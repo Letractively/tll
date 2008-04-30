@@ -3,13 +3,11 @@ package com.tll.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.tll.util.INameValueProvider;
-
 /**
  * Utility methods for enum classes.
  * @author jpk
  */
-public class EnumUtil {
+public final class EnumUtil {
 
 	/**
 	 * Attempts to provide the enum class given an enum class name.
@@ -19,16 +17,8 @@ public class EnumUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<?>> Class<E> enumClassFromString(String enumClassName) {
-		final String enumPkgName = EnumUtil.class.getPackage().getName();
-		String className;
-		if(enumClassName != null && !enumClassName.startsWith(enumPkgName)) {
-			className = enumPkgName + "." + enumClassName;
-		}
-		else {
-			className = enumClassName;
-		}
 		try {
-			return (Class<E>) Class.forName(className);
+			return (Class<E>) Class.forName(enumClassName);
 		}
 		catch(final ClassNotFoundException e) {
 			return null;

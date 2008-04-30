@@ -2,9 +2,9 @@ aspectj 1.5.4
 gwt 1.5M2
 testng 5.8
 
-tll-config 1.0
-tll-core 1.0
-tll-mail 1.0
+tll-config.jar 1.0
+tll-core.jar 1.0
+tll-mail.jar 1.0
 
 acegi-security.jar 1.0.4
 activation.jar 1.1.1

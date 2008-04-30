@@ -125,7 +125,7 @@ target (dist: 'distribute the project') {
 	println()
  	println 'distributing...'
 	Ant.jar(
-		destfile: property.'project.dir' + '/dist/tll-mail.jar', 
+		destfile: property.'project.dir' + '/dist/' + property.'app.name' + '.jar', 
 		basedir: property.'project.dir' + '/build/classes',
 		excludes: '**/*Test.class **/*.properties')
 	targetEnd()

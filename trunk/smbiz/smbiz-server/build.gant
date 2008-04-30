@@ -7,10 +7,11 @@
  * - JAVA_HOME env var is set to a desired JDK installation 
  * - ant.jar (v1.7.0+) 
  * - commons-lang.jar (v2.3+)
+ * - commons-logging.jar (v1.1.1+)
  * - commons-collections.jar (v3.2+)
  * - commons-configuration.jar (v1.5+)
  * - tll-config.jar (v1.0+)
- * - aspectjtools.jar
+ * - aspectjtools.jar (v1.5.4+)
  * - config.properties and optionally {username}.{machine}.config.properties or local.config.properties
  */
  
@@ -99,7 +100,6 @@ def java_run_server_test_classpath = Ant.path {
 def gwt_compile_classpath = Ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-dev-windows.jar")
-	pathelement(location: property.'project.tll-core.dir' + '/src')
 	pathelement(location: property.'project.client.dir' + '/src')
 	pathelement(location: property.'project.server.dir' + '/src')
 	fileset(dir: property.'project.client.dir' + '/lib') {
@@ -433,9 +433,6 @@ target (compileServer: 'compile server code') {
 		optimize: property.'project.compile.optimize',
 		source: property.'project.server.source', 
 		target: property.'project.server.target') {
-			src(path: property.'project.tll-config.dir' + '/src')
-			src(path: property.'project.tll-core.dir' + '/src')
-			src(path: property.'project.tll-mail.dir' + '/src')
 			src(path: property.'project.server.dir' + '/src')
 	}
 
