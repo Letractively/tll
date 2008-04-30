@@ -1,0 +1,18 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-entity-service-tests" verbose="5">
+  
+  <test name="entity.service">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="HIBERNATE" />
+    <groups>
+      <run>
+        <include name="entity.service" />
+      </run>
+    </groups>
+    <packages>
+    	<package name="com.tll.service.entity"></package>
+    </packages>
+  </test>
+
+</suite>

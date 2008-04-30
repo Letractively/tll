@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm 
+  http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+  version="1.0">
+
+  <named-query name="user.setCredentials">
+    <query><![CDATA[update User set emailAddress = :username, password = :password where id = :id]]></query>
+  </named-query>
+
+  <named-query name="account.ispList">
+    <query>
+    <![CDATA[
+    select
+      a.id as id,
+      a.name as name,
+      a.status as status,
+      a.dateCreated as dateCreated,
+      a.dateModified as dateModified,
+      a.billingModel as billingModel,
+      a.billingCycle as billingCycle
+    from
+      Isp a
+    order by name
+    ]]>
+    </query>
+  </named-query>
+  <named-query name="account.ispList.count"><query><![CDATA[select count(id) from Isp]]></query></named-query>
+  
+  <named-query name="account.merchantList">
+    <query>
+    <![CDATA[
+    select
+      m.id as id,
+      m.name as name,
+      m.status as status,
+      m.dateCreated as dateCreated,
+      m.dateModified as dateModified,
+      m.billingModel as billingModel,
+      m.billingCycle as billingCycle,
+      m.storeName as storeName
+    from
+      Merchant m
+    where
+      m.parent.id = :ispId
+    order by name
+    ]]>
+    </query>
+  </named-query>
+  <named-query name="account.merchantList.count"><query><![CDATA[select count(id) from Merchant m where m.parent.id = :ispId]]></query></named-query>
+  
+  <named-query name="account.customerList">
+    <query>
+    <![CDATA[
+    select
+      ca.dateCreated as dateCreated,
+      ca.dateModified as dateModified,
+      ca.status as status,
+      ca.source as source,
+      c.id as id,
+      c.name as name
+    from
+      CustomerAccount ca join ca.customer as c
+    where
+      ca.account.id = :merchantId
+    order by name
+    ]]>
+    </query>
+  </named-query>
+  <named-query name="account.customerList.count"><query><![CDATA[select count(c.id) from CustomerAccount ca join ca.customer as c where ca.account.id = :merchantId order by name]]></query></named-query>
+  
+  <named-query name="interface.summaryList">
+    <query>
+    <![CDATA[
+    select
+      intf.id as id,
+      intf.name as name,
+      intf.code as code,
+      intf.description as description,
+      intf.dateModified as dateModified,
+      count(options) as numOptions
+    from
+      Interface intf
+      join intf.options options
+    group by intf.name 
+    order by intf.name
+    ]]>
+    </query>
+  </named-query>
+
+  <named-query name="interface.summaryList.count">
+    <query><![CDATA[select count(id) from Interface]]></query>
+  </named-query>
+  
+  <!-- test queries -->
+  <named-query name="interface.test">
+    <query><![CDATA[from Interface intf order by name]]></query>
+  </named-query>
+
+  <named-query name="interface.test.count">
+    <query><![CDATA[select count(id) from Interface]]></query>
+  </named-query>
+  <!-- end test queries -->
+
+  <!-- TODO: finish 
+  <named-native-query name="pch.findTopLevelCategoryIds">
+    <query>
+      select pch.child_id 
+      from pch pch inner join product_category pc on pch.child_id = pc.id 
+      where pc.aid = :accountId and pch.parent_id is null  
+    </query>
+  </named-native-query>
+
+  <named-native-query name="pch.findChildCategoryIds">
+    <query>
+      select pch.child_id from pch pch where pch.parent_id = :categoryId
+    </query>
+  </named-native-query>
+
+  <named-native-query name="pch.findParentCategoryIds">
+    <query>
+      select pch.parent_id from pch pch where pch.child_id = :categoryId
+    </query>
+  </named-native-query>
+  -->
+  
+</entity-mappings>

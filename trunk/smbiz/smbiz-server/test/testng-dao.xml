@@ -1,0 +1,85 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-dao-tests" verbose="5">
+  
+  <test name="dao.schema">
+    <groups>
+      <run>
+        <include name="dao.schema" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.model.schema.SchemaInfoTest" />
+    </classes>
+  </test>
+
+  <test name="dao.factory">
+    <groups>
+      <run>
+        <include name="dao.schema" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.dao.DaoFactoryTest" />
+    </classes>
+  </test>
+
+  <test name="dao.impl.mock">
+    <parameter name="daoMode" value="MOCK" />
+    <groups>
+      <run>
+        <include name="dao" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.dao.impl" />
+    </packages>
+  </test>
+  
+  <test name="dao.impl.hibernate">
+    <parameter name="daoMode" value="HIBERNATE" />
+    <groups>
+      <run>
+        <include name="dao" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.dao.impl" />
+    </packages>
+    <!-- 
+    <classes>
+      <class name="com.tll.dao.impl.AppPropertyDaoTest" />
+      <class name="com.tll.dao.impl.CurrencyDaoTest" />
+      <class name="com.tll.dao.impl.AddressDaoTest" />
+      <class name="com.tll.dao.impl.PaymentInfoDaoTest" />
+      <class name="com.tll.dao.impl.PaymentTransDaoTest" />
+      <class name="com.tll.dao.impl.AuthorityDaoTest" />
+      <class name="com.tll.dao.impl.AccountDaoTest_Asp" />
+      <class name="com.tll.dao.impl.AccountDaoTest_Isp" />
+      <class name="com.tll.dao.impl.AccountDaoTest_Merchant" />
+      <class name="com.tll.dao.impl.AccountDaoTest_Customer" />
+      <class name="com.tll.dao.impl.AccountHistoryDaoTest" />
+      <class name="com.tll.dao.impl.AccountAddressDaoTest" />
+      <class name="com.tll.dao.impl.VisitorDaoTest" />
+      <class name="com.tll.dao.impl.CustomerAccountDaoTest" />
+      <class name="com.tll.dao.impl.UserDaoTest" />
+      <class name="com.tll.dao.impl.InterfaceDaoTest_Multi" />
+      <class name="com.tll.dao.impl.InterfaceDaoTest_Single" />
+      <class name="com.tll.dao.impl.InterfaceDaoTest_Switch" />
+      <class name="com.tll.dao.impl.InterfaceOptionAccountDaoTest" />
+      <class name="com.tll.dao.impl.ProductInventoryDaoTest" />
+      <class name="com.tll.dao.impl.ProductCategoryDaoTest" />
+      <class name="com.tll.dao.impl.ProdCatDaoTest" />
+      <class name="com.tll.dao.impl.SalesTaxDaoTest" />
+      <class name="com.tll.dao.impl.ShipModeDaoTest" />
+      <class name="com.tll.dao.impl.ShipBoundCostDaoTest" />
+      <class name="com.tll.dao.impl.SiteCodeDaoTest" />
+      <class name="com.tll.dao.impl.OrderDaoTest" />
+      <class name="com.tll.dao.impl.OrderItemDaoTest" />
+      <class name="com.tll.dao.impl.OrderTransDaoTest" />
+      <class name="com.tll.dao.impl.OrderItemTransDaoTest" />
+    </classes>
+    -->
+  </test>
+
+</suite>

@@ -1,0 +1,46 @@
+/**
+ * The Logic Lab
+ * @author jpk
+ * Feb 21, 2008
+ */
+package com.tll.server.rpc.entity.impl;
+
+import java.util.Map;
+
+import com.tll.SystemError;
+import com.tll.client.data.EntityOptions;
+import com.tll.client.model.RefKey;
+import com.tll.client.search.ISearch;
+import com.tll.criteria.ICriteria;
+import com.tll.model.impl.Interface;
+import com.tll.server.RequestContext;
+import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
+
+/**
+ * InterfaceService
+ * @author jpk
+ */
+public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
+
+	private static final MarshalOptions marshalOptions = MarshalOptions.UNCONSTRAINED_MARSHALING;
+
+	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
+		return marshalOptions;
+	}
+
+	@Override
+	protected void handleLoadOptions(RequestContext requestContext, Interface e, EntityOptions options,
+			Map<String, RefKey> refs) throws SystemError {
+	}
+
+	@Override
+	protected void handlePersistOptions(RequestContext requestContext, Interface e, EntityOptions options)
+			throws SystemError {
+	}
+
+	@Override
+	protected void handleSearchTranslation(RequestContext requestContext, ISearch search,
+			ICriteria<? extends Interface> criteria) throws IllegalArgumentException {
+	}
+}

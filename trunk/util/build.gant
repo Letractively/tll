@@ -1,0 +1,131 @@
+/**
+ * GANT build script
+ * @author jpk, The Logic Lab
+ *
+ * CLASSPATH REQUIREMENTS:
+ * ----------------------------------
+ * - JAVA_HOME env var is set to a desired JDK installation 
+ * - ant.jar (v1.7.0+) 
+ * - commons-lang.jar (v2.3+)
+ * - commons-collections.jar (v3.2+)
+ * - commons-configuration.jar (v1.5+)
+ * - tll-config.jar (v1.0++)
+ * - config.properties and optionally {username}.{machine}.config.properties or local.config.properties
+ */
+ 
+def config = com.tll.config.Config.instance();
+def property = config.asMap(null, null);
+
+def NL = System.getProperty("line.separator")
+
+Ant.taskdef ( resource : 'testngtasks' , classpath: property.'lib.testng' )
+
+def dependant_libs = Ant.path {
+	pathelement(location: "${property.'lib.commons-logging'}")
+	pathelement(location: "${property.'lib.commons-lang'}")
+	pathelement(location: "${property.'lib.commons-logging'}")
+	pathelement(location: "${property.'lib.commons-collections'}")
+	pathelement(location: "${property.'lib.commons-configuration'}")
+	pathelement(location: "${property.'lib.commons-io'}")
+	pathelement(location: "${property.'lib.commons-validator'}")
+	pathelement(location: "${property.'lib.jakarto-oro'}")
+	pathelement(location: "${property.'lib.velocity'}")
+	pathelement(location: "${property.'lib.testng'}")
+	pathelement(location: "${property.'lib.guice'}")
+	pathelement(location: "${property.'lib.spring'}")
+}
+
+// compile classpath 
+def java_compile_classpath = Ant.path {
+	pathelement(path: dependant_libs)
+}
+	
+// test run classpath
+def java_run_test_classpath = Ant.path {
+	pathelement(location: "${property.'project.dir'}/build/classes")
+	pathelement(location: "${property.'project.dir'}/test")
+	pathelement(path: dependant_libs)
+}
+
+boolean isDeploy = false;
+long startTime = System.currentTimeMillis()
+int targetCount = 0;
+
+def targetStart = { targetCount++; }
+	
+def targetEnd = {
+	if(--targetCount == 0) {
+		long endTime = System.currentTimeMillis()
+			def duration = ((endTime - startTime) / 1000) / 60 // in minutes
+			println("GANT BUILD SUCCESSFULL: $duration minutes")
+	}
+}
+	
+////// TARGETS
+
+target(info: 'Echos the config properties') {
+	println()
+	println('CONFIG PROPERTIES:')
+	String s = ''
+	property.each( { String key, String val -> s += key + ' = ' + val + NL } )
+	Ant.echo(s)
+}
+
+target (prepare: 'create directories') {
+	targetStart()
+	println()
+	println 'prepare'
+	Ant.mkdir(dir: property.'project.dir' + '/build')
+	Ant.mkdir(dir: property.'project.dir' + '/build/classes')
+	Ant.mkdir(dir: property.'project.dir' + '/dist')
+	targetEnd()
+}
+
+target (clean: 'clean directories') {
+	targetStart()
+	println()
+	println 'Cleaning directories...'
+ 	Ant.delete(dir: property.'project.dir.build')
+	Ant.delete(dir: property.'project.dir' + '/dist')
+	targetEnd()
+}
+
+target (compile: 'compile the project') {
+	targetStart()
+	depends(prepare)
+	println()
+ 	println 'compiling...'
+	Ant.javac(
+		destdir: "${property.'project.dir'}/build/classes", 
+		classpath: java_compile_classpath,
+		optimize: 'true',
+		source: property.'project.source', 
+		target: property.'project.target') {
+			src(path: "${property.'project.dir'}/src")			
+			src(path: "${property.'project.dir'}/test")			
+	}
+	targetEnd()
+}
+
+target (test: 'perform testing') {
+	targetStart()
+	depends(compile)
+	println()
+ 	println 'testing...'
+	testng(outputdir: "${property.'project.dir'}/test-output", classpath: java_run_test_classpath, haltonfailure:'true') {
+		jvmarg(value: '-ea')
+		xmlfileset(file:"${property.'project.dir'}/test/testng-util.xml")
+	}
+}
+
+target (dist: 'distribute the project') {
+	targetStart()
+	depends(test)
+	println()
+ 	println 'distributing...'
+	Ant.jar(
+		destfile: property.'project.dir' + '/dist/tll-core.jar', 
+		basedir: property.'project.dir' + '/build/classes',
+		excludes: '**/*Test.class **/*.properties')
+	targetEnd()
+}

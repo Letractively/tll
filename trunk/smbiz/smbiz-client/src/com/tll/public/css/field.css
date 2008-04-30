@@ -1,0 +1,68 @@
+@CHARSET "ISO-8859-1";
+
+.fld {
+	padding: 0;
+	margin: 3px 6px 3px 0;
+}
+
+/* non IE rules (for mozilla) */
+.fld input[type='text'] {
+	height: 1.5em;
+}
+
+.fld input[type='checkbox'] {
+	height: 1.22em;
+	margin-right: 3px;
+}
+/* END non IE rules */
+
+.fld .lbl, label {
+	color: blue;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+label .rqd {
+	color: red;
+	font-size: 14px;
+}
+
+.error input, .error select, .error textarea {
+	border: 1px solid red !important;
+	background-color: #FFFFCC;
+}
+
+.changed input, .changed select, .changed textarea {
+	border: 1px solid #007BBF !important;
+	background-color: #DFF4FF;
+}
+
+.fld .icon {
+	cursor: pointer;
+	display: inline;
+}
+
+.fldrow {
+	padding: .25em;
+	border: 1px solid;
+	border-color: transparent;
+	margin: .15em 0 .15em 0;
+	text-align: left;
+	width: 100%; /* for when the view is popped out */
+}
+
+.fldrow .fld {
+	float: left;	
+}
+
+/* fldcol - no floating fields - vertical layout */
+.fldcol {
+}
+
+.fldrow .fldcol {
+	float: left;
+}
+
+.fldrow .fldcol .fld {
+	float: none;
+}

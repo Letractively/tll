@@ -1,0 +1,27 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-model-tests" verbose="5">
+  
+  <test name="model.key">
+    <groups>
+      <run>
+        <include name="model.key" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.model.key.KeyFactoryTest" />
+    </classes>
+  </test>
+
+  <test name="model.validator">
+    <groups>
+      <run>
+        <include name="model.validate" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.model.validate.ValidatorsTest" />
+    </classes>
+  </test>
+
+</suite>
