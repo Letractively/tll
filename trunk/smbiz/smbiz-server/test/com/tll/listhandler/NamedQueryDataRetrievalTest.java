@@ -93,17 +93,38 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 		return injector.getInstance(IEntityServiceFactory.class).instanceByEntityType(entityClass);
 	}
 
+	/**
+	 * Does simple validation on the given list handler.
+	 * @param <T>
+	 * @param listHandler
+	 * @param sorting
+	 * @throws Exception
+	 */
+	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
+		assert listHandler != null : "The list handler is null";
+		assert listHandler.size() > 0 : "No list handler elements exist";
+		assert listHandler.getSorting() != null && listHandler.getSorting().equals(sorting) : "List hanler sorting differs";
+		assert listHandler.getElement(0) != null : "Unable to obtain the first list handler element";
+	}
+
 	public void test() throws Exception {
 
 		IListHandlerDataProvider<IEntity> dataProvider;
 		ICriteria<? extends IEntity> criteria;
 
+		// iterator through all defined select named queries
 		for(SelectNamedQuery nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
 			criteria = CriteriaFactory.buildQueryCriteria(nq);
-			criteria.setSorting(new Sorting(querySortBindings.get(nq)));
-			List<SearchResult<IEntity>> list = dataProvider.find(criteria);
-			assert list != null && list.size() > 0 : "No named query results retrieved for named query: " + nq.getQueryName();
+			Sorting sorting = new Sorting(querySortBindings.get(nq));
+			criteria.setSorting(sorting);
+
+			// test for all list handler types
+			IListHandler<SearchResult<IEntity>> listHandler;
+			for(ListHandlerType lht : ListHandlerType.values()) {
+				listHandler = ListHandlerFactory.create(criteria, lht, dataProvider);
+				validateListHandler(listHandler, sorting);
+			}
 		}
 	}
 }

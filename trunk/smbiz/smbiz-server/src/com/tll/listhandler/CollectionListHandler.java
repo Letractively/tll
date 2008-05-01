@@ -87,7 +87,7 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 				Collections.sort(this.rows, new SortColumnBeanComparator<T>(sorting.getPrimarySortColumn()));
 			}
 			catch(final RuntimeException e) {
-				throw new ListHandlerException("Unable to sort list: " + e.getMessage());
+				throw new ListHandlerException("Unable to sort list: " + e.getMessage(), e);
 			}
 		}
 		this.sorting = sorting;
@@ -110,14 +110,5 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 		catch(final IndexOutOfBoundsException ioobe) {
 			throw new ListHandlerException("invalid index range: start(" + start + "), end(" + end + ")");
 		}
-	}
-
-	public List<T> getAllElements() throws EmptyListException, ListHandlerException {
-		if(!hasElements()) throw new EmptyListException("Unable to retrieve collection list elements: none exist");
-		return rows;
-	}
-
-	public int getPageSize() {
-		throw new UnsupportedOperationException("Collection List handlers don't provide page size.");
 	}
 }

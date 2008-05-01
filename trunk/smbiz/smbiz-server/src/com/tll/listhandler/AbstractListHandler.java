@@ -22,7 +22,7 @@ public abstract class AbstractListHandler<T> implements IListHandler<T> {
 	 * ListHandlerIterator - Common list handling iteration.
 	 * @author jpk
 	 */
-	class ListHandlerIteratorImpl extends ListHandlerIterator<T> {
+	protected class ListHandlerIteratorImpl extends ListHandlerIterator<T> {
 
 		public ListHandlerIteratorImpl(int size) {
 			super(size);

@@ -3,9 +3,9 @@
   
   <test verbose="6" name="shell-test" annotations="JDK">
     <parameter name="jpaMode" value="SPRING" />
-    <parameter name="daoMode" value="HIBERNATE" />
+    <parameter name="daoMode" value="ORM" />
     <classes>
-      <class name="com.tll.service.entity.ListHandlerDataProviderTest"/>
+      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest"/>
     </classes>
   </test>
 
