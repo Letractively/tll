@@ -33,7 +33,7 @@ public class PaymentInfoStubber extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new DaoModule(DaoMode.HIBERNATE));
+		modules.add(new DaoModule(DaoMode.ORM));
 	}
 
 	@Test

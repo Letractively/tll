@@ -3,44 +3,25 @@
 <suite name="smbiz-listhandler-tests" verbose="5">
   
   <test name="paging">
-    <parameter name="jpaMode" value="NONE" />
-    <parameter name="daoMode" value="MOCK" />
-    <groups>
-      <run>
-        <include name="listhandler*" />
-      </run>
-    </groups>
     <classes>
       <class name="com.tll.service.entity.PagingSearchListHandlerTest" />
     </classes>
   </test>
   
-  <test name="namedqueries.orm" verbose="5">
-    <parameter name="jpaMode" value="NONE" />
-    <parameter name="daoMode" value="HIBERNATE" />
-    <groups>
-      <run>
-        <include name="listhandler.namedquery" />
-      </run>
-    </groups>
-    <packages>
-    	<package name="com.tll.listhandler*" />
-    	<package name="com.tll.service*" />
-    </packages>
+  <test name="listhandler.namedqueries.orm">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
+    <classes>
+      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest" />
+    </classes>
   </test>
 
-  <test name="namedqueries.mock" verbose="5">
+  <test name="listhandler.namedqueries.mock">
     <parameter name="jpaMode" value="NONE" />
     <parameter name="daoMode" value="MOCK" />
-    <groups>
-      <run>
-        <include name="listhandler.namedquery" />
-      </run>
-    </groups>
-    <packages>
-    	<package name="com.tll.listhandler*" />
-    	<package name="com.tll.service*" />
-    </packages>
+    <classes>
+      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest" />
+    </classes>
   </test>
 
 </suite>

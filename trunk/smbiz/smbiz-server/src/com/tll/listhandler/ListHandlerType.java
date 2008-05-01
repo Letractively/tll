@@ -12,11 +12,10 @@ public enum ListHandlerType {
 
 	/**
 	 * Does the {@link ListHandlerType} employ search criteria?
-	 * @param lht The {@link ListHandlerType}
 	 * @return true/false
 	 */
-	public static boolean isSearchBased(ListHandlerType lht) {
-		return ListHandlerType.IDLIST.equals(lht) || ListHandlerType.PAGE.equals(lht);
+	public boolean isSearchBased() {
+		return this == ListHandlerType.IDLIST || this == ListHandlerType.PAGE;
 	}
 
 }

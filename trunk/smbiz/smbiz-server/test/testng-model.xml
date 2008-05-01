@@ -2,6 +2,17 @@
 
 <suite name="smbiz-model-tests" verbose="5">
   
+  <test name="model.schema">
+    <groups>
+      <run>
+        <include name="model.schema" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.model.schema.*" />
+    </classes>
+  </test>
+
   <test name="model.key">
     <groups>
       <run>
@@ -9,7 +20,7 @@
       </run>
     </groups>
     <classes>
-      <class name="com.tll.model.key.KeyFactoryTest" />
+      <class name="com.tll.model.key.*" />
     </classes>
   </test>
 
@@ -20,7 +31,7 @@
       </run>
     </groups>
     <classes>
-      <class name="com.tll.model.validate.ValidatorsTest" />
+      <class name="com.tll.model.validate.*" />
     </classes>
   </test>
 

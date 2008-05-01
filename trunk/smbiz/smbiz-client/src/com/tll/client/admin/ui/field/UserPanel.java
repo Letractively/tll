@@ -14,7 +14,6 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -26,6 +25,7 @@ import com.tll.client.ui.field.FieldWidget;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
 
 /**
  * UserPanel
@@ -56,7 +56,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
-		auxDataRequest.requestEntityList(IEntityType.AUTHORITY);
+		auxDataRequest.requestEntityList(EntityType.AUTHORITY);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		expires = fdate("expires", "Expires", IField.LBL_ABOVE, GlobalFormat.DATE);
 
 		authorityPanel = new FieldPanel(IField.CSS_FIELD_ROW);
-		List<Model> authList = AuxDataCache.instance().getEntityList(IEntityType.AUTHORITY);
+		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
 		authorities = new CheckboxField[authList.size()];
 		int i = 0;
 		for(Model auth : authList) {

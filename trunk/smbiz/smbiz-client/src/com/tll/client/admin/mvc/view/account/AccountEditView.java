@@ -6,10 +6,10 @@ package com.tll.client.admin.mvc.view.account;
 
 import com.tll.client.admin.ui.field.AccountPanel;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.model.IEntityType;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.model.EntityType;
 
 /**
  * AccountEditView - Base AbstractView for editing accounts.
@@ -38,9 +38,9 @@ public class AccountEditView extends EditView {
 	private static final EntityOptions entityOptions = new EntityOptions();
 
 	static {
-		entityOptions.requestRelated(IEntityType.PAYMENT_INFO);
-		entityOptions.requestRelated(IEntityType.ACCOUNT_ADDRESS);
-		entityOptions.requestRelatedRef(IEntityType.ACCOUNT);
+		entityOptions.requestRelated(EntityType.PAYMENT_INFO);
+		entityOptions.requestRelated(EntityType.ACCOUNT_ADDRESS);
+		entityOptions.requestRelatedRef(EntityType.ACCOUNT);
 	}
 
 	/**

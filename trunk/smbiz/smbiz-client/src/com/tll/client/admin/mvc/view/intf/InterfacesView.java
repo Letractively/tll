@@ -27,10 +27,11 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.InterfaceSearch;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.EditPanel;
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.Sorting;
 
@@ -55,22 +56,17 @@ public class InterfacesView extends AbstractView {
 
 	}
 
-	/**
-	 * Corres. to a named query
-	 */
-	private static final String SEARCH_NAME = "interface.summaryList";
-
-	private static final InterfaceSearch criteria = new InterfaceSearch(ISearch.TYPE_SCALER_QUERY);
+	private static final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 
 	private static final IListingDefinition listingDef;
 
 	static {
-		criteria.setQueryName(SEARCH_NAME);
+		criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
 
 		listingDef = new IListingDefinition() {
 
 			public String getListingName() {
-				return SEARCH_NAME;
+				return criteria.getNamedQuery().getQueryName();
 			}
 
 			public boolean isSortable() {

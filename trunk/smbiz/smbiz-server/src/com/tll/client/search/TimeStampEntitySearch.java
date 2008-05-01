@@ -5,6 +5,8 @@
  */
 package com.tll.client.search;
 
+import com.tll.criteria.CriteriaType;
+import com.tll.model.EntityType;
 import com.tll.util.DateRange;
 
 /**
@@ -31,11 +33,11 @@ public abstract class TimeStampEntitySearch extends EntitySearch {
 
 	/**
 	 * Constructor
-	 * @param searchType
+	 * @param criteriaType
 	 * @param entityType
 	 */
-	public TimeStampEntitySearch(int searchType, String entityType) {
-		super(searchType, entityType);
+	public TimeStampEntitySearch(CriteriaType criteriaType, EntityType entityType) {
+		super(criteriaType, entityType);
 	}
 
 	public final DateRange getDateCreatedRange() {
@@ -60,39 +62,6 @@ public abstract class TimeStampEntitySearch extends EntitySearch {
 
 		if(dcr != null) dcr.clear();
 		if(dmr != null) dmr.clear();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(!super.equals(obj) || obj instanceof TimeStampEntitySearch == false) return false;
-		final TimeStampEntitySearch that = (TimeStampEntitySearch) obj;
-		if(that.dcr == null) {
-			if(dcr != null) return false;
-		}
-		else {
-			if(dcr == null || !dcr.equals(that.dcr)) return false;
-
-		}
-		if(that.dmr == null) {
-			if(dmr != null) return false;
-		}
-		else {
-			if(dmr == null || !dmr.equals(that.dmr)) return false;
-
-		}
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = super.hashCode();
-		if(dcr != null) {
-			hash = hash * 31 + dcr.hashCode();
-		}
-		if(dmr != null) {
-			hash = hash * 37 + dmr.hashCode();
-		}
-		return hash;
 	}
 
 	@Override

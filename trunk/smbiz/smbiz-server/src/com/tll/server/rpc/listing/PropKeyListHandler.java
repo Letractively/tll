@@ -44,7 +44,7 @@ public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler
 			return model;
 		}
 		final int numCols = propKeys.length;
-		Model xgrp = new Model(model.getRefType());
+		Model xgrp = new Model(model.getEntityType());
 		for(int i = 0; i < numCols; i++) {
 			PropKey def = propKeys[i];
 			IPropertyBinding prop = model.getPropertyBinding(def.prop);

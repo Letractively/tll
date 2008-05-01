@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tll.SystemError;
+import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.impl.EntityType;
 import com.tll.server.rpc.entity.impl.AccountAddressService;
 import com.tll.server.rpc.entity.impl.AccountService;
 import com.tll.server.rpc.entity.impl.AuthorityService;

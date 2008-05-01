@@ -5,10 +5,10 @@
 package com.tll.client.admin.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.IEntityType;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
+import com.tll.model.EntityType;
 
 /**
  * MerchantMain - ISP root view.
@@ -21,7 +21,7 @@ public class MerchantMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(IEntityType.MERCHANT);
+			super(EntityType.MERCHANT);
 		}
 
 		@Override

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.tll.client.IMarshalable;
+import com.tll.model.EntityType;
 
 /**
  * EntityOptions - Provision for specifying persistence options (eager loading
@@ -19,19 +20,19 @@ public final class EntityOptions implements IMarshalable {
 	/**
 	 * Collection of entity types as {@link String}s
 	 */
-	private final Set<String> relatedRequests = new HashSet<String>();
+	private final Set<EntityType> relatedRequests = new HashSet<EntityType>();
 
 	/**
 	 * Collection of entity types as {@link String}s
 	 */
-	private final Set<String> relatedRefRequests = new HashSet<String>();
+	private final Set<EntityType> relatedRefRequests = new HashSet<EntityType>();
 
 	/**
 	 * Instructs the server to provide the related entity type ref for a CRUD load
 	 * op.
 	 * @param entityType
 	 */
-	public void requestRelatedRef(String entityType) {
+	public void requestRelatedRef(EntityType entityType) {
 		relatedRefRequests.add(entityType);
 	}
 
@@ -40,7 +41,7 @@ public final class EntityOptions implements IMarshalable {
 	 * should be provided for a CRUD load op.
 	 * @param entityType
 	 */
-	public boolean isRelatedRefRequested(String entityType) {
+	public boolean isRelatedRefRequested(EntityType entityType) {
 		return relatedRefRequests.contains(entityType);
 	}
 
@@ -48,7 +49,7 @@ public final class EntityOptions implements IMarshalable {
 	 * Instructs the server to handle the related entity type for CRUD ops.
 	 * @param entityType
 	 */
-	public void requestRelated(String entityType) {
+	public void requestRelated(EntityType entityType) {
 		relatedRequests.add(entityType);
 	}
 

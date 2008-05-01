@@ -9,13 +9,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.account.IspListingView;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.event.type.StaticViewRequest;
-import com.tll.client.model.IEntityType;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.ViewRequestLink;
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
+import com.tll.model.EntityType;
 
 /**
  * AspMain - ASP root view.
@@ -28,7 +29,7 @@ public class AspMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(IEntityType.ASP);
+			super(EntityType.ASP);
 		}
 
 		@Override
@@ -48,8 +49,8 @@ public class AspMain extends MainView {
 	public AspMain() {
 		super();
 
-		AccountSearch as = new AccountSearch(ISearch.TYPE_SCALER_QUERY, IEntityType.ISP);
-		as.setQueryName("account.ispList");
+		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
+		as.setNamedQuery(SelectNamedQuery.ISP_LISTING);
 
 		links.add(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
 		links.add(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));

@@ -4,15 +4,15 @@
   
   <test name="server-tests">
     <parameter name="jpaMode" value="SPRING" />
-    <parameter name="daoMode" value="HIBERNATE" />
+    <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
         <include name="server.*" />
       </run>
     </groups>
-    <packages>
-      <package name="com.tll.server.*" />
-    </packages>
+    <classes>
+      <class name="com.tll.server.*" />
+    </classes>
   </test>
 
 </suite>

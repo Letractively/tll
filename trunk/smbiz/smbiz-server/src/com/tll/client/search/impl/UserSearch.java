@@ -4,8 +4,9 @@
  */
 package com.tll.client.search.impl;
 
-import com.tll.client.model.IEntityType;
 import com.tll.client.search.NamedTimeStampEntitySearch;
+import com.tll.criteria.CriteriaType;
+import com.tll.model.EntityType;
 
 /**
  * UserSearch
@@ -22,10 +23,10 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 
 	/**
 	 * Constructor
-	 * @param searchType
+	 * @param criteriaType
 	 */
-	public UserSearch(int searchType) {
-		super(searchType, IEntityType.USER);
+	public UserSearch(CriteriaType criteriaType) {
+		super(criteriaType, EntityType.USER);
 	}
 
 	@Override
@@ -38,20 +39,4 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 		super.clear();
 
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(!super.equals(obj)) {
-			return false;
-		}
-		if(obj instanceof UserSearch == false) return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = super.hashCode();
-		return hash;
-	}
-
 }

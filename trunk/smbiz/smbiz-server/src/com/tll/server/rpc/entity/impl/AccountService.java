@@ -8,16 +8,15 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
+import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountStatus;
-import com.tll.model.impl.EntityType;
 import com.tll.model.key.IPrimaryKey;
 import com.tll.model.key.KeyFactory;
 import com.tll.server.RequestContext;
@@ -75,11 +74,11 @@ public class AccountService extends MNamedEntityServiceImpl<Account> {
 		*/
 
 		// load parent account ref?
-		if(entityOptions.isRelatedRefRequested(IEntityType.ACCOUNT) && e.getParent() != null) {
+		if(entityOptions.isRelatedRefRequested(EntityType.ACCOUNT) && e.getParent() != null) {
 			IPrimaryKey<Account> pk = KeyFactory.getPrimaryKey(Account.class, e.getParent().getId());
 			IAccountService svc = entityServiceFactory.instance(IAccountService.class);
 			Account parent = svc.load(pk);
-			RefKey er = new RefKey(EntityType.ACCOUNT.toString(), parent.getId(), parent.getName());
+			RefKey er = new RefKey(EntityType.ACCOUNT, parent.getId(), parent.getName());
 			refs.put("parent", er);
 		}
 	}

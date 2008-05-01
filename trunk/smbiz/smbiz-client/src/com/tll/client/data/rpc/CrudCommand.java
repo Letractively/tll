@@ -25,7 +25,7 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.util.StringUtil;
+import com.tll.model.EntityType;
 
 /**
  * CrudCommand - Issues CRUD commands to the server.
@@ -63,8 +63,8 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 * @param entityType
 	 * @param generate
 	 */
-	public final void receiveEmpty(String entityType, boolean generate) {
-		if(StringUtil.isEmpty(entityType)) {
+	public final void receiveEmpty(EntityType entityType, boolean generate) {
+		if(entityType == null) {
 			throw new IllegalStateException("An entity type must be specified.");
 		}
 		entityRequest = new EntityGetEmptyRequest(entityType, generate);
@@ -87,7 +87,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 * Sets the state of this command for loading an entity by primary key.
 	 * @param entityType The entity type
 	 */
-	public final void loadByName(String entityType, String name) {
+	public final void loadByName(EntityType entityType, String name) {
 		if(entityType == null || name == null) {
 			throw new IllegalStateException("An entity type and name must be specified.");
 		}

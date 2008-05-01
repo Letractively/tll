@@ -7,16 +7,19 @@ package com.tll.client.search;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
+
 /**
  * SearchBase
  * @author jpk
  */
 public abstract class SearchBase implements ISearch {
 
-	private int searchType;
+	private CriteriaType criteriaType;
 	private boolean retrieveAll = false;
 
-	private String queryName;
+	private SelectNamedQuery namedQuery;
 	private Map<String, String> queryParams;
 
 	/**
@@ -28,12 +31,11 @@ public abstract class SearchBase implements ISearch {
 
 	/**
 	 * Constructor
-	 * @param searchType May NOT be <code>null</code>.
+	 * @param criteriaType May NOT be <code>null</code>.
 	 */
-	public SearchBase(int searchType) {
+	public SearchBase(CriteriaType criteriaType) {
 		this();
-		assert searchType == TYPE_ENTTY || searchType == TYPE_ENTTY_QUERY || searchType == TYPE_SCALER_QUERY;
-		this.searchType = searchType;
+		this.criteriaType = criteriaType;
 	}
 
 	public String descriptor() {
@@ -41,25 +43,25 @@ public abstract class SearchBase implements ISearch {
 	}
 
 	/**
-	 * @return the searchType
+	 * @return the criteriaType
 	 */
-	public int getSearchType() {
-		return searchType;
+	public CriteriaType getCriteriaType() {
+		return criteriaType;
 	}
 
 	/**
-	 * @param searchType the searchType to set
+	 * @param criteriaType the criteriaType to set
 	 */
-	public void setSearchType(int searchType) {
-		this.searchType = searchType;
+	public void setCriteriaType(CriteriaType criteriaType) {
+		this.criteriaType = criteriaType;
 	}
 
-	public final String getQueryName() {
-		return queryName;
+	public SelectNamedQuery getNamedQuery() {
+		return namedQuery;
 	}
 
-	public final void setQueryName(String searchName) {
-		this.queryName = searchName;
+	public void setNamedQuery(SelectNamedQuery namedQuery) {
+		this.namedQuery = namedQuery;
 	}
 
 	public final Map<String, String> getQueryParams() {
@@ -86,36 +88,15 @@ public abstract class SearchBase implements ISearch {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if(obj == this) return true;
-		if(obj instanceof SearchBase == false) return false;
-		final SearchBase that = (SearchBase) obj;
-		return (that.searchType == this.searchType) && that.queryName != null && that.queryName.equals(this.queryName)
-				&& that.retrieveAll == this.retrieveAll;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = searchType;
-		if(queryName != null) {
-			hash = hash * 31 + queryName.hashCode();
-		}
-		hash += (retrieveAll ? 31 : 0);
-		return hash;
-	}
-
-	@Override
 	public String toString() {
 		String s = "";
-		switch(searchType) {
-			case TYPE_ENTTY:
+		switch(criteriaType) {
+			case ENTITY:
 				s = "ENTITY";
 				break;
-			case TYPE_ENTTY_QUERY:
-				s = "ENTITY_QUERY (query:" + queryName + ")";
-				break;
-			case TYPE_SCALER_QUERY:
-				s = "SCALAR_QUERY (query:" + queryName + ")";
+			case ENTITY_NAMED_QUERY:
+			case SCALAR_NAMED_QUERY:
+				s = namedQuery.toString();
 				break;
 		}
 		return s;

@@ -30,9 +30,10 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
+import com.tll.criteria.SelectNamedQuery;
+import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.impl.EntityType;
 import com.tll.model.key.IPrimaryKey;
 import com.tll.model.key.KeyFactory;
 import com.tll.server.RequestContext;
@@ -42,7 +43,6 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.PropKeyListHandler;
 import com.tll.service.entity.IEntityService;
 import com.tll.util.DateRange;
-import com.tll.util.EnumUtil;
 
 /**
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
@@ -224,38 +224,29 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	@SuppressWarnings("unchecked")
 	public final ICriteria<? extends E> translate(final RequestContext requestContext, final EntityType entityType,
 			final ISearch search) throws IllegalArgumentException {
-		final CriteriaType criteriaType = EnumUtil.fromOrdinal(CriteriaType.class, search.getSearchType());
+		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		ICriteria<? extends E> criteria;
 		final Map<String, String> queryParams = search.getQueryParams();
-		switch(criteriaType) {
 
-			case ENTITY:
-				criteria = CriteriaFactory.buildEntityCriteria(entityClass);
-				handleSearchTranslation(requestContext, search, criteria);
-				break;
-
-			case ENTITY_NAMED_QUERY:
-				criteria = CriteriaFactory.buildEntityQueryCriteria(entityClass, search.getQueryName());
-				if(queryParams != null) {
-					for(final String paramName : queryParams.keySet()) {
-						criteria.setQueryParam(paramName, queryParams.get(paramName));
-					}
+		if(criteriaType.isQuery()) {
+			SelectNamedQuery nq = search.getNamedQuery();
+			if(nq == null) {
+				throw new IllegalArgumentException("No named query specified");
+			}
+			criteria = (ICriteria<? extends E>) CriteriaFactory.buildQueryCriteria(nq);
+			if(queryParams != null) {
+				for(final String paramName : queryParams.keySet()) {
+					criteria.setQueryParam(paramName, queryParams.get(paramName));
 				}
-				break;
-
-			case SCALAR_NAMED_QUERY:
-				criteria = CriteriaFactory.buildScalarQueryCriteria(entityClass, search.getQueryName());
-				if(queryParams != null) {
-					for(final String paramName : queryParams.keySet()) {
-						criteria.setQueryParam(paramName, queryParams.get(paramName));
-					}
-				}
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unhandled criteria type " + criteriaType);
+			}
 		}
+		else {
+			// entity
+			criteria = CriteriaFactory.buildEntityCriteria(entityClass);
+			handleSearchTranslation(requestContext, search, criteria);
+		}
+
 		return criteria;
 	}
 

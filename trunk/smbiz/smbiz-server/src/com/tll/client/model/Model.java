@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.client.IMarshalable;
+import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -55,11 +56,9 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	private Set<IPropertyBinding> props = new HashSet<IPropertyBinding>();
 
 	/**
-	 * The entity/model type usu. corresponding to an {@link IEntityType}
-	 * constant. This property is required for marshaling and the ability to
-	 * provide {@link RefKey}s.
+	 * The entity type.
 	 */
-	private String refType;
+	private EntityType entityType;
 
 	/**
 	 * The marked deleted flag. When <code>true</code>, this indicates this
@@ -76,25 +75,25 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 	/**
 	 * Constructor
-	 * @param refType The referring type usu. an {@link IEntityType} constant.
+	 * @param entityType
 	 */
-	public Model(String refType) {
+	public Model(EntityType entityType) {
 		super();
-		this.refType = refType;
+		this.entityType = entityType;
 	}
 
 	/**
 	 * @return the ref type
 	 */
-	public String getRefType() {
-		return refType;
+	public EntityType getEntityType() {
+		return entityType;
 	}
 
 	/**
 	 * @param type the type to set
 	 */
-	public void setRefType(String type) {
-		this.refType = type;
+	public void setEntityType(EntityType type) {
+		this.entityType = type;
 	}
 
 	/**
@@ -116,8 +115,8 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 		// NOTE: we don't enforce/check id validity here as we may be a copy or a
 		// cleared model!
-		assert /*(id != null) && */(refType != null);
-		return new RefKey(refType, id, name);
+		assert /*(id != null) && */(entityType != null);
+		return new RefKey(entityType, id, name);
 	}
 
 	public String descriptor() {
@@ -575,7 +574,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 		CopyBinding binding = (CopyBinding) visited.find(source);
 		if(binding != null) return binding.target;
 
-		Model copy = new Model(source.refType);
+		Model copy = new Model(source.entityType);
 
 		visited.add(new CopyBinding(source, copy));
 

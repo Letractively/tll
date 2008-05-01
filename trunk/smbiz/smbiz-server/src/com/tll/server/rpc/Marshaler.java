@@ -36,10 +36,10 @@ import com.tll.client.model.StringMapPropertyValue;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.EntityAssembler;
+import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
-import com.tll.model.impl.EntityType;
 import com.tll.model.impl.PaymentData;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.model.schema.FieldData;
@@ -265,8 +265,7 @@ public final class Marshaler {
 		}
 
 		final Class<? extends IEntity> entityClass = source.entityClass();
-		final String refType = EntityUtil.entityTypeFromClass(entityClass).toString();
-		final Model model = new Model(refType);
+		final Model model = new Model(EntityUtil.entityTypeFromClass(entityClass));
 
 		b = new Binding(source, model);
 		visited.push(b);
@@ -364,8 +363,7 @@ public final class Marshaler {
 	@SuppressWarnings("unchecked")
 	public <S extends IScalar> Model marshalScalar(final S source, final MarshalOptions options) {
 
-		final String refType = EntityUtil.entityTypeFromClass(source.getRefType()).toString();
-		final Model model = new Model(refType);
+		final Model model = new Model(EntityUtil.entityTypeFromClass(source.getRefType()));
 
 		final Map<String, Object> tupleMap = source.getTupleMap();
 		for(final String pname : tupleMap.keySet()) {
@@ -470,10 +468,10 @@ public final class Marshaler {
 
 				case RELATED_ONE: {
 					final Model rltdOne = (Model) pval;
-					final String entityType = rltdOne == null ? null : rltdOne.getRefType();
+					final EntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();
 					final IEntity toOne =
-							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(
-									getEntityClassFromTypeName(entityType), rltdOne, visited));
+							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil
+									.entityClassFromType(entityType), rltdOne, visited));
 					val = toOne;
 				}
 					break;
@@ -483,10 +481,10 @@ public final class Marshaler {
 					final Set<IEntity> set = new LinkedHashSet<IEntity>(el == null ? 0 : el.size());
 					for(final Object obj : el) {
 						final Model model = (Model) obj;
-						final String entityType = model.getRefType();
+						final EntityType entityType = model.getEntityType();
 						final IEntity clcEntity =
-								model.isMarkedDeleted() ? null
-										: unmarshalEntity(getEntityClassFromTypeName(entityType), model, visited);
+								model.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil.entityClassFromType(entityType), model,
+										visited);
 						if(clcEntity != null) {
 							set.add(clcEntity);
 						}
@@ -554,15 +552,4 @@ public final class Marshaler {
 			return false;
 		}
 	}
-
-	/**
-	 * Helper method providing the {@link IEntity} class given a String wise
-	 * entity type name corres. to the {@link EntityType} enum.
-	 * @param entityTypeName
-	 * @return
-	 */
-	private static Class<? extends IEntity> getEntityClassFromTypeName(final String entityTypeName) {
-		return EntityUtil.entityClassFromType(entityTypeName);
-	}
-
 }

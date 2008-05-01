@@ -5,6 +5,7 @@
 package com.tll.client.model;
 
 import com.tll.client.IMarshalable;
+import com.tll.model.EntityType;
 
 /**
  * RefKey - Generic proxy for an Object having an id, type and optionally a
@@ -16,7 +17,7 @@ public class RefKey implements IMarshalable {
 	/**
 	 * Required type
 	 */
-	protected String type;
+	protected EntityType type;
 	/**
 	 * Required id
 	 */
@@ -39,18 +40,18 @@ public class RefKey implements IMarshalable {
 	 * @param id
 	 * @param name May be <code>null</code>
 	 */
-	public RefKey(String type, Integer id, String name) {
+	public RefKey(EntityType type, Integer id, String name) {
 		super();
 		this.type = type;
 		this.id = id;
 		this.name = name;
 	}
 
-	public String getType() {
+	public EntityType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(EntityType type) {
 		this.type = type;
 	}
 
@@ -77,14 +78,14 @@ public class RefKey implements IMarshalable {
 	}
 
 	public boolean isSet() {
-		return id != null && /* name != null && name.length() > 0 && */type != null && type.length() > 0;
+		return id != null && /* name != null && name.length() > 0 && */type != null;
 	}
 
 	/**
 	 * @return A UI friendly String
 	 */
 	public String descriptor() {
-		return (name != null) ? type + " '" + name + '\'' : type;
+		return (name != null) ? type.getName() + " '" + name + '\'' : type.getName();
 	}
 
 	@Override

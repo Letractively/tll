@@ -17,14 +17,13 @@ import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
+import com.tll.model.EntityType;
 import com.tll.model.IEntity;
-import com.tll.model.impl.EntityType;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.service.entity.IEntityService;
-import com.tll.util.EnumUtil;
 
 /**
  * MEntityServiceDelegate
@@ -48,18 +47,14 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 			final EntityPayload payload) {
 		// ensure non-null request
 		if(request == null) {
-			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR);
+			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR);
 			return null;
 		}
 
 		// validate entity type string
-		EntityType entityType;
-		try {
-			entityType = EnumUtil.fromString(EntityType.class, request.getEntityType());
-		}
-		catch(final IllegalArgumentException e) {
-			ServletUtil.handleException(getRequestContext(), payload, e, "Un-resolvable entity type: "
-					+ request.getEntityType(), false);
+		EntityType entityType = request.getEntityType();
+		if(entityType == null) {
+			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR);
 			return null;
 		}
 
@@ -77,8 +72,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		final EntityPayload payload = new EntityPayload();
 		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
-			impl.getEmptyEntity(getRequestContext(), request, EnumUtil.fromString(EntityType.class, request.getEntityType()),
-					payload);
+			impl.getEmptyEntity(getRequestContext(), request, request.getEntityType(), payload);
 		}
 		return payload;
 	}
@@ -87,7 +81,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		final EntityPayload payload = new EntityPayload();
 		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
-			impl.load(getRequestContext(), request, EnumUtil.fromString(EntityType.class, request.getEntityType()), payload);
+			impl.load(getRequestContext(), request, request.getEntityType(), payload);
 		}
 		return payload;
 	}
@@ -96,8 +90,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		final EntityPayload payload = new EntityPayload();
 		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
-			impl.persist(getRequestContext(), request, EnumUtil.fromString(EntityType.class, request.getEntityType()),
-					payload);
+			impl.persist(getRequestContext(), request, request.getEntityType(), payload);
 		}
 		return payload;
 	}
@@ -106,7 +99,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		final EntityPayload payload = new EntityPayload();
 		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
-			impl.purge(getRequestContext(), request, EnumUtil.fromString(EntityType.class, request.getEntityType()), payload);
+			impl.purge(getRequestContext(), request, request.getEntityType(), payload);
 		}
 		return payload;
 	}
@@ -119,7 +112,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		if(search == null) {
 			throw new IllegalArgumentException("Null search argument.");
 		}
-		final EntityType entityType = EnumUtil.fromString(EntityType.class, search.getEntityType());
+		final EntityType entityType = search.getEntityType();
 		return MEntityServiceImplFactory.instance(entityType).translate(getRequestContext(), entityType, search);
 	}
 
@@ -132,8 +125,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		if(listingCommand == null || listingCommand.getSearchCriteria() == null) {
 			throw new IllegalArgumentException("A listing command and member search property must be set.");
 		}
-		final String entityTypeString = listingCommand.getSearchCriteria().getEntityType();
-		final EntityType entityType = EnumUtil.fromString(EntityType.class, entityTypeString);
+		final EntityType entityType = listingCommand.getSearchCriteria().getEntityType();
 		final MEntityServiceImpl<IEntity> svc =
 				(MEntityServiceImpl<IEntity>) MEntityServiceImplFactory.instance(entityType);
 		return svc.getMarshalingListHandler(getRequestContext(), listingCommand);

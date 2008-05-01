@@ -1,8 +1,8 @@
 package com.tll.model.key;
 
 import com.tll.key.IKey;
+import com.tll.model.EntityType;
 import com.tll.model.IEntity;
-import com.tll.model.impl.EntityType;
 
 /**
  * Abstraction representing a unique identifier of an entity.

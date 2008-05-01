@@ -7,7 +7,6 @@ package com.tll.client.model;
 import java.util.List;
 
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
@@ -19,7 +18,6 @@ import com.tll.guice.DaoModule;
  * ModelCopyTest - Test the {@link Model#copy()} method.
  * @author jpk
  */
-@Test(groups = "client-model")
 public abstract class AbstractModelTest extends DbTest {
 
 	/**

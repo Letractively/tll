@@ -12,6 +12,8 @@ import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.util.ClientEnumUtil;
+import com.tll.model.impl.CreditCardType;
 
 /**
  * CreditCardPanel
@@ -42,15 +44,13 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
-		auxDataRequest.requestEnum("CreditCardType");
 		auxDataRequest.requestAppRefData("usps-state-abbrs");
 		auxDataRequest.requestAppRefData("iso-country-codes");
 	}
 
 	@Override
 	protected void configure() {
-		type =
-				fselect("paymentData.ccType", "Type", IField.LBL_ABOVE, AuxDataCache.instance().getEnumMap("CreditCardType"));
+		type = fselect("paymentData.ccType", "Type", IField.LBL_ABOVE, ClientEnumUtil.toMap(CreditCardType.class));
 		num = ftext("paymentData.ccNum", "Num", IField.LBL_ABOVE, 15);
 		cvv2 = ftext("paymentData.ccCvv2", "CVV2", IField.LBL_ABOVE, 4);
 		expMn = ftext("paymentData.ccExpMonth", "Exp Month", IField.LBL_ABOVE, 2);

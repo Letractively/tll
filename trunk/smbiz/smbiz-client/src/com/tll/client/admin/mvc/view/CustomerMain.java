@@ -5,11 +5,11 @@
 package com.tll.client.admin.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.IEntityType;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.ViewRequestLink;
+import com.tll.model.EntityType;
 
 /**
  * CustomerMain - ISP root view.
@@ -22,7 +22,7 @@ public class CustomerMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(IEntityType.CUSTOMER);
+			super(EntityType.CUSTOMER);
 		}
 
 		@Override

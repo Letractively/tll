@@ -59,7 +59,7 @@ public class EntityServiceTest extends DbTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 
-		final DaoModule dm = new DaoModule(DaoMode.HIBERNATE);
+		final DaoModule dm = new DaoModule(DaoMode.ORM);
 		modules.add(dm);
 
 		final EntityServiceModule esm = new EntityServiceModule();

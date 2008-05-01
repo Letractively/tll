@@ -1,26 +1,28 @@
 package com.tll.service.entity.impl.account;
 
 import com.tll.util.INameValueProvider;
-import com.tll.util.StringUtil;
 
 /**
  * AccountHistoryOp
  * @author jpk
  */
 public enum AccountHistoryOp implements INameValueProvider {
-	ACCOUNT_ADDED,
-	ACCOUNT_UPDATED,
-	ACCOUNT_DELETED,
-	ACCOUNT_PURGED,
-	CUSTOMER_ACCOUNT_ADDED,
-	CUSTOMER_ACCOUNT_DELETED,
-	CUSTOMER_ACCOUNT_PURGED;
+	ACCOUNT_ADDED("Account added"),
+	ACCOUNT_UPDATED("Account update"),
+	ACCOUNT_DELETED("Account deleted"),
+	ACCOUNT_PURGED("Account purget"),
+	CUSTOMER_ACCOUNT_ADDED("Customer account added"),
+	CUSTOMER_ACCOUNT_DELETED("Customer account deleted"),
+	CUSTOMER_ACCOUNT_PURGED("Customer account purged");
 
-	AccountHistoryOp() {
+	private final String name;
+
+	private AccountHistoryOp(String name) {
+		this.name = name;
 	}
 
 	public String getName() {
-		return StringUtil.formatEnumValue(name());
+		return name;
 	}
 
 	public Object getValue() {

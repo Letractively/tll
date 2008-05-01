@@ -1,9 +1,9 @@
 package com.tll.model.key;
 
 import com.tll.key.Key;
+import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.impl.EntityType;
 
 /**
  * Abstract key class for entity related keys.

@@ -447,7 +447,7 @@ public class DaoModule extends CompositeModule {
 		 */
 		public HibernateDaoModule() {
 			super();
-			log.info("Employing HIBERNATE Dao");
+			log.info("Employing ORM Dao");
 		}
 
 		@Override

@@ -6,23 +6,23 @@
   http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
   version="1.0">
 
-  <named-query name="user.setCredentials">
-    <query><![CDATA[update User set emailAddress = :username, password = :password where id = :id]]></query>
-  </named-query>
+  <!-- ===================== -->
+  <!-- SCALAR SELECT QUERIES -->
+  <!-- ===================== -->
 
   <named-query name="account.ispList">
     <query>
     <![CDATA[
     select
-      a.id as id,
-      a.name as name,
-      a.status as status,
-      a.dateCreated as dateCreated,
-      a.dateModified as dateModified,
-      a.billingModel as billingModel,
-      a.billingCycle as billingCycle
+      i.id as id,
+      i.name as name,
+      i.status as status,
+      i.dateCreated as dateCreated,
+      i.dateModified as dateModified,
+      i.billingModel as billingModel,
+      i.billingCycle as billingCycle
     from
-      Isp a
+      Isp i
     order by name
     ]]>
     </query>
@@ -85,24 +85,10 @@
       Interface intf
       join intf.options options
     group by intf.name 
-    order by intf.name
+    order by name
     ]]>
     </query>
   </named-query>
-
-  <named-query name="interface.summaryList.count">
-    <query><![CDATA[select count(id) from Interface]]></query>
-  </named-query>
-  
-  <!-- test queries -->
-  <named-query name="interface.test">
-    <query><![CDATA[from Interface intf order by name]]></query>
-  </named-query>
-
-  <named-query name="interface.test.count">
-    <query><![CDATA[select count(id) from Interface]]></query>
-  </named-query>
-  <!-- end test queries -->
 
   <!-- TODO: finish 
   <named-native-query name="pch.findTopLevelCategoryIds">
@@ -125,5 +111,29 @@
     </query>
   </named-native-query>
   -->
+  
+  <!-- ===================== -->
+  <!-- ENTITY SELECT QUERIES -->
+  <!-- ===================== -->
+
+  <named-query name="interface.summaryList.count">
+    <query><![CDATA[select count(id) from Interface]]></query>
+  </named-query>
+  
+  <named-query name="interface.select">
+    <query><![CDATA[from Interface intf order by name]]></query>
+  </named-query>
+
+  <named-query name="interface.select.count">
+    <query><![CDATA[select count(id) from Interface]]></query>
+  </named-query>
+  
+  <!-- ================================= -->
+  <!-- MUTATION (update, delete) QUERIES -->
+  <!-- ================================= -->
+
+  <named-query name="user.setCredentials">
+    <query><![CDATA[update User set emailAddress = :username, password = :password where id = :id]]></query>
+  </named-query>
   
 </entity-mappings>

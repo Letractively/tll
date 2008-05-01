@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.client.IMarshalable;
+import com.tll.model.EntityType;
 
 /**
  * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.
@@ -16,25 +17,17 @@ import com.tll.client.IMarshalable;
  */
 public class AuxDataRequest implements IMarshalable {
 
-	public static final int TYPE_ENUM = 1;
-	public static final int TYPE_REF_DATA = 2;
-	public static final int TYPE_ENTITY = 3;
+	public enum AuxDataType {
+		REFDATA,
+		ENTITY;
+	}
 
-	public static final String enumTypePrefix = Integer.toString(TYPE_ENUM);
-	public static final String refDataTypePrefix = Integer.toString(TYPE_REF_DATA);
-	public static final String entityTypePrefix = Integer.toString(TYPE_ENTITY);
+	private Set<String> refData;
 
-	/**
-	 * Holds the requests.
-	 */
-	private Set<String> set = new HashSet<String>();
+	private Set<EntityType> entityTypes;
 
-	/**
-	 * Request an app enum in the form of a string/string map.
-	 * @param enumClassName
-	 */
-	public void requestEnum(String enumClassName) {
-		set.add(getKey(TYPE_ENUM, enumClassName));
+	public String descriptor() {
+		return "Auxiliary Data Request";
 	}
 
 	/**
@@ -42,31 +35,32 @@ public class AuxDataRequest implements IMarshalable {
 	 * @param terseName
 	 */
 	public void requestAppRefData(String terseName) {
-		set.add(getKey(TYPE_REF_DATA, terseName));
+		if(refData == null) {
+			refData = new HashSet<String>();
+		}
+		refData.add(terseName);
 	}
 
 	/**
 	 * Request a listing of a particular entity type.
-	 * @param entityTypeName The enum EntityType name.
+	 * @param entityType The entity type
 	 */
-	public void requestEntityList(String entityTypeName) {
-		set.add(getKey(TYPE_ENTITY, entityTypeName));
+	public void requestEntityList(EntityType entityType) {
+		if(entityTypes == null) {
+			entityTypes = new HashSet<EntityType>();
+		}
+		entityTypes.add(entityType);
 	}
 
-	private String getKey(int type, String typeKey) {
-		return Integer.toString(type) + typeKey;
+	public Iterator<String> getRefDataRequests() {
+		return refData == null ? null : refData.iterator();
 	}
 
-	public Iterator<String> requestIterator() {
-		return set.iterator();
+	public Iterator<EntityType> getEntityRequests() {
+		return entityTypes == null ? null : entityTypes.iterator();
 	}
 
 	public int size() {
-		return set.size();
+		return (refData == null ? 0 : refData.size()) + (entityTypes == null ? 0 : entityTypes.size());
 	}
-
-	public String descriptor() {
-		return "Auxiliary Data Request";
-	}
-
 }

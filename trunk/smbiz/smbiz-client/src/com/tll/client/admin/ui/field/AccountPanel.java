@@ -25,7 +25,6 @@ import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.field.IField;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
@@ -36,7 +35,11 @@ import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.util.ClientEnumUtil;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
+import com.tll.model.impl.AccountStatus;
+import com.tll.model.impl.AddressType;
 
 /**
  * AccountPanel
@@ -109,7 +112,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			// drat! we gotta go to the server
 			bindPending = aap;
 			CrudCommand cc = new CrudCommand(this);
-			cc.receiveEmpty(IEntityType.ACCOUNT_ADDRESS, false);
+			cc.receiveEmpty(EntityType.ACCOUNT_ADDRESS, false);
 			cc.addCrudListener(this);
 			cc.execute();
 		}
@@ -166,9 +169,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
-		auxDataRequest.requestEnum("AccountStatus");
-		auxDataRequest.requestEntityList(IEntityType.CURRENCY);
-		auxDataRequest.requestEnum("AddressType");
+		auxDataRequest.requestEntityList(EntityType.CURRENCY);
 		paymentInfoPanel.neededAuxData(auxDataRequest);
 		// NOTE: we can't use AccountAddressPanel as instances of this type are
 		// dynamically loaded
@@ -184,7 +185,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		parent.setReadOnly(true);
 		parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		status = fselect("status", "Status", IField.LBL_ABOVE, AuxDataCache.instance().getEnumMap("AccountStatus"));
+		status = fselect("status", "Status", IField.LBL_ABOVE, ClientEnumUtil.toMap(AccountStatus.class));
 		status.getListBox().addChangeListener(this);
 
 		dateCancelled = fdate("dateCancelled", "Date Cancelled", IField.LBL_ABOVE, GlobalFormat.DATE);
@@ -203,7 +204,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		paymentInfoPanel.setRefWidget(dpPaymentInfo);
 
 		// account address sub-panels prep
-		adrsTypes = AuxDataCache.instance().getEnumMap("AddressType");
+		adrsTypes = ClientEnumUtil.toMap(AddressType.class);
 		availAAPVIs = new int[adrsTypes.size()];
 
 		// stub the account address panels

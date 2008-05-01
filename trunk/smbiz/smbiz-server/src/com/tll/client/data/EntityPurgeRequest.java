@@ -6,6 +6,7 @@
 package com.tll.client.data;
 
 import com.tll.client.model.RefKey;
+import com.tll.model.EntityType;
 
 /**
  * EntityPurgeRequest
@@ -37,7 +38,7 @@ public class EntityPurgeRequest extends EntityRequest {
 	}
 
 	@Override
-	public String getEntityType() {
+	public EntityType getEntityType() {
 		return entityRef.getType();
 	}
 

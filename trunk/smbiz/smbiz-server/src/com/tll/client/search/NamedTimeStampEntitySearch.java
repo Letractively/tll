@@ -5,6 +5,9 @@
  */
 package com.tll.client.search;
 
+import com.tll.criteria.CriteriaType;
+import com.tll.model.EntityType;
+
 /**
  * TimeStampEntitySearch
  * @author jpk
@@ -22,11 +25,11 @@ public abstract class NamedTimeStampEntitySearch extends TimeStampEntitySearch {
 
 	/**
 	 * Constructor
-	 * @param searchType
+	 * @param criteriaType
 	 * @param entityType
 	 */
-	public NamedTimeStampEntitySearch(int searchType, String entityType) {
-		super(searchType, entityType);
+	public NamedTimeStampEntitySearch(CriteriaType criteriaType, EntityType entityType) {
+		super(criteriaType, entityType);
 	}
 
 	/**
@@ -47,29 +50,6 @@ public abstract class NamedTimeStampEntitySearch extends TimeStampEntitySearch {
 	public void clear() {
 		super.clear();
 		name = null;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(!super.equals(obj) || obj instanceof NamedTimeStampEntitySearch == false) return false;
-		final NamedTimeStampEntitySearch that = (NamedTimeStampEntitySearch) obj;
-		if(that.name == null) {
-			if(name != null) return false;
-		}
-		else {
-			if(name == null || !name.equals(that.name)) return false;
-
-		}
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = super.hashCode();
-		if(name != null) {
-			hash = hash * 25 + name.hashCode();
-		}
-		return hash;
 	}
 
 	@Override

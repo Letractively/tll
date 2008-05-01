@@ -10,18 +10,13 @@ import org.testng.annotations.Test;
 
 import com.tll.TestBase;
 import com.tll.model.IEntity;
-import com.tll.model.schema.FieldData;
-import com.tll.model.schema.ISchemaInfo;
-import com.tll.model.schema.ISchemaProperty;
-import com.tll.model.schema.RelationInfo;
-import com.tll.model.schema.SchemaInfo;
 import com.tll.util.CommonUtil;
 
 /**
  * SchemaInfoTest
  * @author jpk
  */
-@Test(groups = "dao.schema")
+@Test(groups = "model.schema")
 public class SchemaInfoTest extends TestBase {
 
 	/**

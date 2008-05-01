@@ -23,7 +23,6 @@ import com.tll.client.event.ICrudListener;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
@@ -39,6 +38,7 @@ import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
+import com.tll.model.EntityType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
@@ -160,7 +160,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 					intfPanel.render();
 				}
 			});
-			cc.loadByName(IEntityType.INTERFACE_SINGLE, "Payment Processor");
+			cc.loadByName(EntityType.INTERFACE_SINGLE, "Payment Processor");
 			cc.execute();
 		}
 		else {

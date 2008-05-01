@@ -108,7 +108,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentAccount(account);
 
 			// set the initial view based on the user's account type
-			Dispatcher.instance().dispatch(new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getRefType())));
+			Dispatcher.instance().dispatch(
+					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ACCOUNT_CHANGE) {
 			// update the current account panel
@@ -273,7 +274,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentAccount(Model account) {
 			this.lblCrntAcnt.setText(account.getName());
-			this.lblCrntAcntType.setText(account.getRefType());
+			this.lblCrntAcntType.setText(account.getEntityType().getName());
 			this.lblCrntAcntDateCreated.setText(Fmt.date(account.getDateCreated(), DateFormat.DATE));
 		}
 

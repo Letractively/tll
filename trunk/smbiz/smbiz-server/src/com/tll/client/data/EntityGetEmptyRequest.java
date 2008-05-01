@@ -5,13 +5,15 @@
  */
 package com.tll.client.data;
 
+import com.tll.model.EntityType;
+
 /**
  * EntityGetEmptyRequest
  * @author jpk
  */
 public class EntityGetEmptyRequest extends EntityRequest {
 
-	private String entityType;
+	private EntityType entityType;
 
 	/**
 	 * Tells the server to generate (set the id) of a newly created entity.
@@ -30,8 +32,9 @@ public class EntityGetEmptyRequest extends EntityRequest {
 	 * @param entityType
 	 * @param generate
 	 */
-	public EntityGetEmptyRequest(String entityType, boolean generate) {
+	public EntityGetEmptyRequest(EntityType entityType, boolean generate) {
 		super();
+		this.entityType = entityType;
 		this.generate = generate;
 	}
 
@@ -40,7 +43,7 @@ public class EntityGetEmptyRequest extends EntityRequest {
 	}
 
 	@Override
-	public String getEntityType() {
+	public EntityType getEntityType() {
 		return entityType;
 	}
 

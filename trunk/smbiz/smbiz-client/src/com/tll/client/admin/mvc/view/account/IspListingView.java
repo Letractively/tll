@@ -17,17 +17,18 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
 import com.tll.client.util.GlobalFormat;
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
+import com.tll.model.EntityType;
 
 /**
  * IspListingView
@@ -89,8 +90,8 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 	@Override
 	protected void doInitialization(ViewRequestEvent viewRequest) {
 
-		final AccountSearch criteria = new AccountSearch(ISearch.TYPE_SCALER_QUERY, IEntityType.ISP);
-		criteria.setQueryName("account.ispList");
+		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
+		criteria.setNamedQuery(SelectNamedQuery.ISP_LISTING);
 
 		final IListingConfig config = new AccountListingConfig() {
 

@@ -11,6 +11,7 @@ import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.model.EntityType;
 
 /**
  * MainView - The root view base class for all account types.
@@ -31,15 +32,15 @@ public abstract class MainView extends AbstractView {
 		 * @param accountType
 		 * @return The ViewClass of the appropriate main view.
 		 */
-		public static ViewClass getMainViewClass(String accountType) {
+		public static ViewClass getMainViewClass(EntityType accountType) {
 			return ViewClass.findClassByViewName(getMainViewName(accountType));
 		}
 
-		private static String getMainViewName(String accountType) {
-			return accountType + "_MAIN";
+		private static String getMainViewName(EntityType accountType) {
+			return accountType.name() + "_MAIN";
 		}
 
-		protected MainViewClass(String accountType) {
+		protected MainViewClass(EntityType accountType) {
 			super(getMainViewName(accountType));
 		}
 

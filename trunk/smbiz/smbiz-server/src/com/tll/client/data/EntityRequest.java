@@ -5,7 +5,7 @@
 package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
-import com.tll.client.model.IEntityType;
+import com.tll.model.EntityType;
 
 /**
  * EntityRequest - Encapsulates the needed properties to fullfill an entity
@@ -34,8 +34,8 @@ public abstract class EntityRequest implements IMarshalable {
 	}
 
 	/**
-	 * @return The entity type. Must corres. to a {@link IEntityType} constant and
+	 * @return The entity type. Must corres. to a {@link EntityType} constant and
 	 *         be non-<code>null</code>.
 	 */
-	public abstract String getEntityType();
+	public abstract EntityType getEntityType();
 }

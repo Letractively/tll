@@ -28,7 +28,7 @@ public class DaoFactoryTest extends TestBase {
 
 	@Test
 	public void testHibernate() throws Exception {
-		doTest(DaoMode.HIBERNATE);
+		doTest(DaoMode.ORM);
 	}
 
 	@Test

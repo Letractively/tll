@@ -45,7 +45,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 
-		DaoModule dm = new DaoModule(DaoMode.HIBERNATE);
+		DaoModule dm = new DaoModule(DaoMode.ORM);
 		modules.add(dm);
 
 		EntityServiceModule esm = new EntityServiceModule();

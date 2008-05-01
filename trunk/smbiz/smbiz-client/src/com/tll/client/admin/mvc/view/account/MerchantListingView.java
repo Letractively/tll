@@ -17,18 +17,19 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
+import com.tll.model.EntityType;
 
 /**
  * MerchantListingView
@@ -120,8 +121,8 @@ public final class MerchantListingView extends ListingView {
 		ispListingLink.setViewRequest(IspListingView.klas.newViewRequest(this));
 		ispListingLink.setText(ispRef.getName());
 
-		final AccountSearch criteria = new AccountSearch(ISearch.TYPE_SCALER_QUERY, IEntityType.MERCHANT);
-		criteria.setQueryName("account.merchantList");
+		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
+		criteria.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
 		criteria.setQueryParam("ispId", ispRef.getId().toString());
 
 		final IListingConfig config = new AccountListingConfig() {

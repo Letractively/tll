@@ -15,18 +15,19 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.IEntityType;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
+import com.tll.criteria.CriteriaType;
+import com.tll.criteria.SelectNamedQuery;
+import com.tll.model.EntityType;
 
 /**
  * CustomerListingView
@@ -127,8 +128,8 @@ public final class CustomerListingView extends ListingView implements IRowOption
 		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(this, r.ispRef));
 		mercListingLink.setText(mercRef.getName());
 
-		final AccountSearch criteria = new AccountSearch(ISearch.TYPE_SCALER_QUERY, IEntityType.CUSTOMER);
-		criteria.setQueryName("account.customerList");
+		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
+		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
 		criteria.setQueryParam("merchantId", mercRef.getId().toString());
 
 		final IListingConfig config = new AccountListingConfig() {

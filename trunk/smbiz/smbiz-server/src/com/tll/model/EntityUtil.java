@@ -6,7 +6,6 @@ package com.tll.model;
 import java.util.Collection;
 
 import com.tll.SystemError;
-import com.tll.model.impl.EntityType;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.KeyFactory;
 import com.tll.util.CommonUtil;

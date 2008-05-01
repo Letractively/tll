@@ -864,6 +864,14 @@ def testPrepare = {
 	//Ant.delete(dir: "${property.'project.server.dir'}/test-output", quiet:'true')
 }
 
+target(testBootstrap: 'Runs the bootstrapping related tests') {
+	//depends(buildServer)
+	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: java_run_server_test_classpath, haltonfailure:'true') {
+		jvmarg(value: '-ea')
+		xmlfileset(file:"${property.'project.server.dir'}/test/testng-bootstrap.xml")
+	}
+}
+
 target(testModel: 'Runs the model related tests') {
 	//depends(buildServer)
 	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: java_run_server_test_classpath, haltonfailure:'true') {

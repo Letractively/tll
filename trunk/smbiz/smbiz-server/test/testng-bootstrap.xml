@@ -1,15 +1,15 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="smbiz-client-model-tests" verbose="5">
+<suite name="smbiz-bootstrap-tests" verbose="5">
   
-  <test name="client-model">
+  <test name="bootstrap">
     <groups>
       <run>
-        <include name="client-model" />
+        <include name="bootstrap" />
       </run>
     </groups>
     <classes>
-      <class name="com.tll.client.model.*" />
+      <class name="com.tll.*" />
     </classes>
   </test>
 

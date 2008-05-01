@@ -1,4 +1,4 @@
-package com.tll.model.impl;
+package com.tll.model;
 
 import com.tll.util.INameValueProvider;
 

@@ -55,7 +55,7 @@ public abstract class EditView extends AbstractView implements ClickListener {
 		String s = modelRef.getName();
 		if(s == null) {
 			// fallback to the entity type
-			s = modelRef.getType();
+			s = modelRef.getType().getName();
 		}
 		return "Edit " + s;
 	}

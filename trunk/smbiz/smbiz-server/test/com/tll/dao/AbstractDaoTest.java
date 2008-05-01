@@ -39,9 +39,9 @@ import com.tll.model.key.KeyFactory;
 import com.tll.util.EnumUtil;
 
 /**
+ * AbstractDaoTest
  * @author jpk
  */
-@Parameters(value = { "daoMode" })
 public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 	protected final Class<E> entityClass;
@@ -105,7 +105,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		// for dao impl tests, the jpa mode is soley dependent on the dao
 		// mode
 		switch(daoMode) {
-			case HIBERNATE:
+			case ORM:
 				jpaMode = JpaMode.LOCAL;
 				break;
 			case MOCK:
@@ -122,7 +122,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		this.rawDao = (IEntityDao<E>) getDao(daoClass);
 		logger.debug("Starting DAO Test: " + this.getClass().getSimpleName() + ", dao mode: " + daoMode.toString());
 
-		if(daoMode.isJpa()) {
+		if(daoMode == DaoMode.ORM) {
 			// ensure test db is created and cleared
 			getDbShell().create();
 			getDbShell().clear();
@@ -244,7 +244,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * Disables caching for the current data store session.
 	 */
 	protected final void disableDataStoreCaching() {
-		if(this.daoMode.isJpa()) {
+		if(this.daoMode == DaoMode.ORM) {
 			((Session) getEntityManager().getDelegate()).setCacheMode(CacheMode.IGNORE);
 		}
 	}

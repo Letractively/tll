@@ -3,6 +3,7 @@
  */
 package com.tll.criteria;
 
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.IBusinessKey;
@@ -182,27 +183,13 @@ public abstract class CriteriaFactory {
 	}
 
 	/**
-	 * Builds an entity query criteria instance.
-	 * @param <E>
-	 * @param entityQueryName
-	 * @return New {@link ICriteria} instance that will invoke a entity named
-	 *         query
+	 * Builds criteria that points to a defined named query.
+	 * @param namedQuery The named query definition
+	 * @return New {@link ICriteria} instance wired to invoke the given named
+	 *         query.
 	 */
-	public static <E extends IEntity> ICriteria<? extends E> buildEntityQueryCriteria(Class<? extends E> entityClass,
-			String entityQueryName) {
-		return new Criteria<E>(entityClass, entityQueryName, false);
+	public static ICriteria<? extends IEntity> buildQueryCriteria(SelectNamedQuery namedQuery) {
+		return new Criteria<IEntity>(EntityUtil.entityClassFromType(namedQuery.getEntityType()), namedQuery.getQueryName(),
+				namedQuery.isScalar());
 	}
-
-	/**
-	 * Builds a scalar query criteria instance.
-	 * @param <E>
-	 * @param scalarQueryName
-	 * @return New {@link ICriteria} instance that will invoke a sclara named
-	 *         query
-	 */
-	public static <E extends IEntity> ICriteria<? extends E> buildScalarQueryCriteria(Class<? extends E> entityClass,
-			String scalarQueryName) {
-		return new Criteria<E>(entityClass, scalarQueryName, true);
-	}
-
 }

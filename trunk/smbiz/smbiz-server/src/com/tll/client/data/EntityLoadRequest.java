@@ -6,6 +6,7 @@
 package com.tll.client.data;
 
 import com.tll.client.model.RefKey;
+import com.tll.model.EntityType;
 
 /**
  * EntityLoadRequest
@@ -29,7 +30,7 @@ public class EntityLoadRequest extends EntityRequest {
 	 * @param entityType
 	 * @param name
 	 */
-	public EntityLoadRequest(String entityType, String name) {
+	public EntityLoadRequest(EntityType entityType, String name) {
 		super();
 		this.entityRef = new RefKey(entityType, null, name);
 		this.loadByName = true;
@@ -50,7 +51,7 @@ public class EntityLoadRequest extends EntityRequest {
 	}
 
 	@Override
-	public String getEntityType() {
+	public EntityType getEntityType() {
 		return entityRef.getType();
 	}
 

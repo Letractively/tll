@@ -17,22 +17,24 @@ import com.tll.dao.JpaMode;
  * EntityServiceModuleTest
  * @author jpk
  */
-@Test(groups = "service")
+@Test(groups = {
+	"bootstrap",
+	"entity.service" })
 public class EntityServiceModuleTest extends TestBase {
 
 	public void testLoadHibernate() throws Exception {
-		JpaModule jm = new JpaModule(JpaMode.MOCK);
-		DaoModule dm = new DaoModule(DaoMode.HIBERNATE);
-		EntityServiceModule esm = new EntityServiceModule();
-		Injector injector = Guice.createInjector(jm, dm, esm);
+		final JpaModule jm = new JpaModule(JpaMode.MOCK);
+		final DaoModule dm = new DaoModule(DaoMode.ORM);
+		final EntityServiceModule esm = new EntityServiceModule();
+		final Injector injector = Guice.createInjector(jm, dm, esm);
 		assert injector != null;
 	}
 
 	public void testLoadMock() throws Exception {
-		MockEntitiesModule mem = new MockEntitiesModule();
-		DaoModule dm = new DaoModule(DaoMode.MOCK);
-		EntityServiceModule esm = new EntityServiceModule();
-		Injector injector = Guice.createInjector(mem, dm, esm);
+		final MockEntitiesModule mem = new MockEntitiesModule();
+		final DaoModule dm = new DaoModule(DaoMode.MOCK);
+		final EntityServiceModule esm = new EntityServiceModule();
+		final Injector injector = Guice.createInjector(mem, dm, esm);
 		assert injector != null;
 	}
 

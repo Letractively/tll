@@ -1,18 +1,23 @@
 package com.tll.model.impl;
 
 import com.tll.util.INameValueProvider;
-import com.tll.util.StringUtil;
 
 /**
  * Interface (entity) status
  * @author jpk
  */
 public enum InterfaceStatus implements INameValueProvider {
-	ON,
-	OFF;
+	ON("On"),
+	OFF("Off");
+
+	private final String name;
+
+	private InterfaceStatus(String name) {
+		this.name = name;
+	}
 
 	public String getName() {
-		return StringUtil.formatEnumValue(name());
+		return name;
 	}
 
 	public Object getValue() {

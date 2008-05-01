@@ -11,7 +11,6 @@ import com.tll.model.impl.Authority;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.Customer;
 import com.tll.model.impl.CustomerAccount;
-import com.tll.model.impl.EntityType;
 import com.tll.model.impl.InterfaceMulti;
 import com.tll.model.impl.InterfaceOption;
 import com.tll.model.impl.InterfaceOptionAccount;

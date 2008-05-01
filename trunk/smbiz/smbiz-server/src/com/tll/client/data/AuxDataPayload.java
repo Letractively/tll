@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.client.model.Model;
+import com.tll.model.EntityType;
 
 /**
  * AuxDataPayload - Construct to hold aux (enum maps, ref data maps and related
@@ -33,13 +34,6 @@ public class AuxDataPayload extends Payload {
 	}
 
 	/**
-	 * Map of string-wise enum maps keyed by the enum class name.<br>
-	 * Enum map format: key: enum name (presentation worthy), val: enum value
-	 * (Enum.name()).
-	 */
-	protected Map<String, Map<String, String>> enumsMap;
-
-	/**
 	 * Map of app ref data name/value pairs keyed by the app ref data terse name.<br>
 	 */
 	protected Map<String, Map<String, String>> refDataMaps;
@@ -47,15 +41,7 @@ public class AuxDataPayload extends Payload {
 	/**
 	 * Map of entity lists keyed by the entity class name.
 	 */
-	protected Map<String, List<Model>> entityGroupMap;
-
-	public Map<String, Map<String, String>> getEnumsMap() {
-		return enumsMap;
-	}
-
-	public void setEnumsMap(Map<String, Map<String, String>> enumsMap) {
-		this.enumsMap = enumsMap;
-	}
+	protected Map<EntityType, List<Model>> entityGroupMap;
 
 	public Map<String, Map<String, String>> getRefDataMaps() {
 		return refDataMaps;
@@ -65,23 +51,11 @@ public class AuxDataPayload extends Payload {
 		this.refDataMaps = refDataMaps;
 	}
 
-	public Map<String, List<Model>> getEntityGroupMap() {
+	public Map<EntityType, List<Model>> getEntityGroupMap() {
 		return entityGroupMap;
 	}
 
-	public void setEntityGroupMap(Map<String, List<Model>> entityMap) {
+	public void setEntityGroupMap(Map<EntityType, List<Model>> entityMap) {
 		this.entityGroupMap = entityMap;
-	}
-
-	public Map<String, String> getEnumMap(String enumClassName) {
-		return enumsMap == null ? null : enumsMap.get(enumClassName);
-	}
-
-	public Map<String, String> getRefDataMap(String terseName) {
-		return refDataMaps == null ? null : refDataMaps.get(terseName);
-	}
-
-	public List<Model> getEntityList(String entityTypeName) {
-		return entityGroupMap == null ? null : entityGroupMap.get(entityTypeName);
 	}
 }

@@ -13,15 +13,17 @@ import com.tll.TestBase;
  * SecurityModuleTest
  * @author jpk
  */
-@Test(groups = "security")
+@Test(groups = {
+	"bootstrap",
+	"security" })
 public class SecurityModuleTest extends TestBase {
 
 	@Test
 	public void testLoad() throws Exception {
-		DaoModule dm = new DaoModule();
-		EntityServiceModule esm = new EntityServiceModule();
-		SecurityModule sm = new SecurityModule();
-		Injector injector = Guice.createInjector(dm, esm, sm);
+		final DaoModule dm = new DaoModule();
+		final EntityServiceModule esm = new EntityServiceModule();
+		final SecurityModule sm = new SecurityModule();
+		final Injector injector = Guice.createInjector(dm, esm, sm);
 		assert injector != null;
 	}
 }

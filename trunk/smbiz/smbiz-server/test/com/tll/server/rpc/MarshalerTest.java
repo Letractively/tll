@@ -70,8 +70,8 @@ public class MarshalerTest extends TestBase {
 			Assert.assertNotNull(e);
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
-			assert model.getRefType() != null : "The marshaled entity model's ref type was found null";
-			assert model.getRefType().equals(EntityUtil.entityTypeFromClass(e.entityClass()).name()) : "The marshaled entity model's ref type did not match the sourcing entities' entity type";
+			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
+			assert model.getEntityType().equals(EntityUtil.entityTypeFromClass(e.entityClass()).name()) : "The marshaled entity model's ref type did not match the sourcing entities' entity type";
 			final RefKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";

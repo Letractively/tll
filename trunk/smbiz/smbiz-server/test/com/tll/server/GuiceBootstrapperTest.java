@@ -17,7 +17,7 @@ import com.tll.TestBase;
  * GuiceBootstrapperTest
  * @author jpk
  */
-@Test(groups = "server.bootstrap")
+@Test(groups = "bootstrap")
 public class GuiceBootstrapperTest extends TestBase {
 
 	private ServletContext getMockServletContext() {

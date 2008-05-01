@@ -5,6 +5,9 @@
  */
 package com.tll.client.search;
 
+import com.tll.criteria.CriteriaType;
+import com.tll.model.EntityType;
+
 /**
  * EntitySearch
  * @author jpk
@@ -14,7 +17,7 @@ public abstract class EntitySearch extends SearchBase {
 	/**
 	 * Corres. to the string-wise representation of the EntityType enum.
 	 */
-	protected String entityType;
+	protected EntityType entityType;
 
 	/**
 	 * Constructor
@@ -25,19 +28,19 @@ public abstract class EntitySearch extends SearchBase {
 
 	/**
 	 * Constructor
-	 * @param searchType
+	 * @param criteriaType
 	 * @param entityType
 	 */
-	public EntitySearch(int searchType, String entityType) {
-		super(searchType);
+	public EntitySearch(CriteriaType criteriaType, EntityType entityType) {
+		super(criteriaType);
 		this.entityType = entityType;
 	}
 
-	public final String getEntityType() {
+	public final EntityType getEntityType() {
 		return entityType;
 	}
 
-	public final void setEntityType(String entityType) {
+	public final void setEntityType(EntityType entityType) {
 		this.entityType = entityType;
 	}
 
@@ -45,22 +48,6 @@ public abstract class EntitySearch extends SearchBase {
 	public void clear() {
 		super.clear();
 		// no-op
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(!super.equals(obj) || obj instanceof EntitySearch == false) return false;
-		final EntitySearch that = (EntitySearch) obj;
-		return that.entityType != null && that.entityType.equals(this.entityType);
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = super.hashCode();
-		if(entityType != null) {
-			hash = hash * 31 + entityType.hashCode();
-		}
-		return hash;
 	}
 
 	@Override

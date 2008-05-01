@@ -1,4 +1,4 @@
-#Sun Apr 27 14:11:43 PDT 2008
+#Wed Apr 30 17:56:07 PDT 2008
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
 formatter_profile=_jpk
@@ -17,7 +17,7 @@ sp_cleanup.always_use_this_for_non_static_field_access=false
 sp_cleanup.always_use_this_for_non_static_method_access=false
 sp_cleanup.convert_to_enhanced_for_loop=false
 sp_cleanup.format_source_code=true
-sp_cleanup.make_local_variable_final=true
+sp_cleanup.make_local_variable_final=false
 sp_cleanup.make_parameters_final=false
 sp_cleanup.make_private_fields_final=false
 sp_cleanup.make_variable_declarations_final=true

@@ -38,7 +38,7 @@ public class HibernateEnvironmentTest extends TestBase {
 	public void test() {
 		try {
 			JpaModule jpaModule = new JpaModule(JpaMode.LOCAL);
-			DaoModule daoModule = new DaoModule(DaoMode.HIBERNATE);
+			DaoModule daoModule = new DaoModule(DaoMode.ORM);
 			Guice.createInjector(Stage.DEVELOPMENT, jpaModule, daoModule);
 		}
 		catch(Throwable t) {

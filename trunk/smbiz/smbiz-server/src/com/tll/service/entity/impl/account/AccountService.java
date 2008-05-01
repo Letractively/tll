@@ -14,10 +14,10 @@ import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
+import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
-import com.tll.model.impl.EntityType;
 import com.tll.model.key.INameKey;
 import com.tll.service.entity.StatefulEntityService;
 
