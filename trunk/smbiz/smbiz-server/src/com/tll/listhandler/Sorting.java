@@ -10,42 +10,55 @@ public class Sorting implements IMarshalable {
 
 	static final long serialVersionUID = 4943672060530931835L;
 
+	/**
+	 * The sort columns in order or priority.
+	 */
 	private SortColumn[] columns;
 
 	public Sorting() {
 		super();
 	}
 
-	public String descriptor() {
-		return "Sorting";
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
+	 * @param primaryParentAlias
+	 * @param direction
+	 * @param ignoreCase
+	 */
+	public Sorting(String primaryPropertyName, String primaryParentAlias, SortDir direction, Boolean ignoreCase) {
+		this(new SortColumn(primaryPropertyName, primaryParentAlias, direction, ignoreCase));
 	}
 
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
+	 * @param primaryParentAlias
+	 */
+	public Sorting(String primaryPropertyName, String primaryParentAlias) {
+		this(new SortColumn(primaryPropertyName, primaryParentAlias));
+	}
+
+	/**
+	 * Constructor
+	 * @param columns
+	 */
 	public Sorting(SortColumn[] columns) {
 		this();
 		setColumns(columns);
 	}
 
-	public Sorting(String primarySortColumnName, SortDir direction, Boolean ignoreCase) {
+	/**
+	 * Constructor
+	 * @param sortColumn
+	 */
+	public Sorting(SortColumn sortColumn) {
 		super();
-		getPrimarySortColumn().setColumn(primarySortColumnName);
-		getPrimarySortColumn().setDirection(direction);
-		getPrimarySortColumn().setIgnoreCase(ignoreCase);
+		setPrimarySortColumn(sortColumn);
 	}
 
-	public Sorting(String primarySortColumnName, SortDir direction) {
-		super();
-		getPrimarySortColumn().setColumn(primarySortColumnName);
-		getPrimarySortColumn().setDirection(direction);
-	}
-
-	public Sorting(String primarySortColumnName, Boolean ignoreCase) {
-		this(primarySortColumnName, SortDir.ASC, ignoreCase);
-	}
-
-	public Sorting(String primarySortColumnName) {
-		super();
-		getPrimarySortColumn().setColumn(primarySortColumnName);
-		getPrimarySortColumn().setDirection(SortDir.ASC);
+	public String descriptor() {
+		return "Sorting";
 	}
 
 	public int size() {
@@ -115,18 +128,5 @@ public class Sorting implements IMarshalable {
 			}
 		}
 		return sb.toString();
-	}
-
-	public Sorting copy() {
-		final Sorting cln = new Sorting();
-
-		if(this.columns != null) {
-			cln.columns = new SortColumn[this.columns.length];
-			for(int i = 0; i < this.columns.length; i++) {
-				cln.columns[i] = this.columns[i].copy();
-			}
-		}
-
-		return cln;
 	}
 }

@@ -34,19 +34,37 @@ import com.tll.util.EnumUtil;
 @Test(groups = "listhandler")
 public class NamedQueryDataRetrievalTest extends DbTest {
 
-	private static final Map<SelectNamedQuery, String> querySortBindings = new HashMap<SelectNamedQuery, String>();
+	private static final Map<SelectNamedQuery, SortColumn> querySortBindings =
+			new HashMap<SelectNamedQuery, SortColumn>();
+
+	private static final Map<SelectNamedQuery, Map<String, String>> queryParamsBindings =
+			new HashMap<SelectNamedQuery, Map<String, String>>();
 
 	static {
 		for(SelectNamedQuery nq : SelectNamedQuery.values()) {
 			switch(nq) {
 				case ISP_LISTING:
-				case MERCHANT_LISTING:
-				case CUSTOMER_LISTING:
-					querySortBindings.put(nq, "dateCreated");
+					querySortBindings.put(nq, new SortColumn("dateCreated", "i"));
+					queryParamsBindings.put(nq, null);
 					break;
+				case MERCHANT_LISTING: {
+					querySortBindings.put(nq, new SortColumn("dateCreated", "m"));
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("ispId", "1");
+					queryParamsBindings.put(nq, map);
+					break;
+				}
+				case CUSTOMER_LISTING: {
+					querySortBindings.put(nq, new SortColumn("dateCreated", "ca"));
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("merchantId", "1");
+					queryParamsBindings.put(nq, map);
+					break;
+				}
 				case INTERFACE_SUMMARY_LISTING:
 				case INTERFACES:
-					querySortBindings.put(nq, "code");
+					querySortBindings.put(nq, new SortColumn("code", "intf"));
+					queryParamsBindings.put(nq, null);
 					break;
 			}
 		}
@@ -109,20 +127,20 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 
 	public void test() throws Exception {
 
+		final int pageSize = 2;
 		IListHandlerDataProvider<IEntity> dataProvider;
 		ICriteria<? extends IEntity> criteria;
 
 		// iterator through all defined select named queries
 		for(SelectNamedQuery nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
-			criteria = CriteriaFactory.buildQueryCriteria(nq);
+			criteria = CriteriaFactory.buildQueryCriteria(nq, queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
-			criteria.setSorting(sorting);
 
 			// test for all list handler types
 			IListHandler<SearchResult<IEntity>> listHandler;
 			for(ListHandlerType lht : ListHandlerType.values()) {
-				listHandler = ListHandlerFactory.create(criteria, lht, dataProvider);
+				listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
 				validateListHandler(listHandler, sorting);
 			}
 		}

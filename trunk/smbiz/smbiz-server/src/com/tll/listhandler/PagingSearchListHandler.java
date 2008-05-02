@@ -13,6 +13,11 @@ import com.tll.model.IEntity;
 public final class PagingSearchListHandler<E extends IEntity> extends SearchListHandler<E> {
 
 	/**
+	 * The page size
+	 */
+	private final int pageSize;
+
+	/**
 	 * The current page of results
 	 */
 	private IPage<SearchResult<E>> page;
@@ -20,9 +25,14 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	/**
 	 * Constructor
 	 * @param dataProvider
+	 * @param pageSize The page size. Must be at least <code>1</code>.
 	 */
-	public PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider) {
+	public PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, int pageSize) {
 		super(dataProvider);
+		if(pageSize < 1) {
+			throw new IllegalArgumentException("The page size must be at least 1");
+		}
+		this.pageSize = pageSize;
 	}
 
 	public ListHandlerType getListHandlerType() {
@@ -30,9 +40,10 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	}
 
 	@Override
-	protected void refresh(ICriteria<? extends E> criteria) throws InvalidCriteriaException, NoMatchingResultsException {
+	protected void refresh(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
+			NoMatchingResultsException {
 		final int pageNumber = page == null ? 0 : page.getPageNumber();
-		page = dataProvider.getPage(criteria, pageNumber, criteria.getPageSize());
+		page = dataProvider.getPage(criteria, sorting, pageNumber, pageSize);
 		this.criteria = criteria;
 		if(page.getTotalSize() < 1) {
 			throw new NoMatchingResultsException("No results found.");

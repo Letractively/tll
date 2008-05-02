@@ -19,19 +19,21 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	/**
 	 * Retrieves a list of matching results for the given criteria.
 	 * @param criteria
+	 * @param sorting
 	 * @return list of result elements or an empty list if no matches are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<SearchResult<E>> find(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria.
 	 * @param criteria
+	 * @param sorting
 	 * @return list of ids of matching elements or an empty list if no matching
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<Integer> getIds(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids.
@@ -46,19 +48,20 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	/**
 	 * Returns a page of matching results for the given criteria.
 	 * @param criteria
+	 * @param sorting
 	 * @param page
 	 * @param pageSize
 	 * @throws InvalidCriteriaException
 	 */
-	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, int page, int pageSize)
+	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
 			throws InvalidCriteriaException;
 
 	/**
 	 * Returns a subsequent page of matching results.
 	 * @param currentPage The current page
-	 * @param newPageNum The desired page to query for
-	 *        {@link #getPage(ICriteria, int, int)} must be called first!
-	 * @see #getPage(ICriteria, int, int)
+	 * @param newPageNum The desired page to query for.
+	 *        {@link #getPage(ICriteria, Sorting, int, int)} must be called first!
+	 * @see #getPage(ICriteria, Sorting, int, int)
 	 */
 	IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum);
 }

@@ -234,12 +234,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			if(nq == null) {
 				throw new IllegalArgumentException("No named query specified");
 			}
-			criteria = (ICriteria<? extends E>) CriteriaFactory.buildQueryCriteria(nq);
-			if(queryParams != null) {
-				for(final String paramName : queryParams.keySet()) {
-					criteria.setQueryParam(paramName, queryParams.get(paramName));
-				}
-			}
+			criteria = (ICriteria<? extends E>) CriteriaFactory.buildQueryCriteria(nq, queryParams);
 		}
 		else {
 			// entity

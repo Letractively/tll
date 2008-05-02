@@ -17,7 +17,7 @@ import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.ClientListingOp;
 import com.tll.client.search.ISearch;
-import com.tll.listhandler.SortDir;
+import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -139,13 +139,12 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 
 	/**
 	 * Issue a sort command to the server.
-	 * @param colName The column name by which to sort
-	 * @param direction The sorting direction
+	 * @param sortColumn sortColumn
 	 */
-	public void sort(String colName, SortDir direction) {
+	public void sort(SortColumn sortColumn) {
 		ListingOp listingOp = new ListingOp();
 		listingOp.setOp(ListingOp.SORT);
-		listingOp.setSorting(new Sorting(colName, direction));
+		listingOp.setSorting(new Sorting(sortColumn));
 		IListingCommand lc = new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
 		this.listingCommand = lc;
 	}

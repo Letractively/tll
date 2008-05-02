@@ -14,7 +14,7 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
-import com.tll.listhandler.SortDir;
+import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -137,8 +137,8 @@ public final class RpcListingOperator extends AbstractListingOperator {
 		cmd.execute();
 	}
 
-	public void sort(String colName, SortDir direction) {
-		cmd.sort(colName, direction);
+	public void sort(SortColumn sortColumn) {
+		cmd.sort(sortColumn);
 		cmd.execute();
 	}
 

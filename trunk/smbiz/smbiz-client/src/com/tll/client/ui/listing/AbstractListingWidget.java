@@ -26,7 +26,7 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
-import com.tll.listhandler.SortDir;
+import com.tll.listhandler.SortColumn;
 
 /**
  * AbstractListingWidget - Base class for all listing {@link Widget}s in the
@@ -143,8 +143,8 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 		operator.refresh();
 	}
 
-	public final void sort(String colName, SortDir direction) {
-		operator.sort(colName, direction);
+	public final void sort(SortColumn sortColumn) {
+		operator.sort(sortColumn);
 	}
 
 	public final void updateRow(int rowIndex, Model rowData) {

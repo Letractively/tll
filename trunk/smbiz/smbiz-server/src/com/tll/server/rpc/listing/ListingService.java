@@ -109,8 +109,6 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 						throw new ListingException(listingName, "Unable to translate listing command search criteria: "
 								+ listingCommand.descriptor(), iae);
 					}
-					criteria.setPageSize(listingCommand.getPageSize());
-					criteria.setSorting(listingOp.getSorting());
 
 					// resolve the listing halder data provider
 					final IListHandlerDataProvider<E> dataProvider =
@@ -120,7 +118,9 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 					final ListHandlerType lht = EnumUtil.fromOrdinal(ListHandlerType.class, listingCommand.getListHandlerType());
 					IListHandler<SearchResult<E>> listHandler = null;
 					try {
-						listHandler = ListHandlerFactory.create(criteria, lht, dataProvider);
+						listHandler =
+								ListHandlerFactory.create(criteria, listingOp.getSorting(), lht, listingCommand.getPageSize(),
+										dataProvider);
 					}
 					catch(final InvalidCriteriaException e) {
 						throw new ListingException(listingName, "Invalid criteria: " + e.getMessage(), e);

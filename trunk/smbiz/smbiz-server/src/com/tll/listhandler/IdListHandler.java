@@ -35,8 +35,9 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	}
 
 	@Override
-	protected void refresh(ICriteria<? extends E> criteria) throws InvalidCriteriaException, NoMatchingResultsException {
-		ids = dataProvider.getIds(criteria);
+	protected void refresh(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
+			NoMatchingResultsException {
+		ids = dataProvider.getIds(criteria, sorting);
 		this.criteria = criteria;
 		if(ids == null || ids.size() < 1) {
 			throw new NoMatchingResultsException("No results found anymore upon list refresh.");
@@ -61,8 +62,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		if(index < 0 || index > size() - 1) {
 			throw new ListHandlerException("Unable to retreive list elements: invalid index: " + index);
 		}
-		final List<E> list =
-				dataProvider.getEntitiesFromIds(criteria.getEntityClass(), getIds(index, index + 1), criteria.getSorting());
+		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), getIds(index, index + 1), sorting);
 
 		if(list == null || list.size() < 1) {
 			throw new EmptyListException("No list elements exist");
@@ -77,8 +77,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 			throw new ListHandlerException("Unable to retreive list elements: invalid range - start(" + start + "), end("
 					+ end + ")");
 		}
-		final List<E> list =
-				dataProvider.getEntitiesFromIds(criteria.getEntityClass(), getIds(start, end), criteria.getSorting());
+		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), getIds(start, end), sorting);
 
 		if(list == null || list.size() < 1) {
 			throw new EmptyListException("No list elements exist");

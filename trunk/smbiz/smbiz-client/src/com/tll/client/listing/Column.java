@@ -1,13 +1,13 @@
 package com.tll.client.listing;
 
-import com.tll.client.data.PropKey;
 import com.tll.client.util.GlobalFormat;
+import com.tll.listhandler.SortColumn;
 
 /**
- * Column
+ * Column - UI wise column
  * @author jpk
  */
-public final class Column {
+public final class Column extends SortColumn {
 
 	/**
 	 * Unique token to indictate this column is for row counting.
@@ -18,10 +18,6 @@ public final class Column {
 	 * The UI presentable column name.
 	 */
 	public final String name;
-	/**
-	 * The prop name corres. to {@link PropKey#prop}.
-	 */
-	public final String prop;
 
 	/**
 	 * The format directive
@@ -32,29 +28,28 @@ public final class Column {
 	 * Constructor
 	 * @param name
 	 * @param prop
+	 * @param parentAlias
 	 */
-	public Column(String name, String prop) {
-		super();
-		this.name = name;
-		this.prop = prop;
-		this.format = null;
+	public Column(String name, String prop, String parentAlias) {
+		this(name, prop, parentAlias, null);
 	}
 
 	/**
 	 * Constructor
 	 * @param name
 	 * @param prop
+	 * @param parentAlias
+	 * @param format
 	 */
-	public Column(String name, String prop, GlobalFormat format) {
-		super();
+	public Column(String name, String prop, String parentAlias, GlobalFormat format) {
+		super(prop, parentAlias);
 		this.name = name;
-		this.prop = prop;
 		this.format = format;
 	}
 
 	@Override
 	public String toString() {
-		return "name: " + name + ", prop: " + prop + ", format: " + format;
+		return "name: " + name + ", format: " + format;
 	}
 
 }

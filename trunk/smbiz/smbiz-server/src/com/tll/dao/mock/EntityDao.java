@@ -233,7 +233,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return loadAll();
 	}
 
-	public List<E> findEntities(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public List<E> findEntities(final ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -245,7 +245,6 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 
 		// is it a query ref?
 		if(criteria.getCriteriaType().isQuery()) {
-			log.info("Mock dao processing named query: " + criteria.getQueryName());
 			list = processQuery(criteria);
 		}
 		else {
@@ -285,21 +284,22 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 			}
 		}
 
-		if(list != null && criteria.getSorting() != null) {
-			Collections.sort(list, new SortColumnBeanComparator<E>(criteria.getSorting().getPrimarySortColumn()));
+		if(list != null && sorting != null) {
+			Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
 		}
 
 		return list;
 	}
 
-	public List<SearchResult<E>> find(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public List<SearchResult<E>> find(final ICriteria<? extends E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
 		if(criteria.getCriteriaType() == null) {
 			throw new InvalidCriteriaException("A criteria type must be specified.");
 		}
-		final List<E> list = findEntities(criteria);
+		final List<E> list = findEntities(criteria, sorting);
 
 		// transform list
 		return transformEntityList(list, criteria.getCriteriaType().isScalar());
@@ -330,7 +330,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return slist;
 	}
 
-	public List<E> findByIds(final List<Integer> ids) {
+	public List<E> findByIds(final List<Integer> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
 		for(final E e : set) {
 			for(final Integer id : ids) {
@@ -339,11 +339,14 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 				}
 			}
 		}
+		if(sorting != null && list.size() > 1) {
+			Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
+		}
 		return list;
 	}
 
 	public E findEntity(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		final List<SearchResult<E>> list = find(criteria);
+		final List<SearchResult<E>> list = find(criteria, null);
 		if(list != null && list.size() == 1) {
 			return list.get(0).getEntity();
 		}
@@ -441,8 +444,8 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return list;
 	}
 
-	public List<Integer> getIds(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		final List<SearchResult<E>> list = find(criteria);
+	public List<Integer> getIds(final ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		final List<SearchResult<E>> list = find(criteria, sorting);
 		if(list == null) {
 			return null;
 		}
@@ -453,9 +456,9 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return idlist;
 	}
 
-	public IPage<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, final int page, final int pageSize)
-			throws InvalidCriteriaException {
-		List<SearchResult<E>> elist = find(criteria);
+	public IPage<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting, final int page,
+			final int pageSize) throws InvalidCriteriaException {
+		List<SearchResult<E>> elist = find(criteria, sorting);
 		if(elist == null) {
 			elist = new ArrayList<SearchResult<E>>();
 		}
@@ -483,7 +486,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		}
 		try {
 			final NativeCriteriaPage<E> mCrntPage = (NativeCriteriaPage<E>) currentPage;
-			return getPage(mCrntPage.getCriteria(), newPageNum, currentPage.getPageSize());
+			return getPage(mCrntPage.getCriteria(), null, newPageNum, currentPage.getPageSize());
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new SystemError("Unable to get page: " + e.getMessage(), e);

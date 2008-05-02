@@ -11,6 +11,7 @@ import org.hibernate.validator.InvalidStateException;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.IPrimaryKey;
@@ -53,7 +54,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @param ids the ids of the entities to retrieve
 	 * @return List of entities
 	 */
-	List<E> loadByIds(List<Integer> ids);
+	List<E> loadByIds(List<Integer> ids, Sorting sorting);
 
 	/**
 	 * Updates an instance of this entity. The input entity should have a valid
@@ -92,9 +93,10 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	/**
 	 * Finds entities given criteria.
 	 * @param criteria
+	 * @param sorting
 	 * @return List of matching entities or an empty list if no matches found.
 	 *         (Never <code>null</code>).
 	 * @throws InvalidCriteriaException Upon malformed or invlaid criteria.
 	 */
-	List<E> findEntities(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 }

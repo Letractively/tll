@@ -28,6 +28,8 @@ import com.tll.client.ui.Option;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
+import com.tll.listhandler.SortColumn;
+import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**
@@ -95,6 +97,10 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 
 		final IListingConfig config = new AccountListingConfig() {
 
+			public Sorting getDefaultSorting() {
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "i"));
+			}
+
 			private final PropKey[] propKeys = new PropKey[] {
 				new PropKey(Model.ID_PROPERTY),
 				new PropKey(Model.NAME_PROPERTY),
@@ -105,13 +111,13 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 				new PropKey("billingCycle") };
 
 			private final Column[] columns = new Column[] {
-				new Column("#", Column.ROW_COUNT_COL_PROP),
-				new Column("Name", Model.NAME_PROPERTY),
-				new Column("Created", Model.DATE_CREATED_PROPERTY, GlobalFormat.DATE),
-				new Column("Modified", Model.DATE_MODIFIED_PROPERTY, GlobalFormat.DATE),
-				new Column("Status", "status"),
-				new Column("Billing Model", "billingModel"),
-				new Column("Billing Cycle", "billingCycle") };
+				new Column("#", Column.ROW_COUNT_COL_PROP, "i"),
+				new Column("Name", Model.NAME_PROPERTY, "i"),
+				new Column("Created", Model.DATE_CREATED_PROPERTY, "i", GlobalFormat.DATE),
+				new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "i", GlobalFormat.DATE),
+				new Column("Status", "status", "i"),
+				new Column("Billing Model", "billingModel", "i"),
+				new Column("Billing Cycle", "billingCycle", "i") };
 
 			public PropKey[] getPropKeys() {
 				return propKeys;

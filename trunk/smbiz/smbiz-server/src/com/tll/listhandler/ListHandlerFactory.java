@@ -38,29 +38,32 @@ public abstract class ListHandlerFactory {
 	 * Creates a criteria based list handler.
 	 * @param <E>
 	 * @param criteria
+	 * @param sorting
 	 * @param type
+	 * @param pageSize The page size. Needed <em>only</em> when the given
+	 *        {@link ListHandlerType} is {@link ListHandlerType#PAGE}.
 	 * @param dataProvider
 	 * @return The generated search based {@link IListHandler}
 	 * @throws InvalidCriteriaException
 	 * @throws EmptyListException
 	 */
 	public static <E extends IEntity> IListHandler<SearchResult<E>> create(ICriteria<? extends E> criteria,
-			ListHandlerType type, IListHandlerDataProvider<E> dataProvider) throws InvalidCriteriaException,
-			EmptyListException {
+			Sorting sorting, ListHandlerType type, int pageSize, IListHandlerDataProvider<E> dataProvider)
+			throws InvalidCriteriaException, EmptyListException {
 
 		SearchListHandler<E> slh = null;
 
 		switch(type) {
 
 			case COLLECTION:
-				return create(dataProvider.find(criteria), criteria.getSorting());
+				return create(dataProvider.find(criteria, sorting), sorting);
 
 			case IDLIST:
 				slh = new IdListHandler<E>(dataProvider);
 				break;
 
 			case PAGE:
-				slh = new PagingSearchListHandler<E>(dataProvider);
+				slh = new PagingSearchListHandler<E>(dataProvider, pageSize);
 				break;
 
 			default:
@@ -68,7 +71,7 @@ public abstract class ListHandlerFactory {
 		}
 
 		try {
-			slh.executeSearch(criteria);
+			slh.executeSearch(criteria, sorting);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw e;

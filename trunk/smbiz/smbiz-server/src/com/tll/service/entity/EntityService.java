@@ -120,20 +120,20 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	}
 
 	@Transactional(readOnly = true)
-	public List<E> findEntities(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		return dao.findEntities(criteria);
+	public List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		return dao.findEntities(criteria, sorting);
 	}
 
 	// IListHandlerDataProvider impl:
 
 	@Transactional(readOnly = true)
-	public List<E> loadByIds(List<Integer> ids) {
-		return dao.findByIds(ids);
+	public List<E> loadByIds(List<Integer> ids, Sorting sorting) {
+		return dao.findByIds(ids, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<SearchResult<E>> find(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		return dao.find(criteria);
+	public List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		return dao.find(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
@@ -142,14 +142,14 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	}
 
 	@Transactional(readOnly = true)
-	public List<Integer> getIds(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		return dao.getIds(criteria);
+	public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		return dao.getIds(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, int page, int pageSize)
+	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
 			throws InvalidCriteriaException {
-		return dao.getPage(criteria, page, pageSize);
+		return dao.getPage(criteria, sorting, page, pageSize);
 	}
 
 	@Transactional(readOnly = true)

@@ -137,7 +137,7 @@ public abstract class DbTest extends TestBase {
 	protected static final <E extends IEntity, D extends IEntityDao<E>> List<SearchResult<E>> getEntitiesFromDb(D dao,
 			ICriteria<? extends E> criteria) {
 		try {
-			return dao.find(criteria);
+			return dao.find(criteria, null);
 		}
 		catch(InvalidCriteriaException e) {
 			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());

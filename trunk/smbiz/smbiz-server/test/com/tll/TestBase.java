@@ -22,6 +22,7 @@ import com.tll.dao.IDaoFactory;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.guice.MockEntitiesModule;
 import com.tll.guice.DbShellModule.TestDb;
+import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityAssembler;
@@ -40,6 +41,8 @@ public abstract class TestBase {
 
 	protected static final Log staticLogger = LogFactory.getLog(TestBase.class);
 
+	protected final Log logger = LogFactory.getLog(this.getClass());
+
 	protected static final String LENGTH_64_STRING = "1234567890123456789012345678901234567890123456789012345678901234";
 
 	protected static final String LENGTH_65_STRING = LENGTH_64_STRING + "5";
@@ -52,7 +55,7 @@ public abstract class TestBase {
 
 	protected static final String LENGTH_257_STRING = LENGTH_128_STRING + LENGTH_129_STRING;
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+	protected Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	protected Injector injector;
 
@@ -293,14 +296,6 @@ public abstract class TestBase {
 		catch(final BusinessKeyNotDefinedException e1) {
 			// ok
 		}
-	}
-
-	/**
-	 * @return Sorting instance having primary sort column name set to the
-	 *         {@link IEntity#getId()} property.
-	 */
-	protected static final Sorting getIdSorting() {
-		return new Sorting(IEntity.PK_FIELDNAME);
 	}
 
 	/**

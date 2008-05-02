@@ -63,11 +63,9 @@ public class PagingSearchListHandlerTest extends DbTest {
 		final int pageSize = 3;
 
 		ICriteria<Account> c = CriteriaFactory.buildEntityCriteria(Account.class);
-		Sorting sorting = new Sorting(INamedEntity.NAME);
-		c.setSorting(sorting);
-		c.setPageSize(pageSize);
+		Sorting sorting = new Sorting(new SortColumn(INamedEntity.NAME));
 		IListHandler<SearchResult<Account>> listHandler =
-				ListHandlerFactory.create(c, ListHandlerType.PAGE, accountService);
+				ListHandlerFactory.create(c, sorting, ListHandlerType.PAGE, pageSize, accountService);
 
 		List<SearchResult<Account>> list;
 

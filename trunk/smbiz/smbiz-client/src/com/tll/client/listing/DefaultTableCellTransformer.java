@@ -24,13 +24,14 @@ public class DefaultTableCellTransformer implements ITableCellTransformer {
 		String[] vals = new String[columns.length];
 		for(int i = 0; i < columns.length; i++) {
 			Column col = columns[i];
-			if(Column.ROW_COUNT_COL_PROP.equals(col.prop)) {
+			String prop = col.getPropertyName();
+			if(Column.ROW_COUNT_COL_PROP.equals(prop)) {
 				vals[i] = null;
 			}
 			else {
-				PropKey pk = findPropKey(col.prop, propKeys);
+				PropKey pk = findPropKey(prop, propKeys);
 				if(pk != null) {
-					IPropertyValue pv = rowData.getProp(col.prop);
+					IPropertyValue pv = rowData.getProp(prop);
 
 					// self formatting type..
 					if(pv.getType().isSelfFormatting()) {

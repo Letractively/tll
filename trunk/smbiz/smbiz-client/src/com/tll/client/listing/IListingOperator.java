@@ -6,7 +6,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.model.Model;
-import com.tll.listhandler.SortDir;
+import com.tll.listhandler.SortColumn;
 
 /**
  * IListingOperator - Performs listing ops on a particular listing. This
@@ -32,10 +32,9 @@ public interface IListingOperator {
 	/**
 	 * Sorts the listing. A listing event is then dispatched to the listing
 	 * Widget.
-	 * @param colName
-	 * @param direction
+	 * @param sortColumn
 	 */
-	void sort(String colName, SortDir direction);
+	void sort(SortColumn sortColumn);
 
 	/**
 	 * Navigates the listing. A listing event is then dispatched to the listing

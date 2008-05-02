@@ -11,59 +11,108 @@ public class SortColumn implements IMarshalable {
 	private static final long serialVersionUID = -4966927388892147102L;
 
 	public static final Boolean DEFAULT_IGNORE_CASE = Boolean.TRUE;
+
 	public static final SortDir DEFAULT_SORT_DIR = SortDir.ASC;
 
 	/**
-	 * The column name
+	 * The property name
 	 */
-	private String column;
+	private String propertyName;
+
+	/**
+	 * The parent ref alias name. Intended mainly to be used in sql/orm queries.
+	 * In an ORM context, this property is necessary to avoid ambiguity in the
+	 * query.
+	 */
+	private String parentAlias;
+
 	/**
 	 * The sort direction: ascending or descending
 	 */
 	private SortDir direction = DEFAULT_SORT_DIR;
+
 	/**
 	 * Ignore upper/lower case when column is text-based?
 	 */
 	private Boolean ignoreCase = DEFAULT_IGNORE_CASE;
 
+	/**
+	 * Constructor
+	 */
 	public SortColumn() {
 		super();
 	}
 
-	public SortColumn(String column) {
-		this();
-		setColumn(column);
+	/**
+	 * Constructor
+	 * @param propertyName
+	 */
+	public SortColumn(String propertyName) {
+		this(propertyName, null, DEFAULT_SORT_DIR, DEFAULT_IGNORE_CASE);
 	}
 
-	public SortColumn(String column, SortDir direction) {
-		this();
-		setColumn(column);
-		setDirection(direction);
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 */
+	public SortColumn(String propertyName, String parentAlias) {
+		this(propertyName, parentAlias, DEFAULT_SORT_DIR, DEFAULT_IGNORE_CASE);
 	}
 
-	public SortColumn(String column, Boolean ignoreCase) {
-		this();
-		setColumn(column);
-		setIgnoreCase(ignoreCase);
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param direction
+	 */
+	public SortColumn(String propertyName, String parentAlias, SortDir direction) {
+		this(propertyName, parentAlias, direction, DEFAULT_IGNORE_CASE);
 	}
 
-	public SortColumn(String column, SortDir direction, Boolean ignoreCase) {
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param ignoreCase
+	 */
+	public SortColumn(String propertyName, String parentAlias, Boolean ignoreCase) {
+		this(propertyName, parentAlias, DEFAULT_SORT_DIR, ignoreCase);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param direction
+	 * @param ignoreCase
+	 */
+	public SortColumn(String propertyName, String parentAlias, SortDir direction, Boolean ignoreCase) {
 		this();
-		setColumn(column);
+		setPropertyName(propertyName);
+		setParentAlias(parentAlias);
 		setDirection(direction);
 		setIgnoreCase(ignoreCase);
 	}
 
 	public String descriptor() {
-		return toString();
+		return "Sort Column";
 	}
 
-	public String getColumn() {
-		return column;
+	public String getPropertyName() {
+		return propertyName;
 	}
 
-	public void setColumn(String column) {
-		this.column = column;
+	public void setPropertyName(String propertyName) {
+		this.propertyName = propertyName;
+	}
+
+	public String getParentAlias() {
+		return parentAlias;
+	}
+
+	public void setParentAlias(String parentAlias) {
+		this.parentAlias = parentAlias;
 	}
 
 	public SortDir getDirection() {
@@ -91,39 +140,39 @@ public class SortColumn implements IMarshalable {
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
-		if(this == obj) {
-			return true;
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		final SortColumn other = (SortColumn) obj;
+		if(direction == null) {
+			if(other.direction != null) return false;
 		}
-		if(obj instanceof SortColumn == false) {
-			return false;
+		else if(!direction.equals(other.direction)) return false;
+		if(ignoreCase == null) {
+			if(other.ignoreCase != null) return false;
 		}
-
-		final SortColumn that = (SortColumn) obj;
-
-		boolean rval = (column != null && column.equals(that.column) && direction == that.direction);
-
-		if(rval) {
-			rval = (ignoreCase == null) ? that.ignoreCase == null : ignoreCase.equals(that.ignoreCase);
+		else if(!ignoreCase.equals(other.ignoreCase)) return false;
+		if(parentAlias == null) {
+			if(other.parentAlias != null) return false;
 		}
-
-		return rval;
+		else if(!parentAlias.equals(other.parentAlias)) return false;
+		if(propertyName == null) {
+			if(other.propertyName != null) return false;
+		}
+		else if(!propertyName.equals(other.propertyName)) return false;
+		return true;
 	}
 
 	@Override
-	public final int hashCode() {
-		int hash = 1;
-		if(column != null) {
-			hash += 31 * column.hashCode();
-		}
-		hash += direction.hashCode();
-		hash += ignoreCase == null ? 0 : ignoreCase.booleanValue() ? 1 : 0;
-		return hash;
-	}
-
-	public SortColumn copy() {
-		return new SortColumn(column, direction, (this.ignoreCase == null ? null : new Boolean(this.ignoreCase
-				.booleanValue())));
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((direction == null) ? 0 : direction.hashCode());
+		result = prime * result + ((ignoreCase == null) ? 0 : ignoreCase.hashCode());
+		result = prime * result + ((parentAlias == null) ? 0 : parentAlias.hashCode());
+		result = prime * result + ((propertyName == null) ? 0 : propertyName.hashCode());
+		return result;
 	}
 
 	/**
@@ -133,6 +182,7 @@ public class SortColumn implements IMarshalable {
 	 */
 	@Override
 	public String toString() {
-		return getColumn() + " " + (getDirection() == SortDir.ASC ? "asc" : "desc");
+		String s = parentAlias == null ? "" : parentAlias + ".";
+		return s + propertyName + " " + getDirection().getSqlclause();
 	}
 }

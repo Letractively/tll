@@ -3,9 +3,6 @@ package com.tll.criteria;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Query;
-
-import com.tll.listhandler.Sorting;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
@@ -22,25 +19,11 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private Class<? extends E> entityClass;
 
-	private String queryName;
-
-	/**
-	 * The sorting directive.
-	 * <p>
-	 * <strong>NOTE: </strong>The sorting column names are the query alias names
-	 * when this criteria points to a named query.
-	 */
-	private Sorting sorting;
+	private SelectNamedQuery namedQueryDefinition;
 
 	private CriterionGroup primaryGroup = new CriterionGroup();
 
 	private Map<String, String> queryParams;
-
-	/**
-	 * Have a non-zero default value for page size to avoid division by zero
-	 * errors.
-	 */
-	private int pageSize = DEFAULT_PAGE_SIZE;
 
 	/**
 	 * Constructor
@@ -62,49 +45,29 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	}
 
 	/**
-	 * Constructor - Use this constructor for {@link Query} based criteria.
-	 * @param entityClass May NOT be <code>null</code>.
-	 * @param queryName May NOT be <code>null</code>.
-	 * @param isScalarQuery Does the referenced query return scalar results?
+	 * Constructor - Use this constructor for criteria pointing to a named query.
+	 * @param namedQueryDefinition The named query definition
+	 * @param queryParams The possible query parameters
 	 */
-	public Criteria(Class<? extends E> entityClass, String queryName, boolean isScalarQuery) {
+	public Criteria(SelectNamedQuery namedQueryDefinition, Map<String, String> queryParams) {
 		super();
-		assert entityClass != null;
-		this.entityClass = entityClass;
-		setQueryName(queryName, isScalarQuery);
-	}
-
-	public String descriptor() {
-		return toString();
+		this.criteriaType =
+				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
+		this.entityClass = EntityUtil.entityClassFromType(namedQueryDefinition.getEntityType());
+		this.namedQueryDefinition = namedQueryDefinition;
+		this.queryParams = queryParams;
 	}
 
 	public CriteriaType getCriteriaType() {
 		return criteriaType;
 	}
 
-	public void setCriteriaType(CriteriaType criteriaType) {
-		if(criteriaType == null) {
-			throw new IllegalArgumentException("The criteria type may not be null");
-		}
-		this.criteriaType = criteriaType;
-	}
-
 	public Class<? extends E> getEntityClass() {
 		return entityClass;
 	}
 
-	public void setEntityClass(Class<? extends E> entityClass) {
-		this.entityClass = entityClass;
-	}
-
-	public String getQueryName() {
-		return queryName;
-	}
-
-	public void setQueryName(String queryName, boolean isScalarQuery) {
-		assert queryName != null;
-		this.criteriaType = isScalarQuery ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
-		this.queryName = queryName;
+	public SelectNamedQuery getNamedQueryDefinition() {
+		return namedQueryDefinition;
 	}
 
 	public Map<String, String> getQueryParams() {
@@ -119,23 +82,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	}
 
 	public boolean isSet() {
-		return criteriaType.isQuery() ? (queryName != null) : (primaryGroup != null && primaryGroup.isSet());
-	}
-
-	public Sorting getSorting() {
-		return sorting;
-	}
-
-	public void setSorting(Sorting sorting) {
-		this.sorting = sorting;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
+		return criteriaType.isQuery() ? (namedQueryDefinition != null) : (primaryGroup != null && primaryGroup.isSet());
 	}
 
 	public ICriterionGroup getPrimaryGroup() {
@@ -146,8 +93,9 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		if(primaryGroup != null) {
 			primaryGroup.clear();
 		}
-		sorting = null;
-		queryName = null;
+		if(queryParams != null) {
+			queryParams.clear();
+		}
 	}
 
 	@Override
@@ -162,9 +110,6 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		}
 		if(primaryGroup != null) {
 			cln.primaryGroup = primaryGroup.clone();
-		}
-		if(sorting != null) {
-			cln.sorting = sorting.copy();
 		}
 		return cln;
 	}
@@ -183,7 +128,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 			sb.append(EntityUtil.typeName(entityClass));
 			if(criteriaType.isQuery()) {
 				sb.append(", query name: ");
-				sb.append(queryName);
+				sb.append(namedQueryDefinition.getQueryName());
 			}
 			sb.append(")");
 		}

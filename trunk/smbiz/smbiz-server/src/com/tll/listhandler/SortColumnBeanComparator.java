@@ -54,7 +54,7 @@ public class SortColumnBeanComparator<T> implements Comparator<T>, Serializable 
 		final BeanWrapper bw1 = new BeanWrapperImpl(o1);
 		final BeanWrapper bw2 = new BeanWrapperImpl(o2);
 
-		final String propPath = PropertyPathHelper.getPropertyPath(nestedpath, sortColumn.getColumn());
+		final String propPath = PropertyPathHelper.getPropertyPath(nestedpath, sortColumn.getPropertyName());
 		final Object v1 = bw1.getPropertyValue(propPath);
 		final Object v2 = bw2.getPropertyValue(propPath);
 

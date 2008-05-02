@@ -23,9 +23,9 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 		new PropKey("description") };
 
 	private final Column[] columns = {
-		new Column("Name", "name"),
-		new Column("Code", "code"),
-		new Column("Desc", "description") };
+		new Column("Name", "name", "intf"),
+		new Column("Code", "code", "intf"),
+		new Column("Desc", "description", "intf") };
 
 	public final Sorting getDefaultSorting() {
 		return null;

@@ -33,6 +33,14 @@ public enum SelectNamedQuery {
 		return queryName;
 	}
 
+	/**
+	 * @return The counterpart named query that retrieves the count of this named
+	 *         query.
+	 */
+	public String getCountCounterpartQueryName() {
+		return queryName + ".count";
+	}
+
 	public EntityType getEntityType() {
 		return entityType;
 	}

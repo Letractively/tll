@@ -3,7 +3,8 @@
  */
 package com.tll.criteria;
 
-import com.tll.model.EntityUtil;
+import java.util.Map;
+
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.IBusinessKey;
@@ -185,11 +186,12 @@ public abstract class CriteriaFactory {
 	/**
 	 * Builds criteria that points to a defined named query.
 	 * @param namedQuery The named query definition
+	 * @param queryParams The possible query parameters
 	 * @return New {@link ICriteria} instance wired to invoke the given named
 	 *         query.
 	 */
-	public static ICriteria<? extends IEntity> buildQueryCriteria(SelectNamedQuery namedQuery) {
-		return new Criteria<IEntity>(EntityUtil.entityClassFromType(namedQuery.getEntityType()), namedQuery.getQueryName(),
-				namedQuery.isScalar());
+	public static ICriteria<? extends IEntity> buildQueryCriteria(SelectNamedQuery namedQuery,
+			Map<String, String> queryParams) {
+		return new Criteria<IEntity>(namedQuery, queryParams);
 	}
 }

@@ -35,6 +35,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
 import com.tll.listhandler.IPage;
@@ -186,19 +187,19 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> findEntities(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
 		if(criteria.getCriteriaType() == null || criteria.getCriteriaType().isScalar()) {
 			throw new InvalidCriteriaException("A criteria type must be specified and be non-scalar.");
 		}
-		return (List<E>) processCriteria(criteria, !criteria.getCriteriaType().isQuery(),
+		return (List<E>) processCriteria(criteria, sorting, !criteria.getCriteriaType().isQuery(),
 				CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 	}
 
 	public E findEntity(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-		final List<E> list = findEntities(criteria);
+		final List<E> list = findEntities(criteria, null);
 		if(list == null || list.size() != 1) {
 			return null;
 		}
@@ -206,14 +207,14 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SearchResult<E>> find(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
 		if(criteria.getCriteriaType() == null) {
 			throw new InvalidCriteriaException("A criteria type must be specified.");
 		}
-		return (List<SearchResult<E>>) processCriteria(criteria, !criteria.getCriteriaType().isQuery(), criteria
+		return (List<SearchResult<E>>) processCriteria(criteria, sorting, !criteria.getCriteriaType().isQuery(), criteria
 				.getCriteriaType().isScalar() ? (new ScalarSearchResultTransformer(criteria.getEntityClass()))
 				: ENTITY_RESULT_TRANSFORMER);
 	}
@@ -239,19 +240,19 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 *         otherwise.
 	 */
 	@SuppressWarnings("unchecked")
-	protected final List<?> processCriteria(ICriteria<? extends E> criteria, boolean applySorting,
+	protected final List<?> processCriteria(ICriteria<? extends E> criteria, Sorting sorting, boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
 		if(criteria.getCriteriaType().isQuery()) {
 			// presume named query ref
-			return findByNamedQuery(criteria, resultTransformer);
+			return findByNamedQuery(criteria, sorting, resultTransformer);
 		}
 		// translate to hbm criteria
 		final Class<? extends E> entityClass =
 				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
 		final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
 		dc.setResultTransformer(resultTransformer);
-		applyCriteria(dc, criteria, applySorting);
+		applyCriteria(dc, criteria, sorting, applySorting);
 		return findByDetatchedCriteria(dc);
 	}
 
@@ -269,26 +270,23 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	/**
 	 * Translates native criteria to a new Query instance.
 	 * @param criteria The native criteria
+	 * @param sorting
 	 * @param resultTransformer May be <code>null</code>.
 	 * @param cacheable Is this query cacheable?
 	 * @return New Query instance
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private final Query assembleQuery(ICriteria<? extends E> criteria, ResultTransformer resultTransformer,
-			boolean cacheable) throws InvalidCriteriaException {
-		if(criteria.getQueryName() == null) {
-			throw new InvalidCriteriaException("A query name must be specified.");
+	private final Query assembleQuery(String queryName, Map<String, String> queryParams, Sorting sorting,
+			ResultTransformer resultTransformer, boolean cacheable) throws InvalidCriteriaException {
+		if(queryName == null) {
+			throw new InvalidCriteriaException("No query name specified.");
 		}
-
 		final EntityManager em = getEntityManager();
-		final String queryName = criteria.getQueryName();
 		Query q = em.createNamedQuery(queryName);
 		org.hibernate.Query hbmQuery = jpa2hbmQuery(q);
-		// TODO resolve aliases in sort directive!!!
 
 		// apply sorting (if specified)
-		final Sorting sorting = criteria.getSorting();
 		if(sorting != null) {
 			final StringBuffer sb = new StringBuffer(hbmQuery.getQueryString().toString());
 			int indx = sb.indexOf(ORDER_BY_TOKEN);
@@ -306,7 +304,6 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		final String[] namedParams = hbmQuery.getNamedParameters();
 		if(namedParams != null && namedParams.length > 0) {
 			// create param map
-			final Map<String, String> queryParams = criteria.getQueryParams();
 			if(queryParams == null || queryParams.size() != namedParams.length) {
 				throw new InvalidCriteriaException("Empty or invalid number of query parameters for named query: " + queryName);
 			}
@@ -346,9 +343,11 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @return List of either entities or scalars.
 	 * @throws InvalidCriteriaException
 	 */
-	protected final List<?> findByNamedQuery(ICriteria<? extends E> criteria, ResultTransformer resultTransformer)
-			throws InvalidCriteriaException {
-		return assembleQuery(criteria, resultTransformer, true).getResultList();
+	protected final List<?> findByNamedQuery(ICriteria<? extends E> criteria, Sorting sorting,
+			ResultTransformer resultTransformer) throws InvalidCriteriaException {
+		SelectNamedQuery nq = criteria.getNamedQueryDefinition();
+		return assembleQuery(nq.getQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
+				.getResultList();
 	}
 
 	/**
@@ -359,11 +358,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * and thus is not called from processUniqueCriteria(ICriteria).
 	 * @param dc the hibernate criteria object
 	 * @param criteria Criteria object
+	 * @param sorting
 	 * @throws InvalidCriteriaException
 	 */
-	protected void applyCriteria(DetachedCriteria dc, ICriteria<? extends E> criteria, boolean applySorting)
-			throws InvalidCriteriaException {
-		applyCriteriaStrict(dc, criteria, applySorting);
+	protected void applyCriteria(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
+			boolean applySorting) throws InvalidCriteriaException {
+		applyCriteriaStrict(dc, criteria, sorting, applySorting);
 	}
 
 	/**
@@ -371,11 +371,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * may not be overridden.
 	 * @param dc the hibernate criteria object
 	 * @param criteria criteria object
+	 * @param sorting
 	 * @throws InvalidCriteriaException
 	 * @see #applyCriteria(DetachedCriteria, ICriteria)
 	 */
-	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, boolean applySorting)
-			throws InvalidCriteriaException {
+	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
+			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
 			final ICriterionGroup pg = criteria.getPrimaryGroup();
 			Junction j = null;
@@ -384,16 +385,16 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				dc.add(j);
 			}
 			for(final ICriterion crit : pg) {
-				applyCriterion(dc, crit, criteria, j);
+				applyCriterion(dc, crit, criteria, sorting, j);
 			}
 		} // else all entities will be retrieved
 		if(applySorting) {
-			applySorting(dc, criteria.getSorting());
+			applySorting(dc, sorting);
 		}
 	}
 
-	private void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<? extends E> criteria, Junction junction)
-			throws InvalidCriteriaException {
+	private void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<? extends E> criteria, Sorting sorting,
+			Junction junction) throws InvalidCriteriaException {
 		if(!ctn.isSet()) {
 			return;
 		}
@@ -404,7 +405,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			dc.add(j);
 
 			for(final ICriterion c : g) {
-				applyCriterion(dc, c, criteria, j);
+				applyCriterion(dc, c, criteria, sorting, j);
 			}
 
 			return;
@@ -427,7 +428,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		else {
 			// apply an alias (if not sorting against this field - else hibernate
 			// duplicate alias exception occurrs)
-			if(criteria.getSorting() == null || !criteria.getSorting().getPrimarySortColumn().getColumn().equals(fieldName)) {
+			if(sorting == null || sorting.getPrimarySortColumn().getPropertyName().equals(fieldName)) {
 				applyAliasIfNecessary(dc2, fieldName);
 			}
 		}
@@ -481,7 +482,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		for(final SortColumn element : columns) {
 			// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
 			// element.getDirection();
-			final String column = element.getColumn();
+			final String column = element.getPropertyName();
 			final Boolean ignoreCase = element.getIgnoreCase();
 			applyAliasIfNecessary(dc, column);
 			final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
@@ -519,13 +520,13 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> findByIds(List<Integer> ids) {
+	public List<E> findByIds(List<Integer> ids, Sorting sorting) {
 		final ICriteria<? extends E> criteria =
 				CriteriaFactory.buildEntityCriteria(getEntityClass(), IEntity.PK_FIELDNAME, ids, Comparator.IN);
 		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, criteria, true);
+			applyCriteriaStrict(dc, criteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);
@@ -534,7 +535,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Integer> getIds(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
 		if(criteria.getCriteriaType().isScalar()) {
 			throw new InvalidCriteriaException("Ids are not supplied for queries returning scalar results.");
 		}
@@ -542,7 +543,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
 		final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
 		dc.setProjection(Projections.property(IEntity.PK_FIELDNAME));
-		applyCriteria(dc, criteria, true);
+		applyCriteria(dc, criteria, sorting, true);
 		return (List<Integer>) findByDetatchedCriteria(dc);
 
 	}
@@ -601,7 +602,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return new QueryPage<T>(pageSize, rowCount, list, page, refType, scalar);
 	}
 
-	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, int page, int pageSize)
+	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
 			throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		final Class<? extends E> entityClass =
@@ -611,12 +612,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case ENTITY: {
 				final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
 
-				if(criteria.getSorting() == null) {
+				if(sorting == null) {
 					// sorting is necessary in the case of IPage results due to necessary
 					// in memory manipulation to provide a distinct list of results
 					throw new InvalidCriteriaException("Paged results require a sorting directive");
 				}
-				applyCriteria(dc, criteria, true);
+				applyCriteria(dc, criteria, sorting, true);
 				final Session session = (Session) getEntityManager().getDelegate();
 				final Criteria hCrit = dc.getExecutableCriteria(session);
 
@@ -634,14 +635,14 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case ENTITY_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final ICriteria<? extends E> countCriteria = criteria.copy();
-				countCriteria.setQueryName(criteria.getQueryName() + ".count", false);
-				countCriteria.setSorting(null);
-				final Query cq = assembleQuery(countCriteria, null, false);
+				final SelectNamedQuery namedQueryDef = criteria.getNamedQueryDefinition();
+				String queryName = namedQueryDef.getQueryName();
+				String countQueryName = namedQueryDef.getCountCounterpartQueryName();
+				final Query cq = assembleQuery(countQueryName, null, null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
 
-				final Query q = assembleQuery(criteria, ENTITY_RESULT_TRANSFORMER, true);
+				final Query q = assembleQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
 				final QueryPage<SearchResult<E>> qp =
 						generateQueryPage(q, page, pageSize, count.intValue(), entityClass, false);
 				return qp;
@@ -650,14 +651,16 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case SCALAR_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final ICriteria<? extends E> countCriteria = criteria.copy();
-				countCriteria.setQueryName(criteria.getQueryName() + ".count", true);
-				countCriteria.setSorting(null);
-				final Query cq = assembleQuery(countCriteria, null, false);
+				final SelectNamedQuery namedQueryDef = criteria.getNamedQueryDefinition();
+				String queryName = namedQueryDef.getQueryName();
+				String countQueryName = namedQueryDef.getCountCounterpartQueryName();
+				final Query cq = assembleQuery(countQueryName, null, null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
 
-				final Query q = assembleQuery(criteria, new ScalarSearchResultTransformer(criteria.getEntityClass()), true);
+				final Query q =
+						assembleQuery(queryName, criteria.getQueryParams(), sorting, new ScalarSearchResultTransformer(criteria
+								.getEntityClass()), true);
 				final QueryPage<SearchResult<E>> qp = generateQueryPage(q, page, pageSize, count.intValue(), entityClass, true);
 				return qp;
 			}

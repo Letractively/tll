@@ -7,20 +7,12 @@ package com.tll.client.admin.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
-import com.tll.client.model.Model;
-import com.tll.listhandler.Sorting;
 
 /**
  * AccountListingConfig
  * @author jpk
  */
 public abstract class AccountListingConfig implements IListingConfig {
-
-	private final Sorting defaultSorting = new Sorting(Model.NAME_PROPERTY);
-
-	public final Sorting getDefaultSorting() {
-		return defaultSorting;
-	}
 
 	public final String getCaption() {
 		return null;

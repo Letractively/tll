@@ -82,11 +82,12 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	/**
 	 * Finds matching entities given criteria.
 	 * @param criteria May not be <code>null</code>.
+	 * @param sorting
 	 * @return List of entities or empty list if none found
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code>
 	 *         or found to be invalid.
 	 */
-	List<E> findEntities(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Use when the expected result is a single entity.
@@ -102,11 +103,12 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	 * Returns a list of entities that satisfy the given criteria. This method
 	 * will return an empty list if no entities match the criteria.
 	 * @param criteria The criteria. May NOT be <code>null</code>.
+	 * @param sorting The sorting directive. May be <code>null</code>.
 	 * @return List of entities or empty list if none found
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code>
 	 *         or found to be invalid.
 	 */
-	List<SearchResult<E>> find(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Returns a list of entities that satisfy the given id list. This method will
@@ -114,18 +116,19 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	 * @param ids the list id entity ids
 	 * @return List of entities or empty list if none found
 	 */
-	List<E> findByIds(List<Integer> ids);
+	List<E> findByIds(List<Integer> ids, Sorting sorting);
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria. Used for
 	 * id based list handling.
-	 * @param criteria
+	 * @param criteria The criteria. May NOT be <code>null</code>.
+	 * @param sorting The sorting directive. May be <code>null</code>.
 	 * @return List of ids of matching entities, empty list if no matching
 	 *         entities are found.
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code>
 	 *         or found to be invalid.
 	 */
-	List<Integer> getIds(ICriteria<? extends E> criteria) throws InvalidCriteriaException;
+	List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids. Used for id based list
@@ -141,20 +144,21 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	/**
 	 * Returns a page of matching results for the given criteria. Used for result
 	 * set page-based list handling.
-	 * @param criteria
+	 * @param criteria The criteria. May NOT be <code>null</code>.
+	 * @param sorting The sorting directive. May be <code>null</code>.
 	 * @param page
 	 * @param pageSize
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code>
 	 *         or found to be invalid.
 	 */
-	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, int page, int pageSize)
+	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
 			throws InvalidCriteriaException;
 
 	/**
 	 * Returns a subsequent page of matching results. Used for result set
 	 * page-based list handling.
 	 * <p>
-	 * {@link #getPage(ICriteria, int, int)} must be called first!
+	 * {@link #getPage(ICriteria, Sorting, int, int)} must be called first!
 	 * @param currentPage
 	 * @param newPageNum
 	 */

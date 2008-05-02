@@ -288,33 +288,33 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.persistAll(entities);
 		}
 
-		public List<E> findEntities(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-			return rawDao.findEntities(criteria);
+		public List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return rawDao.findEntities(criteria, sorting);
 		}
 
 		public E findEntity(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
 			return rawDao.findEntity(criteria);
 		}
 
-		public List<E> findByIds(List<Integer> ids) {
-			return rawDao.findByIds(ids);
+		public List<E> findByIds(List<Integer> ids, Sorting sorting) {
+			return rawDao.findByIds(ids, sorting);
 		}
 
-		public List<Integer> getIds(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-			return rawDao.getIds(criteria);
+		public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return rawDao.getIds(criteria, sorting);
 		}
 
 		public List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting) {
 			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
-		public List<SearchResult<E>> find(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
-			return rawDao.find(criteria);
+		public List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return rawDao.find(criteria, sorting);
 		}
 
-		public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, int page, int pageSize)
+		public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
 				throws InvalidCriteriaException {
-			return rawDao.getPage(criteria, page, pageSize);
+			return rawDao.getPage(criteria, sorting, page, pageSize);
 		}
 
 		public IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum) {
@@ -451,7 +451,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		startNewTransaction();
 		final ICriteria<? extends E> criteria = CriteriaFactory.buildEntityCriteria(KeyFactory.getPrimaryKey(e));
-		final List<E> list = dao.findEntities(criteria);
+		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");
 		Assert.assertTrue(list.size() == 1, "findEntities returned empty list");
@@ -473,7 +473,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		Assert.assertNotNull(e, "Null generated test entity");
 		final List<Integer> ids = new ArrayList<Integer>(1);
 		ids.add(e.getId());
-		final List<E> list = dao.findByIds(ids);
+		final List<E> list = dao.findByIds(ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");
 	}
@@ -500,11 +500,10 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		final ICriteria<? extends E> crit =
 				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
-		crit.setSorting(getIdSorting());
 
 		// get ids
 		startNewTransaction();
-		final List<Integer> dbIdList = dao.getIds(crit);
+		final List<Integer> dbIdList = dao.getIds(crit, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
@@ -540,8 +539,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		startNewTransaction();
 		final ICriteria<? extends E> crit =
 				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
-		crit.setSorting(getIdSorting());
-		IPage<SearchResult<E>> page = dao.getPage(crit, 0, 2);
+		IPage<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 2,
 				"Empty or invalid number of initial page elements");
 		endTransaction();

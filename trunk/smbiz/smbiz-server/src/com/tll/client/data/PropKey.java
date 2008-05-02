@@ -11,7 +11,7 @@ import com.tll.client.IMarshalable;
  * PropKey - Encapsulates a single property name and formatting directive.
  * @author jpk
  */
-// TODO do we really need this class?
+// TODO can we just get away with a String instead???
 public class PropKey implements IMarshalable {
 
 	public String prop;

@@ -14,7 +14,7 @@ import com.tll.client.model.Model;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
-import com.tll.listhandler.SortDir;
+import com.tll.listhandler.SortColumn;
 
 /**
  * DataCollectionListingOperator - {@link IListingOperator} based on an existing
@@ -174,7 +174,7 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 		refresh();
 	}
 
-	public void sort(String colName, SortDir direction) {
+	public void sort(SortColumn sortColumn) {
 		// TODO implement
 		throw new UnsupportedOperationException("Sorting data collection listings is not currently implemented");
 	}
