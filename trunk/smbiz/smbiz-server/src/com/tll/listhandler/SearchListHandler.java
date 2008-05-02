@@ -25,12 +25,12 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	/**
 	 * The search criteria.
 	 */
-	protected ICriteria<? extends E> criteria;
+	private ICriteria<? extends E> criteria;
 
 	/**
 	 * The sorting directive.
 	 */
-	protected Sorting sorting;
+	private Sorting sorting;
 
 	/**
 	 * Constructor
@@ -44,12 +44,16 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 		this.dataProvider = dataProvider;
 	}
 
+	protected final Class<? extends E> getEntityClass() {
+		return criteria == null ? null : criteria.getEntityClass();
+	}
+
 	public final boolean hasElements() {
 		return (size() > 0);
 	}
 
 	public final void refresh() throws EmptyListException {
-		if(this.criteria != null) {
+		if(criteria != null) {
 			try {
 				executeSearch(criteria, sorting);
 			}
@@ -71,23 +75,25 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
-		// NOTE: don't enfore this as we may be pointing to a named query
 		if(sorting == null) {
 			// NOTE: we always require sorting for search based list handling
 			throw new InvalidCriteriaException("A Sort directive must be specified for search based list handlers.");
 		}
-		refresh(criteria, sorting);
+		// we now commit to the given criteria and sorting irregardless of the
+		// search outcome to maintain proper state
+		this.criteria = criteria;
+		this.sorting = sorting;
+		doSearch(criteria, sorting);
 	}
 
 	/**
-	 * Refresh the list handler elements with the provided criteria. This allows
-	 * for centralization of search execution and sorting.
+	 * Sub-classes are responsible for performing the actual search.
 	 * @param criteria The criteria to refresh with. Guaranteed non-<code>null</code>.
-	 * @param sorting The sort directive
+	 * @param sorting The sort directive. Guaranteed non-<code>null</code>.
 	 * @throws InvalidCriteriaException
 	 * @throws NoMatchingResultsException
 	 */
-	protected abstract void refresh(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
+	protected abstract void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
 			NoMatchingResultsException;
 
 	public final void sort(Sorting sorting) throws ListHandlerException {
@@ -104,7 +110,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 
 			try {
 				try {
-					refresh(criteria, sorting);
+					doSearch(criteria, sorting);
 					this.sorting = sorting;
 				}
 				catch(final NoMatchingResultsException e) {

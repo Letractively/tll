@@ -1,12 +1,13 @@
 package com.tll.listhandler;
 
 import com.tll.client.IMarshalable;
+import com.tll.client.model.IPropertyNameProvider;
 
 /**
  * Represents a sort directive for a single "column".
  * @author jpk
  */
-public class SortColumn implements IMarshalable {
+public class SortColumn implements IMarshalable, IPropertyNameProvider {
 
 	private static final long serialVersionUID = -4966927388892147102L;
 

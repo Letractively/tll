@@ -191,7 +191,7 @@ public abstract class CriteriaFactory {
 	 *         query.
 	 */
 	public static ICriteria<? extends IEntity> buildQueryCriteria(SelectNamedQuery namedQuery,
-			Map<String, String> queryParams) {
+			Map<String, Object> queryParams) {
 		return new Criteria<IEntity>(namedQuery, queryParams);
 	}
 }

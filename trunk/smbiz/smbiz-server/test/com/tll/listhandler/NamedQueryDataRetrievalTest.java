@@ -39,8 +39,8 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	private static final Map<SelectNamedQuery, SortColumn> querySortBindings =
 			new HashMap<SelectNamedQuery, SortColumn>();
 
-	private static final Map<SelectNamedQuery, Map<String, String>> queryParamsBindings =
-			new HashMap<SelectNamedQuery, Map<String, String>>();
+	private static final Map<SelectNamedQuery, Map<String, Object>> queryParamsBindings =
+			new HashMap<SelectNamedQuery, Map<String, Object>>();
 
 	static {
 		for(SelectNamedQuery nq : SelectNamedQuery.values()) {
@@ -51,15 +51,15 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 					break;
 				case MERCHANT_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "m"));
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("ispId", "1");
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("ispId", new Integer(4));
 					queryParamsBindings.put(nq, map);
 					break;
 				}
 				case CUSTOMER_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "ca"));
-					Map<String, String> map = new HashMap<String, String>();
-					map.put("merchantId", "1");
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("merchantId", new Integer(7));
 					queryParamsBindings.put(nq, map);
 					break;
 				}
@@ -140,9 +140,9 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types
-			IListHandler<SearchResult<IEntity>> listHandler = null;
 			for(ListHandlerType lht : ListHandlerType.values()) {
-				logger.debug("Validating named query: " + nq.toString() + " with list handler type: " + lht.toString() + "...");
+				IListHandler<SearchResult<IEntity>> listHandler = null;
+				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
 					case COLLECTION:
 						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
@@ -162,7 +162,9 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 					default:
 						throw new Error("Unhandled list handler type: " + lht.toString());
 				}
-				validateListHandler(listHandler, sorting);
+				if(listHandler != null) {
+					validateListHandler(listHandler, sorting);
+				}
 			}
 			logger.debug("Validation complete");
 		}

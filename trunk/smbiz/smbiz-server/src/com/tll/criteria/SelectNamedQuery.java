@@ -51,7 +51,7 @@ public enum SelectNamedQuery {
 
 	@Override
 	public String toString() {
-		return queryName + "(scalar? " + scalar + ")";
+		return queryName;
 	}
 
 	/**

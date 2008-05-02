@@ -269,7 +269,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	/**
 	 * Translates native criteria to a new Query instance.
-	 * @param criteria The native criteria
+	 * @param queryName
+	 * @param queryParams
 	 * @param sorting
 	 * @param resultTransformer May be <code>null</code>.
 	 * @param cacheable Is this query cacheable?
@@ -277,7 +278,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private final Query assembleQuery(String queryName, Map<String, String> queryParams, Sorting sorting,
+	private final Query assembleQuery(String queryName, Map<String, Object> queryParams, Sorting sorting,
 			ResultTransformer resultTransformer, boolean cacheable) throws InvalidCriteriaException {
 		if(queryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");

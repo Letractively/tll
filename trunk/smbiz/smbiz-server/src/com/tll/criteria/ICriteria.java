@@ -36,7 +36,7 @@ public interface ICriteria<E extends IEntity> extends Serializable, Cloneable {
 	 * @return Map of the query params and their associated String wise values.
 	 *         May be <code>null</code> or empty.
 	 */
-	Map<String, String> getQueryParams();
+	Map<String, Object> getQueryParams();
 
 	/**
 	 * @return true if at least one valid {@link Criterion} exists.

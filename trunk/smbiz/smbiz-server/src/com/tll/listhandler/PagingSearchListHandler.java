@@ -40,13 +40,12 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	}
 
 	@Override
-	protected void refresh(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
+	protected void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
 			NoMatchingResultsException {
 		final int pageNumber = page == null ? 0 : page.getPageNumber();
 		page = dataProvider.getPage(criteria, sorting, pageNumber, pageSize);
-		this.criteria = criteria;
 		if(page.getTotalSize() < 1) {
-			throw new NoMatchingResultsException("No results found.");
+			throw new NoMatchingResultsException();
 		}
 	}
 

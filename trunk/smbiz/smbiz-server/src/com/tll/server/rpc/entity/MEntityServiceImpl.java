@@ -227,7 +227,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		ICriteria<? extends E> criteria;
-		final Map<String, String> queryParams = search.getQueryParams();
+		final Map<String, Object> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
 			SelectNamedQuery nq = search.getNamedQuery();

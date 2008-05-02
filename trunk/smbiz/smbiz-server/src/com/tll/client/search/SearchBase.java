@@ -20,7 +20,7 @@ public abstract class SearchBase implements ISearch {
 	private boolean retrieveAll = false;
 
 	private SelectNamedQuery namedQuery;
-	private Map<String, String> queryParams;
+	private Map<String, Object> queryParams;
 
 	/**
 	 * Constructor
@@ -64,13 +64,13 @@ public abstract class SearchBase implements ISearch {
 		this.namedQuery = namedQuery;
 	}
 
-	public final Map<String, String> getQueryParams() {
+	public final Map<String, Object> getQueryParams() {
 		return queryParams;
 	}
 
-	public final void setQueryParam(String paramName, String paramValue) {
+	public final void setQueryParam(String paramName, Object paramValue) {
 		if(queryParams == null) {
-			queryParams = new HashMap<String, String>();
+			queryParams = new HashMap<String, Object>();
 		}
 		queryParams.put(paramName, paramValue);
 	}

@@ -48,5 +48,5 @@ public interface ISearch extends IMarshalable {
 	/**
 	 * @return Possible query parameters when a named query is specified.
 	 */
-	Map<String, String> getQueryParams();
+	Map<String, Object> getQueryParams();
 }

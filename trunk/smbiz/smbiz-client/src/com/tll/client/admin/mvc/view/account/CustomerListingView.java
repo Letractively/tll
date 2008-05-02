@@ -132,7 +132,7 @@ public final class CustomerListingView extends ListingView implements IRowOption
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
 		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
-		criteria.setQueryParam("merchantId", mercRef.getId().toString());
+		criteria.setQueryParam("merchantId", mercRef.getId());
 
 		final IListingConfig config = new AccountListingConfig() {
 

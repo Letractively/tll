@@ -23,7 +23,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private CriterionGroup primaryGroup = new CriterionGroup();
 
-	private Map<String, String> queryParams;
+	private Map<String, Object> queryParams;
 
 	/**
 	 * Constructor
@@ -49,7 +49,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * @param namedQueryDefinition The named query definition
 	 * @param queryParams The possible query parameters
 	 */
-	public Criteria(SelectNamedQuery namedQueryDefinition, Map<String, String> queryParams) {
+	public Criteria(SelectNamedQuery namedQueryDefinition, Map<String, Object> queryParams) {
 		super();
 		this.criteriaType =
 				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
@@ -70,13 +70,13 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		return namedQueryDefinition;
 	}
 
-	public Map<String, String> getQueryParams() {
+	public Map<String, Object> getQueryParams() {
 		return queryParams;
 	}
 
 	public void setQueryParam(String paramName, String paramValue) {
 		if(queryParams == null) {
-			queryParams = new HashMap<String, String>();
+			queryParams = new HashMap<String, Object>();
 		}
 		queryParams.put(paramName, paramValue);
 	}

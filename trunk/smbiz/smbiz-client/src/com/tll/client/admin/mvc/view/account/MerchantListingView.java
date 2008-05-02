@@ -125,7 +125,7 @@ public final class MerchantListingView extends ListingView {
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
 		criteria.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
-		criteria.setQueryParam("ispId", ispRef.getId().toString());
+		criteria.setQueryParam("ispId", ispRef.getId());
 
 		final IListingConfig config = new AccountListingConfig() {
 

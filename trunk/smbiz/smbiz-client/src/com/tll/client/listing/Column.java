@@ -1,10 +1,11 @@
 package com.tll.client.listing;
 
+import com.tll.client.IMarshalable;
 import com.tll.client.util.GlobalFormat;
 import com.tll.listhandler.SortColumn;
 
 /**
- * Column - UI wise column
+ * Column - UI wise column that exists soley on the client side.
  * @author jpk
  */
 public final class Column extends SortColumn {
@@ -23,6 +24,14 @@ public final class Column extends SortColumn {
 	 * The format directive
 	 */
 	public final GlobalFormat format;
+
+	/**
+	 * Constructor - This is not used and is for GWT compiler compliance since we
+	 * are (spuriously) extending {@link SortColumn} which is {@link IMarshalable}.
+	 */
+	public Column() {
+		this(null, null, null);
+	}
 
 	/**
 	 * Constructor
