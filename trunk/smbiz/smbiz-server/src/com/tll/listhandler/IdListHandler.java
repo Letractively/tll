@@ -22,7 +22,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	 * Constructor
 	 * @param dataProvider
 	 */
-	public IdListHandler(IListHandlerDataProvider<E> dataProvider) {
+	IdListHandler(IListHandlerDataProvider<E> dataProvider) {
 		super(dataProvider);
 	}
 

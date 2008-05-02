@@ -536,8 +536,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	@SuppressWarnings("unchecked")
 	public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
-		if(criteria.getCriteriaType().isScalar()) {
-			throw new InvalidCriteriaException("Ids are not supplied for queries returning scalar results.");
+		if(criteria.getCriteriaType().isQuery()) {
+			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
 		}
 		final Class<? extends E> entityClass =
 				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();

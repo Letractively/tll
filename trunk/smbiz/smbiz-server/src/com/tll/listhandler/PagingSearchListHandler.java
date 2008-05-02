@@ -27,7 +27,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	 * @param dataProvider
 	 * @param pageSize The page size. Must be at least <code>1</code>.
 	 */
-	public PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, int pageSize) {
+	PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, int pageSize) {
 		super(dataProvider);
 		if(pageSize < 1) {
 			throw new IllegalArgumentException("The page size must be at least 1");

@@ -36,8 +36,8 @@ public final class ModelListingHandler implements IListingHandler {
 	 * @param config
 	 * @throws IllegalArgumentException upon null or invalid arguments
 	 */
-	ModelListingHandler(IListHandler<Model> listHandler, String listingName, boolean pageable,
-			int pageSize) throws IllegalArgumentException {
+	ModelListingHandler(IListHandler<Model> listHandler, String listingName, boolean pageable, int pageSize)
+			throws IllegalArgumentException {
 		super();
 
 		if(listHandler == null) {
@@ -152,10 +152,6 @@ public final class ModelListingHandler implements IListingHandler {
 			throw new ListingException(listingName, "An unexpected list handling error occurred: " + e.getMessage(), e);
 		}
 		return page.getPageNumber();
-	}
-
-	public boolean isSortable() {
-		return listHandler.isSortable();
 	}
 
 	public Sorting getSorting() {

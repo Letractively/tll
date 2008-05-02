@@ -2,7 +2,6 @@ package com.tll.listhandler;
 
 import java.util.List;
 
-
 /**
  * The list handler interface.
  * @author jpk
@@ -42,14 +41,6 @@ public interface IListHandler<T> extends Iterable<T> {
 	 *         are out of bounds
 	 */
 	List<T> getElements(int start, int end) throws EmptyListException, ListHandlerException;
-
-	/**
-	 * Is this list handler sortable? If not, {@link #getSorting()} should return
-	 * <code>null</code> and {@link #sort(Sorting)} should throw a
-	 * {@link ListHandlerException}.
-	 * @return <code>true</code> when the list handler is sortable.
-	 */
-	boolean isSortable();
 
 	/**
 	 * @return the {@link Sorting} used by this list handler.

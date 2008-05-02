@@ -36,16 +36,12 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 * Constructor
 	 * @param dataProvider
 	 */
-	public SearchListHandler(IListHandlerDataProvider<E> dataProvider) {
+	SearchListHandler(IListHandlerDataProvider<E> dataProvider) {
 		super();
 		if(dataProvider == null) {
 			throw new IllegalArgumentException("A list handler service must be specified.");
 		}
 		this.dataProvider = dataProvider;
-	}
-
-	public boolean isSortable() {
-		return true;
 	}
 
 	public final boolean hasElements() {
@@ -95,9 +91,6 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 			NoMatchingResultsException;
 
 	public final void sort(Sorting sorting) throws ListHandlerException {
-		if(!isSortable()) {
-			throw new ListHandlerException("This list handler is not sortable");
-		}
 		if(sorting == null || sorting.size() < 1) {
 			throw new ListHandlerException("No sorting directives specified");
 		}

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -17,6 +18,7 @@ import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
+import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
@@ -121,7 +123,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
 		assert listHandler.size() > 0 : "No list handler elements exist";
-		assert listHandler.getSorting() != null && listHandler.getSorting().equals(sorting) : "List hanler sorting differs";
+		assert sorting != null && listHandler.getSorting() != null && listHandler.getSorting().equals(sorting) : "List handler sorting differs";
 		assert listHandler.getElement(0) != null : "Unable to obtain the first list handler element";
 	}
 
@@ -138,11 +140,31 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types
-			IListHandler<SearchResult<IEntity>> listHandler;
+			IListHandler<SearchResult<IEntity>> listHandler = null;
 			for(ListHandlerType lht : ListHandlerType.values()) {
-				listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+				logger.debug("Validating named query: " + nq.toString() + " with list handler type: " + lht.toString() + "...");
+				switch(lht) {
+					case COLLECTION:
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						break;
+					case IDLIST:
+						try {
+							listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+							Assert.fail("Able to create id list based list handler for a scalar named query!");
+						}
+						catch(InvalidCriteriaException e) {
+							// expected
+						}
+						break;
+					case PAGE:
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						break;
+					default:
+						throw new Error("Unhandled list handler type: " + lht.toString());
+				}
 				validateListHandler(listHandler, sorting);
 			}
+			logger.debug("Validation complete");
 		}
 	}
 }

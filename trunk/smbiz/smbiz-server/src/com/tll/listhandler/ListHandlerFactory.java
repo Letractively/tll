@@ -21,17 +21,22 @@ public abstract class ListHandlerFactory {
 	 * @param sorting the sorting directive. May be <code>null</code>.
 	 * @return IListHandler instance
 	 * @throws EmptyListException
+	 * @throws ListHandlerException When a sorting related occurrs.
 	 */
-	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws EmptyListException {
+	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting, boolean doInitialSort)
+			throws EmptyListException, ListHandlerException {
+		IListHandler<T> listHandler;
 		try {
-			return new CollectionListHandler<T>(CollectionUtil.listFromCollection(c), sorting);
+			listHandler =
+					new CollectionListHandler<T>(CollectionUtil.listFromCollection(c), (doInitialSort ? null : sorting));
 		}
 		catch(final EmptyListException ele) {
 			throw ele;
 		}
-		catch(final ListHandlerException lhe) {
-			throw new SystemError("Unable to create collection based list handler: " + lhe.getMessage(), lhe);
+		if(doInitialSort) {
+			listHandler.sort(sorting);
 		}
+		return listHandler;
 	}
 
 	/**
@@ -46,17 +51,18 @@ public abstract class ListHandlerFactory {
 	 * @return The generated search based {@link IListHandler}
 	 * @throws InvalidCriteriaException
 	 * @throws EmptyListException
+	 * @throws ListHandlerException When a sorting related error occurrs
 	 */
 	public static <E extends IEntity> IListHandler<SearchResult<E>> create(ICriteria<? extends E> criteria,
 			Sorting sorting, ListHandlerType type, int pageSize, IListHandlerDataProvider<E> dataProvider)
-			throws InvalidCriteriaException, EmptyListException {
+			throws InvalidCriteriaException, EmptyListException, ListHandlerException {
 
 		SearchListHandler<E> slh = null;
 
 		switch(type) {
 
 			case COLLECTION:
-				return create(dataProvider.find(criteria, sorting), sorting);
+				return create(dataProvider.find(criteria, sorting), sorting, false);
 
 			case IDLIST:
 				slh = new IdListHandler<E>(dataProvider);

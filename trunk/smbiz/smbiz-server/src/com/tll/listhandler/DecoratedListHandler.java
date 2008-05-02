@@ -43,10 +43,6 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 		this.listHandler = listHandler;
 	}
 
-	public boolean isSortable() {
-		return listHandler == null ? false : listHandler.isSortable();
-	}
-
 	public int size() {
 		return (listHandler == null) ? 0 : listHandler.size();
 	}
@@ -54,14 +50,6 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 	public boolean hasElements() {
 		return (listHandler == null) ? false : listHandler.hasElements();
 	}
-
-	/*
-	public void refresh() throws EmptyListException {
-		if(listHandler != null) {
-			listHandler.refresh();
-		}
-	}
-	*/
 
 	public void sort(Sorting sorting) throws ListHandlerException {
 		if(listHandler != null) listHandler.sort(sorting);

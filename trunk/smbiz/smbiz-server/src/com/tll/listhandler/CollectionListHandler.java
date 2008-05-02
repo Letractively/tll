@@ -3,8 +3,6 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
-import com.tll.SystemError;
-
 /**
  * List handler implementation for a {@link java.util.Collection}.
  * @author jpk
@@ -18,59 +16,33 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 	/**
 	 * Constructor
 	 */
-	public CollectionListHandler() {
+	CollectionListHandler() {
 		super();
 	}
 
 	/**
 	 * Constructor
 	 * @param rows
+	 * @param sorting The sorting the given <code>rows</code> are in. May be
+	 *        <code>null</code>. <strong>NOTE: </strong>NO actual sorting is
+	 *        performed.
 	 * @throws EmptyListException
 	 */
-	public CollectionListHandler(List<T> rows) throws EmptyListException {
+	CollectionListHandler(List<T> rows, Sorting sorting) throws EmptyListException {
 		this();
 		setRows(rows);
-	}
-
-	/**
-	 * Constructor
-	 * @param rows
-	 * @param sorting
-	 * @throws EmptyListException
-	 * @throws ListHandlerException
-	 */
-	public CollectionListHandler(List<T> rows, Sorting sorting) throws EmptyListException, ListHandlerException {
-		this();
-		setRows(rows, sorting);
+		this.sorting = sorting;
 	}
 
 	public ListHandlerType getListHandlerType() {
 		return ListHandlerType.COLLECTION;
 	}
 
-	public boolean isSortable() {
-		return true;
-	}
-
-	public void setRows(List<T> rows) throws EmptyListException {
-		try {
-			setRows(rows, null);
-		}
-		catch(final EmptyListException ele) {
-			throw ele;
-		}
-		catch(final ListHandlerException lhe) {
-			throw new SystemError("An unexpected list handling exception occurred attempting to set rows: "
-					+ lhe.getMessage(), lhe);
-		}
-	}
-
-	public void setRows(List<T> rows, Sorting sorting) throws EmptyListException, ListHandlerException {
+	private void setRows(List<T> rows) throws EmptyListException {
 		if(rows == null || rows.size() < 1) {
 			throw new EmptyListException("Unable to instantiate collection list handler: No rows specified");
 		}
 		this.rows = rows;
-		sort(sorting);
 	}
 
 	public int size() {
@@ -82,7 +54,10 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 	}
 
 	public void sort(Sorting sorting) throws ListHandlerException {
-		if(sorting != null && sorting.size() > 0 && size() > 1) {
+		if(sorting == null || sorting.size() < 1) {
+			throw new ListHandlerException("No sorting specified.");
+		}
+		if(size() > 1) {
 			try {
 				Collections.sort(this.rows, new SortColumnBeanComparator<T>(sorting.getPrimarySortColumn()));
 			}

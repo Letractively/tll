@@ -6,6 +6,7 @@ package com.tll.server.rpc.listing;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.tll.SystemError;
 import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
@@ -128,6 +129,10 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 					catch(final EmptyListException e) {
 						// we proceed to allow client to still show the listing
 						status.addMsg(e.getMessage(), MsgLevel.WARN);
+					}
+					catch(final ListHandlerException e) {
+						// shouldn't happen
+						throw new SystemError("Unable to instantiate the list handler: " + e.getMessage(), e);
 					}
 
 					// transform to marshaling list handler
