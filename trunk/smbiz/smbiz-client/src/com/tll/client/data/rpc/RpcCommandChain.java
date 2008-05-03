@@ -8,7 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.client.data.Payload;
 
 /**
- * RpcCommandChain - Enables {@link IRpcCommand}s to be chained together for execution.
+ * RpcCommandChain - Enables {@link IRpcCommand}s to be chained together for
+ * execution.
  * @author jpk
  */
 public final class RpcCommandChain implements IRpcCommand<Payload> {
@@ -63,14 +64,12 @@ public final class RpcCommandChain implements IRpcCommand<Payload> {
 
 	@SuppressWarnings("unchecked")
 	public void onSuccess(Payload result) {
-		RpcCommand.rpc(false);
-		((RpcCommand) currentCommand).handleSuccess(result);
+		((RpcCommand) currentCommand).onSuccess(result);
 		currentCommand = null;
 		executeNextCommand();
 	}
 
 	public void onFailure(Throwable caught) {
-		RpcCommand.rpc(false);
 		// halt
 		currentCommand.onFailure(caught);
 		currentCommand = null;

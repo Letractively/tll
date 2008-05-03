@@ -705,17 +705,6 @@ target (buildClient: 'Build all client related stuff') {
 	targetStart()
 	depends(copyClient)
 	clearClientClasses()
-	
-	// HACK
-	// FOR GWT HOST MODE ONLY: copy refdata files to client classes dir
-	// as this is where the class loader looks!
-	println()
-	println 'HACK ALERT: FOR GWT HOST MODE ONLY: Copying refdata files to client classes dir...'
-	Ant.copy(todir: "${property.'project.client.dir'}/classes", preservelastmodified:true) {
-		fileset(dir: "${property.'project.server.dir'}/resources/refdata")
-	}
-	// END HACK
-	
 	targetEnd()
 }
 	

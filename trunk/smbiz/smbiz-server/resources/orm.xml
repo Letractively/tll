@@ -90,6 +90,10 @@
     </query>
   </named-query>
 
+  <named-query name="interface.summaryList.count">
+    <query><![CDATA[select count(id) from Interface]]></query>
+  </named-query>
+  
   <!-- TODO: finish 
   <named-native-query name="pch.findTopLevelCategoryIds">
     <query>
@@ -116,10 +120,6 @@
   <!-- ENTITY SELECT QUERIES -->
   <!-- ===================== -->
 
-  <named-query name="interface.summaryList.count">
-    <query><![CDATA[select count(id) from Interface]]></query>
-  </named-query>
-  
   <named-query name="interface.select">
     <query><![CDATA[from Interface intf order by name]]></query>
   </named-query>

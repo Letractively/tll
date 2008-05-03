@@ -106,7 +106,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 
 		// only sort when at least 2 list elements and sorting directive argument
 		// differs than what is held in the list handler's criteria.
-		if(size() > 1 && !sorting.equals(sorting)) {
+		if(size() > 1 && !sorting.equals(this.sorting)) {
 
 			try {
 				try {

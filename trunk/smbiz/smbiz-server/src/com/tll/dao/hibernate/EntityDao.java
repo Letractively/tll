@@ -289,7 +289,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 		// apply sorting (if specified)
 		if(sorting != null) {
-			final StringBuffer sb = new StringBuffer(hbmQuery.getQueryString().toString());
+			final StringBuffer sb = new StringBuffer(hbmQuery.getQueryString());
 			int indx = sb.indexOf(ORDER_BY_TOKEN);
 			if(indx >= 0) {
 				indx += ORDER_BY_TOKEN.length();
@@ -661,7 +661,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				final SelectNamedQuery namedQueryDef = criteria.getNamedQueryDefinition();
 				String queryName = namedQueryDef.getQueryName();
 				String countQueryName = namedQueryDef.getCountCounterpartQueryName();
-				final Query cq = assembleQuery(countQueryName, null, null, null, false);
+				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
 

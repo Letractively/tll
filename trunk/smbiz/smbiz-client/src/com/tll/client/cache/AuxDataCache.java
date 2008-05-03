@@ -144,7 +144,7 @@ public final class AuxDataCache {
 		return currencyMap;
 	}
 
-	public boolean isCached(AuxDataType type, Object obj) {
+	private boolean isCached(AuxDataType type, Object obj) {
 		switch(type) {
 			case REFDATA:
 				return refDataMaps == null ? false : refDataMaps.containsKey(obj);

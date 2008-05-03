@@ -8,7 +8,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -40,7 +40,7 @@ import com.tll.listhandler.Sorting;
  * ListingTable - AbstractListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable extends Grid implements IListingListener, TableListener, KeyboardListener, ClickListener {
+public class ListingTable extends Grid implements IListingListener, TableListener, KeyboardListener {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -57,8 +57,10 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	protected static final String CSS_UPDATED = "updated";
 	protected static final String CSS_DELETED = "deleted";
 
-	protected static final String DOM_PROP_SORT_COL = "sortcol";
-	protected static final String DOM_PROP_SORT_DIR = "sortdir";
+	/**
+	 * The sort column arrow.
+	 */
+	private Image imgSortDir;
 
 	protected Column[] columns;
 
@@ -83,11 +85,6 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	 * The column index of the currently sorted column.
 	 */
 	private int crntSortColIndex = -1;
-
-	/**
-	 * The sort column arrow.
-	 */
-	private Image imgCurrentSort;
 
 	/**
 	 * Associates a Column to a column header cell widget in the header row. Used
@@ -142,11 +139,9 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 		}
 		rowNumColIndex = rn;
 
-		/*
 		if(config.isSortable()) {
-			this.colBindings = new Object[columns.length][2];
+			sortlinks = new SortLink[columns.length];
 		}
-		*/
 
 		setStyleName(STYLE_TABLE);
 
@@ -162,16 +157,6 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 
 	public final Widget getTableWidget() {
 		return this;
-	}
-
-	public void onClick(Widget sender) {
-		if(sender instanceof SortLink) {
-			SortLink sortLink = (SortLink) sender;
-			Column col = sortLink.column;
-			SortColumn sc = new SortColumn(col.getPropertyName(), col.getParentAlias(), col.getIgnoreCase());
-			sc.setDirection(sortLink.direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
-			listingOperator.sort(sc);
-		}
 	}
 
 	/**
@@ -218,75 +203,91 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	}
 
 	private void applySorting(Sorting sorting) {
+		assert sortlinks != null;
 		if(sorting != null) {
-			if(imgCurrentSort == null) {
-				imgCurrentSort = new Image();
-				imgCurrentSort.addClickListener(this);
-			}
 			SortColumn sc = sorting.getPrimarySortColumn();
-			if(sc.getDirection() == SortDir.ASC) {
-				App.imgs().sort_asc().applyTo(imgCurrentSort);
-			}
-			else {
-				App.imgs().sort_desc().applyTo(imgCurrentSort);
-			}
-			SortDir reverseDir = sc.getDirection() == SortDir.ASC ? SortDir.DESC : SortDir.ASC;
-			String sdesc = "Sort " + (reverseDir.getName());
-			imgCurrentSort.setTitle(sdesc);
-			imgCurrentSort.getElement().setPropertyString(DOM_PROP_SORT_COL, sc.getPropertyName());
-			imgCurrentSort.getElement().setPropertyInt(DOM_PROP_SORT_DIR, reverseDir.ordinal());
 
-			// to apply sort col index
+			// resolve the column index
 			int index = resolveColumnIndex(sc.getPropertyName());
 
-			ComplexPanel pnl;
-			SortLink lnk;
-
-			if(index != crntSortColIndex) {
-
-				// reset old sort column
-				if(crntSortColIndex >= 0) {
-					lnk = sortlinks[crntSortColIndex];
-					Column col = lnk.column;
-					imgCurrentSort.removeFromParent();
-					lnk.setTitle("Sort by " + col.name);
-					lnk.getElement().setPropertyInt(DOM_PROP_SORT_DIR, SortDir.ASC.ordinal());
-				}
-
-				// set new sort column
-				lnk = sortlinks[index];
-				pnl = (ComplexPanel) lnk.getParent();
-				pnl.add(imgCurrentSort);
-
-				crntSortColIndex = index;
+			// reset old sort column (if there is one)
+			if(crntSortColIndex >= 0) {
+				sortlinks[crntSortColIndex].clearSortDirection();
 			}
-			else {
-				lnk = sortlinks[index];
-			}
-			lnk.setTitle(sdesc);
-			lnk.column.setDirection(reverseDir);
-			imgCurrentSort.setStyleName(CSS_SORT);
+
+			// set new sort column
+			sortlinks[index].setSortDirection(sc.getDirection());
+			crntSortColIndex = index;
 		}
 	}
 
-	private final class SortLink extends SimpleHyperLink {
+	/**
+	 * SortLink
+	 * @author jpk
+	 */
+	private final class SortLink extends Composite implements ClickListener {
 
-		Column column;
-		int columnIndex;
-		SortDir direction = SortDir.ASC;
+		private final FlowPanel pnl = new FlowPanel();
+
+		private final SimpleHyperLink lnk;
+
+		private final Column column;
+
+		private SortDir direction;
 
 		/**
 		 * Constructor
 		 * @param column
-		 * @param columnIndex
 		 */
-		public SortLink(Column column, int columnIndex) {
-			super(column.name, ListingTable.this);
+		public SortLink(Column column) {
+			lnk = new SimpleHyperLink(column.name, this);
+			pnl.add(lnk);
+			initWidget(pnl);
 			this.column = column;
-			this.columnIndex = columnIndex;
-			setTitle("Sort by " + column.name);
 		}
 
+		public void setSortDirection(SortDir direction) {
+			assert direction != null && pnl.getWidgetCount() == 1;
+
+			this.direction = direction;
+
+			SortDir reverseDir = direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC;
+			String reverseTitle = "Sort " + (reverseDir.getName());
+
+			// set the title to the reverse of the current sort dir
+			lnk.setTitle(reverseTitle);
+
+			if(imgSortDir == null) {
+				imgSortDir = new Image();
+				imgSortDir.addClickListener(this);
+				imgSortDir.setStyleName(CSS_SORT);
+			}
+
+			// insert the sort dir arrow image
+			if(direction == SortDir.ASC) {
+				App.imgs().sort_asc().applyTo(imgSortDir);
+			}
+			else {
+				App.imgs().sort_desc().applyTo(imgSortDir);
+			}
+			imgSortDir.setTitle(reverseTitle);
+			pnl.insert(imgSortDir, 0);
+		}
+
+		public void clearSortDirection() {
+			assert direction != null && pnl.getWidgetCount() == 2;
+			direction = null;
+			lnk.setTitle("Sort by " + column.name);
+			pnl.remove(0);
+		}
+
+		public void onClick(Widget sender) {
+			if(sender == lnk) {
+				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), column.getIgnoreCase());
+				sc.setDirection(direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
+				listingOperator.sort(sc);
+			}
+		}
 	}
 
 	private void addHeaderRow(IListingConfig config) {
@@ -302,23 +303,19 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 				getCellFormatter().addStyleName(0, c, CSS_COUNT_COL);
 				getColumnFormatter().addStyleName(c, CSS_COUNT_COL);
 			}
-			FlowPanel pnl = new FlowPanel();
-			SortLink lnk = null;
 			if(config.isSortable()) {
 				if(isRowCntCol) {
-					pnl.add(new Label("#"));
+					setWidget(0, c, new Label("#"));
 				}
 				else {
-					lnk = new SortLink(col, c);
-					pnl.add(lnk);
+					assert sortlinks != null;
+					SortLink sl = new SortLink(col);
+					sortlinks[c] = sl;
+					setWidget(0, c, sl);
 				}
 			}
 			else {
-				pnl.add(new Label(col.name));
-			}
-			setWidget(0, c, pnl);
-			if(sortlinks != null) {
-				sortlinks[c] = lnk;
+				setWidget(0, c, new Label(col.name));
 			}
 		}
 	}
@@ -379,7 +376,7 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 			if(page != null) {
 				removeBodyRows();
 				addBodyRows(page);
-				applySorting(event.getSorting());
+				if(sortlinks != null) applySorting(event.getSorting());
 				crntPage = page.getPageNumber() + 1;
 				numPages = page.getNumPages();
 				actvRowIndex = crntRowIndex = -1; // reset

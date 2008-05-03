@@ -14,6 +14,7 @@ import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
+import com.tll.model.impl.AddressType;
 
 /**
  * AccountAddressPanel
@@ -23,7 +24,7 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 
 	static final String ID_ACCOUNT_ADDRESS_DELETE_PREFIX = "dlte_aa_";
 
-	protected final String addressTypeName;
+	protected final AddressType addressType;
 	protected int propValIndex = -1;
 	protected TextField name;
 	// protected final Image imgDeleteToggle = new Image();
@@ -33,13 +34,13 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param addressTypeName
+	 * @param addressType
 	 * @param propValIndex
 	 */
-	public AccountAddressPanel(String propName, String addressTypeName, int propValIndex) {
-		super(propName, addressTypeName);
+	public AccountAddressPanel(String propName, AddressType addressType, int propValIndex) {
+		super(propName, addressType.getName());
 
-		this.addressTypeName = addressTypeName;
+		this.addressType = addressType;
 		this.propValIndex = propValIndex;
 
 		// delete img btn
@@ -50,13 +51,13 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 		addressPanel = new AddressPanel("address");
 	}
 
+	public AddressType getAddressType() {
+		return addressType;
+	}
+
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
 		// none
-	}
-
-	public String getAddressTypeName() {
-		return addressTypeName;
 	}
 
 	public int getPropValIndex() {
@@ -96,12 +97,12 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 		if(markDeleted) {
 			// App.imgs().undo().applyTo(imgDeleteToggle);
 			btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
-			btnDeleteToggle.setTitle("Un-delete " + addressTypeName + " Address");
+			btnDeleteToggle.setTitle("Un-delete " + addressType.getName() + " Address");
 		}
 		else {
 			// App.imgs().delete().applyTo(imgDeleteToggle);
 			btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
-			btnDeleteToggle.setTitle("Delete " + addressTypeName + " Address");
+			btnDeleteToggle.setTitle("Delete " + addressType.getName() + " Address");
 		}
 	}
 
