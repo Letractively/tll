@@ -1,7 +1,8 @@
 package com.tll.criteria;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -23,7 +24,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private CriterionGroup primaryGroup = new CriterionGroup();
 
-	private Map<String, Object> queryParams;
+	private Set<IQueryParam> queryParams;
 
 	/**
 	 * Constructor
@@ -49,7 +50,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * @param namedQueryDefinition The named query definition
 	 * @param queryParams The possible query parameters
 	 */
-	public Criteria(SelectNamedQuery namedQueryDefinition, Map<String, Object> queryParams) {
+	public Criteria(SelectNamedQuery namedQueryDefinition, Set<IQueryParam> queryParams) {
 		super();
 		this.criteriaType =
 				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
@@ -70,15 +71,15 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		return namedQueryDefinition;
 	}
 
-	public Map<String, Object> getQueryParams() {
+	public Collection<IQueryParam> getQueryParams() {
 		return queryParams;
 	}
 
-	public void setQueryParam(String paramName, String paramValue) {
+	public void setQueryParam(IQueryParam param) {
 		if(queryParams == null) {
-			queryParams = new HashMap<String, Object>();
+			queryParams = new HashSet<IQueryParam>();
 		}
-		queryParams.put(paramName, paramValue);
+		queryParams.add(param);
 	}
 
 	public boolean isSet() {

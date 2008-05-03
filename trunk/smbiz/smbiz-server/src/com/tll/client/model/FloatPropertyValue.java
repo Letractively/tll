@@ -21,12 +21,21 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public FloatPropertyValue(String propertyName, Float value) {
+		this(propertyName, null, value);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public FloatPropertyValue(String name, PropertyData pdata, Float value) {
-		super(name, pdata);
+	public FloatPropertyValue(String propertyName, PropertyData pdata, Float value) {
+		super(propertyName, pdata);
 		this.value = value;
 	}
 
@@ -64,4 +73,26 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 	public void setFloat(Float value) {
 		this.value = value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final FloatPropertyValue other = (FloatPropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }

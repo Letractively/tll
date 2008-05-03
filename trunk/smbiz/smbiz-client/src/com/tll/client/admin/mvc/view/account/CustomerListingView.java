@@ -15,6 +15,7 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
@@ -132,7 +133,7 @@ public final class CustomerListingView extends ListingView implements IRowOption
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
 		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
-		criteria.setQueryParam("merchantId", mercRef.getId());
+		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
 
 		final IListingConfig config = new AccountListingConfig() {
 

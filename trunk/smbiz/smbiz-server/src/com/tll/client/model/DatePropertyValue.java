@@ -23,12 +23,22 @@ public class DatePropertyValue extends AbstractPropertyValue {
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public DatePropertyValue(String propertyName, Date value) {
+		super(propertyName, null);
+		this.value = value;
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public DatePropertyValue(String name, PropertyData pdata, Date value) {
-		super(name, pdata);
+	public DatePropertyValue(String propertyName, PropertyData pdata, Date value) {
+		super(propertyName, pdata);
 		this.value = value;
 	}
 
@@ -66,4 +76,26 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	public Date getDate() {
 		return value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final DatePropertyValue other = (DatePropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }

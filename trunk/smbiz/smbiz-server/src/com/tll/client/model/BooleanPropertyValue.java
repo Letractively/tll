@@ -11,7 +11,7 @@ import com.tll.model.schema.PropertyType;
  */
 public class BooleanPropertyValue extends AbstractPropertyValue {
 
-	protected Boolean value;
+	private Boolean value;
 
 	/**
 	 * Constructor
@@ -22,12 +22,21 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public BooleanPropertyValue(String propertyName, Boolean value) {
+		this(propertyName, null, value);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public BooleanPropertyValue(String name, PropertyData pdata, Boolean value) {
-		super(name, pdata);
+	public BooleanPropertyValue(String propertyName, PropertyData pdata, Boolean value) {
+		super(propertyName, pdata);
 		this.value = value;
 	}
 
@@ -65,4 +74,26 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	public Boolean getBoolean() {
 		return value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final BooleanPropertyValue other = (BooleanPropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }

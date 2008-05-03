@@ -21,12 +21,21 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public LongPropertyValue(String propertyName, Long value) {
+		this(propertyName, null, value);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public LongPropertyValue(String name, PropertyData pdata, Long value) {
-		super(name, pdata);
+	public LongPropertyValue(String propertyName, PropertyData pdata, Long value) {
+		super(propertyName, pdata);
 		this.value = value;
 	}
 
@@ -68,4 +77,26 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 	public Long getLong() {
 		return value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final LongPropertyValue other = (LongPropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }

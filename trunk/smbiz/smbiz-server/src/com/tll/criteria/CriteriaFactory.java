@@ -3,7 +3,7 @@
  */
 package com.tll.criteria;
 
-import java.util.Map;
+import java.util.Set;
 
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
@@ -191,7 +191,7 @@ public abstract class CriteriaFactory {
 	 *         query.
 	 */
 	public static ICriteria<? extends IEntity> buildQueryCriteria(SelectNamedQuery namedQuery,
-			Map<String, Object> queryParams) {
+			Set<IQueryParam> queryParams) {
 		return new Criteria<IEntity>(namedQuery, queryParams);
 	}
 }

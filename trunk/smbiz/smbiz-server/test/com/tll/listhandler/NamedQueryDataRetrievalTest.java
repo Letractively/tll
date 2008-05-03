@@ -6,8 +6,10 @@
 package com.tll.listhandler;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -18,6 +20,7 @@ import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.DaoMode;
@@ -26,6 +29,7 @@ import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.util.EnumUtil;
 
@@ -39,8 +43,44 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	private static final Map<SelectNamedQuery, SortColumn> querySortBindings =
 			new HashMap<SelectNamedQuery, SortColumn>();
 
-	private static final Map<SelectNamedQuery, Map<String, Object>> queryParamsBindings =
-			new HashMap<SelectNamedQuery, Map<String, Object>>();
+	private static final Map<SelectNamedQuery, Set<IQueryParam>> queryParamsBindings =
+			new HashMap<SelectNamedQuery, Set<IQueryParam>>();
+
+	private static class QueryParam implements IQueryParam {
+
+		private String propertyName;
+		private PropertyType type;
+		private Object value;
+
+		/**
+		 * Constructor
+		 * @param propertyName
+		 * @param type
+		 * @param value
+		 */
+		public QueryParam(String propertyName, PropertyType type, Object value) {
+			super();
+			this.propertyName = propertyName;
+			this.type = type;
+			this.value = value;
+		}
+
+		public String descriptor() {
+			return "Query Param";
+		}
+
+		public String getPropertyName() {
+			return propertyName;
+		}
+
+		public PropertyType getType() {
+			return type;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+	}
 
 	static {
 		for(SelectNamedQuery nq : SelectNamedQuery.values()) {
@@ -51,16 +91,16 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 					break;
 				case MERCHANT_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "m"));
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("ispId", new Integer(4));
-					queryParamsBindings.put(nq, map);
+					Set<IQueryParam> set = new HashSet<IQueryParam>();
+					set.add(new QueryParam("ispId", PropertyType.INT, new Integer(2)));
+					queryParamsBindings.put(nq, set);
 					break;
 				}
 				case CUSTOMER_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "ca"));
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("merchantId", new Integer(7));
-					queryParamsBindings.put(nq, map);
+					Set<IQueryParam> set = new HashSet<IQueryParam>();
+					set.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
+					queryParamsBindings.put(nq, set);
 					break;
 				}
 				case INTERFACE_SUMMARY_LISTING:

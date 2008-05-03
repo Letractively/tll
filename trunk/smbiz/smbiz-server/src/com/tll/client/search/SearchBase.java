@@ -4,10 +4,11 @@
  */
 package com.tll.client.search;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.tll.criteria.CriteriaType;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQuery;
 
 /**
@@ -20,7 +21,7 @@ public abstract class SearchBase implements ISearch {
 	private boolean retrieveAll = false;
 
 	private SelectNamedQuery namedQuery;
-	private Map<String, Object> queryParams;
+	private Set<IQueryParam> queryParams;
 
 	/**
 	 * Constructor
@@ -64,15 +65,15 @@ public abstract class SearchBase implements ISearch {
 		this.namedQuery = namedQuery;
 	}
 
-	public final Map<String, Object> getQueryParams() {
+	public final Set<IQueryParam> getQueryParams() {
 		return queryParams;
 	}
 
-	public final void setQueryParam(String paramName, Object paramValue) {
+	public final void setQueryParam(IQueryParam queryParam) {
 		if(queryParams == null) {
-			queryParams = new HashMap<String, Object>();
+			queryParams = new HashSet<IQueryParam>();
 		}
-		queryParams.put(paramName, paramValue);
+		queryParams.add(queryParam);
 	}
 
 	public final boolean isRetrieveAll() {

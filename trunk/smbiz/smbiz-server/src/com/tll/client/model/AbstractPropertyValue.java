@@ -5,11 +5,13 @@
  */
 package com.tll.client.model;
 
+import com.tll.criteria.IQueryParam;
+
 /**
  * AbstractPropertyValue
  * @author jpk
  */
-public abstract class AbstractPropertyValue extends AbstractPropertyBinding implements IPropertyValue {
+public abstract class AbstractPropertyValue extends AbstractPropertyBinding implements IPropertyValue, IQueryParam {
 
 	/**
 	 * The optional property meta data.
@@ -20,7 +22,7 @@ public abstract class AbstractPropertyValue extends AbstractPropertyBinding impl
 	 * Constructor
 	 */
 	public AbstractPropertyValue() {
-		super();
+		this(null, null);
 	}
 
 	/**
@@ -48,5 +50,15 @@ public abstract class AbstractPropertyValue extends AbstractPropertyBinding impl
 	public final String toString() {
 		String pn = propertyName;
 		return pn + "=" + (getValue() == null ? "<UNSET>" : getValue().toString());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }

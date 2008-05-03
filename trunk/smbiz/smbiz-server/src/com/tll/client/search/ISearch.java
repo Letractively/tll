@@ -4,10 +4,11 @@
  */
 package com.tll.client.search;
 
-import java.util.Map;
+import java.util.Set;
 
 import com.tll.client.IMarshalable;
 import com.tll.criteria.CriteriaType;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;
 
@@ -48,5 +49,5 @@ public interface ISearch extends IMarshalable {
 	/**
 	 * @return Possible query parameters when a named query is specified.
 	 */
-	Map<String, Object> getQueryParams();
+	Set<IQueryParam> getQueryParams();
 }

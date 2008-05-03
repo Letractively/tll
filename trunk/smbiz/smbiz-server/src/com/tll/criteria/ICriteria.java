@@ -1,7 +1,7 @@
 package com.tll.criteria;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Collection;
 
 import com.tll.model.IEntity;
 
@@ -33,10 +33,10 @@ public interface ICriteria<E extends IEntity> extends Serializable, Cloneable {
 
 	/**
 	 * Retrieves any query parameters if a named query is specified.
-	 * @return Map of the query params and their associated String wise values.
+	 * @return Collection of query params and their associated String wise values.
 	 *         May be <code>null</code> or empty.
 	 */
-	Map<String, Object> getQueryParams();
+	Collection<IQueryParam> getQueryParams();
 
 	/**
 	 * @return true if at least one valid {@link Criterion} exists.

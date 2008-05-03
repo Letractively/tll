@@ -21,12 +21,22 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public StringPropertyValue(String propertyName, String value) {
+		this(propertyName, null, value);
+
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public StringPropertyValue(String name, PropertyData pdata, String value) {
-		super(name, pdata);
+	public StringPropertyValue(String propertyName, PropertyData pdata, String value) {
+		super(propertyName, pdata);
 		this.value = value;
 
 	}
@@ -69,4 +79,26 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	public void setString(String value) {
 		this.value = value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final StringPropertyValue other = (StringPropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }

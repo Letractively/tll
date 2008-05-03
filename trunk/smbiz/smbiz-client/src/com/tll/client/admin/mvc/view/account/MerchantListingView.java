@@ -17,6 +17,7 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
@@ -125,7 +126,7 @@ public final class MerchantListingView extends ListingView {
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
 		criteria.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
-		criteria.setQueryParam("ispId", ispRef.getId());
+		criteria.setQueryParam(new IntPropertyValue("ispId", ispRef.getId()));
 
 		final IListingConfig config = new AccountListingConfig() {
 

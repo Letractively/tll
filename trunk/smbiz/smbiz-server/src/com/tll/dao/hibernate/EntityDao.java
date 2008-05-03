@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -34,6 +33,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.ICriterionGroup;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.IDbDialectHandler;
@@ -278,7 +278,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private final Query assembleQuery(String queryName, Map<String, Object> queryParams, Sorting sorting,
+	private final Query assembleQuery(String queryName, Collection<IQueryParam> queryParams, Sorting sorting,
 			ResultTransformer resultTransformer, boolean cacheable) throws InvalidCriteriaException {
 		if(queryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");
@@ -309,12 +309,18 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				throw new InvalidCriteriaException("Empty or invalid number of query parameters for named query: " + queryName);
 			}
 			for(final String np : namedParams) {
-				final Object paramValue = queryParams.get(np);
-				if(paramValue == null) {
+				IQueryParam queryParam = null;
+				for(IQueryParam qp : queryParams) {
+					if(np.equals(qp.getPropertyName())) {
+						queryParam = qp;
+						break;
+					}
+				}
+				if(queryParam == null) {
 					throw new InvalidCriteriaException("Named parameter: " + np + " is not specified for named query: "
 							+ queryName);
 				}
-				hbmQuery.setParameter(np, paramValue);
+				hbmQuery.setParameter(np, queryParam.getValue());
 			}
 		}
 

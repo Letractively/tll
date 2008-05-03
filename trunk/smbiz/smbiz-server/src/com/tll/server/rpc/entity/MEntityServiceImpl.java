@@ -6,6 +6,7 @@ package com.tll.server.rpc.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -30,6 +31,7 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
@@ -227,7 +229,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		ICriteria<? extends E> criteria;
-		final Map<String, Object> queryParams = search.getQueryParams();
+		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
 			SelectNamedQuery nq = search.getNamedQuery();

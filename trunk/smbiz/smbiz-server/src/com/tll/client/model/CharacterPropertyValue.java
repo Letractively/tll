@@ -21,12 +21,21 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 
 	/**
 	 * Constructor
-	 * @param name
+	 * @param propertyName
+	 * @param value
+	 */
+	public CharacterPropertyValue(String propertyName, Character value) {
+		this(propertyName, null, value);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public CharacterPropertyValue(String name, PropertyData pdata, Character value) {
-		super(name, pdata);
+	public CharacterPropertyValue(String propertyName, PropertyData pdata, Character value) {
+		super(propertyName, pdata);
 		this.value = value;
 	}
 
@@ -68,4 +77,26 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	public Character getCharacter() {
 		return value;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final CharacterPropertyValue other = (CharacterPropertyValue) obj;
+		if(value == null) {
+			if(other.value != null) return false;
+		}
+		else if(!value.equals(other.value)) return false;
+		return true;
+	}
+
 }
