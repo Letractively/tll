@@ -14,7 +14,6 @@ import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.Interface;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**
@@ -22,12 +21,6 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * @author jpk
  */
 public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
-
-	private static final MarshalOptions marshalOptions = MarshalOptions.UNCONSTRAINED_MARSHALING;
-
-	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
-		return marshalOptions;
-	}
 
 	@Override
 	protected void handleLoadOptions(RequestContext requestContext, Interface e, EntityOptions options,

@@ -36,7 +36,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 		super(JpaMode.LOCAL);
 	}
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
 	}

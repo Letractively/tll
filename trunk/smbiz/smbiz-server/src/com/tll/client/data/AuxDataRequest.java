@@ -19,12 +19,15 @@ public class AuxDataRequest implements IMarshalable {
 
 	public enum AuxDataType {
 		REFDATA,
-		ENTITY;
+		ENTITY,
+		ENTITY_PROTOTYPE;
 	}
 
 	private Set<String> refData;
 
 	private Set<EntityType> entityTypes;
+
+	private Set<EntityType> entityPrototypes;
 
 	public String descriptor() {
 		return "Auxiliary Data Request";
@@ -52,6 +55,13 @@ public class AuxDataRequest implements IMarshalable {
 		entityTypes.add(entityType);
 	}
 
+	public void requestEntityPrototype(EntityType entityType) {
+		if(entityPrototypes == null) {
+			entityPrototypes = new HashSet<EntityType>();
+		}
+		entityPrototypes.add(entityType);
+	}
+
 	public Iterator<String> getRefDataRequests() {
 		return refData == null ? null : refData.iterator();
 	}
@@ -60,7 +70,12 @@ public class AuxDataRequest implements IMarshalable {
 		return entityTypes == null ? null : entityTypes.iterator();
 	}
 
+	public Iterator<EntityType> getEntityPrototypeRequests() {
+		return entityPrototypes == null ? null : entityPrototypes.iterator();
+	}
+
 	public int size() {
-		return (refData == null ? 0 : refData.size()) + (entityTypes == null ? 0 : entityTypes.size());
+		return (refData == null ? 0 : refData.size()) + (entityTypes == null ? 0 : entityTypes.size())
+				+ (entityPrototypes == null ? 0 : entityPrototypes.size());
 	}
 }

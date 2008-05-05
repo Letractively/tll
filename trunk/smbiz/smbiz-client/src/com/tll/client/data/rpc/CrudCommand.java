@@ -33,11 +33,13 @@ import com.tll.model.EntityType;
  */
 public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
 
-	public static final int CRUD_OP_RECIEVE_EMPTY_ENTITY = 0;
-	public static final int CRUD_OP_LOAD = 1;
-	public static final int CRUD_OP_ADD = 2;
-	public static final int CRUD_OP_UPDATE = 3;
-	public static final int CRUD_OP_PURGE = 4;
+	public enum CrudOp {
+		RECIEVE_EMPTY_ENTITY,
+		LOAD,
+		ADD,
+		UPDATE,
+		PURGE;
+	}
 
 	private static final ICrudServiceAsync svc;
 	static {
@@ -47,7 +49,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 
 	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
 
-	private int crudOp = -1;
+	private CrudOp crudOp;
 	private EntityRequest entityRequest;
 
 	/**
@@ -68,7 +70,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalStateException("An entity type must be specified.");
 		}
 		entityRequest = new EntityGetEmptyRequest(entityType, generate);
-		crudOp = CRUD_OP_RECIEVE_EMPTY_ENTITY;
+		crudOp = CrudOp.RECIEVE_EMPTY_ENTITY;
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalStateException("A set entity reference must be specified.");
 		}
 		entityRequest = new EntityLoadRequest(entityRef);
-		crudOp = CRUD_OP_LOAD;
+		crudOp = CrudOp.LOAD;
 	}
 
 	/**
@@ -92,7 +94,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalStateException("An entity type and name must be specified.");
 		}
 		entityRequest = new EntityLoadRequest(entityType, name);
-		crudOp = CRUD_OP_LOAD;
+		crudOp = CrudOp.LOAD;
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalArgumentException("A non-null and new entity must be specified.");
 		}
 		entityRequest = new EntityPersistRequest(entity);
-		crudOp = CRUD_OP_ADD;
+		crudOp = CrudOp.ADD;
 	}
 
 	/**
@@ -116,7 +118,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalStateException("A non-null and non-new entity must be specified.");
 		}
 		entityRequest = new EntityPersistRequest(entity);
-		crudOp = CRUD_OP_UPDATE;
+		crudOp = CrudOp.UPDATE;
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 			throw new IllegalStateException("A set entity reference must be specified.");
 		}
 		entityRequest = new EntityPurgeRequest(entityRef);
-		crudOp = CRUD_OP_PURGE;
+		crudOp = CrudOp.PURGE;
 	}
 
 	public final void addCrudListener(ICrudListener listener) {
@@ -154,7 +156,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	}
 
 	private void clear() {
-		crudOp = -1;
+		crudOp = null;
 		entityRequest = null;
 	}
 
@@ -175,23 +177,23 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	@Override
 	protected void doExecute() {
 		switch(crudOp) {
-			case CRUD_OP_RECIEVE_EMPTY_ENTITY:
+			case RECIEVE_EMPTY_ENTITY:
 				svc.getEmptyEntity((EntityGetEmptyRequest) entityRequest, getAsyncCallback());
 				break;
 
-			case CRUD_OP_LOAD:
+			case LOAD:
 				if(entityRequest.auxDataRequest != null) {
 					entityRequest.auxDataRequest = AuxDataCache.instance().filterRequest(entityRequest.auxDataRequest);
 				}
 				svc.load((EntityLoadRequest) entityRequest, getAsyncCallback());
 				break;
 
-			case CRUD_OP_ADD:
-			case CRUD_OP_UPDATE:
+			case ADD:
+			case UPDATE:
 				svc.persist((EntityPersistRequest) entityRequest, getAsyncCallback());
 				break;
 
-			case CRUD_OP_PURGE:
+			case PURGE:
 				svc.purge((EntityPurgeRequest) entityRequest, getAsyncCallback());
 				break;
 
@@ -203,23 +205,26 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	@Override
 	protected void handleSuccess(EntityPayload result) {
 		super.handleSuccess(result);
+
+		// cache aux data
 		AuxDataCache.instance().cache(result);
+
 		crudListeners.fireCrudEvent(new CrudEvent(sourcingWidget, crudOp, entityRequest, result));
 
 		// fire app wide model change event if applicable
 		if(!result.hasErrors()) {
 			switch(crudOp) {
-				case CRUD_OP_ADD: {
+				case ADD: {
 					ModelChangeEventDispatcher.instance().fireOnModelChange(
 							new ModelChangeEvent(sourcingWidget, ModelChangeOp.ADD, result.getEntity()));
 					break;
 				}
-				case CRUD_OP_UPDATE: {
+				case UPDATE: {
 					ModelChangeEventDispatcher.instance().fireOnModelChange(
 							new ModelChangeEvent(sourcingWidget, ModelChangeOp.UPDATE, result.getEntity()));
 					break;
 				}
-				case CRUD_OP_PURGE: {
+				case PURGE: {
 					ModelChangeEventDispatcher.instance().fireOnModelChange(
 							new ModelChangeEvent(sourcingWidget, ModelChangeOp.DELETE, result.getEntityRef()));
 					break;

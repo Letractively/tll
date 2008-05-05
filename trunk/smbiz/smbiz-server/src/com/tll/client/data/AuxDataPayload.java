@@ -6,6 +6,7 @@ package com.tll.client.data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.tll.client.model.Model;
 import com.tll.model.EntityType;
@@ -43,6 +44,11 @@ public class AuxDataPayload extends Payload {
 	 */
 	protected Map<EntityType, List<Model>> entityGroupMap;
 
+	/**
+	 * Set of entity prototypes
+	 */
+	protected Set<Model> entityPrototypes;
+
 	public Map<String, Map<String, String>> getRefDataMaps() {
 		return refDataMaps;
 	}
@@ -58,4 +64,13 @@ public class AuxDataPayload extends Payload {
 	public void setEntityGroupMap(Map<EntityType, List<Model>> entityMap) {
 		this.entityGroupMap = entityMap;
 	}
+
+	public Set<Model> getEntityPrototypes() {
+		return entityPrototypes;
+	}
+
+	public void setEntityPrototypes(Set<Model> entityPrototypes) {
+		this.entityPrototypes = entityPrototypes;
+	}
+
 }

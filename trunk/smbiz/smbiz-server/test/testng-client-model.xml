@@ -8,9 +8,9 @@
         <include name="client-model" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.client.model.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.client.model" />
+    </packages>
   </test>
 
 </suite>

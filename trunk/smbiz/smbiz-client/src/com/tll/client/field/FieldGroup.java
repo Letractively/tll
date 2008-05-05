@@ -16,7 +16,6 @@ import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
-import com.tll.client.model.PropertyPathHelper;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
@@ -245,6 +244,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *         field group properly or when the property path is inherently
 	 *         mal-formed.
 	 */
+	/*
 	public void setField(String propPath, IField field) throws IllegalArgumentException {
 		assert field != null;
 		try {
@@ -264,6 +264,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	*/
 
 	/**
 	 * Recursively searches for the field of the given property path and if found
@@ -271,6 +272,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param propPath The property path of the field to be removed.
 	 * @return The removed field or <code>null</code> if not found.
 	 */
+	/*
 	public IField removeField(String propPath) {
 		if(propPath == null) return null;
 		FieldBinding binding;
@@ -285,10 +287,32 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		binding.parent.fields.remove(binding.field);
 		return binding.field;
 	}
+	*/
+
+	/**
+	 * Removes a field by reference searching recursively. If the given field is
+	 * <code>null</code> or is <em>this</em> field group, no field is removed
+	 * and <code>false</code> is returned.
+	 * @param field The field to remove.
+	 * @return <code>true</code> if the field was removed, <code>false</code>
+	 *         if not.
+	 */
+	public boolean removeField(IField field) {
+		if(field == null || field == this) return false;
+		for(IField fld : fields) {
+			if(fld == field) {
+				return fields.remove(field);
+			}
+			else if(fld instanceof FieldGroup) {
+				((FieldGroup) fld).removeField(field);
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Adds a field directly under this field group.
-	 * @param field
+	 * @param field The field to add
 	 */
 	public void addField(IField field) {
 		assert field != null;
@@ -313,8 +337,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * For the case of a field group, we provide a comma delimited list of field
-	 * values.
+	 * For the case of a {@link FieldGroup}, we provide a comma delimited list of
+	 * field values for all child {@link IField}s.
 	 */
 	public String getValue() {
 		StringBuffer sb = new StringBuffer();
@@ -326,8 +350,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Setting a value on a field group, means we set the same value to all child
-	 * fields.
+	 * Setting a value on a {@link FieldGroup}, means we recursively set the same
+	 * value to all child fields.
 	 */
 	public void setValue(String value) {
 		for(IField field : fields) {
@@ -365,6 +389,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	// TODO: fix this - we're not traversing the hierarchy!!!
 	public boolean updateModel(Model model) {
 		model.setMarkedDeleted(markedDeleted);
 		if(!markedDeleted) {

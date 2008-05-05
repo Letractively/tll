@@ -7,9 +7,11 @@ package com.tll.server.rpc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.tll.client.data.AuxDataPayload;
 import com.tll.client.data.AuxDataRequest;
@@ -38,6 +40,7 @@ public abstract class AuxDataHandler {
 
 		Map<String, Map<String, String>> appRefDataMap = null;
 		Map<EntityType, List<Model>> entityMap = null;
+		Set<Model> entityPrototypes = null;
 
 		// app ref data
 		Iterator<String> adritr = auxDataRequest.getRefDataRequests();
@@ -69,7 +72,8 @@ public abstract class AuxDataHandler {
 			else {
 				final List<Model> elist = new ArrayList<Model>(list.size());
 				for(final IEntity e : list) {
-					final Model group = requestContext.getMarshaler().marshalEntity(e, new MarshalOptions(false, false, -1));
+					final Model group =
+							requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCE_ENTITY_MARSHALING);
 					elist.add(group);
 				}
 				if(entityMap == null) {
@@ -79,8 +83,20 @@ public abstract class AuxDataHandler {
 			}
 		}
 
+		// entity prototypes
+		etitr = auxDataRequest.getEntityPrototypeRequests();
+		while(etitr != null && etitr.hasNext()) {
+			EntityType et = etitr.next();
+			final IEntity e = requestContext.getEntityAssembler().assembleEntity(et, null, false);
+			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCE_ENTITY_MARSHALING);
+			if(entityPrototypes == null) {
+				entityPrototypes = new HashSet<Model>();
+			}
+			entityPrototypes.add(model);
+		}
+
 		payload.setRefDataMaps(appRefDataMap);
 		payload.setEntityGroupMap(entityMap);
-
+		payload.setEntityPrototypes(entityPrototypes);
 	}
 }

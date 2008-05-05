@@ -28,11 +28,14 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	IEntityService<E> getEntityService();
 
 	/**
-	 * Translates {@link ISearch} instances to server-side compatible {@link ICriteria} instances.
+	 * Translates {@link ISearch} instances to server-side compatible
+	 * {@link ICriteria} instances.
 	 * @param search Client-side search instance.
 	 * @return Server-side criteria instance.
-	 * @throws IllegalArgumentException When <code>search</code> param is invalid.
-	 * @throws SystemError When the impl service is unable to be properly resolved.
+	 * @throws IllegalArgumentException When <code>search</code> param is
+	 *         invalid.
+	 * @throws SystemError When the impl service is unable to be properly
+	 *         resolved.
 	 */
 	ICriteria<? extends E> translate(ISearch search) throws IllegalArgumentException, SystemError;
 
@@ -42,12 +45,14 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	MarshalOptions getMarshalOptions();
 
 	/**
-	 * Provides an {@link IMarshalingListHandler} for use by {@link IListingService} implementations.
+	 * Provides an {@link IMarshalingListHandler} for use by
+	 * {@link IListingService} implementations.
 	 * @param listingCommand The listing command.
 	 * @return An entity row list handler.
-	 * @throws IllegalArgumentException When the <code>listingCommand</code> arg is
-	 *           <code>null</code> or invalid.
-	 * @throws SystemError When the impl service is unable to be properly resolved.
+	 * @throws IllegalArgumentException When the <code>listingCommand</code> arg
+	 *         is <code>null</code> or invalid.
+	 * @throws SystemError When the impl service is unable to be properly
+	 *         resolved.
 	 */
 	IMarshalingListHandler<E> getMarshalingListHandler(IListingCommand listingCommand) throws IllegalArgumentException,
 			SystemError;

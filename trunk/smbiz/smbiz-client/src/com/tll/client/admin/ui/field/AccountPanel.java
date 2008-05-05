@@ -4,7 +4,9 @@
  */
 package com.tll.client.admin.ui.field;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,11 +21,8 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityPayload;
-import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.ICrudListener;
-import com.tll.client.event.type.CrudEvent;
 import com.tll.client.field.IField;
+import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
@@ -44,13 +43,7 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends NamedTimeStampEntityPanel implements ClickListener, TabListener, DisclosureHandler, ICrudListener, ChangeListener {
-
-	/**
-	 * Non-generated prototype acount address entity used to stub new account
-	 * addresses.
-	 */
-	private Model accountAddressPrototype;
+public class AccountPanel extends NamedTimeStampEntityPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
 
 	protected TextField parent;
 	protected SelectField status;
@@ -65,18 +58,19 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
 	protected PaymentInfoPanel paymentInfoPanel;
 	protected final TabPanel tabAddresses = new TabPanel();
-	protected AccountAddressPanel[] aaPanels;
-
-	private AccountAddressPanel bindPending;
 
 	/**
-	 * Array of indexes representing "open" (non-existant) account addresses for
-	 * the backing account entity. <br>
-	 * <code>-1</code> indicates non-open, zero and positive indicates an open
-	 * slot and corres. to the account address list index in the backing account
-	 * entity.
+	 * AccountAddressPanelModelBinding
+	 * @author jpk
 	 */
-	protected int[] availAAPVIs;
+	private final class AccountAddressPanelModelBinding {
+
+		public AccountAddressPanel panel;
+		public Model proto;
+	}
+
+	private final Map<AddressType, AccountAddressPanelModelBinding> aamap =
+			new HashMap<AddressType, AccountAddressPanelModelBinding>(AddressType.values().length);
 
 	/**
 	 * Constructor
@@ -87,84 +81,6 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		paymentInfoPanel = new PaymentInfoPanel("paymentInfo");
 	}
 
-	protected final int getNextAvailableAccountAddressPropertyIndex() {
-		for(int i = 0; i < availAAPVIs.length; i++) {
-			if(availAAPVIs[i] != -1) {
-				return i;
-			}
-		}
-		return -1; // no open slots left
-	}
-
-	protected final AccountAddressPanel getAccountAddressPanel(AddressType addressType) {
-		for(AccountAddressPanel element2 : aaPanels) {
-			if(element2.getAddressType() == addressType) {
-				return element2;
-			}
-		}
-		return null; // shouldn't happen
-	}
-
-	private void applyPrototypeAccountAddress(AccountAddressPanel aap) {
-		if(accountAddressPrototype == null) {
-			// drat! we gotta go to the server
-			bindPending = aap;
-			CrudCommand cc = new CrudCommand(this);
-			cc.receiveEmpty(EntityType.ACCOUNT_ADDRESS, false);
-			cc.addCrudListener(this);
-			cc.execute();
-		}
-		else {
-			aap.bind(accountAddressPrototype.copy());
-		}
-	}
-
-	public void onCrudEvent(CrudEvent event) {
-		EntityPayload p = event.getPayload();
-		if(!p.hasErrors()) {
-			accountAddressPrototype = p.getEntity();
-			assert bindPending != null;
-			applyPrototypeAccountAddress(bindPending);
-		}
-	}
-
-	/**
-	 * Propagates the property path based on the dynamic <code>propValIndex</code>
-	 * argument and adds the {@link AccountAddressPanel}s field group to this
-	 * panel's field group and finally updates the {@link #availAAPVIs} array.
-	 * @param aap The {@link AccountAddressPanel} to bind.
-	 * @param propValIndex The index relative to the account entities' collection
-	 *        of current account addresses.
-	 */
-	private void bindAccountAddressPanel(AccountAddressPanel aap, int propValIndex) {
-		final String propName = "addresses[" + propValIndex + "]";
-		aap.setPropertyName(propName);
-		aap.setPropValIndex(propValIndex);
-		if(fields.getField(propName) == null) {
-			fields.addField(aap.getFields());
-		}
-		availAAPVIs[propValIndex] = -1; // indicates occupied
-	}
-
-	/**
-	 * Removes the {@link AccountAddressPanel}s field group from this panel's
-	 * field group and opens up the taken slot in the {@link #availAAPVIs} array.
-	 * @param aap The {@link AccountAddressPanel} to unbind.
-	 * @param propValIndex The index relative to the account entities' collection
-	 *        of current account addresses.
-	 */
-	private void unbindAccountAddressPanel(AccountAddressPanel aap) {
-		assert aap != null;
-		int pvi = aap.getPropValIndex();
-		if(pvi != -1) {
-			String propName = aap.getPropertyName();
-			fields.removeField(propName);
-			availAAPVIs[pvi] = pvi;
-			aap.setPropValIndex(-1);
-			aap.setPropertyName(null);
-		}
-	}
-
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
 		auxDataRequest.requestEntityList(EntityType.CURRENCY);
@@ -173,6 +89,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		// dynamically loaded
 		auxDataRequest.requestAppRefData("usps-state-abbrs");
 		auxDataRequest.requestAppRefData("iso-country-codes");
+		auxDataRequest.requestEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 	}
 
 	@Override
@@ -201,20 +118,12 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		paymentInfoPanel.configure();
 		paymentInfoPanel.setRefWidget(dpPaymentInfo);
 
-		// account address sub-panels prep
-		availAAPVIs = new int[AddressType.values().length];
-
-		// stub the account address panels
-		aaPanels = new AccountAddressPanel[AddressType.values().length];
-		int adrTypeIndex = 0;
+		// stub the address type to account address panel bindings
 		for(AddressType at : AddressType.values()) {
-			AccountAddressPanel aap = new AccountAddressPanel(null, at, -1);
-			aap.setRefWidget(tabAddresses);
-			// NOTE: the aa panel property path is set just before the entity is
-			// applied
-			aaPanels[adrTypeIndex++] = aap;
-			// aap.configure();
+			aamap.put(at, new AccountAddressPanelModelBinding());
 		}
+
+		// listen to tab events
 		tabAddresses.addTabListener(this);
 
 		fields.addField(parent);
@@ -282,49 +191,44 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	protected void onBeforeBind(Model model) {
 		super.onBeforeBind(model);
 
-		// reset
-		for(int i = 0; i < availAAPVIs.length; i++) {
-			availAAPVIs[i] = i;
+		// un-bind existing
+		for(AddressType at : aamap.keySet()) {
+			AccountAddressPanelModelBinding binding = aamap.get(at);
+			if(binding.panel != null) {
+				fields.removeField(binding.panel.getFields());
+				binding.panel = null;
+				binding.proto = null;
+			}
 		}
 
+		// clear out address tabs
 		tabAddresses.clear();
 
-		// [re-]set the account address panels
+		// bind from model
 		RelatedManyProperty pvAddresses = model.relatedMany("addresses");
-		List<Model> addresses = pvAddresses.getList();
-		for(AddressType at : AddressType.values()) {
-			// resolve the entity property path index for this adrs type
-			int i = -1;
-			boolean exists = false;
-			if(addresses != null) {
-				for(Model aa : addresses) {
-					i++;
-					// set the account address prototype
-					if(accountAddressPrototype == null) {
-						accountAddressPrototype = aa.copy();
-						accountAddressPrototype.clearPropertyValues();
-					}
-					if(at.getValue().equals(aa.asString("type"))) {
-						exists = true;
-						break;
-					}
-				}
-				if(!exists) i = -1;
+		if(pvAddresses != null) {
+			Iterator<IndexedProperty> itr = pvAddresses.iterator();
+			while(itr.hasNext()) {
+				IndexedProperty ip = itr.next();
+				AddressType at = (AddressType) ip.getModel().getProp("type").getValue();
+				AccountAddressPanel aap = new AccountAddressPanel(ip.getPropertyName(), at);
+				aamap.get(at).panel = aap;
+				aap.bind(ip.getModel());
+				fields.addField(aap.getFields());
 			}
+		}
 
-			AccountAddressPanel aap = getAccountAddressPanel(at);
-			if(i != -1) { // exists
-				assert aap != null;
-				bindAccountAddressPanel(aap, i);
-				tabAddresses.add(aap, at.getName());
-			}
-			else { // doesn't exist
-				unbindAccountAddressPanel(aap);
+		// add address tabs
+		for(AddressType at : aamap.keySet()) {
+			AccountAddressPanelModelBinding binding = aamap.get(at);
+			if(binding.panel == null) {
 				NoEntityExistsPanel neep =
-						new NoEntityExistsPanel(at.getName(), "No " + at.getName() + " address set.", "Create " + at.getName()
-								+ " address");
+						new NoEntityExistsPanel(at, "No " + at.getName() + " address set.", "Create " + at.getName() + " address");
 				neep.addClickListener(this);
 				tabAddresses.add(neep, at.getName());
+			}
+			else {
+				tabAddresses.add(binding.panel, at.getName());
 			}
 		}
 	}
@@ -344,18 +248,20 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 		// we need to stub related many account addresses if they exist in the field
 		// group but don't in the account entity (propValGroup)
-		for(AccountAddressPanel aap : aaPanels) {
-			String propName = aap.getPropertyName();
-			// NOTE: if the prop name is null then we can assume the entity doesn't
-			// have it or has it so we are safe
-			if(propName != null && !model.isPropertyDefined(propName)) {
-				// account address is new so stub it in the account entity
-				assert accountAddressPrototype != null;
-				Model newAccountAddress = accountAddressPrototype.copy();
-				AddressType at = aap.getAddressType();
-				newAccountAddress.setProp("type", at.getValue());
-				newAccountAddress.setRelatedOne("account", model);
-				model.addIndexedModel(propName, newAccountAddress);
+
+		RelatedManyProperty addresses = model.relatedMany("addresses");
+		assert addresses != null;
+
+		for(AddressType at : aamap.keySet()) {
+			AccountAddressPanel aap = aamap.get(at).panel;
+			if(aap != null) {
+				String propertyName = aap.getFields().getPropertyName();
+				if(isPendingProperty(propertyName)) {
+					Model aaproto = aamap.get(at).proto;
+					assert aaproto != null;
+					String actualPropName = addresses.add(aaproto);
+					aap.getFields().setPropertyName(actualPropName);
+				}
 			}
 		}
 	}
@@ -376,18 +282,19 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			// this is a non-existant account address
 			int selTabIndx = tabAddresses.getTabBar().getSelectedTab();
 			assert selTabIndx >= 0;
-			String adrsTypeName = ((NoEntityExistsPanel) sender).getRefToken();
-			int propValIndex = getNextAvailableAccountAddressPropertyIndex();
-			assert propValIndex != -1;
-			AccountAddressPanel aap = aaPanels[selTabIndx];
-			bindAccountAddressPanel(aap, propValIndex);
 
-			// ensure the account address panel fields have their property values set
-			applyPrototypeAccountAddress(aap);
-			// aap.reset();
+			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
+			AccountAddressPanelModelBinding binding = aamap.get(at);
+			assert binding.panel == null;
+			String pendingIndexedPropName = getPendingPropertyName();
+			binding.panel = new AccountAddressPanel(pendingIndexedPropName, at);
+			binding.proto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+			assert binding.proto != null;
+			binding.panel.bind(binding.proto);
+			fields.addField(binding.panel.getFields());
 
-			tabAddresses.insert(aap, adrsTypeName, selTabIndx == 0 ? 0 : selTabIndx);
-			aap.getFields().render();
+			tabAddresses.insert(binding.panel, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);
+			binding.panel.getFields().render();
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);
 		}

@@ -44,6 +44,7 @@ public class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 
 	@Override
 	protected void handleSuccess(AuxDataPayload result) {
+		// cache the results
 		AuxDataCache.instance().cache(result);
 		super.handleSuccess(result);
 	}

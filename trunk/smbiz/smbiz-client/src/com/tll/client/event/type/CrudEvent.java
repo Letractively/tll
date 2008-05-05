@@ -7,6 +7,7 @@ package com.tll.client.event.type;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityRequest;
+import com.tll.client.data.rpc.CrudCommand.CrudOp;
 
 /**
  * CrudEvent
@@ -14,7 +15,7 @@ import com.tll.client.data.EntityRequest;
  */
 public final class CrudEvent extends BaseEvent {
 
-	private final int crudOp;
+	private final CrudOp crudOp;
 	private final EntityRequest request;
 	private final EntityPayload payload;
 
@@ -24,14 +25,14 @@ public final class CrudEvent extends BaseEvent {
 	 * @param crudOp
 	 * @param payload
 	 */
-	public CrudEvent(Widget source, int crudOp, EntityRequest request, EntityPayload payload) {
+	public CrudEvent(Widget source, CrudOp crudOp, EntityRequest request, EntityPayload payload) {
 		super(source);
 		this.crudOp = crudOp;
 		this.request = request;
 		this.payload = payload;
 	}
 
-	public int getCrudOp() {
+	public CrudOp getCrudOp() {
 		return crudOp;
 	}
 

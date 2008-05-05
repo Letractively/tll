@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class NoEntityExistsPanel extends VerticalPanel implements SourcesClickEvents {
 
-	private final String refToken;
+	private final Object refToken;
 	private final Label lblDesc;
 	private final Button btnCreate;
 	private ClickListenerCollection clickListeners;
@@ -33,7 +33,7 @@ public class NoEntityExistsPanel extends VerticalPanel implements SourcesClickEv
 	 * @param description
 	 * @param createBtnText
 	 */
-	public NoEntityExistsPanel(String refToken, String description, String createBtnText) {
+	public NoEntityExistsPanel(Object refToken, String description, String createBtnText) {
 		super();
 		this.refToken = refToken;
 		lblDesc = new Label(description);
@@ -50,7 +50,7 @@ public class NoEntityExistsPanel extends VerticalPanel implements SourcesClickEv
 		sinkEvents(Event.ONCLICK);
 	}
 
-	public String getRefToken() {
+	public Object getRefToken() {
 		return refToken;
 	}
 

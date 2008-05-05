@@ -46,7 +46,6 @@ import com.tll.model.schema.FieldData;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
-import com.tll.util.EnumUtil;
 
 /**
  * Marshaler
@@ -176,7 +175,7 @@ public final class Marshaler {
 		}
 
 		else if(Enum.class.isAssignableFrom(ptype)) {
-			prop = new EnumPropertyValue(ptype.getName(), pname, pdata, obj == null ? null : ((Enum<?>) obj).name());
+			prop = new EnumPropertyValue(pname, pdata, obj == null ? null : (Enum<?>) obj);
 		}
 
 		else if(Long.class.isAssignableFrom(ptype) || long.class.isAssignableFrom(ptype)) {
@@ -296,16 +295,18 @@ public final class Marshaler {
 			if(prop == null) {
 				// related one
 				if(IEntity.class.isAssignableFrom(ptype)) {
-					if(options.processRelatedOne && depthCheck(depth, options.maxDepth)) {
+					boolean reference = isReferenceRelation(entityClass, pname);
+					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						prop = new RelatedOneProperty(pname, isReferenceRelation(entityClass, pname), ngrp);
+						prop = new RelatedOneProperty(pname, reference, ngrp);
 					}
 				}
 
 				// related many collection
 				else if(Set.class.isAssignableFrom(ptype)) {
-					if(options.processRelatedMany && depthCheck(depth, options.maxDepth)) {
+					boolean reference = isReferenceRelation(entityClass, pname);
+					if(shouldMarshalRelation(reference, depth, options)) {
 						List<Model> list = null;
 						if(obj != null) {
 							list = new ArrayList<Model>();
@@ -450,20 +451,8 @@ public final class Marshaler {
 				case FLOAT:
 				case DATE:
 				case CHAR:
+				case ENUM:
 					val = pval;
-					break;
-
-				case ENUM: {
-					final EnumPropertyValue epv = (EnumPropertyValue) prop;
-					Class<? extends Enum> enumClass;
-					try {
-						enumClass = (Class<? extends Enum>) Class.forName(epv.getEnumClassName());
-					}
-					catch(final ClassNotFoundException e1) {
-						throw new SystemError("Unable to resolve enum class: " + epv.getEnumClassName());
-					}
-					val = EnumUtil.fromString(enumClass, epv.getString());
-				}
 					break;
 
 				case RELATED_ONE: {
@@ -523,33 +512,47 @@ public final class Marshaler {
 	 * Provides {@link PropertyData} for a given entities' property.
 	 * @param entityClass
 	 * @param propName
-	 * @return New {@link PropertyData} instance of <code>null</code> if none
-	 *         could be resolved.
+	 * @return New {@link PropertyData} instance or <code>null</code> if the
+	 *         given property name does not resolve to a property value.
 	 */
 	private PropertyData generatePropertyData(final Class<? extends IEntity> entityClass, final String propName) {
 		try {
 			final FieldData fd = schemaInfo.getFieldData(entityClass, propName);
 			return new PropertyData(fd.getPropertyType(), fd.isRequired(), fd.getMaxLen());
 		}
-		catch(final SchemaInfoException e) {
+		catch(SchemaInfoException e) {
 			return null;
 		}
 	}
 
 	/**
-	 * Ascertains whether or not a given relational type property for a given
-	 * entity type is a reference or is "owned".
+	 * Is this given relational property a reference?
 	 * @param entityClass
 	 * @param propName
 	 * @return true/false
+	 * @throws SchemaInfoException When the prop name is not resolvable to a model
+	 *         relation.
 	 */
 	private boolean isReferenceRelation(final Class<? extends IEntity> entityClass, final String propName) {
-		try {
-			final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, propName);
-			return ri.isReference();
-		}
-		catch(final SchemaInfoException e) {
+		final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, propName);
+		return ri.isReference();
+	}
+
+	/**
+	 * Ascertains whether or not a given relational type property for a given
+	 * entity type should be marshaled.
+	 * @param isReferenceRelation
+	 * @param currentDepth
+	 * @param marshalOptions
+	 * @return true/false
+	 */
+	private boolean shouldMarshalRelation(boolean isReferenceRelation, int currentDepth, MarshalOptions marshalOptions) {
+		if(!depthCheck(currentDepth, marshalOptions.maxDepth)) {
 			return false;
 		}
+		if(isReferenceRelation) {
+			return marshalOptions.processReferenceRelations;
+		}
+		return true;
 	}
 }

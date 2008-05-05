@@ -4,14 +4,18 @@
 package com.tll.client.model;
 
 import com.tll.model.schema.PropertyType;
+import com.tll.util.INameValueProvider;
 
 /**
  * StringPropertyValue - Generic holder construct for entity properties.
  * @author jpk
  */
-public class EnumPropertyValue extends StringPropertyValue {
+@SuppressWarnings("unchecked")
+public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFormattingPropertyValue {
 
-	private String enumClassName;
+	// TODO paramterize (Enum<?>)
+	// see http://code.google.com/p/google-web-toolkit/issues/detail?id=2281
+	private Enum value;
 
 	/**
 	 * Constructor
@@ -21,58 +25,71 @@ public class EnumPropertyValue extends StringPropertyValue {
 
 	/**
 	 * Constructor
-	 * @param enumClassName May not be <code>null</code>.
 	 * @param propertyName
 	 * @param value
 	 */
-	public EnumPropertyValue(String enumClassName, String propertyName, String value) {
-		this(enumClassName, propertyName, null, value);
+	public EnumPropertyValue(String propertyName, Enum<?> value) {
+		this(propertyName, null, value);
 	}
 
 	/**
 	 * Constructor
-	 * @param enumClassName May not be <code>null</code>.
 	 * @param propertyName
 	 * @param pdata
 	 * @param value
 	 */
-	public EnumPropertyValue(String enumClassName, String propertyName, PropertyData pdata, String value) {
-		super(propertyName, pdata, value);
-		assert enumClassName != null;
-		this.enumClassName = enumClassName;
+	public EnumPropertyValue(String propertyName, PropertyData pdata, Enum<?> value) {
+		super(propertyName, pdata);
+		this.value = value;
 	}
 
-	@Override
+	public String descriptor() {
+		return "Enum property";
+	}
+
 	public PropertyType getType() {
 		return PropertyType.ENUM;
 	}
 
-	@Override
 	public IPropertyValue copy() {
-		return new EnumPropertyValue(enumClassName, getPropertyName(), pdata, value);
+		return new EnumPropertyValue(getPropertyName(), pdata, value);
 	}
 
-	public String getEnumClassName() {
-		return enumClassName;
-	}
-
-	public void setEnumClassName(String enumClassName) {
-		this.enumClassName = enumClassName;
-	}
-
-	public String getEnum() {
+	public Enum<?> getEnum() {
 		return value;
 	}
 
-	public void setEnum(String value) {
+	public void setEnum(Enum<?> value) {
 		this.value = value;
+	}
+
+	public void clear() {
+		this.value = null;
+	}
+
+	public void setValue(Object value) {
+		if(value instanceof Enum == false) {
+			throw new IllegalArgumentException("The value must be an Enum");
+		}
+		setEnum((Enum<?>) value);
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public String asString() {
+		if(value instanceof INameValueProvider) {
+			return ((INameValueProvider) value).getName();
+		}
+		return value == null ? null : value.name();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((enumClassName == null) ? 0 : enumClassName.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
@@ -82,10 +99,10 @@ public class EnumPropertyValue extends StringPropertyValue {
 		if(!super.equals(obj)) return false;
 		if(getClass() != obj.getClass()) return false;
 		final EnumPropertyValue other = (EnumPropertyValue) obj;
-		if(enumClassName == null) {
-			if(other.enumClassName != null) return false;
+		if(value == null) {
+			if(other.value != null) return false;
 		}
-		else if(!enumClassName.equals(other.enumClassName)) return false;
+		else if(!value.equals(other.value)) return false;
 		return true;
 	}
 

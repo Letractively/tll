@@ -17,20 +17,22 @@ import com.tll.TestBase;
  * GuiceBootstrapperTest
  * @author jpk
  */
-@Test(groups = "bootstrap")
+@Test(groups = {
+	"server",
+	"bootstrap" })
 public class GuiceBootstrapperTest extends TestBase {
 
 	private ServletContext getMockServletContext() {
 		MockServletContext context = new MockServletContext();
 		context.addInitParameter(Constants.GUICE_MODULE_CLASS_NAMES, 
-	      "com.tll.guice.VelocityModule \r\n"
-	      +"com.tll.guice.MailModule \r\n"
-	      +"com.tll.guice.AppRefDataModule \r\n"
-	      +"com.tll.guice.MockEntitiesModule \r\n"
-	      +"com.tll.guice.JpaModule \r\n"
-	      +"com.tll.guice.DaoModule \r\n"
-	      +"com.tll.guice.EntityServiceModule \r\n"
-	      +"com.tll.guice.SecurityModule \r\n");
+				"com.tll.guice.VelocityModule \r\n"
+				+ "com.tll.guice.MailModule \r\n" 
+				+ "com.tll.guice.AppRefDataModule \r\n"
+				+ "com.tll.guice.MockEntitiesModule \r\n" 
+				+ "com.tll.guice.JpaModule \r\n" 
+				+ "com.tll.guice.DaoModule \r\n"
+				+ "com.tll.guice.EntityServiceModule \r\n" 
+				+ "com.tll.guice.SecurityModule \r\n");
 		return context;
 	}
 

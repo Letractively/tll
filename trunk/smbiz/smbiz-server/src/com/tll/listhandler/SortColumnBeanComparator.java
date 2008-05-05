@@ -9,7 +9,7 @@ import java.util.Comparator;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-import com.tll.client.model.PropertyPathHelper;
+import com.tll.client.model.PropertyPath;
 
 /**
  * {@link Comparator} that compares properties of beans via reflection employing
@@ -54,7 +54,7 @@ public class SortColumnBeanComparator<T> implements Comparator<T>, Serializable 
 		final BeanWrapper bw1 = new BeanWrapperImpl(o1);
 		final BeanWrapper bw2 = new BeanWrapperImpl(o2);
 
-		final String propPath = PropertyPathHelper.getPropertyPath(nestedpath, sortColumn.getPropertyName());
+		final String propPath = PropertyPath.getPropertyPath(nestedpath, sortColumn.getPropertyName());
 		final Object v1 = bw1.getPropertyValue(propPath);
 		final Object v2 = bw2.getPropertyValue(propPath);
 

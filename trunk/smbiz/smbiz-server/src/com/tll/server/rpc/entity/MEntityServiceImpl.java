@@ -41,6 +41,7 @@ import com.tll.model.key.KeyFactory;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.AuxDataHandler;
+import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.PropKeyListHandler;
 import com.tll.service.entity.IEntityService;
@@ -78,7 +79,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			final IEntity e = requestContext.getEntityAssembler().assembleEntity(entityType, null, request.isGenerate());
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCE_ENTITY_MARSHALING);
 			payload.setEntity(group);
 		}
 		catch(final SystemError se) {
@@ -122,7 +123,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			}
 
 			// marshal the loaded entity
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 			payload.setEntity(group);
 
 			// set any entity refs
@@ -161,7 +162,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			handlePersistOptions(requestContext, e, request.entityOptions);
 
 			// marshall
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 			payload.setEntity(group);
 
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
@@ -253,8 +254,8 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
 			final IListingCommand listingCommand) {
-		return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext), listingCommand
-				.getPropKeys());
+		return new PropKeyListHandler<E>(requestContext.getMarshaler(), MarshalOptions.UNCONSTRAINED_MARSHALING,
+				listingCommand.getPropKeys());
 	}
 
 	/**

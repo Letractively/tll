@@ -66,7 +66,7 @@ public class EntityServiceTest extends DbTest {
 		modules.add(esm);
 	}
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
 	}

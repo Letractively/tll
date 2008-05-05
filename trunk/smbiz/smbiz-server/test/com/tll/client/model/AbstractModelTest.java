@@ -33,7 +33,7 @@ public abstract class AbstractModelTest extends DbTest {
 		modules.add(new DaoModule(DaoMode.MOCK));
 	}
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
 	}

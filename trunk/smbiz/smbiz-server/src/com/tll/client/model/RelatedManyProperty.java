@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -110,8 +111,46 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 		return new IndexedIterator();
 	}
 
+	/**
+	 * @return The number of indexed models in this related many list.
+	 */
 	public int size() {
 		return list == null ? 0 : list.size();
+	}
+
+	/**
+	 * Adds a model to the related many collection returning the property name
+	 * that identifies the added model.
+	 * @param indexable The model to add
+	 * @return The property name identifying the newly added model.
+	 */
+	public String add(Model indexable) {
+		if(indexable == null) return null;
+		if(list == null) {
+			list = new ArrayList<Model>();
+		}
+		list.add(indexable);
+		return getPropertyName() + '[' + (list.size() - 1) + ']';
+	}
+
+	/**
+	 * Removes an indexed model from this related many list.
+	 * @param indexable The indexable model to remove
+	 * @return <code>true</code> if the indexed model was actually removed.
+	 */
+	public boolean remove(Model indexable) {
+		if(indexable == null || list == null) return false;
+		return list.remove(indexable);
+	}
+
+	/**
+	 * Removes an indexed model by index.
+	 * @param index The index of the indexed model to remove
+	 * @throws IndexOutOfBoundsException When the index is out of bounds
+	 */
+	public void removeIndexed(int index) throws IndexOutOfBoundsException {
+		if(list == null) return;
+		list.remove(index);
 	}
 
 	@Override

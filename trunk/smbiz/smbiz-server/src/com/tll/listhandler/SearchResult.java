@@ -5,7 +5,7 @@
  */
 package com.tll.listhandler;
 
-import com.tll.client.model.PropertyPathHelper;
+import com.tll.client.model.PropertyPath;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 
@@ -50,12 +50,12 @@ public final class SearchResult<E extends IEntity> {
 		final E e = getEntity();
 		if(e != null) {
 			// entity
-			return PropertyPathHelper.getPropertyPath("element", propertyName);
+			return PropertyPath.getPropertyPath("element", propertyName);
 		}
 		// scalar
 		final IScalar scalar = getScalar();
 		assert scalar != null;
-		return PropertyPathHelper.getPropertyPath("element", scalar.getPropertyPath(propertyName));
+		return PropertyPath.getPropertyPath("element", scalar.getPropertyPath(propertyName));
 	}
 
 	/**

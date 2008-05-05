@@ -214,7 +214,7 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 
 		// do we need any aux data from the server?
 		AuxDataRequest adr = AuxDataCache.instance().filterRequest(auxDataRequest);
-		if(adr.size() > 0) {
+		if(adr != null) {
 			final AuxDataCommand adc = new AuxDataCommand(this, adr);
 			adc.addRpcListener(this);
 			adc.execute();
@@ -229,15 +229,15 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 
 	public void onCrudEvent(CrudEvent event) {
 		switch(event.getCrudOp()) {
-			case CrudCommand.CRUD_OP_RECIEVE_EMPTY_ENTITY:
-			case CrudCommand.CRUD_OP_LOAD:
+			case RECIEVE_EMPTY_ENTITY:
+			case LOAD:
 				entity = event.getPayload().getEntity();
 				refresh();
 				break;
 
-			case CrudCommand.CRUD_OP_ADD:
-			case CrudCommand.CRUD_OP_UPDATE:
-			case CrudCommand.CRUD_OP_PURGE: {
+			case ADD:
+			case UPDATE:
+			case PURGE: {
 				Status status = event.getPayload().getStatus();
 				if(status.hasErrors()) {
 					fldGrpPnl.fields.handleValidationFeedback(new ValidationException(status.getFieldMsgs()));

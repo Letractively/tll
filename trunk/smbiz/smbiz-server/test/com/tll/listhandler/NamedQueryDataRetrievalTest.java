@@ -114,7 +114,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 
 	protected DaoMode daoMode;
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	@Parameters(value = {
 		"jpaMode",
 		"daoMode" })

@@ -2,10 +2,12 @@
 <suite name="smbiz-test-shell">
   
   <test verbose="6" name="shell-test" annotations="JDK">
+    <!-- 
     <parameter name="jpaMode" value="SPRING" />
     <parameter name="daoMode" value="ORM" />
+    -->
     <classes>
-      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest"/>
+      <class name="com.tll.client.model.PropertyPathTest" />
     </classes>
   </test>
 

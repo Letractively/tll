@@ -44,7 +44,7 @@ public class MarshalerTest extends TestBase {
 		super();
 	}
 
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
 	}

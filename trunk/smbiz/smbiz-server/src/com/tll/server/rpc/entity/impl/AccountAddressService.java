@@ -14,7 +14,6 @@ import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.AccountAddress;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**
@@ -22,12 +21,6 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * @author jpk
  */
 public final class AccountAddressService extends MNamedEntityServiceImpl<AccountAddress> {
-
-	private static final MarshalOptions marshalOptions = new MarshalOptions(false, true, 2);
-
-	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
-		return marshalOptions;
-	}
 
 	@Override
 	protected void handleLoadOptions(RequestContext requestContext, AccountAddress e, EntityOptions options,

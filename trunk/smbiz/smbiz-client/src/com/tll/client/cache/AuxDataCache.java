@@ -5,9 +5,11 @@
 package com.tll.client.cache;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.tll.client.data.AuxDataPayload;
 import com.tll.client.data.AuxDataRequest;
@@ -42,13 +44,19 @@ public final class AuxDataCache {
 	 */
 	private Map<EntityType, List<Model>> entityMap;
 
+	/**
+	 * Cache of entity prototypes
+	 */
+	private Set<Model> entityPrototypes;
+
 	private AuxDataCache() {
 	}
 
 	/**
 	 * Eliminates those requests already present in the {@link AuxDataCache}.
 	 * @param adr The aux data request to filter.
-	 * @return The filtered data request to send to the server.
+	 * @return The filtered data request to send to the server or
+	 *         <code>null</code> if the filtering yields no needed aux data.
 	 */
 	public AuxDataRequest filterRequest(AuxDataRequest adr) {
 		if(adr == null) return null;
@@ -76,9 +84,45 @@ public final class AuxDataCache {
 			}
 		}
 
-		return sadr;
+		// entity prototypes
+		ets = adr.getEntityPrototypeRequests();
+		if(ets != null) {
+			while(ets.hasNext()) {
+				EntityType et = ets.next();
+				if(!isCached(AuxDataType.ENTITY_PROTOTYPE, et)) {
+					sadr.requestEntityPrototype(et);
+				}
+			}
+		}
+
+		return sadr.size() > 0 ? sadr : null;
 	}
 
+	private void cacheRefDataMap(String appRefDataTerseName, Map<String, String> map) {
+		if(refDataMaps == null) {
+			refDataMaps = new HashMap<String, Map<String, String>>();
+		}
+		refDataMaps.put(appRefDataTerseName, map);
+	}
+
+	private void cacheEntityList(EntityType entityType, List<Model> list) {
+		if(entityMap == null) {
+			entityMap = new HashMap<EntityType, List<Model>>();
+		}
+		entityMap.put(entityType, list);
+	}
+
+	private void cacheEntityPrototype(Model prototype) {
+		if(entityPrototypes == null) {
+			entityPrototypes = new HashSet<Model>();
+		}
+		entityPrototypes.add(prototype);
+	}
+
+	/**
+	 * Caches the resultant aux data received from the server.
+	 * @param payload The aux data payload
+	 */
 	public void cache(AuxDataPayload payload) {
 
 		// ref data maps
@@ -96,20 +140,14 @@ public final class AuxDataCache {
 				cacheEntityList(et, egm.get(et));
 			}
 		}
-	}
 
-	private void cacheRefDataMap(String appRefDataTerseName, Map<String, String> map) {
-		if(refDataMaps == null) {
-			refDataMaps = new HashMap<String, Map<String, String>>();
+		// entity prototypes
+		Set<Model> eps = payload.getEntityPrototypes();
+		if(eps != null) {
+			for(Model p : eps) {
+				cacheEntityPrototype(p);
+			}
 		}
-		refDataMaps.put(appRefDataTerseName, map);
-	}
-
-	private void cacheEntityList(EntityType entityType, List<Model> list) {
-		if(entityMap == null) {
-			entityMap = new HashMap<EntityType, List<Model>>();
-		}
-		entityMap.put(entityType, list);
 	}
 
 	public Map<String, String> getRefDataMap(String appRefDataTerseName) {
@@ -118,6 +156,23 @@ public final class AuxDataCache {
 
 	public List<Model> getEntityList(EntityType entityType) {
 		return entityMap == null ? null : entityMap.get(entityType);
+	}
+
+	/**
+	 * Returns a
+	 * <em>distinct<em> prototype {@link Model} instance of the given entity type.
+	 * @param entityType The entity type
+	 * @return A distinct prototypical {@link Model} instance of the given entity type.
+	 */
+	public Model getEntityPrototype(EntityType entityType) {
+		if(entityPrototypes != null) {
+			for(Model p : entityPrototypes) {
+				if(p.getEntityType() == entityType) {
+					return p.copy(); // IMPT: provide a distinct instance
+				}
+			}
+		}
+		return null;
 	}
 
 	private static Map<String, String> currencyMap;
@@ -144,12 +199,20 @@ public final class AuxDataCache {
 		return currencyMap;
 	}
 
-	private boolean isCached(AuxDataType type, Object obj) {
+	public boolean isCached(AuxDataType type, Object obj) {
 		switch(type) {
 			case REFDATA:
 				return refDataMaps == null ? false : refDataMaps.containsKey(obj);
 			case ENTITY:
 				return entityMap == null ? false : entityMap.containsKey(obj);
+			case ENTITY_PROTOTYPE: {
+				if(entityPrototypes == null) return false;
+				assert obj instanceof EntityType;
+				for(Model p : entityPrototypes) {
+					if(p.getEntityType() == obj) return true;
+				}
+				return false;
+			}
 			default:
 				return false;
 		}
@@ -158,6 +221,7 @@ public final class AuxDataCache {
 	public void clear() {
 		if(refDataMaps != null) refDataMaps.clear();
 		if(entityMap != null) entityMap.clear();
+		if(entityPrototypes != null) entityPrototypes.clear();
 	}
 
 }

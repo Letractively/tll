@@ -9,58 +9,33 @@ public final class MarshalOptions {
 	/**
 	 * Use for unconstrained marshaling
 	 */
-	public static final MarshalOptions UNCONSTRAINED_MARSHALING = new MarshalOptions(true, true, -1);
-
-	boolean processRelatedMany, processRelatedOne;
-
-	int maxDepth;
+	public static final MarshalOptions UNCONSTRAINED_MARSHALING = new MarshalOptions(true, -1);
 
 	/**
-	 * Constructor
+	 * Use for marshaling entities where reference relations are NOT marshaled.
 	 */
-	public MarshalOptions() {
-		super();
-	}
+	public static final MarshalOptions NO_REFERENCE_ENTITY_MARSHALING = new MarshalOptions(false, -1);
+
+	final boolean processReferenceRelations;
+
+	final int maxDepth;
 
 	/**
 	 * Constructor
-	 * @param processRelatedMany
-	 * @param processRelatedOne
+	 * @param processReferenceRelations
 	 * @param maxDepth
 	 */
-	public MarshalOptions(boolean processRelatedMany, boolean processRelatedOne, int maxDepth) {
+	private MarshalOptions(boolean processReferenceRelations, int maxDepth) {
 		super();
-		this.processRelatedMany = processRelatedMany;
-		this.processRelatedOne = processRelatedOne;
+		this.processReferenceRelations = processReferenceRelations;
 		this.maxDepth = maxDepth;
 	}
 
 	/**
-	 * @return the processRelatedMany
+	 * @return the processReferenceRelations
 	 */
-	public boolean isProcessRelatedMany() {
-		return processRelatedMany;
-	}
-
-	/**
-	 * @param processRelatedMany the processRelatedMany to set
-	 */
-	public void setProcessRelatedMany(boolean processRelatedMany) {
-		this.processRelatedMany = processRelatedMany;
-	}
-
-	/**
-	 * @return the processRelatedOne
-	 */
-	public boolean isProcessRelatedOne() {
-		return processRelatedOne;
-	}
-
-	/**
-	 * @param processRelatedOne the processRelatedOne to set
-	 */
-	public void setProcessRelatedOne(boolean processRelatedOne) {
-		this.processRelatedOne = processRelatedOne;
+	public boolean isProcessReferenceRelations() {
+		return processReferenceRelations;
 	}
 
 	/**
@@ -69,12 +44,4 @@ public final class MarshalOptions {
 	public int getMaxDepth() {
 		return maxDepth;
 	}
-
-	/**
-	 * @param maxDepth the maxDepth to set
-	 */
-	public void setMaxDepth(int maxDepth) {
-		this.maxDepth = maxDepth;
-	}
-
 }

@@ -18,7 +18,7 @@ import com.tll.server.rpc.MarshalOptions;
 @Test(groups = "client-model")
 public class PropertyPathTest extends AbstractModelTest {
 
-	private Model getTestPropertyValueGroup() {
+	private Model getTestModel() {
 		final IAccountDao dao = getDaoFactory().instance(IAccountDao.class);
 		final Asp asp = (Asp) dao.load(KeyFactory.getNameKey(Asp.class, Asp.ASP_NAME));
 		assert asp != null;
@@ -35,7 +35,7 @@ public class PropertyPathTest extends AbstractModelTest {
 		String path;
 		Model model;
 
-		model = getTestPropertyValueGroup();
+		model = getTestModel();
 
 		path = "name";
 		prop = model.getPropertyBinding(path);

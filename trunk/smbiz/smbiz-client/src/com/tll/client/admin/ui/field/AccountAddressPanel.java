@@ -22,10 +22,10 @@ import com.tll.model.impl.AddressType;
  */
 public class AccountAddressPanel extends FieldGroupPanel implements ClickListener {
 
-	static final String ID_ACCOUNT_ADDRESS_DELETE_PREFIX = "dlte_aa_";
+	// static final String ID_ACCOUNT_ADDRESS_DELETE_PREFIX = "dlte_aa_";
 
 	protected final AddressType addressType;
-	protected int propValIndex = -1;
+	// protected int propValIndex = -1;
 	protected TextField name;
 	// protected final Image imgDeleteToggle = new Image();
 	protected final PushButton btnDeleteToggle;
@@ -35,13 +35,12 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 	 * Constructor
 	 * @param propName
 	 * @param addressType
-	 * @param propValIndex
 	 */
-	public AccountAddressPanel(String propName, AddressType addressType, int propValIndex) {
+	public AccountAddressPanel(String propName, AddressType addressType) {
 		super(propName, addressType.getName());
 
 		this.addressType = addressType;
-		this.propValIndex = propValIndex;
+		// this.propValIndex = propValIndex;
 
 		// delete img btn
 		btnDeleteToggle = new PushButton();
@@ -60,6 +59,7 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 		// none
 	}
 
+	/*
 	public int getPropValIndex() {
 		return propValIndex;
 	}
@@ -67,6 +67,7 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 	public void setPropValIndex(int propValIndex) {
 		this.propValIndex = propValIndex;
 	}
+	*/
 
 	@Override
 	protected void configure() {

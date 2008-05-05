@@ -186,16 +186,17 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * Resolves a property path to the nested {@link IPropertyValue}. This is a
-	 * generic way to obtain a contained property.
+	 * Resolves a property path to the nested {@link IPropertyBinding}. This is a
+	 * generic way to obtain a defined model property.
 	 * <p>
 	 * <strong>NOTE: </strong>When a property path element having no associated
-	 * property value is encoutered before reaching the end of the given property
-	 * path or when a given index is found out of range for an indexable property
-	 * in the given property path, <code>null</code> is returned.
+	 * property is encoutered before reaching the end of the given property path
+	 * or when a given index is found out of range for an indexable property in
+	 * the given property path, <code>null</code> is returned.
 	 * @param propPath The property path. When <code>null</code>, a
-	 *        {@link RelatedOneProperty} that references this model is returned.
-	 * @return The nested property value or <code>null</code> if not present
+	 *        {@link RelatedOneProperty} that references <em>this</em> model is
+	 *        returned.
+	 * @return The nested property or <code>null</code> if not present
 	 * @throws IllegalArgumentException When the given property path is
 	 *         <code>null</code> or mal-formed.
 	 */
@@ -251,6 +252,37 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
 		}
 		return (RelatedOneProperty) prop;
+	}
+
+	/**
+	 * Sets a related one property creating it if found not to exist.
+	 * @param propPath The property path pointing to the related one property to
+	 *        set
+	 * @param model The related one model to set
+	 * @throws IllegalArgumentException When the property path is mal-formed or
+	 *         refers to an existing property that is not a related one model ref.
+	 */
+	public void setRelatedOne(String propPath, Model model) throws IllegalArgumentException {
+		RelatedOneProperty ropv;
+		PropPathBinding binding = null;
+		try {
+			binding = resolvePropertyPath(propPath);
+			IPropertyBinding prop = binding.getPropertyBinding();
+			if(prop.getType() != PropertyType.RELATED_ONE) {
+				throw new IllegalArgumentException("Property '" + propPath + "' is not a related-one property");
+			}
+			ropv = (RelatedOneProperty) prop;
+			ropv.setModel(model);
+		}
+		catch(UnsetPropertyException upe) {
+			// NOTE: we presume the related one property is a reference!!
+			// TODO determine if we need to have reference as a method param
+			ropv = new RelatedOneProperty(binding.getPropPath().endPropName(), true, model);
+			binding.getModel().set(ropv);
+		}
+		catch(PropertyPathException ppe) {
+			throw new IllegalArgumentException("Unable to set related one property '" + propPath + "': " + ppe.getMessage());
+		}
 	}
 
 	/**
@@ -310,76 +342,6 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 		}
 		catch(PropertyPathException ppe) {
 			throw new IllegalArgumentException("Unable to set the related one model reference '" + propPath + "': "
-					+ ppe.getMessage());
-		}
-	}
-
-	/**
-	 * Sets a related one property creating it if found not to exist.
-	 * @param propPath The property path pointing to the related one property to
-	 *        set
-	 * @param model The related one model to set
-	 * @throws IllegalArgumentException When the property path is mal-formed or
-	 *         refers to an existing property that is not a related one model ref.
-	 */
-	public void setRelatedOne(String propPath, Model model) throws IllegalArgumentException {
-		RelatedOneProperty ropv;
-		PropPathBinding binding = null;
-		try {
-			binding = resolvePropertyPath(propPath);
-			IPropertyBinding prop = binding.getPropertyBinding();
-			if(prop.getType() != PropertyType.RELATED_ONE) {
-				throw new IllegalArgumentException("Property '" + propPath + "' is not a related-one property");
-			}
-			ropv = (RelatedOneProperty) prop;
-			ropv.setModel(model);
-		}
-		catch(UnsetPropertyException upe) {
-			// NOTE: we presume the related one property is a reference!!
-			// TODO determine if we need to have reference as a method param
-			ropv = new RelatedOneProperty(binding.getPropPath().endPropName(), true, model);
-			binding.getModel().set(ropv);
-		}
-		catch(PropertyPathException ppe) {
-			throw new IllegalArgumentException("Unable to set related one property '" + propPath + "': " + ppe.getMessage());
-		}
-	}
-
-	/**
-	 * Adds a Model to the list of a related many property.
-	 * @param relatedManyPropPath Refers to the related many property underwhich
-	 *        the indexed property ref is set
-	 * @param model The model to set as an indexed model ref
-	 * @throws IllegalArgumentException When the indexable property path is
-	 *         mal-formed or refers to an existing property that is not a related
-	 *         many model ref.
-	 */
-	public void addIndexedModel(String relatedManyPropPath, Model model) throws IllegalArgumentException {
-		RelatedManyProperty rmpv;
-		PropPathBinding binding = null;
-		List<Model> list;
-		try {
-			binding = resolvePropertyPath(relatedManyPropPath);
-			IPropertyBinding prop = binding.getPropertyBinding();
-			if(prop.getType() != PropertyType.RELATED_MANY) {
-				throw new IllegalArgumentException("Property '" + relatedManyPropPath + "' is not a related many property");
-			}
-			rmpv = (RelatedManyProperty) prop;
-			list = rmpv.getList();
-			if(list == null) {
-				list = new ArrayList<Model>();
-				rmpv.setList(list);
-			}
-			list.add(model);
-		}
-		catch(UnsetPropertyException upe) {
-			list = new ArrayList<Model>();
-			list.add(model);
-			rmpv = new RelatedManyProperty(binding.getPropPath().endPropName(), true, list);
-			binding.getModel().set(rmpv);
-		}
-		catch(PropertyPathException ppe) {
-			throw new IllegalArgumentException("Unable to set related many property '" + relatedManyPropPath + "': "
 					+ ppe.getMessage());
 		}
 	}
