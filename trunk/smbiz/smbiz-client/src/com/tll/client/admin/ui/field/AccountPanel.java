@@ -213,8 +213,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 				AddressType at = (AddressType) ip.getModel().getProp("type").getValue();
 				AccountAddressPanel aap = new AccountAddressPanel(ip.getPropertyName(), at);
 				aamap.get(at).panel = aap;
-				aap.bind(ip.getModel());
 				fields.addField(aap.getFields());
+				aap.configure();
 			}
 		}
 
