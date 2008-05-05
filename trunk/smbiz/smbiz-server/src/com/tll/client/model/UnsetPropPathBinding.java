@@ -16,14 +16,13 @@ final class UnsetPropPathBinding extends PropPathBinding {
 	 * Constructor
 	 * @param parent
 	 * @param propPath
-	 * @param nullPropName
 	 */
-	public UnsetPropPathBinding(Model parent, PropertyPath propPath, String nullPropName) {
-		super(propPath);
+	public UnsetPropPathBinding(Model parent, PropertyPath propPath) {
+		super(parent, propPath);
 	}
 
 	@Override
-	IPropertyValue getPropertyBinding() {
-		return null;
+	IPropertyValue getPropertyBinding() throws UnsetPropertyException {
+		throw new UnsetPropertyException(propPath.toString());
 	}
 }

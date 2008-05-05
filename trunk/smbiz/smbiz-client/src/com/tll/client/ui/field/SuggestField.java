@@ -9,13 +9,15 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestionEvent;
+import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.tll.client.field.IField;
 
 /**
  * SuggestField
  * @author jpk
  */
-public final class SuggestField extends AbstractDataMapField {
+public final class SuggestField extends AbstractDataMapField implements SuggestionHandler {
 
 	private SuggestBox sb;
 
@@ -44,6 +46,7 @@ public final class SuggestField extends AbstractDataMapField {
 			}
 			sb.addFocusListener(this);
 			sb.addChangeListener(this);
+			sb.addEventHandler(this);
 		}
 		return sb;
 	}
@@ -82,6 +85,10 @@ public final class SuggestField extends AbstractDataMapField {
 
 	public IField copy() {
 		return new SuggestField(propName, lblTxt, lblMode, dataMap);
+	}
+
+	public void onSuggestionSelected(SuggestionEvent event) {
+		changed = true;
 	}
 
 }

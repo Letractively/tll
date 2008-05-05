@@ -444,7 +444,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 			prop = model.get(pname);
 			if(prop == null) {
 				if(atEnd) {
-					return new UnsetPropPathBinding(model, pp, pname);
+					return new UnsetPropPathBinding(model, pp);
 				}
 				throw new NullNodeInPropPathException(propPath, pname);
 			}
@@ -584,7 +584,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * Clears all nested property values of the given group.
+	 * Clears all nested property values of the given model.
 	 * @param model The group to be cleared
 	 * @param visited
 	 */
@@ -598,7 +598,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 		visited.add(new PropBinding(model));
 
-		// NOTE: retain the property name
+		// TODO do we want to reset markedDeleted?
 		model.markedDeleted = false;
 
 		for(IPropertyBinding prop : model.props) {

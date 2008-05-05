@@ -370,17 +370,15 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		for(IField fld : this) {
 			if(fld instanceof FieldGroup) {
 				final IPropertyBinding binding = model.getPropertyBinding(fld.getPropertyName());
-				if(binding == null) {
-					// no associated model data
-					continue;
-				}
-				if(!binding.getType().isModelRef()) {
-					throw new IllegalArgumentException("The field group '" + fld.getPropertyName()
-							+ "' does not map to a model ref property");
-				}
-				final Model submodel = ((IModelRefProperty) binding).getModel();
-				if(submodel != null) {
-					fld.bindModel(submodel);
+				if(binding != null) {
+					if(!binding.getType().isModelRef()) {
+						throw new IllegalArgumentException("Can't bind model: Field group '" + fld.getPropertyName()
+								+ "' does not map to a model ref property");
+					}
+					final Model submodel = ((IModelRefProperty) binding).getModel();
+					if(submodel != null) {
+						fld.bindModel(submodel);
+					}
 				}
 			}
 			else {
@@ -389,20 +387,36 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	// TODO: fix this - we're not traversing the hierarchy!!!
 	public boolean updateModel(Model model) {
 		model.setMarkedDeleted(markedDeleted);
-		if(!markedDeleted) {
-			boolean changed = false;
-			for(IField fld : this) {
+		if(markedDeleted) {
+			// since we are marked as deleted, change is true
+			return true;
+		}
+		boolean changed = false;
+		for(IField fld : this) {
+			if(fld instanceof FieldGroup) {
+				final IPropertyBinding binding = model.getPropertyBinding(fld.getPropertyName());
+				if(binding != null) {
+					if(!binding.getType().isModelRef()) {
+						throw new IllegalArgumentException("Can't update model: Field group '" + fld.getPropertyName()
+								+ "' does not map to a model ref property");
+					}
+					final Model submodel = ((IModelRefProperty) binding).getModel();
+					if(submodel != null) {
+						if(fld.updateModel(submodel)) {
+							changed = true;
+						}
+					}
+				}
+			}
+			else {
 				if(fld.updateModel(model)) {
 					changed = true;
 				}
 			}
-			return changed;
 		}
-		// since we are marked as deleted, change is true
-		return true;
+		return changed;
 	}
 
 	public IValidator getValidators() {

@@ -111,7 +111,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	/**
 	 * Internal flag for detecting if the field's value is changed.
 	 */
-	private boolean changed;
+	protected boolean changed;
 
 	/**
 	 * Constructor
