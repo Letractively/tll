@@ -60,7 +60,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.GWTShell"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-logLevel DEBUG -out ${gwt_host_webroot} com.tll.SmbizAdminApp"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-logLevel INFO -out ${gwt_host_webroot} com.tll.SmbizAdminApp"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="smbiz-client"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256m -ea"/>
 </launchConfiguration>

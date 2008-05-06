@@ -322,7 +322,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public void onStatusEvent(StatusEvent event) {
 			Status status = event.getStatus();
 			if(status != null) {
-				MsgManager.instance.post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true);
+				MsgManager.instance.post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
 			}
 		}
 

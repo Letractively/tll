@@ -132,7 +132,7 @@ public final class Status implements IMarshalable {
 	/**
 	 * Adds a {@link Msg} w/ no ref token and no attributes.
 	 * <p>
-	 * <strong>NOTE: </strong>Adding messages via this method will, be default, be
+	 * <strong>NOTE: </strong>Adding messages via this method will, by default, be
 	 * displayed in the UI.
 	 * @param msg
 	 * @param level
