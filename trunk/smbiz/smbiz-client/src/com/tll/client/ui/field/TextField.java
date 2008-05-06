@@ -34,7 +34,7 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 	 * @param lblMode
 	 * @param visibleLen
 	 */
-	public TextField(String propName, String lblTxt, int lblMode, int visibleLen) {
+	public TextField(String propName, String lblTxt, LabelMode lblMode, int visibleLen) {
 		super(propName, lblTxt, lblMode);
 		this.visibleLen = visibleLen;
 	}

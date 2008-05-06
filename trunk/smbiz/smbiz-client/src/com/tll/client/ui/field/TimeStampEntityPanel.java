@@ -6,7 +6,7 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.util.GlobalFormat;
 
 /**
@@ -29,8 +29,8 @@ public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		dateCreated = fdate("dateCreated", "Created", IField.LBL_ABOVE, GlobalFormat.DATE);
-		dateModified = fdate("dateModified", "Modified", IField.LBL_ABOVE, GlobalFormat.DATE);
+		dateCreated = fdate("dateCreated", "Created", LabelMode.ABOVE, GlobalFormat.DATE);
+		dateModified = fdate("dateModified", "Modified", LabelMode.ABOVE, GlobalFormat.DATE);
 		dateCreated.setReadOnly(true);
 		dateModified.setReadOnly(true);
 		dateCreated.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);

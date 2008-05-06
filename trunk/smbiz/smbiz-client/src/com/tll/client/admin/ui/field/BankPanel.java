@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
 
@@ -35,9 +35,9 @@ public final class BankPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		bankName = ftext("paymentData.bankName", "Bank Name", IField.LBL_ABOVE, 40);
-		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", IField.LBL_ABOVE, 30);
-		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", IField.LBL_ABOVE, 20);
+		bankName = ftext("paymentData.bankName", "Bank Name", LabelMode.ABOVE, 40);
+		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", LabelMode.ABOVE, 30);
+		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", LabelMode.ABOVE, 20);
 
 		fields.addField(bankName);
 		fields.addField(bankAccountNo);

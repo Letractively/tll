@@ -15,10 +15,15 @@ import com.tll.client.validate.IValidator;
  */
 public interface IField extends IPropertyNameProvider {
 
-	// label render modes
-	static final int LBL_NONE = 0;
-	static final int LBL_ABOVE = 1;
-	static final int LBL_LEFT = 2;
+	/**
+	 * LabelMode
+	 * @author jpk
+	 */
+	enum LabelMode {
+		NONE,
+		ABOVE,
+		LEFT;
+	}
 
 	// CSS styles declared in field.css
 	static final String CSS_FIELD = "fld";

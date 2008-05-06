@@ -39,7 +39,7 @@ public class CheckboxField extends AbstractField {
 	 * @param uncheckedValue
 	 */
 	public CheckboxField(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
-		super(propName, null, IField.LBL_NONE);
+		super(propName, null, LabelMode.NONE);
 		this.cbLblTxt = lblTxt;
 		this.checkedValue = checkedValue;
 		this.uncheckedValue = uncheckedValue;

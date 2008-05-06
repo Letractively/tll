@@ -28,7 +28,7 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	public SuggestField(String propName, String lblTxt, int lblMode, Map<String, String> dataMap) {
+	public SuggestField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
 		super(propName, lblTxt, lblMode, dataMap);
 	}
 

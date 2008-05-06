@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
@@ -50,21 +50,21 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		type = fselect("paymentData.ccType", "Type", IField.LBL_ABOVE, ClientEnumUtil.toMap(CreditCardType.class));
-		num = ftext("paymentData.ccNum", "Num", IField.LBL_ABOVE, 15);
-		cvv2 = ftext("paymentData.ccCvv2", "CVV2", IField.LBL_ABOVE, 4);
-		expMn = ftext("paymentData.ccExpMonth", "Exp Month", IField.LBL_ABOVE, 2);
-		expYr = ftext("paymentData.ccExpYear", "Exp Year", IField.LBL_ABOVE, 4);
-		name = ftext("paymentData.ccName", "Name", IField.LBL_ABOVE, 30);
-		addr1 = ftext("paymentData.ccAddress1", "Address 1", IField.LBL_ABOVE, 40);
-		addr2 = ftext("paymentData.ccAddress2", "Address 2", IField.LBL_ABOVE, 40);
-		city = ftext("paymentData.ccCity", "City", IField.LBL_ABOVE, 30);
+		type = fselect("paymentData.ccType", "Type", LabelMode.ABOVE, ClientEnumUtil.toMap(CreditCardType.class));
+		num = ftext("paymentData.ccNum", "Num", LabelMode.ABOVE, 15);
+		cvv2 = ftext("paymentData.ccCvv2", "CVV2", LabelMode.ABOVE, 4);
+		expMn = ftext("paymentData.ccExpMonth", "Exp Month", LabelMode.ABOVE, 2);
+		expYr = ftext("paymentData.ccExpYear", "Exp Year", LabelMode.ABOVE, 4);
+		name = ftext("paymentData.ccName", "Name", LabelMode.ABOVE, 30);
+		addr1 = ftext("paymentData.ccAddress1", "Address 1", LabelMode.ABOVE, 40);
+		addr2 = ftext("paymentData.ccAddress2", "Address 2", LabelMode.ABOVE, 40);
+		city = ftext("paymentData.ccCity", "City", LabelMode.ABOVE, 30);
 		state =
-				fsuggest("paymentData.ccState", "State/Province", IField.LBL_ABOVE, AuxDataCache.instance().getRefDataMap(
+				fsuggest("paymentData.ccState", "State/Province", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
 						"usps-state-abbrs"));
-		zip = ftext("paymentData.ccZip", "Zip/Postal Code", IField.LBL_ABOVE, 15);
+		zip = ftext("paymentData.ccZip", "Zip/Postal Code", LabelMode.ABOVE, 15);
 		country =
-				fsuggest("paymentData.ccCountry", "Country", IField.LBL_ABOVE, AuxDataCache.instance().getRefDataMap(
+				fsuggest("paymentData.ccCountry", "Country", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
 						"iso-country-codes"));
 
 		fields.addField(type);

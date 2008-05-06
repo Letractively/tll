@@ -121,7 +121,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	 * @throws IllegalArgumentException When a <code>null</code> or zero-length
 	 *         property name is given.
 	 */
-	public AbstractField(String propName, String lblTxt, int lblMode) {
+	public AbstractField(String propName, String lblTxt, LabelMode lblMode) {
 		super(lblTxt, lblMode);
 		this.domId = 'f' + Integer.toString(++fieldCounter);
 		if(this.fldLbl != null) {
@@ -265,7 +265,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	 */
 	private int getFieldDisplayIndex() {
 		// considers possible field label being absent and the br widget
-		return fldLbl == null ? 0 : lblMode == IField.LBL_ABOVE ? 1 : 0;
+		return fldLbl == null ? 0 : lblMode == LabelMode.ABOVE ? 1 : 0;
 	}
 
 	/**
@@ -305,8 +305,6 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 			}
 			else {
 				assert fIndx < fp.getWidgetCount();
-				// if(beforeIndex > fp.getWidgetCount()) beforeIndex =
-				// fp.getWidgetCount();
 				fp.insert(ef, fIndx + 1);
 			}
 		}

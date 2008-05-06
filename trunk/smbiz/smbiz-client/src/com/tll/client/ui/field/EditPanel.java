@@ -236,15 +236,21 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 				break;
 
 			case ADD:
-			case UPDATE:
-			case PURGE: {
+			case UPDATE: {
 				Status status = event.getPayload().getStatus();
 				if(status.hasErrors()) {
 					fldGrpPnl.fields.handleValidationFeedback(new ValidationException(status.getFieldMsgs()));
 				}
 				else {
+					entity = event.getPayload().getEntity();
+					assert entity != null;
+
 					// re-bind the updated entity
 					fldGrpPnl.bind(entity);
+					// HACK: re-render as well
+					fldGrpPnl.render();
+					// TODO can we figure out a CLEAN way to avoid having to re-call
+					// render() ?
 				}
 				break;
 			}

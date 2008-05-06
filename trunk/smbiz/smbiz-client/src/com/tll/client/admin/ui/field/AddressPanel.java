@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
@@ -47,21 +47,21 @@ public class AddressPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		emailAddress = ftext("emailAddress", "Email Address", IField.LBL_ABOVE, 30);
-		lastName = ftext("firstName", "First Name", IField.LBL_ABOVE, 20);
-		firstName = ftext("lastName", "Last Name", IField.LBL_ABOVE, 20);
-		mi = ftext("mi", "MI", IField.LBL_ABOVE, 1);
-		company = ftext("company", "Company", IField.LBL_ABOVE, 20);
-		attn = ftext("attn", "Attn", IField.LBL_ABOVE, 10);
-		address1 = ftext("address1", "Address 1", IField.LBL_ABOVE, 40);
-		address2 = ftext("address2", "Address 2", IField.LBL_ABOVE, 40);
-		city = ftext("city", "City", IField.LBL_ABOVE, 30);
+		emailAddress = ftext("emailAddress", "Email Address", LabelMode.ABOVE, 30);
+		lastName = ftext("firstName", "First Name", LabelMode.ABOVE, 20);
+		firstName = ftext("lastName", "Last Name", LabelMode.ABOVE, 20);
+		mi = ftext("mi", "MI", LabelMode.ABOVE, 1);
+		company = ftext("company", "Company", LabelMode.ABOVE, 20);
+		attn = ftext("attn", "Attn", LabelMode.ABOVE, 10);
+		address1 = ftext("address1", "Address 1", LabelMode.ABOVE, 40);
+		address2 = ftext("address2", "Address 2", LabelMode.ABOVE, 40);
+		city = ftext("city", "City", LabelMode.ABOVE, 30);
 		province =
-				fsuggest("province", "State/Province", IField.LBL_ABOVE, AuxDataCache.instance().getRefDataMap(
+				fsuggest("province", "State/Province", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
 						"usps-state-abbrs"));
-		postalCode = ftext("postalCode", "Zip", IField.LBL_ABOVE, 20);
+		postalCode = ftext("postalCode", "Zip", LabelMode.ABOVE, 20);
 		country =
-				fsuggest("country", "Country", IField.LBL_ABOVE, AuxDataCache.instance().getRefDataMap("iso-country-codes"));
+				fsuggest("country", "Country", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap("iso-country-codes"));
 
 		fields.addField(emailAddress);
 		fields.addField(lastName);

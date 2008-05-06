@@ -26,7 +26,7 @@ public class SelectField extends AbstractDataMapField {
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	public SelectField(String propName, String lblTxt, int lblMode, Map<String, String> dataMap) {
+	public SelectField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
 		super(propName, lblTxt, lblMode, dataMap);
 	}
 

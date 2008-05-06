@@ -7,8 +7,9 @@ package com.tll.client.ui.field;
 import java.util.Map;
 
 /**
- * AbstractDataMapField - Supports the ability to map a value to a mapped value. Form controls
- * involving multiple selection choices such as list boxes rely on data maps.
+ * AbstractDataMapField - Supports the ability to map a value to a mapped value.
+ * Form controls involving multiple selection choices such as list boxes rely on
+ * data maps.
  * @author jpk
  */
 public abstract class AbstractDataMapField extends AbstractField {
@@ -26,7 +27,7 @@ public abstract class AbstractDataMapField extends AbstractField {
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	public AbstractDataMapField(String propName, String lblText, int lblMode, Map<String, String> dataMap) {
+	public AbstractDataMapField(String propName, String lblText, LabelMode lblMode, Map<String, String> dataMap) {
 		super(propName, lblText, lblMode);
 		this.dataMap = dataMap;
 	}

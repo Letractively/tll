@@ -10,12 +10,14 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.Br;
 import com.tll.client.ui.CSS;
 import com.tll.client.util.StringUtil;
 
 /**
- * FieldAdapter - Use as a base class for {@link Widget}s wishing to have field type UI styling.
+ * FieldAdapter - Use as a base class for {@link Widget}s wishing to have field
+ * type UI styling.
  * @author jpk
  */
 public abstract class FieldAdapter extends Composite implements HasHorizontalAlignment {
@@ -30,7 +32,7 @@ public abstract class FieldAdapter extends Composite implements HasHorizontalAli
 	 */
 	protected final FieldLabel fldLbl;
 
-	protected final int lblMode;
+	protected final LabelMode lblMode;
 	protected String lblTxt;
 
 	/**
@@ -38,16 +40,16 @@ public abstract class FieldAdapter extends Composite implements HasHorizontalAli
 	 * @param lblTxt
 	 * @param lblMode
 	 */
-	public FieldAdapter(String lblTxt, int lblMode) {
+	public FieldAdapter(String lblTxt, LabelMode lblMode) {
 		super();
 		this.lblTxt = lblTxt;
 		this.lblMode = lblMode;
 		initWidget(fp);
 		fp.setStyleName(IField.CSS_FIELD);
-		fldLbl = (lblMode == IField.LBL_NONE) ? null : lblTxt == null ? null : new FieldLabel(lblTxt);
+		fldLbl = (lblMode == LabelMode.NONE) ? null : lblTxt == null ? null : new FieldLabel(lblTxt);
 		if(fldLbl != null) {
 			fp.add(fldLbl);
-			if(lblMode == IField.LBL_ABOVE) fp.add(new Br());
+			if(lblMode == LabelMode.ABOVE) fp.add(new Br());
 		}
 	}
 

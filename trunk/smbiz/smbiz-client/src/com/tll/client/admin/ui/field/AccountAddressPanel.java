@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FieldPanel;
@@ -71,7 +72,7 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 
 	@Override
 	protected void configure() {
-		name = ftext("name", "Name", IField.LBL_ABOVE, 20);
+		name = ftext("name", "Name", LabelMode.ABOVE, 20);
 
 		fields.addField(name);
 		addressPanel.configure();

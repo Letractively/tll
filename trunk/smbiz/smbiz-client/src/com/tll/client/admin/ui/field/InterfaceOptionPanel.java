@@ -17,6 +17,7 @@ import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
 import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
@@ -112,13 +113,13 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		isDefault = fbool("isDefault", "Default?");
 		isDefault.setAlignBottom(true);
 
-		setUpCost = ftext("setUpCost", "Setup Cost", IField.LBL_NONE, 10);
-		monthlyCost = ftext("monthlyCost", "Monthly Cost", IField.LBL_NONE, 10);
-		annualCost = ftext("Annual Cost", "Annual Cost", IField.LBL_NONE, 10);
+		setUpCost = ftext("setUpCost", "Setup Cost", LabelMode.NONE, 10);
+		monthlyCost = ftext("monthlyCost", "Monthly Cost", LabelMode.NONE, 10);
+		annualCost = ftext("Annual Cost", "Annual Cost", LabelMode.NONE, 10);
 
-		baseSetupPrice = ftext("baseSetupPrice", "Setup Price", IField.LBL_NONE, 10);
-		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", IField.LBL_NONE, 10);
-		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", IField.LBL_NONE, 10);
+		baseSetupPrice = ftext("baseSetupPrice", "Setup Price", LabelMode.NONE, 10);
+		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", LabelMode.NONE, 10);
+		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", LabelMode.NONE, 10);
 
 		fields.addField(isDefault);
 		fields.addField(setUpCost);

@@ -20,7 +20,6 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
 import com.tll.server.ServletUtil;
-import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.service.entity.IEntityService;
@@ -114,10 +113,6 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		}
 		final EntityType entityType = search.getEntityType();
 		return MEntityServiceImplFactory.instance(entityType).translate(getRequestContext(), entityType, search);
-	}
-
-	public MarshalOptions getMarshalOptions() {
-		throw new UnsupportedOperationException("getMarshalOptions method is unsupported at the delegate level.");
 	}
 
 	@SuppressWarnings("unchecked")

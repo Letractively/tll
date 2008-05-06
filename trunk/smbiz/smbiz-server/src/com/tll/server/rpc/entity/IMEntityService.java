@@ -12,7 +12,6 @@ import com.tll.client.data.rpc.IListingService;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.service.entity.IEntityService;
 
@@ -42,8 +41,7 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	/**
 	 * @return The marshaling options catering to the entity type.
 	 */
-	MarshalOptions getMarshalOptions();
-
+	// MarshalOptions getMarshalOptions();
 	/**
 	 * Provides an {@link IMarshalingListHandler} for use by
 	 * {@link IListingService} implementations.

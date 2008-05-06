@@ -44,7 +44,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 	 * @param dataMap
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String lblTxt, int lblMode, Map<String, String> dataMap,
+	public RadioGroupField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap,
 			boolean renderHorizontal) {
 		super(propName, lblTxt, lblMode, dataMap);
 		if(renderHorizontal) {

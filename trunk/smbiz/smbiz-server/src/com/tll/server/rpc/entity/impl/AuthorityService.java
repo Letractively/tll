@@ -14,6 +14,7 @@ import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.Authority;
 import com.tll.server.RequestContext;
+import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**
@@ -21,6 +22,13 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * @author jpk
  */
 public class AuthorityService extends MNamedEntityServiceImpl<Authority> {
+
+	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
+
+	@Override
+	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
+		return marshalOptions;
+	}
 
 	@Override
 	protected void handleLoadOptions(RequestContext requestContext, Authority e, EntityOptions options,

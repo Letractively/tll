@@ -28,7 +28,7 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
 	 */
-	public TextAreaField(String propName, String lblTxt, int lblMode, int numRows, int numCols) {
+	public TextAreaField(String propName, String lblTxt, LabelMode lblMode, int numRows, int numCols) {
 		super(propName, lblTxt, lblMode);
 		this.numRows = numRows;
 		this.numCols = numCols;

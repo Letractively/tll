@@ -336,9 +336,11 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 
 		final String[] cellVals = cellTransformer.getCellValues(rowData, propKeys, columns);
 		for(int c = 0; c < columns.length; c++) {
-			if(rowNum > -1 && Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
-				getCellFormatter().addStyleName(rowIndex, c, CSS_COUNT_COL);
-				setText(rowIndex, c, Integer.toString(rowNum));
+			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
+				if(rowNum > -1) {
+					getCellFormatter().addStyleName(rowIndex, c, CSS_COUNT_COL);
+					setText(rowIndex, c, Integer.toString(rowNum));
+				}
 			}
 			else {
 				String cv = cellVals[c];

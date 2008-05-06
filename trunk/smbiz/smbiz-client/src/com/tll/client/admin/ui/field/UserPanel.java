@@ -14,6 +14,7 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -63,11 +64,11 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	protected void configure() {
 		super.configure();
 
-		emailAddress = ftext("emailAddress", "Email Address", IField.LBL_ABOVE, 30);
+		emailAddress = ftext("emailAddress", "Email Address", LabelMode.ABOVE, 30);
 		emailAddress.setReadOnly(true);
 		locked = fbool("locked", "Locked");
 		enabled = fbool("enabled", "Enabled");
-		expires = fdate("expires", "Expires", IField.LBL_ABOVE, GlobalFormat.DATE);
+		expires = fdate("expires", "Expires", LabelMode.ABOVE, GlobalFormat.DATE);
 
 		authorityPanel = new FieldPanel(IField.CSS_FIELD_ROW);
 		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
@@ -106,7 +107,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 
 		// parent account ref link
 		lnkAccount = new ViewRequestLink();
-		frow.add(new FieldWidget("Account", IField.LBL_ABOVE, lnkAccount));
+		frow.add(new FieldWidget("Account", LabelMode.ABOVE, lnkAccount));
 
 		fcol = new FieldPanel(IField.CSS_FIELD_COL);
 		fcol.add(dateCreated);

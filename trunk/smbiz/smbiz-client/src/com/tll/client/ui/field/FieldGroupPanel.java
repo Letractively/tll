@@ -12,6 +12,7 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
@@ -105,10 +106,16 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 		fields.setRefWidget(refWidget);
 	}
 
+	/**
+	 * @return The owned FieldGroup for this panel.
+	 */
 	public final FieldGroup getFields() {
 		return fields;
 	}
 
+	/**
+	 * @return <code>true</code> if {@link #configure()} was called.
+	 */
 	protected final boolean isConfigured() {
 		return configured;
 	}
@@ -236,7 +243,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param visibleLength
 	 */
-	protected final TextField ftext(String propName, String lblTxt, int lblMode, int visibleLength) {
+	protected final TextField ftext(String propName, String lblTxt, LabelMode lblMode, int visibleLength) {
 		return new TextField(propName, lblTxt, lblMode, visibleLength);
 	}
 
@@ -247,7 +254,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param displayFormat
 	 */
-	protected final DateField fdate(String propName, String lblTxt, int lblMode, GlobalFormat format) {
+	protected final DateField fdate(String propName, String lblTxt, LabelMode lblMode, GlobalFormat format) {
 		return new DateField(propName, lblTxt, lblMode, format);
 	}
 
@@ -284,7 +291,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param numRows
 	 * @param numCols
 	 */
-	protected final TextAreaField ftextarea(String propName, String lblTxt, int lblMode, int numRows, int numCols) {
+	protected final TextAreaField ftextarea(String propName, String lblTxt, LabelMode lblMode, int numRows, int numCols) {
 		return new TextAreaField(propName, lblTxt, lblMode, numRows, numCols);
 	}
 
@@ -294,7 +301,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblTxt
 	 * @param lblMode
 	 */
-	protected final PasswordField fpassword(String propName, String lblTxt, int lblMode) {
+	protected final PasswordField fpassword(String propName, String lblTxt, LabelMode lblMode) {
 		return new PasswordField(propName, lblTxt, lblMode);
 	}
 
@@ -305,7 +312,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected final SelectField fselect(String propName, String lblTxt, int lblMode, Map<String, String> dataMap) {
+	protected final SelectField fselect(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
 		return new SelectField(propName, lblTxt, lblMode, dataMap);
 	}
 
@@ -316,7 +323,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected final SuggestField fsuggest(String propName, String lblTxt, int lblMode, Map<String, String> dataMap) {
+	protected final SuggestField fsuggest(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
 		return new SuggestField(propName, lblTxt, lblMode, dataMap);
 	}
 
@@ -328,8 +335,8 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param dataMap
 	 * @param renderHorizontal
 	 */
-	protected final RadioGroupField fradiogroup(String propName, String lblTxt, int lblMode, Map<String, String> dataMap,
-			boolean renderHorizontal) {
+	protected final RadioGroupField fradiogroup(String propName, String lblTxt, LabelMode lblMode,
+			Map<String, String> dataMap, boolean renderHorizontal) {
 		return new RadioGroupField(propName, lblTxt, lblMode, dataMap, renderHorizontal);
 	}
 

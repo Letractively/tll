@@ -72,8 +72,7 @@ public abstract class AuxDataHandler {
 			else {
 				final List<Model> elist = new ArrayList<Model>(list.size());
 				for(final IEntity e : list) {
-					final Model group =
-							requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCE_ENTITY_MARSHALING);
+					final Model group = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NON_RELATIONAL);
 					elist.add(group);
 				}
 				if(entityMap == null) {
@@ -88,7 +87,7 @@ public abstract class AuxDataHandler {
 		while(etitr != null && etitr.hasNext()) {
 			EntityType et = etitr.next();
 			final IEntity e = requestContext.getEntityAssembler().assembleEntity(et, null, false);
-			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCE_ENTITY_MARSHALING);
+			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();
 			}

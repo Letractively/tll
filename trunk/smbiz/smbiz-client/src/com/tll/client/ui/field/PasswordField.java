@@ -23,7 +23,7 @@ public class PasswordField extends AbstractField {
 	 * @param lblText
 	 * @param lblMode
 	 */
-	public PasswordField(String propName, String lblText, int lblMode) {
+	public PasswordField(String propName, String lblText, LabelMode lblMode) {
 		super(propName, lblText, lblMode);
 	}
 

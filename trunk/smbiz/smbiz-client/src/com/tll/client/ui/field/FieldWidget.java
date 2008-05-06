@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.field.IField.LabelMode;
 
 /**
  * FieldWidget - Enables arbitrary {@link Widget}s to display as a UI field.
@@ -20,7 +21,7 @@ public class FieldWidget extends FieldAdapter {
 	 * @param lblMode
 	 * @param w The widget encased in the field's {@link Panel}.
 	 */
-	public FieldWidget(String lblTxt, int lblMode, Widget w) {
+	public FieldWidget(String lblTxt, LabelMode lblMode, Widget w) {
 		super(lblTxt, lblMode);
 		assert w != null;
 		fp.add(w);

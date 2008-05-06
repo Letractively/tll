@@ -12,6 +12,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
+import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**
@@ -79,6 +80,13 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 */
 	ICriteria<? extends E> translate(RequestContext requestContext, EntityType entityType, ISearch search)
 			throws IllegalArgumentException;
+
+	/**
+	 * Gets the entity type specific marshaling options.
+	 * @param requestContext Guaranteed non-<code>null</code>
+	 * @return The {@link MarshalOptions}
+	 */
+	MarshalOptions getMarshalOptions(RequestContext requestContext);
 
 	/**
 	 * Provides the entity type specific {@link IMarshalingListHandler}.

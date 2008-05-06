@@ -547,11 +547,11 @@ public final class Marshaler {
 	 * @return true/false
 	 */
 	private boolean shouldMarshalRelation(boolean isReferenceRelation, int currentDepth, MarshalOptions marshalOptions) {
-		if(!depthCheck(currentDepth, marshalOptions.maxDepth)) {
+		if(!depthCheck(currentDepth, marshalOptions.getMaxDepth())) {
 			return false;
 		}
 		if(isReferenceRelation) {
-			return marshalOptions.processReferenceRelations;
+			return marshalOptions.isProcessReferenceRelations();
 		}
 		return true;
 	}

@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField;
+import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
@@ -96,21 +97,21 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	protected void configure() {
 		super.configure();
 
-		parent = ftext("parent.name", "Parent", IField.LBL_ABOVE, 15);
+		parent = ftext("parent.name", "Parent", LabelMode.ABOVE, 15);
 		parent.setReadOnly(true);
 		parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		status = fselect("status", "Status", IField.LBL_ABOVE, ClientEnumUtil.toMap(AccountStatus.class));
+		status = fselect("status", "Status", LabelMode.ABOVE, ClientEnumUtil.toMap(AccountStatus.class));
 		status.getListBox().addChangeListener(this);
 
-		dateCancelled = fdate("dateCancelled", "Date Cancelled", IField.LBL_ABOVE, GlobalFormat.DATE);
+		dateCancelled = fdate("dateCancelled", "Date Cancelled", LabelMode.ABOVE, GlobalFormat.DATE);
 
-		currency = fselect("currency.id", "Currency", IField.LBL_ABOVE, AuxDataCache.instance().getCurrencyDataMap());
+		currency = fselect("currency.id", "Currency", LabelMode.ABOVE, AuxDataCache.instance().getCurrencyDataMap());
 
-		billingModel = ftext("billingModel", "Billing Model", IField.LBL_ABOVE, 18);
-		billingCycle = ftext("billingCycle", "Billing Cycle", IField.LBL_ABOVE, 18);
-		dateLastCharged = fdate("dateLastCharged", "Last Charged", IField.LBL_ABOVE, GlobalFormat.DATE);
-		nextChargeDate = fdate("nextChargeDate", "Next Charge", IField.LBL_ABOVE, GlobalFormat.DATE);
+		billingModel = ftext("billingModel", "Billing Model", LabelMode.ABOVE, 18);
+		billingCycle = ftext("billingCycle", "Billing Cycle", LabelMode.ABOVE, 18);
+		dateLastCharged = fdate("dateLastCharged", "Last Charged", LabelMode.ABOVE, GlobalFormat.DATE);
+		nextChargeDate = fdate("nextChargeDate", "Next Charge", LabelMode.ABOVE, GlobalFormat.DATE);
 
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);

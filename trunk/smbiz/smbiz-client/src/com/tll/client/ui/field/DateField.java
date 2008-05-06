@@ -22,7 +22,7 @@ public class DateField extends TextField {
 	 * @param lblMode
 	 * @param format
 	 */
-	public DateField(String propName, String lblText, int lblMode, GlobalFormat format) {
+	public DateField(String propName, String lblText, LabelMode lblMode, GlobalFormat format) {
 		super(propName, lblText, lblMode, 10);
 		setFormat(format);
 		DateFormat dateFormat = Fmt.getDateFormat(format);
