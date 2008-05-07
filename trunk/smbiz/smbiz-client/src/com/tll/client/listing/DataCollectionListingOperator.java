@@ -22,7 +22,9 @@ import com.tll.listhandler.SortColumn;
  * collection of listing elements.
  * @author jpk
  */
-public class DataCollectionListingOperator extends AbstractListingOperator {
+public class DataCollectionListingOperator implements IListingOperator {
+
+	private final AbstractListingWidget listingWidget;
 
 	private final int pageSize;
 
@@ -47,7 +49,7 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 	 * @param dataList
 	 */
 	public DataCollectionListingOperator(AbstractListingWidget listingWidget, int pageSize, List<Model> dataList) {
-		super(listingWidget);
+		this.listingWidget = listingWidget;
 		this.pageSize = pageSize;
 		this.dataList = dataList;
 		this.size = dataList == null ? 0 : dataList.size();

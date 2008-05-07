@@ -5,6 +5,7 @@ package com.tll.client.listing;
 
 import java.util.List;
 
+import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
@@ -40,7 +41,7 @@ public abstract class ListingFactory {
 	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria,
 			ListHandlerType listHandlerType, IRowOptionsProvider rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
-		listingWidget.setOperator(new RpcListingOperator(listingWidget, config, listHandlerType, criteria));
+		listingWidget.setOperator(new ListingCommand(listingWidget, config, listHandlerType, criteria));
 		return listingWidget;
 	}
 

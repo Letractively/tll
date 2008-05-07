@@ -74,10 +74,4 @@ public interface IListingOperator {
 	 * @param rowIndex The index of the row to delete
 	 */
 	void deleteRow(int rowIndex);
-
-	/**
-	 * Should be called just before the app looses the ability to reference the
-	 * bound listing widget.
-	 */
-	void destroy();
 }

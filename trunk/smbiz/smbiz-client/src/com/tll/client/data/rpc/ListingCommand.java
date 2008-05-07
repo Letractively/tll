@@ -15,7 +15,12 @@ import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
+import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IListingOperator;
+import com.tll.client.model.Model;
+import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
+import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
@@ -24,61 +29,13 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - Issues RPC listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
+public final class ListingCommand extends RpcCommand<ListingPayload> implements IListingOperator, ISourcesListingEvents {
 
 	private static final IListingServiceAsync svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
 	}
-
-	/**
-	 * IListingDefinition - Listing definition that encapsulates necessary config
-	 * related properties for the server to generate a listing.
-	 * @author jpk
-	 */
-	public interface IListingDefinition {
-
-		public static final ListHandlerType DEFAULT_LIST_HANDLER_TYPE = ListHandlerType.PAGE;
-
-		/**
-		 * This name <em>must</em> be unique accross all defined
-		 * IListingDefinition s in the app.
-		 * @return The listing name.
-		 */
-		String getListingName();
-
-		/**
-		 * @return The server side list handler type
-		 */
-		ListHandlerType getListHandlerType();
-
-		/**
-		 * @return The data set
-		 */
-		PropKey[] getPropKeys();
-
-		/**
-		 * @return The page size or <code>-1</code> for <em>NO</em> paging.
-		 */
-		int getPageSize();
-
-		/**
-		 * @return <code>true</code> if the listing is sortable.
-		 */
-		boolean isSortable();
-
-		/**
-		 * @return The default (initial) Sorting directive.
-		 */
-		Sorting getDefaultSorting();
-	}
-
-	/**
-	 * The necessary listing definition for server side list handling
-	 * configuration
-	 */
-	private final IListingDefinition listingDef;
 
 	/**
 	 * The listing event listeners.
@@ -97,16 +54,57 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	private boolean listingGenerated;
 
 	/**
+	 * This listing this operator operates on.
+	 */
+	private final AbstractListingWidget listingWidget;
+
+	/**
+	 * The search criteria that dictates data retrieval from the server.
+	 */
+	private final ISearch criteria;
+
+	private final String listingName;
+	private final ListHandlerType listHandlerType;
+	private final PropKey[] props;
+	private final int pageSize;
+	private final Sorting sorting;
+
+	/**
+	 * Constructor
+	 * @param listingWidget
+	 * @param listingConfig
+	 * @param listHandlerType
+	 * @param criteria
+	 */
+	public ListingCommand(AbstractListingWidget listingWidget, final IListingConfig listingConfig,
+			ListHandlerType listHandlerType, ISearch criteria) {
+		this(listingWidget, listingWidget, Integer.toString(criteria.hashCode()), listHandlerType, listingConfig
+				.getPropKeys(), listingConfig.getPageSize(), (listingConfig.isSortable() ? listingConfig.getDefaultSorting()
+				: null), criteria);
+	}
+
+	/**
 	 * Constructor
 	 * @param sourcingWidget
-	 * @param listingDef
+	 * @param listingWidget
+	 * @param listingName
+	 * @param listHandlerType
+	 * @param props
+	 * @param pageSize
+	 * @param sorting
+	 * @param criteria
 	 */
-	public ListingCommand(Widget sourcingWidget, IListingDefinition listingDef) {
+	public ListingCommand(Widget sourcingWidget, AbstractListingWidget listingWidget, String listingName,
+			ListHandlerType listHandlerType, PropKey[] props, int pageSize, Sorting sorting, ISearch criteria) {
 		super(sourcingWidget);
-		if(listingDef == null) {
-			throw new IllegalArgumentException("No listing definition specified.");
-		}
-		this.listingDef = listingDef;
+		this.listingWidget = listingWidget;
+		this.listingName = listingName;
+		this.listHandlerType = listHandlerType;
+		this.props = props;
+		this.pageSize = pageSize;
+		this.sorting = sorting;
+		this.criteria = criteria;
+		addListingListener(listingWidget);
 	}
 
 	public void addListingListener(IListingListener listener) {
@@ -128,11 +126,8 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 		}
 		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
 		com.tll.client.data.ListingCommand lc =
-				new com.tll.client.data.ListingCommand(listingDef.getPageSize(), listingDef.getListHandlerType(), listingDef
-						.getListingName(), listingDef.getPropKeys(), listingOp, criteria);
-		if(listingDef.isSortable()) {
-			lc.setSorting(listingDef.getDefaultSorting());
-		}
+				new com.tll.client.data.ListingCommand(pageSize, listHandlerType, listingName, props, listingOp, criteria);
+		lc.setSorting(sorting);
 		this.listingCommand = lc;
 	}
 
@@ -142,8 +137,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 */
 	public void sort(SortColumn sortColumn) {
 		ListingOp listingOp = ListingOp.SORT;
-		com.tll.client.data.ListingCommand lc =
-				new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+		com.tll.client.data.ListingCommand lc = new com.tll.client.data.ListingCommand(listingName, listingOp);
 		lc.setSorting(new Sorting(sortColumn));
 		this.listingCommand = lc;
 	}
@@ -155,17 +149,47 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 */
 	public void navigate(ListingOp navAction, Integer pageNum) {
 		ListingOp listingOp = navAction;
-		com.tll.client.data.ListingCommand lc =
-				new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+		com.tll.client.data.ListingCommand lc = new com.tll.client.data.ListingCommand(listingName, listingOp);
 		lc.setPageNumber(pageNum);
 		this.listingCommand = lc;
+	}
+
+	public void refresh() {
+		list(criteria, true);
+		execute();
+	}
+
+	public void display() {
+		list(criteria, false);
+		execute();
+	}
+
+	public void insertRow(int rowIndex, Model rowData) {
+		throw new UnsupportedOperationException("RPC listing operators do not support row insertion.");
+	}
+
+	public void updateRow(int rowIndex, Model rowData) {
+		throw new UnsupportedOperationException("RPC listing operators do not support row updating.");
+	}
+
+	/**
+	 * We rely on the model change event dispatching system to subsequently update
+	 * the listing.
+	 */
+	public void deleteRow(int rowIndex) {
+		RefKey rowRef = listingWidget.getRowRef(rowIndex);
+		assert rowRef != null && rowRef.isSet();
+
+		CrudCommand cc = new CrudCommand(listingWidget);
+		cc.purge(rowRef);
+		cc.execute();
 	}
 
 	/**
 	 * Clear the listing.
 	 */
 	public void clear() {
-		this.listingCommand = new com.tll.client.data.ListingCommand(listingDef.getListingName(), ListingOp.CLEAR);
+		this.listingCommand = new com.tll.client.data.ListingCommand(listingName, ListingOp.CLEAR);
 	}
 
 	@Override
@@ -189,4 +213,5 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 
 		listeners.fireListingEvent(new ListingEvent(sourcingWidget, !result.hasErrors(), op, result.getPage(), sorting));
 	}
+
 }

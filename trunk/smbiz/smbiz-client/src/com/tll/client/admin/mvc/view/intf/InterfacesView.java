@@ -11,10 +11,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.InterfacePanel;
-import com.tll.client.data.PropKey;
 import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.data.rpc.ListingCommand.IListingDefinition;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.CrudEvent;
@@ -22,6 +19,7 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.listing.RpcListingOperator;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
@@ -32,8 +30,6 @@ import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.listhandler.IPage;
-import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.Sorting;
 
 /**
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
@@ -58,11 +54,10 @@ public class InterfacesView extends AbstractView {
 
 	private static final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 
-	private static final IListingDefinition listingDef;
-
 	static {
 		criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
 
+		/*
 		listingDef = new IListingDefinition() {
 
 			public String getListingName() {
@@ -90,6 +85,7 @@ public class InterfacesView extends AbstractView {
 			}
 
 		};
+		*/
 	}
 
 	/**
@@ -150,7 +146,7 @@ public class InterfacesView extends AbstractView {
 
 		}// InterfaceStack
 
-		private final ListingCommand listingCommand;
+		private final RpcListingOperator listingOperator;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -164,7 +160,7 @@ public class InterfacesView extends AbstractView {
 		 */
 		public InterfacesStack() {
 			super();
-			listingCommand = new ListingCommand(this, listingDef);
+			listingOperator = new RpcListingOperator(this, listingDef);
 			listingCommand.addListingListener(this);
 		}
 
