@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.InterfacePanel;
 import com.tll.client.data.rpc.CrudCommand;
+import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.CrudEvent;
@@ -19,7 +20,6 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.listing.RpcListingOperator;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
@@ -50,42 +50,6 @@ public class InterfacesView extends AbstractView {
 			return new InterfacesView();
 		}
 
-	}
-
-	private static final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
-
-	static {
-		criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
-
-		/*
-		listingDef = new IListingDefinition() {
-
-			public String getListingName() {
-				return criteria.getNamedQuery().getQueryName();
-			}
-
-			public boolean isSortable() {
-				return false;
-			}
-
-			public PropKey[] getPropKeys() {
-				return null;
-			}
-
-			public int getPageSize() {
-				return 25;
-			}
-
-			public ListHandlerType getListHandlerType() {
-				return ListHandlerType.COLLECTION;
-			}
-
-			public Sorting getDefaultSorting() {
-				return null;
-			}
-
-		};
-		*/
 	}
 
 	/**
@@ -146,7 +110,7 @@ public class InterfacesView extends AbstractView {
 
 		}// InterfaceStack
 
-		private final RpcListingOperator listingOperator;
+		private final ListingCommand listingOperator;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -160,8 +124,11 @@ public class InterfacesView extends AbstractView {
 		 */
 		public InterfacesStack() {
 			super();
-			listingOperator = new RpcListingOperator(this, listingDef);
-			listingCommand.addListingListener(this);
+
+			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
+			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
+
+			listingOperator = new ListingCommand(this, listingDef);
 		}
 
 		void refreshData() {

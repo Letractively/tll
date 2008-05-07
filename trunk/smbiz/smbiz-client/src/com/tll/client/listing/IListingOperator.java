@@ -6,7 +6,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.data.ListingOp;
-import com.tll.client.model.Model;
+import com.tll.client.event.ISourcesListingEvents;
 import com.tll.listhandler.SortColumn;
 
 /**
@@ -14,7 +14,7 @@ import com.tll.listhandler.SortColumn;
  * interface enables a pluggable (generic) way to provide listing data.
  * @author jpk
  */
-public interface IListingOperator {
+public interface IListingOperator extends ISourcesListingEvents {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then
@@ -51,27 +51,4 @@ public interface IListingOperator {
 	 * the listing Widget.
 	 */
 	void clear();
-
-	/**
-	 * Inserts a new row at the given index shifting the existing rows downward. A
-	 * listing event is then dispatched to the listing Widget.
-	 * @param beforeRow The index before which the new row will be inserted.
-	 * @param rowData The row data
-	 */
-	void insertRow(int rowIndex, Model rowData);
-
-	/**
-	 * Updates an existing row's cell contents. A listing event is then dispatched
-	 * to the listing Widget.
-	 * @param rowIndex The row index of the row to update
-	 * @param rowData The new row data to apply
-	 */
-	void updateRow(int rowIndex, Model rowData);
-
-	/**
-	 * Deletes a row at the given row index. A listing event is then dispatched to
-	 * the listing Widget.
-	 * @param rowIndex The index of the row to delete
-	 */
-	void deleteRow(int rowIndex);
 }

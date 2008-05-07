@@ -41,7 +41,10 @@ public abstract class ListingFactory {
 	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria,
 			ListHandlerType listHandlerType, IRowOptionsProvider rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
-		listingWidget.setOperator(new ListingCommand(listingWidget, config, listHandlerType, criteria));
+		// TODO improve the listing name!!!
+		String listingName = Integer.toString(criteria.hashCode());
+		listingWidget.setOperator(new ListingCommand(listingWidget, listingName, listHandlerType, config.getPropKeys(),
+				config.getPageSize(), config.isSortable() ? config.getDefaultSorting() : null, criteria));
 		return listingWidget;
 	}
 

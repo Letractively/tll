@@ -22,18 +22,16 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
-import com.tll.listhandler.SortColumn;
 
 /**
  * AbstractListingWidget - Base class for all listing {@link Widget}s in the
  * app.
  * @author jpk
  */
-public abstract class AbstractListingWidget extends Composite implements IListingListener, HasFocus, IModelChangeListener, IListingOperator {
+public abstract class AbstractListingWidget extends Composite implements IListingListener, HasFocus, IModelChangeListener {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -65,9 +63,6 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 	 */
 	private final ScrollPanel portal = new ScrollPanel();
 
-	/**
-	 * The listing operator.
-	 */
 	private IListingOperator operator;
 
 	/**
@@ -111,52 +106,23 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 	}
 
 	/**
+	 * @return The listing operator for this listing widget. <br>
+	 *         <strong>NOTE: </strong>The operator is assigned via #setOperator
+	 */
+	public final IListingOperator getOperator() {
+		return operator;
+	}
+
+	/**
+	 * Sets the listing operator for this listing.
 	 * @param operator the operator to set
 	 */
-	public void setOperator(IListingOperator operator) {
-		this.operator = operator;
+	public final void setOperator(IListingOperator operator) {
+		if(operator == null) {
+			throw new IllegalArgumentException("A listing operator must be specified.");
+		}
 		table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
-	}
-
-	public final void clear() {
-		operator.clear();
-	}
-
-	public final void destroy() {
-		// TODO impl!!
-	}
-
-	public final void deleteRow(int rowIndex) {
-		operator.deleteRow(rowIndex);
-	}
-
-	public final void display() {
-		operator.display();
-	}
-
-	public final void insertRow(int rowIndex, Model rowData) {
-		operator.insertRow(rowIndex, rowData);
-	}
-
-	public final void navigate(ListingOp navAction, Integer page) {
-		operator.navigate(navAction, page);
-	}
-
-	public final void refresh() {
-		operator.refresh();
-	}
-
-	public final void sort(SortColumn sortColumn) {
-		operator.sort(sortColumn);
-	}
-
-	public final void updateRow(int rowIndex, Model rowData) {
-		operator.updateRow(rowIndex, rowData);
-	}
-
-	public final RefKey getRowRef(int rowIndex) {
-		return table.getRowRef(rowIndex);
 	}
 
 	/**

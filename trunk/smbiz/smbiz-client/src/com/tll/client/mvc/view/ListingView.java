@@ -6,7 +6,6 @@
 package com.tll.client.mvc.view;
 
 import com.tll.client.event.IRowOptionListener;
-import com.tll.client.event.ModelChangeEventDispatcher;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
@@ -31,20 +30,20 @@ public abstract class ListingView extends AbstractView implements IRowOptionList
 	protected final void setListingWidget(AbstractListingWidget listingWidget) {
 		assert listingWidget != null;
 		this.listingWidget = listingWidget;
-		ModelChangeEventDispatcher.instance().addModelChangeListener(listingWidget);
+		// ModelChangeEventDispatcher.instance().addModelChangeListener(listingWidget);
 		addWidget(listingWidget);
 	}
 
 	@Override
 	public final void refresh() {
-		if(listingWidget != null) listingWidget.refresh();
+		if(listingWidget != null) listingWidget.getOperator().refresh();
 	}
 
 	@Override
 	protected final void doDestroy() {
 		if(listingWidget != null) {
-			listingWidget.clear();
-			ModelChangeEventDispatcher.instance().removeModelChangeListener(listingWidget);
+			listingWidget.getOperator().clear();
+			// ModelChangeEventDispatcher.instance().removeModelChangeListener(listingWidget);
 		}
 	}
 

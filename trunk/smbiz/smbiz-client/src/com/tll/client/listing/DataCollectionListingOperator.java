@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.tll.client.data.ListingOp;
+import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.Model;
 import com.tll.client.ui.listing.AbstractListingWidget;
@@ -43,6 +44,11 @@ public class DataCollectionListingOperator implements IListingOperator {
 	private int numPages = -1;
 
 	/**
+	 * The listing event listeners.
+	 */
+	private final ListingListenerCollection listeners = new ListingListenerCollection();
+
+	/**
 	 * Constructor
 	 * @param listingWidget
 	 * @param pageSize
@@ -54,6 +60,14 @@ public class DataCollectionListingOperator implements IListingOperator {
 		this.dataList = dataList;
 		this.size = dataList == null ? 0 : dataList.size();
 		this.numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
+	}
+
+	public void addListingListener(IListingListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListingListener(IListingListener listener) {
+		listeners.remove(listener);
 	}
 
 	/**
@@ -187,6 +201,7 @@ public class DataCollectionListingOperator implements IListingOperator {
 
 	}
 
+	/*
 	public void insertRow(int rowIndex, Model rowData) {
 		dataList.add(rowIndex, rowData);
 		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.INSERT_ROW, rowIndex, rowData));
@@ -204,4 +219,5 @@ public class DataCollectionListingOperator implements IListingOperator {
 		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.DELETE_ROW, rowIndex, removed));
 
 	}
+	*/
 }

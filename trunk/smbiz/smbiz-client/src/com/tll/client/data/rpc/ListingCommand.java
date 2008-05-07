@@ -13,14 +13,9 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
-import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
@@ -29,7 +24,7 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - Issues RPC listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand extends RpcCommand<ListingPayload> implements IListingOperator, ISourcesListingEvents {
+public final class ListingCommand extends RpcCommand<ListingPayload> implements IListingOperator {
 
 	private static final IListingServiceAsync svc;
 	static {
@@ -54,11 +49,6 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	private boolean listingGenerated;
 
 	/**
-	 * This listing this operator operates on.
-	 */
-	private final AbstractListingWidget listingWidget;
-
-	/**
 	 * The search criteria that dictates data retrieval from the server.
 	 */
 	private final ISearch criteria;
@@ -71,22 +61,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 
 	/**
 	 * Constructor
-	 * @param listingWidget
-	 * @param listingConfig
-	 * @param listHandlerType
-	 * @param criteria
-	 */
-	public ListingCommand(AbstractListingWidget listingWidget, final IListingConfig listingConfig,
-			ListHandlerType listHandlerType, ISearch criteria) {
-		this(listingWidget, listingWidget, Integer.toString(criteria.hashCode()), listHandlerType, listingConfig
-				.getPropKeys(), listingConfig.getPageSize(), (listingConfig.isSortable() ? listingConfig.getDefaultSorting()
-				: null), criteria);
-	}
-
-	/**
-	 * Constructor
 	 * @param sourcingWidget
-	 * @param listingWidget
 	 * @param listingName
 	 * @param listHandlerType
 	 * @param props
@@ -94,17 +69,15 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * @param sorting
 	 * @param criteria
 	 */
-	public ListingCommand(Widget sourcingWidget, AbstractListingWidget listingWidget, String listingName,
-			ListHandlerType listHandlerType, PropKey[] props, int pageSize, Sorting sorting, ISearch criteria) {
+	public ListingCommand(Widget sourcingWidget, String listingName, ListHandlerType listHandlerType, PropKey[] props,
+			int pageSize, Sorting sorting, ISearch criteria) {
 		super(sourcingWidget);
-		this.listingWidget = listingWidget;
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
 		this.props = props;
 		this.pageSize = pageSize;
 		this.sorting = sorting;
 		this.criteria = criteria;
-		addListingListener(listingWidget);
 	}
 
 	public void addListingListener(IListingListener listener) {
@@ -162,27 +135,6 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	public void display() {
 		list(criteria, false);
 		execute();
-	}
-
-	public void insertRow(int rowIndex, Model rowData) {
-		throw new UnsupportedOperationException("RPC listing operators do not support row insertion.");
-	}
-
-	public void updateRow(int rowIndex, Model rowData) {
-		throw new UnsupportedOperationException("RPC listing operators do not support row updating.");
-	}
-
-	/**
-	 * We rely on the model change event dispatching system to subsequently update
-	 * the listing.
-	 */
-	public void deleteRow(int rowIndex) {
-		RefKey rowRef = listingWidget.getRowRef(rowIndex);
-		assert rowRef != null && rowRef.isSet();
-
-		CrudCommand cc = new CrudCommand(listingWidget);
-		cc.purge(rowRef);
-		cc.execute();
 	}
 
 	/**
