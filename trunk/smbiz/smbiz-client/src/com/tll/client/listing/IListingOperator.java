@@ -5,6 +5,7 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.data.ListingOp;
 import com.tll.client.model.Model;
 import com.tll.listhandler.SortColumn;
 
@@ -42,7 +43,7 @@ public interface IListingOperator {
 	 * @param navAction
 	 * @param page The 0-based page number
 	 */
-	void navigate(ClientListingOp navAction, Integer page);
+	void navigate(ListingOp navAction, Integer page);
 
 	/**
 	 * Relinquishes any inter-request listing cache and state associated with the
@@ -73,4 +74,10 @@ public interface IListingOperator {
 	 * @param rowIndex The index of the row to delete
 	 */
 	void deleteRow(int rowIndex);
+
+	/**
+	 * Should be called just before the app looses the ability to reference the
+	 * bound listing widget.
+	 */
+	void destroy();
 }

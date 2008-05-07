@@ -2,6 +2,8 @@ package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
 import com.tll.client.search.ISearch;
+import com.tll.listhandler.ListHandlerType;
+import com.tll.listhandler.Sorting;
 
 /**
  * The listing command interface. Used to transfer a client/server request for
@@ -9,11 +11,6 @@ import com.tll.client.search.ISearch;
  * @author jpk
  */
 public interface IListingCommand extends IMarshalable {
-
-	/* in lieu of ListHandlerType enum */
-	public static final int LIST_HANDLER_TYPE_COLLECTION = 0;
-	public static final int LIST_HANDLER_TYPE_IDLIST = 1;
-	public static final int LIST_HANDLER_TYPE_PAGE = 2;
 
 	/**
 	 * @return the distinguishing name of the listing. Must be unique against all
@@ -37,7 +34,7 @@ public interface IListingCommand extends IMarshalable {
 	 * @return The list handling type. Controls how paging is performed on the
 	 *         server.
 	 */
-	int getListHandlerType();
+	ListHandlerType getListHandlerType();
 
 	/**
 	 * @return The search criteria for the listing.
@@ -54,4 +51,13 @@ public interface IListingCommand extends IMarshalable {
 	 * @return ListingOp
 	 */
 	ListingOp getListingOp();
+
+	/**
+	 * @return The sorting directive.
+	 */
+	Sorting getSorting();
+
+	Integer getPageNumber();
+
+	Boolean getRetainStateOnClear();
 }

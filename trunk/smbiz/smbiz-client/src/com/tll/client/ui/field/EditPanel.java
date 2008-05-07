@@ -101,6 +101,8 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 	 */
 	private Model entity;
 
+	private boolean loaded;
+
 	/**
 	 * Constructor
 	 * @param fldGrpPnl The panel containing the desired fields for edit.
@@ -200,6 +202,12 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 	 */
 	public void refresh() {
 
+		if(loaded) {
+			// force a refresh
+			entity = null;
+			loaded = false;
+		}
+
 		// fetch entity from server?
 		if(entity == null) {
 			if(entityRef == null || !entityRef.isSet()) {
@@ -225,6 +233,8 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 		fldGrpPnl.bind(entity);
 		fldGrpPnl.render();
 		pnlButtonRow.setVisible(true);
+
+		loaded = true;
 	}
 
 	public void onCrudEvent(CrudEvent event) {
@@ -245,12 +255,10 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 					entity = event.getPayload().getEntity();
 					assert entity != null;
 
-					// re-bind the updated entity
+					// re-"draw" the updated entity
 					fldGrpPnl.bind(entity);
-					// HACK: re-render as well
+					fldGrpPnl.reset();
 					fldGrpPnl.render();
-					// TODO can we figure out a CLEAN way to avoid having to re-call
-					// render() ?
 				}
 				break;
 			}

@@ -5,123 +5,61 @@
 
 package com.tll.client.data;
 
-import com.tll.client.IMarshalable;
-import com.tll.listhandler.Sorting;
+import com.tll.util.INameValueProvider;
 
 /**
  * ListingOp - Encapsulates all available actions on a server side listing.
  * @author jpk
  */
-public final class ListingOp implements IMarshalable {
+public enum ListingOp implements INameValueProvider {
 
 	/**
 	 * [Re-]Generate the listing clearing any cache.
 	 */
-	public static final int REFRESH = 0;
+	REFRESH("Refresh"),
 
 	/**
 	 * Retrieve cached listing data or generate the listing if not cached.
 	 */
-	public static final int DISPLAY = 1;
+	DISPLAY("Display"),
 
-	public static final int GOTO_PAGE = 2;
-	public static final int FIRST_PAGE = 3;
-	public static final int LAST_PAGE = 4;
-	public static final int PREVIOUS_PAGE = 5;
-	public static final int NEXT_PAGE = 6;
-	public static final int SORT = 7;
-	public static final int CLEAR = 8;
-	public static final int CLEAR_ALL = 9;
+	GOTO_PAGE("Goto page"),
 
-	private int op = -1; // undefined
+	FIRST_PAGE("First page"),
 
-	/**
-	 * The 1-based page number.
-	 */
-	private Integer pageNumber = null;
+	LAST_PAGE("Last page"),
 
-	private Sorting sorting;
+	PREVIOUS_PAGE("Previous page"),
 
-	private Boolean retainStateOnClear = Boolean.TRUE;
+	NEXT_PAGE("Next page"),
 
-	/**
-	 * Constructor
-	 */
-	public ListingOp() {
-		super();
-	}
+	SORT("Sort"),
+
+	CLEAR("Clear"),
+
+	CLEAR_ALL("Clear all"),
+
+	INSERT_ROW("Insert row"),
+
+	UPDATE_ROW("Update row"),
+
+	DELETE_ROW("Delete row");
+
+	private final String name;
 
 	/**
 	 * Constructor
-	 * @param op
+	 * @param name
 	 */
-	public ListingOp(int op) {
-		this();
-		this.op = op;
+	private ListingOp(String name) {
+		this.name = name;
 	}
 
-	public String descriptor() {
-		switch(op) {
-			case REFRESH:
-				return "Refresh";
-			case DISPLAY:
-				return "Display";
-			case GOTO_PAGE:
-				return "Goto page" + (pageNumber == null ? "" : (" " + pageNumber.toString()));
-			case FIRST_PAGE:
-				return "Goto First Page";
-			case LAST_PAGE:
-				return "Goto Last Page";
-			case PREVIOUS_PAGE:
-				return "Previous Page";
-			case NEXT_PAGE:
-				return "Next Page";
-			case SORT:
-				return "Sort";
-			case CLEAR:
-				return "Clear";
-			case CLEAR_ALL:
-				return "Clear All";
-			default:
-				return "UNKNOWN (" + op + ")";
-		}
+	public String getName() {
+		return name;
 	}
 
-	public int getOp() {
-		return op;
-	}
-
-	public void setOp(int op) {
-		this.op = op;
-	}
-
-	public Integer getPageNumber() {
-		return pageNumber;
-	}
-
-	public void setPageNumber(Integer pageNumber) {
-		this.pageNumber = pageNumber;
-	}
-
-	public Sorting getSorting() {
-		return sorting;
-	}
-
-	public void setSorting(Sorting sorting) {
-		this.sorting = sorting;
-	}
-
-	public Boolean getRetainStateOnClear() {
-		return retainStateOnClear;
-	}
-
-	public void setRetainStateOnClear(Boolean retainStateOnClear) {
-		this.retainStateOnClear = retainStateOnClear;
-	}
-
-	@Override
-	public String toString() {
-		return descriptor() + ", page num:" + getPageNumber() + ", sorting:"
-				+ (getSorting() == null ? "null" : getSorting().toString()) + ", retainStateOnClear:" + retainStateOnClear;
+	public Object getValue() {
+		return name();
 	}
 }

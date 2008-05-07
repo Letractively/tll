@@ -26,4 +26,9 @@ public abstract class AbstractListingOperator implements IListingOperator {
 		super();
 		this.listingWidget = listingWidget;
 	}
+
+	public void destroy() {
+		// TODO impl!!
+	}
+
 }

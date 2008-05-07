@@ -15,11 +15,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.data.ListingOp;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.listing.ClientListingOp;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
@@ -123,6 +123,10 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 		operator.clear();
 	}
 
+	public final void destroy() {
+		// TODO impl!!
+	}
+
 	public final void deleteRow(int rowIndex) {
 		operator.deleteRow(rowIndex);
 	}
@@ -135,7 +139,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 		operator.insertRow(rowIndex, rowData);
 	}
 
-	public final void navigate(ClientListingOp navAction, Integer page) {
+	public final void navigate(ListingOp navAction, Integer page) {
 		operator.navigate(navAction, page);
 	}
 
@@ -215,7 +219,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 			case ADD:
-				onListingEvent(new ListingEvent(this, true, ClientListingOp.INSERT_ROW, 0, event.getModel()));
+				onListingEvent(new ListingEvent(this, true, ListingOp.INSERT_ROW, 0, event.getModel()));
 				break;
 			case UPDATE: {
 				RefKey modelRef = event.getModel().getRefKey();
@@ -223,7 +227,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
-					onListingEvent(new ListingEvent(this, true, ClientListingOp.UPDATE_ROW, rowIndex - 1, event.getModel()));
+					onListingEvent(new ListingEvent(this, true, ListingOp.UPDATE_ROW, rowIndex - 1, event.getModel()));
 				}
 				break;
 			}
@@ -232,7 +236,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					onListingEvent(new ListingEvent(this, true, ClientListingOp.DELETE_ROW, rowIndex - 1, null));
+					onListingEvent(new ListingEvent(this, true, ListingOp.DELETE_ROW, rowIndex - 1, null));
 				}
 				break;
 			}

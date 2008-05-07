@@ -15,9 +15,9 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.data.ListingOp;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.listing.ClientListingOp;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
@@ -175,19 +175,19 @@ public class ListingNavBar extends Toolbar implements IListingListener, ClickLis
 	}
 
 	public void onClick(Widget sender) {
-		ClientListingOp action = null;
+		ListingOp action = null;
 		Integer page = null;
 		if(sender == btnPageFirst) {
-			action = ClientListingOp.FIRST_PAGE;
+			action = ListingOp.FIRST_PAGE;
 		}
 		else if(sender == btnPagePrev) {
-			action = ClientListingOp.PREVIOUS_PAGE;
+			action = ListingOp.PREVIOUS_PAGE;
 		}
 		else if(sender == btnPageNext) {
-			action = ClientListingOp.NEXT_PAGE;
+			action = ListingOp.NEXT_PAGE;
 		}
 		else if(sender == btnPageLast) {
-			action = ClientListingOp.LAST_PAGE;
+			action = ListingOp.LAST_PAGE;
 		}
 		else if(sender == btnRefresh) {
 			listingOperator.refresh();
@@ -242,7 +242,7 @@ public class ListingNavBar extends Toolbar implements IListingListener, ClickLis
 				return;
 			}
 			assert listingOperator != null : "No listing operator set";
-			listingOperator.navigate(ClientListingOp.GOTO_PAGE, new Integer(page - 1));
+			listingOperator.navigate(ListingOp.GOTO_PAGE, new Integer(page - 1));
 		}
 		else {
 			throw new IllegalArgumentException("Unhandled listing nav change action");

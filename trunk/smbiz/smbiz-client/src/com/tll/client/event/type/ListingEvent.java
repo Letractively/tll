@@ -5,7 +5,7 @@
 package com.tll.client.event.type;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.listing.ClientListingOp;
+import com.tll.client.data.ListingOp;
 import com.tll.client.model.Model;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.Sorting;
@@ -17,7 +17,7 @@ import com.tll.listhandler.Sorting;
 public final class ListingEvent extends BaseEvent {
 
 	private final boolean success;
-	private final ClientListingOp listingOp;
+	private final ListingOp listingOp;
 	private final IPage<Model> page;
 	private final int rowIndex;
 	/**
@@ -35,7 +35,7 @@ public final class ListingEvent extends BaseEvent {
 	 * @param page
 	 * @param sorting
 	 */
-	public ListingEvent(Widget source, boolean success, ClientListingOp listingOp, IPage<Model> page, Sorting sorting) {
+	public ListingEvent(Widget source, boolean success, ListingOp listingOp, IPage<Model> page, Sorting sorting) {
 		super(source);
 		this.success = success;
 		this.listingOp = listingOp;
@@ -53,7 +53,7 @@ public final class ListingEvent extends BaseEvent {
 	 * @param rowIndex
 	 * @param rowData
 	 */
-	public ListingEvent(Widget source, boolean success, ClientListingOp listingOp, int rowIndex, Model rowData) {
+	public ListingEvent(Widget source, boolean success, ListingOp listingOp, int rowIndex, Model rowData) {
 		super(source);
 		this.success = success;
 		this.listingOp = listingOp;
@@ -67,7 +67,7 @@ public final class ListingEvent extends BaseEvent {
 		return success;
 	}
 
-	public ClientListingOp getListingOp() {
+	public ListingOp getListingOp() {
 		return listingOp;
 	}
 

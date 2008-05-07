@@ -19,10 +19,10 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.data.ListingOp;
 import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.listing.ClientListingOp;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
@@ -373,7 +373,7 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 
 	public void onListingEvent(ListingEvent event) {
 		if(event.isSuccess()) {
-			ClientListingOp listingOp = event.getListingOp();
+			ListingOp listingOp = event.getListingOp();
 			IPage<Model> page = event.getPage();
 			if(page != null) {
 				removeBodyRows();
@@ -384,16 +384,16 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 				actvRowIndex = crntRowIndex = -1; // reset
 			}
 			// NOTE: we adjust the event's row index to account for the header row
-			else if(listingOp == ClientListingOp.INSERT_ROW) {
+			else if(listingOp == ListingOp.INSERT_ROW) {
 				addRow(event.getRowIndex() + 2, event.getRowData());
 			}
-			else if(listingOp == ClientListingOp.UPDATE_ROW) {
+			else if(listingOp == ListingOp.UPDATE_ROW) {
 				updateRow(event.getRowIndex() + 1, event.getRowData());
 			}
-			else if(listingOp == ClientListingOp.DELETE_ROW) {
+			else if(listingOp == ListingOp.DELETE_ROW) {
 				deleteRow(event.getRowIndex() + 1);
 			}
-			else if(listingOp == ClientListingOp.CLEAR) {
+			else if(listingOp == ListingOp.CLEAR) {
 				removeBodyRows();
 			}
 		}
@@ -442,12 +442,12 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEUP) {
 			if(crntPage > 1) {
-				listingOperator.navigate(ClientListingOp.PREVIOUS_PAGE, null);
+				listingOperator.navigate(ListingOp.PREVIOUS_PAGE, null);
 			}
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEDOWN) {
 			if(crntPage < numPages) {
-				listingOperator.navigate(ClientListingOp.NEXT_PAGE, null);
+				listingOperator.navigate(ListingOp.NEXT_PAGE, null);
 			}
 		}
 	}

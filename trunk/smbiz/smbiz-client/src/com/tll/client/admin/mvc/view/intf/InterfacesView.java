@@ -11,7 +11,6 @@ import java.util.List;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.InterfacePanel;
-import com.tll.client.data.IListingCommand;
 import com.tll.client.data.PropKey;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.ListingCommand;
@@ -33,6 +32,7 @@ import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.listhandler.IPage;
+import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -81,8 +81,8 @@ public class InterfacesView extends AbstractView {
 				return 25;
 			}
 
-			public int getListHandlerType() {
-				return IListingCommand.LIST_HANDLER_TYPE_COLLECTION;
+			public ListHandlerType getListHandlerType() {
+				return ListHandlerType.COLLECTION;
 			}
 
 			public Sorting getDefaultSorting() {

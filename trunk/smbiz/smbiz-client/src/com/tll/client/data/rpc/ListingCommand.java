@@ -15,8 +15,8 @@ import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.listing.ClientListingOp;
 import com.tll.client.search.ISearch;
+import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
@@ -39,7 +39,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 */
 	public interface IListingDefinition {
 
-		public static final int DEFAULT_LIST_HANDLER_TYPE = IListingCommand.LIST_HANDLER_TYPE_PAGE;
+		public static final ListHandlerType DEFAULT_LIST_HANDLER_TYPE = ListHandlerType.PAGE;
 
 		/**
 		 * This name <em>must</em> be unique accross all defined
@@ -49,19 +49,19 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 		String getListingName();
 
 		/**
-		 * @return The page size or <code>-1</code> for <em>NO</em> paging.
-		 */
-		int getPageSize();
-
-		/**
 		 * @return The server side list handler type
 		 */
-		int getListHandlerType();
+		ListHandlerType getListHandlerType();
 
 		/**
 		 * @return The data set
 		 */
 		PropKey[] getPropKeys();
+
+		/**
+		 * @return The page size or <code>-1</code> for <em>NO</em> paging.
+		 */
+		int getPageSize();
 
 		/**
 		 * @return <code>true</code> if the listing is sortable.
@@ -126,14 +126,13 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 		if(criteria == null) {
 			throw new IllegalStateException("No criteria specified.");
 		}
-		ListingOp listingOp = new ListingOp();
-		listingOp.setOp((!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY);
-		if(listingDef.isSortable()) {
-			listingOp.setSorting(listingDef.getDefaultSorting());
-		}
-		IListingCommand lc =
+		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
+		com.tll.client.data.ListingCommand lc =
 				new com.tll.client.data.ListingCommand(listingDef.getPageSize(), listingDef.getListHandlerType(), listingDef
 						.getListingName(), listingDef.getPropKeys(), listingOp, criteria);
+		if(listingDef.isSortable()) {
+			lc.setSorting(listingDef.getDefaultSorting());
+		}
 		this.listingCommand = lc;
 	}
 
@@ -142,10 +141,10 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * @param sortColumn sortColumn
 	 */
 	public void sort(SortColumn sortColumn) {
-		ListingOp listingOp = new ListingOp();
-		listingOp.setOp(ListingOp.SORT);
-		listingOp.setSorting(new Sorting(sortColumn));
-		IListingCommand lc = new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+		ListingOp listingOp = ListingOp.SORT;
+		com.tll.client.data.ListingCommand lc =
+				new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+		lc.setSorting(new Sorting(sortColumn));
 		this.listingCommand = lc;
 	}
 
@@ -154,11 +153,11 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * @param navAction
 	 * @param pageNum
 	 */
-	public void navigate(int navAction, Integer pageNum) {
-		ListingOp listingOp = new ListingOp();
-		listingOp.setOp(navAction);
-		listingOp.setPageNumber(pageNum);
-		IListingCommand lc = new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+	public void navigate(ListingOp navAction, Integer pageNum) {
+		ListingOp listingOp = navAction;
+		com.tll.client.data.ListingCommand lc =
+				new com.tll.client.data.ListingCommand(listingDef.getListingName(), listingOp);
+		lc.setPageNumber(pageNum);
 		this.listingCommand = lc;
 	}
 
@@ -166,8 +165,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * Clear the listing.
 	 */
 	public void clear() {
-		this.listingCommand =
-				new com.tll.client.data.ListingCommand(listingDef.getListingName(), new ListingOp(ListingOp.CLEAR));
+		this.listingCommand = new com.tll.client.data.ListingCommand(listingDef.getListingName(), ListingOp.CLEAR);
 	}
 
 	@Override
@@ -185,43 +183,10 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 		if(!result.hasErrors()) {
 			listingGenerated = true;
 		}
-		final int op = listingCommand.getListingOp().getOp();
-		final Sorting sorting = listingCommand.getListingOp().getSorting();
+		final ListingOp op = listingCommand.getListingOp();
+		final Sorting sorting = listingCommand.getSorting();
 		listingCommand = null; // reset
 
-		// TODO temp
-		ClientListingOp clo;
-		switch(op) {
-			case ListingOp.REFRESH:
-			case ListingOp.DISPLAY:
-				clo = ClientListingOp.REFRESH;
-				break;
-			case ListingOp.GOTO_PAGE:
-				clo = ClientListingOp.GOTO_PAGE;
-				break;
-			case ListingOp.FIRST_PAGE:
-				clo = ClientListingOp.FIRST_PAGE;
-				break;
-			case ListingOp.LAST_PAGE:
-				clo = ClientListingOp.LAST_PAGE;
-				break;
-			case ListingOp.PREVIOUS_PAGE:
-				clo = ClientListingOp.PREVIOUS_PAGE;
-				break;
-			case ListingOp.NEXT_PAGE:
-				clo = ClientListingOp.NEXT_PAGE;
-				break;
-			case ListingOp.SORT:
-				clo = ClientListingOp.SORT;
-				break;
-			case ListingOp.CLEAR:
-			case ListingOp.CLEAR_ALL:
-				clo = ClientListingOp.CLEAR;
-				break;
-			default:
-				throw new IllegalStateException("TODO");
-		}
-
-		listeners.fireListingEvent(new ListingEvent(sourcingWidget, !result.hasErrors(), clo, result.getPage(), sorting));
+		listeners.fireListingEvent(new ListingEvent(sourcingWidget, !result.hasErrors(), op, result.getPage(), sorting));
 	}
 }

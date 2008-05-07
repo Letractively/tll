@@ -114,13 +114,6 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	}
 
 	/**
-	 * @return <code>true</code> if {@link #configure()} was called.
-	 */
-	protected final boolean isConfigured() {
-		return configured;
-	}
-
-	/**
 	 * Populates the field group and sets the UI widgets. Performed once.
 	 * <p>
 	 * <em>IMPT:</em> This method should be called resursively for child field

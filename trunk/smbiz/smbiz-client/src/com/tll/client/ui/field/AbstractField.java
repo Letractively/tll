@@ -316,10 +316,20 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		removeStyleName(styleWarn);
 	}
 
+	private void clearEditStyling() {
+		removeStyleName(styleChanged);
+	}
+
 	public final void reset() {
 		clearValidationStyling();
-		removeStyleName(styleChanged);
+		clearEditStyling();
 		setValue(resetValue);
+	}
+
+	public void clear() {
+		clearValidationStyling();
+		clearEditStyling();
+		setValue(null);
 	}
 
 	public final void bindModel(Model model) {

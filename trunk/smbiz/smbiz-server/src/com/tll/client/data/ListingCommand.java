@@ -5,6 +5,8 @@
 package com.tll.client.data;
 
 import com.tll.client.search.ISearch;
+import com.tll.listhandler.ListHandlerType;
+import com.tll.listhandler.Sorting;
 
 /**
  * ListingCommand - {@link IListingCommand} impl.
@@ -12,12 +14,16 @@ import com.tll.client.search.ISearch;
  */
 public final class ListingCommand implements IListingCommand {
 
-	private int pageSize;
-	private int listHandlerType;
+	private ListHandlerType listHandlerType;
 	private String listingName;
+	private int pageSize;
 	private PropKey[] propKeys;
+	private ISearch searchCriteria;
+
 	private ListingOp listingOp;
-	private ISearch criteria;
+	private Integer pageNumber;
+	private Sorting sorting;
+	private Boolean retainStateOnClear = Boolean.TRUE;
 
 	/**
 	 * Constructor
@@ -32,18 +38,18 @@ public final class ListingCommand implements IListingCommand {
 	 * @param listHandlerType
 	 * @param listingName
 	 * @param propKeys
-	 * @param opContext
-	 * @param criteria
+	 * @param listingOp
+	 * @param searchCriteria
 	 */
-	public ListingCommand(int pageSize, int listHandlerType, String listingName, PropKey[] propKeys, ListingOp opContext,
-			ISearch criteria) {
+	public ListingCommand(int pageSize, ListHandlerType listHandlerType, String listingName, PropKey[] propKeys,
+			ListingOp listingOp, ISearch searchCriteria) {
 		super();
 		this.pageSize = pageSize;
 		this.listHandlerType = listHandlerType;
 		this.listingName = listingName;
 		this.propKeys = propKeys;
-		this.listingOp = opContext;
-		this.criteria = criteria;
+		this.listingOp = listingOp;
+		this.searchCriteria = searchCriteria;
 	}
 
 	/**
@@ -69,7 +75,7 @@ public final class ListingCommand implements IListingCommand {
 		return pageSize;
 	}
 
-	public int getListHandlerType() {
+	public ListHandlerType getListHandlerType() {
 		return listHandlerType;
 	}
 
@@ -98,10 +104,35 @@ public final class ListingCommand implements IListingCommand {
 	}
 
 	public ISearch getSearchCriteria() {
-		return criteria;
+		return searchCriteria;
 	}
 
-	public void setSearchCriteria(ISearch criteria) {
-		this.criteria = criteria;
+	public void setSearchCriteria(ISearch searchCriteria) {
+		this.searchCriteria = searchCriteria;
 	}
+
+	public Integer getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public Sorting getSorting() {
+		return sorting;
+	}
+
+	public void setSorting(Sorting sorting) {
+		this.sorting = sorting;
+	}
+
+	public Boolean getRetainStateOnClear() {
+		return retainStateOnClear;
+	}
+
+	public void setRetainStateOnClear(Boolean retainStateOnClear) {
+		this.retainStateOnClear = retainStateOnClear;
+	}
+
 }

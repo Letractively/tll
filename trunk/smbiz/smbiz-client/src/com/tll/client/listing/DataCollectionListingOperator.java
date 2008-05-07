@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.tll.client.data.ListingOp;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.Model;
 import com.tll.client.ui.listing.AbstractListingWidget;
@@ -125,7 +126,7 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 
 	}
 
-	public void navigate(ClientListingOp navAction, Integer page) {
+	public void navigate(ListingOp navAction, Integer page) {
 		int navPageNum;
 		switch(navAction) {
 			case GOTO_PAGE:
@@ -166,7 +167,7 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 		if(size == 0) return;
 		IPage<Model> mpage = generatePage(pageNum);
 
-		ListingEvent event = new ListingEvent(listingWidget, true, ClientListingOp.REFRESH, mpage, null);
+		ListingEvent event = new ListingEvent(listingWidget, true, ListingOp.REFRESH, mpage, null);
 		listingWidget.onListingEvent(event);
 	}
 
@@ -186,19 +187,19 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 
 	public void insertRow(int rowIndex, Model rowData) {
 		dataList.add(rowIndex, rowData);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ClientListingOp.INSERT_ROW, rowIndex, rowData));
+		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.INSERT_ROW, rowIndex, rowData));
 	}
 
 	public void updateRow(int rowIndex, Model rowData) {
 		dataList.remove(rowIndex);
 		dataList.add(rowIndex, rowData);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ClientListingOp.UPDATE_ROW, rowIndex, rowData));
+		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.UPDATE_ROW, rowIndex, rowData));
 	}
 
 	public void deleteRow(int rowIndex) {
 		dataList.remove(rowIndex);
 		Model removed = dataList.remove(rowIndex);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ClientListingOp.DELETE_ROW, rowIndex, removed));
+		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.DELETE_ROW, rowIndex, removed));
 
 	}
 }

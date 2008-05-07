@@ -89,6 +89,11 @@ public interface IField extends IPropertyNameProvider {
 	void reset();
 
 	/**
+	 * Clears the value setting it to any set default.
+	 */
+	void clear();
+
+	/**
 	 * Binds the model data to this field.
 	 * @param model The model to bind.
 	 */

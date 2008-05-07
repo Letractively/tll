@@ -6,7 +6,6 @@ package com.tll.client.admin.mvc.view.account;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
-import com.tll.client.data.IListingCommand;
 import com.tll.client.data.PropKey;
 import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.EditViewRequest;
@@ -30,6 +29,7 @@ import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
+import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
@@ -194,7 +194,7 @@ public final class MerchantListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, IListingCommand.LIST_HANDLER_TYPE_PAGE, rop));
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rop));
 	}
 
 	@Override

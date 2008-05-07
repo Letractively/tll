@@ -14,6 +14,7 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
@@ -42,7 +43,7 @@ public final class RpcListingOperator extends AbstractListingOperator {
 	private final class ListingDefinition implements IListingDefinition {
 
 		private final Sorting defaultSorting;
-		private final int listHandlerType;
+		private final ListHandlerType listHandlerType;
 		private final String listingName;
 		private final int pageSize;
 		private final PropKey[] propKeys;
@@ -54,7 +55,7 @@ public final class RpcListingOperator extends AbstractListingOperator {
 		 * @param listingName
 		 * @param listHandlerType
 		 */
-		public ListingDefinition(IListingConfig listingConfig, String listingName, int listHandlerType) {
+		public ListingDefinition(IListingConfig listingConfig, String listingName, ListHandlerType listHandlerType) {
 			super();
 			defaultSorting = listingConfig.getDefaultSorting();
 			this.listHandlerType = listHandlerType;
@@ -68,7 +69,7 @@ public final class RpcListingOperator extends AbstractListingOperator {
 			return defaultSorting;
 		}
 
-		public int getListHandlerType() {
+		public ListHandlerType getListHandlerType() {
 			return listHandlerType;
 		}
 
@@ -97,7 +98,7 @@ public final class RpcListingOperator extends AbstractListingOperator {
 	 * @param criteria
 	 */
 	public RpcListingOperator(AbstractListingWidget listingWidget, final IListingConfig listingConfig,
-			final int listHandlerType, final ISearch criteria) {
+			final ListHandlerType listHandlerType, final ISearch criteria) {
 		super(listingWidget);
 		String listingName = Integer.toString(criteria.hashCode());
 		cmd = new ListingCommand(listingWidget, new ListingDefinition(listingConfig, listingName, listHandlerType));
@@ -115,25 +116,8 @@ public final class RpcListingOperator extends AbstractListingOperator {
 		cmd.execute();
 	}
 
-	public void navigate(ClientListingOp navAction, Integer page) {
-		switch(navAction) {
-			case LAST_PAGE:
-				cmd.navigate(ListingOp.LAST_PAGE, page);
-				break;
-			case NEXT_PAGE:
-				cmd.navigate(ListingOp.NEXT_PAGE, page);
-				break;
-			case PREVIOUS_PAGE:
-				cmd.navigate(ListingOp.PREVIOUS_PAGE, page);
-				break;
-			case GOTO_PAGE:
-				cmd.navigate(ListingOp.GOTO_PAGE, page);
-				break;
-			default:
-			case FIRST_PAGE:
-				cmd.navigate(ListingOp.FIRST_PAGE, page);
-				break;
-		}
+	public void navigate(ListingOp navAction, Integer page) {
+		cmd.navigate(navAction, page);
 		cmd.execute();
 	}
 

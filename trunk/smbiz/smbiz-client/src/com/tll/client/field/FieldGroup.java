@@ -332,6 +332,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	public void clear() {
+		MsgManager.instance.clear(refWidget, true);
+		for(IField field : fields) {
+			field.clear();
+		}
+	}
+
 	public int size() {
 		return fields.size();
 	}

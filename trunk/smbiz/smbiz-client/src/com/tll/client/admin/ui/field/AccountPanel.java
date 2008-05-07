@@ -241,6 +241,10 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		String status = model.asString("status");
 		status = status == null ? null : status.toLowerCase();
 		dateCancelled.setVisible("closed".equals(status));
+
+		dpPaymentInfo.setOpen(false);
+		dpAddresses.setOpen(false);
+		tabAddresses.selectTab(0);
 	}
 
 	@Override
@@ -268,14 +272,6 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		dpPaymentInfo.setOpen(false);
-		dpAddresses.setOpen(false);
-		// tabAddresses.selectTab(0);
 	}
 
 	public void onClick(Widget sender) {

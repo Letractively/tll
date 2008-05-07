@@ -31,7 +31,6 @@ import com.tll.server.ServletUtil;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
-import com.tll.util.EnumUtil;
 
 /**
  * ListingService
@@ -68,10 +67,7 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 			status.addMsg("No listing op specified.", MsgLevel.ERROR);
 		}
 
-		final int op = listingOp == null ? -1 : listingOp.getOp();
-		if(op == -1) {
-			status.addMsg("No listing op directive specified.", MsgLevel.ERROR);
-		}
+		Integer pageNum = listingCommand.getPageNumber();
 
 		if(!status.hasErrors()) {
 
@@ -86,7 +82,7 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 
 			try {
 				// acquire the listing handler
-				if(handler == null || op == ListingOp.REFRESH) {
+				if(handler == null || listingOp == ListingOp.REFRESH) {
 
 					if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
 
@@ -116,11 +112,14 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 							requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 					// resolve the list handler type
-					final ListHandlerType lht = EnumUtil.fromOrdinal(ListHandlerType.class, listingCommand.getListHandlerType());
+					final ListHandlerType lht = listingCommand.getListHandlerType();
+					if(lht == null) {
+						throw new ListingException(listingName, "No list handler type specified.");
+					}
 					IListHandler<SearchResult<E>> listHandler = null;
 					try {
 						listHandler =
-								ListHandlerFactory.create(criteria, listingOp.getSorting(), lht, listingCommand.getPageSize(),
+								ListHandlerFactory.create(criteria, listingCommand.getSorting(), lht, listingCommand.getPageSize(),
 										dataProvider);
 					}
 					catch(final InvalidCriteriaException e) {
@@ -146,12 +145,12 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 									.getPageSize());
 
 					// sync up with cached state (if present)
-					if(op != ListingOp.REFRESH && state != null) {
+					if(listingOp != ListingOp.REFRESH && state != null) {
 						if(log.isDebugEnabled())
 							log.debug("Found cached state for listing '" + listingName + "': " + state.toString());
 
 						// sorting
-						if(!(op == ListingOp.SORT) && state.getSorting() != null) {
+						if(!(listingOp == ListingOp.SORT) && state.getSorting() != null) {
 							if(log.isDebugEnabled())
 								log.debug("Setting listing sorting from cached state for '" + listingName + "'...");
 							try {
@@ -167,7 +166,8 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 						if(state.getPageNumber() != null) {
 							if(log.isDebugEnabled())
 								log.debug("Setting page num from cached state for listing '" + listingName + "'...");
-							listingOp.setPageNumber(state.getPageNumber());
+							// listingOp.setPageNumber(state.getPageNumber());
+							pageNum = state.getPageNumber();
 							pageNumWasSynced = true;
 						}
 					}
@@ -177,16 +177,16 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 				// do the listing op
 				if(log.isDebugEnabled()) log.debug("Performing listing op for '" + listingName + "'...");
 				try {
-					switch(op) {
+					switch(listingOp) {
 
 						// refresh/display
-						case ListingOp.REFRESH:
-						case ListingOp.DISPLAY: {
+						case REFRESH:
+						case DISPLAY: {
 							int cp;
 
 							// first, try to get page num from the context
-							if(listingOp.getPageNumber() != null) {
-								cp = listingOp.getPageNumber().intValue();
+							if(pageNum != null) {
+								cp = pageNum.intValue();
 								if(log.isDebugEnabled()) log.debug("Retrieved page (" + cp + ") from listing op.");
 								if(cp >= handler.getNumPages()) cp = handler.getNumPages() - 1;
 							}
@@ -198,28 +198,28 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 						}
 
 							// page nav
-						case ListingOp.GOTO_PAGE:
-							if(listingOp.getPageNumber() == null)
+						case GOTO_PAGE:
+							if(pageNum == null)
 								throw new ListingException(listingName, "Unable to goto page: Page Number not specified.");
-							setCurrentPage(listingOp.getPageNumber().intValue(), pageNumWasSynced, handler, status);
+							setCurrentPage(pageNum.intValue(), pageNumWasSynced, handler, status);
 							break;
 
-						case ListingOp.FIRST_PAGE:
+						case FIRST_PAGE:
 							handler.setCurrentPage(0, false);
 							break;
 
-						case ListingOp.LAST_PAGE:
+						case LAST_PAGE:
 							handler.setCurrentPage(handler.getNumPages() - 1, false);
 							break;
 
-						case ListingOp.PREVIOUS_PAGE: {
+						case PREVIOUS_PAGE: {
 							int pn = handler.getPageNumber() - 1;
 							if(pn < 0) pn = 0;
 							handler.setCurrentPage(pn, false);
 							break;
 						}
 
-						case ListingOp.NEXT_PAGE: {
+						case NEXT_PAGE: {
 							int pn = handler.getPageNumber() + 1;
 							if(pn >= handler.getNumPages()) pn = handler.getNumPages() - 1;
 							handler.setCurrentPage(pn, false);
@@ -227,9 +227,9 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 						}
 
 							// sort
-						case ListingOp.SORT: {
+						case SORT: {
 							try {
-								handler.sort(listingOp.getSorting());
+								handler.sort(listingCommand.getSorting());
 							}
 							catch(final EmptyListException ele) {
 								throw ele;
@@ -241,22 +241,18 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 						}
 
 							// clear
-						case ListingOp.CLEAR:
-							// no-op - handled in the cache update phase
-							break;
-
-						// clear all
-						case ListingOp.CLEAR_ALL:
+						case CLEAR:
+						case CLEAR_ALL:
 							// no-op - handled in the cache update phase
 							break;
 
 						// unhandled op
 						default:
-							throw new ListingException(listingName, "Unhandled listing op: " + listingOp.descriptor());
+							throw new ListingException(listingName, "Unhandled listing op: " + listingOp.getName());
 
 					}// switch
 
-					status.addMsg(listingOp.descriptor() + " for '" + listingName + "' successful.", MsgLevel.INFO,
+					status.addMsg(listingOp.getName() + " for '" + listingName + "' successful.", MsgLevel.INFO,
 							MsgAttr.NODISPLAY.flag);
 				}
 				catch(final EmptyListException e) {
@@ -276,20 +272,20 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 			}
 
 			// do caching
-			if(op == ListingOp.CLEAR) {
+			if(listingOp == ListingOp.CLEAR) {
 				// clear
 				if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingName + "'...");
 				ListingCache.clearHandler(request, listingName);
-				if(!listingOp.getRetainStateOnClear()) {
+				if(!listingCommand.getRetainStateOnClear()) {
 					ListingCache.clearState(request, listingName);
 				}
 			}
-			else if(op == ListingOp.CLEAR_ALL) {
+			else if(listingOp == ListingOp.CLEAR_ALL) {
 				// clear all
 				if(log.isDebugEnabled()) log.debug("Clearing ALL listings...");
 				ListingCache.clearHandler(request, listingName);
-				if(!listingOp.getRetainStateOnClear()) {
-					ListingCache.clearAll(request, listingOp.getRetainStateOnClear());
+				if(!listingCommand.getRetainStateOnClear()) {
+					ListingCache.clearAll(request, listingCommand.getRetainStateOnClear());
 				}
 			}
 			else {
@@ -303,7 +299,7 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 		}
 
 		// only generate the table page when it is needed at the client
-		if(handler != null && ListingOp.CLEAR != op && ListingOp.CLEAR_ALL != op) {
+		if(handler != null && ListingOp.CLEAR != listingOp && ListingOp.CLEAR_ALL != listingOp) {
 			if(log.isDebugEnabled()) log.debug("Setting generated mpage for '" + listingName + "'...");
 			p.setPage(handler.getPage());
 		}

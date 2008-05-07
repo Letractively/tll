@@ -5,6 +5,11 @@
     <!-- 
     <parameter name="jpaMode" value="SPRING" />
     <parameter name="daoMode" value="ORM" />
+    <groups>
+    	<run>
+    		<include name="temp" />
+    	</run>
+    </groups>
     -->
     <classes>
       <class name="com.tll.client.model.PropertyPathTest" />

@@ -9,6 +9,7 @@ import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.client.ui.listing.RowContextListingWidget;
+import com.tll.listhandler.ListHandlerType;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
@@ -36,8 +37,8 @@ public abstract class ListingFactory {
 	 *        will be available.
 	 * @return A new listing Widget
 	 */
-	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria, int listHandlerType,
-			IRowOptionsProvider rowOptionsProvider) {
+	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria,
+			ListHandlerType listHandlerType, IRowOptionsProvider rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
 		listingWidget.setOperator(new RpcListingOperator(listingWidget, config, listHandlerType, criteria));
 		return listingWidget;
