@@ -14,16 +14,16 @@ import com.tll.listhandler.Sorting;
  */
 public final class ListingCommand implements IListingCommand {
 
-	private ListHandlerType listHandlerType;
 	private String listingName;
-	private int pageSize;
+	private ListHandlerType listHandlerType;
 	private PropKey[] propKeys;
-	private ISearch searchCriteria;
+	private int pageSize;
+	private Boolean retainStateOnClear = Boolean.TRUE;
 
 	private ListingOp listingOp;
-	private Integer pageNumber;
+	private ISearch searchCriteria;
 	private Sorting sorting;
-	private Boolean retainStateOnClear = Boolean.TRUE;
+	private Integer pageNumber;
 
 	/**
 	 * Constructor
@@ -34,22 +34,22 @@ public final class ListingCommand implements IListingCommand {
 
 	/**
 	 * Constructor - Used for generating a fresh listing.
-	 * @param pageSize
-	 * @param listHandlerType
 	 * @param listingName
+	 * @param listHandlerType
 	 * @param propKeys
-	 * @param listingOp
+	 * @param pageSize
 	 * @param searchCriteria
+	 * @param listingOp
 	 */
-	public ListingCommand(int pageSize, ListHandlerType listHandlerType, String listingName, PropKey[] propKeys,
-			ListingOp listingOp, ISearch searchCriteria) {
+	public ListingCommand(String listingName, ListHandlerType listHandlerType, PropKey[] propKeys, int pageSize,
+			ISearch searchCriteria, ListingOp listingOp) {
 		super();
-		this.pageSize = pageSize;
-		this.listHandlerType = listHandlerType;
 		this.listingName = listingName;
+		this.listHandlerType = listHandlerType;
 		this.propKeys = propKeys;
-		this.listingOp = listingOp;
+		this.pageSize = pageSize;
 		this.searchCriteria = searchCriteria;
+		this.listingOp = listingOp;
 	}
 
 	/**
@@ -99,16 +99,8 @@ public final class ListingCommand implements IListingCommand {
 		return listingOp;
 	}
 
-	public void setOpContext(ListingOp opContext) {
-		this.listingOp = opContext;
-	}
-
 	public ISearch getSearchCriteria() {
 		return searchCriteria;
-	}
-
-	public void setSearchCriteria(ISearch searchCriteria) {
-		this.searchCriteria = searchCriteria;
 	}
 
 	public Integer getPageNumber() {

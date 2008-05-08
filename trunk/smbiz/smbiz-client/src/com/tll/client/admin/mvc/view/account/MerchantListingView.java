@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.event.type.ShowViewRequest;
@@ -130,6 +129,14 @@ public final class MerchantListingView extends ListingView {
 
 		final IListingConfig config = new AccountListingConfig() {
 
+			public String getListingName() {
+				return EntityType.MERCHANT.name() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return EntityType.MERCHANT.getName();
+			}
+
 			public Sorting getDefaultSorting() {
 				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "m"));
 			}
@@ -158,10 +165,6 @@ public final class MerchantListingView extends ListingView {
 				return propKeys;
 			}
 
-			public String getListingElementName() {
-				return "Merchant";
-			}
-
 			public Column[] getColumns() {
 				return columns;
 			}
@@ -187,10 +190,6 @@ public final class MerchantListingView extends ListingView {
 
 			public Option[] getOptions(RefKey rowRef) {
 				return rowContextOptions;
-			}
-
-			public IRowOptionListener getRowOptionListener() {
-				return MerchantListingView.this;
 			}
 		};
 

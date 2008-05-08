@@ -16,8 +16,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.IListingListener;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
@@ -33,7 +31,7 @@ import com.tll.listhandler.IPage;
  * ListingNavBar - Toolbar impl for listing navigation.
  * @author jpk
  */
-public class ListingNavBar extends Toolbar implements IListingListener, ClickListener, KeyboardListener, ChangeListener {
+public class ListingNavBar extends Toolbar implements ClickListener, KeyboardListener, ChangeListener {
 
 	private static final String STYLE_TABLE_VIEW_NAVBAR = "tvnav";
 	private static final String CSS_PAGE_CONTAINER = "page";
@@ -255,58 +253,54 @@ public class ListingNavBar extends Toolbar implements IListingListener, ClickLis
 				+ totalSize);
 	}
 
-	public void onListingEvent(ListingEvent event) {
-		if(event.isSuccess()) {
-			IPage<Model> page = event.getPage();
-			if(page == null) {
-				return;
-			}
-			this.firstIndex = page.getFirstIndex();
-			this.lastIndex = page.getLastIndex();
-			this.totalSize = page.getTotalSize();
-			this.numPages = page.getNumPages();
-			this.crntPage = page.getPageNumber() + 1;
+	public void setPage(IPage<Model> page) {
+		// if(event.isSuccess()) {
+		this.firstIndex = page.getFirstIndex();
+		this.lastIndex = page.getLastIndex();
+		this.totalSize = page.getTotalSize();
+		this.numPages = page.getNumPages();
+		this.crntPage = page.getPageNumber() + 1;
 
-			// first page btn
-			btnPageFirst.setEnabled(!page.isFirstPage());
-			if(page.isFirstPage()) {
-				App.imgs().page_first_disabled().applyTo(imgPageFirst);
-			}
-			else {
-				App.imgs().page_first().applyTo(imgPageFirst);
-			}
-
-			// last page btn
-			btnPageLast.setEnabled(!page.isLastPage());
-			if(page.isLastPage()) {
-				App.imgs().page_last_disabled().applyTo(imgPageLast);
-			}
-			else {
-				App.imgs().page_last().applyTo(imgPageLast);
-			}
-
-			// prev page btn
-			btnPagePrev.setEnabled(!page.isFirstPage());
-			if(page.isFirstPage()) {
-				App.imgs().page_prev_disabled().applyTo(imgPagePrev);
-			}
-			else {
-				App.imgs().page_prev().applyTo(imgPagePrev);
-			}
-
-			// next page btn
-			btnPageNext.setEnabled(!page.isLastPage());
-			if(page.isLastPage()) {
-				App.imgs().page_next_disabled().applyTo(imgPageNext);
-			}
-			else {
-				App.imgs().page_next().applyTo(imgPageNext);
-			}
-
-			tbPage.setText(Integer.toString(crntPage));
-			tbPage.setEnabled(numPages > 1);
-			lblPagePost.setText("of " + numPages);
-			setSummaryCaption();
+		// first page btn
+		btnPageFirst.setEnabled(!page.isFirstPage());
+		if(page.isFirstPage()) {
+			App.imgs().page_first_disabled().applyTo(imgPageFirst);
 		}
+		else {
+			App.imgs().page_first().applyTo(imgPageFirst);
+		}
+
+		// last page btn
+		btnPageLast.setEnabled(!page.isLastPage());
+		if(page.isLastPage()) {
+			App.imgs().page_last_disabled().applyTo(imgPageLast);
+		}
+		else {
+			App.imgs().page_last().applyTo(imgPageLast);
+		}
+
+		// prev page btn
+		btnPagePrev.setEnabled(!page.isFirstPage());
+		if(page.isFirstPage()) {
+			App.imgs().page_prev_disabled().applyTo(imgPagePrev);
+		}
+		else {
+			App.imgs().page_prev().applyTo(imgPagePrev);
+		}
+
+		// next page btn
+		btnPageNext.setEnabled(!page.isLastPage());
+		if(page.isLastPage()) {
+			App.imgs().page_next_disabled().applyTo(imgPageNext);
+		}
+		else {
+			App.imgs().page_next().applyTo(imgPageNext);
+		}
+
+		tbPage.setText(Integer.toString(crntPage));
+		tbPage.setEnabled(numPages > 1);
+		lblPagePost.setText("of " + numPages);
+		setSummaryCaption();
+		// }
 	}
 }

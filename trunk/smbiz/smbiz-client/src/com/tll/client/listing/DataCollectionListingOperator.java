@@ -10,22 +10,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.IListingListener;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.Model;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
 import com.tll.listhandler.SortColumn;
+import com.tll.listhandler.Sorting;
 
 /**
  * DataCollectionListingOperator - {@link IListingOperator} based on an existing
  * collection of listing elements.
  * @author jpk
  */
-public class DataCollectionListingOperator implements IListingOperator {
-
-	private final AbstractListingWidget listingWidget;
+// TODO implemenet sorting!!!
+public class DataCollectionListingOperator extends AbstractListingOperator {
 
 	private final int pageSize;
 
@@ -43,31 +41,23 @@ public class DataCollectionListingOperator implements IListingOperator {
 	 */
 	private int numPages = -1;
 
-	/**
-	 * The listing event listeners.
-	 */
-	private final ListingListenerCollection listeners = new ListingListenerCollection();
+	private final Sorting sorting;
 
 	/**
 	 * Constructor
 	 * @param listingWidget
 	 * @param pageSize
 	 * @param dataList
+	 * @param sorting
 	 */
-	public DataCollectionListingOperator(AbstractListingWidget listingWidget, int pageSize, List<Model> dataList) {
-		this.listingWidget = listingWidget;
+	public DataCollectionListingOperator(AbstractListingWidget listingWidget, int pageSize, List<Model> dataList,
+			Sorting sorting) {
+		super(listingWidget);
 		this.pageSize = pageSize;
 		this.dataList = dataList;
+		this.sorting = sorting;
 		this.size = dataList == null ? 0 : dataList.size();
 		this.numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
-	}
-
-	public void addListingListener(IListingListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListingListener(IListingListener listener) {
-		listeners.remove(listener);
 	}
 
 	/**
@@ -175,16 +165,14 @@ public class DataCollectionListingOperator implements IListingOperator {
 		assert pageNum >= 0;
 
 		IPage<Model> mpage = generatePage(navPageNum);
-		ListingEvent event = new ListingEvent(listingWidget, true, navAction, mpage, null);
-		listingWidget.onListingEvent(event);
+		listingWidget.setPage(mpage, null);
 	}
 
 	public void refresh() {
 		if(size == 0) return;
 		IPage<Model> mpage = generatePage(pageNum);
 
-		ListingEvent event = new ListingEvent(listingWidget, true, ListingOp.REFRESH, mpage, null);
-		listingWidget.onListingEvent(event);
+		listingWidget.setPage(mpage, null);
 	}
 
 	public void display() {
@@ -198,7 +186,6 @@ public class DataCollectionListingOperator implements IListingOperator {
 
 	public void clear() {
 		size = pageNum = numPages = -1;
-
 	}
 
 	/*

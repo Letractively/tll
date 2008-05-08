@@ -5,7 +5,6 @@ package com.tll.client.listing;
 
 import java.util.List;
 
-import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
@@ -41,10 +40,8 @@ public abstract class ListingFactory {
 	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria,
 			ListHandlerType listHandlerType, IRowOptionsProvider rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
-		// TODO improve the listing name!!!
-		String listingName = Integer.toString(criteria.hashCode());
-		listingWidget.setOperator(new ListingCommand(listingWidget, listingName, listHandlerType, config.getPropKeys(),
-				config.getPageSize(), config.isSortable() ? config.getDefaultSorting() : null, criteria));
+		listingWidget.setOperator(new RpcListingOperator(listingWidget, config.getListingName(), listHandlerType, config
+				.getPageSize(), config.getPropKeys(), criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}
 
@@ -52,16 +49,15 @@ public abstract class ListingFactory {
 	 * Assembles a collection based listing Widget.
 	 * @param config The listing config
 	 * @param data The listing data collection
-	 * @param pageSize if <code>-1</code>, the listing will <em>not</em> be
-	 *        page-able
 	 * @param rowOptionsProvider Optional. If <code>null</code>, no row options
 	 *        will be available.
 	 * @return A new listing Widget
 	 */
-	public static AbstractListingWidget collectionListing(IListingConfig config, List<Model> data, int pageSize,
+	public static AbstractListingWidget collectionListing(IListingConfig config, List<Model> data,
 			IRowOptionsProvider rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
-		listingWidget.setOperator(new DataCollectionListingOperator(listingWidget, pageSize, data));
+		listingWidget.setOperator(new DataCollectionListingOperator(listingWidget, config.getPageSize(), data, (config
+				.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}
 }

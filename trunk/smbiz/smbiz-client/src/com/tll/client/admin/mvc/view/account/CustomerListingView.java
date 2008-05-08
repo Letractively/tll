@@ -6,7 +6,6 @@ package com.tll.client.admin.mvc.view.account;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
@@ -36,7 +35,7 @@ import com.tll.model.EntityType;
  * CustomerListingView
  * @author jpk
  */
-public final class CustomerListingView extends ListingView implements IRowOptionListener {
+public final class CustomerListingView extends ListingView {
 
 	public static final Class klas = new Class();
 
@@ -137,6 +136,14 @@ public final class CustomerListingView extends ListingView implements IRowOption
 
 		final IListingConfig config = new AccountListingConfig() {
 
+			public String getListingName() {
+				return EntityType.CUSTOMER.name() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return EntityType.CUSTOMER.getName();
+			}
+
 			public Sorting getDefaultSorting() {
 				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "c"));
 			}
@@ -163,10 +170,6 @@ public final class CustomerListingView extends ListingView implements IRowOption
 				return propKeys;
 			}
 
-			public String getListingElementName() {
-				return "Customer";
-			}
-
 			public Column[] getColumns() {
 				return columns;
 			}
@@ -185,10 +188,6 @@ public final class CustomerListingView extends ListingView implements IRowOption
 
 			public Option[] getOptions(RefKey rowRef) {
 				return rowContextOptions;
-			}
-
-			public IRowOptionListener getRowOptionListener() {
-				return CustomerListingView.this;
 			}
 		};
 

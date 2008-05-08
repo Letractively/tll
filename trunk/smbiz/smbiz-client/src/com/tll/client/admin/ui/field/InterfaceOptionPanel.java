@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
@@ -36,7 +35,7 @@ import com.tll.client.ui.listing.AbstractListingWidget;
  * InterfacePanel
  * @author jpk
  */
-final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener, IRowOptionListener {
+final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener/*, IRowOptionListener*/{
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
 
@@ -92,13 +91,9 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			public Option[] getOptions(RefKey rowRef) {
 				return options;
 			}
-
-			public IRowOptionListener getRowOptionListener() {
-				return InterfaceOptionPanel.this;
-			}
 		};
 
-		lstngParams = ListingFactory.collectionListing(plc, params, -1, rop);
+		lstngParams = ListingFactory.collectionListing(plc, params, rop);
 
 		InterfaceOptionParameterPanel pnlParam = new InterfaceOptionParameterPanel();
 		pnlParamEdit = new EditPanel(pnlParam, null, true);

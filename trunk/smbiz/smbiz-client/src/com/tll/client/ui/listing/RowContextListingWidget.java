@@ -6,10 +6,6 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
-import com.tll.client.event.IOptionListener;
-import com.tll.client.event.IRowOptionListener;
-import com.tll.client.event.type.OptionEvent;
-import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsProvider;
 import com.tll.client.ui.Option;
@@ -19,7 +15,7 @@ import com.tll.client.ui.OptionsPopup;
  * RowContextListingWidget - ListingWidget impl that supports row popup panels.
  * @author jpk
  */
-public class RowContextListingWidget extends AbstractListingWidget implements IOptionListener {
+public class RowContextListingWidget extends AbstractListingWidget /*implements IOptionListener*/{
 
 	/**
 	 * RowContextPopup - The {@link Option}s panel pop-up.
@@ -98,8 +94,7 @@ public class RowContextListingWidget extends AbstractListingWidget implements IO
 	 * The row event listener for event that are not row edit (update/delete)
 	 * related.
 	 */
-	private final IRowOptionListener rowOptionListener;
-
+	// private final IRowOptionListener rowOptionListener;
 	/**
 	 * Constructor
 	 * @param config The listing configuration
@@ -111,7 +106,7 @@ public class RowContextListingWidget extends AbstractListingWidget implements IO
 
 		if(rowOptionsProvider != null) {
 			rowContextPopup = new RowContextPopup(rowOptionsProvider);
-			rowContextPopup.addOptionListener(this);
+			// rowContextPopup.addOptionListener(this);
 			table.addTableListener(rowContextPopup);
 			getListingPanel().addMouseListener(rowContextPopup);
 		}
@@ -119,11 +114,12 @@ public class RowContextListingWidget extends AbstractListingWidget implements IO
 			rowContextPopup = null;
 		}
 
-		this.rowOptionListener = rowOptionsProvider.getRowOptionListener();
+		// this.rowOptionListener = rowOptionsProvider.getRowOptionListener();
 
 		getListingPanel().addKeyboardListener(table);
 	}
 
+	/*
 	public void onCurrentOptionChanged(OptionEvent event) {
 		// no-op
 	}
@@ -137,4 +133,5 @@ public class RowContextListingWidget extends AbstractListingWidget implements IO
 			rowOptionListener.onRowOptionSelected(new RowOptionEvent(this, optionText, rowIndex, table.getRowRef(rowIndex)));
 		}
 	}
+	*/
 }

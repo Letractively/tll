@@ -37,13 +37,15 @@ public enum ListingOp implements INameValueProvider {
 
 	CLEAR("Clear"),
 
-	CLEAR_ALL("Clear all"),
+	CLEAR_ALL("Clear all");
 
+	/*
 	INSERT_ROW("Insert row"),
 
 	UPDATE_ROW("Update row"),
 
 	DELETE_ROW("Delete row");
+	*/
 
 	private final String name;
 
@@ -61,5 +63,14 @@ public enum ListingOp implements INameValueProvider {
 
 	public Object getValue() {
 		return name();
+	}
+
+	public boolean isClear() {
+		return this == ListingOp.CLEAR || this == ListingOp.CLEAR_ALL;
+	}
+
+	public boolean isNavigation() {
+		return this == ListingOp.FIRST_PAGE || this == ListingOp.LAST_PAGE || this == ListingOp.PREVIOUS_PAGE
+				|| this == ListingOp.NEXT_PAGE || this == ListingOp.GOTO_PAGE;
 	}
 }

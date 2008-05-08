@@ -3,20 +3,20 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
 /**
- * IRowOptionsProvider - Indicates the ability to provide {@link Option}s for a particular table
- * row.
+ * IRowOptionsProvider - Indicates the ability to provide {@link Option}s for a
+ * particular table row.
  * @author jpk
  */
 public interface IRowOptionsProvider {
 
 	/**
-	 * @return <code>true</code> if the options are applicable to all rows. This is an optimization
-	 *         to avoid having to fill/re-fill options when they are always the same (static).
+	 * @return <code>true</code> if the options are applicable to all rows. This
+	 *         is an optimization to avoid having to fill/re-fill options when
+	 *         they are always the same (static).
 	 */
 	boolean isStaticOptions();
 
@@ -26,9 +26,4 @@ public interface IRowOptionsProvider {
 	 * @return Array of {@link Option}s.
 	 */
 	Option[] getOptions(RefKey rowRef);
-
-	/**
-	 * @return The listener that will recieve the row option events.
-	 */
-	IRowOptionListener getRowOptionListener();
 }

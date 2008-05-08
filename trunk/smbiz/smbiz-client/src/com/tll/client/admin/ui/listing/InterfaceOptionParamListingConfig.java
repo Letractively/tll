@@ -10,12 +10,21 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
 import com.tll.listhandler.Sorting;
+import com.tll.model.EntityType;
 
 /**
  * AccountListingConfig
  * @author jpk
  */
 public final class InterfaceOptionParamListingConfig implements IListingConfig {
+
+	public String getListingName() {
+		return EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION.name() + "_LISTING";
+	}
+
+	public String getListingElementName() {
+		return "Parameter";
+	}
 
 	private final PropKey[] propKeys = {
 		new PropKey("name"),
@@ -33,10 +42,6 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 
 	public Column[] getColumns() {
 		return columns;
-	}
-
-	public String getListingElementName() {
-		return "Parameter";
 	}
 
 	public PropKey[] getPropKeys() {

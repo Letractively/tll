@@ -13,8 +13,8 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
+import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.listing.IListingOperator;
 import com.tll.client.search.ISearch;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
@@ -24,7 +24,7 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - Issues RPC listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand extends RpcCommand<ListingPayload> implements IListingOperator {
+public final class ListingCommand extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
 
 	private static final IListingServiceAsync svc;
 	static {
@@ -38,6 +38,12 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	private final ListingListenerCollection listeners = new ListingListenerCollection();
 
 	/**
+	 * The unique name that identifies the listing this command targets on the
+	 * server.
+	 */
+	private final String listingName;
+
+	/**
 	 * The enqueued command to go to the server.
 	 */
 	private IListingCommand listingCommand;
@@ -49,35 +55,20 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	private boolean listingGenerated;
 
 	/**
-	 * The search criteria that dictates data retrieval from the server.
-	 */
-	private final ISearch criteria;
-
-	private final String listingName;
-	private final ListHandlerType listHandlerType;
-	private final PropKey[] props;
-	private final int pageSize;
-	private final Sorting sorting;
-
-	/**
 	 * Constructor
 	 * @param sourcingWidget
 	 * @param listingName
-	 * @param listHandlerType
-	 * @param props
-	 * @param pageSize
-	 * @param sorting
-	 * @param criteria
 	 */
-	public ListingCommand(Widget sourcingWidget, String listingName, ListHandlerType listHandlerType, PropKey[] props,
-			int pageSize, Sorting sorting, ISearch criteria) {
+	public ListingCommand(Widget sourcingWidget, String listingName) {
 		super(sourcingWidget);
 		this.listingName = listingName;
-		this.listHandlerType = listHandlerType;
-		this.props = props;
-		this.pageSize = pageSize;
-		this.sorting = sorting;
-		this.criteria = criteria;
+	}
+
+	/**
+	 * @return The unique server-side name of targeted listing.
+	 */
+	public String getListingName() {
+		return listingName;
 	}
 
 	public void addListingListener(IListingListener listener) {
@@ -90,16 +81,22 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 
 	/**
 	 * Generate or refresh the listing.
-	 * @param criteria The search criteria.
-	 * @param refresh Force a listing refresh?
+	 * @param listHandlerType
+	 * @param pageSize
+	 * @param props
+	 * @param searchCriteria The search criteria
+	 * @param sorting The sorting directive
+	 * @param refresh Force a listing refresh if listing data is found cached on
+	 *        the server?
 	 */
-	public void list(ISearch criteria, boolean refresh) {
-		if(criteria == null) {
+	public void list(ListHandlerType listHandlerType, int pageSize, PropKey[] props, ISearch searchCriteria,
+			Sorting sorting, boolean refresh) {
+		if(searchCriteria == null) {
 			throw new IllegalStateException("No criteria specified.");
 		}
 		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
 		com.tll.client.data.ListingCommand lc =
-				new com.tll.client.data.ListingCommand(pageSize, listHandlerType, listingName, props, listingOp, criteria);
+				new com.tll.client.data.ListingCommand(listingName, listHandlerType, props, pageSize, searchCriteria, listingOp);
 		lc.setSorting(sorting);
 		this.listingCommand = lc;
 	}
@@ -127,21 +124,11 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 		this.listingCommand = lc;
 	}
 
-	public void refresh() {
-		list(criteria, true);
-		execute();
-	}
-
-	public void display() {
-		list(criteria, false);
-		execute();
-	}
-
 	/**
 	 * Clear the listing.
 	 */
 	public void clear() {
-		this.listingCommand = new com.tll.client.data.ListingCommand(listingName, ListingOp.CLEAR);
+		listingCommand = new com.tll.client.data.ListingCommand(listingName, ListingOp.CLEAR);
 	}
 
 	@Override
@@ -156,14 +143,15 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	public void handleSuccess(ListingPayload result) {
 		assert listingCommand != null;
 		super.handleSuccess(result);
-		if(!result.hasErrors()) {
+		final ListingOp op = listingCommand.getListingOp();
+		if(!result.hasErrors() && !op.isClear()) {
 			listingGenerated = true;
 		}
-		final ListingOp op = listingCommand.getListingOp();
 		final Sorting sorting = listingCommand.getSorting();
 		listingCommand = null; // reset
 
-		listeners.fireListingEvent(new ListingEvent(sourcingWidget, !result.hasErrors(), op, result.getPage(), sorting));
+		listeners.fireListingEvent(new ListingEvent(sourcingWidget, listingName, !result.hasErrors(), op, result.getPage(),
+				sorting));
 	}
 
 }

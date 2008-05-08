@@ -5,17 +5,15 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.Option;
 import com.tll.client.ui.listing.AbstractListingWidget;
 
 /**
  * ListingView - View dedicated to a single listing.
  * @author jpk
  */
-public abstract class ListingView extends AbstractView implements IRowOptionListener {
+public abstract class ListingView extends AbstractView {
 
 	/**
 	 * The listing widget.
@@ -36,17 +34,18 @@ public abstract class ListingView extends AbstractView implements IRowOptionList
 
 	@Override
 	public final void refresh() {
-		if(listingWidget != null) listingWidget.getOperator().refresh();
+		if(listingWidget != null) listingWidget.refresh();
 	}
 
 	@Override
 	protected final void doDestroy() {
 		if(listingWidget != null) {
-			listingWidget.getOperator().clear();
+			listingWidget.clear();
 			// ModelChangeEventDispatcher.instance().removeModelChangeListener(listingWidget);
 		}
 	}
 
+	/*
 	public final void onRowOptionSelected(RowOptionEvent event) {
 		final String optionText = event.optionText;
 		if(Option.isEditOption(optionText)) {
@@ -59,6 +58,7 @@ public abstract class ListingView extends AbstractView implements IRowOptionList
 			doCustomRowOption(event);
 		}
 	}
+	*/
 
 	/**
 	 * Called when a row is selected for edit

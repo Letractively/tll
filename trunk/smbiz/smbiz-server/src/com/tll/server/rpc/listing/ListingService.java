@@ -33,7 +33,7 @@ import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
 
 /**
- * ListingService
+ * ListingService - Handles client listing requests.
  * @author jpk
  */
 public final class ListingService<E extends IEntity> extends RpcServlet implements IListingService {

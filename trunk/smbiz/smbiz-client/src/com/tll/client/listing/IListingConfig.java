@@ -20,6 +20,12 @@ public interface IListingConfig {
 	public static final ITableCellTransformer DEFAULT_TABLE_CELL_TRANSFORMER = new DefaultTableCellTransformer();
 
 	/**
+	 * @return A unique name to assign to the listing. Critical for server-side
+	 *         listing handling as listing data is cached.
+	 */
+	String getListingName();
+
+	/**
 	 * @return A presentation worthy name for the row type.
 	 */
 	String getListingElementName();

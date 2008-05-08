@@ -6,7 +6,6 @@
 package com.tll.client.listing;
 
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.ISourcesListingEvents;
 import com.tll.listhandler.SortColumn;
 
 /**
@@ -14,7 +13,7 @@ import com.tll.listhandler.SortColumn;
  * interface enables a pluggable (generic) way to provide listing data.
  * @author jpk
  */
-public interface IListingOperator extends ISourcesListingEvents {
+public interface IListingOperator {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then
@@ -51,4 +50,13 @@ public interface IListingOperator extends ISourcesListingEvents {
 	 * the listing Widget.
 	 */
 	void clear();
+
+	/**
+	 * Inserts a row.
+	 * @param rowIndex
+	 * @param rowData
+	 */
+	// void insertRow(int rowIndex, Model rowData);
+	// void updateRow(int rowIndex, Model rowData);
+	// void deleteRow(int rowIndex);
 }

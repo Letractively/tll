@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
-import com.tll.client.event.IRowOptionListener;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.event.type.ShowViewRequest;
@@ -36,7 +35,7 @@ import com.tll.model.EntityType;
  * IspListingView
  * @author jpk
  */
-public final class IspListingView extends ListingView implements IRowOptionListener {
+public final class IspListingView extends ListingView {
 
 	public static final Class klas = new Class();
 
@@ -97,6 +96,14 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 
 		final IListingConfig config = new AccountListingConfig() {
 
+			public String getListingName() {
+				return EntityType.ISP.name() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return EntityType.ISP.getName();
+			}
+
 			public Sorting getDefaultSorting() {
 				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "i"));
 			}
@@ -123,10 +130,6 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 				return propKeys;
 			}
 
-			public String getListingElementName() {
-				return "Isp";
-			}
-
 			public Column[] getColumns() {
 				return columns;
 			}
@@ -146,10 +149,6 @@ public final class IspListingView extends ListingView implements IRowOptionListe
 
 			public Option[] getOptions(RefKey rowRef) {
 				return rowContextOptions;
-			}
-
-			public IRowOptionListener getRowOptionListener() {
-				return IspListingView.this;
 			}
 		};
 

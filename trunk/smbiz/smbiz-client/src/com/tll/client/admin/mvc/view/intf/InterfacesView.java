@@ -30,6 +30,9 @@ import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.listhandler.IPage;
+import com.tll.listhandler.ListHandlerType;
+import com.tll.listhandler.Sorting;
+import com.tll.model.EntityType;
 
 /**
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
@@ -110,7 +113,7 @@ public class InterfacesView extends AbstractView {
 
 		}// InterfaceStack
 
-		private final ListingCommand listingOperator;
+		private final ListingCommand listingCommand;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -124,15 +127,15 @@ public class InterfacesView extends AbstractView {
 		 */
 		public InterfacesStack() {
 			super();
-
-			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
-			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
-
-			listingOperator = new ListingCommand(this, listingDef);
+			String listingName = EntityType.INTERFACE.name();
+			listingCommand = new ListingCommand(this, listingName);
 		}
 
 		void refreshData() {
-			listingCommand.list(criteria, true);
+			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
+			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
+			Sorting sorting = new Sorting("name", "intf");
+			listingCommand.list(ListHandlerType.COLLECTION, -1, null, criteria, sorting, true);
 			listingCommand.execute();
 		}
 

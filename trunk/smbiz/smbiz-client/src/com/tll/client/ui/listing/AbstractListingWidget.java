@@ -4,7 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
@@ -16,22 +15,23 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.IListingListener;
 import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
+import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
-import com.tll.client.ui.FocusCommand;
+import com.tll.listhandler.IPage;
+import com.tll.listhandler.SortColumn;
+import com.tll.listhandler.Sorting;
 
 /**
  * AbstractListingWidget - Base class for all listing {@link Widget}s in the
  * app.
  * @author jpk
  */
-public abstract class AbstractListingWidget extends Composite implements IListingListener, HasFocus, IModelChangeListener {
+public abstract class AbstractListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -63,6 +63,9 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 	 */
 	private final ScrollPanel portal = new ScrollPanel();
 
+	/**
+	 * The operator that performs actual listing commands for this listing.
+	 */
 	private IListingOperator operator;
 
 	/**
@@ -106,14 +109,6 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 	}
 
 	/**
-	 * @return The listing operator for this listing widget. <br>
-	 *         <strong>NOTE: </strong>The operator is assigned via #setOperator
-	 */
-	public final IListingOperator getOperator() {
-		return operator;
-	}
-
-	/**
 	 * Sets the listing operator for this listing.
 	 * @param operator the operator to set
 	 */
@@ -123,6 +118,26 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 		}
 		table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
+	}
+
+	public final void clear() {
+		operator.clear();
+	}
+
+	public final void display() {
+		operator.display();
+	}
+
+	public final void navigate(ListingOp navAction, Integer page) {
+		operator.navigate(navAction, page);
+	}
+
+	public final void refresh() {
+		operator.refresh();
+	}
+
+	public final void sort(SortColumn sortColumn) {
+		operator.sort(sortColumn);
 	}
 
 	/**
@@ -165,27 +180,28 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 		focusPanel.removeKeyboardListener(listener);
 	}
 
-	public final void onListingEvent(ListingEvent event) {
-		assert event.getWidget() == this;
-		if(event.getWidget() == this) {
-			table.onListingEvent(event);
-			if(!event.isSuccess()) {
-				if(navBar != null) navBar.getWidget().setVisible(false);
-			}
-			else {
-				if(navBar != null) {
-					navBar.onListingEvent(event);
-					navBar.getWidget().setVisible(true);
-				}
-				DeferredCommand.addCommand(new FocusCommand(focusPanel, true));
-			}
+	/**
+	 * Updates the listing with row data and the sorting directive.
+	 * @param page The row data
+	 * @param sorting The sorting directive. May be <code>null</code>
+	 */
+	public final void setPage(IPage<Model> page, Sorting sorting) {
+		table.setPage(page, sorting);
+		if(navBar != null) {
+			navBar.setPage(page);
+			navBar.getWidget().setVisible(true);
 		}
+		// DeferredCommand.addCommand(new FocusCommand(focusPanel, true));
 	}
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 			case ADD:
-				onListingEvent(new ListingEvent(this, true, ListingOp.INSERT_ROW, 0, event.getModel()));
+				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
+					// i.e. the add button in the nav bar was the source of the model
+					// change..
+					table.addRow(1, event.getModel());
+				}
 				break;
 			case UPDATE: {
 				RefKey modelRef = event.getModel().getRefKey();
@@ -193,7 +209,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
-					onListingEvent(new ListingEvent(this, true, ListingOp.UPDATE_ROW, rowIndex - 1, event.getModel()));
+					table.updateRow(rowIndex - 1, event.getModel());
 				}
 				break;
 			}
@@ -202,7 +218,7 @@ public abstract class AbstractListingWidget extends Composite implements IListin
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					onListingEvent(new ListingEvent(this, true, ListingOp.DELETE_ROW, rowIndex - 1, null));
+					table.deleteRow(rowIndex - 1);
 				}
 				break;
 			}

@@ -21,8 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.PropKey;
-import com.tll.client.event.IListingListener;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
@@ -40,7 +38,7 @@ import com.tll.listhandler.Sorting;
  * ListingTable - AbstractListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable extends Grid implements IListingListener, TableListener, KeyboardListener {
+public class ListingTable extends Grid implements TableListener, KeyboardListener {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -371,32 +369,30 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 		resizeRows(1);
 	}
 
-	public void onListingEvent(ListingEvent event) {
-		if(event.isSuccess()) {
-			ListingOp listingOp = event.getListingOp();
-			IPage<Model> page = event.getPage();
-			if(page != null) {
-				removeBodyRows();
-				addBodyRows(page);
-				if(sortlinks != null) applySorting(event.getSorting());
-				crntPage = page.getPageNumber() + 1;
-				numPages = page.getNumPages();
-				actvRowIndex = crntRowIndex = -1; // reset
-			}
-			// NOTE: we adjust the event's row index to account for the header row
-			else if(listingOp == ListingOp.INSERT_ROW) {
-				addRow(event.getRowIndex() + 2, event.getRowData());
-			}
-			else if(listingOp == ListingOp.UPDATE_ROW) {
-				updateRow(event.getRowIndex() + 1, event.getRowData());
-			}
-			else if(listingOp == ListingOp.DELETE_ROW) {
-				deleteRow(event.getRowIndex() + 1);
-			}
-			else if(listingOp == ListingOp.CLEAR) {
-				removeBodyRows();
-			}
+	public void setPage(IPage<Model> page, Sorting sorting) {
+		// if(event.isSuccess()) {
+		removeBodyRows();
+		addBodyRows(page);
+		if(sortlinks != null) applySorting(sorting);
+		crntPage = page.getPageNumber() + 1;
+		numPages = page.getNumPages();
+		actvRowIndex = crntRowIndex = -1; // reset
+		/*
+		// NOTE: we adjust the event's row index to account for the header row
+		else if(listingOp == ListingOp.INSERT_ROW) {
+			addRow(event.getRowIndex() + 2, event.getRowData());
 		}
+		else if(listingOp == ListingOp.UPDATE_ROW) {
+			updateRow(event.getRowIndex() + 1, event.getRowData());
+		}
+		else if(listingOp == ListingOp.DELETE_ROW) {
+			deleteRow(event.getRowIndex() + 1);
+		}
+		else if(listingOp == ListingOp.CLEAR) {
+			removeBodyRows();
+		}
+		*/
+		// }
 	}
 
 	@Override
@@ -487,7 +483,7 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	 * @param rowData The row data
 	 * @return The index of the newly-created row.
 	 */
-	private int addRow(int beforeRow, Model rowData) {
+	int addRow(int beforeRow, Model rowData) {
 		assert beforeRow > 0 : "Can't insert before the header row";
 
 		// first get the page row num
@@ -530,7 +526,7 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	 * Deletes a row at the given index
 	 * @param rowIndex The index of the row to delete
 	 */
-	private void deleteRow(int rowIndex) {
+	void deleteRow(int rowIndex) {
 		assert rowIndex >= 1 : "Can't delete the header row";
 		/*
 		removeRow(rowIndex);
@@ -567,7 +563,7 @@ public class ListingTable extends Grid implements IListingListener, TableListene
 	 * @param rowIndex The row index of the row to update
 	 * @param rowData The new row data to apply
 	 */
-	private void updateRow(int rowIndex, Model rowData) {
+	void updateRow(int rowIndex, Model rowData) {
 		setRowData(rowIndex, -1, rowData, true);
 		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
