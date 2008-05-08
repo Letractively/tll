@@ -32,6 +32,16 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	private int crntIndx = -1;
 	private OptionListenerCollection optionListeners;
 
+	/**
+	 * Constructor
+	 */
+	public OptionsPanel() {
+		super();
+		setWidget(vp);
+		addKeyboardListener(this);
+		setStyleName(STYLE_OPTIONS);
+	}
+
 	public void addOptionListener(IOptionListener listener) {
 		if(optionListeners == null) {
 			optionListeners = new OptionListenerCollection();
@@ -43,16 +53,6 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		if(optionListeners != null) {
 			optionListeners.remove(listener);
 		}
-	}
-
-	/**
-	 * Constructor
-	 */
-	public OptionsPanel() {
-		super();
-		setWidget(vp);
-		addKeyboardListener(this);
-		setStyleName(STYLE_OPTIONS);
 	}
 
 	/**
@@ -132,18 +132,20 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	}
 
 	public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-		switch(keyCode) {
-			case KeyboardListener.KEY_UP:
-				setCurrentOption(crntIndx - 1, true);
-				break;
-			case KeyboardListener.KEY_DOWN:
-				setCurrentOption(crntIndx + 1, true);
-				break;
-			case KeyboardListener.KEY_ENTER:
-				if(crntIndx >= 0 && optionListeners != null) {
-					optionListeners.fireOnSelected(new OptionEvent(this, options.get(crntIndx).getText()));
-				}
-				break;
+		if(sender == this) {
+			switch(keyCode) {
+				case KeyboardListener.KEY_UP:
+					setCurrentOption(crntIndx - 1, true);
+					break;
+				case KeyboardListener.KEY_DOWN:
+					setCurrentOption(crntIndx + 1, true);
+					break;
+				case KeyboardListener.KEY_ENTER:
+					if(crntIndx >= 0 && optionListeners != null) {
+						optionListeners.fireOnSelected(new OptionEvent(this, options.get(crntIndx).getText()));
+					}
+					break;
+			}
 		}
 	}
 
@@ -157,8 +159,9 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	}
 
 	public void onMouseEnter(Widget sender) {
-		if(sender instanceof Option) {
-			setCurrentOption(options.indexOf(sender), false);
+		final int index = options.indexOf(sender);
+		if(index >= 0) {
+			setCurrentOption(index, false);
 			if(optionListeners != null) {
 				optionListeners.fireOnCurrentChanged(new OptionEvent(this, ((Option) sender).getText()));
 			}
@@ -175,8 +178,9 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	}
 
 	public void onClick(Widget sender) {
-		if(sender instanceof Option) {
-			setCurrentOption(options.indexOf(sender), false);
+		final int index = options.indexOf(sender);
+		if(index > 0) {
+			setCurrentOption(index, false);
 			if(optionListeners != null) {
 				optionListeners.fireOnSelected(new OptionEvent(this, ((Option) sender).getText()));
 			}
