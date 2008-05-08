@@ -7,11 +7,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
 import com.tll.client.event.type.EditViewRequest;
+import com.tll.client.event.type.OptionEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsProvider;
+import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -23,6 +24,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.ViewRequestLink;
+import com.tll.client.ui.listing.RowContextListingWidget;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -176,11 +178,11 @@ public final class CustomerListingView extends ListingView {
 
 		};
 
-		IRowOptionsProvider rop = new IRowOptionsProvider() {
+		IRowOptionsManager rom = new IRowOptionsManager() {
 
 			private final Option[] rowContextOptions = new Option[] {
-				Option.editOption(config.getListingElementName()),
-				Option.deleteOption(config.getListingElementName()) };
+				RowContextListingWidget.editOption(config.getListingElementName()),
+				RowContextListingWidget.deleteOption(config.getListingElementName()) };
 
 			public boolean isStaticOptions() {
 				return true;
@@ -189,9 +191,14 @@ public final class CustomerListingView extends ListingView {
 			public Option[] getOptions(RefKey rowRef) {
 				return rowContextOptions;
 			}
+
+			public void handleOptionEvent(OptionEvent event, RefKey rowRef) {
+				Dispatcher.instance().dispatch(new EditViewRequest(CustomerListingView.this, AccountEditView.klas, rowRef));
+			}
+
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rop));
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rom));
 	}
 
 	@Override
@@ -212,10 +219,5 @@ public final class CustomerListingView extends ListingView {
 	@Override
 	public ShowViewRequest newViewRequest() {
 		return klas.newViewRequest(this, mercRef, ispRef);
-	}
-
-	@Override
-	protected void doEditRow(RefKey rowRef) {
-		Dispatcher.instance().dispatch(new EditViewRequest(this, AccountEditView.klas, rowRef));
 	}
 }

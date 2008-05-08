@@ -24,7 +24,7 @@ public abstract class ListingFactory {
 	 * @return A new listing Widget
 	 */
 	private static AbstractListingWidget assembleListingWidget(IListingConfig config,
-			IRowOptionsProvider rowOptionsProvider) {
+			IRowOptionsManager rowOptionsProvider) {
 		return new RowContextListingWidget(config, rowOptionsProvider);
 	}
 
@@ -38,7 +38,7 @@ public abstract class ListingFactory {
 	 * @return A new listing Widget
 	 */
 	public static AbstractListingWidget rpcListing(IListingConfig config, ISearch criteria,
-			ListHandlerType listHandlerType, IRowOptionsProvider rowOptionsProvider) {
+			ListHandlerType listHandlerType, IRowOptionsManager rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
 		listingWidget.setOperator(new RpcListingOperator(listingWidget, config.getListingName(), listHandlerType, config
 				.getPageSize(), config.getPropKeys(), criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
@@ -54,7 +54,7 @@ public abstract class ListingFactory {
 	 * @return A new listing Widget
 	 */
 	public static AbstractListingWidget collectionListing(IListingConfig config, List<Model> data,
-			IRowOptionsProvider rowOptionsProvider) {
+			IRowOptionsManager rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
 		listingWidget.setOperator(new DataCollectionListingOperator(listingWidget, config.getPageSize(), data, (config
 				.isSortable() ? config.getDefaultSorting() : null)));

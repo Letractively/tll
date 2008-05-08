@@ -17,7 +17,7 @@ import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
 import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
-import com.tll.client.listing.IRowOptionsProvider;
+import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -82,7 +82,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		btnDeleteToggle.addClickListener(this);
 		btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
 
-		final IRowOptionsProvider rop = new IRowOptionsProvider() {
+		final IRowOptionsManager rop = new IRowOptionsManager() {
 
 			public boolean isStaticOptions() {
 				return true;

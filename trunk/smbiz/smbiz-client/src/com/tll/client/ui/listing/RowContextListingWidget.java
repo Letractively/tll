@@ -6,8 +6,10 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
+import com.tll.client.App;
+import com.tll.client.event.type.OptionEvent;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsProvider;
+import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.OptionsPopup;
 
@@ -15,7 +17,50 @@ import com.tll.client.ui.OptionsPopup;
  * RowContextListingWidget - ListingWidget impl that supports row popup panels.
  * @author jpk
  */
-public class RowContextListingWidget extends AbstractListingWidget /*implements IOptionListener*/{
+public class RowContextListingWidget extends AbstractListingWidget {
+
+	private static final String EDIT_OPTION_PREFIX = "Edit ";
+	private static final String DELETE_OPTION_PREFIX = "Delete ";
+
+	/**
+	 * Generates an edit option with the given name.
+	 * <p>
+	 * FORMAT: "Edit {subjectName}"
+	 * @param subjectName
+	 * @return New Option instance
+	 */
+	public static Option editOption(String subjectName) {
+		return new Option(EDIT_OPTION_PREFIX + subjectName, App.imgs().pencil().createImage());
+	}
+
+	/**
+	 * Generates a delete option with the given name.
+	 * <p>
+	 * FORMAT: "Delete {subjectName}"
+	 * @param subjectName
+	 * @return New Option instance
+	 */
+	public static Option deleteOption(String subjectName) {
+		return new Option(DELETE_OPTION_PREFIX + subjectName, App.imgs().trash().createImage());
+	}
+
+	/**
+	 * Does the option text indicate edit?
+	 * @param optionText
+	 * @return true/false
+	 */
+	public static boolean isEditOption(String optionText) {
+		return optionText == null ? false : optionText.startsWith(EDIT_OPTION_PREFIX);
+	}
+
+	/**
+	 * Does the option text indicate delete?
+	 * @param optionText
+	 * @return true/false
+	 */
+	public static boolean isDeleteOption(String optionText) {
+		return optionText == null ? false : optionText.startsWith(DELETE_OPTION_PREFIX);
+	}
 
 	/**
 	 * RowContextPopup - The {@link Option}s panel pop-up.
@@ -26,9 +71,9 @@ public class RowContextListingWidget extends AbstractListingWidget /*implements 
 		private static final int SHOW_DURATION = 2000; // 2s
 
 		/**
-		 * The bound {@link IRowOptionsProvider}
+		 * The bound {@link IRowOptionsManager}
 		 */
-		private final IRowOptionsProvider optionProvider;
+		private final IRowOptionsManager optionProvider;
 
 		/**
 		 * The row index for this row context.
@@ -40,7 +85,7 @@ public class RowContextListingWidget extends AbstractListingWidget /*implements 
 		 * entries: row edit/delete based on the state of the listing configuration.
 		 * @param rowOptionsProvider Provides the Options.
 		 */
-		public RowContextPopup(IRowOptionsProvider rowOptionsProvider) {
+		public RowContextPopup(IRowOptionsManager rowOptionsProvider) {
 			super(SHOW_DURATION);
 
 			assert rowOptionsProvider != null;
@@ -80,9 +125,12 @@ public class RowContextListingWidget extends AbstractListingWidget /*implements 
 			this.rowIndex = row;
 		}
 
-		public int getRowIndex() {
-			return rowIndex;
+		@Override
+		public void onOptionSelected(OptionEvent event) {
+			super.onOptionSelected(event);
+			optionProvider.handleOptionEvent(event, table.getRowRef(rowIndex));
 		}
+
 	}
 
 	/**
@@ -91,22 +139,16 @@ public class RowContextListingWidget extends AbstractListingWidget /*implements 
 	private final RowContextPopup rowContextPopup;
 
 	/**
-	 * The row event listener for event that are not row edit (update/delete)
-	 * related.
-	 */
-	// private final IRowOptionListener rowOptionListener;
-	/**
 	 * Constructor
 	 * @param config The listing configuration
 	 * @param rowOptionsProvider The row {@link Option}s provider. May be
 	 *        <code>null</code>.
 	 */
-	public RowContextListingWidget(IListingConfig config, IRowOptionsProvider rowOptionsProvider) {
+	public RowContextListingWidget(IListingConfig config, IRowOptionsManager rowOptionsProvider) {
 		super(config);
 
 		if(rowOptionsProvider != null) {
 			rowContextPopup = new RowContextPopup(rowOptionsProvider);
-			// rowContextPopup.addOptionListener(this);
 			table.addTableListener(rowContextPopup);
 			getListingPanel().addMouseListener(rowContextPopup);
 		}
@@ -114,24 +156,6 @@ public class RowContextListingWidget extends AbstractListingWidget /*implements 
 			rowContextPopup = null;
 		}
 
-		// this.rowOptionListener = rowOptionsProvider.getRowOptionListener();
-
 		getListingPanel().addKeyboardListener(table);
 	}
-
-	/*
-	public void onCurrentOptionChanged(OptionEvent event) {
-		// no-op
-	}
-
-	public void onOptionSelected(OptionEvent event) {
-		if(rowOptionListener != null) {
-			// fire the row option event
-			rowContextPopup.hide();
-			final String optionText = event.optionText;
-			final int rowIndex = rowContextPopup.getRowIndex();
-			rowOptionListener.onRowOptionSelected(new RowOptionEvent(this, optionText, rowIndex, table.getRowRef(rowIndex)));
-		}
-	}
-	*/
 }

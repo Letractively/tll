@@ -13,7 +13,7 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsProvider;
+import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -177,7 +177,7 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		final IRowOptionsProvider rop = new IRowOptionsProvider() {
+		final IRowOptionsManager rop = new IRowOptionsManager() {
 
 			private final Option[] rowContextOptions = new Option[] {
 				Option.editOption(config.getListingElementName()),

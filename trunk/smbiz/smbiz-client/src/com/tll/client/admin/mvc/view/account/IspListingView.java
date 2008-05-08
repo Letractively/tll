@@ -13,7 +13,7 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsProvider;
+import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -136,7 +136,7 @@ public final class IspListingView extends ListingView {
 
 		};
 
-		IRowOptionsProvider rop = new IRowOptionsProvider() {
+		IRowOptionsManager rop = new IRowOptionsManager() {
 
 			private final Option[] rowContextOptions = new Option[] {
 				Option.editOption(config.getListingElementName()),
