@@ -197,14 +197,14 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
-			case ADD:
+			case ADDED:
 				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
 					// i.e. the add button in the nav bar was the source of the model
 					// change..
 					table.addRow(1, event.getModel());
 				}
 				break;
-			case UPDATE: {
+			case UPDATED: {
 				RefKey modelRef = event.getModel().getRefKey();
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
@@ -214,7 +214,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				}
 				break;
 			}
-			case DELETE: {
+			case DELETED: {
 				RefKey modelRef = event.getModelRef();
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {

@@ -15,9 +15,9 @@ import com.tll.client.model.RefKey;
 public final class ModelChangeEvent extends BaseEvent {
 
 	public static enum ModelChangeOp {
-		ADD,
-		UPDATE,
-		DELETE;
+		ADDED,
+		UPDATED,
+		DELETED;
 	}
 
 	private final ModelChangeOp change;
