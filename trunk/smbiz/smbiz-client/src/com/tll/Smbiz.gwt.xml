@@ -14,6 +14,7 @@
 		<include name="criteria/CriteriaType.java" />
 		<include name="criteria/SelectNamedQuery.java" />
 		<include name="criteria/IQueryParam.java" />
+		<include name="listhandler/ListHandlerType.java" />
 		<include name="listhandler/IPage.java" />
 		<include name="listhandler/Page.java" />
 		<include name="listhandler/PageUtil.java" />

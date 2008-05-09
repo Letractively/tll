@@ -6,13 +6,12 @@ package com.tll.client.admin.mvc.view.account;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
+import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.OptionEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -22,9 +21,8 @@ import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
-import com.tll.client.ui.Option;
 import com.tll.client.ui.ViewRequestLink;
-import com.tll.client.ui.listing.RowContextListingWidget;
+import com.tll.client.ui.listing.RowOpDelegate;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -178,27 +176,28 @@ public final class CustomerListingView extends ListingView {
 
 		};
 
-		IRowOptionsManager rom = new IRowOptionsManager() {
+		RowOpDelegate rod = new RowOpDelegate() {
 
-			private final Option[] rowContextOptions = new Option[] {
-				RowContextListingWidget.editOption(config.getListingElementName()),
-				RowContextListingWidget.deleteOption(config.getListingElementName()) };
-
-			public boolean isStaticOptions() {
-				return true;
+			@Override
+			protected String getListingElementName() {
+				return config.getListingElementName();
 			}
 
-			public Option[] getOptions(RefKey rowRef) {
-				return rowContextOptions;
-			}
-
-			public void handleOptionEvent(OptionEvent event, RefKey rowRef) {
+			@Override
+			protected void doEditRow(int rowIndex, RefKey rowRef) {
 				Dispatcher.instance().dispatch(new EditViewRequest(CustomerListingView.this, AccountEditView.klas, rowRef));
+			}
+
+			@Override
+			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+				CrudCommand cmd = new CrudCommand(CustomerListingView.this);
+				cmd.purge(rowRef);
+				cmd.execute();
 			}
 
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rom));
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rod));
 	}
 
 	@Override

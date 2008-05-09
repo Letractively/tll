@@ -41,7 +41,8 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 	 */
 	private int numPages = -1;
 
-	private final Sorting sorting;
+	// TODO make private when sorting is implemented
+	/*private*/final Sorting sorting;
 
 	/**
 	 * Constructor

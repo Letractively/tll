@@ -7,13 +7,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
+import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -25,6 +24,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.ViewRequestLink;
+import com.tll.client.ui.listing.RowOpDelegate;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -177,23 +177,41 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		final IRowOptionsManager rop = new IRowOptionsManager() {
+		RowOpDelegate rod = new RowOpDelegate() {
 
-			private final Option[] rowContextOptions = new Option[] {
-				Option.editOption(config.getListingElementName()),
-				Option.deleteOption(config.getListingElementName()),
-				new Option("Customer Listing", App.imgs().arrow_sm_down().createImage()) };
-
-			public boolean isStaticOptions() {
-				return true;
+			@Override
+			protected String getListingElementName() {
+				return config.getListingElementName();
 			}
 
-			public Option[] getOptions(RefKey rowRef) {
-				return rowContextOptions;
+			@Override
+			protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
+				return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
 			}
+
+			@Override
+			protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
+				if(optionText.indexOf("Merchant Listing") == 0) {
+					Dispatcher.instance().dispatch(
+							CustomerListingView.klas.newViewRequest(MerchantListingView.this, rowRef, ispRef));
+				}
+			}
+
+			@Override
+			protected void doEditRow(int rowIndex, RefKey rowRef) {
+				Dispatcher.instance().dispatch(new EditViewRequest(MerchantListingView.this, AccountEditView.klas, rowRef));
+			}
+
+			@Override
+			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+				CrudCommand cmd = new CrudCommand(MerchantListingView.this);
+				cmd.purge(rowRef);
+				cmd.execute();
+			}
+
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rop));
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rod));
 	}
 
 	@Override
@@ -214,16 +232,5 @@ public final class MerchantListingView extends ListingView {
 	@Override
 	public ShowViewRequest newViewRequest() {
 		return klas.newViewRequest(this, ispRef);
-	}
-
-	@Override
-	protected void doEditRow(RefKey rowRef) {
-		Dispatcher.instance().dispatch(new EditViewRequest(this, AccountEditView.klas, rowRef));
-	}
-
-	@Override
-	protected void doCustomRowOption(RowOptionEvent rowOption) {
-		ViewRequestEvent vr = CustomerListingView.klas.newViewRequest(rowOption.getWidget(), rowOption.rowRef, ispRef);
-		Dispatcher.instance().dispatch(vr);
 	}
 }

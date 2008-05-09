@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
-import com.tll.client.event.type.RowOptionEvent;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IRowOptionsManager;
@@ -23,13 +22,13 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
-import com.tll.client.ui.Option;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.RowOpDelegate;
 
 /**
  * InterfacePanel
@@ -38,10 +37,6 @@ import com.tll.client.ui.listing.AbstractListingWidget;
 final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener/*, IRowOptionListener*/{
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
-
-	private static final Option[] options = new Option[] {
-		Option.editOption(plc.getListingElementName()),
-		Option.deleteOption(plc.getListingElementName()) };
 
 	private CheckboxField isDefault;
 
@@ -82,18 +77,40 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		btnDeleteToggle.addClickListener(this);
 		btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
 
-		final IRowOptionsManager rop = new IRowOptionsManager() {
+		final IRowOptionsManager rod = new RowOpDelegate() {
 
-			public boolean isStaticOptions() {
-				return true;
+			@Override
+			protected String getListingElementName() {
+				return plc.getListingElementName();
 			}
 
-			public Option[] getOptions(RefKey rowRef) {
-				return options;
+			@Override
+			protected void doEditRow(int rowIndex, RefKey rowRef) {
+				paramRowIndex = rowIndex - 1;
+				Model param = params.get(paramRowIndex);
+				String paramName = param.getName();
+				assert paramName != null;
+				pnlParamEdit.setEntity(param);
+				pnlParamEdit.refresh();
+				dlgParam.setText("Edit " + paramName);
+				dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+
+					public void setPosition(int offsetWidth, int offsetHeight) {
+						dlgParam.setPopupPosition(lstngParams.getAbsoluteLeft() + 5, lstngParams.getAbsoluteTop() + 5);
+					}
+
+				});
 			}
+
+			@Override
+			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+				// lstngParams.deleteRow(rowRef);
+				// TODO handle
+			}
+
 		};
 
-		lstngParams = ListingFactory.collectionListing(plc, params, rop);
+		lstngParams = ListingFactory.collectionListing(plc, params, rod);
 
 		InterfaceOptionParameterPanel pnlParam = new InterfaceOptionParameterPanel();
 		pnlParamEdit = new EditPanel(pnlParam, null, true);
@@ -183,32 +200,6 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	public void onClick(Widget sender) {
 		if(sender == btnDeleteToggle) {
 			setMarkDeleted(!getFields().isMarkedDeleted());
-		}
-	}
-
-	public void onRowOptionSelected(RowOptionEvent event) {
-
-		// edit param
-		if(Option.isEditOption(event.optionText)) {
-			paramRowIndex = event.rowIndex - 1;
-			Model param = params.get(paramRowIndex);
-			String paramName = param.getName();
-			assert paramName != null;
-			pnlParamEdit.setEntity(param);
-			pnlParamEdit.refresh();
-			dlgParam.setText("Edit " + paramName);
-			dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-
-				public void setPosition(int offsetWidth, int offsetHeight) {
-					dlgParam.setPopupPosition(lstngParams.getAbsoluteLeft() + 5, lstngParams.getAbsoluteTop() + 5);
-				}
-
-			});
-		}
-
-		// delete param
-		else if(Option.isDeleteOption(event.optionText)) {
-			lstngParams.deleteRow(event.rowIndex);
 		}
 	}
 

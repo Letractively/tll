@@ -13,7 +13,7 @@ import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**
- * AccountListingConfig
+ * InterfaceOptionParamListingConfig
  * @author jpk
  */
 public final class InterfaceOptionParamListingConfig implements IListingConfig {

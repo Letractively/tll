@@ -118,6 +118,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		}
 		table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
+		this.operator = operator;
 	}
 
 	public final void clear() {
