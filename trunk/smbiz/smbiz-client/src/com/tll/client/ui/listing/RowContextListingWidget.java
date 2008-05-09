@@ -43,13 +43,12 @@ public class RowContextListingWidget extends AbstractListingWidget {
 		 */
 		public RowContextPopup(IRowOptionsManager rowOpDelegate) {
 			super(SHOW_DURATION);
+			assert rowOpDelegate != null;
 			this.rowOpDelegate = rowOpDelegate;
 		}
 
 		private void show(int row) {
-			if(rowOpDelegate != null) {
-				setOptions(rowOpDelegate.getOptions(rowIndex, table.getRowRef(row)));
-			}
+			setOptions(rowOpDelegate.getOptions(row, table.getRowRef(row)));
 			super.show();
 		}
 

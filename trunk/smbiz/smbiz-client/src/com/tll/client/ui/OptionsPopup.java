@@ -7,6 +7,7 @@ package com.tll.client.ui;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerCollection;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.event.IOptionListener;
@@ -21,6 +22,8 @@ public abstract class OptionsPopup extends TimedPopup implements MouseListener, 
 
 	protected final OptionsPanel optionsPanel = new OptionsPanel();
 
+	private final KeyboardListenerCollection keyboardListeners = new KeyboardListenerCollection();
+
 	/**
 	 * Constructor
 	 * @param duration
@@ -28,6 +31,7 @@ public abstract class OptionsPopup extends TimedPopup implements MouseListener, 
 	public OptionsPopup(int duration) {
 		super(true, false, duration);
 		optionsPanel.addOptionListener(this);
+		keyboardListeners.add(optionsPanel);
 		setWidget(optionsPanel);
 	}
 
@@ -43,13 +47,11 @@ public abstract class OptionsPopup extends TimedPopup implements MouseListener, 
 				case Event.ONKEYDOWN: {
 					final int key = event.getKeyCode();
 					switch(key) {
-						/*
 						case KeyboardListener.KEY_UP:
 						case KeyboardListener.KEY_DOWN:
 						case KeyboardListener.KEY_ENTER:
-							if(keyboardListeners != null) keyboardListeners.fireKeyboardEvent(this, event);
+							keyboardListeners.fireKeyboardEvent(this, event);
 							return false;
-						*/
 						case KeyboardListener.KEY_ESCAPE:
 							hide();
 							return false;
