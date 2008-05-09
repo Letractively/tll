@@ -20,10 +20,7 @@ import com.tll.client.data.EntityRequest;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.ISourcesCrudEvents;
 import com.tll.client.event.type.CrudEvent;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.Model;
-import com.tll.client.model.ModelChangeEventDispatcher;
 import com.tll.client.model.RefKey;
 import com.tll.model.EntityType;
 
@@ -210,27 +207,6 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 		AuxDataCache.instance().cache(result);
 
 		crudListeners.fireCrudEvent(new CrudEvent(sourcingWidget, crudOp, entityRequest, result));
-
-		// fire app wide model change event if applicable
-		if(!result.hasErrors()) {
-			switch(crudOp) {
-				case ADD: {
-					ModelChangeEventDispatcher.instance().fireOnModelChange(
-							new ModelChangeEvent(sourcingWidget, ModelChangeOp.ADDED, result.getEntity()));
-					break;
-				}
-				case UPDATE: {
-					ModelChangeEventDispatcher.instance().fireOnModelChange(
-							new ModelChangeEvent(sourcingWidget, ModelChangeOp.UPDATED, result.getEntity()));
-					break;
-				}
-				case PURGE: {
-					ModelChangeEventDispatcher.instance().fireOnModelChange(
-							new ModelChangeEvent(sourcingWidget, ModelChangeOp.DELETED, result.getEntityRef()));
-					break;
-				}
-			}
-		}
 
 		clear();
 	}

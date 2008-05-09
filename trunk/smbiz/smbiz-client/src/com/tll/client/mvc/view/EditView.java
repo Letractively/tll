@@ -4,13 +4,15 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.EntityOptions;
+import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.EditViewRequest;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.model.CommitModelChangeHandler;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
@@ -22,7 +24,7 @@ import com.tll.client.ui.field.FieldGroupPanel;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView implements ClickListener {
+public abstract class EditView extends AbstractView implements IModelChangeListener {
 
 	/**
 	 * The Panel containing the UI edit Widgets.
@@ -41,8 +43,9 @@ public abstract class EditView extends AbstractView implements ClickListener {
 	 */
 	public EditView(FieldGroupPanel fldGrpPnl, EntityOptions entityOptions) {
 		super();
-		editPanel = new EditPanel(fldGrpPnl, entityOptions, true);
-		editPanel.addClickListener(this);
+		IModelChangeHandler handler = new CommitModelChangeHandler(this);
+		handler.addModelChangeListener(this);
+		editPanel = new EditPanel(fldGrpPnl, entityOptions, true, handler);
 		addWidget(editPanel);
 	}
 
@@ -92,10 +95,14 @@ public abstract class EditView extends AbstractView implements ClickListener {
 		// no-op
 	}
 
-	public void onClick(Widget sender) {
-		if(editPanel.getElement().isOrHasChild(sender.getElement())) {
-			// presume a cancel
+	@Override
+	public void onModelChangeEvent(ModelChangeEvent event) {
+		if(event.isCanceled()) {
 			Dispatcher.instance().dispatch(new UnloadViewRequest(this, getViewKey()));
+		}
+		else if(event.isError()) {
+			// TODO necessary?
+			// refresh();
 		}
 	}
 

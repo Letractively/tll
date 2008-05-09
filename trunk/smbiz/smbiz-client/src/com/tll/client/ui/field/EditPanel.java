@@ -11,18 +11,18 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.data.Status;
 import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IRpcListener;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.RpcEvent;
+import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg;
@@ -41,7 +41,7 @@ import com.tll.client.validate.ValidationException;
  * keeps the edit and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ICrudListener, IRpcListener, ClickListener, SourcesClickEvents {
+public final class EditPanel extends Composite implements ICrudListener, IRpcListener, ClickListener {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -82,16 +82,6 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 	private final EntityOptions entityOptions;
 
 	/**
-	 * Optional provision to specify needed aux data.
-	 */
-	private final AuxDataRequest auxDataRequest;
-
-	/**
-	 * The internal {@link CrudCommand} for committing edits.
-	 */
-	private final CrudCommand crudCmd = new CrudCommand(this);
-
-	/**
 	 * The ref to the entity subject to editing.
 	 */
 	private RefKey entityRef;
@@ -103,24 +93,30 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 
 	private boolean loaded;
 
+	private final IModelChangeHandler modelChangeHandler;
+
 	/**
 	 * Constructor
 	 * @param fldGrpPnl The panel containing the desired fields for edit.
-	 * @param showCancelBtn Show the cancel button?
 	 * @param entityOptions
+	 * @param showCancelBtn Show the cancel button?
+	 * @param modelChangeHandler Called upon to handle the invoked model change
+	 *        requests (when the user commits the changes)
 	 */
-	public EditPanel(FieldGroupPanel fldGrpPnl, EntityOptions entityOptions, boolean showCancelBtn) {
-		crudCmd.addCrudListener(this);
+	public EditPanel(FieldGroupPanel fldGrpPnl, EntityOptions entityOptions, boolean showCancelBtn,
+			IModelChangeHandler modelChangeHandler) {
 
-		assert fldGrpPnl != null;
+		if(fldGrpPnl == null) {
+			throw new IllegalArgumentException("A field panel must be specified.");
+		}
 		this.fldGrpPnl = fldGrpPnl;
 
 		this.entityOptions = entityOptions;
 
-		// build the aux data request
-		AuxDataRequest adr = new AuxDataRequest();
-		fldGrpPnl.neededAuxData(adr);
-		this.auxDataRequest = adr;
+		if(modelChangeHandler == null) {
+			throw new IllegalArgumentException("A model change handler must be specified.");
+		}
+		this.modelChangeHandler = modelChangeHandler;
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 		// hide the button row until initialized
@@ -213,15 +209,24 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new IllegalStateException("No valid entity ref specified");
 			}
+			CrudCommand crudCmd = new CrudCommand(this);
+			crudCmd.addCrudListener(this);
 			crudCmd.load(entityRef);
 			crudCmd.setEntityOptions(entityOptions);
-			crudCmd.setAuxDataRequest(auxDataRequest);
+
+			// request needed aux data
+			AuxDataRequest adr = new AuxDataRequest();
+			fldGrpPnl.neededAuxData(adr);
+			if(adr.size() > 0) crudCmd.setAuxDataRequest(adr);
+
 			crudCmd.execute();
 			return;
 		}
 
 		// do we need any aux data from the server?
-		AuxDataRequest adr = AuxDataCache.instance().filterRequest(auxDataRequest);
+		AuxDataRequest adr = new AuxDataRequest();
+		fldGrpPnl.neededAuxData(adr);
+		adr = AuxDataCache.instance().filterRequest(adr);
 		if(adr != null) {
 			final AuxDataCommand adc = new AuxDataCommand(this, adr);
 			adc.addRpcListener(this);
@@ -244,24 +249,6 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 				entity = event.getPayload().getEntity();
 				refresh();
 				break;
-
-			case ADD:
-			case UPDATE: {
-				Status status = event.getPayload().getStatus();
-				if(status.hasErrors()) {
-					fldGrpPnl.fields.handleValidationFeedback(new ValidationException(status.getFieldMsgs()));
-				}
-				else {
-					entity = event.getPayload().getEntity();
-					assert entity != null;
-
-					// re-"draw" the updated entity
-					fldGrpPnl.bind(entity);
-					fldGrpPnl.reset();
-					fldGrpPnl.render();
-				}
-				break;
-			}
 		}
 	}
 
@@ -278,11 +265,11 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 		if(sender == btnSave) {
 			try {
 				if(fldGrpPnl.updateModel(entity)) {
-					// send to server
-					crudCmd.persist(entity);
-					crudCmd.execute();
+					// commit the model change..
+					modelChangeHandler.handleModelUpdate(entity);
 				}
 				else {
+					// TODO do something better than this
 					MsgManager.instance
 							.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, false).show();
 				}
@@ -293,6 +280,10 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 		}
 		else if(sender == btnReset) {
 			fldGrpPnl.reset();
+		}
+		else if(sender == btnCancel) {
+			modelChangeHandler.handleModelChangeCancellation(entity.isNew() ? ModelChangeOp.ADDED : ModelChangeOp.UPDATED,
+					entity);
 		}
 	}
 }

@@ -4,9 +4,12 @@
  */
 package com.tll.client.event.type;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
+import com.tll.client.msg.Msg;
 
 /**
  * ModelChangeEvent
@@ -23,6 +26,10 @@ public final class ModelChangeEvent extends BaseEvent {
 	private final ModelChangeOp change;
 	private final Model model;
 	private final RefKey modelRef;
+
+	private boolean canceled;
+
+	private List<Msg> errors;
 
 	/**
 	 * Constructor - Use for add and update model change events.
@@ -61,4 +68,25 @@ public final class ModelChangeEvent extends BaseEvent {
 	public RefKey getModelRef() {
 		return modelRef;
 	}
+
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
+	}
+
+	public boolean isError() {
+		return errors != null;
+	}
+
+	public List<Msg> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(List<Msg> errors) {
+		this.errors = errors;
+	}
+
 }
