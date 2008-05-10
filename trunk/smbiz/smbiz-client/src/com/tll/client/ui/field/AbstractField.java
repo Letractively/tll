@@ -418,11 +418,12 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		// stringize value of the model property value
 		String strval = Fmt.format(pv.getValue(), format);
 
-		// set the field's value
-		setValue(strval);
-
 		// assign the reset value
 		resetValue = strval;
+
+		// clear out styling and set the current value to the just assigned reset
+		// value
+		reset();
 	}
 
 	/**

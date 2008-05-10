@@ -12,12 +12,14 @@ import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg;
 
 /**
- * ModelChangeEvent
+ * ModelChangeEvent - Used to dissemminate model changes.
  * @author jpk
  */
 public final class ModelChangeEvent extends BaseEvent {
 
 	public static enum ModelChangeOp {
+		AUXDATA_READY,
+		LOADED,
 		ADDED,
 		UPDATED,
 		DELETED;
@@ -27,21 +29,21 @@ public final class ModelChangeEvent extends BaseEvent {
 	private final Model model;
 	private final RefKey modelRef;
 
-	private boolean canceled;
-
-	private List<Msg> errors;
+	private final List<Msg> errors;
 
 	/**
 	 * Constructor - Use for add and update model change events.
 	 * @param source
 	 * @param change
 	 * @param model
+	 * @param errors
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, Model model) {
+	public ModelChangeEvent(Widget source, ModelChangeOp change, Model model, List<Msg> errors) {
 		super(source);
 		this.change = change;
 		this.model = model;
 		this.modelRef = null;
+		this.errors = errors;
 	}
 
 	/**
@@ -49,12 +51,14 @@ public final class ModelChangeEvent extends BaseEvent {
 	 * @param source
 	 * @param change
 	 * @param modelRef
+	 * @param errors
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, RefKey modelRef) {
+	public ModelChangeEvent(Widget source, ModelChangeOp change, RefKey modelRef, List<Msg> errors) {
 		super(source);
 		this.change = change;
 		this.model = null;
 		this.modelRef = modelRef;
+		this.errors = errors;
 	}
 
 	public ModelChangeOp getChangeOp() {
@@ -69,24 +73,15 @@ public final class ModelChangeEvent extends BaseEvent {
 		return modelRef;
 	}
 
-	public boolean isCanceled() {
-		return canceled;
-	}
-
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
+	public boolean isSuccess() {
+		return (errors == null);
 	}
 
 	public boolean isError() {
-		return errors != null;
+		return errors != null && errors.size() > 0;
 	}
 
 	public List<Msg> getErrors() {
 		return errors;
 	}
-
-	public void setErrors(List<Msg> errors) {
-		this.errors = errors;
-	}
-
 }

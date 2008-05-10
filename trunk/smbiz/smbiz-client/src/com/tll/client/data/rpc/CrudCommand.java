@@ -31,6 +31,7 @@ import com.tll.model.EntityType;
 public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
 
 	public enum CrudOp {
+		// TODO change to LOAD_NEW ???
 		RECIEVE_EMPTY_ENTITY,
 		LOAD,
 		ADD,

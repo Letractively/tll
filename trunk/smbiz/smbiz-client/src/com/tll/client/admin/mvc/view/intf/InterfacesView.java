@@ -11,15 +11,21 @@ import java.util.List;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.InterfacePanel;
+import com.tll.client.data.AuxDataRequest;
+import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IListingListener;
+import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.ListingEvent;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.model.CommitModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
@@ -67,7 +73,7 @@ public class InterfacesView extends AbstractView {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack {
+		private final class InterfaceStack implements IModelChangeListener {
 
 			private final int stackIndex;
 			private final RefKey intfRef;
@@ -83,9 +89,33 @@ public class InterfacesView extends AbstractView {
 				super();
 				this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
+				this.editPanel = new EditPanel(new InterfacePanel(null), false);
 
-				InterfacePanel pnlIntf = new InterfacePanel(null);
-				editPanel = new EditPanel(pnlIntf, null, false);
+				CommitModelChangeHandler handler = new CommitModelChangeHandler() {
+
+					public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
+						// no-op as there is no cancel button
+					}
+
+					@Override
+					protected Widget getSourcingWidget() {
+						return InterfacesStack.this;
+					}
+
+					@Override
+					protected AuxDataRequest getNeededAuxData() {
+						return editPanel.getNeededAuxData();
+					}
+
+					@Override
+					protected EntityOptions getEntityOptions() {
+						return null;
+					}
+
+				};
+				handler.addModelChangeListener(this);
+
+				editPanel.setModelChangeHandler(handler);
 			}
 
 			public void loadInterfaceIfNecessary() {
@@ -108,6 +138,18 @@ public class InterfacesView extends AbstractView {
 					});
 					cmd.load(intfRef);
 					cmd.execute();
+				}
+			}
+
+			public void onModelChangeEvent(ModelChangeEvent event) {
+				if(event.isError()) {
+					editPanel.applyMsgs(event.getErrors());
+				}
+				else {
+					if(event.getChangeOp() == ModelChangeOp.LOADED) {
+						editPanel.setEntity(event.getModel());
+						editPanel.refresh();
+					}
 				}
 			}
 

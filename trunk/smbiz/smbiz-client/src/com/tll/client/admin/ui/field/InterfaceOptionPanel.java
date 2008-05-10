@@ -14,10 +14,12 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
+import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
@@ -113,7 +115,33 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		lstngParams = ListingFactory.collectionListing(plc, params, rod);
 
 		InterfaceOptionParameterPanel pnlParam = new InterfaceOptionParameterPanel();
-		pnlParamEdit = new EditPanel(pnlParam, null, true);
+		pnlParamEdit = new EditPanel(pnlParam, true);
+
+		IModelChangeHandler handler = new IModelChangeHandler() {
+
+			public void handleModelUpdate(Model model) {
+			}
+
+			public void handleModelFetch(RefKey modelRef) {
+			}
+
+			public void handleModelDelete(RefKey modelRef) {
+			}
+
+			public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
+			}
+
+			public void handleModelAdd(Model model) {
+			}
+
+			public boolean handleAuxDataFetch() {
+				return false;
+			}
+
+		};
+
+		pnlParamEdit.setModelChangeHandler(handler);
+
 		dlgParam = new Dialog(lstngParams, false);
 		dlgParam.setWidget(pnlParamEdit);
 	}
@@ -202,17 +230,4 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			setMarkDeleted(!getFields().isMarkedDeleted());
 		}
 	}
-
-	// TODO handle
-	/*
-	public void onEditEvent(EditEvent event) {
-		dlgParam.hide();
-		if(event.getEditOp() == EditEvent.EDIT_OP_UPDATED) {
-			// update the params listing
-			Model param = event.getEntity();
-			paramsListingOperator.updateRow(paramRowIndex, param);
-			paramRowIndex = -1; // reset
-		}
-	}
-	*/
 }

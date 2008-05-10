@@ -4,6 +4,8 @@
  */
 package com.tll.client.ui.field;
 
+import java.util.List;
+
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -12,15 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
-import com.tll.client.data.rpc.AuxDataCommand;
-import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.ICrudListener;
-import com.tll.client.event.IRpcListener;
-import com.tll.client.event.type.CrudEvent;
-import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
@@ -31,6 +25,7 @@ import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
 
 /**
@@ -41,7 +36,7 @@ import com.tll.client.validate.ValidationException;
  * keeps the edit and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ICrudListener, IRpcListener, ClickListener {
+public final class EditPanel extends Composite implements ClickListener {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -77,11 +72,6 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 	private final Button btnSave, btnReset, btnCancel;
 
 	/**
-	 * Used for committing the edits. May be <code>null</code>.
-	 */
-	private final EntityOptions entityOptions;
-
-	/**
 	 * The ref to the entity subject to editing.
 	 */
 	private RefKey entityRef;
@@ -91,32 +81,19 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 	 */
 	private Model entity;
 
-	private boolean loaded;
-
-	private final IModelChangeHandler modelChangeHandler;
+	private IModelChangeHandler modelChangeHandler;
 
 	/**
 	 * Constructor
 	 * @param fldGrpPnl The panel containing the desired fields for edit.
-	 * @param entityOptions
 	 * @param showCancelBtn Show the cancel button?
-	 * @param modelChangeHandler Called upon to handle the invoked model change
-	 *        requests (when the user commits the changes)
 	 */
-	public EditPanel(FieldGroupPanel fldGrpPnl, EntityOptions entityOptions, boolean showCancelBtn,
-			IModelChangeHandler modelChangeHandler) {
+	public EditPanel(FieldGroupPanel fldGrpPnl, boolean showCancelBtn) {
 
 		if(fldGrpPnl == null) {
 			throw new IllegalArgumentException("A field panel must be specified.");
 		}
 		this.fldGrpPnl = fldGrpPnl;
-
-		this.entityOptions = entityOptions;
-
-		if(modelChangeHandler == null) {
-			throw new IllegalArgumentException("A model change handler must be specified.");
-		}
-		this.modelChangeHandler = modelChangeHandler;
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 		// hide the button row until initialized
@@ -143,6 +120,21 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 		panel.add(pnlButtonRow);
 		initWidget(panel);
 		setStyleName(STYLE_ENTITY_EDIT);
+	}
+
+	/**
+	 * Sets the model change handler which handles model related data acquisition
+	 * and data change requests.
+	 * @param modelChangeHandler The model change handler
+	 */
+	public void setModelChangeHandler(IModelChangeHandler modelChangeHandler) {
+		this.modelChangeHandler = modelChangeHandler;
+	}
+
+	private void ensureModelHandlerSet() throws IllegalStateException {
+		if(modelChangeHandler == null) {
+			throw new IllegalStateException("No model handler set");
+		}
 	}
 
 	@Override
@@ -191,95 +183,80 @@ public final class EditPanel extends Composite implements ICrudListener, IRpcLis
 		this.entity = null;
 	}
 
+	public void applyMsgs(final List<Msg> msgs) {
+		fldGrpPnl.getFields().handleValidationFeedback(new IValidationFeedback() {
+
+			public List<Msg> getValidationMessages() {
+				return msgs;
+			}
+
+		});
+	}
+
+	/**
+	 * @return An {@link AuxDataRequest} instance containing the needed aux data
+	 *         or <code>null</code> if no aux data is needed.<br>
+	 *         <strong>NOTE: </strong>This method does <em>not</em> check the
+	 *         aux data cache.
+	 */
+	public AuxDataRequest getNeededAuxData() {
+		AuxDataRequest adr = new AuxDataRequest();
+		fldGrpPnl.neededAuxData(adr);
+		return adr.size() == 0 ? null : adr;
+	}
+
 	/**
 	 * Refreshes the edit panel by [re-]applying the entity model to the contained
 	 * {@link FieldGroupPanel} and setting the edit button based on whether the
 	 * entity is new or not.
 	 */
 	public void refresh() {
-
-		if(loaded) {
-			// force a refresh
-			entity = null;
-			loaded = false;
-		}
+		ensureModelHandlerSet();
 
 		// fetch entity from server?
 		if(entity == null) {
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new IllegalStateException("No valid entity ref specified");
 			}
-			CrudCommand crudCmd = new CrudCommand(this);
-			crudCmd.addCrudListener(this);
-			crudCmd.load(entityRef);
-			crudCmd.setEntityOptions(entityOptions);
-
-			// request needed aux data
-			AuxDataRequest adr = new AuxDataRequest();
-			fldGrpPnl.neededAuxData(adr);
-			if(adr.size() > 0) crudCmd.setAuxDataRequest(adr);
-
-			crudCmd.execute();
+			modelChangeHandler.handleModelFetch(entityRef);
 			return;
 		}
 
-		// do we need any aux data from the server?
-		AuxDataRequest adr = new AuxDataRequest();
-		fldGrpPnl.neededAuxData(adr);
-		adr = AuxDataCache.instance().filterRequest(adr);
-		if(adr != null) {
-			final AuxDataCommand adc = new AuxDataCommand(this, adr);
-			adc.addRpcListener(this);
-			adc.execute();
-			return;
+		if(!modelChangeHandler.handleAuxDataFetch()) {
+			btnSave.setText(entity.isNew() ? "Add" : "Update");
+			fldGrpPnl.bind(entity);
+			fldGrpPnl.render();
+			pnlButtonRow.setVisible(true);
 		}
 
-		btnSave.setText(entity.isNew() ? "Add" : "Update");
-		fldGrpPnl.bind(entity);
-		fldGrpPnl.render();
-		pnlButtonRow.setVisible(true);
-
-		loaded = true;
-	}
-
-	public void onCrudEvent(CrudEvent event) {
-		switch(event.getCrudOp()) {
-			case RECIEVE_EMPTY_ENTITY:
-			case LOAD:
-				entity = event.getPayload().getEntity();
-				refresh();
-				break;
-		}
 	}
 
 	/**
-	 * This means an aux data request came back successfully
+	 * Resets the fields contained in this panel.
 	 */
-	public void onRpcEvent(RpcEvent event) {
-		if(!event.getPayload().hasErrors()) {
-			refresh();
-		}
+	public void reset() {
+		fldGrpPnl.reset();
 	}
 
 	public void onClick(Widget sender) {
+		ensureModelHandlerSet();
 		if(sender == btnSave) {
 			try {
 				if(fldGrpPnl.updateModel(entity)) {
-					// commit the model change..
+					// handle the model change
 					modelChangeHandler.handleModelUpdate(entity);
 				}
 				else {
-					// TODO do something better than this
-					MsgManager.instance
-							.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, false).show();
+					MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
+							.show();
 				}
 			}
 			catch(ValidationException e) {
-
+				// no-op
 			}
 		}
 		else if(sender == btnReset) {
-			fldGrpPnl.reset();
+			reset();
 		}
 		else if(sender == btnCancel) {
 			modelChangeHandler.handleModelChangeCancellation(entity.isNew() ? ModelChangeOp.ADDED : ModelChangeOp.UPDATED,

@@ -66,6 +66,7 @@ public final class Status implements IMarshalable {
 	 * @return {@link List} of messages associated with a UI field.
 	 */
 	public List<Msg> getFieldMsgs() {
+		if(msgs == null) return null;
 		final List<Msg> list = new ArrayList<Msg>();
 		for(final Msg msg : msgs) {
 			if(msg.hasAttribute(MsgAttr.FIELD)) {

@@ -4,6 +4,8 @@
  */
 package com.tll.client.mvc.view;
 
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.EditViewRequest;
@@ -11,8 +13,8 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.CommitModelChangeHandler;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
@@ -41,11 +43,36 @@ public abstract class EditView extends AbstractView implements IModelChangeListe
 	 * @param fldGrpPnl The field group panel. May NOT be <code>null</code>.
 	 * @param entityOptions
 	 */
-	public EditView(FieldGroupPanel fldGrpPnl, EntityOptions entityOptions) {
+	public EditView(FieldGroupPanel fldGrpPnl, final EntityOptions entityOptions) {
 		super();
-		IModelChangeHandler handler = new CommitModelChangeHandler(this);
+
+		editPanel = new EditPanel(fldGrpPnl, true);
+
+		CommitModelChangeHandler handler = new CommitModelChangeHandler() {
+
+			@Override
+			protected Widget getSourcingWidget() {
+				return EditView.this;
+			}
+
+			@Override
+			protected AuxDataRequest getNeededAuxData() {
+				return editPanel.getNeededAuxData();
+			}
+
+			@Override
+			protected EntityOptions getEntityOptions() {
+				return entityOptions;
+			}
+
+			public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
+				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey()));
+			}
+
+		};
 		handler.addModelChangeListener(this);
-		editPanel = new EditPanel(fldGrpPnl, entityOptions, true, handler);
+		editPanel.setModelChangeHandler(handler);
+
 		addWidget(editPanel);
 	}
 
@@ -95,14 +122,28 @@ public abstract class EditView extends AbstractView implements IModelChangeListe
 		// no-op
 	}
 
-	@Override
-	public void onModelChangeEvent(ModelChangeEvent event) {
-		if(event.isCanceled()) {
-			Dispatcher.instance().dispatch(new UnloadViewRequest(this, getViewKey()));
+	public final void onModelChangeEvent(ModelChangeEvent event) {
+		if(event.isError()) {
+			editPanel.applyMsgs(event.getErrors());
+			return;
 		}
-		else if(event.isError()) {
-			// TODO necessary?
-			// refresh();
+		switch(event.getChangeOp()) {
+			case AUXDATA_READY:
+				editPanel.refresh();
+				break;
+			case LOADED:
+				editPanel.setEntity(event.getModel());
+				editPanel.refresh();
+				break;
+			case ADDED:
+			case UPDATED:
+				editPanel.setEntity(event.getModel());
+				editPanel.refresh();
+				break;
+			case DELETED:
+				// TODO eliminate this view from cache as well
+				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey()));
+				break;
 		}
 	}
 
