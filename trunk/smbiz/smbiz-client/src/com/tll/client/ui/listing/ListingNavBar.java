@@ -39,24 +39,33 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	private static final String CSS_PAGE = "tbPage";
 
 	private String listingElementName;
+
 	private IListingOperator listingOperator;
 
-	private final Image imgPageFirst = App.imgs().page_first().createImage();
-	private final Image imgPagePrev = App.imgs().page_prev().createImage();
-	private final Image imgPageNext = App.imgs().page_next().createImage();
-	private final Image imgPageLast = App.imgs().page_last().createImage();
-	private Image imgRefresh;
-	// private Image imgAdd;
-	private final PushButton btnPageFirst = new PushButton(imgPageFirst, this);
-	private final PushButton btnPagePrev = new PushButton(imgPagePrev, this);
-	private final PushButton btnPageNext = new PushButton(imgPageNext, this);
-	private final PushButton btnPageLast = new PushButton(imgPageLast, this);
-	private PushButton btnRefresh;
-	private PushButton btnAdd;
+	private boolean pageable;
+
+	// page nav related
+	private Image imgPageFirst;
+	private Image imgPagePrev;
+	private Image imgPageNext;
+	private Image imgPageLast;
+	private PushButton btnPageFirst;
+	private PushButton btnPagePrev;
+	private PushButton btnPageNext;
+	private PushButton btnPageLast;
 	private final TextBox tbPage = new TextBox();
 	private final Label lblPagePre = new Label("Page");
 	private final Label lblPagePost = new Label();
-	private final Label lblSmry = new Label();
+
+	// refresh related
+	private Image imgRefresh;
+	private PushButton btnRefresh;
+
+	// add related
+	private PushButton btnAdd;
+
+	// summary text ("Displaying elements x of y")
+	private Label lblSmry;
 
 	private int firstIndex = -1;
 	private int lastIndex = -1;
@@ -82,59 +91,74 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 
 		this.listingElementName = config.getListingElementName();
 		assert listingElementName != null;
-		// setTitle(config.descriptor() + " Navigation Panel");
 
 		addStyleName(STYLE_TABLE_VIEW_NAVBAR);
 
-		btnPageFirst.setTitle("Fist Page");
-		btnPagePrev.setTitle("Previous Page");
-		btnPageNext.setTitle("Next Page");
-		btnPageLast.setTitle("Last Page");
-		tbPage.setTitle("Current Page");
-
-		tbPage.addKeyboardListener(this);
-		tbPage.addChangeListener(this);
-		tbPage.setMaxLength(4);
-		tbPage.setStyleName(CSS_PAGE);
-
-		// ImageContainer ic;
 		Image split;
 
-		// prev buttons (divs)
-		add(btnPageFirst);
-		add(btnPagePrev);
+		if(config.isPageable()) {
+			pageable = true;
 
-		// separator
-		split = App.imgs().split().createImage();
-		split.setStylePrimaryName(CSS_SEPARATOR);
-		add(split);
+			imgPageFirst = App.imgs().page_first().createImage();
+			imgPagePrev = App.imgs().page_prev().createImage();
+			imgPageNext = App.imgs().page_next().createImage();
+			imgPageLast = App.imgs().page_last().createImage();
 
-		// Page x of y
-		FlowPanel pageXofY = new FlowPanel();
-		pageXofY.addStyleName(CSS_PAGE_CONTAINER);
-		pageXofY.add(lblPagePre);
-		pageXofY.add(tbPage);
-		pageXofY.add(lblPagePost);
-		add(pageXofY);
+			btnPageFirst = new PushButton(imgPageFirst, this);
+			btnPagePrev = new PushButton(imgPagePrev, this);
+			btnPageNext = new PushButton(imgPageNext, this);
+			btnPageLast = new PushButton(imgPageLast, this);
 
-		// separator
-		split = App.imgs().split().createImage();
-		split.setStylePrimaryName(CSS_SEPARATOR);
-		add(split);
+			btnPageFirst.setTitle("Fist Page");
+			btnPagePrev.setTitle("Previous Page");
+			btnPageNext.setTitle("Next Page");
+			btnPageLast.setTitle("Last Page");
+			tbPage.setTitle("Current Page");
 
-		// next buttons (divs)
-		add(btnPageNext);
-		add(btnPageLast);
+			tbPage.addKeyboardListener(this);
+			tbPage.addChangeListener(this);
+			tbPage.setMaxLength(4);
+			tbPage.setStyleName(CSS_PAGE);
+
+			// prev buttons (divs)
+			add(btnPageFirst);
+			add(btnPagePrev);
+
+			// separator
+			split = App.imgs().split().createImage();
+			split.setStylePrimaryName(CSS_SEPARATOR);
+			add(split);
+
+			// Page x of y
+			FlowPanel pageXofY = new FlowPanel();
+			pageXofY.addStyleName(CSS_PAGE_CONTAINER);
+			pageXofY.add(lblPagePre);
+			pageXofY.add(tbPage);
+			pageXofY.add(lblPagePost);
+			add(pageXofY);
+
+			// separator
+			split = App.imgs().split().createImage();
+			split.setStylePrimaryName(CSS_SEPARATOR);
+			add(split);
+
+			// next buttons (divs)
+			add(btnPageNext);
+			add(btnPageLast);
+		}
 
 		// show refresh button?
 		if(config.isShowRefreshBtn()) {
 			imgRefresh = App.imgs().refresh().createImage();
 			btnRefresh = new PushButton(imgRefresh, this);
 			btnRefresh.setTitle("Refresh");
-			// separator
-			split = App.imgs().split().createImage();
-			split.setStylePrimaryName(CSS_SEPARATOR);
-			add(split);
+
+			if(config.isPageable()) {
+				// separator
+				split = App.imgs().split().createImage();
+				split.setStylePrimaryName(CSS_SEPARATOR);
+				add(split);
+			}
 			add(btnRefresh);
 		}
 
@@ -144,14 +168,17 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title);
 			btnAdd.setTitle(title);
-			// separator
-			split = App.imgs().split().createImage();
-			split.setStylePrimaryName(CSS_SEPARATOR);
-			add(split);
+			if(config.isPageable() || config.isShowRefreshBtn()) {
+				// separator
+				split = App.imgs().split().createImage();
+				split.setStylePrimaryName(CSS_SEPARATOR);
+				add(split);
+			}
 			add(btnAdd);
 		}
 
 		// Displaying {listing element name} x - y of TOTAL
+		lblSmry = new Label();
 		lblSmry.setStyleName(CSS_SUMMARY);
 		add(lblSmry);
 
@@ -175,17 +202,19 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	public void onClick(Widget sender) {
 		ListingOp action = null;
 		Integer page = null;
-		if(sender == btnPageFirst) {
-			action = ListingOp.FIRST_PAGE;
-		}
-		else if(sender == btnPagePrev) {
-			action = ListingOp.PREVIOUS_PAGE;
-		}
-		else if(sender == btnPageNext) {
-			action = ListingOp.NEXT_PAGE;
-		}
-		else if(sender == btnPageLast) {
-			action = ListingOp.LAST_PAGE;
+		if(pageable) {
+			if(sender == btnPageFirst) {
+				action = ListingOp.FIRST_PAGE;
+			}
+			else if(sender == btnPagePrev) {
+				action = ListingOp.PREVIOUS_PAGE;
+			}
+			else if(sender == btnPageNext) {
+				action = ListingOp.NEXT_PAGE;
+			}
+			else if(sender == btnPageLast) {
+				action = ListingOp.LAST_PAGE;
+			}
 		}
 		else if(sender == btnRefresh) {
 			listingOperator.refresh();
@@ -249,8 +278,13 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 
 	private void setSummaryCaption() {
 		assert listingElementName != null;
-		lblSmry.setText("Displaying " + listingElementName + "s " + (firstIndex + 1) + " - " + (lastIndex + 1) + " of "
-				+ totalSize);
+		if(totalSize == 0) {
+			lblSmry.setText("No " + listingElementName + "s exist");
+		}
+		else {
+			lblSmry.setText("Displaying " + listingElementName + "s " + (firstIndex + 1) + " - " + (lastIndex + 1) + " of "
+					+ totalSize);
+		}
 	}
 
 	public void setPage(IPage<Model> page) {
@@ -261,46 +295,48 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		this.numPages = page.getNumPages();
 		this.crntPage = page.getPageNumber() + 1;
 
-		// first page btn
-		btnPageFirst.setEnabled(!page.isFirstPage());
-		if(page.isFirstPage()) {
-			App.imgs().page_first_disabled().applyTo(imgPageFirst);
-		}
-		else {
-			App.imgs().page_first().applyTo(imgPageFirst);
+		if(pageable) {
+			// first page btn
+			btnPageFirst.setEnabled(!page.isFirstPage());
+			if(page.isFirstPage()) {
+				App.imgs().page_first_disabled().applyTo(imgPageFirst);
+			}
+			else {
+				App.imgs().page_first().applyTo(imgPageFirst);
+			}
+
+			// last page btn
+			btnPageLast.setEnabled(!page.isLastPage());
+			if(page.isLastPage()) {
+				App.imgs().page_last_disabled().applyTo(imgPageLast);
+			}
+			else {
+				App.imgs().page_last().applyTo(imgPageLast);
+			}
+
+			// prev page btn
+			btnPagePrev.setEnabled(!page.isFirstPage());
+			if(page.isFirstPage()) {
+				App.imgs().page_prev_disabled().applyTo(imgPagePrev);
+			}
+			else {
+				App.imgs().page_prev().applyTo(imgPagePrev);
+			}
+
+			// next page btn
+			btnPageNext.setEnabled(!page.isLastPage());
+			if(page.isLastPage()) {
+				App.imgs().page_next_disabled().applyTo(imgPageNext);
+			}
+			else {
+				App.imgs().page_next().applyTo(imgPageNext);
+			}
+
+			tbPage.setText(Integer.toString(crntPage));
+			tbPage.setEnabled(numPages > 1);
+			lblPagePost.setText("of " + numPages);
 		}
 
-		// last page btn
-		btnPageLast.setEnabled(!page.isLastPage());
-		if(page.isLastPage()) {
-			App.imgs().page_last_disabled().applyTo(imgPageLast);
-		}
-		else {
-			App.imgs().page_last().applyTo(imgPageLast);
-		}
-
-		// prev page btn
-		btnPagePrev.setEnabled(!page.isFirstPage());
-		if(page.isFirstPage()) {
-			App.imgs().page_prev_disabled().applyTo(imgPagePrev);
-		}
-		else {
-			App.imgs().page_prev().applyTo(imgPagePrev);
-		}
-
-		// next page btn
-		btnPageNext.setEnabled(!page.isLastPage());
-		if(page.isLastPage()) {
-			App.imgs().page_next_disabled().applyTo(imgPageNext);
-		}
-		else {
-			App.imgs().page_next().applyTo(imgPageNext);
-		}
-
-		tbPage.setText(Integer.toString(crntPage));
-		tbPage.setEnabled(numPages > 1);
-		lblPagePost.setText("of " + numPages);
 		setSummaryCaption();
-		// }
 	}
 }

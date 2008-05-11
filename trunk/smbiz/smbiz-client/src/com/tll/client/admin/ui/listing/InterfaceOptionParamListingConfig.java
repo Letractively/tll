@@ -73,10 +73,10 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 	}
 
 	public final boolean isShowRefreshBtn() {
-		return true;
+		return false;
 	}
 
 	public final boolean isSortable() {
-		return true;
+		return false;
 	}
 }

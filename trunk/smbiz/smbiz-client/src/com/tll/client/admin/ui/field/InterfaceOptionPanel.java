@@ -6,6 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,13 +17,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IDataProvider;
 import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
@@ -57,16 +61,18 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	private String optionName;
 
 	/**
-	 * Cloned list of parameters extracted from the parent property value group
-	 * declared as a convenience.
+	 * list of parameters extracted from the parent property value group declared
+	 * as a convenience.
 	 */
 	private List<Model> params;
 
 	private final AbstractListingWidget lstngParams;
 
-	private final EditPanel pnlParamEdit;
+	private List<InterfaceOptionParameterPanel> paramFieldPanels;
 
 	private int paramRowIndex = -1;
+
+	private final EditPanel paramEditPanel;
 
 	private final Dialog dlgParam;
 
@@ -94,8 +100,10 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				Model param = params.get(paramRowIndex);
 				String paramName = param.getName();
 				assert paramName != null;
-				pnlParamEdit.setEntity(param);
-				pnlParamEdit.refresh();
+				InterfaceOptionParameterPanel pep = paramFieldPanels.get(rowIndex - 1);
+				paramEditPanel.setFieldPanel(pep);
+				paramEditPanel.setEntity(param);
+				paramEditPanel.refresh();
 				dlgParam.setText("Edit " + paramName);
 				dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
 
@@ -108,8 +116,9 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 			@Override
 			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
-				// lstngParams.deleteRow(rowRef);
-				// TODO handle
+				FieldGroup paramGrp = (FieldGroup) fields.getField(PropertyPath.indexed("parameters", rowIndex - 1));
+				paramGrp.setMarkedDeleted(true);
+				lstngParams.deleteRow(rowIndex);
 			}
 
 		};
@@ -122,36 +131,41 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		}, rod);
 
-		InterfaceOptionParameterPanel pnlParam = new InterfaceOptionParameterPanel();
-		pnlParamEdit = new EditPanel(pnlParam, true);
+		paramEditPanel = new EditPanel(true);
 
 		IModelChangeHandler handler = new IModelChangeHandler() {
 
 			public void handleModelUpdate(Model model) {
+				lstngParams.updateRow(paramRowIndex + 1, model);
+				dlgParam.hide();
 			}
 
 			public void handleModelFetch(RefKey modelRef) {
+				// no-op - this won't be called
 			}
 
 			public void handleModelDelete(RefKey modelRef) {
+				// no-op - this won't be called
 			}
 
 			public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
+				dlgParam.hide();
 			}
 
 			public void handleModelAdd(Model model) {
+				// no-op - this won't be called
 			}
 
 			public boolean handleAuxDataFetch() {
+				// no-op - this won't be called
 				return false;
 			}
 
 		};
-
-		pnlParamEdit.setModelChangeHandler(handler);
+		paramEditPanel.setModelChangeHandler(handler);
 
 		dlgParam = new Dialog(lstngParams, false);
-		dlgParam.setWidget(pnlParamEdit);
+		dlgParam.setWidget(paramEditPanel);
 	}
 
 	@Override
@@ -217,16 +231,18 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		setMarkDeleted(false);
 
 		// params
-		List<Model> plist = modelOption.relatedMany("parameters").getList();
-		if(plist != null) {
-			params = new ArrayList<Model>(plist.size());
-			for(Model p : plist) {
-				params.add(p.copy());
+		paramFieldPanels = new ArrayList<InterfaceOptionParameterPanel>();
+		Iterator<IndexedProperty> itr = modelOption.relatedMany("parameters").iterator();
+		if(itr != null) {
+			while(itr.hasNext()) {
+				IndexedProperty param = itr.next();
+				InterfaceOptionParameterPanel pp = new InterfaceOptionParameterPanel(param.getPropertyName());
+				paramFieldPanels.add(pp);
+				fields.addField(pp.getFields());
 			}
 		}
-		else {
-			params = null;
-		}
+
+		params = modelOption.relatedMany("parameters").getList();
 		lstngParams.display();
 	}
 

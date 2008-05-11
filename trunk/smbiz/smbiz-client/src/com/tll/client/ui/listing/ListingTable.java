@@ -377,22 +377,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		crntPage = page.getPageNumber() + 1;
 		numPages = page.getNumPages();
 		actvRowIndex = crntRowIndex = -1; // reset
-		/*
-		// NOTE: we adjust the event's row index to account for the header row
-		else if(listingOp == ListingOp.INSERT_ROW) {
-			addRow(event.getRowIndex() + 2, event.getRowData());
-		}
-		else if(listingOp == ListingOp.UPDATE_ROW) {
-			updateRow(event.getRowIndex() + 1, event.getRowData());
-		}
-		else if(listingOp == ListingOp.DELETE_ROW) {
-			deleteRow(event.getRowIndex() + 1);
-		}
-		else if(listingOp == ListingOp.CLEAR) {
-			removeBodyRows();
-		}
-		*/
-		// }
 	}
 
 	@Override

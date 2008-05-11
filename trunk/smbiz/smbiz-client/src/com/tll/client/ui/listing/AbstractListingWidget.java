@@ -148,6 +148,18 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		operator.sort(sortColumn);
 	}
 
+	public final void addRow(int beforeRow, Model rowData) {
+		table.addRow(beforeRow, rowData);
+	}
+
+	public final void updateRow(int rowIndex, Model rowData) {
+		table.updateRow(rowIndex, rowData);
+	}
+
+	public final void deleteRow(int rowIndex) {
+		table.deleteRow(rowIndex);
+	}
+
 	/**
 	 * @return The parent {@link Panel} containing all constituent listing
 	 *         {@link Widget}s.
@@ -209,7 +221,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
 					// i.e. the add button in the nav bar was the source of the model
 					// change..
-					table.addRow(1, event.getModel());
+					addRow(1, event.getModel());
 				}
 				break;
 			case UPDATED: {
@@ -218,7 +230,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
-					table.updateRow(rowIndex, event.getModel());
+					updateRow(rowIndex, event.getModel());
 				}
 				break;
 			}
@@ -227,7 +239,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					table.deleteRow(rowIndex);
+					deleteRow(rowIndex);
 				}
 				break;
 			}

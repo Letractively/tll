@@ -62,7 +62,7 @@ public final class EditPanel extends Composite implements ClickListener {
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldGroupPanel fldGrpPnl;
+	private FieldGroupPanel fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -85,16 +85,9 @@ public final class EditPanel extends Composite implements ClickListener {
 
 	/**
 	 * Constructor
-	 * @param fldGrpPnl The panel containing the desired fields for edit.
-	 * @param showCancelBtn Show the cancel button?
+	 * @param showCancelBtn
 	 */
-	public EditPanel(FieldGroupPanel fldGrpPnl, boolean showCancelBtn) {
-
-		if(fldGrpPnl == null) {
-			throw new IllegalArgumentException("A field panel must be specified.");
-		}
-		this.fldGrpPnl = fldGrpPnl;
-
+	public EditPanel(boolean showCancelBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 		// hide the button row until initialized
 		pnlButtonRow.setVisible(false);
@@ -114,12 +107,34 @@ public final class EditPanel extends Composite implements ClickListener {
 		}
 
 		portal.setStyleName(CSS.PORTAL);
-		portal.add(fldGrpPnl);
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);
 		initWidget(panel);
 		setStyleName(STYLE_ENTITY_EDIT);
+	}
+
+	/**
+	 * Constructor
+	 * @param fieldPanel The panel containing the desired fields for edit.
+	 * @param showCancelBtn Show the cancel button?
+	 */
+	public EditPanel(FieldGroupPanel fieldPanel, boolean showCancelBtn) {
+		this(showCancelBtn);
+		setFieldPanel(fieldPanel);
+	}
+
+	/**
+	 * Sets or replaces the field panel.
+	 * @param fieldPanel The field panel
+	 */
+	public void setFieldPanel(FieldGroupPanel fieldPanel) {
+		if(this.fieldPanel != null && this.fieldPanel == fieldPanel) return;
+		if(fieldPanel == null) {
+			throw new IllegalArgumentException("A field panel must be specified.");
+		}
+		this.fieldPanel = fieldPanel;
+		portal.setWidget(fieldPanel);
 	}
 
 	/**
@@ -184,7 +199,7 @@ public final class EditPanel extends Composite implements ClickListener {
 	}
 
 	public void applyMsgs(final List<Msg> msgs) {
-		fldGrpPnl.getFields().handleValidationFeedback(new IValidationFeedback() {
+		fieldPanel.getFields().handleValidationFeedback(new IValidationFeedback() {
 
 			public List<Msg> getValidationMessages() {
 				return msgs;
@@ -201,7 +216,7 @@ public final class EditPanel extends Composite implements ClickListener {
 	 */
 	public AuxDataRequest getNeededAuxData() {
 		AuxDataRequest adr = new AuxDataRequest();
-		fldGrpPnl.neededAuxData(adr);
+		fieldPanel.neededAuxData(adr);
 		return adr.size() == 0 ? null : adr;
 	}
 
@@ -224,8 +239,8 @@ public final class EditPanel extends Composite implements ClickListener {
 
 		if(!modelChangeHandler.handleAuxDataFetch()) {
 			btnSave.setText(entity.isNew() ? "Add" : "Update");
-			fldGrpPnl.bind(entity);
-			fldGrpPnl.render();
+			fieldPanel.bind(entity);
+			fieldPanel.render();
 			pnlButtonRow.setVisible(true);
 		}
 
@@ -235,14 +250,14 @@ public final class EditPanel extends Composite implements ClickListener {
 	 * Resets the fields contained in this panel.
 	 */
 	public void reset() {
-		fldGrpPnl.reset();
+		fieldPanel.reset();
 	}
 
 	public void onClick(Widget sender) {
 		ensureModelHandlerSet();
 		if(sender == btnSave) {
 			try {
-				if(fldGrpPnl.updateModel(entity)) {
+				if(fieldPanel.updateModel(entity)) {
 					// handle the model change
 					modelChangeHandler.handleModelUpdate(entity);
 				}

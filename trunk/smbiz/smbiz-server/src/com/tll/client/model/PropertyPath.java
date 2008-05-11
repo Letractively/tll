@@ -12,6 +12,9 @@ package com.tll.client.model;
  */
 public class PropertyPath {
 
+	private static final char LEFT_INDEX_CHAR = '[';
+	private static final char RIGHT_INDEX_CHAR = ']';
+
 	/**
 	 * Chains the given arguments together to form the corresponding property
 	 * path. Support for <code>null</code> or empty is considered for all
@@ -40,6 +43,17 @@ public class PropertyPath {
 	public static String getPropertyPath(String parentPropPath, String propName) {
 		return (parentPropPath == null || parentPropPath.length() < 1) ? (propName == null ? "" : propName)
 				: (propName == null || propName.length() < 1) ? parentPropPath : parentPropPath + '.' + propName;
+	}
+
+	/**
+	 * Assembles an indexed property name given a the indexable property name and
+	 * the desired index.
+	 * @param indexablePropName
+	 * @param index
+	 * @return The indexed property name
+	 */
+	public static String indexed(String indexablePropName, int index) {
+		return LEFT_INDEX_CHAR + indexablePropName + RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -72,11 +86,11 @@ public class PropertyPath {
 		void set(String path) throws MalformedPropPathException {
 			assert path != null;
 			int rmIndx = -1; // if this prop path element contains []
-			int bi = path.indexOf('[');
+			int bi = path.indexOf(LEFT_INDEX_CHAR);
 			if(bi > 0) {
 				// indexed property: extract the prop name and index
 				String rmProp = path.substring(0, bi);
-				int ebi = path.indexOf(']');
+				int ebi = path.indexOf(RIGHT_INDEX_CHAR);
 				String sindx = path.substring(bi + 1, ebi);
 				try {
 					rmIndx = Integer.parseInt(sindx);

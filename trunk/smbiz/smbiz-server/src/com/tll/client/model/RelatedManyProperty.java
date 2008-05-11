@@ -63,7 +63,7 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 	 * IndexedIterator
 	 * @author jpk
 	 */
-	public class IndexedIterator implements Iterator<IndexedProperty> {
+	private class IndexedIterator implements Iterator<IndexedProperty> {
 
 		private int index = -1;
 		private final int size;
@@ -130,7 +130,7 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 			list = new ArrayList<Model>();
 		}
 		list.add(indexable);
-		return getPropertyName() + '[' + (list.size() - 1) + ']';
+		return PropertyPath.indexed(getPropertyName(), list.size() - 1);
 	}
 
 	/**

@@ -11,9 +11,10 @@ final class InterfaceOptionParameterPanel extends InterfaceRelatedPanel {
 
 	/**
 	 * Constructor
+	 * @param propName
 	 */
-	public InterfaceOptionParameterPanel() {
-		super(null, null);
+	public InterfaceOptionParameterPanel(String propName) {
+		super(propName, null);
 	}
 
 	@Override

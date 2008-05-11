@@ -47,6 +47,12 @@ public interface IListingConfig {
 	Column[] getColumns();
 
 	/**
+	 * Shall the listing be pageable?
+	 * @return true/false
+	 */
+	boolean isPageable();
+
+	/**
 	 * @return The page size or <code>-1</code> for no paging.
 	 */
 	int getPageSize();

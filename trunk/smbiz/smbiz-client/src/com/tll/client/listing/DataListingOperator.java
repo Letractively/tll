@@ -66,10 +66,6 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @return Array of data list elements
 	 */
 	private Model[] subArray(int startIndex, int endIndex) {
-		if(size == -1) {
-			size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
-			numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
-		}
 		Model[] array = new Model[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
 			array[i] = dataProvider.getData().get(i);
@@ -83,6 +79,13 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @return Ad-hoc generated IPage instance
 	 */
 	private IPage<Model> generatePage(int page) {
+
+		// calculate size and num pages if not already
+		if(size == -1) {
+			size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
+			numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
+		}
+
 		// calculate first and last page indexes
 		int start, end;
 		if(pageSize == -1) {
@@ -135,11 +138,11 @@ public class DataListingOperator extends AbstractListingOperator {
 			}
 
 			public int getFirstIndex() {
-				return PageUtil.getPageIndexFromListIndex(startIndex, size, pageSize);
+				return pageSize == -1 ? 0 : PageUtil.getPageIndexFromListIndex(startIndex, size, pageSize);
 			}
 
 			public int getLastIndex() {
-				return PageUtil.getPageIndexFromListIndex(endIndex, size, pageSize);
+				return pageSize == -1 ? size - 1 : PageUtil.getPageIndexFromListIndex(endIndex, size, pageSize);
 			}
 		};
 

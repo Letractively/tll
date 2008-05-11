@@ -31,7 +31,7 @@ public class IndexedProperty extends ModelRefProperty {
 	 * @param index
 	 */
 	public IndexedProperty(String propName, boolean reference, Model model, int index) {
-		super(propName + '[' + index + ']', reference, model);
+		super(PropertyPath.indexed(propName, index), reference, model);
 		this.index = index;
 	}
 
