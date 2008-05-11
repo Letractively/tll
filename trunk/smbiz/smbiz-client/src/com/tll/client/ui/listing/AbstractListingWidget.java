@@ -109,6 +109,13 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	}
 
 	/**
+	 * @return The listing operator.
+	 */
+	public final IListingOperator getOperator() {
+		return operator;
+	}
+
+	/**
 	 * Sets the listing operator for this listing.
 	 * @param operator the operator to set
 	 */
@@ -198,6 +205,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 			case ADDED:
+				// TODO make this check more robust
 				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
 					// i.e. the add button in the nav bar was the source of the model
 					// change..
@@ -210,7 +218,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
-					table.updateRow(rowIndex - 1, event.getModel());
+					table.updateRow(rowIndex, event.getModel());
 				}
 				break;
 			}
@@ -219,7 +227,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					table.deleteRow(rowIndex - 1);
+					table.deleteRow(rowIndex);
 				}
 				break;
 			}

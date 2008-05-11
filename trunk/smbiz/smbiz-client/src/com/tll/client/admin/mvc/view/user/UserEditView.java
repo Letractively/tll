@@ -6,8 +6,8 @@
 package com.tll.client.admin.mvc.view.user;
 
 import com.tll.client.admin.ui.field.UserPanel;
-import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.EditView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 
@@ -28,7 +28,7 @@ public class UserEditView extends EditView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new UserEditView();
 		}
 

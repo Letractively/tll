@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ViewClass - Serves as a view definition enabling factory style view instantiation.
+ * ViewClass - Serves as a view definition enabling factory style view
+ * instantiation.
  * @author jpk
  */
 public abstract class ViewClass {
@@ -43,9 +44,10 @@ public abstract class ViewClass {
 
 	/**
 	 * Finds the ViewClass with the given view name.
-	 * @param viewName The view name to search for. If <code>null</code>, <code>null</code> is
-	 *          returned.
-	 * @return The found ViewClass or <code>null<code> of no ViewClass exists for the given view name.
+	 * @param viewName The view name to search for. If <code>null</code>,
+	 *        <code>null</code> is returned.
+	 * @return The found ViewClass or
+	 *         <code>null<code> of no ViewClass exists for the given view name.
 	 */
 	public static final ViewClass findClassByViewName(String viewName) {
 		if(viewName != null) {
@@ -88,10 +90,11 @@ public abstract class ViewClass {
 	/**
 	 * @return New instance of the view this class defines.
 	 */
-	public abstract AbstractView newView();
+	public abstract IView newView();
 
 	@Override
 	public final boolean equals(Object obj) {
+		if(this == obj) return true;
 		if(obj instanceof ViewClass == false) return false;
 		return this.name.equals(((ViewClass) obj).name);
 	}

@@ -5,6 +5,7 @@
  */
 package com.tll.client.admin.mvc.view;
 
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
@@ -50,7 +51,6 @@ public abstract class MainView extends AbstractView {
 		}
 	}
 
-	@Override
 	public final void refresh() {
 		// base impl no-op
 	}
@@ -68,5 +68,9 @@ public abstract class MainView extends AbstractView {
 	@Override
 	public final ShowViewRequest newViewRequest() {
 		return new StaticViewRequest(this, getViewClass());
+	}
+
+	public void onModelChangeEvent(ModelChangeEvent event) {
+		// no-op
 	}
 }

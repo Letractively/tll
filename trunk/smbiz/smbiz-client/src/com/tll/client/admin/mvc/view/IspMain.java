@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.AdminContext;
 import com.tll.client.admin.SmbizAdmin;
 import com.tll.client.model.RefKey;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
@@ -30,7 +30,7 @@ public class IspMain extends MainView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new IspMain();
 		}
 	}

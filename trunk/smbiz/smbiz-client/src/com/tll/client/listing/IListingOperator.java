@@ -17,7 +17,7 @@ public interface IListingOperator {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then
-	 * dispatches the a listing event to the listing Widget.
+	 * dispatches a listing event to the listing Widget.
 	 */
 	void refresh();
 
@@ -50,13 +50,4 @@ public interface IListingOperator {
 	 * the listing Widget.
 	 */
 	void clear();
-
-	/**
-	 * Inserts a row.
-	 * @param rowIndex
-	 * @param rowData
-	 */
-	// void insertRow(int rowIndex, Model rowData);
-	// void updateRow(int rowIndex, Model rowData);
-	// void deleteRow(int rowIndex);
 }

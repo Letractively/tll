@@ -17,7 +17,7 @@ import com.tll.client.ui.ViewRequestLink;
 public interface IViewRef {
 
 	/**
-	 * Tools - AbstractView ref utility methods.
+	 * Tools - view utility methods.
 	 * @author jpk
 	 */
 	public static final class Tools {
@@ -25,7 +25,8 @@ public interface IViewRef {
 		/**
 		 * Generates a link to the view the given {@link IViewRef} references.
 		 * @param viewRef The view ref for which a view link is generated
-		 * @return A clickable Widget that invokes the display of the referenced view.
+		 * @return A clickable Widget that invokes the display of the referenced
+		 *         view.
 		 */
 		public static Widget getViewLink(IViewRef viewRef) {
 			if(viewRef instanceof ViewRequestEvent) {

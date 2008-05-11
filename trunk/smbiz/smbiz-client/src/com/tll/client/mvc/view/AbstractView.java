@@ -14,7 +14,7 @@ import com.tll.client.event.type.ViewRequestEvent;
  * AbstractView - Base view class for all defined views in the app.
  * @author jpk
  */
-public abstract class AbstractView extends Composite implements IViewRef {
+public abstract class AbstractView extends Composite implements IView {
 
 	static final String CSS_VIEW = "view";
 
@@ -37,10 +37,22 @@ public abstract class AbstractView extends Composite implements IViewRef {
 		initWidget(pnl);
 	}
 
+	public final Widget getViewWidget() {
+		return this;
+	}
+
 	/**
 	 * @return The {@link ViewClass} of this AbstractView.
 	 */
 	protected abstract ViewClass getViewClass();
+
+	public final ViewOptions getOptions() {
+		return getViewClass().getViewOptions();
+	}
+
+	public final ViewKey getViewKey() {
+		return viewKey;
+	}
 
 	/**
 	 * Factory method employed by {@link #getViewRequest()}.
@@ -48,15 +60,6 @@ public abstract class AbstractView extends Composite implements IViewRef {
 	 */
 	protected abstract ShowViewRequest newViewRequest();
 
-	/**
-	 * Provision for generating a {@link ViewRequestEvent} that "points" to this
-	 * particular AbstractView implementation.
-	 * <p>
-	 * The purponse for this method, among others, is to have the ability to
-	 * "re-constitute" any particular AbstractView at any time during the app's
-	 * loaded life-cycle.
-	 * @return New and configured {@link ViewRequestEvent} instance.
-	 */
 	public final ShowViewRequest getViewRequest() {
 		ShowViewRequest r = newViewRequest();
 		r.setLongViewName(getLongViewName());
@@ -64,9 +67,6 @@ public abstract class AbstractView extends Composite implements IViewRef {
 		return r;
 	}
 
-	/**
-	 * The default impl for the short view name. Override as desired.
-	 */
 	public String getShortViewName() {
 		return getLongViewName();
 	}
@@ -80,20 +80,6 @@ public abstract class AbstractView extends Composite implements IViewRef {
 	}
 
 	/**
-	 * The view options that define how the view appears.
-	 */
-	public final ViewOptions getOptions() {
-		return getViewClass().getViewOptions();
-	}
-
-	/**
-	 * @return the ViewKey which is runtime dependant
-	 */
-	public final ViewKey getViewKey() {
-		return viewKey;
-	}
-
-	/**
 	 * Override this method when the impl needs a css style callout added to the
 	 * view Widget. The default is <code>null</code>.
 	 * @return AbstractView impl specific style.
@@ -102,11 +88,6 @@ public abstract class AbstractView extends Composite implements IViewRef {
 		return null;
 	}
 
-	/**
-	 * Initializes the view with the runtime dependant {@link ViewRequestEvent}.
-	 * @param viewRequest The view request responsible for the instantiation of
-	 *        this view. May NOT be <code>null</code>.
-	 */
 	public final void initialize(ViewRequestEvent viewRequest) {
 		assert viewRequest != null;
 		// set the view key
@@ -126,11 +107,6 @@ public abstract class AbstractView extends Composite implements IViewRef {
 	 * @param viewRequest The non-<code>null</code> view request.
 	 */
 	protected abstract void doInitialization(ViewRequestEvent viewRequest);
-
-	/**
-	 * Refreshes the contents of the view.
-	 */
-	public abstract void refresh();
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before

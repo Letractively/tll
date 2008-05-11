@@ -5,6 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
@@ -17,6 +18,7 @@ import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
+import com.tll.client.listing.IDataProvider;
 import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IModelChangeHandler;
@@ -55,8 +57,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	private String optionName;
 
 	/**
-	 * List of parameters extracted from the parent property value group declared
-	 * as a convenience.
+	 * Cloned list of parameters extracted from the parent property value group
+	 * declared as a convenience.
 	 */
 	private List<Model> params;
 
@@ -112,7 +114,13 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		};
 
-		lstngParams = ListingFactory.collectionListing(plc, params, rod);
+		lstngParams = ListingFactory.dataListing(plc, new IDataProvider() {
+
+			public List<Model> getData() {
+				return params;
+			}
+
+		}, rod);
 
 		InterfaceOptionParameterPanel pnlParam = new InterfaceOptionParameterPanel();
 		pnlParamEdit = new EditPanel(pnlParam, true);
@@ -209,7 +217,17 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		setMarkDeleted(false);
 
 		// params
-		params = modelOption.relatedMany("parameters").getList();
+		List<Model> plist = modelOption.relatedMany("parameters").getList();
+		if(plist != null) {
+			params = new ArrayList<Model>(plist.size());
+			for(Model p : plist) {
+				params.add(p.copy());
+			}
+		}
+		else {
+			params = null;
+		}
+		lstngParams.display();
 	}
 
 	private void setMarkDeleted(boolean markDeleted) {

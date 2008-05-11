@@ -29,6 +29,7 @@ import com.tll.client.model.CommitModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.InterfaceSearch;
 import com.tll.client.ui.CSS;
@@ -55,7 +56,7 @@ public class InterfacesView extends AbstractView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new InterfacesView();
 		}
 
@@ -171,6 +172,7 @@ public class InterfacesView extends AbstractView {
 			super();
 			String listingName = EntityType.INTERFACE.name();
 			listingCommand = new ListingCommand(this, listingName);
+			listingCommand.addListingListener(this);
 		}
 
 		void refreshData() {
@@ -267,7 +269,6 @@ public class InterfacesView extends AbstractView {
 		// no-op
 	}
 
-	@Override
 	public void refresh() {
 		intfStack.refreshData();
 	}
@@ -280,6 +281,10 @@ public class InterfacesView extends AbstractView {
 	@Override
 	public ShowViewRequest newViewRequest() {
 		return new StaticViewRequest(this, klas);
+	}
+
+	public void onModelChangeEvent(ModelChangeEvent event) {
+		// no-op
 	}
 
 }

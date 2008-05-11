@@ -9,6 +9,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.App;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
@@ -20,20 +21,22 @@ import com.tll.client.ui.view.ViewContainer;
 public abstract class AbstractController implements IController {
 
 	/**
-	 * Resolves a {@link AbstractView} given a view key by first checking the view cache. If no matching view
-	 * is cached, a fresh view instance if provided by way of {@link ViewClass}'s factory method.
+	 * Resolves a {@link AbstractView} given a view key by first checking the view
+	 * cache. If no matching view is cached, a fresh view instance if provided by
+	 * way of {@link ViewClass}'s factory method.
 	 * @param viewRequest The view request. May NOT be <code>null</code>.
 	 * @param refreshOnNew Refresh a newly created AbstractView instance?
-	 * @return Either a cached or fresh {@link AbstractView} instance that is never <code>null</code>.
+	 * @return Either a cached or fresh {@link AbstractView} instance that is
+	 *         never <code>null</code>.
 	 */
-	protected static final AbstractView resolveView(ViewRequestEvent viewRequest, boolean refreshOnNew) {
+	protected static final IView resolveView(ViewRequestEvent viewRequest, boolean refreshOnNew) {
 		assert viewRequest != null;
 		ViewKey viewKey = viewRequest.getViewKey();
 		assert viewKey != null;
 		ViewContainer vc = ViewManager.instance().findView(viewKey);
 		if(vc == null) {
 			// create a fresh instance
-			AbstractView view = viewKey.getViewClass().newView();
+			IView view = viewKey.getViewClass().newView();
 			// initialize the view
 			view.initialize(viewRequest);
 			if(refreshOnNew) {
@@ -48,7 +51,7 @@ public abstract class AbstractController implements IController {
 	 * Sets the view.
 	 * @param managedViewProvider
 	 */
-	protected static final void onViewReady(final AbstractView view) {
+	protected static final void onViewReady(final IView view) {
 		final boolean showBusy = (ViewManager.instance().findView(view.getViewKey()) == null);
 		if(showBusy) App.busy();
 		DeferredCommand.addCommand(new Command() {
@@ -67,7 +70,8 @@ public abstract class AbstractController implements IController {
 	/**
 	 * Default implementation.
 	 * <p>
-	 * Particular controllers may need to override this method to ensure proper view initialization.
+	 * Particular controllers may need to override this method to ensure proper
+	 * view initialization.
 	 * @param request
 	 */
 	public void handle(ViewRequestEvent request) {

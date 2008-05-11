@@ -5,6 +5,7 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.ui.listing.AbstractListingWidget;
 
 /**
@@ -30,7 +31,6 @@ public abstract class ListingView extends AbstractView {
 		addWidget(listingWidget);
 	}
 
-	@Override
 	public final void refresh() {
 		if(listingWidget != null) listingWidget.refresh();
 	}
@@ -42,4 +42,9 @@ public abstract class ListingView extends AbstractView {
 			// ModelChangeEventDispatcher.instance().removeModelChangeListener(listingWidget);
 		}
 	}
+
+	public final void onModelChangeEvent(ModelChangeEvent event) {
+		listingWidget.onModelChangeEvent(event);
+	}
+
 }

@@ -73,10 +73,6 @@ public final class ModelChangeEvent extends BaseEvent {
 		return modelRef;
 	}
 
-	public boolean isSuccess() {
-		return (errors == null);
-	}
-
 	public boolean isError() {
 		return errors != null && errors.size() > 0;
 	}

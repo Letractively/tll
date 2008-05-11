@@ -17,7 +17,7 @@ import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
@@ -46,7 +46,7 @@ public final class CustomerListingView extends ListingView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new CustomerListingView();
 		}
 

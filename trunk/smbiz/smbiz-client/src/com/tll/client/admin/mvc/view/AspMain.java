@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.account.IspListingView;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.event.type.StaticViewRequest;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
@@ -33,7 +33,7 @@ public class AspMain extends MainView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new AspMain();
 		}
 	}

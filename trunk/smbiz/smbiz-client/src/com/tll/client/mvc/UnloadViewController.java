@@ -7,7 +7,7 @@ package com.tll.client.mvc;
 import com.google.gwt.user.client.History;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
 
@@ -35,7 +35,7 @@ class UnloadViewController extends AbstractController {
 		}
 
 		// unload the view
-		AbstractView newestPinned = ViewManager.instance().unloadView(viewToUnload);
+		IView newestPinned = ViewManager.instance().unloadView(viewToUnload);
 		if(newestPinned != null) {
 			// Dispatcher.instance().dispatch(new SimpleViewRequest(r.getWidget(),
 			// newestPinned.getViewKey()));

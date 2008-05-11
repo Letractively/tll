@@ -3,9 +3,6 @@
  */
 package com.tll.client.listing;
 
-import java.util.List;
-
-import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.client.ui.listing.RowContextListingWidget;
@@ -46,17 +43,18 @@ public abstract class ListingFactory {
 	}
 
 	/**
-	 * Assembles a collection based listing Widget.
+	 * Assembles a listing from data provided by an {@link IDataProvider}
+	 * instance.
 	 * @param config The listing config
-	 * @param data The listing data collection
+	 * @param dataProvider The listing data collection
 	 * @param rowOptionsProvider Optional. If <code>null</code>, no row options
 	 *        will be available.
 	 * @return A new listing Widget
 	 */
-	public static AbstractListingWidget collectionListing(IListingConfig config, List<Model> data,
+	public static AbstractListingWidget dataListing(IListingConfig config, IDataProvider dataProvider,
 			IRowOptionsManager rowOptionsProvider) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsProvider);
-		listingWidget.setOperator(new DataCollectionListingOperator(listingWidget, config.getPageSize(), data, (config
+		listingWidget.setOperator(new DataListingOperator(listingWidget, config.getPageSize(), dataProvider, (config
 				.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}

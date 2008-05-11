@@ -5,7 +5,7 @@
 package com.tll.client.admin.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.model.EntityType;
@@ -25,7 +25,7 @@ public class MerchantMain extends MainView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new MerchantMain();
 		}
 	}

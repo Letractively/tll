@@ -23,23 +23,23 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 // TODO implemenet sorting!!!
-public class DataCollectionListingOperator extends AbstractListingOperator {
+public class DataListingOperator extends AbstractListingOperator {
+
+	/**
+	 * The data provider.
+	 */
+	private final IDataProvider dataProvider;
 
 	private final int pageSize;
 
-	private final List<Model> dataList;
-	/**
-	 * The size of the data list
-	 */
 	private int size = -1;
+
+	private int numPages = -1;
+
 	/**
 	 * The 0-based page number
 	 */
 	private int pageNum = 0;
-	/**
-	 * The calculated number of pages
-	 */
-	private int numPages = -1;
 
 	// TODO make private when sorting is implemented
 	/*private*/final Sorting sorting;
@@ -48,29 +48,31 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 	 * Constructor
 	 * @param listingWidget
 	 * @param pageSize
-	 * @param dataList
+	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataCollectionListingOperator(AbstractListingWidget listingWidget, int pageSize, List<Model> dataList,
+	public DataListingOperator(AbstractListingWidget listingWidget, int pageSize, IDataProvider dataProvider,
 			Sorting sorting) {
 		super(listingWidget);
 		this.pageSize = pageSize;
-		this.dataList = dataList;
+		this.dataProvider = dataProvider;
 		this.sorting = sorting;
-		this.size = dataList == null ? 0 : dataList.size();
-		this.numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
 	}
 
 	/**
-	 * Extracts a sub-array from the dataList
+	 * Extracts a sub-array from the dataProvider
 	 * @param startIndex 0-based inclusive
 	 * @param endIndex 0-based EXCLUSIVE
 	 * @return Array of data list elements
 	 */
 	private Model[] subArray(int startIndex, int endIndex) {
+		if(size == -1) {
+			size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
+			numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
+		}
 		Model[] array = new Model[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
-			array[i] = dataList.get(i);
+			array[i] = dataProvider.getData().get(i);
 		}
 		return array;
 	}
@@ -82,10 +84,20 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 	 */
 	private IPage<Model> generatePage(int page) {
 		// calculate first and last page indexes
-		final int startIndex = page * pageSize; // (0-based index)
-		int indx = startIndex + pageSize; // 0-based exclusive
-		if(indx > size) indx = size;
-		final int endIndex = indx;
+		int start, end;
+		if(pageSize == -1) {
+			// no paging
+			start = 0;
+			end = size;
+		}
+		else {
+			start = page * pageSize; // (0-based index)
+			end = start + pageSize; // 0-based exclusive
+			if(end > size) end = size;
+		}
+
+		final int startIndex = start;
+		final int endIndex = end;
 		final Model[] pageElements = subArray(startIndex, endIndex);
 
 		return new IPage<Model>() {
@@ -186,26 +198,6 @@ public class DataCollectionListingOperator extends AbstractListingOperator {
 	}
 
 	public void clear() {
-		size = pageNum = numPages = -1;
+		size = numPages = pageNum = -1;
 	}
-
-	/*
-	public void insertRow(int rowIndex, Model rowData) {
-		dataList.add(rowIndex, rowData);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.INSERT_ROW, rowIndex, rowData));
-	}
-
-	public void updateRow(int rowIndex, Model rowData) {
-		dataList.remove(rowIndex);
-		dataList.add(rowIndex, rowData);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.UPDATE_ROW, rowIndex, rowData));
-	}
-
-	public void deleteRow(int rowIndex) {
-		dataList.remove(rowIndex);
-		Model removed = dataList.remove(rowIndex);
-		listingWidget.onListingEvent(new ListingEvent(listingWidget, true, ListingOp.DELETE_ROW, rowIndex, removed));
-
-	}
-	*/
 }

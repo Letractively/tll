@@ -21,6 +21,7 @@ import com.tll.client.admin.ui.field.InterfacePanel;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.type.CrudEvent;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.model.Model;
@@ -28,6 +29,7 @@ import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.HtmlListPanel;
@@ -197,7 +199,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new TestView();
 		}
 
@@ -230,7 +232,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		protected void doInitialization(ViewRequestEvent viewRequest) {
 		}
 
-		@Override
 		public void refresh() {
 		}
 
@@ -241,6 +242,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 		@Override
 		public ShowViewRequest newViewRequest() {
 			return null;
+		}
+
+		public void onModelChangeEvent(ModelChangeEvent event) {
 		}
 	}
 

@@ -9,19 +9,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.ISourcesViewEvents;
 import com.tll.client.event.IViewEventListener;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ViewChangedEvent;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewRef;
-import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
- * ViewManager - Singleton managing {@link AbstractView} life-cycles and view caching.
+ * ViewManager - Singleton managing {@link IView} life-cycles and view caching.
  * @author jpk
  */
-public final class ViewManager implements ISourcesViewEvents {
+public final class ViewManager implements ISourcesViewEvents, IModelChangeListener {
 
 	/**
 	 * The default number of views to cache.
@@ -42,7 +44,8 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * The parent view panel. This property must be set so that views can attach to the DOM.
+	 * The parent view panel. This property must be set so that views can attach
+	 * to the DOM.
 	 */
 	private Panel parentViewPanel;
 
@@ -85,8 +88,8 @@ public final class ViewManager implements ISourcesViewEvents {
 
 	/**
 	 * Must be called once by the app on startup.
-	 * @param parentViewPanel The Panel that is the parent of the pinned view container. Must not be
-	 *          <code>null</code>.
+	 * @param parentViewPanel The Panel that is the parent of the pinned view
+	 *        container. Must not be <code>null</code>.
 	 */
 	public void initialize(Panel parentViewPanel) {
 		assert parentViewPanel != null;
@@ -94,10 +97,11 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Sets the current view. The current view is defined as the visible pinned view.
+	 * Sets the current view. The current view is defined as the visible pinned
+	 * view.
 	 * @param view The view to be set as current
 	 */
-	void setCurrentView(AbstractView view) {
+	void setCurrentView(IView view) {
 		assert view != null;
 
 		final int cacheIndex = cache.searchCache(view.getViewKey());
@@ -158,14 +162,17 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Unloads the given view from the DOM document retaining it in the view cache.
+	 * Unloads the given view from the DOM document retaining it in the view
+	 * cache.
 	 * <p>
-	 * <strong>NOTE: </strong>This method does NOT subsequently set the current view.
+	 * <strong>NOTE: </strong>This method does NOT subsequently set the current
+	 * view.
 	 * @param vc The view container of the view to unload
-	 * @return The most recently viewed pinned AbstractView <em>never</em> equalling the AbstractView being unloaded
-	 *         or <code>null</code> if no alternate pinned AbstractView is available.
+	 * @return The most recently viewed pinned IView <em>never</em> equalling
+	 *         the IView being unloaded or <code>null</code> if no alternate
+	 *         pinned IView is available.
 	 */
-	AbstractView unloadView(ViewContainer vc) {
+	IView unloadView(ViewContainer vc) {
 		assert vc != null;
 
 		// find the newest pinned view excluding the one to be unloaded
@@ -208,12 +215,14 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Generic find view method returning the first found match in the view cache starting at the
-	 * given index.
+	 * Generic find view method returning the first found match in the view cache
+	 * starting at the given index.
 	 * @param beginIndex The starting view cache where searching starts
 	 * @param popped Is desired view popped?
-	 * @param exclude The view key of a view to exclude from the search. May be <code>null</code>.
-	 * @return The first found matching view or <code>null</code> if no match found.
+	 * @param exclude The view key of a view to exclude from the search. May be
+	 *        <code>null</code>.
+	 * @return The first found matching view or <code>null</code> if no match
+	 *         found.
 	 */
 	private ViewContainer findFirstView(int beginIndex, boolean popped, ViewKey exclude) {
 		assert beginIndex >= 0 && beginIndex <= cache.cacheSize();
@@ -234,7 +243,8 @@ public final class ViewManager implements ISourcesViewEvents {
 	/**
 	 * Locates a cached view given the view widget or child view widget.
 	 * @param child
-	 * @return The found {@link AbstractView} or <code>null</code> if not present in the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in
+	 *         the view cache.
 	 */
 	/*
 	ViewContainer findView(Widget child) {
@@ -255,7 +265,8 @@ public final class ViewManager implements ISourcesViewEvents {
 	/**
 	 * Locates a cached view given a view key.
 	 * @param viewKey The view key
-	 * @return The found {@link AbstractView} or <code>null</code> if not present in the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in
+	 *         the view cache.
 	 */
 	ViewContainer findView(ViewKey viewKey) {
 		Iterator<ViewContainer> itr = cache.cacheIterator(0);
@@ -273,7 +284,8 @@ public final class ViewManager implements ISourcesViewEvents {
 	/**
 	 * Locates a cached view given a view key hash.
 	 * @param viewKeyHash
-	 * @return The found {@link AbstractView} or <code>null</code> if not present in the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in
+	 *         the view cache.
 	 */
 	ViewContainer findView(int viewKeyHash) {
 		Iterator<ViewContainer> itr = cache.cacheIterator(0);
@@ -290,7 +302,8 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Provides an array of all cached views that are NOT in the popped state from oldest to newest.
+	 * Provides an array of all cached views that are NOT in the popped state from
+	 * oldest to newest.
 	 * @return Array of {@link IViewRef}s
 	 */
 	public IViewRef[] getRecentViews() {
@@ -314,9 +327,10 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Provides an array of {@link IViewRef}s representing the current "view path". The view path is
-	 * a list of visited views beginning from the initially viewed view ending one before the current
-	 * pinned view with a subset of visited views in between. Determining the views in between the
+	 * Provides an array of {@link IViewRef}s representing the current "view
+	 * path". The view path is a list of visited views beginning from the
+	 * initially viewed view ending one before the current pinned view with a
+	 * subset of visited views in between. Determining the views in between the
 	 * initial and current view follows this logic:
 	 * <ol>
 	 * <li>TODO
@@ -374,12 +388,12 @@ public final class ViewManager implements ISourcesViewEvents {
 	}
 
 	/**
-	 * Pops the currently visible pinned view out of the natural flow of the DOM document returning
-	 * the {@link ViewKey} of the view that is to be the subsequent pinned view. We don't set it here
-	 * as it needs to be routed through the history mechanism so the view history integrity is
-	 * maintained.
-	 * @return {@link ViewKey} representing the target for the subsequent pinned view or
-	 *         <code>null</code> if no target was resolved.
+	 * Pops the currently visible pinned view out of the natural flow of the DOM
+	 * document returning the {@link ViewKey} of the view that is to be the
+	 * subsequent pinned view. We don't set it here as it needs to be routed
+	 * through the history mechanism so the view history integrity is maintained.
+	 * @return {@link ViewKey} representing the target for the subsequent pinned
+	 *         view or <code>null</code> if no target was resolved.
 	 */
 	ViewKey popCurrentView() {
 		if(currentViewContainer == null) return null;
@@ -395,11 +409,22 @@ public final class ViewManager implements ISourcesViewEvents {
 	/**
 	 * Closes a popped view.
 	 * @param view The popped view to close.
-	 * @return <code>true</code> if the given view is in popped state and successful.
+	 * @return <code>true</code> if the given view is in popped state and
+	 *         successful.
 	 */
 	boolean closePoppedView(ViewContainer vc) {
 		if(vc == null || !vc.isPopped()) return false;
 		vc.close();
 		return true;
 	}
+
+	public void onModelChangeEvent(ModelChangeEvent event) {
+		// pass the event to all cached views
+		Iterator<ViewContainer> itr = cache.cacheIterator(0);
+		while(itr.hasNext()) {
+			IView view = itr.next().getView();
+			view.onModelChangeEvent(event);
+		}
+	}
+
 }

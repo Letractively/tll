@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewRef;
-import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.view.ViewContainer;
@@ -13,9 +13,10 @@ import com.tll.client.ui.view.ViewContainer;
 /**
  * ViewStack - Manages two lists:
  * <ul>
- * <li>Distinct LIFO collection of cached {@link ViewContainer}s limited by a specified capacity.</li>
- * <li>Distinct list of {@link IViewRef}s representing <em>all</em> visited views relative to
- * the app's life-cycle in chronological order.</li>
+ * <li>Distinct LIFO collection of cached {@link ViewContainer}s limited by a
+ * specified capacity.</li>
+ * <li>Distinct list of {@link IViewRef}s representing <em>all</em> visited
+ * views relative to the app's life-cycle in chronological order.</li>
  * @author jpk
  */
 final class ViewStack {
@@ -26,16 +27,18 @@ final class ViewStack {
 	private final int capacity;
 
 	/**
-	 * LIFO list of {@link ViewContainer}s representing the view cache. This list effectively serves
-	 * as the first level cache as the entire view is retained.
+	 * LIFO list of {@link ViewContainer}s representing the view cache. This list
+	 * effectively serves as the first level cache as the entire view is retained.
 	 */
 	private final List<ViewContainer> cache;
 
 	/**
-	 * Distinct list of {@link ViewRequestLink}s representing all visited views relative to the app's
-	 * life-cycle in chronological order <em>EXCLUDING</em> those whose associated views are present
-	 * in the {@link #cache} list. <em>This</em> list effectively serves as the second-level cache
-	 * enabling the ability to "re-constitute" a view at any time during the app's loaded life-cycle.
+	 * Distinct list of {@link ViewRequestLink}s representing all visited views
+	 * relative to the app's life-cycle in chronological order <em>EXCLUDING</em>
+	 * those whose associated views are present in the {@link #cache} list.
+	 * <em>This</em> list effectively serves as the second-level cache enabling
+	 * the ability to "re-constitute" a view at any time during the app's loaded
+	 * life-cycle.
 	 */
 	private final List<IViewRef> visited = new ArrayList<IViewRef>();
 
@@ -94,9 +97,11 @@ final class ViewStack {
 	}
 
 	/**
-	 * Calculates the index of the associated view ref in the visisted list for a given ViewContainer.
+	 * Calculates the index of the associated view ref in the visisted list for a
+	 * given ViewContainer.
 	 * @param vc The ViewContainer
-	 * @return The index or <code>-1</code> if no associated view ref exists in the visited list.
+	 * @return The index or <code>-1</code> if no associated view ref exists in
+	 *         the visited list.
 	 */
 	int searchVisited(ViewKey key) {
 		int i = 0;
@@ -111,15 +116,16 @@ final class ViewStack {
 	}
 
 	/**
-	 * Adds the viewContainer to the cache returning the viewContainer removed from the cache in the
-	 * event the cache was at capacity at the time this method is called.
+	 * Adds the viewContainer to the cache returning the viewContainer removed
+	 * from the cache in the event the cache was at capacity at the time this
+	 * method is called.
 	 * @param viewContainer The viewContainer to add to the cache
-	 * @return The "expired" {@link ViewContainer} when the cache is at capacity or <code>null</code>
-	 *         if the cache is not yet at capacity.
+	 * @return The "expired" {@link ViewContainer} when the cache is at capacity
+	 *         or <code>null</code> if the cache is not yet at capacity.
 	 */
 	public ViewContainer push(ViewContainer viewContainer) {
 		assert viewContainer != null;
-		AbstractView view = viewContainer.getView();
+		IView view = viewContainer.getView();
 		assert view != null;
 		ViewKey key = view.getViewKey();
 		assert key != null;
@@ -149,8 +155,8 @@ final class ViewStack {
 	}
 
 	/**
-	 * Moves a cached {@link ViewContainer}'s position in the cache list to the last position thus
-	 * making it the "oldest" entry.
+	 * Moves a cached {@link ViewContainer}'s position in the cache list to the
+	 * last position thus making it the "oldest" entry.
 	 * @param viewContainer The element moved to the last list position
 	 */
 	public void moveToLast(ViewContainer viewContainer) {
@@ -181,9 +187,9 @@ final class ViewStack {
 
 	/**
 	 * @param startIndex The index iterating begins on.
-	 * @return Iterator from newest to oldest of the cached views beginning at the given starting
-	 *         index or <code>null</code> if the <code>startIndex</code> equals or exceeds the
-	 *         cache size.
+	 * @return Iterator from newest to oldest of the cached views beginning at the
+	 *         given starting index or <code>null</code> if the
+	 *         <code>startIndex</code> equals or exceeds the cache size.
 	 */
 	public Iterator<ViewContainer> cacheIterator(int startIndex) {
 		assert startIndex >= 0;
@@ -192,9 +198,9 @@ final class ViewStack {
 
 	/**
 	 * @param startIndex The index iterating begins on.
-	 * @return Iterator of the visited views beginning at the given starting index or
-	 *         <code>null</code> if the <code>startIndex</code> equals or exceeds the number of
-	 *         currently visited views.
+	 * @return Iterator of the visited views beginning at the given starting index
+	 *         or <code>null</code> if the <code>startIndex</code> equals or
+	 *         exceeds the number of currently visited views.
 	 */
 	public Iterator<IViewRef> visitedIterator(int startIndex) {
 		assert startIndex >= 0;

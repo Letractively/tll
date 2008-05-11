@@ -6,8 +6,8 @@ package com.tll.client.admin.mvc.view.account;
 
 import com.tll.client.admin.ui.field.AccountPanel;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.EditView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.model.EntityType;
 
@@ -29,7 +29,7 @@ public class AccountEditView extends EditView {
 		}
 
 		@Override
-		public AbstractView newView() {
+		public IView newView() {
 			return new AccountEditView();
 		}
 

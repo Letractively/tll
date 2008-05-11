@@ -23,11 +23,11 @@ import com.tll.client.event.type.PinPopViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.Dispatcher;
-import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewState;
 
 /**
- * ViewContainer - UI container for {@link AbstractView} implementations.
+ * ViewContainer - UI container for {@link IView} implementations.
  * @author jpk
  */
 public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener, EventPreview {
@@ -36,9 +36,9 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	public static final String CSS_VIEW_CONTAINER_PINNED = "viewContainerPinned";
 
 	/**
-	 * The wrapped AbstractView
+	 * The wrapped IView
 	 */
-	private final AbstractView view;
+	private final IView view;
 
 	private final ViewToolbar toolbar;
 
@@ -74,13 +74,13 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	 * Constructor
 	 * @param view The view to set
 	 */
-	public ViewContainer(AbstractView view) {
+	public ViewContainer(IView view) {
 		super();
 		assert view != null;
 		this.view = view;
 		toolbar = new ViewToolbar(view.getLongViewName(), view.getOptions(), this);
 		mainLayout.add(toolbar);
-		mainLayout.add(view);
+		mainLayout.add(view.getViewWidget());
 		setWidget(mainLayout);
 	}
 
@@ -130,7 +130,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	/**
 	 * @return the view
 	 */
-	public AbstractView getView() {
+	public IView getView() {
 		return view;
 	}
 
@@ -177,7 +177,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	}
 
 	public boolean isMinimized() {
-		return "none".equals(mainLayout.getWidgetTr(view).getStyle().getProperty("display"));
+		return "none".equals(mainLayout.getWidgetTr(view.getViewWidget()).getStyle().getProperty("display"));
 	}
 
 	private void endDrag(Widget sender) {
@@ -332,7 +332,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	 */
 	public void minimize() {
 		if(!isMinimized()) {
-			mainLayout.getWidgetTr(view).getStyle().setProperty("display", "none");
+			mainLayout.getWidgetTr(view.getViewWidget()).getStyle().setProperty("display", "none");
 			toolbar.btnMinimize.setTitle(ViewToolbar.TITLE_MAXIMIZE);
 		}
 	}
@@ -342,7 +342,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	 */
 	public void maximize() {
 		if(isMinimized()) {
-			mainLayout.getWidgetTr(view).getStyle().setProperty("display", "");
+			mainLayout.getWidgetTr(view.getViewWidget()).getStyle().setProperty("display", "");
 			toolbar.btnMinimize.setTitle(ViewToolbar.TITLE_MINIMIZE);
 		}
 	}
