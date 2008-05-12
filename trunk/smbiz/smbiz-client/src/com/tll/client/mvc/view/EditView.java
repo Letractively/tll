@@ -5,7 +5,6 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.event.IEditListener;
@@ -17,6 +16,7 @@ import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.model.CommitModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
@@ -104,16 +104,24 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		return new EditViewRequest(this, getViewClass(), modelRef);
 	}
 
+	private void setModelRef(RefKey modelRef) {
+		if(modelRef == null || !modelRef.isSet()) {
+			throw new IllegalArgumentException("Invalid model ref specified");
+		}
+		this.modelRef = modelRef;
+	}
+
 	@Override
 	protected final void doInitialization(ViewRequestEvent viewRequest) {
 		assert viewRequest instanceof EditViewRequest;
 		EditViewRequest r = (EditViewRequest) viewRequest;
-		modelRef = r.getModelRef();
-		if(modelRef == null || !modelRef.isSet()) {
-			throw new IllegalArgumentException("No valid model ref found in the edit view request");
+		Model model = r.getModel();
+		if(model == null) {
+			setModelRef(r.getModelRef());
 		}
-		if(r.getModel() != null) {
-			editPanel.setModel(r.getModel());
+		else {
+			setModelRef(model.getRefKey());
+			editPanel.setModel(model);
 		}
 	}
 
@@ -124,13 +132,10 @@ public abstract class EditView extends AbstractView implements IEditListener {
 			modelChangeHandler.handleModelFetch(modelRef);
 			return;
 		}
-		App.busy();
-		try {
-			editPanel.refresh();
+		if(modelChangeHandler.handleAuxDataFetch()) {
+			return;
 		}
-		finally {
-			App.unbusy();
-		}
+		editPanel.refresh();
 	}
 
 	@Override

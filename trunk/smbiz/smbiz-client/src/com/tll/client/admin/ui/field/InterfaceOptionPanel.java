@@ -6,7 +6,6 @@
 package com.tll.client.admin.ui.field;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.Window;
@@ -30,6 +29,7 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.field.CheckboxField;
@@ -204,8 +204,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	@Override
 	protected void onBeforeBind(Model modelOption) {
 		super.onBeforeBind(modelOption);
+
 		optionName = modelOption.getName();
-		setMarkDeleted(false);
 
 		// clear existing params
 		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
@@ -214,10 +214,9 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		paramFieldPanels.clear();
 
 		// add params
-		Iterator<IndexedProperty> itr = modelOption.relatedMany("parameters").iterator();
-		if(itr != null) {
-			while(itr.hasNext()) {
-				IndexedProperty param = itr.next();
+		RelatedManyProperty pvParams = modelOption.relatedMany("parameters");
+		if(pvParams != null && pvParams.size() > 0) {
+			for(IndexedProperty param : pvParams) {
 				InterfaceOptionParameterPanel pp = new InterfaceOptionParameterPanel(param.getPropertyName());
 				// pp.configure();
 				paramFieldPanels.add(pp);
@@ -225,6 +224,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			}
 		}
 
+		// re-display params listing
 		params = modelOption.relatedMany("parameters").getList();
 		lstngParams.display();
 	}

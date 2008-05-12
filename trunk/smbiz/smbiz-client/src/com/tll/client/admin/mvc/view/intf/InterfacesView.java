@@ -27,7 +27,6 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.CommitModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
@@ -121,12 +120,6 @@ public class InterfacesView extends AbstractView {
 				modelChangeHandler.addModelChangeListener(this);
 			}
 
-			public void onEditEvent(EditEvent event) {
-				if(event.getOp() == EditOp.SAVE) {
-					modelChangeHandler.handleModelPersist(event.getModel());
-				}
-			}
-
 			public void loadInterfaceIfNecessary() {
 				if(!loaded) {
 					// fetch the interface from the server
@@ -150,12 +143,18 @@ public class InterfacesView extends AbstractView {
 				}
 			}
 
+			public void onEditEvent(EditEvent event) {
+				if(event.getOp() == EditOp.SAVE) {
+					modelChangeHandler.handleModelPersist(event.getModel());
+				}
+			}
+
 			public void onModelChangeEvent(ModelChangeEvent event) {
 				if(event.isError()) {
 					editPanel.applyMsgs(event.getErrors());
 				}
 				else {
-					if(event.getChangeOp() == ModelChangeOp.LOADED) {
+					if(event.getModel() != null) {
 						editPanel.setModel(event.getModel());
 						editPanel.refresh();
 					}

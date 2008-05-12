@@ -5,6 +5,9 @@
  */
 package com.tll.client.admin.ui.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -35,7 +38,7 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 	protected CheckboxField isRequiredCustomer;
 
 	protected TabPanel tabOptions = new TabPanel();
-	protected InterfaceOptionPanel[] optionPanels;
+	protected final List<InterfaceOptionPanel> optionPanels = new ArrayList<InterfaceOptionPanel>();
 
 	/**
 	 * Constructor
@@ -113,18 +116,25 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 	protected void onBeforeBind(Model modelInterface) {
 		super.onBeforeBind(modelInterface);
 
-		// options
+		// clear existing options
+		for(InterfaceOptionPanel p : optionPanels) {
+			fields.removeField(p.getFields());
+		}
+		optionPanels.clear();
+		tabOptions.clear();
+
+		// bind options
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
-		optionPanels = new InterfaceOptionPanel[pvOptions.size()];
-		int i = 0;
-		for(IndexedProperty propOption : pvOptions) {
-			Model option = propOption.getModel();
-			InterfaceOptionPanel pnlOption = new InterfaceOptionPanel(propOption.getPropertyName());
-			fields.addField(pnlOption.getFields());
-			optionPanels[i++] = pnlOption;
-			pnlOption.configure();
-			pnlOption.onBeforeBind(option);
-			tabOptions.add(pnlOption, option.getName());
+		if(pvOptions != null && pvOptions.size() > 0) {
+			for(IndexedProperty propOption : pvOptions) {
+				Model option = propOption.getModel();
+				InterfaceOptionPanel pnlOption = new InterfaceOptionPanel(propOption.getPropertyName());
+				fields.addField(pnlOption.getFields());
+				optionPanels.add(pnlOption);
+				pnlOption.configure();
+				pnlOption.onBeforeBind(option);
+				tabOptions.add(pnlOption, option.getName());
+			}
 		}
 
 		// add new option tab

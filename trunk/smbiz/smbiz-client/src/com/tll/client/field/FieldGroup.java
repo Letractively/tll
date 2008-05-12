@@ -392,6 +392,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				fld.bindModel(model);
 			}
 		}
+		setMarkedDeleted(false);
 	}
 
 	public boolean updateModel(Model model) {
