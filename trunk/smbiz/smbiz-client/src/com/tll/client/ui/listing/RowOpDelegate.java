@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.App;
-import com.tll.client.listing.IRowOptionsManager;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
 /**
- * RowOpDelegate - An adapter for {@link IRowOptionsManager} simplifying the
+ * RowOpDelegate - An adapter for {@link IRowOptionsDelegate} simplifying the
  * implementation.
  * @author jpk
  */
-public abstract class RowOpDelegate implements IRowOptionsManager {
+public abstract class RowOpDelegate implements IRowOptionsDelegate {
 
 	private static final String EDIT_OPTION_PREFIX = "Edit ";
 	private static final String DELETE_OPTION_PREFIX = "Delete ";

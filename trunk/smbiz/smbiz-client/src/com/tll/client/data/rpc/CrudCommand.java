@@ -180,9 +180,6 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 				break;
 
 			case LOAD:
-				if(entityRequest.auxDataRequest != null) {
-					entityRequest.auxDataRequest = AuxDataCache.instance().filterRequest(entityRequest.auxDataRequest);
-				}
 				svc.load((EntityLoadRequest) entityRequest, getAsyncCallback());
 				break;
 

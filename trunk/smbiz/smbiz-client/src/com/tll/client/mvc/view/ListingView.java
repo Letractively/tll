@@ -27,7 +27,6 @@ public abstract class ListingView extends AbstractView {
 	protected final void setListingWidget(AbstractListingWidget listingWidget) {
 		assert listingWidget != null;
 		this.listingWidget = listingWidget;
-		// ModelChangeEventDispatcher.instance().addModelChangeListener(listingWidget);
 		addWidget(listingWidget);
 	}
 
@@ -39,7 +38,6 @@ public abstract class ListingView extends AbstractView {
 	protected final void doDestroy() {
 		if(listingWidget != null) {
 			listingWidget.clear();
-			// ModelChangeEventDispatcher.instance().removeModelChangeListener(listingWidget);
 		}
 	}
 

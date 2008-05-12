@@ -53,7 +53,7 @@ public class PropertyPath {
 	 * @return The indexed property name
 	 */
 	public static String indexed(String indexablePropName, int index) {
-		return LEFT_INDEX_CHAR + indexablePropName + RIGHT_INDEX_CHAR;
+		return indexablePropName + LEFT_INDEX_CHAR + index + RIGHT_INDEX_CHAR;
 	}
 
 	/**

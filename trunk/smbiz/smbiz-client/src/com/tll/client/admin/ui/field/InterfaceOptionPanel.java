@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -16,14 +17,15 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.event.IEditListener;
+import com.tll.client.event.type.EditEvent;
+import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IDataProvider;
-import com.tll.client.listing.IRowOptionsManager;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -42,7 +44,7 @@ import com.tll.client.ui.listing.RowOpDelegate;
  * InterfacePanel
  * @author jpk
  */
-final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener/*, IRowOptionListener*/{
+final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener, IEditListener {
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
 
@@ -68,7 +70,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 	private final AbstractListingWidget lstngParams;
 
-	private List<InterfaceOptionParameterPanel> paramFieldPanels;
+	private final List<InterfaceOptionParameterPanel> paramFieldPanels = new ArrayList<InterfaceOptionParameterPanel>();
 
 	private int paramRowIndex = -1;
 
@@ -87,7 +89,13 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		btnDeleteToggle.addClickListener(this);
 		btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
 
-		final IRowOptionsManager rod = new RowOpDelegate() {
+		lstngParams = ListingFactory.dataListing(plc, new IDataProvider() {
+
+			public List<Model> getData() {
+				return params;
+			}
+
+		}, new RowOpDelegate() {
 
 			@Override
 			protected String getListingElementName() {
@@ -102,7 +110,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				assert paramName != null;
 				InterfaceOptionParameterPanel pep = paramFieldPanels.get(rowIndex - 1);
 				paramEditPanel.setFieldPanel(pep);
-				paramEditPanel.setEntity(param);
+				paramEditPanel.setModel(param);
 				paramEditPanel.refresh();
 				dlgParam.setText("Edit " + paramName);
 				dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
@@ -121,48 +129,17 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				lstngParams.deleteRow(rowIndex);
 			}
 
-		};
+		}, new IAddRowDelegate() {
 
-		lstngParams = ListingFactory.dataListing(plc, new IDataProvider() {
-
-			public List<Model> getData() {
-				return params;
+			public void handleAddRow() {
+				// TODO impl
+				Window.alert("You clicked the add button");
 			}
 
-		}, rod);
+		});
 
 		paramEditPanel = new EditPanel(true);
-
-		IModelChangeHandler handler = new IModelChangeHandler() {
-
-			public void handleModelUpdate(Model model) {
-				lstngParams.updateRow(paramRowIndex + 1, model);
-				dlgParam.hide();
-			}
-
-			public void handleModelFetch(RefKey modelRef) {
-				// no-op - this won't be called
-			}
-
-			public void handleModelDelete(RefKey modelRef) {
-				// no-op - this won't be called
-			}
-
-			public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
-				dlgParam.hide();
-			}
-
-			public void handleModelAdd(Model model) {
-				// no-op - this won't be called
-			}
-
-			public boolean handleAuxDataFetch() {
-				// no-op - this won't be called
-				return false;
-			}
-
-		};
-		paramEditPanel.setModelChangeHandler(handler);
+		paramEditPanel.addEditListener(this);
 
 		dlgParam = new Dialog(lstngParams, false);
 		dlgParam.setWidget(paramEditPanel);
@@ -177,7 +154,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		setUpCost = ftext("setUpCost", "Setup Cost", LabelMode.NONE, 10);
 		monthlyCost = ftext("monthlyCost", "Monthly Cost", LabelMode.NONE, 10);
-		annualCost = ftext("Annual Cost", "Annual Cost", LabelMode.NONE, 10);
+		annualCost = ftext("annualCost", "Annual Cost", LabelMode.NONE, 10);
 
 		baseSetupPrice = ftext("baseSetupPrice", "Setup Price", LabelMode.NONE, 10);
 		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", LabelMode.NONE, 10);
@@ -230,13 +207,19 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		optionName = modelOption.getName();
 		setMarkDeleted(false);
 
-		// params
-		paramFieldPanels = new ArrayList<InterfaceOptionParameterPanel>();
+		// clear existing params
+		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
+			fields.removeField(pp.getFields());
+		}
+		paramFieldPanels.clear();
+
+		// add params
 		Iterator<IndexedProperty> itr = modelOption.relatedMany("parameters").iterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				IndexedProperty param = itr.next();
 				InterfaceOptionParameterPanel pp = new InterfaceOptionParameterPanel(param.getPropertyName());
+				// pp.configure();
 				paramFieldPanels.add(pp);
 				fields.addField(pp.getFields());
 			}
@@ -264,4 +247,14 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			setMarkDeleted(!getFields().isMarkedDeleted());
 		}
 	}
+
+	public void onEditEvent(EditEvent event) {
+		if(event.getOp() == EditOp.SAVE) {
+			if(!event.getModel().isNew()) {
+				lstngParams.updateRow(paramRowIndex + 1, event.getModel());
+			}
+		}
+		dlgParam.hide();
+	}
+
 }

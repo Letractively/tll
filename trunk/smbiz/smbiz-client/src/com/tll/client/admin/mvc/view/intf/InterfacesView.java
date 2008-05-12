@@ -16,16 +16,20 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.ICrudListener;
+import com.tll.client.event.IEditListener;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.CrudEvent;
+import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.CommitModelChangeHandler;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
@@ -74,12 +78,13 @@ public class InterfacesView extends AbstractView {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IModelChangeListener {
+		private final class InterfaceStack implements IEditListener, IModelChangeListener {
 
 			private final int stackIndex;
 			private final RefKey intfRef;
 			private boolean loaded;
 			private final EditPanel editPanel;
+			private final IModelChangeHandler modelChangeHandler;
 
 			/**
 			 * Constructor
@@ -90,9 +95,11 @@ public class InterfacesView extends AbstractView {
 				super();
 				this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
-				this.editPanel = new EditPanel(new InterfacePanel(null), false);
 
-				CommitModelChangeHandler handler = new CommitModelChangeHandler() {
+				editPanel = new EditPanel(new InterfacePanel(null), false);
+				editPanel.addEditListener(this);
+
+				modelChangeHandler = new CommitModelChangeHandler() {
 
 					public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
 						// no-op as there is no cancel button
@@ -114,9 +121,14 @@ public class InterfacesView extends AbstractView {
 					}
 
 				};
-				handler.addModelChangeListener(this);
 
-				editPanel.setModelChangeHandler(handler);
+				modelChangeHandler.addModelChangeListener(this);
+			}
+
+			public void onEditEvent(EditEvent event) {
+				if(event.getOp() == EditOp.SAVE) {
+					modelChangeHandler.handleModelPersist(event.getModel());
+				}
 			}
 
 			public void loadInterfaceIfNecessary() {
@@ -129,7 +141,7 @@ public class InterfacesView extends AbstractView {
 							assert event.getSource() == InterfacesStack.this;
 							if(!event.getPayload().hasErrors()) {
 								loaded = true;
-								editPanel.setEntity(event.getPayload().getEntity());
+								editPanel.setModel(event.getPayload().getEntity());
 								editPanel.refresh();
 								// open er up
 								showStack(stackIndex);
@@ -148,7 +160,7 @@ public class InterfacesView extends AbstractView {
 				}
 				else {
 					if(event.getChangeOp() == ModelChangeOp.LOADED) {
-						editPanel.setEntity(event.getModel());
+						editPanel.setModel(event.getModel());
 						editPanel.refresh();
 					}
 				}

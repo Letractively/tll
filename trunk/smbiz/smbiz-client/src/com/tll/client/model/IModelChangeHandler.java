@@ -1,13 +1,14 @@
 package com.tll.client.model;
 
+import com.tll.client.event.ISourcesModelChangeEvents;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 
 /**
  * IModelChangeHandler - Acts as a mediator and centralizes the handling of
- * model change events as well we model retrieval given a model ref.
+ * model change events. Also handles model retrieval given a model ref.
  * @author jpk
  */
-public interface IModelChangeHandler {
+public interface IModelChangeHandler extends ISourcesModelChangeEvents {
 
 	/**
 	 * Handles the fetching of a model given a model ref.
@@ -32,16 +33,11 @@ public interface IModelChangeHandler {
 	void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model);
 
 	/**
-	 * Handles model addition firing a model change event.
+	 * Handles model persisting (adding and updating) firing an appropriate model
+	 * change event.
 	 * @param model The model to add
 	 */
-	void handleModelAdd(Model model);
-
-	/**
-	 * Commits a model update firing a model change event.
-	 * @param model The model to update
-	 */
-	void handleModelUpdate(Model model);
+	void handleModelPersist(Model model);
 
 	/**
 	 * Commits a model delete firing a model change event to subscribed listeners

@@ -177,7 +177,7 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		RowOpDelegate rod = new RowOpDelegate() {
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, new RowOpDelegate() {
 
 			@Override
 			protected String getListingElementName() {
@@ -209,9 +209,7 @@ public final class MerchantListingView extends ListingView {
 				cmd.execute();
 			}
 
-		};
-
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, rod));
+		}, null));
 	}
 
 	@Override

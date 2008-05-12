@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.ListingOp;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
@@ -41,6 +42,8 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	private String listingElementName;
 
 	private IListingOperator listingOperator;
+
+	private IAddRowDelegate addRowDelegate;
 
 	private boolean pageable;
 
@@ -188,10 +191,19 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	}
 
 	/**
-	 * @param listingOperator the listingOperator to set
+	 * Sets the listing operator.
+	 * @param listingOperator
 	 */
 	public void setListingOperator(IListingOperator listingOperator) {
 		this.listingOperator = listingOperator;
+	}
+
+	/**
+	 * Sets the add row delegate
+	 * @param addRowDelegate
+	 */
+	public void setAddRowDelegate(IAddRowDelegate addRowDelegate) {
+		this.addRowDelegate = addRowDelegate;
 	}
 
 	@Override
@@ -220,13 +232,13 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			listingOperator.refresh();
 		}
 		else if(sender == btnAdd) {
-			// TODO: handle
+			assert addRowDelegate != null;
+			addRowDelegate.handleAddRow();
 		}
 		else {
 			throw new IllegalArgumentException("Unhandled listing nav bar action");
 		}
 		((HasFocus) sender).setFocus(false);
-		assert listingOperator != null : "No listing operator set";
 		if(action != null) {
 			listingOperator.navigate(action, page);
 		}

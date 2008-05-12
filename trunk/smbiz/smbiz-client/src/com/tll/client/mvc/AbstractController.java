@@ -25,11 +25,10 @@ public abstract class AbstractController implements IController {
 	 * cache. If no matching view is cached, a fresh view instance if provided by
 	 * way of {@link ViewClass}'s factory method.
 	 * @param viewRequest The view request. May NOT be <code>null</code>.
-	 * @param refreshOnNew Refresh a newly created AbstractView instance?
 	 * @return Either a cached or fresh {@link AbstractView} instance that is
 	 *         never <code>null</code>.
 	 */
-	protected static final IView resolveView(ViewRequestEvent viewRequest, boolean refreshOnNew) {
+	protected static final IView resolveView(ViewRequestEvent viewRequest) {
 		assert viewRequest != null;
 		ViewKey viewKey = viewRequest.getViewKey();
 		assert viewKey != null;
@@ -39,9 +38,8 @@ public abstract class AbstractController implements IController {
 			IView view = viewKey.getViewClass().newView();
 			// initialize the view
 			view.initialize(viewRequest);
-			if(refreshOnNew) {
-				view.refresh();
-			}
+			// load the view
+			view.refresh();
 			return view;
 		}
 		return vc.getView();
@@ -75,6 +73,6 @@ public abstract class AbstractController implements IController {
 	 * @param request
 	 */
 	public void handle(ViewRequestEvent request) {
-		onViewReady(resolveView(request, true));
+		onViewReady(resolveView(request));
 	}
 }

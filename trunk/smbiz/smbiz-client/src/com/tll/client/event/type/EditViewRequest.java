@@ -12,29 +12,29 @@ import com.tll.client.mvc.view.ViewClass;
 public final class EditViewRequest extends ShowViewRequest {
 
 	/**
-	 * The entity. May be <code>null</code> in which case, {@link #modelRef} is
-	 * expected to be non-<code>null</code>.
+	 * The entity model. May be <code>null</code> in which case,
+	 * {@link #modelRef} is expected to be non-<code>null</code>.
 	 */
-	private final Model entity;
+	private final Model model;
 
 	/**
-	 * The entity ref. May be <code>null</code> in which case, {@link #entity}
-	 * is expected to be non-<code>null</code>.
+	 * The entity ref. May be <code>null</code> in which case, {@link #model} is
+	 * expected to be non-<code>null</code>.
 	 */
-	private final RefKey entityRef;
+	private final RefKey modelRef;
 
 	/**
 	 * Constructor - Use when only an entity ref is available. This implies a
 	 * server request for the referred entity.
 	 * @param source
 	 * @param viewClass
-	 * @param entityRef
+	 * @param modelRef
 	 */
-	public EditViewRequest(Widget source, ViewClass viewClass, RefKey entityRef) {
+	public EditViewRequest(Widget source, ViewClass viewClass, RefKey modelRef) {
 		super(source, viewClass);
-		assert entityRef != null;
-		this.entityRef = entityRef;
-		this.entity = null;
+		assert modelRef != null;
+		this.modelRef = modelRef;
+		this.model = null;
 	}
 
 	/**
@@ -42,31 +42,31 @@ public final class EditViewRequest extends ShowViewRequest {
 	 * request.
 	 * @param source
 	 * @param viewClass
-	 * @param entity
+	 * @param model
 	 */
-	public EditViewRequest(Widget source, ViewClass viewClass, Model entity) {
+	public EditViewRequest(Widget source, ViewClass viewClass, Model model) {
 		super(source, viewClass);
-		this.entityRef = null;
-		assert entity != null;
-		this.entity = entity;
+		this.modelRef = null;
+		assert model != null;
+		this.model = model;
 	}
 
 	@Override
 	protected int getViewId() {
-		return entity == null ? entityRef.hashCode() : entity.getRefKey().hashCode();
+		return model == null ? modelRef.hashCode() : model.getRefKey().hashCode();
 	}
 
 	/**
 	 * @return The entity model.
 	 */
-	public Model getEntity() {
-		return entity;
+	public Model getModel() {
+		return model;
 	}
 
 	/**
 	 * @return The entity ref.
 	 */
-	public RefKey getEntityRef() {
-		return entityRef;
+	public RefKey getModelRef() {
+		return modelRef;
 	}
 }

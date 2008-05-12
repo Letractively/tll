@@ -11,7 +11,6 @@ import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.IRpcListener;
-import com.tll.client.event.ISourcesModelChangeEvents;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.RpcEvent;
@@ -22,7 +21,7 @@ import com.tll.client.msg.Msg;
  * CommitModelChangeHandler - Handles model changes via {@link CrudCommand}s.
  * @author jpk
  */
-public abstract class CommitModelChangeHandler implements IRpcListener, ICrudListener, ISourcesModelChangeEvents, IModelChangeHandler {
+public abstract class CommitModelChangeHandler implements IRpcListener, ICrudListener, IModelChangeHandler {
 
 	private final ModelChangeListenerCollection listeners = new ModelChangeListenerCollection();
 
@@ -57,10 +56,20 @@ public abstract class CommitModelChangeHandler implements IRpcListener, ICrudLis
 		return cmd;
 	}
 
+	/**
+	 * Filters the needed aux data returning <code>null</code> if no aux data is
+	 * needed.
+	 * @return The filtered aux data request of <code>null</code> if not aux
+	 *         data is needed
+	 */
+	private AuxDataRequest filterNeededAuxData() {
+		AuxDataRequest adr = getNeededAuxData();
+		return adr == null ? null : AuxDataCache.instance().filterRequest(adr);
+	}
+
 	public boolean handleAuxDataFetch() {
 		// do we need any aux data from the server?
-		AuxDataRequest adr = getNeededAuxData();
-		adr = adr == null ? null : AuxDataCache.instance().filterRequest(adr);
+		AuxDataRequest adr = filterNeededAuxData();
 		if(adr == null) return false;
 		final AuxDataCommand adc = new AuxDataCommand(getSourcingWidget(), adr);
 		adc.addRpcListener(this);
@@ -74,22 +83,20 @@ public abstract class CommitModelChangeHandler implements IRpcListener, ICrudLis
 		cmd.setEntityOptions(getEntityOptions());
 
 		// request needed aux data
-		AuxDataRequest adr = getNeededAuxData();
-		if(adr.size() > 0) cmd.setAuxDataRequest(adr);
+		AuxDataRequest adr = filterNeededAuxData();
+		if(adr != null) cmd.setAuxDataRequest(adr);
 
 		cmd.execute();
 	}
 
-	public void handleModelAdd(Model model) {
+	public void handleModelPersist(Model model) {
 		CrudCommand cmd = createCrudCommand();
-		cmd.add(model);
-		cmd.setEntityOptions(getEntityOptions());
-		cmd.execute();
-	}
-
-	public void handleModelUpdate(Model model) {
-		CrudCommand cmd = createCrudCommand();
-		cmd.update(model);
+		if(model.isNew()) {
+			cmd.add(model);
+		}
+		else {
+			cmd.update(model);
+		}
 		cmd.setEntityOptions(getEntityOptions());
 		cmd.execute();
 	}

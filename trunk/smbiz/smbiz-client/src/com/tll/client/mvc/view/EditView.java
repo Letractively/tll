@@ -7,6 +7,8 @@ package com.tll.client.mvc.view;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
+import com.tll.client.event.IEditListener;
+import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
@@ -14,6 +16,7 @@ import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.model.CommitModelChangeHandler;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
@@ -26,17 +29,24 @@ import com.tll.client.ui.field.FieldGroupPanel;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView {
+public abstract class EditView extends AbstractView implements IEditListener {
 
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	protected final EditPanel editPanel;
+	private final EditPanel editPanel;
+
+	/**
+	 * Handles model change events
+	 */
+	private final IModelChangeHandler modelChangeHandler;
+
+	private boolean modelChangeHandled;
 
 	/**
 	 * The unique model reference.
 	 */
-	protected RefKey modelRef;
+	private RefKey modelRef;
 
 	/**
 	 * Constructor
@@ -48,7 +58,7 @@ public abstract class EditView extends AbstractView {
 
 		editPanel = new EditPanel(fldGrpPnl, true);
 
-		CommitModelChangeHandler handler = new CommitModelChangeHandler() {
+		modelChangeHandler = new CommitModelChangeHandler() {
 
 			@Override
 			protected Widget getSourcingWidget() {
@@ -70,8 +80,8 @@ public abstract class EditView extends AbstractView {
 			}
 
 		};
-		handler.addModelChangeListener(ViewManager.instance());
-		editPanel.setModelChangeHandler(handler);
+
+		modelChangeHandler.addModelChangeListener(this);
 
 		addWidget(editPanel);
 	}
@@ -100,16 +110,23 @@ public abstract class EditView extends AbstractView {
 		assert viewRequest instanceof EditViewRequest;
 		EditViewRequest r = (EditViewRequest) viewRequest;
 
-		Model entityGroup = r.getEntity();
-		if(entityGroup == null) {
-			modelRef = r.getEntityRef();
-			editPanel.setEntityRef(modelRef);
+		Model model = r.getModel();
+		if(model == null) {
+			modelRef = r.getModelRef();
+			if(modelRef == null || !modelRef.isSet()) {
+				throw new IllegalArgumentException("Invalid model ref in view request");
+			}
+			// we need to fetch the model first
+			// NOTE: needed aux data will be fetched with
+			modelChangeHandler.handleModelFetch(modelRef);
+			return;
 		}
-		else {
-			modelRef = entityGroup.getRefKey();
-			editPanel.setEntity(entityGroup);
+
+		modelRef = model.getRefKey();
+		if(modelRef == null || !modelRef.isSet()) {
+			throw new IllegalArgumentException("Invalid model ref extracted from model in view request");
 		}
-		assert modelRef != null : "No entity ref specified.";
+		editPanel.setModel(model);
 	}
 
 	public final void refresh() {
@@ -122,26 +139,49 @@ public abstract class EditView extends AbstractView {
 	}
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
+		if(modelChangeHandled) {
+			modelChangeHandled = false; // reset
+			return;
+		}
 		if(event.isError()) {
 			editPanel.applyMsgs(event.getErrors());
 			return;
 		}
 		switch(event.getChangeOp()) {
+
+			case LOADED:
+				editPanel.setModel(event.getModel());
+				// NOTE we fall through
 			case AUXDATA_READY:
 				editPanel.refresh();
-				break;
-			case LOADED:
-				editPanel.setEntity(event.getModel());
-				editPanel.refresh();
-				break;
+				// NOTE we bail as we don't need to dissemminate these model changes to
+				// the other views
+				return;
+
 			case ADDED:
 			case UPDATED:
-				editPanel.setEntity(event.getModel());
+				editPanel.setModel(event.getModel());
 				editPanel.refresh();
 				break;
 			case DELETED:
 				// TODO eliminate this view from cache as well
 				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey()));
+				break;
+		}
+
+		// dispatch to other loaded view flagging this view as already handled this
+		// event
+		modelChangeHandled = true;
+		ViewManager.instance().onModelChangeEvent(event);
+	}
+
+	public final void onEditEvent(EditEvent event) {
+		switch(event.getOp()) {
+			case CANCEL:
+				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey()));
+				break;
+			case SAVE:
+				modelChangeHandler.handleModelPersist(event.getModel());
 				break;
 		}
 	}

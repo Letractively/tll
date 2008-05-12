@@ -15,10 +15,11 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
-import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.event.IEditListener;
+import com.tll.client.event.ISourcesEditEvents;
+import com.tll.client.event.type.EditEvent;
+import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -36,7 +37,7 @@ import com.tll.client.validate.ValidationException;
  * keeps the edit and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ClickListener {
+public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -71,17 +72,12 @@ public final class EditPanel extends Composite implements ClickListener {
 
 	private final Button btnSave, btnReset, btnCancel;
 
-	/**
-	 * The ref to the entity subject to editing.
-	 */
-	private RefKey entityRef;
+	private final EditListenerCollection editListeners = new EditListenerCollection();
 
 	/**
-	 * The entity subject to editing.
+	 * The model subject to editing.
 	 */
-	private Model entity;
-
-	private IModelChangeHandler modelChangeHandler;
+	private Model model;
 
 	/**
 	 * Constructor
@@ -124,6 +120,14 @@ public final class EditPanel extends Composite implements ClickListener {
 		setFieldPanel(fieldPanel);
 	}
 
+	public void addEditListener(IEditListener listener) {
+		editListeners.add(listener);
+	}
+
+	public void removeEditListener(IEditListener listener) {
+		editListeners.remove(listener);
+	}
+
 	/**
 	 * Sets or replaces the field panel.
 	 * @param fieldPanel The field panel
@@ -135,21 +139,6 @@ public final class EditPanel extends Composite implements ClickListener {
 		}
 		this.fieldPanel = fieldPanel;
 		portal.setWidget(fieldPanel);
-	}
-
-	/**
-	 * Sets the model change handler which handles model related data acquisition
-	 * and data change requests.
-	 * @param modelChangeHandler The model change handler
-	 */
-	public void setModelChangeHandler(IModelChangeHandler modelChangeHandler) {
-		this.modelChangeHandler = modelChangeHandler;
-	}
-
-	private void ensureModelHandlerSet() throws IllegalStateException {
-		if(modelChangeHandler == null) {
-			throw new IllegalStateException("No model handler set");
-		}
 	}
 
 	@Override
@@ -181,21 +170,11 @@ public final class EditPanel extends Composite implements ClickListener {
 
 	/**
 	 * Sets the entity.
-	 * @param entity May NOT be <code>null</code>.
+	 * @param model May NOT be <code>null</code>.
 	 * @throws IllegalArgumentException When the entity is <code>null</code>.
 	 */
-	public void setEntity(Model entity) {
-		assert entity != null;
-		setEntityRef(entity.getRefKey());
-		this.entity = entity;
-	}
-
-	public void setEntityRef(RefKey entityRef) {
-		if(entityRef == null || !entityRef.isSet()) {
-			throw new IllegalArgumentException("Invalid entity ref key");
-		}
-		this.entityRef = entityRef;
-		this.entity = null;
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 	public void applyMsgs(final List<Msg> msgs) {
@@ -226,24 +205,13 @@ public final class EditPanel extends Composite implements ClickListener {
 	 * entity is new or not.
 	 */
 	public void refresh() {
-		ensureModelHandlerSet();
-
-		// fetch entity from server?
-		if(entity == null) {
-			if(entityRef == null || !entityRef.isSet()) {
-				throw new IllegalStateException("No valid entity ref specified");
-			}
-			modelChangeHandler.handleModelFetch(entityRef);
-			return;
+		if(model == null) {
+			throw new IllegalStateException("No model specified.");
 		}
-
-		if(!modelChangeHandler.handleAuxDataFetch()) {
-			btnSave.setText(entity.isNew() ? "Add" : "Update");
-			fieldPanel.bind(entity);
-			fieldPanel.render();
-			pnlButtonRow.setVisible(true);
-		}
-
+		btnSave.setText(model.isNew() ? "Add" : "Update");
+		fieldPanel.bind(model);
+		fieldPanel.render();
+		pnlButtonRow.setVisible(true);
 	}
 
 	/**
@@ -254,12 +222,10 @@ public final class EditPanel extends Composite implements ClickListener {
 	}
 
 	public void onClick(Widget sender) {
-		ensureModelHandlerSet();
 		if(sender == btnSave) {
 			try {
-				if(fieldPanel.updateModel(entity)) {
-					// handle the model change
-					modelChangeHandler.handleModelUpdate(entity);
+				if(fieldPanel.updateModel(model)) {
+					editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
 				}
 				else {
 					MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
@@ -274,8 +240,7 @@ public final class EditPanel extends Composite implements ClickListener {
 			reset();
 		}
 		else if(sender == btnCancel) {
-			modelChangeHandler.handleModelChangeCancellation(entity.isNew() ? ModelChangeOp.ADDED : ModelChangeOp.UPDATED,
-					entity);
+			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL, model));
 		}
 	}
 }

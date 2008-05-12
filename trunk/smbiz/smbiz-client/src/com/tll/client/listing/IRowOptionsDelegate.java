@@ -7,11 +7,11 @@ import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
 /**
- * IRowOptionsManager - Indicates the ability to provide {@link Option}s for a
- * particular table row and handle row option selections.
+ * IRowOptionsDelegate - Indicates the ability to provide {@link Option}s for a
+ * particular table row and handles row option selection events.
  * @author jpk
  */
-public interface IRowOptionsManager {
+public interface IRowOptionsDelegate {
 
 	/**
 	 * Provides {@link Option}s for use by a row specific popup Panel.

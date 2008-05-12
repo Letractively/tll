@@ -7,8 +7,9 @@ package com.tll.client.ui.listing;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.tll.client.event.type.OptionEvent;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IRowOptionsManager;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.OptionsPopup;
 
@@ -27,9 +28,9 @@ public class RowContextListingWidget extends AbstractListingWidget {
 		private static final int SHOW_DURATION = 2000; // 2s
 
 		/**
-		 * The bound {@link IRowOptionsManager}
+		 * The bound {@link IRowOptionsDelegate}
 		 */
-		private final IRowOptionsManager rowOpDelegate;
+		private final IRowOptionsDelegate rowOpDelegate;
 
 		/**
 		 * The row index for this row context.
@@ -41,7 +42,7 @@ public class RowContextListingWidget extends AbstractListingWidget {
 		 * entries: row edit/delete based on the state of the listing configuration.
 		 * @param rowOpDelegate Provides the Options.
 		 */
-		public RowContextPopup(IRowOptionsManager rowOpDelegate) {
+		public RowContextPopup(IRowOptionsDelegate rowOpDelegate) {
 			super(SHOW_DURATION);
 			assert rowOpDelegate != null;
 			this.rowOpDelegate = rowOpDelegate;
@@ -89,14 +90,16 @@ public class RowContextListingWidget extends AbstractListingWidget {
 	/**
 	 * Constructor
 	 * @param config The listing configuration
-	 * @param rowOptionsProvider The row {@link Option}s provider. May be
+	 * @param rowOptionsDelegate The row {@link Option}s provider. May be
 	 *        <code>null</code>.
+	 * @param addRowDelegate The delegate to handle adding row requests.
 	 */
-	public RowContextListingWidget(IListingConfig config, IRowOptionsManager rowOptionsProvider) {
+	public RowContextListingWidget(IListingConfig config, IRowOptionsDelegate rowOptionsDelegate,
+			IAddRowDelegate addRowDelegate) {
 		super(config);
 
-		if(rowOptionsProvider != null) {
-			rowContextPopup = new RowContextPopup(rowOptionsProvider);
+		if(rowOptionsDelegate != null) {
+			rowContextPopup = new RowContextPopup(rowOptionsDelegate);
 			table.addTableListener(rowContextPopup);
 			getListingPanel().addMouseListener(rowContextPopup);
 		}
@@ -105,5 +108,7 @@ public class RowContextListingWidget extends AbstractListingWidget {
 		}
 
 		getListingPanel().addKeyboardListener(table);
+
+		navBar.setAddRowDelegate(addRowDelegate);
 	}
 }
