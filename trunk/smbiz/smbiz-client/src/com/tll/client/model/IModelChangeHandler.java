@@ -29,7 +29,7 @@ public interface IModelChangeHandler extends ISourcesModelChangeEvents {
 	/**
 	 * Handles model persisting (adding and updating) firing an appropriate model
 	 * change event. A subsequent model change event is anticipated.
-	 * @param model The model to add
+	 * @param model The model to persist
 	 */
 	void handleModelPersist(Model model);
 

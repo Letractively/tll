@@ -60,10 +60,15 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 	}
 
 	public void setValue(Object obj) {
-		if(obj instanceof Float == false) {
+		if(obj instanceof Float) {
+			setFloat((Float) obj);
+		}
+		else if(obj instanceof Number) {
+			setFloat(((Number) obj).floatValue());
+		}
+		else {
 			throw new IllegalArgumentException("The value must be a Float");
 		}
-		setFloat((Float) obj);
 	}
 
 	public Float getFloat() {

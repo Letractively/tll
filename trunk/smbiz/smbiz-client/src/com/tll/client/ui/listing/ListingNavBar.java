@@ -169,7 +169,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		if(config.isShowAddBtn()) {
 			// imgAdd = App.imgs().add().createImage();
 			String title = "Add " + config.getListingElementName();
-			btnAdd = new PushButton(title);
+			btnAdd = new PushButton(title, this);
 			btnAdd.setTitle(title);
 			if(config.isPageable() || config.isShowRefreshBtn()) {
 				// separator

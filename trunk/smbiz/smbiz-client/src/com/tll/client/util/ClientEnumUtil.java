@@ -5,7 +5,7 @@
  */
 package com.tll.client.util;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.tll.util.INameValueProvider;
@@ -25,7 +25,9 @@ public class ClientEnumUtil {
 	 * @return a name/value Map
 	 */
 	public static <E extends Enum<?>> Map<String, String> toMap(Class<E> enumType) {
-		final Map<String, String> map = new LinkedHashMap<String, String>();
+		// TODO temp commented out until GWT fully supports LinkedHashMaps!!!
+		// final Map<String, String> map = new LinkedHashMap<String, String>();
+		final Map<String, String> map = new HashMap<String, String>();
 		for(final Object e : enumType.getEnumConstants()) {
 			if(e instanceof INameValueProvider) {
 				final INameValueProvider senum = (INameValueProvider) e;

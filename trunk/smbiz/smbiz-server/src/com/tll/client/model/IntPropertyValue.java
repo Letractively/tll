@@ -64,10 +64,15 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	}
 
 	public void setValue(Object obj) {
-		if(obj instanceof Integer == false) {
+		if(obj instanceof Integer) {
+			setInteger((Integer) obj);
+		}
+		else if(obj instanceof Number) {
+			setInteger(((Number) obj).intValue());
+		}
+		else {
 			throw new IllegalArgumentException("The value must be an Integer");
 		}
-		setInteger((Integer) obj);
 	}
 
 	public Integer getInteger() {
