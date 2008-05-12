@@ -168,11 +168,12 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * <strong>NOTE: </strong>This method does NOT subsequently set the current
 	 * view.
 	 * @param vc The view container of the view to unload
+	 * @param removeFromCache Remove the view from the view cache?
 	 * @return The most recently viewed pinned IView <em>never</em> equalling
 	 *         the IView being unloaded or <code>null</code> if no alternate
 	 *         pinned IView is available.
 	 */
-	IView unloadView(ViewContainer vc) {
+	IView unloadView(ViewContainer vc, boolean removeFromCache) {
 		assert vc != null;
 
 		// find the newest pinned view excluding the one to be unloaded
@@ -185,11 +186,14 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		// unload the given view
 		vc.close();
 
-		// remove the view from cache
-		// cache.remove(cache.index(vc));
-
-		// shove it to the back of the cache
-		cache.moveToLast(vc);
+		if(removeFromCache) {
+			// remove the view from cache
+			cache.remove(cache.searchCache(vc.getView().getViewKey()));
+		}
+		else {
+			// demote the view
+			cache.moveToLast(vc);
+		}
 
 		// fire view changed event
 		// NOTE: this is necessary to ensure the view history panel is properly

@@ -35,7 +35,7 @@ class UnloadViewController extends AbstractController {
 		}
 
 		// unload the view
-		IView newestPinned = ViewManager.instance().unloadView(viewToUnload);
+		IView newestPinned = ViewManager.instance().unloadView(viewToUnload, r.isRemoveFromCache());
 		if(newestPinned != null) {
 			// Dispatcher.instance().dispatch(new SimpleViewRequest(r.getWidget(),
 			// newestPinned.getViewKey()));

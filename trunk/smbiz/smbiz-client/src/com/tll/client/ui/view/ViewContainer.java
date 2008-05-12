@@ -365,7 +365,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			Dispatcher.instance().dispatch(new UnloadViewRequest(this, view.getViewKey()));
+			Dispatcher.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), false));
 		}
 
 		// minimize/mazimize the view

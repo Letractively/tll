@@ -1,7 +1,6 @@
 package com.tll.client.model;
 
 import com.tll.client.event.ISourcesModelChangeEvents;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 
 /**
  * IModelChangeHandler - Acts as a mediator and centralizes the handling of
@@ -11,30 +10,25 @@ import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 public interface IModelChangeHandler extends ISourcesModelChangeEvents {
 
 	/**
-	 * Handles the fetching of a model given a model ref.
+	 * Handles the fetching of a model given a model ref. A subsequent model
+	 * change event is anticipated.
 	 * @param modelRef The reference of the model to fetch
 	 */
 	void handleModelFetch(RefKey modelRef);
 
 	/**
-	 * Handles the fetching of needed auxiliary data
-	 * @return <code>true</code> only if aux data is needed and
-	 *         <code>false</code> when no aux data is needed of all needed aux
-	 *         datat is already cached on the client.
+	 * Handles the fetching of needed auxiliary data. A subsequent model change
+	 * event is anticipated if aux data is found needed (<code>true</code> is
+	 * returned).
+	 * @return <code>true</code> only if aux data is actually needed and
+	 *         <code>false</code> when no aux data is needed. I.e.: it is
+	 *         already cached on the client.
 	 */
 	boolean handleAuxDataFetch();
 
 	/**
-	 * Handles a model change cancellation firing a model change event only to
-	 * indicate cancellation.
-	 * @param canceledOp
-	 * @param model The unchanged model.
-	 */
-	void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model);
-
-	/**
 	 * Handles model persisting (adding and updating) firing an appropriate model
-	 * change event.
+	 * change event. A subsequent model change event is anticipated.
 	 * @param model The model to add
 	 */
 	void handleModelPersist(Model model);

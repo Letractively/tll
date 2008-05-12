@@ -101,10 +101,6 @@ public class InterfacesView extends AbstractView {
 
 				modelChangeHandler = new CommitModelChangeHandler() {
 
-					public void handleModelChangeCancellation(ModelChangeOp canceledOp, Model model) {
-						// no-op as there is no cancel button
-					}
-
 					@Override
 					protected Widget getSourcingWidget() {
 						return InterfacesStack.this;

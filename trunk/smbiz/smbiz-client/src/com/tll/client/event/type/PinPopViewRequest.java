@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.view.ViewKey;
 
 /**
- * PinPopViewRequest - Request to either pin or pop a AbstractView.
+ * PinPopViewRequest - Request to either pin or pop a view.
  * @author jpk
  */
 public final class PinPopViewRequest extends ViewOpRequest {
@@ -20,7 +20,7 @@ public final class PinPopViewRequest extends ViewOpRequest {
 	 * @param source
 	 * @param viewKey May be <code>null</code>
 	 * @param pop <code>true</code> when requesting to pop the current view,
-	 *          <code>false<code> when requesting to pin a popped view.
+	 *        <code>false<code> when requesting to pin a popped view.
 	 */
 	public PinPopViewRequest(Widget source, ViewKey viewKey, boolean pop) {
 		super(source, viewKey);

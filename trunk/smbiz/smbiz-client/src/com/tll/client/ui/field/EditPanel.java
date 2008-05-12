@@ -200,13 +200,21 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	/**
+	 * Is this edit panel loaded with model data?
+	 * @return true/false
+	 */
+	public boolean isModelLoaded() {
+		return model != null;
+	}
+
+	/**
 	 * Refreshes the edit panel by [re-]applying the entity model to the contained
 	 * {@link FieldGroupPanel} and setting the edit button based on whether the
 	 * entity is new or not.
 	 */
 	public void refresh() {
 		if(model == null) {
-			throw new IllegalStateException("No model specified.");
+			throw new IllegalStateException("No model loaded.");
 		}
 		btnSave.setText(model.isNew() ? "Add" : "Update");
 		fieldPanel.bind(model);
