@@ -10,43 +10,45 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 
+import com.tll.model.schema.Managed;
+
 /**
  * An entity that contains audit information. The information currently stored
  * is the create/modify date and the create/modify user.
- * 
  * @author jpk
  */
 @MappedSuperclass
 public abstract class TimeStampEntity extends EntityBase implements ITimeStampEntity {
-  private Date dateCreated;
-  private Date dateModified;
 
-  @Column(name = "date_created", updatable = false)
-  @Temporal(TemporalType.TIMESTAMP)
-  @NotNull
-  public Date getDateCreated() {
-    return dateCreated;
-  }
+	private Date dateCreated;
+	private Date dateModified;
 
-  public void setDateCreated(Date date) {
-    this.dateCreated = date;
-  }
+	@Column(name = "date_created", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
+	@Managed
+	public Date getDateCreated() {
+		return dateCreated;
+	}
 
-  @Column(name = "date_last_modified")
-  @Temporal(TemporalType.TIMESTAMP)
-  @NotNull
-  public Date getDateModified() {
-    return dateModified;
-  }
+	public void setDateCreated(Date date) {
+		this.dateCreated = date;
+	}
 
-  public void setDateModified(Date date) {
-    dateModified = date;
-  }
+	@Column(name = "date_last_modified")
+	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
+	@Managed
+	public Date getDateModified() {
+		return dateModified;
+	}
 
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
-    .append("dateCreated", getDateCreated())
-    .append("dateModified", getDateModified());
-  }
+	public void setDateModified(Date date) {
+		dateModified = date;
+	}
+
+	@Override
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder().append("dateCreated", getDateCreated()).append("dateModified", getDateModified());
+	}
 }

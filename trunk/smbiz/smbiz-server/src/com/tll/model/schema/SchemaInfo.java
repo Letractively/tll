@@ -153,6 +153,8 @@ public final class SchemaInfo implements ISchemaInfo {
 
 			final Column c = m.getAnnotation(Column.class);
 
+			final boolean managed = (m.getAnnotation(Managed.class) != null);
+
 			final boolean required =
 					m.getAnnotation(NotNull.class) != null || m.getAnnotation(NotEmpty.class) != null
 							|| (c == null ? false : !c.nullable());
@@ -164,37 +166,37 @@ public final class SchemaInfo implements ISchemaInfo {
 			assert rt != null : "The return type is null";
 			if(rt.equals(String.class)) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
-				fd = new FieldData(PropertyType.STRING, propName, required, maxlen);
+				fd = new FieldData(PropertyType.STRING, propName, managed, required, maxlen);
 			}
 			else if(rt.isEnum()) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
-				fd = new FieldData(PropertyType.ENUM, propName, required, maxlen);
+				fd = new FieldData(PropertyType.ENUM, propName, managed, required, maxlen);
 			}
 			else if(int.class.equals(rt) || Integer.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenInt : maxlen;
-				fd = new FieldData(PropertyType.INT, propName, required, maxlen);
+				fd = new FieldData(PropertyType.INT, propName, managed, required, maxlen);
 			}
 			else if(boolean.class.equals(rt) || Boolean.class.equals(rt)) {
 				maxlen = maxlen == -1 ? 5 : maxlen;
-				fd = new FieldData(PropertyType.BOOL, propName, required, maxlen);
+				fd = new FieldData(PropertyType.BOOL, propName, managed, required, maxlen);
 			}
 			else if(float.class.equals(rt) || Float.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenFloat : maxlen;
-				fd = new FieldData(PropertyType.FLOAT, propName, required, maxlen);
+				fd = new FieldData(PropertyType.FLOAT, propName, managed, required, maxlen);
 			}
 			else if(double.class.equals(rt) || Double.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenDouble : maxlen;
-				fd = new FieldData(PropertyType.DOUBLE, propName, required, maxlen);
+				fd = new FieldData(PropertyType.DOUBLE, propName, managed, required, maxlen);
 			}
 			else if(long.class.equals(rt) || Long.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenLong : maxlen;
-				fd = new FieldData(PropertyType.LONG, propName, required, maxlen);
+				fd = new FieldData(PropertyType.LONG, propName, managed, required, maxlen);
 			}
 			else if(char.class.equals(rt) || Character.class.equals(rt)) {
-				fd = new FieldData(PropertyType.CHAR, propName, required, 1);
+				fd = new FieldData(PropertyType.CHAR, propName, managed, required, 1);
 			}
 			else if(Date.class.equals(rt)) {
-				fd = new FieldData(PropertyType.DATE, propName, required, 30);
+				fd = new FieldData(PropertyType.DATE, propName, managed, required, 30);
 			}
 
 			return fd;

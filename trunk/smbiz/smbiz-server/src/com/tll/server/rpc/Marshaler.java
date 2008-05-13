@@ -518,7 +518,7 @@ public final class Marshaler {
 	private PropertyData generatePropertyData(final Class<? extends IEntity> entityClass, final String propName) {
 		try {
 			final FieldData fd = schemaInfo.getFieldData(entityClass, propName);
-			return new PropertyData(fd.getPropertyType(), fd.isRequired(), fd.getMaxLen());
+			return new PropertyData(fd.getPropertyType(), fd.isManaged(), fd.isRequired(), fd.getMaxLen());
 		}
 		catch(SchemaInfoException e) {
 			return null;

@@ -10,10 +10,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.CSS;
-import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.model.impl.AddressType;
 
@@ -21,7 +20,7 @@ import com.tll.model.impl.AddressType;
  * AccountAddressPanel
  * @author jpk
  */
-public class AccountAddressPanel extends FieldGroupPanel implements ClickListener {
+public class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
 
 	// static final String ID_ACCOUNT_ADDRESS_DELETE_PREFIX = "dlte_aa_";
 
@@ -41,7 +40,6 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 		super(propName, addressType.getName());
 
 		this.addressType = addressType;
-		// this.propValIndex = propValIndex;
 
 		// delete img btn
 		btnDeleteToggle = new PushButton();
@@ -60,21 +58,10 @@ public class AccountAddressPanel extends FieldGroupPanel implements ClickListene
 		// none
 	}
 
-	/*
-	public int getPropValIndex() {
-		return propValIndex;
-	}
-
-	public void setPropValIndex(int propValIndex) {
-		this.propValIndex = propValIndex;
-	}
-	*/
-
 	@Override
 	protected void configure() {
-		name = ftext("name", "Name", LabelMode.ABOVE, 20);
+		super.configure();
 
-		fields.addField(name);
 		addressPanel.configure();
 		fields.addField(addressPanel.getFields());
 

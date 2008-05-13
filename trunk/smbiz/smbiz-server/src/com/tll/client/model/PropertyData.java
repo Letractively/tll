@@ -9,16 +9,21 @@ import com.tll.client.IMarshalable;
 import com.tll.model.schema.PropertyType;
 
 /**
- * PropertyData - "meta" info for a single property. (RPC version of FieldData).
+ * PropertyData - "meta" or schema info for a single model property.
  * @author jpk
  */
-// TODO re-name to ModelMetaData (or something to this effect)
 public class PropertyData implements IMarshalable {
 
 	/**
 	 * The property type.
 	 */
 	public PropertyType propertyType;
+
+	/**
+	 * Is this property managed? When managed, the bound model properties' value
+	 * is automatically set.
+	 */
+	public boolean managed;
 
 	/**
 	 * Flag for indicating required-ness.
@@ -41,10 +46,11 @@ public class PropertyData implements IMarshalable {
 	/**
 	 * Constructor
 	 * @param propertyType The property type
+	 * @param managed Is the property managed?
 	 * @param required Is required?
 	 * @param maxLen The max allowed String wise length
 	 */
-	public PropertyData(PropertyType propertyType, boolean required, int maxLen) {
+	public PropertyData(PropertyType propertyType, boolean managed, boolean required, int maxLen) {
 		super();
 		this.propertyType = propertyType;
 		this.required = required;

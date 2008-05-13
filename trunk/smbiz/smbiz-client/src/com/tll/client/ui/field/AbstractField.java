@@ -349,7 +349,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		PropertyData metadata = pv.getPropertyData();
 		if(metadata != null) {
 
-			setRequired(metadata.required);
+			setRequired(metadata.required && !metadata.managed);
 			if(this instanceof HasMaxLength) {
 				((HasMaxLength) this).setMaxLen(metadata.maxLen);
 			}
