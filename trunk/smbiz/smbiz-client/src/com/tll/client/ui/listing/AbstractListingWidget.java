@@ -148,6 +148,10 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		operator.sort(sortColumn);
 	}
 
+	public final int getNumRows() {
+		return table.getRowCount();
+	}
+
 	public final void addRow(int beforeRow, Model rowData) {
 		table.addRow(beforeRow, rowData);
 	}

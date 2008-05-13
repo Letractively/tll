@@ -14,7 +14,7 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.model.CommitModelChangeHandler;
+import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -58,7 +58,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		editPanel = new EditPanel(fldGrpPnl, true);
 		editPanel.addEditListener(this);
 
-		modelChangeHandler = new CommitModelChangeHandler() {
+		modelChangeHandler = new AbstractModelChangeHandler() {
 
 			@Override
 			protected Widget getSourcingWidget() {
@@ -129,13 +129,11 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		if(!editPanel.isModelLoaded()) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with
-			modelChangeHandler.handleModelFetch(modelRef);
-			return;
+			modelChangeHandler.handleModelLoad(modelRef);
 		}
-		if(modelChangeHandler.handleAuxDataFetch()) {
-			return;
+		else if(!modelChangeHandler.handleAuxDataFetch()) {
+			editPanel.refresh();
 		}
-		editPanel.refresh();
 	}
 
 	@Override

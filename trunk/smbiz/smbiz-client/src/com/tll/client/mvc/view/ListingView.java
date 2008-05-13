@@ -5,7 +5,16 @@
  */
 package com.tll.client.mvc.view;
 
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.data.AuxDataRequest;
+import com.tll.client.data.EntityOptions;
+import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
+import com.tll.client.listing.RowOpDelegate;
+import com.tll.client.model.AbstractModelChangeHandler;
+import com.tll.client.model.RefKey;
+import com.tll.client.mvc.Dispatcher;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.listing.AbstractListingWidget;
 
 /**
@@ -13,6 +22,65 @@ import com.tll.client.ui.listing.AbstractListingWidget;
  * @author jpk
  */
 public abstract class ListingView extends AbstractView {
+
+	/**
+	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
+	 * @author jpk
+	 */
+	protected abstract class ModelChangingRowOpDelegate extends RowOpDelegate {
+
+		/**
+		 * Provides the necessary sourcing widget enabling the sourcing of potential
+		 * events that are driven by option selections.
+		 * @return A non-<code>null</code> Widget ref
+		 */
+		protected abstract Widget getSourcingWidget();
+
+		/**
+		 * @return The class of the view to display for editing listing rows.
+		 */
+		protected abstract ViewClass getEditViewClass();
+
+		/**
+		 * This method is invoked whtn a row is targeted for editing.
+		 * @param rowIndex The row index of the targeted row
+		 * @param rowRef The ref of the row to edit
+		 */
+		@Override
+		protected void doEditRow(int rowIndex, RefKey rowRef) {
+			Dispatcher.instance().dispatch(new EditViewRequest(getSourcingWidget(), getEditViewClass(), rowRef));
+		}
+
+		/**
+		 * This method is invoked when a row is targeted for deletion.
+		 * @param rowIndex The row index of the targeted row
+		 * @param rowRef The ref of the row to delete
+		 */
+		@Override
+		protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+			AbstractModelChangeHandler handler = new AbstractModelChangeHandler() {
+
+				@Override
+				protected Widget getSourcingWidget() {
+					return ListingView.this;
+				}
+
+				@Override
+				protected AuxDataRequest getNeededAuxData() {
+					return null;
+				}
+
+				@Override
+				protected EntityOptions getEntityOptions() {
+					return null;
+				}
+
+			};
+			handler.addModelChangeListener(ViewManager.instance());
+			handler.handleModelDelete(rowRef);
+		}
+
+	}
 
 	/**
 	 * The listing widget.
@@ -42,7 +110,7 @@ public abstract class ListingView extends AbstractView {
 	}
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
-		listingWidget.onModelChangeEvent(event);
+		if(listingWidget != null) listingWidget.onModelChangeEvent(event);
 	}
 
 }

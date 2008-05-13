@@ -13,13 +13,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.InterfacePanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.event.ICrudListener;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
@@ -27,9 +24,9 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.model.CommitModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
+import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
@@ -98,7 +95,7 @@ public class InterfacesView extends AbstractView {
 				editPanel = new EditPanel(new InterfacePanel(null), false);
 				editPanel.addEditListener(this);
 
-				modelChangeHandler = new CommitModelChangeHandler() {
+				modelChangeHandler = new AbstractModelChangeHandler() {
 
 					@Override
 					protected Widget getSourcingWidget() {
@@ -122,24 +119,7 @@ public class InterfacesView extends AbstractView {
 
 			public void loadInterfaceIfNecessary() {
 				if(!loaded) {
-					// fetch the interface from the server
-					CrudCommand cmd = new CrudCommand(InterfacesStack.this);
-					cmd.addCrudListener(new ICrudListener() {
-
-						public void onCrudEvent(CrudEvent event) {
-							assert event.getSource() == InterfacesStack.this;
-							if(!event.getPayload().hasErrors()) {
-								loaded = true;
-								editPanel.setModel(event.getPayload().getEntity());
-								editPanel.refresh();
-								// open er up
-								showStack(stackIndex);
-							}
-						}
-
-					});
-					cmd.load(intfRef);
-					cmd.execute();
+					modelChangeHandler.handleModelLoad(intfRef);
 				}
 			}
 
@@ -152,12 +132,18 @@ public class InterfacesView extends AbstractView {
 			public void onModelChangeEvent(ModelChangeEvent event) {
 				if(event.isError()) {
 					editPanel.applyMsgs(event.getErrors());
+					return;
 				}
-				else {
-					if(event.getModel() != null) {
+				switch(event.getChangeOp()) {
+					case LOADED:
+						loaded = true;
+						// open er up
+						showStack(stackIndex);
+						// NOTE: we fall through
+					case UPDATED:
+					case DELETED:
 						editPanel.setModel(event.getModel());
 						editPanel.refresh();
-					}
 				}
 			}
 

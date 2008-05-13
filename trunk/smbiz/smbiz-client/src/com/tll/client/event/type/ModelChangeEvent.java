@@ -61,6 +61,16 @@ public final class ModelChangeEvent extends BaseEvent {
 		this.errors = errors;
 	}
 
+	/**
+	 * Constructor - Use for {@link ModelChangeOp#AUXDATA_READY} events.
+	 * @param source
+	 * @param change Expected to be a {@link ModelChangeOp#AUXDATA_READY} event
+	 */
+	public ModelChangeEvent(Widget source, ModelChangeOp change) {
+		this(source, change, (Model) null, null);
+
+	}
+
 	public ModelChangeOp getChangeOp() {
 		return change;
 	}

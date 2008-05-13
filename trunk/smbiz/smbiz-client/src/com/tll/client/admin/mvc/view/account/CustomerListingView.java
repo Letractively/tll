@@ -6,8 +6,6 @@ package com.tll.client.admin.mvc.view.account;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
-import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
@@ -16,13 +14,11 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.ViewRequestLink;
-import com.tll.client.ui.listing.RowOpDelegate;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -176,26 +172,25 @@ public final class CustomerListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, new RowOpDelegate() {
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE,
+				new ModelChangingRowOpDelegate() {
 
-			@Override
-			protected String getListingElementName() {
-				return config.getListingElementName();
-			}
+					@Override
+					protected Widget getSourcingWidget() {
+						return CustomerListingView.this;
+					}
 
-			@Override
-			protected void doEditRow(int rowIndex, RefKey rowRef) {
-				Dispatcher.instance().dispatch(new EditViewRequest(CustomerListingView.this, AccountEditView.klas, rowRef));
-			}
+					@Override
+					protected ViewClass getEditViewClass() {
+						return AccountEditView.klas;
+					}
 
-			@Override
-			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
-				CrudCommand cmd = new CrudCommand(CustomerListingView.this);
-				cmd.purge(rowRef);
-				cmd.execute();
-			}
+					@Override
+					protected String getListingElementName() {
+						return config.getListingElementName();
+					}
 
-		}, null));
+				}, null));
 	}
 
 	@Override

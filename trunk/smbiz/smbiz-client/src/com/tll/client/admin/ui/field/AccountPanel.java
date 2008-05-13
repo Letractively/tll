@@ -268,7 +268,6 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 					aaproto.setProp("type", at);
 					aaproto.setRelatedOne("account", model);
 					aap.getFields().setPropertyName(actualPropName);
-
 				}
 			}
 		}

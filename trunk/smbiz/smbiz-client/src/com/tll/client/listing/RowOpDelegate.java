@@ -3,13 +3,12 @@
  * @author jpk
  * May 8, 2008
  */
-package com.tll.client.ui.listing;
+package com.tll.client.listing;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.App;
-import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
@@ -65,6 +64,9 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 
 	private Option[] staticOptions;
 
+	/**
+	 * @return The listing element name.
+	 */
 	protected abstract String getListingElementName();
 
 	/**
@@ -88,7 +90,7 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 	}
 
 	/**
-	 * Performs row editing.
+	 * This method is invoked whtn a row is targeted for editing.
 	 * @param rowIndex The row index of the targeted row
 	 * @param rowRef The ref of the row to edit
 	 */
@@ -97,7 +99,7 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 	}
 
 	/**
-	 * Performs row deletion.
+	 * This method is invoked when a row is targeted for deletion.
 	 * @param rowIndex The row index of the targeted row
 	 * @param rowRef The ref of the row to delete
 	 */

@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.data.PropKey;
-import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
@@ -22,7 +20,6 @@ import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
-import com.tll.client.ui.listing.RowOpDelegate;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -136,38 +133,36 @@ public final class IspListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE, new RowOpDelegate() {
+		setListingWidget(ListingFactory.rpcListing(config, criteria, ListHandlerType.PAGE,
+				new ModelChangingRowOpDelegate() {
 
-			@Override
-			protected String getListingElementName() {
-				return config.getListingElementName();
-			}
+					@Override
+					protected String getListingElementName() {
+						return config.getListingElementName();
+					}
 
-			@Override
-			protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
-				return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
-			}
+					@Override
+					protected Widget getSourcingWidget() {
+						return IspListingView.this;
+					}
 
-			@Override
-			protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
-				if(optionText.indexOf("Merchant Listing") == 0) {
-					Dispatcher.instance().dispatch(MerchantListingView.klas.newViewRequest(IspListingView.this, rowRef));
-				}
-			}
+					@Override
+					protected ViewClass getEditViewClass() {
+						return AccountEditView.klas;
+					}
 
-			@Override
-			protected void doEditRow(int rowIndex, RefKey rowRef) {
-				Dispatcher.instance().dispatch(new EditViewRequest(IspListingView.this, AccountEditView.klas, rowRef));
-			}
+					@Override
+					protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
+						return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
+					}
 
-			@Override
-			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
-				CrudCommand cmd = new CrudCommand(IspListingView.this);
-				cmd.purge(rowRef);
-				cmd.execute();
-			}
-
-		}, null));
+					@Override
+					protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
+						if(optionText.indexOf("Merchant Listing") == 0) {
+							Dispatcher.instance().dispatch(MerchantListingView.klas.newViewRequest(IspListingView.this, rowRef));
+						}
+					}
+				}, null));
 	}
 
 	public String getLongViewName() {

@@ -169,9 +169,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	/**
-	 * Sets the entity.
-	 * @param model May NOT be <code>null</code>.
-	 * @throws IllegalArgumentException When the entity is <code>null</code>.
+	 * Sets the model to edit.
+	 * @param model
 	 */
 	public void setModel(Model model) {
 		this.model = model;

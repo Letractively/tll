@@ -8,7 +8,6 @@ package com.tll.client.admin.ui.field;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -16,8 +15,13 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.InterfaceOptionParamListingConfig;
+import com.tll.client.cache.AuxDataCache;
+import com.tll.client.data.AuxDataRequest;
+import com.tll.client.data.EntityOptions;
 import com.tll.client.event.IEditListener;
+import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.EditEvent;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
@@ -25,6 +29,9 @@ import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IDataProvider;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.RowOpDelegate;
+import com.tll.client.model.AbstractModelChangeHandler;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -38,7 +45,7 @@ import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.listing.AbstractListingWidget;
-import com.tll.client.ui.listing.RowOpDelegate;
+import com.tll.model.EntityType;
 
 /**
  * InterfacePanel
@@ -79,6 +86,11 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	private final Dialog dlgParam;
 
 	/**
+	 * Single model instance used for adding params so we can retain field values.
+	 */
+	private Model paramPrototype;
+
+	/**
 	 * Constructor
 	 * @param propName
 	 */
@@ -110,16 +122,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				assert paramName != null;
 				InterfaceOptionParameterPanel pep = paramFieldPanels.get(rowIndex - 1);
 				paramEditPanel.setFieldPanel(pep);
-				paramEditPanel.setModel(param);
-				paramEditPanel.refresh();
-				dlgParam.setText("Edit " + paramName);
-				dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-
-					public void setPosition(int offsetWidth, int offsetHeight) {
-						dlgParam.setPopupPosition(lstngParams.getAbsoluteLeft() + 5, lstngParams.getAbsoluteTop() + 5);
-					}
-
-				});
+				showParamEditDialog(param);
 			}
 
 			@Override
@@ -132,8 +135,45 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		}, new IAddRowDelegate() {
 
 			public void handleAddRow() {
-				// TODO impl
-				Window.alert("You clicked the add button");
+				InterfaceOptionParameterPanel newParamPanel = new InterfaceOptionParameterPanel(getPendingPropertyName());
+				paramFieldPanels.add(newParamPanel);
+				paramEditPanel.setFieldPanel(newParamPanel);
+				if(paramPrototype == null) {
+					IModelChangeHandler handler = new AbstractModelChangeHandler() {
+
+						@Override
+						protected Widget getSourcingWidget() {
+							return InterfaceOptionPanel.this;
+						}
+
+						@Override
+						protected AuxDataRequest getNeededAuxData() {
+							return null;
+						}
+
+						@Override
+						protected EntityOptions getEntityOptions() {
+							return null;
+						}
+
+					};
+					handler.addModelChangeListener(new IModelChangeListener() {
+
+						public void onModelChangeEvent(ModelChangeEvent event) {
+							if(!event.isError()) {
+								paramPrototype =
+										AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
+								assert paramPrototype != null;
+								showParamEditDialog(paramPrototype);
+							}
+						}
+
+					});
+					handler.handleModelPrototypeFetch(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
+				}
+				else {
+					showParamEditDialog(paramPrototype);
+				}
 			}
 
 		});
@@ -218,7 +258,6 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		if(pvParams != null && pvParams.size() > 0) {
 			for(IndexedProperty param : pvParams) {
 				InterfaceOptionParameterPanel pp = new InterfaceOptionParameterPanel(param.getPropertyName());
-				// pp.configure();
 				paramFieldPanels.add(pp);
 				fields.addField(pp.getFields());
 			}
@@ -227,6 +266,22 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		// re-display params listing
 		params = modelOption.relatedMany("parameters").getList();
 		lstngParams.display();
+	}
+
+	@Override
+	protected void onBeforeUpdateModel(Model model) {
+		super.onBeforeUpdateModel(model);
+
+		RelatedManyProperty pvParams = model.relatedMany("parameters");
+
+		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
+			String propertyName = pp.getFields().getPropertyName();
+			if(isPendingProperty(propertyName)) {
+				Model proto = paramPrototype.copy();
+				String actualPropName = pvParams.add(proto);
+				pp.getFields().setPropertyName(actualPropName);
+			}
+		}
 	}
 
 	private void setMarkDeleted(boolean markDeleted) {
@@ -242,6 +297,19 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		}
 	}
 
+	private void showParamEditDialog(Model param) {
+		paramEditPanel.setModel(param);
+		paramEditPanel.refresh();
+		dlgParam.setText((param.isNew() ? "Add" : "Edit") + " Parameter");
+		dlgParam.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				dlgParam.setPopupPosition(lstngParams.getAbsoluteLeft() + 5, lstngParams.getAbsoluteTop() + 5);
+			}
+
+		});
+	}
+
 	public void onClick(Widget sender) {
 		if(sender == btnDeleteToggle) {
 			setMarkDeleted(!getFields().isMarkedDeleted());
@@ -253,8 +321,15 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			if(!event.getModel().isNew()) {
 				lstngParams.updateRow(paramRowIndex + 1, event.getModel());
 			}
+			else {
+				lstngParams.addRow(lstngParams.getNumRows(), event.getModel());
+			}
+		}
+		if(event.getOp() == EditOp.CANCEL) {
+			if(event.getModel().isNew()) {
+				paramFieldPanels.remove(paramFieldPanels.size() - 1);
+			}
 		}
 		dlgParam.hide();
 	}
-
 }

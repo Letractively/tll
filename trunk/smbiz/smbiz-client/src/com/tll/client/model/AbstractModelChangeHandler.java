@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
+import com.tll.client.data.AuxDataRequest.AuxDataType;
 import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
@@ -16,12 +17,16 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
 import com.tll.client.msg.Msg;
+import com.tll.model.EntityType;
 
 /**
- * CommitModelChangeHandler - Handles model changes via {@link CrudCommand}s.
+ * AbstractModelChangeHandler - Core {@link IModelChangeHandler} implementation
+ * handling model changes via {@link CrudCommand}s. This implementation
+ * centralizes model aux data fetching as well as CRUD handling and should be
+ * used in place of "naked" {@link CrudCommand}s.
  * @author jpk
  */
-public abstract class CommitModelChangeHandler implements IRpcListener, ICrudListener, IModelChangeHandler {
+public abstract class AbstractModelChangeHandler implements IRpcListener, ICrudListener, IModelChangeHandler {
 
 	private final ModelChangeListenerCollection listeners = new ModelChangeListenerCollection();
 
@@ -63,8 +68,7 @@ public abstract class CommitModelChangeHandler implements IRpcListener, ICrudLis
 	 *         data is needed
 	 */
 	private AuxDataRequest filterNeededAuxData() {
-		AuxDataRequest adr = getNeededAuxData();
-		return adr == null ? null : AuxDataCache.instance().filterRequest(adr);
+		return getNeededAuxData() == null ? null : AuxDataCache.instance().filterRequest(getNeededAuxData());
 	}
 
 	public boolean handleAuxDataFetch() {
@@ -77,7 +81,20 @@ public abstract class CommitModelChangeHandler implements IRpcListener, ICrudLis
 		return true;
 	}
 
-	public void handleModelFetch(RefKey modelRef) {
+	public boolean handleModelPrototypeFetch(EntityType entityType) {
+		if(!AuxDataCache.instance().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
+			AuxDataRequest adr = new AuxDataRequest();
+			adr.requestEntityPrototype(entityType);
+			final AuxDataCommand adc = new AuxDataCommand(getSourcingWidget(), adr);
+			adc.addRpcListener(this);
+			adc.execute();
+			return true;
+		}
+		listeners.fireOnModelChange(new ModelChangeEvent(getSourcingWidget(), ModelChangeOp.AUXDATA_READY));
+		return false;
+	}
+
+	public void handleModelLoad(RefKey modelRef) {
 		CrudCommand cmd = createCrudCommand();
 		cmd.load(modelRef);
 		cmd.setEntityOptions(getEntityOptions());
