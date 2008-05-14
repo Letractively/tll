@@ -96,10 +96,6 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 		setIgnoreCase(ignoreCase);
 	}
 
-	public String descriptor() {
-		return "Sort Column";
-	}
-
 	public String getPropertyName() {
 		return propertyName;
 	}

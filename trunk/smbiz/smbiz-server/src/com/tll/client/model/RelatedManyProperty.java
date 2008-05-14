@@ -36,10 +36,6 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 		this.list = list;
 	}
 
-	public String descriptor() {
-		return "Related many collection property";
-	}
-
 	public PropertyType getType() {
 		return PropertyType.RELATED_MANY;
 	}

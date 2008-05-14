@@ -5,12 +5,13 @@
  */
 package com.tll.model.schema;
 
+import com.tll.client.IMarshalable;
 
 /**
  * ISchemaProperty
  * @author jpk
  */
-public interface ISchemaProperty {
+public interface ISchemaProperty extends IMarshalable {
 
 	/**
 	 * @return The property type

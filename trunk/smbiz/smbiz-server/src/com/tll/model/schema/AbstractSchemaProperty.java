@@ -5,14 +5,20 @@
  */
 package com.tll.model.schema;
 
-
 /**
  * AbstractSchemaProperty
  * @author jpk
  */
-public class AbstractSchemaProperty implements ISchemaProperty {
+public abstract class AbstractSchemaProperty implements ISchemaProperty {
 
-	private final PropertyType propertyType;
+	private PropertyType propertyType;
+
+	/**
+	 * Constructor - Needed for GWT compile
+	 */
+	protected AbstractSchemaProperty() {
+		super();
+	}
 
 	/**
 	 * Constructor
@@ -29,5 +35,4 @@ public class AbstractSchemaProperty implements ISchemaProperty {
 	public PropertyType getPropertyType() {
 		return propertyType;
 	}
-
 }

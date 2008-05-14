@@ -1,5 +1,7 @@
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
+
 /**
  * IPropertyValue - A property binding that whose value is non-relational.
  * @author jpk
@@ -9,7 +11,7 @@ public interface IPropertyValue extends IPropertyBinding {
 	/**
 	 * @return The property meta data
 	 */
-	PropertyData getPropertyData();
+	PropertyMetadata getMetadata();
 
 	/**
 	 * Set the property value.

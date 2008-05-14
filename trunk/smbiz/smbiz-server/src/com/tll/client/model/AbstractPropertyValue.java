@@ -6,6 +6,7 @@
 package com.tll.client.model;
 
 import com.tll.criteria.IQueryParam;
+import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractPropertyValue
@@ -16,7 +17,7 @@ public abstract class AbstractPropertyValue extends AbstractPropertyBinding impl
 	/**
 	 * The optional property meta data.
 	 */
-	protected PropertyData pdata;
+	protected PropertyMetadata metadata;
 
 	/**
 	 * Constructor
@@ -28,19 +29,19 @@ public abstract class AbstractPropertyValue extends AbstractPropertyBinding impl
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 */
-	public AbstractPropertyValue(String propertyName, PropertyData pdata) {
+	public AbstractPropertyValue(String propertyName, PropertyMetadata metadata) {
 		super(propertyName);
-		this.pdata = pdata;
+		this.metadata = metadata;
 	}
 
-	public final PropertyData getPropertyData() {
-		return pdata;
+	public final PropertyMetadata getMetadata() {
+		return metadata;
 	}
 
-	public final void setPropertyData(PropertyData pdata) {
-		this.pdata = pdata;
+	public final void setPropertyData(PropertyMetadata metadata) {
+		this.metadata = metadata;
 	}
 
 	/**

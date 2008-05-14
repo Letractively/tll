@@ -38,10 +38,9 @@ public class SchemaInfoTest extends TestBase {
 			for(final String propName : fdMap.keySet()) {
 				final ISchemaProperty sp = fdMap.get(propName);
 				assert sp != null : "Got null schema property";
+				assert sp.getPropertyType() != null;
 				if(!sp.getPropertyType().isRelational()) {
-					assert sp instanceof FieldData : "Wrong ISchemaProperty impl instance.  Expected FieldData type";
-					final FieldData fd = (FieldData) sp;
-					Assert.assertNotNull(fd.getName());
+					assert sp instanceof PropertyMetadata : "Wrong ISchemaProperty impl instance.  Expected FieldData type";
 				}
 				else {
 					assert sp instanceof RelationInfo : "Wrong ISchemaProperty impl instance.  Expected RelationInfo type";

@@ -35,10 +35,6 @@ public class IndexedProperty extends ModelRefProperty {
 		this.index = index;
 	}
 
-	public String descriptor() {
-		return "Indexed property";
-	}
-
 	public PropertyType getType() {
 		return PropertyType.INDEXED;
 	}

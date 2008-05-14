@@ -6,13 +6,14 @@ package com.tll.client.model;
 
 import com.tll.client.IMarshalable;
 import com.tll.model.EntityType;
+import com.tll.util.IDescriptorProvider;
 
 /**
  * RefKey - Generic proxy for an Object having an id, type and optionally a
  * name.
  * @author jpk
  */
-public class RefKey implements IMarshalable {
+public class RefKey implements IMarshalable, IDescriptorProvider {
 
 	/**
 	 * Required type

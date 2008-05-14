@@ -62,8 +62,4 @@ public final class EntityOptions implements IMarshalable {
 		return relatedRequests.contains(entityType);
 	}
 
-	public String descriptor() {
-		return "Entity CRUD options";
-	}
-
 }

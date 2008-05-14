@@ -32,10 +32,6 @@ public class Payload implements IMarshalable {
 		this.status = status;
 	}
 
-	public String descriptor() {
-		return "Payload";
-	}
-
 	public final Status getStatus() {
 		return status;
 	}

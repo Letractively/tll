@@ -107,9 +107,4 @@ public final class AdminContext implements IMarshalable {
 	public void setAccount(Model account) {
 		this.account = account;
 	}
-
-	public String descriptor() {
-		return "Admin Context";
-	}
-
 }

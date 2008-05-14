@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.util.INameValueProvider;
 
@@ -35,16 +36,12 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public EnumPropertyValue(String propertyName, PropertyData pdata, Enum<?> value) {
-		super(propertyName, pdata);
+	public EnumPropertyValue(String propertyName, PropertyMetadata metadata, Enum<?> value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Enum property";
 	}
 
 	public PropertyType getType() {
@@ -52,7 +49,7 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new EnumPropertyValue(getPropertyName(), pdata, value);
+		return new EnumPropertyValue(getPropertyName(), metadata, value);
 	}
 
 	public Enum<?> getEnum() {

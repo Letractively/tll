@@ -108,10 +108,6 @@ public final class Msg implements IMarshalable {
 		setRefToken(refToken);
 	}
 
-	public String descriptor() {
-		return "Msg";
-	}
-
 	public String getMsg() {
 		return msg;
 	}

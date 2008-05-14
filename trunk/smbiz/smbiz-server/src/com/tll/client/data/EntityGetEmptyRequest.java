@@ -38,10 +38,6 @@ public class EntityGetEmptyRequest extends EntityRequest {
 		this.generate = generate;
 	}
 
-	public String descriptor() {
-		return "Get empty entity request";
-	}
-
 	@Override
 	public EntityType getEntityType() {
 		return entityType;

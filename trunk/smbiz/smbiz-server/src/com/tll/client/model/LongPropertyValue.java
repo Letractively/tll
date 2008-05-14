@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -31,16 +32,12 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public LongPropertyValue(String propertyName, PropertyData pdata, Long value) {
-		super(propertyName, pdata);
+	public LongPropertyValue(String propertyName, PropertyMetadata metadata, Long value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Long property";
 	}
 
 	public PropertyType getType() {
@@ -52,7 +49,7 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new LongPropertyValue(getPropertyName(), pdata, value == null ? null : new Long(value.longValue()));
+		return new LongPropertyValue(getPropertyName(), metadata, value == null ? null : new Long(value.longValue()));
 	}
 
 	public final Object getValue() {

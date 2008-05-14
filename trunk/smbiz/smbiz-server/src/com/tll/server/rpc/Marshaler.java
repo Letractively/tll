@@ -29,7 +29,6 @@ import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.LongPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyData;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringMapPropertyValue;
@@ -42,8 +41,8 @@ import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.impl.PaymentData;
 import com.tll.model.impl.PaymentInfo;
-import com.tll.model.schema.FieldData;
 import com.tll.model.schema.ISchemaInfo;
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
 
@@ -157,12 +156,12 @@ public final class Marshaler {
 	 * @param ptype The property type
 	 * @param pname The property name
 	 * @param obj The value. May be <code>null</code>.
-	 * @param pdata The property meta data. May be <code>null</code>.
+	 * @param metadata The property meta data. May be <code>null</code>.
 	 * @return new IPropertyBinding instance or <code>null</code> if the given
 	 *         property type does NOT corres. to a rudimentary property value.
 	 */
 	private IPropertyBinding createPropertyValueBinding(final Class<?> ptype, final String pname, final Object obj,
-			final PropertyData pdata) {
+			final PropertyMetadata pdata) {
 		IPropertyBinding prop = null;
 
 		if(String.class.isAssignableFrom(ptype)) {
@@ -288,7 +287,7 @@ public final class Marshaler {
 				continue;
 			}
 
-			final PropertyData pdata = generatePropertyData(entityClass, pname);
+			final PropertyMetadata pdata = generatePropertyData(entityClass, pname);
 
 			IPropertyBinding prop = createPropertyValueBinding(ptype, pname, obj, pdata);
 
@@ -509,16 +508,15 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Provides {@link PropertyData} for a given entities' property.
+	 * Provides {@link PropertyMetadata} for a given entities' property.
 	 * @param entityClass
 	 * @param propName
-	 * @return New {@link PropertyData} instance or <code>null</code> if the
+	 * @return New {@link PropertyMetadata} instance or <code>null</code> if the
 	 *         given property name does not resolve to a property value.
 	 */
-	private PropertyData generatePropertyData(final Class<? extends IEntity> entityClass, final String propName) {
+	private PropertyMetadata generatePropertyData(final Class<? extends IEntity> entityClass, final String propName) {
 		try {
-			final FieldData fd = schemaInfo.getFieldData(entityClass, propName);
-			return new PropertyData(fd.getPropertyType(), fd.isManaged(), fd.isRequired(), fd.getMaxLen());
+			return schemaInfo.getPropertyMetadata(entityClass, propName);
 		}
 		catch(SchemaInfoException e) {
 			return null;

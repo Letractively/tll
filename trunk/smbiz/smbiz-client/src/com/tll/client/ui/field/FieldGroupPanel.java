@@ -26,33 +26,6 @@ import com.tll.client.validate.ValidationException;
 public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNameProvider*/{
 
 	/**
-	 * Needed to ensure unique pending property names and to hide this aspect from
-	 * clients.
-	 */
-	private static int pendingPropertyCounter = 0;
-
-	/**
-	 * Provides a "pending" indexed property name. Pending implies that the
-	 * indexed property does <em>NOT</em> yet exist and the semantics of a
-	 * pending property name serves to indicate this fact.
-	 * @return A unique property name indicating "pending".
-	 */
-	public static String getPendingPropertyName() {
-		return "{pending" + pendingPropertyCounter++ + '}';
-	}
-
-	/**
-	 * Is the given property name a pending property? Used in tandem with
-	 * {@link #getPendingPropertyName()}.
-	 * @param propName The property name to check
-	 * @return true/false
-	 * @see #getPendingPropertyName()
-	 */
-	public static boolean isPendingProperty(String propName) {
-		return propName != null && propName.startsWith("{pending");
-	}
-
-	/**
 	 * The collective group of all fields in this panel.
 	 */
 	protected final FieldGroup fields;

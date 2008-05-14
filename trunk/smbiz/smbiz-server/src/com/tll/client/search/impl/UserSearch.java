@@ -30,11 +30,6 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 	}
 
 	@Override
-	public String descriptor() {
-		return "User Search";
-	}
-
-	@Override
 	public void clear() {
 		super.clear();
 

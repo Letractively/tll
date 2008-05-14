@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -32,16 +33,12 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public BooleanPropertyValue(String propertyName, PropertyData pdata, Boolean value) {
-		super(propertyName, pdata);
+	public BooleanPropertyValue(String propertyName, PropertyMetadata metadata, Boolean value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Boolean property";
 	}
 
 	public PropertyType getType() {
@@ -53,7 +50,8 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new BooleanPropertyValue(getPropertyName(), pdata, value == null ? null : new Boolean(value.booleanValue()));
+		return new BooleanPropertyValue(getPropertyName(), metadata, value == null ? null : new Boolean(value
+				.booleanValue()));
 	}
 
 	public final Object getValue() {

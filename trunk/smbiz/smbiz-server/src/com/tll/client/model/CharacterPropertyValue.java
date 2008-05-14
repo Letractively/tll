@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -31,16 +32,12 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public CharacterPropertyValue(String propertyName, PropertyData pdata, Character value) {
-		super(propertyName, pdata);
+	public CharacterPropertyValue(String propertyName, PropertyMetadata metadata, Character value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Character property";
 	}
 
 	public PropertyType getType() {
@@ -52,7 +49,8 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	}
 
 	public IPropertyValue copy() {
-		return new CharacterPropertyValue(getPropertyName(), pdata, value == null ? null : new Character(value.charValue()));
+		return new CharacterPropertyValue(getPropertyName(), metadata, value == null ? null : new Character(value
+				.charValue()));
 	}
 
 	public final Object getValue() {

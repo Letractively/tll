@@ -119,10 +119,6 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 		return new RefKey(entityType, id, name);
 	}
 
-	public String descriptor() {
-		return "Model (" + getRefKey().descriptor() + ")";
-	}
-
 	/**
 	 * Tests whether the given property path is associated with a nested
 	 * {@link IPropertyValue}.

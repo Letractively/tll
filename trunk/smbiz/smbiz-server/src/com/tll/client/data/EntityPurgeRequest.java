@@ -33,10 +33,6 @@ public class EntityPurgeRequest extends EntityRequest {
 		this.entityRef = entityRef;
 	}
 
-	public String descriptor() {
-		return "Entity purge request";
-	}
-
 	@Override
 	public EntityType getEntityType() {
 		return entityRef.getType();

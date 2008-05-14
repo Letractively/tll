@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -31,16 +32,12 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public FloatPropertyValue(String propertyName, PropertyData pdata, Float value) {
-		super(propertyName, pdata);
+	public FloatPropertyValue(String propertyName, PropertyMetadata metadata, Float value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Float property";
 	}
 
 	public PropertyType getType() {
@@ -52,7 +49,7 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new FloatPropertyValue(getPropertyName(), pdata, value == null ? null : new Float(value.floatValue()));
+		return new FloatPropertyValue(getPropertyName(), metadata, value == null ? null : new Float(value.floatValue()));
 	}
 
 	public final Object getValue() {

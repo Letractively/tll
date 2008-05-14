@@ -46,10 +46,6 @@ public class EntityLoadRequest extends EntityRequest {
 		this.loadByName = false;
 	}
 
-	public String descriptor() {
-		return "Entity load request";
-	}
-
 	@Override
 	public EntityType getEntityType() {
 		return entityRef.getType();

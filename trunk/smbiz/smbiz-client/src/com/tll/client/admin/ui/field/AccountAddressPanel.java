@@ -13,7 +13,6 @@ import com.tll.client.field.IField;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
-import com.tll.client.ui.field.TextField;
 import com.tll.model.impl.AddressType;
 
 /**
@@ -22,12 +21,7 @@ import com.tll.model.impl.AddressType;
  */
 public class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
 
-	// static final String ID_ACCOUNT_ADDRESS_DELETE_PREFIX = "dlte_aa_";
-
 	protected final AddressType addressType;
-	// protected int propValIndex = -1;
-	protected TextField name;
-	// protected final Image imgDeleteToggle = new Image();
 	protected final PushButton btnDeleteToggle;
 	protected final AddressPanel addressPanel;
 
@@ -84,12 +78,10 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 	private void setMarkDeleted(boolean markDeleted) {
 		getFields().setMarkedDeleted(markDeleted);
 		if(markDeleted) {
-			// App.imgs().undo().applyTo(imgDeleteToggle);
 			btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
 			btnDeleteToggle.setTitle("Un-delete " + addressType.getName() + " Address");
 		}
 		else {
-			// App.imgs().delete().applyTo(imgDeleteToggle);
 			btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
 			btnDeleteToggle.setTitle("Delete " + addressType.getName() + " Address");
 		}

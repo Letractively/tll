@@ -36,10 +36,6 @@ public final class Status implements IMarshalable {
 		addMsg(new Msg(msg, level));
 	}
 
-	public String descriptor() {
-		return "Status";
-	}
-
 	public boolean hasErrors() {
 		return errors;
 	}

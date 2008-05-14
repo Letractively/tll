@@ -29,10 +29,6 @@ public class AuxDataRequest implements IMarshalable {
 
 	private Set<EntityType> entityPrototypes;
 
-	public String descriptor() {
-		return "Auxiliary Data Request";
-	}
-
 	/**
 	 * Request app ref data in the form of a string/string map.
 	 * @param terseName

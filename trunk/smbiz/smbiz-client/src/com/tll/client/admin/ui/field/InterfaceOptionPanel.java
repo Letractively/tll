@@ -135,7 +135,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		}, new IAddRowDelegate() {
 
 			public void handleAddRow() {
-				InterfaceOptionParameterPanel newParamPanel = new InterfaceOptionParameterPanel(getPendingPropertyName());
+				InterfaceOptionParameterPanel newParamPanel =
+						new InterfaceOptionParameterPanel(FieldGroup.getPendingPropertyName());
 				paramFieldPanels.add(newParamPanel);
 				paramEditPanel.setFieldPanel(newParamPanel);
 				if(paramPrototype == null) {
@@ -275,8 +276,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		RelatedManyProperty pvParams = model.relatedMany("parameters");
 
 		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
-			String propertyName = pp.getFields().getPropertyName();
-			if(isPendingProperty(propertyName)) {
+			if(pp.getFields().isPending()) {
 				Model proto = paramPrototype.copy();
 				String actualPropName = pvParams.add(proto);
 				pp.getFields().setPropertyName(actualPropName);
@@ -322,10 +322,12 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				lstngParams.updateRow(paramRowIndex + 1, event.getModel());
 			}
 			else {
-				lstngParams.addRow(lstngParams.getNumRows(), event.getModel());
+				params.add(event.getModel());
+				fields.addField(paramFieldPanels.get(paramFieldPanels.size() - 1).getFields());
+				lstngParams.addRow(event.getModel());
 			}
 		}
-		if(event.getOp() == EditOp.CANCEL) {
+		else if(event.getOp() == EditOp.CANCEL) {
 			if(event.getModel().isNew()) {
 				paramFieldPanels.remove(paramFieldPanels.size() - 1);
 			}

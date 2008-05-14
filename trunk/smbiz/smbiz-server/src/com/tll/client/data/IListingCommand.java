@@ -4,13 +4,14 @@ import com.tll.client.IMarshalable;
 import com.tll.client.search.ISearch;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
+import com.tll.util.IDescriptorProvider;
 
 /**
  * The listing command interface. Used to transfer a client/server request for
  * table data.
  * @author jpk
  */
-public interface IListingCommand extends IMarshalable {
+public interface IListingCommand extends IMarshalable, IDescriptorProvider {
 
 	/**
 	 * @return the distinguishing name of the listing. Must be unique against all

@@ -46,6 +46,91 @@ import com.tll.util.IDescriptorProvider;
 public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
 
 	/**
+	 * FieldBinding - Encapsulates parent/child relationship for a given parent
+	 * FieldGroup and child IField.
+	 * @author jpk
+	 */
+	private static class FieldBinding {
+
+		public IField field;
+		public FieldGroup parent;
+
+		public FieldBinding(IField field, FieldGroup parent) {
+			super();
+			this.field = field;
+			this.parent = parent;
+		}
+	}
+
+	/**
+	 * @param propPath
+	 * @param group
+	 * @param parentPropPath
+	 * @return
+	 * @throws MalformedPropPathException
+	 */
+	private static FieldBinding getBindingByPropertyPath(final String propPath, FieldGroup group, String parentPropPath)
+			throws MalformedPropPathException {
+		return getBindingByPropertyPath(new PropertyPath(propPath), 0, group);
+	}
+
+	/**
+	 * Recursive method seeking the field bound to the given property path.
+	 * @param propPath The property path object
+	 * @param pindex The property path index
+	 * @param group The current {@link FieldGroup}
+	 * @return The {@link FieldBinding} (never <code>null</code>).
+	 * @throws MalformedPropPathException
+	 */
+	private static FieldBinding getBindingByPropertyPath(final PropertyPath propPath, int pindex, FieldGroup group)
+			throws MalformedPropPathException {
+		String name = propPath.propNameAt(pindex);
+		boolean atEnd = propPath.atEnd(pindex);
+		for(IField fld : group) {
+			if(name.equals(fld.getPropertyName())) {
+				if(atEnd) {
+					// found it
+					return new FieldBinding(fld, group);
+				}
+				if(fld instanceof FieldGroup == false) {
+					throw new MalformedPropPathException(propPath.toString());
+				}
+				return getBindingByPropertyPath(propPath, pindex + 1, (FieldGroup) fld);
+			}
+		}
+		return new FieldBinding(null, group);
+	}
+
+	/**
+	 * Needed to ensure unique pending property names and to hide this aspect from
+	 * clients.
+	 */
+	private static int pendingPropertyCounter = 0;
+
+	private static String pendingTokenPrefix = "{pending";
+
+	/**
+	 * Provides a "pending" property name. Pending implies that the property does
+	 * <em>NOT</em> yet exist and the semantics of a pending property name
+	 * serves to indicate this fact.
+	 * @return A unique property name indicating "pending".
+	 */
+	public static String getPendingPropertyName() {
+		return pendingTokenPrefix + pendingPropertyCounter++ + '}';
+	}
+
+	/**
+	 * Is the given property name a pending property? Used in tandem with
+	 * {@link #getPendingPropertyName()}.
+	 * @param propName The property name to check
+	 * @return true/false
+	 * @see #getPendingPropertyName()
+	 */
+	private static boolean isPendingProperty(String propName) {
+		return propName != null && propName.startsWith(pendingTokenPrefix);
+	}
+
+	/**
 	 * The property name representing a property path (for the case of field
 	 * groups). May be <code>null</code>.
 	 */
@@ -149,6 +234,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		setEnabled(!markedDeleted);
 	}
 
+	public boolean isPending() {
+		return isPendingProperty(propName);
+	}
+
 	public Widget getRefWidget() {
 		return refWidget;
 	}
@@ -159,62 +248,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	public Iterator<IField> iterator() {
 		return fields.iterator();
-	}
-
-	/**
-	 * FieldBinding - Encapsulates parent/child relationship for a given parent
-	 * FieldGroup and child IField.
-	 * @author jpk
-	 */
-	private static class FieldBinding {
-
-		public IField field;
-		public FieldGroup parent;
-
-		public FieldBinding(IField field, FieldGroup parent) {
-			super();
-			this.field = field;
-			this.parent = parent;
-		}
-	}
-
-	/**
-	 * @param propPath
-	 * @param group
-	 * @param parentPropPath
-	 * @return
-	 * @throws MalformedPropPathException
-	 */
-	private static FieldBinding getBindingByPropertyPath(final String propPath, FieldGroup group, String parentPropPath)
-			throws MalformedPropPathException {
-		return getBindingByPropertyPath(new PropertyPath(propPath), 0, group);
-	}
-
-	/**
-	 * Recursive method seeking the field bound to the given property path.
-	 * @param propPath The property path object
-	 * @param pindex The property path index
-	 * @param group The current {@link FieldGroup}
-	 * @return The {@link FieldBinding} (never <code>null</code>).
-	 * @throws MalformedPropPathException
-	 */
-	private static FieldBinding getBindingByPropertyPath(final PropertyPath propPath, int pindex, FieldGroup group)
-			throws MalformedPropPathException {
-		String name = propPath.propNameAt(pindex);
-		boolean atEnd = propPath.atEnd(pindex);
-		for(IField fld : group) {
-			if(name.equals(fld.getPropertyName())) {
-				if(atEnd) {
-					// found it
-					return new FieldBinding(fld, group);
-				}
-				if(fld instanceof FieldGroup == false) {
-					throw new MalformedPropPathException(propPath.toString());
-				}
-				return getBindingByPropertyPath(propPath, pindex + 1, (FieldGroup) fld);
-			}
-		}
-		return new FieldBinding(null, group);
 	}
 
 	/**
@@ -325,11 +358,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	// TODO remove pending sub groups!!
 	public void reset() {
 		MsgManager.instance.clear(refWidget, true);
 		for(IField field : fields) {
 			field.reset();
 		}
+		markedDeleted = false;
 	}
 
 	public void clear() {
@@ -397,8 +432,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	public boolean updateModel(Model model) {
 		model.setMarkedDeleted(markedDeleted);
-		if(markedDeleted) {
-			// since we are marked as deleted, change is true
+		if(markedDeleted || isPending()) {
+			// since we are marked as deleted or pending, change is true
 			return true;
 		}
 		boolean changed = false;

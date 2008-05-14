@@ -5,6 +5,7 @@ package com.tll.client.model;
 
 import java.util.Date;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -34,16 +35,12 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public DatePropertyValue(String propertyName, PropertyData pdata, Date value) {
-		super(propertyName, pdata);
+	public DatePropertyValue(String propertyName, PropertyMetadata metadata, Date value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Date property";
 	}
 
 	public PropertyType getType() {
@@ -55,7 +52,7 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new DatePropertyValue(getPropertyName(), pdata, value == null ? null : new Date(value.getTime()));
+		return new DatePropertyValue(getPropertyName(), metadata, value == null ? null : new Date(value.getTime()));
 	}
 
 	public final Object getValue() {

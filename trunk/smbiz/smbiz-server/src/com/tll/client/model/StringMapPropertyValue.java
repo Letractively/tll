@@ -6,6 +6,7 @@ package com.tll.client.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -26,16 +27,12 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	/**
 	 * Constructor
 	 * @param name
-	 * @param pdata
+	 * @param metadata
 	 * @param map
 	 */
-	public StringMapPropertyValue(String name, PropertyData pdata, Map<String, String> map) {
-		super(name, pdata);
+	public StringMapPropertyValue(String name, PropertyMetadata metadata, Map<String, String> map) {
+		super(name, metadata);
 		this.map = map;
-	}
-
-	public String descriptor() {
-		return "Name/Value pair map property";
 	}
 
 	public PropertyType getType() {

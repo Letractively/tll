@@ -30,11 +30,6 @@ public class InterfaceSearch extends NamedTimeStampEntitySearch {
 	}
 
 	@Override
-	public String descriptor() {
-		return "Interface Search";
-	}
-
-	@Override
 	public void clear() {
 		super.clear();
 	}

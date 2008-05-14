@@ -4,6 +4,9 @@
  */
 package com.tll.client.ui.listing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -77,7 +80,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	/**
 	 * {@link RefKey}s for each listing element row.
 	 */
-	protected RefKey[] rowRefs;
+	protected final List<RefKey> rowRefs = new ArrayList<RefKey>();
 
 	/**
 	 * The column index of the currently sorted column.
@@ -159,13 +162,11 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 
 	/**
 	 * Get the row ref for a given row.
-	 * @param row 0-based row num.
+	 * @param row 0-based table row num (considers the header row).
 	 * @return RefKey
 	 */
 	public final RefKey getRowRef(int row) {
-		assert rowRefs != null && row <= rowRefs.length;
-		if(row == 0) return null; // header row
-		return rowRefs[row - 1];
+		return rowRefs.get(row - 1);
 	}
 
 	/**
@@ -174,15 +175,8 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @return The row index or <code>-1</code> if no row matching the given ref
 	 *         key is present in the table.
 	 */
-	public final int getRowIndex(RefKey rowRef) {
-		int rowIndex = 0;
-		for(RefKey rk : rowRefs) {
-			++rowIndex;
-			if(rk.equals(rowRef)) {
-				return rowIndex;
-			}
-		}
-		return -1;
+	final int getRowIndex(RefKey rowRef) {
+		return rowRefs.indexOf(rowRef) + 1; // account for header row
 	}
 
 	/**
@@ -350,18 +344,19 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 				}
 			}
 		}
-		rowRefs[rowIndex - 1] = rowData.getRefKey(); // account for header row
 	}
 
 	private void addBodyRows(IPage<Model> page) {
 		final int numBodyRows = page.getNumPageElements();
 		resizeRows(numBodyRows + 1);
-		this.rowRefs = new RefKey[numBodyRows];
+		rowRefs.clear();
 		boolean evn = false;
 		int rowNum = page.getFirstIndex();
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
+			Model m = page.getPageElements().get(r);
+			setRowData(r + 1, ++rowNum, m, true);
+			rowRefs.add(m.getRefKey());
 		}
 	}
 
@@ -370,7 +365,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	}
 
 	public void setPage(IPage<Model> page, Sorting sorting) {
-		// if(event.isSuccess()) {
 		removeBodyRows();
 		addBodyRows(page);
 		if(sortlinks != null) applySorting(sorting);
@@ -462,83 +456,49 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	}
 
 	/**
-	 * Inserts a new row before the given index.
-	 * @param beforeRow The index before which the new row will be inserted.
-	 * @param rowData The row data
-	 * @return The index of the newly-created row.
+	 * Appends a new row to the table.
+	 * @param rowData The row data for the new table row
+	 * @return The index of the newly-created row
 	 */
-	int addRow(int beforeRow, Model rowData) {
-		assert beforeRow > 0 : "Can't insert before the header row";
-
-		// first get the page row num
-		int pageRowNum = getPageRowNum(beforeRow);
-
+	int addRow(Model rowData) {
 		// insert a new empty row
-		int rowIndex = insertRow(beforeRow);
+		final int addRowIndex = getRowCount();
+		resizeRows(addRowIndex + 1);
 
 		// set the row data
-		setRowData(rowIndex, pageRowNum, rowData, true);
+		setRowData(addRowIndex, -1, rowData, true);
+		rowRefs.add(rowData.getRefKey());
 
-		// update the rows below
-		updateRowsBelow(rowIndex + 1, true);
+		getRowFormatter().addStyleName(addRowIndex, CSS_ADDED);
 
-		// update rowRefs
-		final int refIndx = rowIndex - 1;
-		RefKey[] rks = new RefKey[rowRefs.length + 1];
-		for(int i = 0; i < rks.length; i++) {
-			if(i < refIndx) {
-				rks[i] = rowRefs[i];
-			}
-			else if(i == refIndx) {
-				rks[i] = null;
-			}
-			else {
-				rks[i] = rowRefs[i - 1];
-			}
-		}
-		rowRefs = null;
-		rowRefs = rks;
-		// update the numRows property
-		numRows++;
-
-		getRowFormatter().addStyleName(rowIndex, CSS_ADDED);
-
-		return rowIndex;
+		return addRowIndex;
 	}
 
 	/**
-	 * Deletes a row at the given index
-	 * @param rowIndex The index of the row to delete
+	 * Removes a table row.
+	 * @param rowIndex The row index of the row to remove
 	 */
 	void deleteRow(int rowIndex) {
 		assert rowIndex >= 1 : "Can't delete the header row";
-		/*
+
 		removeRow(rowIndex);
+		// update the numRows property
+		numRows--;
+		rowRefs.remove(rowIndex);
 		updateRowsBelow(rowIndex, false);
+
 		// reset the current row index
 		if(crntRowIndex == rowIndex) {
 			crntRowIndex = -1;
 		}
-		// update row refs
-		final int refIndx = rowIndex - 1;
-		final int len = rowRefs.length;
-		RefKey[] rks = new RefKey[len - 1];
-		int j = 0;
-		for(int i = 0; i < len; i++) {
-			if(i == len - 1) break;
-			if(i < refIndx) {
-				rks[j++] = rowRefs[i];
-			}
-			else {
-				rks[j++] = rowRefs[i + 1];
-			}
-		}
-		rowRefs = null;
-		rowRefs = rks;
-		// update the numRows property
-		numRows--;
-		*/
+	}
 
+	/**
+	 * Marks a row as deleted but does not actually remove the table row.
+	 * @param rowIndex The index of the row to mark deleted
+	 */
+	void markRowDeleted(int rowIndex) {
+		assert rowIndex >= 1 : "Can't delete the header row";
 		getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
 	}
 
@@ -548,7 +508,9 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowData The new row data to apply
 	 */
 	void updateRow(int rowIndex, Model rowData) {
+		assert rowIndex >= 1 : "Can't update the header row";
 		setRowData(rowIndex, -1, rowData, true);
+		rowRefs.set(rowIndex - 1, rowData.getRefKey());
 		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 

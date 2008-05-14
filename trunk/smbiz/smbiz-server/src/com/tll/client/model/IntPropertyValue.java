@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -31,16 +32,12 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public IntPropertyValue(String propertyName, PropertyData pdata, Integer value) {
-		super(propertyName, pdata);
+	public IntPropertyValue(String propertyName, PropertyMetadata metadata, Integer value) {
+		super(propertyName, metadata);
 		this.value = value;
-	}
-
-	public String descriptor() {
-		return "Integer property";
 	}
 
 	public PropertyType getType() {
@@ -52,7 +49,7 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	}
 
 	public IPropertyValue copy() {
-		return new IntPropertyValue(getPropertyName(), pdata, value == null ? null : new Integer(value.intValue()));
+		return new IntPropertyValue(getPropertyName(), metadata, value == null ? null : new Integer(value.intValue()));
 	}
 
 	public final Object getValue() {

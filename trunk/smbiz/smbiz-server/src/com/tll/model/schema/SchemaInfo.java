@@ -149,7 +149,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		// non-relational...
 		if(isNonRelational(m)) {
 
-			FieldData fd = null;
+			PropertyMetadata fd = null;
 
 			final Column c = m.getAnnotation(Column.class);
 
@@ -166,37 +166,37 @@ public final class SchemaInfo implements ISchemaInfo {
 			assert rt != null : "The return type is null";
 			if(rt.equals(String.class)) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
-				fd = new FieldData(PropertyType.STRING, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.STRING, managed, required, maxlen);
 			}
 			else if(rt.isEnum()) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
-				fd = new FieldData(PropertyType.ENUM, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.ENUM, managed, required, maxlen);
 			}
 			else if(int.class.equals(rt) || Integer.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenInt : maxlen;
-				fd = new FieldData(PropertyType.INT, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.INT, managed, required, maxlen);
 			}
 			else if(boolean.class.equals(rt) || Boolean.class.equals(rt)) {
 				maxlen = maxlen == -1 ? 5 : maxlen;
-				fd = new FieldData(PropertyType.BOOL, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.BOOL, managed, required, maxlen);
 			}
 			else if(float.class.equals(rt) || Float.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenFloat : maxlen;
-				fd = new FieldData(PropertyType.FLOAT, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.FLOAT, managed, required, maxlen);
 			}
 			else if(double.class.equals(rt) || Double.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenDouble : maxlen;
-				fd = new FieldData(PropertyType.DOUBLE, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.DOUBLE, managed, required, maxlen);
 			}
 			else if(long.class.equals(rt) || Long.class.equals(rt)) {
 				maxlen = maxlen == -1 ? maxLenLong : maxlen;
-				fd = new FieldData(PropertyType.LONG, propName, managed, required, maxlen);
+				fd = new PropertyMetadata(PropertyType.LONG, managed, required, maxlen);
 			}
 			else if(char.class.equals(rt) || Character.class.equals(rt)) {
-				fd = new FieldData(PropertyType.CHAR, propName, managed, required, 1);
+				fd = new PropertyMetadata(PropertyType.CHAR, managed, required, 1);
 			}
 			else if(Date.class.equals(rt)) {
-				fd = new FieldData(PropertyType.DATE, propName, managed, required, 30);
+				fd = new PropertyMetadata(PropertyType.DATE, managed, required, 30);
 			}
 
 			return fd;
@@ -268,14 +268,14 @@ public final class SchemaInfo implements ISchemaInfo {
 		return classMap.get(propertyName);
 	}
 
-	public FieldData getFieldData(final Class<? extends IEntity> entityClass, final String propertyName)
+	public PropertyMetadata getPropertyMetadata(final Class<? extends IEntity> entityClass, final String propertyName)
 			throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(sp.getPropertyType().isRelational()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
 					+ " is not non-relational.");
 		}
-		return (FieldData) sp;
+		return (PropertyMetadata) sp;
 	}
 
 	public RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propertyName)

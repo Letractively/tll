@@ -54,10 +54,6 @@ public class Page<T> implements IPage<T>, IMarshalable {
 		this.pageNumber = pageNumber;
 	}
 
-	public String descriptor() {
-		return "Page";
-	}
-
 	public void setPage(List<T> pageElements, int pageNumber) {
 		this.pageElements = pageElements;
 		this.pageNumber = pageNumber;

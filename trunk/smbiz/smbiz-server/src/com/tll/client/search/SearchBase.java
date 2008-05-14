@@ -39,10 +39,6 @@ public abstract class SearchBase implements ISearch {
 		this.criteriaType = criteriaType;
 	}
 
-	public String descriptor() {
-		return "Search criteria";
-	}
-
 	/**
 	 * @return the criteriaType
 	 */

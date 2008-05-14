@@ -57,10 +57,6 @@ public class Sorting implements IMarshalable {
 		setPrimarySortColumn(sortColumn);
 	}
 
-	public String descriptor() {
-		return "Sorting";
-	}
-
 	public int size() {
 		return columns == null ? 0 : columns.length;
 	}

@@ -16,10 +16,6 @@ public class PropKey implements IMarshalable {
 
 	public String prop;
 
-	public String descriptor() {
-		return prop + " property key";
-	}
-
 	/**
 	 * Constructor
 	 */

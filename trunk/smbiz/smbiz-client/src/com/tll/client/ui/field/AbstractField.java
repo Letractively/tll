@@ -18,7 +18,6 @@ import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyData;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -40,6 +39,7 @@ import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Input field abstraction.
@@ -346,16 +346,16 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		GlobalFormat format = (this instanceof HasFormat) ? ((HasFormat) this).getFormat() : null;
 
 		// set property meta data related field properties
-		PropertyData metadata = pv.getPropertyData();
+		PropertyMetadata metadata = pv.getMetadata();
 		if(metadata != null) {
 
-			setRequired(metadata.required && !metadata.managed);
+			setRequired(metadata.isRequired() && !metadata.isManaged());
 			if(this instanceof HasMaxLength) {
-				((HasMaxLength) this).setMaxLen(metadata.maxLen);
+				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
 			}
 
 			// critical: set the type coercion validator
-			switch(metadata.propertyType) {
+			switch(metadata.getPropertyType()) {
 				case BOOL:
 					addValidator(BooleanValidator.INSTANCE);
 					break;
@@ -411,7 +411,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 					break;
 
 				default:
-					throw new IllegalStateException("Unhandled model property type: " + metadata.propertyType.name());
+					throw new IllegalStateException("Unhandled model property type: " + metadata.getPropertyType().name());
 			}
 		}
 

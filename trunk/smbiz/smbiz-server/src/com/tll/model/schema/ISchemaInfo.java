@@ -25,14 +25,14 @@ public interface ISchemaInfo {
 	String[] getSchemaPropertyNames(Class<? extends IEntity> entityClass) throws SchemaInfoException;
 
 	/**
-	 * Retrieves the {@link FieldData} for the given entity property name.
+	 * Retrieves the {@link PropertyMetadata} for the given entity property name.
 	 * @param entityClass The entity type
 	 * @param propertyName The entity property name
-	 * @return {@link FieldData} assoc. with the given property
+	 * @return {@link PropertyMetadata} assoc. with the given property
 	 * @throws SchemaInfoException When the property is not found for the given
 	 *         entity type
 	 */
-	FieldData getFieldData(Class<? extends IEntity> entityClass, String propertyName) throws SchemaInfoException;
+	PropertyMetadata getPropertyMetadata(Class<? extends IEntity> entityClass, String propertyName) throws SchemaInfoException;
 
 	/**
 	 * Retrieves the {@link RelationInfo} for the given entity property name.

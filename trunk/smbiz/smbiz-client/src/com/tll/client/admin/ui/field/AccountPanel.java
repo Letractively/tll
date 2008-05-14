@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
@@ -260,8 +261,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		for(AddressType at : aamap.keySet()) {
 			AccountAddressPanel aap = aamap.get(at).panel;
 			if(aap != null) {
-				String propertyName = aap.getFields().getPropertyName();
-				if(isPendingProperty(propertyName)) {
+				if(aap.getFields().isPending()) {
 					Model aaproto = aamap.get(at).proto;
 					assert aaproto != null;
 					String actualPropName = addresses.add(aaproto);
@@ -285,7 +285,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanelModelBinding binding = aamap.get(at);
 			assert binding.panel == null;
-			String pendingIndexedPropName = getPendingPropertyName();
+			String pendingIndexedPropName = FieldGroup.getPendingPropertyName();
 			binding.panel = new AccountAddressPanel(pendingIndexedPropName, at);
 			binding.proto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 			assert binding.proto != null;

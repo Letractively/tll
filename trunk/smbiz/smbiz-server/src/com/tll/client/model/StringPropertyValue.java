@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -32,11 +33,11 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	/**
 	 * Constructor
 	 * @param propertyName
-	 * @param pdata
+	 * @param metadata
 	 * @param value
 	 */
-	public StringPropertyValue(String propertyName, PropertyData pdata, String value) {
-		super(propertyName, pdata);
+	public StringPropertyValue(String propertyName, PropertyMetadata metadata, String value) {
+		super(propertyName, metadata);
 		this.value = value;
 
 	}
@@ -54,7 +55,7 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	}
 
 	public IPropertyValue copy() {
-		return new StringPropertyValue(getPropertyName(), pdata, value);
+		return new StringPropertyValue(getPropertyName(), metadata, value);
 	}
 
 	public final Object getValue() {

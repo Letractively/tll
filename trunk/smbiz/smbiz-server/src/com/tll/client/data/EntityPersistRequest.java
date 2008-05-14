@@ -37,10 +37,6 @@ public class EntityPersistRequest extends EntityRequest {
 		return entity.getEntityType();
 	}
 
-	public String descriptor() {
-		return "Entity persist request";
-	}
-
 	/**
 	 * @return the entity
 	 */

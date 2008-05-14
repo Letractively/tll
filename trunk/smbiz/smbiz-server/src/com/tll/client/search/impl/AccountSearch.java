@@ -34,11 +34,6 @@ public final class AccountSearch extends NamedTimeStampEntitySearch {
 		super(criteriaType, accountType);
 	}
 
-	@Override
-	public String descriptor() {
-		return "Account Search";
-	}
-
 	public final RefKey getParentAccountRef() {
 		return parentAccountRef;
 	}

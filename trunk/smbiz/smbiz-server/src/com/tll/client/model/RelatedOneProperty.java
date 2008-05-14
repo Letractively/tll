@@ -31,10 +31,6 @@ public class RelatedOneProperty extends ModelRefProperty {
 		super(propName, reference, model);
 	}
 
-	public String descriptor() {
-		return "Related one model ref property";
-	}
-
 	public PropertyType getType() {
 		return PropertyType.RELATED_ONE;
 	}
