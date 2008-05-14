@@ -195,22 +195,20 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	}
 
 	private void applySorting(Sorting sorting) {
-		assert sortlinks != null;
-		if(sorting != null) {
-			SortColumn sc = sorting.getPrimarySortColumn();
+		assert sortlinks != null && sorting != null;
+		SortColumn sc = sorting.getPrimarySortColumn();
 
-			// resolve the column index
-			int index = resolveColumnIndex(sc.getPropertyName());
+		// resolve the column index
+		int index = resolveColumnIndex(sc.getPropertyName());
 
-			// reset old sort column (if there is one)
-			if(crntSortColIndex >= 0) {
-				sortlinks[crntSortColIndex].clearSortDirection();
-			}
-
-			// set new sort column
-			sortlinks[index].setSortDirection(sc.getDirection());
-			crntSortColIndex = index;
+		// reset old sort column (if there is one)
+		if(crntSortColIndex >= 0) {
+			sortlinks[crntSortColIndex].clearSortDirection();
 		}
+
+		// set new sort column
+		sortlinks[index].setSortDirection(sc.getDirection());
+		crntSortColIndex = index;
 	}
 
 	/**
@@ -367,7 +365,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	public void setPage(IPage<Model> page, Sorting sorting) {
 		removeBodyRows();
 		addBodyRows(page);
-		if(sortlinks != null) applySorting(sorting);
+		if(sortlinks != null && sorting != null) applySorting(sorting);
 		crntPage = page.getPageNumber() + 1;
 		numPages = page.getNumPages();
 		actvRowIndex = crntRowIndex = -1; // reset

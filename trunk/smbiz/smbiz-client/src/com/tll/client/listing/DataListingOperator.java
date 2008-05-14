@@ -32,8 +32,6 @@ public class DataListingOperator extends AbstractListingOperator {
 
 	private final int pageSize;
 
-	private int size = -1;
-
 	private int numPages = -1;
 
 	/**
@@ -80,11 +78,9 @@ public class DataListingOperator extends AbstractListingOperator {
 	 */
 	private IPage<Model> generatePage(int page) {
 
-		// calculate size and num pages if not already
-		if(size == -1) {
-			size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
-			numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
-		}
+		// calculate size and num pages
+		final int size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
+		numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
 
 		// calculate first and last page indexes
 		int start, end;
@@ -185,9 +181,7 @@ public class DataListingOperator extends AbstractListingOperator {
 	}
 
 	public void refresh() {
-		if(size == 0) return;
 		IPage<Model> mpage = generatePage(pageNum);
-
 		listingWidget.setPage(mpage, null);
 	}
 
@@ -201,6 +195,6 @@ public class DataListingOperator extends AbstractListingOperator {
 	}
 
 	public void clear() {
-		size = numPages = pageNum = -1;
+		numPages = pageNum = -1;
 	}
 }

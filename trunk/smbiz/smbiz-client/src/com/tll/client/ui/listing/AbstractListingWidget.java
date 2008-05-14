@@ -154,6 +154,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 
 	public final void addRow(Model rowData) {
 		table.addRow(rowData);
+		if(navBar != null) navBar.increment();
 	}
 
 	public final void updateRow(int rowIndex, Model rowData) {
@@ -162,6 +163,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 
 	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
+		if(navBar != null) navBar.decrement();
 	}
 
 	public final void markRowDeleted(int rowIndex) {

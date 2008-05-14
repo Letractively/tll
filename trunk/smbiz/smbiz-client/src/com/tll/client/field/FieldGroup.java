@@ -358,7 +358,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	// TODO remove pending sub groups!!
 	public void reset() {
 		MsgManager.instance.clear(refWidget, true);
 		for(IField field : fields) {

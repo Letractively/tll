@@ -76,6 +76,8 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	private int numPages = -1;
 	private int crntPage = -1;
 
+	private boolean firstPage, lastPage;
+
 	/**
 	 * Constructor
 	 * @param config Must be specified.
@@ -288,29 +290,26 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		}
 	}
 
-	private void setSummaryCaption() {
-		assert listingElementName != null;
-		if(totalSize == 0) {
-			lblSmry.setText("No " + listingElementName + "s exist");
-		}
-		else {
-			lblSmry.setText("Displaying " + listingElementName + "s " + (firstIndex + 1) + " - " + (lastIndex + 1) + " of "
-					+ totalSize);
-		}
+	void increment() {
+		lastIndex++;
+		draw();
 	}
 
-	public void setPage(IPage<Model> page) {
-		// if(event.isSuccess()) {
-		this.firstIndex = page.getFirstIndex();
-		this.lastIndex = page.getLastIndex();
-		this.totalSize = page.getTotalSize();
-		this.numPages = page.getNumPages();
-		this.crntPage = page.getPageNumber() + 1;
+	void decrement() {
+		lastIndex--;
+		draw();
+	}
 
+	/**
+	 * Re-draws the contents of the nav bar.
+	 * @param isFirstPage
+	 * @param isLastPage
+	 */
+	private void draw() {
 		if(pageable) {
 			// first page btn
-			btnPageFirst.setEnabled(!page.isFirstPage());
-			if(page.isFirstPage()) {
+			btnPageFirst.setEnabled(!firstPage);
+			if(firstPage) {
 				App.imgs().page_first_disabled().applyTo(imgPageFirst);
 			}
 			else {
@@ -318,8 +317,8 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			}
 
 			// last page btn
-			btnPageLast.setEnabled(!page.isLastPage());
-			if(page.isLastPage()) {
+			btnPageLast.setEnabled(!lastPage);
+			if(lastPage) {
 				App.imgs().page_last_disabled().applyTo(imgPageLast);
 			}
 			else {
@@ -327,8 +326,8 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			}
 
 			// prev page btn
-			btnPagePrev.setEnabled(!page.isFirstPage());
-			if(page.isFirstPage()) {
+			btnPagePrev.setEnabled(!firstPage);
+			if(firstPage) {
 				App.imgs().page_prev_disabled().applyTo(imgPagePrev);
 			}
 			else {
@@ -336,8 +335,8 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			}
 
 			// next page btn
-			btnPageNext.setEnabled(!page.isLastPage());
-			if(page.isLastPage()) {
+			btnPageNext.setEnabled(!lastPage);
+			if(lastPage) {
 				App.imgs().page_next_disabled().applyTo(imgPageNext);
 			}
 			else {
@@ -349,6 +348,25 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			lblPagePost.setText("of " + numPages);
 		}
 
-		setSummaryCaption();
+		// summary caption
+		assert listingElementName != null;
+		if(totalSize == 0) {
+			lblSmry.setText("No " + listingElementName + "s exist");
+		}
+		else {
+			lblSmry.setText("Displaying " + listingElementName + "s " + (firstIndex + 1) + " - " + (lastIndex + 1) + " of "
+					+ totalSize);
+		}
+	}
+
+	public void setPage(IPage<Model> page) {
+		this.firstIndex = page.getFirstIndex();
+		this.lastIndex = page.getLastIndex();
+		this.totalSize = page.getTotalSize();
+		this.numPages = page.getNumPages();
+		this.crntPage = page.getPageNumber() + 1;
+		this.firstPage = page.isFirstPage();
+		this.lastPage = page.isFirstPage();
+		draw();
 	}
 }

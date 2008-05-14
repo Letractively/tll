@@ -324,7 +324,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			else {
 				params.add(event.getModel());
 				fields.addField(paramFieldPanels.get(paramFieldPanels.size() - 1).getFields());
-				lstngParams.addRow(event.getModel());
+				// lstngParams.addRow(event.getModel());
+				lstngParams.refresh();
 			}
 		}
 		else if(event.getOp() == EditOp.CANCEL) {
