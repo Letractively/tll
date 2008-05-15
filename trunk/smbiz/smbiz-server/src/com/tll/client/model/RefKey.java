@@ -9,24 +9,26 @@ import com.tll.model.EntityType;
 import com.tll.util.IDescriptorProvider;
 
 /**
- * RefKey - Generic proxy for an Object having an id, type and optionally a
- * name.
+ * RefKey - Generic model entity proxy encapsulating the uniqueness of the
+ * referenced model entity.
  * @author jpk
  */
-public class RefKey implements IMarshalable, IDescriptorProvider {
+public final class RefKey implements IMarshalable, IDescriptorProvider {
 
 	/**
 	 * Required type
 	 */
-	protected EntityType type;
+	private EntityType type;
+
 	/**
 	 * Required id
 	 */
-	protected Integer id;
+	private Integer id;
+
 	/**
 	 * Optional name
 	 */
-	protected String name;
+	private String name;
 
 	/**
 	 * Constructor
@@ -43,9 +45,9 @@ public class RefKey implements IMarshalable, IDescriptorProvider {
 	 */
 	public RefKey(EntityType type, Integer id, String name) {
 		super();
-		this.type = type;
-		this.id = id;
-		this.name = name;
+		setType(type);
+		setId(id);
+		setName(name);
 	}
 
 	public EntityType getType() {
@@ -53,6 +55,9 @@ public class RefKey implements IMarshalable, IDescriptorProvider {
 	}
 
 	public void setType(EntityType type) {
+		if(type == null) {
+			throw new IllegalArgumentException("A type must be specified for ref keys");
+		}
 		this.type = type;
 	}
 
@@ -91,20 +96,32 @@ public class RefKey implements IMarshalable, IDescriptorProvider {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(this == obj) {
-			return true;
+		if(this == obj) return true;
+		if(obj == null) return false;
+		// NOTE: we always return false if the key is not set
+		if(!isSet()) return false;
+		if(getClass() != obj.getClass()) return false;
+		final RefKey other = (RefKey) obj;
+		if(!type.equals(other.type)) return false;
+		if(id == null) {
+			if(other.id != null) return false;
 		}
-		if(!(obj instanceof RefKey)) {
-			return false;
+		else if(!id.equals(other.id)) return false;
+		if(name == null) {
+			if(other.name != null) return false;
 		}
-
-		final RefKey key = (RefKey) obj;
-		return type.equals(key.type) && id.equals(key.id);
+		else if(!name.equals(other.name)) return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return (id == null ? 0 : 27 * id.hashCode()) + (type == null ? 0 : 29 * type.hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
 	}
 
 	@Override

@@ -161,6 +161,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		table.updateRow(rowIndex, rowData);
 	}
 
+	// TODO do we need this?
 	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();

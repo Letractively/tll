@@ -70,7 +70,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
-	private final Button btnSave, btnReset, btnCancel;
+	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
@@ -81,9 +81,12 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
-	 * @param showCancelBtn
+	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
+	 *        when clicked.
+	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
+	 *        when clicked.
 	 */
-	public EditPanel(boolean showCancelBtn) {
+	public EditPanel(boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 		// hide the button row until initialized
 		pnlButtonRow.setVisible(false);
@@ -93,6 +96,14 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 		btnReset = new Button("Reset", this);
 		pnlButtonRow.add(btnReset);
+
+		if(showDeleteBtn) {
+			btnDelete = new Button("Delete", this);
+			pnlButtonRow.add(btnDelete);
+		}
+		else {
+			btnDelete = null;
+		}
 
 		if(showCancelBtn) {
 			btnCancel = new Button("Cancel", this);
@@ -113,10 +124,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * Constructor
 	 * @param fieldPanel The panel containing the desired fields for edit.
-	 * @param showCancelBtn Show the cancel button?
+	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
+	 *        when clicked.
+	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
+	 *        when clicked.
 	 */
-	public EditPanel(FieldGroupPanel fieldPanel, boolean showCancelBtn) {
-		this(showCancelBtn);
+	public EditPanel(FieldGroupPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+		this(showCancelBtn, showDeleteBtn);
 		setFieldPanel(fieldPanel);
 	}
 
@@ -245,6 +259,10 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 		else if(sender == btnReset) {
 			reset();
+		}
+		else if(sender == btnDelete) {
+			fieldPanel.getFields().setMarkedDeleted(true);
+			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE, model));
 		}
 		else if(sender == btnCancel) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL, model));

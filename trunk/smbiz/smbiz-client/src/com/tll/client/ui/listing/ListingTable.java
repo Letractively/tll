@@ -482,7 +482,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		removeRow(rowIndex);
 		// update the numRows property
 		numRows--;
-		rowRefs.remove(rowIndex);
+		rowRefs.remove(rowIndex - 1);
 		updateRowsBelow(rowIndex, false);
 
 		// reset the current row index

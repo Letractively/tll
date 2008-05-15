@@ -161,7 +161,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	public final boolean updateModel(Model model) throws ValidationException {
 		fields.validate();
 		onBeforeUpdateModel(model);
-		if(fields.updateModel(model)) {
+		if(fields.updateModel(model) || fields.isPending()) {
 			onAfterUpdateModel(model);
 			return true;
 		}

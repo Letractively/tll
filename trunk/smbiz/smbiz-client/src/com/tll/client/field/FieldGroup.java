@@ -121,7 +121,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Is the given property name a pending property? Used in tandem with
-	 * {@link #getPendingPropertyName()}.
+	 * {@link #getPendingPropertyName()}. This scheme is used to indicate model
+	 * add operations.
 	 * @param propName The property name to check
 	 * @return true/false
 	 * @see #getPendingPropertyName()
@@ -431,8 +432,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	public boolean updateModel(Model model) {
 		model.setMarkedDeleted(markedDeleted);
-		if(markedDeleted || isPending()) {
-			// since we are marked as deleted or pending, change is true
+		if(markedDeleted) {
+			// since we are marked as deleted, change is true
 			return true;
 		}
 		boolean changed = false;

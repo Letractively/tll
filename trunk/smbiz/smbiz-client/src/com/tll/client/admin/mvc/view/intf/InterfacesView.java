@@ -24,9 +24,9 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
+import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
-import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
@@ -92,7 +92,7 @@ public class InterfacesView extends AbstractView {
 				this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(new InterfacePanel(null), false);
+				editPanel = new EditPanel(new InterfacePanel(null), false, true);
 				editPanel.addEditListener(this);
 
 				modelChangeHandler = new AbstractModelChangeHandler() {
@@ -126,6 +126,9 @@ public class InterfacesView extends AbstractView {
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp() == EditOp.SAVE) {
 					modelChangeHandler.handleModelPersist(event.getModel());
+				}
+				else if(event.getOp() == EditOp.DELETE) {
+					modelChangeHandler.handleModelDelete(event.getModel().getRefKey());
 				}
 			}
 

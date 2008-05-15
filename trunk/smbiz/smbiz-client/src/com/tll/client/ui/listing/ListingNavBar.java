@@ -292,11 +292,13 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 
 	void increment() {
 		lastIndex++;
+		totalSize++;
 		draw();
 	}
 
 	void decrement() {
 		lastIndex--;
+		totalSize--;
 		draw();
 	}
 

@@ -55,7 +55,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	public EditView(FieldGroupPanel fldGrpPnl, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(fldGrpPnl, true);
+		editPanel = new EditPanel(fldGrpPnl, true, false);
 		editPanel.addEditListener(this);
 
 		modelChangeHandler = new AbstractModelChangeHandler() {

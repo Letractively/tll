@@ -16,6 +16,7 @@ public final class EditEvent extends BaseEvent {
 
 	public enum EditOp {
 		SAVE,
+		DELETE,
 		CANCEL;
 	}
 

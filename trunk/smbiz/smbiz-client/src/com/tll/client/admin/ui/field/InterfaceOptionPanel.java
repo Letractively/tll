@@ -34,7 +34,6 @@ import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.CSS;
@@ -127,9 +126,18 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 			@Override
 			protected void doDeleteRow(int rowIndex, RefKey rowRef) {
-				FieldGroup paramGrp = (FieldGroup) fields.getField(PropertyPath.indexed("parameters", rowIndex - 1));
-				paramGrp.setMarkedDeleted(true);
-				lstngParams.deleteRow(rowIndex);
+				// FieldGroup paramGrp = (FieldGroup)
+				// fields.getField(PropertyPath.indexed("parameters", rowIndex - 1));
+				FieldGroup paramGrp = paramFieldPanels.get(rowIndex - 1).getFields();
+				if(paramGrp.isPending()) {
+					params.remove(rowIndex - 1);
+					paramFieldPanels.remove(rowIndex - 1);
+					lstngParams.refresh();
+				}
+				else {
+					paramGrp.setMarkedDeleted(true);
+					lstngParams.markRowDeleted(rowIndex);
+				}
 			}
 
 		}, new IAddRowDelegate() {
@@ -179,7 +187,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		});
 
-		paramEditPanel = new EditPanel(true);
+		paramEditPanel = new EditPanel(true, false);
 		paramEditPanel.addEditListener(this);
 
 		dlgParam = new Dialog(lstngParams, false);
@@ -324,7 +332,6 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			else {
 				params.add(event.getModel());
 				fields.addField(paramFieldPanels.get(paramFieldPanels.size() - 1).getFields());
-				// lstngParams.addRow(event.getModel());
 				lstngParams.refresh();
 			}
 		}
