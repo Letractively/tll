@@ -21,28 +21,6 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * Tests two Strings for equality. Same as {@link String#equals(Object)}.
-	 * Either argument may be <code>null</code>.
-	 * @param a a String, or <code>null</code>
-	 * @param b a String, or <code>null</code>
-	 * @return <code>true</code> if
-	 *         <code>(a == b || a != null && a.equals(b))</code>
-	 */
-	public static native boolean equals(String a, String b) /*-{
-		return a == b;
-	}-*/;
-
-	// return s==null? null : s.test(/^\s+|\s+$/g);
-	public static native boolean isWhitespace(String s)/*-{
-							  var reg = /^\s+|\s+$/g
-							  return s==null? null : reg.test(s);
-							}-*/;
-
-	public static native String trim(String s)/*-{
-								try { return s.replace(/^\s+|\s+$/g, ""); } catch(e) { return s; }
-							}-*/;
-
-	/**
 	 * Abbreviates a string.
 	 * @param str
 	 * @param length
@@ -106,67 +84,6 @@ public abstract class StringUtil {
 		}
 		return str;
 	}
-
-	/*
-	// pulled from apache commons-lang 2.3
-	// private static boolean isDelimiter(char ch, char[] delimiters) {
-	private static boolean isDelimiter(String ch, String delimiters) {
-		if(delimiters == null) {
-			return isWhitespace(ch);
-		}
-		for(int i = 0, isize = delimiters.length(); i < isize; i++) {
-			if(ch == delimiters.substring(i, i + 1)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// pulled from apache commons-lang 2.3
-	// public static String capitalize(String str, char[] delimiters) {
-	public static String capitalize(String str, String delimiters) {
-		int delimLen = (delimiters == null ? -1 : delimiters.length());
-		if(str == null || str.length() == 0 || delimLen == 0) {
-			return str;
-		}
-		int strLen = str.length();
-		StringBuffer buffer = new StringBuffer(strLen);
-		boolean capitalizeNext = true;
-		for(int i = 0; i < strLen; i++) {
-			// char ch = str.charAt(i);
-			String ch = str.substring(i, i + 1);
-
-			if(isDelimiter(ch, delimiters)) {
-				buffer.append(ch);
-				capitalizeNext = true;
-			}
-			else if(capitalizeNext) {
-				// buffer.append(Character.toTitleCase(ch));
-				buffer.append(ch.toUpperCase());
-				capitalizeNext = false;
-			}
-			else {
-				buffer.append(ch);
-			}
-		}
-		return buffer.toString();
-	}
-
-	// pulled from apache commons-lang 2.3
-	public static String capitalizeFully(String str) {
-		return capitalizeFully(str, null);
-	}
-
-	// pulled from apache commons-lang 2.3
-	public static String capitalizeFully(String str, String delimiters) {
-		int delimLen = (delimiters == null ? -1 : delimiters.length());
-		if(str == null || str.length() == 0 || delimLen == 0) {
-			return str;
-		}
-		str = str.toLowerCase();
-		return capitalize(str, delimiters);
-	}
-	*/
 
 	/**
 	 * Converts a Presentation Style string to an ENUM_STYLE string.
