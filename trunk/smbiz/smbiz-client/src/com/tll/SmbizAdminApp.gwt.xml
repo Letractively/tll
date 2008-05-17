@@ -30,6 +30,7 @@
 
   <public path="public" />
   
+  <!-- 
   <stylesheet src="css/reset.css" />
   <stylesheet src="css/base.css" />
   <stylesheet src="css/widget.css" />
@@ -43,4 +44,5 @@
   <stylesheet src="css/viewpath.css" />
   <stylesheet src="css/view.css" />
   <stylesheet src="css/admin.css" />
+  -->
 </module>
