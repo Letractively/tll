@@ -31,9 +31,6 @@ public class ConfigTest {
 	private static final List<String> keys = new ArrayList<String>();
 
 	static {
-		System.setProperty(Config.MACHINE_NAME_KEY, "domain");
-		System.setProperty(Config.USER_NAME_KEY, "user");
-
 		// # simple keys
 		keys.add("props.simple.propA");
 		keys.add("props.simple.propB");
@@ -189,6 +186,8 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testUserDomainFileLoading() throws Exception {
+		System.setProperty(Config.MACHINE_NAME_KEY, "domain");
+		System.setProperty(Config.USER_NAME_KEY, "user");
 		Config.instance().reload();
 		Config config = Config.instance();
 		String pval1 = config.getString("props.simple.propA");
