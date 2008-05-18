@@ -13,12 +13,16 @@ The following environment variables are required:
 ||GROOVY_HOME||Points to the root groovy install dir.||
 ||ANT_HOME||Points to the root ant install dir.||
 ||TLL_ROOT||Points to the root dir of the tll source tree.||
+||tll-config.machine.name||The tll configuration system property machine name.||
+||tll-config.user.name||The tll configuration system property user name.||
 
 Append the *Path* environment variable to include:
   * <JAVA_HOME>/bin
   * <GROOVY_HOME>/bin
   * <ANT_HOME>/bin
   * {subversion install dir}/bin
+
+These syst
 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
