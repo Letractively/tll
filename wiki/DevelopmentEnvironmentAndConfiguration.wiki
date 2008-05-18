@@ -4,6 +4,8 @@ Lists the necessary local environment and IDE settings for building and deployin
 
 == jdk ==
   * Download and install the [http://java.sun.com/javase/downloads/index.jsp jdk] version jdk1.6.0_05 or higher.
+  * Set environment variable: *JAVA_HOME* that points to the root Java install dir.
+  * Ensure the Path environment variable includes the path: <JAVA_HOME>/bin.
 
 == groovy ==
   * Download and install [http://gant.codehaus.org/ groovy] version 1.5.4+.
@@ -21,7 +23,6 @@ Lists the necessary local environment and IDE settings for building and deployin
 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
-
 
 == Classpath Variables ==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
