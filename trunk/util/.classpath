@@ -3,13 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spring"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-lang"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-validator"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jakarta-oro"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/TestNG"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/tll-config"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-io"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-collections.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-configuration.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-configuration-1.5-sources.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-io.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-lang.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-logging.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-validator.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jakarta-oro.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -9,8 +9,8 @@
  * - commons-lang.jar (v2.3+)
  * - commons-collections.jar (v3.2+)
  * - commons-configuration.jar (v1.5+)
- * - tll-config.jar (v1.0++)
- * - config.properties and optionally {username}.{machine}.config.properties or local.config.properties
+ * - tll-config.jar (v1.0+)
+ * - config.properties and optionally {machine name}.{user name}.config.properties or local.config.properties
  */
  
 def config = com.tll.config.Config.instance();
@@ -29,9 +29,7 @@ def dependant_libs = Ant.path {
 	pathelement(location: "${property.'lib.commons-io'}")
 	pathelement(location: "${property.'lib.commons-validator'}")
 	pathelement(location: "${property.'lib.jakarto-oro'}")
-	pathelement(location: "${property.'lib.velocity'}")
 	pathelement(location: "${property.'lib.testng'}")
-	pathelement(location: "${property.'lib.guice'}")
 	pathelement(location: "${property.'lib.spring'}")
 }
 
