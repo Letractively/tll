@@ -43,54 +43,45 @@ public final class Config implements Configuration {
 	public static final String LOCAL_CONFIG_PROPERTIES_FILE_NAME = "local.config.properties";
 
 	/**
-	 * The default domain env key
+	 * The machine name system property key
 	 */
-	public static final String DEFAULT_DOMAIN_ENVIRONMENT_KEY = "USERDOMAIN";
+	public static final String MACHINE_NAME_KEY = "tll.config.machine.name";
 
 	/**
-	 * The default username env key
+	 * The user name system property key
 	 */
-	public static final String DEFAULT_USERNAME_ENVIRONMENT_KEY = "USERNAME";
-
-	private static String usernameKey = DEFAULT_USERNAME_ENVIRONMENT_KEY;
-
-	private static String domainKey = DEFAULT_DOMAIN_ENVIRONMENT_KEY;
-
-	/**
-	 * Sets the domain environment key employed by the {@link Config} instance.
-	 * @param key
-	 */
-	public static final void setDomainEnvKey(String key) {
-		domainKey = key;
-	}
-
-	/**
-	 * Sets the username environment key employed by the {@link Config} instance.
-	 * @param key
-	 */
-	public static final void setUsernameEnvKey(String key) {
-		usernameKey = key;
-	}
+	public static final String USER_NAME_KEY = "tll.config.user.name";
 
 	private static final Config instance = new Config();
 
 	/**
-	 * <p>
-	 * FORMAT:
-	 * <p>
-	 * "{domain env key prop val}.{username env prop val}.config.properties"
+	 * Determines the machine/user config file name based on the corresponding
+	 * system property values for {@link #MACHINE_NAME_KEY} and
+	 * {@link #USER_NAME_KEY}. FORMAT:
+	 * <code>"{machine name}.{user name}.config.properties"</code>
 	 * @return The user environment config file overriding the base config prop
-	 *         file but overridable by the local confif file.
-	 * @throws ConfigurationException When at least one of the env keys resolves
-	 *         to a <code>null</code> value.
+	 *         file but overridable by the local confif file or <code>null</code>
+	 *         if either the machine name or user name properties could not be
+	 *         resolved.
 	 */
-	private final String getDomainUserConfigPropFileName() throws ConfigurationException {
-		String domain = System.getenv(domainKey);
-		String username = System.getenv(usernameKey);
-		if(domain == null || username == null) {
-			throw new ConfigurationException();
+	private final String getMachineUserConfigPropFileName() {
+		String machinename = System.getProperty(MACHINE_NAME_KEY);
+		if(machinename == null) {
+			// try env property
+			machinename = System.getenv(MACHINE_NAME_KEY);
 		}
-		return domain + '.' + username + ".config.properties";
+		if(machinename == null || machinename.isEmpty()) {
+			return null;
+		}
+		String username = System.getProperty(USER_NAME_KEY);
+		if(username == null) {
+			// try env property
+			username = System.getenv(USER_NAME_KEY);
+		}
+		if(username == null || username.isEmpty()) {
+			return null;
+		}
+		return machinename + '.' + username + ".config.properties";
 	}
 
 	public static final Config instance() {
@@ -104,8 +95,7 @@ public final class Config implements Configuration {
 
 	/**
 	 * Constructor
-	 * @throws RuntimeException When the app configuration can't be successfully
-	 *         loaded.
+	 * @throws RuntimeException When the configuration is not successfully loaded.
 	 */
 	private Config() {
 		super();
@@ -116,9 +106,9 @@ public final class Config implements Configuration {
 	 * [Re-]loads the configuration from disk.
 	 */
 	public void reload() {
-		PropertiesConfiguration baseProps, userDomainProps, localProps;
+		PropertiesConfiguration baseProps, machineUserProps, localProps;
 
-		// load base props
+		// load the required base props
 		try {
 			baseProps = new PropertiesConfiguration();
 			baseProps.setDelimiterParsingDisabled(true);
@@ -128,17 +118,23 @@ public final class Config implements Configuration {
 			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
 		}
 
-		// load domain user props
-		try {
-			userDomainProps = new PropertiesConfiguration();
-			userDomainProps.setDelimiterParsingDisabled(true);
-			userDomainProps.load(getDomainUserConfigPropFileName());
+		// load the machine user props (if present)
+		String machineUserPropFileName = getMachineUserConfigPropFileName();
+		if(machineUserPropFileName != null) {
+			try {
+				machineUserProps = new PropertiesConfiguration();
+				machineUserProps.setDelimiterParsingDisabled(true);
+				machineUserProps.load(machineUserPropFileName);
+			}
+			catch(ConfigurationException ce) {
+				throw new RuntimeException("Unable to load the machine/user configuration: " + ce.getMessage(), ce);
+			}
 		}
-		catch(ConfigurationException ce) {
-			userDomainProps = null; // ok, this file is optional
+		else {
+			machineUserProps = null;
 		}
 
-		// load optional props (if present)
+		// load the optional local props overrides
 		try {
 			localProps = new PropertiesConfiguration();
 			localProps.setDelimiterParsingDisabled(true);
@@ -150,7 +146,7 @@ public final class Config implements Configuration {
 
 		CompositeConfiguration cc = new CompositeConfiguration();
 		if(localProps != null) cc.addConfiguration(localProps);
-		if(userDomainProps != null) cc.addConfiguration(userDomainProps);
+		if(machineUserProps != null) cc.addConfiguration(machineUserProps);
 		cc.addConfiguration(baseProps);
 
 		root = new CombinedConfiguration();

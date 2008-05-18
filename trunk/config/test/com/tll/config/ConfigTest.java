@@ -31,6 +31,9 @@ public class ConfigTest {
 	private static final List<String> keys = new ArrayList<String>();
 
 	static {
+		System.setProperty(Config.MACHINE_NAME_KEY, "domain");
+		System.setProperty(Config.USER_NAME_KEY, "user");
+
 		// # simple keys
 		keys.add("props.simple.propA");
 		keys.add("props.simple.propB");
@@ -186,9 +189,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testUserDomainFileLoading() throws Exception {
-		String domain = System.getenv(Config.DEFAULT_DOMAIN_ENVIRONMENT_KEY);
-		String username = System.getenv(Config.DEFAULT_USERNAME_ENVIRONMENT_KEY);
-		assert domain != null && domain.equals("domain") && username != null && username.equals("user") : "Make sure to invoke the test from the buildsh.bat script";
+		Config.instance().reload();
 		Config config = Config.instance();
 		String pval1 = config.getString("props.simple.propA");
 		String pval2 = config.getString("props.simple.propB");

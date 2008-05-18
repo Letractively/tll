@@ -27,7 +27,7 @@ def java_compile_classpath = Ant.path {
 // test run classpath
 def java_run_test_classpath = Ant.path {
 	pathelement(location: "${property.'project.dir'}/test")
-	pathelement(location: "${property.'project.dir.build'}/classes")
+	pathelement(location: "${property.'project.dir'}/build/classes")
 	pathelement(location: "${property.'lib.commons-lang'}")
 	pathelement(location: "${property.'lib.commons-logging'}")
 	pathelement(location: "${property.'lib.commons-collections'}")
@@ -58,9 +58,7 @@ target (prepare: 'create directories') {
 	targetStart()
 	println()
 	println 'prepare'
-	Ant.mkdir(dir: property.'project.dir.build')
-	Ant.mkdir(dir: property.'project.dir.build' + '/classes')
-	//Ant.mkdir(dir: property.'project.dir.build' + '/src')	// for javadocs
+	Ant.mkdir(dir: property.'project.dir' + '/build/classes')
 	Ant.mkdir(dir: property.'project.dir' + '/dist')
 	targetEnd()
 }
@@ -69,7 +67,7 @@ target (clean: 'clean directories') {
 	targetStart()
 	println()
 	println 'Cleaning directories...'
- 	Ant.delete(dir: property.'project.dir.build')
+ 	Ant.delete(dir: property.'project.dir' + '/build')
 	Ant.delete(dir: property.'project.dir' + '/dist')
 	targetEnd()
 }
@@ -80,7 +78,7 @@ target (compile: 'compile the project') {
 	println()
  	println 'compiling...'
 	Ant.javac(
-		destdir: "${property.'project.dir.build'}/classes", 
+		destdir: "${property.'project.dir'}/build/classes", 
 		classpath: java_compile_classpath,
 		optimize: 'true',
 		source: property.'project.source', 
@@ -109,7 +107,7 @@ target (dist: 'distribute the project') {
  	println 'distributing...'
 	Ant.jar(
 		destfile: property.'project.dir' + '/dist/tll-config.jar', 
-		basedir: property.'project.dir.build' + '/classes',
+		basedir: property.'project.dir' + '/build/classes',
 		excludes: '**/*Test.class **/*.properties')
 	targetEnd()
 }
