@@ -54,7 +54,7 @@ The following _Preferences -> Java -> Build Path -> *User Libraries*_ are requir
 = Configuration =
 Create a machine and user unique config.properties file having the following naming format:
 
-{machine name}.{user name}.config.properties
+{{{ {machine name}.{user name}.config.properties }}}
 
 This file must declare all properties contained in the root config.properties whose value is UNSPECIFIED.
 
