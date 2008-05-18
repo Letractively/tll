@@ -1,25 +1,24 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
+= Required Software =
+  * [http://java.sun.com/javase/downloads/index.jsp jdk] version jdk1.6.0_05 or higher.
+  * [http://gant.codehaus.org/ groovy] version 1.5.6+.
+  * [http://ant.apache.org/ ant] version 1.7.0+.
+  * [http://gant.codehaus.org/ gant] version 1.2.0+.
+  * [http://subversion.tigris.org/ subversion client] version *1.5* or higher
+
 = environment =
+The following environment variables are required:
+||JAVA_HOME||Points to the root Java install dir.||
+||GROOVY_HOME||Points to the root groovy install dir.||
+||ANT_HOME||Points to the root ant install dir.||
+||TLL_ROOT||Points to the root dir of the tll source tree.||
 
-== jdk ==
-  * Download and install the [http://java.sun.com/javase/downloads/index.jsp jdk] version jdk1.6.0_05 or higher.
-  * Set environment variable: *JAVA_HOME* that points to the root Java install dir.
-  * Ensure the Path environment variable includes the path: <JAVA_HOME>/bin.
-
-== groovy ==
-  * Download and install [http://gant.codehaus.org/ groovy] version 1.5.4+.
-  * Set environment variable: *GROOVY_HOME* that points to the root groovy install dir.
-  * Ensure the Path environment variable includes the path: <GROOVY_HOME>/bin.
-
-== ant ==
-  * Download and install [http://ant.apache.org/ ant] version 1.7.0+.
-  * Set environment variable: *ANT_HOME* that points to the root ant install dir.
-  * Ensure the Path environment variable includes the path: <ANT_HOME>/bin.
-
-== gant ==
-  * Download and install [http://gant.codehaus.org/ gant] version 1.1.1+.
-  * With groovy already installed, run the gant install script from the gant install dir: groovy bin/install.groovy
+Append the *Path* environment variable to include:
+  * <JAVA_HOME>/bin
+  * <GROOVY_HOME>/bin
+  * <ANT_HOME>/bin
+  * {subversion install dir}/bin
 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
