@@ -1,11 +1,11 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 = Required Software =
-  * [http://java.sun.com/javase/downloads/index.jsp jdk] version jdk1.6.0_05 or higher.
-  * [http://gant.codehaus.org/ groovy] version 1.5.6+.
-  * [http://ant.apache.org/ ant] version 1.7.0+.
-  * [http://gant.codehaus.org/ gant] version 1.2.0+.
-  * [http://subversion.tigris.org/ subversion client] version *1.5* or higher
+  * [http://java.sun.com/javase/downloads/index.jsp jdk] 1.6.0_05 or higher.
+  * [http://gant.codehaus.org/ groovy] v1.5.6+.
+  * [http://ant.apache.org/ ant] v1.7.0+.
+  * [http://gant.codehaus.org/ gant] v1.2.0+.
+  * [http://subversion.tigris.org/ subversion client] v*1.5*+.
 
 = environment =
 The following environment variables are required:
@@ -21,8 +21,6 @@ Append the *Path* environment variable to include:
   * <GROOVY_HOME>/bin
   * <ANT_HOME>/bin
   * {subversion install dir}/bin
-
-These syst
 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
