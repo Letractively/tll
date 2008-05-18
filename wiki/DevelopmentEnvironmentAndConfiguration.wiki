@@ -6,6 +6,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 ||[http://ant.apache.org/ ant]||1.7.0+||
 ||[http://gant.codehaus.org/ gant]||1.2.0+||
 ||[http://subversion.tigris.org/ subversion client]||1.5+||
+||[http://www.eclipse.org/ eclipse]||3.3.2+||
 
 
 = environment =
@@ -22,9 +23,11 @@ Lists the necessary local environment and IDE settings for building and deployin
     * <ANT_HOME>/bin
     * {subversion install dir}/bin
 
-  * Build the tll-config.jar by invoking gant in the <TLL_ROOT>/config dir:
-    * {{{<TLL_ROOT>/config/gant dist}}}
-    This will create the tll-config.jar and place it in the <TLL_ROOT>/config/dist dir.
+  * Build the tll-config.jar:
+{{{
+<TLL_ROOT>/config/gant dist
+}}}
+ This will create the tll-config.jar and place it in the <TLL_ROOT>/config/dist dir.
 
   * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
     * <TLL_ROOT>/tools/commons-lang.jar
