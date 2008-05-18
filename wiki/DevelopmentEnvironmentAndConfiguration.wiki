@@ -2,6 +2,9 @@ Lists the necessary local environment and IDE settings for building and deployin
 
 = environment =
 
+== jdk ==
+  * Download and install the [http://java.sun.com/javase/downloads/index.jsp jdk] version jdk1.6.0_05 or higher.
+
 == groovy ==
   * Download and install [http://gant.codehaus.org/ groovy] version 1.5.4+.
   * Set environment variable: *GROOVY_HOME* that points to the root groovy install dir.
