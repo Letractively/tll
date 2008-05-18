@@ -3,9 +3,6 @@ package com.tll.config;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,13 +55,16 @@ public final class Config implements Configuration {
 	private static final Config instance = new Config();
 
 	/**
-	 * Resolves the machine/user config file based on the system property values
-	 * for {@link #MACHINE_NAME_KEY} and {@link #USER_NAME_KEY}. <br>
-	 * FORMAT: <code>"{machine name}.{user name}.config.properties"</code>
-	 * @return A non-<code>null</code> {@link File} ref or <code>null</code>
-	 *         if the file does not exist.
+	 * Determines the machine/user config file name based on the corresponding
+	 * system property values for {@link #MACHINE_NAME_KEY} and
+	 * {@link #USER_NAME_KEY}. FORMAT:
+	 * <code>"{machine name}.{user name}.config.properties"</code>
+	 * @return The user environment config file overriding the base config prop
+	 *         file but overridable by the local confif file or <code>null</code>
+	 *         if either the machine name or user name properties could not be
+	 *         resolved.
 	 */
-	private final File getMachineUserConfigPropFile() {
+	private final String getMachineUserConfigPropFileName() {
 		String machinename = System.getProperty(MACHINE_NAME_KEY);
 		if(machinename == null) {
 			// try env property
@@ -81,28 +81,7 @@ public final class Config implements Configuration {
 		if(username == null || username.isEmpty()) {
 			return null;
 		}
-
-		String fn = machinename + '.' + username + ".config.properties";
-
-		ClassLoader cld = Thread.currentThread().getContextClassLoader();
-		if(cld == null) {
-			throw new IllegalStateException("Can't get class loader.");
-		}
-		String path = ""; // i.e. the root
-		URL resource = cld.getResource(path);
-		if(resource == null) {
-			throw new IllegalStateException("Unable to obtain the classpath root dir");
-		}
-
-		try {
-			URI uri = resource.toURI();
-			File f = new File(uri.getPath() + "/" + fn);
-			return f.isFile() ? f : null;
-		}
-		catch(URISyntaxException se) {
-			throw new Error("Bad uri syntax: " + se.getMessage(), se);
-		}
-
+		return machinename + '.' + username + ".config.properties";
 	}
 
 	public static final Config instance() {
@@ -139,16 +118,16 @@ public final class Config implements Configuration {
 			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
 		}
 
-		// load the machine user props (if present)
-		File f = getMachineUserConfigPropFile();
-		if(f != null) {
+		// load the optional machine user props
+		String machineUserPropFileName = getMachineUserConfigPropFileName();
+		if(machineUserPropFileName != null) {
 			try {
 				machineUserProps = new PropertiesConfiguration();
 				machineUserProps.setDelimiterParsingDisabled(true);
-				machineUserProps.load(f);
+				machineUserProps.load(machineUserPropFileName);
 			}
 			catch(ConfigurationException ce) {
-				throw new RuntimeException("Unable to load the machine/user configuration: " + ce.getMessage(), ce);
+				// ok, this file is optional
 			}
 		}
 
