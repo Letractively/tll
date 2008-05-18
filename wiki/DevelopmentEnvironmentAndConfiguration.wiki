@@ -1,4 +1,20 @@
-Lists the necessary settings for building and deploying _tll_ projects.
+Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
+
+= environment =
+
+== groovy ==
+  * Download and install [http://gant.codehaus.org/ groovy] version 1.5.4+.
+  * Set environment variable: *GROOVY_HOME* that points to the root groovy install dir.
+  * Ensure the Path environment variable includes the path: <GROOVY_HOME>/bin.
+
+== ant ==
+  * Download and install [http://ant.apache.org/ ant] version 1.7.0+.
+  * Set environment variable: *ANT_HOME* that points to the root ant install dir.
+  * Ensure the Path environment variable includes the path: <ANT_HOME>/bin.
+
+== gant ==
+  * Download and install [http://gant.codehaus.org/ gant] version 1.1.1+.
+  * With groovy already installed, run the gant install script from the gant install dir: groovy bin/install.groovy
 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
