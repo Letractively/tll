@@ -1,11 +1,11 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 = Required Software =
-  * [http://java.sun.com/javase/downloads/index.jsp jdk] 1.6.0_05 or higher.
+  * [http://java.sun.com/javase/downloads/index.jsp jdk] v1.6.0_05+.
   * [http://gant.codehaus.org/ groovy] v1.5.6+.
   * [http://ant.apache.org/ ant] v1.7.0+.
   * [http://gant.codehaus.org/ gant] v1.2.0+.
-  * [http://subversion.tigris.org/ subversion client] v*1.5*+.
+  * [http://subversion.tigris.org/ subversion client] *v1.5*+.
 
 = environment =
 The following environment variables are required:
