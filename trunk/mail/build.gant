@@ -10,7 +10,7 @@
  * - commons-collections.jar (v3.2+)
  * - commons-configuration.jar (v1.5+)
  * - tll-config.jar (v1.0+)
- * - config.properties and optionally {username}.{machine}.config.properties or local.config.properties
+ * - config.properties and optionally {machine name}.{user machine}.config.properties or local.config.properties
  */
  
 def config = com.tll.config.Config.instance();
@@ -99,7 +99,6 @@ target (compile: 'compile the project') {
 	Ant.javac(
 		destdir: "${property.'project.dir'}/build/classes", 
 		classpath: java_compile_classpath,
-		optimize: 'true',
 		source: property.'project.source', 
 		target: property.'project.target') {
 			src(path: "${property.'project.dir'}/src")			
