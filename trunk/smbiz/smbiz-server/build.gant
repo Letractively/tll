@@ -12,7 +12,7 @@
  * - commons-configuration.jar (v1.5+)
  * - tll-config.jar (v1.0+)
  * - aspectjtools.jar (v1.5.4+)
- * - config.properties and optionally {username}.{machine}.config.properties or local.config.properties
+ * - config.properties and optionally {machine name}.{user name}.config.properties or local.config.properties
  */
  
 def config = com.tll.config.Config.instance();
@@ -50,9 +50,13 @@ Ant.patternset(id:'ps_libsDeploy') {
 	
 //	compile classpath for javac server 
 def java_compile_server_classpath = Ant.path {
+	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'testng.jar'}")
-	fileset(dir: property.'project.server.dir' + '/lib') {
+	pathelement(location: "${property.'dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'dir.tll'}/mail/dist/tll-mail.jar")
+	fileset(dir: property.'dir.tll.libs') {
 		include(name: '*.jar')
 	}
 }
@@ -61,10 +65,13 @@ def java_compile_server_classpath = Ant.path {
 def java_compile_server_test_classpath = Ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'testng.jar'}")
-	pathelement(location: "${property.'project.dir.build'}/server-classes")
-	fileset(dir: property.'project.server.dir' + '/lib') {
+	pathelement(location: "${property.'dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'dir.tll'}/mail/dist/tll-mail.jar")
+	fileset(dir: property.'dir.tll.libs') {
 		include(name: '*.jar')
 	}
+	pathelement(location: "${property.'project.dir.build'}/server-classes")
 }
 	
 // compile classpath for javac client 
@@ -78,7 +85,7 @@ def java_compile_client_classpath = Ant.path {
 	
 // run classpath for db tasks
 def db_task_classpath = Ant.path {
-	fileset(dir: property.'project.server.dir' + '/lib') {
+	fileset(dir: property.'dir.tll.libs') {
 		include(name: 'mysql-connector-java-bin.jar')
 	}
 }
@@ -93,7 +100,7 @@ def java_run_server_test_classpath = Ant.path {
 		exclude(name: '**/**.zip')
 		exclude(name: '**/src/*')
 	}
-	pathelement(location: "${property.'project.server.dir'}/lib/servlet-api.jar")
+	pathelement(location: "${property.'dir.tll.libs'}/servlet-api.jar")
 }
 	
 // compile classpath for the gwt compiler 
@@ -115,7 +122,7 @@ def javadoc_classpath = Ant.path {
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
-	fileset(dir: property.'project.server.dir' + '/lib') {
+	fileset(dir: property.'dir.tll.libs') {
 		include(name: '*.jar')
 	}
 }
@@ -455,7 +462,7 @@ target (compileServer: 'compile server code') {
 					pathelement(location: "${property.'project.dir.build'}/server-classes")
 				}
 				aspectpath() {
-					pathelement(location: "${property.'project.server.dir'}/lib/spring-aspects.jar")
+					pathelement(location: "${property.'dir.tll.libs'}/spring-aspects.jar")
 				}
 		}
 	}
@@ -608,7 +615,7 @@ target (copyServerLib: 'Copies server library files') {
 	println 'Copying server library files...'
 	
 	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
-		fileset(dir: property.'project.server.dir' + '/lib') {
+		fileset(dir: property.'dir.tll.libs') {
 			patternset(refid:'ps_libsDeploy')
 		}
 	}
