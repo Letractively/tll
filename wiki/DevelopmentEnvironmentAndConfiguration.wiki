@@ -58,6 +58,11 @@ The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are r
 ||TLL_ROOT||Points to the root dir of the _tll_ source tree.||
 ||GWT_HOME||Points to the root instal dir of the Google Web Toolkit.||
 
+==String Substitution==
+The following _Preferences -> Run/Debug -> *String Substitution*s_ are required:
+||aspectj_home||Points to the root install dir of AspectJ.||
+||gwt_host_webroot||<TLL_ROOT>/smbiz/smbiz-client/tomcat/webapps/ROOT||
+
 =smbiz project configuration=
 In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
 
