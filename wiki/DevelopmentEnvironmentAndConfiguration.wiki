@@ -1,13 +1,15 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 = Required Software =
+|| *ware* || *version* ||
 ||[http://java.sun.com/javase/downloads/index.jsp jdk]||1.6.0_05+||
 ||[http://gant.codehaus.org/ groovy]||1.5.6+||
 ||[http://ant.apache.org/ ant]||1.7.0+||
 ||[http://gant.codehaus.org/ gant]||1.2.0+||
 ||[http://subversion.tigris.org/ subversion client]||1.5+||
 ||[http://www.eclipse.org/ eclipse]||3.3.2+||
-
+||[http://code.google.com/p/google-web-toolkit/ GWT]||r2824+||
+||[http://code.google.com/p/google-web-toolkit/ AspectJ]||1.5.4+||
 
 = environment =
   * The following environment variables are required:
@@ -18,10 +20,10 @@ Lists the necessary local environment and IDE settings for building and deployin
 ||tll.config.user.name||The tll configuration system property user name.||
 
   * Append the *Path* environment variable to include:
-    * <JAVA_HOME>/bin
-    * <GROOVY_HOME>/bin
-    * <ANT_HOME>/bin
-    * {subversion install dir}/bin
+||<JAVA_HOME>/bin||
+||<GROOVY_HOME>/bin||
+||<ANT_HOME>/bin||
+||{subversion install dir}/bin||
 
   * Build the tll-config.jar:
 {{{
@@ -30,40 +32,40 @@ Lists the necessary local environment and IDE settings for building and deployin
  This will create the tll-config.jar and place it in the <TLL_ROOT>/config/dist dir.
 
   * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
-    * <TLL_ROOT>/tools/commons-lang.jar
-    * <TLL_ROOT>/tools/commons-logging.jar
-    * <TLL_ROOT>/tools/commons-collections.jar
-    * <TLL_ROOT>/tools/commons-configuration.jar
-    * <TLL_ROOT>/config/dist/tll-config.jar
+||<TLL_ROOT>/tools/commons-lang.jar||
+||<TLL_ROOT>/tools/commons-logging.jar||
+||<TLL_ROOT>/tools/commons-collections.jar||
+||<TLL_ROOT>/tools/commons-configuration.jar||
+||<TLL_ROOT>/config/dist/tll-config.jar||
+||{AspectJ install dir}/bin/aspectjtools.jar||
 
  These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
 
   * Add the following to the <GROOVY_HOME>/conf/groovy-starter.conf file:
- {{{
+{{{
     # for tll project
     load ./config
- }}}
+}}}
 
- This avoids the need to set the CLASSPATH before invoking gant commands for any given tll project.
+ This adds the stated path to groovy's CLASSPATH before invoking gant. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
 
 = eclipse =
-The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings for the _tll_ projects.
+The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
 == Classpath Variables ==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
   * TLL_ROOT - Points to the root dir of the _tll_ source tree.
   * GWT_HOME - Points to the root instal dir of the Google Web Toolkit.
 
-= Configuration =
-Create a machine and user unique config.properties file having the following naming format:
+= smbiz project configuration =
+In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
 
-{{{ {machine name}.{user name}.config.properties }}}
+{{{ {tll.config.machine.name}.{tll.config.machine.name}.config.properties }}}
 
-This file must declare all properties contained in the root config.properties whose value is UNSPECIFIED.
+This file must declare all properties contained in <TLL_ROOT>/smbiz/smbiz-server/config/config.properties whose value is UNSPECIFIED.
 
-Example:
-
-{{{
+ Example:
+ {{{
 environment JPK_VOSTRO
 debug true
 
