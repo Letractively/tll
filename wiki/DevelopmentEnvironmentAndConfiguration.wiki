@@ -54,8 +54,8 @@ The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE wo
 
 == Classpath Variables ==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
-  * TLL_ROOT - Points to the root dir of the _tll_ source tree.
-  * GWT_HOME - Points to the root instal dir of the Google Web Toolkit.
+||TLL_ROOT||Points to the root dir of the _tll_ source tree.||
+||GWT_HOME||Points to the root instal dir of the Google Web Toolkit.||
 
 = smbiz project configuration =
 In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
