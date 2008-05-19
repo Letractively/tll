@@ -3,7 +3,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 =Required Software=
 || *ware* || *version* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ ||
-|| [http://gant.codehaus.org/ groovy] || 1.5.6+ ||
+|| [http://groovy.codehaus.org/ groovy] || 1.5.6+ ||
 || [http://ant.apache.org/ ant] || 1.7.0+ ||
 || [http://gant.codehaus.org/ gant] || 1.2.0+ ||
 || [http://subversion.tigris.org/ subversion client] || 1.5+ ||
