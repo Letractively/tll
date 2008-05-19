@@ -10,7 +10,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 ||[http://www.eclipse.org/ eclipse]||3.3.2+||
 ||[http://code.google.com/p/google-web-toolkit/ GWT]||r2824+||
 ||[http://code.google.com/p/google-web-toolkit/ AspectJ]||1.5.4+||
-
+ 
 = environment =
   * The following environment variables are required:
 ||JAVA_HOME||Points to the root Java install dir.||
@@ -48,15 +48,15 @@ Lists the necessary local environment and IDE settings for building and deployin
 }}}
 
  This adds the stated path to groovy's CLASSPATH before invoking gant. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
-
+ 
 = eclipse =
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
-
+ 
 == Classpath Variables ==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
 ||TLL_ROOT||Points to the root dir of the _tll_ source tree.||
 ||GWT_HOME||Points to the root instal dir of the Google Web Toolkit.||
-
+ 
 = smbiz project configuration =
 In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
 
