@@ -66,7 +66,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 =smbiz project configuration=
 In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
 
-{{{ {tll.config.machine.name}.{tll.config.machine.name}.config.properties }}}
+{{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}}
 
 This file must declare all properties contained in <TLL_ROOT>/smbiz/smbiz-server/config/config.properties whose value is UNSPECIFIED.
 
