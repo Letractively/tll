@@ -228,8 +228,8 @@ def gwtCompile = { module ->
 		arg (value: property.'gwt.compile.style') 
 		arg (value: module)
 	}
-	println "Copying RPC serialization policy files to GWT host mode module dir: " + module + "...";
 	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
+	println "Copying " + module + " RPC serialization policy files to : " + hostModeModuleDir + "...";
 	Ant.copy(todir: hostModeModuleDir) {
 		fileset(dir: "${property.'project.dir.build'}/${module}") {
 			include(name: '*.rpc')
@@ -609,10 +609,10 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	targetEnd()
 }
 	
-target (copyServerLib: 'Copies server library files') {
+target (copyServerLib: 'Copies needed library files for the server') {
 	targetStart()
 	println()
-	println 'Copying server library files...'
+	println 'Aggregating server library files under the build dir...'
 	
 	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
 		fileset(dir: property.'dir.tll.libs') {
@@ -620,8 +620,9 @@ target (copyServerLib: 'Copies server library files') {
 		}
 	}
 	
-	println()
-	println 'Aggregating externally referenced libraries...'
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
 	
 	println property.'testng.jar' + '...'
 	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: property.'testng.jar')
