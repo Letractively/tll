@@ -173,7 +173,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 								paramPrototype =
 										AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 								assert paramPrototype != null;
-								showParamEditDialog(paramPrototype);
+								showParamEditDialog(paramPrototype.copy());
 							}
 						}
 
@@ -181,7 +181,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 					handler.handleModelPrototypeFetch(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 				}
 				else {
-					showParamEditDialog(paramPrototype);
+					showParamEditDialog(paramPrototype.copy());
 				}
 			}
 

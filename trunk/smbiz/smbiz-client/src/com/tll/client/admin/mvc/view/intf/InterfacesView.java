@@ -144,9 +144,14 @@ public class InterfacesView extends AbstractView {
 						showStack(stackIndex);
 						// NOTE: we fall through
 					case UPDATED:
-					case DELETED:
 						editPanel.setModel(event.getModel());
 						editPanel.refresh();
+						break;
+
+					case DELETED:
+						// refresh the interface listing
+						refreshData();
+						break;
 				}
 			}
 
@@ -172,6 +177,7 @@ public class InterfacesView extends AbstractView {
 		}
 
 		void refreshData() {
+			initialized = false;
 			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
 			Sorting sorting = new Sorting("name", "intf");
