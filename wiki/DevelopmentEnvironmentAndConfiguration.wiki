@@ -11,7 +11,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 || [http://code.google.com/p/google-web-toolkit/ GWT] || r2824+ ||
 || [http://code.google.com/p/google-web-toolkit/ AspectJ] || 1.5.4+ ||
  
-*NOTE: *Subversion client 1.5 is available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]
+ *NOTE: *Subversion client 1.5 is available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]
 
 =environment=
   * The following environment variables are required:
