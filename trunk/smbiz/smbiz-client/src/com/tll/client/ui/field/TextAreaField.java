@@ -60,7 +60,6 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 				ta.setVisibleLines(numRows);
 			}
 			ta.addFocusListener(this);
-			ta.addChangeListener(this);
 		}
 		return ta;
 	}

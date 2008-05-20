@@ -31,7 +31,6 @@ public class PasswordField extends AbstractField {
 		if(tb == null) {
 			tb = new PasswordTextBox();
 			tb.addFocusListener(this);
-			tb.addChangeListener(this);
 		}
 		return tb;
 	}

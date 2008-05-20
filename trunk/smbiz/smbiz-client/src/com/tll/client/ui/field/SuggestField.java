@@ -45,7 +45,6 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 				sb = new SuggestBox();
 			}
 			sb.addFocusListener(this);
-			sb.addChangeListener(this);
 			sb.addEventHandler(this);
 		}
 		return sb;

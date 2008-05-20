@@ -6,7 +6,6 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasFocus;
@@ -45,7 +44,7 @@ import com.tll.model.schema.PropertyMetadata;
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends FieldAdapter implements IField, HasFocus, ClickListener, ChangeListener, FocusListener {
+public abstract class AbstractField extends FieldAdapter implements IField, HasFocus, ClickListener, FocusListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -493,10 +492,6 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		clearValidationStyling();
 	}
 
-	public void onChange(Widget sender) {
-		changed = true;
-	}
-
 	public final void addKeyboardListener(KeyboardListener listener) {
 		if(!isReadOnly()) {
 			getEditable(null).addKeyboardListener(listener);
@@ -553,7 +548,6 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	 * called.
 	 */
 	public final void onLostFocus(Widget sender) {
-		if(!changed) return;
 		final String currentValue = getValue();
 		assert currentValue != null;
 

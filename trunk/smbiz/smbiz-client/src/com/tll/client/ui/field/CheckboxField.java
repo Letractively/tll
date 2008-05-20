@@ -146,7 +146,7 @@ public class CheckboxField extends AbstractField {
 	@Override
 	public void onClick(Widget sender) {
 		if(sender == cb) {
-			onChange(this);
+			changed = true;
 		}
 		else {
 			super.onClick(sender);

@@ -40,7 +40,6 @@ public class SelectField extends AbstractDataMapField {
 				}
 			}
 			lb.addFocusListener(this);
-			lb.addChangeListener(this);
 		}
 		return lb;
 	}

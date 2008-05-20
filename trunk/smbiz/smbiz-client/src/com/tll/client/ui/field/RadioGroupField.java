@@ -100,7 +100,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 	public void onClick(Widget sender) {
 		for(RadioButton rb : radioButtons) {
 			if(sender == rb) {
-				onChange(this);
+				changed = true;
 				return;
 			}
 		}
