@@ -6,12 +6,10 @@ Lists the necessary local environment and IDE settings for building and deployin
 || [http://groovy.codehaus.org/ groovy] || 1.5.6+ ||
 || [http://ant.apache.org/ ant] || 1.7.0+ ||
 || [http://gant.codehaus.org/ gant] || 1.2.0+ ||
-|| [http://subversion.tigris.org/ subversion client] || 1.5+ ||
+|| [http://subversion.tigris.org/ subversion client] || 1.5+ available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]||
 || [http://www.eclipse.org/ eclipse] || 3.3.2+||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || r2824+ ||
 || [http://code.google.com/p/google-web-toolkit/ AspectJ] || 1.5.4+ ||
- 
- *NOTE: *Subversion client 1.5 is available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]
 
 =environment=
   * The following environment variables are required:
