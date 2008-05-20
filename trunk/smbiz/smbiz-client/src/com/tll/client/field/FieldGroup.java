@@ -452,6 +452,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						}
 					}
 				}
+				else if(((FieldGroup) fld).isPending()) {
+					// we have a pending addition
+					changed = true;
+				}
 			}
 			else {
 				if(fld.updateModel(model)) {

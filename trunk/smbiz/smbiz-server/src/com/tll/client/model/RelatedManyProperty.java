@@ -72,20 +72,6 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 			this.size = list == null ? 0 : list.size();
 		}
 
-		/**
-		 * @return the index
-		 */
-		public int getIndex() {
-			return index;
-		}
-
-		/**
-		 * @return the size
-		 */
-		public int getSize() {
-			return size;
-		}
-
 		public boolean hasNext() {
 			return index < (size - 1);
 		}
