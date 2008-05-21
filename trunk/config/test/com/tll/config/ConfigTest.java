@@ -208,4 +208,24 @@ public class ConfigTest {
 		assert pval != null && pval.equals("basepropval");
 
 	}
+
+	/**
+	 * Tests filtering of config props via a {@link IConfigKeyProvider}.
+	 * @throws Exception
+	 */
+	public void testConfigKeyProviding() throws Exception {
+		Config config = Config.instance();
+		Map<String, String> map = config.asMap(new IConfigKeyProvider() {
+
+			public String[] getConfigKeys() {
+				return new String[] {
+					"props.simple.propA",
+					"props.simple.propB" };
+			}
+
+		});
+		assert map != null && map.size() == 2 : "Unable to obtain properly sized prop mak from an IConfigKeyProvider instance";
+		assert map.get("props.simple.propA") != null;
+		assert map.get("props.simple.propB") != null;
+	}
 }

@@ -335,9 +335,31 @@ public final class Config implements Configuration {
 		return pc;
 	}
 
+	@SuppressWarnings("unchecked")
+	private PropertiesConfiguration filter(IConfigKeyProvider keyProvider) {
+		String[] keys = keyProvider == null ? null : keyProvider.getConfigKeys();
+		if(keys == null) return null;
+		PropertiesConfiguration pc = new PropertiesConfiguration();
+		for(String key : keys) {
+			pc.addProperty(key, root.getProperty(key));
+		}
+		return pc;
+	}
+
 	/**
-	 * Saves the cofiguration properties to file.
-	 * @param f
+	 * Saves the cofiguration properties to file given a key provider which serves
+	 * as a filter.
+	 * @param f The file to save to
+	 * @param keyProvider A config key provider
+	 * @throws ConfigurationException
+	 */
+	public void saveAsPropFile(File f, IConfigKeyProvider keyProvider) throws ConfigurationException {
+		filter(keyProvider).save(f);
+	}
+
+	/**
+	 * Saves the cofiguration properties to file given a prefix and prepend token.
+	 * @param f The file to save to
 	 * @param prefix the prefix of the keys for the subset. May be
 	 *        <code>null</code> in which case all properties are considered.
 	 * @param prependToken String to prepend to all resultant subset properties.
@@ -348,17 +370,8 @@ public final class Config implements Configuration {
 		subsetAsProps(prefix, prependToken).save(f);
 	}
 
-	/**
-	 * Puts the held properties in distinct String keyed and valued map.
-	 * @param prefix the prefix of the keys for the subset. May be
-	 *        <code>null</code> in which case all properties are considered.
-	 * @param prependToken String to prepend to all resultant subset properties.
-	 *        May be <code>null</code>.
-	 * @return Map of String property names and String property values
-	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, String> asMap(String prefix, String prependToken) {
-		PropertiesConfiguration pc = subsetAsProps(prefix, prependToken);
+	private Map<String, String> asMap(PropertiesConfiguration pc) {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		for(Iterator<String> itr = pc.getKeys(); itr.hasNext();) {
 			String key = itr.next();
@@ -369,6 +382,37 @@ public final class Config implements Configuration {
 	}
 
 	/**
+	 * Puts the held properties in a distinct map given a config key provider.
+	 * @param keyProvider The config key provider
+	 * @return Map of String property names and String property values
+	 */
+	public Map<String, String> asMap(IConfigKeyProvider keyProvider) {
+		return asMap(filter(keyProvider));
+	}
+
+	/**
+	 * Puts the held properties in distinct String keyed and valued map.
+	 * @param prefix the prefix of the keys for the subset. May be
+	 *        <code>null</code> in which case all properties are considered.
+	 * @param prependToken String to prepend to all resultant subset properties.
+	 *        May be <code>null</code>.
+	 * @return Map of String property names and String property values
+	 */
+	public Map<String, String> asMap(String prefix, String prependToken) {
+		return asMap(subsetAsProps(prefix, prependToken));
+	}
+
+	/**
+	 * Provides a {@link Properties} instance representation of this config
+	 * instance.
+	 * @param keyProvider The config key provider
+	 * @return java.util.Properties instance
+	 */
+	public Properties asProperties(IConfigKeyProvider keyProvider) {
+		return ConfigurationConverter.getProperties(filter(keyProvider));
+	}
+
+	/**
 	 * Provides a {@link Properties} instance representation of this config
 	 * instance.
 	 * @param prefix the prefix of the keys for the subset. May be
@@ -376,6 +420,6 @@ public final class Config implements Configuration {
 	 * @return java.util.Properties instance
 	 */
 	public Properties asProperties(String prefix) {
-		return ConfigurationConverter.getProperties(Config.instance().subset(prefix));
+		return ConfigurationConverter.getProperties(subset(prefix));
 	}
 }
