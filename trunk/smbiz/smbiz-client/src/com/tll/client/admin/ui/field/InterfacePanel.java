@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.App;
+import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
@@ -20,12 +17,13 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.model.EntityType;
 
 /**
  * InterfacePanel
  * @author jpk
  */
-public final class InterfacePanel extends InterfaceRelatedPanel {
+public abstract class InterfacePanel extends InterfaceRelatedPanel {
 
 	protected CheckboxField isAvailableAsp;
 	protected CheckboxField isAvailableIsp;
@@ -37,7 +35,6 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 	protected CheckboxField isRequiredMerchant;
 	protected CheckboxField isRequiredCustomer;
 
-	protected TabPanel tabOptions = new TabPanel();
 	protected final List<InterfaceOptionPanel> optionPanels = new ArrayList<InterfaceOptionPanel>();
 
 	/**
@@ -46,6 +43,17 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 	 */
 	public InterfacePanel(String propName) {
 		super(propName, "Interface");
+	}
+
+	@Override
+	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+		super.neededAuxData(auxDataRequest);
+		// let's get all interface prototype models upfront
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}
 
 	@Override
@@ -106,11 +114,11 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 		frow.add(fcol);
 		fcol.add(dateCreated);
 		fcol.add(dateModified);
-
-		// second row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
-		add(tabOptions);
 	}
+
+	protected abstract void uiOptionsClear();
+
+	protected abstract void uiAddOption(InterfaceOptionPanel optionPanel, Model option);
 
 	@Override
 	protected void onBeforeBind(Model modelInterface) {
@@ -121,7 +129,7 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 			fields.removeField(p.getFields());
 		}
 		optionPanels.clear();
-		tabOptions.clear();
+		uiOptionsClear();
 
 		// bind options
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
@@ -133,17 +141,9 @@ public final class InterfacePanel extends InterfaceRelatedPanel {
 				optionPanels.add(pnlOption);
 				pnlOption.configure();
 				pnlOption.onBeforeBind(option);
-				tabOptions.add(pnlOption, option.getName());
+				uiAddOption(pnlOption, option);
 			}
 		}
-
-		// add new option tab
-		Image img = App.imgs().add().createImage();
-		img.setTitle("Add...");
-		tabOptions.add(new Label("TODO"), img);
-
-		// default select the first tab
-		tabOptions.selectTab(0);
 	}
 
 }

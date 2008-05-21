@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
+import com.tll.client.admin.ui.field.InterfaceMultiPanel;
 import com.tll.client.admin.ui.field.InterfacePanel;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
@@ -149,7 +150,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
 	 */
 	void testInterfacePanel() {
-		final InterfacePanel intfPanel = new InterfacePanel(null);
+		final InterfacePanel intfPanel = new InterfaceMultiPanel(null);
 		testPanel.add(intfPanel);
 		if(intfGroup == null) {
 			// stub mock interface

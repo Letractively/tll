@@ -8,9 +8,14 @@ package com.tll.client.admin.mvc.view.intf;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.admin.ui.field.InterfaceMultiPanel;
 import com.tll.client.admin.ui.field.InterfacePanel;
+import com.tll.client.admin.ui.field.InterfaceSinglePanel;
+import com.tll.client.admin.ui.field.InterfaceSwitchPanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.ListingCommand;
@@ -45,7 +50,7 @@ import com.tll.model.EntityType;
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
  * @author jpk
  */
-public class InterfacesView extends AbstractView {
+public class InterfacesView extends AbstractView implements ClickListener {
 
 	public static final Class klas = new Class();
 
@@ -92,7 +97,7 @@ public class InterfacesView extends AbstractView {
 				this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(new InterfacePanel(null), false, true);
+				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 
 				modelChangeHandler = new AbstractModelChangeHandler() {
@@ -115,6 +120,19 @@ public class InterfacesView extends AbstractView {
 				};
 
 				modelChangeHandler.addModelChangeListener(this);
+			}
+
+			private InterfacePanel resolveInterfacePanel(EntityType intfType) {
+				switch(intfType) {
+					case INTERFACE_MULTI:
+						return new InterfaceMultiPanel(null);
+					case INTERFACE_SINGLE:
+						return new InterfaceSinglePanel(null);
+					case INTERFACE_SWITCH:
+						return new InterfaceSwitchPanel(null);
+					default:
+						throw new IllegalArgumentException();
+				}
 			}
 
 			public void loadInterfaceIfNecessary() {
@@ -244,11 +262,15 @@ public class InterfacesView extends AbstractView {
 
 	private final InterfacesStack intfStack = new InterfacesStack();
 
+	private final Button btnAddIntf = new Button("Add Interface");
+
 	/**
 	 * Constructor
 	 */
 	public InterfacesView() {
 		super();
+		btnAddIntf.addClickListener(this);
+		addWidget(btnAddIntf);
 		addWidget(intfStack);
 	}
 
@@ -287,6 +309,12 @@ public class InterfacesView extends AbstractView {
 
 	public void onModelChangeEvent(ModelChangeEvent event) {
 		// no-op
+	}
+
+	public void onClick(Widget sender) {
+		if(sender == btnAddIntf) {
+			// TODO add an interface
+		}
 	}
 
 }
