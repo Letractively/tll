@@ -6,7 +6,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 || [http://groovy.codehaus.org/ groovy] || 1.5.6+ ||
 || [http://ant.apache.org/ ant] || 1.7.0+ ||
 || [http://gant.codehaus.org/ gant] || 1.2.0+ ||
-|| [http://subversion.tigris.org/ subversion client] || 1.5+ available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]||
+|| [http://subversion.tigris.org/ subversion client] || 1.4.6+ (v1.5rc5 available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]||
 || [http://www.eclipse.org/ eclipse] || 3.3.2+||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || r2824+ ||
 || [http://code.google.com/p/google-web-toolkit/ AspectJ] || 1.5.4+ ||
@@ -63,11 +63,11 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || gwt_host_webroot || <TLL_ROOT>/smbiz/smbiz-client/tomcat/webapps/ROOT ||
 
 =smbiz project configuration=
-In the <TLL_ROOT>/smbiz/smbiz-server/config dir, create the necessary config override file with the following name:
+In the <TLL_ROOT>/smbiz/config dir, create the necessary config override file with the following name:
 
 {{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}}
 
-This file must declare all properties contained in <TLL_ROOT>/smbiz/smbiz-server/config/config.properties whose value is UNSPECIFIED.
+This file must declare all properties contained in <TLL_ROOT>/smbiz/config/config.properties whose value is "UNSPECIFIED".
 
 Example:
 {{{
