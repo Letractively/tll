@@ -15,15 +15,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testng.Assert;
 
 import com.google.inject.Module;
-import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
 import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DbShellModule;
-import com.tll.guice.JpaModule;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.IEntity;
 import com.tll.model.key.IPrimaryKey;
@@ -79,7 +76,6 @@ public abstract class DbTest extends TestBase {
 		assert jpaMode != null : "The JpaMode must be specified for db supporting tests";
 		if(jpaMode != JpaMode.NONE) {
 			// IMPT: use the TEST db!
-			modules.add(new JpaModule(jpaMode, Config.instance().getString(ConfigKeys.DB_TEST_NAME)));
 			if(jpaMode != JpaMode.MOCK) {
 				modules.add(new DbShellModule());
 			}

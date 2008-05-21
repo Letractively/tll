@@ -142,8 +142,8 @@ public class DaoModule extends CompositeModule {
 	public DaoModule(DaoMode daoMode) {
 		super();
 		this.daoMode =
-				daoMode == null ? EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM))
-						: daoMode;
+				daoMode == null ? EnumUtil.fromString(DaoMode.class, Config.instance().getString(
+						ConfigKeys.DAO_MODE_PARAM.getKey())) : daoMode;
 	}
 
 	@Override

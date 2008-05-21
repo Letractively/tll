@@ -24,7 +24,8 @@ public class DbShellModule extends CompositeModule {
 	@Override
 	protected Module[] getModulesToBind() {
 		return new Module[] {
-			new ProductionDbShellModule(), new TestDbShellModule() };
+			new ProductionDbShellModule(),
+			new TestDbShellModule() };
 	}
 
 	/**
@@ -32,7 +33,8 @@ public class DbShellModule extends CompositeModule {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
+		ElementType.FIELD,
+		ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface ProductionDb {
 	}
@@ -42,7 +44,8 @@ public class DbShellModule extends CompositeModule {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
+		ElementType.FIELD,
+		ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface TestDb {
 	}
@@ -63,15 +66,15 @@ public class DbShellModule extends CompositeModule {
 		public AbstractDbShellModule(String dbName) {
 			super();
 			final Config config = Config.instance();
-			this.driverClassName = config.getString(ConfigKeys.DB_DRIVER);
-			this.rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT);
+			this.driverClassName = config.getString(ConfigKeys.DB_DRIVER.getKey());
+			this.rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT.getKey());
 			this.dbName = dbName;
-			this.urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX);
-			this.username = config.getString(ConfigKeys.DB_USERNAME);
-			this.password = config.getString(ConfigKeys.DB_PASSWORD);
-			this.dbSchemaFileName = config.getString(ConfigKeys.DB_SCHEMA_FILE_NAME);
-			this.dbDataDeleteFileName = config.getString(ConfigKeys.DB_DELETE_FILE_NAME);
-			this.dbDataStubFileName = config.getString(ConfigKeys.DB_STUB_FILE_NAME);
+			this.urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX.getKey());
+			this.username = config.getString(ConfigKeys.DB_USERNAME.getKey());
+			this.password = config.getString(ConfigKeys.DB_PASSWORD.getKey());
+			this.dbSchemaFileName = config.getString(ConfigKeys.DB_SCHEMA_FILE_NAME.getKey());
+			this.dbDataDeleteFileName = config.getString(ConfigKeys.DB_DELETE_FILE_NAME.getKey());
+			this.dbDataStubFileName = config.getString(ConfigKeys.DB_STUB_FILE_NAME.getKey());
 		}
 
 		protected DbShell createDbShell(IDbDialectHandler exceptionTranslator) {
@@ -90,7 +93,7 @@ public class DbShellModule extends CompositeModule {
 		 * Constructor
 		 */
 		public ProductionDbShellModule() {
-			super(Config.instance().getString(ConfigKeys.DB_NAME));
+			super(Config.instance().getString(ConfigKeys.DB_NAME.getKey()));
 			log.info("Employing Production Db shell");
 		}
 
@@ -120,7 +123,7 @@ public class DbShellModule extends CompositeModule {
 		 * Constructor
 		 */
 		public TestDbShellModule() {
-			super(Config.instance().getString(ConfigKeys.DB_TEST_NAME));
+			super(Config.instance().getString(ConfigKeys.DB_TEST_NAME.getKey()));
 			log.info("Employing TEST Db shell");
 		}
 

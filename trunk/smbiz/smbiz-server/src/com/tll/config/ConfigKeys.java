@@ -12,32 +12,55 @@ package com.tll.config;
  * Only the ones accessed from a Java context.
  * @author jpk
  */
-public abstract class ConfigKeys {
+public enum ConfigKeys implements IConfigKeyProvider {
 
-	public static final String ENVIRONMENT_PARAM = "environment";
-	public static final String DEBUG_PARAM = "debug";
+	ENVIRONMENT_PARAM("environment"),
+	DEBUG_PARAM("debug"),
 
-	public static final String APP_NAME = "app.name";
+	APP_NAME("app.name"),
 
-	public static final String SECURITY_MODE_PARAM = "app.security.mode";
-	public static final String DAO_MODE_PARAM = "db.dao.mode";
-	public static final String JPA_MODE_PARAM = "db.jpa.mode";
+	SECURITY_MODE_PARAM("app.security.mode"),
+	DAO_MODE_PARAM("db.dao.mode"),
+	JPA_MODE_PARAM("db.jpa.mode"),
 
-	public static final String USER_DEFAULT_EMAIL_PARAM = "mail.dflt_user_email";
+	USER_DEFAULT_EMAIL_PARAM("mail.dflt_user_email"),
 
-	public static final String DB_NAME = "db.name";
-	public static final String DB_TEST_NAME = "db.test.name";
-	public static final String DB_NAME_ROOT = "db.name.root";
-	public static final String DB_JPA_PERSISTENCE_UNIT_NAME = "db.jpa.persistenceUnitName";
+	DB_NAME("db.name"),
+	DB_TEST_NAME("db.test.name"),
+	DB_NAME_ROOT("db.name.root"),
+	DB_JPA_PERSISTENCE_UNIT_NAME("db.jpa.persistenceUnitName"),
 
-	public static final String DB_DRIVER = "db.driver";
-	public static final String DB_URL = "db.url";
-	public static final String DB_URL_PREFIX = "db.urlprefix";
-	public static final String DB_USERNAME = "db.username";
-	public static final String DB_PASSWORD = "db.password";
+	DB_DRIVER("db.driver"),
+	DB_URL("db.url"),
+	DB_URL_PREFIX("db.urlprefix"),
+	DB_USERNAME("db.username"),
+	DB_PASSWORD("db.password"),
 
-	public static final String DB_SCHEMA_FILE_NAME = "db.file.schema";
-	public static final String DB_STUB_FILE_NAME = "db.file.stub";
-	public static final String DB_DELETE_FILE_NAME = "db.file.delete";
+	DB_SCHEMA_FILE_NAME("db.file.schema"),
+	DB_STUB_FILE_NAME("db.file.stub"),
+	DB_DELETE_FILE_NAME("db.file.delete");
+
+	private final String key;
+
+	/**
+	 * Constructor
+	 * @param key
+	 */
+	private ConfigKeys(String key) {
+		this.key = key;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public String[] getConfigKeys() {
+		final ConfigKeys[] cks = values();
+		String[] keys = new String[cks.length];
+		for(int i = 0; i < cks.length; ++i) {
+			keys[i] = cks[i].getKey();
+		}
+		return keys;
+	}
 
 }

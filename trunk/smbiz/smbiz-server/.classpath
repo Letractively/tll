@@ -36,14 +36,14 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/mail.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/mysql-connector-java-bin.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/servlet-api.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar" sourcepath="/TLL_ROOT/tools/lib/src/spring-sources.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-aspects.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-test.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/mail/dist/tll-mail.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/config/dist/tll-config.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/mail/dist/tll-mail.jar" sourcepath="/TLL_ROOT/mail/src"/>
+	<classpathentry kind="var" path="TLL_ROOT/config/dist/tll-config.jar" sourcepath="/TLL_ROOT/config/src"/>
 	<classpathentry kind="var" path="TLL_ROOT/util/dist/tll-util.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -52,11 +52,10 @@ Ant.patternset(id:'ps_libsDeploy') {
 def java_compile_server_classpath = Ant.path {
 	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
-	pathelement(location: "${property.'testng.jar'}")
-	pathelement(location: "${property.'dir.tll'}/config/dist/tll-config.jar")
-	pathelement(location: "${property.'dir.tll'}/util/dist/tll-util.jar")
-	pathelement(location: "${property.'dir.tll'}/mail/dist/tll-mail.jar")
-	fileset(dir: property.'dir.tll.libs') {
+	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
+	fileset(dir: property.'project.dir.tll.libs') {
 		include(name: '*.jar')
 	}
 }
@@ -64,11 +63,10 @@ def java_compile_server_classpath = Ant.path {
 // compile classpath for javac server test
 def java_compile_server_test_classpath = Ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
-	pathelement(location: "${property.'testng.jar'}")
-	pathelement(location: "${property.'dir.tll'}/config/dist/tll-config.jar")
-	pathelement(location: "${property.'dir.tll'}/util/dist/tll-util.jar")
-	pathelement(location: "${property.'dir.tll'}/mail/dist/tll-mail.jar")
-	fileset(dir: property.'dir.tll.libs') {
+	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
+	fileset(dir: property.'project.dir.tll.libs') {
 		include(name: '*.jar')
 	}
 	pathelement(location: "${property.'project.dir.build'}/server-classes")
@@ -85,7 +83,7 @@ def java_compile_client_classpath = Ant.path {
 	
 // run classpath for db tasks
 def db_task_classpath = Ant.path {
-	fileset(dir: property.'dir.tll.libs') {
+	fileset(dir: property.'project.dir.tll.libs') {
 		include(name: 'mysql-connector-java-bin.jar')
 	}
 }
@@ -94,13 +92,12 @@ def db_task_classpath = Ant.path {
 def java_run_server_test_classpath = Ant.path {
 	pathelement(location: "${property.'project.dir.build.web'}/WEB-INF/classes")
 	pathelement(location: "${property.'project.dir.build'}/server-classes-test")
-	//pathelement(location: "${property.'testng.jar'}")
 	fileset(dir: "${property.'project.dir.build.web'}/WEB-INF/lib") {
 		include(name: '**/*.jar')
 		exclude(name: '**/**.zip')
 		exclude(name: '**/src/*')
 	}
-	pathelement(location: "${property.'dir.tll.libs'}/servlet-api.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/servlet-api.jar")
 }
 	
 // compile classpath for the gwt compiler 
@@ -122,7 +119,7 @@ def javadoc_classpath = Ant.path {
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
-	fileset(dir: property.'dir.tll.libs') {
+	fileset(dir: property.'project.dir.tll.libs') {
 		include(name: '*.jar')
 	}
 }
@@ -341,20 +338,21 @@ target(persistFileTest:'target for testing createBuildPersistenceXmlFile closure
 }
 */
 
-boolean isDeploy = false;
 long startTime = System.currentTimeMillis()
-int targetCount = 0;
+def duration = { 
+	return Math.round((System.currentTimeMillis() - startTime) / 1000.0f) // in seconds
+}
 
+int targetCount = 0;
 def targetStart = { targetCount++; }
-	
 def targetEnd = {
 	if(--targetCount == 0) {
-		long endTime = System.currentTimeMillis()
-			def duration = ((endTime - startTime) / 1000) / 60 // in minutes
-			println("GANT BUILD SUCCESSFULL: $duration minutes")
+			println("BUILD SUCCESSFULL: " + duration() + " seconds")
 	}
 }
 	
+boolean isDeploy = false;
+
 ////// TARGETS
 
 target(info: 'Echos the loaded Ant and Config properties') {
@@ -437,7 +435,6 @@ target (compileServer: 'compile server code') {
 		destdir: "${property.'project.dir.build'}/server-classes", 
 		classpath: java_compile_server_classpath,
 		debug: property.'project.compile.debug', 
-		optimize: property.'project.compile.optimize',
 		source: property.'project.server.source', 
 		target: property.'project.server.target') {
 			src(path: property.'project.server.dir' + '/src')
@@ -462,7 +459,7 @@ target (compileServer: 'compile server code') {
 					pathelement(location: "${property.'project.dir.build'}/server-classes")
 				}
 				aspectpath() {
-					pathelement(location: "${property.'dir.tll.libs'}/spring-aspects.jar")
+					pathelement(location: "${property.'project.dir.tll.libs'}/spring-aspects.jar")
 				}
 		}
 	}
@@ -477,7 +474,7 @@ target (compileServerTest: 'compile server test code') {
 	Ant.javac(destdir: "${property.'project.dir.build'}/server-classes-test", 
 		srcdir: property.'project.server.dir' + '/test', 
 		classpath: java_compile_server_test_classpath,
-		debug: true, optimize: property.'project.compile.optimize',
+		debug: property.'project.compile.debug', 
 		source: property.'project.server.source', target: property.'project.server.target')
 	targetEnd()
 }
@@ -490,7 +487,7 @@ target (compileClient: 'compile GWT client code') {
 	Ant.javac(destdir: "${property.'project.dir.build'}/client-classes", 
 		srcdir: property.'project.client.dir' + '/src', 
 		classpath: java_compile_client_classpath,
-		debug: property.'project.compile.debug', optimize: property.'project.compile.optimize',
+		debug: property.'project.compile.debug', 
 		source: property.'project.client.compile.source', target: property.'project.client.target')
 	targetEnd()
 }
@@ -535,6 +532,8 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	println()
 	println('Creating build config.properties file...')
 	File f = new File("${property.'project.dir.build.web'}/WEB-INF/classes/config.properties")
+	//ConfigKeys cks = ConfigKeys.getClass().newInstance();
+	//config.saveAsPropFile(f, cks.getConfigKeys())
 	config.saveAsPropFile(f, null, null)
 
 	// log4j.xml (generated)
@@ -615,17 +614,14 @@ target (copyServerLib: 'Copies needed library files for the server') {
 	println 'Aggregating server library files under the build dir...'
 	
 	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
-		fileset(dir: property.'dir.tll.libs') {
+		fileset(dir: property.'project.dir.tll.libs') {
 			patternset(refid:'ps_libsDeploy')
 		}
 	}
 	
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
-	
-	println property.'testng.jar' + '...'
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: property.'testng.jar')
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
+	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
 	
 	println 'gwt-servlet.jar...'
 	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'gwt.dir.install'}/gwt-servlet.jar")

@@ -36,7 +36,7 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 				assert hsr.getSession(false) != null;
 				AdminContext ac = (AdminContext) hsr.getSession(false).getAttribute(Constants.SA_ADMIN_CONTEXT);
 				if(ac == null) {
-					String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM);
+					String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
 					assert defaultUserEmail != null : "No default user email defined in the app configuration!";
 					User user = userService.findByUsername(defaultUserEmail);
 					ac = new AdminContext();

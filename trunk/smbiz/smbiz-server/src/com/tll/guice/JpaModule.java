@@ -71,8 +71,8 @@ public class JpaModule extends GModule {
 		JpaMode jpaMode;
 		try {
 			jpaMode =
-					(mode == null ? EnumUtil.fromString(JpaMode.class, Config.instance().getString(ConfigKeys.JPA_MODE_PARAM))
-							: mode);
+					(mode == null ? EnumUtil.fromString(JpaMode.class, Config.instance().getString(
+							ConfigKeys.JPA_MODE_PARAM.getKey())) : mode);
 		}
 		catch(final IllegalArgumentException e) {
 			jpaMode = JpaMode.NONE;
@@ -84,10 +84,10 @@ public class JpaModule extends GModule {
 			// resolve the persistence unit name
 			if(persistenceUnitName == null) {
 				// grab the persistence unit defined in Configuration (if declared)
-				persistenceUnitName = Config.instance().getString(ConfigKeys.DB_JPA_PERSISTENCE_UNIT_NAME);
+				persistenceUnitName = Config.instance().getString(ConfigKeys.DB_JPA_PERSISTENCE_UNIT_NAME.getKey());
 				if(persistenceUnitName == null) {
 					// fallback to the db name property
-					persistenceUnitName = Config.instance().getString(ConfigKeys.DB_NAME);
+					persistenceUnitName = Config.instance().getString(ConfigKeys.DB_NAME.getKey());
 				}
 			}
 			assert persistenceUnitName != null : "Can't resolve the jpa persistence unit name";

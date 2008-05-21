@@ -37,7 +37,7 @@ public class HttpSessionContextIntegrationFilter extends org.acegisecurity.conte
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		super.init(filterConfig);
-		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM));
+		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 	}
 
 	@Override

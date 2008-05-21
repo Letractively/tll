@@ -32,7 +32,7 @@ public class OpenEntityManagerInViewFilter extends org.springframework.orm.jpa.s
 		super.initFilterBean();
 
 		FilterConfig config = this.getFilterConfig();
-		String daoMode = Config.instance().getString(ConfigKeys.DAO_MODE_PARAM);
+		String daoMode = Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey());
 		if(!DaoMode.MOCK.name().equals(daoMode)) {
 			Injector injector =
 					(Injector) config.getServletContext().getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);

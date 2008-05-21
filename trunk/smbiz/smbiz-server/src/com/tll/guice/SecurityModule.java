@@ -35,7 +35,7 @@ public class SecurityModule extends CompositeModule {
 		super();
 		this.mode =
 				mode == null ? EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
-						ConfigKeys.SECURITY_MODE_PARAM)) : mode;
+						ConfigKeys.SECURITY_MODE_PARAM.getKey())) : mode;
 	}
 
 	@Override

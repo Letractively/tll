@@ -39,11 +39,11 @@ public final class GuiceBootstrapper implements ServletContextListener {
 		}
 
 		// debug
-		final boolean isDebug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM);
+		final boolean isDebug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
 		context.setAttribute(Constants.IS_DEBUG_CONTEXT_ATTRIBUTE, new Boolean(isDebug));
 
 		// environment
-		final String env = Config.instance().getString(ConfigKeys.ENVIRONMENT_PARAM);
+		final String env = Config.instance().getString(ConfigKeys.ENVIRONMENT_PARAM.getKey());
 		context.setAttribute(Constants.ENVIRONMENT_CONTEXT_ATTRIBUTE, env);
 
 		// injector

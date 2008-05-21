@@ -49,7 +49,7 @@ public final class FilterSecurityInterceptor extends org.acegisecurity.intercept
 	public void init(FilterConfig config) throws ServletException {
 		super.init(config);
 
-		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM));
+		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 		if(isAcegi) {
 			Injector injector =
 					(Injector) config.getServletContext().getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
