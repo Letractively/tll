@@ -5,15 +5,9 @@
  */
 package com.tll.client.admin.ui.field;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField;
-import com.tll.client.model.IndexedProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
@@ -35,8 +29,6 @@ public abstract class InterfacePanel extends InterfaceRelatedPanel {
 	protected CheckboxField isRequiredMerchant;
 	protected CheckboxField isRequiredCustomer;
 
-	protected final List<InterfaceOptionPanel> optionPanels = new ArrayList<InterfaceOptionPanel>();
-
 	/**
 	 * Constructor
 	 * @param propName
@@ -49,9 +41,6 @@ public abstract class InterfacePanel extends InterfaceRelatedPanel {
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
 		super.neededAuxData(auxDataRequest);
 		// let's get all interface prototype models upfront
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}
@@ -114,36 +103,6 @@ public abstract class InterfacePanel extends InterfaceRelatedPanel {
 		frow.add(fcol);
 		fcol.add(dateCreated);
 		fcol.add(dateModified);
-	}
-
-	protected abstract void uiOptionsClear();
-
-	protected abstract void uiAddOption(InterfaceOptionPanel optionPanel, Model option);
-
-	@Override
-	protected void onBeforeBind(Model modelInterface) {
-		super.onBeforeBind(modelInterface);
-
-		// clear existing options
-		for(InterfaceOptionPanel p : optionPanels) {
-			fields.removeField(p.getFields());
-		}
-		optionPanels.clear();
-		uiOptionsClear();
-
-		// bind options
-		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
-		if(pvOptions != null && pvOptions.size() > 0) {
-			for(IndexedProperty propOption : pvOptions) {
-				Model option = propOption.getModel();
-				InterfaceOptionPanel pnlOption = new InterfaceOptionPanel(propOption.getPropertyName());
-				fields.addField(pnlOption.getFields());
-				optionPanels.add(pnlOption);
-				pnlOption.configure();
-				pnlOption.onBeforeBind(option);
-				uiAddOption(pnlOption, option);
-			}
-		}
 	}
 
 }

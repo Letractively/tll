@@ -80,8 +80,7 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 			if(index >= size) {
 				throw new NoSuchElementException();
 			}
-			final Model model = list.get(++index);
-			return new IndexedProperty(propertyName, isReference(), model, index);
+			return getIndexedProperty(++index);
 		}
 
 		public void remove() {
@@ -98,6 +97,15 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 	 */
 	public int size() {
 		return list == null ? 0 : list.size();
+	}
+
+	/**
+	 * Get an indexed property at the given index.
+	 * @param index The index
+	 * @return The {@link IndexedProperty} at the given index.
+	 */
+	public IndexedProperty getIndexedProperty(int index) {
+		return new IndexedProperty(propertyName, isReference(), list.get(index), index);
 	}
 
 	/**

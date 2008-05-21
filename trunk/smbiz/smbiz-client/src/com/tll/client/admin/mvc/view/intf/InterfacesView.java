@@ -217,9 +217,11 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		private String getStackHtml(Model model) {
 			String name = model.getName();
 			String desc = model.asString("description");
-			// String modified = PV.f(model, "dateModified");
-			return "<p class=\"" + CSS.FLOAT_LEFT + " " + CSS.BOLD + "\">" + name + "</p><p class=\"" + CSS.SMALL_ITALIC
-					+ " " + CSS.FLOAT_RIGHT + "\">" + desc + "</p>";
+			String type = model.getEntityType().getName();
+			int i = type.indexOf('-');
+			if(i > 0) type = type.substring(0, i);
+			return "<p class=\"" + CSS.FLOAT_LEFT + "\"><span class=\"" + CSS.BOLD + "\">" + name + " </span> (" + type
+					+ ") </p><p class=\"" + CSS.SMALL_ITALIC + " " + CSS.FLOAT_RIGHT + "\">" + desc + "</p>";
 		}
 
 		/**

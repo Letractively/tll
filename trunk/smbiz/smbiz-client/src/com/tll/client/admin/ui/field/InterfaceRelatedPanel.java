@@ -17,6 +17,7 @@ import com.tll.client.ui.field.TextField;
  */
 public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 
+	protected boolean bindCodeAndDescFields = true;
 	protected TextField code;
 	protected TextAreaField description;
 
@@ -29,6 +30,10 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 		super(propName, displayName);
 	}
 
+	public void setBindCodeAndDescFields(boolean bindCodeAndDescFields) {
+		this.bindCodeAndDescFields = bindCodeAndDescFields;
+	}
+
 	@Override
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
 		// none
@@ -38,11 +43,13 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 	protected void configure() {
 		super.configure();
 
-		code = ftext("code", "Code", LabelMode.ABOVE, 20);
-		description = ftextarea("description", "Description", LabelMode.ABOVE, 3, 18);
+		if(bindCodeAndDescFields) {
+			code = ftext("code", "Code", LabelMode.ABOVE, 20);
+			description = ftextarea("description", "Description", LabelMode.ABOVE, 3, 18);
 
-		fields.addField(code);
-		fields.addField(description);
+			fields.addField(code);
+			fields.addField(description);
+		}
 	}
 
 }

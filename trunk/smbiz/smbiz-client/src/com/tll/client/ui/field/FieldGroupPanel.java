@@ -144,6 +144,15 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	}
 
 	/**
+	 * The validation hook. Sub-classes may override but should most always call
+	 * the super to ensure the fields are validated!
+	 * @throws ValidationException
+	 */
+	public void validate() throws ValidationException {
+		fields.validate();
+	}
+
+	/**
 	 * Validates the field group and if no validation errors sets the
 	 * {@link IPropertyValue}s in the given {@link Model} with those held in the
 	 * child {@link IField}s of this panel's {@link FieldGroup}.
@@ -159,7 +168,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @throws ValidationException When there are validation errors.
 	 */
 	public final boolean updateModel(Model model) throws ValidationException {
-		fields.validate();
+		validate();
 		onBeforeUpdateModel(model);
 		if(fields.updateModel(model) || fields.isPending()) {
 			onAfterUpdateModel(model);
@@ -187,7 +196,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	}
 
 	/**
-	 * The method is called just before the model is updated.
+	 * The method is called just before the model is updated *after* validation.
 	 * @param model The model about to be updated.
 	 */
 	protected void onBeforeUpdateModel(Model model) {

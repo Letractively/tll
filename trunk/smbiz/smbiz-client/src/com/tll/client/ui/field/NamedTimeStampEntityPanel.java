@@ -13,6 +13,7 @@ import com.tll.client.field.IField.LabelMode;
  */
 public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 
+	protected boolean bindNameField = true;
 	protected TextField name;
 
 	/**
@@ -24,13 +25,18 @@ public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 		super(propName, displayName);
 	}
 
+	public void setBindNameField(boolean bindNameField) {
+		this.bindNameField = bindNameField;
+	}
+
 	@Override
 	protected void configure() {
 		super.configure();
 
-		name = ftext("name", "Name", LabelMode.ABOVE, 30);
-
-		fields.addField(name);
+		if(bindNameField) {
+			name = ftext("name", "Name", LabelMode.ABOVE, 30);
+			fields.addField(name);
+		}
 	}
 
 }

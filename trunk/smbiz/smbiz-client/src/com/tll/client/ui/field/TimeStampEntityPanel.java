@@ -15,6 +15,7 @@ import com.tll.client.util.GlobalFormat;
  */
 public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 
+	protected boolean bindTimestampFields = true;
 	protected TextField dateCreated;
 	protected TextField dateModified;
 
@@ -27,17 +28,23 @@ public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 		super(propName, displayName);
 	}
 
+	public void setBindTimestampFields(boolean bindTimestampFields) {
+		this.bindTimestampFields = bindTimestampFields;
+	}
+
 	@Override
 	protected void configure() {
-		dateCreated = fdate("dateCreated", "Created", LabelMode.ABOVE, GlobalFormat.DATE);
-		dateModified = fdate("dateModified", "Modified", LabelMode.ABOVE, GlobalFormat.DATE);
-		dateCreated.setReadOnly(true);
-		dateModified.setReadOnly(true);
-		dateCreated.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		dateModified.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		if(bindTimestampFields) {
+			dateCreated = fdate("dateCreated", "Created", LabelMode.ABOVE, GlobalFormat.DATE);
+			dateModified = fdate("dateModified", "Modified", LabelMode.ABOVE, GlobalFormat.DATE);
+			dateCreated.setReadOnly(true);
+			dateModified.setReadOnly(true);
+			dateCreated.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			dateModified.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
-		fields.addField(dateCreated);
-		fields.addField(dateModified);
+			fields.addField(dateCreated);
+			fields.addField(dateModified);
+		}
 	}
 
 }

@@ -54,6 +54,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
 
+	private boolean bindDefaultField;
+
 	private CheckboxField isDefault;
 
 	private TextField setUpCost;
@@ -64,7 +66,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	private TextField baseMonthlyPrice;
 	private TextField baseAnnualPrice;
 
-	private final PushButton btnDeleteToggle;
+	private boolean bindDeleteBtn = true;
+	private PushButton btnDeleteToggle;
 
 	private String optionName;
 
@@ -95,10 +98,6 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	 */
 	public InterfaceOptionPanel(String propName) {
 		super(propName, "Interface Option");
-
-		btnDeleteToggle = new PushButton();
-		btnDeleteToggle.addClickListener(this);
-		btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
 
 		lstngParams = ListingFactory.dataListing(plc, new IDataProvider() {
 
@@ -194,12 +193,22 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		dlgParam.setWidget(paramEditPanel);
 	}
 
+	public void setBindDeleteBtn(boolean bindDeleteBtn) {
+		this.bindDeleteBtn = bindDeleteBtn;
+	}
+
+	public void setBindDefaultField(boolean bindDefaultField) {
+		this.bindDefaultField = bindDefaultField;
+	}
+
 	@Override
 	protected void configure() {
 		super.configure();
 
-		isDefault = fbool("isDefault", "Default?");
-		isDefault.setAlignBottom(true);
+		if(bindDefaultField) {
+			isDefault = fbool("isDefault", "Default?");
+			isDefault.setAlignBottom(true);
+		}
 
 		setUpCost = ftext("setUpCost", "Setup Cost", LabelMode.NONE, 10);
 		monthlyCost = ftext("monthlyCost", "Monthly Cost", LabelMode.NONE, 10);
@@ -222,12 +231,22 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		// first row
 		frow = new FieldPanel(IField.CSS_FIELD_ROW);
 		add(frow);
-		frow.add(name);
-		frow.add(code);
-		frow.add(description);
-		frow.add(isDefault);
+		if(bindNameField) frow.add(name);
+		if(bindCodeAndDescFields) {
+			frow.add(code);
+			frow.add(description);
+		}
+		if(bindDefaultField) frow.add(isDefault);
 
-		frow.add(btnDeleteToggle);
+		if(bindDeleteBtn) {
+			btnDeleteToggle = new PushButton();
+			btnDeleteToggle.addClickListener(this);
+			btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
+			frow.add(btnDeleteToggle);
+		}
+		else {
+			btnDeleteToggle = null;
+		}
 
 		// second row
 		frow = new FieldPanel(IField.CSS_FIELD_ROW);
@@ -295,13 +314,15 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	private void setMarkDeleted(boolean markDeleted) {
 		assert optionName != null;
 		getFields().setMarkedDeleted(markDeleted);
-		if(markDeleted) {
-			btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
-			btnDeleteToggle.setTitle("Un-delete " + optionName + " Option");
-		}
-		else {
-			btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
-			btnDeleteToggle.setTitle("Delete " + optionName + " Option");
+		if(btnDeleteToggle != null) {
+			if(markDeleted) {
+				btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
+				btnDeleteToggle.setTitle("Un-delete " + optionName + " Option");
+			}
+			else {
+				btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
+				btnDeleteToggle.setTitle("Delete " + optionName + " Option");
+			}
 		}
 	}
 
