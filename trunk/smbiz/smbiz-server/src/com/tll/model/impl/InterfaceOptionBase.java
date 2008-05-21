@@ -17,7 +17,6 @@ import com.tll.model.NamedTimeStampEntity;
 /**
  * Base class for interface options and interface option parameter definition
  * classes.
- * 
  * @author jpk
  */
 @Entity
@@ -25,6 +24,7 @@ import com.tll.model.NamedTimeStampEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "record_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
+
 	public static final int MAXLEN_CODE = 50;
 	public static final int MAXLEN_NAME = 50;
 	public static final int MAXLEN_DESCRIPTION = 50;
@@ -60,7 +60,6 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	 * @return Returns the description.
 	 */
 	@Column
-	@NotEmpty
 	@Length(max = MAXLEN_DESCRIPTION)
 	public String getDescription() {
 		return description;
@@ -75,9 +74,7 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 
 	@Override
 	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-		.append("code", getCode())
-		.append("description", getDescription());
+		return super.toStringBuilder().append("code", getCode()).append("description", getDescription());
 	}
 
 }

@@ -5,17 +5,15 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.tll.client.data.AuxDataRequest;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.model.EntityType;
 
 /**
  * InterfaceSinglePanel
  * @author jpk
  */
-public final class InterfaceSinglePanel extends InterfacePanel {
+public final class InterfaceSinglePanel extends InterfaceMultiOptionPanel {
 
 	/**
 	 * The single un-deletable switch option
@@ -28,17 +26,6 @@ public final class InterfaceSinglePanel extends InterfacePanel {
 	 */
 	public InterfaceSinglePanel(String propName) {
 		super(propName);
-		pnlOption.setBindNameField(false);
-		pnlOption.setBindTimestampFields(false);
-		pnlOption.setBindCodeAndDescFields(false);
-		pnlOption.setBindDefaultField(false);
-		pnlOption.setBindDeleteBtn(false);
-	}
-
-	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
-		super.neededAuxData(auxDataRequest);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
 	}
 
 	@Override

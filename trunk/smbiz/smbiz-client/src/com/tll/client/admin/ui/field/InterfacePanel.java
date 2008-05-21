@@ -41,6 +41,9 @@ public abstract class InterfacePanel extends InterfaceRelatedPanel {
 	protected void neededAuxData(AuxDataRequest auxDataRequest) {
 		super.neededAuxData(auxDataRequest);
 		// let's get all interface prototype models upfront
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}

@@ -54,7 +54,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
 
-	private boolean bindDefaultField;
+	private boolean bindDefaultField = true;
 
 	private CheckboxField isDefault;
 
@@ -218,7 +218,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", LabelMode.NONE, 10);
 		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", LabelMode.NONE, 10);
 
-		fields.addField(isDefault);
+		if(isDefault != null) fields.addField(isDefault);
 		fields.addField(setUpCost);
 		fields.addField(monthlyCost);
 		fields.addField(annualCost);
@@ -230,13 +230,12 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		// first row
 		frow = new FieldPanel(IField.CSS_FIELD_ROW);
-		add(frow);
 		if(bindNameField) frow.add(name);
 		if(bindCodeAndDescFields) {
 			frow.add(code);
 			frow.add(description);
 		}
-		if(bindDefaultField) frow.add(isDefault);
+		if(isDefault != null) frow.add(isDefault);
 
 		if(bindDeleteBtn) {
 			btnDeleteToggle = new PushButton();
@@ -247,6 +246,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		else {
 			btnDeleteToggle = null;
 		}
+		if(frow.getWidgetCount() > 0) add(frow);
 
 		// second row
 		frow = new FieldPanel(IField.CSS_FIELD_ROW);
