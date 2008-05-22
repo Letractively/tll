@@ -17,6 +17,10 @@ public class SwitchOptionPanel extends AbstractOptionPanel {
 	 */
 	public SwitchOptionPanel(String propName) {
 		super(propName);
+		setBindNameField(false);
+		setBindTimestampFields(false);
+		setBindCodeAndDescFields(false);
+		setBindDeleteBtn(false);
 	}
 
 }

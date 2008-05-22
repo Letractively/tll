@@ -915,3 +915,5 @@ target(testServer: 'Runs the server related tests') {
 		xmlfileset(file:"${property.'project.server.dir'}/test/testng-server.xml")
 	}
 }
+
+setDefaultTarget(build)

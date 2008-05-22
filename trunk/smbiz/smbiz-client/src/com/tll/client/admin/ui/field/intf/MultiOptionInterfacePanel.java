@@ -14,9 +14,12 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.App;
+import com.tll.client.cache.AuxDataCache;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
+import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -81,7 +84,17 @@ public class MultiOptionInterfacePanel extends AbstractInterfacePanel implements
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 		assert sender == tabOptions;
 		if(tabIndex == tabOptions.getTabBar().getTabCount() - 1) {
-			// we are adding
+			OptionPanel op = new OptionPanel(FieldGroup.getPendingPropertyName());
+
+			Model proto = AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION);
+			assert proto != null;
+			op.bind(proto);
+			fields.addField(op.getFields());
+
+			tabOptions.insert(op, "New Option", tabIndex);
+			op.getFields().render();
+			// tabOptions.remove(tabIndex + 1);
+			// tabOptions.selectTab(tabIndex);
 		}
 		return true;
 	}

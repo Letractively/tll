@@ -19,12 +19,6 @@ import com.tll.model.EntityType;
  */
 public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 
-	enum InterfaceType {
-		SWITCH,
-		SINGLE,
-		MULTI;
-	}
-
 	protected CheckboxField isAvailableAsp;
 	protected CheckboxField isAvailableIsp;
 	protected CheckboxField isAvailableMerchant;

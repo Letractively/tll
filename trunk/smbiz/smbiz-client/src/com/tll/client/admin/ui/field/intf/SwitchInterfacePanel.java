@@ -5,11 +5,9 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.tll.client.data.AuxDataRequest;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.model.EntityType;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -28,17 +26,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	 */
 	public SwitchInterfacePanel(String propName) {
 		super(propName);
-		pnlOption.setBindNameField(false);
-		pnlOption.setBindTimestampFields(false);
-		pnlOption.setBindCodeAndDescFields(false);
-		// pnlOption.setBindDefaultField(false);
-		pnlOption.setBindDeleteBtn(false);
-	}
-
-	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
-		super.neededAuxData(auxDataRequest);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
 	}
 
 	@Override
@@ -46,7 +33,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		super.configure();
 		pnlOption.configure();
 		add(pnlOption);
-
 	}
 
 	@Override
