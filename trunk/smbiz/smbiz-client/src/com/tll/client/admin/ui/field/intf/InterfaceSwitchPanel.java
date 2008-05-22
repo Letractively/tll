@@ -3,7 +3,7 @@
  * @author jkirton
  * May 21, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.model.IndexedProperty;
@@ -12,7 +12,7 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.model.EntityType;
 
 /**
- * InterfaceSwitchPanel
+ * InterfaceSwitchPanel - One option exists that is either on or off.
  * @author jpk
  */
 public final class InterfaceSwitchPanel extends InterfacePanel {
@@ -31,7 +31,7 @@ public final class InterfaceSwitchPanel extends InterfacePanel {
 		pnlOption.setBindNameField(false);
 		pnlOption.setBindTimestampFields(false);
 		pnlOption.setBindCodeAndDescFields(false);
-		pnlOption.setBindDefaultField(false);
+		// pnlOption.setBindDefaultField(false);
 		pnlOption.setBindDeleteBtn(false);
 	}
 
@@ -46,6 +46,7 @@ public final class InterfaceSwitchPanel extends InterfacePanel {
 		super.configure();
 		pnlOption.configure();
 		add(pnlOption);
+
 	}
 
 	@Override

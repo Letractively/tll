@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.data.AuxDataRequest;
@@ -18,6 +18,12 @@ import com.tll.model.EntityType;
  * @author jpk
  */
 public abstract class InterfacePanel extends InterfaceRelatedPanel {
+
+	enum InterfaceType {
+		SWITCH,
+		SINGLE,
+		MULTI;
+	}
 
 	protected CheckboxField isAvailableAsp;
 	protected CheckboxField isAvailableIsp;

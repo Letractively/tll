@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.IField.LabelMode;

@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +53,6 @@ import com.tll.model.EntityType;
 final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener, IEditListener {
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
-
-	private boolean bindDefaultField = true;
 
 	private CheckboxField isDefault;
 
@@ -197,18 +195,12 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		this.bindDeleteBtn = bindDeleteBtn;
 	}
 
-	public void setBindDefaultField(boolean bindDefaultField) {
-		this.bindDefaultField = bindDefaultField;
-	}
-
 	@Override
 	protected void configure() {
 		super.configure();
 
-		if(bindDefaultField) {
-			isDefault = fbool("isDefault", "Default?");
-			isDefault.setAlignBottom(true);
-		}
+		isDefault = fbool("isDefault", "Default?");
+		isDefault.setAlignBottom(true);
 
 		setUpCost = ftext("setUpCost", "Setup Cost", LabelMode.NONE, 10);
 		monthlyCost = ftext("monthlyCost", "Monthly Cost", LabelMode.NONE, 10);
@@ -218,7 +210,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", LabelMode.NONE, 10);
 		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", LabelMode.NONE, 10);
 
-		if(isDefault != null) fields.addField(isDefault);
+		fields.addField(isDefault);
 		fields.addField(setUpCost);
 		fields.addField(monthlyCost);
 		fields.addField(annualCost);
@@ -235,7 +227,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 			frow.add(code);
 			frow.add(description);
 		}
-		if(isDefault != null) frow.add(isDefault);
+		frow.add(isDefault);
 
 		if(bindDeleteBtn) {
 			btnDeleteToggle = new PushButton();

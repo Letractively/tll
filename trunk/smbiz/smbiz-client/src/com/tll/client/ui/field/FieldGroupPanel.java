@@ -51,7 +51,9 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * group panel.
 	 * @param auxDataRequest
 	 */
-	protected abstract void neededAuxData(AuxDataRequest auxDataRequest);
+	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+		// default is nothing
+	}
 
 	/**
 	 * The <em>local</em> (or relative) property name bound the FieldGroup

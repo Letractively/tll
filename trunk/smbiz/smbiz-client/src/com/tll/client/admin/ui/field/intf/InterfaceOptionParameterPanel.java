@@ -1,4 +1,4 @@
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import com.tll.client.field.IField;
 import com.tll.client.ui.field.FieldPanel;

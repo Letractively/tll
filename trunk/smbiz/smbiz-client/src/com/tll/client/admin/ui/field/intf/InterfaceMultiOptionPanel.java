@@ -3,7 +3,7 @@
  * @author jkirton
  * May 21, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.intf;
 
 import java.util.ArrayList;
 import java.util.List;
