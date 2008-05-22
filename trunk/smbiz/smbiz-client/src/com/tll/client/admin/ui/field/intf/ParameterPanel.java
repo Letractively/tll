@@ -7,13 +7,13 @@ import com.tll.client.ui.field.FieldPanel;
  * ParameterPanel - Interface option parameter definition panel.
  * @author jpk
  */
-final class InterfaceOptionParameterPanel extends InterfaceRelatedPanel {
+final class ParameterPanel extends InterfaceRelatedPanel {
 
 	/**
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfaceOptionParameterPanel(String propName) {
+	public ParameterPanel(String propName) {
 		super(propName, null);
 	}
 

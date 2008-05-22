@@ -14,10 +14,10 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.model.EntityType;
 
 /**
- * InterfacePanel
+ * AbstractInterfacePanel
  * @author jpk
  */
-public abstract class InterfacePanel extends InterfaceRelatedPanel {
+public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 
 	enum InterfaceType {
 		SWITCH,
@@ -39,7 +39,7 @@ public abstract class InterfacePanel extends InterfaceRelatedPanel {
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfacePanel(String propName) {
+	public AbstractInterfacePanel(String propName) {
 		super(propName, "Interface");
 	}
 

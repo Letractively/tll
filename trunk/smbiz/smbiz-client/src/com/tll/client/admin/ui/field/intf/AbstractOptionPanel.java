@@ -47,10 +47,10 @@ import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.model.EntityType;
 
 /**
- * InterfacePanel
+ * AbstractInterfacePanel
  * @author jpk
  */
-final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickListener, IEditListener {
+abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements ClickListener, IEditListener {
 
 	private static final InterfaceOptionParamListingConfig plc = new InterfaceOptionParamListingConfig();
 
@@ -77,7 +77,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 	private final AbstractListingWidget lstngParams;
 
-	private final List<InterfaceOptionParameterPanel> paramFieldPanels = new ArrayList<InterfaceOptionParameterPanel>();
+	private final List<ParameterPanel> paramFieldPanels = new ArrayList<ParameterPanel>();
 
 	private int paramRowIndex = -1;
 
@@ -94,7 +94,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfaceOptionPanel(String propName) {
+	public AbstractOptionPanel(String propName) {
 		super(propName, "Interface Option");
 
 		lstngParams = ListingFactory.dataListing(plc, new IDataProvider() {
@@ -116,7 +116,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 				Model param = params.get(paramRowIndex);
 				String paramName = param.getName();
 				assert paramName != null;
-				InterfaceOptionParameterPanel pep = paramFieldPanels.get(rowIndex - 1);
+				ParameterPanel pep = paramFieldPanels.get(rowIndex - 1);
 				paramEditPanel.setFieldPanel(pep);
 				showParamEditDialog(param);
 			}
@@ -140,8 +140,8 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		}, new IAddRowDelegate() {
 
 			public void handleAddRow() {
-				InterfaceOptionParameterPanel newParamPanel =
-						new InterfaceOptionParameterPanel(FieldGroup.getPendingPropertyName());
+				ParameterPanel newParamPanel =
+						new ParameterPanel(FieldGroup.getPendingPropertyName());
 				paramFieldPanels.add(newParamPanel);
 				paramEditPanel.setFieldPanel(newParamPanel);
 				if(paramPrototype == null) {
@@ -149,7 +149,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 						@Override
 						protected Widget getSourcingWidget() {
-							return InterfaceOptionPanel.this;
+							return AbstractOptionPanel.this;
 						}
 
 						@Override
@@ -268,7 +268,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		optionName = modelOption.getName();
 
 		// clear existing params
-		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
+		for(ParameterPanel pp : paramFieldPanels) {
 			fields.removeField(pp.getFields());
 		}
 		paramFieldPanels.clear();
@@ -277,7 +277,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 		RelatedManyProperty pvParams = modelOption.relatedMany("parameters");
 		if(pvParams != null && pvParams.size() > 0) {
 			for(IndexedProperty param : pvParams) {
-				InterfaceOptionParameterPanel pp = new InterfaceOptionParameterPanel(param.getPropertyName());
+				ParameterPanel pp = new ParameterPanel(param.getPropertyName());
 				paramFieldPanels.add(pp);
 				fields.addField(pp.getFields());
 			}
@@ -294,7 +294,7 @@ final class InterfaceOptionPanel extends InterfaceRelatedPanel implements ClickL
 
 		RelatedManyProperty pvParams = model.relatedMany("parameters");
 
-		for(InterfaceOptionParameterPanel pp : paramFieldPanels) {
+		for(ParameterPanel pp : paramFieldPanels) {
 			if(pp.getFields().isPending()) {
 				Model proto = paramPrototype.copy();
 				String actualPropName = pvParams.add(proto);

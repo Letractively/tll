@@ -1,22 +1,21 @@
 /**
  * The Logic Lab
- * @author jkirton
+ * @author jpk
  * May 21, 2008
  */
 package com.tll.client.admin.ui.field.intf;
 
-
 /**
- * InterfaceMultiPanel
+ * OptionPanel
  * @author jpk
  */
-public final class InterfaceMultiPanel extends InterfaceMultiOptionPanel {
+public class OptionPanel extends AbstractOptionPanel {
 
 	/**
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfaceMultiPanel(String propName) {
+	public OptionPanel(String propName) {
 		super(propName);
 	}
 

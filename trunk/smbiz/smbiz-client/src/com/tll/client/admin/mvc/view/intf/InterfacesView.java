@@ -12,10 +12,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.ui.field.intf.InterfaceMultiPanel;
-import com.tll.client.admin.ui.field.intf.InterfacePanel;
-import com.tll.client.admin.ui.field.intf.InterfaceSinglePanel;
-import com.tll.client.admin.ui.field.intf.InterfaceSwitchPanel;
+import com.tll.client.admin.ui.field.intf.AbstractInterfacePanel;
+import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
+import com.tll.client.admin.ui.field.intf.SwitchInterfacePanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.ListingCommand;
@@ -122,14 +121,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				modelChangeHandler.addModelChangeListener(this);
 			}
 
-			private InterfacePanel resolveInterfacePanel(EntityType intfType) {
+			private AbstractInterfacePanel resolveInterfacePanel(EntityType intfType) {
 				switch(intfType) {
 					case INTERFACE_MULTI:
-						return new InterfaceMultiPanel(null);
 					case INTERFACE_SINGLE:
-						return new InterfaceSinglePanel(null);
+						return new MultiOptionInterfacePanel(null);
 					case INTERFACE_SWITCH:
-						return new InterfaceSwitchPanel(null);
+						return new SwitchInterfacePanel(null);
 					default:
 						throw new IllegalArgumentException();
 				}

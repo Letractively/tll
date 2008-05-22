@@ -19,12 +19,13 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 
 /**
- * InterfaceMultiOptionPanel
+ * MultiOptionInterfacePanel - Interface panel for interfaces where more than
+ * one option is allowed.
  * @author jpk
  */
-public class InterfaceMultiOptionPanel extends InterfacePanel implements TabListener {
+public class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
 
-	protected final List<InterfaceOptionPanel> optionPanels = new ArrayList<InterfaceOptionPanel>();
+	protected final List<OptionPanel> optionPanels = new ArrayList<OptionPanel>();
 
 	private final TabPanel tabOptions = new TabPanel();
 
@@ -32,7 +33,7 @@ public class InterfaceMultiOptionPanel extends InterfacePanel implements TabList
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfaceMultiOptionPanel(String propName) {
+	public MultiOptionInterfacePanel(String propName) {
 		super(propName);
 		tabOptions.addTabListener(this);
 	}
@@ -48,7 +49,7 @@ public class InterfaceMultiOptionPanel extends InterfacePanel implements TabList
 		super.onBeforeBind(modelInterface);
 
 		// clear existing options
-		for(InterfaceOptionPanel p : optionPanels) {
+		for(OptionPanel p : optionPanels) {
 			fields.removeField(p.getFields());
 		}
 		optionPanels.clear();
@@ -59,7 +60,7 @@ public class InterfaceMultiOptionPanel extends InterfacePanel implements TabList
 		if(pvOptions != null && pvOptions.size() > 0) {
 			for(IndexedProperty propOption : pvOptions) {
 				Model option = propOption.getModel();
-				InterfaceOptionPanel pnlOption = new InterfaceOptionPanel(propOption.getPropertyName());
+				OptionPanel pnlOption = new OptionPanel(propOption.getPropertyName());
 				fields.addField(pnlOption.getFields());
 				optionPanels.add(pnlOption);
 				pnlOption.configure();

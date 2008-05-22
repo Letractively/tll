@@ -12,21 +12,21 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.model.EntityType;
 
 /**
- * InterfaceSwitchPanel - One option exists that is either on or off.
+ * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
  */
-public final class InterfaceSwitchPanel extends InterfacePanel {
+public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 	/**
 	 * The single un-deletable switch option
 	 */
-	private final InterfaceOptionPanel pnlOption = new InterfaceOptionPanel(null);
+	private final SwitchOptionPanel pnlOption = new SwitchOptionPanel(null);
 
 	/**
 	 * Constructor
 	 * @param propName
 	 */
-	public InterfaceSwitchPanel(String propName) {
+	public SwitchInterfacePanel(String propName) {
 		super(propName);
 		pnlOption.setBindNameField(false);
 		pnlOption.setBindTimestampFields(false);
