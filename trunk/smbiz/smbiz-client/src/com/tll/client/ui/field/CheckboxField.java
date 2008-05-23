@@ -62,7 +62,7 @@ public class CheckboxField extends AbstractField {
 	public CheckBox getCheckBox() {
 		if(cb == null) {
 			cb = new CheckBox(cbLblTxt);
-			cb.setStyleName(IField.CSS_FIELD_LABEL);
+			cb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
 			cb.addFocusListener(this);
 			cb.addClickListener(this);
 		}

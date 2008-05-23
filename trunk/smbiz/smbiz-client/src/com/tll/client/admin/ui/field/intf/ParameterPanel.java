@@ -1,6 +1,5 @@
 package com.tll.client.admin.ui.field.intf;
 
-import com.tll.client.field.IField;
 import com.tll.client.ui.field.FieldPanel;
 
 /**
@@ -24,7 +23,7 @@ final class ParameterPanel extends InterfaceRelatedPanel {
 		FieldPanel frow;
 
 		// first row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
 		frow.add(name);
 		frow.add(code);

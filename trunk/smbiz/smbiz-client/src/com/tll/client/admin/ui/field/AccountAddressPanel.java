@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
@@ -64,13 +63,13 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 		FieldPanel frow;
 
 		// account address name row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		frow.add(name);
 		frow.add(btnDeleteToggle);
 		add(frow);
 
 		// address row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		frow.add(addressPanel);
 		add(frow);
 	}

@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
@@ -139,23 +138,23 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		fields.addField(persistPymntInfo);
 		fields.addField(paymentInfoPanel.getFields());
 
-		FieldPanel frow, fcol, fldp;
+		FieldPanel frow, fcol;
 
 		// first row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
 		frow.add(name);
 		frow.add(status);
 		frow.add(dateCancelled);
 		frow.add(currency);
 		frow.add(parent);
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		fcol.add(dateCreated);
 		fcol.add(dateModified);
 		frow.add(fcol);
 
 		// second row (billing)
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		frow.add(billingModel);
 		frow.add(billingCycle);
 		frow.add(dateLastCharged);
@@ -165,25 +164,21 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		// third row
 		// NOTE: we use a horizontal panel to ensure both the address and payment
 		// info disclosure panels remain on the same row at all times.
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		HorizontalPanel hp = new HorizontalPanel();
 		frow.add(hp);
 		add(frow);
 
 		// account addresses block
 		dpAddresses.add(tabAddresses);
-		fldp = new FieldPanel(IField.CSS_FIELD);
-		fldp.add(dpAddresses);
-		hp.add(fldp);
+		hp.add(dpAddresses);
 
 		// payment info block
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		fcol.add(persistPymntInfo);
 		fcol.add(paymentInfoPanel);
 		dpPaymentInfo.add(fcol);
-		fldp = new FieldPanel(IField.CSS_FIELD);
-		fldp.add(dpPaymentInfo);
-		hp.add(fldp);
+		hp.add(dpPaymentInfo);
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);

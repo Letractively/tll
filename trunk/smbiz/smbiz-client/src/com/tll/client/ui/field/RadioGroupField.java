@@ -62,7 +62,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 			if(dataMap != null) {
 				for(String n : dataMap.keySet()) {
 					RadioButton rb = new RadioButton("rg_" + domId, n);
-					rb.setStyleName(IField.CSS_FIELD_LABEL);
+					rb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
 					rb.addClickListener(this);
 					rbPanel.add(rb);
 					radioButtons.add(rb);

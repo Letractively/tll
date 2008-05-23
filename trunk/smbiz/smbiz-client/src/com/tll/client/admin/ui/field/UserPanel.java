@@ -13,7 +13,6 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
@@ -70,7 +69,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		enabled = fbool("enabled", "Enabled");
 		expires = fdate("expires", "Expires", LabelMode.ABOVE, GlobalFormat.DATE);
 
-		authorityPanel = new FieldPanel(IField.CSS_FIELD_ROW);
+		authorityPanel = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
 		authorities = new CheckboxField[authList.size()];
 		int i = 0;
@@ -95,11 +94,11 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		FieldPanel frow, fcol;
 
 		// first row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
 		frow.add(name);
 		frow.add(emailAddress);
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		fcol.add(locked);
 		fcol.add(enabled);
 		frow.add(fcol);
@@ -109,7 +108,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		lnkAccount = new ViewRequestLink();
 		frow.add(new FieldWidget("Account", LabelMode.ABOVE, lnkAccount));
 
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		fcol.add(dateCreated);
 		fcol.add(dateModified);
 		frow.add(fcol);
@@ -118,7 +117,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		add(authorityPanel);
 
 		// third row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
 		frow.add(addressPanel);
 	}

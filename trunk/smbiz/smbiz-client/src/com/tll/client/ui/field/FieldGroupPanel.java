@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
@@ -23,12 +24,19 @@ import com.tll.client.validate.ValidationException;
  * Provision for read-only is supported.
  * @author jpk
  */
-public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNameProvider*/{
+public abstract class FieldGroupPanel extends Composite {
+
+	protected enum FieldLayout {
+		FLOW,
+		VERTICAL;
+	}
 
 	/**
 	 * The collective group of all fields in this panel.
 	 */
 	protected final FieldGroup fields;
+
+	private final FlowPanel panel = new FlowPanel();
 
 	/**
 	 * Flag indicating whether the fields have been instantiated and the UI
@@ -44,6 +52,11 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	public FieldGroupPanel(String propName, String displayName) {
 		super();
 		this.fields = new FieldGroup(propName, displayName, this);
+		initWidget(panel);
+	}
+
+	protected void add(Widget w) {
+		panel.add(w);
 	}
 
 	/**
@@ -220,7 +233,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param visibleLength
 	 */
-	protected final TextField ftext(String propName, String lblTxt, LabelMode lblMode, int visibleLength) {
+	protected static final TextField ftext(String propName, String lblTxt, LabelMode lblMode, int visibleLength) {
 		return new TextField(propName, lblTxt, lblMode, visibleLength);
 	}
 
@@ -231,7 +244,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param displayFormat
 	 */
-	protected final DateField fdate(String propName, String lblTxt, LabelMode lblMode, GlobalFormat format) {
+	protected static final DateField fdate(String propName, String lblTxt, LabelMode lblMode, GlobalFormat format) {
 		return new DateField(propName, lblTxt, lblMode, format);
 	}
 
@@ -244,7 +257,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param checkedValue
 	 * @param uncheckedValue
 	 */
-	protected final CheckboxField fbool(String propName, String lblTxt) {
+	protected static final CheckboxField fbool(String propName, String lblTxt) {
 		return new CheckboxField(propName, lblTxt, "true", "false");
 	}
 
@@ -256,7 +269,8 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param checkedValue
 	 * @param uncheckedValue
 	 */
-	protected final CheckboxField fcheckbox(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
+	protected static final CheckboxField fcheckbox(String propName, String lblTxt, String checkedValue,
+			String uncheckedValue) {
 		return new CheckboxField(propName, lblTxt, checkedValue, uncheckedValue);
 	}
 
@@ -268,7 +282,8 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param numRows
 	 * @param numCols
 	 */
-	protected final TextAreaField ftextarea(String propName, String lblTxt, LabelMode lblMode, int numRows, int numCols) {
+	protected static final TextAreaField ftextarea(String propName, String lblTxt, LabelMode lblMode, int numRows,
+			int numCols) {
 		return new TextAreaField(propName, lblTxt, lblMode, numRows, numCols);
 	}
 
@@ -278,7 +293,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblTxt
 	 * @param lblMode
 	 */
-	protected final PasswordField fpassword(String propName, String lblTxt, LabelMode lblMode) {
+	protected static final PasswordField fpassword(String propName, String lblTxt, LabelMode lblMode) {
 		return new PasswordField(propName, lblTxt, lblMode);
 	}
 
@@ -289,7 +304,8 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected final SelectField fselect(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
+	protected static final SelectField fselect(String propName, String lblTxt, LabelMode lblMode,
+			Map<String, String> dataMap) {
 		return new SelectField(propName, lblTxt, lblMode, dataMap);
 	}
 
@@ -300,7 +316,8 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected final SuggestField fsuggest(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
+	protected static final SuggestField fsuggest(String propName, String lblTxt, LabelMode lblMode,
+			Map<String, String> dataMap) {
 		return new SuggestField(propName, lblTxt, lblMode, dataMap);
 	}
 
@@ -312,7 +329,7 @@ public abstract class FieldGroupPanel extends FlowPanel /*implements IPropertyNa
 	 * @param dataMap
 	 * @param renderHorizontal
 	 */
-	protected final RadioGroupField fradiogroup(String propName, String lblTxt, LabelMode lblMode,
+	protected static final RadioGroupField fradiogroup(String propName, String lblTxt, LabelMode lblMode,
 			Map<String, String> dataMap, boolean renderHorizontal) {
 		return new RadioGroupField(propName, lblTxt, lblMode, dataMap, renderHorizontal);
 	}

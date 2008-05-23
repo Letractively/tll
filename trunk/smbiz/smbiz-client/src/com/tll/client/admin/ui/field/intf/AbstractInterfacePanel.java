@@ -7,7 +7,6 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
@@ -75,15 +74,15 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		FieldPanel frow, fcol;
 
 		// first row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		frow.add(fcol);
 		fcol.add(name);
 		fcol.add(code);
 		frow.add(description);
 
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		frow.add(fcol);
 		Grid g = new Grid(3, 5);
 		fcol.add(g);
@@ -102,7 +101,7 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		g.setWidget(2, 3, isRequiredMerchant);
 		g.setWidget(2, 4, isRequiredCustomer);
 
-		fcol = new FieldPanel(IField.CSS_FIELD_COL);
+		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
 		frow.add(fcol);
 		fcol.add(dateCreated);
 		fcol.add(dateModified);

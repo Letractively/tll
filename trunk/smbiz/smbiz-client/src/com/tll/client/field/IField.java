@@ -25,13 +25,6 @@ public interface IField extends IPropertyNameProvider {
 		LEFT;
 	}
 
-	// CSS styles declared in field.css
-	static final String CSS_FIELD = "fld";
-	static final String CSS_FIELD_LABEL = "lbl";
-	static final String CSS_FIELD_REQUIRED_TOKEN = "rqd";
-	static final String CSS_FIELD_ROW = "fldrow";
-	static final String CSS_FIELD_COL = "fldcol";
-
 	/**
 	 * @return <code>true</code> if this field is required.
 	 */
@@ -81,6 +74,7 @@ public interface IField extends IPropertyNameProvider {
 	/**
 	 * Renders the UI control.
 	 */
+	// TODO eliminate and rely on Widget.onLoad() method for the rendering hook
 	void render();
 
 	/**

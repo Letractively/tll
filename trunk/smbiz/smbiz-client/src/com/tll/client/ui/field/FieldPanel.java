@@ -15,6 +15,9 @@ import com.tll.client.ui.CSS;
  */
 public final class FieldPanel extends FlowPanel {
 
+	public static final String CSS_FIELD_ROW = "fldrow";
+	public static final String CSS_FIELD_COL = "fldcol";
+
 	/**
 	 * Constructor
 	 * @param fieldStyle The CSS class to add to this panel. Use those declared in
@@ -24,7 +27,7 @@ public final class FieldPanel extends FlowPanel {
 		super();
 		assert fieldStyle != null;
 		addStyleName(fieldStyle);
-		if(IField.CSS_FIELD_ROW.equals(fieldStyle)) {
+		if(CSS_FIELD_ROW.equals(fieldStyle)) {
 			addStyleName(CSS.FLOAT_CLEARFIX);
 		}
 	}

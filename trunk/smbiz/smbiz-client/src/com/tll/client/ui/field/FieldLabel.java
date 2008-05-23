@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.ClickListenerCollection;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.IField;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
 import com.tll.client.util.StringUtil;
 
@@ -18,7 +17,11 @@ import com.tll.client.util.StringUtil;
  */
 public final class FieldLabel extends Widget implements HasText, SourcesClickEvents {
 
-	private static final String requiredToken = "<sup class=\"" + IField.CSS_FIELD_REQUIRED_TOKEN + "\">*</sup>";
+	public static final String CSS_FIELD_LABEL = "lbl";
+
+	public static final String CSS_FIELD_REQUIRED_TOKEN = "rqd";
+
+	private static final String requiredToken = "<sup class=\"" + CSS_FIELD_REQUIRED_TOKEN + "\">*</sup>";
 
 	private static final FieldLabelImpl impl = (FieldLabelImpl) GWT.create(FieldLabelImpl.class);
 
@@ -36,7 +39,7 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 	public FieldLabel(String text, String fldId, boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
-		setStyleName(IField.CSS_FIELD_LABEL);
+		setStyleName(CSS_FIELD_LABEL);
 		setText(text);
 		if(fldId != null) {
 			setFor(fldId);

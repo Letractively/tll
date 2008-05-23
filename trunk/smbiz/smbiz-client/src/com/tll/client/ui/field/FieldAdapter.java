@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.Br;
 import com.tll.client.ui.CSS;
@@ -21,6 +20,8 @@ import com.tll.client.util.StringUtil;
  * @author jpk
  */
 public abstract class FieldAdapter extends Composite implements HasHorizontalAlignment {
+
+	private static final String CSS_FIELD = "fld";
 
 	/**
 	 * The wrapped UI panel containing all the field sub-widgets.
@@ -45,7 +46,7 @@ public abstract class FieldAdapter extends Composite implements HasHorizontalAli
 		this.lblTxt = lblTxt;
 		this.lblMode = lblMode;
 		initWidget(fp);
-		fp.setStyleName(IField.CSS_FIELD);
+		fp.setStyleName(CSS_FIELD);
 		fldLbl = (lblMode == LabelMode.NONE) ? null : lblTxt == null ? null : new FieldLabel(lblTxt);
 		if(fldLbl != null) {
 			fp.add(fldLbl);

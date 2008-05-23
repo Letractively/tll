@@ -24,7 +24,6 @@ import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
 import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IDataProvider;
@@ -140,8 +139,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		}, new IAddRowDelegate() {
 
 			public void handleAddRow() {
-				ParameterPanel newParamPanel =
-						new ParameterPanel(FieldGroup.getPendingPropertyName());
+				ParameterPanel newParamPanel = new ParameterPanel(FieldGroup.getPendingPropertyName());
 				paramFieldPanels.add(newParamPanel);
 				paramEditPanel.setFieldPanel(newParamPanel);
 				if(paramPrototype == null) {
@@ -221,7 +219,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		FieldPanel frow;
 
 		// first row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		if(bindNameField) frow.add(name);
 		if(bindCodeAndDescFields) {
 			frow.add(code);
@@ -241,7 +239,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		if(frow.getWidgetCount() > 0) add(frow);
 
 		// second row
-		frow = new FieldPanel(IField.CSS_FIELD_ROW);
+		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		add(frow);
 
 		Grid g = new Grid(3, 4);
