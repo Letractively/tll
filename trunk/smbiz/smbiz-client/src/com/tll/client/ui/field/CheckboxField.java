@@ -6,10 +6,8 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.IField;
-import com.tll.client.ui.Br;
 
 /**
  * CheckboxField
@@ -39,7 +37,7 @@ public class CheckboxField extends AbstractField {
 	 * @param uncheckedValue
 	 */
 	public CheckboxField(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
-		super(propName, null, LabelMode.NONE);
+		super(propName, null);
 		this.cbLblTxt = lblTxt;
 		this.checkedValue = checkedValue;
 		this.uncheckedValue = uncheckedValue;
@@ -69,6 +67,7 @@ public class CheckboxField extends AbstractField {
 		return cb;
 	}
 
+	/*
 	@Override
 	public String getLabelText() {
 		return cbLblTxt;
@@ -82,6 +81,7 @@ public class CheckboxField extends AbstractField {
 			cb.setText(cbLblTxt);
 		}
 	}
+	*/
 
 	public final void setChecked(boolean checked) {
 		this.value = checked ? checkedValue : uncheckedValue;
@@ -119,6 +119,7 @@ public class CheckboxField extends AbstractField {
 		return isCheckedValue(getValue()) ? checkedValue : uncheckedValue;
 	}
 
+	/*
 	@Override
 	public void render() {
 		fp.clear();
@@ -138,6 +139,7 @@ public class CheckboxField extends AbstractField {
 			fp.add(ef);
 		}
 	}
+	*/
 
 	public IField copy() {
 		return new CheckboxField(propName, /*propType, */lblTxt, checkedValue, uncheckedValue);

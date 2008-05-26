@@ -29,6 +29,14 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 		super(criteriaType, EntityType.USER);
 	}
 
+	/**
+	 * Constructor
+	 * @param businessKeyName
+	 */
+	public UserSearch(String businessKeyName) {
+		super(businessKeyName, EntityType.USER);
+	}
+
 	@Override
 	public void clear() {
 		super.clear();

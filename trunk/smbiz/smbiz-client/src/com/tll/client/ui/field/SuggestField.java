@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
-import com.tll.client.field.IField;
 
 /**
  * SuggestField
@@ -25,11 +24,10 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 */
-	public SuggestField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
-		super(propName, lblTxt, lblMode, dataMap);
+	public SuggestField(String propName, String lblTxt, Map<String, String> dataMap) {
+		super(propName, lblTxt, dataMap);
 	}
 
 	public SuggestBox getSuggestBox() {
@@ -82,12 +80,7 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 		return value == null ? rawValue : value;
 	}
 
-	public IField copy() {
-		return new SuggestField(propName, lblTxt, lblMode, dataMap);
-	}
-
 	public void onSuggestionSelected(SuggestionEvent event) {
 		changed = true;
 	}
-
 }

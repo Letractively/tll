@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
-import com.tll.client.field.IField;
 
 /**
  * SelectField
@@ -23,11 +22,10 @@ public class SelectField extends AbstractDataMapField {
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 */
-	public SelectField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap) {
-		super(propName, lblTxt, lblMode, dataMap);
+	public SelectField(String propName, String lblTxt, Map<String, String> dataMap) {
+		super(propName, lblTxt, dataMap);
 	}
 
 	public ListBox getListBox() {
@@ -65,9 +63,4 @@ public class SelectField extends AbstractDataMapField {
 		}
 		return null;
 	}
-
-	public IField copy() {
-		return new SelectField(propName, lblTxt, lblMode, dataMap);
-	}
-
 }

@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.CSS;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.model.impl.AddressType;
 
@@ -58,20 +58,18 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 		addressPanel.configure();
 		fields.addField(addressPanel.getFields());
 
+		// TODO determine why we need this as we shouldn't!!!
 		setMarkDeleted(false);
 
-		FieldPanel frow;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
 		// account address name row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		frow.add(name);
-		frow.add(btnDeleteToggle);
-		add(frow);
+		canvas.addField(name);
+		canvas.addWidget(btnDeleteToggle);
 
 		// address row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		frow.add(addressPanel);
-		add(frow);
+		canvas.newRow();
+		canvas.addWidget(addressPanel);
 	}
 
 	private void setMarkDeleted(boolean markDeleted) {

@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.field.IField.LabelMode;
 
 /**
  * NamedTimeStampEntityPanel
@@ -34,7 +33,7 @@ public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 		super.configure();
 
 		if(bindNameField) {
-			name = ftext("name", "Name", LabelMode.ABOVE, 30);
+			name = ftext("name", "Name", 30);
 			fields.addField(name);
 		}
 	}

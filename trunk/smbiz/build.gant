@@ -389,8 +389,8 @@ target (prepare: 'create directories') {
 	Ant.mkdir(dir: property.'project.dir.dist')
 	Ant.mkdir(dir: property.'project.dir.dist' + '/docs')
 	Ant.mkdir(dir: property.'project.dir.dist' + '/docs/api')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.admin')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.tests')
+	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
+	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
 	Ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/WEB-INF')
 	Ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/email-templates')
 	targetEnd()
@@ -403,8 +403,8 @@ target (clean: 'clean directories') {
  	Ant.delete(dir: property.'project.dir.build')
 	Ant.delete(dir: property.'project.dir.dist')
 	Ant.delete(dir: property.'gwt.dir.shell.server.deploy')
-	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.admin')
-	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.tests')
+	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
+	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
 	targetEnd()
 }
 
@@ -671,14 +671,14 @@ target (copyServer: 'Copies server dependant files to build dir') {
 target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
 	targetStart()
 	depends(compileClient)
-	gwtCompile(property.'gwt.module.tests')
+	gwtCompile(property.'gwt.module.smbiz.tests')
 	targetEnd()
 }
 
 target (gwtCompileAdmin: 'GWT compilation of the tests module') {
 	targetStart()
 	depends(compileClient)
-	gwtCompile(property.'gwt.module.admin')
+	gwtCompile(property.'gwt.module.smbiz.admin')
 	targetEnd()
 }
 	
@@ -689,7 +689,7 @@ target (copyClient: 'Copies client files to build dir') {
 	println()
 	println 'Copying GWT compiler output to build web dir...'
 	Ant.copy(todir: property.'project.dir.build.web', preservelastmodified:true) {
-		fileset(dir: "${property.'project.dir.build'}/${property.'gwt.module.admin'}") {
+		fileset(dir: "${property.'project.dir.build'}/${property.'gwt.module.smbiz.admin'}") {
 			include(name: '**/*')	// all found files
 			exclude(name: 'Thumbs.db')
 			exclude(name: 'hosted.html')

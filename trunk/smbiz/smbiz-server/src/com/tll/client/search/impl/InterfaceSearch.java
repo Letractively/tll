@@ -29,6 +29,14 @@ public class InterfaceSearch extends NamedTimeStampEntitySearch {
 		super(criteriaType, EntityType.INTERFACE);
 	}
 
+	/**
+	 * Constructor
+	 * @param businessKeyName
+	 */
+	public InterfaceSearch(String businessKeyName) {
+		super(businessKeyName, EntityType.INTERFACE);
+	}
+
 	@Override
 	public void clear() {
 		super.clear();

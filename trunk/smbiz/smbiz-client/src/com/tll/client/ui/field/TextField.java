@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextBox;
 import com.tll.client.field.HasFormat;
 import com.tll.client.field.HasMaxLength;
-import com.tll.client.field.IField;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.StringUtil;
 
@@ -31,11 +30,10 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param visibleLen
 	 */
-	public TextField(String propName, String lblTxt, LabelMode lblMode, int visibleLen) {
-		super(propName, lblTxt, lblMode);
+	public TextField(String propName, String lblTxt, int visibleLen) {
+		super(propName, lblTxt);
 		this.visibleLen = visibleLen;
 	}
 
@@ -94,9 +92,5 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 	@Override
 	protected String getReadOnlyRenderValue() {
 		return StringUtil.abbr(super.getReadOnlyRenderValue(), visibleLen);
-	}
-
-	public IField copy() {
-		return new TextField(propName, lblTxt, lblMode, visibleLen);
 	}
 }

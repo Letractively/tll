@@ -35,6 +35,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.InterfaceSearch;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.EditPanel;
@@ -173,7 +174,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 		}// InterfaceStack
 
-		private final ListingCommand listingCommand;
+		private final ListingCommand<ISearch> listingCommand;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -188,7 +189,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		public InterfacesStack() {
 			super();
 			String listingName = EntityType.INTERFACE.name();
-			listingCommand = new ListingCommand(this, listingName);
+			listingCommand = new ListingCommand<ISearch>(this, listingName);
 			listingCommand.addListingListener(this);
 		}
 

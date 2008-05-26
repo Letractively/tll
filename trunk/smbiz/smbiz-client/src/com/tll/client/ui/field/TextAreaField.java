@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.tll.client.field.HasMaxLength;
-import com.tll.client.field.IField;
 import com.tll.client.util.StringUtil;
 
 /**
@@ -24,12 +23,11 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
 	 */
-	public TextAreaField(String propName, String lblTxt, LabelMode lblMode, int numRows, int numCols) {
-		super(propName, lblTxt, lblMode);
+	public TextAreaField(String propName, String lblTxt, int numRows, int numCols) {
+		super(propName, lblTxt);
 		this.numRows = numRows;
 		this.numCols = numCols;
 	}
@@ -89,9 +87,5 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 	@Override
 	protected String getReadOnlyRenderValue() {
 		return StringUtil.abbr(super.getReadOnlyRenderValue(), getMaxLen());
-	}
-
-	public IField copy() {
-		return new TextAreaField(propName, lblTxt, lblMode, numRows, numCols);
 	}
 }

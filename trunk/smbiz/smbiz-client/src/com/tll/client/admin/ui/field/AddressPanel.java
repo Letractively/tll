@@ -4,10 +4,9 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField.LabelMode;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
@@ -47,21 +46,18 @@ public class AddressPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		emailAddress = ftext("emailAddress", "Email Address", LabelMode.ABOVE, 30);
-		lastName = ftext("firstName", "First Name", LabelMode.ABOVE, 20);
-		firstName = ftext("lastName", "Last Name", LabelMode.ABOVE, 20);
-		mi = ftext("mi", "MI", LabelMode.ABOVE, 1);
-		company = ftext("company", "Company", LabelMode.ABOVE, 20);
-		attn = ftext("attn", "Attn", LabelMode.ABOVE, 10);
-		address1 = ftext("address1", "Address 1", LabelMode.ABOVE, 40);
-		address2 = ftext("address2", "Address 2", LabelMode.ABOVE, 40);
-		city = ftext("city", "City", LabelMode.ABOVE, 30);
-		province =
-				fsuggest("province", "State/Province", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
-						"usps-state-abbrs"));
-		postalCode = ftext("postalCode", "Zip", LabelMode.ABOVE, 20);
-		country =
-				fsuggest("country", "Country", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap("iso-country-codes"));
+		emailAddress = ftext("emailAddress", "Email Address", 30);
+		lastName = ftext("firstName", "First Name", 20);
+		firstName = ftext("lastName", "Last Name", 20);
+		mi = ftext("mi", "MI", 1);
+		company = ftext("company", "Company", 20);
+		attn = ftext("attn", "Attn", 10);
+		address1 = ftext("address1", "Address 1", 40);
+		address2 = ftext("address2", "Address 2", 40);
+		city = ftext("city", "City", 30);
+		province = fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
+		postalCode = ftext("postalCode", "Zip", 20);
+		country = fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
 
 		fields.addField(emailAddress);
 		fields.addField(lastName);
@@ -76,40 +72,33 @@ public class AddressPanel extends FieldGroupPanel {
 		fields.addField(postalCode);
 		fields.addField(country);
 
-		HorizontalPanel hp;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
-		hp = new HorizontalPanel();
-		hp.add(emailAddress);
-		add(hp);
+		canvas.addField(emailAddress);
 
-		hp = new HorizontalPanel();
-		hp.add(firstName);
-		hp.add(mi);
-		hp.add(lastName);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(firstName);
+		canvas.addField(firstName);
+		canvas.addField(mi);
+		canvas.addField(lastName);
 
-		hp = new HorizontalPanel();
-		hp.add(attn);
-		hp.add(company);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(attn);
+		canvas.addField(company);
 
-		hp = new HorizontalPanel();
-		hp.add(address1);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(address1);
 
-		hp = new HorizontalPanel();
-		hp.add(address2);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(address2);
 
-		hp = new HorizontalPanel();
-		hp.add(city);
-		hp.add(province);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(city);
+		canvas.addField(province);
 
-		hp = new HorizontalPanel();
-		hp.add(postalCode);
-		hp.add(country);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(postalCode);
+		canvas.addField(country);
 	}
 
 }

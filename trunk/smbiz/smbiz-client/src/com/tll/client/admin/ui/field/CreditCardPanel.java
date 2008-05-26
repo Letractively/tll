@@ -4,10 +4,9 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField.LabelMode;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
@@ -50,22 +49,19 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		type = fselect("paymentData.ccType", "Type", LabelMode.ABOVE, ClientEnumUtil.toMap(CreditCardType.class));
-		num = ftext("paymentData.ccNum", "Num", LabelMode.ABOVE, 15);
-		cvv2 = ftext("paymentData.ccCvv2", "CVV2", LabelMode.ABOVE, 4);
-		expMn = ftext("paymentData.ccExpMonth", "Exp Month", LabelMode.ABOVE, 2);
-		expYr = ftext("paymentData.ccExpYear", "Exp Year", LabelMode.ABOVE, 4);
-		name = ftext("paymentData.ccName", "Name", LabelMode.ABOVE, 30);
-		addr1 = ftext("paymentData.ccAddress1", "Address 1", LabelMode.ABOVE, 40);
-		addr2 = ftext("paymentData.ccAddress2", "Address 2", LabelMode.ABOVE, 40);
-		city = ftext("paymentData.ccCity", "City", LabelMode.ABOVE, 30);
+		type = fselect("paymentData.ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
+		num = ftext("paymentData.ccNum", "Num", 15);
+		cvv2 = ftext("paymentData.ccCvv2", "CVV2", 4);
+		expMn = ftext("paymentData.ccExpMonth", "Exp Month", 2);
+		expYr = ftext("paymentData.ccExpYear", "Exp Year", 4);
+		name = ftext("paymentData.ccName", "Name", 30);
+		addr1 = ftext("paymentData.ccAddress1", "Address 1", 40);
+		addr2 = ftext("paymentData.ccAddress2", "Address 2", 40);
+		city = ftext("paymentData.ccCity", "City", 30);
 		state =
-				fsuggest("paymentData.ccState", "State/Province", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
-						"usps-state-abbrs"));
-		zip = ftext("paymentData.ccZip", "Zip/Postal Code", LabelMode.ABOVE, 15);
-		country =
-				fsuggest("paymentData.ccCountry", "Country", LabelMode.ABOVE, AuxDataCache.instance().getRefDataMap(
-						"iso-country-codes"));
+				fsuggest("paymentData.ccState", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
+		zip = ftext("paymentData.ccZip", "Zip/Postal Code", 15);
+		country = fsuggest("paymentData.ccCountry", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
 
 		fields.addField(type);
 		fields.addField(num);
@@ -80,32 +76,26 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		fields.addField(zip);
 		fields.addField(country);
 
-		HorizontalPanel hp;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
-		add(type);
+		canvas.addField(type);
 
-		hp = new HorizontalPanel();
-		hp.setWidth("100%");
-		hp.add(num);
-		hp.add(cvv2);
-		hp.add(expMn);
-		hp.add(expYr);
-		add(hp);
+		canvas.addField(num);
+		canvas.addField(cvv2);
+		canvas.addField(expMn);
+		canvas.addField(expYr);
 
-		add(name);
-		add(addr1);
-		add(addr2);
+		canvas.newRow();
+		canvas.addField(name);
+		canvas.addField(addr1);
+		canvas.addField(addr2);
 
-		hp = new HorizontalPanel();
-		hp.setWidth("100%");
-		hp.add(city);
-		hp.add(state);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(city);
+		canvas.addField(state);
 
-		hp = new HorizontalPanel();
-		hp.setWidth("100%");
-		hp.add(zip);
-		hp.add(country);
-		add(hp);
+		canvas.newRow();
+		canvas.addField(zip);
+		canvas.addField(country);
 	}
 }

@@ -7,13 +7,12 @@ package com.tll.client.ui.field;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
@@ -26,17 +25,15 @@ import com.tll.client.validate.ValidationException;
  */
 public abstract class FieldGroupPanel extends Composite {
 
-	protected enum FieldLayout {
-		FLOW,
-		VERTICAL;
-	}
+	/**
+	 * The wrapped panel. An {@link IFieldCanvas} will append to this panel.
+	 */
+	protected final SimplePanel panel = new SimplePanel();
 
 	/**
 	 * The collective group of all fields in this panel.
 	 */
 	protected final FieldGroup fields;
-
-	private final FlowPanel panel = new FlowPanel();
 
 	/**
 	 * Flag indicating whether the fields have been instantiated and the UI
@@ -53,10 +50,6 @@ public abstract class FieldGroupPanel extends Composite {
 		super();
 		this.fields = new FieldGroup(propName, displayName, this);
 		initWidget(panel);
-	}
-
-	protected void add(Widget w) {
-		panel.add(w);
 	}
 
 	/**
@@ -102,13 +95,17 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * Populates the field group and sets the UI widgets. Performed once.
+	 * Responsible for:
+	 * <ul>
+	 * <li>Populating {@link #fields}
+	 * <li>Creating and populating a {@link Panel} containing the owned
+	 * {@link IField}s
+	 * <li>calling {@link #initWidget(Widget)} with the created {@link Panel}
+	 * </ul>
 	 * <p>
-	 * <em>IMPT:</em> This method should be called resursively for child field
-	 * group panels.
-	 * <p>
-	 * NOTE: panels needing aux data should access the {@link AuxDataCache}
-	 * singleton.
+	 * <strong>IMPT:</strong> A {@link FieldGroupPanel} containing child
+	 * {@link FieldGroupPanel}s are responsible for calling {@link #configure()}
+	 * for these children.
 	 */
 	protected abstract void configure();
 
@@ -131,10 +128,12 @@ public abstract class FieldGroupPanel extends Composite {
 	/**
 	 * Renders the fields.
 	 */
+	/*
 	public final void render() {
 		assert configured : "The field group panel must be configured before rendering is allowed";
 		fields.render();
 	}
+	*/
 
 	/**
 	 * Resets the field values to their original values.
@@ -230,22 +229,20 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Creates a new {@link TextField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param visibleLength
 	 */
-	protected static final TextField ftext(String propName, String lblTxt, LabelMode lblMode, int visibleLength) {
-		return new TextField(propName, lblTxt, lblMode, visibleLength);
+	protected static final TextField ftext(String propName, String lblTxt, int visibleLength) {
+		return new TextField(propName, lblTxt, visibleLength);
 	}
 
 	/**
 	 * Creates new {@link DateField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param displayFormat
 	 */
-	protected static final DateField fdate(String propName, String lblTxt, LabelMode lblMode, GlobalFormat format) {
-		return new DateField(propName, lblTxt, lblMode, format);
+	protected static final DateField fdate(String propName, String lblTxt, GlobalFormat format) {
+		return new DateField(propName, lblTxt, format);
 	}
 
 	/**
@@ -278,60 +275,52 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Creates a new {@link TextAreaField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param numRows
 	 * @param numCols
 	 */
-	protected static final TextAreaField ftextarea(String propName, String lblTxt, LabelMode lblMode, int numRows,
-			int numCols) {
-		return new TextAreaField(propName, lblTxt, lblMode, numRows, numCols);
+	protected static final TextAreaField ftextarea(String propName, String lblTxt, int numRows, int numCols) {
+		return new TextAreaField(propName, lblTxt, numRows, numCols);
 	}
 
 	/**
 	 * Creates a new {@link PasswordField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 */
-	protected static final PasswordField fpassword(String propName, String lblTxt, LabelMode lblMode) {
-		return new PasswordField(propName, lblTxt, lblMode);
+	protected static final PasswordField fpassword(String propName, String lblTxt) {
+		return new PasswordField(propName, lblTxt);
 	}
 
 	/**
 	 * Creates a new {@link SelectField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected static final SelectField fselect(String propName, String lblTxt, LabelMode lblMode,
-			Map<String, String> dataMap) {
-		return new SelectField(propName, lblTxt, lblMode, dataMap);
+	protected static final SelectField fselect(String propName, String lblTxt, Map<String, String> dataMap) {
+		return new SelectField(propName, lblTxt, dataMap);
 	}
 
 	/**
 	 * Creates a new {@link SuggestField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 */
-	protected static final SuggestField fsuggest(String propName, String lblTxt, LabelMode lblMode,
-			Map<String, String> dataMap) {
-		return new SuggestField(propName, lblTxt, lblMode, dataMap);
+	protected static final SuggestField fsuggest(String propName, String lblTxt, Map<String, String> dataMap) {
+		return new SuggestField(propName, lblTxt, dataMap);
 	}
 
 	/**
 	 * Creates a new {@link RadioGroupField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 * @param renderHorizontal
 	 */
-	protected static final RadioGroupField fradiogroup(String propName, String lblTxt, LabelMode lblMode,
-			Map<String, String> dataMap, boolean renderHorizontal) {
-		return new RadioGroupField(propName, lblTxt, lblMode, dataMap, renderHorizontal);
+	protected static final RadioGroupField fradiogroup(String propName, String lblTxt, Map<String, String> dataMap,
+			boolean renderHorizontal) {
+		return new RadioGroupField(propName, lblTxt, dataMap, renderHorizontal);
 	}
 
 	@Override

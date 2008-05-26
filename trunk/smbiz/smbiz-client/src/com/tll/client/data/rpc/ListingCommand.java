@@ -24,7 +24,7 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - Issues RPC listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
+public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
 
 	private static final IListingServiceAsync svc;
 	static {
@@ -46,7 +46,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	/**
 	 * The enqueued command to go to the server.
 	 */
-	private IListingCommand listingCommand;
+	private IListingCommand<S> listingCommand;
 
 	/**
 	 * Has the listing been initially generated? This flag is necessary to discern
@@ -89,14 +89,15 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * @param refresh Force a listing refresh if listing data is found cached on
 	 *        the server?
 	 */
-	public void list(ListHandlerType listHandlerType, int pageSize, PropKey[] props, ISearch searchCriteria,
-			Sorting sorting, boolean refresh) {
+	public void list(ListHandlerType listHandlerType, int pageSize, PropKey[] props, S searchCriteria, Sorting sorting,
+			boolean refresh) {
 		if(searchCriteria == null) {
 			throw new IllegalStateException("No criteria specified.");
 		}
 		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
-		com.tll.client.data.ListingCommand lc =
-				new com.tll.client.data.ListingCommand(listingName, listHandlerType, props, pageSize, searchCriteria, listingOp);
+		com.tll.client.data.ListingCommand<S> lc =
+				new com.tll.client.data.ListingCommand<S>(listingName, listHandlerType, props, pageSize, searchCriteria,
+						listingOp);
 		lc.setSorting(sorting);
 		this.listingCommand = lc;
 	}
@@ -107,7 +108,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 */
 	public void sort(SortColumn sortColumn) {
 		ListingOp listingOp = ListingOp.SORT;
-		com.tll.client.data.ListingCommand lc = new com.tll.client.data.ListingCommand(listingName, listingOp);
+		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
 		lc.setSorting(new Sorting(sortColumn));
 		this.listingCommand = lc;
 	}
@@ -119,7 +120,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 */
 	public void navigate(ListingOp navAction, Integer pageNum) {
 		ListingOp listingOp = navAction;
-		com.tll.client.data.ListingCommand lc = new com.tll.client.data.ListingCommand(listingName, listingOp);
+		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
 		lc.setPageNumber(pageNum);
 		this.listingCommand = lc;
 	}
@@ -128,7 +129,7 @@ public final class ListingCommand extends RpcCommand<ListingPayload> implements 
 	 * Clear the listing.
 	 */
 	public void clear() {
-		listingCommand = new com.tll.client.data.ListingCommand(listingName, ListingOp.CLEAR);
+		listingCommand = new com.tll.client.data.ListingCommand<S>(listingName, ListingOp.CLEAR);
 	}
 
 	@Override

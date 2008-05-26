@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.IField;
 
 /**
  * RadioGroupField
@@ -40,13 +39,11 @@ public final class RadioGroupField extends AbstractDataMapField {
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param lblMode
 	 * @param dataMap
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String lblTxt, LabelMode lblMode, Map<String, String> dataMap,
-			boolean renderHorizontal) {
-		super(propName, lblTxt, lblMode, dataMap);
+	public RadioGroupField(String propName, String lblTxt, Map<String, String> dataMap, boolean renderHorizontal) {
+		super(propName, lblTxt, dataMap);
 		if(renderHorizontal) {
 			rbPanel = new HorizontalPanel();
 		}
@@ -106,9 +103,4 @@ public final class RadioGroupField extends AbstractDataMapField {
 		}
 		super.onClick(sender);
 	}
-
-	public IField copy() {
-		return new RadioGroupField(propName, lblTxt, lblMode, dataMap, (rbPanel instanceof HorizontalPanel));
-	}
-
 }

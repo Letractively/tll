@@ -21,7 +21,7 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
  * @author jpk
  * @param <E>
  */
-public interface IMEntityServiceImpl<E extends IEntity> {
+public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 
 	/**
 	 * Get an empty entity.
@@ -78,7 +78,7 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<? extends E> translate(RequestContext requestContext, EntityType entityType, ISearch search)
+	ICriteria<? extends E> translate(RequestContext requestContext, EntityType entityType, S search)
 			throws IllegalArgumentException;
 
 	/**
@@ -94,6 +94,6 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 * @param listingCommand The {@link IListingCommand}
 	 * @return The marshaling list handler.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext, IListingCommand listingCommand);
+	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext, IListingCommand<S> listingCommand);
 
 }

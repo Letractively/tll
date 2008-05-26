@@ -46,7 +46,8 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
-		add(tabPanel);
+
+		panel.add(tabPanel);
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {

@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -22,14 +20,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
@@ -97,21 +94,21 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	protected void configure() {
 		super.configure();
 
-		parent = ftext("parent.name", "Parent", LabelMode.ABOVE, 15);
+		parent = ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
-		parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		// parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		status = fselect("status", "Status", LabelMode.ABOVE, ClientEnumUtil.toMap(AccountStatus.class));
+		status = fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
 		status.getListBox().addChangeListener(this);
 
-		dateCancelled = fdate("dateCancelled", "Date Cancelled", LabelMode.ABOVE, GlobalFormat.DATE);
+		dateCancelled = fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE);
 
-		currency = fselect("currency.id", "Currency", LabelMode.ABOVE, AuxDataCache.instance().getCurrencyDataMap());
+		currency = fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap());
 
-		billingModel = ftext("billingModel", "Billing Model", LabelMode.ABOVE, 18);
-		billingCycle = ftext("billingCycle", "Billing Cycle", LabelMode.ABOVE, 18);
-		dateLastCharged = fdate("dateLastCharged", "Last Charged", LabelMode.ABOVE, GlobalFormat.DATE);
-		nextChargeDate = fdate("nextChargeDate", "Next Charge", LabelMode.ABOVE, GlobalFormat.DATE);
+		billingModel = ftext("billingModel", "Billing Model", 18);
+		billingCycle = ftext("billingCycle", "Billing Cycle", 18);
+		dateLastCharged = fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE);
+		nextChargeDate = fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE);
 
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
@@ -138,47 +135,34 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		fields.addField(persistPymntInfo);
 		fields.addField(paymentInfoPanel.getFields());
 
-		FieldPanel frow, fcol;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
 		// first row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
-		frow.add(name);
-		frow.add(status);
-		frow.add(dateCancelled);
-		frow.add(currency);
-		frow.add(parent);
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		fcol.add(dateCreated);
-		fcol.add(dateModified);
-		frow.add(fcol);
+		canvas.addField(name);
+		canvas.addField(status);
+		canvas.addField(dateCancelled);
+		canvas.addField(currency);
+		canvas.addField(parent);
+		canvas.addField(dateCreated);
+		canvas.addFieldAtCurrent(dateModified);
 
 		// second row (billing)
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		frow.add(billingModel);
-		frow.add(billingCycle);
-		frow.add(dateLastCharged);
-		frow.add(nextChargeDate);
-		add(frow);
+		canvas.newRow();
+		canvas.addField(billingModel);
+		canvas.addField(billingCycle);
+		canvas.addField(dateLastCharged);
+		canvas.addField(nextChargeDate);
 
 		// third row
-		// NOTE: we use a horizontal panel to ensure both the address and payment
-		// info disclosure panels remain on the same row at all times.
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		HorizontalPanel hp = new HorizontalPanel();
-		frow.add(hp);
-		add(frow);
-
+		canvas.newRow();
 		// account addresses block
 		dpAddresses.add(tabAddresses);
-		hp.add(dpAddresses);
+		canvas.addWidget(dpAddresses);
 
 		// payment info block
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		fcol.add(persistPymntInfo);
-		fcol.add(paymentInfoPanel);
-		dpPaymentInfo.add(fcol);
-		hp.add(dpPaymentInfo);
+		canvas.addField(persistPymntInfo);
+		dpPaymentInfo.add(paymentInfoPanel);
+		canvas.addWidgetAtCurrent(dpPaymentInfo);
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
@@ -288,7 +272,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			fields.addField(binding.panel.getFields());
 
 			tabAddresses.insert(binding.panel, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);
-			binding.panel.getFields().render();
+			// binding.panel.getFields().render();
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);
 		}

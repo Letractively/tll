@@ -231,7 +231,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 		btnSave.setText(model.isNew() ? "Add" : "Update");
 		fieldPanel.bind(model);
-		fieldPanel.render();
+		// fieldPanel.render();
 		pnlButtonRow.setVisible(true);
 	}
 

@@ -36,6 +36,7 @@ import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.IPrimaryKey;
 import com.tll.model.key.KeyFactory;
 import com.tll.server.RequestContext;
@@ -50,7 +51,7 @@ import com.tll.util.DateRange;
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
  * @author jpk
  */
-public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityServiceImpl<E> {
+public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> implements IMEntityServiceImpl<E, S> {
 
 	/**
 	 * Loads additional entity properties.
@@ -98,11 +99,25 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * @param payload
 	 * @return The loaded {@link IEntity}
 	 */
+	@SuppressWarnings("unchecked")
 	protected E coreLoad(final RequestContext requestContext, final EntityLoadRequest request,
 			final EntityType entityType, final EntityPayload payload) {
 		// core entity loading
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+
+		if(request.isLoadByBusinessKey()) {
+			// load by business key
+			S search = (S) request.getSearch();
+			if(search == null) {
+				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
+				return null;
+			}
+			IBusinessKey<? extends E> key = handleBusinessKeyTranslation(search);
+			return svc.load(key);
+		}
+
+		// load by primary key
 		final Integer id = request.getEntityRef().getId();
 		return svc.load(KeyFactory.getPrimaryKey(entityClass, id));
 	}
@@ -214,18 +229,25 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	}
 
 	/**
+	 * Translates {@link ISearch} to {@link IBusinessKey}s.
+	 * @param search The search to translate
+	 * @return Translated {@link IBusinessKey}
+	 */
+	protected abstract IBusinessKey<? extends E> handleBusinessKeyTranslation(S search);
+
+	/**
 	 * Handles the entity specific search to criteria translation.
 	 * @param search
 	 * @param criteria
 	 * @throws IllegalArgumentException When the <code>search</code> parameter
 	 *         is unsupported.
 	 */
-	protected abstract void handleSearchTranslation(RequestContext requestContext, ISearch search,
+	protected abstract void handleSearchTranslation(RequestContext requestContext, S search,
 			ICriteria<? extends E> criteria) throws IllegalArgumentException;
 
 	@SuppressWarnings("unchecked")
 	public final ICriteria<? extends E> translate(final RequestContext requestContext, final EntityType entityType,
-			final ISearch search) throws IllegalArgumentException {
+			final S search) throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		ICriteria<? extends E> criteria;
@@ -252,7 +274,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * based on the listing command particulars.
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
-			final IListingCommand listingCommand) {
+			final IListingCommand<S> listingCommand) {
 		return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext), listingCommand
 				.getPropKeys());
 	}

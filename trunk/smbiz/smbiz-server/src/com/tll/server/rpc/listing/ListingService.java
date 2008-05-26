@@ -94,8 +94,8 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 
 					// resolve the entity class and corres. marshaling entity service
 					final Class<E> entityClass = EntityUtil.entityClassFromType(search.getEntityType());
-					final IMEntityServiceImpl<E> mEntitySvc =
-							(IMEntityServiceImpl<E>) MEntityServiceImplFactory.instance(entityClass);
+					final IMEntityServiceImpl<E, ISearch> mEntitySvc =
+							(IMEntityServiceImpl<E, ISearch>) MEntityServiceImplFactory.instance(entityClass);
 
 					// translate client side criteria to server side criteria
 					final ICriteria<? extends E> criteria;

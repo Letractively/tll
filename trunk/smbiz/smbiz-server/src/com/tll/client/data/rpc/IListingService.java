@@ -8,6 +8,7 @@ package com.tll.client.data.rpc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingPayload;
+import com.tll.client.search.ISearch;
 
 /**
  * IListingService
@@ -20,5 +21,5 @@ public interface IListingService extends RemoteService {
 	 * @param listingCommand
 	 * @return ListingPayload
 	 */
-	ListingPayload process(IListingCommand listingCommand);
+	ListingPayload process(IListingCommand<? extends ISearch> listingCommand);
 }

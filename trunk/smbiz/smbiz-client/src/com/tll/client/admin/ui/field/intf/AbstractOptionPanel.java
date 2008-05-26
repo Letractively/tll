@@ -24,7 +24,6 @@ import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IDataProvider;
 import com.tll.client.listing.ListingFactory;
@@ -35,12 +34,10 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldLabel;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.model.EntityType;
@@ -63,8 +60,8 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 	private TextField baseMonthlyPrice;
 	private TextField baseAnnualPrice;
 
-	private boolean bindDeleteBtn = true;
-	private PushButton btnDeleteToggle;
+	protected boolean bindDeleteBtn = true;
+	protected PushButton btnDeleteToggle;
 
 	private String optionName;
 
@@ -200,13 +197,13 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		isDefault = fbool("isDefault", "Default?");
 		isDefault.setAlignBottom(true);
 
-		setUpCost = ftext("setUpCost", "Setup Cost", LabelMode.NONE, 10);
-		monthlyCost = ftext("monthlyCost", "Monthly Cost", LabelMode.NONE, 10);
-		annualCost = ftext("annualCost", "Annual Cost", LabelMode.NONE, 10);
+		setUpCost = ftext("setUpCost", "Setup Cost", 10);
+		monthlyCost = ftext("monthlyCost", "Monthly Cost", 10);
+		annualCost = ftext("annualCost", "Annual Cost", 10);
 
-		baseSetupPrice = ftext("baseSetupPrice", "Setup Price", LabelMode.NONE, 10);
-		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", LabelMode.NONE, 10);
-		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", LabelMode.NONE, 10);
+		baseSetupPrice = ftext("baseSetupPrice", "Setup Price", 10);
+		baseMonthlyPrice = ftext("baseMonthlyPrice", "Monthly Price", 10);
+		baseAnnualPrice = ftext("baseAnnualPrice", "Annual Price", 10);
 
 		fields.addField(isDefault);
 		fields.addField(setUpCost);
@@ -216,8 +213,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		fields.addField(baseMonthlyPrice);
 		fields.addField(baseAnnualPrice);
 
-		FieldPanel frow;
-
+		/*
 		// first row
 		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
 		if(bindNameField) frow.add(name);
@@ -231,7 +227,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 			btnDeleteToggle = new PushButton();
 			btnDeleteToggle.addClickListener(this);
 			btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
-			frow.add(btnDeleteToggle);
+			//frow.add(btnDeleteToggle);
 		}
 		else {
 			btnDeleteToggle = null;
@@ -257,6 +253,23 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		frow.add(g);
 
 		frow.add(lstngParams);
+		*/
+	}
+
+	protected Grid createPricingGrid() {
+		Grid g = new Grid(3, 4);
+		g.setWidget(0, 1, new FieldLabel("Set Up", setUpCost.getDomId(), false));
+		g.setWidget(0, 2, new FieldLabel("Monthly", monthlyCost.getDomId(), false));
+		g.setWidget(0, 3, new FieldLabel("Annual", annualCost.getDomId(), false));
+		g.setWidget(1, 0, new FieldLabel("Cost", setUpCost.getDomId(), true));
+		g.setWidget(1, 1, setUpCost);
+		g.setWidget(1, 2, monthlyCost);
+		g.setWidget(1, 3, annualCost);
+		g.setWidget(2, 0, new FieldLabel("Price", baseSetupPrice.getDomId(), true));
+		g.setWidget(2, 1, baseSetupPrice);
+		g.setWidget(2, 2, baseMonthlyPrice);
+		g.setWidget(2, 3, baseAnnualPrice);
+		return g;
 	}
 
 	@Override

@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.tll.client.field.IField;
 
 /**
  * PasswordField
@@ -21,10 +20,9 @@ public class PasswordField extends AbstractField {
 	 * Constructor
 	 * @param propName
 	 * @param lblText
-	 * @param lblMode
 	 */
-	public PasswordField(String propName, String lblText, LabelMode lblMode) {
-		super(propName, lblText, lblMode);
+	public PasswordField(String propName, String lblText) {
+		super(propName, lblText);
 	}
 
 	public PasswordTextBox getPasswordTextBox() {
@@ -47,9 +45,5 @@ public class PasswordField extends AbstractField {
 	@Override
 	public String getEditableValue() {
 		return tb == null ? null : tb.getText();
-	}
-
-	public IField copy() {
-		return new PasswordField(propName, lblTxt, lblMode);
 	}
 }

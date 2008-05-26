@@ -1,6 +1,6 @@
 package com.tll.client.admin.ui.field.intf;
 
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.FlowFieldCanvas;
 
 /**
  * ParameterPanel - Interface option parameter definition panel.
@@ -20,13 +20,11 @@ final class ParameterPanel extends InterfaceRelatedPanel {
 	protected void configure() {
 		super.configure();
 
-		FieldPanel frow;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
 		// first row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
-		frow.add(name);
-		frow.add(code);
-		frow.add(description);
+		canvas.addField(name);
+		canvas.addField(code);
+		canvas.addField(description);
 	}
 }

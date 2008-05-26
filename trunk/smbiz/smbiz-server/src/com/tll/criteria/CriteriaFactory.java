@@ -46,6 +46,18 @@ public abstract class CriteriaFactory {
 	}
 
 	/**
+	 * Adds a criterion from a buisiness key to the given criterion group.
+	 * @param key The business key to translate and add
+	 * @param isCaseSensitive true/false
+	 */
+	public static void buildBusinessKeyCriterion(ICriterionGroup g, IBusinessKey<? extends IEntity> key,
+			boolean isCaseSensitive) {
+		for(final String fname : key.getFieldNames()) {
+			g.addCriterion(buildCriterion(fname, key.getFieldValue(fname), Comparator.EQUALS, isCaseSensitive));
+		}
+	}
+
+	/**
 	 * Builds a foreign key criterion.
 	 * @param <F> The foreign entity type
 	 * @param rltdPropName The property name that references the foreign key

@@ -21,13 +21,13 @@ import com.tll.listhandler.Sorting;
  * server. This is for search based listings.
  * @author jpk
  */
-public final class RpcListingOperator extends AbstractListingOperator implements IListingListener {
+public final class RpcListingOperator<S extends ISearch> extends AbstractListingOperator implements IListingListener {
 
 	private final String listingName;
 	private final ListHandlerType listHandlerType;
 	private final int pageSize;
 	private final PropKey[] props;
-	private final ISearch searchCriteria;
+	private final S searchCriteria;
 	private final Sorting sorting;
 
 	/**
@@ -42,7 +42,7 @@ public final class RpcListingOperator extends AbstractListingOperator implements
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
 	public RpcListingOperator(AbstractListingWidget listingWidget, String listingName, ListHandlerType listHandlerType,
-			int pageSize, PropKey[] props, ISearch searchCriteria, Sorting sorting) {
+			int pageSize, PropKey[] props, S searchCriteria, Sorting sorting) {
 		super(listingWidget);
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
@@ -53,35 +53,35 @@ public final class RpcListingOperator extends AbstractListingOperator implements
 	}
 
 	public void refresh() {
-		ListingCommand cmd = new ListingCommand(listingWidget, listingName);
+		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
 		cmd.list(listHandlerType, pageSize, props, searchCriteria, sorting, true);
 		cmd.execute();
 	}
 
 	public void display() {
-		ListingCommand cmd = new ListingCommand(listingWidget, listingName);
+		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
 		cmd.list(listHandlerType, pageSize, props, searchCriteria, sorting, false);
 		cmd.execute();
 	}
 
 	public void navigate(ListingOp navAction, Integer page) {
-		ListingCommand cmd = new ListingCommand(listingWidget, listingName);
+		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
 		cmd.navigate(navAction, page);
 		cmd.execute();
 	}
 
 	public void sort(SortColumn sortColumn) {
-		ListingCommand cmd = new ListingCommand(listingWidget, listingName);
+		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
 		cmd.sort(sortColumn);
 		cmd.execute();
 	}
 
 	public void clear() {
-		ListingCommand cmd = new ListingCommand(listingWidget, listingName);
+		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
 		cmd.clear();
 		cmd.execute();

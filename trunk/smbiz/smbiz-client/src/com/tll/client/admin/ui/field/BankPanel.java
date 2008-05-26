@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField.LabelMode;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
 
@@ -35,16 +35,17 @@ public final class BankPanel extends FieldGroupPanel {
 
 	@Override
 	protected void configure() {
-		bankName = ftext("paymentData.bankName", "Bank Name", LabelMode.ABOVE, 40);
-		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", LabelMode.ABOVE, 30);
-		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", LabelMode.ABOVE, 20);
+		bankName = ftext("paymentData.bankName", "Bank Name", 40);
+		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", 30);
+		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", 20);
 
 		fields.addField(bankName);
 		fields.addField(bankAccountNo);
 		fields.addField(bankRoutingNo);
 
-		add(bankName);
-		add(bankAccountNo);
-		add(bankRoutingNo);
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		canvas.addField(bankName);
+		canvas.addField(bankAccountNo);
+		canvas.addField(bankRoutingNo);
 	}
 }

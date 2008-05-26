@@ -8,6 +8,7 @@ package com.tll.server.rpc.entity;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.INamedEntity;
@@ -19,7 +20,7 @@ import com.tll.service.entity.INamedEntityService;
  * MNamedEntityServiceImpl
  * @author jpk
  */
-public abstract class MNamedEntityServiceImpl<N extends INamedEntity> extends MEntityServiceImpl<N> {
+public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends ISearch> extends MEntityServiceImpl<N, S> {
 
 	@Override
 	protected N coreLoad(final RequestContext requestContext, final EntityLoadRequest request,

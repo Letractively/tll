@@ -40,6 +40,15 @@ public abstract class TimeStampEntitySearch extends EntitySearch {
 		super(criteriaType, entityType);
 	}
 
+	/**
+	 * Constructor
+	 * @param businessKeyName
+	 * @param entityType
+	 */
+	public TimeStampEntitySearch(String businessKeyName, EntityType entityType) {
+		super(businessKeyName, entityType);
+	}
+
 	public final DateRange getDateCreatedRange() {
 		return dcr;
 	}

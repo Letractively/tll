@@ -13,15 +13,13 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FieldWidget;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
@@ -42,7 +40,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 
 	protected CheckboxField[] authorities;
 
-	protected FieldPanel authorityPanel;
+	// protected FieldPanel authorityPanel;
 
 	protected AddressPanel addressPanel;
 
@@ -63,24 +61,11 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	protected void configure() {
 		super.configure();
 
-		emailAddress = ftext("emailAddress", "Email Address", LabelMode.ABOVE, 30);
+		emailAddress = ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);
 		locked = fbool("locked", "Locked");
 		enabled = fbool("enabled", "Enabled");
-		expires = fdate("expires", "Expires", LabelMode.ABOVE, GlobalFormat.DATE);
-
-		authorityPanel = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
-		authorities = new CheckboxField[authList.size()];
-		int i = 0;
-		for(Model auth : authList) {
-			String role = auth.asString("authority");
-			CheckboxField cbAuth = fcheckbox("authority", role, role, "");
-			FieldGroup fg = new FieldGroup("authoritys[" + (i++) + "]", role, cbAuth);
-			fields.addField(fg);
-			fg.addField(cbAuth);
-			authorityPanel.add(cbAuth);
-		}
+		expires = fdate("expires", "Expires", GlobalFormat.DATE);
 
 		addressPanel = new AddressPanel("address");
 		addressPanel.configure();
@@ -91,35 +76,39 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		fields.addField(expires);
 		fields.addField(addressPanel.getFields());
 
-		FieldPanel frow, fcol;
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
 
 		// first row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
-		frow.add(name);
-		frow.add(emailAddress);
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		fcol.add(locked);
-		fcol.add(enabled);
-		frow.add(fcol);
-		frow.add(expires);
+		canvas.addField(name);
+		canvas.addField(emailAddress);
+		canvas.addField(locked);
+		canvas.addFieldAtCurrent(enabled);
+		canvas.addField(expires);
 
 		// parent account ref link
 		lnkAccount = new ViewRequestLink();
-		frow.add(new FieldWidget("Account", LabelMode.ABOVE, lnkAccount));
+		canvas.addWidget("Account", lnkAccount);
 
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		fcol.add(dateCreated);
-		fcol.add(dateModified);
-		frow.add(fcol);
+		canvas.addField(dateCreated);
+		canvas.addFieldAtCurrent(dateModified);
 
 		// second row (authorities)
-		add(authorityPanel);
+		canvas.newRow();
+		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
+		authorities = new CheckboxField[authList.size()];
+		int i = 0;
+		for(Model auth : authList) {
+			String role = auth.asString("authority");
+			CheckboxField cbAuth = fcheckbox("authority", role, role, "");
+			FieldGroup fg = new FieldGroup("authoritys[" + (i++) + "]", role, cbAuth);
+			fields.addField(fg);
+			fg.addField(cbAuth);
+			canvas.addField(cbAuth);
+		}
 
 		// third row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
-		frow.add(addressPanel);
+		canvas.newRow();
+		canvas.addWidget(addressPanel);
 	}
 
 	@Override

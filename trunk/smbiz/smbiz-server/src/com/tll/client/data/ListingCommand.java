@@ -12,7 +12,7 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - {@link IListingCommand} impl.
  * @author jpk
  */
-public final class ListingCommand implements IListingCommand {
+public final class ListingCommand<S extends ISearch> implements IListingCommand<S> {
 
 	private String listingName;
 	private ListHandlerType listHandlerType;
@@ -21,7 +21,7 @@ public final class ListingCommand implements IListingCommand {
 	private Boolean retainStateOnClear = Boolean.TRUE;
 
 	private ListingOp listingOp;
-	private ISearch searchCriteria;
+	private S searchCriteria;
 	private Sorting sorting;
 	private Integer pageNumber;
 
@@ -42,7 +42,7 @@ public final class ListingCommand implements IListingCommand {
 	 * @param listingOp
 	 */
 	public ListingCommand(String listingName, ListHandlerType listHandlerType, PropKey[] propKeys, int pageSize,
-			ISearch searchCriteria, ListingOp listingOp) {
+			S searchCriteria, ListingOp listingOp) {
 		super();
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
@@ -99,7 +99,7 @@ public final class ListingCommand implements IListingCommand {
 		return listingOp;
 	}
 
-	public ISearch getSearchCriteria() {
+	public S getSearchCriteria() {
 		return searchCriteria;
 	}
 

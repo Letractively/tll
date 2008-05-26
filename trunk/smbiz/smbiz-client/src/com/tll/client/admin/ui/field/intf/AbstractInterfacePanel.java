@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldLabel;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.model.EntityType;
 
 /**
@@ -71,21 +70,24 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		fields.addField(isRequiredMerchant);
 		fields.addField(isRequiredCustomer);
 
-		FieldPanel frow, fcol;
+		/*
+		FlowFieldCanvas canvas = new FlowFieldCanvas();
 
 		// first row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		frow.add(fcol);
-		fcol.add(name);
-		fcol.add(code);
-		frow.add(description);
+		canvas.addField(name);
+		canvas.addField(code);
+		canvas.addField(description);
 
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		frow.add(fcol);
+		canvas.newRow();
+		canvas.addWidget(g);
+
+		canvas.addField(dateCreated);
+		canvas.addField(dateModified);
+		*/
+	}
+
+	protected Grid createAvailabilityGrid() {
 		Grid g = new Grid(3, 5);
-		fcol.add(g);
 		g.setWidget(0, 1, new FieldLabel("Asp"));
 		g.setWidget(0, 2, new FieldLabel("Isp"));
 		g.setWidget(0, 3, new FieldLabel("Mrc"));
@@ -100,11 +102,6 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		g.setWidget(2, 2, isRequiredIsp);
 		g.setWidget(2, 3, isRequiredMerchant);
 		g.setWidget(2, 4, isRequiredCustomer);
-
-		fcol = new FieldPanel(FieldPanel.CSS_FIELD_COL);
-		frow.add(fcol);
-		fcol.add(dateCreated);
-		fcol.add(dateModified);
+		return g;
 	}
-
 }

@@ -19,7 +19,7 @@ import com.tll.service.entity.IEntityService;
  * IMEntityService - Performs tasks specific to a single entity type.
  * @author jpk
  */
-public interface IMEntityService<E extends IEntity> extends ICrudService {
+public interface IMEntityService<E extends IEntity, S extends ISearch> extends ICrudService {
 
 	/**
 	 * @return The {@link IEntityService}.
@@ -39,10 +39,6 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	ICriteria<? extends E> translate(ISearch search) throws IllegalArgumentException, SystemError;
 
 	/**
-	 * @return The marshaling options catering to the entity type.
-	 */
-	// MarshalOptions getMarshalOptions();
-	/**
 	 * Provides an {@link IMarshalingListHandler} for use by
 	 * {@link IListingService} implementations.
 	 * @param listingCommand The listing command.
@@ -52,6 +48,6 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(IListingCommand listingCommand) throws IllegalArgumentException,
-			SystemError;
+	IMarshalingListHandler<E> getMarshalingListHandler(IListingCommand<S> listingCommand)
+			throws IllegalArgumentException, SystemError;
 }

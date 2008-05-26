@@ -353,11 +353,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		fields.add(field);
 	}
 
+	/*
 	public void render() {
 		for(IField field : fields) {
 			field.render();
 		}
 	}
+	*/
 
 	public void reset() {
 		MsgManager.instance.clear(refWidget, true);

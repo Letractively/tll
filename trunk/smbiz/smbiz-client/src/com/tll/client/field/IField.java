@@ -16,16 +16,6 @@ import com.tll.client.validate.IValidator;
 public interface IField extends IPropertyNameProvider {
 
 	/**
-	 * LabelMode
-	 * @author jpk
-	 */
-	enum LabelMode {
-		NONE,
-		ABOVE,
-		LEFT;
-	}
-
-	/**
 	 * @return <code>true</code> if this field is required.
 	 */
 	boolean isRequired();
@@ -75,8 +65,7 @@ public interface IField extends IPropertyNameProvider {
 	 * Renders the UI control.
 	 */
 	// TODO eliminate and rely on Widget.onLoad() method for the rendering hook
-	void render();
-
+	// void render();
 	/**
 	 * Resets the field's UI value to the default.
 	 */

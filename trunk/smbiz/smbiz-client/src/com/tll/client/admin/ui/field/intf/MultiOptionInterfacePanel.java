@@ -26,7 +26,7 @@ import com.tll.model.EntityType;
  * one option is allowed.
  * @author jpk
  */
-public class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
+public final class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
 
 	protected final List<OptionPanel> optionPanels = new ArrayList<OptionPanel>();
 
@@ -44,7 +44,8 @@ public class MultiOptionInterfacePanel extends AbstractInterfacePanel implements
 	@Override
 	protected void configure() {
 		super.configure();
-		add(tabOptions);
+
+		panel.add(tabOptions);
 	}
 
 	@Override
@@ -92,7 +93,7 @@ public class MultiOptionInterfacePanel extends AbstractInterfacePanel implements
 			fields.addField(op.getFields());
 
 			tabOptions.insert(op, "New Option", tabIndex);
-			op.getFields().render();
+			// op.getFields().render();
 			// tabOptions.remove(tabIndex + 1);
 			// tabOptions.selectTab(tabIndex);
 		}

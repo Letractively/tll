@@ -13,6 +13,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.AccountAddress;
+import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -21,7 +22,7 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * AccountAddressService
  * @author jpk
  */
-public final class AccountAddressService extends MNamedEntityServiceImpl<AccountAddress> {
+public final class AccountAddressService extends MNamedEntityServiceImpl<AccountAddress, ISearch> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 1);
 
@@ -39,6 +40,11 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 	protected void handlePersistOptions(RequestContext requestContext, AccountAddress e, EntityOptions options)
 			throws SystemError {
 		// no-op
+	}
+
+	@Override
+	protected IBusinessKey<? extends AccountAddress> handleBusinessKeyTranslation(ISearch search) {
+		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 	@Override

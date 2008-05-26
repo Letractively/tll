@@ -7,10 +7,12 @@ package com.tll.client.ui.field;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.HasFormat;
 import com.tll.client.field.HasMaxLength;
@@ -44,7 +46,7 @@ import com.tll.model.schema.PropertyMetadata;
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends FieldAdapter implements IField, HasFocus, ClickListener, FocusListener {
+public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, FocusListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -62,6 +64,8 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 
 	private static final String styleError = MsgLevel.ERROR.getName().toLowerCase();
 	private static final String styleWarn = MsgLevel.WARN.getName().toLowerCase();
+
+	public static final String CSS_FIELD = "fld";
 
 	/**
 	 * The unique DOM element id of this field.
@@ -113,26 +117,59 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	protected boolean changed;
 
 	/**
+	 * The label text. If <code>null</code>, no {@link FieldLabel} will be
+	 * created.
+	 */
+	protected String lblTxt;
+
+	/**
+	 * The optional field label created lazily and only when {@link #lblTxt} is
+	 * non-<code>null</code>.
+	 */
+	protected FieldLabel fldLbl;
+
+	/**
+	 * The composite wrapped widget that either the read-only or editable
+	 * {@link Widget} is attached to at load time.
+	 */
+	private final SimplePanel pnl = new SimplePanel();
+
+	/**
 	 * Constructor
 	 * @param propName The property name to associate w/ this field.
 	 * @param lblTxt The field label text.
-	 * @param lblMode The label mode as defined in {@link IField}.
 	 * @throws IllegalArgumentException When a <code>null</code> or zero-length
 	 *         property name is given.
 	 */
-	public AbstractField(String propName, String lblTxt, LabelMode lblMode) {
-		super(lblTxt, lblMode);
+	public AbstractField(String propName, String lblTxt) {
+
 		this.domId = 'f' + Integer.toString(++fieldCounter);
-		if(this.fldLbl != null) {
-			this.fldLbl.setFor(domId);
-			this.fldLbl.addClickListener(this);
-		}
+
+		pnl.setStyleName(CSS_FIELD);
+		initWidget(pnl);
+
 		setPropertyName(propName);
+
+		this.lblTxt = lblTxt;
+
 		// do core field validation
 		// IMPT: the core validator is first in the list of validators where the
 		// last in the list
 		// shall provide the transformed model value
 		addValidator(new IntrinsicValidator());
+	}
+
+	/**
+	 * @return The {@link FieldLabel}. <em>NOTE: </em>The field label is
+	 *         <em>NOT</em> a child of this composite Widget.
+	 */
+	public final FieldLabel getFieldLabel() {
+		if(fldLbl == null && lblTxt != null) {
+			fldLbl = new FieldLabel(lblTxt);
+			fldLbl.setFor(domId);
+			fldLbl.addClickListener(this);
+		}
+		return fldLbl;
 	}
 
 	/**
@@ -153,6 +190,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		this.propName = propName;
 	}
 
+	/*
 	public String getLabelText() {
 		return lblTxt;
 	}
@@ -165,19 +203,40 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 			fldLbl.setText(lblTxt);
 		}
 	}
+	*/
+
+	private boolean isDrawn() {
+		return pnl.getWidget() != null;
+	}
+
+	private void redraw() {
+		pnl.clear();
+		if(readOnly) {
+			if(rof == null) {
+				rof = new Label();
+			}
+			String val = getReadOnlyRenderValue();
+			if(val != null) rof.setText(val);
+			pnl.add(rof);
+		}
+		else {
+			pnl.add((Widget) getEditable(null));
+		}
+		pnl.getWidget().getElement().setPropertyString("id", domId);
+	}
 
 	public final boolean isReadOnly() {
 		return readOnly;
 	}
 
 	public final void setReadOnly(boolean readOnly) {
-		if(readOnly == this.readOnly) return;
-		this.readOnly = readOnly;
-		if(readOnly && defaultUiValue == null) {
-			defaultUiValue = dfltReadOnlyEmptyValue;
+		if(readOnly != this.readOnly) {
+			this.readOnly = readOnly;
+			if(readOnly && defaultUiValue == null) {
+				defaultUiValue = dfltReadOnlyEmptyValue;
+			}
+			redraw();
 		}
-		// re-render if attached to the DOM
-		if(isAttached()) render();
 	}
 
 	public final boolean isRequired() {
@@ -185,8 +244,13 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	}
 
 	public final void setRequired(boolean required) {
-		this.required = required;
-		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
+		if(this.required != required) {
+			this.required = required;
+			FieldLabel lbl = getFieldLabel();
+			if(lbl != null) {
+				lbl.setRequired(readOnly ? false : required);
+			}
+		}
 	}
 
 	public final boolean isEnabled() {
@@ -194,9 +258,9 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	}
 
 	public void setEnabled(boolean enabled) {
-		if(enabled == this.enabled) return;
-		this.enabled = enabled;
-		if(isAttached()) {
+		if(enabled != this.enabled) {
+			this.enabled = enabled;
+
 			clearValidationStyling();
 			if(enabled) {
 				removeStyleName(CSS.DISABLED);
@@ -222,13 +286,13 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 
 	/**
 	 * The method grabs the current form element value and is employed when this
-	 * field is editable and a call to {@link #getValue()} was invoked.
+	 * field is editable and a call to {@link #getValue()} is invoked.
 	 * @return The editable form element value.
 	 */
 	protected abstract String getEditableValue();
 
 	public final String getValue() {
-		if(!readOnly) {
+		if(!readOnly && isAttached()) {
 			value = getEditableValue();
 		}
 		return value;
@@ -238,12 +302,14 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 		value = value == null ? (defaultUiValue == null ? "" : defaultUiValue) : value;
 		this.value = value;
 		if(resetValue == null) resetValue = value;
+
 		if(isAttached()) {
-			if(!readOnly) {
-				getEditable(value);
-			}
-			else if(rof != null) {
+			if(readOnly) {
+				assert rof != null;
 				rof.setText(value);
+			}
+			else {
+				getEditable(value);
 			}
 		}
 	}
@@ -255,58 +321,6 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	 */
 	protected String getReadOnlyRenderValue() {
 		return value == null ? defaultUiValue : value;
-	}
-
-	/**
-	 * @return The index relative to {@link #fp} to which either {@link #rof} or
-	 *         {@link #getEditable(String)} shall is located NOT considering error
-	 *         or warning icons.
-	 */
-	private int getFieldDisplayIndex() {
-		// considers possible field label being absent and the br widget
-		return fldLbl == null ? 0 : lblMode == LabelMode.ABOVE ? 1 : 0;
-	}
-
-	/**
-	 * FORMAT:
-	 * <p>
-	 * [{fldLbl}] {rof|getEditable()} [{iconErr}{iconWrn}]
-	 */
-	public void render() {
-		final int fIndx = getFieldDisplayIndex();
-		if(readOnly) {
-			if(rof == null) {
-				rof = new Label();
-				fp.insert(rof, fIndx);
-			}
-			String val = getReadOnlyRenderValue();
-			if(val != null) rof.setText(val);
-
-			// hide the editable field (if present)
-			if(fIndx < fp.getWidgetCount() - 1) {
-				fp.getWidget(fIndx + 1).setVisible(false);
-			}
-			rof.setVisible(true);
-			return;
-		}
-		if(rof != null) rof.setVisible(false);
-
-		// editable field
-		final HasFocus editable = getEditable(value == null ? defaultUiValue : value);
-		final Widget ef = (Widget) editable;
-		assert ef != null;
-		ef.setVisible(true);
-		ef.getElement().setPropertyBoolean("disabled", !enabled);
-		if(fp.getWidgetIndex(ef) == -1) {
-			ef.getElement().setPropertyString("id", domId);
-			if(fIndx == 0) {
-				fp.insert(ef, 0);
-			}
-			else {
-				assert fIndx < fp.getWidgetCount();
-				fp.insert(ef, fIndx + 1);
-			}
-		}
 	}
 
 	private void clearValidationStyling() {
@@ -490,6 +504,7 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	protected void onLoad() {
 		super.onLoad();
 		clearValidationStyling();
+		if(!isDrawn()) redraw();
 	}
 
 	public final void addKeyboardListener(KeyboardListener listener) {
@@ -539,7 +554,6 @@ public abstract class AbstractField extends FieldAdapter implements IField, HasF
 	}
 
 	public final void onFocus(Widget sender) {
-		// clearValidationStyling();
 	}
 
 	/**

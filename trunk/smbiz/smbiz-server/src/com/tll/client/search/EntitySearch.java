@@ -36,6 +36,16 @@ public abstract class EntitySearch extends SearchBase {
 		this.entityType = entityType;
 	}
 
+	/**
+	 * Constructor
+	 * @param businessKeyName
+	 * @param entityType
+	 */
+	public EntitySearch(String businessKeyName, EntityType entityType) {
+		super(businessKeyName);
+		this.entityType = entityType;
+	}
+
 	public final EntityType getEntityType() {
 		return entityType;
 	}

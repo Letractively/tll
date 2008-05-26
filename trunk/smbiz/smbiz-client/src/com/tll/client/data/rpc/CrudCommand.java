@@ -22,6 +22,7 @@ import com.tll.client.event.ISourcesCrudEvents;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
+import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
 
 /**
@@ -65,7 +66,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 */
 	public final void receiveEmpty(EntityType entityType, boolean generate) {
 		if(entityType == null) {
-			throw new IllegalStateException("An entity type must be specified.");
+			throw new IllegalArgumentException("An entity type must be specified.");
 		}
 		entityRequest = new EntityGetEmptyRequest(entityType, generate);
 		crudOp = CrudOp.RECIEVE_EMPTY_ENTITY;
@@ -77,21 +78,34 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 */
 	public final void load(RefKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
-			throw new IllegalStateException("A set entity reference must be specified.");
+			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
 		entityRequest = new EntityLoadRequest(entityRef);
 		crudOp = CrudOp.LOAD;
 	}
 
 	/**
-	 * Sets the state of this command for loading an entity by primary key.
+	 * Sets the state of this command for loading a named entity by name.
 	 * @param entityType The entity type
+	 * @param name The name of the named entity
 	 */
 	public final void loadByName(EntityType entityType, String name) {
 		if(entityType == null || name == null) {
-			throw new IllegalStateException("An entity type and name must be specified.");
+			throw new IllegalArgumentException("An entity type and name must be specified.");
 		}
 		entityRequest = new EntityLoadRequest(entityType, name);
+		crudOp = CrudOp.LOAD;
+	}
+
+	/**
+	 * Sets the state of this command for loading an entity by business key.
+	 * @param search The search holding the business key properties
+	 */
+	public final void loadByBusinessKey(ISearch search) {
+		if(search == null) {
+			throw new IllegalArgumentException("A business key search must be specified.");
+		}
+		entityRequest = new EntityLoadRequest(search);
 		crudOp = CrudOp.LOAD;
 	}
 
@@ -113,7 +127,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 */
 	public final void update(Model entity) {
 		if(entity == null || entity.isNew()) {
-			throw new IllegalStateException("A non-null and non-new entity must be specified.");
+			throw new IllegalArgumentException("A non-null and non-new entity must be specified.");
 		}
 		entityRequest = new EntityPersistRequest(entity);
 		crudOp = CrudOp.UPDATE;
@@ -139,7 +153,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 */
 	public final void purge(RefKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
-			throw new IllegalStateException("A set entity reference must be specified.");
+			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
 		entityRequest = new EntityPurgeRequest(entityRef);
 		crudOp = CrudOp.PURGE;

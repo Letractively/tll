@@ -31,8 +31,10 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	@Override
 	protected void configure() {
 		super.configure();
+
 		pnlOption.configure();
-		add(pnlOption);
+
+		panel.add(pnlOption);
 	}
 
 	@Override

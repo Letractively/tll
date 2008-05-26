@@ -6,7 +6,6 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.IField.LabelMode;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
@@ -44,8 +43,8 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 		super.configure();
 
 		if(bindCodeAndDescFields) {
-			code = ftext("code", "Code", LabelMode.ABOVE, 20);
-			description = ftextarea("description", "Description", LabelMode.ABOVE, 3, 18);
+			code = ftext("code", "Code", 20);
+			description = ftextarea("description", "Description", 3, 18);
 
 			fields.addField(code);
 			fields.addField(description);

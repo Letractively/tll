@@ -34,8 +34,7 @@ public interface ISearch extends IMarshalable {
 	 * Return all elements of the ordained type?
 	 * @return boolean
 	 */
-	boolean isRetrieveAll();
-
+	// boolean isRetrieveAll();
 	/**
 	 * Resets the state of the object.
 	 */

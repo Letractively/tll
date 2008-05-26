@@ -24,11 +24,10 @@ public abstract class AbstractDataMapField extends AbstractField {
 	 * Constructor
 	 * @param propName
 	 * @param lblText
-	 * @param lblMode
 	 * @param dataMap
 	 */
-	public AbstractDataMapField(String propName, String lblText, LabelMode lblMode, Map<String, String> dataMap) {
-		super(propName, lblText, lblMode);
+	public AbstractDataMapField(String propName, String lblText, Map<String, String> dataMap) {
+		super(propName, lblText);
 		this.dataMap = dataMap;
 	}
 

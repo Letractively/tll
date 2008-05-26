@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -17,13 +18,18 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
+import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
+import com.tll.client.data.PropKey;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.listing.Column;
+import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.ITableCellTransformer;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
@@ -32,14 +38,17 @@ import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.client.search.impl.AddressSearch;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
+import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**
@@ -54,12 +63,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 	static final String TEST_MSG_PANEL = "TEST_MSG_PANEL";
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
+	static final String TEST_FIELDS = "TEST_FIELDS";
 	static final String TEST_INTERFACE_PANEL = "TEST_INTERFACE_PANEL";
 
 	static String[] tests = new String[] {
 		TEST_MSG_PANEL,
 		TEST_TOOLBAR,
 		TEST_VIEW_CONTAINER,
+		TEST_FIELDS,
 		TEST_INTERFACE_PANEL };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
@@ -128,6 +139,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 				else if(TEST_VIEW_CONTAINER.equals(historyToken)) {
 					testViewContainer();
 				}
+				else if(TEST_FIELDS.equals(historyToken)) {
+					testFields();
+				}
 				else if(TEST_INTERFACE_PANEL.equals(historyToken)) {
 					testInterfacePanel();
 				}
@@ -140,34 +154,96 @@ public final class UITests implements EntryPoint, HistoryListener {
 		});
 	}
 
-	private static Model intfGroup;
+	private static Model address;
+	private static Model intf;
 
 	/**
 	 * <p>
-	 * Test: TEST_INTERFACES_VIEW
+	 * Test: TEST_ADDRESS_PANEL
 	 * <p>
 	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
+	 */
+	void testFields() {
+		// use an address panel inside an edit panel as the test bed
+		final AddressPanel ap = new AddressPanel(null);
+		final EditPanel ep = new EditPanel(ap, true, true);
+		testPanel.add(ep);
+
+		if(address == null) {
+			CrudCommand cc = new CrudCommand(testPanel);
+			cc.addCrudListener(new ICrudListener() {
+
+				public void onCrudEvent(CrudEvent event) {
+					address = event.getPayload().getEntity();
+					ep.setModel(address);
+					ep.refresh();
+				}
+			});
+			AddressSearch search = new AddressSearch("AddressKey");
+			search.setAddress1("home address line 11");
+			search.setPostalCode("94155");
+			cc.loadByBusinessKey(search);
+			cc.execute();
+		}
+		else {
+			ep.setModel(address);
+			ep.refresh();
+		}
+
+		// add button toggle read only/editable
+		Button btnRO = new Button("Read Only", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				Button b = (Button) sender;
+				boolean readOnly = b.getText().equals("Read Only");
+				ap.setReadOnly(readOnly);
+				b.setText(readOnly ? "Editable" : "Read Only");
+			}
+
+		});
+		testPanel.add(btnRO);
+
+		// add button toggle enable/disable
+		Button btnEnbl = new Button("Enable", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				Button b = (Button) sender;
+				boolean enable = b.getText().equals("Enable");
+				ap.setEnabled(enable);
+				b.setText(enable ? "Disable" : "Enable");
+			}
+
+		});
+		testPanel.add(btnEnbl);
+
+	}
+
+	/**
+	 * <p>
+	 * Test: TEST_INTERFACE_PANEL
+	 * <p>
+	 * Purpose: Renders an interface panel to verify its DOM/CSS.
 	 */
 	void testInterfacePanel() {
 		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel(null);
 		testPanel.add(intfPanel);
-		if(intfGroup == null) {
+		if(intf == null) {
 			// stub mock interface
 			CrudCommand cc = new CrudCommand(testPanel);
 			cc.addCrudListener(new ICrudListener() {
 
 				public void onCrudEvent(CrudEvent event) {
-					intfGroup = event.getPayload().getEntity();
-					intfPanel.bind(intfGroup);
-					intfPanel.render();
+					intf = event.getPayload().getEntity();
+					intfPanel.bind(intf);
+					// intfPanel.render();
 				}
 			});
 			cc.loadByName(EntityType.INTERFACE_SINGLE, "Payment Processor");
 			cc.execute();
 		}
 		else {
-			intfPanel.bind(intfGroup);
-			intfPanel.render();
+			intfPanel.bind(intf);
+			// intfPanel.render();
 		}
 	}
 
@@ -188,7 +264,61 @@ public final class UITests implements EntryPoint, HistoryListener {
 						});
 		testPanel.add(vt);
 
-		ListingNavBar listingToolbar = new ListingNavBar(null);
+		ListingNavBar listingToolbar = new ListingNavBar(new IListingConfig() {
+
+			public boolean isSortable() {
+				return true;
+			}
+
+			public boolean isShowRefreshBtn() {
+				return true;
+			}
+
+			public boolean isShowNavBar() {
+				return true;
+			}
+
+			public boolean isShowAddBtn() {
+				return true;
+			}
+
+			public boolean isPageable() {
+				return true;
+			}
+
+			public ITableCellTransformer getTableCellTransformer() {
+				return null;
+			}
+
+			public PropKey[] getPropKeys() {
+				return null;
+			}
+
+			public int getPageSize() {
+				return 0;
+			}
+
+			public String getListingName() {
+				return "Test Listing";
+			}
+
+			public String getListingElementName() {
+				return "Test Element";
+			}
+
+			public Sorting getDefaultSorting() {
+				return null;
+			}
+
+			public Column[] getColumns() {
+				return null;
+			}
+
+			public String getCaption() {
+				return "Test elements";
+			}
+
+		});
 		testPanel.add(listingToolbar);
 	}
 
@@ -209,14 +339,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		private static final TestViewClass klas = new TestViewClass();
 
-		private final FlowPanel pnl = new FlowPanel();
-
 		public TestView() {
 			super();
-			initWidget(pnl);
-			pnl.add(new Label("label 1"));
-			pnl.add(new Label("label 2"));
-			pnl.add(new Label("label 3"));
+			addWidget(new Label("label 1"));
+			addWidget(new Label("label 2"));
+			addWidget(new Label("label 3"));
 		}
 
 		@Override
@@ -294,6 +421,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
 		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
 
-		MsgManager.instance.post(false, msgs, Position.CENTER, RootPanel.get(), -1, true);
+		MsgManager.instance.post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
 	}
 }

@@ -28,7 +28,7 @@ import com.tll.service.entity.IEntityService;
  * MEntityServiceDelegate
  * @author jpk
  */
-public class MEntityServiceDelegate extends RpcServlet implements IMEntityService<IEntity> {
+public class MEntityServiceDelegate extends RpcServlet implements IMEntityService<IEntity, ISearch> {
 
 	private static final long serialVersionUID = 5017008307371980402L;
 
@@ -42,8 +42,8 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 	 *         {@link EntityPayload}'s {@link Status} is updated with an error
 	 *         message.
 	 */
-	private IMEntityServiceImpl<? extends IEntity> resolveEntityServiceImpl(final EntityRequest request,
-			final EntityPayload payload) {
+	private IMEntityServiceImpl<? extends IEntity, ? extends ISearch> resolveEntityServiceImpl(
+			final EntityRequest request, final EntityPayload payload) {
 		// ensure non-null request
 		if(request == null) {
 			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR);
@@ -69,7 +69,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload getEmptyEntity(final EntityGetEmptyRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.getEmptyEntity(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -78,7 +78,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload load(final EntityLoadRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.load(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -87,7 +87,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload persist(final EntityPersistRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.persist(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -96,7 +96,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload purge(final EntityPurgeRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.purge(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -121,8 +121,8 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 			throw new IllegalArgumentException("A listing command and member search property must be set.");
 		}
 		final EntityType entityType = listingCommand.getSearchCriteria().getEntityType();
-		final MEntityServiceImpl<IEntity> svc =
-				(MEntityServiceImpl<IEntity>) MEntityServiceImplFactory.instance(entityType);
+		final MEntityServiceImpl<IEntity, ISearch> svc =
+				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(entityType);
 		return svc.getMarshalingListHandler(getRequestContext(), listingCommand);
 	}
 

@@ -33,6 +33,15 @@ public abstract class NamedTimeStampEntitySearch extends TimeStampEntitySearch {
 	}
 
 	/**
+	 * Constructor
+	 * @param businessKeyName
+	 * @param entityType
+	 */
+	public NamedTimeStampEntitySearch(String businessKeyName, EntityType entityType) {
+		super(businessKeyName, entityType);
+	}
+
+	/**
 	 * @return the name
 	 */
 	public String getName() {

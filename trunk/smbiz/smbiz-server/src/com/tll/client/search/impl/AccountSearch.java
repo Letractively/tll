@@ -34,6 +34,14 @@ public final class AccountSearch extends NamedTimeStampEntitySearch {
 		super(criteriaType, accountType);
 	}
 
+	/**
+	 * Constructor
+	 * @param businessKeyName
+	 */
+	public AccountSearch(String businessKeyName) {
+		super(businessKeyName, EntityType.ACCOUNT);
+	}
+
 	public final RefKey getParentAccountRef() {
 		return parentAccountRef;
 	}

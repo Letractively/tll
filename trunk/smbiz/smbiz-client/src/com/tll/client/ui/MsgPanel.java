@@ -9,7 +9,6 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -142,8 +141,6 @@ public final class MsgPanel extends TimedPositionedPopup {
 	 * Removes all {@link Msg}s from this panel.
 	 */
 	public void removeMsgs() {
-		for(Object element2 : container) {
-			container.remove((Widget) element2);
-		}
+		container.clear();
 	}
 }

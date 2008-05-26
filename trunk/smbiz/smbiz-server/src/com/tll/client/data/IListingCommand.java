@@ -11,7 +11,7 @@ import com.tll.util.IDescriptorProvider;
  * table data.
  * @author jpk
  */
-public interface IListingCommand extends IMarshalable, IDescriptorProvider {
+public interface IListingCommand<S extends ISearch> extends IMarshalable, IDescriptorProvider {
 
 	/**
 	 * @return the distinguishing name of the listing. Must be unique against all
@@ -40,7 +40,7 @@ public interface IListingCommand extends IMarshalable, IDescriptorProvider {
 	/**
 	 * @return The search criteria for the listing.
 	 */
-	ISearch getSearchCriteria();
+	S getSearchCriteria();
 
 	/**
 	 * @return the prop keys array.

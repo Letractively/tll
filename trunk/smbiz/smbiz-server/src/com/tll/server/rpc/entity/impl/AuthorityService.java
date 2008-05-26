@@ -13,6 +13,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.Authority;
+import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -21,7 +22,7 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * AuthorityService
  * @author jpk
  */
-public class AuthorityService extends MNamedEntityServiceImpl<Authority> {
+public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
@@ -41,7 +42,13 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority> {
 	}
 
 	@Override
+	protected IBusinessKey<? extends Authority> handleBusinessKeyTranslation(ISearch search) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	protected void handleSearchTranslation(RequestContext requestContext, ISearch search,
 			ICriteria<? extends Authority> criteria) throws IllegalArgumentException {
+		throw new UnsupportedOperationException();
 	}
 }

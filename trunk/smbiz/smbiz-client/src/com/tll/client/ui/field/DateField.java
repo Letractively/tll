@@ -19,11 +19,10 @@ public class DateField extends TextField {
 	 * Constructor
 	 * @param propName
 	 * @param lblText
-	 * @param lblMode
 	 * @param format
 	 */
-	public DateField(String propName, String lblText, LabelMode lblMode, GlobalFormat format) {
-		super(propName, lblText, lblMode, 10);
+	public DateField(String propName, String lblText, GlobalFormat format) {
+		super(propName, lblText, 10);
 		setFormat(format);
 		DateFormat dateFormat = Fmt.getDateFormat(format);
 		switch(dateFormat) {
