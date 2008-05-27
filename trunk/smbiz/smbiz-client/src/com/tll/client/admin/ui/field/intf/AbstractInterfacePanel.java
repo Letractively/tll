@@ -71,7 +71,7 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		fields.addField(isRequiredCustomer);
 
 		/*
-		FlowFieldCanvas canvas = new FlowFieldCanvas();
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
 		canvas.addField(name);

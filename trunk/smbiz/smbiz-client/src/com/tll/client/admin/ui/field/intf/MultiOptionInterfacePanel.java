@@ -20,7 +20,7 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.model.EntityType;
 
 /**
@@ -47,7 +47,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	protected void configure() {
 		super.configure();
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(name);

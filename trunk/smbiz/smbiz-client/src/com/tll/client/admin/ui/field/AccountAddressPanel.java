@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.CSS;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.model.impl.AddressType;
 
@@ -61,7 +61,7 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 		// TODO determine why we need this as we shouldn't!!!
 		setMarkDeleted(false);
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// account address name row
 		canvas.addField(name);

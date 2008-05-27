@@ -37,7 +37,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldLabel;
@@ -216,7 +216,7 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		fields.addField(baseMonthlyPrice);
 		fields.addField(baseAnnualPrice);
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		if(bindNameField) canvas.addField(name);

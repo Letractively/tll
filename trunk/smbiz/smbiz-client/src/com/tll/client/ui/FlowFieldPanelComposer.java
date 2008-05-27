@@ -13,10 +13,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldLabel;
-import com.tll.client.ui.field.IFieldCanvas;
+import com.tll.client.ui.field.IFieldPanelComposer;
 
 /**
- * FlowFieldCanvas - Lays out fields in a flow style having the following
+ * FlowFieldPanelComposer - Lays out fields in a flow style having the following
  * attributes:
  * <ol>
  * <li>Field labels are placed on top of the field
@@ -25,9 +25,7 @@ import com.tll.client.ui.field.IFieldCanvas;
  * </ol>
  * @author jpk
  */
-public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
-
-	private static final String CSS_FIELD = "fld";
+public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment {
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
@@ -44,7 +42,7 @@ public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
 	 * Constructor
 	 * @param parentPanel The panel that will be appended with this canvas
 	 */
-	public FlowFieldCanvas(Panel parentPanel) {
+	public FlowFieldPanelComposer(Panel parentPanel) {
 		super();
 		parentPanel.add(vp);
 	}
@@ -61,7 +59,7 @@ public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			fp.setStyleName(CSS_FIELD);
+			fp.setStyleName(IFieldPanelComposer.CSS_FIELD);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");
@@ -83,18 +81,16 @@ public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
 	}
 
 	/**
-	 * Adds a field label and Widget to the current row creating a new slot.
+	 * Adds a field label and Widget to the canvas. If the label text is
+	 * <code>null</code>, no label is added. If the Widget is an IField
+	 * {@link #addField(AbstractField)} should be called instead.
 	 * @param label The label text
-	 * @param w The widget
+	 * @param w The non-IField and non-FieldGroupPanel Widget to add
 	 */
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
-	/**
-	 * Adds a field to the current row creating a new slot.
-	 * @param field The field to add
-	 */
 	public void addField(AbstractField field) {
 		add(field.getFieldLabel(), field);
 		field.setFieldParent(last.getParent());
@@ -149,18 +145,4 @@ public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
 	public void setVerticalAlignment(VerticalAlignmentConstant align) {
 		getCurrentRow().setVerticalAlignment(align);
 	}
-
-	/*
-	private Element getFieldCell(AbstractField field) {
-		return field.getParent().getElement().getParentElement();
-	}
-
-	public void hideField(AbstractField field) {
-		getFieldCell(field).getStyle().setProperty("display", "none");
-	}
-
-	public void showField(AbstractField field) {
-		getFieldCell(field).getStyle().setProperty("display", "");
-	}
-	*/
 }

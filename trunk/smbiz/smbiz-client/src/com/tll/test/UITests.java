@@ -40,7 +40,7 @@ import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.search.impl.AddressSearch;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
@@ -189,7 +189,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			fields.addField(bflabel);
 			fields.addField(bf);
 
-			FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 			canvas.addWidget(ap);
 

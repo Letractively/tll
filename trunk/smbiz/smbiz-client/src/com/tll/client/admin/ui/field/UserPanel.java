@@ -17,7 +17,7 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -77,7 +77,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		fields.addField(expires);
 		fields.addField(addressPanel.getFields());
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(name);

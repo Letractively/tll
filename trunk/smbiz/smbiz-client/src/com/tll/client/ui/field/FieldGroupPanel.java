@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
@@ -14,6 +15,7 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ValidationException;
 
@@ -25,7 +27,8 @@ import com.tll.client.validate.ValidationException;
 public abstract class FieldGroupPanel extends Composite {
 
 	/**
-	 * The wrapped panel. An {@link IFieldCanvas} will append to this panel.
+	 * The wrapped panel. An {@link IFieldPanelComposer} will append to this
+	 * panel.
 	 */
 	protected final SimplePanel panel = new SimplePanel();
 
@@ -75,6 +78,10 @@ public abstract class FieldGroupPanel extends Composite {
 	 */
 	public final FieldGroup getFields() {
 		return fields;
+	}
+
+	protected final IFieldPanelComposer getComposer() {
+		return new FlowFieldPanelComposer(panel);
 	}
 
 	/**

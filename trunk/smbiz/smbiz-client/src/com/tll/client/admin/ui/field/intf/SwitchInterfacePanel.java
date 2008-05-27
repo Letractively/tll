@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -36,7 +36,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 		pnlOption.configure();
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(name);

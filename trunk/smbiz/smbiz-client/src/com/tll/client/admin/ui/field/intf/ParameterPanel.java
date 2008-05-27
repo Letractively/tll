@@ -1,6 +1,6 @@
 package com.tll.client.admin.ui.field.intf;
 
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 
 /**
  * ParameterPanel - Interface option parameter definition panel.
@@ -20,7 +20,7 @@ final class ParameterPanel extends InterfaceRelatedPanel {
 	protected void configure() {
 		super.configure();
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(name);

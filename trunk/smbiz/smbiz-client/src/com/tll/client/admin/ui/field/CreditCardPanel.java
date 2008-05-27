@@ -6,7 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
@@ -76,7 +76,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		fields.addField(zip);
 		fields.addField(country);
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		canvas.addField(type);
 

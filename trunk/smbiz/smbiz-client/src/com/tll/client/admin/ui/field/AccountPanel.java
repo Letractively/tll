@@ -25,7 +25,7 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.FlowFieldCanvas;
+import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
@@ -136,7 +136,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		fields.addField(persistPymntInfo);
 		fields.addField(paymentInfoPanel.getFields());
 
-		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(name);
