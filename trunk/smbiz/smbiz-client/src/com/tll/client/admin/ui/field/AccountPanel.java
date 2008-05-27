@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -164,11 +165,11 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		canvas.addWidget(dpAddresses);
 
 		// payment info block
-		canvas.addField(persistPymntInfo);
-		dpPaymentInfo.add(paymentInfoPanel);
-		canvas.stopFlow();
+		FlowPanel fp = new FlowPanel();
+		fp.add(persistPymntInfo);
+		fp.add(paymentInfoPanel);
+		dpPaymentInfo.add(fp);
 		canvas.addWidget(dpPaymentInfo);
-		canvas.resetFlow();
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
