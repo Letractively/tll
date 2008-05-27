@@ -5,8 +5,8 @@
  */
 package com.tll.client.ui;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -25,11 +25,20 @@ import com.tll.client.ui.field.IFieldCanvas;
  * </ol>
  * @author jpk
  */
-public class FlowFieldCanvas implements IFieldCanvas {
+public class FlowFieldCanvas implements IFieldCanvas, HasAlignment {
 
+	private static final String CSS_FIELD = "fld";
+
+	/**
+	 * The root canvas panel for this field canvas implementation.
+	 */
 	private final VerticalPanel vp = new VerticalPanel();
+
 	private HorizontalPanel currentRow;
+
 	private Widget last;
+
+	private boolean atCurrent;
 
 	/**
 	 * Constructor
@@ -48,11 +57,11 @@ public class FlowFieldCanvas implements IFieldCanvas {
 		return currentRow;
 	}
 
-	private void add(FieldLabel fldLbl, Widget w, boolean atCurrent) {
+	private void add(FieldLabel fldLbl, Widget w) {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			fp.setStyleName(AbstractField.CSS_FIELD);
+			fp.setStyleName(CSS_FIELD);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");
@@ -61,7 +70,6 @@ public class FlowFieldCanvas implements IFieldCanvas {
 		}
 		if(fldLbl != null) fp.add(fldLbl);
 		fp.add(w);
-		// addWidget(fp);
 		getCurrentRow().add(fp);
 		last = w;
 	}
@@ -71,7 +79,7 @@ public class FlowFieldCanvas implements IFieldCanvas {
 	 * @param w The non-field Widget to add
 	 */
 	public void addWidget(Widget w) {
-		add(null, w, false);
+		add(null, w);
 	}
 
 	/**
@@ -80,7 +88,7 @@ public class FlowFieldCanvas implements IFieldCanvas {
 	 * @param w The widget
 	 */
 	public void addWidget(String label, Widget w) {
-		add(label == null ? null : new FieldLabel(label), w, false);
+		add(label == null ? null : new FieldLabel(label), w);
 	}
 
 	/**
@@ -88,32 +96,9 @@ public class FlowFieldCanvas implements IFieldCanvas {
 	 * @param field The field to add
 	 */
 	public void addField(AbstractField field) {
-		add(field.getFieldLabel(), field, false);
-	}
-
-	/**
-	 * Adds a field beneath the last added field.
-	 * @param field The field to add
-	 */
-	public void addFieldAtCurrent(AbstractField field) {
-		add(field.getFieldLabel(), field, true);
-	}
-
-	/**
-	 * Adds a Widget beneath the last added field.
-	 * @param w The Widget to add
-	 */
-	public void addWidgetAtCurrent(Widget w) {
-		add(null, w, true);
-	}
-
-	/**
-	 * Adds a Widget beneath the last added field along with a field label.
-	 * @param label The label text
-	 * @param w The Widget to add
-	 */
-	public void addWidgetAtCurrent(String label, Widget w) {
-		add(label == null ? null : new FieldLabel(label), w, true);
+		add(field.getFieldLabel(), field);
+		field.setFieldParent(last.getParent());
+		field.setFieldLabelParent(last.getParent());
 	}
 
 	/**
@@ -124,6 +109,48 @@ public class FlowFieldCanvas implements IFieldCanvas {
 		currentRow = null;
 	}
 
+	/**
+	 * Forces subsequently added fields/widgets to be added at the same "slot" at
+	 * the last added field/widget.
+	 */
+	public void stopFlow() {
+		atCurrent = true;
+	}
+
+	/**
+	 * Re-establishes the flow so subsequently added fields/widgets will have a
+	 * newly created "slot".
+	 */
+	public void resetFlow() {
+		atCurrent = false;
+	}
+
+	/**
+	 * Resets the alignment for subsequently added Widgets/fields to their initial
+	 * values.
+	 */
+	public void resetAlignment() {
+		setHorizontalAlignment(ALIGN_DEFAULT);
+		setVerticalAlignment(ALIGN_TOP);
+	}
+
+	public HorizontalAlignmentConstant getHorizontalAlignment() {
+		return getCurrentRow().getHorizontalAlignment();
+	}
+
+	public void setHorizontalAlignment(HorizontalAlignmentConstant align) {
+		getCurrentRow().setHorizontalAlignment(align);
+	}
+
+	public VerticalAlignmentConstant getVerticalAlignment() {
+		return getCurrentRow().getVerticalAlignment();
+	}
+
+	public void setVerticalAlignment(VerticalAlignmentConstant align) {
+		getCurrentRow().setVerticalAlignment(align);
+	}
+
+	/*
 	private Element getFieldCell(AbstractField field) {
 		return field.getParent().getElement().getParentElement();
 	}
@@ -135,4 +162,5 @@ public class FlowFieldCanvas implements IFieldCanvas {
 	public void showField(AbstractField field) {
 		getFieldCell(field).getStyle().setProperty("display", "");
 	}
+	*/
 }

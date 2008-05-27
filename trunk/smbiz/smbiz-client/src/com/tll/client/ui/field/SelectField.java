@@ -63,4 +63,11 @@ public class SelectField extends AbstractDataMapField {
 		}
 		return null;
 	}
+
+	@Override
+	public void setDataMap(Map<String, String> dataMap) {
+		super.setDataMap(dataMap);
+		lb = null; // force re-create for case when already created
+	}
+
 }

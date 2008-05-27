@@ -56,6 +56,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 
 	public RadioButton[] getRadioButtons() {
 		if(rbPanel.getWidgetCount() == 0) {
+			radioButtons.clear();
 			if(dataMap != null) {
 				for(String n : dataMap.keySet()) {
 					RadioButton rb = new RadioButton("rg_" + domId, n);
@@ -103,4 +104,11 @@ public final class RadioGroupField extends AbstractDataMapField {
 		}
 		super.onClick(sender);
 	}
+
+	@Override
+	public void setDataMap(Map<String, String> dataMap) {
+		super.setDataMap(dataMap);
+		rbPanel.clear(); // force re-create
+	}
+
 }

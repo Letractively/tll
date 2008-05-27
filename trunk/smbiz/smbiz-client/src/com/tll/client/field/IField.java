@@ -49,6 +49,18 @@ public interface IField extends IPropertyNameProvider {
 	void setEnabled(boolean enabled);
 
 	/**
+	 * Is the field visible?
+	 * @return true/false
+	 */
+	boolean isVisible();
+
+	/**
+	 * Sets the field's visibility.
+	 * @param visible true/false
+	 */
+	void setVisible(boolean visible);
+
+	/**
 	 * @return The field's value.
 	 */
 	String getValue();
@@ -61,11 +73,6 @@ public interface IField extends IPropertyNameProvider {
 	 */
 	void setValue(String value);
 
-	/**
-	 * Renders the UI control.
-	 */
-	// TODO eliminate and rely on Widget.onLoad() method for the rendering hook
-	// void render();
 	/**
 	 * Resets the field's UI value to the default.
 	 */

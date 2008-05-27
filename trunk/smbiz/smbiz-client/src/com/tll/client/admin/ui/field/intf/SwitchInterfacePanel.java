@@ -5,9 +5,11 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
+import com.tll.client.ui.FlowFieldCanvas;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -34,7 +36,23 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 		pnlOption.configure();
 
-		panel.add(pnlOption);
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+
+		// first row
+		canvas.addField(name);
+		canvas.addField(code);
+		canvas.addField(description);
+
+		canvas.addWidget(createAvailabilityGrid());
+
+		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		canvas.addField(dateCreated);
+		canvas.stopFlow();
+		canvas.addField(dateModified);
+		canvas.resetAlignment();
+
+		canvas.newRow();
+		canvas.addWidget(pnlOption);
 	}
 
 	@Override

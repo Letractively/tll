@@ -31,7 +31,6 @@ import com.tll.util.IDescriptorProvider;
  * paths so any given field group object graph should be structured such that
  * property path integrity is maintained.
  * <p>
- * <p>
  * <strong>NOTE: </strong>Property path conventions as they related to
  * {@link FieldGroup}s:
  * <ol>
@@ -39,10 +38,10 @@ import com.tll.util.IDescriptorProvider;
  * E.g.: For property path 'account.addresses[3].firstName', the corres. field
  * group hierarchy is: fg(account)-nestedfg(addresses[3])-nestedfg(firstName)
  * </ol>
- * TODO create a field "set" construct to handle redundant (non-property path
- * dependent) field aggregations for validation purposes.
  * @author jpk
  */
+// TODO create a field "set" construct to handle redundant (non-property path
+// dependent) field aggregations for validation purposes.
 public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
 
 	/**
@@ -145,6 +144,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private boolean required = false;
 	private boolean readOnly = false;
 	private boolean enabled = true;
+	private boolean visible = true;
 
 	/**
 	 * Used to indicate this field group is scheduled for deletion when populating
@@ -207,11 +207,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public void setReadOnly(boolean readOnly) {
-		if(readOnly == this.readOnly) return;
-		for(IField field : fields) {
-			field.setReadOnly(readOnly);
+		if(readOnly != this.readOnly) {
+			for(IField field : fields) {
+				field.setReadOnly(readOnly);
+			}
+			this.readOnly = readOnly;
 		}
-		this.readOnly = readOnly;
 	}
 
 	public boolean isEnabled() {
@@ -219,11 +220,25 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public void setEnabled(boolean enabled) {
-		if(enabled == this.enabled) return;
-		for(IField field : fields) {
-			field.setEnabled(enabled);
+		if(enabled != this.enabled) {
+			for(IField field : fields) {
+				field.setEnabled(enabled);
+			}
+			this.enabled = enabled;
 		}
-		this.enabled = enabled;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		if(visible != this.visible) {
+			for(IField field : fields) {
+				field.setVisible(visible);
+			}
+			this.visible = visible;
+		}
 	}
 
 	public boolean isMarkedDeleted() {
@@ -352,14 +367,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		assert field != null;
 		fields.add(field);
 	}
-
-	/*
-	public void render() {
-		for(IField field : fields) {
-			field.render();
-		}
-	}
-	*/
 
 	public void reset() {
 		MsgManager.instance.clear(refWidget, true);

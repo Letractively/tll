@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,7 +35,9 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.model.RelatedManyProperty;
+import com.tll.client.ui.CSS;
 import com.tll.client.ui.Dialog;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldLabel;
@@ -191,11 +194,11 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 	}
 
 	@Override
-	protected void configure() {
+	protected final void configure() {
 		super.configure();
 
 		isDefault = fbool("isDefault", "Default?");
-		isDefault.setAlignBottom(true);
+		// isDefault.setAlignBottom(true);
 
 		setUpCost = ftext("setUpCost", "Setup Cost", 10);
 		monthlyCost = ftext("monthlyCost", "Monthly Cost", 10);
@@ -213,47 +216,35 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 		fields.addField(baseMonthlyPrice);
 		fields.addField(baseAnnualPrice);
 
-		/*
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+
 		// first row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		if(bindNameField) frow.add(name);
+		if(bindNameField) canvas.addField(name);
 		if(bindCodeAndDescFields) {
-			frow.add(code);
-			frow.add(description);
+			canvas.addField(code);
+			canvas.addField(description);
 		}
-		frow.add(isDefault);
+		canvas.addField(isDefault);
 
 		if(bindDeleteBtn) {
 			btnDeleteToggle = new PushButton();
 			btnDeleteToggle.addClickListener(this);
 			btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
-			//frow.add(btnDeleteToggle);
+			canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			canvas.addWidget(btnDeleteToggle);
+			canvas.resetAlignment();
 		}
 		else {
 			btnDeleteToggle = null;
 		}
-		if(frow.getWidgetCount() > 0) add(frow);
 
 		// second row
-		frow = new FieldPanel(FieldPanel.CSS_FIELD_ROW);
-		add(frow);
+		canvas.newRow();
+		canvas.addWidget(createPricingGrid());
 
-		Grid g = new Grid(3, 4);
-		g.setWidget(0, 1, new FieldLabel("Set Up", setUpCost.getDomId(), false));
-		g.setWidget(0, 2, new FieldLabel("Monthly", monthlyCost.getDomId(), false));
-		g.setWidget(0, 3, new FieldLabel("Annual", annualCost.getDomId(), false));
-		g.setWidget(1, 0, new FieldLabel("Cost", setUpCost.getDomId(), true));
-		g.setWidget(1, 1, setUpCost);
-		g.setWidget(1, 2, monthlyCost);
-		g.setWidget(1, 3, annualCost);
-		g.setWidget(2, 0, new FieldLabel("Price", baseSetupPrice.getDomId(), true));
-		g.setWidget(2, 1, baseSetupPrice);
-		g.setWidget(2, 2, baseMonthlyPrice);
-		g.setWidget(2, 3, baseAnnualPrice);
-		frow.add(g);
-
-		frow.add(lstngParams);
-		*/
+		// third row
+		canvas.newRow();
+		canvas.addWidget(lstngParams);
 	}
 
 	protected Grid createPricingGrid() {

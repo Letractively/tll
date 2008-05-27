@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
@@ -62,22 +61,6 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * The <em>local</em> (or relative) property name bound the FieldGroup
-	 * referenced by this FieldGroupPanel.
-	 * <p>
-	 * NOTE: This does <em>not</em> include the parent property path.
-	 */
-	/*
-	public final String getPropertyName() {
-		return fields.getPropertyName();
-	}
-
-	public final void setPropertyName(String propName) {
-		fields.setPropertyName(propName);
-	}
-	*/
-
-	/**
 	 * Overrides the default behavior of this panel being the ref Widget. This is
 	 * useful when we have Widgets that cloak (hide) fields since the ref Widget
 	 * is employed for posting validation messages in the ui.
@@ -109,38 +92,11 @@ public abstract class FieldGroupPanel extends Composite {
 	 */
 	protected abstract void configure();
 
-	public final boolean isReadOnly() {
-		return fields.isReadOnly();
-	}
-
-	public final void setReadOnly(boolean readOnly) {
-		fields.setReadOnly(readOnly);
-	}
-
-	public final boolean isEnabled() {
-		return fields.isEnabled();
-	}
-
-	public final void setEnabled(boolean enabled) {
-		fields.setEnabled(enabled);
-	}
-
-	/**
-	 * Renders the fields.
-	 */
-	/*
-	public final void render() {
-		assert configured : "The field group panel must be configured before rendering is allowed";
-		fields.render();
-	}
-	*/
-
-	/**
-	 * Resets the field values to their original values.
-	 */
-	public final void reset() {
-		assert configured : "The field group panel must be configured before resetting is allowed";
-		fields.reset();
+	public final void initFields() {
+		if(!configured) {
+			configure();
+			configured = true;
+		}
 	}
 
 	/**
@@ -148,10 +104,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * @param model The model to bind
 	 */
 	public final void bind(Model model) {
-		if(!configured) {
-			configure();
-			configured = true;
-		}
+		initFields();
 		onBeforeBind(model);
 		fields.bindModel(model);
 		onAfterBind(model);

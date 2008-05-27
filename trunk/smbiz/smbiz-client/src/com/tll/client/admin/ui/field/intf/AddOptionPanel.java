@@ -27,7 +27,7 @@ public class AddOptionPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	public void configure() {
 		name = ftext("name", "Name", 30);
 		code = ftext("code", "Code", 20);
 		description = ftextarea("description", "Description", 3, 18);

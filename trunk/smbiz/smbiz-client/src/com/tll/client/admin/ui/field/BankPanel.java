@@ -44,6 +44,7 @@ public final class BankPanel extends FieldGroupPanel {
 		fields.addField(bankRoutingNo);
 
 		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+
 		canvas.addField(bankName);
 		canvas.addField(bankAccountNo);
 		canvas.addField(bankRoutingNo);

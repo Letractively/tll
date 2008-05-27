@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -113,7 +114,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
-		paymentInfoPanel.configure();
+		paymentInfoPanel.initFields();
 		paymentInfoPanel.setRefWidget(dpPaymentInfo);
 
 		// stub the address type to account address panel bindings
@@ -143,8 +144,11 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		canvas.addField(dateCancelled);
 		canvas.addField(currency);
 		canvas.addField(parent);
+		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		canvas.addField(dateCreated);
-		canvas.addFieldAtCurrent(dateModified);
+		canvas.stopFlow();
+		canvas.addField(dateModified);
+		canvas.resetFlow();
 
 		// second row (billing)
 		canvas.newRow();
@@ -162,7 +166,9 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		// payment info block
 		canvas.addField(persistPymntInfo);
 		dpPaymentInfo.add(paymentInfoPanel);
-		canvas.addWidgetAtCurrent(dpPaymentInfo);
+		canvas.stopFlow();
+		canvas.addWidget(dpPaymentInfo);
+		canvas.resetFlow();
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
@@ -254,7 +260,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 	public void onClick(Widget sender) {
 		if(sender == persistPymntInfo.getCheckBox()) {
-			paymentInfoPanel.setEnabled(persistPymntInfo.getCheckBox().isChecked());
+			paymentInfoPanel.getFields().setEnabled(persistPymntInfo.getCheckBox().isChecked());
 		}
 		else if(sender instanceof NoEntityExistsPanel) {
 			// this is a non-existant account address

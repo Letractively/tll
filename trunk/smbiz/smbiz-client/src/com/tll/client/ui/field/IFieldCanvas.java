@@ -6,6 +6,7 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.IField;
 
 /**
@@ -17,14 +18,18 @@ import com.tll.client.field.IField;
 public interface IFieldCanvas {
 
 	/**
-	 * Shows a field. Relevant when the field was previously hidden.
-	 * @param field The field to show
+	 * Adds a field label and Widget to the canvas. If the label text is
+	 * <code>null</code>, no label is added. If the Widget is an IField,
+	 * {@link #addField(AbstractField)} should be called instead.
+	 * @param label The label text
+	 * @param w The widget to add
 	 */
-	void showField(AbstractField field);
+	void addWidget(String label, Widget w);
 
 	/**
-	 * Hides a field.
-	 * @param field The field to hide
+	 * Adds a field to the canvas. The field label is extracted from the given
+	 * field and if non-<code>null</code>, is added as well.
+	 * @param field The field to add
 	 */
-	void hideField(AbstractField field);
+	void addField(AbstractField field);
 }

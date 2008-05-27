@@ -30,6 +30,7 @@ import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
@@ -39,12 +40,15 @@ import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.search.impl.AddressSearch;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
@@ -154,8 +158,53 @@ public final class UITests implements EntryPoint, HistoryListener {
 		});
 	}
 
-	private static Model address;
+	private static Model testModel;
 	private static Model intf;
+
+	/**
+	 * TestFieldPanel - Used for the fields test.
+	 * @author jpk
+	 */
+	private static final class TestFieldPanel extends FieldGroupPanel {
+
+		private final AddressPanel ap;
+
+		private final CheckboxField bf;
+		private final CheckboxField bflabel;
+
+		/**
+		 * Constructor
+		 */
+		public TestFieldPanel() {
+			super("test", "Test Field Panel");
+			ap = new AddressPanel("address");
+			bf = fbool("bf", null);
+			bflabel = fbool("bflabel", "Boolean with Label");
+		}
+
+		@Override
+		protected void configure() {
+			ap.initFields();
+			fields.addField(ap.getFields());
+			fields.addField(bflabel);
+			fields.addField(bf);
+
+			FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+
+			canvas.addWidget(ap);
+
+			canvas.addField(bflabel);
+			canvas.addField(bf);
+		}
+
+	}
+
+	private void setTestModel(Model address) {
+		testModel = new Model();
+		testModel.setRelatedOne("address", address);
+		testModel.set(new BooleanPropertyValue("bflabel", true));
+		testModel.set(new BooleanPropertyValue("bf", false));
+	}
 
 	/**
 	 * <p>
@@ -165,17 +214,17 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 */
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
-		final AddressPanel ap = new AddressPanel(null);
-		final EditPanel ep = new EditPanel(ap, true, true);
+		final TestFieldPanel fieldPanel = new TestFieldPanel();
+		final EditPanel ep = new EditPanel(fieldPanel, true, true);
 		testPanel.add(ep);
 
-		if(address == null) {
+		if(testModel == null) {
 			CrudCommand cc = new CrudCommand(testPanel);
 			cc.addCrudListener(new ICrudListener() {
 
 				public void onCrudEvent(CrudEvent event) {
-					address = event.getPayload().getEntity();
-					ep.setModel(address);
+					setTestModel(event.getPayload().getEntity());
+					ep.setModel(testModel);
 					ep.refresh();
 				}
 			});
@@ -186,7 +235,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			cc.execute();
 		}
 		else {
-			ep.setModel(address);
+			ep.setModel(testModel);
 			ep.refresh();
 		}
 
@@ -196,7 +245,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			public void onClick(Widget sender) {
 				Button b = (Button) sender;
 				boolean readOnly = b.getText().equals("Read Only");
-				ap.setReadOnly(readOnly);
+				fieldPanel.getFields().setReadOnly(readOnly);
 				b.setText(readOnly ? "Editable" : "Read Only");
 			}
 
@@ -204,17 +253,30 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testPanel.add(btnRO);
 
 		// add button toggle enable/disable
-		Button btnEnbl = new Button("Enable", new ClickListener() {
+		Button btnEnbl = new Button("Disable", new ClickListener() {
 
 			public void onClick(Widget sender) {
 				Button b = (Button) sender;
 				boolean enable = b.getText().equals("Enable");
-				ap.setEnabled(enable);
+				fieldPanel.getFields().setEnabled(enable);
 				b.setText(enable ? "Disable" : "Enable");
 			}
 
 		});
 		testPanel.add(btnEnbl);
+
+		// add button toggle show/hide
+		Button btnVisible = new Button("Hide", new ClickListener() {
+
+			public void onClick(Widget sender) {
+				Button b = (Button) sender;
+				boolean show = b.getText().equals("Show");
+				fieldPanel.setVisible(show);
+				b.setText(show ? "Hide" : "Show");
+			}
+
+		});
+		testPanel.add(btnVisible);
 
 	}
 

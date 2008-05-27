@@ -15,6 +15,7 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.client.ui.ViewRequestLink;
@@ -82,7 +83,9 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		canvas.addField(name);
 		canvas.addField(emailAddress);
 		canvas.addField(locked);
-		canvas.addFieldAtCurrent(enabled);
+		canvas.stopFlow();
+		canvas.addField(enabled);
+		canvas.resetFlow();
 		canvas.addField(expires);
 
 		// parent account ref link
@@ -90,7 +93,9 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		canvas.addWidget("Account", lnkAccount);
 
 		canvas.addField(dateCreated);
-		canvas.addFieldAtCurrent(dateModified);
+		canvas.stopFlow();
+		canvas.addField(dateModified);
+		canvas.resetFlow();
 
 		// second row (authorities)
 		canvas.newRow();
@@ -100,7 +105,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		for(Model auth : authList) {
 			String role = auth.asString("authority");
 			CheckboxField cbAuth = fcheckbox("authority", role, role, "");
-			FieldGroup fg = new FieldGroup("authoritys[" + (i++) + "]", role, cbAuth);
+			FieldGroup fg = new FieldGroup(PropertyPath.indexed("authoritys", ++i), role, cbAuth);
 			fields.addField(fg);
 			fg.addField(cbAuth);
 			canvas.addField(cbAuth);

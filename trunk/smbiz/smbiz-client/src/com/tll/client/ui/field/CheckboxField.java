@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.IField;
 
 /**
  * CheckboxField
@@ -26,9 +25,6 @@ public class CheckboxField extends AbstractField {
 	 */
 	protected String cbLblTxt;
 
-	// TODO figure out how to eliminate this property
-	private boolean alignBottom;
-
 	/**
 	 * Constructor
 	 * @param propName
@@ -43,20 +39,6 @@ public class CheckboxField extends AbstractField {
 		this.uncheckedValue = uncheckedValue;
 	}
 
-	/**
-	 * @return the alignBottom
-	 */
-	public boolean isAlignBottom() {
-		return alignBottom;
-	}
-
-	/**
-	 * @param alignBottom the alignBottom to set
-	 */
-	public void setAlignBottom(boolean alignBottom) {
-		this.alignBottom = alignBottom;
-	}
-
 	public CheckBox getCheckBox() {
 		if(cb == null) {
 			cb = new CheckBox(cbLblTxt);
@@ -66,22 +48,6 @@ public class CheckboxField extends AbstractField {
 		}
 		return cb;
 	}
-
-	/*
-	@Override
-	public String getLabelText() {
-		return cbLblTxt;
-	}
-
-	@Override
-	public void setLabelText(String lblTxt) {
-		if(lblTxt != null && lblTxt.equals(cbLblTxt)) return;
-		this.cbLblTxt = lblTxt == null ? "" : lblTxt;
-		if(cb != null) {
-			cb.setText(cbLblTxt);
-		}
-	}
-	*/
 
 	public final void setChecked(boolean checked) {
 		this.value = checked ? checkedValue : uncheckedValue;
@@ -116,33 +82,8 @@ public class CheckboxField extends AbstractField {
 
 	@Override
 	protected String getReadOnlyRenderValue() {
-		return isCheckedValue(getValue()) ? checkedValue : uncheckedValue;
-	}
-
-	/*
-	@Override
-	public void render() {
-		fp.clear();
-		if(isReadOnly()) {
-			fp.add(new FieldLabel(cbLblTxt));
-			fp.add(new Label(getReadOnlyRenderValue()));
-		}
-		else {
-			if(alignBottom) {
-				fp.add(new Br());
-			}
-			final Widget ef = (Widget) getEditable(value);
-			assert ef != null;
-			ef.setVisible(true);
-			ef.getElement().setPropertyString("id", domId);
-			ef.getElement().setPropertyBoolean("disabled", !isEnabled());
-			fp.add(ef);
-		}
-	}
-	*/
-
-	public IField copy() {
-		return new CheckboxField(propName, /*propType, */lblTxt, checkedValue, uncheckedValue);
+		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
+				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
 	}
 
 	@Override

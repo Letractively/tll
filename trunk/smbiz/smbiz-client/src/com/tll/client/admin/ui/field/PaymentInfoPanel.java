@@ -38,8 +38,8 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 
 	@Override
 	protected void configure() {
-		creditCardPanel.configure();
-		bankPanel.configure();
+		creditCardPanel.initFields();
+		bankPanel.initFields();
 
 		fields.addField(creditCardPanel.getFields());
 		fields.addField(bankPanel.getFields());

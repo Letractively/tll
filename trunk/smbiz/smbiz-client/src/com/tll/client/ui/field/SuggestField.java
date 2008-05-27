@@ -83,4 +83,11 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 	public void onSuggestionSelected(SuggestionEvent event) {
 		changed = true;
 	}
+
+	@Override
+	public void setDataMap(Map<String, String> dataMap) {
+		super.setDataMap(dataMap);
+		sb = null; // force re-create if already set
+	}
+
 }

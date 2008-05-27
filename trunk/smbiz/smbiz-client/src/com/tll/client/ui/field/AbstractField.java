@@ -9,9 +9,9 @@ import java.util.List;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.HasFormat;
@@ -61,11 +61,30 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private static final String dfltReadOnlyEmptyValue = "-";
 
 	private static final String styleChanged = "changed";
-
 	private static final String styleError = MsgLevel.ERROR.getName().toLowerCase();
 	private static final String styleWarn = MsgLevel.WARN.getName().toLowerCase();
 
-	public static final String CSS_FIELD = "fld";
+	/**
+	 * IntrinsicValidator - validates the field's intrinsic properties. When
+	 * validating, this validator is always invoked first.
+	 * @author jpk
+	 */
+	private class IntrinsicValidator implements IValidator {
+
+		public Object validate(Object value) throws ValidationException {
+			if(isRequired()) {
+				NotEmptyValidator.INSTANCE.validate(value);
+			}
+			if(this instanceof HasMaxLength) {
+				final int maxlen = ((HasMaxLength) this).getMaxLen();
+				if(maxlen != -1) {
+					StringLengthValidator.validate(value, -1, maxlen);
+				}
+			}
+			return value;
+		}
+
+	}
 
 	/**
 	 * The unique DOM element id of this field.
@@ -93,7 +112,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private boolean readOnly = false;
 	private boolean enabled = true;
 
-	private Label rof; // the read-only field
+	private HTML rof; // the read-only field
 
 	/**
 	 * The default value to display when the value is empty. Ok if
@@ -117,12 +136,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	protected boolean changed;
 
 	/**
-	 * The label text. If <code>null</code>, no {@link FieldLabel} will be
-	 * created.
-	 */
-	protected String lblTxt;
-
-	/**
 	 * The optional field label created lazily and only when {@link #lblTxt} is
 	 * non-<code>null</code>.
 	 */
@@ -135,6 +148,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private final SimplePanel pnl = new SimplePanel();
 
 	/**
+	 * The parents for the field control and field label control. Necessary refs
+	 * to properly show/hide, enable/disable a field and its label.
+	 */
+	private Widget fieldParent, fieldLabelParent;
+
+	/**
 	 * Constructor
 	 * @param propName The property name to associate w/ this field.
 	 * @param lblTxt The field label text.
@@ -145,12 +164,17 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 		this.domId = 'f' + Integer.toString(++fieldCounter);
 
-		pnl.setStyleName(CSS_FIELD);
+		// pnl.setStyleName(CSS_FIELD);
 		initWidget(pnl);
 
 		setPropertyName(propName);
 
-		this.lblTxt = lblTxt;
+		// create field label if label text specified
+		if(lblTxt != null) {
+			fldLbl = new FieldLabel(lblTxt);
+			fldLbl.setFor(domId);
+			fldLbl.addClickListener(this);
+		}
 
 		// do core field validation
 		// IMPT: the core validator is first in the list of validators where the
@@ -159,16 +183,19 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		addValidator(new IntrinsicValidator());
 	}
 
+	public void setFieldParent(Widget fieldParent) {
+		this.fieldParent = fieldParent;
+	}
+
+	public void setFieldLabelParent(Widget fieldLabelParent) {
+		this.fieldLabelParent = fieldLabelParent;
+	}
+
 	/**
 	 * @return The {@link FieldLabel}. <em>NOTE: </em>The field label is
 	 *         <em>NOT</em> a child of this composite Widget.
 	 */
 	public final FieldLabel getFieldLabel() {
-		if(fldLbl == null && lblTxt != null) {
-			fldLbl = new FieldLabel(lblTxt);
-			fldLbl.setFor(domId);
-			fldLbl.addClickListener(this);
-		}
 		return fldLbl;
 	}
 
@@ -213,10 +240,10 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		pnl.clear();
 		if(readOnly) {
 			if(rof == null) {
-				rof = new Label();
+				rof = new HTML();
 			}
 			String val = getReadOnlyRenderValue();
-			if(val != null) rof.setText(val);
+			if(val != null) rof.setHTML(val);
 			pnl.add(rof);
 		}
 		else {
@@ -235,7 +262,14 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			if(readOnly && defaultUiValue == null) {
 				defaultUiValue = dfltReadOnlyEmptyValue;
 			}
+			if(fldLbl != null) {
+				fldLbl.setRequired(readOnly ? false : required);
+			}
 			redraw();
+			if(!readOnly) {
+				Widget w = (Widget) getEditable(null);
+				w.getElement().setPropertyBoolean("disabled", !enabled);
+			}
 		}
 	}
 
@@ -246,9 +280,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	public final void setRequired(boolean required) {
 		if(this.required != required) {
 			this.required = required;
-			FieldLabel lbl = getFieldLabel();
-			if(lbl != null) {
-				lbl.setRequired(readOnly ? false : required);
+			if(fldLbl != null) {
+				fldLbl.setRequired(readOnly ? false : required);
 			}
 		}
 	}
@@ -257,20 +290,56 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		return enabled;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public final void setEnabled(boolean enabled) {
 		if(enabled != this.enabled) {
 			this.enabled = enabled;
 
 			clearValidationStyling();
+
+			// resolve the parents
+			Widget parent = fieldParent == null ? this : fieldParent;
+			Widget labelParent = fldLbl == null ? null : fieldLabelParent == null ? fldLbl : fieldLabelParent;
+
 			if(enabled) {
-				removeStyleName(CSS.DISABLED);
+				parent.removeStyleName(CSS.DISABLED);
+				if(labelParent != null) labelParent.removeStyleName(CSS.DISABLED);
 			}
 			else {
-				addStyleName(CSS.DISABLED);
+				parent.addStyleName(CSS.DISABLED);
+				if(labelParent != null) labelParent.addStyleName(CSS.DISABLED);
 			}
+
 			if(!readOnly) {
 				Widget w = (Widget) getEditable(null);
 				w.getElement().setPropertyBoolean("disabled", !enabled);
+			}
+		}
+	}
+
+	@Override
+	public final boolean isVisible() {
+		if(fieldParent != null) return fieldParent.isVisible();
+		return super.isVisible();
+	}
+
+	/**
+	 * We override to handle setting the visibility for the label as well and also
+	 * to apply visibility to the directed parent Widget.
+	 */
+	@Override
+	public final void setVisible(boolean visible) {
+		if(fieldParent != null) {
+			fieldParent.setVisible(visible);
+		}
+		else {
+			super.setVisible(visible);
+		}
+		if(fldLbl != null) {
+			if(fieldLabelParent != null) {
+				fieldLabelParent.setVisible(visible);
+			}
+			else {
+				fldLbl.setVisible(visible);
 			}
 		}
 	}
@@ -320,7 +389,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 *         those fields that implement {@link HasMaxLength}.
 	 */
 	protected String getReadOnlyRenderValue() {
-		return value == null ? defaultUiValue : value;
+		return (value == null || value.length() == 0) ? defaultUiValue : value;
 	}
 
 	private void clearValidationStyling() {
@@ -437,28 +506,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		// clear out styling and set the current value to the just assigned reset
 		// value
 		reset();
-	}
-
-	/**
-	 * IntrinsicValidator - validates the field's intrinsic properties. When
-	 * validating, this validator is always invoked first.
-	 * @author jpk
-	 */
-	private class IntrinsicValidator implements IValidator {
-
-		public Object validate(Object value) throws ValidationException {
-			if(isRequired()) {
-				NotEmptyValidator.INSTANCE.validate(value);
-			}
-			if(this instanceof HasMaxLength) {
-				final int maxlen = ((HasMaxLength) this).getMaxLen();
-				if(maxlen != -1) {
-					StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-			return value;
-		}
-
 	}
 
 	public boolean updateModel(Model model) {

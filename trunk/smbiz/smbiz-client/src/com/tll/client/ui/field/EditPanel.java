@@ -239,7 +239,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * Resets the fields contained in this panel.
 	 */
 	public void reset() {
-		fieldPanel.reset();
+		fieldPanel.getFields().reset();
 	}
 
 	public void onClick(Widget sender) {

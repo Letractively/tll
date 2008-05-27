@@ -8,6 +8,7 @@ package com.tll.client.admin.ui.field.intf;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
@@ -19,6 +20,7 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
+import com.tll.client.ui.FlowFieldCanvas;
 import com.tll.model.EntityType;
 
 /**
@@ -45,7 +47,23 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	protected void configure() {
 		super.configure();
 
-		panel.add(tabOptions);
+		FlowFieldCanvas canvas = new FlowFieldCanvas(panel);
+
+		// first row
+		canvas.addField(name);
+		canvas.addField(code);
+		canvas.addField(description);
+
+		canvas.addWidget(createAvailabilityGrid());
+
+		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		canvas.addField(dateCreated);
+		canvas.stopFlow();
+		canvas.addField(dateModified);
+		canvas.resetAlignment();
+
+		canvas.newRow();
+		canvas.addWidget(tabOptions);
 	}
 
 	@Override
