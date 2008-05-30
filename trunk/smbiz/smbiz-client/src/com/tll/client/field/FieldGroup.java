@@ -166,16 +166,25 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Constructor
+	 * @param displayName
+	 * @param refWidget
+	 */
+	public FieldGroup(String displayName, Widget refWidget) {
+		super();
+		this.displayName = displayName;
+		this.refWidget = refWidget;
+	}
+
+	/**
+	 * Constructor
 	 * @param propName
 	 * @param displayName
 	 * @param refWidget The associated UI {@link Widget}. May be
 	 *        <code>null</code>. Used for validation feedback.
 	 */
 	public FieldGroup(String propName, String displayName, Widget refWidget) {
-		super();
+		this(displayName, refWidget);
 		this.propName = propName;
-		this.displayName = displayName;
-		this.refWidget = refWidget;
 	}
 
 	public String descriptor() {

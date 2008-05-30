@@ -20,18 +20,18 @@ import com.tll.model.impl.CreditCardType;
  */
 public final class CreditCardPanel extends FieldGroupPanel {
 
-	protected SelectField type;
-	protected TextField num;
-	protected TextField cvv2;
-	protected TextField expMn;
-	protected TextField expYr;
-	protected TextField name;
-	protected TextField addr1;
-	protected TextField addr2;
-	protected TextField city;
-	protected SuggestField state;
-	protected TextField zip;
-	protected SuggestField country;
+	private SelectField type;
+	private TextField num;
+	private TextField cvv2;
+	private TextField expMn;
+	private TextField expYr;
+	private TextField name;
+	private TextField addr1;
+	private TextField addr2;
+	private TextField city;
+	private SuggestField state;
+	private TextField zip;
+	private SuggestField country;
 
 	/**
 	 * Constructor
@@ -42,7 +42,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		auxDataRequest.requestAppRefData("usps-state-abbrs");
 		auxDataRequest.requestAppRefData("iso-country-codes");
 	}
@@ -87,7 +87,11 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 		canvas.newRow();
 		canvas.addField(name);
+
+		canvas.newRow();
 		canvas.addField(addr1);
+
+		canvas.newRow();
 		canvas.addField(addr2);
 
 		canvas.newRow();

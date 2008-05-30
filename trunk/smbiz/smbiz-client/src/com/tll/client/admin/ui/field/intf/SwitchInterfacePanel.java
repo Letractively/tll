@@ -43,13 +43,14 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		canvas.addField(code);
 		canvas.addField(description);
 
-		canvas.addWidget(createAvailabilityGrid());
-
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		canvas.addField(dateCreated);
 		canvas.stopFlow();
 		canvas.addField(dateModified);
 		canvas.resetAlignment();
+
+		canvas.newRow();
+		canvas.addWidget(createAvailabilityGrid());
 
 		canvas.newRow();
 		canvas.addWidget(pnlOption);

@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
 
@@ -29,7 +29,7 @@ public final class BankPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		// none
 	}
 
@@ -43,7 +43,7 @@ public final class BankPanel extends FieldGroupPanel {
 		fields.addField(bankAccountNo);
 		fields.addField(bankRoutingNo);
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer(panel);
 
 		canvas.addField(bankName);
 		canvas.addField(bankAccountNo);

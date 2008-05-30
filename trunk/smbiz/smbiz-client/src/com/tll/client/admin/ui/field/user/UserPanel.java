@@ -3,12 +3,13 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.user;
 
 import java.util.Iterator;
 import java.util.List;
 
 import com.tll.client.admin.mvc.view.account.AccountEditView;
+import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
@@ -54,7 +55,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		auxDataRequest.requestEntityList(EntityType.AUTHORITY);
 	}
 
@@ -69,7 +70,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		expires = fdate("expires", "Expires", GlobalFormat.DATE);
 
 		addressPanel = new AddressPanel("address");
-		addressPanel.configure();
+		addressPanel.initFields();
 
 		fields.addField(emailAddress);
 		fields.addField(locked);

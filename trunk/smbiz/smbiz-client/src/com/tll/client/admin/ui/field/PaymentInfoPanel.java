@@ -31,7 +31,7 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		creditCardPanel.neededAuxData(auxDataRequest);
 		bankPanel.neededAuxData(auxDataRequest);
 	}

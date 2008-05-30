@@ -41,28 +41,3 @@ label .rqd {
 	cursor: pointer;
 	display: inline;
 }
-
-.fldrow {
-	padding: .25em;
-	border: 1px solid;
-	border-color: transparent;
-	margin: .15em 0 .15em 0;
-	text-align: left;
-	width: 100%; /* for when the view is popped out */
-}
-
-.fldrow .fld {
-	float: left;	
-}
-
-/* fldcol - no floating fields - vertical layout */
-.fldcol {
-}
-
-.fldrow .fldcol {
-	float: left;
-}
-
-.fldrow .fldcol .fld {
-	float: none;
-}

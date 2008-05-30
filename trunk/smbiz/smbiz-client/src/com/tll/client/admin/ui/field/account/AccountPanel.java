@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Sep 14, 2007
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.account;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
@@ -82,7 +83,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		auxDataRequest.requestEntityList(EntityType.CURRENCY);
 		paymentInfoPanel.neededAuxData(auxDataRequest);
 		// NOTE: we can't use AccountAddressPanel as instances of this type are
@@ -144,12 +145,12 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		canvas.addField(status);
 		canvas.addField(dateCancelled);
 		canvas.addField(currency);
+		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		canvas.addField(parent);
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		canvas.addField(dateCreated);
 		canvas.stopFlow();
 		canvas.addField(dateModified);
-		canvas.resetFlow();
 
 		// second row (billing)
 		canvas.newRow();

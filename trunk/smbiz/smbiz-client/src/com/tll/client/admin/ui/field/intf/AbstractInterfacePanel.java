@@ -36,7 +36,7 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		super.neededAuxData(auxDataRequest);
 		// let's get all interface prototype models upfront
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);

@@ -2,12 +2,13 @@
  * The Logic Lab
  * @author jpk Dec 17, 2007
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.admin.ui.field.account;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FlowFieldPanelComposer;
@@ -18,11 +19,11 @@ import com.tll.model.impl.AddressType;
  * AccountAddressPanel
  * @author jpk
  */
-public class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
+public final class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
 
-	protected final AddressType addressType;
-	protected final PushButton btnDeleteToggle;
-	protected final AddressPanel addressPanel;
+	private final AddressType addressType;
+	private final PushButton btnDeleteToggle;
+	private final AddressPanel addressPanel;
 
 	/**
 	 * Constructor
@@ -47,7 +48,7 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		// none
 	}
 
@@ -55,7 +56,7 @@ public class AccountAddressPanel extends NamedTimeStampEntityPanel implements Cl
 	protected void configure() {
 		super.configure();
 
-		addressPanel.configure();
+		addressPanel.initFields();
 		fields.addField(addressPanel.getFields());
 
 		// TODO determine why we need this as we shouldn't!!!

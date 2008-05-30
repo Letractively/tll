@@ -20,12 +20,13 @@ public interface IFieldPanelComposer {
 	/**
 	 * Common style for {@link IField}s.
 	 */
-	public static final String CSS_FIELD = "fld";
+	static final String CSS_FIELD = "fld";
 
 	/**
-	 * Adds a field to the canvas. The field label is extracted from the given
-	 * field and if non-<code>null</code>, is added as well.
-	 * @param field The field to add
+	 * Composes the field panel
+	 * @param group The field grop from which {@link IField}s that will be added
+	 *        to the given Panel are gotten.
+	 * @param attachPanel The Panel onto which {@link IField}s are added.
 	 */
-	void addField(AbstractField field);
+	// void composeFieldPanel(FieldGroup group, Panel attachPanel);
 }

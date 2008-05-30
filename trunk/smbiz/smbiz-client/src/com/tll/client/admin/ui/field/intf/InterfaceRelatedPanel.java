@@ -34,7 +34,7 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		// none
 	}
 

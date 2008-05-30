@@ -91,6 +91,11 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
+	/**
+	 * Adds a field to the canvas. The field label is extracted from the given
+	 * field and if non-<code>null</code>, is added as well.
+	 * @param field The field to add
+	 */
 	public void addField(AbstractField field) {
 		add(field.getFieldLabel(), field);
 		field.setFieldParent(last.getParent());
@@ -99,10 +104,12 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	/**
 	 * Forces a new row to be created before the next field or Widget is added.
+	 * Also, the flow and alignment state is reset.
 	 */
 	public void newRow() {
 		// this will cause a new row the next time addField is called
 		currentRow = null;
+		reset();
 	}
 
 	/**
@@ -128,6 +135,14 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	public void resetAlignment() {
 		setHorizontalAlignment(ALIGN_DEFAULT);
 		setVerticalAlignment(ALIGN_TOP);
+	}
+
+	/**
+	 * Resets both the flow and alignment.
+	 */
+	public void reset() {
+		resetFlow();
+		resetAlignment();
 	}
 
 	public HorizontalAlignmentConstant getHorizontalAlignment() {

@@ -39,7 +39,7 @@ public class AddressPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		auxDataRequest.requestAppRefData("usps-state-abbrs");
 		auxDataRequest.requestAppRefData("iso-country-codes");
 	}

@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.mvc.view.user;
 
-import com.tll.client.admin.ui.field.UserPanel;
+import com.tll.client.admin.ui.field.user.UserPanel;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;

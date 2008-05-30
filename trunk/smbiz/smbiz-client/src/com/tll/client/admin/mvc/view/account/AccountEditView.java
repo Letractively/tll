@@ -4,7 +4,7 @@
  */
 package com.tll.client.admin.mvc.view.account;
 
-import com.tll.client.admin.ui.field.AccountPanel;
+import com.tll.client.admin.ui.field.account.AccountPanel;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;

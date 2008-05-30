@@ -59,7 +59,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * group panel.
 	 * @param auxDataRequest
 	 */
-	protected void neededAuxData(AuxDataRequest auxDataRequest) {
+	public void neededAuxData(AuxDataRequest auxDataRequest) {
 		// default is nothing
 	}
 
