@@ -194,8 +194,8 @@ abstract class AbstractOptionPanel extends InterfaceRelatedPanel implements Clic
 	}
 
 	@Override
-	protected final void configure() {
-		super.configure();
+	protected final void doInitFields() {
+		super.doInitFields();
 
 		isDefault = fbool("isDefault", "Default?");
 		// isDefault.setAlignBottom(true);

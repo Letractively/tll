@@ -6,8 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.FlowFieldPanelComposer;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
 
@@ -15,7 +14,7 @@ import com.tll.client.ui.field.TextField;
  * AddressPanel
  * @author jpk
  */
-public class AddressPanel extends FieldGroupPanel {
+public class AddressPanel extends FieldModelBinding {
 
 	protected TextField emailAddress;
 	protected TextField lastName;
@@ -45,7 +44,7 @@ public class AddressPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInitFields() {
 		emailAddress = ftext("emailAddress", "Email Address", 30);
 		lastName = ftext("firstName", "First Name", 20);
 		firstName = ftext("lastName", "Last Name", 20);
@@ -72,6 +71,7 @@ public class AddressPanel extends FieldGroupPanel {
 		fields.addField(postalCode);
 		fields.addField(country);
 
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		canvas.addField(emailAddress);
@@ -99,6 +99,7 @@ public class AddressPanel extends FieldGroupPanel {
 		canvas.newRow();
 		canvas.addField(postalCode);
 		canvas.addField(country);
+		*/
 	}
 
 }

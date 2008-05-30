@@ -48,7 +48,7 @@ import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
@@ -165,7 +165,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel extends FieldGroupPanel {
+	private static final class TestFieldPanel extends FieldModelBinding {
 
 		private final AddressPanel ap;
 
@@ -183,7 +183,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected void configure() {
+		protected void doInitFields() {
 			ap.initFields();
 			fields.addField(ap.getFields());
 			fields.addField(bflabel);

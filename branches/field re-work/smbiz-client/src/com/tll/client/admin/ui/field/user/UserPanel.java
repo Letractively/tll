@@ -60,8 +60,8 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		emailAddress = ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);

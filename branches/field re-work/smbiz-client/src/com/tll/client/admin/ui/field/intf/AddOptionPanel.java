@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
 
@@ -13,7 +13,7 @@ import com.tll.client.ui.field.TextField;
  * AddOptionPanel
  * @author jpk
  */
-public class AddOptionPanel extends FieldGroupPanel {
+public class AddOptionPanel extends FieldModelBinding {
 
 	private TextField name;
 	private TextField code;
@@ -27,7 +27,7 @@ public class AddOptionPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	public void configure() {
+	public void doInitFields() {
 		name = ftext("name", "Name", 30);
 		code = ftext("code", "Code", 20);
 		description = ftextarea("description", "Description", 3, 18);

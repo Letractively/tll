@@ -94,8 +94,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		parent = ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
@@ -203,7 +203,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 				AccountAddressPanel aap = new AccountAddressPanel(ip.getPropertyName(), at);
 				aamap.get(at).panel = aap;
 				fields.addField(aap.getFields());
-				aap.configure();
+				aap.doInitFields();
 			}
 		}
 

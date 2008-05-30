@@ -11,7 +11,7 @@ import com.tll.client.util.GlobalFormat;
  * TimeStampEntityPanel
  * @author jpk
  */
-public abstract class TimeStampEntityPanel extends FieldGroupPanel {
+public abstract class TimeStampEntityPanel extends FieldModelBinding {
 
 	protected boolean bindTimestampFields = true;
 	protected TextField dateCreated;
@@ -31,7 +31,7 @@ public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInitFields() {
 		if(bindTimestampFields) {
 			dateCreated = fdate("dateCreated", "Created", GlobalFormat.DATE);
 			dateModified = fdate("dateModified", "Modified", GlobalFormat.DATE);

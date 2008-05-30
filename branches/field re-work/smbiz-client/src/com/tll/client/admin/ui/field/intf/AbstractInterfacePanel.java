@@ -47,8 +47,8 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		isAvailableAsp = fbool("isAvailableAsp", null);
 		isAvailableIsp = fbool("isAvailableIsp", null);

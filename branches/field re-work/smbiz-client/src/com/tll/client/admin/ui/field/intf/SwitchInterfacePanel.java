@@ -31,10 +31,10 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
-		pnlOption.configure();
+		pnlOption.doInitFields();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 

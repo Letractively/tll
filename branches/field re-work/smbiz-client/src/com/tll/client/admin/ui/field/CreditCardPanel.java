@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.FlowFieldPanelComposer;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
@@ -18,7 +18,7 @@ import com.tll.model.impl.CreditCardType;
  * CreditCardPanel
  * @author jpk
  */
-public final class CreditCardPanel extends FieldGroupPanel {
+public final class CreditCardPanel extends FieldModelBinding {
 
 	private SelectField type;
 	private TextField num;
@@ -48,7 +48,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInitFields() {
 		type = fselect("paymentData.ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
 		num = ftext("paymentData.ccNum", "Num", 15);
 		cvv2 = ftext("paymentData.ccCvv2", "CVV2", 4);

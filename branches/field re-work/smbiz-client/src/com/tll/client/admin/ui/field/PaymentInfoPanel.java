@@ -8,13 +8,13 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 
 /**
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldGroupPanel implements TabListener {
+public final class PaymentInfoPanel extends FieldModelBinding implements TabListener {
 
 	private final CreditCardPanel creditCardPanel;
 	private final BankPanel bankPanel;
@@ -37,7 +37,7 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInitFields() {
 		creditCardPanel.initFields();
 		bankPanel.initFields();
 

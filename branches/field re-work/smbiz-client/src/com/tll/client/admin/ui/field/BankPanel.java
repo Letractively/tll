@@ -7,14 +7,14 @@ package com.tll.client.admin.ui.field;
 
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.VerticalFieldPanelComposer;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.TextField;
 
 /**
  * BankPanel
  * @author jpk
  */
-public final class BankPanel extends FieldGroupPanel {
+public final class BankPanel extends FieldModelBinding {
 
 	protected TextField bankName;
 	protected TextField bankAccountNo;
@@ -34,7 +34,7 @@ public final class BankPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInitFields() {
 		bankName = ftext("paymentData.bankName", "Bank Name", 40);
 		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", 30);
 		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", 20);

@@ -29,8 +29,8 @@ public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		if(bindNameField) {
 			name = ftext("name", "Name", 30);

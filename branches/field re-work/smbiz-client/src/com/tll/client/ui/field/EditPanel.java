@@ -31,9 +31,9 @@ import com.tll.client.validate.ValidationException;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
- * consist of a {@link ScrollPanel} containing a {@link FieldGroupPanel} and
+ * consist of a {@link ScrollPanel} containing a {@link FieldModelBinding} and
  * another {@link FlowPanel} containing edit buttons. The {@link ScrollPanel}
- * enables the the {@link FieldGroupPanel} content to always be navigable and
+ * enables the the {@link FieldModelBinding} content to always be navigable and
  * keeps the edit and cancel buttons in constant position.
  * @author jpk
  */
@@ -55,7 +55,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	private final FlowPanel panel = new FlowPanel();
 
 	/**
-	 * This panel contains the {@link FieldGroupPanel}.
+	 * This panel contains the {@link FieldModelBinding}.
 	 */
 	// private final ScrollPanel portal = new ScrollPanel();
 	private final SimplePanel portal = new SimplePanel();
@@ -63,7 +63,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private FieldGroupPanel fieldPanel;
+	private FieldModelBinding fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -129,7 +129,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldGroupPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldModelBinding fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		this(showCancelBtn, showDeleteBtn);
 		setFieldPanel(fieldPanel);
 	}
@@ -146,7 +146,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * Sets or replaces the field panel.
 	 * @param fieldPanel The field panel
 	 */
-	public void setFieldPanel(FieldGroupPanel fieldPanel) {
+	public void setFieldPanel(FieldModelBinding fieldPanel) {
 		if(this.fieldPanel != null && this.fieldPanel == fieldPanel) return;
 		if(fieldPanel == null) {
 			throw new IllegalArgumentException("A field panel must be specified.");
@@ -222,7 +222,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Refreshes the edit panel by [re-]applying the entity model to the contained
-	 * {@link FieldGroupPanel} and setting the edit button based on whether the
+	 * {@link FieldModelBinding} and setting the edit button based on whether the
 	 * entity is new or not.
 	 */
 	public void refresh() {

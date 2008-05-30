@@ -39,8 +39,8 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		if(bindCodeAndDescFields) {
 			code = ftext("code", "Code", 20);

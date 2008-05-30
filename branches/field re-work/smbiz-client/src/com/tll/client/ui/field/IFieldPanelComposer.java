@@ -11,7 +11,7 @@ import com.tll.client.field.IField;
  * IFieldPanelComposer - Implementations are responsible for:
  * <ol>
  * <li>Adding {@link IField}s to the UI
- * <li>Dictating the layout style for the {@link FieldGroupPanel}'s UI
+ * <li>Dictating the layout style for the {@link FieldModelBinding}'s UI
  * </ol>
  * @author jpk
  */

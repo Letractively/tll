@@ -44,8 +44,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
@@ -85,7 +85,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 				OptionPanel pnlOption = new OptionPanel(propOption.getPropertyName());
 				fields.addField(pnlOption.getFields());
 				optionPanels.add(pnlOption);
-				pnlOption.configure();
+				pnlOption.doInitFields();
 				pnlOption.onBeforeBind(option);
 				tabOptions.add(pnlOption, option.getName());
 			}

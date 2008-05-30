@@ -17,8 +17,8 @@ final class ParameterPanel extends InterfaceRelatedPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 

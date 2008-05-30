@@ -53,8 +53,8 @@ public final class AccountAddressPanel extends NamedTimeStampEntityPanel impleme
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInitFields() {
+		super.doInitFields();
 
 		addressPanel.initFields();
 		fields.addField(addressPanel.getFields());

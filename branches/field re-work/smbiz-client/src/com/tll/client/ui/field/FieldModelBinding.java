@@ -6,31 +6,21 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ValidationException;
 
 /**
- * FieldGroupPanel - Common base class for panels that display form data.
+ * FieldModelBinding - Common base class for panels that display form data.
  * Provision for read-only is supported.
  * @author jpk
  */
-public abstract class FieldGroupPanel extends Composite {
-
-	/**
-	 * The wrapped panel. An {@link IFieldPanelComposer} will append to this
-	 * panel.
-	 */
-	protected final SimplePanel panel = new SimplePanel();
+public abstract class FieldModelBinding {
 
 	/**
 	 * The collective group of all fields in this panel.
@@ -41,17 +31,16 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Flag indicating whether the fields have been instantiated and the UI
 	 * widgets have been set.
 	 */
-	private boolean configured = false;
+	private boolean fieldsInitialized = false;
 
 	/**
 	 * Constructor
 	 * @param propName The property name
 	 * @param displayName The display name
 	 */
-	public FieldGroupPanel(String propName, String displayName) {
+	public FieldModelBinding(String propName, String displayName) {
 		super();
-		this.fields = new FieldGroup(propName, displayName, this);
-		initWidget(panel);
+		this.fields = new FieldGroup(propName, displayName, null);
 	}
 
 	/**
@@ -59,9 +48,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * group panel.
 	 * @param auxDataRequest
 	 */
-	public void neededAuxData(AuxDataRequest auxDataRequest) {
-		// default is nothing
-	}
+	public abstract void neededAuxData(AuxDataRequest auxDataRequest);
 
 	/**
 	 * Overrides the default behavior of this panel being the ref Widget. This is
@@ -80,29 +67,22 @@ public abstract class FieldGroupPanel extends Composite {
 		return fields;
 	}
 
-	protected final IFieldPanelComposer getComposer() {
-		return new FlowFieldPanelComposer(panel);
-	}
+	/**
+	 * Does the actual FieldGroup populating.
+	 */
+	protected abstract void doInitFields();
 
 	/**
-	 * Responsible for:
-	 * <ul>
-	 * <li>Populating {@link #fields}
-	 * <li>Creating and populating a {@link Panel} containing the owned
-	 * {@link IField}s
-	 * <li>calling {@link #initWidget(Widget)} with the created {@link Panel}
-	 * </ul>
+	 * Responsible for populating the {@link #fields}.
 	 * <p>
-	 * <strong>IMPT:</strong> A {@link FieldGroupPanel} containing child
-	 * {@link FieldGroupPanel}s are responsible for calling {@link #configure()}
-	 * for these children.
+	 * <strong>IMPT:</strong> A {@link FieldModelBinding} containing child
+	 * {@link FieldModelBinding}s are responsible for calling
+	 * {@link #initFields()} for these children.
 	 */
-	protected abstract void configure();
-
 	public final void initFields() {
-		if(!configured) {
-			configure();
-			configured = true;
+		if(!fieldsInitialized) {
+			doInitFields();
+			fieldsInitialized = true;
 		}
 	}
 

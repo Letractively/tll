@@ -21,7 +21,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.field.EditPanel;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldModelBinding;
 
 /**
  * EditView - Dedicated base class for AbstractView impls whose sole purpose is
@@ -52,7 +52,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	 * @param fldGrpPnl The field group panel. May NOT be <code>null</code>.
 	 * @param entityOptions
 	 */
-	public EditView(FieldGroupPanel fldGrpPnl, final EntityOptions entityOptions) {
+	public EditView(FieldModelBinding fldGrpPnl, final EntityOptions entityOptions) {
 		super();
 
 		editPanel = new EditPanel(fldGrpPnl, true, false);

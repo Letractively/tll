@@ -167,12 +167,18 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * Constructor
 	 * @param displayName
+	 */
+	public FieldGroup(String displayName) {
+		this(null, displayName, null);
+	}
+
+	/**
+	 * Constructor
+	 * @param displayName
 	 * @param refWidget
 	 */
 	public FieldGroup(String displayName, Widget refWidget) {
-		super();
-		this.displayName = displayName;
-		this.refWidget = refWidget;
+		this(null, displayName, refWidget);
 	}
 
 	/**
@@ -183,7 +189,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *        <code>null</code>. Used for validation feedback.
 	 */
 	public FieldGroup(String propName, String displayName, Widget refWidget) {
-		this(displayName, refWidget);
+		this.displayName = displayName;
+		this.refWidget = refWidget;
 		this.propName = propName;
 	}
 
