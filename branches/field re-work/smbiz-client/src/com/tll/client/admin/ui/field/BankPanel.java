@@ -6,7 +6,6 @@
 package com.tll.client.admin.ui.field;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.TextField;
 
@@ -43,10 +42,12 @@ public final class BankPanel extends FieldModelBinding {
 		fields.addField(bankAccountNo);
 		fields.addField(bankRoutingNo);
 
+		/*
 		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer(panel);
 
 		canvas.addField(bankName);
 		canvas.addField(bankAccountNo);
 		canvas.addField(bankRoutingNo);
+		*/
 	}
 }

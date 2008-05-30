@@ -11,7 +11,6 @@ import com.tll.client.App;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.CSS;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
 import com.tll.model.impl.AddressType;
 
@@ -59,9 +58,7 @@ public final class AccountAddressPanel extends NamedTimeStampEntityPanel impleme
 		addressPanel.initFields();
 		fields.addField(addressPanel.getFields());
 
-		// TODO determine why we need this as we shouldn't!!!
-		setMarkDeleted(false);
-
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// account address name row
@@ -71,6 +68,7 @@ public final class AccountAddressPanel extends NamedTimeStampEntityPanel impleme
 		// address row
 		canvas.newRow();
 		canvas.addWidget(addressPanel);
+		*/
 	}
 
 	private void setMarkDeleted(boolean markDeleted) {

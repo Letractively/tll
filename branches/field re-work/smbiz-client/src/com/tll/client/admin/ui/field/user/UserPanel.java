@@ -6,19 +6,14 @@
 package com.tll.client.admin.ui.field.user;
 
 import java.util.Iterator;
-import java.util.List;
 
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -78,6 +73,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		fields.addField(expires);
 		fields.addField(addressPanel.getFields());
 
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
@@ -115,6 +111,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		// third row
 		canvas.newRow();
 		canvas.addWidget(addressPanel);
+		*/
 	}
 
 	@Override

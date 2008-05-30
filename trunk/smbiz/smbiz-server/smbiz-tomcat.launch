@@ -62,5 +62,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="start"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcatalina.base=&quot;C:\development\apache-tomcat-6.0.14&quot; -Dcatalina.home=&quot;C:\development\apache-tomcat-6.0.14&quot; -Dwtp.deploy=&quot;C:\development\apache-tomcat-6.0.14\wtpwebapps&quot; -Djava.endorsed.dirs=&quot;C:\development\apache-tomcat-6.0.14\common\endorsed&quot;&#13;&#10;-ea"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:smbiz/build/smbiz}"/>
-<stringAttribute key="server-id" value="4_20_08_2_59_PM0"/>
+<stringAttribute key="server-id" value="5_12_08_1_27_PM0"/>
 </launchConfiguration>

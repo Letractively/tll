@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -27,7 +25,6 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.NamedTimeStampEntityPanel;
@@ -138,6 +135,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		fields.addField(persistPymntInfo);
 		fields.addField(paymentInfoPanel.getFields());
 
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
@@ -174,6 +172,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
+		*/
 	}
 
 	@Override

@@ -6,7 +6,6 @@ package com.tll.client.admin.ui.field;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldModelBinding;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
@@ -76,6 +75,7 @@ public final class CreditCardPanel extends FieldModelBinding {
 		fields.addField(zip);
 		fields.addField(country);
 
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		canvas.addField(type);
@@ -101,5 +101,6 @@ public final class CreditCardPanel extends FieldModelBinding {
 		canvas.newRow();
 		canvas.addField(zip);
 		canvas.addField(country);
+		*/
 	}
 }

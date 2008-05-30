@@ -44,10 +44,12 @@ public final class PaymentInfoPanel extends FieldModelBinding implements TabList
 		fields.addField(creditCardPanel.getFields());
 		fields.addField(bankPanel.getFields());
 
+		/*
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
 
 		panel.add(tabPanel);
+		*/
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
@@ -60,10 +62,12 @@ public final class PaymentInfoPanel extends FieldModelBinding implements TabList
 		}
 	}
 
+	/*
 	@Override
 	protected void onLoad() {
 		super.onLoad();
 		tabPanel.selectTab(0); // reset state
 	}
+	*/
 
 }
