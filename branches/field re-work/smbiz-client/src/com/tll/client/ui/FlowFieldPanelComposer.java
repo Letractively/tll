@@ -25,7 +25,7 @@ import com.tll.client.ui.field.IFieldPanelComposer;
  * </ol>
  * @author jpk
  */
-public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment {
+public final class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment {
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
@@ -40,11 +40,13 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	/**
 	 * Constructor
-	 * @param parentPanel The panel that will be appended with this canvas
 	 */
-	public FlowFieldPanelComposer(Panel parentPanel) {
+	public FlowFieldPanelComposer() {
 		super();
-		parentPanel.add(vp);
+	}
+
+	public Panel getFieldPanel() {
+		return vp;
 	}
 
 	private HorizontalPanel getCurrentRow() {

@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
@@ -32,6 +33,11 @@ public abstract class FieldModelBinding {
 	 * widgets have been set.
 	 */
 	private boolean fieldsInitialized = false;
+
+	/**
+	 * The Panel on which fields are drawn and rendered.
+	 */
+	private Panel fieldPanel;
 
 	/**
 	 * Constructor
@@ -73,7 +79,7 @@ public abstract class FieldModelBinding {
 	protected abstract void doInitFields();
 
 	/**
-	 * Responsible for populating the {@link #fields}.
+	 * Responsible for populating the member FieldGroup.
 	 * <p>
 	 * <strong>IMPT:</strong> A {@link FieldModelBinding} containing child
 	 * {@link FieldModelBinding}s are responsible for calling
@@ -87,11 +93,29 @@ public abstract class FieldModelBinding {
 	}
 
 	/**
+	 * Creates a Panel then adds fields onto it.
+	 */
+	protected abstract Panel draw();
+
+	/**
+	 * Composes the Panel in which the fields reside.
+	 * @return The drawn Panel containing the bound fields.
+	 */
+	public final Panel getFieldPanel() {
+		initFields();
+		if(fieldPanel == null) {
+			fieldPanel = draw();
+		}
+		return fieldPanel;
+	}
+
+	/**
 	 * Binds the model to the field group referenced by the field group panel.
 	 * @param model The model to bind
 	 */
 	public final void bind(Model model) {
-		initFields();
+		// initFields();
+		assert fieldsInitialized == true;
 		onBeforeBind(model);
 		fields.bindModel(model);
 		onAfterBind(model);
