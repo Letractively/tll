@@ -19,11 +19,10 @@ public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 * @param displayName
 	 */
-	public TimeStampEntityPanel(String propName, String displayName) {
-		super(propName, displayName);
+	public TimeStampEntityPanel(String displayName) {
+		super(displayName);
 	}
 
 	public void setBindTimestampFields(boolean bindTimestampFields) {
@@ -31,7 +30,7 @@ public abstract class TimeStampEntityPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInit() {
 		if(bindTimestampFields) {
 			dateCreated = fdate("dateCreated", "Created", GlobalFormat.DATE);
 			dateModified = fdate("dateModified", "Modified", GlobalFormat.DATE);

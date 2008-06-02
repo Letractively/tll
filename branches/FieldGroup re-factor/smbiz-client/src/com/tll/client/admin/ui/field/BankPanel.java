@@ -22,10 +22,9 @@ public final class BankPanel extends FieldGroupPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public BankPanel(String propName) {
-		super(propName, "Bank Info");
+	public BankPanel() {
+		super("Bank Info");
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public final class BankPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInit() {
 		bankName = ftext("paymentData.bankName", "Bank Name", 40);
 		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", 30);
 		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", 20);

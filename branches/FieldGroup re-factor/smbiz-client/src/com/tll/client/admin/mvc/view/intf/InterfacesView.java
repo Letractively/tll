@@ -126,9 +126,9 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				switch(intfType) {
 					case INTERFACE_MULTI:
 					case INTERFACE_SINGLE:
-						return new MultiOptionInterfacePanel(null);
+						return new MultiOptionInterfacePanel();
 					case INTERFACE_SWITCH:
-						return new SwitchInterfacePanel(null);
+						return new SwitchInterfacePanel();
 					default:
 						throw new IllegalArgumentException();
 				}

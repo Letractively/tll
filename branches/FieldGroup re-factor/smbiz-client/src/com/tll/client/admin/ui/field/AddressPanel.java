@@ -32,10 +32,9 @@ public class AddressPanel extends FieldGroupPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public AddressPanel(String propName) {
-		super(propName, "Address");
+	public AddressPanel() {
+		super("Address");
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class AddressPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInit() {
 		emailAddress = ftext("emailAddress", "Email Address", 30);
 		lastName = ftext("firstName", "First Name", 20);
 		firstName = ftext("lastName", "Last Name", 20);

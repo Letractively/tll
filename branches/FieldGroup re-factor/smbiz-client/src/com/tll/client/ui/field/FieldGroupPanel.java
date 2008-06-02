@@ -15,7 +15,6 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ValidationException;
 
@@ -41,16 +40,15 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Flag indicating whether the fields have been instantiated and the UI
 	 * widgets have been set.
 	 */
-	private boolean configured = false;
+	private boolean initialized = false;
 
 	/**
 	 * Constructor
-	 * @param propName The property name
 	 * @param displayName The display name
 	 */
-	public FieldGroupPanel(String propName, String displayName) {
+	public FieldGroupPanel(String displayName) {
 		super();
-		this.fields = new FieldGroup(propName, displayName, this);
+		this.fields = new FieldGroup(displayName, this);
 		initWidget(panel);
 	}
 
@@ -80,10 +78,6 @@ public abstract class FieldGroupPanel extends Composite {
 		return fields;
 	}
 
-	protected final IFieldPanelComposer getComposer() {
-		return new FlowFieldPanelComposer(panel);
-	}
-
 	/**
 	 * Responsible for:
 	 * <ul>
@@ -94,15 +88,15 @@ public abstract class FieldGroupPanel extends Composite {
 	 * </ul>
 	 * <p>
 	 * <strong>IMPT:</strong> A {@link FieldGroupPanel} containing child
-	 * {@link FieldGroupPanel}s are responsible for calling {@link #configure()}
-	 * for these children.
+	 * {@link FieldGroupPanel}s are responsible for calling {@link #doInit()} for
+	 * these children.
 	 */
-	protected abstract void configure();
+	protected abstract void doInit();
 
-	public final void initFields() {
-		if(!configured) {
-			configure();
-			configured = true;
+	public final void init() {
+		if(!initialized) {
+			doInit();
+			initialized = true;
 		}
 	}
 
@@ -111,9 +105,9 @@ public abstract class FieldGroupPanel extends Composite {
 	 * @param model The model to bind
 	 */
 	public final void bind(Model model) {
-		initFields();
+		init();
 		onBeforeBind(model);
-		fields.bindModel(model);
+		fields.bindModel(model.getPropertyBinding(null));
 		onAfterBind(model);
 	}
 
@@ -144,7 +138,7 @@ public abstract class FieldGroupPanel extends Composite {
 	public final boolean updateModel(Model model) throws ValidationException {
 		validate();
 		onBeforeUpdateModel(model);
-		if(fields.updateModel(model) || fields.isPending()) {
+		if(fields.updateModel(model.getPropertyBinding(null)) /*|| fields.isPending()*/) {
 			onAfterUpdateModel(model);
 			return true;
 		}

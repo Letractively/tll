@@ -6,9 +6,6 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.model.IndexedProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.FlowFieldPanelComposer;
 
 /**
@@ -18,23 +15,17 @@ import com.tll.client.ui.FlowFieldPanelComposer;
 public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 	/**
-	 * The single un-deletable switch option
-	 */
-	private final SwitchOptionPanel pnlOption = new SwitchOptionPanel(null);
-
-	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public SwitchInterfacePanel(String propName) {
-		super(propName);
+	public SwitchInterfacePanel() {
+		super();
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
-		pnlOption.configure();
+		// pnlOption.doInit();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
@@ -52,10 +43,11 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		canvas.newRow();
 		canvas.addWidget(createAvailabilityGrid());
 
-		canvas.newRow();
-		canvas.addWidget(pnlOption);
+		// canvas.newRow();
+		// canvas.addWidget(pnlOption);
 	}
 
+	/*
 	@Override
 	protected void onBeforeBind(Model modelInterface) {
 		super.onBeforeBind(modelInterface);
@@ -70,5 +62,5 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		fields.addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
 	}
-
+	*/
 }

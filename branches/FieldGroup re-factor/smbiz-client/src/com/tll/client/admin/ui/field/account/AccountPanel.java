@@ -4,9 +4,7 @@
  */
 package com.tll.client.admin.ui.field.account;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,18 +13,22 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.App;
+import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.CSS;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -60,26 +62,85 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	protected PaymentInfoPanel paymentInfoPanel;
 	protected final TabPanel tabAddresses = new TabPanel();
 
+	protected int lastAccountAddressIndex = -1;
+
 	/**
-	 * AccountAddressPanelModelBinding
+	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	private final class AccountAddressPanelModelBinding {
+	static final class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
 
-		public AccountAddressPanel panel;
-		public Model proto;
+		final AddressType addressType;
+		final int index;
+		final PushButton btnDeleteToggle;
+		final AddressPanel addressPanel;
+		Model proto;
+
+		/**
+		 * Constructor
+		 * @param addressType
+		 * @param index
+		 */
+		public AccountAddressPanel(AddressType addressType, int index) {
+			super(addressType.getName());
+
+			this.addressType = addressType;
+			this.index = index;
+
+			// delete img btn
+			btnDeleteToggle = new PushButton();
+			btnDeleteToggle.addClickListener(this);
+			btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
+
+			addressPanel = new AddressPanel();
+		}
+
+		@Override
+		protected void doInit() {
+			super.doInit();
+
+			addressPanel.init();
+			fields.addField("address", addressPanel.getFields());
+
+			// TODO determine why we need this as we shouldn't!!!
+			// setMarkDeleted(false);
+
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+
+			// account address name row
+			canvas.addField(name);
+			canvas.addWidget(btnDeleteToggle);
+
+			// address row
+			canvas.newRow();
+			canvas.addWidget(addressPanel);
+		}
+
+		private void setMarkDeleted(boolean markDeleted) {
+			getFields().setMarkedDeleted(markDeleted);
+			if(markDeleted) {
+				btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
+				btnDeleteToggle.setTitle("Un-delete " + addressType.getName() + " Address");
+			}
+			else {
+				btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
+				btnDeleteToggle.setTitle("Delete " + addressType.getName() + " Address");
+			}
+		}
+
+		public void onClick(Widget sender) {
+			if(sender == btnDeleteToggle) {
+				setMarkDeleted(!getFields().isMarkedDeleted());
+			}
+		}
 	}
-
-	private final Map<AddressType, AccountAddressPanelModelBinding> aamap =
-			new HashMap<AddressType, AccountAddressPanelModelBinding>(AddressType.values().length);
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public AccountPanel(String propName) {
-		super(propName, "Account");
-		paymentInfoPanel = new PaymentInfoPanel("paymentInfo");
+	public AccountPanel() {
+		super("Account");
+		paymentInfoPanel = new PaymentInfoPanel();
 	}
 
 	@Override
@@ -94,8 +155,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		parent = ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
@@ -116,13 +177,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
-		paymentInfoPanel.initFields();
+		paymentInfoPanel.init();
 		paymentInfoPanel.setRefWidget(dpPaymentInfo);
-
-		// stub the address type to account address panel bindings
-		for(AddressType at : AddressType.values()) {
-			aamap.put(at, new AccountAddressPanelModelBinding());
-		}
 
 		// listen to tab events
 		tabAddresses.addTabListener(this);
@@ -136,7 +192,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		fields.addField(nextChargeDate);
 		fields.addField(currency);
 		fields.addField(persistPymntInfo);
-		fields.addField(paymentInfoPanel.getFields());
+		fields.addField("paymentInfo", paymentInfoPanel.getFields());
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
@@ -181,43 +237,34 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		super.onBeforeBind(model);
 
 		// un-bind existing
-		for(AddressType at : aamap.keySet()) {
-			AccountAddressPanelModelBinding binding = aamap.get(at);
-			if(binding.panel != null) {
-				fields.removeField(binding.panel.getFields());
-				binding.panel = null;
-				binding.proto = null;
-			}
+		for(Widget w : tabAddresses) {
+			fields.removeField(((AccountAddressPanel) w).getFields());
 		}
-
-		// clear out address tabs
 		tabAddresses.clear();
 
-		// bind from model
+		// bind
 		RelatedManyProperty pvAddresses = model.relatedMany("addresses");
-		if(pvAddresses != null) {
-			Iterator<IndexedProperty> itr = pvAddresses.iterator();
-			while(itr.hasNext()) {
-				IndexedProperty ip = itr.next();
-				AddressType at = (AddressType) ip.getModel().getProp("type").getValue();
-				AccountAddressPanel aap = new AccountAddressPanel(ip.getPropertyName(), at);
-				aamap.get(at).panel = aap;
-				fields.addField(aap.getFields());
-				aap.configure();
+		for(AddressType at : AddressType.values()) {
+			AccountAddressPanel aap = null;
+			if(pvAddresses != null) {
+				Iterator<IndexedProperty> itr = pvAddresses.iterator();
+				while(itr.hasNext()) {
+					IndexedProperty ip = itr.next();
+					if(at == ip.getModel().getProp("type").getValue()) {
+						int index = ip.getIndex();
+						if(lastAccountAddressIndex < index) lastAccountAddressIndex = index;
+						aap = new AccountAddressPanel(at, index);
+						tabAddresses.add(aap, at.getName());
+						aap.init();
+						fields.addField(ip.getPropertyName(), aap.getFields());
+					}
+				}
 			}
-		}
-
-		// add address tabs
-		for(AddressType at : aamap.keySet()) {
-			AccountAddressPanelModelBinding binding = aamap.get(at);
-			if(binding.panel == null) {
+			if(aap == null) {
 				NoEntityExistsPanel neep =
 						new NoEntityExistsPanel(at, "No " + at.getName() + " address set.", "Create " + at.getName() + " address");
 				neep.addClickListener(this);
 				tabAddresses.add(neep, at.getName());
-			}
-			else {
-				tabAddresses.add(binding.panel, at.getName());
 			}
 		}
 	}
@@ -245,17 +292,14 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		RelatedManyProperty addresses = model.relatedMany("addresses");
 		assert addresses != null;
 
-		for(AddressType at : aamap.keySet()) {
-			AccountAddressPanel aap = aamap.get(at).panel;
-			if(aap != null) {
-				if(aap.getFields().isPending()) {
-					Model aaproto = aamap.get(at).proto;
-					assert aaproto != null;
-					String actualPropName = addresses.add(aaproto);
-					aaproto.setProp("type", at);
-					aaproto.setRelatedOne("account", model);
-					aap.getFields().setPropertyName(actualPropName);
-				}
+		for(Widget w : tabAddresses) {
+			AccountAddressPanel aap = (AccountAddressPanel) w;
+			if(aap.proto != null) {
+				String actualPropName = addresses.add(aap.proto);
+				aap.proto.setProp("type", aap.addressType);
+				aap.proto.setRelatedOne("account", model);
+				// TODO verify that we don't need to do this:
+				aap.getFields().setParentPropPath(actualPropName);
 			}
 		}
 	}
@@ -270,17 +314,12 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			assert selTabIndx >= 0;
 
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
-			AccountAddressPanelModelBinding binding = aamap.get(at);
-			assert binding.panel == null;
-			String pendingIndexedPropName = FieldGroup.getPendingPropertyName();
-			binding.panel = new AccountAddressPanel(pendingIndexedPropName, at);
-			binding.proto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
-			assert binding.proto != null;
-			binding.panel.bind(binding.proto);
-			fields.addField(binding.panel.getFields());
+			AccountAddressPanel aap = new AccountAddressPanel(at, ++lastAccountAddressIndex);
+			aap.proto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+			String parentPropPath = PropertyPath.indexed("addresses", aap.index);
+			fields.addField(parentPropPath, aap.getFields());
 
-			tabAddresses.insert(binding.panel, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);
-			// binding.panel.getFields().render();
+			tabAddresses.insert(aap, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);
 		}

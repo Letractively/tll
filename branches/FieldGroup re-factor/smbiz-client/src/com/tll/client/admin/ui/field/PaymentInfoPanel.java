@@ -22,12 +22,11 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public PaymentInfoPanel(String propName) {
-		super(propName, "Payment Info");
-		creditCardPanel = new CreditCardPanel(null);
-		bankPanel = new BankPanel(null);
+	public PaymentInfoPanel() {
+		super("Payment Info");
+		creditCardPanel = new CreditCardPanel();
+		bankPanel = new BankPanel();
 	}
 
 	@Override
@@ -37,9 +36,9 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 	}
 
 	@Override
-	protected void configure() {
-		creditCardPanel.initFields();
-		bankPanel.initFields();
+	protected void doInit() {
+		creditCardPanel.init();
+		bankPanel.init();
 
 		fields.addField(creditCardPanel.getFields());
 		fields.addField(bankPanel.getFields());

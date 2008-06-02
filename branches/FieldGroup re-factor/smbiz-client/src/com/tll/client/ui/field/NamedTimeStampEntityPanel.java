@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-
 /**
  * NamedTimeStampEntityPanel
  * @author jpk
@@ -17,11 +16,10 @@ public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 * @param displayName
 	 */
-	public NamedTimeStampEntityPanel(String propName, String displayName) {
-		super(propName, displayName);
+	public NamedTimeStampEntityPanel(String displayName) {
+		super(displayName);
 	}
 
 	public void setBindNameField(boolean bindNameField) {
@@ -29,8 +27,8 @@ public abstract class NamedTimeStampEntityPanel extends TimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		if(bindNameField) {
 			name = ftext("name", "Name", 30);

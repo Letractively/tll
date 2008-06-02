@@ -10,15 +10,14 @@ final class ParameterPanel extends InterfaceRelatedPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public ParameterPanel(String propName) {
-		super(propName, null);
+	public ParameterPanel() {
+		super(null);
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 

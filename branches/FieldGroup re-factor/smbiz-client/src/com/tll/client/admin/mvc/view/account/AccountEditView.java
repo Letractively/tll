@@ -47,7 +47,7 @@ public class AccountEditView extends EditView {
 	 * Constructor
 	 */
 	public AccountEditView() {
-		super(new AccountPanel(null), entityOptions);
+		super(new AccountPanel(), entityOptions);
 	}
 
 	@Override

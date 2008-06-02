@@ -35,10 +35,9 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public CreditCardPanel(String propName) {
-		super(propName, "Credit Card");
+	public CreditCardPanel() {
+		super("Credit Card");
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void configure() {
+	protected void doInit() {
 		type = fselect("paymentData.ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
 		num = ftext("paymentData.ccNum", "Num", 15);
 		cvv2 = ftext("paymentData.ccCvv2", "CVV2", 4);

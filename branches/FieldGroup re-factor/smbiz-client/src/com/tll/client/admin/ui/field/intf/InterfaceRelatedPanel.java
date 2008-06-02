@@ -22,11 +22,10 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 * @param displayName
 	 */
-	public InterfaceRelatedPanel(String propName, String displayName) {
-		super(propName, displayName);
+	public InterfaceRelatedPanel(String displayName) {
+		super(displayName);
 	}
 
 	public void setBindCodeAndDescFields(boolean bindCodeAndDescFields) {
@@ -39,8 +38,8 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		if(bindCodeAndDescFields) {
 			code = ftext("code", "Code", 20);

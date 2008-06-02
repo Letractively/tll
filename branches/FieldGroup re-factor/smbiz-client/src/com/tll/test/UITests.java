@@ -176,15 +176,15 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 * Constructor
 		 */
 		public TestFieldPanel() {
-			super("test", "Test Field Panel");
-			ap = new AddressPanel("address");
+			super("Test Field Panel");
+			ap = new AddressPanel();
 			bf = fbool("bf", null);
 			bflabel = fbool("bflabel", "Boolean with Label");
 		}
 
 		@Override
-		protected void configure() {
-			ap.initFields();
+		protected void doInit() {
+			ap.init();
 			fields.addField(ap.getFields());
 			fields.addField(bflabel);
 			fields.addField(bf);
@@ -287,7 +287,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * Purpose: Renders an interface panel to verify its DOM/CSS.
 	 */
 	void testInterfacePanel() {
-		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel(null);
+		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel();
 		testPanel.add(intfPanel);
 		if(intf == null) {
 			// stub mock interface

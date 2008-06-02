@@ -16,7 +16,6 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
@@ -48,10 +47,9 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public UserPanel(String propName) {
-		super(propName, "User");
+	public UserPanel() {
+		super("User");
 	}
 
 	@Override
@@ -60,8 +58,8 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		emailAddress = ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);
@@ -69,8 +67,8 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		enabled = fbool("enabled", "Enabled");
 		expires = fdate("expires", "Expires", GlobalFormat.DATE);
 
-		addressPanel = new AddressPanel("address");
-		addressPanel.initFields();
+		addressPanel = new AddressPanel();
+		addressPanel.init();
 
 		fields.addField(emailAddress);
 		fields.addField(locked);
@@ -102,11 +100,11 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		canvas.newRow();
 		List<Model> authList = AuxDataCache.instance().getEntityList(EntityType.AUTHORITY);
 		authorities = new CheckboxField[authList.size()];
-		int i = 0;
+		// int i = 0;
 		for(Model auth : authList) {
 			String role = auth.asString("authority");
 			CheckboxField cbAuth = fcheckbox("authority", role, role, "");
-			FieldGroup fg = new FieldGroup(PropertyPath.indexed("authoritys", ++i), role, cbAuth);
+			FieldGroup fg = new FieldGroup(/*PropertyPath.indexed("authoritys", ++i),*/role, cbAuth);
 			fields.addField(fg);
 			fg.addField(cbAuth);
 			canvas.addField(cbAuth);

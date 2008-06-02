@@ -29,10 +29,9 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public AbstractInterfacePanel(String propName) {
-		super(propName, "Interface");
+	public AbstractInterfacePanel() {
+		super("Interface");
 	}
 
 	@Override
@@ -47,8 +46,8 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
+	protected void doInit() {
+		super.doInit();
 
 		isAvailableAsp = fbool("isAvailableAsp", null);
 		isAvailableIsp = fbool("isAvailableIsp", null);
