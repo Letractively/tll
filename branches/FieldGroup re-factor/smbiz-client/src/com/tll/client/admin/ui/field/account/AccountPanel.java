@@ -295,11 +295,9 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		for(Widget w : tabAddresses) {
 			AccountAddressPanel aap = (AccountAddressPanel) w;
 			if(aap.proto != null) {
-				String actualPropName = addresses.add(aap.proto);
+				addresses.add(aap.proto);
 				aap.proto.setProp("type", aap.addressType);
 				aap.proto.setRelatedOne("account", model);
-				// TODO verify that we don't need to do this:
-				aap.getFields().setParentPropPath(actualPropName);
 			}
 		}
 	}

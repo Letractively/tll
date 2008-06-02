@@ -263,27 +263,28 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * Recursively pre-pends the given property path to all child fields' property
+	 * names.
+	 * @param propertyPath The property path to pre-pend
+	 */
+	private void prePendPropertyName(String propertyPath) {
+		for(IField fld : this) {
+			if(fld instanceof FieldGroup) {
+				((FieldGroup) fld).prePendPropertyName(propertyPath);
+			}
+			else {
+				fld.setPropertyName(PropertyPath.getPropertyPath(propertyPath, fld.getPropertyName()));
+			}
+		}
+	}
+
+	/**
 	 * Adds a field directly under this field group.
 	 * @param field The field to add
 	 */
 	public void addField(IField field) {
 		assert field != null;
 		fields.add(field);
-	}
-
-	/**
-	 * Recursively [re-]sets the given parent property path to all child fields.
-	 * @param parentPropPath The parent property path
-	 */
-	public void setParentPropPath(String parentPropPath) {
-		for(IField fld : this) {
-			if(fld instanceof FieldGroup) {
-				((FieldGroup) fld).setParentPropPath(parentPropPath);
-			}
-			else {
-				fld.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, fld.getPropertyName()));
-			}
-		}
 	}
 
 	/**
@@ -296,7 +297,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	public void addField(String parentPropPath, IField field) {
 		if(parentPropPath != null) {
 			if(field instanceof FieldGroup) {
-				((FieldGroup) field).setParentPropPath(parentPropPath);
+				((FieldGroup) field).prePendPropertyName(parentPropPath);
 			}
 			else {
 				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
