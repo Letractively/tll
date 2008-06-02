@@ -57,6 +57,21 @@ public class PropertyPath {
 	}
 
 	/**
+	 * Sets or re-sets the parent property path for a given property name or path.
+	 * @param property Either a simple property name or path
+	 * @param parentPropPath The property path that replaces any existing parent
+	 *        property path in the property
+	 * @return The updated property path
+	 */
+	/*
+	public static String setParentPropertyPath(String property, String parentPropPath) {
+		final int lastDot = property.lastIndexOf('.');
+		return getPropertyPath(parentPropPath, lastDot < 0 ? property : property.substring(lastDot + 1));
+
+	}
+	*/
+
+	/**
 	 * Node - Represents a single "node" in a property path string. Handles
 	 * parsing of indexed paths.
 	 * @author jpk
