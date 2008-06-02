@@ -282,15 +282,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 			else {
 				fld.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, fld.getPropertyName()));
-				// fld.setPropertyName(PropertyPath.setParentPropertyPath(fld.getPropertyName(),
-				// parentPropPath));
 			}
 		}
 	}
 
 	/**
-	 * Adds a field directly under this field group but first pre-pends the given
-	 * parent property path to the field's property name.
+	 * Adds a field directly under this field group pre-pending the given parent
+	 * property path to the field's <em>existing</em> property name.
 	 * @param parentPropPath Pre-pended to the field's property name before the
 	 *        field is added
 	 * @param field The field to add

@@ -89,13 +89,13 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	/**
 	 * The unique DOM element id of this field.
 	 */
-	protected final String domId;
+	private final String domId;
 
 	/**
 	 * The field name synonymous w/ the property name when considered in a
 	 * property path context. Can NOT be <code>null</code>.
 	 */
-	protected String propName;
+	private String propName;
 
 	/**
 	 * The field value. This property is necessary when considering read-only
