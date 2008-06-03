@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.Msg;
@@ -27,16 +28,28 @@ import com.tll.util.IDescriptorProvider;
 
 /**
  * FieldGroup - A group of {@link IField}s which may in turn be nested
- * {@link FieldGroup}s. This construct assists in the management of property
- * paths so any given field group object graph should be structured such that
- * property path integrity is maintained.
+ * {@link FieldGroup}s. Thus a FieldGroup is a hierarchical collection of
+ * {@link IField}s.
  * <p>
- * <strong>NOTE: </strong>Property path conventions as they related to
- * {@link FieldGroup}s:
+ * Non-FieldGroup children of {@link FieldGroup}s are expected to have a unique
+ * property name that allows the field to be mapped to the underlying
+ * {@link Model}.
+ * <p>
+ * A FieldGroup represents a grouping of {@link IField}s for UI purposes only
+ * and as such does
+ * <em>may not necessarily represent model hierarchy boundaries!</em>
+ * <p>
+ * To fully support data transfer ("binding") between a FieldGroup instance and
+ * a Model instance, the following conventions are established:
  * <ol>
- * <li>Each nested field group represents a single name in a property path.
- * E.g.: For property path 'account.addresses[3].firstName', the corres. field
- * group hierarchy is: fg(account)-nestedfg(addresses[3])-nestedfg(firstName)
+ * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected
+ * to have a standard OGNL property name to support binding to/from the
+ * underlying Model.
+ * <li>Newly created IFields that map to a non-existant related many Model are
+ * expected to have a property name that indicates as much:
+ * <code>indexableProp{index}.propertyName</code> as opposed to the standard:
+ * <code>indexableProp[index].propertyName</code>. In other words, curly
+ * braces (<code>{}</code>) are used instead of square braces (<code>[]</code>).
  * </ol>
  * @author jpk
  */
@@ -354,12 +367,19 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param model The Model
 	 */
 	private static void bindModel(FieldGroup group, final Model model) {
+		final PropertyPath propPath = new PropertyPath();
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup) {
 				bindModel((FieldGroup) fld, model);
 			}
 			else {
-				IPropertyValue pv = model.getProp(fld.getPropertyName());
+				try {
+					propPath.parse(fld.getPropertyName());
+				}
+				catch(MalformedPropPathException e) {
+					throw new IllegalStateException(e.getMessage());
+				}
+				IPropertyValue pv = model.getProp(propPath);
 				if(pv == null) {
 					fld.clear();
 				}
@@ -382,16 +402,27 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		boolean changed = false;
 		model.setMarkedDeleted(group.markedDeleted);
 		if(!group.markedDeleted) {
+			IPropertyValue pv;
+			final PropertyPath propPath = new PropertyPath();
 			for(IField fld : group) {
 				if(fld instanceof FieldGroup) {
 					updateModel((FieldGroup) fld, model);
 				}
 				else {
-					IPropertyValue pv = model.getProp(fld.getPropertyName());
-					if(pv != null) {
-						if(fld.updateModel(pv)) {
-							changed = true;
+					try {
+						propPath.parse(fld.getPropertyName());
+						pv = model.getProp(propPath);
+						if(pv != null) {
+							if(fld.updateModel(pv)) {
+								changed = true;
+							}
 						}
+					}
+					catch(MalformedPropPathException e) {
+						throw new IllegalStateException(e.getMessage());
+					}
+					catch(IllegalArgumentException e) {
+						throw new IllegalStateException(e.getMessage());
 					}
 				}
 			}

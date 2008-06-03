@@ -7,13 +7,16 @@ package com.tll.client.model;
 
 /**
  * PropertyPath - Helper class for walking a property path and extracting
- * certain properties therein that are needed when resolving them.
+ * properties therein.
  * @author jpk
  */
 public class PropertyPath {
 
 	private static final char LEFT_INDEX_CHAR = '[';
 	private static final char RIGHT_INDEX_CHAR = ']';
+
+	private static final char NEW_LEFT_INDEX_CHAR = '{';
+	private static final char NEW_RIGHT_INDEX_CHAR = '}';
 
 	/**
 	 * Chains the given arguments together to form the corresponding property
@@ -57,37 +60,42 @@ public class PropertyPath {
 	}
 
 	/**
-	 * Sets or re-sets the parent property path for a given property name or path.
-	 * @param property Either a simple property name or path
-	 * @param parentPropPath The property path that replaces any existing parent
-	 *        property path in the property
-	 * @return The updated property path
-	 */
-	/*
-	public static String setParentPropertyPath(String property, String parentPropPath) {
-		final int lastDot = property.lastIndexOf('.');
-		return getPropertyPath(parentPropPath, lastDot < 0 ? property : property.substring(lastDot + 1));
-
-	}
-	*/
-
-	/**
 	 * Node - Represents a single "node" in a property path string. Handles
 	 * parsing of indexed paths.
 	 * @author jpk
 	 */
-	private static final class Node {
+	public static final class Node {
 
 		/**
 		 * The unaltered (qualified) sub-path.
 		 */
-		String path;
-		String name;
-		int index = -1;
+		private String path;
+
+		/**
+		 * The property name stripped of potential indexing characters ([]).
+		 */
+		private String name;
+
+		/**
+		 * The resolved index (for indexed properties only).
+		 */
+		private int index = -1;
+
+		/**
+		 * Is this a new indexed property? I.e., does it have curly braces ({}) in
+		 * place of the standard square braces ([])? Relevant only for indexed
+		 * property nodes.
+		 */
+		private boolean newIndex;
 
 		Node() {
 		}
 
+		/**
+		 * Constructor
+		 * @param path
+		 * @throws MalformedPropPathException
+		 */
 		Node(String path) throws MalformedPropPathException {
 			set(path);
 		}
@@ -95,17 +103,27 @@ public class PropertyPath {
 		/**
 		 * Sets the name and index properties depending on whether or not the given
 		 * path is indexed.
-		 * @param path The possibly indexed (E.g.: path[5]) path
+		 * @param path Atomic sub-path (no dots) that may be indexed ([]) at the end
+		 *        of the given path String
 		 * @throws PropertyPathException When the path is found to be mal-formed.
 		 */
 		void set(String path) throws MalformedPropPathException {
 			assert path != null;
 			int rmIndx = -1; // if this prop path element contains []
-			int bi = path.indexOf(LEFT_INDEX_CHAR);
+			int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = -1;
+			if(bi < 0) {
+				bi = path.indexOf(NEW_LEFT_INDEX_CHAR);
+				if(bi > 0) {
+					this.newIndex = true;
+					ebi = path.indexOf(NEW_RIGHT_INDEX_CHAR);
+				}
+			}
+			else {
+				ebi = path.indexOf(RIGHT_INDEX_CHAR);
+			}
 			if(bi > 0) {
 				// indexed property: extract the prop name and index
 				String rmProp = path.substring(0, bi);
-				int ebi = path.indexOf(RIGHT_INDEX_CHAR);
 				String sindx = path.substring(bi + 1, ebi);
 				try {
 					rmIndx = Integer.parseInt(sindx);
@@ -126,21 +144,36 @@ public class PropertyPath {
 			this.path = path;
 		}
 
-		String getName() {
+		public String getPath() {
+			return path;
+		}
+
+		public String getName() {
 			return name;
 		}
 
-		int getIndex() {
+		public int getIndex() {
 			return index;
 		}
 
-		void setIndex(int index) {
-			this.index = index;
+		public boolean isNewIndex() {
+			return newIndex;
 		}
 	}
 
+	/**
+	 * The property path in String form. (That which is parsed).
+	 */
 	private String propPath;
+
+	/**
+	 * Array of atomic sub-paths that together make up the entire property path.
+	 */
 	private Node[] nodes;
+
+	/**
+	 * The number of atomic nodes in the property path.
+	 */
 	private int len;
 
 	/**
@@ -161,7 +194,8 @@ public class PropertyPath {
 
 	/**
 	 * Parses a property path.
-	 * @param propPath
+	 * @param propPath The property path String to be parsed. When
+	 *        <code>null</code> or empty, en empty property path is set.
 	 * @throws MalformedPropPathException When the property path is found to be
 	 *         mal-formed.
 	 */
@@ -171,13 +205,14 @@ public class PropertyPath {
 			len = 0;
 		}
 		else {
-
 			// special case: paymentInfo.paymentData.
-			boolean hasPaymentData = (propPath.indexOf("paymentData.") >= 0);
+			final boolean hasPaymentData = (propPath.indexOf("paymentData.") >= 0);
 
-			String[] props = propPath.split("\\.");
+			final String[] props = propPath.split("\\.");
+
 			len = props.length;
 			nodes = new Node[hasPaymentData ? len - 1 : len];
+
 			for(int i = 0; i < len; i++) {
 				String prop = props[i];
 				if(i < len - 1 && "paymentData".equals(prop)) {
@@ -193,64 +228,24 @@ public class PropertyPath {
 		this.propPath = propPath;
 	}
 
-	private Node nodeAt(int pos) {
-		return nodes[pos];
-	}
-
-	public boolean isEmpty() {
-		return nodes.length == 0;
+	public Node[] getNodes() {
+		return nodes;
 	}
 
 	/**
-	 * Provides the name with OUT any indexing related chars.
-	 * @param pos
-	 * @return The unqualified name
+	 * @return The number of "nodes" in the parsed property path.<br>
+	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
 	 */
-	public String unqualifiedPropNameAt(int pos) {
-		return nodeAt(pos).name;
-	}
-
-	/**
-	 * Provides the name WITH indexing related chars.
-	 * @param pos
-	 * @return The qualified name
-	 */
-	public String propNameAt(int pos) {
-		return nodeAt(pos).path;
-	}
-
-	/**
-	 * @return The ending property path (with indexing qualifications).
-	 */
-	public String endPropPath() {
-		return nodeAt(len - 1).path;
-	}
-
-	/**
-	 * @return The ending property name (no indexing qualifications).
-	 */
-	public String endPropName() {
-		return nodeAt(len - 1).name;
-	}
-
-	public int indexAt(int pos) {
-		return nodeAt(pos).index;
-	}
-
-	public boolean isIndexedAt(int pos) {
-		return indexAt(pos) >= 0;
-	}
-
-	public boolean hasNext(int pos) {
-		return (pos < len - 1);
-	}
-
-	public boolean atEnd(int pos) {
-		return pos == len - 1;
-	}
-
 	public int size() {
 		return len;
+	}
+
+	/**
+	 * @return The last property name in the property path <em>stripped</em> of
+	 *         indexing symbols.
+	 */
+	public String endPropName() {
+		return nodes[len - 1].getName();
 	}
 
 	@Override

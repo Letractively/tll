@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.client.IMarshalable;
+import com.tll.client.model.PropertyPath.Node;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
@@ -126,7 +127,10 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 */
 	public boolean isPropertyDefined(String propPath) {
 		try {
-			return getPropertyBinding(propPath) != null;
+			return getPropertyBinding(new PropertyPath(propPath)) != null;
+		}
+		catch(MalformedPropPathException e) {
+			return false;
 		}
 		catch(IllegalArgumentException e) {
 			return false;
@@ -173,7 +177,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(propPath);
+		IPropertyBinding prop;
+		try {
+			prop = getPropertyBinding(new PropertyPath(propPath));
+		}
+		catch(MalformedPropPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 		if(prop == null) return null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
@@ -196,8 +206,8 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @throws IllegalArgumentException When the given property path is
 	 *         <code>null</code> or mal-formed.
 	 */
-	public IPropertyBinding getPropertyBinding(String propPath) throws IllegalArgumentException {
-		if(propPath == null || propPath.length() < 1) {
+	public IPropertyBinding getPropertyBinding(PropertyPath propPath) throws IllegalArgumentException {
+		if(propPath == null) {
 			return new RelatedOneProperty(null, true, this);
 		}
 		try {
@@ -218,13 +228,28 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * Retrieves a property value from the model given a property path.
-	 * @param propPath The property path (E.g.: "root.propName")
-	 * @return Rudimentary property value or <code>null</code> if not set.
-	 * @throws IllegalArgumentException When the given property path can't be
-	 *         resolved or does not map to a property <em>value</em>.
+	 * Resolves a property path to the nested {@link IPropertyBinding}. This is a
+	 * generic way to obtain a defined model property.
+	 * @param propPath
+	 * @see #getPropertyBinding(PropertyPath)
 	 */
-	public IPropertyValue getProp(String propPath) throws IllegalArgumentException {
+	public IPropertyBinding getPropertyBinding(String propPath) throws IllegalArgumentException {
+		try {
+			return getPropertyBinding(new PropertyPath(propPath));
+		}
+		catch(MalformedPropPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Retrieves a property value from the model given a property path.
+	 * @param propPath A parsed property path
+	 * @return The resolved IPropertyValue or <code>null</code> if not set.
+	 * @throws IllegalArgumentException When the given property path can't be
+	 *         resolved or does not map to an {@link IPropertyValue}.
+	 */
+	public IPropertyValue getProp(PropertyPath propPath) throws IllegalArgumentException {
 		IPropertyBinding prop = getPropertyBinding(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
@@ -242,7 +267,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 *         resolved or does not map to a related one property.
 	 */
 	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(propPath);
+		IPropertyBinding prop;
+		try {
+			prop = getPropertyBinding(new PropertyPath(propPath));
+		}
+		catch(MalformedPropPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
@@ -262,7 +293,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 		RelatedOneProperty ropv;
 		PropPathBinding binding = null;
 		try {
-			binding = resolvePropertyPath(propPath);
+			binding = resolvePropertyPath(new PropertyPath(propPath));
 			IPropertyBinding prop = binding.getPropertyBinding();
 			if(prop.getType() != PropertyType.RELATED_ONE) {
 				throw new IllegalArgumentException("Property '" + propPath + "' is not a related-one property");
@@ -290,7 +321,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(propPath);
+		IPropertyBinding prop;
+		try {
+			prop = getPropertyBinding(new PropertyPath(propPath));
+		}
+		catch(MalformedPropPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related many property");
@@ -308,7 +345,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(propPath);
+		IPropertyBinding prop;
+		try {
+			prop = getPropertyBinding(new PropertyPath(propPath));
+		}
+		catch(MalformedPropPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");
@@ -321,6 +364,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @param propPath The property path
 	 * @param value The value to set
 	 */
+	/*
 	public void setProp(String propPath, Object value) throws IllegalArgumentException {
 		IPropertyValue rpv;
 		PropPathBinding binding = null;
@@ -341,6 +385,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 					+ ppe.getMessage());
 		}
 	}
+	*/
 
 	/**
 	 * Is this model entity new?
@@ -417,32 +462,34 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 	/**
 	 * Resolves a given property path against the hierarchy of this model.
-	 * @param propPath
+	 * @param propPath The property path
 	 * @return Property path binding
 	 * @throws PropertyPathException When an error occurrs whilst resolving the
 	 *         property path
 	 */
-	private PropPathBinding resolvePropertyPath(String propPath) throws PropertyPathException {
-		if(propPath == null || propPath.length() < 1) {
+	private PropPathBinding resolvePropertyPath(final PropertyPath propPath) throws PropertyPathException {
+		if(propPath == null || propPath.size() < 1) {
 			throw new MalformedPropPathException("No property specified.");
 		}
 
 		IPropertyBinding prop = null;
 		Model model = this, parentModel = null;
-		final PropertyPath pp = new PropertyPath(propPath);
-		final int len = pp.size();
+		final Node[] nodes = propPath.getNodes();
+		final int len = nodes.length;
 		for(int i = 0; i < len; i++) {
-			String pname = pp.unqualifiedPropNameAt(i);
-			boolean indexed = pp.isIndexedAt(i);
-			boolean atEnd = pp.atEnd(i);
+			Node node = nodes[i];
+			String pname = node.getName();
+			int index = node.getIndex();
+			boolean indexed = (index >= 0);
+			boolean atEnd = (i == len - 1);
 
 			// find the prop val under current group
 			prop = model.get(pname);
 			if(prop == null) {
 				if(atEnd) {
-					return new UnsetPropPathBinding(model, pp);
+					return new UnsetPropPathBinding(model, propPath);
 				}
-				throw new NullNodeInPropPathException(propPath, pname);
+				throw new NullNodeInPropPathException(propPath.toString(), pname);
 			}
 
 			// get the bound prop val type for this prop path element
@@ -451,25 +498,25 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 			// non-relational prop val
 			if(!pvType.isRelational()) {
 				if(!atEnd) {
-					throw new PropPathNodeMismatchException(propPath, pname, pvType.toString(), "Relational");
+					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(), "Relational");
 				}
-				return new PropertyValuePropPathBinding(pp, (AbstractPropertyValue) prop);
+				return new PropertyValuePropPathBinding(propPath, (AbstractPropertyValue) prop);
 			}
 
 			// related one prop val
 			else if(pvType == PropertyType.RELATED_ONE) {
 				if(indexed) {
-					throw new PropPathNodeMismatchException(propPath, pname, pvType.toString(), PropertyType.RELATED_MANY
-							.toString());
+					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(),
+							PropertyType.RELATED_MANY.toString());
 				}
 				ModelRefProperty gpv = (ModelRefProperty) prop;
 				if(atEnd) {
-					return new RelatedOnePropPathBinding(parentModel, pp, gpv);
+					return new RelatedOnePropPathBinding(parentModel, propPath, gpv);
 				}
 				// get the nested group...
 				Model ng = gpv.getModel();
 				if(ng == null) {
-					throw new NullNodeInPropPathException(propPath, pname);
+					throw new NullNodeInPropPathException(propPath.toString(), pname);
 				}
 				// reset for next path
 				parentModel = model;
@@ -481,25 +528,24 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 				RelatedManyProperty glpv = (RelatedManyProperty) prop;
 				if(!indexed) {
 					if(atEnd) {
-						return new IndexablePropPathBinding(parentModel, pp, glpv);
+						return new IndexablePropPathBinding(parentModel, propPath, glpv);
 					}
 					// and index is expected if were not at the end
-					throw new MalformedPropPathException(propPath);
+					throw new MalformedPropPathException(propPath.toString());
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
 					List<Model> nlist = glpv.getList();
-					int index = pp.indexAt(i);
 					if(nlist == null) {
 						// ensure we have a list to attach indexed groups to later
 						nlist = new ArrayList<Model>(0);
 						glpv.setList(nlist);
 					}
 					if(atEnd) {
-						return new IndexedPropPathBinding(parentModel, pp, glpv.isReference(), nlist, index);
+						return new IndexedPropPathBinding(parentModel, propPath, glpv.isReference(), nlist, index);
 					}
 					if(index >= nlist.size()) {
-						throw new IndexOutOfRangeInPropPathException(propPath, pname, index);
+						throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
 					}
 					// reset for next path
 					parentModel = model;
@@ -507,7 +553,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 				}
 			}
 		}
-		throw new MalformedPropPathException(propPath);
+		throw new MalformedPropPathException(propPath.toString());
 	}
 
 	/**

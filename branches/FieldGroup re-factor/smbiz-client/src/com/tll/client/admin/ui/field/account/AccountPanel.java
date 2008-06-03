@@ -74,7 +74,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		final int index;
 		final PushButton btnDeleteToggle;
 		final AddressPanel addressPanel;
-		Model proto;
+
+		// Model proto;
 
 		/**
 		 * Constructor

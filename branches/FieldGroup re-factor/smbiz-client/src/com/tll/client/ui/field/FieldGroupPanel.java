@@ -107,7 +107,7 @@ public abstract class FieldGroupPanel extends Composite {
 	public final void bind(Model model) {
 		init();
 		onBeforeBind(model);
-		fields.bindModel(model.getPropertyBinding(null));
+		fields.bindModel(model.getPropertyBinding((String) null));
 		onAfterBind(model);
 	}
 
@@ -138,7 +138,7 @@ public abstract class FieldGroupPanel extends Composite {
 	public final boolean updateModel(Model model) throws ValidationException {
 		validate();
 		onBeforeUpdateModel(model);
-		if(fields.updateModel(model.getPropertyBinding(null)) /*|| fields.isPending()*/) {
+		if(fields.updateModel(model.getPropertyBinding((String) null)) /*|| fields.isPending()*/) {
 			onAfterUpdateModel(model);
 			return true;
 		}

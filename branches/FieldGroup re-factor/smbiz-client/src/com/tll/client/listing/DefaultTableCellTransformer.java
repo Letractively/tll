@@ -7,7 +7,9 @@ package com.tll.client.listing;
 import com.tll.client.data.PropKey;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.ISelfFormattingPropertyValue;
+import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.util.Fmt;
 
 /**
@@ -22,6 +24,7 @@ public class DefaultTableCellTransformer implements ITableCellTransformer {
 	 */
 	public String[] getCellValues(Model rowData, PropKey[] propKeys, Column[] columns) {
 		String[] vals = new String[columns.length];
+		final PropertyPath propPath = new PropertyPath();
 		for(int i = 0; i < columns.length; i++) {
 			Column col = columns[i];
 			String prop = col.getPropertyName();
@@ -31,7 +34,13 @@ public class DefaultTableCellTransformer implements ITableCellTransformer {
 			else {
 				PropKey pk = findPropKey(prop, propKeys);
 				if(pk != null) {
-					IPropertyValue pv = rowData.getProp(prop);
+					try {
+						propPath.parse(prop);
+					}
+					catch(MalformedPropPathException e) {
+						throw new IllegalStateException(e.getMessage());
+					}
+					IPropertyValue pv = rowData.getProp(propPath);
 
 					// self formatting type..
 					if(pv.getType().isSelfFormatting()) {
