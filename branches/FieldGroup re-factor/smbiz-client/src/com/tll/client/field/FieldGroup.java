@@ -5,9 +5,11 @@
 package com.tll.client.field;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -401,6 +403,15 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	private static boolean updateModel(FieldGroup group, final Model model) {
 		boolean changed = false;
+
+		// map of newly created indexed properties keyed by the indexable property
+		// path
+		// this construct serves to unify like new indexed properties which is a
+		// pre-cursor
+		// to determining the model relative index range of indexed properties that
+		// need to be created!
+		Map<PropertyPath, Set<IField>> unboundFields = null;
+
 		model.setMarkedDeleted(group.markedDeleted);
 		if(!group.markedDeleted) {
 			IPropertyValue pv;
@@ -410,12 +421,31 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 					updateModel((FieldGroup) fld, model);
 				}
 				else {
+					// non-group field
 					try {
 						propPath.parse(fld.getPropertyName());
-						pv = model.getProp(propPath);
-						if(pv != null) {
-							if(fld.updateModel(pv)) {
-								changed = true;
+
+						int n = propPath.getNextUnboundNode(0);
+						if(n >= 0) {
+							// unbound property!
+							PropertyPath unboundPath = propPath.upto(n);
+							if(unboundFields == null) {
+								unboundFields = new HashMap<PropertyPath, Set<IField>>();
+							}
+							Set<IField> set = unboundFields.get(unboundPath);
+							if(set == null) {
+								set = new HashSet<IField>();
+								unboundFields.put(unboundPath, set);
+							}
+							set.add(fld);
+						}
+						else {
+							// existing model property
+							pv = model.getProp(propPath);
+							if(pv != null) {
+								if(fld.updateModel(pv)) {
+									changed = true;
+								}
 							}
 						}
 					}
@@ -425,6 +455,14 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 					catch(IllegalArgumentException e) {
 						throw new IllegalStateException(e.getMessage());
 					}
+				}
+			}
+
+			// handle the new indexed props
+			if(unboundFields != null) {
+				for(PropertyPath upp : unboundFields.keySet()) {
+					// stub the model with the missing constructs
+					IPropertyBinding pb = model.getPropertyBinding(upp);
 				}
 			}
 		}

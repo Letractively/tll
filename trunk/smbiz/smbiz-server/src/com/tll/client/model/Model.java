@@ -478,10 +478,9 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 		IPropertyBinding prop = null;
 		Model model = this, parentModel = null;
-		final Node[] nodes = propPath.getNodes();
-		final int len = nodes.length;
+		final int len = propPath.size();
 		for(int i = 0; i < len; i++) {
-			Node node = nodes[i];
+			Node node = propPath.nodeAt(i);
 			String pname = node.getName();
 			int index = node.getIndex();
 			boolean indexed = (index >= 0);

@@ -6,8 +6,18 @@
 package com.tll.client.model;
 
 /**
- * PropertyPath - Helper class for walking a property path and extracting
- * properties therein.
+ * PropertyPath - Represents a valid property path.
+ * <p>
+ * A valid property path is: <br>
+ * <ol>
+ * <li>Standard OGNL format.<br>
+ * E.g.: <code>propA.propB.propC[i].propD</code>
+ * <li>Unbound format:<br>
+ * <code>propA.&propB</code> (indicates <code>propB</code> is an "unbound"
+ * <em>related one</em> property)<br>
+ * <code>propA.propB{i}.propC</code> (indicates <code>propB</code> is an
+ * "unbound" <em>indexed</em> property)
+ * </ol>
  * @author jpk
  */
 public class PropertyPath {
@@ -15,8 +25,19 @@ public class PropertyPath {
 	private static final char LEFT_INDEX_CHAR = '[';
 	private static final char RIGHT_INDEX_CHAR = ']';
 
-	private static final char NEW_LEFT_INDEX_CHAR = '{';
-	private static final char NEW_RIGHT_INDEX_CHAR = '}';
+	/**
+	 * Indicates in conjunction with {@link #UNBOUND_RIGHT_INDEX_CHAR} that an
+	 * indexed property path node is unbound.
+	 */
+	private static final char UNBOUND_LEFT_INDEX_CHAR = '{';
+
+	private static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
+
+	/**
+	 * Used to indicate a non-idexed (related one) node in a property path is
+	 * "unbound"
+	 */
+	private static final char UNBOUND_PREFIX_CHAR = '&';
 
 	/**
 	 * Chains the given arguments together to form the corresponding property
@@ -67,12 +88,12 @@ public class PropertyPath {
 	public static final class Node {
 
 		/**
-		 * The unaltered (qualified) sub-path.
+		 * The full property node String with potential indexing chars.
 		 */
 		String path;
 
 		/**
-		 * The property name stripped of potential indexing characters ([]).
+		 * The property node name stripped of potential indexing characters.
 		 */
 		String name;
 
@@ -82,11 +103,10 @@ public class PropertyPath {
 		int index = -1;
 
 		/**
-		 * Is this a new indexed property? I.e., does it have curly braces ({}) in
-		 * place of the standard square braces ([])? Relevant only for indexed
-		 * property nodes.
+		 * Flag to indicate whether this node is "unbound" meaning there is no
+		 * corresonding model structure.
 		 */
-		boolean newIndex;
+		boolean unbound;
 
 		Node() {
 		}
@@ -109,22 +129,22 @@ public class PropertyPath {
 		 */
 		void set(String path) throws MalformedPropPathException {
 			assert path != null;
-			int rmIndx = -1; // if this prop path element contains []
 			int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = -1;
 			if(bi < 0) {
-				bi = path.indexOf(NEW_LEFT_INDEX_CHAR);
+				bi = path.indexOf(UNBOUND_LEFT_INDEX_CHAR);
 				if(bi > 0) {
-					this.newIndex = true;
-					ebi = path.indexOf(NEW_RIGHT_INDEX_CHAR);
+					this.unbound = true;
+					ebi = path.indexOf(UNBOUND_RIGHT_INDEX_CHAR);
 				}
 			}
 			else {
 				ebi = path.indexOf(RIGHT_INDEX_CHAR);
 			}
 			if(bi > 0) {
-				// indexed property: extract the prop name and index
+				// indexed property prop name
 				String rmProp = path.substring(0, bi);
 				String sindx = path.substring(bi + 1, ebi);
+				int rmIndx;
 				try {
 					rmIndx = Integer.parseInt(sindx);
 					if(rmIndx < 0) {
@@ -138,14 +158,17 @@ public class PropertyPath {
 				this.index = rmIndx;
 			}
 			else {
-				this.name = path;
+				// non-indexed (related one) prop name
+				if(path.charAt(0) == UNBOUND_PREFIX_CHAR) {
+					this.unbound = true;
+					this.name = path.substring(1);
+				}
+				else {
+					this.name = path;
+				}
 				this.index = -1;
 			}
 			this.path = path;
-		}
-
-		public String getPath() {
-			return path;
 		}
 
 		public String getName() {
@@ -156,8 +179,20 @@ public class PropertyPath {
 			return index;
 		}
 
-		public boolean isNewIndex() {
-			return newIndex;
+		/**
+		 * Is this property path node "unbound"?
+		 */
+		protected boolean isUnbound() {
+			return unbound;
+		}
+
+		public Node copy() {
+			Node c = new Node();
+			c.index = index;
+			c.name = name;
+			c.path = path;
+			c.unbound = unbound;
+			return c;
 		}
 	}
 
@@ -179,7 +214,7 @@ public class PropertyPath {
 	/**
 	 * Does the property path have a node that represents a "new" index?
 	 */
-	private boolean newIndex;
+	private boolean unbound;
 
 	/**
 	 * Constructor
@@ -217,7 +252,7 @@ public class PropertyPath {
 
 			len = props.length;
 			nodes = new Node[hasPaymentData ? len - 1 : len];
-			newIndex = false;
+			unbound = false;
 
 			for(int i = 0; i < len; i++) {
 				String prop = props[i];
@@ -229,7 +264,7 @@ public class PropertyPath {
 					node = new Node(prop);
 				}
 				nodes[i] = node;
-				if(node.isNewIndex()) newIndex = true;
+				if(node.isUnbound()) unbound = true;
 			}
 			if(hasPaymentData) len--;
 		}
@@ -237,8 +272,44 @@ public class PropertyPath {
 		this.propPath = propPath;
 	}
 
-	public Node[] getNodes() {
-		return nodes;
+	public Node nodeAt(int index) {
+		return nodes[index];
+	}
+
+	public Node lastNode() {
+		return nodes == null ? null : nodes[len - 1];
+	}
+
+	/**
+	 * Provides the property path <em>upto</em> the given node index.
+	 * @param index The node index
+	 * @return The sub-property path
+	 */
+	public PropertyPath upto(int index) {
+		// NOTE: no array bounds checking for speed
+		if(nodes == null) return null;
+		String path;
+		if(index == 0) {
+			path = nodes[0].path;
+		}
+		else if(index == (len - 1)) {
+			path = propPath;
+		}
+		else {
+			StringBuffer sb = new StringBuffer(propPath.length());
+			for(int i = 0; i <= index; ++i) {
+				sb.append(nodes[i].path);
+				if(i < index) sb.append('.');
+			}
+			path = sb.toString();
+		}
+		try {
+			return new PropertyPath(path);
+		}
+		catch(MalformedPropPathException e) {
+			// shouldn't happen bro!
+			throw new IllegalStateException();
+		}
 	}
 
 	/**
@@ -250,29 +321,41 @@ public class PropertyPath {
 	}
 
 	/**
-	 * Convenience method that provides the last node in the property path
-	 * @return The last property name in the property path <em>stripped</em> of
-	 *         indexing symbols.
-	 */
-	public Node lastNode() {
-		return nodes == null ? null : nodes[len - 1];
-	}
-
-	/**
-	 * Searches for a new index property path node starting at the given node
-	 * index.
+	 * Searches for a nearest unbound property path node starting at the given
+	 * node index.
 	 * @param nodeIndex The node index at which searching starts
-	 * @return The first found Node that is indexed as new or <code>null</code>
-	 *         if none found.
+	 * @return The first found node index that is unbound or <code>-1</code> if
+	 *         none found.
 	 */
-	public Node getNextNewIndexNode(int nodeIndex) {
-		if(newIndex) {
+	public int getNextUnboundNode(int nodeIndex) {
+		if(unbound) {
 			assert nodes != null;
 			for(int i = nodeIndex; i < len; ++i) {
-				if(nodes[i].newIndex) return nodes[i];
+				if(nodes[i].unbound) return i;
 			}
 		}
-		return null;
+		return -1;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		final PropertyPath other = (PropertyPath) obj;
+		if(propPath == null) {
+			if(other.propPath != null) return false;
+		}
+		else if(!propPath.equals(other.propPath)) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((propPath == null) ? 0 : propPath.hashCode());
+		return result;
 	}
 
 	@Override
