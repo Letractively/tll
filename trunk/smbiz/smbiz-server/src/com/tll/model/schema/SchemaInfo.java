@@ -1,6 +1,7 @@
 package com.tll.model.schema;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -146,6 +147,9 @@ public final class SchemaInfo implements ISchemaInfo {
 	private ISchemaProperty toSchemaProperty(final String propName, final Method m) {
 		assert m != null;
 
+		final Class<?> rt = m.getReturnType();
+		assert rt != null : "The return type is null";
+
 		// non-relational...
 		if(isNonRelational(m)) {
 
@@ -162,8 +166,6 @@ public final class SchemaInfo implements ISchemaInfo {
 			final Length aLength = m.getAnnotation(Length.class);
 			int maxlen = aLength != null ? aLength.max() : -1;
 
-			final Class<?> rt = m.getReturnType();
-			assert rt != null : "The return type is null";
 			if(rt.equals(String.class)) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
 				fd = new PropertyMetadata(PropertyType.STRING, managed, required, maxlen);
@@ -208,18 +210,23 @@ public final class SchemaInfo implements ISchemaInfo {
 		final ManyToOne mto = m.getAnnotation(ManyToOne.class);
 		if(mto != null) {
 			cascades = mto.cascade();
-			return new RelationInfo(PropertyType.RELATED_ONE, (cascades == null || cascades.length == 0));
+			return new RelationInfo(EntityUtil.entityTypeFromClass((Class<? extends IEntity>) rt), PropertyType.RELATED_ONE,
+					(cascades == null || cascades.length == 0));
 		}
 
 		final OneToMany otm = m.getAnnotation(OneToMany.class);
 		if(otm != null) {
+			Class<? extends IEntity> rmec =
+					(Class<? extends IEntity>) ((ParameterizedType) rt.getGenericSuperclass()).getActualTypeArguments()[0];
 			cascades = otm.cascade();
-			return new RelationInfo(PropertyType.RELATED_MANY, (cascades == null || cascades.length == 0));
+			return new RelationInfo(EntityUtil.entityTypeFromClass(rmec), PropertyType.RELATED_MANY,
+					(cascades == null || cascades.length == 0));
 		}
 
 		// TODO make this more generic!
 		if("parent".equals(propName)) {
-			return new RelationInfo(PropertyType.RELATED_ONE, true);
+			return new RelationInfo(EntityUtil.entityTypeFromClass((Class<? extends IEntity>) rt), PropertyType.RELATED_ONE,
+					true);
 		}
 
 		return null;

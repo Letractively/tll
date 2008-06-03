@@ -7,6 +7,8 @@ package com.tll.client.model;
 
 import java.util.List;
 
+import com.tll.model.EntityType;
+
 /**
  * IndexedPropPathBinding - Represents a binding resulting from a resolved
  * property path ending with an index callout.
@@ -16,6 +18,7 @@ import java.util.List;
  */
 class IndexedPropPathBinding extends PropPathBinding {
 
+	private final EntityType indexedType;
 	private final List<Model> list;
 	private final int index;
 	private final boolean reference;
@@ -31,12 +34,16 @@ class IndexedPropPathBinding extends PropPathBinding {
 	 * @param parent
 	 * @param propPath
 	 * @param reference
+	 * @param indexedType
 	 * @param list
 	 * @param index
 	 */
-	IndexedPropPathBinding(Model parent, PropertyPath propPath, boolean reference, List<Model> list, int index) {
+	IndexedPropPathBinding(Model parent, PropertyPath propPath, boolean reference, EntityType indexedType,
+			List<Model> list, int index) {
 		super(parent, propPath);
 		this.reference = reference;
+		assert indexedType != null;
+		this.indexedType = indexedType;
 		assert list != null;
 		this.list = list;
 		assert index >= 0;
@@ -50,7 +57,7 @@ class IndexedPropPathBinding extends PropPathBinding {
 				throw new UnsetPropertyException(propPath.toString());
 			}
 			Model ng = list.get(index);
-			ipv = new IndexedProperty(propPath.endPropName(), reference, ng, index);
+			ipv = new IndexedProperty(indexedType, propPath.lastNode().name, reference, ng, index);
 		}
 		return ipv;
 	}

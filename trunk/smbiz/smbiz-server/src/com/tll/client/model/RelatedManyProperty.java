@@ -8,14 +8,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
  * RelatedManyProperty
  * @author jpk
  */
-public class RelatedManyProperty extends AbstractRelationalProperty implements Iterable<IndexedProperty> {
+public final class RelatedManyProperty extends AbstractRelationalProperty implements Iterable<IndexedProperty> {
 
+	/**
+	 * The list of related many {@link Model}s.
+	 */
 	protected List<Model> list;
 
 	/**
@@ -29,10 +33,12 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 	 * Constructor
 	 * @param propName
 	 * @param reference
+	 * @param manyType The related many Model type.
 	 * @param list List of {@link Model}s.
 	 */
-	public RelatedManyProperty(final String propName, final boolean reference, final List<Model> list) {
-		super(propName, reference);
+	public RelatedManyProperty(final EntityType manyType, final String propName, final boolean reference,
+			final List<Model> list) {
+		super(manyType, propName, reference);
 		this.list = list;
 	}
 
@@ -105,7 +111,7 @@ public class RelatedManyProperty extends AbstractRelationalProperty implements I
 	 * @return The {@link IndexedProperty} at the given index.
 	 */
 	public IndexedProperty getIndexedProperty(int index) {
-		return new IndexedProperty(propertyName, isReference(), list.get(index), index);
+		return new IndexedProperty(relatedType, propertyName, isReference(), list.get(index), index);
 	}
 
 	/**

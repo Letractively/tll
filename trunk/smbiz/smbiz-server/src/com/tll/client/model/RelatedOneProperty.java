@@ -5,6 +5,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -23,12 +24,13 @@ public class RelatedOneProperty extends ModelRefProperty {
 
 	/**
 	 * Constructor
+	 * @param relatedType
 	 * @param propName
 	 * @param reference
 	 * @param model
 	 */
-	public RelatedOneProperty(String propName, boolean reference, Model model) {
-		super(propName, reference, model);
+	public RelatedOneProperty(EntityType relatedType, String propName, boolean reference, Model model) {
+		super(relatedType, propName, reference, model);
 	}
 
 	public PropertyType getType() {

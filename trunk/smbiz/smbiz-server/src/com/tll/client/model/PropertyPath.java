@@ -69,24 +69,24 @@ public class PropertyPath {
 		/**
 		 * The unaltered (qualified) sub-path.
 		 */
-		private String path;
+		String path;
 
 		/**
 		 * The property name stripped of potential indexing characters ([]).
 		 */
-		private String name;
+		String name;
 
 		/**
 		 * The resolved index (for indexed properties only).
 		 */
-		private int index = -1;
+		int index = -1;
 
 		/**
 		 * Is this a new indexed property? I.e., does it have curly braces ({}) in
 		 * place of the standard square braces ([])? Relevant only for indexed
 		 * property nodes.
 		 */
-		private boolean newIndex;
+		boolean newIndex;
 
 		Node() {
 		}
@@ -177,6 +177,11 @@ public class PropertyPath {
 	private int len;
 
 	/**
+	 * Does the property path have a node that represents a "new" index?
+	 */
+	private boolean newIndex;
+
+	/**
 	 * Constructor
 	 */
 	public PropertyPath() {
@@ -212,15 +217,19 @@ public class PropertyPath {
 
 			len = props.length;
 			nodes = new Node[hasPaymentData ? len - 1 : len];
+			newIndex = false;
 
 			for(int i = 0; i < len; i++) {
 				String prop = props[i];
+				Node node;
 				if(i < len - 1 && "paymentData".equals(prop)) {
-					nodes[i] = new Node(prop + '.' + props[++i]);
+					node = new Node(prop + '.' + props[++i]);
 				}
 				else {
-					nodes[i] = new Node(prop);
+					node = new Node(prop);
 				}
+				nodes[i] = node;
+				if(node.isNewIndex()) newIndex = true;
 			}
 			if(hasPaymentData) len--;
 		}
@@ -241,11 +250,29 @@ public class PropertyPath {
 	}
 
 	/**
+	 * Convenience method that provides the last node in the property path
 	 * @return The last property name in the property path <em>stripped</em> of
 	 *         indexing symbols.
 	 */
-	public String endPropName() {
-		return nodes[len - 1].getName();
+	public Node lastNode() {
+		return nodes == null ? null : nodes[len - 1];
+	}
+
+	/**
+	 * Searches for a new index property path node starting at the given node
+	 * index.
+	 * @param nodeIndex The node index at which searching starts
+	 * @return The first found Node that is indexed as new or <code>null</code>
+	 *         if none found.
+	 */
+	public Node getNextNewIndexNode(int nodeIndex) {
+		if(newIndex) {
+			assert nodes != null;
+			for(int i = nodeIndex; i < len; ++i) {
+				if(nodes[i].newIndex) return nodes[i];
+			}
+		}
+		return null;
 	}
 
 	@Override

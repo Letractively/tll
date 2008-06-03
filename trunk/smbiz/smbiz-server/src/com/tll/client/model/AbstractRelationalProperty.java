@@ -3,11 +3,15 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.EntityType;
+
 /**
  * AbstractRelationalProperty
  * @author jpk
  */
 public abstract class AbstractRelationalProperty extends AbstractPropertyBinding implements IRelationalProperty {
+
+	protected EntityType relatedType;
 
 	/**
 	 * Indicates the encased model is a "reference" and the model shall NOT be
@@ -25,23 +29,25 @@ public abstract class AbstractRelationalProperty extends AbstractPropertyBinding
 
 	/**
 	 * Constructor
-	 * @param propertyName
-	 * @param reference
+	 * @param relatedType The related type
+	 * @param propertyName The property name
+	 * @param reference Is the relation a reference?
 	 */
-	public AbstractRelationalProperty(String propertyName, boolean reference) {
+	public AbstractRelationalProperty(EntityType relatedType, String propertyName, boolean reference) {
 		super(propertyName);
+		this.relatedType = relatedType;
 		this.reference = reference;
+	}
+
+	public final EntityType getRelatedType() {
+		return relatedType;
+	}
+
+	protected void setRelatedType(EntityType relatedType) {
+		this.relatedType = relatedType;
 	}
 
 	public final boolean isReference() {
 		return reference;
-	}
-
-	public final void setReference(boolean reference) {
-		this.reference = reference;
-	}
-
-	public final void setValue(Object value) {
-		throw new UnsupportedOperationException("Relational properties don't support generic value assigning");
 	}
 }

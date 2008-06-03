@@ -294,17 +294,19 @@ public final class Marshaler {
 			if(prop == null) {
 				// related one
 				if(IEntity.class.isAssignableFrom(ptype)) {
-					boolean reference = isReferenceRelation(entityClass, pname);
+					final RelationInfo ri = getRelationInfo(entityClass, pname);
+					boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						prop = new RelatedOneProperty(pname, reference, ngrp);
+						prop = new RelatedOneProperty(ri.getRelatedType(), pname, reference, ngrp);
 					}
 				}
 
 				// related many collection
 				else if(Set.class.isAssignableFrom(ptype)) {
-					boolean reference = isReferenceRelation(entityClass, pname);
+					final RelationInfo ri = getRelationInfo(entityClass, pname);
+					boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						List<Model> list = null;
 						if(obj != null) {
@@ -315,7 +317,7 @@ public final class Marshaler {
 								list.add(nested);
 							}
 						}
-						prop = new RelatedManyProperty(pname, isReferenceRelation(entityClass, pname), list);
+						prop = new RelatedManyProperty(ri.getRelatedType(), pname, reference, list);
 					}
 				}
 
@@ -524,16 +526,16 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Is this given relational property a reference?
+	 * Gets relational info for a given entity property that is expected to be
+	 * relational
 	 * @param entityClass
 	 * @param propName
 	 * @return true/false
 	 * @throws SchemaInfoException When the prop name is not resolvable to a model
 	 *         relation.
 	 */
-	private boolean isReferenceRelation(final Class<? extends IEntity> entityClass, final String propName) {
-		final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, propName);
-		return ri.isReference();
+	private RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propName) {
+		return schemaInfo.getRelationInfo(entityClass, propName);
 	}
 
 	/**

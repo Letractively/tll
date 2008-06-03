@@ -208,7 +208,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 */
 	public IPropertyBinding getPropertyBinding(PropertyPath propPath) throws IllegalArgumentException {
 		if(propPath == null) {
-			return new RelatedOneProperty(null, true, this);
+			return new RelatedOneProperty(getEntityType(), null, true, this);
 		}
 		try {
 			return resolvePropertyPath(propPath).getPropertyBinding();
@@ -302,9 +302,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 			ropv.setModel(model);
 		}
 		catch(UnsetPropertyException upe) {
+			// ensure the model is non-null since we must resolve the related type!
+			if(model == null) {
+				throw new IllegalArgumentException("The related one model must be specified");
+			}
 			// NOTE: we presume the related one property is a reference!!
 			// TODO determine if we need to have reference as a method param
-			ropv = new RelatedOneProperty(binding.getPropPath().endPropName(), true, model);
+			ropv = new RelatedOneProperty(model.getEntityType(), binding.getPropPath().lastNode().name, true, model);
 			binding.getModel().set(ropv);
 		}
 		catch(PropertyPathException ppe) {
@@ -525,24 +529,25 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 			// related many prop val
 			else if(pvType == PropertyType.RELATED_MANY) {
-				RelatedManyProperty glpv = (RelatedManyProperty) prop;
+				RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(!indexed) {
 					if(atEnd) {
-						return new IndexablePropPathBinding(parentModel, propPath, glpv);
+						return new IndexablePropPathBinding(parentModel, propPath, rmp);
 					}
 					// and index is expected if were not at the end
 					throw new MalformedPropPathException(propPath.toString());
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
-					List<Model> nlist = glpv.getList();
+					List<Model> nlist = rmp.getList();
 					if(nlist == null) {
 						// ensure we have a list to attach indexed groups to later
 						nlist = new ArrayList<Model>(0);
-						glpv.setList(nlist);
+						rmp.setList(nlist);
 					}
 					if(atEnd) {
-						return new IndexedPropPathBinding(parentModel, propPath, glpv.isReference(), nlist, index);
+						return new IndexedPropPathBinding(parentModel, propPath, rmp.isReference(), rmp.getRelatedType(), nlist,
+								index);
 					}
 					if(index >= nlist.size()) {
 						throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
@@ -589,23 +594,23 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 
 			// related one or indexed prop...
 			if(prop instanceof ModelRefProperty) {
-				ModelRefProperty gpv = (ModelRefProperty) prop;
-				Model model = gpv.isReference() ? gpv.getModel() : copy(gpv.getModel(), visited);
-				copy.props.add(new RelatedOneProperty(gpv.getPropertyName(), gpv.isReference(), model));
+				ModelRefProperty mrp = (ModelRefProperty) prop;
+				Model model = mrp.isReference() ? mrp.getModel() : copy(mrp.getModel(), visited);
+				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
 			// model list relation...
 			else if(prop instanceof RelatedManyProperty) {
-				RelatedManyProperty glpv = (RelatedManyProperty) prop;
-				List<Model> list = glpv.getList();
+				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				List<Model> list = rmp.getList();
 				List<Model> nlist = null;
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
 					for(Model model : list) {
-						nlist.add(glpv.isReference() ? model : copy(model, visited));
+						nlist.add(rmp.isReference() ? model : copy(model, visited));
 					}
 				}
-				copy.props.add(new RelatedManyProperty(glpv.getPropertyName(), glpv.isReference(), nlist));
+				copy.props.add(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), nlist));
 			}
 
 			// prop val..

@@ -5,6 +5,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -25,13 +26,14 @@ public class IndexedProperty extends ModelRefProperty {
 
 	/**
 	 * Constructor
+	 * @param indexedType
 	 * @param propName
 	 * @param reference
 	 * @param model
 	 * @param index
 	 */
-	public IndexedProperty(String propName, boolean reference, Model model, int index) {
-		super(PropertyPath.indexed(propName, index), reference, model);
+	public IndexedProperty(EntityType indexedType, String propName, boolean reference, Model model, int index) {
+		super(indexedType, PropertyPath.indexed(propName, index), reference, model);
 		this.index = index;
 	}
 

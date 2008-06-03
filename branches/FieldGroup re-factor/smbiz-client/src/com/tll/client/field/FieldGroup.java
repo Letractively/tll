@@ -379,6 +379,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				catch(MalformedPropPathException e) {
 					throw new IllegalStateException(e.getMessage());
 				}
+
 				IPropertyValue pv = model.getProp(propPath);
 				if(pv == null) {
 					fld.clear();

@@ -3,6 +3,8 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.EntityType;
+
 /**
  * ModelRefProperty - Thin wrapper around a {@link Model} in order to facilitate
  * the hierarchical representation of a related one association.
@@ -21,13 +23,15 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 
 	/**
 	 * Constructor
+	 * @param relatedType The related Model type. This <em>must</em> match that
+	 *        of the given Model's type if the given Model is non-<code>null</code>.
 	 * @param propName
 	 * @param reference
 	 * @param model
 	 */
-	public ModelRefProperty(String propName, boolean reference, Model model) {
-		super(propName, reference);
-		this.model = model;
+	public ModelRefProperty(EntityType relatedType, String propName, boolean reference, Model model) {
+		super(relatedType, propName, reference);
+		setModel(model);
 	}
 
 	public final Object getValue() {
@@ -39,6 +43,14 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	}
 
 	final void setModel(Model model) {
+		if(relatedType == null) {
+			throw new IllegalStateException("A related type must be set");
+		}
+		if(model != null) {
+			if(relatedType != model.getEntityType()) {
+				throw new IllegalArgumentException("The model type must match the prescribed related type");
+			}
+		}
 		this.model = model;
 	}
 

@@ -5,11 +5,18 @@
  */
 package com.tll.client.model;
 
+import com.tll.model.EntityType;
+
 /**
  * IRelationalProperty - Indicates a relationship within a model.
  * @author jpk
  */
 public interface IRelationalProperty extends IPropertyBinding {
+
+	/**
+	 * @return The related entity/model type.
+	 */
+	EntityType getRelatedType();
 
 	/**
 	 * @return <code>true</code> when this property is a "reference" to another
