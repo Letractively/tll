@@ -57,7 +57,7 @@ class IndexedPropPathBinding extends PropPathBinding {
 				throw new UnsetPropertyException(propPath.toString());
 			}
 			Model ng = list.get(index);
-			ipv = new IndexedProperty(indexedType, propPath.lastNode().name, reference, ng, index);
+			ipv = new IndexedProperty(indexedType, propPath.nameAt(propPath.size() - 1), reference, ng, index);
 		}
 		return ipv;
 	}

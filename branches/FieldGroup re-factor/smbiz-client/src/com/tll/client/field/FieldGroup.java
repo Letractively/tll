@@ -19,6 +19,7 @@ import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
@@ -375,13 +376,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				bindModel((FieldGroup) fld, model);
 			}
 			else {
-				try {
-					propPath.parse(fld.getPropertyName());
-				}
-				catch(MalformedPropPathException e) {
-					throw new IllegalStateException(e.getMessage());
-				}
-
+				propPath.parse(fld.getPropertyName());
 				IPropertyValue pv = model.getProp(propPath);
 				if(pv == null) {
 					fld.clear();
@@ -462,7 +457,14 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			if(unboundFields != null) {
 				for(PropertyPath upp : unboundFields.keySet()) {
 					// stub the model with the missing constructs
-					IPropertyBinding pb = model.getPropertyBinding(upp);
+					// IPropertyBinding pb = model.getPropertyBinding(upp);
+					if(upp.isIndexed()) {
+						// unbound indexed property
+						RelatedManyProperty rmp = (RelatedManyProperty) model.getPropertyBinding(upp);
+					}
+					else {
+						// unbound related one or many property
+					}
 				}
 			}
 		}
