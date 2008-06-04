@@ -6,8 +6,8 @@ package com.tll.client.model;
 import com.tll.model.EntityType;
 
 /**
- * ModelRefProperty - Thin wrapper around a {@link Model} in order to facilitate
- * the hierarchical representation of a related one association.
+ * ModelRefProperty - Thin wrapper around a {@link Model} in order to realize
+ * relationships in a model hierarchy.
  * @author jpk
  */
 public abstract class ModelRefProperty extends AbstractRelationalProperty implements IModelRefProperty {
@@ -48,7 +48,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		}
 		if(model != null) {
 			if(relatedType != model.getEntityType()) {
-				throw new IllegalArgumentException("The model type must match the prescribed related type");
+				throw new IllegalArgumentException("The model must be a" + relatedType.getName());
 			}
 		}
 		this.model = model;

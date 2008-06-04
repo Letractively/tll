@@ -125,12 +125,15 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		if(list == null) {
 			list = new ArrayList<Model>();
 		}
+		if(indexable.getEntityType() != relatedType) {
+			throw new IllegalArgumentException("The indexable model must be a " + relatedType.getName());
+		}
 		list.add(indexable);
 		return PropertyPath.indexed(getPropertyName(), list.size() - 1);
 	}
 
 	/**
-	 * Removes an indexed model from this related many list.
+	 * Removes an indexed model by reference.
 	 * @param indexable The indexable model to remove
 	 * @return <code>true</code> if the indexed model was actually removed.
 	 */
@@ -142,11 +145,12 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	/**
 	 * Removes an indexed model by index.
 	 * @param index The index of the indexed model to remove
+	 * @return The removed Model.
 	 * @throws IndexOutOfBoundsException When the index is out of bounds
 	 */
-	public void removeIndexed(int index) throws IndexOutOfBoundsException {
-		if(list == null) return;
-		list.remove(index);
+	public Model remove(int index) throws IndexOutOfBoundsException {
+		if(list == null) return null;
+		return list.remove(index);
 	}
 
 	@Override

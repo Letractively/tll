@@ -9,8 +9,8 @@ import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
- * IndexedProperty - Represents a single indexed property value referenced by a
- * parent related many property value.
+ * IndexedProperty - Represents a single indexed property referenced by a parent
+ * {@link RelatedManyProperty}.
  * @author jpk
  */
 public class IndexedProperty extends ModelRefProperty {

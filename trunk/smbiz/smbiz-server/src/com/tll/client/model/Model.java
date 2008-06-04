@@ -504,9 +504,9 @@ public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 
 			// model list (relational) prop val...
 			else if(prop instanceof RelatedManyProperty) {
-				RelatedManyProperty glpv = (RelatedManyProperty) prop;
-				if(!glpv.isReference()) {
-					List<Model> list = glpv.getList();
+				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				if(!rmp.isReference()) {
+					List<Model> list = rmp.getList();
 					if(list != null) {
 						for(Model m : list) {
 							clearProps(m, visited);

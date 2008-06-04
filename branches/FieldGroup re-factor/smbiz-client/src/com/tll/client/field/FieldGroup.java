@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
@@ -38,7 +39,7 @@ import com.tll.util.IDescriptorProvider;
  * {@link Model}.
  * <p>
  * A FieldGroup represents a grouping of {@link IField}s for UI purposes only
- * and as such does
+ * and as such
  * <em>may not necessarily represent model hierarchy boundaries!</em>
  * <p>
  * To fully support data transfer ("binding") between a FieldGroup instance and
@@ -422,7 +423,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						int n = propPath.nextUnboundNode(0);
 						if(n >= 0) {
 							// unbound property!
-							PropertyPath unboundPath = propPath.upto(n);
+							PropertyPath unboundPath = propPath.parent(n);
 							if(unboundFields == null) {
 								unboundFields = new HashMap<PropertyPath, Set<IField>>();
 							}
@@ -449,17 +450,28 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				}
 			}
 
-			// handle the new indexed props
+			// handle the unbound indexed props (newly created in the ui)
 			if(unboundFields != null) {
 				for(PropertyPath upp : unboundFields.keySet()) {
-					// stub the model with the missing constructs
-					// IPropertyBinding pb = model.getPropertyBinding(upp);
+					// create the missing properties in the model
 					if(upp.isIndexed()) {
 						// unbound indexed property
-						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp);
+						RelatedManyProperty rmp =
+								(RelatedManyProperty) model.getBinding(upp.parent(upp.size() - 1).indexedParent());
+						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
+						if(stub == null) {
+							throw new IllegalStateException("Unable to acquire a fresh " + rmp.getRelatedType().getName());
+						}
+						final String actualPath = rmp.add(stub);
+						// now we need to propagate the actual property path to the fields
+						Set<IField> ufields = unboundFields.get(upp);
+						for(IField fld : ufields) {
+
+						}
 					}
 					else {
-						// unbound related one or many property
+						// unbound non-indexed property
+						throw new UnsupportedOperationException("Only indexed properties may be unbound");
 					}
 				}
 			}

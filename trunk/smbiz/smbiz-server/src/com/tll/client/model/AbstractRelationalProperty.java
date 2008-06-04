@@ -6,17 +6,21 @@ package com.tll.client.model;
 import com.tll.model.EntityType;
 
 /**
- * AbstractRelationalProperty
+ * AbstractRelationalProperty - Base class for Model properties that are
+ * relational.
  * @author jpk
  */
 public abstract class AbstractRelationalProperty extends AbstractPropertyBinding implements IRelationalProperty {
 
+	/**
+	 * The related type.
+	 */
 	protected EntityType relatedType;
 
 	/**
 	 * Indicates the encased model is a "reference" and the model shall NOT be
-	 * cleared or cloned when recursing any given {@link Model}. The "reference"
-	 * to this model is always honored.
+	 * cleared or cloned when traversing a Model hierarchy. The "reference" to
+	 * this model is always honored.
 	 */
 	protected boolean reference;
 
@@ -43,7 +47,7 @@ public abstract class AbstractRelationalProperty extends AbstractPropertyBinding
 		return relatedType;
 	}
 
-	protected void setRelatedType(EntityType relatedType) {
+	protected final void setRelatedType(EntityType relatedType) {
 		this.relatedType = relatedType;
 	}
 

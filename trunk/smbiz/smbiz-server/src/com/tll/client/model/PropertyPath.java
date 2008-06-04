@@ -86,6 +86,24 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Replaces the parent property path in the given proeprty name with a
+	 * replacement parent property path.
+	 * @param replParentPath The replacement parent property path
+	 * @param propName The property name subject to replacement
+	 * @return Property name with the replaced parent property path
+	 */
+	public static String replace(String replParentPath, String propName) {
+		final PropertyPath repl = new PropertyPath(replParentPath);
+		final PropertyPath path = new PropertyPath(propName);
+		if(path.size() < repl.size()) {
+			throw new IllegalArgumentException(
+					"The replacement parent property path size is greater than the targeted property name size");
+		}
+		// TODO finish
+		return null;
+	}
+
+	/**
 	 * Removes all indexing and unbound symbols from a property node String
 	 * returning the property name.
 	 * @param prop The property path node String
@@ -209,6 +227,14 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * @return The number of "nodes" in the parsed property path.<br>
+	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
+	 */
+	public int size() {
+		return len;
+	}
+
+	/**
 	 * Does this property path point to an indexed property?<br>
 	 * (E.g.: <code>propA.propB[1]</code> or <code>propA.propB{1}</code>)
 	 * <br>
@@ -244,6 +270,20 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Strips the indexing from the end of this property path returninng the
+	 * resultant path which effectively is the parent to the indexed property.
+	 * @return New property path stripped of trailing indexing or
+	 *         <code>null</code> if this property path is not an indexed
+	 *         property.
+	 */
+	public PropertyPath indexedParent() {
+		if(propPath == null) return null;
+		int i = propPath.lastIndexOf(LEFT_INDEX_CHAR);
+		if(i < 0) i = propPath.lastIndexOf(UNBOUND_LEFT_INDEX_CHAR);
+		return i < 0 ? null : new PropertyPath(propPath.substring(0, i));
+	}
+
+	/**
 	 * Returns the first found node index that is unbound starting at the given
 	 * index.
 	 * @param index The node index where searching begins
@@ -262,30 +302,45 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Provides the property path <em>upto</em> the given node index.
+	 * Calculates the overall offset relative to the {@link #propPath} of the
+	 * given node index.
 	 * @param index The node index
-	 * @return The sub-property path
+	 * @return The prop path offset
 	 */
-	public PropertyPath upto(int index) {
-		if(nodes == null) return null;
-		if(index == 0) return new PropertyPath(nodes[0]);
-		if(index == len - 1) return this;
-
-		assert propPath != null;
-		StringBuffer sb = new StringBuffer(propPath.length());
+	private int offset(int index) {
+		int offset = 0;
 		for(int i = 0; i <= index; ++i) {
-			sb.append(nodes[i]);
-			if(i < index) sb.append('.');
+			offset += nodes[i].length();
 		}
-		return new PropertyPath(sb.toString());
+		return offset + index;
 	}
 
 	/**
-	 * @return The number of "nodes" in the parsed property path.<br>
-	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
+	 * Provides the property path <em>upto</em> the given node index optionally
+	 * stripping the indexing at the ending node.
+	 * @param index The node index at which to stop
+	 * @return A PropertyPath
 	 */
-	public int size() {
-		return len;
+	public PropertyPath parent(int index) {
+		if(nodes == null) return null;
+		assert propPath != null && len >= 0;
+		if(index == 0) return new PropertyPath(nodes[0]);
+		if(index == len - 1) return this;
+		return new PropertyPath(propPath.substring(0, offset(index)));
+	}
+
+	/**
+	 * Extracts a nested property path beginning at the given node index. I.e.:
+	 * everything to the right of the node index (dot).
+	 * @param index The node index indicating the nest point
+	 * @return The nested property path at the desired point
+	 */
+	public PropertyPath nested(int index) {
+		if(nodes == null) return null;
+		assert propPath != null && len >= 0;
+		if(index == 0) return this;
+		if(index == len - 1) return new PropertyPath(nodes[len - 1]);
+		return new PropertyPath(propPath.substring(offset(index) + 1));
 	}
 
 	@Override

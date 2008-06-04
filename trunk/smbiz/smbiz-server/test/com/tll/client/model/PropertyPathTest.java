@@ -94,9 +94,11 @@ public class PropertyPathTest {
 		assert pp.nextUnboundNode(3) == -1;
 
 		// test upto
-		assert "pathA".equals(pp.upto(0).toString());
-		assert "pathA.pathB{3}".equals(pp.upto(1).toString());
-		assert "pathA.pathB{3}.pathC".equals(pp.upto(2).toString());
-		assert "pathA.pathB{3}.pathC.pathD".equals(pp.upto(3).toString());
+		assert "pathA".equals(pp.parent(0).toString());
+		assert "pathA.pathB{3}".equals(pp.parent(1).toString());
+		assert "pathA.pathB{3}.pathC".equals(pp.parent(2).toString());
+		assert "pathA.pathB{3}.pathC.pathD".equals(pp.parent(3).toString());
+
+		assert "pathA.pathB".equals(pp.parent(1).indexedParent().toString());
 	}
 }
