@@ -12,7 +12,7 @@
     </groups>
     -->
     <classes>
-      <class name="com.tll.model.schema.SchemaInfoTest" />
+      <class name="com.tll.client.model.PropertyPathTest" />
     </classes>
   </test>
 

@@ -6,7 +6,8 @@
 package com.tll.client.model;
 
 /**
- * PropertyPath - Represents a valid property path.
+ * PropertyPath - Encapsulates a property path String providing convenience
+ * methods for accessing its attributes.
  * <p>
  * A valid property path is: <br>
  * <ol>
@@ -19,7 +20,7 @@ package com.tll.client.model;
  * </ol>
  * @author jpk
  */
-public class PropertyPath {
+public final class PropertyPath {
 
 	private static final char LEFT_INDEX_CHAR = '[';
 	private static final char RIGHT_INDEX_CHAR = ']';
@@ -185,7 +186,7 @@ public class PropertyPath {
 		}
 		else {
 			final String[] props = propPath.split("\\.");
-			len = nodes.length;
+			len = props.length;
 
 			// special case: paymentInfo.paymentData.
 			final boolean hasPaymentData = (propPath.indexOf("paymentData") >= 0);

@@ -1,90 +1,102 @@
 /**
  * The Logic Lab
- * @author jpk Dec 18, 2007
+ * @author jpk
+ * Jun 4, 2008
  */
 package com.tll.client.model;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.impl.IAccountDao;
-import com.tll.model.impl.Asp;
-import com.tll.model.key.KeyFactory;
-import com.tll.server.rpc.MarshalOptions;
-
 /**
- * PropertyPathTest
+ * PropertyPathTest - Test the public methods for {@link PropertyPath}.
  * @author jpk
  */
 @Test(groups = "client-model")
-public class PropertyPathTest extends AbstractModelTest {
+public class PropertyPathTest {
 
-	private Model getTestModel() {
-		final IAccountDao dao = getDaoFactory().instance(IAccountDao.class);
-		final Asp asp = (Asp) dao.load(KeyFactory.getNameKey(Asp.class, Asp.ASP_NAME));
-		assert asp != null;
-		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
-	}
+	public void test() throws Exception {
+		final PropertyPath pp = new PropertyPath();
 
-	/**
-	 * Test the property path resolution of EXISTING property valuess
-	 * @throws Exception Upon any encountered failure
-	 */
-	@Test
-	public void testResolution() throws Exception {
-		IPropertyBinding prop;
-		PropertyPath path = new PropertyPath();
-		Model model;
+		String path;
 
-		model = getTestModel();
+		// test empty property path
+		pp.parse(null);
+		assert pp.toString() == null;
+		assert pp.nameAt(0) == null;
+		assert pp.indexAt(0) == -1;
 
-		path.parse("name");
-		prop = model.getBinding(path);
-		assert prop != null : "Unable to resolve property path: " + path;
-
-		path.parse("currency.iso4217");
-		prop = model.getBinding(path);
-		assert prop != null : "Unable to resolve property path: " + path;
-
-		// test non-existant model one before end of path
-		path.parse("parent.name");
-		prop = model.getBinding(path);
-		assert prop == null : "Resolved should have been null path node";
-
-		path.parse("addresses");
-		prop = model.getBinding(path);
-		assert prop != null : "Unable to resolve property path: " + path;
-		assert prop instanceof RelatedManyProperty : "Related many property value is the wrong type";
-
-		path.parse("addresses[0]");
-		prop = model.getBinding(path);
-		assert prop != null : "Unable to resolve property path: " + path;
-		assert prop instanceof ModelRefProperty : "Expected ModelRefProperty impl at property path: " + path;
-
-		path.parse("addresses[20]");
-		prop = model.getBinding(path);
-		assert prop == null : "Got a non-null prop value for a non-existant indexed property!";
-
-		path.parse("addresses[0].address.firstName");
-		prop = model.getBinding(path);
-		assert prop != null : "Unable to resolve property path: " + path;
-
-		// test paymentInfo resolution
-		path.parse("paymentInfo.paymentData");
-		prop = model.getBinding(path);
-		assert prop == null : "Able to resolve paymentInfo.paymentData path!";
-
-		path.parse("paymentInfo.paymentData.bankName");
-		prop = model.getBinding(path);
-		assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
-
-		// malformed
+		// test single node non-indexed property path
+		path = "path";
+		pp.parse(path);
+		assert path.equals(pp.toString());
+		assert pp.size() == 1;
+		assert pp.nameAt(0) == path;
+		assert pp.indexAt(0) == -1;
 		try {
-			path.parse("paymentInfo[2].name");
-			prop = model.getBinding(path);
-			assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
+			pp.nameAt(1);
+			Assert.fail();
 		}
-		catch(final IllegalArgumentException e) {
+		catch(ArrayIndexOutOfBoundsException e) {
 			// expected
 		}
+
+		// test single node indexed property path
+		path = "path[2]";
+		pp.parse(path);
+		assert path.equals(pp.toString());
+		assert pp.size() == 1;
+		assert "path".equals(pp.nameAt(0));
+		assert pp.indexAt(0) == 2;
+
+		// test invalid single node indexed property path w/ non-numeric index
+		path = "path[a]";
+		pp.parse(path);
+		assert path.equals(pp.toString());
+		assert pp.size() == 1;
+		assert "path".equals(pp.nameAt(0));
+		try {
+			pp.indexAt(0);
+		}
+		catch(MalformedPropPathException e) {
+			// expected
+		}
+
+		// test single node unbound indexed property path
+		path = "path{2}";
+		pp.parse(path);
+		assert path.equals(pp.toString());
+		assert pp.size() == 1;
+		assert "path".equals(pp.nameAt(0));
+		assert pp.indexAt(0) == 2;
+		assert pp.nextUnboundNode(0) == 0;
+
+		// test property path depth
+		path = "pathA.pathB[3].pathC.pathD";
+		pp.parse(path);
+		assert pp.toString() == path;
+		assert pp.size() == 4;
+		assert "pathA".equals(pp.nameAt(0));
+		assert "pathB".equals(pp.nameAt(1));
+		assert "pathC".equals(pp.nameAt(2));
+		assert "pathD".equals(pp.nameAt(3));
+		assert pp.indexAt(0) == -1;
+		assert pp.indexAt(1) == 3;
+		assert pp.indexAt(2) == -1;
+		assert pp.indexAt(3) == -1;
+
+		// test unbound node search
+		path = "pathA.pathB{3}.pathC.pathD";
+		pp.parse(path);
+		assert pp.nextUnboundNode(0) == 1;
+		assert pp.nextUnboundNode(1) == 1;
+		assert pp.nextUnboundNode(2) == -1;
+		assert pp.nextUnboundNode(3) == -1;
+
+		// test upto
+		assert "pathA".equals(pp.upto(0).toString());
+		assert "pathA.pathB{3}".equals(pp.upto(1).toString());
+		assert "pathA.pathB{3}.pathC".equals(pp.upto(2).toString());
+		assert "pathA.pathB{3}.pathC.pathD".equals(pp.upto(3).toString());
 	}
 }
