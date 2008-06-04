@@ -34,7 +34,7 @@ public class DefaultTableCellTransformer implements ITableCellTransformer {
 				PropKey pk = findPropKey(prop, propKeys);
 				if(pk != null) {
 					propPath.parse(prop);
-					IPropertyValue pv = rowData.getProp(propPath);
+					IPropertyValue pv = rowData.getValue(propPath);
 
 					// self formatting type..
 					if(pv.getType().isSelfFormatting()) {

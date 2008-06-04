@@ -7,6 +7,7 @@ package com.tll.client.admin;
 
 import com.tll.client.IMarshalable;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedOneProperty;
 
 /**
@@ -88,7 +89,7 @@ public final class AdminContext implements IMarshalable {
 	 */
 	public Model getUserAccount() {
 		assert user != null;
-		RelatedOneProperty apv = user.relatedOne("account");
+		RelatedOneProperty apv = user.relatedOne(new PropertyPath("account"));
 		return apv == null ? null : apv.getModel();
 	}
 

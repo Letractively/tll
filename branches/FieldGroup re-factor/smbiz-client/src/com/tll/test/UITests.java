@@ -32,6 +32,7 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -201,7 +202,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 	private void setTestModel(Model address) {
 		testModel = new Model();
-		testModel.setRelatedOne("address", address);
+		testModel.set(new RelatedOneProperty(EntityType.ADDRESS, "address", true, address));
 		testModel.set(new BooleanPropertyValue("bflabel", true));
 		testModel.set(new BooleanPropertyValue("bf", false));
 	}

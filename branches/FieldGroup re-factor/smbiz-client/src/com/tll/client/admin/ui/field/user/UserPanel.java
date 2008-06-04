@@ -16,6 +16,7 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
@@ -119,15 +120,19 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 	protected void onBeforeBind(Model model) {
 		super.onBeforeBind(model);
 
+		final PropertyPath path = new PropertyPath();
+
 		// set the parent account view link
 		lnkAccount.setText(model.asString("account.name"));
-		Model account = model.relatedOne("account").getModel();
+		path.parse("account");
+		Model account = model.relatedOne(path).getModel();
 		RefKey accountRef = account.getRefKey();
 		EditViewRequest vr = new EditViewRequest(this, AccountEditView.klas, accountRef);
 		lnkAccount.setViewRequest(vr);
 
 		// check the authorities bound to the user
-		Iterator<IndexedProperty> itr = model.relatedMany("authoritys").iterator();
+		path.parse("authoritys");
+		Iterator<IndexedProperty> itr = model.relatedMany(path).iterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				IndexedProperty auth = itr.next();

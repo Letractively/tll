@@ -243,15 +243,19 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		}
 		tabAddresses.clear();
 
+		final PropertyPath path = new PropertyPath();
+
 		// bind
-		RelatedManyProperty pvAddresses = model.relatedMany("addresses");
+		path.parse("addresses");
+		RelatedManyProperty pvAddresses = model.relatedMany(path);
 		for(AddressType at : AddressType.values()) {
 			AccountAddressPanel aap = null;
 			if(pvAddresses != null) {
 				Iterator<IndexedProperty> itr = pvAddresses.iterator();
+				path.parse("type");
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
-					if(at == ip.getModel().getProp("type").getValue()) {
+					if(at == ip.getModel().getValue(path).getValue()) {
 						int index = ip.getIndex();
 						if(lastAccountAddressIndex < index) lastAccountAddressIndex = index;
 						aap = new AccountAddressPanel(at, index);

@@ -74,7 +74,7 @@ public class ModelCopyTest extends AbstractModelTest {
 		for(final Iterator<IPropertyBinding> itr = source.iterator(); itr.hasNext();) {
 			final IPropertyBinding srcPv = itr.next();
 			final String propName = srcPv.getPropertyName();
-			final IPropertyBinding cpyPv = copy.getPropertyBinding(propName);
+			final IPropertyBinding cpyPv = copy.getBinding(new PropertyPath(propName));
 
 			// verify like types
 			validateEqualTypes(srcPv, cpyPv);

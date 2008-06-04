@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
@@ -377,7 +376,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 			else {
 				propPath.parse(fld.getPropertyName());
-				IPropertyValue pv = model.getProp(propPath);
+				IPropertyValue pv = model.getValue(propPath);
 				if(pv == null) {
 					fld.clear();
 				}
@@ -420,7 +419,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 					try {
 						propPath.parse(fld.getPropertyName());
 
-						int n = propPath.getNextUnboundNode(0);
+						int n = propPath.nextUnboundNode(0);
 						if(n >= 0) {
 							// unbound property!
 							PropertyPath unboundPath = propPath.upto(n);
@@ -436,16 +435,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						}
 						else {
 							// existing model property
-							pv = model.getProp(propPath);
+							pv = model.getValue(propPath);
 							if(pv != null) {
 								if(fld.updateModel(pv)) {
 									changed = true;
 								}
 							}
 						}
-					}
-					catch(MalformedPropPathException e) {
-						throw new IllegalStateException(e.getMessage());
 					}
 					catch(IllegalArgumentException e) {
 						throw new IllegalStateException(e.getMessage());
@@ -460,7 +456,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 					// IPropertyBinding pb = model.getPropertyBinding(upp);
 					if(upp.isIndexed()) {
 						// unbound indexed property
-						RelatedManyProperty rmp = (RelatedManyProperty) model.getPropertyBinding(upp);
+						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp);
 					}
 					else {
 						// unbound related one or many property

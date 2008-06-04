@@ -13,12 +13,9 @@ package com.tll.client.model;
  * <li>Standard OGNL format.<br>
  * E.g.: <code>propA.propB.propC[i].propD</code>
  * <li>Unbound format:<br>
- * <code>propA.&propB</code> (indicates <code>propB</code> is an "unbound"
- * property)<br>
  * <code>propA.propB{i}.propC</code> (indicates <code>propB</code> is an
  * "unbound" <em>indexed</em> property)<br>
- * <em>NOTE: </em><code>propA.&propB{i}</code> is considered "undefined"
- * (not supported).
+ * <em>NOTE: </em>Currently, only indexed properties may be marked as unbound.
  * </ol>
  * @author jpk
  */
@@ -34,12 +31,6 @@ public class PropertyPath {
 	private static final char UNBOUND_LEFT_INDEX_CHAR = '{';
 
 	private static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
-
-	/**
-	 * Used to indicate a non-idexed (related one) node in a property path is
-	 * "unbound"
-	 */
-	private static final char UNBOUND_PREFIX_CHAR = '&';
 
 	/**
 	 * Chains the given arguments together to form the corresponding property
@@ -83,26 +74,33 @@ public class PropertyPath {
 	}
 
 	/**
+	 * Assembles an <em>unbound</em> indexed property name given a the indexable
+	 * property name and the desired index.
+	 * @param indexablePropName
+	 * @param index
+	 * @return The unbound indexed property name
+	 */
+	public static String indexedUnbound(String indexablePropName, int index) {
+		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + index + UNBOUND_RIGHT_INDEX_CHAR;
+	}
+
+	/**
 	 * Removes all indexing and unbound symbols from a property node String
 	 * returning the property name.
-	 * @param singleProp The property path node String
+	 * @param prop The property path node String
 	 * @return The stripped property name or <code>null</code> if the given prop
 	 *         is <code>null</code>.
 	 */
-	private static String strip(String singleProp) {
-		if(singleProp == null) return null;
+	private static String strip(String prop) {
+		if(prop == null) return null;
 
-		if(singleProp.charAt(0) == UNBOUND_PREFIX_CHAR) {
-			singleProp = singleProp.substring(1);
-		}
+		int si = prop.indexOf(LEFT_INDEX_CHAR);
+		if(si > 0) return prop.substring(0, si);
 
-		int si = singleProp.indexOf(LEFT_INDEX_CHAR);
-		if(si > 0) return singleProp.substring(0, si);
+		si = prop.indexOf(UNBOUND_LEFT_INDEX_CHAR);
+		if(si > 0) return prop.substring(0, si);
 
-		si = singleProp.indexOf(UNBOUND_LEFT_INDEX_CHAR);
-		if(si > 0) return singleProp.substring(0, si);
-
-		return singleProp;
+		return prop;
 	}
 
 	/**
@@ -115,6 +113,7 @@ public class PropertyPath {
 	 *         negative.
 	 */
 	private static int resolveIndex(String path) throws MalformedPropPathException {
+		if(path == null) return -1;
 		int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = -1;
 		if(bi < 0) {
 			bi = path.indexOf(UNBOUND_LEFT_INDEX_CHAR);
@@ -129,7 +128,7 @@ public class PropertyPath {
 			// indexed property prop name
 			final String sindx = path.substring(bi + 1, ebi);
 			try {
-				int rmIndx = Integer.parseInt(sindx);
+				final int rmIndx = Integer.parseInt(sindx);
 				if(rmIndx < 0) {
 					throw new MalformedPropPathException("Negative index in property path: " + path);
 				}
@@ -138,7 +137,6 @@ public class PropertyPath {
 			catch(NumberFormatException nfe) {
 				throw new MalformedPropPathException("Invalid index '" + sindx + "' in property path: " + path);
 			}
-
 		}
 		return -1;
 	}
@@ -154,9 +152,9 @@ public class PropertyPath {
 	private int len;
 
 	/**
-	 * Offsets of all occurring '.' chars in the prop path
+	 * The atomic nodes of the property path dictated by the indices of dot chars.
 	 */
-	private int[] indices;
+	private String[] nodes;
 
 	/**
 	 * Constructor
@@ -178,38 +176,34 @@ public class PropertyPath {
 	 * Parses a property path.
 	 * @param propPath The property path String to be parsed. When
 	 *        <code>null</code> or empty, en empty property path is set.
-	 * @throws MalformedPropPathException When the property path is found to be
-	 *         mal-formed.
 	 */
 	public void parse(String propPath) {
 		if(propPath == null || propPath.length() == 0) {
-			indices = null;
+			nodes = null;
 			len = 0;
 			this.propPath = null;
 		}
 		else {
+			final String[] props = propPath.split("\\.");
+			len = nodes.length;
 
 			// special case: paymentInfo.paymentData.
-			final int pdi = propPath.indexOf("paymentData");
+			final boolean hasPaymentData = (propPath.indexOf("paymentData") >= 0);
 
-			final int len = propPath.length();
-			int numDots = 0;
-			for(int i = 0; i < len; ++i) {
-				if(propPath.charAt(i) == '.') numDots++;
-			}
+			nodes = new String[hasPaymentData ? len - 1 : len];
 
-			indices = new int[(pdi >= 0) ? numDots : numDots + 1];
-
-			int i, indicesIndex = 0;
-			for(i = 0; i < len; ++i) {
-				if(propPath.charAt(i) == '.') {
-					if(pdi == -1 || i != (pdi + 1)) {
-						indices[indicesIndex++] = i;
-					}
+			for(int i = 0; i < len; i++) {
+				String prop = props[i];
+				if(i < len - 1 && "paymentData".equals(prop)) {
+					nodes[i] = prop + '.' + props[++i];
+				}
+				else {
+					nodes[i] = prop;
 				}
 			}
+			if(hasPaymentData) len--;
+
 			this.propPath = propPath;
-			this.len = i + 1;
 		}
 	}
 
@@ -227,32 +221,13 @@ public class PropertyPath {
 	}
 
 	/**
-	 * Extracts the single path at the desired node index.
-	 * @param nodeIndex The node index
-	 * @return The single node property path (i.e. no dots).
-	 */
-	private String getNode(int nodeIndex) {
-		if(propPath == null) return null;
-		if(nodeIndex == 0) {
-			// first prop node
-			return propPath.substring(0, indices[0]);
-		}
-		if(nodeIndex == indices.length) {
-			// last prop node
-			return propPath.substring(indices[nodeIndex - 1]);
-		}
-		// [assume] inner prop node
-		return propPath.substring(indices[nodeIndex - 1], indices[nodeIndex]);
-	}
-
-	/**
 	 * Extracts the property name at the given node index stripping indexing
 	 * chars.
 	 * @param nodeIndex The node index (depth into the property path).
 	 * @return The property name w/o indexing symbols
 	 */
 	public String nameAt(int nodeIndex) {
-		return strip(getNode(nodeIndex));
+		return nodes == null ? null : strip(nodes[nodeIndex]);
 	}
 
 	/**
@@ -264,7 +239,25 @@ public class PropertyPath {
 	 *         negative.
 	 */
 	public int indexAt(int nodeIndex) throws MalformedPropPathException {
-		return resolveIndex(getNode(nodeIndex));
+		return nodes == null ? -1 : resolveIndex(nodes[nodeIndex]);
+	}
+
+	/**
+	 * Returns the first found node index that is unbound starting at the given
+	 * index.
+	 * @param index The node index where searching begins
+	 * @return Node index of the nearest node that is unbound or <code>-1</code>
+	 *         if no unbound node is found.
+	 */
+	public int nextUnboundNode(int index) {
+		int i = index;
+		do {
+			final String prop = nodes[i];
+			if(prop.charAt(prop.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR) {
+				return i;
+			}
+		} while(++i < len);
+		return -1;
 	}
 
 	/**
@@ -273,7 +266,17 @@ public class PropertyPath {
 	 * @return The sub-property path
 	 */
 	public PropertyPath upto(int index) {
-		return new PropertyPath(propPath.substring(0, indices[index]));
+		if(nodes == null) return null;
+		if(index == 0) return new PropertyPath(nodes[0]);
+		if(index == len - 1) return this;
+
+		assert propPath != null;
+		StringBuffer sb = new StringBuffer(propPath.length());
+		for(int i = 0; i <= index; ++i) {
+			sb.append(nodes[i]);
+			if(i < index) sb.append('.');
+		}
+		return new PropertyPath(sb.toString());
 	}
 
 	/**
@@ -281,7 +284,7 @@ public class PropertyPath {
 	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
 	 */
 	public int size() {
-		return indices == null ? 0 : indices.length + 1;
+		return len;
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import com.tll.model.schema.PropertyType;
  * serves to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IRefKeyProvider {
+public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 
 	/**
 	 * Entity id property name
@@ -90,13 +90,6 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * @param type the type to set
-	 */
-	public void setEntityType(EntityType type) {
-		this.entityType = type;
-	}
-
-	/**
 	 * Provides the <em>unique</em> {@link RefKey} for this model/entity
 	 * instance.
 	 */
@@ -117,20 +110,6 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 		// cleared model!
 		assert /*(id != null) && */(entityType != null);
 		return new RefKey(entityType, id, name);
-	}
-
-	/**
-	 * Tests whether the given property path is associated with a nested
-	 * {@link IPropertyValue}.
-	 * @param propPath
-	 */
-	public boolean isPropertyDefined(String propPath) {
-		try {
-			return getPropertyBinding(new PropertyPath(propPath)) != null;
-		}
-		catch(IllegalArgumentException e) {
-			return false;
-		}
 	}
 
 	/**
@@ -173,7 +152,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(new PropertyPath(propPath));
+		IPropertyBinding prop = getBinding(new PropertyPath(propPath));
 		if(prop == null) return null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
@@ -196,7 +175,7 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @throws IllegalArgumentException When the given property path is
 	 *         <code>null</code> or mal-formed.
 	 */
-	public IPropertyBinding getPropertyBinding(PropertyPath propPath) throws IllegalArgumentException {
+	public IPropertyBinding getBinding(PropertyPath propPath) throws IllegalArgumentException {
 		if(propPath == null) {
 			return new RelatedOneProperty(getEntityType(), null, true, this);
 		}
@@ -218,24 +197,14 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * Resolves a property path to the nested {@link IPropertyBinding}. This is a
-	 * generic way to obtain a defined model property.
-	 * @param propPath
-	 * @see #getPropertyBinding(PropertyPath)
-	 */
-	public IPropertyBinding getPropertyBinding(String propPath) throws IllegalArgumentException {
-		return getPropertyBinding(new PropertyPath(propPath));
-	}
-
-	/**
 	 * Retrieves a property value from the model given a property path.
 	 * @param propPath A parsed property path
 	 * @return The resolved IPropertyValue or <code>null</code> if not set.
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IPropertyValue}.
 	 */
-	public IPropertyValue getProp(PropertyPath propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(propPath);
+	public IPropertyValue getValue(PropertyPath propPath) throws IllegalArgumentException {
+		IPropertyBinding prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a value property");
@@ -251,49 +220,13 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related one property.
 	 */
-	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(new PropertyPath(propPath));
+	public RelatedOneProperty relatedOne(PropertyPath propPath) throws IllegalArgumentException {
+		IPropertyBinding prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
 		}
 		return (RelatedOneProperty) prop;
-	}
-
-	/**
-	 * Sets a related one property creating it if found not to exist.
-	 * @param propPath The property path pointing to the related one property to
-	 *        set
-	 * @param model The related one model to set
-	 * @throws IllegalArgumentException When the property path is mal-formed or
-	 *         refers to an existing property that is not a related one model ref.
-	 */
-	public void setRelatedOne(String propPath, Model model) throws IllegalArgumentException {
-		RelatedOneProperty ropv;
-		PropPathBinding binding = null;
-		try {
-			binding = resolvePropertyPath(new PropertyPath(propPath));
-			IPropertyBinding prop = binding.getPropertyBinding();
-			if(prop.getType() != PropertyType.RELATED_ONE) {
-				throw new IllegalArgumentException("Property '" + propPath + "' is not a related-one property");
-			}
-			ropv = (RelatedOneProperty) prop;
-			ropv.setModel(model);
-		}
-		catch(UnsetPropertyException upe) {
-			// ensure the model is non-null since we must resolve the related type!
-			if(model == null) {
-				throw new IllegalArgumentException("The related one model must be specified");
-			}
-			// NOTE: we presume the related one property is a reference!!
-			// TODO determine if we need to have reference as a method param
-			final PropertyPath pp = binding.getPropPath();
-			ropv = new RelatedOneProperty(model.getEntityType(), pp.nameAt(pp.size() - 1), true, model);
-			binding.getModel().set(ropv);
-		}
-		catch(PropertyPathException ppe) {
-			throw new IllegalArgumentException("Unable to set related one property '" + propPath + "': " + ppe.getMessage());
-		}
 	}
 
 	/**
@@ -304,8 +237,8 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
-	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(new PropertyPath(propPath));
+	public RelatedManyProperty relatedMany(PropertyPath propPath) throws IllegalArgumentException {
+		IPropertyBinding prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related many property");
@@ -322,42 +255,14 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
-	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getPropertyBinding(new PropertyPath(propPath));
+	public IndexedProperty indexed(PropertyPath propPath) throws IllegalArgumentException {
+		IPropertyBinding prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");
 		}
 		return (IndexedProperty) prop;
 	}
-
-	/**
-	 * Sets or replaces an <em>existing</em> property value's held value.
-	 * @param propPath The property path
-	 * @param value The value to set
-	 */
-	/*
-	public void setProp(String propPath, Object value) throws IllegalArgumentException {
-		IPropertyValue rpv;
-		PropPathBinding binding = null;
-		try {
-			binding = resolvePropertyPath(propPath);
-			IPropertyBinding prop = binding.getPropertyBinding();
-			if(prop instanceof IPropertyValue == false) {
-				throw new IllegalArgumentException("Property '" + propPath + "' is an existing relational property");
-			}
-			rpv = (IPropertyValue) prop;
-			rpv.setValue(value);
-		}
-		catch(UnsetPropertyException upe) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not exist");
-		}
-		catch(PropertyPathException ppe) {
-			throw new IllegalArgumentException("Unable to set the related one model reference '" + propPath + "': "
-					+ ppe.getMessage());
-		}
-	}
-	*/
 
 	/**
 	 * Is this model entity new?
@@ -378,40 +283,12 @@ public final class Model implements IMarshalable, IRefKeyProvider {
 	}
 
 	/**
-	 * Sets the entity id
-	 * @param id The id to set
-	 */
-	public void setId(Integer id) {
-		IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
-		if(prop == null) {
-			prop = new IntPropertyValue(ID_PROPERTY, null, id);
-			set(prop);
-			return;
-		}
-		prop.setInteger(id);
-	}
-
-	/**
 	 * Retrieves the entities' name property value
 	 * @return The entities' name
 	 */
 	public String getName() {
 		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
 		return prop == null ? null : prop.getString();
-	}
-
-	/**
-	 * Sets the entities' name property
-	 * @param name The name to set
-	 */
-	public void setName(String name) {
-		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
-		if(prop == null) {
-			prop = new StringPropertyValue(NAME_PROPERTY, null, name);
-			set(prop);
-			return;
-		}
-		prop.setString(name);
 	}
 
 	/**
