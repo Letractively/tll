@@ -317,13 +317,13 @@ public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 	 *         property path
 	 */
 	private PropPathBinding resolvePropertyPath(final PropertyPath propPath) throws PropertyPathException {
-		if(propPath == null || propPath.size() < 1) {
+		if(propPath == null || propPath.depth() < 1) {
 			throw new MalformedPropPathException("No property specified.");
 		}
 
 		IPropertyBinding prop = null;
 		Model model = this, parentModel = null;
-		final int len = propPath.size();
+		final int len = propPath.depth();
 		for(int i = 0; i < len; i++) {
 			final String pname = propPath.nameAt(i);
 			final int index = propPath.indexAt(i);

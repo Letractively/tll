@@ -30,7 +30,7 @@ public class PropertyPathTest {
 		path = "path";
 		pp.parse(path);
 		assert path.equals(pp.toString());
-		assert pp.size() == 1;
+		assert pp.depth() == 1;
 		assert pp.nameAt(0) == path;
 		assert pp.indexAt(0) == -1;
 		try {
@@ -45,7 +45,7 @@ public class PropertyPathTest {
 		path = "path[2]";
 		pp.parse(path);
 		assert path.equals(pp.toString());
-		assert pp.size() == 1;
+		assert pp.depth() == 1;
 		assert "path".equals(pp.nameAt(0));
 		assert pp.indexAt(0) == 2;
 
@@ -53,7 +53,7 @@ public class PropertyPathTest {
 		path = "path[a]";
 		pp.parse(path);
 		assert path.equals(pp.toString());
-		assert pp.size() == 1;
+		assert pp.depth() == 1;
 		assert "path".equals(pp.nameAt(0));
 		try {
 			pp.indexAt(0);
@@ -66,7 +66,7 @@ public class PropertyPathTest {
 		path = "path{2}";
 		pp.parse(path);
 		assert path.equals(pp.toString());
-		assert pp.size() == 1;
+		assert pp.depth() == 1;
 		assert "path".equals(pp.nameAt(0));
 		assert pp.indexAt(0) == 2;
 		assert pp.nextUnboundNode(0) == 0;
@@ -75,7 +75,7 @@ public class PropertyPathTest {
 		path = "pathA.pathB[3].pathC.pathD";
 		pp.parse(path);
 		assert pp.toString() == path;
-		assert pp.size() == 4;
+		assert pp.depth() == 4;
 		assert "pathA".equals(pp.nameAt(0));
 		assert "pathB".equals(pp.nameAt(1));
 		assert "pathC".equals(pp.nameAt(2));
@@ -85,20 +85,33 @@ public class PropertyPathTest {
 		assert pp.indexAt(2) == -1;
 		assert pp.indexAt(3) == -1;
 
-		// test unbound node search
 		path = "pathA.pathB{3}.pathC.pathD";
 		pp.parse(path);
+
+		// test unbound node search
 		assert pp.nextUnboundNode(0) == 1;
 		assert pp.nextUnboundNode(1) == 1;
 		assert pp.nextUnboundNode(2) == -1;
 		assert pp.nextUnboundNode(3) == -1;
 
-		// test upto
-		assert "pathA".equals(pp.parent(0).toString());
-		assert "pathA.pathB{3}".equals(pp.parent(1).toString());
-		assert "pathA.pathB{3}.pathC".equals(pp.parent(2).toString());
-		assert "pathA.pathB{3}.pathC.pathD".equals(pp.parent(3).toString());
+		// test parent method
+		assert null == pp.parent(0);
+		assert "pathA".equals(pp.parent(1).toString());
+		assert "pathA.pathB{3}".equals(pp.parent(2).toString());
+		assert "pathA.pathB{3}.pathC".equals(pp.parent(3).toString());
 
-		assert "pathA.pathB".equals(pp.parent(1).indexedParent().toString());
+		// test indexedParent method
+		assert "pathA.pathB".equals(pp.parent(2).indexedParent().toString());
+
+		// test nested method
+		assert "pathB{3}.pathC.pathD".equals(pp.nested(0).toString());
+		assert "pathC.pathD".equals(pp.nested(1).toString());
+		assert "pathD".equals(pp.nested(2).toString());
+		assert pp.nested(3) == null;
+
+		// test nested method against single prop name
+		path = "pathA";
+		pp.parse(path);
+		assert pp.nested(0) == null;
 	}
 }

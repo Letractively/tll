@@ -95,12 +95,11 @@ public final class PropertyPath {
 	public static String replace(String replParentPath, String propName) {
 		final PropertyPath repl = new PropertyPath(replParentPath);
 		final PropertyPath path = new PropertyPath(propName);
-		if(path.size() < repl.size()) {
+		if(path.depth() < repl.depth()) {
 			throw new IllegalArgumentException(
 					"The replacement parent property path size is greater than the targeted property name size");
 		}
-		// TODO finish
-		return null;
+		return getPropertyPath(repl.toString(), path.nested(repl.depth()).toString());
 	}
 
 	/**
@@ -227,11 +226,25 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * @return The length, in characters, of the property path String.
+	 */
+	public int length() {
+		return propPath == null ? 0 : propPath.length();
+	}
+
+	/**
 	 * @return The number of "nodes" in the parsed property path.<br>
 	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
 	 */
-	public int size() {
+	public int depth() {
 		return len;
+	}
+
+	/**
+	 * @return The deepest property path node index.
+	 */
+	public int lastNodeIndex() {
+		return nodes == null ? -1 : len - 1;
 	}
 
 	/**
@@ -302,45 +315,41 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Calculates the overall offset relative to the {@link #propPath} of the
-	 * given node index.
+	 * Calculates the offset relative to the {@link #propPath} String of a desired
+	 * node index. The offset, when non-zero, points to the first character after
+	 * the preceeding dot that represents that node.
 	 * @param index The node index
 	 * @return The prop path offset
 	 */
 	private int offset(int index) {
 		int offset = 0;
-		for(int i = 0; i <= index; ++i) {
-			offset += nodes[i].length();
+		for(int i = 0; i < index; ++i) {
+			offset += (nodes[i].length() + 1);
 		}
-		return offset + index;
+		return offset;
 	}
 
 	/**
-	 * Provides the property path <em>upto</em> the given node index optionally
-	 * stripping the indexing at the ending node.
-	 * @param index The node index at which to stop
-	 * @return A PropertyPath
+	 * Extracts the property path <em>upto</em> the given node index.
+	 * @param index The node index from which the parent path is determined
+	 * @return The parent property path of the given node index
 	 */
 	public PropertyPath parent(int index) {
-		if(nodes == null) return null;
+		if(nodes == null || index < 1) return null;
 		assert propPath != null && len >= 0;
-		if(index == 0) return new PropertyPath(nodes[0]);
-		if(index == len - 1) return this;
-		return new PropertyPath(propPath.substring(0, offset(index)));
+		return new PropertyPath(propPath.substring(0, offset(index) - 1));
 	}
 
 	/**
-	 * Extracts a nested property path beginning at the given node index. I.e.:
-	 * everything to the right of the node index (dot).
+	 * The reverse of {@link #parent(int)}. Extracts the property path starting
+	 * <em>from</em> everything to the right of the node index (dot).
 	 * @param index The node index indicating the nest point
 	 * @return The nested property path at the desired point
 	 */
 	public PropertyPath nested(int index) {
-		if(nodes == null) return null;
+		if(nodes == null || len < 2 || index >= len - 1) return null;
 		assert propPath != null && len >= 0;
-		if(index == 0) return this;
-		if(index == len - 1) return new PropertyPath(nodes[len - 1]);
-		return new PropertyPath(propPath.substring(offset(index) + 1));
+		return new PropertyPath(propPath.substring(offset(index + 1)));
 	}
 
 	@Override

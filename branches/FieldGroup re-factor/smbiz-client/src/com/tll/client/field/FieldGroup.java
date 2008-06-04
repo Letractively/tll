@@ -456,8 +456,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 					// create the missing properties in the model
 					if(upp.isIndexed()) {
 						// unbound indexed property
-						RelatedManyProperty rmp =
-								(RelatedManyProperty) model.getBinding(upp.parent(upp.size() - 1).indexedParent());
+						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
 						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
 						if(stub == null) {
 							throw new IllegalStateException("Unable to acquire a fresh " + rmp.getRelatedType().getName());
