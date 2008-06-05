@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.TextField;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -32,19 +34,25 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	protected void doInit() {
 		super.doInit();
 
+		final TextField fname = createNameEntityField();
+		fields.addField(fname);
+
+		final DateField[] ftimestamps = createTimestampEntityFields();
+		fields.addFields(ftimestamps);
+
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
-		canvas.addField(name);
+		canvas.addField(fname);
 		canvas.addField(code);
 		canvas.addField(description);
 
 		canvas.addWidget(createAvailabilityGrid());
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(dateCreated);
+		canvas.addField(ftimestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(ftimestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();

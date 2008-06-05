@@ -277,6 +277,29 @@ public abstract class FieldGroupPanel extends Composite {
 		return new RadioGroupField(propName, lblTxt, dataMap, renderHorizontal);
 	}
 
+	/**
+	 * Creates entity date created and date modified read only fields returning
+	 * them in an array where the first element is the date created field.
+	 * @return DateField array
+	 */
+	protected static final DateField[] createTimestampEntityFields() {
+		DateField dateCreated = fdate(Model.DATE_CREATED_PROPERTY, "Created", GlobalFormat.DATE);
+		DateField dateModified = fdate(Model.DATE_MODIFIED_PROPERTY, "Modified", GlobalFormat.DATE);
+		dateCreated.setReadOnly(true);
+		dateModified.setReadOnly(true);
+		return new DateField[] {
+			dateCreated,
+			dateModified };
+	}
+
+	/**
+	 * Creates an entity name text field.
+	 * @return The created entity name field
+	 */
+	protected static final TextField createNameEntityField() {
+		return ftext(Model.NAME_PROPERTY, "Name", 30);
+	}
+
 	@Override
 	public final String toString() {
 		return fields.getPropertyName();

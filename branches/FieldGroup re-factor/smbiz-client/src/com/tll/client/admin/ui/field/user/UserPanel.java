@@ -22,7 +22,7 @@ import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.NamedTimeStampEntityPanel;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
 import com.tll.model.EntityType;
@@ -31,7 +31,7 @@ import com.tll.model.EntityType;
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends NamedTimeStampEntityPanel {
+public class UserPanel extends FieldGroupPanel {
 
 	protected TextField emailAddress;
 	protected CheckboxField locked;
@@ -60,8 +60,8 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 
 	@Override
 	protected void doInit() {
-		super.doInit();
-
+		final TextField fname = createNameEntityField();
+		final DateField[] ftimestamps = createTimestampEntityFields();
 		emailAddress = ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);
 		locked = fbool("locked", "Locked");
@@ -80,7 +80,7 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
-		canvas.addField(name);
+		canvas.addField(fname);
 		canvas.addField(emailAddress);
 		canvas.addField(locked);
 		canvas.stopFlow();
@@ -92,9 +92,9 @@ public class UserPanel extends NamedTimeStampEntityPanel {
 		lnkAccount = new ViewRequestLink();
 		canvas.addWidget("Account", lnkAccount);
 
-		canvas.addField(dateCreated);
+		canvas.addField(ftimestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(ftimestamps[1]);
 		canvas.resetFlow();
 
 		// second row (authorities)

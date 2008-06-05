@@ -32,7 +32,7 @@ import com.tll.client.ui.CSS;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.NamedTimeStampEntityPanel;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
@@ -46,7 +46,7 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends NamedTimeStampEntityPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
+public class AccountPanel extends FieldGroupPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
 
 	protected TextField parent;
 	protected SelectField status;
@@ -68,7 +68,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends NamedTimeStampEntityPanel implements ClickListener {
+	static final class AccountAddressPanel extends FieldGroupPanel implements ClickListener {
 
 		final AddressType addressType;
 		final int index;
@@ -96,10 +96,10 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 		@Override
 		protected void doInit() {
-			super.doInit();
-
 			addressPanel.init();
 			fields.addField("address", addressPanel.getFields());
+			TextField fname = createNameEntityField();
+			fields.addField(fname);
 
 			// TODO determine why we need this as we shouldn't!!!
 			// setMarkDeleted(false);
@@ -107,7 +107,7 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 			// account address name row
-			canvas.addField(name);
+			canvas.addField(fname);
 			canvas.addWidget(btnDeleteToggle);
 
 			// address row
@@ -155,8 +155,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 	@Override
 	protected void doInit() {
-		super.doInit();
-
+		final TextField fname = createNameEntityField();
+		final DateField[] ftimestamps = createTimestampEntityFields();
 		parent = ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
 		// parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -196,16 +196,16 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
-		canvas.addField(name);
+		canvas.addField(fname);
 		canvas.addField(status);
 		canvas.addField(dateCancelled);
 		canvas.addField(currency);
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		canvas.addField(parent);
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(dateCreated);
+		canvas.addField(ftimestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(ftimestamps[1]);
 
 		// second row (billing)
 		canvas.newRow();

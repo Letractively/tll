@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.ui.field.NamedTimeStampEntityPanel;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
 
@@ -14,7 +14,7 @@ import com.tll.client.ui.field.TextField;
  * InterfaceRelatedPanel - Abstract field panel for interface type entities.
  * @author jpk
  */
-public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
+public abstract class InterfaceRelatedPanel extends FieldGroupPanel {
 
 	protected boolean bindCodeAndDescFields = true;
 	protected TextField code;
@@ -39,8 +39,6 @@ public abstract class InterfaceRelatedPanel extends NamedTimeStampEntityPanel {
 
 	@Override
 	protected void doInit() {
-		super.doInit();
-
 		if(bindCodeAndDescFields) {
 			code = ftext("code", "Code", 20);
 			description = ftextarea("description", "Description", 3, 18);

@@ -296,12 +296,20 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Adds a field directly under this field group.
-	 * @param field The field to add
+	 * Adds an IField directly under this FieldGroup.
+	 * @param field The IField to add
 	 */
 	public void addField(IField field) {
-		assert field != null;
 		fields.add(field);
+	}
+
+	/**
+	 * Adds an array of {@link IField}s directly under this FieldGroup.
+	 * @param farray The IField array
+	 */
+	public void addFields(IField[] farray) {
+		for(IField f : farray)
+			fields.add(f);
 	}
 
 	/**

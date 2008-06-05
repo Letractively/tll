@@ -7,6 +7,8 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.TextField;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -25,19 +27,25 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	protected void doInit() {
 		super.doInit();
 
+		final TextField fname = createNameEntityField();
+		fields.addField(fname);
+
+		final DateField[] ftimestamps = createTimestampEntityFields();
+		fields.addFields(ftimestamps);
+
 		// pnlOption.doInit();
 
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
-		canvas.addField(name);
+		canvas.addField(fname);
 		canvas.addField(code);
 		canvas.addField(description);
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(dateCreated);
+		canvas.addField(ftimestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(ftimestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();
