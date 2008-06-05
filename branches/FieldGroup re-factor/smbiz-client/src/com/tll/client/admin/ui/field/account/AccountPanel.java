@@ -157,6 +157,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	protected void doInit() {
 		final TextField fname = createNameEntityField();
 		final DateField[] ftimestamps = createTimestampEntityFields();
+
 		parent = ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
 		// parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -182,6 +183,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		// listen to tab events
 		tabAddresses.addTabListener(this);
 
+		fields.addField(fname);
+		fields.addFields(ftimestamps);
 		fields.addField(parent);
 		fields.addField(status);
 		fields.addField(dateCancelled);
