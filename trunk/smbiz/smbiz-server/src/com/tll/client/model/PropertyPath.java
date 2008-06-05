@@ -22,16 +22,17 @@ package com.tll.client.model;
  */
 public final class PropertyPath {
 
-	private static final char LEFT_INDEX_CHAR = '[';
-	private static final char RIGHT_INDEX_CHAR = ']';
+	public static final char LEFT_INDEX_CHAR = '[';
+
+	public static final char RIGHT_INDEX_CHAR = ']';
 
 	/**
 	 * Indicates in conjunction with {@link #UNBOUND_RIGHT_INDEX_CHAR} that an
 	 * indexed property path node is unbound.
 	 */
-	private static final char UNBOUND_LEFT_INDEX_CHAR = '{';
+	public static final char UNBOUND_LEFT_INDEX_CHAR = '{';
 
-	private static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
+	public static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
 
 	/**
 	 * Chains the given arguments together to form the corresponding property

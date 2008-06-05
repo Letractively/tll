@@ -75,8 +75,6 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		final PushButton btnDeleteToggle;
 		final AddressPanel addressPanel;
 
-		// Model proto;
-
 		/**
 		 * Constructor
 		 * @param addressType
@@ -287,26 +285,6 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 		tabAddresses.selectTab(0);
 	}
 
-	@Override
-	protected void onBeforeUpdateModel(Model model) {
-		super.onBeforeUpdateModel(model);
-
-		// we need to stub related many account addresses if they exist in the field
-		// group but don't in the account entity (propValGroup)
-
-		RelatedManyProperty addresses = model.relatedMany("addresses");
-		assert addresses != null;
-
-		for(Widget w : tabAddresses) {
-			AccountAddressPanel aap = (AccountAddressPanel) w;
-			if(aap.proto != null) {
-				addresses.add(aap.proto);
-				aap.proto.setProp("type", aap.addressType);
-				aap.proto.setRelatedOne("account", model);
-			}
-		}
-	}
-
 	public void onClick(Widget sender) {
 		if(sender == persistPymntInfo.getCheckBox()) {
 			paymentInfoPanel.getFields().setEnabled(persistPymntInfo.getCheckBox().isChecked());
@@ -318,8 +296,8 @@ public class AccountPanel extends NamedTimeStampEntityPanel implements ClickList
 
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanel aap = new AccountAddressPanel(at, ++lastAccountAddressIndex);
-			aap.proto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
-			String parentPropPath = PropertyPath.indexed("addresses", aap.index);
+			aap.init();
+			String parentPropPath = PropertyPath.indexedUnbound("addresses", aap.index);
 			fields.addField(parentPropPath, aap.getFields());
 
 			tabAddresses.insert(aap, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);

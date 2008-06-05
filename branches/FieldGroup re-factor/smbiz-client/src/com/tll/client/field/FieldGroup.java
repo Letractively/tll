@@ -23,6 +23,7 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.util.StringUtil;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -461,13 +462,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						if(stub == null) {
 							throw new IllegalStateException("Unable to acquire a fresh " + rmp.getRelatedType().getName());
 						}
-						PropertyPath actualPath = new PropertyPath(rmp.add(stub));
-						String last = actualPath.pathAt(actualPath.lastNodeIndex());
 						// now we need to propagate the actual property path to the child
 						// fields
+						String upps = upp.toString();
+						String app = rmp.add(stub); // actual property path
+						String oldIndexToken = upps.substring(0, upps.lastIndexOf(PropertyPath.UNBOUND_LEFT_INDEX_CHAR));
+						String newIndexToken = app.substring(0, app.lastIndexOf(PropertyPath.UNBOUND_LEFT_INDEX_CHAR));
 						Set<IField> ufields = unboundFields.get(upp);
 						for(IField fld : ufields) {
-
+							fld.setPropertyName(StringUtil.replace(fld.getPropertyName(), oldIndexToken, newIndexToken));
+							// do the model update
+							pv = model.getValue(propPath);
+							if(pv != null) {
+								if(fld.updateModel(pv)) {
+									changed = true;
+								}
+							}
 						}
 					}
 					else {
