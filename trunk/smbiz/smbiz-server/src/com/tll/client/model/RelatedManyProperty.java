@@ -125,7 +125,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		if(list == null) {
 			list = new ArrayList<Model>();
 		}
-		if(indexable.getEntityType() != relatedType) {
+		if(relatedType != null
+				&& !(indexable.getEntityType() == relatedType || relatedType.isSubtype(indexable.getEntityType()))) {
 			throw new IllegalArgumentException("The indexable model must be a " + relatedType.getName());
 		}
 		list.add(indexable);

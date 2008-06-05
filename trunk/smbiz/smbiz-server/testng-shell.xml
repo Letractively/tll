@@ -12,7 +12,7 @@
     </groups>
     -->
     <classes>
-      <class name="com.tll.client.model.PropertyPathTest" />
+      <class name="com.tll.client.model.PropertyPathModelResolutionTest" />
     </classes>
   </test>
 

@@ -26,7 +26,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 	}
 
 	/**
-	 * Test the property path resolution of EXISTING property valuess
+	 * Test the property path resolution of EXISTING property values
 	 * @throws Exception Upon any encountered failure
 	 */
 	@Test
@@ -69,11 +69,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		assert prop != null : "Unable to resolve property path: " + path;
 
 		// test paymentInfo resolution
-		path.parse("paymentInfo.paymentData");
-		prop = model.getBinding(path);
-		assert prop == null : "Able to resolve paymentInfo.paymentData path!";
-
-		path.parse("paymentInfo.paymentData.bankName");
+		path.parse("paymentInfo.paymentData_bankName");
 		prop = model.getBinding(path);
 		assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
 

@@ -86,23 +86,6 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Replaces the parent property path in the given proeprty name with a
-	 * replacement parent property path.
-	 * @param replParentPath The replacement parent property path
-	 * @param propName The property name subject to replacement
-	 * @return Property name with the replaced parent property path
-	 */
-	public static String replace(String replParentPath, String propName) {
-		final PropertyPath repl = new PropertyPath(replParentPath);
-		final PropertyPath path = new PropertyPath(propName);
-		if(path.depth() < repl.depth()) {
-			throw new IllegalArgumentException(
-					"The replacement parent property path size is greater than the targeted property name size");
-		}
-		return getPropertyPath(repl.toString(), path.nested(repl.depth()).toString());
-	}
-
-	/**
 	 * Removes all indexing and unbound symbols from a property node String
 	 * returning the property name.
 	 * @param prop The property path node String
@@ -205,23 +188,39 @@ public final class PropertyPath {
 			final String[] props = propPath.split("\\.");
 			len = props.length;
 
-			// special case: paymentInfo.paymentData.
-			final boolean hasPaymentData = (propPath.indexOf("paymentData") >= 0);
-
-			nodes = new String[hasPaymentData ? len - 1 : len];
+			nodes = new String[len];
 
 			for(int i = 0; i < len; i++) {
 				String prop = props[i];
-				if(i < len - 1 && "paymentData".equals(prop)) {
-					nodes[i] = prop + '.' + props[++i];
-				}
-				else {
-					nodes[i] = prop;
-				}
+				nodes[i] = prop;
 			}
-			if(hasPaymentData) len--;
 
 			this.propPath = propPath;
+		}
+	}
+
+	/**
+	 * Rebuilds the property path from the {@link #nodes} array resetting the
+	 * {@link #propPath} String. If a nodes element is null or empty, it is
+	 * skipped in the rebuild.
+	 */
+	private void rebuild() {
+		if(nodes == null || nodes.length == 0) {
+			propPath = null;
+			len = 0;
+		}
+		else {
+			StringBuffer sb = new StringBuffer();
+			for(int i = 0; i < len; ++i) {
+				String node = nodes[i];
+				if(node != null && node.length() > 0) {
+					if(sb.length() > 0 && !(sb.charAt(sb.length() - 1) == '.')) sb.append('.');
+					sb.append(node);
+				}
+			}
+			propPath = sb.toString();
+			nodes = propPath.split("\\.");
+			len = nodes.length;
 		}
 	}
 
@@ -258,6 +257,15 @@ public final class PropertyPath {
 		if(propPath == null) return false;
 		final char end = propPath.charAt(len - 1);
 		return (end == LEFT_INDEX_CHAR || end == UNBOUND_LEFT_INDEX_CHAR);
+	}
+
+	/**
+	 * Returns the node path of the given node index.
+	 * @param nodeIndex The node index
+	 * @return The node path
+	 */
+	public String pathAt(int nodeIndex) {
+		return nodes == null ? null : nodes[nodeIndex];
 	}
 
 	/**
@@ -299,12 +307,12 @@ public final class PropertyPath {
 	/**
 	 * Returns the first found node index that is unbound starting at the given
 	 * index.
-	 * @param index The node index where searching begins
+	 * @param nodeIndex The node index where searching begins
 	 * @return Node index of the nearest node that is unbound or <code>-1</code>
 	 *         if no unbound node is found.
 	 */
-	public int nextUnboundNode(int index) {
-		int i = index;
+	public int nextUnboundNode(int nodeIndex) {
+		int i = nodeIndex;
 		do {
 			final String prop = nodes[i];
 			if(prop.charAt(prop.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR) {
@@ -318,12 +326,12 @@ public final class PropertyPath {
 	 * Calculates the offset relative to the {@link #propPath} String of a desired
 	 * node index. The offset, when non-zero, points to the first character after
 	 * the preceeding dot that represents that node.
-	 * @param index The node index
+	 * @param nodeIndex The node index
 	 * @return The prop path offset
 	 */
-	private int offset(int index) {
+	private int offset(int nodeIndex) {
 		int offset = 0;
-		for(int i = 0; i < index; ++i) {
+		for(int i = 0; i < nodeIndex; ++i) {
 			offset += (nodes[i].length() + 1);
 		}
 		return offset;
@@ -331,25 +339,41 @@ public final class PropertyPath {
 
 	/**
 	 * Extracts the property path <em>upto</em> the given node index.
-	 * @param index The node index from which the parent path is determined
+	 * @param nodeIndex The node index from which the parent path is determined
 	 * @return The parent property path of the given node index
 	 */
-	public PropertyPath parent(int index) {
-		if(nodes == null || index < 1) return null;
+	public PropertyPath parent(int nodeIndex) {
+		if(nodes == null || nodeIndex < 1) return null;
 		assert propPath != null && len >= 0;
-		return new PropertyPath(propPath.substring(0, offset(index) - 1));
+		return new PropertyPath(propPath.substring(0, offset(nodeIndex) - 1));
 	}
 
 	/**
 	 * The reverse of {@link #parent(int)}. Extracts the property path starting
 	 * <em>from</em> everything to the right of the node index (dot).
-	 * @param index The node index indicating the nest point
+	 * @param nodeIndex The node index indicating the nest point
 	 * @return The nested property path at the desired point
 	 */
-	public PropertyPath nested(int index) {
-		if(nodes == null || len < 2 || index >= len - 1) return null;
+	public PropertyPath nested(int nodeIndex) {
+		if(nodes == null || len < 2 || nodeIndex >= len - 1) return null;
 		assert propPath != null && len >= 0;
-		return new PropertyPath(propPath.substring(offset(index + 1)));
+		return new PropertyPath(propPath.substring(offset(nodeIndex + 1)));
+	}
+
+	/**
+	 * Replaces a single node in the property path.
+	 * @param nodeIndex The index of the node to replace. If the given node index
+	 *        exceeds the depth of this property path, this property path is
+	 *        unaltered.
+	 * @param prop The node replacement String. If <code>null</code> the
+	 *        property path is "shortened" and will <em>not</em> contain the
+	 *        prop at the given node index.
+	 */
+	public void replaceAt(int nodeIndex, String prop) {
+		if(nodes == null || nodeIndex > len - 1) return;
+		assert propPath != null && len >= 0;
+		nodes[nodeIndex] = prop;
+		rebuild();
 	}
 
 	@Override

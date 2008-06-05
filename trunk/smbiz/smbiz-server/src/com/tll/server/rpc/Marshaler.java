@@ -334,7 +334,7 @@ public final class Marshaler {
 							try {
 								final Object oval = bw2.getPropertyValue(pd2.getName());
 								if(oval != null) {
-									final String pn = "paymentData." + pd2.getName();
+									final String pn = "paymentData_" + pd2.getName();
 									model.set(new StringPropertyValue(pn, generatePropertyData(PaymentInfo.class, pn), oval.toString()));
 								}
 							}
@@ -439,7 +439,7 @@ public final class Marshaler {
 
 		for(final Iterator itr = entityGroup.iterator(); itr.hasNext();) {
 			final IPropertyBinding prop = (IPropertyBinding) itr.next();
-			final String propName = prop.getPropertyName();
+			String propName = prop.getPropertyName();
 			final Object pval = prop.getValue();
 			Object val = null;
 
@@ -491,6 +491,11 @@ public final class Marshaler {
 					throw new SystemError("Unhandled Property Value type: " + prop.getType());
 
 			}// switch
+
+			// special case: paymentData_
+			if(propName.startsWith("paymentData_")) {
+				propName = "paymentData." + propName.substring(12);
+			}
 
 			try {
 				bw.setPropertyValue(propName, val);

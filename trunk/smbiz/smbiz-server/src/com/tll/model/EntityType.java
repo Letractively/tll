@@ -72,4 +72,19 @@ public enum EntityType implements INameValueProvider {
 		return INTERFACE.equals(this) || INTERFACE_MULTI.equals(this) || INTERFACE_SINGLE.equals(this)
 				|| INTERFACE_SWITCH.equals(this);
 	}
+
+	/**
+	 * Mimics the java class hierarchy mechanism so we can check for
+	 * <em>compatible</em> types rather than exact equals.
+	 * @return true/false
+	 */
+	public boolean isSubtype(EntityType type) {
+		switch(this) {
+			case ACCOUNT:
+				return type.isAccountType();
+			case INTERFACE:
+				return type.isInterfaceType();
+		}
+		return false;
+	}
 }

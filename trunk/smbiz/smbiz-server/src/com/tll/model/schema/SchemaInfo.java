@@ -206,7 +206,8 @@ public final class SchemaInfo implements ISchemaInfo {
 
 		// relational...
 		CascadeType[] cascades = null;
-		// determine if the relation is cascaded
+
+		// many to one?
 		final ManyToOne mto = m.getAnnotation(ManyToOne.class);
 		if(mto != null) {
 			cascades = mto.cascade();
@@ -214,10 +215,11 @@ public final class SchemaInfo implements ISchemaInfo {
 					(cascades == null || cascades.length == 0));
 		}
 
+		// one to many?
 		final OneToMany otm = m.getAnnotation(OneToMany.class);
 		if(otm != null) {
 			Class<? extends IEntity> rmec =
-					(Class<? extends IEntity>) ((ParameterizedType) rt.getGenericSuperclass()).getActualTypeArguments()[0];
+					(Class<? extends IEntity>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
 			cascades = otm.cascade();
 			return new RelationInfo(EntityUtil.entityTypeFromClass(rmec), PropertyType.RELATED_MANY,
 					(cascades == null || cascades.length == 0));
@@ -225,8 +227,11 @@ public final class SchemaInfo implements ISchemaInfo {
 
 		// TODO make this more generic!
 		if("parent".equals(propName)) {
-			return new RelationInfo(EntityUtil.entityTypeFromClass((Class<? extends IEntity>) rt), PropertyType.RELATED_ONE,
-					true);
+			// NOTE: we can't determine the return type at runtime since, in the
+			// IChildEntity.getParent() case, the return type is generic
+			// so we are forced to pass null for the related type
+			return new RelationInfo(/*EntityUtil.entityTypeFromClass((Class<? extends IEntity>) rt)*/null,
+					PropertyType.RELATED_ONE, true);
 		}
 
 		return null;

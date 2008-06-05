@@ -461,8 +461,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						if(stub == null) {
 							throw new IllegalStateException("Unable to acquire a fresh " + rmp.getRelatedType().getName());
 						}
-						final String actualPath = rmp.add(stub);
-						// now we need to propagate the actual property path to the fields
+						PropertyPath actualPath = new PropertyPath(rmp.add(stub));
+						String last = actualPath.pathAt(actualPath.lastNodeIndex());
+						// now we need to propagate the actual property path to the child
+						// fields
 						Set<IField> ufields = unboundFields.get(upp);
 						for(IField fld : ufields) {
 

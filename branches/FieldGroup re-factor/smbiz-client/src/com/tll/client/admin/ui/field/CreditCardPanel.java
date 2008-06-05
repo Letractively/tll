@@ -48,19 +48,19 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	@Override
 	protected void doInit() {
-		type = fselect("paymentData.ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
-		num = ftext("paymentData.ccNum", "Num", 15);
-		cvv2 = ftext("paymentData.ccCvv2", "CVV2", 4);
-		expMn = ftext("paymentData.ccExpMonth", "Exp Month", 2);
-		expYr = ftext("paymentData.ccExpYear", "Exp Year", 4);
-		name = ftext("paymentData.ccName", "Name", 30);
-		addr1 = ftext("paymentData.ccAddress1", "Address 1", 40);
-		addr2 = ftext("paymentData.ccAddress2", "Address 2", 40);
-		city = ftext("paymentData.ccCity", "City", 30);
+		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
+		num = ftext("paymentData_ccNum", "Num", 15);
+		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
+		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2);
+		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4);
+		name = ftext("paymentData_ccName", "Name", 30);
+		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40);
+		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40);
+		city = ftext("paymentData_ccCity", "City", 30);
 		state =
-				fsuggest("paymentData.ccState", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
-		zip = ftext("paymentData.ccZip", "Zip/Postal Code", 15);
-		country = fsuggest("paymentData.ccCountry", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
+				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
+		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15);
+		country = fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
 
 		fields.addField(type);
 		fields.addField(num);

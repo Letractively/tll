@@ -43,13 +43,11 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	}
 
 	final void setModel(Model model) {
-		if(relatedType == null) {
-			throw new IllegalStateException("A related type must be set");
-		}
-		if(model != null) {
-			if(relatedType != model.getEntityType()) {
-				throw new IllegalArgumentException("The model must be a" + relatedType.getName());
-			}
+		// NOTE: we don't *require* the relatedType to be set but if it is, we
+		// enfore type compatability
+		if(relatedType != null && model != null
+				&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
+			throw new IllegalArgumentException("The model must be a " + relatedType.getName());
 		}
 		this.model = model;
 	}

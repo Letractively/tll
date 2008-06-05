@@ -34,9 +34,9 @@ public final class BankPanel extends FieldGroupPanel {
 
 	@Override
 	protected void doInit() {
-		bankName = ftext("paymentData.bankName", "Bank Name", 40);
-		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", 30);
-		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", 20);
+		bankName = ftext("paymentData_bankName", "Bank Name", 40);
+		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30);
+		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20);
 
 		fields.addField(bankName);
 		fields.addField(bankAccountNo);

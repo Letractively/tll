@@ -109,9 +109,18 @@ public class PropertyPathTest {
 		assert "pathD".equals(pp.nested(2).toString());
 		assert pp.nested(3) == null;
 
+		// test replace at
+		pp.replaceAt(0, "pathAU");
+		assert "pathAU.pathB{3}.pathC.pathD".equals(pp.toString());
+		pp.replaceAt(3, "pathDU");
+		assert "pathAU.pathB{3}.pathC.pathDU".equals(pp.toString());
+		pp.replaceAt(2, null);
+		assert "pathAU.pathB{3}.pathDU".equals(pp.toString());
+
 		// test nested method against single prop name
 		path = "pathA";
 		pp.parse(path);
 		assert pp.nested(0) == null;
+
 	}
 }
