@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.field.FieldGroup;
@@ -25,15 +26,21 @@ import com.tll.client.validate.ValidationException;
 public abstract class FieldGroupPanel extends Composite {
 
 	/**
-	 * The wrapped canvas panel Widget. An {@link IFieldPanelComposer} wil
-	 * generate and provide this Widget.
+	 * The wrapped panel. An {@link IFieldPanelComposer} will append to this
+	 * panel.
 	 */
-	protected Widget canvas;
+	protected final SimplePanel panel = new SimplePanel();
 
 	/**
 	 * The collective group of all fields in this panel.
 	 */
 	protected final FieldGroup fields;
+
+	/**
+	 * Flag indicating whether the fields have been instantiated and the UI
+	 * widgets have been set.
+	 */
+	private boolean initialized = false;
 
 	/**
 	 * Constructor
@@ -42,15 +49,7 @@ public abstract class FieldGroupPanel extends Composite {
 	public FieldGroupPanel(String displayName) {
 		super();
 		this.fields = new FieldGroup(displayName, this);
-		// initWidget(panel);
-	}
-
-	@Override
-	protected void onAttach() {
-		init();
-		assert canvas != null;
-		initWidget(canvas);
-		super.onAttach();
+		initWidget(panel);
 	}
 
 	/**
@@ -85,15 +84,19 @@ public abstract class FieldGroupPanel extends Composite {
 	 * <li>Populating {@link #fields}
 	 * <li>Creating and populating a {@link Panel} containing the owned
 	 * {@link IField}s
+	 * <li>calling {@link #initWidget(Widget)} with the created {@link Panel}
 	 * </ul>
-	 * @return The canvas Widget that serves as the wrapped Widget for this
-	 *         Composite Widget.
+	 * <p>
+	 * <strong>IMPT:</strong> A {@link FieldGroupPanel} containing child
+	 * {@link FieldGroupPanel}s are responsible for calling {@link #doInit()} for
+	 * these children.
 	 */
-	protected abstract Widget doInit();
+	protected abstract void doInit();
 
 	public final void init() {
-		if(canvas == null) {
-			canvas = doInit();
+		if(!initialized) {
+			doInit();
+			initialized = true;
 		}
 	}
 
@@ -102,8 +105,6 @@ public abstract class FieldGroupPanel extends Composite {
 	 * @param model The model to bind
 	 */
 	public final void bind(Model model) {
-		// TODO determine if we need to call init here as we are now calling it in
-		// onAttach().
 		init();
 		onBeforeBind(model);
 		fields.bindModel(model.getBinding(null));

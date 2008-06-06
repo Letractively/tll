@@ -8,7 +8,6 @@ package com.tll.client.admin.ui.field.user;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.cache.AuxDataCache;
@@ -60,7 +59,7 @@ public class UserPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget doInit() {
+	protected void doInit() {
 		final TextField fname = createNameEntityField();
 		final DateField[] ftimestamps = createTimestampEntityFields();
 		emailAddress = ftext("emailAddress", "Email Address", 30);
@@ -78,7 +77,7 @@ public class UserPanel extends FieldGroupPanel {
 		fields.addField(expires);
 		fields.addField(addressPanel.getFields());
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
 
 		// first row
 		canvas.addField(fname);
@@ -115,8 +114,6 @@ public class UserPanel extends FieldGroupPanel {
 		// third row
 		canvas.newRow();
 		canvas.addWidget(addressPanel);
-
-		return canvas.getWidget();
 	}
 
 	@Override

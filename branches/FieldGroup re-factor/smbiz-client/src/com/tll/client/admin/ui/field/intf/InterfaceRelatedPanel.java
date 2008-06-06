@@ -37,9 +37,8 @@ public abstract class InterfaceRelatedPanel extends FieldGroupPanel {
 		// none
 	}
 
-	/*
 	@Override
-	protected Widget doInit() {
+	protected void doInit() {
 		if(bindCodeAndDescFields) {
 			code = ftext("code", "Code", 20);
 			description = ftextarea("description", "Description", 3, 18);
@@ -48,6 +47,5 @@ public abstract class InterfaceRelatedPanel extends FieldGroupPanel {
 			fields.addField(description);
 		}
 	}
-	*/
 
 }

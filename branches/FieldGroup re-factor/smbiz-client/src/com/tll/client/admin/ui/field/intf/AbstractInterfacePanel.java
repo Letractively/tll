@@ -45,7 +45,6 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}
 
-	/*
 	@Override
 	protected void doInit() {
 		super.doInit();
@@ -70,6 +69,7 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		fields.addField(isRequiredMerchant);
 		fields.addField(isRequiredCustomer);
 
+		/*
 		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
@@ -82,8 +82,8 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 
 		canvas.addField(dateCreated);
 		canvas.addField(dateModified);
+		*/
 	}
-	*/
 
 	protected Grid createAvailabilityGrid() {
 		Grid g = new Grid(3, 5);
