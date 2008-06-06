@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.field.FieldGroupPanel;
 
@@ -36,7 +37,7 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 	}
 
 	@Override
-	protected void doInit() {
+	protected Widget doInit() {
 		creditCardPanel.init();
 		bankPanel.init();
 
@@ -46,7 +47,7 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
 
-		panel.add(tabPanel);
+		return tabPanel;
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {

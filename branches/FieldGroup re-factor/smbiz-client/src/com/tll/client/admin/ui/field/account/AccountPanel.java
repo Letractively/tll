@@ -95,8 +95,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		}
 
 		@Override
-		protected void doInit() {
-			addressPanel.init();
+		protected Widget doInit() {
+			// addressPanel.init();
 			fields.addField("address", addressPanel.getFields());
 			TextField fname = createNameEntityField();
 			fields.addField(fname);
@@ -104,7 +104,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			// TODO determine why we need this as we shouldn't!!!
 			// setMarkDeleted(false);
 
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 			// account address name row
 			canvas.addField(fname);
@@ -113,6 +113,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			// address row
 			canvas.newRow();
 			canvas.addWidget(addressPanel);
+
+			return canvas.getWidget();
 		}
 
 		private void setMarkDeleted(boolean markDeleted) {
@@ -154,7 +156,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	}
 
 	@Override
-	protected void doInit() {
+	protected Widget doInit() {
 		final TextField fname = createNameEntityField();
 		final DateField[] ftimestamps = createTimestampEntityFields();
 
@@ -177,7 +179,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
-		paymentInfoPanel.init();
+		// paymentInfoPanel.init();
 		paymentInfoPanel.setRefWidget(dpPaymentInfo);
 
 		// listen to tab events
@@ -196,7 +198,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		fields.addField(persistPymntInfo);
 		fields.addField("paymentInfo", paymentInfoPanel.getFields());
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
 		canvas.addField(fname);
@@ -232,6 +234,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
+
+		return canvas.getWidget();
 	}
 
 	@Override
@@ -261,7 +265,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 						if(lastAccountAddressIndex < index) lastAccountAddressIndex = index;
 						aap = new AccountAddressPanel(at, index);
 						tabAddresses.add(aap, at.getName());
-						aap.init();
+						// aap.init();
 						fields.addField(ip.getPropertyName(), aap.getFields());
 					}
 				}
@@ -299,7 +303,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanel aap = new AccountAddressPanel(at, ++lastAccountAddressIndex);
-			aap.init();
+			// aap.init();
 			String parentPropPath = PropertyPath.indexedUnbound("addresses", aap.index);
 			fields.addField(parentPropPath, aap.getFields());
 

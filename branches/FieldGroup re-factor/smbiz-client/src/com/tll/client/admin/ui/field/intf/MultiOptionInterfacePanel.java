@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.TextField;
@@ -31,8 +32,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void doInit() {
-		super.doInit();
+	protected Widget doInit() {
+		// super.doInit();
 
 		final TextField fname = createNameEntityField();
 		fields.addField(fname);
@@ -40,7 +41,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		final DateField[] ftimestamps = createTimestampEntityFields();
 		fields.addFields(ftimestamps);
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
 		canvas.addField(fname);
@@ -57,6 +58,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		canvas.newRow();
 		canvas.addWidget(tabOptions);
+
+		return canvas.getWidget();
 	}
 
 	/*

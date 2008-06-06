@@ -184,18 +184,20 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected void doInit() {
+		protected Widget doInit() {
 			ap.init();
 			fields.addField(ap.getFields());
 			fields.addField(bflabel);
 			fields.addField(bf);
 
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 			canvas.addWidget(ap);
 
 			canvas.addField(bflabel);
 			canvas.addField(bf);
+
+			return canvas.getWidget();
 		}
 
 	}

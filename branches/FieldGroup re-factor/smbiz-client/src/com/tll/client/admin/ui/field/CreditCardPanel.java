@@ -4,6 +4,7 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.FlowFieldPanelComposer;
@@ -47,7 +48,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void doInit() {
+	protected Widget doInit() {
 		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
 		num = ftext("paymentData_ccNum", "Num", 15);
 		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
@@ -75,7 +76,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		fields.addField(zip);
 		fields.addField(country);
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		canvas.addField(type);
 
@@ -100,5 +101,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		canvas.newRow();
 		canvas.addField(zip);
 		canvas.addField(country);
+
+		return canvas.getWidget();
 	}
 }

@@ -5,6 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
@@ -33,7 +34,7 @@ public final class BankPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void doInit() {
+	protected Widget doInit() {
 		bankName = ftext("paymentData_bankName", "Bank Name", 40);
 		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30);
 		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20);
@@ -42,10 +43,12 @@ public final class BankPanel extends FieldGroupPanel {
 		fields.addField(bankAccountNo);
 		fields.addField(bankRoutingNo);
 
-		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer(panel);
+		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer();
 
 		canvas.addField(bankName);
 		canvas.addField(bankAccountNo);
 		canvas.addField(bankRoutingNo);
+
+		return canvas.getWidget();
 	}
 }

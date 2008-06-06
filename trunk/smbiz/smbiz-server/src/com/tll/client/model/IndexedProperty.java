@@ -13,7 +13,7 @@ import com.tll.model.schema.PropertyType;
  * {@link RelatedManyProperty}.
  * @author jpk
  */
-public class IndexedProperty extends ModelRefProperty {
+public final class IndexedProperty extends ModelRefProperty {
 
 	private int index;
 
