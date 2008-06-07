@@ -9,9 +9,8 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.FlowFieldPanelComposer;
-import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.TextField;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -31,39 +30,32 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void doInit() {
-		super.doInit();
-
-		final TextField fname = createNameEntityField();
-		fields.addField(fname);
-
-		final DateField[] ftimestamps = createTimestampEntityFields();
-		fields.addFields(ftimestamps);
-
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
-		canvas.addField(fname);
+		canvas.addField(name);
 		canvas.addField(code);
 		canvas.addField(description);
 
 		canvas.addWidget(createAvailabilityGrid());
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(ftimestamps[0]);
+		canvas.addField(timestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(ftimestamps[1]);
+		canvas.addField(timestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();
 		canvas.addWidget(tabOptions);
+		return canvas.getCanvasWidget();
 	}
 
-	/*
 	@Override
-	protected void onBeforeBind(Model modelInterface) {
-		super.onBeforeBind(modelInterface);
+	public void populateFieldGroup() {
+		super.populateFieldGroup();
 
+		/*
 		// clear existing options
 		for(OptionPanel p : optionPanels) {
 			fields.removeField(p.getFields());
@@ -92,8 +84,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		// default select the first tab
 		tabOptions.selectTab(0);
+		*/
 	}
-	*/
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 		/*

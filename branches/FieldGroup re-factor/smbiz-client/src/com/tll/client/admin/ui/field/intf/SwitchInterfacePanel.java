@@ -6,9 +6,9 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.model.Model;
 import com.tll.client.ui.FlowFieldPanelComposer;
-import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.TextField;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -24,42 +24,29 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected void doInit() {
-		super.doInit();
-
-		final TextField fname = createNameEntityField();
-		fields.addField(fname);
-
-		final DateField[] ftimestamps = createTimestampEntityFields();
-		fields.addFields(ftimestamps);
-
-		// pnlOption.doInit();
-
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
-		canvas.addField(fname);
+		canvas.addField(name);
 		canvas.addField(code);
 		canvas.addField(description);
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(ftimestamps[0]);
+		canvas.addField(timestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(ftimestamps[1]);
+		canvas.addField(timestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();
 		canvas.addWidget(createAvailabilityGrid());
 
-		// canvas.newRow();
-		// canvas.addWidget(pnlOption);
+		return canvas.getCanvasWidget();
 	}
 
-	/*
 	@Override
-	protected void onBeforeBind(Model modelInterface) {
-		super.onBeforeBind(modelInterface);
-
+	protected void applyModel(Model modelInterface) {
+		/*
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
 			throw new IllegalArgumentException();
@@ -69,6 +56,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		pnlOption.getFields().setPropertyName(ip.getPropertyName());
 		fields.addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
+		*/
 	}
-	*/
 }

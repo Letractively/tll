@@ -7,18 +7,19 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.data.AuxDataRequest;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.FieldGroupPanel;
 
 /**
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldGroupPanel implements TabListener {
+public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTabEvents {
+
+	private final TabPanel tabPanel = new TabPanel();
 
 	private final CreditCardPanel creditCardPanel;
 	private final BankPanel bankPanel;
-	private final TabPanel tabPanel = new TabPanel();
 
 	/**
 	 * Constructor
@@ -30,33 +31,24 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 	}
 
 	@Override
-	public void neededAuxData(AuxDataRequest auxDataRequest) {
-		creditCardPanel.neededAuxData(auxDataRequest);
-		bankPanel.neededAuxData(auxDataRequest);
+	public void populateFieldGroup() {
+		addField(creditCardPanel.getFields());
+		addField(bankPanel.getFields());
 	}
 
 	@Override
-	protected void doInit() {
-		creditCardPanel.init();
-		bankPanel.init();
-
-		fields.addField(creditCardPanel.getFields());
-		fields.addField(bankPanel.getFields());
-
+	protected Widget draw() {
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
-
-		panel.add(tabPanel);
+		return tabPanel;
 	}
 
-	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		if(sender == tabPanel) return true;
-		return false;
+	public void addTabListener(TabListener listener) {
+		tabPanel.addTabListener(listener);
 	}
 
-	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-		if(sender == tabPanel) {
-		}
+	public void removeTabListener(TabListener listener) {
+		tabPanel.removeTabListener(listener);
 	}
 
 	@Override
@@ -64,5 +56,4 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements TabListen
 		super.onLoad();
 		tabPanel.selectTab(0); // reset state
 	}
-
 }

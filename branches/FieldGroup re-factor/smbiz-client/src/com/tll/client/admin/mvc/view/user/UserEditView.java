@@ -6,10 +6,12 @@
 package com.tll.client.admin.mvc.view.user;
 
 import com.tll.client.admin.ui.field.user.UserPanel;
+import com.tll.client.data.AuxDataRequest;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.model.EntityType;
 
 /**
  * UserEditView
@@ -50,4 +52,12 @@ public class UserEditView extends EditView {
 	protected ViewClass getViewClass() {
 		return klas;
 	}
+
+	@Override
+	protected AuxDataRequest getNeededAuxData() {
+		AuxDataRequest auxDataRequest = new AuxDataRequest();
+		auxDataRequest.requestEntityList(EntityType.AUTHORITY);
+		return auxDataRequest;
+	}
+
 }

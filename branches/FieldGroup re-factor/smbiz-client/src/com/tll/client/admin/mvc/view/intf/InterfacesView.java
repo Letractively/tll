@@ -109,7 +109,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 					@Override
 					protected AuxDataRequest getNeededAuxData() {
-						return editPanel.getNeededAuxData();
+						AuxDataRequest auxDataRequest = new AuxDataRequest();
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
+						return auxDataRequest;
 					}
 
 					@Override

@@ -4,8 +4,8 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.SelectField;
@@ -41,13 +41,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	public void neededAuxData(AuxDataRequest auxDataRequest) {
-		auxDataRequest.requestAppRefData("usps-state-abbrs");
-		auxDataRequest.requestAppRefData("iso-country-codes");
-	}
-
-	@Override
-	protected void doInit() {
+	public void populateFieldGroup() {
 		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
 		num = ftext("paymentData_ccNum", "Num", 15);
 		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
@@ -62,20 +56,23 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15);
 		country = fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
 
-		fields.addField(type);
-		fields.addField(num);
-		fields.addField(cvv2);
-		fields.addField(expMn);
-		fields.addField(expYr);
-		fields.addField(name);
-		fields.addField(addr1);
-		fields.addField(addr2);
-		fields.addField(city);
-		fields.addField(state);
-		fields.addField(zip);
-		fields.addField(country);
+		addField(type);
+		addField(num);
+		addField(cvv2);
+		addField(expMn);
+		addField(expYr);
+		addField(name);
+		addField(addr1);
+		addField(addr2);
+		addField(city);
+		addField(state);
+		addField(zip);
+		addField(country);
+	}
 
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+	@Override
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		canvas.addField(type);
 
@@ -100,5 +97,7 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		canvas.newRow();
 		canvas.addField(zip);
 		canvas.addField(country);
+
+		return canvas.getCanvasWidget();
 	}
 }

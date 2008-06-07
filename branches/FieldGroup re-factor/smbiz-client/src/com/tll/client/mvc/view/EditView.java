@@ -67,7 +67,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 			@Override
 			protected AuxDataRequest getNeededAuxData() {
-				return editPanel.getNeededAuxData();
+				return EditView.this.getNeededAuxData();
 			}
 
 			@Override
@@ -80,6 +80,8 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 		addWidget(editPanel);
 	}
+
+	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
 		String s = modelRef.getType().getName();
@@ -128,7 +130,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	public final void refresh() {
 		if(!editPanel.isModelLoaded()) {
 			// we need to fetch the model first
-			// NOTE: needed aux data will be fetched with
+			// NOTE: needed aux data will be fetched with this rpc call
 			modelChangeHandler.handleModelLoad(modelRef);
 		}
 		else if(!modelChangeHandler.handleAuxDataFetch()) {

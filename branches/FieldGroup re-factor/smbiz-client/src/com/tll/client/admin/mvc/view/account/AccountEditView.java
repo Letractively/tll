@@ -5,6 +5,7 @@
 package com.tll.client.admin.mvc.view.account;
 
 import com.tll.client.admin.ui.field.account.AccountPanel;
+import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
@@ -54,4 +55,15 @@ public class AccountEditView extends EditView {
 	protected ViewClass getViewClass() {
 		return klas;
 	}
+
+	@Override
+	protected AuxDataRequest getNeededAuxData() {
+		AuxDataRequest auxDataRequest = new AuxDataRequest();
+		auxDataRequest.requestEntityList(EntityType.CURRENCY);
+		auxDataRequest.requestAppRefData("usps-state-abbrs");
+		auxDataRequest.requestAppRefData("iso-country-codes");
+		auxDataRequest.requestEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+		return auxDataRequest;
+	}
+
 }

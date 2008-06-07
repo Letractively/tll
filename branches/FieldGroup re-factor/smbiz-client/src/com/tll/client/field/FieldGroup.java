@@ -296,27 +296,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Adds an IField directly under this FieldGroup.
-	 * @param field The IField to add
-	 */
-	public void addField(IField field) {
-		fields.add(field);
-	}
-
-	/**
-	 * Adds an array of {@link IField}s directly under this FieldGroup.
-	 * @param farray The IField array
-	 */
-	public void addFields(IField[] farray) {
-		for(IField f : farray)
-			fields.add(f);
-	}
-
-	/**
 	 * Adds a field directly under this field group pre-pending the given parent
 	 * property path to the field's <em>existing</em> property name.
 	 * @param parentPropPath Pre-pended to the field's property name before the
-	 *        field is added
+	 *        field is added. May be <code>null</code> in which case the field's
+	 *        property name remains un-altered.
 	 * @param field The field to add
 	 */
 	public void addField(String parentPropPath, IField field) {
@@ -328,7 +312,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
 			}
 		}
-		addField(field);
+		fields.add(field);
+	}
+
+	/**
+	 * Adds multiple fields to this group.
+	 * @param parentPropPath Pre-pended to the each field's property name before
+	 *        the fields are added. May be <code>null</code> in which case the
+	 *        fields' property names remain un-altered.
+	 * @param fields The fields to add
+	 */
+	public void addFields(String parentPropPath, IField[] fields) {
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(parentPropPath, fld);
+			}
+		}
 	}
 
 	public void reset() {

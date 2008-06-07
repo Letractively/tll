@@ -184,20 +184,20 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected void doInit() {
-			ap.init();
-			fields.addField(ap.getFields());
-			fields.addField(bflabel);
-			fields.addField(bf);
-
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
-
-			canvas.addWidget(ap);
-
-			canvas.addField(bflabel);
-			canvas.addField(bf);
+		public void populateFieldGroup() {
+			addField(ap.getFields());
+			addField(bflabel);
+			addField(bf);
 		}
 
+		@Override
+		protected Widget draw() {
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+			canvas.addWidget(ap);
+			canvas.addField(bflabel);
+			canvas.addField(bf);
+			return canvas.getCanvasWidget();
+		}
 	}
 
 	private void setTestModel(Model address) {
@@ -297,16 +297,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				public void onCrudEvent(CrudEvent event) {
 					intf = event.getPayload().getEntity();
-					intfPanel.bind(intf);
-					// intfPanel.render();
+					intfPanel.populateFieldGroup();
 				}
 			});
 			cc.loadByName(EntityType.INTERFACE_SINGLE, "Payment Processor");
 			cc.execute();
 		}
 		else {
-			intfPanel.bind(intf);
-			// intfPanel.render();
+			intfPanel.populateFieldGroup();
 		}
 	}
 
