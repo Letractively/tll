@@ -126,7 +126,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Used to indicate this field group is scheduled for deletion when populating
-	 * the field data back to the associated property value group.
+	 * the field data back to the underlying Model.
 	 */
 	private boolean markedDeleted = false;
 
@@ -376,16 +376,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Recursively binds a FieldGroup to a Model.
 	 * @param group The FieldGroup
 	 * @param model The Model
+	 * @param propertyPathOffset The node index at which the given FieldGroup
+	 *        binds to the given Model.
 	 */
-	private static void bindModel(FieldGroup group, final Model model) {
+	private static void bindModel(final int propertyPathOffset, FieldGroup group, final Model model) {
 		final PropertyPath propPath = new PropertyPath();
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup) {
-				bindModel((FieldGroup) fld, model);
+				bindModel(propertyPathOffset, (FieldGroup) fld, model);
 			}
 			else {
+				PropertyPath resolved = propPath;
 				propPath.parse(fld.getPropertyName());
-				IPropertyValue pv = model.getValue(propPath);
+				if(propertyPathOffset > 0) {
+					resolved = propPath.nested(propertyPathOffset - 1);
+				}
+				IPropertyValue pv = model.getValue(resolved);
 				if(pv == null) {
 					fld.clear();
 				}
@@ -497,11 +503,21 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return changed;
 	}
 
-	public void bindModel(IPropertyBinding binding) {
+	/**
+	 * Binds a Model to this group.
+	 * @param propPathOffset Property path node index representing the parent
+	 *        property path offset that is applied to all non-group child IFields.
+	 * @param binding The Model binding
+	 */
+	public void bindModel(int propPathOffset, IPropertyBinding binding) {
 		if(binding instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
 		}
-		bindModel(this, ((IModelRefProperty) binding).getModel());
+		bindModel(propPathOffset, this, ((IModelRefProperty) binding).getModel());
+	}
+
+	public void bindModel(IPropertyBinding binding) {
+		bindModel(0, binding);
 	}
 
 	public boolean updateModel(IPropertyBinding binding) {

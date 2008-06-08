@@ -68,7 +68,8 @@ public abstract class AbstractModelChangeHandler implements IRpcListener, ICrudL
 	 *         data is needed
 	 */
 	private AuxDataRequest filterNeededAuxData() {
-		return getNeededAuxData() == null ? null : AuxDataCache.instance().filterRequest(getNeededAuxData());
+		final AuxDataRequest adr = getNeededAuxData();
+		return adr == null ? null : AuxDataCache.instance().filterRequest(adr);
 	}
 
 	public boolean handleAuxDataFetch() {

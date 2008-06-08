@@ -67,6 +67,11 @@ public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 	private boolean markedDeleted;
 
 	/**
+	 * IPropertyBinding ref to this Model that is lazily instantiated
+	 */
+	private RelatedOneProperty bindingRef;
+
+	/**
 	 * Constructor
 	 */
 	public Model() {
@@ -110,6 +115,17 @@ public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 		// cleared model!
 		assert /*(id != null) && */(entityType != null);
 		return new RefKey(entityType, id, name);
+	}
+
+	/**
+	 * @return Reference to <em>this</em> Model expressed as an
+	 *         {@link IPropertyBinding}.
+	 */
+	public RelatedOneProperty getBindingRef() {
+		if(bindingRef == null) {
+			bindingRef = new RelatedOneProperty(getEntityType(), null, true, this);
+		}
+		return bindingRef;
 	}
 
 	/**
@@ -176,8 +192,8 @@ public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
 	 *         <code>null</code> or mal-formed.
 	 */
 	public IPropertyBinding getBinding(PropertyPath propPath) throws IllegalArgumentException {
-		if(propPath == null) {
-			return new RelatedOneProperty(getEntityType(), null, true, this);
+		if(propPath == null || propPath.length() < 1) {
+			return getBindingRef();
 		}
 		try {
 			return resolvePropertyPath(propPath).getPropertyBinding();

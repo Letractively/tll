@@ -13,12 +13,10 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
@@ -27,16 +25,17 @@ import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -68,12 +67,11 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FieldGroupPanel implements ClickListener {
+	static final class AccountAddressPanel extends FieldGroupPanel {
 
 		final AddressType addressType;
 		TextField name;
 		final int index;
-		final PushButton btnDeleteToggle;
 		final AddressPanel addressPanel;
 
 		/**
@@ -86,11 +84,6 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 			this.addressType = addressType;
 			this.index = index;
-
-			// delete img btn
-			btnDeleteToggle = new PushButton();
-			btnDeleteToggle.addClickListener(this);
-			btnDeleteToggle.addStyleName(CSS.FLOAT_RIGHT);
 
 			addressPanel = new AddressPanel();
 		}
@@ -108,31 +101,12 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 			// account address name row
 			canvas.addField(name);
-			canvas.addWidget(btnDeleteToggle);
 
 			// address row
 			canvas.newRow();
 			canvas.addWidget(addressPanel);
 
 			return canvas.getCanvasWidget();
-		}
-
-		private void setMarkDeleted(boolean markDeleted) {
-			getFields().setMarkedDeleted(markDeleted);
-			if(markDeleted) {
-				btnDeleteToggle.getUpFace().setImage(App.imgs().undo().createImage());
-				btnDeleteToggle.setTitle("Un-delete " + addressType.getName() + " Address");
-			}
-			else {
-				btnDeleteToggle.getUpFace().setImage(App.imgs().delete().createImage());
-				btnDeleteToggle.setTitle("Delete " + addressType.getName() + " Address");
-			}
-		}
-
-		public void onClick(Widget sender) {
-			if(sender == btnDeleteToggle) {
-				setMarkDeleted(!getFields().isMarkedDeleted());
-			}
 		}
 	}
 
@@ -242,20 +216,20 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		// bind
 		path.parse("addresses");
 		RelatedManyProperty pvAddresses = model.relatedMany(path);
+		path.parse("type");
 		for(AddressType at : AddressType.values()) {
 			AccountAddressPanel aap = null;
 			if(pvAddresses != null) {
 				Iterator<IndexedProperty> itr = pvAddresses.iterator();
-				path.parse("type");
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
 					if(at == ip.getModel().getValue(path).getValue()) {
 						int index = ip.getIndex();
 						if(lastAccountAddressIndex < index) lastAccountAddressIndex = index;
 						aap = new AccountAddressPanel(at, index);
-						tabAddresses.add(aap, at.getName());
-						// aap.init();
 						addField(ip.getPropertyName(), aap.getFields());
+						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFields()));
+						break;
 					}
 				}
 			}
@@ -282,17 +256,26 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			paymentInfoPanel.getFields().setEnabled(persistPymntInfo.getCheckBox().isChecked());
 		}
 		else if(sender instanceof NoEntityExistsPanel) {
-			// this is a non-existant account address
+			// non-existant account address
+
+			// resolve tab index
 			int selTabIndx = tabAddresses.getTabBar().getSelectedTab();
 			assert selTabIndx >= 0;
 
+			// stub aa panel
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanel aap = new AccountAddressPanel(at, ++lastAccountAddressIndex);
-			// aap.init();
 			String parentPropPath = PropertyPath.indexedUnbound("addresses", aap.index);
 			addField(parentPropPath, aap.getFields());
 
-			tabAddresses.insert(aap, at.getName(), selTabIndx == 0 ? 0 : selTabIndx);
+			// bind to prototype
+			Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+			if(aaproto == null) throw new IllegalStateException();
+			// NOTE: we need a property path offset here since the fields' property
+			// paths are relative to ACCOUNT!
+			aap.getFields().bindModel(1, aaproto.getBindingRef());
+
+			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFields()), selTabIndx == 0 ? 0 : selTabIndx);
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);
 		}

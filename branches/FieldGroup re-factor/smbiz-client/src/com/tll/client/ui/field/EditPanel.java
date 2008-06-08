@@ -151,7 +151,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			throw new IllegalArgumentException("A field panel must be specified.");
 		}
 		this.fieldPanel = fieldPanel;
-		fieldPanel.init();
 		portal.setWidget(fieldPanel);
 	}
 
@@ -218,8 +217,9 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			throw new IllegalStateException("No model loaded.");
 		}
 		btnSave.setText(model.isNew() ? "Add" : "Update");
+		fieldPanel.init();
 		fieldPanel.applyModel(model);
-		fieldPanel.getFields().bindModel(model.getBinding(null));
+		fieldPanel.getFields().bindModel(model.getBindingRef());
 		pnlButtonRow.setVisible(true);
 	}
 
@@ -238,7 +238,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			catch(ValidationException e) {
 				return;
 			}
-			if(fieldPanel.getFields().updateModel(model.getBinding(null))) {
+			if(fieldPanel.getFields().updateModel(model.getBindingRef())) {
 				editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
 			}
 			else {

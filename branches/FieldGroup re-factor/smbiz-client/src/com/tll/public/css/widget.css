@@ -130,6 +130,20 @@
 	margin-right: 2px;
 }
 
+/* DeleteTabWidget styling */
+.gwt-TabBar .gwt-TabBarItem .btnDeleteToggle {
+	display: none;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected .btnDeleteToggle {
+	display: block;
+}
+
+.dtw .gwt-ToggleButton {
+	display: inline;
+	margin-left: .5em;
+}
+
 .gwt-StackPanel {
 }
 

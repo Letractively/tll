@@ -149,12 +149,13 @@ public final class PropertyPath {
 	private String propPath;
 
 	/**
-	 * The length of the property path String.
+	 * The number of "nodes" in the property path.
 	 */
 	private int len;
 
 	/**
-	 * The atomic nodes of the property path dictated by the indices of dot chars.
+	 * The constituent property names that make up the property path that are
+	 * separated by dot chars.
 	 */
 	private String[] nodes;
 
@@ -351,9 +352,9 @@ public final class PropertyPath {
 
 	/**
 	 * The reverse of {@link #parent(int)}. Extracts the property path starting
-	 * <em>from</em> everything to the right of the node index (dot).
+	 * <em>from</em> everything to the right of the node index.
 	 * @param nodeIndex The node index indicating the nest point
-	 * @return The nested property path at the desired point
+	 * @return The nested property path
 	 */
 	public PropertyPath nested(int nodeIndex) {
 		if(nodes == null || len < 2 || nodeIndex >= len - 1) return null;

@@ -209,7 +209,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 	/**
 	 * <p>
-	 * Test: TEST_ADDRESS_PANEL
+	 * Test: TEST_FIELDS
 	 * <p>
 	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
 	 */
