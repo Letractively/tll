@@ -23,7 +23,6 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.util.StringUtil;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -437,7 +436,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						int n = propPath.nextUnboundNode(0);
 						if(n >= 0) {
 							// unbound property!
-							PropertyPath unboundPath = propPath.parent(n);
+							PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
+							assert unboundPath != null && unboundPath.length() > 0;
 							if(unboundFields == null) {
 								unboundFields = new HashMap<PropertyPath, Set<IField>>();
 							}
@@ -466,24 +466,38 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 			// handle the unbound indexed props (newly created in the ui)
 			if(unboundFields != null) {
+				final PropertyPath fpp = new PropertyPath();
 				for(PropertyPath upp : unboundFields.keySet()) {
 					// create the missing properties in the model
 					if(upp.isIndexed()) {
 						// unbound indexed property
 						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
 						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
-						if(stub == null) {
-							throw new IllegalStateException("Unable to acquire a fresh " + rmp.getRelatedType().getName());
-						}
+						if(stub == null)
+							throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
+									+ " model prototype");
+
 						// now we need to propagate the actual property path to the child
 						// fields
-						String upps = upp.toString();
-						String app = rmp.add(stub); // actual property path
-						String oldIndexToken = upps.substring(0, upps.lastIndexOf(PropertyPath.UNBOUND_LEFT_INDEX_CHAR));
-						String newIndexToken = app.substring(0, app.lastIndexOf(PropertyPath.UNBOUND_LEFT_INDEX_CHAR));
+
+						// actual property path RELATIVE TO THE RELATED MANY PROPERTY
+						// BINDING AND NOT THE ROOT MODEL
+						// e.g. relatedMany[1] NOT root.relatedMany[1]
+						final String app = rmp.add(stub);
+
+						// the depth index of the unbound prop path
+						final int depthIndex = upp.depth() - 1;
+						assert depthIndex >= 0;
+
 						Set<IField> ufields = unboundFields.get(upp);
 						for(IField fld : ufields) {
-							fld.setPropertyName(StringUtil.replace(fld.getPropertyName(), oldIndexToken, newIndexToken));
+
+							// replace the indexed property path node
+							fpp.parse(fld.getPropertyName());
+							assert fpp.depth() > depthIndex;
+							fpp.replaceAt(depthIndex, app);
+
+							fld.setPropertyName(fpp.toString());
 							// do the model update
 							pv = model.getValue(propPath);
 							if(pv != null) {

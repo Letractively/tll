@@ -257,8 +257,8 @@ public final class PropertyPath {
 	 */
 	public boolean isIndexed() {
 		if(propPath == null) return false;
-		final char end = propPath.charAt(len - 1);
-		return (end == LEFT_INDEX_CHAR || end == UNBOUND_LEFT_INDEX_CHAR);
+		final char end = propPath.charAt(propPath.length() - 1);
+		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
 	}
 
 	/**
@@ -329,9 +329,12 @@ public final class PropertyPath {
 	 * node index. The offset, when non-zero, points to the first character after
 	 * the preceeding dot that represents that node.
 	 * @param nodeIndex The node index
-	 * @return The prop path offset
+	 * @return The prop path offset or <code>-1</code> if no property path is
+	 *         currently set.
 	 */
 	private int offset(int nodeIndex) {
+		if(len == 0) return -1;
+		if(nodeIndex == 0) return 0;
 		int offset = 0;
 		for(int i = 0; i < nodeIndex; ++i) {
 			offset += (nodes[i].length() + 1);
@@ -340,26 +343,45 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Extracts the property path <em>upto</em> the given node index.
-	 * @param nodeIndex The node index from which the parent path is determined
-	 * @return The parent property path of the given node index
+	 * Calculates the node index for the given node path String presumed to be
+	 * part of this property path.
+	 * @param nodePath The node path String that is part of this property path.
+	 * @return The corresponding node index or <code>-1</code> if not found or
+	 *         if this property path has not been set.
 	 */
-	public PropertyPath parent(int nodeIndex) {
-		if(nodes == null || nodeIndex < 1) return null;
-		assert propPath != null && len >= 0;
-		return new PropertyPath(propPath.substring(0, offset(nodeIndex) - 1));
+	private int nodeIndexOf(String nodePath) {
+		if(nodes == null) return -1;
+		for(int i = 0; i < len; ++i) {
+			if(nodePath.equals(nodes[i])) return i;
+		}
+		return -1;
 	}
 
 	/**
-	 * The reverse of {@link #parent(int)}. Extracts the property path starting
-	 * <em>from</em> everything to the right of the node index.
-	 * @param nodeIndex The node index indicating the nest point
-	 * @return The nested property path
+	 * Returns the ancestor property path of this property path based on a desired
+	 * number of nodes to traverse up the property path starting at the last
+	 * (right-most) node.
+	 * @param delta The number of nodes to upward to traverse
+	 * @return An ancestral property path of this property path or
+	 *         <code>null</code> if the delta exceeds the depth of this property
+	 *         path.
 	 */
-	public PropertyPath nested(int nodeIndex) {
-		if(nodes == null || len < 2 || nodeIndex >= len - 1) return null;
+	public PropertyPath ancestor(int delta) {
+		if(nodes == null || delta > len - 1) return null;
+		assert propPath != null && len > 0;
+		return delta == 0 ? this : new PropertyPath(propPath.substring(0, offset(len - delta) - 1));
+	}
+
+	/**
+	 * Extracts a child property path from this property path starting from the
+	 * top-most node traversing a desired number of child nodes.
+	 * @param depth The number of nested nodes to traverse
+	 * @return The nested (child) property path
+	 */
+	public PropertyPath nested(int depth) {
+		if(nodes == null || len < 2 || depth > len - 1) return null;
 		assert propPath != null && len >= 0;
-		return new PropertyPath(propPath.substring(offset(nodeIndex + 1)));
+		return depth == 0 ? this : new PropertyPath(propPath.substring(offset(depth)));
 	}
 
 	/**
@@ -376,6 +398,21 @@ public final class PropertyPath {
 		assert propPath != null && len >= 0;
 		nodes[nodeIndex] = prop;
 		rebuild();
+	}
+
+	/**
+	 * Replaces a node path String.
+	 * @param nodePath The target node path String to replace.
+	 * @param replNodePath The replacement node path String.
+	 * @return <code>true</code> if the replacement was successful.
+	 */
+	public boolean replace(String nodePath, String replNodePath) {
+		if(nodes != null) return false;
+		final int ni = nodeIndexOf(nodePath);
+		if(ni == -1) return false;
+		nodes[ni] = replNodePath;
+		rebuild();
+		return true;
 	}
 
 	@Override
