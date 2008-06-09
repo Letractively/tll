@@ -17,6 +17,7 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
@@ -258,6 +259,41 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * Adds a field directly under this field group pre-pending the given parent
+	 * property path to the field's <em>existing</em> property name.
+	 * @param parentPropPath Pre-pended to the field's property name before the
+	 *        field is added. May be <code>null</code> in which case the field's
+	 *        property name remains un-altered.
+	 * @param field The field to add
+	 */
+	public void addField(String parentPropPath, IField field) {
+		if(parentPropPath != null) {
+			if(field instanceof FieldGroup) {
+				((FieldGroup) field).prePendPropertyName(parentPropPath);
+			}
+			else {
+				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
+			}
+		}
+		fields.add(field);
+	}
+
+	/**
+	 * Adds multiple fields to this group.
+	 * @param parentPropPath Pre-pended to the each field's property name before
+	 *        the fields are added. May be <code>null</code> in which case the
+	 *        fields' property names remain un-altered.
+	 * @param fields The fields to add
+	 */
+	public void addFields(String parentPropPath, IField[] fields) {
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(parentPropPath, fld);
+			}
+		}
+	}
+
+	/**
 	 * Removes a field by reference searching recursively. If the given field is
 	 * <code>null</code> or is <em>this</em> field group, no field is removed
 	 * and <code>false</code> is returned.
@@ -290,41 +326,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 			else {
 				fld.setPropertyName(PropertyPath.getPropertyPath(propertyPath, fld.getPropertyName()));
-			}
-		}
-	}
-
-	/**
-	 * Adds a field directly under this field group pre-pending the given parent
-	 * property path to the field's <em>existing</em> property name.
-	 * @param parentPropPath Pre-pended to the field's property name before the
-	 *        field is added. May be <code>null</code> in which case the field's
-	 *        property name remains un-altered.
-	 * @param field The field to add
-	 */
-	public void addField(String parentPropPath, IField field) {
-		if(parentPropPath != null) {
-			if(field instanceof FieldGroup) {
-				((FieldGroup) field).prePendPropertyName(parentPropPath);
-			}
-			else {
-				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
-			}
-		}
-		fields.add(field);
-	}
-
-	/**
-	 * Adds multiple fields to this group.
-	 * @param parentPropPath Pre-pended to the each field's property name before
-	 *        the fields are added. May be <code>null</code> in which case the
-	 *        fields' property names remain un-altered.
-	 * @param fields The fields to add
-	 */
-	public void addFields(String parentPropPath, IField[] fields) {
-		if(fields != null) {
-			for(IField fld : fields) {
-				addField(parentPropPath, fld);
 			}
 		}
 	}
@@ -388,7 +389,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				PropertyPath resolved = propPath;
 				propPath.parse(fld.getPropertyName());
 				if(propertyPathOffset > 0) {
-					resolved = propPath.nested(propertyPathOffset - 1);
+					resolved = propPath.nested(propertyPathOffset);
 				}
 				IPropertyValue pv = model.getValue(resolved);
 				if(pv == null) {
@@ -403,13 +404,26 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * UnboundFieldsBinding - Associates a set of unbound {@link IField}s to an
+	 * indexed Model property.
+	 * @author jpk
+	 */
+	private static final class UnboundFieldsBinding {
+
+		Set<IField> unboundFields;
+		IndexedProperty modelProp;
+	}
+
+	/**
 	 * Updates the model by recursively traversing the given FieldGroup.
 	 * @param group The FieldGroup
 	 * @param model The Model to be updated
+	 * @param unboundFieldsMap
 	 * @return <code>true</code> when at least one valid update was transferred
 	 *         to the given model.
 	 */
-	private static boolean updateModel(FieldGroup group, final Model model) {
+	private static boolean updateModel(FieldGroup group, final Model model,
+			final Map<PropertyPath, UnboundFieldsBinding> unboundFieldsMap) {
 		boolean changed = false;
 
 		// map of newly created indexed properties keyed by the indexable property
@@ -418,7 +432,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		// pre-cursor
 		// to determining the model relative index range of indexed properties that
 		// need to be created!
-		Map<PropertyPath, Set<IField>> unboundFields = null;
 
 		model.setMarkedDeleted(group.markedDeleted);
 		if(!group.markedDeleted) {
@@ -426,7 +439,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			final PropertyPath propPath = new PropertyPath();
 			for(IField fld : group) {
 				if(fld instanceof FieldGroup) {
-					updateModel((FieldGroup) fld, model);
+					updateModel((FieldGroup) fld, model, unboundFieldsMap);
 				}
 				else {
 					// non-group field
@@ -437,6 +450,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						if(n >= 0) {
 							// unbound property!
 							PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
+							UnboundFieldsBinding binding = unboundFieldsMap.get(unboundPath);
 							assert unboundPath != null && unboundPath.length() > 0;
 							if(unboundFields == null) {
 								unboundFields = new HashMap<PropertyPath, Set<IField>>();

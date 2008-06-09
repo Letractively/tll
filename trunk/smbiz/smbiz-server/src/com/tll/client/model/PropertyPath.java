@@ -407,7 +407,7 @@ public final class PropertyPath {
 	 * @return <code>true</code> if the replacement was successful.
 	 */
 	public boolean replace(String nodePath, String replNodePath) {
-		if(nodes != null) return false;
+		if(nodes == null) return false;
 		final int ni = nodeIndexOf(nodePath);
 		if(ni == -1) return false;
 		nodes[ni] = replNodePath;
