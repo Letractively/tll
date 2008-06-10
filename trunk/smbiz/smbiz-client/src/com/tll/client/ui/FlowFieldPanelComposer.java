@@ -8,7 +8,6 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.AbstractField;
@@ -38,13 +37,8 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	private boolean atCurrent;
 
-	/**
-	 * Constructor
-	 * @param parentPanel The panel that will be appended with this canvas
-	 */
-	public FlowFieldPanelComposer(Panel parentPanel) {
-		super();
-		parentPanel.add(vp);
+	public Widget getCanvasWidget() {
+		return vp;
 	}
 
 	private HorizontalPanel getCurrentRow() {

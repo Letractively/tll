@@ -6,16 +6,22 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
-import com.tll.client.data.AuxDataRequest;
 import com.tll.client.ui.field.CheckboxField;
+import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FieldLabel;
-import com.tll.model.EntityType;
+import com.tll.client.ui.field.TextAreaField;
+import com.tll.client.ui.field.TextField;
 
 /**
  * AbstractInterfacePanel
  * @author jpk
  */
-public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
+public abstract class AbstractInterfacePanel extends FieldGroupPanel {
+
+	protected TextField name, code;
+	protected TextAreaField description;
+	protected DateField[] timestamps;
 
 	protected CheckboxField isAvailableAsp;
 	protected CheckboxField isAvailableIsp;
@@ -29,26 +35,17 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public AbstractInterfacePanel(String propName) {
-		super(propName, "Interface");
+	public AbstractInterfacePanel() {
+		super("Interface");
 	}
 
 	@Override
-	public void neededAuxData(AuxDataRequest auxDataRequest) {
-		super.neededAuxData(auxDataRequest);
-		// let's get all interface prototype models upfront
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
-		auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
-	}
-
-	@Override
-	protected void configure() {
-		super.configure();
+	public void populateFieldGroup() {
+		name = createNameEntityField();
+		code = ftext("code", "Code", 20);
+		description = ftextarea("description", "Desc", 3, 8);
+		timestamps = createTimestampEntityFields();
 
 		isAvailableAsp = fbool("isAvailableAsp", null);
 		isAvailableIsp = fbool("isAvailableIsp", null);
@@ -60,30 +57,19 @@ public abstract class AbstractInterfacePanel extends InterfaceRelatedPanel {
 		isRequiredMerchant = fbool("isRequiredMerchant", null);
 		isRequiredCustomer = fbool("isRequiredCustomer", null);
 
-		fields.addField(isAvailableAsp);
-		fields.addField(isAvailableIsp);
-		fields.addField(isAvailableMerchant);
-		fields.addField(isAvailableCustomer);
+		addField(name);
+		addField(code);
+		addField(description);
+		addFields(timestamps);
 
-		fields.addField(isRequiredAsp);
-		fields.addField(isRequiredIsp);
-		fields.addField(isRequiredMerchant);
-		fields.addField(isRequiredCustomer);
-
-		/*
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
-
-		// first row
-		canvas.addField(name);
-		canvas.addField(code);
-		canvas.addField(description);
-
-		canvas.newRow();
-		canvas.addWidget(g);
-
-		canvas.addField(dateCreated);
-		canvas.addField(dateModified);
-		*/
+		addField(isAvailableAsp);
+		addField(isAvailableIsp);
+		addField(isAvailableMerchant);
+		addField(isAvailableCustomer);
+		addField(isRequiredAsp);
+		addField(isRequiredIsp);
+		addField(isRequiredMerchant);
+		addField(isRequiredCustomer);
 	}
 
 	protected Grid createAvailabilityGrid() {

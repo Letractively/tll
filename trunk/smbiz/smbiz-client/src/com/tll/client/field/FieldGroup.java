@@ -5,17 +5,21 @@
 package com.tll.client.field;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
-import com.tll.client.model.MalformedPropPathException;
+import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
@@ -27,114 +31,86 @@ import com.tll.util.IDescriptorProvider;
 
 /**
  * FieldGroup - A group of {@link IField}s which may in turn be nested
- * {@link FieldGroup}s. This construct assists in the management of property
- * paths so any given field group object graph should be structured such that
- * property path integrity is maintained.
+ * {@link FieldGroup}s. Thus a FieldGroup is a hierarchical collection of
+ * {@link IField}s.
  * <p>
- * <strong>NOTE: </strong>Property path conventions as they related to
- * {@link FieldGroup}s:
+ * Non-FieldGroup children of {@link FieldGroup}s are expected to have a unique
+ * property name that allows the field to be mapped to the underlying
+ * {@link Model}.
+ * <p>
+ * A FieldGroup represents a grouping of {@link IField}s for UI purposes and as
+ * such <em>does not necessarily represent model hierarchy boundaries</em>
+ * <p>
+ * To fully support data transfer ("binding") between a FieldGroup instance and
+ * a Model instance, the following conventions are established:
  * <ol>
- * <li>Each nested field group represents a single name in a property path.
- * E.g.: For property path 'account.addresses[3].firstName', the corres. field
- * group hierarchy is: fg(account)-nestedfg(addresses[3])-nestedfg(firstName)
+ * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected
+ * to have a standard OGNL property name to support binding to/from the
+ * underlying Model.
+ * <li>Newly created IFields that map to a non-existant related many Model are
+ * expected to have a property name that indicates as much:
+ * <code>indexableProp{index}.propertyName</code> as opposed to the standard:
+ * <code>indexableProp[index].propertyName</code>. In other words, curly
+ * braces (<code>{}</code>) are used instead of square braces (<code>[]</code>).
  * </ol>
  * @author jpk
  */
-// TODO create a field "set" construct to handle redundant (non-property path
-// dependent) field aggregations for validation purposes.
 public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
 
 	/**
-	 * FieldBinding - Encapsulates parent/child relationship for a given parent
-	 * FieldGroup and child IField.
-	 * @author jpk
+	 * Recursively searches for a single field whose property name matches the
+	 * given property name
+	 * @param propertyName The property name to search for
+	 * @param group The group to search in
+	 * @return The found IField or <code>null</code> if no matching field found
 	 */
-	private static class FieldBinding {
-
-		public IField field;
-		public FieldGroup parent;
-
-		public FieldBinding(IField field, FieldGroup parent) {
-			super();
-			this.field = field;
-			this.parent = parent;
-		}
-	}
-
-	/**
-	 * @param propPath
-	 * @param group
-	 * @param parentPropPath
-	 * @return
-	 * @throws MalformedPropPathException
-	 */
-	private static FieldBinding getBindingByPropertyPath(final String propPath, FieldGroup group, String parentPropPath)
-			throws MalformedPropPathException {
-		return getBindingByPropertyPath(new PropertyPath(propPath), 0, group);
-	}
-
-	/**
-	 * Recursive method seeking the field bound to the given property path.
-	 * @param propPath The property path object
-	 * @param pindex The property path index
-	 * @param group The current {@link FieldGroup}
-	 * @return The {@link FieldBinding} (never <code>null</code>).
-	 * @throws MalformedPropPathException
-	 */
-	private static FieldBinding getBindingByPropertyPath(final PropertyPath propPath, int pindex, FieldGroup group)
-			throws MalformedPropPathException {
-		String name = propPath.propNameAt(pindex);
-		boolean atEnd = propPath.atEnd(pindex);
+	private static IField findField(final String propertyName, FieldGroup group) {
+		List<FieldGroup> glist = null;
 		for(IField fld : group) {
-			if(name.equals(fld.getPropertyName())) {
-				if(atEnd) {
-					// found it
-					return new FieldBinding(fld, group);
+			if(fld instanceof FieldGroup == false) {
+				if(fld.getPropertyName().equals(propertyName)) {
+					return fld;
 				}
-				if(fld instanceof FieldGroup == false) {
-					throw new MalformedPropPathException(propPath.toString());
-				}
-				return getBindingByPropertyPath(propPath, pindex + 1, (FieldGroup) fld);
+			}
+			else {
+				if(glist == null) glist = new ArrayList<FieldGroup>();
+				glist.add((FieldGroup) fld);
 			}
 		}
-		return new FieldBinding(null, group);
+		if(glist != null) {
+			for(FieldGroup fg : glist) {
+				findField(propertyName, fg);
+			}
+		}
+		return null;
 	}
 
 	/**
-	 * Needed to ensure unique pending property names and to hide this aspect from
-	 * clients.
+	 * Recursively extracts all {@link IField}s whose property name starts with
+	 * the given property path. The found fields are added to the given set.
+	 * @param propPath The property path used to compare against all encountered
+	 *        fields
+	 * @param group The field group to search
+	 * @param set The set of found fields
 	 */
-	private static int pendingPropertyCounter = 0;
-
-	private static String pendingTokenPrefix = "{pending";
-
-	/**
-	 * Provides a "pending" property name. Pending implies that the property does
-	 * <em>NOT</em> yet exist and the semantics of a pending property name
-	 * serves to indicate this fact.
-	 * @return A unique property name indicating "pending".
-	 */
-	public static String getPendingPropertyName() {
-		return pendingTokenPrefix + pendingPropertyCounter++ + '}';
+	private static void findFields(final String propPath, FieldGroup group, Set<IField> set) {
+		List<FieldGroup> glist = new ArrayList<FieldGroup>();
+		for(IField fld : group) {
+			if(fld instanceof FieldGroup == false) {
+				if(fld.getPropertyName().startsWith(propPath)) {
+					set.add(fld);
+				}
+			}
+			else {
+				glist.add((FieldGroup) fld);
+			}
+		}
+		if(glist.size() > 0) {
+			for(FieldGroup fg : glist) {
+				findFields(propPath, fg, set);
+			}
+		}
 	}
-
-	/**
-	 * Is the given property name a pending property? Used in tandem with
-	 * {@link #getPendingPropertyName()}. This scheme is used to indicate model
-	 * add operations.
-	 * @param propName The property name to check
-	 * @return true/false
-	 * @see #getPendingPropertyName()
-	 */
-	private static boolean isPendingProperty(String propName) {
-		return propName != null && propName.startsWith(pendingTokenPrefix);
-	}
-
-	/**
-	 * The property name representing a property path (for the case of field
-	 * groups). May be <code>null</code>.
-	 */
-	private String propName;
 
 	/**
 	 * A presentation worthy display name.
@@ -147,8 +123,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private boolean visible = true;
 
 	/**
-	 * Used to indicate this field group is scheduled for deletion when populating
-	 * the field data back to the associated property value group.
+	 * Used to indicate deletion in the underlying Model. Although a FieldGroup
+	 * hierarchy is not required to conform to the Model hierarchy, this property
+	 * is here nonetheless to facilitate data transferance of this information to
+	 * the Model.
 	 */
 	private boolean markedDeleted = false;
 
@@ -175,18 +153,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		this.refWidget = refWidget;
 	}
 
-	/**
-	 * Constructor
-	 * @param propName
-	 * @param displayName
-	 * @param refWidget The associated UI {@link Widget}. May be
-	 *        <code>null</code>. Used for validation feedback.
-	 */
-	public FieldGroup(String propName, String displayName, Widget refWidget) {
-		this(displayName, refWidget);
-		this.propName = propName;
-	}
-
 	public String descriptor() {
 		return displayName;
 	}
@@ -204,11 +170,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public String getPropertyName() {
-		return propName;
+		// fields groups shall NOT serve as model hierarchy boundaries!!!
+		throw new UnsupportedOperationException();
 	}
 
 	public void setPropertyName(String propName) {
-		this.propName = propName;
+		throw new UnsupportedOperationException();
 	}
 
 	public boolean isReadOnly() {
@@ -259,10 +226,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		setEnabled(!markedDeleted);
 	}
 
-	public boolean isPending() {
-		return isPendingProperty(propName);
-	}
-
 	public Widget getRefWidget() {
 		return refWidget;
 	}
@@ -276,76 +239,59 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Finds a field having the given property path. Searches recursively.
-	 * @param propPath
+	 * Recursively searches for a field having the given property name.
+	 * @param propertyName
 	 * @return The found field or <code>null</code> if it doesn't exist.
-	 * @throws IllegalArgumentException When the property path doesn't map to the
-	 *         field group properly or when the property path is inherently
-	 *         mal-formed.
 	 */
-	public IField getField(String propPath) {
-		if(propPath == null) return null;
-		try {
-			FieldBinding binding = getBindingByPropertyPath(propPath, this, getPropertyName());
-			return binding.field;
-		}
-		catch(MalformedPropPathException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+	public IField getField(String propertyName) {
+		return propertyName == null ? null : findField(propertyName, this);
 	}
 
 	/**
-	 * Sets a field given a property path
-	 * @param propPath
-	 * @param field
-	 * @throws IllegalArgumentException When the property path doesn't map to the
-	 *         field group properly or when the property path is inherently
-	 *         mal-formed.
+	 * Finds all fields whose property name begins with the given property path.
+	 * @param propPath The property path
+	 * @return Set of matching fields
 	 */
-	/*
-	public void setField(String propPath, IField field) throws IllegalArgumentException {
-		assert field != null;
-		try {
-			FieldBinding binding =
-					getBindingByPropertyPath(PropertyPathHelper.getPropertyPath(propPath, field.getPropertyName()), this,
-							getPropertyName());
-			if(binding.field == null) {
-				binding.parent.addField(field);
+	public Set<IField> getFields(String propPath) {
+		Set<IField> set = new HashSet<IField>();
+		findFields(propPath, this, set);
+		return set;
+	}
+
+	/**
+	 * Adds a field directly under this field group pre-pending the given parent
+	 * property path to the field's <em>existing</em> property name.
+	 * @param parentPropPath Pre-pended to the field's property name before the
+	 *        field is added. May be <code>null</code> in which case the field's
+	 *        property name remains un-altered.
+	 * @param field The field to add
+	 */
+	public void addField(String parentPropPath, IField field) {
+		if(parentPropPath != null) {
+			if(field instanceof FieldGroup) {
+				((FieldGroup) field).prePendPropertyName(parentPropPath);
 			}
 			else {
-				Set<IField> set = binding.parent.fields;
-				set.remove(binding.field);
-				set.add(field);
+				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
 			}
 		}
-		catch(MalformedPropPathException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+		fields.add(field);
 	}
-	*/
 
 	/**
-	 * Recursively searches for the field of the given property path and if found
-	 * is removed from its parent group.
-	 * @param propPath The property path of the field to be removed.
-	 * @return The removed field or <code>null</code> if not found.
+	 * Adds multiple fields to this group.
+	 * @param parentPropPath Pre-pended to the each field's property name before
+	 *        the fields are added. May be <code>null</code> in which case the
+	 *        fields' property names remain un-altered.
+	 * @param fields The fields to add
 	 */
-	/*
-	public IField removeField(String propPath) {
-		if(propPath == null) return null;
-		FieldBinding binding;
-		try {
-			binding = getBindingByPropertyPath(propPath, this, getPropertyName());
+	public void addFields(String parentPropPath, IField[] fields) {
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(parentPropPath, fld);
+			}
 		}
-		catch(MalformedPropPathException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
-		if(binding.field == null) return null;
-		assert binding.parent != null;
-		binding.parent.fields.remove(binding.field);
-		return binding.field;
 	}
-	*/
 
 	/**
 	 * Removes a field by reference searching recursively. If the given field is
@@ -369,12 +315,19 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Adds a field directly under this field group.
-	 * @param field The field to add
+	 * Recursively pre-pends the given property path to all child fields' property
+	 * names.
+	 * @param propertyPath The property path to pre-pend
 	 */
-	public void addField(IField field) {
-		assert field != null;
-		fields.add(field);
+	private void prePendPropertyName(String propertyPath) {
+		for(IField fld : this) {
+			if(fld instanceof FieldGroup) {
+				((FieldGroup) fld).prePendPropertyName(propertyPath);
+			}
+			else {
+				fld.setPropertyName(PropertyPath.getPropertyPath(propertyPath, fld.getPropertyName()));
+			}
+		}
 	}
 
 	public void reset() {
@@ -420,68 +373,161 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Binds the model to this field group.
-	 * <p>
-	 * <strong>NOTE: </strong>The property name hierarchy of the model
-	 * <em>must</em> to be consistent with this field group's property name
-	 * hierarchy.
+	 * Recursively binds a FieldGroup to a Model.
+	 * @param group The FieldGroup
+	 * @param model The Model
+	 * @param propertyPathOffset The node index at which the given FieldGroup
+	 *        binds to the given Model.
 	 */
-	public void bindModel(Model model) {
-		for(IField fld : this) {
+	private static void bindModel(final int propertyPathOffset, FieldGroup group, final Model model) {
+		final PropertyPath propPath = new PropertyPath();
+		for(IField fld : group) {
 			if(fld instanceof FieldGroup) {
-				final IPropertyBinding binding = model.getPropertyBinding(fld.getPropertyName());
-				if(binding != null) {
-					if(!binding.getType().isModelRef()) {
-						throw new IllegalArgumentException("Can't bind model: Field group '" + fld.getPropertyName()
-								+ "' does not map to a model ref property");
-					}
-					final Model submodel = ((IModelRefProperty) binding).getModel();
-					if(submodel != null) {
-						fld.bindModel(submodel);
-					}
-				}
+				bindModel(propertyPathOffset, (FieldGroup) fld, model);
 			}
 			else {
-				fld.bindModel(model);
+				PropertyPath resolved = propPath;
+				propPath.parse(fld.getPropertyName());
+				if(propertyPathOffset > 0) {
+					resolved = propPath.nested(propertyPathOffset);
+				}
+				IPropertyValue pv = model.getValue(resolved);
+				if(pv == null) {
+					fld.clear();
+				}
+				else {
+					fld.bindModel(pv);
+				}
 			}
 		}
-		setMarkedDeleted(false);
+		group.setMarkedDeleted(false);
 	}
 
-	public boolean updateModel(Model model) {
-		model.setMarkedDeleted(markedDeleted);
-		if(markedDeleted) {
-			// since we are marked as deleted, change is true
-			return true;
-		}
+	/**
+	 * Updates the model by recursively traversing the given FieldGroup.
+	 * @param group The FieldGroup
+	 * @param model The Model to be updated
+	 * @param unboundFieldsMap
+	 * @param depth The recursion depth
+	 * @return <code>true</code> when at least one valid update was transferred
+	 *         to the given model.
+	 */
+	private static boolean updateModel(FieldGroup group, final Model model,
+			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {
 		boolean changed = false;
-		for(IField fld : this) {
-			if(fld instanceof FieldGroup) {
-				final IPropertyBinding binding = model.getPropertyBinding(fld.getPropertyName());
-				if(binding != null) {
-					if(!binding.getType().isModelRef()) {
-						throw new IllegalArgumentException("Can't update model: Field group '" + fld.getPropertyName()
-								+ "' does not map to a model ref property");
-					}
-					final Model submodel = ((IModelRefProperty) binding).getModel();
-					if(submodel != null) {
-						if(fld.updateModel(submodel)) {
-							changed = true;
+
+		model.setMarkedDeleted(group.markedDeleted);
+		if(!group.markedDeleted) {
+			IPropertyValue pv;
+			final PropertyPath propPath = new PropertyPath();
+			for(IField fld : group) {
+				if(fld instanceof FieldGroup) {
+					updateModel((FieldGroup) fld, model, unboundFields, depth + 1);
+				}
+				else {
+					// non-group field
+					try {
+						propPath.parse(fld.getPropertyName());
+
+						int n = propPath.nextUnboundNode(0);
+						if(n >= 0) {
+							// unbound property!
+							PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
+							assert unboundPath != null && unboundPath.length() > 0;
+							Set<IField> set = unboundFields.get(unboundPath);
+							if(set == null) {
+								set = new HashSet<IField>();
+								unboundFields.put(unboundPath, set);
+							}
+							set.add(fld);
+						}
+						else {
+							// existing model property
+							pv = model.getValue(propPath);
+							if(pv != null) {
+								if(fld.updateModel(pv)) {
+									changed = true;
+								}
+							}
 						}
 					}
-				}
-				else if(((FieldGroup) fld).isPending()) {
-					// we have a pending addition
-					changed = true;
+					catch(IllegalArgumentException e) {
+						throw new IllegalStateException(e.getMessage());
+					}
 				}
 			}
-			else {
-				if(fld.updateModel(model)) {
-					changed = true;
+
+			// handle the unbound indexed props (newly created in the ui)
+			if(depth == 0 && unboundFields.size() > 0) {
+				for(PropertyPath upp : unboundFields.keySet()) {
+					// create the missing properties in the model
+					if(upp.isIndexed()) {
+						// unbound indexed property
+						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
+						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
+						if(stub == null)
+							throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
+									+ " model prototype");
+
+						// now we need to propagate the actual property path to the child
+						// fields
+
+						// actual property path RELATIVE TO THE RELATED MANY PROPERTY
+						// BINDING AND NOT THE ROOT MODEL
+						// e.g. relatedMany[1] NOT root.relatedMany[1]
+						final String app = rmp.add(stub);
+
+						// the depth index of the unbound prop path
+						final int depthIndex = upp.depth() - 1;
+						assert depthIndex >= 0;
+
+						Set<IField> ufields = unboundFields.get(upp);
+						for(IField fld : ufields) {
+
+							// replace the indexed property path node
+							propPath.parse(fld.getPropertyName());
+							assert propPath.depth() > depthIndex;
+							propPath.replaceAt(depthIndex, app);
+
+							fld.setPropertyName(propPath.toString());
+							// do the model update
+							pv = model.getValue(propPath);
+							if(pv != null) fld.updateModel(pv);
+						}
+						changed = true;
+					}
+					else {
+						// unbound non-indexed property
+						throw new UnsupportedOperationException("Only indexed properties may be unbound");
+					}
 				}
 			}
 		}
 		return changed;
+	}
+
+	/**
+	 * Binds a Model to this group.
+	 * @param propPathOffset Property path node index representing the parent
+	 *        property path offset that is applied to all non-group child IFields.
+	 * @param binding The Model binding
+	 */
+	public void bindModel(int propPathOffset, IPropertyBinding binding) {
+		if(binding instanceof IModelRefProperty == false) {
+			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
+		}
+		bindModel(propPathOffset, this, ((IModelRefProperty) binding).getModel());
+	}
+
+	public void bindModel(IPropertyBinding binding) {
+		bindModel(0, binding);
+	}
+
+	public boolean updateModel(IPropertyBinding binding) {
+		if(binding instanceof IModelRefProperty == false) {
+			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
+		}
+		return updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
 	}
 
 	public IValidator getValidators() {

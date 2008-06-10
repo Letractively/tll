@@ -109,7 +109,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 					@Override
 					protected AuxDataRequest getNeededAuxData() {
-						return editPanel.getNeededAuxData();
+						AuxDataRequest auxDataRequest = new AuxDataRequest();
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
+						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
+						return auxDataRequest;
 					}
 
 					@Override
@@ -126,9 +132,9 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				switch(intfType) {
 					case INTERFACE_MULTI:
 					case INTERFACE_SINGLE:
-						return new MultiOptionInterfacePanel(null);
+						return new MultiOptionInterfacePanel();
 					case INTERFACE_SWITCH:
-						return new SwitchInterfacePanel(null);
+						return new SwitchInterfacePanel();
 					default:
 						throw new IllegalArgumentException();
 				}

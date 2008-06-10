@@ -5,23 +5,12 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.App;
-import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldGroup;
-import com.tll.client.model.IndexedProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.RelatedManyProperty;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.FlowFieldPanelComposer;
-import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -30,24 +19,19 @@ import com.tll.model.EntityType;
  */
 public final class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
 
-	protected final List<OptionPanel> optionPanels = new ArrayList<OptionPanel>();
-
 	private final TabPanel tabOptions = new TabPanel();
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public MultiOptionInterfacePanel(String propName) {
-		super(propName);
+	public MultiOptionInterfacePanel() {
+		super();
 		tabOptions.addTabListener(this);
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
-
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
 		canvas.addField(name);
@@ -57,19 +41,21 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		canvas.addWidget(createAvailabilityGrid());
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(dateCreated);
+		canvas.addField(timestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(timestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();
 		canvas.addWidget(tabOptions);
+		return canvas.getCanvasWidget();
 	}
 
 	@Override
-	protected void onBeforeBind(Model modelInterface) {
-		super.onBeforeBind(modelInterface);
+	public void populateFieldGroup() {
+		super.populateFieldGroup();
 
+		/*
 		// clear existing options
 		for(OptionPanel p : optionPanels) {
 			fields.removeField(p.getFields());
@@ -98,9 +84,11 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		// default select the first tab
 		tabOptions.selectTab(0);
+		*/
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
+		/*
 		assert sender == tabOptions;
 		if(tabIndex == tabOptions.getTabBar().getTabCount() - 1) {
 			OptionPanel op = new OptionPanel(FieldGroup.getPendingPropertyName());
@@ -115,6 +103,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			// tabOptions.remove(tabIndex + 1);
 			// tabOptions.selectTab(tabIndex);
 		}
+		*/
 		return true;
 	}
 

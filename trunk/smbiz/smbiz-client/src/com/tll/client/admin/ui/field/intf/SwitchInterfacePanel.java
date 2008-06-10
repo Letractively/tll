@@ -6,9 +6,8 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.model.IndexedProperty;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.Model;
-import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.FlowFieldPanelComposer;
 
 /**
@@ -18,25 +17,15 @@ import com.tll.client.ui.FlowFieldPanelComposer;
 public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 	/**
-	 * The single un-deletable switch option
-	 */
-	private final SwitchOptionPanel pnlOption = new SwitchOptionPanel(null);
-
-	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public SwitchInterfacePanel(String propName) {
-		super(propName);
+	public SwitchInterfacePanel() {
+		super();
 	}
 
 	@Override
-	protected void configure() {
-		super.configure();
-
-		pnlOption.configure();
-
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
 
 		// first row
 		canvas.addField(name);
@@ -44,22 +33,20 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		canvas.addField(description);
 
 		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(dateCreated);
+		canvas.addField(timestamps[0]);
 		canvas.stopFlow();
-		canvas.addField(dateModified);
+		canvas.addField(timestamps[1]);
 		canvas.resetAlignment();
 
 		canvas.newRow();
 		canvas.addWidget(createAvailabilityGrid());
 
-		canvas.newRow();
-		canvas.addWidget(pnlOption);
+		return canvas.getCanvasWidget();
 	}
 
 	@Override
-	protected void onBeforeBind(Model modelInterface) {
-		super.onBeforeBind(modelInterface);
-
+	protected void applyModel(Model modelInterface) {
+		/*
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
 			throw new IllegalArgumentException();
@@ -69,6 +56,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		pnlOption.getFields().setPropertyName(ip.getPropertyName());
 		fields.addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
+		*/
 	}
-
 }

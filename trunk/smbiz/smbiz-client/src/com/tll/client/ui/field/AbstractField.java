@@ -17,8 +17,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.HasFormat;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
+import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -89,13 +89,13 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	/**
 	 * The unique DOM element id of this field.
 	 */
-	protected final String domId;
+	private final String domId;
 
 	/**
 	 * The field name synonymous w/ the property name when considered in a
 	 * property path context. Can NOT be <code>null</code>.
 	 */
-	protected String propName;
+	private String propName;
 
 	/**
 	 * The field value. This property is necessary when considering read-only
@@ -414,16 +414,10 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		setValue(null);
 	}
 
-	public final void bindModel(Model model) {
-		assert model != null;
-
-		// extract the model's property value with the property name assigned to
-		// this field
-		IPropertyValue pv = model.getProp(getPropertyName());
-		if(pv == null) {
-			// no associated model data
-			return;
-		}
+	public final void bindModel(IPropertyBinding binding) {
+		if(binding instanceof IPropertyValue == false)
+			throw new IllegalArgumentException("Non-group fields may only bind to property values.");
+		final IPropertyValue pv = (IPropertyValue) binding;
 
 		GlobalFormat format = (this instanceof HasFormat) ? ((HasFormat) this).getFormat() : null;
 
@@ -508,13 +502,16 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		reset();
 	}
 
-	public boolean updateModel(Model model) {
+	public boolean updateModel(IPropertyBinding binding) {
+		if(binding instanceof IPropertyValue == false)
+			throw new IllegalArgumentException("Non-group fields may only update model property values.");
+		final IPropertyValue pv = (IPropertyValue) binding;
 		if(modelValue != null) {
-			// NOTE: there is potential for the model.setProp call to throw an
+			// NOTE: there is potential for the setProp call to throw an
 			// excecption
 			// but this souldn't happen if the model has been "properly" bound and the
 			// validators property set
-			model.setProp(getPropertyName(), modelValue);
+			pv.setValue(modelValue);
 			return true;
 		}
 		return false;
@@ -605,8 +602,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	/**
 	 * This is when we perform actual field validation and retain the validated
-	 * model value for later application when {@link #updateModel(Model)} is
-	 * called.
+	 * model value for later application when
+	 * {@link #updateModel(IPropertyBinding)} is called.
 	 */
 	public final void onLostFocus(Widget sender) {
 		final String currentValue = getValue();

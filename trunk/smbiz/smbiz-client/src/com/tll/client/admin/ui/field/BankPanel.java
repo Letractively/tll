@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.tll.client.data.AuxDataRequest;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
@@ -16,37 +16,36 @@ import com.tll.client.ui.field.TextField;
  */
 public final class BankPanel extends FieldGroupPanel {
 
-	protected TextField bankName;
-	protected TextField bankAccountNo;
-	protected TextField bankRoutingNo;
+	private TextField bankName;
+	private TextField bankAccountNo;
+	private TextField bankRoutingNo;
 
 	/**
 	 * Constructor
-	 * @param propName
 	 */
-	public BankPanel(String propName) {
-		super(propName, "Bank Info");
+	public BankPanel() {
+		super("Bank Info");
 	}
 
 	@Override
-	public void neededAuxData(AuxDataRequest auxDataRequest) {
-		// none
+	public void populateFieldGroup() {
+		bankName = ftext("paymentData_bankName", "Bank Name", 40);
+		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30);
+		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20);
+
+		addField(bankName);
+		addField(bankAccountNo);
+		addField(bankRoutingNo);
 	}
 
 	@Override
-	protected void configure() {
-		bankName = ftext("paymentData.bankName", "Bank Name", 40);
-		bankAccountNo = ftext("paymentData.bankAccountNo", "Account Num", 30);
-		bankRoutingNo = ftext("paymentData.bankRoutingNo", "Routing Num", 20);
-
-		fields.addField(bankName);
-		fields.addField(bankAccountNo);
-		fields.addField(bankRoutingNo);
-
-		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer(panel);
+	protected Widget draw() {
+		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer();
 
 		canvas.addField(bankName);
 		canvas.addField(bankAccountNo);
 		canvas.addField(bankRoutingNo);
+
+		return canvas.getCanvasWidget();
 	}
 }

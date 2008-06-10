@@ -32,6 +32,7 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -176,39 +177,39 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 * Constructor
 		 */
 		public TestFieldPanel() {
-			super("test", "Test Field Panel");
-			ap = new AddressPanel("address");
+			super("Test Field Panel");
+			ap = new AddressPanel();
 			bf = fbool("bf", null);
 			bflabel = fbool("bflabel", "Boolean with Label");
 		}
 
 		@Override
-		protected void configure() {
-			ap.initFields();
-			fields.addField(ap.getFields());
-			fields.addField(bflabel);
-			fields.addField(bf);
-
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer(panel);
-
-			canvas.addWidget(ap);
-
-			canvas.addField(bflabel);
-			canvas.addField(bf);
+		public void populateFieldGroup() {
+			addField(ap.getFields());
+			addField(bflabel);
+			addField(bf);
 		}
 
+		@Override
+		protected Widget draw() {
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+			canvas.addWidget(ap);
+			canvas.addField(bflabel);
+			canvas.addField(bf);
+			return canvas.getCanvasWidget();
+		}
 	}
 
 	private void setTestModel(Model address) {
 		testModel = new Model();
-		testModel.setRelatedOne("address", address);
+		testModel.set(new RelatedOneProperty(EntityType.ADDRESS, "address", true, address));
 		testModel.set(new BooleanPropertyValue("bflabel", true));
 		testModel.set(new BooleanPropertyValue("bf", false));
 	}
 
 	/**
 	 * <p>
-	 * Test: TEST_ADDRESS_PANEL
+	 * Test: TEST_FIELDS
 	 * <p>
 	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
 	 */
@@ -287,7 +288,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * Purpose: Renders an interface panel to verify its DOM/CSS.
 	 */
 	void testInterfacePanel() {
-		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel(null);
+		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel();
 		testPanel.add(intfPanel);
 		if(intf == null) {
 			// stub mock interface
@@ -296,16 +297,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				public void onCrudEvent(CrudEvent event) {
 					intf = event.getPayload().getEntity();
-					intfPanel.bind(intf);
-					// intfPanel.render();
+					intfPanel.populateFieldGroup();
 				}
 			});
 			cc.loadByName(EntityType.INTERFACE_SINGLE, "Payment Processor");
 			cc.execute();
 		}
 		else {
-			intfPanel.bind(intf);
-			// intfPanel.render();
+			intfPanel.populateFieldGroup();
 		}
 	}
 

@@ -36,6 +36,7 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.StatusEvent;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
@@ -268,7 +269,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			this.vlUsername.setText(user.asString("emailAddress"));
 			this.vlUsername.setViewRequest(new EditViewRequest(this, UserEditView.klas, user));
 			this.lblUserDateCreated.setText(Fmt.date(user.getDateCreated(), DateFormat.DATE));
-			Model account = user.relatedOne("account").getModel();
+			Model account = user.relatedOne(new PropertyPath("account")).getModel();
 			this.lblUserAccount.setText(Fmt.date(account.getDateModified(), DateFormat.DATE));
 		}
 

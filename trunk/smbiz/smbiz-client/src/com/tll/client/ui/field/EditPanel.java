@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.AuxDataRequest;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
@@ -201,18 +200,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	/**
-	 * @return An {@link AuxDataRequest} instance containing the needed aux data
-	 *         or <code>null</code> if no aux data is needed.<br>
-	 *         <strong>NOTE: </strong>This method does <em>not</em> check the
-	 *         aux data cache.
-	 */
-	public AuxDataRequest getNeededAuxData() {
-		AuxDataRequest adr = new AuxDataRequest();
-		fieldPanel.neededAuxData(adr);
-		return adr.size() == 0 ? null : adr;
-	}
-
-	/**
 	 * Is this edit panel loaded with model data?
 	 * @return true/false
 	 */
@@ -230,8 +217,9 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			throw new IllegalStateException("No model loaded.");
 		}
 		btnSave.setText(model.isNew() ? "Add" : "Update");
-		fieldPanel.bind(model);
-		// fieldPanel.render();
+		fieldPanel.init();
+		fieldPanel.applyModel(model);
+		fieldPanel.getFields().bindModel(model.getBindingRef());
 		pnlButtonRow.setVisible(true);
 	}
 
@@ -245,16 +233,17 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	public void onClick(Widget sender) {
 		if(sender == btnSave) {
 			try {
-				if(fieldPanel.updateModel(model)) {
-					editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
-				}
-				else {
-					MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
-							.show();
-				}
+				fieldPanel.getFields().validate();
 			}
 			catch(ValidationException e) {
-				// no-op
+				return;
+			}
+			if(fieldPanel.getFields().updateModel(model.getBindingRef())) {
+				editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
+			}
+			else {
+				MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
+						.show();
 			}
 		}
 		else if(sender == btnReset) {

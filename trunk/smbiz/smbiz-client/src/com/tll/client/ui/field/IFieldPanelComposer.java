@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.IField;
 
 /**
@@ -23,10 +24,8 @@ public interface IFieldPanelComposer {
 	static final String CSS_FIELD = "fld";
 
 	/**
-	 * Composes the field panel
-	 * @param group The field grop from which {@link IField}s that will be added
-	 *        to the given Panel are gotten.
-	 * @param attachPanel The Panel onto which {@link IField}s are added.
+	 * @return The Widget on which {@link IField}s and supporting {@link Widget}s
+	 *         are drawn.
 	 */
-	// void composeFieldPanel(FieldGroup group, Panel attachPanel);
+	Widget getCanvasWidget();
 }
