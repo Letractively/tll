@@ -11,8 +11,8 @@ import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 
 /**
- * DataField - IField that serves only to hold a value and is <em>not</em>
- * rendered in the UI.
+ * DataField - An IField serving only to transfer data to the model. DataFields
+ * are <em>not</em> rendered in the UI.
  * @author jpk
  */
 public class DataField implements IField {
@@ -44,7 +44,8 @@ public class DataField implements IField {
 	}
 
 	public void bindModel(IPropertyBinding binding) {
-		value = binding.getValue();
+		// value = binding.getValue();
+		// no-op
 	}
 
 	public void clear() {
