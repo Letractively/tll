@@ -17,7 +17,6 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
@@ -404,17 +403,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * UnboundFieldsBinding - Associates a set of unbound {@link IField}s to an
-	 * indexed Model property.
-	 * @author jpk
-	 */
-	private static final class UnboundFieldsBinding {
-
-		Set<IField> unboundFields;
-		IndexedProperty modelProp;
-	}
-
-	/**
 	 * Updates the model by recursively traversing the given FieldGroup.
 	 * @param group The FieldGroup
 	 * @param model The Model to be updated
@@ -423,7 +411,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *         to the given model.
 	 */
 	private static boolean updateModel(FieldGroup group, final Model model,
-			final Map<PropertyPath, UnboundFieldsBinding> unboundFieldsMap) {
+			final Map<PropertyPath, Set<IField>> unboundFields) {
 		boolean changed = false;
 
 		// map of newly created indexed properties keyed by the indexable property
@@ -439,7 +427,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			final PropertyPath propPath = new PropertyPath();
 			for(IField fld : group) {
 				if(fld instanceof FieldGroup) {
-					updateModel((FieldGroup) fld, model, unboundFieldsMap);
+					updateModel((FieldGroup) fld, model, unboundFields);
 				}
 				else {
 					// non-group field
@@ -450,11 +438,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						if(n >= 0) {
 							// unbound property!
 							PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
-							UnboundFieldsBinding binding = unboundFieldsMap.get(unboundPath);
 							assert unboundPath != null && unboundPath.length() > 0;
-							if(unboundFields == null) {
-								unboundFields = new HashMap<PropertyPath, Set<IField>>();
-							}
 							Set<IField> set = unboundFields.get(unboundPath);
 							if(set == null) {
 								set = new HashSet<IField>();
@@ -552,7 +536,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(binding instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
 		}
-		return updateModel(this, ((IModelRefProperty) binding).getModel());
+		Map<PropertyPath, Set<IField>> unboundFields = new HashMap<PropertyPath, Set<IField>>();
+		boolean changed = updateModel(this, ((IModelRefProperty) binding).getModel(), unboundFields);
+		if(unboundFields.size() > 0) {
+			// TODO handle unbound fields here!
+		}
+		return changed;
 	}
 
 	public IValidator getValidators() {
