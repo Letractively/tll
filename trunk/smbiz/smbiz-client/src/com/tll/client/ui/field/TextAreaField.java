@@ -85,7 +85,7 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 	}
 
 	@Override
-	protected String getReadOnlyRenderValue() {
-		return StringUtil.abbr(super.getReadOnlyRenderValue(), getMaxLen());
+	protected String getReadOnlyHtml() {
+		return StringUtil.abbr(super.getReadOnlyHtml(), getMaxLen());
 	}
 }

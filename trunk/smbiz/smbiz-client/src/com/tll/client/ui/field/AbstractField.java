@@ -136,8 +136,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	protected boolean changed;
 
 	/**
-	 * The optional field label created lazily and only when {@link #lblTxt} is
-	 * non-<code>null</code>.
+	 * The optional FieldLabel created lazily.
 	 */
 	protected FieldLabel fldLbl;
 
@@ -217,21 +216,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		this.propName = propName;
 	}
 
-	/*
-	public String getLabelText() {
-		return lblTxt;
-	}
-
-	public void setLabelText(String lblTxt) {
-		if(lblTxt != null && lblTxt.equals(this.lblTxt)) return;
-		if(lblTxt == null) lblTxt = "";
-		this.lblTxt = lblTxt;
-		if(fldLbl != null) {
-			fldLbl.setText(lblTxt);
-		}
-	}
-	*/
-
 	private boolean isDrawn() {
 		return pnl.getWidget() != null;
 	}
@@ -242,7 +226,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			if(rof == null) {
 				rof = new HTML();
 			}
-			String val = getReadOnlyRenderValue();
+			String val = getReadOnlyHtml();
 			if(val != null) rof.setHTML(val);
 			pnl.add(rof);
 		}
@@ -384,11 +368,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	/**
-	 * @return The read-only value to use when rendering. Sub-classes should
-	 *         override for special bahavior. E.g.: abbreviating the value for
-	 *         those fields that implement {@link HasMaxLength}.
+	 * @return Valid HTML String displayed in the UI when this field is read-only.
+	 *         Sub-classes should override for special bahavior. E.g.:
+	 *         abbreviating the value for those fields that implement
+	 *         {@link HasMaxLength}.
 	 */
-	protected String getReadOnlyRenderValue() {
+	protected String getReadOnlyHtml() {
 		return (value == null || value.length() == 0) ? defaultUiValue : value;
 	}
 

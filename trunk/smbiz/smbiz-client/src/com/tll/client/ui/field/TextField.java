@@ -90,7 +90,7 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 	}
 
 	@Override
-	protected String getReadOnlyRenderValue() {
-		return StringUtil.abbr(super.getReadOnlyRenderValue(), visibleLen);
+	protected String getReadOnlyHtml() {
+		return StringUtil.abbr(super.getReadOnlyHtml(), visibleLen);
 	}
 }

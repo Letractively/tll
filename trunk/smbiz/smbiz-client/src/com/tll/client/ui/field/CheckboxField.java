@@ -81,7 +81,7 @@ public class CheckboxField extends AbstractField {
 	}
 
 	@Override
-	protected String getReadOnlyRenderValue() {
+	protected String getReadOnlyHtml() {
 		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
 				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
 	}

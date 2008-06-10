@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.field.DataField;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -91,6 +92,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		@Override
 		public void populateFieldGroup() {
 			name = createNameEntityField();
+			addField(new DataField("type", addressType));
 			addField(name);
 			addField("address", addressPanel.getFields());
 		}
