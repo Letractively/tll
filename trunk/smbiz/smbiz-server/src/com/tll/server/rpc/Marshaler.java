@@ -37,6 +37,7 @@ import com.tll.listhandler.SearchResult;
 import com.tll.model.EntityAssembler;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
+import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.impl.PaymentData;
@@ -475,6 +476,9 @@ public final class Marshaler {
 						final IEntity clcEntity =
 								model.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil.entityClassFromType(entityType), model,
 										visited);
+						if(clcEntity instanceof IChildEntity) {
+							((IChildEntity) clcEntity).setParent(e);
+						}
 						if(clcEntity != null) {
 							set.add(clcEntity);
 						}
