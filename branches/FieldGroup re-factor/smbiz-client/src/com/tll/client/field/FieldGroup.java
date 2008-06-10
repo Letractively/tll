@@ -38,9 +38,8 @@ import com.tll.util.IDescriptorProvider;
  * property name that allows the field to be mapped to the underlying
  * {@link Model}.
  * <p>
- * A FieldGroup represents a grouping of {@link IField}s for UI purposes only
- * and as such
- * <em>may not necessarily represent model hierarchy boundaries!</em>
+ * A FieldGroup represents a grouping of {@link IField}s for UI purposes and as
+ * such <em>does not necessarily represent model hierarchy boundaries</em>
  * <p>
  * To fully support data transfer ("binding") between a FieldGroup instance and
  * a Model instance, the following conventions are established:
@@ -124,8 +123,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private boolean visible = true;
 
 	/**
-	 * Used to indicate this field group is scheduled for deletion when populating
-	 * the field data back to the underlying Model.
+	 * Used to indicate deletion in the underlying Model. Although a FieldGroup
+	 * hierarchy is not required to conform to the Model hierarchy, this property
+	 * is here nonetheless to facilitate data transferance of this information to
+	 * the Model.
 	 */
 	private boolean markedDeleted = false;
 
@@ -407,19 +408,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param group The FieldGroup
 	 * @param model The Model to be updated
 	 * @param unboundFieldsMap
+	 * @param depth The recursion depth
 	 * @return <code>true</code> when at least one valid update was transferred
 	 *         to the given model.
 	 */
 	private static boolean updateModel(FieldGroup group, final Model model,
-			final Map<PropertyPath, Set<IField>> unboundFields) {
+			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {
 		boolean changed = false;
-
-		// map of newly created indexed properties keyed by the indexable property
-		// path
-		// this construct serves to unify like new indexed properties which is a
-		// pre-cursor
-		// to determining the model relative index range of indexed properties that
-		// need to be created!
 
 		model.setMarkedDeleted(group.markedDeleted);
 		if(!group.markedDeleted) {
@@ -427,7 +422,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			final PropertyPath propPath = new PropertyPath();
 			for(IField fld : group) {
 				if(fld instanceof FieldGroup) {
-					updateModel((FieldGroup) fld, model, unboundFields);
+					updateModel((FieldGroup) fld, model, unboundFields, depth + 1);
 				}
 				else {
 					// non-group field
@@ -463,8 +458,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 
 			// handle the unbound indexed props (newly created in the ui)
-			if(unboundFields != null) {
-				final PropertyPath fpp = new PropertyPath();
+			if(depth == 0 && unboundFields.size() > 0) {
 				for(PropertyPath upp : unboundFields.keySet()) {
 					// create the missing properties in the model
 					if(upp.isIndexed()) {
@@ -491,19 +485,16 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 						for(IField fld : ufields) {
 
 							// replace the indexed property path node
-							fpp.parse(fld.getPropertyName());
-							assert fpp.depth() > depthIndex;
-							fpp.replaceAt(depthIndex, app);
+							propPath.parse(fld.getPropertyName());
+							assert propPath.depth() > depthIndex;
+							propPath.replaceAt(depthIndex, app);
 
-							fld.setPropertyName(fpp.toString());
+							fld.setPropertyName(propPath.toString());
 							// do the model update
 							pv = model.getValue(propPath);
-							if(pv != null) {
-								if(fld.updateModel(pv)) {
-									changed = true;
-								}
-							}
+							if(pv != null) fld.updateModel(pv);
 						}
+						changed = true;
 					}
 					else {
 						// unbound non-indexed property
@@ -536,12 +527,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(binding instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
 		}
-		Map<PropertyPath, Set<IField>> unboundFields = new HashMap<PropertyPath, Set<IField>>();
-		boolean changed = updateModel(this, ((IModelRefProperty) binding).getModel(), unboundFields);
-		if(unboundFields.size() > 0) {
-			// TODO handle unbound fields here!
-		}
-		return changed;
+		return updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
 	}
 
 	public IValidator getValidators() {
