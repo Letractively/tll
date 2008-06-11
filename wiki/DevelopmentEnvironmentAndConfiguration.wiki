@@ -2,12 +2,11 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 =Required Software=
-|| *ware* || *version* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ ||
 || [http://groovy.codehaus.org/ groovy] || 1.5.6+ ||
 || [http://ant.apache.org/ ant] || 1.7.0+ ||
 || [http://gant.codehaus.org/ gant] || 1.2.0+ ||
-|| [http://subversion.tigris.org/ subversion client] || 1.4.6+ (v1.5rc5 available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet]||
+|| [http://subversion.tigris.org/ subversion client] || 1.4.6+ (v1.5rc5 available at [http://merge-tracking.open.collab.net/servlets/ProjectProcess?pageID=3711 Collabnet])||
 || [http://www.eclipse.org/ eclipse] || 3.3.2+||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || r2824+ ||
 || [http://code.google.com/p/google-web-toolkit/ AspectJ] || 1.5.4+ ||
@@ -17,6 +16,8 @@ Lists the necessary local environment and IDE settings for building and deployin
 || JAVA_HOME || Points to the root Java install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root ant install dir. ||
+|| GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
+|| GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 || tll.config.machine.name || The tll configuration system property machine name. ||
 || tll.config.user.name || The tll configuration system property user name. ||
 
@@ -44,7 +45,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 
   * Add the following to the <GROOVY_HOME>/conf/groovy-starter.conf file:
 {{{
-    # for tll project
+    # for tll projects
     load ./config
 }}}
 
@@ -57,6 +58,7 @@ The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE wo
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
 || TLL_ROOT || Points to the root dir of the _tll_ source tree. ||
 || GWT_HOME || Points to the root instal dir of the Google Web Toolkit. ||
+|| GWT_INCUBATOR || Points to the root instal dir of the GWT Incubator project. ||
 
 ==String Substitution==
 The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
