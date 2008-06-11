@@ -6,7 +6,6 @@ package com.tll.client.admin.mvc.view.account;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
-import com.tll.client.data.PropKey;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
@@ -138,16 +137,6 @@ public final class MerchantListingView extends ListingView {
 				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "m"));
 			}
 
-			private final PropKey[] propKeys = new PropKey[] {
-				new PropKey(Model.ID_PROPERTY),
-				new PropKey(Model.NAME_PROPERTY),
-				new PropKey(Model.DATE_CREATED_PROPERTY),
-				new PropKey(Model.DATE_MODIFIED_PROPERTY),
-				new PropKey("status"),
-				new PropKey("billingModel"),
-				new PropKey("billingCycle"),
-				new PropKey("storeName") };
-
 			private final Column[] columns = new Column[] {
 				new Column("#", Column.ROW_COUNT_COL_PROP, null),
 				new Column("Name", Model.NAME_PROPERTY, "m"),
@@ -157,10 +146,6 @@ public final class MerchantListingView extends ListingView {
 				new Column("Billing Model", "billingModel", "m"),
 				new Column("Billing Cycle", "billingCycle", "m"),
 				new Column("Store Name", "storeName", "m") };
-
-			public PropKey[] getPropKeys() {
-				return propKeys;
-			}
 
 			public Column[] getColumns() {
 				return columns;

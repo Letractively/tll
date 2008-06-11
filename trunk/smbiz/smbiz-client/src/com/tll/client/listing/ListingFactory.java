@@ -42,7 +42,7 @@ public abstract class ListingFactory {
 			ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
 		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
-				.getPageSize(), config.getPropKeys(), criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
+				.getPageSize(), criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}
 

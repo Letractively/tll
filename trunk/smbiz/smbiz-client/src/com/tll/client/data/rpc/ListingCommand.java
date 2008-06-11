@@ -11,7 +11,6 @@ import com.tll.client.App;
 import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
-import com.tll.client.data.PropKey;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
@@ -83,21 +82,18 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * Generate or refresh the listing.
 	 * @param listHandlerType
 	 * @param pageSize
-	 * @param props
 	 * @param searchCriteria The search criteria
 	 * @param sorting The sorting directive
 	 * @param refresh Force a listing refresh if listing data is found cached on
 	 *        the server?
 	 */
-	public void list(ListHandlerType listHandlerType, int pageSize, PropKey[] props, S searchCriteria, Sorting sorting,
-			boolean refresh) {
+	public void list(ListHandlerType listHandlerType, int pageSize, S searchCriteria, Sorting sorting, boolean refresh) {
 		if(searchCriteria == null) {
 			throw new IllegalStateException("No criteria specified.");
 		}
 		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
 		com.tll.client.data.ListingCommand<S> lc =
-				new com.tll.client.data.ListingCommand<S>(listingName, listHandlerType, props, pageSize, searchCriteria,
-						listingOp);
+				new com.tll.client.data.ListingCommand<S>(listingName, listHandlerType, pageSize, searchCriteria, listingOp);
 		lc.setSorting(sorting);
 		this.listingCommand = lc;
 	}

@@ -5,7 +5,6 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.data.PropKey;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -35,11 +34,6 @@ public interface IListingConfig {
 	 * @return The table caption name
 	 */
 	String getCaption();
-
-	/**
-	 * @return The data keys of the backing listing cell data.
-	 */
-	PropKey[] getPropKeys();
 
 	/**
 	 * @return The columns

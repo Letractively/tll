@@ -20,7 +20,6 @@ import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
-import com.tll.client.data.PropKey;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.event.ICrudListener;
 import com.tll.client.event.type.CrudEvent;
@@ -348,10 +347,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 			}
 
 			public ITableCellTransformer getTableCellTransformer() {
-				return null;
-			}
-
-			public PropKey[] getPropKeys() {
 				return null;
 			}
 

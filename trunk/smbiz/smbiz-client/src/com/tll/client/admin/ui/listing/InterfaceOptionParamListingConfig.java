@@ -5,7 +5,6 @@
  */
 package com.tll.client.admin.ui.listing;
 
-import com.tll.client.data.PropKey;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
@@ -26,11 +25,6 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 		return "Parameter";
 	}
 
-	private final PropKey[] propKeys = {
-		new PropKey("name"),
-		new PropKey("code"),
-		new PropKey("description") };
-
 	private final Column[] columns = {
 		new Column("Name", "name", "intf"),
 		new Column("Code", "code", "intf"),
@@ -42,10 +36,6 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 
 	public Column[] getColumns() {
 		return columns;
-	}
-
-	public PropKey[] getPropKeys() {
-		return propKeys;
 	}
 
 	public final String getCaption() {

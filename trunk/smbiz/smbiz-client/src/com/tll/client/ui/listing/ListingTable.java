@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.ListingOp;
-import com.tll.client.data.PropKey;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
@@ -64,8 +63,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	private Image imgSortDir;
 
 	protected Column[] columns;
-
-	protected PropKey[] propKeys;
 
 	protected ITableCellTransformer cellTransformer;
 
@@ -126,9 +123,8 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		assert config != null;
 
 		this.columns = config.getColumns();
-		this.propKeys = config.getPropKeys();
 		this.cellTransformer = config.getTableCellTransformer();
-		assert columns != null && propKeys != null && cellTransformer != null;
+		assert columns != null && cellTransformer != null;
 
 		int rn = -1;
 		Column[] columns = config.getColumns();
@@ -324,7 +320,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 			return; // header row
 		}
 
-		final String[] cellVals = cellTransformer.getCellValues(rowData, propKeys, columns);
+		final String[] cellVals = cellTransformer.getCellValues(rowData, columns);
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
 				if(rowNum > -1) {

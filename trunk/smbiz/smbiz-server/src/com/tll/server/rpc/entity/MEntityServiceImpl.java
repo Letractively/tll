@@ -43,7 +43,7 @@ import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.AuxDataHandler;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
-import com.tll.server.rpc.listing.PropKeyListHandler;
+import com.tll.server.rpc.listing.MarshalingListHandler;
 import com.tll.service.entity.IEntityService;
 import com.tll.util.DateRange;
 
@@ -275,8 +275,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
 			final IListingCommand<S> listingCommand) {
-		return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext), listingCommand
-				.getPropKeys());
+		return new MarshalingListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext));
 	}
 
 	/**
