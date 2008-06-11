@@ -5,12 +5,18 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.model.Model;
 import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.TextAreaField;
+import com.tll.client.ui.field.TextField;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -21,34 +27,83 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 	private final TabPanel tabOptions = new TabPanel();
 
+	private static final class OptionPanel extends FieldGroupPanel {
+
+		TextField name, code;
+		TextAreaField description;
+		TextField[] cost, price;
+
+		Grid params;
+
+		/**
+		 * Constructor
+		 */
+		public OptionPanel() {
+			super("Option");
+		}
+
+		@Override
+		protected void populateFieldGroup() {
+			name = createNameEntityField();
+			code = ftext("code", "Code", 20);
+			description = ftextarea("description", "Desc", 3, 8);
+
+			cost = new TextField[3];
+			cost[0] = fcurrency("setUpCost", "Set Up");
+			cost[1] = fcurrency("monthlyCost", "Monthly");
+			cost[2] = fcurrency("annualCost", "Annual");
+
+			price = new TextField[3];
+			price[0] = fcurrency("baseSetupPrice", "Set Up");
+			price[1] = fcurrency("baseMonthlyPrice", "Monthly");
+			price[2] = fcurrency("baseAnnualPrice", "Annual");
+
+			addField(name);
+			addField(code);
+			addField(description);
+			addFields(cost);
+			addFields(price);
+		}
+
+		@Override
+		protected Widget draw() {
+			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+
+			// first row
+			canvas.addField(name);
+			canvas.addField(code);
+			canvas.addField(description);
+
+			// pricing
+			canvas.newRow();
+			Grid g = new Grid(2, 3);
+			g.setWidget(0, 0, cost[0]);
+			g.setWidget(0, 1, cost[1]);
+			g.setWidget(0, 2, cost[2]);
+			g.setWidget(1, 0, price[0]);
+			g.setWidget(1, 1, price[1]);
+			g.setWidget(1, 2, price[2]);
+			canvas.addWidget(g);
+
+			// params
+			params = new Grid(1, 3);
+			params.setWidget(0, 0, new Label("Name"));
+			params.setWidget(0, 1, new Label("Code"));
+			params.setWidget(0, 3, new Label("Desc"));
+			canvas.newRow();
+			canvas.addWidget(params);
+
+			return canvas.getCanvasWidget();
+		}
+
+	}
+
 	/**
 	 * Constructor
 	 */
 	public MultiOptionInterfacePanel() {
 		super();
 		tabOptions.addTabListener(this);
-	}
-
-	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
-
-		// first row
-		canvas.addField(name);
-		canvas.addField(code);
-		canvas.addField(description);
-
-		canvas.addWidget(createAvailabilityGrid());
-
-		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(timestamps[0]);
-		canvas.stopFlow();
-		canvas.addField(timestamps[1]);
-		canvas.resetAlignment();
-
-		canvas.newRow();
-		canvas.addWidget(tabOptions);
-		return canvas.getCanvasWidget();
 	}
 
 	@Override
@@ -85,6 +140,35 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		// default select the first tab
 		tabOptions.selectTab(0);
 		*/
+	}
+
+	@Override
+	protected Widget draw() {
+		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+
+		// first row
+		canvas.addField(name);
+		canvas.addField(code);
+		canvas.addField(description);
+		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		canvas.addField(timestamps[0]);
+		canvas.stopFlow();
+		canvas.addField(timestamps[1]);
+		canvas.resetAlignment();
+
+		// availability
+		canvas.newRow();
+		canvas.addWidget(createAvailabilityGrid());
+
+		// options tab widget
+		canvas.newRow();
+		canvas.addWidget(tabOptions);
+		return canvas.getCanvasWidget();
+	}
+
+	@Override
+	protected void applyModel(Model model) {
+
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {

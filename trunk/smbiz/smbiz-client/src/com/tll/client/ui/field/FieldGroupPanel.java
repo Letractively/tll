@@ -127,6 +127,17 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
+	 * Creates a new {@link TextField} instance with currency formatting.
+	 * @param propName
+	 * @param lblTxt
+	 */
+	protected static final TextField fcurrency(String propName, String lblTxt) {
+		TextField fld = ftext(propName, lblTxt, 15);
+		fld.setFormat(GlobalFormat.CURRENCY);
+		return fld;
+	}
+
+	/**
 	 * Creates new {@link DateField} instance.
 	 * @param propName
 	 * @param lblTxt

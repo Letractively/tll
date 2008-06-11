@@ -2,6 +2,9 @@
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name="com.google.gwt.i18n.I18N" />
 
+	<inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+	<!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+
 	<source>
 		<include name="util/DateRange.java" />
 		<include name="util/IDescriptorProvider.java" />
@@ -25,7 +28,7 @@
 		<include name="listhandler/SortColumn.java" />
 		<include name="listhandler/Sorting.java" />
 	</source>
-	
+
 	<replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
 		<when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
 		<any>

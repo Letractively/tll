@@ -22,16 +22,8 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 	protected TextField name, code;
 	protected TextAreaField description;
 	protected DateField[] timestamps;
-
-	protected CheckboxField isAvailableAsp;
-	protected CheckboxField isAvailableIsp;
-	protected CheckboxField isAvailableMerchant;
-	protected CheckboxField isAvailableCustomer;
-
-	protected CheckboxField isRequiredAsp;
-	protected CheckboxField isRequiredIsp;
-	protected CheckboxField isRequiredMerchant;
-	protected CheckboxField isRequiredCustomer;
+	protected CheckboxField isAvailableAsp, isAvailableIsp, isAvailableMerchant, isAvailableCustomer;
+	protected CheckboxField isRequiredAsp, isRequiredIsp, isRequiredMerchant, isRequiredCustomer;
 
 	/**
 	 * Constructor
