@@ -4,7 +4,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 
 /**
  * ITableCellTransformer - Responsible for transforming row data to presentation
@@ -20,5 +20,5 @@ public interface ITableCellTransformer {
 	 * @param columns The defined {@link Column}s
 	 * @return Array of presentation ready table cell value {@link String}s.
 	 */
-	String[] getCellValues(Model rowData, Column[] columns);
+	String[] getCellValues(IData rowData, Column[] columns);
 }

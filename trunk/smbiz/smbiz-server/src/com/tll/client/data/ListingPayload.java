@@ -5,7 +5,7 @@
  */
 package com.tll.client.data;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.listhandler.IPage;
 
 /**
@@ -14,7 +14,7 @@ import com.tll.listhandler.IPage;
  */
 public class ListingPayload extends Payload {
 
-	private IPage<Model> page;
+	private IPage<? extends IData> page;
 
 	/**
 	 * Constructor
@@ -23,11 +23,11 @@ public class ListingPayload extends Payload {
 		super();
 	}
 
-	public IPage<Model> getPage() {
+	public IPage<? extends IData> getPage() {
 		return page;
 	}
 
-	public void setPage(IPage<Model> page) {
+	public void setPage(IPage<? extends IData> page) {
 		this.page = page;
 	}
 }

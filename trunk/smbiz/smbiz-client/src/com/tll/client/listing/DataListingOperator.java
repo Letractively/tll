@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.tll.client.data.ListingOp;
+import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.IPage;
@@ -76,7 +77,7 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param page The desired page number
 	 * @return Ad-hoc generated IPage instance
 	 */
-	private IPage<Model> generatePage(int page) {
+	private IPage<IData> generatePage(int page) {
 
 		// calculate size and num pages
 		final int size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
@@ -99,7 +100,7 @@ public class DataListingOperator extends AbstractListingOperator {
 		final int endIndex = end;
 		final Model[] pageElements = subArray(startIndex, endIndex);
 
-		return new IPage<Model>() {
+		return new IPage<IData>() {
 
 			public boolean isLastPage() {
 				return pageNum == numPages - 1;
@@ -121,8 +122,8 @@ public class DataListingOperator extends AbstractListingOperator {
 				return pageNum;
 			}
 
-			public List<Model> getPageElements() {
-				return new ArrayList<Model>(Arrays.asList(pageElements));
+			public List<IData> getPageElements() {
+				return new ArrayList<IData>(Arrays.asList(pageElements));
 			}
 
 			public int getNumPages() {
@@ -176,12 +177,12 @@ public class DataListingOperator extends AbstractListingOperator {
 		pageNum = navPageNum;
 		assert pageNum >= 0;
 
-		IPage<Model> mpage = generatePage(navPageNum);
+		IPage<IData> mpage = generatePage(navPageNum);
 		listingWidget.setPage(mpage, null);
 	}
 
 	public void refresh() {
-		IPage<Model> mpage = generatePage(pageNum);
+		IPage<IData> mpage = generatePage(pageNum);
 		listingWidget.setPage(mpage, null);
 	}
 

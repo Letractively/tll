@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.tll.client.IMarshalable;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
@@ -20,7 +19,7 @@ import com.tll.model.schema.PropertyType;
  * serves to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, Iterable<IPropertyBinding> {
+public final class Model implements IData, Iterable<IPropertyBinding> {
 
 	/**
 	 * Entity id property name

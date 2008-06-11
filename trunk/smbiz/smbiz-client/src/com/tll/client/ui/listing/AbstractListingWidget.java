@@ -19,6 +19,7 @@ import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
+import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
@@ -216,7 +217,7 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	 * @param page The row data
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public final void setPage(IPage<Model> page, Sorting sorting) {
+	public final void setPage(IPage<? extends IData> page, Sorting sorting) {
 		table.setPage(page, sorting);
 		if(navBar != null) {
 			navBar.setPage(page);

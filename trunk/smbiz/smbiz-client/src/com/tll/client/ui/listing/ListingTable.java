@@ -27,6 +27,7 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
@@ -315,7 +316,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param overwriteOnNull Overwrite existing cell data when the corresponding
 	 *        row data element is <code>null</code>?
 	 */
-	private void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
+	private void setRowData(int rowIndex, int rowNum, IData rowData, boolean overwriteOnNull) {
 		if(rowIndex == 0) {
 			return; // header row
 		}
@@ -340,7 +341,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 	}
 
-	private void addBodyRows(IPage<Model> page) {
+	private void addBodyRows(IPage<? extends IData> page) {
 		final int numBodyRows = page.getNumPageElements();
 		resizeRows(numBodyRows + 1);
 		rowRefs.clear();
@@ -348,9 +349,9 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		int rowNum = page.getFirstIndex();
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			Model m = page.getPageElements().get(r);
-			setRowData(r + 1, ++rowNum, m, true);
-			rowRefs.add(m.getRefKey());
+			IData data = page.getPageElements().get(r);
+			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
+			rowRefs.add(data.getRefKey());
 		}
 	}
 
@@ -358,7 +359,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		resizeRows(1);
 	}
 
-	public void setPage(IPage<Model> page, Sorting sorting) {
+	public void setPage(IPage<? extends IData> page, Sorting sorting) {
 		removeBodyRows();
 		addBodyRows(page);
 		if(sortlinks != null && sorting != null) applySorting(sorting);

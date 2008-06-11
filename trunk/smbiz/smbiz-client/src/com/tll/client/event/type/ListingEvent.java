@@ -6,7 +6,7 @@ package com.tll.client.event.type;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.Sorting;
 
@@ -19,7 +19,7 @@ public final class ListingEvent extends BaseEvent {
 	private final boolean success;
 	private final String listingName;
 	private final ListingOp listingOp;
-	private final IPage<Model> page;
+	private final IPage<? extends IData> page;
 	private final Sorting sorting;
 
 	/**
@@ -31,8 +31,8 @@ public final class ListingEvent extends BaseEvent {
 	 * @param page
 	 * @param sorting
 	 */
-	public ListingEvent(Widget source, String listingName, boolean success, ListingOp listingOp, IPage<Model> page,
-			Sorting sorting) {
+	public ListingEvent(Widget source, String listingName, boolean success, ListingOp listingOp,
+			IPage<? extends IData> page, Sorting sorting) {
 		super(source);
 		this.success = success;
 		this.listingName = listingName;
@@ -53,7 +53,7 @@ public final class ListingEvent extends BaseEvent {
 		return listingOp;
 	}
 
-	public IPage<Model> getPage() {
+	public IPage<? extends IData> getPage() {
 		return page;
 	}
 

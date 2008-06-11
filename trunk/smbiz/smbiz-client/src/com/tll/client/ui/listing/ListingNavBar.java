@@ -19,7 +19,7 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -361,7 +361,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		}
 	}
 
-	public void setPage(IPage<Model> page) {
+	public void setPage(IPage<? extends IData> page) {
 		this.firstIndex = page.getFirstIndex();
 		this.lastIndex = page.getLastIndex();
 		this.totalSize = page.getTotalSize();

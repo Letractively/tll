@@ -5,16 +5,17 @@
 
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.listhandler.EmptyListException;
-import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.IPage;
+import com.tll.listhandler.ListHandlerException;
+import com.tll.listhandler.Sorting;
 
 /**
  * Manages {@link IPage} instances and retrieval of their row data.
  * @author jpk
  */
-public interface IListingHandler extends IListHandler<Model> {
+public interface IListingHandler {
 
 	/**
 	 * @return The name of the listing this handler handles.
@@ -45,10 +46,17 @@ public interface IListingHandler extends IListHandler<Model> {
 			ListingException;
 
 	/**
+	 * Sorts the listing.
+	 * @param sorting
+	 * @throws ListHandlerException
+	 */
+	void sort(Sorting sorting) throws ListHandlerException;
+
+	/**
 	 * Generates a marshallable page suitable for transport to the UI layer.
 	 * @return IPage instance
 	 */
-	IPage<Model> getPage();
+	IPage<? extends IData> getPage();
 
 	/**
 	 * @return the current state of this handler.

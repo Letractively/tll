@@ -29,6 +29,7 @@ import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.model.AbstractModelChangeHandler;
+import com.tll.client.model.IData;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -233,16 +234,18 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 * Populates the stack panel with the returned listing results.
 		 * @param page The data elements
 		 */
-		private void setData(IPage<Model> page) {
+		private void setData(IPage<? extends IData> page) {
 			// reset stack panel
 			clear();
 
 			list.clear();
 			if(page == null || page.getNumPageElements() < 1) return;
 
-			List<Model> dataList = page.getPageElements();
+			List<? extends IData> dataList = page.getPageElements();
 			for(int i = 0; i < dataList.size(); i++) {
-				Model data = dataList.get(i);
+				// TODO eliminate the need to cast to Model or have stronger typing
+				// somehow!!!
+				Model data = (Model) dataList.get(i);
 				RefKey ref = data.getRefKey();
 				assert ref != null && ref.isSet();
 				InterfaceStack ir = new InterfaceStack(i, ref);
