@@ -5,6 +5,7 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -12,11 +13,12 @@ import com.tll.listhandler.Sorting;
  * non-runtime listing attributes.
  * @author jpk
  */
-public interface IListingConfig {
+public interface IListingConfig<D extends IData> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
-	public static final ITableCellTransformer DEFAULT_TABLE_CELL_TRANSFORMER = new DefaultTableCellTransformer();
+	// public static final ITableCellTransformer DEFAULT_TABLE_CELL_TRANSFORMER =
+	// new ModelTableCellTransformer();
 
 	/**
 	 * @return A unique name to assign to the listing. Critical for server-side
