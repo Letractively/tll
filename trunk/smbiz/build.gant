@@ -76,6 +76,7 @@ def java_compile_server_test_classpath = Ant.path {
 def java_compile_client_classpath = Ant.path {
 	pathelement(location: "${property.'project.dir.build'}/server-classes")
 	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
+	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
@@ -102,8 +103,9 @@ def java_run_server_test_classpath = Ant.path {
 	
 // compile classpath for the gwt compiler 
 def gwt_compile_classpath = Ant.path {
-	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-dev-windows.jar")
+	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
+	pathelement(location: "${property.'gwt.incubator.dir.install'}/build/dist/gwt-incubator.jar")
 	pathelement(location: property.'project.client.dir' + '/src')
 	pathelement(location: property.'project.server.dir' + '/src')
 	fileset(dir: property.'project.client.dir' + '/lib') {

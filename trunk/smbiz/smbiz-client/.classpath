@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/smbiz-server"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
-	<classpathentry kind="var" path="GWT_INCUBATOR/build/dist/gwt-incubator.jar"/>
+	<classpathentry kind="var" path="GWT_INCUBATOR_ROOT/build/dist/gwt-incubator.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
