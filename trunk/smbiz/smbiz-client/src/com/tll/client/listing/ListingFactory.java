@@ -30,6 +30,8 @@ public abstract class ListingFactory {
 	 * Assembles an RPC based listing Widget.
 	 * @param <S> The search type
 	 * @param config The listing config
+	 * @param props Array of properties serving as a filter on the server side
+	 *        where only these properties will be provided
 	 * @param criteria The search criteria
 	 * @param listHandlerType The server side list handler type
 	 * @param rowOptionsDelegate Optional. If <code>null</code>, no row options
@@ -38,11 +40,11 @@ public abstract class ListingFactory {
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static <S extends ISearch> AbstractListingWidget rpcListing(IListingConfig config, S criteria,
+	public static <S extends ISearch> AbstractListingWidget rpcListing(IListingConfig config, String[] props, S criteria,
 			ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
 		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
-				.getPageSize(), criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
+				.getPageSize(), props, criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}
 

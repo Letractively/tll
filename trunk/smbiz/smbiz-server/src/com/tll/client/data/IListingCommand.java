@@ -43,6 +43,11 @@ public interface IListingCommand<S extends ISearch> extends IMarshalable, IDescr
 	S getSearchCriteria();
 
 	/**
+	 * @return the prop keys array.
+	 */
+	String[] getPropKeys();
+
+	/**
 	 * Required by the server side table model operator.
 	 * @return ListingOp
 	 */

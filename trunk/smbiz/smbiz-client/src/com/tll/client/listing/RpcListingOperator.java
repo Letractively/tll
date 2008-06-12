@@ -25,6 +25,7 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 	private final String listingName;
 	private final ListHandlerType listHandlerType;
 	private final int pageSize;
+	private final String[] props;
 	private final S searchCriteria;
 	private final Sorting sorting;
 
@@ -34,16 +35,18 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 	 * @param listingName The unique server-side listing name.
 	 * @param listHandlerType The server side list handling strategy
 	 * @param pageSize The desired page size
+	 * @param props The desired properties the server shall provide as page data
 	 * @param searchCriteria The search criteria used to generate the listing data
 	 *        on the server
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
 	public RpcListingOperator(AbstractListingWidget listingWidget, String listingName, ListHandlerType listHandlerType,
-			int pageSize, S searchCriteria, Sorting sorting) {
+			int pageSize, String[] props, S searchCriteria, Sorting sorting) {
 		super(listingWidget);
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
 		this.pageSize = pageSize;
+		this.props = props;
 		this.searchCriteria = searchCriteria;
 		this.sorting = sorting;
 	}
@@ -51,14 +54,14 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 	public void refresh() {
 		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
-		cmd.list(listHandlerType, pageSize, searchCriteria, sorting, true);
+		cmd.list(listHandlerType, pageSize, props, searchCriteria, sorting, true);
 		cmd.execute();
 	}
 
 	public void display() {
 		ListingCommand<S> cmd = new ListingCommand<S>(listingWidget, listingName);
 		cmd.addListingListener(this);
-		cmd.list(listHandlerType, pageSize, searchCriteria, sorting, false);
+		cmd.list(listHandlerType, pageSize, props, searchCriteria, sorting, false);
 		cmd.execute();
 	}
 

@@ -16,6 +16,7 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 
 	private String listingName;
 	private ListHandlerType listHandlerType;
+	private String[] propKeys;
 	private int pageSize;
 	private Boolean retainStateOnClear = Boolean.TRUE;
 
@@ -35,15 +36,17 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 	 * Constructor - Used for generating a fresh listing.
 	 * @param listingName
 	 * @param listHandlerType
+	 * @param propKeys
 	 * @param pageSize
 	 * @param searchCriteria
 	 * @param listingOp
 	 */
-	public ListingCommand(String listingName, ListHandlerType listHandlerType, int pageSize, S searchCriteria,
-			ListingOp listingOp) {
+	public ListingCommand(String listingName, ListHandlerType listHandlerType, String[] propKeys, int pageSize,
+			S searchCriteria, ListingOp listingOp) {
 		super();
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
+		this.propKeys = propKeys;
 		this.pageSize = pageSize;
 		this.searchCriteria = searchCriteria;
 		this.listingOp = listingOp;
@@ -82,6 +85,14 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 
 	public void setListingName(String listingName) {
 		this.listingName = listingName;
+	}
+
+	public String[] getPropKeys() {
+		return propKeys;
+	}
+
+	public void setPropKeys(String[] propKeys) {
+		this.propKeys = propKeys;
 	}
 
 	public ListingOp getListingOp() {
