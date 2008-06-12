@@ -7,7 +7,7 @@ package com.tll.client.listing;
 
 import java.util.List;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 
 /**
  * IDataProvider - Generification of providing data to a listing.
@@ -18,5 +18,5 @@ public interface IDataProvider {
 	/**
 	 * @return List of data.
 	 */
-	List<Model> getData();
+	List<IData> getData();
 }

@@ -6,6 +6,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.data.ListingOp;
+import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.SortColumn;
 
 /**
@@ -14,6 +15,8 @@ import com.tll.listhandler.SortColumn;
  * @author jpk
  */
 public interface IListingOperator {
+
+	void setListingWidget(AbstractListingWidget listingWidget);
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

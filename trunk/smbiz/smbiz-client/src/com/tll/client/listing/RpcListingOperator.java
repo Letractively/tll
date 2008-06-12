@@ -10,7 +10,6 @@ import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.search.ISearch;
-import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
@@ -40,9 +39,9 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 	 *        on the server
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public RpcListingOperator(AbstractListingWidget listingWidget, String listingName, ListHandlerType listHandlerType,
-			int pageSize, String[] props, S searchCriteria, Sorting sorting) {
-		super(listingWidget);
+	public RpcListingOperator(String listingName, ListHandlerType listHandlerType, int pageSize, String[] props,
+			S searchCriteria, Sorting sorting) {
+		super();
 		this.listingName = listingName;
 		this.listHandlerType = listHandlerType;
 		this.pageSize = pageSize;

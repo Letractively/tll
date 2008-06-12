@@ -16,14 +16,21 @@ public abstract class AbstractListingOperator implements IListingOperator {
 	/**
 	 * The listing this operator operates on.
 	 */
-	protected final AbstractListingWidget listingWidget;
+	protected AbstractListingWidget listingWidget;
 
 	/**
 	 * Constructor
 	 * @param listingWidget
 	 */
-	public AbstractListingOperator(AbstractListingWidget listingWidget) {
+	public AbstractListingOperator() {
 		super();
+	}
+
+	/**
+	 * @param listingWidget the listingWidget to set
+	 */
+	public final void setListingWidget(AbstractListingWidget listingWidget) {
 		this.listingWidget = listingWidget;
 	}
+
 }

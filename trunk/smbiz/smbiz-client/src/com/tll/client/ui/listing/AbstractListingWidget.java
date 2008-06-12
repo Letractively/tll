@@ -11,25 +11,28 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SourcesMouseEvents;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.ListingOp;
-import com.tll.client.listing.IListingConfig;
+import com.tll.client.event.IModelChangeListener;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
+import com.tll.client.model.Model;
+import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.listhandler.IPage;
-import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
  * AbstractListingWidget - Base class for all listing {@link Widget}s in the
  * app.
- * @param <R> the data type of the row values
  * @author jpk
  */
-public abstract class AbstractListingWidget<R extends IData> extends Composite implements HasFocus, IListingOperator {
+public final class AbstractListingWidget extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IModelChangeListener {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -42,10 +45,14 @@ public abstract class AbstractListingWidget<R extends IData> extends Composite i
 	private static final String STYLE_CAPTION = "caption";
 
 	/**
+	 * The actual listing table.
+	 */
+	protected final ListingTable table;
+
+	/**
 	 * The listing navigation bar.
 	 */
-	protected ListingNavBar navBar;
-
+	// protected final ListingNavBar navBar;
 	/**
 	 * The main "listing" panel containing all widgets comprising this widget.
 	 */
@@ -65,85 +72,66 @@ public abstract class AbstractListingWidget<R extends IData> extends Composite i
 	 * Constructor
 	 * @param config The listing configuration Can't be <code>null</code>.
 	 */
-	public AbstractListingWidget(IListingConfig config) {
+	public AbstractListingWidget(String caption, Widget table, Widget navBar) {
 		super();
-		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
-		initWidget(focusPanel);
-	}
-
-	protected final void stub(IListingConfig config, Widget tableWidget) {
 		FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(STYLE_TABLE_VIEW);
 
 		// add a caption if specified
-		if(config.getCaption() != null) {
-			Label caption = new Label(config.getCaption());
-			caption.setStyleName(STYLE_CAPTION);
-			tableViewPanel.add(caption);
+		if(caption != null) {
+			Label lbl = new Label(caption);
+			lbl.setStyleName(STYLE_CAPTION);
+			tableViewPanel.add(lbl);
 		}
 
 		// portal
 		portal.setStyleName(CSS.PORTAL);
-		portal.add(tableWidget);
+		portal.add(table);
 		tableViewPanel.add(portal);
 
 		// generate nav bar
-		if(config.isShowNavBar()) {
-			navBar = new ListingNavBar(config);
-			tableViewPanel.add(navBar.getWidget());
-		}
-		else {
-			navBar = null;
-		}
+		if(navBar != null) tableViewPanel.add(navBar);
 
 		focusPanel.add(tableViewPanel);
-	}
 
-	/**
-	 * @return The listing operator.
-	 */
-	public final IListingOperator getOperator() {
-		return operator;
+		// TODO determine the purpose of this
+		// focusPanel.addKeyboardListener(table);
+
+		initWidget(focusPanel);
 	}
 
 	/**
 	 * Sets the listing operator for this listing.
 	 * @param operator the operator to set
 	 */
-	public void setOperator(IListingOperator operator) {
+	public final void setOperator(IListingOperator operator) {
 		if(operator == null) {
 			throw new IllegalArgumentException("A listing operator must be specified.");
 		}
+		table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
 		this.operator = operator;
 	}
 
-	public final void clear() {
-		operator.clear();
+	private void addRow(Model rowData) {
+		table.addRow(rowData);
+		if(navBar != null) navBar.increment();
 	}
 
-	public final void display() {
-		operator.display();
+	private void updateRow(int rowIndex, Model rowData) {
+		table.updateRow(rowIndex, rowData);
 	}
 
-	public final void navigate(ListingOp navAction, Integer page) {
-		operator.navigate(navAction, page);
+	// TODO do we need this?
+	/*
+	private void deleteRow(int rowIndex) {
+		table.deleteRow(rowIndex);
+		if(navBar != null) navBar.decrement();
 	}
+	*/
 
-	public final void refresh() {
-		operator.refresh();
-	}
-
-	public final void sort(SortColumn sortColumn) {
-		operator.sort(sortColumn);
-	}
-
-	/**
-	 * @return The parent {@link Panel} containing all constituent listing
-	 *         {@link Widget}s.
-	 */
-	protected final FocusPanel getListingPanel() {
-		return focusPanel;
+	private void markRowDeleted(int rowIndex) {
+		table.markRowDeleted(rowIndex);
 	}
 
 	public final int getTabIndex() {
@@ -178,15 +166,66 @@ public abstract class AbstractListingWidget<R extends IData> extends Composite i
 		focusPanel.removeKeyboardListener(listener);
 	}
 
+	public final void addTableListener(TableListener listener) {
+		table.addTableListener(listener);
+	}
+
+	public final void removeTableListener(TableListener listener) {
+		table.removeTableListener(listener);
+	}
+
+	public final void addMouseListener(MouseListener listener) {
+		focusPanel.addMouseListener(listener);
+	}
+
+	public final void removeMouseListener(MouseListener listener) {
+		focusPanel.removeMouseListener(listener);
+	}
+
 	/**
 	 * Updates the listing with row data and the sorting directive.
 	 * @param page The row data
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public void setPage(IPage<R> page, Sorting sorting) {
+	public final void setPage(IPage<? extends IData> page, Sorting sorting) {
+		table.setPage(page, sorting);
 		if(navBar != null) {
 			navBar.setPage(page);
 			navBar.getWidget().setVisible(true);
+		}
+		// DeferredCommand.addCommand(new FocusCommand(focusPanel, true));
+	}
+
+	public final void onModelChangeEvent(ModelChangeEvent event) {
+		switch(event.getChangeOp()) {
+			case ADDED:
+				// TODO make this check more robust
+				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
+					// i.e. the add button in the nav bar was the source of the model
+					// change..
+					addRow(event.getModel());
+				}
+				break;
+			case UPDATED: {
+				RefKey modelRef = event.getModel().getRefKey();
+				int rowIndex = table.getRowIndex(modelRef);
+				if(rowIndex != -1) {
+					assert rowIndex > 0; // header row
+					// TODO determine how to handle named query specific model data!!
+					updateRow(rowIndex, event.getModel());
+				}
+				break;
+			}
+			case DELETED: {
+				RefKey modelRef = event.getModelRef();
+				int rowIndex = table.getRowIndex(modelRef);
+				if(rowIndex != -1) {
+					assert rowIndex > 0; // header row
+					markRowDeleted(rowIndex);
+				}
+				break;
+			}
+
 		}
 	}
 }

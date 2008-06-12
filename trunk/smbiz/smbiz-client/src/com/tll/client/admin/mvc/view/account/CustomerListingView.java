@@ -158,7 +158,7 @@ public final class CustomerListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, null, criteria, ListHandlerType.PAGE,
+		setListingWidget(ListingFactory.create(config, null, criteria, ListHandlerType.PAGE,
 				new ModelChangingRowOpDelegate() {
 
 					@Override
