@@ -11,7 +11,7 @@ import com.tll.client.model.IData;
  * ready columned text.
  * @author jpk
  */
-public interface ITableCellTransformer<D extends IData> {
+public interface ITableCellTransformer {
 
 	/**
 	 * Provides a way for the underlying table rows to be set/updated given a
@@ -20,5 +20,5 @@ public interface ITableCellTransformer<D extends IData> {
 	 * @param columns The defined {@link Column}s
 	 * @return Array of presentation ready table cell value {@link String}s.
 	 */
-	String[] getCellValues(D rowData, Column[] columns);
+	String[] getCellValues(IData rowData, Column[] columns);
 }

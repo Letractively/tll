@@ -7,22 +7,19 @@ package com.tll.client.admin.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellTransformer;
-import com.tll.client.listing.ModelTableCellTransformer;
-import com.tll.client.model.Model;
 
 /**
  * AccountListingConfig
  * @author jpk
  */
-public abstract class AccountListingConfig implements IListingConfig<Model> {
+public abstract class AccountListingConfig implements IListingConfig {
 
 	public final String getCaption() {
 		return null;
 	}
 
-	public final ITableCellTransformer<Model> getTableCellTransformer() {
-		// return IListingConfig.DEFAULT_TABLE_CELL_TRANSFORMER;
-		return new ModelTableCellTransformer();
+	public final ITableCellTransformer getTableCellTransformer() {
+		return IListingConfig.DEFAULT_TABLE_CELL_TRANSFORMER;
 	}
 
 	public final boolean isPageable() {
