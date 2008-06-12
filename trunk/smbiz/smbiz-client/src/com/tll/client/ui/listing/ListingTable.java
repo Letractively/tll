@@ -4,9 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -28,8 +25,6 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellTransformer;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.listhandler.IPage;
@@ -39,9 +34,10 @@ import com.tll.listhandler.Sorting;
 
 /**
  * ListingTable - AbstractListingWidget specific HTML table.
+ * @param <R> the data type of the row values
  * @author jpk
  */
-public class ListingTable extends Grid implements TableListener, KeyboardListener {
+public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -74,11 +70,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * exist.
 	 */
 	protected int rowNumColIndex;
-
-	/**
-	 * {@link RefKey}s for each listing element row.
-	 */
-	protected final List<RefKey> rowRefs = new ArrayList<RefKey>();
 
 	/**
 	 * The column index of the currently sorted column.
@@ -120,6 +111,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * Initializes the table.
 	 * @param config
 	 */
+	@SuppressWarnings("unchecked")
 	protected void initialize(IListingConfig config) {
 		assert config != null;
 
@@ -138,7 +130,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		rowNumColIndex = rn;
 
 		if(config.isSortable()) {
-			sortlinks = new SortLink[columns.length];
+			sortlinks = new ListingTable.SortLink[columns.length];
 		}
 
 		setStyleName(STYLE_TABLE);
@@ -155,25 +147,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 
 	public final Widget getTableWidget() {
 		return this;
-	}
-
-	/**
-	 * Get the row ref for a given row.
-	 * @param row 0-based table row num (considers the header row).
-	 * @return RefKey
-	 */
-	public final RefKey getRowRef(int row) {
-		return rowRefs.get(row - 1);
-	}
-
-	/**
-	 * Get the row index given a {@link RefKey}.
-	 * @param rowRef The RefKey for which to find the associated row index.
-	 * @return The row index or <code>-1</code> if no row matching the given ref
-	 *         key is present in the table.
-	 */
-	final int getRowIndex(RefKey rowRef) {
-		return rowRefs.indexOf(rowRef) + 1; // account for header row
 	}
 
 	/**
@@ -316,7 +289,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param overwriteOnNull Overwrite existing cell data when the corresponding
 	 *        row data element is <code>null</code>?
 	 */
-	private void setRowData(int rowIndex, int rowNum, IData rowData, boolean overwriteOnNull) {
+	protected void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
 		if(rowIndex == 0) {
 			return; // header row
 		}
@@ -341,17 +314,20 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 	}
 
-	private void addBodyRows(IPage<? extends IData> page) {
+	protected void removeRows() {
+
+	}
+
+	private void addBodyRows(IPage<R> page) {
 		final int numBodyRows = page.getNumPageElements();
 		resizeRows(numBodyRows + 1);
-		rowRefs.clear();
+		// rowRefs.clear();
 		boolean evn = false;
 		int rowNum = page.getFirstIndex();
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			IData data = page.getPageElements().get(r);
-			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
-			rowRefs.add(data.getRefKey());
+			R data = page.getPageElements().get(r);
+			setRowData(r + 1, ++rowNum, data, true);
 		}
 	}
 
@@ -359,7 +335,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		resizeRows(1);
 	}
 
-	public void setPage(IPage<? extends IData> page, Sorting sorting) {
+	public final void setPage(IPage<R> page, Sorting sorting) {
 		removeBodyRows();
 		addBodyRows(page);
 		if(sortlinks != null && sorting != null) applySorting(sorting);
@@ -455,14 +431,13 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowData The row data for the new table row
 	 * @return The index of the newly-created row
 	 */
-	int addRow(Model rowData) {
+	int addRow(R rowData) {
 		// insert a new empty row
 		final int addRowIndex = getRowCount();
 		resizeRows(addRowIndex + 1);
 
 		// set the row data
 		setRowData(addRowIndex, -1, rowData, true);
-		rowRefs.add(rowData.getRefKey());
 
 		getRowFormatter().addStyleName(addRowIndex, CSS_ADDED);
 
@@ -479,7 +454,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		removeRow(rowIndex);
 		// update the numRows property
 		numRows--;
-		rowRefs.remove(rowIndex - 1);
 		updateRowsBelow(rowIndex, false);
 
 		// reset the current row index
@@ -502,10 +476,9 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowIndex The row index of the row to update
 	 * @param rowData The new row data to apply
 	 */
-	void updateRow(int rowIndex, Model rowData) {
+	void updateRow(int rowIndex, R rowData) {
 		assert rowIndex >= 1 : "Can't update the header row";
 		setRowData(rowIndex, -1, rowData, true);
-		rowRefs.set(rowIndex - 1, rowData.getRefKey());
 		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 
@@ -534,13 +507,13 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 
 				// toggle the odd/even styling
 				HTMLTable.RowFormatter rf = getRowFormatter();
-				if(rf.getStyleName(i).indexOf("even") >= 0) {
-					rf.removeStyleName(i, "even");
-					rf.addStyleName(i, "odd");
+				if(rf.getStyleName(i).indexOf(CSS_EVEN) >= 0) {
+					rf.removeStyleName(i, CSS_EVEN);
+					rf.addStyleName(i, CSS_ODD);
 				}
-				else if(rf.getStyleName(i).indexOf("odd") >= 0) {
-					rf.removeStyleName(i, "odd");
-					rf.addStyleName(i, "even");
+				else if(rf.getStyleName(i).indexOf(CSS_ODD) >= 0) {
+					rf.removeStyleName(i, CSS_ODD);
+					rf.addStyleName(i, CSS_EVEN);
 
 				}
 			}

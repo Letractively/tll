@@ -13,9 +13,4 @@ import com.tll.client.IMarshalable;
  * @author jpk
  */
 public interface IData extends IMarshalable {
-
-	/**
-	 * @return The unique ref for this data.
-	 */
-	RefKey getRefKey();
 }

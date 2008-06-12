@@ -15,13 +15,9 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.SortColumn;
@@ -30,9 +26,10 @@ import com.tll.listhandler.Sorting;
 /**
  * AbstractListingWidget - Base class for all listing {@link Widget}s in the
  * app.
+ * @param <R> the data type of the row values
  * @author jpk
  */
-public abstract class AbstractListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
+public abstract class AbstractListingWidget<R extends IData> extends Composite implements HasFocus, IListingOperator {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -45,14 +42,9 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	private static final String STYLE_CAPTION = "caption";
 
 	/**
-	 * The actual listing table.
-	 */
-	protected final ListingTable table;
-
-	/**
 	 * The listing navigation bar.
 	 */
-	protected final ListingNavBar navBar;
+	protected ListingNavBar navBar;
 
 	/**
 	 * The main "listing" panel containing all widgets comprising this widget.
@@ -76,7 +68,10 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	public AbstractListingWidget(IListingConfig config) {
 		super();
 		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
+		initWidget(focusPanel);
+	}
 
+	protected final void stub(IListingConfig config, Widget tableWidget) {
 		FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(STYLE_TABLE_VIEW);
 
@@ -87,12 +82,9 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 			tableViewPanel.add(caption);
 		}
 
-		// create and initialize the table panel
-		table = new ListingTable(config);
-
 		// portal
 		portal.setStyleName(CSS.PORTAL);
-		portal.add(table.getTableWidget());
+		portal.add(tableWidget);
 		tableViewPanel.add(portal);
 
 		// generate nav bar
@@ -105,8 +97,6 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		}
 
 		focusPanel.add(tableViewPanel);
-
-		initWidget(focusPanel);
 	}
 
 	/**
@@ -120,11 +110,10 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	 * Sets the listing operator for this listing.
 	 * @param operator the operator to set
 	 */
-	public final void setOperator(IListingOperator operator) {
+	public void setOperator(IListingOperator operator) {
 		if(operator == null) {
 			throw new IllegalArgumentException("A listing operator must be specified.");
 		}
-		table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
 		this.operator = operator;
 	}
@@ -147,29 +136,6 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 
 	public final void sort(SortColumn sortColumn) {
 		operator.sort(sortColumn);
-	}
-
-	public final int getNumRows() {
-		return table.getRowCount();
-	}
-
-	public final void addRow(Model rowData) {
-		table.addRow(rowData);
-		if(navBar != null) navBar.increment();
-	}
-
-	public final void updateRow(int rowIndex, Model rowData) {
-		table.updateRow(rowIndex, rowData);
-	}
-
-	// TODO do we need this?
-	public final void deleteRow(int rowIndex) {
-		table.deleteRow(rowIndex);
-		if(navBar != null) navBar.decrement();
-	}
-
-	public final void markRowDeleted(int rowIndex) {
-		table.markRowDeleted(rowIndex);
 	}
 
 	/**
@@ -217,45 +183,10 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	 * @param page The row data
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public final void setPage(IPage<? extends IData> page, Sorting sorting) {
-		table.setPage(page, sorting);
+	public void setPage(IPage<R> page, Sorting sorting) {
 		if(navBar != null) {
 			navBar.setPage(page);
 			navBar.getWidget().setVisible(true);
-		}
-		// DeferredCommand.addCommand(new FocusCommand(focusPanel, true));
-	}
-
-	public final void onModelChangeEvent(ModelChangeEvent event) {
-		switch(event.getChangeOp()) {
-			case ADDED:
-				// TODO make this check more robust
-				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
-					// i.e. the add button in the nav bar was the source of the model
-					// change..
-					addRow(event.getModel());
-				}
-				break;
-			case UPDATED: {
-				RefKey modelRef = event.getModel().getRefKey();
-				int rowIndex = table.getRowIndex(modelRef);
-				if(rowIndex != -1) {
-					assert rowIndex > 0; // header row
-					// TODO determine how to handle named query specific model data!!
-					updateRow(rowIndex, event.getModel());
-				}
-				break;
-			}
-			case DELETED: {
-				RefKey modelRef = event.getModelRef();
-				int rowIndex = table.getRowIndex(modelRef);
-				if(rowIndex != -1) {
-					assert rowIndex > 0; // header row
-					markRowDeleted(rowIndex);
-				}
-				break;
-			}
-
 		}
 	}
 }
