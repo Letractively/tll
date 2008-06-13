@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+
+	<!-- ======================== FILTER CHAIN ======================= -->
+
+	<bean id="filterChainProxy"
+		class="org.acegisecurity.util.FilterChainProxy">
+		<property name="filterInvocationDefinitionSource">
+			<value>
+				CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+				PATTERN_TYPE_APACHE_ANT
+				/**=httpSessionContextIntegrationFilter,authenticationProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
+			</value>
+		</property>
+	</bean>
+
+	<!-- ======================== AUTHENTICATION ======================= -->
+
+	<bean id="authenticationManager"
+		class="org.acegisecurity.providers.ProviderManager">
+		<property name="providers">
+			<list>
+				<ref bean="daoAuthenticationProvider" />
+				<ref bean="anonymousAuthenticationProvider" />
+			</list>
+		</property>
+		<!-- <property name="sessionController"><ref bean="concurrentSessionController"/></property> -->
+	</bean>
+
+	<!-- 
+		<bean id="concurrentSessionFilter" class="org.acegisecurity.concurrent.ConcurrentSessionFilter">
+		<property name="sessionRegistry"><ref local="sessionRegistry"/></property>
+		<property name="expiredUrl"><value>/adminSessionTerminated</value></property>
+		</bean>
+		
+		<bean id="concurrentSessionController" class="org.acegisecurity.concurrent.ConcurrentSessionControllerImpl">
+		<property name="maximumSessions"><value>1</value></property>
+		<property name="sessionRegistry"><ref local="sessionRegistry"/></property>
+		</bean>
+		
+		<bean id="sessionRegistry" class="org.acegisecurity.concurrent.SessionRegistryImpl"/>
+	-->
+
+	<bean id="daoAuthenticationProvider"
+		class="org.acegisecurity.providers.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService">
+			<ref bean="com.tll.service.user.IUserService" />
+		</property>
+		<property name="saltSource">
+			<bean
+				class="org.acegisecurity.providers.dao.salt.ReflectionSaltSource">
+				<property name="userPropertyToUse">
+					<value>getUsername</value>
+				</property>
+			</bean>
+		</property>
+		<property name="passwordEncoder">
+			<ref bean="passwordEncoder" />
+		</property>
+	</bean>
+
+	<bean id="passwordEncoder"
+		class="org.acegisecurity.providers.encoding.Md5PasswordEncoder" />
+
+	<bean id="userCacheBackend"
+		class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager">
+			<ref bean="cacheManager" />
+		</property>
+		<property name="cacheName">
+			<value>userCache</value>
+		</property>
+	</bean>
+
+	<bean id="userCache"
+		class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
+		<property name="cache">
+			<ref local="userCacheBackend" />
+		</property>
+	</bean>
+
+	<bean id="loggerListener"
+		class="org.acegisecurity.event.authentication.LoggerListener" />
+
+	<bean id="anonymousProcessingFilter"
+		class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+		<property name="key">
+			<value>smibz</value>
+		</property>
+		<property name="userAttribute">
+			<value>anonymousUser,ROLE_ANONYMOUS</value>
+		</property>
+	</bean>
+
+	<bean id="anonymousAuthenticationProvider"
+		class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+		<property name="key">
+			<value>smbiz</value>
+		</property>
+	</bean>
+
+	<bean id="httpSessionContextIntegrationFilter"
+		class="org.acegisecurity.context.HttpSessionContextIntegrationFilter">
+		<property name="context">
+			<value>org.acegisecurity.context.SecurityContextImpl</value>
+		</property>
+	</bean>
+
+	<!-- ===================== HTTP REQUEST SECURITY ==================== -->
+
+	<bean id="accessDeniedHandler"
+		class="org.acegisecurity.ui.AccessDeniedHandlerImpl">
+		<property name="errorPage">
+			<value>/admin/errorHandler/</value>
+		</property>
+	</bean>
+
+	<bean id="exceptionTranslationFilter"
+		class="org.acegisecurity.ui.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint">
+			<ref local="authenticationProcessingFilterEntryPoint" />
+		</property>
+		<property name="accessDeniedHandler">
+			<ref local="accessDeniedHandler" />
+		</property>
+	</bean>
+
+	<bean id="authenticationProcessingFilter"
+		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="authenticationFailureUrl">
+			<value>/adminLogin?login_error=1</value>
+		</property>
+		<property name="defaultTargetUrl">
+			<value>/</value>
+		</property>
+		<property name="filterProcessesUrl">
+			<value>/j_acegi_security_check</value>
+		</property>
+		<!--<property name="rememberMeServices"><ref local="rememberMeServices"/></property>-->
+	</bean>
+
+	<bean id="authenticationProcessingFilterEntryPoint"
+		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+		<property name="loginFormUrl">
+			<value>/adminLogin</value>
+		</property>
+		<property name="forceHttps">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<!-- TODO remove (this is defined in the auth xml) -->
+	<!-- <bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter"/> -->
+
+	<bean id="httpRequestAccessDecisionManager"
+		class="org.acegisecurity.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions">
+			<value>false</value>
+		</property>
+		<property name="decisionVoters">
+			<list>
+				<ref bean="roleVoter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="filterInvocationInterceptor"
+		class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
+		<property name="authenticationManager">
+			<ref bean="authenticationManager" />
+		</property>
+		<property name="accessDecisionManager">
+			<ref bean="httpRequestAccessDecisionManager" />
+		</property>
+		<property name="objectDefinitionSource">
+			<value>
+				PATTERN_TYPE_APACHE_ANT
+				/index.html=ROLE_ANONYMOUS,ROLE_USER
+				/adminLogin.vm=ROLE_ANONYMOUS,ROLE_USER
+				/adminLogoff.vm=ROLE_ANONYMOUS,ROLE_USER
+				/adminForgotPassword.vm=ROLE_ANONYMOUS,ROLE_USER
+				/admin/user/setCredentials**=ROLE_USER,ROLE_ADMINISTRATOR
+				/admin/user/**=ROLE_ADMINISTRATOR
+				/admin/acl/**=ROLE_ADMINISTRATOR
+				/admin/log/config/**=ROLE_ADMINISTRATOR
+				/admin/**=ROLE_USER,ROLE_ADMINISTRATOR
+			</value>
+		</property>
+	</bean>
+
+</beans>
