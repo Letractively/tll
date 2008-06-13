@@ -5,7 +5,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.ListingWidget;
 
 /**
  * AbstractListingOperator
@@ -16,13 +16,13 @@ public abstract class AbstractListingOperator implements IListingOperator {
 	/**
 	 * The listing this operator operates on.
 	 */
-	protected final AbstractListingWidget listingWidget;
+	protected final ListingWidget listingWidget;
 
 	/**
 	 * Constructor
 	 * @param listingWidget
 	 */
-	public AbstractListingOperator(AbstractListingWidget listingWidget) {
+	public AbstractListingOperator(ListingWidget listingWidget) {
 		super();
 		this.listingWidget = listingWidget;
 	}

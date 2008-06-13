@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ModelChangeEvent;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
@@ -28,11 +29,10 @@ import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
- * AbstractListingWidget - Base class for all listing {@link Widget}s in the
- * app.
+ * ListingWidget - Base class for all listing {@link Widget}s in the app.
  * @author jpk
  */
-public abstract class AbstractListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
+public class ListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -72,8 +72,9 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 	/**
 	 * Constructor
 	 * @param config The listing configuration Can't be <code>null</code>.
+	 * @param addRowDelegate The optional delegate for adding rows.
 	 */
-	public AbstractListingWidget(IListingConfig config) {
+	public ListingWidget(IListingConfig config, IAddRowDelegate addRowDelegate) {
 		super();
 		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
 
@@ -99,6 +100,9 @@ public abstract class AbstractListingWidget extends Composite implements HasFocu
 		if(config.isShowNavBar()) {
 			navBar = new ListingNavBar(config);
 			tableViewPanel.add(navBar.getWidget());
+			if(addRowDelegate != null) {
+				navBar.setAddRowDelegate(addRowDelegate);
+			}
 		}
 		else {
 			navBar = null;

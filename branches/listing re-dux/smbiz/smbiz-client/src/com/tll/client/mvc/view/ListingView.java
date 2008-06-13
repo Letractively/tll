@@ -15,7 +15,7 @@ import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.ListingWidget;
 
 /**
  * ListingView - View dedicated to a single listing.
@@ -85,14 +85,14 @@ public abstract class ListingView extends AbstractView {
 	/**
 	 * The listing widget.
 	 */
-	private AbstractListingWidget listingWidget;
+	private ListingWidget listingWidget;
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
 	 * associated with it.
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
-	protected final void setListingWidget(AbstractListingWidget listingWidget) {
+	protected final void setListingWidget(ListingWidget listingWidget) {
 		assert listingWidget != null;
 		this.listingWidget = listingWidget;
 		addWidget(listingWidget);

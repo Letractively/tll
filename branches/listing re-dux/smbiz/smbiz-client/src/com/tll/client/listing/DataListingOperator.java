@@ -12,7 +12,7 @@ import java.util.List;
 import com.tll.client.data.ListingOp;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
-import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
 import com.tll.listhandler.SortColumn;
@@ -50,7 +50,7 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(AbstractListingWidget listingWidget, int pageSize, IDataProvider dataProvider,
+	public DataListingOperator(ListingWidget listingWidget, int pageSize, IDataProvider dataProvider,
 			Sorting sorting) {
 		super(listingWidget);
 		this.pageSize = pageSize;

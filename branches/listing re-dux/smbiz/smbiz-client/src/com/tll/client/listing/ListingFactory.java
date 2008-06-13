@@ -4,7 +4,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.search.ISearch;
-import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.RowContextListingWidget;
 import com.tll.listhandler.ListHandlerType;
 
@@ -21,8 +21,11 @@ public abstract class ListingFactory {
 	 * @param addRowDelegate May be <code>null</code>
 	 * @return A new listing Widget
 	 */
-	private static AbstractListingWidget assembleListingWidget(IListingConfig config,
-			IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
+	private static ListingWidget assembleListingWidget(IListingConfig config, IRowOptionsDelegate rowOptionsDelegate,
+			IAddRowDelegate addRowDelegate) {
+		if(rowOptionsDelegate != null) {
+			return new ListingWidget(config, addRowDelegate);
+		}
 		return new RowContextListingWidget(config, rowOptionsDelegate, addRowDelegate);
 	}
 
@@ -40,9 +43,9 @@ public abstract class ListingFactory {
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static <S extends ISearch> AbstractListingWidget rpcListing(IListingConfig config, String[] props, S criteria,
+	public static <S extends ISearch> ListingWidget rpcListing(IListingConfig config, String[] props, S criteria,
 			ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
-		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
+		ListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
 		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
 				.getPageSize(), props, criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
@@ -59,9 +62,9 @@ public abstract class ListingFactory {
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static AbstractListingWidget dataListing(IListingConfig config, IDataProvider dataProvider,
+	public static ListingWidget dataListing(IListingConfig config, IDataProvider dataProvider,
 			IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
-		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
+		ListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
 		listingWidget.setOperator(new DataListingOperator(listingWidget, config.getPageSize(), dataProvider, (config
 				.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;

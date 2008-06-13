@@ -17,7 +17,7 @@ import com.tll.client.ui.OptionsPopup;
  * RowContextListingWidget - ListingWidget impl that supports row popup panels.
  * @author jpk
  */
-public class RowContextListingWidget extends AbstractListingWidget {
+public class RowContextListingWidget extends ListingWidget {
 
 	/**
 	 * RowContextPopup - The {@link Option}s panel pop-up.
@@ -96,7 +96,7 @@ public class RowContextListingWidget extends AbstractListingWidget {
 	 */
 	public RowContextListingWidget(IListingConfig config, IRowOptionsDelegate rowOptionsDelegate,
 			IAddRowDelegate addRowDelegate) {
-		super(config);
+		super(config, addRowDelegate);
 
 		if(rowOptionsDelegate != null) {
 			rowContextPopup = new RowContextPopup(rowOptionsDelegate);
@@ -108,7 +108,5 @@ public class RowContextListingWidget extends AbstractListingWidget {
 		}
 
 		getListingPanel().addKeyboardListener(table);
-
-		navBar.setAddRowDelegate(addRowDelegate);
 	}
 }

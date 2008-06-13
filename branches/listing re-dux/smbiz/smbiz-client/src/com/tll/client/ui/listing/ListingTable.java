@@ -38,7 +38,7 @@ import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingTable - AbstractListingWidget specific HTML table.
+ * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
 public class ListingTable extends Grid implements TableListener, KeyboardListener {
