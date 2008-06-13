@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.App;
+import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
 /**
@@ -76,31 +77,33 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 		return true;
 	}
 
-	protected boolean isRowEditable(int rowIndex) {
+	protected boolean isRowEditable(int rowIndex, RefKey rowRef) {
 		return true;
 	}
 
-	protected boolean isRowDeletable(int rowIndex) {
+	protected boolean isRowDeletable(int rowIndex, RefKey rowRef) {
 		return true;
 	}
 
-	protected Option[] getCustomRowOps(int rowIndex) {
+	protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
 		return null;
 	}
 
 	/**
 	 * This method is invoked whtn a row is targeted for editing.
 	 * @param rowIndex The row index of the targeted row
+	 * @param rowRef The ref of the row to edit
 	 */
-	protected void doEditRow(int rowIndex) {
+	protected void doEditRow(int rowIndex, RefKey rowRef) {
 		// no-op
 	}
 
 	/**
 	 * This method is invoked when a row is targeted for deletion.
 	 * @param rowIndex The row index of the targeted row
+	 * @param rowRef The ref of the row to delete
 	 */
-	protected void doDeleteRow(int rowIndex) {
+	protected void doDeleteRow(int rowIndex, RefKey rowRef) {
 		// no-op
 	}
 
@@ -108,19 +111,20 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 	 * Performs custom row ops other that edit and delete.
 	 * @param optionText The option text of the selection option
 	 * @param rowIndex The row index of the targeted row
+	 * @param rowRef The ref of the targeted row
 	 */
-	protected void handleRowOp(String optionText, int rowIndex) {
+	protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
 		// no-op
 	}
 
-	public final Option[] getOptions(int rowIndex) {
+	public final Option[] getOptions(int rowIndex, RefKey rowRef) {
 		if(isStaticOptions() && staticOptions != null) {
 			return staticOptions;
 		}
 		List<Option> options = new ArrayList<Option>();
-		if(isRowEditable(rowIndex)) options.add(editOption(getListingElementName()));
-		if(isRowDeletable(rowIndex)) options.add(deleteOption(getListingElementName()));
-		Option[] customOps = getCustomRowOps(rowIndex);
+		if(isRowEditable(rowIndex, rowRef)) options.add(editOption(getListingElementName()));
+		if(isRowDeletable(rowIndex, rowRef)) options.add(deleteOption(getListingElementName()));
+		Option[] customOps = getCustomRowOps(rowIndex, rowRef);
 		if(customOps != null) {
 			for(Option o : customOps) {
 				options.add(o);
@@ -133,15 +137,15 @@ public abstract class RowOpDelegate implements IRowOptionsDelegate {
 		return arr;
 	}
 
-	public final void handleOptionSelection(String optionText, int rowIndex) {
+	public final void handleOptionSelection(String optionText, int rowIndex, RefKey rowRef) {
 		if(isEditOption(optionText)) {
-			doEditRow(rowIndex);
+			doEditRow(rowIndex, rowRef);
 		}
 		else if(isDeleteOption(optionText)) {
-			doDeleteRow(rowIndex);
+			doDeleteRow(rowIndex, rowRef);
 		}
 		else {
-			handleRowOp(optionText, rowIndex);
+			handleRowOp(optionText, rowIndex, rowRef);
 		}
 	}
 }

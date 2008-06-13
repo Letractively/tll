@@ -12,6 +12,7 @@ import java.util.List;
 import com.tll.client.data.ListingOp;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
+import com.tll.client.ui.listing.AbstractListingWidget;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
 import com.tll.listhandler.SortColumn;
@@ -44,12 +45,14 @@ public class DataListingOperator extends AbstractListingOperator {
 
 	/**
 	 * Constructor
+	 * @param listingWidget
 	 * @param pageSize
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(int pageSize, IDataProvider dataProvider, Sorting sorting) {
-		super();
+	public DataListingOperator(AbstractListingWidget listingWidget, int pageSize, IDataProvider dataProvider,
+			Sorting sorting) {
+		super(listingWidget);
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
@@ -61,8 +64,8 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param endIndex 0-based EXCLUSIVE
 	 * @return Array of data list elements
 	 */
-	private IData[] subArray(int startIndex, int endIndex) {
-		IData[] array = new Model[endIndex - startIndex];
+	private Model[] subArray(int startIndex, int endIndex) {
+		Model[] array = new Model[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
 			array[i] = dataProvider.getData().get(i);
 		}
@@ -95,7 +98,7 @@ public class DataListingOperator extends AbstractListingOperator {
 
 		final int startIndex = start;
 		final int endIndex = end;
-		final IData[] pageElements = subArray(startIndex, endIndex);
+		final Model[] pageElements = subArray(startIndex, endIndex);
 
 		return new IPage<IData>() {
 

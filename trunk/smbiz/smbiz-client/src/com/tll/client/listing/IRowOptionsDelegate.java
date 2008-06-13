@@ -3,6 +3,7 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.model.RefKey;
 import com.tll.client.ui.Option;
 
 /**
@@ -18,12 +19,14 @@ public interface IRowOptionsDelegate {
 	 * @param rowRef The RefKey of the row for which {@link Option}s are sought
 	 * @return Array of {@link Option}s.
 	 */
-	Option[] getOptions(int rowIndex/*, RefKey rowRef*/);
+	Option[] getOptions(int rowIndex, RefKey rowRef);
 
 	/**
 	 * Handles option events for a single row.
 	 * @param optionText The text of the selected option
 	 * @param rowIndex The row index of associated with the selected option
+	 * @param rowRef The ref of the row at which the option selection event
+	 *        occurred
 	 */
-	void handleOptionSelection(String optionText, int rowIndex/*, RefKey rowRef*/);
+	void handleOptionSelection(String optionText, int rowIndex, RefKey rowRef);
 }

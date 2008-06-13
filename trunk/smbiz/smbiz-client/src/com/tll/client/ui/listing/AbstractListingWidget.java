@@ -11,20 +11,20 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SourcesMouseEvents;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.data.ListingOp;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ModelChangeEvent;
+import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.listhandler.IPage;
+import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -32,7 +32,7 @@ import com.tll.listhandler.Sorting;
  * app.
  * @author jpk
  */
-public final class AbstractListingWidget extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IModelChangeListener {
+public abstract class AbstractListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -52,7 +52,8 @@ public final class AbstractListingWidget extends Composite implements HasFocus, 
 	/**
 	 * The listing navigation bar.
 	 */
-	// protected final ListingNavBar navBar;
+	protected final ListingNavBar navBar;
+
 	/**
 	 * The main "listing" panel containing all widgets comprising this widget.
 	 */
@@ -72,32 +73,47 @@ public final class AbstractListingWidget extends Composite implements HasFocus, 
 	 * Constructor
 	 * @param config The listing configuration Can't be <code>null</code>.
 	 */
-	public AbstractListingWidget(String caption, Widget table, Widget navBar) {
+	public AbstractListingWidget(IListingConfig config) {
 		super();
+		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
+
 		FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(STYLE_TABLE_VIEW);
 
 		// add a caption if specified
-		if(caption != null) {
-			Label lbl = new Label(caption);
-			lbl.setStyleName(STYLE_CAPTION);
-			tableViewPanel.add(lbl);
+		if(config.getCaption() != null) {
+			Label caption = new Label(config.getCaption());
+			caption.setStyleName(STYLE_CAPTION);
+			tableViewPanel.add(caption);
 		}
+
+		// create and initialize the table panel
+		table = new ListingTable(config);
 
 		// portal
 		portal.setStyleName(CSS.PORTAL);
-		portal.add(table);
+		portal.add(table.getTableWidget());
 		tableViewPanel.add(portal);
 
 		// generate nav bar
-		if(navBar != null) tableViewPanel.add(navBar);
+		if(config.isShowNavBar()) {
+			navBar = new ListingNavBar(config);
+			tableViewPanel.add(navBar.getWidget());
+		}
+		else {
+			navBar = null;
+		}
 
 		focusPanel.add(tableViewPanel);
 
-		// TODO determine the purpose of this
-		// focusPanel.addKeyboardListener(table);
-
 		initWidget(focusPanel);
+	}
+
+	/**
+	 * @return The listing operator.
+	 */
+	public final IListingOperator getOperator() {
+		return operator;
 	}
 
 	/**
@@ -113,25 +129,55 @@ public final class AbstractListingWidget extends Composite implements HasFocus, 
 		this.operator = operator;
 	}
 
-	private void addRow(Model rowData) {
+	public final void clear() {
+		operator.clear();
+	}
+
+	public final void display() {
+		operator.display();
+	}
+
+	public final void navigate(ListingOp navAction, Integer page) {
+		operator.navigate(navAction, page);
+	}
+
+	public final void refresh() {
+		operator.refresh();
+	}
+
+	public final void sort(SortColumn sortColumn) {
+		operator.sort(sortColumn);
+	}
+
+	public final int getNumRows() {
+		return table.getRowCount();
+	}
+
+	public final void addRow(Model rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
 	}
 
-	private void updateRow(int rowIndex, Model rowData) {
+	public final void updateRow(int rowIndex, Model rowData) {
 		table.updateRow(rowIndex, rowData);
 	}
 
 	// TODO do we need this?
-	/*
-	private void deleteRow(int rowIndex) {
+	public final void deleteRow(int rowIndex) {
 		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();
 	}
-	*/
 
-	private void markRowDeleted(int rowIndex) {
+	public final void markRowDeleted(int rowIndex) {
 		table.markRowDeleted(rowIndex);
+	}
+
+	/**
+	 * @return The parent {@link Panel} containing all constituent listing
+	 *         {@link Widget}s.
+	 */
+	protected final FocusPanel getListingPanel() {
+		return focusPanel;
 	}
 
 	public final int getTabIndex() {
@@ -164,22 +210,6 @@ public final class AbstractListingWidget extends Composite implements HasFocus, 
 
 	public final void removeKeyboardListener(KeyboardListener listener) {
 		focusPanel.removeKeyboardListener(listener);
-	}
-
-	public final void addTableListener(TableListener listener) {
-		table.addTableListener(listener);
-	}
-
-	public final void removeTableListener(TableListener listener) {
-		table.removeTableListener(listener);
-	}
-
-	public final void addMouseListener(MouseListener listener) {
-		focusPanel.addMouseListener(listener);
-	}
-
-	public final void removeMouseListener(MouseListener listener) {
-		focusPanel.removeMouseListener(listener);
 	}
 
 	/**

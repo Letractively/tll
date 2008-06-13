@@ -44,20 +44,20 @@ public abstract class ListingView extends AbstractView {
 		/**
 		 * This method is invoked whtn a row is targeted for editing.
 		 * @param rowIndex The row index of the targeted row
+		 * @param rowRef The ref of the row to edit
 		 */
 		@Override
-		protected void doEditRow(int rowIndex) {
-			// TODO need to resolve the row ref!!!!!!!
-			RefKey rowRef = null;
+		protected void doEditRow(int rowIndex, RefKey rowRef) {
 			Dispatcher.instance().dispatch(new EditViewRequest(getSourcingWidget(), getEditViewClass(), rowRef));
 		}
 
 		/**
 		 * This method is invoked when a row is targeted for deletion.
 		 * @param rowIndex The row index of the targeted row
+		 * @param rowRef The ref of the row to delete
 		 */
 		@Override
-		protected void doDeleteRow(int rowIndex) {
+		protected void doDeleteRow(int rowIndex, RefKey rowRef) {
 			AbstractModelChangeHandler handler = new AbstractModelChangeHandler() {
 
 				@Override
@@ -77,8 +77,6 @@ public abstract class ListingView extends AbstractView {
 
 			};
 			handler.addModelChangeListener(ViewManager.instance());
-			// TODO need to resolve the row ref!!!!!!!
-			RefKey rowRef = null;
 			handler.handleModelDelete(rowRef);
 		}
 

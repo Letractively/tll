@@ -119,7 +119,7 @@ public final class IspListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.create(config, null, criteria, ListHandlerType.PAGE,
+		setListingWidget(ListingFactory.rpcListing(config, null, criteria, ListHandlerType.PAGE,
 				new ModelChangingRowOpDelegate() {
 
 					@Override

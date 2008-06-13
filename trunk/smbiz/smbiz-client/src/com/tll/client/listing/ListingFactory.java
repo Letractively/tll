@@ -5,25 +5,14 @@ package com.tll.client.listing;
 
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.RowContextListingWidget;
+import com.tll.listhandler.ListHandlerType;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
  * @author jpk
  */
 public abstract class ListingFactory {
-
-	/*
-		if(rowOptionsDelegate != null) {
-			rowContextPopup = new RowContextPopup(rowOptionsDelegate);
-			table.addTableListener(rowContextPopup);
-			getListingPanel().addMouseListener(rowContextPopup);
-		}
-		else {
-			rowContextPopup = null;
-		}
-
-		navBar.setAddRowDelegate(addRowDelegate);
-	 */
 
 	/**
 	 * Factory method for a listing Widget.
@@ -38,20 +27,43 @@ public abstract class ListingFactory {
 	}
 
 	/**
-	 * Assembles a listing Widget.
+	 * Assembles an RPC based listing Widget.
 	 * @param <S> The search type
 	 * @param config The listing config
-	 * @param operator The listing operator
+	 * @param props Array of properties serving as a filter on the server side
+	 *        where only these properties will be provided
+	 * @param criteria The search criteria
+	 * @param listHandlerType The server side list handler type
 	 * @param rowOptionsDelegate Optional. If <code>null</code>, no row options
 	 *        will be available.
 	 * @param addRowDelegate The optional add row delegate that will handle adding
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static <S extends ISearch> AbstractListingWidget create(IListingConfig config, IListingOperator operator,
+	public static <S extends ISearch> AbstractListingWidget rpcListing(IListingConfig config, String[] props, S criteria,
+			ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
+		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
+		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
+				.getPageSize(), props, criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
+		return listingWidget;
+	}
+
+	/**
+	 * Assembles a listing from data provided by an {@link IDataProvider}
+	 * instance.
+	 * @param config The listing config
+	 * @param dataProvider The listing data collection
+	 * @param rowOptionsDelegate Optional. If <code>null</code>, no row options
+	 *        will be available.
+	 * @param addRowDelegate The optional add row delegate that will handle adding
+	 *        rows.
+	 * @return A new listing Widget
+	 */
+	public static AbstractListingWidget dataListing(IListingConfig config, IDataProvider dataProvider,
 			IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
 		AbstractListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
-		operator.setListingWidget(listingWidget);
+		listingWidget.setOperator(new DataListingOperator(listingWidget, config.getPageSize(), dataProvider, (config
+				.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}
 }
