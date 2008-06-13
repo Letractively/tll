@@ -4,7 +4,6 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.model.IData;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.ISelfFormattingPropertyValue;
 import com.tll.client.model.Model;
@@ -12,16 +11,16 @@ import com.tll.client.model.PropertyPath;
 import com.tll.client.util.Fmt;
 
 /**
- * DefaultTableCellTransformer - The default {@link ITableCellTransformer}.
+ * ModelDataCellRenderer - The default {@link ITableCellRenderer}.
  * @author jpk
  */
-public class DefaultTableCellTransformer implements ITableCellTransformer {
+public class ModelDataCellRenderer implements ITableCellRenderer<Model> {
 
 	/**
 	 * Default implementation of row value translation. Sub-classes are
 	 * responsible for overriding this method to facilitate special cases.
 	 */
-	public String[] getCellValues(IData rowData, Column[] columns) {
+	public String[] getCellValues(Model rowData, Column[] columns) {
 		String[] vals = new String[columns.length];
 		final PropertyPath propPath = new PropertyPath();
 		for(int i = 0; i < columns.length; i++) {
@@ -33,8 +32,7 @@ public class DefaultTableCellTransformer implements ITableCellTransformer {
 			else if(prop != null) {
 				propPath.parse(prop);
 				// TODO eliminate need to case or at a minimum do an earlier check
-				Model m = (Model) rowData;
-				IPropertyValue pv = m.getValue(propPath);
+				IPropertyValue pv = rowData.getValue(propPath);
 
 				// self formatting type..
 				if(pv.getType().isSelfFormatting()) {

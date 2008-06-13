@@ -5,18 +5,20 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
  * IListingConfig - The listing configuration definition encompassing
  * non-runtime listing attributes.
+ * @param <R> The listing row data type
  * @author jpk
  */
-public interface IListingConfig {
+public interface IListingConfig<R extends IData> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
-	public static final ITableCellTransformer DEFAULT_TABLE_CELL_TRANSFORMER = new DefaultTableCellTransformer();
+	public static final ModelDataCellRenderer MODEL_DATA_CELL_RENDERER = new ModelDataCellRenderer();
 
 	/**
 	 * @return A unique name to assign to the listing. Critical for server-side
@@ -66,7 +68,7 @@ public interface IListingConfig {
 	 * @return The table cell transformer responsible for rendering cell values
 	 *         from the backing listing data.
 	 */
-	ITableCellTransformer getTableCellTransformer();
+	ITableCellRenderer<R> getCellRenderer();
 
 	/**
 	 * Show the listing nav bar?

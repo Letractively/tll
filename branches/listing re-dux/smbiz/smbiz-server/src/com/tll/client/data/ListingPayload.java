@@ -5,16 +5,17 @@
  */
 package com.tll.client.data;
 
-import com.tll.client.model.IData;
+import com.tll.client.model.Model;
 import com.tll.listhandler.IPage;
 
 /**
  * ListingPayload
+ * @param <R> The row data type
  * @author jpk
  */
 public class ListingPayload extends Payload {
 
-	private IPage<? extends IData> page;
+	private IPage<Model> page;
 
 	/**
 	 * Constructor
@@ -23,11 +24,11 @@ public class ListingPayload extends Payload {
 		super();
 	}
 
-	public IPage<? extends IData> getPage() {
+	public IPage<Model> getPage() {
 		return page;
 	}
 
-	public void setPage(IPage<? extends IData> page) {
+	public void setPage(IPage<Model> page) {
 		this.page = page;
 	}
 }

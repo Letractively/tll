@@ -14,12 +14,12 @@ import com.tll.client.search.ISearch;
  * IListingService
  * @author jpk
  */
-public interface IListingService extends RemoteService {
+public interface IListingService<S extends ISearch> extends RemoteService {
 
 	/**
 	 * Processes a listing command.
 	 * @param listingCommand
 	 * @return ListingPayload
 	 */
-	ListingPayload process(IListingCommand<? extends ISearch> listingCommand);
+	ListingPayload process(IListingCommand<S> listingCommand);
 }

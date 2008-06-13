@@ -9,7 +9,6 @@ import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -90,7 +89,7 @@ public final class IspListingView extends ListingView {
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
 		criteria.setNamedQuery(SelectNamedQuery.ISP_LISTING);
 
-		final IListingConfig config = new AccountListingConfig() {
+		final AccountListingConfig config = new AccountListingConfig() {
 
 			public String getListingName() {
 				return EntityType.ISP.name() + "_LISTING";

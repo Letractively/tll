@@ -82,7 +82,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	 * Constructor
 	 * @param config Must be specified.
 	 */
-	public ListingNavBar(IListingConfig config) {
+	public ListingNavBar(IListingConfig<? extends IData> config) {
 		super();
 		initialize(config);
 	}
@@ -91,7 +91,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 	 * Initializes the nav bar.
 	 * @param config
 	 */
-	protected void initialize(IListingConfig config) {
+	protected void initialize(IListingConfig<? extends IData> config) {
 		assert config != null;
 
 		this.listingElementName = config.getListingElementName();

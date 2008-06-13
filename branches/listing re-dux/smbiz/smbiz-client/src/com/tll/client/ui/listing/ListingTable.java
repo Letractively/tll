@@ -26,9 +26,8 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
@@ -41,7 +40,7 @@ import com.tll.listhandler.Sorting;
  * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable extends Grid implements TableListener, KeyboardListener {
+public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -65,7 +64,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 
 	protected Column[] columns;
 
-	protected ITableCellTransformer cellTransformer;
+	protected ITableCellRenderer<R> cellTransformer;
 
 	protected IListingOperator listingOperator;
 
@@ -109,7 +108,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * Constructor
 	 * @para config
 	 */
-	public ListingTable(IListingConfig config) {
+	public ListingTable(IListingConfig<R> config) {
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addTableListener(this);
@@ -120,11 +119,12 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * Initializes the table.
 	 * @param config
 	 */
+	@SuppressWarnings("unchecked")
 	protected void initialize(IListingConfig config) {
 		assert config != null;
 
 		this.columns = config.getColumns();
-		this.cellTransformer = config.getTableCellTransformer();
+		this.cellTransformer = config.getCellRenderer();
 		assert columns != null && cellTransformer != null;
 
 		int rn = -1;
@@ -138,7 +138,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		rowNumColIndex = rn;
 
 		if(config.isSortable()) {
-			sortlinks = new SortLink[columns.length];
+			sortlinks = new ListingTable.SortLink[columns.length];
 		}
 
 		setStyleName(STYLE_TABLE);
@@ -277,7 +277,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 	}
 
-	private void addHeaderRow(IListingConfig config) {
+	private void addHeaderRow(IListingConfig<R> config) {
 		final int numCols = columns.length;
 
 		resize(1, numCols);
@@ -316,7 +316,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param overwriteOnNull Overwrite existing cell data when the corresponding
 	 *        row data element is <code>null</code>?
 	 */
-	private void setRowData(int rowIndex, int rowNum, IData rowData, boolean overwriteOnNull) {
+	private void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
 		if(rowIndex == 0) {
 			return; // header row
 		}
@@ -341,7 +341,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 	}
 
-	private void addBodyRows(IPage<? extends IData> page) {
+	private void addBodyRows(IPage<R> page) {
 		final int numBodyRows = page.getNumPageElements();
 		resizeRows(numBodyRows + 1);
 		rowRefs.clear();
@@ -349,7 +349,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		int rowNum = page.getFirstIndex();
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			IData data = page.getPageElements().get(r);
+			R data = page.getPageElements().get(r);
 			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
 			rowRefs.add(data.getRefKey());
 		}
@@ -359,7 +359,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		resizeRows(1);
 	}
 
-	public void setPage(IPage<? extends IData> page, Sorting sorting) {
+	public void setPage(IPage<R> page, Sorting sorting) {
 		removeBodyRows();
 		addBodyRows(page);
 		if(sortlinks != null && sorting != null) applySorting(sorting);
@@ -455,7 +455,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowData The row data for the new table row
 	 * @return The index of the newly-created row
 	 */
-	int addRow(Model rowData) {
+	int addRow(R rowData) {
 		// insert a new empty row
 		final int addRowIndex = getRowCount();
 		resizeRows(addRowIndex + 1);
@@ -502,7 +502,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowIndex The row index of the row to update
 	 * @param rowData The new row data to apply
 	 */
-	void updateRow(int rowIndex, Model rowData) {
+	void updateRow(int rowIndex, R rowData) {
 		assert rowIndex >= 1 : "Can't update the header row";
 		setRowData(rowIndex, -1, rowData, true);
 		rowRefs.set(rowIndex - 1, rowData.getRefKey());

@@ -3,7 +3,6 @@ package com.tll.server.rpc.listing;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
@@ -208,7 +207,7 @@ public final class ModelListingHandler implements IListingHandler {
 		return listHandler.iterator();
 	}
 
-	public IPage<? extends IData> getPage() {
+	public IPage<Model> getPage() {
 		return page;
 	}
 

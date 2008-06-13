@@ -21,7 +21,6 @@ import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.listhandler.IPage;
@@ -32,7 +31,7 @@ import com.tll.listhandler.Sorting;
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
  * @author jpk
  */
-public class ListingWidget extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
+public class ListingWidget<R extends IData> extends Composite implements HasFocus, IModelChangeListener, IListingOperator {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -47,7 +46,7 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 	/**
 	 * The actual listing table.
 	 */
-	protected final ListingTable table;
+	protected final ListingTable<R> table;
 
 	/**
 	 * The listing navigation bar.
@@ -74,7 +73,7 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 	 * @param config The listing configuration Can't be <code>null</code>.
 	 * @param addRowDelegate The optional delegate for adding rows.
 	 */
-	public ListingWidget(IListingConfig config, IAddRowDelegate addRowDelegate) {
+	public ListingWidget(IListingConfig<R> config, IAddRowDelegate addRowDelegate) {
 		super();
 		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
 
@@ -89,7 +88,7 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 		}
 
 		// create and initialize the table panel
-		table = new ListingTable(config);
+		table = new ListingTable<R>(config);
 
 		// portal
 		portal.setStyleName(CSS.PORTAL);
@@ -157,12 +156,12 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 		return table.getRowCount();
 	}
 
-	public final void addRow(Model rowData) {
+	public final void addRow(R rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
 	}
 
-	public final void updateRow(int rowIndex, Model rowData) {
+	public final void updateRow(int rowIndex, R rowData) {
 		table.updateRow(rowIndex, rowData);
 	}
 
@@ -221,7 +220,7 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 	 * @param page The row data
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public final void setPage(IPage<? extends IData> page, Sorting sorting) {
+	public final void setPage(IPage<R> page, Sorting sorting) {
 		table.setPage(page, sorting);
 		if(navBar != null) {
 			navBar.setPage(page);
@@ -235,9 +234,10 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 			case ADDED:
 				// TODO make this check more robust
 				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
+					// TODO fix!!!
 					// i.e. the add button in the nav bar was the source of the model
 					// change..
-					addRow(event.getModel());
+					// addRow(event.getModel());
 				}
 				break;
 			case UPDATED: {
@@ -245,8 +245,9 @@ public class ListingWidget extends Composite implements HasFocus, IModelChangeLi
 				int rowIndex = table.getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
+					// TODO fix!!!
 					// TODO determine how to handle named query specific model data!!
-					updateRow(rowIndex, event.getModel());
+					// updateRow(rowIndex, event.getModel());
 				}
 				break;
 			}

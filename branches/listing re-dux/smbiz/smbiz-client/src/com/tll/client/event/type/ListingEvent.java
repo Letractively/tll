@@ -12,14 +12,15 @@ import com.tll.listhandler.Sorting;
 
 /**
  * ListingEvent - Fired when listing data is retrieved for a targeted listing.
+ * @param <R> The row data type
  * @author jpk
  */
-public final class ListingEvent extends BaseEvent {
+public final class ListingEvent<R extends IData> extends BaseEvent {
 
 	private final boolean success;
 	private final String listingName;
 	private final ListingOp listingOp;
-	private final IPage<? extends IData> page;
+	private final IPage<R> page;
 	private final Sorting sorting;
 
 	/**
@@ -31,8 +32,8 @@ public final class ListingEvent extends BaseEvent {
 	 * @param page
 	 * @param sorting
 	 */
-	public ListingEvent(Widget source, String listingName, boolean success, ListingOp listingOp,
-			IPage<? extends IData> page, Sorting sorting) {
+	public ListingEvent(Widget source, String listingName, boolean success, ListingOp listingOp, IPage<R> page,
+			Sorting sorting) {
 		super(source);
 		this.success = success;
 		this.listingName = listingName;
@@ -53,7 +54,7 @@ public final class ListingEvent extends BaseEvent {
 		return listingOp;
 	}
 
-	public IPage<? extends IData> getPage() {
+	public IPage<R> getPage() {
 		return page;
 	}
 

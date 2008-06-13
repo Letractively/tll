@@ -28,7 +28,7 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedOneProperty;
@@ -324,7 +324,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 						});
 		testPanel.add(vt);
 
-		ListingNavBar listingToolbar = new ListingNavBar(new IListingConfig() {
+		ListingNavBar listingToolbar = new ListingNavBar(new IListingConfig<Model>() {
 
 			public boolean isSortable() {
 				return true;
@@ -346,7 +346,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return true;
 			}
 
-			public ITableCellTransformer getTableCellTransformer() {
+			public ITableCellRenderer<Model> getCellRenderer() {
 				return null;
 			}
 

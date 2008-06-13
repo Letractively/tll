@@ -12,6 +12,7 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.RowOpDelegate;
 import com.tll.client.model.AbstractModelChangeHandler;
+import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
@@ -85,14 +86,14 @@ public abstract class ListingView extends AbstractView {
 	/**
 	 * The listing widget.
 	 */
-	private ListingWidget listingWidget;
+	private ListingWidget<Model> listingWidget;
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
 	 * associated with it.
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
-	protected final void setListingWidget(ListingWidget listingWidget) {
+	protected final void setListingWidget(ListingWidget<Model> listingWidget) {
 		assert listingWidget != null;
 		this.listingWidget = listingWidget;
 		addWidget(listingWidget);

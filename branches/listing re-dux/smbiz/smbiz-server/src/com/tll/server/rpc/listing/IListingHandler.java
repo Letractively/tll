@@ -5,7 +5,7 @@
 
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.IData;
+import com.tll.client.model.Model;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.ListHandlerException;
@@ -56,7 +56,7 @@ public interface IListingHandler {
 	 * Generates a marshallable page suitable for transport to the UI layer.
 	 * @return IPage instance
 	 */
-	IPage<? extends IData> getPage();
+	IPage<Model> getPage();
 
 	/**
 	 * @return the current state of this handler.

@@ -9,6 +9,7 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
+import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.ListHandlerType;
@@ -20,7 +21,7 @@ import com.tll.listhandler.Sorting;
  * server. This is for search based listings.
  * @author jpk
  */
-public final class RpcListingOperator<S extends ISearch> extends AbstractListingOperator implements IListingListener {
+public final class RpcListingOperator<S extends ISearch> extends AbstractListingOperator<Model> implements IListingListener<Model> {
 
 	private final String listingName;
 	private final ListHandlerType listHandlerType;
@@ -40,7 +41,7 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 	 *        on the server
 	 * @param sorting The sorting directive. May be <code>null</code>
 	 */
-	public RpcListingOperator(ListingWidget listingWidget, String listingName, ListHandlerType listHandlerType,
+	public RpcListingOperator(ListingWidget<Model> listingWidget, String listingName, ListHandlerType listHandlerType,
 			int pageSize, String[] props, S searchCriteria, Sorting sorting) {
 		super(listingWidget);
 		this.listingName = listingName;
@@ -86,7 +87,7 @@ public final class RpcListingOperator<S extends ISearch> extends AbstractListing
 		cmd.execute();
 	}
 
-	public void onListingEvent(ListingEvent event) {
+	public void onListingEvent(ListingEvent<Model> event) {
 		if(event.isSuccess()) {
 			if(event.getPage() != null) {
 				listingWidget.setPage(event.getPage(), event.getSorting());

@@ -10,6 +10,7 @@ import com.tll.client.event.type.OptionEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.model.IData;
 import com.tll.client.ui.Option;
 import com.tll.client.ui.OptionsPopup;
 
@@ -17,7 +18,7 @@ import com.tll.client.ui.OptionsPopup;
  * RowContextListingWidget - ListingWidget impl that supports row popup panels.
  * @author jpk
  */
-public class RowContextListingWidget extends ListingWidget {
+public class RowContextListingWidget<R extends IData> extends ListingWidget<R> {
 
 	/**
 	 * RowContextPopup - The {@link Option}s panel pop-up.
@@ -94,7 +95,7 @@ public class RowContextListingWidget extends ListingWidget {
 	 *        <code>null</code>.
 	 * @param addRowDelegate The delegate to handle adding row requests.
 	 */
-	public RowContextListingWidget(IListingConfig config, IRowOptionsDelegate rowOptionsDelegate,
+	public RowContextListingWidget(IListingConfig<R> config, IRowOptionsDelegate rowOptionsDelegate,
 			IAddRowDelegate addRowDelegate) {
 		super(config, addRowDelegate);
 

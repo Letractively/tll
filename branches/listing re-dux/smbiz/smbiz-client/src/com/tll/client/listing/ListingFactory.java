@@ -3,6 +3,8 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.model.IData;
+import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.RowContextListingWidget;
@@ -21,12 +23,12 @@ public abstract class ListingFactory {
 	 * @param addRowDelegate May be <code>null</code>
 	 * @return A new listing Widget
 	 */
-	private static ListingWidget assembleListingWidget(IListingConfig config, IRowOptionsDelegate rowOptionsDelegate,
-			IAddRowDelegate addRowDelegate) {
+	private static <R extends IData> ListingWidget<R> assembleListingWidget(IListingConfig<R> config,
+			IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
 		if(rowOptionsDelegate != null) {
-			return new ListingWidget(config, addRowDelegate);
+			return new ListingWidget<R>(config, addRowDelegate);
 		}
-		return new RowContextListingWidget(config, rowOptionsDelegate, addRowDelegate);
+		return new RowContextListingWidget<R>(config, rowOptionsDelegate, addRowDelegate);
 	}
 
 	/**
@@ -43,9 +45,10 @@ public abstract class ListingFactory {
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static <S extends ISearch> ListingWidget rpcListing(IListingConfig config, String[] props, S criteria,
-			ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
-		ListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
+	public static <S extends ISearch> ListingWidget<Model> rpcListing(IListingConfig<Model> config, String[] props,
+			S criteria, ListHandlerType listHandlerType, IRowOptionsDelegate rowOptionsDelegate,
+			IAddRowDelegate addRowDelegate) {
+		ListingWidget<Model> listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
 		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
 				.getPageSize(), props, criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
@@ -62,10 +65,10 @@ public abstract class ListingFactory {
 	 *        rows.
 	 * @return A new listing Widget
 	 */
-	public static ListingWidget dataListing(IListingConfig config, IDataProvider dataProvider,
+	public static <R extends IData> ListingWidget<R> dataListing(IListingConfig<R> config, IDataProvider<R> dataProvider,
 			IRowOptionsDelegate rowOptionsDelegate, IAddRowDelegate addRowDelegate) {
-		ListingWidget listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
-		listingWidget.setOperator(new DataListingOperator(listingWidget, config.getPageSize(), dataProvider, (config
+		ListingWidget<R> listingWidget = assembleListingWidget(config, rowOptionsDelegate, addRowDelegate);
+		listingWidget.setOperator(new DataListingOperator<R>(listingWidget, config.getPageSize(), dataProvider, (config
 				.isSortable() ? config.getDefaultSorting() : null)));
 		return listingWidget;
 	}

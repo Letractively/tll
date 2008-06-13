@@ -5,6 +5,7 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
@@ -14,6 +15,8 @@ import com.tll.client.data.ListingPayload;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
+import com.tll.client.model.IData;
+import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
@@ -23,9 +26,10 @@ import com.tll.listhandler.Sorting;
  * ListingCommand - Issues RPC listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
+@SuppressWarnings("unchecked")
+public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements ISourcesListingEvents<Model> {
 
-	private static final IListingServiceAsync svc;
+	private static final IListingServiceAsync<ISearch, IData> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
@@ -34,7 +38,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The listing event listeners.
 	 */
-	private final ListingListenerCollection listeners = new ListingListenerCollection();
+	private final ListingListenerCollection<Model> listeners = new ListingListenerCollection<Model>();
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -70,11 +74,11 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		return listingName;
 	}
 
-	public void addListingListener(IListingListener listener) {
+	public void addListingListener(IListingListener<Model> listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListingListener(IListingListener listener) {
+	public void removeListingListener(IListingListener<Model> listener) {
 		listeners.remove(listener);
 	}
 
@@ -132,11 +136,12 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void doExecute() {
 		if(listingCommand == null) {
 			throw new IllegalStateException("No listing command set!");
 		}
-		svc.process(listingCommand, getAsyncCallback());
+		svc.process((IListingCommand) listingCommand, (AsyncCallback) getAsyncCallback());
 	}
 
 	@Override
@@ -150,8 +155,8 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		final Sorting sorting = listingCommand.getSorting();
 		listingCommand = null; // reset
 
-		listeners.fireListingEvent(new ListingEvent(sourcingWidget, listingName, !result.hasErrors(), op, result.getPage(),
-				sorting));
+		listeners.fireListingEvent(new ListingEvent<Model>(sourcingWidget, listingName, !result.hasErrors(), op, result
+				.getPage(), sorting));
 	}
 
 }

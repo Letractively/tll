@@ -36,7 +36,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * ListingService - Handles client listing requests.
  * @author jpk
  */
-public final class ListingService<E extends IEntity> extends RpcServlet implements IListingService {
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -46,7 +46,7 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 	 * @return Payload contains the table page and status.
 	 */
 	@SuppressWarnings("unchecked")
-	public ListingPayload process(final IListingCommand listingCommand) {
+	public ListingPayload process(final IListingCommand<S> listingCommand) {
 		final ListingPayload p = new ListingPayload();
 		final Status status = p.getStatus();
 		assert status != null;
@@ -87,15 +87,15 @@ public final class ListingService<E extends IEntity> extends RpcServlet implemen
 					if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
 
 					// get the client side criteria
-					final ISearch search = listingCommand.getSearchCriteria();
+					final S search = listingCommand.getSearchCriteria();
 					if(search == null) {
 						throw new ListingException(listingName, "No search criteria specified.");
 					}
 
 					// resolve the entity class and corres. marshaling entity service
 					final Class<E> entityClass = EntityUtil.entityClassFromType(search.getEntityType());
-					final IMEntityServiceImpl<E, ISearch> mEntitySvc =
-							(IMEntityServiceImpl<E, ISearch>) MEntityServiceImplFactory.instance(entityClass);
+					final IMEntityServiceImpl<E, S> mEntitySvc =
+							(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
 
 					// translate client side criteria to server side criteria
 					final ICriteria<? extends E> criteria;

@@ -24,12 +24,12 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 // TODO implemenet sorting!!!
-public class DataListingOperator extends AbstractListingOperator {
+public class DataListingOperator<R extends IData> extends AbstractListingOperator<R> {
 
 	/**
 	 * The data provider.
 	 */
-	private final IDataProvider dataProvider;
+	private final IDataProvider<R> dataProvider;
 
 	private final int pageSize;
 
@@ -50,7 +50,7 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(ListingWidget listingWidget, int pageSize, IDataProvider dataProvider,
+	public DataListingOperator(ListingWidget<R> listingWidget, int pageSize, IDataProvider<R> dataProvider,
 			Sorting sorting) {
 		super(listingWidget);
 		this.pageSize = pageSize;
@@ -64,8 +64,8 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param endIndex 0-based EXCLUSIVE
 	 * @return Array of data list elements
 	 */
-	private Model[] subArray(int startIndex, int endIndex) {
-		Model[] array = new Model[endIndex - startIndex];
+	private R[] subArray(int startIndex, int endIndex) {
+		R[] array = new Model[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
 			array[i] = dataProvider.getData().get(i);
 		}
@@ -77,7 +77,7 @@ public class DataListingOperator extends AbstractListingOperator {
 	 * @param page The desired page number
 	 * @return Ad-hoc generated IPage instance
 	 */
-	private IPage<IData> generatePage(int page) {
+	private IPage<R> generatePage(int page) {
 
 		// calculate size and num pages
 		final int size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
@@ -98,9 +98,9 @@ public class DataListingOperator extends AbstractListingOperator {
 
 		final int startIndex = start;
 		final int endIndex = end;
-		final Model[] pageElements = subArray(startIndex, endIndex);
+		final R[] pageElements = subArray(startIndex, endIndex);
 
-		return new IPage<IData>() {
+		return new IPage<R>() {
 
 			public boolean isLastPage() {
 				return pageNum == numPages - 1;
@@ -122,8 +122,8 @@ public class DataListingOperator extends AbstractListingOperator {
 				return pageNum;
 			}
 
-			public List<IData> getPageElements() {
-				return new ArrayList<IData>(Arrays.asList(pageElements));
+			public List<R> getPageElements() {
+				return new ArrayList<R>(Arrays.asList(pageElements));
 			}
 
 			public int getNumPages() {
@@ -177,12 +177,12 @@ public class DataListingOperator extends AbstractListingOperator {
 		pageNum = navPageNum;
 		assert pageNum >= 0;
 
-		IPage<IData> mpage = generatePage(navPageNum);
+		IPage<R> mpage = generatePage(navPageNum);
 		listingWidget.setPage(mpage, null);
 	}
 
 	public void refresh() {
-		IPage<IData> mpage = generatePage(pageNum);
+		IPage<R> mpage = generatePage(pageNum);
 		listingWidget.setPage(mpage, null);
 	}
 
