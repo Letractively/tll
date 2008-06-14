@@ -162,13 +162,12 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	 */
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
-		assert listHandler.size() > 0 : "No list handler elements exist";
 		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
+		assert listHandler.size() > 0 : "No list handler elements exist";
 	}
 
 	public void test() throws Exception {
 
-		final int pageSize = 2;
 		IListHandlerDataProvider<IEntity> dataProvider;
 		ICriteria<? extends IEntity> criteria;
 
@@ -184,11 +183,11 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
 					case COLLECTION:
-						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						break;
 					case IDLIST:
 						try {
-							listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 							Assert.fail("Able to create id list based list handler for a scalar named query!");
 						}
 						catch(InvalidCriteriaException e) {
@@ -196,7 +195,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 						}
 						break;
 					case PAGE:
-						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						break;
 					default:
 						throw new Error("Unhandled list handler type: " + lht.toString());

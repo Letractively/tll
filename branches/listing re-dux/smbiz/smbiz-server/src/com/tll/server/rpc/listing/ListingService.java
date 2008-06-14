@@ -118,9 +118,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					}
 					IListHandler<SearchResult<E>> listHandler = null;
 					try {
-						listHandler =
-								ListHandlerFactory.create(criteria, listingCommand.getSorting(), lht, listingCommand.getPageSize(),
-										dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, listingCommand.getSorting(), lht, dataProvider);
 					}
 					catch(final InvalidCriteriaException e) {
 						throw new ListingException(listingName, "Invalid criteria: " + e.getMessage(), e);
@@ -140,9 +138,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					marshalingListHandler.setWrappedHandler(listHandler);
 
 					// instantiate the handler
-					handler =
-							new ModelListingHandler(marshalingListHandler, listingName, listingCommand.isPageable(), listingCommand
-									.getPageSize());
+					handler = new ModelListingHandler(marshalingListHandler, listingName, listingCommand.getPageSize());
 
 					// sync up with cached state (if present)
 					if(listingOp != ListingOp.REFRESH && state != null) {

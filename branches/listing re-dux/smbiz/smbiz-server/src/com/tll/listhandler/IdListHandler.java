@@ -20,10 +20,12 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 
 	/**
 	 * Constructor
-	 * @param dataProvider
+	 * @param dataProvider The data provider used to fetch the list elements with
+	 *        the given criteria.
+	 * @param criteria The criteria used to generate the underlying list
 	 */
-	IdListHandler(IListHandlerDataProvider<E> dataProvider) {
-		super(dataProvider);
+	IdListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting) {
+		super(dataProvider, criteria, sorting);
 	}
 
 	public ListHandlerType getListHandlerType() {
@@ -35,35 +37,37 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	}
 
 	@Override
-	protected void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
-			NoMatchingResultsException {
-		ids = dataProvider.getIds(criteria, sorting);
-		if(ids == null || ids.size() < 1) {
-			throw new NoMatchingResultsException();
-		}
-	}
-
-	private List<Integer> getIds(int start, int end) throws EmptyListException, ListHandlerException {
-		if(size() < 1) {
-			throw new EmptyListException("Unable to retrieve id elements: no ids exist");
-		}
-		try {
-			return this.ids.subList(start, end);
-		}
-		catch(final IndexOutOfBoundsException iobe) {
-			throw new ListHandlerException("Invalid list index range: start(" + start + "), end(" + end + ")");
-		}
-	}
-
-	@Override
 	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
-		final List<E> list =
-				dataProvider.getEntitiesFromIds(getEntityClass(), getIds(offset, offset + pageSize), getSorting());
-		if(list == null || list.size() < 1) {
+
+		assert this.sorting != null;
+
+		// if sorting differs, re-execute search
+		if(sorting != null && !sorting.equals(this.sorting)) {
+			try {
+				ids = dataProvider.getIds(criteria, sorting);
+			}
+			catch(InvalidCriteriaException e) {
+				throw new ListHandlerException(e.getMessage());
+			}
+		}
+
+		if(ids == null || ids.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
-		sort(sorting);
+
+		final int size = ids.size();
+		int ei = offset + pageSize;
+
+		// adjust the end index if it exceeds the bounds of the id list
+		if(ei > size - 1) ei = size - 1;
+
+		List<Integer> subids = ids.subList(offset, ei);
+
+		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sorting);
+		if(list == null || list.size() != subids.size()) {
+			throw new ListHandlerException("id and entity count mismatch");
+		}
 		final List<SearchResult<E>> slist = new ArrayList<SearchResult<E>>(list.size());
 		for(final E e : list) {
 			slist.add(new SearchResult<E>(e));

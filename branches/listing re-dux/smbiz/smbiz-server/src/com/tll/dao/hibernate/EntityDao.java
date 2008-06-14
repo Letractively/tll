@@ -639,7 +639,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			}
 		}
 		if(rlist == null) {
-			throw new InvalidCriteriaException("Invalid criteria for entity paging: " + criteria.getCriteriaType().name());
+			throw new InvalidCriteriaException("Invalid paging criteria: " + criteria.getCriteriaType().name());
 		}
 
 		final List<SearchResult<E>> list = rlist;

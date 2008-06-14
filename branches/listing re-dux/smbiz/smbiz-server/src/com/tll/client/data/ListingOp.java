@@ -39,14 +39,6 @@ public enum ListingOp implements INameValueProvider {
 
 	CLEAR_ALL("Clear all");
 
-	/*
-	INSERT_ROW("Insert row"),
-
-	UPDATE_ROW("Update row"),
-
-	DELETE_ROW("Delete row");
-	*/
-
 	private final String name;
 
 	/**

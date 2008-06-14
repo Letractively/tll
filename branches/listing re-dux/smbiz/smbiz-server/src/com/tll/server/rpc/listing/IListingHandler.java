@@ -5,17 +5,17 @@
 
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.Model;
+import java.util.List;
+
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IPage;
-import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.Sorting;
 
 /**
  * Manages {@link IPage} instances and retrieval of their row data.
  * @author jpk
  */
-public interface IListingHandler {
+public interface IListingHandler<T> {
 
 	/**
 	 * @return The name of the listing this handler handles.
@@ -23,43 +23,39 @@ public interface IListingHandler {
 	String getListingName();
 
 	/**
-	 * @return The current 0-based page number.
+	 * @return The current 0-based list index.
 	 */
-	int getPageNumber();
+	int getOffset();
 
 	/**
-	 * @return The calculated number of pages.
+	 * @return The page size.
 	 */
-	int getNumPages();
+	int getPageSize();
 
 	/**
-	 * Updates the contained listing with rows assoc. with the given page number.
-	 * @param pageNum 0-based page number
-	 * @param adjustPageNum Attempt to adjust the page number if the one given is
-	 *        out of bounds?
-	 * @return The actual page number that was set
+	 * @return The sorting directive.
+	 */
+	Sorting getSorting();
+
+	/**
+	 * @return The total size of the underlying list.
+	 */
+	int size();
+
+	/**
+	 * @return The current list elements.
+	 */
+	List<T> getElements();
+
+	/**
+	 * Fetches list elements.
+	 * @param offset The list index at which retriving begins
+	 * @param pageSize The number of elements to retrieve
+	 * @param sorting The optional sorting directive
 	 * @throws EmptyListException
-	 * @throws PageNumOutOfBoundsException
+	 * @throws IndexOutOfBoundsException
 	 * @throws ListingException
 	 */
-	int setCurrentPage(int pageNum, boolean adjustPageNum) throws EmptyListException, PageNumOutOfBoundsException,
+	void query(int offset, int pageSize, Sorting sorting) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException;
-
-	/**
-	 * Sorts the listing.
-	 * @param sorting
-	 * @throws ListHandlerException
-	 */
-	void sort(Sorting sorting) throws ListHandlerException;
-
-	/**
-	 * Generates a marshallable page suitable for transport to the UI layer.
-	 * @return IPage instance
-	 */
-	IPage<Model> getPage();
-
-	/**
-	 * @return the current state of this handler.
-	 */
-	ListingState getState();
 }

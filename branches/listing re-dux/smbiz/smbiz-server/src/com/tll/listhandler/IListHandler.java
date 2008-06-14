@@ -3,8 +3,8 @@ package com.tll.listhandler;
 import java.util.List;
 
 /**
- * IListHandler - Manages large lists of varying types. This interface defines a
- * common contract for managing lists by providing "paged" access. <br>
+ * IListHandler - Definition for fetching chunks of an underlying, possibly very
+ * large, list in a common manner.<br>
  * {@link IListHandler}s hold state and are <em>not</em> designed to be
  * thread-safe! Therefore, clients must ensure safe access to them.
  * @param <T> The list element type.
@@ -18,14 +18,13 @@ public interface IListHandler<T> {
 	ListHandlerType getListHandlerType();
 
 	/**
-	 * The workhorse method of list handlers. The method must be called first
-	 * before list elements may be accessed.
+	 * Fetches a chunk of list data based on the given list index (offset from
+	 * start) and the corres. number of elements to retrieve (the page size).
 	 * @param offset 0-based index of the underlying list at which fetching
 	 *        starts.
 	 * @param pageSize The number of list elements to fetch
-	 * @param sorting The optional sorting directive.
-	 * @return The result containing the "page" elements and the total size of the
-	 *         list.
+	 * @param sorting Optional sorting directive.
+	 * @return Fetched chunk of list elements.
 	 * @throws IndexOutOfBoundsException The the offset exceeds the size of the
 	 *         list or the number of the elements to fetch results in an out of
 	 *         bounds condition.

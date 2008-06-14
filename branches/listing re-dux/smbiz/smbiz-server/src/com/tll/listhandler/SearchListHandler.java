@@ -3,9 +3,7 @@ package com.tll.listhandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.SystemError;
 import com.tll.criteria.ICriteria;
-import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
 
 /**
@@ -18,7 +16,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	protected final Log LOG = LogFactory.getLog(this.getClass());
 
 	/**
-	 * The list handler service
+	 * The list handler data provider.
 	 */
 	protected final IListHandlerDataProvider<E> dataProvider;
 
@@ -29,109 +27,25 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 
 	/**
 	 * Constructor
-	 * @param dataProvider
+	 * @param dataProvider The data provider used to fetch the list elements with
+	 *        the given criteria.
+	 * @param criteria The criteria used to generate the underlying list
+	 * @param sorting The required sorting directive.
 	 */
-	SearchListHandler(IListHandlerDataProvider<E> dataProvider) {
+	public SearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting)
+			throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {
-			throw new IllegalArgumentException("A list handler service must be specified.");
+			throw new IllegalArgumentException("A data provider must be specified.");
 		}
-		this.dataProvider = dataProvider;
-	}
-
-	/**
-	 * @return The IEntity type.
-	 */
-	protected final Class<? extends E> getEntityClass() {
-		return criteria == null ? null : criteria.getEntityClass();
-	}
-
-	/**
-	 * Refreshes the listing.
-	 * @throws EmptyListException
-	 */
-	public final void refresh() throws EmptyListException {
-		if(criteria != null) {
-			try {
-				executeSearch(criteria, sorting);
-			}
-			catch(final NoMatchingResultsException nmre) {
-				throw new EmptyListException(nmre.getMessage());
-			}
-			catch(final InvalidCriteriaException e) {
-				throw new SystemError("Search list handler refresh failed: " + e.getMessage(), e);
-			}
-		}
-	}
-
-	public final Sorting getSorting() {
-		return sorting;
-	}
-
-	/**
-	 * Executes a search populating this handler.
-	 * @param criteria The search criteria.
-	 * @param sorting The sorting directive
-	 * @throws InvalidCriteriaException
-	 * @throws NoMatchingResultsException
-	 */
-	public final void executeSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
-			NoMatchingResultsException {
 		if(criteria == null) {
-			throw new InvalidCriteriaException("No criteria specified.");
+			throw new IllegalArgumentException("No criteria specified.");
 		}
 		if(sorting == null) {
-			// NOTE: we always require sorting for search based list handling
-			throw new InvalidCriteriaException("A Sort directive must be specified for search based list handlers.");
+			throw new IllegalArgumentException("No sorting directive specified.");
 		}
-		// we now commit to the given criteria and sorting irregardless of the
-		// search outcome to maintain proper state
+		this.dataProvider = dataProvider;
 		this.criteria = criteria;
 		this.sorting = sorting;
-		doSearch(criteria, sorting);
-	}
-
-	/**
-	 * Sub-classes are responsible for performing the actual search.
-	 * @param criteria The criteria to refresh with. Guaranteed non-<code>null</code>.
-	 * @param sorting The sort directive. Guaranteed non-<code>null</code>.
-	 * @throws InvalidCriteriaException
-	 * @throws NoMatchingResultsException
-	 */
-	protected abstract void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
-			NoMatchingResultsException;
-
-	/**
-	 * Sorts this listing only when the given sorting differs from that currently
-	 * held.
-	 * @param sorting The sorting directive.
-	 * @throws ListHandlerException When the given sorting is mal-formed or when
-	 *         no search has been executed.
-	 */
-	protected final void sort(Sorting sorting) throws ListHandlerException {
-		if(sorting == null || sorting.size() < 1) {
-			throw new ListHandlerException("No sorting directives specified");
-		}
-		if(criteria == null) {
-			throw new ListHandlerException("Unable to sort: No criteria present");
-		}
-
-		// only sort when at least 2 list elements and sorting directive argument
-		// differs than what is held in the list handler's criteria.
-		if(size() > 1 && !sorting.equals(this.sorting)) {
-
-			try {
-				try {
-					doSearch(criteria, sorting);
-					this.sorting = sorting;
-				}
-				catch(final NoMatchingResultsException e) {
-					throw new EmptyListException("No list elements exist anymore.");
-				}
-			}
-			catch(final InvalidCriteriaException e) {
-				throw new ListHandlerException("Unexpected invalid criteria exception occurred: " + e.getMessage(), e);
-			}
-		}
 	}
 }

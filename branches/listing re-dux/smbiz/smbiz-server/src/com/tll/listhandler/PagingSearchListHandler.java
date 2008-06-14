@@ -13,60 +13,36 @@ import com.tll.model.IEntity;
 public final class PagingSearchListHandler<E extends IEntity> extends SearchListHandler<E> {
 
 	/**
-	 * The page size.
-	 */
-	private final int pageSize;
-
-	/**
-	 * The current index relative to the underlying result set.
-	 */
-	private int offset = 0;
-
-	/**
 	 * The current page of results
 	 */
 	private IPageResult<SearchResult<E>> page;
 
 	/**
 	 * Constructor
-	 * @param dataProvider
-	 * @param pageSize The page size. Must be at least <code>1</code>.
+	 * @param dataProvider The data provider used to fetch the list elements with
+	 *        the given criteria.
+	 * @param criteria The criteria used to generate the underlying list
+	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, int pageSize) {
-		super(dataProvider);
-		if(pageSize < 1) {
-			throw new IllegalArgumentException("The page size must be at least 1");
-		}
-		this.pageSize = pageSize;
+	PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting) {
+		super(dataProvider, criteria, sorting);
 	}
 
 	public ListHandlerType getListHandlerType() {
 		return ListHandlerType.PAGE;
 	}
 
-	@Override
-	protected void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
-			NoMatchingResultsException {
-		page = dataProvider.getPage(criteria, sorting, offset, pageSize);
-		if(page.getResultCount() < 1) {
-			throw new NoMatchingResultsException();
-		}
-	}
-
-	@Override
 	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
-		if(size() < 1) {
-			throw new EmptyListException("No list elements exist");
-		}
+
 		try {
-			doSearch(criteria, sorting);
+			page = dataProvider.getPage(criteria, sorting, offset, pageSize);
+			if(page.getResultCount() < 1) {
+				throw new EmptyListException("No matching page results found.");
+			}
 		}
 		catch(InvalidCriteriaException e) {
 			throw new ListHandlerException(e.getMessage());
-		}
-		catch(NoMatchingResultsException e) {
-			throw new EmptyListException(e.getMessage());
 		}
 		return page.getPageList();
 	}
