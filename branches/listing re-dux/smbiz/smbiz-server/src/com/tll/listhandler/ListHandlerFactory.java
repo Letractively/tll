@@ -23,20 +23,18 @@ public abstract class ListHandlerFactory {
 	 * @throws EmptyListException
 	 * @throws ListHandlerException When a sorting related occurrs.
 	 */
-	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting, boolean doInitialSort)
-			throws EmptyListException, ListHandlerException {
-		IListHandler<T> listHandler;
+	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws EmptyListException,
+			ListHandlerException {
 		try {
-			listHandler =
-					new CollectionListHandler<T>(CollectionUtil.listFromCollection(c), (doInitialSort ? null : sorting));
+			CollectionListHandler<T> listHandler = new CollectionListHandler<T>(CollectionUtil.listFromCollection(c));
+			if(sorting != null) {
+				listHandler.sort(sorting);
+			}
+			return listHandler;
 		}
 		catch(final EmptyListException ele) {
 			throw ele;
 		}
-		if(doInitialSort) {
-			listHandler.sort(sorting);
-		}
-		return listHandler;
 	}
 
 	/**
@@ -62,7 +60,7 @@ public abstract class ListHandlerFactory {
 		switch(type) {
 
 			case COLLECTION:
-				return create(dataProvider.find(criteria, sorting), sorting, false);
+				return create(dataProvider.find(criteria, null), sorting);
 
 			case IDLIST:
 				slh = new IdListHandler<E>(dataProvider);

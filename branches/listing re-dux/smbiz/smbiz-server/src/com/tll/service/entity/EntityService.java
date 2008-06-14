@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityAssembler;
@@ -147,14 +147,8 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	}
 
 	@Transactional(readOnly = true)
-	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
+	public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
 			throws InvalidCriteriaException {
-		return dao.getPage(criteria, sorting, page, pageSize);
+		return dao.getPage(criteria, sorting, offset, pageSize);
 	}
-
-	@Transactional(readOnly = true)
-	public IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum) {
-		return dao.getPage(currentPage, newPageNum);
-	}
-
 }

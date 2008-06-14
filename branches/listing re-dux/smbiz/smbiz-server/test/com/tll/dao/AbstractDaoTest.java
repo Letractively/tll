@@ -28,7 +28,7 @@ import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.guice.DaoModule;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
@@ -312,13 +312,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.find(criteria, sorting);
 		}
 
-		public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
-				throws InvalidCriteriaException {
-			return rawDao.getPage(criteria, sorting, page, pageSize);
-		}
-
-		public IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum) {
-			return rawDao.getPage(currentPage, newPageNum);
+		public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset,
+				int pageSize) throws InvalidCriteriaException {
+			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
 
 		public void clear() {
@@ -539,20 +535,20 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		startNewTransaction();
 		final ICriteria<? extends E> crit =
 				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
-		IPage<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 2,
+		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of initial page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(page, 1);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 2,
+		page = dao.getPage(crit, simpleIdSorting, 1, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of subsequent page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(page, 2);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 1,
+		page = dao.getPage(crit, simpleIdSorting, 2, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
 				"Empty or invalid number of last page elements");
 		endTransaction();
 	}

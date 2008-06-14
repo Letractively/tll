@@ -23,7 +23,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ehcache.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/guice.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar" sourcepath="/LIBS/hibernate-3.2/src"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-annotations.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-commons-annotations.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-entitymanager.jar"/>

@@ -49,19 +49,10 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 * Returns a page of matching results for the given criteria.
 	 * @param criteria
 	 * @param sorting
-	 * @param page
+	 * @param offset
 	 * @param pageSize
 	 * @throws InvalidCriteriaException
 	 */
-	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
+	IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
 			throws InvalidCriteriaException;
-
-	/**
-	 * Returns a subsequent page of matching results.
-	 * @param currentPage The current page
-	 * @param newPageNum The desired page to query for.
-	 *        {@link #getPage(ICriteria, Sorting, int, int)} must be called first!
-	 * @see #getPage(ICriteria, Sorting, int, int)
-	 */
-	IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum);
 }

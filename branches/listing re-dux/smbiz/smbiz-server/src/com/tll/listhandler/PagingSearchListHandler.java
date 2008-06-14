@@ -13,14 +13,19 @@ import com.tll.model.IEntity;
 public final class PagingSearchListHandler<E extends IEntity> extends SearchListHandler<E> {
 
 	/**
-	 * The page size
+	 * The page size.
 	 */
 	private final int pageSize;
 
 	/**
+	 * The current index relative to the underlying result set.
+	 */
+	private int offset = 0;
+
+	/**
 	 * The current page of results
 	 */
-	private IPage<SearchResult<E>> page;
+	private IPageResult<SearchResult<E>> page;
 
 	/**
 	 * Constructor
@@ -42,72 +47,31 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	@Override
 	protected void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
 			NoMatchingResultsException {
-		final int pageNumber = page == null ? 0 : page.getPageNumber();
-		page = dataProvider.getPage(criteria, sorting, pageNumber, pageSize);
-		if(page.getTotalSize() < 1) {
+		page = dataProvider.getPage(criteria, sorting, offset, pageSize);
+		if(page.getResultCount() < 1) {
 			throw new NoMatchingResultsException();
 		}
 	}
 
-	/**
-	 * Re-sets the page property if necessary based on the given index.
-	 * <p>
-	 * <b>NOTE:</b>{@link #page} is presumed to not be <code>null</code>.
-	 * @param index The 0-based index spanning the entire result set.
-	 */
-	@SuppressWarnings("unchecked")
-	protected void changePage(int index) {
-		assert page != null : "Unable to changePage(): page property was null";
-		final int pageNum = PageUtil.getPageNumberFromListIndex(index, size(), getPageSize());
-		if(pageNum != page.getPageNumber()) {
-			if(LOG.isDebugEnabled()) {
-				LOG.debug("Changing page " + page.getPageNumber() + " to " + pageNum);
-			}
-			try {
-				this.page = dataProvider.getPage(page, pageNum);
-			}
-			catch(final RuntimeException rt) {
-				LOG.error("Change page failed: " + rt.getMessage());
-				throw rt;
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public SearchResult<E> getElement(int index) throws EmptyListException, ListHandlerException {
-		if(!hasElements()) {
+	@Override
+	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+			EmptyListException, ListHandlerException {
+		if(size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
-		if(!PageUtil.isValidListIndex(index, size())) {
-			throw new ListHandlerException("Invalid index: " + index);
+		try {
+			doSearch(criteria, sorting);
 		}
-		changePage(index);
-		final int pageIndex = PageUtil.getPageIndexFromListIndex(index, size(), getPageSize());
-		return page.getPageElements().get(pageIndex);
-	}
-
-	// NOTE: this impl only allows the list indexes to be confined to a single
-	// page range!
-	// Otherwise, the logic would be intense.
-	@SuppressWarnings("unchecked")
-	public List<SearchResult<E>> getElements(int start, int end) throws EmptyListException, ListHandlerException {
-		if(!hasElements()) {
-			throw new EmptyListException("No list elements exist");
+		catch(InvalidCriteriaException e) {
+			throw new ListHandlerException(e.getMessage());
 		}
-		if(!PageUtil.isValidPageIndexRange(start, end, size(), getPageSize())) {
-			throw new ListHandlerException("Invalid list index range: [" + start + "] - [" + end + "]");
+		catch(NoMatchingResultsException e) {
+			throw new EmptyListException(e.getMessage());
 		}
-		changePage(start);
-		final int pageStart = PageUtil.getPageIndexFromListIndex(start, size(), getPageSize());
-		final int pageEnd = pageStart + (end - start);
-		return page.getPageElements().subList(pageStart, pageEnd);
+		return page.getPageList();
 	}
 
 	public int size() {
-		return page == null ? 0 : page.getTotalSize();
-	}
-
-	private final int getPageSize() {
-		return page == null ? 0 : page.getPageSize();
+		return page == null ? 0 : page.getResultCount();
 	}
 }

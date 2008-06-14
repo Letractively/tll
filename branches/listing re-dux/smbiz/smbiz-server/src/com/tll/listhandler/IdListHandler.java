@@ -16,7 +16,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	/**
 	 * The id list - list of entity ids matching the search criteria.
 	 */
-	protected List<Integer> ids;
+	private List<Integer> ids;
 
 	/**
 	 * Constructor
@@ -43,8 +43,8 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		}
 	}
 
-	private final List<Integer> getIds(int start, int end) throws EmptyListException, ListHandlerException {
-		if(!hasElements()) {
+	private List<Integer> getIds(int start, int end) throws EmptyListException, ListHandlerException {
+		if(size() < 1) {
 			throw new EmptyListException("Unable to retrieve id elements: no ids exist");
 		}
 		try {
@@ -55,38 +55,19 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public SearchResult<E> getElement(int index) throws EmptyListException, ListHandlerException {
-
-		if(index < 0 || index > size() - 1) {
-			throw new ListHandlerException("Unable to retreive list elements: invalid index: " + index);
-		}
-		final List<E> list = dataProvider.getEntitiesFromIds(getEntityClass(), getIds(index, index + 1), getSorting());
-
+	@Override
+	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+			EmptyListException, ListHandlerException {
+		final List<E> list =
+				dataProvider.getEntitiesFromIds(getEntityClass(), getIds(offset, offset + pageSize), getSorting());
 		if(list == null || list.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
-
-		return new SearchResult(list.get(0));
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SearchResult<E>> getElements(int start, int end) throws EmptyListException, ListHandlerException {
-		if(start < 0 || end < 0 || start > end) {
-			throw new ListHandlerException("Unable to retreive list elements: invalid range - start(" + start + "), end("
-					+ end + ")");
-		}
-		final List<E> list = dataProvider.getEntitiesFromIds(getEntityClass(), getIds(start, end), getSorting());
-
-		if(list == null || list.size() < 1) {
-			throw new EmptyListException("No list elements exist");
-		}
-
+		sort(sorting);
 		final List<SearchResult<E>> slist = new ArrayList<SearchResult<E>>(list.size());
 		for(final E e : list) {
 			slist.add(new SearchResult<E>(e));
 		}
 		return slist;
 	}
-
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
@@ -142,27 +142,19 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting);
 
 	/**
-	 * Returns a page of matching results for the given criteria. Used for result
-	 * set page-based list handling.
-	 * @param criteria The criteria. May NOT be <code>null</code>.
-	 * @param sorting The sorting directive. May be <code>null</code>.
-	 * @param page
-	 * @param pageSize
+	 * Returns a sub-set of results using record set paging.
+	 * @param criteria The required criteria that generates the record set
+	 * @param sorting The required sorting directive that forces the retrieved
+	 *        record set to be sorted. Sorting is required to be able to provide
+	 *        deterministic results.
+	 * @param offset The result set index where at which results are retrieved
+	 * @param pageSize The number of results to retrieve at the given offset
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code>
-	 *         or found to be invalid.
+	 *         or found to be invalid or when the sorting directive is
+	 *         <code>null</code>.
 	 */
-	IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
+	IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
 			throws InvalidCriteriaException;
-
-	/**
-	 * Returns a subsequent page of matching results. Used for result set
-	 * page-based list handling.
-	 * <p>
-	 * {@link #getPage(ICriteria, Sorting, int, int)} must be called first!
-	 * @param currentPage
-	 * @param newPageNum
-	 */
-	IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum);
 
 	/**
 	 * Flush the persistence context

@@ -25,12 +25,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	/**
 	 * The search criteria.
 	 */
-	private ICriteria<? extends E> criteria;
-
-	/**
-	 * The sorting directive.
-	 */
-	private Sorting sorting;
+	protected ICriteria<? extends E> criteria;
 
 	/**
 	 * Constructor
@@ -44,14 +39,17 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 		this.dataProvider = dataProvider;
 	}
 
+	/**
+	 * @return The IEntity type.
+	 */
 	protected final Class<? extends E> getEntityClass() {
 		return criteria == null ? null : criteria.getEntityClass();
 	}
 
-	public final boolean hasElements() {
-		return (size() > 0);
-	}
-
+	/**
+	 * Refreshes the listing.
+	 * @throws EmptyListException
+	 */
 	public final void refresh() throws EmptyListException {
 		if(criteria != null) {
 			try {
@@ -70,6 +68,13 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 		return sorting;
 	}
 
+	/**
+	 * Executes a search populating this handler.
+	 * @param criteria The search criteria.
+	 * @param sorting The sorting directive
+	 * @throws InvalidCriteriaException
+	 * @throws NoMatchingResultsException
+	 */
 	public final void executeSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
 			NoMatchingResultsException {
 		if(criteria == null) {
@@ -96,7 +101,14 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	protected abstract void doSearch(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException,
 			NoMatchingResultsException;
 
-	public final void sort(Sorting sorting) throws ListHandlerException {
+	/**
+	 * Sorts this listing only when the given sorting differs from that currently
+	 * held.
+	 * @param sorting The sorting directive.
+	 * @throws ListHandlerException When the given sorting is mal-formed or when
+	 *         no search has been executed.
+	 */
+	protected final void sort(Sorting sorting) throws ListHandlerException {
 		if(sorting == null || sorting.size() < 1) {
 			throw new ListHandlerException("No sorting directives specified");
 		}

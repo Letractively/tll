@@ -9,9 +9,10 @@ import java.util.List;
  */
 public class CollectionListHandler<T> extends AbstractListHandler<T> {
 
+	/**
+	 * The managed list.
+	 */
 	private List<T> rows;
-
-	private Sorting sorting;
 
 	/**
 	 * Constructor
@@ -23,34 +24,22 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 	/**
 	 * Constructor
 	 * @param rows
-	 * @param sorting The sorting the given <code>rows</code> are in. May be
-	 *        <code>null</code>. <strong>NOTE: </strong>NO actual sorting is
-	 *        performed.
 	 * @throws EmptyListException
 	 */
-	CollectionListHandler(List<T> rows, Sorting sorting) throws EmptyListException {
+	CollectionListHandler(List<T> rows) throws EmptyListException {
 		this();
-		setRows(rows);
-		this.sorting = sorting;
-	}
-
-	public ListHandlerType getListHandlerType() {
-		return ListHandlerType.COLLECTION;
-	}
-
-	private void setRows(List<T> rows) throws EmptyListException {
 		if(rows == null || rows.size() < 1) {
 			throw new EmptyListException("Unable to instantiate collection list handler: No rows specified");
 		}
 		this.rows = rows;
 	}
 
-	public int size() {
-		return rows == null ? 0 : rows.size();
+	public final ListHandlerType getListHandlerType() {
+		return ListHandlerType.COLLECTION;
 	}
 
-	public boolean hasElements() {
-		return size() > 0;
+	public final int size() {
+		return rows == null ? 0 : rows.size();
 	}
 
 	public void sort(Sorting sorting) throws ListHandlerException {
@@ -68,22 +57,18 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 		this.sorting = sorting;
 	}
 
-	public Sorting getSorting() {
+	public final Sorting getSorting() {
 		return sorting;
 	}
 
-	public T getElement(int index) throws EmptyListException, ListHandlerException {
-		if(!hasElements()) throw new EmptyListException("Unable to retrieve collection list element: none exist");
-		return rows.get(index);
-	}
-
-	public List<T> getElements(int start, int end) throws EmptyListException, ListHandlerException {
-		if(!hasElements()) throw new EmptyListException("Unable to retrieve collection list elements: none exist");
-		try {
-			return rows.subList(start, end);
+	public List<T> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+			EmptyListException, ListHandlerException {
+		if(size() < 1) throw new EmptyListException("Unable to retrieve collection list elements: none exist");
+		if(sorting != null) {
+			if(!sorting.equals(this.sorting)) {
+				sort(sorting);
+			}
 		}
-		catch(final IndexOutOfBoundsException ioobe) {
-			throw new ListHandlerException("invalid index range: start(" + start + "), end(" + end + ")");
-		}
+		return rows.subList(offset, offset + pageSize);
 	}
 }

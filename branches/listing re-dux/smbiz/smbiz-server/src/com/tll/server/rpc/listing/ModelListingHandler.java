@@ -88,7 +88,7 @@ public final class ModelListingHandler implements IListingHandler {
 	private final void setCurrentPageInternal(int pageNum, boolean bForce, boolean adjustPageNum)
 			throws EmptyListException, PageNumOutOfBoundsException, ListHandlerException {
 
-		if(!listHandler.hasElements()) {
+		if(listHandler.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
 
@@ -167,7 +167,7 @@ public final class ModelListingHandler implements IListingHandler {
 		// rows.
 		int oldFirstIndex = page.getFirstIndex();
 
-		if(!hasElements()) throw new EmptyListException("Upon sorting, no rows were found.");
+		if(size() < 1) throw new EmptyListException("Upon sorting, no rows were found.");
 
 		final int size = size();
 
@@ -189,10 +189,6 @@ public final class ModelListingHandler implements IListingHandler {
 
 	public List<Model> getElements(int start, int end) throws ListHandlerException {
 		return listHandler.getElements(start, end);
-	}
-
-	public boolean hasElements() {
-		return listHandler.hasElements();
 	}
 
 	public int size() {

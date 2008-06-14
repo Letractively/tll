@@ -1,13 +1,10 @@
 package com.tll.listhandler;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.tll.SystemError;
 
 /**
  * The decorated list handler allowing list elements to be transformed to
@@ -26,13 +23,24 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 	 */
 	private IListHandler<T> listHandler;
 
+	/**
+	 * Constructor
+	 */
 	public DecoratedListHandler() {
 		super();
 	}
 
+	/**
+	 * Constructor
+	 * @param listHandler
+	 */
 	public DecoratedListHandler(IListHandler<T> listHandler) {
 		this();
 		setWrappedHandler(listHandler);
+	}
+
+	public ListHandlerType getListHandlerType() {
+		return (listHandler == null) ? null : listHandler.getListHandlerType();
 	}
 
 	public IListHandler<T> getWrappedHandler() {
@@ -47,23 +55,12 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 		return (listHandler == null) ? 0 : listHandler.size();
 	}
 
-	public boolean hasElements() {
-		return (listHandler == null) ? false : listHandler.hasElements();
-	}
-
-	public void sort(Sorting sorting) throws ListHandlerException {
-		if(listHandler != null) listHandler.sort(sorting);
-	}
-
-	public V getElement(int index) throws EmptyListException, ListHandlerException {
-		if(listHandler == null) return null;
-		return getDecoratedElement(listHandler.getElement(index));
-	}
-
-	public List<V> getElements(int start, int end) throws ListHandlerException {
+	@Override
+	public List<V> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+			EmptyListException, ListHandlerException {
 		if(listHandler == null) return null;
 
-		final List<T> rows = listHandler.getElements(start, end);
+		final List<T> rows = listHandler.getElements(offset, pageSize, sorting);
 
 		final List<V> decoratedRows = new ArrayList<V>(rows.size());
 
@@ -72,43 +69,5 @@ public abstract class DecoratedListHandler<T, V> implements IDecoratedListHandle
 		}
 
 		return decoratedRows;
-	}
-
-	public List<V> getAllElements() throws EmptyListException, ListHandlerException {
-		if(listHandler == null) return null;
-		return getElements(0, size());
-	}
-
-	public ListHandlerType getListHandlerType() {
-		return (listHandler == null) ? null : listHandler.getListHandlerType();
-	}
-
-	public Sorting getSorting() {
-		return (listHandler == null) ? null : listHandler.getSorting();
-	}
-
-	/**
-	 * DecoratedListHandlerIterator
-	 * @author jpk
-	 */
-	public class DecoratedListHandlerIterator extends ListHandlerIterator<V> {
-
-		public DecoratedListHandlerIterator() {
-			super(size());
-		}
-
-		public V next() {
-			try {
-				return getElement(index++);
-			}
-			catch(final ListHandlerException lhe) {
-				throw new SystemError("Unexpected list handler exception occurred while iterating: " + lhe.getMessage(), lhe);
-			}
-		}
-
-	}
-
-	public Iterator<V> iterator() {
-		return new DecoratedListHandlerIterator();
 	}
 }

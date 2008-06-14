@@ -163,8 +163,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
 		assert listHandler.size() > 0 : "No list handler elements exist";
-		assert sorting != null && listHandler.getSorting() != null && listHandler.getSorting().equals(sorting) : "List handler sorting differs";
-		assert listHandler.getElement(0) != null : "Unable to obtain the first list handler element";
+		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
 	}
 
 	public void test() throws Exception {

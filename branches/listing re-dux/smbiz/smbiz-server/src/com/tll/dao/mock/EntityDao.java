@@ -22,7 +22,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.tll.SystemError;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriteria;
@@ -30,7 +29,7 @@ import com.tll.criteria.ICriterion;
 import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.SortColumnBeanComparator;
 import com.tll.listhandler.Sorting;
@@ -456,41 +455,37 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return idlist;
 	}
 
-	public IPage<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting, final int page,
+	public IPageResult<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting, final int offset,
 			final int pageSize) throws InvalidCriteriaException {
 		List<SearchResult<E>> elist = find(criteria, sorting);
 		if(elist == null) {
 			elist = new ArrayList<SearchResult<E>>();
 		}
 		final int size = elist.size();
-		if(size < 1) {
-			return new NativeCriteriaPage<E>(pageSize, 0, elist, page);
+		if(size >= 1) {
+			int fi = offset;
+			int li = fi + pageSize;
+			if(fi > size - 1) {
+				fi = size - 1;
+			}
+			if(li > size - 1) {
+				li = size; // NOTE: exclusive index
+			}
+			elist = elist.subList(fi, li);
 		}
-		int fi = page * pageSize;
-		int li = fi + pageSize;
-		if(fi > size - 1) {
-			fi = size - 1;
-		}
-		if(li > size - 1) {
-			li = size; // NOTE: exclusive index
-		}
-		final NativeCriteriaPage<E> p = new NativeCriteriaPage<E>(pageSize, size, elist.subList(fi, li), page);
-		p.setCriteria(criteria);
-		return p;
-	}
+		final List<SearchResult<E>> subList = elist;
+		return new IPageResult<SearchResult<E>>() {
 
-	public IPage<SearchResult<E>> getPage(final IPage<SearchResult<E>> currentPage, final int newPageNum) {
-		if(currentPage instanceof NativeCriteriaPage == false) {
-			throw new IllegalArgumentException("The currentPage argument must be of type: "
-					+ NativeCriteriaPage.class.getName());
-		}
-		try {
-			final NativeCriteriaPage<E> mCrntPage = (NativeCriteriaPage<E>) currentPage;
-			return getPage(mCrntPage.getCriteria(), null, newPageNum, currentPage.getPageSize());
-		}
-		catch(final InvalidCriteriaException e) {
-			throw new SystemError("Unable to get page: " + e.getMessage(), e);
-		}
+			@Override
+			public List<SearchResult<E>> getPageList() {
+				return subList;
+			}
+
+			@Override
+			public int getResultCount() {
+				return size;
+			}
+		};
 	}
 
 	protected <N extends INamedEntity> E loadByName(final INameKey<N> key) {

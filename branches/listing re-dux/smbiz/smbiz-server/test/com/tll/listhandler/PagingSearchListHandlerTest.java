@@ -69,17 +69,18 @@ public class PagingSearchListHandlerTest extends DbTest {
 
 		List<SearchResult<Account>> list;
 
-		list = listHandler.getElements(0, pageSize);
+		list = listHandler.getElements(0, pageSize, null);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize, pageSize * 2);
+		list = listHandler.getElements(pageSize, pageSize * 2, null);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize * 2, pageSize * 3);
+		list = listHandler.getElements(pageSize * 2, pageSize * 3, null);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
+		List<SearchResult<Account>> alist = listHandler.getElements(0, pageSize, sorting);
 		for(int i = 0; i < allAccounts.size(); i++) {
-			Account account = listHandler.getElement(i).getEntity();
+			Account account = alist.get(i).getEntity();
 			assert account != null : "Empty account in list";
 		}
 	}
