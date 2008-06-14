@@ -27,7 +27,9 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.Model;
@@ -338,14 +340,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return true;
 			}
 
-			public boolean isShowAddBtn() {
-				return true;
-			}
-
-			public boolean isPageable() {
-				return true;
-			}
-
 			public ITableCellRenderer<Model> getCellRenderer() {
 				return null;
 			}
@@ -374,6 +368,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return "Test elements";
 			}
 
+			public IAddRowDelegate getAddRowHandler() {
+				return null;
+			}
+
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return null;
+			}
 		});
 		testPanel.add(listingToolbar);
 	}

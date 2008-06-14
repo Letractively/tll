@@ -4,7 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Element;
@@ -28,7 +27,6 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.IData;
-import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.listhandler.IPage;
@@ -64,7 +62,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 
 	protected Column[] columns;
 
-	protected ITableCellRenderer<R> cellTransformer;
+	protected ITableCellRenderer<R> cellRenderer;
 
 	protected IListingOperator listingOperator;
 
@@ -73,11 +71,6 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	 * exist.
 	 */
 	protected int rowNumColIndex;
-
-	/**
-	 * {@link RefKey}s for each listing element row.
-	 */
-	protected final List<RefKey> rowRefs = new ArrayList<RefKey>();
 
 	/**
 	 * The column index of the currently sorted column.
@@ -124,8 +117,8 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		assert config != null;
 
 		this.columns = config.getColumns();
-		this.cellTransformer = config.getCellRenderer();
-		assert columns != null && cellTransformer != null;
+		this.cellRenderer = config.getCellRenderer();
+		assert columns != null && cellRenderer != null;
 
 		int rn = -1;
 		Column[] columns = config.getColumns();
@@ -151,29 +144,6 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	 */
 	public final void setListingOperator(IListingOperator listingOperator) {
 		this.listingOperator = listingOperator;
-	}
-
-	public final Widget getTableWidget() {
-		return this;
-	}
-
-	/**
-	 * Get the row ref for a given row.
-	 * @param row 0-based table row num (considers the header row).
-	 * @return RefKey
-	 */
-	public final RefKey getRowRef(int row) {
-		return rowRefs.get(row - 1);
-	}
-
-	/**
-	 * Get the row index given a {@link RefKey}.
-	 * @param rowRef The RefKey for which to find the associated row index.
-	 * @return The row index or <code>-1</code> if no row matching the given ref
-	 *         key is present in the table.
-	 */
-	final int getRowIndex(RefKey rowRef) {
-		return rowRefs.indexOf(rowRef) + 1; // account for header row
 	}
 
 	/**
@@ -316,12 +286,12 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	 * @param overwriteOnNull Overwrite existing cell data when the corresponding
 	 *        row data element is <code>null</code>?
 	 */
-	private void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
+	protected void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
 		if(rowIndex == 0) {
 			return; // header row
 		}
 
-		final String[] cellVals = cellTransformer.getCellValues(rowData, columns);
+		final String[] cellVals = cellRenderer.getCellValues(rowData, columns);
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
 				if(rowNum > -1) {
@@ -344,14 +314,12 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	private void addBodyRows(IPage<R> page) {
 		final int numBodyRows = page.getNumPageElements();
 		resizeRows(numBodyRows + 1);
-		rowRefs.clear();
 		boolean evn = false;
 		int rowNum = page.getFirstIndex();
+		List<R> list = page.getPageElements();
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			R data = page.getPageElements().get(r);
-			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
-			rowRefs.add(data.getRefKey());
+			setRowData(r + 1, ++rowNum, list.get(r), true);
 		}
 	}
 
@@ -462,11 +430,21 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 
 		// set the row data
 		setRowData(addRowIndex, -1, rowData, true);
-		rowRefs.add(rowData.getRefKey());
 
 		getRowFormatter().addStyleName(addRowIndex, CSS_ADDED);
 
 		return addRowIndex;
+	}
+
+	/**
+	 * Updates an existing row's cell contents.
+	 * @param rowIndex The row index of the row to update
+	 * @param rowData The new row data to apply
+	 */
+	void updateRow(int rowIndex, R rowData) {
+		assert rowIndex >= 1 : "Can't update the header row";
+		setRowData(rowIndex, -1, rowData, true);
+		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 
 	/**
@@ -479,7 +457,6 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		removeRow(rowIndex);
 		// update the numRows property
 		numRows--;
-		rowRefs.remove(rowIndex - 1);
 		updateRowsBelow(rowIndex, false);
 
 		// reset the current row index
@@ -495,18 +472,6 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	void markRowDeleted(int rowIndex) {
 		assert rowIndex >= 1 : "Can't delete the header row";
 		getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
-	}
-
-	/**
-	 * Updates an existing row's cell contents.
-	 * @param rowIndex The row index of the row to update
-	 * @param rowData The new row data to apply
-	 */
-	void updateRow(int rowIndex, R rowData) {
-		assert rowIndex >= 1 : "Can't update the header row";
-		setRowData(rowIndex, -1, rowData, true);
-		rowRefs.set(rowIndex - 1, rowData.getRefKey());
-		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 
 	private int getPageRowNum(int rowIndex) {

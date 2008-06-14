@@ -101,9 +101,9 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 
 		Image split;
 
-		if(config.isPageable()) {
-			pageable = true;
+		pageable = (config.getPageSize() > 0);
 
+		if(pageable) {
 			imgPageFirst = App.imgs().page_first().createImage();
 			imgPagePrev = App.imgs().page_prev().createImage();
 			imgPageNext = App.imgs().page_next().createImage();
@@ -158,7 +158,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 			btnRefresh = new PushButton(imgRefresh, this);
 			btnRefresh.setTitle("Refresh");
 
-			if(config.isPageable()) {
+			if(pageable) {
 				// separator
 				split = App.imgs().split().createImage();
 				split.setStylePrimaryName(CSS_SEPARATOR);
@@ -168,12 +168,12 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		}
 
 		// show add button?
-		if(config.isShowAddBtn()) {
+		if(config.getAddRowHandler() != null) {
 			// imgAdd = App.imgs().add().createImage();
 			String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title, this);
 			btnAdd.setTitle(title);
-			if(config.isPageable() || config.isShowRefreshBtn()) {
+			if(pageable || config.isShowRefreshBtn()) {
 				// separator
 				split = App.imgs().split().createImage();
 				split.setStylePrimaryName(CSS_SEPARATOR);

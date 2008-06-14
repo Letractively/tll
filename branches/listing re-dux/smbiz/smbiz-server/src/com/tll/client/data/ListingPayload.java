@@ -10,7 +10,6 @@ import com.tll.listhandler.IPage;
 
 /**
  * ListingPayload
- * @param <R> The row data type
  * @author jpk
  */
 public class ListingPayload extends Payload {

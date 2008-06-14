@@ -23,16 +23,8 @@ public abstract class AccountListingConfig implements IListingConfig<Model> {
 		return IListingConfig.MODEL_DATA_CELL_RENDERER;
 	}
 
-	public final boolean isPageable() {
-		return true;
-	}
-
 	public int getPageSize() {
 		return IListingConfig.DEFAULT_PAGE_SIZE;
-	}
-
-	public final boolean isShowAddBtn() {
-		return true;
 	}
 
 	public final boolean isShowNavBar() {

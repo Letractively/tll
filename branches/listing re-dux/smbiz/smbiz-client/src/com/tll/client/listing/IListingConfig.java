@@ -43,13 +43,7 @@ public interface IListingConfig<R extends IData> {
 	Column[] getColumns();
 
 	/**
-	 * Shall the listing be pageable?
-	 * @return true/false
-	 */
-	boolean isPageable();
-
-	/**
-	 * @return The page size or <code>-1</code> for no paging.
+	 * @return The desired page size or <code>-1</code> for no paging.
 	 */
 	int getPageSize();
 
@@ -83,8 +77,19 @@ public interface IListingConfig<R extends IData> {
 	boolean isShowRefreshBtn();
 
 	/**
-	 * Show the add row button?
-	 * @return true/false
+	 * Optional add row handler. This is usually used in conjunction w/ the
+	 * oprional add button in the listing's nav bar. If this property is set and
+	 * intended for use, make sure the {@link #isShowNavBar()} is set to
+	 * <code>true</code>.
+	 * @return The optional add row handler.
 	 */
-	boolean isShowAddBtn();
+	IAddRowDelegate getAddRowHandler();
+
+	/**
+	 * Optional row options provider and handler. If set, a contextual poupup with
+	 * vertically laid out options will appear when a listing row is clicked. This
+	 * handler is delegated to for handling option selection.
+	 * @return The optional row context handler.
+	 */
+	IRowOptionsDelegate getRowOptionsHandler();
 }

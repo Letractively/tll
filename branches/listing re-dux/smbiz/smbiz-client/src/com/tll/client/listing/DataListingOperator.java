@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.tll.client.data.ListingOp;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
@@ -64,12 +63,13 @@ public class DataListingOperator<R extends IData> extends AbstractListingOperato
 	 * @param endIndex 0-based EXCLUSIVE
 	 * @return Array of data list elements
 	 */
+	@SuppressWarnings("unchecked")
 	private R[] subArray(int startIndex, int endIndex) {
-		R[] array = new Model[endIndex - startIndex];
+		IData[] array = new IData[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
 			array[i] = dataProvider.getData().get(i);
 		}
-		return array;
+		return (R[]) array;
 	}
 
 	/**

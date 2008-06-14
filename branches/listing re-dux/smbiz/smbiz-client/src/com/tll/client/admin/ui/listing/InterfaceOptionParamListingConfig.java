@@ -6,7 +6,9 @@
 package com.tll.client.admin.ui.listing;
 
 import com.tll.client.listing.Column;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.Model;
 import com.tll.listhandler.Sorting;
@@ -47,16 +49,8 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig<M
 		return IListingConfig.MODEL_DATA_CELL_RENDERER;
 	}
 
-	public final boolean isPageable() {
-		return false;
-	}
-
 	public int getPageSize() {
 		return -1;
-	}
-
-	public final boolean isShowAddBtn() {
-		return true;
 	}
 
 	public final boolean isShowNavBar() {
@@ -69,5 +63,13 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig<M
 
 	public final boolean isSortable() {
 		return false;
+	}
+
+	public IAddRowDelegate getAddRowHandler() {
+		return null;
+	}
+
+	public IRowOptionsDelegate getRowOptionsHandler() {
+		return null;
 	}
 }

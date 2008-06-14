@@ -13,10 +13,10 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.RowOpDelegate;
 import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.listing.ListingWidget;
+import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
  * ListingView - View dedicated to a single listing.
@@ -48,8 +48,9 @@ public abstract class ListingView extends AbstractView {
 		 * @param rowRef The ref of the row to edit
 		 */
 		@Override
-		protected void doEditRow(int rowIndex, RefKey rowRef) {
-			Dispatcher.instance().dispatch(new EditViewRequest(getSourcingWidget(), getEditViewClass(), rowRef));
+		protected void doEditRow(int rowIndex) {
+			Dispatcher.instance().dispatch(
+					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowRef(rowIndex)));
 		}
 
 		/**
@@ -58,7 +59,7 @@ public abstract class ListingView extends AbstractView {
 		 * @param rowRef The ref of the row to delete
 		 */
 		@Override
-		protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+		protected void doDeleteRow(int rowIndex) {
 			AbstractModelChangeHandler handler = new AbstractModelChangeHandler() {
 
 				@Override
@@ -78,7 +79,7 @@ public abstract class ListingView extends AbstractView {
 
 			};
 			handler.addModelChangeListener(ViewManager.instance());
-			handler.handleModelDelete(rowRef);
+			handler.handleModelDelete(listingWidget.getRowRef(rowIndex));
 		}
 
 	}
@@ -86,7 +87,7 @@ public abstract class ListingView extends AbstractView {
 	/**
 	 * The listing widget.
 	 */
-	private ListingWidget<Model> listingWidget;
+	protected ModelListingWidget listingWidget;
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
@@ -94,8 +95,10 @@ public abstract class ListingView extends AbstractView {
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
 	protected final void setListingWidget(ListingWidget<Model> listingWidget) {
-		assert listingWidget != null;
-		this.listingWidget = listingWidget;
+		if(listingWidget instanceof ModelListingWidget == false) {
+			throw new IllegalArgumentException("Listing views only support ModelListingWidgets");
+		}
+		this.listingWidget = (ModelListingWidget) listingWidget;
 		addWidget(listingWidget);
 	}
 
