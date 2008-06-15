@@ -23,7 +23,7 @@ public class ListingCache {
 	 * @param listingName
 	 */
 	@SuppressWarnings("unchecked")
-	public static IListingHandler getHandler(HttpServletRequest request, String listingName) {
+	public static <T> IListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
 		return (IListingHandler) WebCache.retrieveWithCacheKeys(request, listingName, IListingHandler.class);
 	}
 
@@ -34,8 +34,7 @@ public class ListingCache {
 	 * @param handler
 	 * @return the cache key under which the handler is stored.
 	 */
-	@SuppressWarnings("unchecked")
-	public static String storeHandler(HttpServletRequest request, String listingName, IListingHandler handler) {
+	public static <T> String storeHandler(HttpServletRequest request, String listingName, IListingHandler<T> handler) {
 		return WebCache.storePageScopeWithCacheKeys(request, listingName, IListingHandler.class, handler);
 	}
 
@@ -46,7 +45,7 @@ public class ListingCache {
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static IListingHandler clearHandler(HttpServletRequest request, String listingName) {
+	public static <T> IListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
 		return (IListingHandler) WebCache.clearWithCacheKeys(request, listingName, IListingHandler.class);
 	}
 

@@ -23,7 +23,7 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 	private ListingOp listingOp;
 	private S searchCriteria;
 	private Sorting sorting;
-	private Integer pageNumber;
+	private Integer offset;
 
 	/**
 	 * Constructor
@@ -103,12 +103,12 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		return searchCriteria;
 	}
 
-	public Integer getPageNumber() {
-		return pageNumber;
+	public Integer getOffset() {
+		return offset;
 	}
 
-	public void setPageNumber(Integer pageNumber) {
-		this.pageNumber = pageNumber;
+	public void setOffset(Integer pageNumber) {
+		this.offset = pageNumber;
 	}
 
 	public Sorting getSorting() {

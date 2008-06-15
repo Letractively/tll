@@ -16,39 +16,54 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 public class ListingState {
-    /**
-     * The 0-based page number.
-     */
-    private Integer   pageNumber;
-    private Sorting   sorting;
-    
-    public ListingState() {
-        super();
-    }
-    public ListingState(Integer pageNumber, Sorting sorting) {
-        this();
-        setPageNumber(pageNumber);
-        setSorting(sorting);
-    }
-    
-    public Integer getPageNumber() {
-        return pageNumber;
-    }
-    public void setPageNumber(Integer pageNumber) {
-        this.pageNumber = pageNumber;
-    }
-    public Sorting getSorting() {
-        return sorting;
-    }
-    public void setSorting(Sorting sorting) {
-        this.sorting = sorting;
-    }
 
-    @Override
-    public String toString() {
-		return new ToStringBuilder(this)
-			.append("pageNumber", getPageNumber())
-			.append("sorting", getSorting()==null? null : getSorting().toString())
-		.toString();
-    }
+	/**
+	 * The 0-based list index offset.
+	 */
+	private Integer offset;
+
+	/**
+	 * The sorting directive.
+	 */
+	private Sorting sorting;
+
+	/**
+	 * Constructor
+	 */
+	public ListingState() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param offset
+	 * @param sorting
+	 */
+	public ListingState(Integer offset, Sorting sorting) {
+		this();
+		setOffset(offset);
+		setSorting(sorting);
+	}
+
+	public Integer getOffset() {
+		return offset;
+	}
+
+	public void setOffset(Integer pageNumber) {
+		this.offset = pageNumber;
+	}
+
+	public Sorting getSorting() {
+		return sorting;
+	}
+
+	public void setSorting(Sorting sorting) {
+		this.sorting = sorting;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("offset", getOffset()).append("sorting",
+				getSorting() == null ? null : getSorting().toString()).toString();
+	}
 }

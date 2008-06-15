@@ -20,6 +20,22 @@ public interface IListingCommand<S extends ISearch> extends IMarshalable, IDescr
 	String getListingName();
 
 	/**
+	 * Required by the server side table model operator.
+	 * @return ListingOp
+	 */
+	ListingOp getListingOp();
+
+	/**
+	 * @return The sorting directive.
+	 */
+	Sorting getSorting();
+
+	/**
+	 * @return The listing index offset
+	 */
+	Integer getOffset();
+
+	/**
 	 * Paging switch. If <code>false</code>, no paging is applied.
 	 * @return true/false
 	 */
@@ -48,17 +64,8 @@ public interface IListingCommand<S extends ISearch> extends IMarshalable, IDescr
 	String[] getPropKeys();
 
 	/**
-	 * Required by the server side table model operator.
-	 * @return ListingOp
+	 * Retain the listing state upon clear?
+	 * @return true/false
 	 */
-	ListingOp getListingOp();
-
-	/**
-	 * @return The sorting directive.
-	 */
-	Sorting getSorting();
-
-	Integer getPageNumber();
-
 	Boolean getRetainStateOnClear();
 }

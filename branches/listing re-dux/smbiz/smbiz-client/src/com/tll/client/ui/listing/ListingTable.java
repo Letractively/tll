@@ -331,7 +331,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		removeBodyRows();
 		addBodyRows(page);
 		if(sortlinks != null && sorting != null) applySorting(sorting);
-		crntPage = page.getPageNumber() + 1;
+		crntPage = page.getOffset() + 1;
 		numPages = page.getNumPages();
 		actvRowIndex = crntRowIndex = -1; // reset
 	}

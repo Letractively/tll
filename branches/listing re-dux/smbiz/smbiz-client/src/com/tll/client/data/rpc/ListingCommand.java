@@ -124,7 +124,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	public void navigate(ListingOp navAction, Integer pageNum) {
 		ListingOp listingOp = navAction;
 		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
-		lc.setPageNumber(pageNum);
+		lc.setOffset(pageNum);
 		this.listingCommand = lc;
 	}
 

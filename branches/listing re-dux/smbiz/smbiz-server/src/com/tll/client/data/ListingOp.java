@@ -16,37 +16,37 @@ public enum ListingOp implements INameValueProvider {
 	/**
 	 * [Re-]Generate the listing clearing any cache.
 	 */
-	REFRESH("Refresh"),
+	REFRESH("Refresh", true),
 
 	/**
-	 * Retrieve cached listing data or generate the listing if not cached.
+	 * Fetches listing data.
 	 */
-	DISPLAY("Display"),
+	FETCH("Fetch", false),
 
-	GOTO_PAGE("Goto page"),
+	/**
+	 * Clears any cached listing data for a particular listing.
+	 */
+	CLEAR("Clear", true),
 
-	FIRST_PAGE("First page"),
-
-	LAST_PAGE("Last page"),
-
-	PREVIOUS_PAGE("Previous page"),
-
-	NEXT_PAGE("Next page"),
-
-	SORT("Sort"),
-
-	CLEAR("Clear"),
-
-	CLEAR_ALL("Clear all");
+	/**
+	 * Clears all listing data for <em>all</em> cached listings.
+	 */
+	CLEAR_ALL("Clear all", true);
 
 	private final String name;
+
+	/**
+	 * Force the operation?
+	 */
+	private final boolean force;
 
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	private ListingOp(String name) {
+	private ListingOp(String name, boolean force) {
 		this.name = name;
+		this.force = force;
 	}
 
 	public String getName() {
@@ -57,12 +57,11 @@ public enum ListingOp implements INameValueProvider {
 		return name();
 	}
 
-	public boolean isClear() {
-		return this == ListingOp.CLEAR || this == ListingOp.CLEAR_ALL;
+	public boolean isForce() {
+		return force;
 	}
 
-	public boolean isNavigation() {
-		return this == ListingOp.FIRST_PAGE || this == ListingOp.LAST_PAGE || this == ListingOp.PREVIOUS_PAGE
-				|| this == ListingOp.NEXT_PAGE || this == ListingOp.GOTO_PAGE;
+	public boolean isClear() {
+		return this == ListingOp.CLEAR || this == ListingOp.CLEAR_ALL;
 	}
 }

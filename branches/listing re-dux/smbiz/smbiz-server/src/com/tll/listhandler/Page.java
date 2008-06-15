@@ -17,7 +17,7 @@ public class Page<T> implements IPage<T>, IMarshalable {
 	private int pageSize;
 	private int totalSize = 0;
 	private List<T> pageElements;
-	private int pageNumber = -1;
+	private int offset = -1;
 	/**
 	 * Calculated property based on the page size and total size.
 	 */
@@ -46,22 +46,22 @@ public class Page<T> implements IPage<T>, IMarshalable {
 	 * @param pageSize
 	 * @param totalSize
 	 * @param pageElements
-	 * @param pageNumber
+	 * @param offset
 	 */
-	public Page(int pageSize, int totalSize, List<T> pageElements, int pageNumber) {
+	public Page(int pageSize, int totalSize, List<T> pageElements, int offset) {
 		this(pageSize, totalSize);
 		this.pageElements = pageElements;
-		this.pageNumber = pageNumber;
+		this.offset = offset;
 	}
 
 	public void setPage(List<T> pageElements, int pageNumber) {
 		this.pageElements = pageElements;
-		this.pageNumber = pageNumber;
+		this.offset = pageNumber;
 	}
 
 	public void clear() {
 		this.pageElements = null;
-		this.pageNumber = -1;
+		this.offset = -1;
 		this.numPages = 0;
 	}
 
@@ -98,16 +98,20 @@ public class Page<T> implements IPage<T>, IMarshalable {
 		return pageElements == null ? 0 : pageElements.size();
 	}
 
-	public final int getPageNumber() {
-		return pageNumber;
+	public final int getOffset() {
+		return offset;
 	}
 
-	public void setPageNumber(int pageNumber) {
-		this.pageNumber = pageNumber;
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+
+	public int getPageNumber() {
+		return PageUtil.getPageNumberFromListIndex(offset, totalSize, pageSize);
 	}
 
 	public final int getFirstIndex() {
-		return pageSize * pageNumber;
+		return pageSize * offset;
 	}
 
 	public final int getLastIndex() {
@@ -115,11 +119,11 @@ public class Page<T> implements IPage<T>, IMarshalable {
 	}
 
 	public final boolean isFirstPage() {
-		return pageNumber == 0;
+		return offset == 0;
 	}
 
 	public final boolean isLastPage() {
-		return pageNumber == (numPages - 1);
+		return offset == (numPages - 1);
 	}
 
 }

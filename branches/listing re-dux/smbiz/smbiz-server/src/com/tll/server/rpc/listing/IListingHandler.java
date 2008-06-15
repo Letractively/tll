@@ -50,12 +50,13 @@ public interface IListingHandler<T> {
 	/**
 	 * Fetches list elements.
 	 * @param offset The list index at which retriving begins
-	 * @param pageSize The number of elements to retrieve
 	 * @param sorting The optional sorting directive
+	 * @param force Force a re-query even if the listing data is currently held
+	 *        that matches the offset and sorting.
 	 * @throws EmptyListException
 	 * @throws IndexOutOfBoundsException
 	 * @throws ListingException
 	 */
-	void query(int offset, int pageSize, Sorting sorting) throws EmptyListException, IndexOutOfBoundsException,
+	void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException;
 }

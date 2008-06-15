@@ -366,7 +366,7 @@ public class ListingNavBar extends Toolbar implements ClickListener, KeyboardLis
 		this.lastIndex = page.getLastIndex();
 		this.totalSize = page.getTotalSize();
 		this.numPages = page.getNumPages();
-		this.crntPage = page.getPageNumber() + 1;
+		this.crntPage = page.getOffset() + 1;
 		this.firstPage = page.isFirstPage();
 		this.lastPage = page.isLastPage();
 		draw();

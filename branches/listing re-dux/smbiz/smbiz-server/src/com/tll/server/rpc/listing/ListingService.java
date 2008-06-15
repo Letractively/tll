@@ -12,6 +12,7 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.Status;
 import com.tll.client.data.rpc.IListingService;
+import com.tll.client.model.Model;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.search.ISearch;
@@ -23,7 +24,9 @@ import com.tll.listhandler.IListHandlerDataProvider;
 import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.listhandler.Page;
 import com.tll.listhandler.SearchResult;
+import com.tll.listhandler.Sorting;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
@@ -51,7 +54,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 		final Status status = p.getStatus();
 		assert status != null;
 
-		IListingHandler handler = null;
+		IListingHandler<Model> handler = null;
 
 		if(listingCommand == null) {
 			status.addMsg("No listing command specified.", MsgLevel.ERROR);
@@ -67,18 +70,35 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 			status.addMsg("No listing op specified.", MsgLevel.ERROR);
 		}
 
-		Integer pageNum = listingCommand.getPageNumber();
-
 		if(!status.hasErrors()) {
 
 			final RequestContext requestContext = getRequestContext();
 			final HttpServletRequest request = getRequestContext().getRequest();
 			assert request != null;
 
+			Integer offset = listingCommand.getOffset();
+			Sorting sorting = listingCommand.getSorting();
+
 			handler = ListingCache.getHandler(request, listingName);
 
+			// get listing state (if cached)
 			final ListingState state = ListingCache.getState(request, listingName);
-			boolean pageNumWasSynced = false;
+
+			if(state != null) {
+				if(log.isDebugEnabled())
+					log.debug("Found cached state for listing '" + listingName + "': " + state.toString());
+			}
+
+			if(offset == null) {
+				offset = state.getOffset();
+				if(log.isDebugEnabled()) log.debug("Setting offset (" + state + ") from cache for listing:" + listingName);
+			}
+
+			if(sorting == null && state != null) {
+				sorting = state.getSorting();
+				if(log.isDebugEnabled())
+					log.debug("Setting sorting (" + sorting.toString() + ") from cache for listing:" + listingName);
+			}
 
 			try {
 				// acquire the listing handler
@@ -118,7 +138,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					}
 					IListHandler<SearchResult<E>> listHandler = null;
 					try {
-						listHandler = ListHandlerFactory.create(criteria, listingCommand.getSorting(), lht, dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 					}
 					catch(final InvalidCriteriaException e) {
 						throw new ListingException(listingName, "Invalid criteria: " + e.getMessage(), e);
@@ -139,35 +159,6 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 					// instantiate the handler
 					handler = new ModelListingHandler(marshalingListHandler, listingName, listingCommand.getPageSize());
-
-					// sync up with cached state (if present)
-					if(listingOp != ListingOp.REFRESH && state != null) {
-						if(log.isDebugEnabled())
-							log.debug("Found cached state for listing '" + listingName + "': " + state.toString());
-
-						// sorting
-						if(!(listingOp == ListingOp.SORT) && state.getSorting() != null) {
-							if(log.isDebugEnabled())
-								log.debug("Setting listing sorting from cached state for '" + listingName + "'...");
-							try {
-								handler.sort(state.getSorting());
-							}
-							catch(final ListHandlerException lhe) {
-								throw new ListingException(listingName, "An unexpected sorting error occurred: " + lhe.getMessage(),
-										lhe);
-							}
-						}
-
-						// page num
-						if(state.getPageNumber() != null) {
-							if(log.isDebugEnabled())
-								log.debug("Setting page num from cached state for listing '" + listingName + "'...");
-							// listingOp.setPageNumber(state.getPageNumber());
-							pageNum = state.getPageNumber();
-							pageNumWasSynced = true;
-						}
-					}
-
 				}
 
 				// do the listing op
@@ -175,64 +166,10 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				try {
 					switch(listingOp) {
 
-						// refresh/display
+						// refresh/fetch
 						case REFRESH:
-						case DISPLAY: {
-							int cp;
-
-							// first, try to get page num from the context
-							if(pageNum != null) {
-								cp = pageNum.intValue();
-								if(log.isDebugEnabled()) log.debug("Retrieved page (" + cp + ") from listing op.");
-								if(cp >= handler.getNumPages()) cp = handler.getNumPages() - 1;
-							}
-							else {
-								cp = 0;
-							}
-							setCurrentPage(cp, pageNumWasSynced, handler, status);
-							break;
-						}
-
-							// page nav
-						case GOTO_PAGE:
-							if(pageNum == null)
-								throw new ListingException(listingName, "Unable to goto page: Page Number not specified.");
-							setCurrentPage(pageNum.intValue(), pageNumWasSynced, handler, status);
-							break;
-
-						case FIRST_PAGE:
-							handler.setCurrentPage(0, false);
-							break;
-
-						case LAST_PAGE:
-							handler.setCurrentPage(handler.getNumPages() - 1, false);
-							break;
-
-						case PREVIOUS_PAGE: {
-							int pn = handler.getPageNumber() - 1;
-							if(pn < 0) pn = 0;
-							handler.setCurrentPage(pn, false);
-							break;
-						}
-
-						case NEXT_PAGE: {
-							int pn = handler.getPageNumber() + 1;
-							if(pn >= handler.getNumPages()) pn = handler.getNumPages() - 1;
-							handler.setCurrentPage(pn, false);
-							break;
-						}
-
-							// sort
-						case SORT: {
-							try {
-								handler.sort(listingCommand.getSorting());
-							}
-							catch(final EmptyListException ele) {
-								throw ele;
-							}
-							catch(final ListHandlerException lhe) {
-								throw new ListingException(listingName, "Unable to sort listing: " + lhe.getMessage(), lhe);
-							}
+						case FETCH: {
+							handler.query(offset.intValue(), sorting, listingOp.isForce());
 							break;
 						}
 
@@ -285,40 +222,29 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				}
 			}
 			else {
-				if(log.isDebugEnabled()) log.debug("[Re-]Caching listing handler '" + listingName + "'...");
-				ListingCache.storeHandler(request, listingName, handler);
+				// cache listing handler
+				if(handler == null) {
+					if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingName + "'...");
+					ListingCache.clearHandler(request, listingName);
+				}
+				else {
+					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingName + "'...");
+					ListingCache.storeHandler(request, listingName, handler);
+				}
+				// cache listing state if handler is non-null
 				if(handler != null) {
 					if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingName + "'...");
-					ListingCache.storeState(request, listingName, handler.getState());
+					ListingCache.storeState(request, listingName, new ListingState(handler.getOffset(), handler.getSorting()));
 				}
 			}
-		}
+		}// !status.hasErrors()
 
 		// only generate the table page when it is needed at the client
-		if(handler != null && ListingOp.CLEAR != listingOp && ListingOp.CLEAR_ALL != listingOp) {
-			if(log.isDebugEnabled()) log.debug("Setting generated mpage for '" + listingName + "'...");
-			p.setPage(handler.getPage());
+		if(handler != null && !listingOp.isClear()) {
+			if(log.isDebugEnabled()) log.debug("Sending page for '" + listingName + "'...");
+			p.setPage(new Page<Model>(handler.getPageSize(), handler.size(), handler.getElements(), handler.getOffset()));
 		}
 
 		return p;
-	}
-
-	/**
-	 * Sets the current page adjusting the requested page number if necessary
-	 * @param rpn The requested 0-based page number
-	 * @param adjustPageNum Adjust the page number of the one given is out of
-	 *        bounds?
-	 * @param handler
-	 * @param status
-	 * @throws PageNumOutOfBoundsException
-	 * @throws EmptyListException
-	 * @throws ListingException
-	 */
-	private void setCurrentPage(final int rpn, final boolean adjustPageNum, final IListingHandler handler,
-			final Status status) throws PageNumOutOfBoundsException, EmptyListException, ListingException {
-		final int apn = handler.setCurrentPage(rpn, adjustPageNum);
-		if(rpn != apn) {
-			status.addMsg("The requested page number: " + rpn + " was adjusted to: " + apn, MsgLevel.INFO);
-		}
 	}
 }

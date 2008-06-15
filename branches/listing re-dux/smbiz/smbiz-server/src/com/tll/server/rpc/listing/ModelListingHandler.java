@@ -91,19 +91,24 @@ public final class ModelListingHandler implements IListingHandler<Model> {
 	}
 
 	@Override
-	public void query(int offset, int pageSize, Sorting sorting) throws EmptyListException, IndexOutOfBoundsException,
+	public void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException {
-		if(listHandler.size() < 1) {
-			throw new EmptyListException("No list elements exist");
-		}
 
 		final int size = listHandler.size();
-		assert size > 0;
+		if(size < 1) {
+			throw new EmptyListException("No list elements exist");
+		}
 
 		if(offset < 0) {
 			throw new IndexOutOfBoundsException("Negative offset: " + offset);
 		}
 
+		// do we need to actually re-query?
+		if(!force && page != null && this.offset == offset && this.sorting != null && this.sorting.equals(sorting)) {
+			return;
+		}
+
+		// query
 		try {
 			page = listHandler.getElements(offset, pageSize, sorting);
 		}
