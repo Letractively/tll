@@ -7,9 +7,9 @@ package com.tll.server.rpc.listing;
 import javax.servlet.http.HttpServletRequest;
 
 import com.tll.SystemError;
-import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
+import com.tll.client.data.ListingRequest;
 import com.tll.client.data.Status;
 import com.tll.client.data.rpc.IListingService;
 import com.tll.client.model.Model;
@@ -45,27 +45,27 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 	/**
 	 * Process a listing related request
-	 * @param listingCommand The listing command
+	 * @param listingRequest The listing command
 	 * @return Payload contains the table page and status.
 	 */
 	@SuppressWarnings("unchecked")
-	public ListingPayload process(final IListingCommand<S> listingCommand) {
+	public ListingPayload process(final ListingRequest<S> listingRequest) {
 		final ListingPayload p = new ListingPayload();
 		final Status status = p.getStatus();
 		assert status != null;
 
 		IListingHandler<Model> handler = null;
 
-		if(listingCommand == null) {
+		if(listingRequest == null) {
 			status.addMsg("No listing command specified.", MsgLevel.ERROR);
 		}
 
-		final String listingName = listingCommand == null ? null : listingCommand.getListingName();
+		final String listingName = listingRequest == null ? null : listingRequest.getListingName();
 		if(listingName == null) {
 			status.addMsg("No listing name specified.", MsgLevel.ERROR);
 		}
 
-		final ListingOp listingOp = listingCommand == null ? null : listingCommand.getListingOp();
+		final ListingOp listingOp = listingRequest == null ? null : listingRequest.getListingOp();
 		if(listingOp == null) {
 			status.addMsg("No listing op specified.", MsgLevel.ERROR);
 		}
@@ -76,8 +76,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 			final HttpServletRequest request = getRequestContext().getRequest();
 			assert request != null;
 
-			Integer offset = listingCommand.getOffset();
-			Sorting sorting = listingCommand.getSorting();
+			Integer offset = listingRequest.getOffset();
+			Sorting sorting = listingRequest.getSorting();
 
 			handler = ListingCache.getHandler(request, listingName);
 
@@ -107,7 +107,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
 
 					// get the client side criteria
-					final S search = listingCommand.getSearchCriteria();
+					final S search = listingRequest.getSearchCriteria();
 					if(search == null) {
 						throw new ListingException(listingName, "No search criteria specified.");
 					}
@@ -124,7 +124,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					}
 					catch(final IllegalArgumentException iae) {
 						throw new ListingException(listingName, "Unable to translate listing command search criteria: "
-								+ listingCommand.descriptor(), iae);
+								+ listingRequest.descriptor(), iae);
 					}
 
 					// resolve the listing halder data provider
@@ -132,7 +132,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 							requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 					// resolve the list handler type
-					final ListHandlerType lht = listingCommand.getListHandlerType();
+					final ListHandlerType lht = listingRequest.getListHandlerType();
 					if(lht == null) {
 						throw new ListingException(listingName, "No list handler type specified.");
 					}
@@ -154,11 +154,11 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 					// transform to marshaling list handler
 					final IMarshalingListHandler<E> marshalingListHandler =
-							mEntitySvc.getMarshalingListHandler(requestContext, listingCommand);
+							mEntitySvc.getMarshalingListHandler(requestContext, listingRequest);
 					marshalingListHandler.setWrappedHandler(listHandler);
 
 					// instantiate the handler
-					handler = new ListingHandler(marshalingListHandler, listingName, listingCommand.getPageSize());
+					handler = new ListingHandler(marshalingListHandler, listingName, listingRequest.getPageSize());
 				}
 
 				// do the listing op
@@ -209,7 +209,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				// clear
 				if(log.isDebugEnabled()) log.debug("Clearing listing '" + listingName + "'...");
 				ListingCache.clearHandler(request, listingName);
-				if(!listingCommand.getRetainStateOnClear()) {
+				if(!listingRequest.getRetainStateOnClear()) {
 					ListingCache.clearState(request, listingName);
 				}
 			}
@@ -217,8 +217,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				// clear all
 				if(log.isDebugEnabled()) log.debug("Clearing ALL listings...");
 				ListingCache.clearHandler(request, listingName);
-				if(!listingCommand.getRetainStateOnClear()) {
-					ListingCache.clearAll(request, listingCommand.getRetainStateOnClear());
+				if(!listingRequest.getRetainStateOnClear()) {
+					ListingCache.clearAll(request, listingRequest.getRetainStateOnClear());
 				}
 			}
 			else {

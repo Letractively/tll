@@ -9,10 +9,10 @@ import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingCommand - {@link IListingCommand} impl.
+ * ListingRequest
  * @author jpk
  */
-public final class ListingCommand<S extends ISearch> implements IListingCommand<S> {
+public final class ListingRequest<S extends ISearch> {
 
 	private String listingName;
 	private ListHandlerType listHandlerType;
@@ -28,7 +28,7 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 	/**
 	 * Constructor
 	 */
-	public ListingCommand() {
+	public ListingRequest() {
 		super();
 	}
 
@@ -41,7 +41,7 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 	 * @param searchCriteria
 	 * @param listingOp
 	 */
-	public ListingCommand(String listingName, ListHandlerType listHandlerType, String[] propKeys, int pageSize,
+	public ListingRequest(String listingName, ListHandlerType listHandlerType, String[] propKeys, int pageSize,
 			S searchCriteria, ListingOp listingOp) {
 		super();
 		this.listingName = listingName;
@@ -57,7 +57,7 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 	 * @param listingName
 	 * @param listingOp
 	 */
-	public ListingCommand(String listingName, ListingOp listingOp) {
+	public ListingRequest(String listingName, ListingOp listingOp) {
 		super();
 		this.listingName = listingName;
 		this.listingOp = listingOp;
@@ -67,18 +67,34 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		return "'" + getListingName() + "' listing command";
 	}
 
+	/**
+	 * Paging switch. If <code>false</code>, no paging is applied.
+	 * @return true/false
+	 */
 	public boolean isPageable() {
 		return pageSize > -1;
 	}
 
+	/**
+	 * The max number of elements to show per page.
+	 * @return int
+	 */
 	public int getPageSize() {
 		return pageSize;
 	}
 
+	/**
+	 * @return The list handling type. Controls how paging is performed on the
+	 *         server.
+	 */
 	public ListHandlerType getListHandlerType() {
 		return listHandlerType;
 	}
 
+	/**
+	 * @return the distinguishing name of the listing. Must be unique against all
+	 *         other loaded listings as it is used for caching.
+	 */
 	public String getListingName() {
 		return listingName;
 	}
@@ -87,6 +103,9 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		this.listingName = listingName;
 	}
 
+	/**
+	 * @return the prop keys array.
+	 */
 	public String[] getPropKeys() {
 		return propKeys;
 	}
@@ -95,14 +114,24 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		this.propKeys = propKeys;
 	}
 
+	/**
+	 * Required by the server side table model operator.
+	 * @return ListingOp
+	 */
 	public ListingOp getListingOp() {
 		return listingOp;
 	}
 
+	/**
+	 * @return The search criteria for the listing.
+	 */
 	public S getSearchCriteria() {
 		return searchCriteria;
 	}
 
+	/**
+	 * @return The listing index offset
+	 */
 	public Integer getOffset() {
 		return offset;
 	}
@@ -111,6 +140,9 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		this.offset = pageNumber;
 	}
 
+	/**
+	 * @return The sorting directive.
+	 */
 	public Sorting getSorting() {
 		return sorting;
 	}
@@ -119,6 +151,10 @@ public final class ListingCommand<S extends ISearch> implements IListingCommand<
 		this.sorting = sorting;
 	}
 
+	/**
+	 * Retain the listing state upon clear?
+	 * @return true/false
+	 */
 	public Boolean getRetainStateOnClear() {
 		return retainStateOnClear;
 	}

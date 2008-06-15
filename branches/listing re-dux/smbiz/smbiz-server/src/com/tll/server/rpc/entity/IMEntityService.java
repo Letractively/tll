@@ -6,7 +6,7 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.SystemError;
-import com.tll.client.data.IListingCommand;
+import com.tll.client.data.ListingRequest;
 import com.tll.client.data.rpc.ICrudService;
 import com.tll.client.data.rpc.IListingService;
 import com.tll.client.search.ISearch;
@@ -48,6 +48,6 @@ public interface IMEntityService<E extends IEntity, S extends ISearch> extends I
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(IListingCommand<S> listingCommand)
-			throws IllegalArgumentException, SystemError;
+	IMarshalingListHandler<E> getMarshalingListHandler(ListingRequest<S> listingCommand) throws IllegalArgumentException,
+			SystemError;
 }

@@ -21,7 +21,7 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
 import com.tll.client.data.EntityPurgeRequest;
-import com.tll.client.data.IListingCommand;
+import com.tll.client.data.ListingRequest;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg.MsgAttr;
@@ -275,7 +275,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * based on the listing command particulars.
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
-			final IListingCommand<S> listingCommand) {
+			final ListingRequest<S> listingCommand) {
 		if(listingCommand.getPropKeys() != null) {
 			return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext), listingCommand
 					.getPropKeys());

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.event.IListingListener;
@@ -23,7 +22,7 @@ import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingCommand - Issues RPC listing commands to the server.
+ * ListingRequest - Issues RPC listing commands to the server.
  * @author jpk
  */
 @SuppressWarnings("unchecked")
@@ -49,7 +48,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The enqueued command to go to the server.
 	 */
-	private IListingCommand<S> listingCommand;
+	private com.tll.client.data.ListingRequest<S> listingRequest;
 
 	/**
 	 * Has the listing been initially generated? This flag is necessary to discern
@@ -98,11 +97,11 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 			throw new IllegalStateException("No criteria specified.");
 		}
 		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
-		com.tll.client.data.ListingCommand<S> lc =
-				new com.tll.client.data.ListingCommand<S>(listingName, listHandlerType, props, pageSize, searchCriteria,
+		com.tll.client.data.ListingRequest<S> lc =
+				new com.tll.client.data.ListingRequest<S>(listingName, listHandlerType, props, pageSize, searchCriteria,
 						listingOp);
 		lc.setSorting(sorting);
-		this.listingCommand = lc;
+		this.listingRequest = lc;
 	}
 
 	/**
@@ -111,9 +110,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 */
 	public void sort(SortColumn sortColumn) {
 		ListingOp listingOp = ListingOp.SORT;
-		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
+		com.tll.client.data.ListingRequest<S> lc = new com.tll.client.data.ListingRequest<S>(listingName, listingOp);
 		lc.setSorting(new Sorting(sortColumn));
-		this.listingCommand = lc;
+		this.listingRequest = lc;
 	}
 
 	/**
@@ -123,37 +122,37 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 */
 	public void navigate(ListingOp navAction, Integer pageNum) {
 		ListingOp listingOp = navAction;
-		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
+		com.tll.client.data.ListingRequest<S> lc = new com.tll.client.data.ListingRequest<S>(listingName, listingOp);
 		lc.setOffset(pageNum);
-		this.listingCommand = lc;
+		this.listingRequest = lc;
 	}
 
 	/**
 	 * Clear the listing.
 	 */
 	public void clear() {
-		listingCommand = new com.tll.client.data.ListingCommand<S>(listingName, ListingOp.CLEAR);
+		listingRequest = new com.tll.client.data.ListingRequest<S>(listingName, ListingOp.CLEAR);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void doExecute() {
-		if(listingCommand == null) {
+		if(listingRequest == null) {
 			throw new IllegalStateException("No listing command set!");
 		}
-		svc.process((IListingCommand) listingCommand, (AsyncCallback) getAsyncCallback());
+		svc.process((com.tll.client.data.ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 	}
 
 	@Override
 	public void handleSuccess(ListingPayload result) {
-		assert listingCommand != null;
+		assert listingRequest != null;
 		super.handleSuccess(result);
-		final ListingOp op = listingCommand.getListingOp();
+		final ListingOp op = listingRequest.getListingOp();
 		if(!result.hasErrors() && !op.isClear()) {
 			listingGenerated = true;
 		}
-		final Sorting sorting = listingCommand.getSorting();
-		listingCommand = null; // reset
+		final Sorting sorting = listingRequest.getSorting();
+		listingRequest = null; // reset
 
 		listeners.fireListingEvent(new ListingEvent<Model>(sourcingWidget, listingName, !result.hasErrors(), op, result
 				.getPage(), sorting));
