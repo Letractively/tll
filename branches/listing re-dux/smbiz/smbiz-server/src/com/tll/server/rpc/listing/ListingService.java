@@ -158,7 +158,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 					marshalingListHandler.setWrappedHandler(listHandler);
 
 					// instantiate the handler
-					handler = new ModelListingHandler(marshalingListHandler, listingName, listingCommand.getPageSize());
+					handler = new ListingHandler(marshalingListHandler, listingName, listingCommand.getPageSize());
 				}
 
 				// do the listing op

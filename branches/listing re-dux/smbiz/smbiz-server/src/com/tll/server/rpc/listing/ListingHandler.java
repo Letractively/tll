@@ -2,7 +2,7 @@ package com.tll.server.rpc.listing;
 
 import java.util.List;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerException;
@@ -12,12 +12,12 @@ import com.tll.listhandler.Sorting;
  * The {@link IListingHandler} implementation.
  * @author jpk
  */
-public final class ModelListingHandler implements IListingHandler<Model> {
+public final class ListingHandler<R extends IData> implements IListingHandler<R> {
 
 	private final int pageSize;
 	private final String listingName;
 
-	private final IListHandler<Model> listHandler;
+	private final IListHandler<R> listHandler;
 
 	/**
 	 * The current list index.
@@ -27,7 +27,7 @@ public final class ModelListingHandler implements IListingHandler<Model> {
 	/**
 	 * The current list of elements.
 	 */
-	private List<Model> page;
+	private List<R> page;
 
 	/**
 	 * The sorting directive.
@@ -41,8 +41,7 @@ public final class ModelListingHandler implements IListingHandler<Model> {
 	 * @param pageSize
 	 * @throws IllegalArgumentException upon null or invalid arguments
 	 */
-	ModelListingHandler(IListHandler<Model> listHandler, String listingName, int pageSize)
-			throws IllegalArgumentException {
+	ListingHandler(IListHandler<R> listHandler, String listingName, int pageSize) throws IllegalArgumentException {
 		super();
 
 		if(listHandler == null) {
@@ -67,7 +66,7 @@ public final class ModelListingHandler implements IListingHandler<Model> {
 	}
 
 	@Override
-	public List<Model> getElements() {
+	public List<R> getElements() {
 		return page;
 	}
 
