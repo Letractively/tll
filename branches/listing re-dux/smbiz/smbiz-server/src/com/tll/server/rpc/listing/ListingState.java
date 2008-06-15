@@ -12,53 +12,46 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.tll.listhandler.Sorting;
 
 /**
- * Represents the state of the table model w/o holding any actual row data.
+ * ListingState - Holds bare bones listing state for a single listing.
  * @author jpk
  */
-public class ListingState {
+public final class ListingState {
 
 	/**
 	 * The 0-based list index offset.
 	 */
-	private Integer offset;
+	private final Integer offset;
 
 	/**
 	 * The sorting directive.
 	 */
-	private Sorting sorting;
-
-	/**
-	 * Constructor
-	 */
-	public ListingState() {
-		super();
-	}
+	private final Sorting sorting;
 
 	/**
 	 * Constructor
 	 * @param offset
 	 * @param sorting
+	 * @throws IllegalArgumentException When any of the arguments are
+	 *         <code>null</code>
 	 */
-	public ListingState(Integer offset, Sorting sorting) {
-		this();
-		setOffset(offset);
-		setSorting(sorting);
+	public ListingState(Integer offset, Sorting sorting) throws IllegalArgumentException {
+		super();
+		if(offset == null) {
+			throw new IllegalArgumentException("An offset must be specified");
+		}
+		if(sorting == null) {
+			throw new IllegalArgumentException("A sorting directive must be specified");
+		}
+		this.offset = offset;
+		this.sorting = sorting;
 	}
 
 	public Integer getOffset() {
 		return offset;
 	}
 
-	public void setOffset(Integer pageNumber) {
-		this.offset = pageNumber;
-	}
-
 	public Sorting getSorting() {
 		return sorting;
-	}
-
-	public void setSorting(Sorting sorting) {
-		this.sorting = sorting;
 	}
 
 	@Override

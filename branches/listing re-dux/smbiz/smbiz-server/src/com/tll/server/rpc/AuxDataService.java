@@ -28,10 +28,10 @@ public class AuxDataService extends RpcServlet implements IAuxDataService {
 			AuxDataHandler.getAuxData(rc, request, payload);
 		}
 		catch(SystemError se) {
-			ServletUtil.handleException(rc, payload, se, null, true);
+			ServletUtil.handleException(rc, payload.getStatus(), se, null, true);
 		}
 		catch(RuntimeException re) {
-			ServletUtil.handleException(rc, payload, re, null, true);
+			ServletUtil.handleException(rc, payload.getStatus(), re, null, true);
 			throw re;
 		}
 		return payload;

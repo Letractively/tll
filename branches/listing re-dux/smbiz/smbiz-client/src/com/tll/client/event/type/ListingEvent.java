@@ -4,10 +4,13 @@
  */
 package com.tll.client.event.type;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
+import com.tll.client.data.ListingPayload;
+import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.client.model.IData;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -17,48 +20,56 @@ import com.tll.listhandler.Sorting;
  */
 public final class ListingEvent<R extends IData> extends BaseEvent {
 
-	private final boolean success;
-	private final String listingName;
 	private final ListingOp listingOp;
-	private final IPage<R> page;
-	private final Sorting sorting;
+	private final ListingPayload<R> listingPayload;
 
 	/**
-	 * Constructor - Use when the listing op changes the page data
+	 * Constructor
 	 * @param source
-	 * @param listingName
-	 * @param success
 	 * @param listingOp
-	 * @param page
-	 * @param sorting
+	 * @param listingPayload
 	 */
-	public ListingEvent(Widget source, String listingName, boolean success, ListingOp listingOp, IPage<R> page,
-			Sorting sorting) {
+	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload<R> listingPayload) {
 		super(source);
-		this.success = success;
-		this.listingName = listingName;
+		if(listingOp == null || listingPayload == null) throw new IllegalArgumentException();
 		this.listingOp = listingOp;
-		this.page = page;
-		this.sorting = sorting;
+		this.listingPayload = listingPayload;
 	}
 
 	public boolean isSuccess() {
-		return success;
+		return !listingPayload.hasErrors();
 	}
 
 	public String getListingName() {
-		return listingName;
+		return listingPayload.getListingName();
 	}
 
 	public ListingOp getListingOp() {
 		return listingOp;
 	}
 
-	public IPage<R> getPage() {
-		return page;
+	public ListingStatus getListingStatus() {
+		return listingPayload.getListingStatus();
+	}
+
+	public List<R> getPageElements() {
+		return listingPayload.getPageElements();
+	}
+
+	public Integer getListSize() {
+		return listingPayload.getListSize();
+	}
+
+	public Integer getOffset() {
+		return listingPayload.getOffset();
 	}
 
 	public Sorting getSorting() {
-		return sorting;
+		return listingPayload.getSorting();
+	}
+
+	@Override
+	public String toString() {
+		return getListingName();
 	}
 }

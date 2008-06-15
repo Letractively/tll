@@ -8,11 +8,10 @@ package com.tll.server.rpc.listing;
 import java.util.List;
 
 import com.tll.listhandler.EmptyListException;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.Sorting;
 
 /**
- * Manages {@link IPage} instances and retrieval of their row data.
+ * Manages server-side listing life-cycles.
  * @author jpk
  */
 public interface IListingHandler<T> {

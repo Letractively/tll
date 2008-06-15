@@ -12,7 +12,6 @@ import java.util.List;
 import com.tll.client.data.ListingOp;
 import com.tll.client.model.IData;
 import com.tll.client.ui.listing.ListingWidget;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.PageUtil;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
@@ -23,7 +22,9 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 // TODO implemenet sorting!!!
-public class DataListingOperator<R extends IData> extends AbstractListingOperator<R> {
+public class DataListingOperator<R extends IData> implements IListingOperator {
+
+	private final ListingWidget<R> listingWidget;
 
 	/**
 	 * The data provider.

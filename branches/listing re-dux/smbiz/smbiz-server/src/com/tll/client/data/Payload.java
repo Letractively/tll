@@ -33,6 +33,9 @@ public class Payload implements IMarshalable {
 	}
 
 	public final Status getStatus() {
+		if(status == null) {
+			status = new Status();
+		}
 		return status;
 	}
 

@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailSendException;
 
-import com.tll.client.data.Payload;
+import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.config.Config;
@@ -84,7 +84,7 @@ public abstract class ServletUtil {
 	/**
 	 * Unified way to handle exceptions for an RPC call.
 	 * @param requestContext The request context.
-	 * @param p The {@link Payload}.
+	 * @param status The Status that will be sent to the client.
 	 * @param t The exception.
 	 * @param uiDisplayText The text to display to the user in the UI. May be
 	 *        <code>null</code> in which case, the message will not be displayed
@@ -92,24 +92,24 @@ public abstract class ServletUtil {
 	 * @param emailException Whether or not a notification email is sent
 	 *        containing the exception stack trace etc.
 	 */
-	public static void handleException(final RequestContext requestContext, final Payload p, final Throwable t,
+	public static void handleException(final RequestContext requestContext, final Status status, final Throwable t,
 			final String uiDisplayText, final boolean emailException) {
-		assert p != null && p.getStatus() != null && t != null;
+		assert status != null && t != null;
 		String emsg = t.getMessage();
 		if(emsg == null) {
 			emsg = t.getClass().getSimpleName();
 		}
 		assert emsg != null;
 		if(t instanceof RuntimeException) {
-			p.getStatus().addMsg(emsg, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
+			status.addMsg(emsg, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
 			if(uiDisplayText != null) {
-				p.getStatus().addMsg(uiDisplayText, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag);
+				status.addMsg(uiDisplayText, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag);
 			}
 		}
 		else {
-			p.getStatus().addMsg(emsg, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
+			status.addMsg(emsg, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
 			if(uiDisplayText != null) {
-				p.getStatus().addMsg(uiDisplayText, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag);
+				status.addMsg(uiDisplayText, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag);
 			}
 		}
 		if(emailException) {
@@ -129,7 +129,7 @@ public abstract class ServletUtil {
 						"exception-notification", data));
 			}
 			catch(final MailSendException mse) {
-				p.getStatus().addMsg("Unable to send exception notification email: " + mse.getMessage(), MsgLevel.ERROR,
+				status.addMsg("Unable to send exception notification email: " + mse.getMessage(), MsgLevel.ERROR,
 						MsgAttr.NODISPLAY.flag);
 			}
 		}

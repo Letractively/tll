@@ -44,20 +44,19 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	private AsyncCallback<P> callback = this;
 
 	/**
-	 * The {@link Widget} that instantiated this command.
+	 * Constructor
+	 * @throws IllegalArgumentException When the sourcing Widget is
+	 *         <code>null</code>
 	 */
-	protected final Widget sourcingWidget;
+	public RpcCommand() throws IllegalArgumentException {
+		super();
+	}
 
 	/**
-	 * Constructor
-	 * @param sourcingWidget The instantiating Widget. May NOT be
-	 *        <code>null</code>.
+	 * @return The sourcing Widget which must <em>not</em> return
+	 *         <code>null</code>.
 	 */
-	public RpcCommand(Widget sourcingWidget) {
-		super();
-		assert sourcingWidget != null;
-		this.sourcingWidget = sourcingWidget;
-	}
+	protected abstract Widget getSourcingWidget();
 
 	public void addRpcListener(IRpcListener listener) {
 		if(rpcListeners == null) {
@@ -134,11 +133,11 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 		// fire RPC event
 		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(sourcingWidget, result, false));
+			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), result, false));
 		}
 
 		// fire status event
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
+		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), result.getStatus()));
 	}
 
 	/**
@@ -150,14 +149,14 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 		// fire RPC event
 		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(sourcingWidget, caught, true));
+			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), caught, true));
 		}
 
 		// fire status event
 		String msg = caught.getMessage();
 		if(msg == null) msg = "An unknown RPC error occurred";
 		final Status status = new Status(msg, MsgLevel.ERROR);
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
+		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), status));
 	}
 
 }

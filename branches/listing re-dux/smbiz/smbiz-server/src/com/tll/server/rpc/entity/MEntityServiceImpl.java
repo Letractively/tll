@@ -21,7 +21,7 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
 import com.tll.client.data.EntityPurgeRequest;
-import com.tll.client.data.ListingRequest;
+import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg.MsgAttr;
@@ -84,10 +84,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			payload.setEntity(group);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload, se, se.getMessage(), true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload, re, re.getMessage(), true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -152,13 +152,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 		}
 		catch(final EntityNotFoundException enfe) {
-			ServletUtil.handleException(requestContext, payload, enfe, enfe.getMessage(), false);
+			ServletUtil.handleException(requestContext, payload.getStatus(), enfe, enfe.getMessage(), false);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload, se, se.getMessage(), true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload, re, re.getMessage(), true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -183,7 +183,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
 		}
 		catch(final EntityExistsException e1) {
-			ServletUtil.handleException(requestContext, payload, e1, e1.getMessage(), false);
+			ServletUtil.handleException(requestContext, payload.getStatus(), e1, e1.getMessage(), false);
 		}
 		catch(final InvalidStateException ise) {
 			for(final InvalidValue iv : ise.getInvalidValues()) {
@@ -192,10 +192,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload, se, null, true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), se, null, true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload, re, null, true);
+			ServletUtil.handleException(requestContext, payload.getStatus(), re, null, true);
 			throw re;
 		}
 	}
@@ -218,13 +218,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			p.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
 		}
 		catch(final EntityNotFoundException e) {
-			ServletUtil.handleException(requestContext, p, e, e.getMessage(), false);
+			ServletUtil.handleException(requestContext, p.getStatus(), e, e.getMessage(), false);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, p, se, se.getMessage(), true);
+			ServletUtil.handleException(requestContext, p.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, p, re, re.getMessage(), true);
+			ServletUtil.handleException(requestContext, p.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -275,10 +275,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * based on the listing command particulars.
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
-			final ListingRequest<S> listingCommand) {
-		if(listingCommand.getPropKeys() != null) {
-			return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext), listingCommand
-					.getPropKeys());
+			final RemoteListingDefinition<S> listingDefinition) {
+		if(listingDefinition.getPropKeys() != null) {
+			return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext),
+					listingDefinition.getPropKeys());
 		}
 		return new MarshalingListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext));
 	}

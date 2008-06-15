@@ -8,45 +8,39 @@ package com.tll.client.data;
 import com.tll.util.INameValueProvider;
 
 /**
- * ListingOp - Encapsulates all available actions on a server side listing.
+ * ListingOp - Defines the possible listing operations on a server-side listing.
  * @author jpk
  */
 public enum ListingOp implements INameValueProvider {
 
 	/**
-	 * [Re-]Generate the listing clearing any cache.
+	 * Generates or refreshes a listing clearing any existing cache.
 	 */
-	REFRESH("Refresh", true),
+	REFRESH("Refresh"),
 
 	/**
-	 * Fetches listing data.
+	 * Fetch page data on an existing listing.
 	 */
-	FETCH("Fetch", false),
+	FETCH("Fetch"),
 
 	/**
 	 * Clears any cached listing data for a particular listing.
 	 */
-	CLEAR("Clear", true),
+	CLEAR("Clear"),
 
 	/**
-	 * Clears all listing data for <em>all</em> cached listings.
+	 * Clears all cached listing data for <em>all</em> cached listings.
 	 */
-	CLEAR_ALL("Clear all", true);
+	CLEAR_ALL("Clear all");
 
 	private final String name;
-
-	/**
-	 * Force the operation?
-	 */
-	private final boolean force;
 
 	/**
 	 * Constructor
 	 * @param name
 	 */
-	private ListingOp(String name, boolean force) {
+	private ListingOp(String name) {
 		this.name = name;
-		this.force = force;
 	}
 
 	public String getName() {
@@ -57,8 +51,8 @@ public enum ListingOp implements INameValueProvider {
 		return name();
 	}
 
-	public boolean isForce() {
-		return force;
+	public boolean isQuery() {
+		return this == ListingOp.REFRESH || this == ListingOp.FETCH;
 	}
 
 	public boolean isClear() {
