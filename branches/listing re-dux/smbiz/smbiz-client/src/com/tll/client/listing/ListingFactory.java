@@ -43,6 +43,7 @@ public abstract class ListingFactory {
 		ModelListingWidget listingWidget = new ModelListingWidget(config, config.getAddRowHandler());
 
 		ListingCommand<S> lc = new ListingCommand<S>(listingWidget, config.getListingName(), listingDef);
+		lc.addListingListener(listingWidget);
 
 		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
 

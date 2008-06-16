@@ -58,6 +58,9 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 */
 	protected final ScrollPanel portal = new ScrollPanel();
 
+	/**
+	 * The optional row popup.
+	 */
 	protected RowContextPopup rowPopup;
 
 	/**
