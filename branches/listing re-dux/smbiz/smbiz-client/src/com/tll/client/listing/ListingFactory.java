@@ -3,6 +3,8 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.data.RemoteListingDefinition;
+import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
@@ -10,7 +12,6 @@ import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.listing.RowContextPopup;
-import com.tll.listhandler.ListHandlerType;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
@@ -33,21 +34,17 @@ public abstract class ListingFactory {
 	 * criteria for listing data.
 	 * @param <S> The search type
 	 * @param config The listing config
-	 * @param props Array of properties serving as a filter on the server side
-	 *        where only these properties will be provided
-	 * @param criteria The search criteria
-	 * @param listHandlerType The server side list handler type
+	 * @param listingDef Server side listing definition
 	 * @return A new listing Widget
 	 */
-	public static <S extends ISearch> ListingWidget<Model> create(IListingConfig<Model> config, String[] props,
-			S criteria, ListHandlerType listHandlerType) {
+	public static <S extends ISearch> ListingWidget<Model> create(IListingConfig<Model> config,
+			RemoteListingDefinition<S> listingDef) {
 
 		ModelListingWidget listingWidget = new ModelListingWidget(config, config.getAddRowHandler());
 
-		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
+		ListingCommand<S> lc = new ListingCommand<S>(listingWidget, config.getListingName(), listingDef);
 
-		listingWidget.setOperator(new RpcListingOperator<S>(listingWidget, config.getListingName(), listHandlerType, config
-				.getPageSize(), props, criteria, (config.isSortable() ? config.getDefaultSorting() : null)));
+		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
 
 		return listingWidget;
 	}

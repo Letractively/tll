@@ -11,8 +11,6 @@ import java.util.List;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.listhandler.IPage;
-import com.tll.listhandler.Sorting;
 
 /**
  * ModelListingTable
@@ -50,12 +48,6 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 */
 	int getRowIndex(RefKey rowRef) {
 		return rowRefs.indexOf(rowRef) + 1; // account for header row
-	}
-
-	@Override
-	public void setPage(IPage<Model> page, Sorting sorting) {
-		rowRefs.clear();
-		super.setPage(page, sorting);
 	}
 
 	@Override

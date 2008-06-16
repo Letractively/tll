@@ -5,25 +5,31 @@
  */
 package com.tll.client.listing;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.tll.client.data.ListingOp;
+import com.tll.client.event.IListingListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.IData;
 import com.tll.client.ui.listing.ListingWidget;
-import com.tll.listhandler.PageUtil;
-import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
  * DataCollectionListingOperator - {@link IListingOperator} based on an existing
- * collection of listing elements.
+ * collection of listing elements of arbitrary type.
  * @author jpk
  */
 // TODO implemenet sorting!!!
-public class DataListingOperator<R extends IData> implements IListingOperator {
+public class DataListingOperator<R extends IData> implements IListingOperator<R> {
 
+	/**
+	 * The listing event listeners.
+	 */
+	private final ListingListenerCollection<R> listeners = new ListingListenerCollection<R>();
+
+	/**
+	 * The listing widget
+	 */
 	private final ListingWidget<R> listingWidget;
 
 	/**
@@ -33,15 +39,12 @@ public class DataListingOperator<R extends IData> implements IListingOperator {
 
 	private final int pageSize;
 
-	private int numPages = -1;
-
-	/**
-	 * The 0-based page number
-	 */
-	private int pageNum = 0;
+	private int offset = 0;
 
 	// TODO make private when sorting is implemented
-	/*private*/final Sorting sorting;
+	/*private*/Sorting sorting;
+
+	// private int numPages = -1;
 
 	/**
 	 * Constructor
@@ -52,10 +55,19 @@ public class DataListingOperator<R extends IData> implements IListingOperator {
 	 */
 	public DataListingOperator(ListingWidget<R> listingWidget, int pageSize, IDataProvider<R> dataProvider,
 			Sorting sorting) {
-		super(listingWidget);
+		super();
+		this.listingWidget = listingWidget;
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
+	}
+
+	public void addListingListener(IListingListener<R> listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListingListener(IListingListener<R> listener) {
+		listeners.remove(listener);
 	}
 
 	/**
@@ -74,129 +86,47 @@ public class DataListingOperator<R extends IData> implements IListingOperator {
 	}
 
 	/**
-	 * Generates an IPage for the desired page number
-	 * @param page The desired page number
-	 * @return Ad-hoc generated IPage instance
+	 * Assembles a listing event ready for firing.
+	 * @param pageElements
+	 * @param listingOp
+	 * @return A new ListingEvent
 	 */
-	private IPage<R> generatePage(int page) {
-
-		// calculate size and num pages
-		final int size = dataProvider.getData() == null ? 0 : dataProvider.getData().size();
-		numPages = (pageSize > -1) ? PageUtil.calculateNumPages(pageSize, size) : (size > 0 ? 1 : 0);
-
-		// calculate first and last page indexes
-		int start, end;
-		if(pageSize == -1) {
-			// no paging
-			start = 0;
-			end = size;
-		}
-		else {
-			start = page * pageSize; // (0-based index)
-			end = start + pageSize; // 0-based exclusive
-			if(end > size) end = size;
-		}
-
-		final int startIndex = start;
-		final int endIndex = end;
-		final R[] pageElements = subArray(startIndex, endIndex);
-
-		return new IPage<R>() {
-
-			public boolean isLastPage() {
-				return pageNum == numPages - 1;
-			}
-
-			public boolean isFirstPage() {
-				return pageNum == 0;
-			}
-
-			public int getTotalSize() {
-				return size;
-			}
-
-			public int getPageSize() {
-				return pageSize;
-			}
-
-			public int getPageNumber() {
-				return pageNum;
-			}
-
-			public List<R> getPageElements() {
-				return new ArrayList<R>(Arrays.asList(pageElements));
-			}
-
-			public int getNumPages() {
-				return numPages;
-			}
-
-			public int getNumPageElements() {
-				return pageElements.length;
-			}
-
-			public int getFirstIndex() {
-				return pageSize == -1 ? 0 : PageUtil.getPageIndexFromListIndex(startIndex, size, pageSize);
-			}
-
-			public int getLastIndex() {
-				return pageSize == -1 ? size - 1 : PageUtil.getPageIndexFromListIndex(endIndex, size, pageSize);
-			}
-		};
-
-	}
-
-	public void navigate(ListingOp navAction, Integer page) {
-		int navPageNum;
-		switch(navAction) {
-			case GOTO_PAGE:
-				assert page != null;
-				navPageNum = page.intValue();
-				break;
-
-			case FIRST_PAGE:
-				navPageNum = 0;
-				break;
-
-			case LAST_PAGE:
-				navPageNum = numPages - 1;
-				break;
-
-			case PREVIOUS_PAGE:
-				navPageNum = pageNum == 0 ? 0 : pageNum - 1;
-				break;
-
-			case NEXT_PAGE:
-				navPageNum = pageNum == (numPages - 1) ? numPages - 1 : pageNum + 1;
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unrecognized listing navigation action");
-		}
-
-		if(pageNum == navPageNum) return; // no-op
-		pageNum = navPageNum;
-		assert pageNum >= 0;
-
-		IPage<R> mpage = generatePage(navPageNum);
-		listingWidget.setPage(mpage, null);
+	private ListingEvent<R> assembleListingEvent(List<R> pageElements, ListingOp listingOp) {
+		final int listSize = pageElements == null ? 0 : pageElements.size();
+		return new ListingEvent<R>(listingWidget, true, null, ListingOp.REFRESH, null, listSize, pageElements, offset,
+				sorting, pageSize);
 	}
 
 	public void refresh() {
-		IPage<R> mpage = generatePage(pageNum);
-		listingWidget.setPage(mpage, null);
+		listeners.fireListingEvent(assembleListingEvent(dataProvider.getData(), ListingOp.REFRESH));
 	}
 
 	public void display() {
-		refresh();
+		listeners.fireListingEvent(assembleListingEvent(dataProvider.getData(), ListingOp.FETCH));
 	}
 
-	public void sort(SortColumn sortColumn) {
-		// TODO implement
-		throw new UnsupportedOperationException("Sorting data collection listings is not currently implemented");
+	public void firstPage() {
+	}
+
+	public void gotoPage(int pageNum) {
+	}
+
+	public void lastPage() {
+	}
+
+	public void nextPage() {
+	}
+
+	public void previousPage() {
+	}
+
+	public void sort(Sorting sorting) {
+		// TODO impl
+		throw new UnsupportedOperationException();
 	}
 
 	public void clear() {
-		numPages = pageNum = -1;
+		offset = 0;
+		sorting = null;
 	}
 }

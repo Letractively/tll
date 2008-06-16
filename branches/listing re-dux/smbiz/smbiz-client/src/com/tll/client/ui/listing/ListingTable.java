@@ -21,7 +21,8 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.ListingOp;
+import com.tll.client.event.IListingListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
@@ -29,7 +30,6 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
@@ -38,7 +38,7 @@ import com.tll.listhandler.Sorting;
  * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener {
+public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -64,7 +64,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 
 	protected ITableCellRenderer<R> cellRenderer;
 
-	protected IListingOperator listingOperator;
+	protected IListingOperator<R> listingOperator;
 
 	/**
 	 * The column index holding the row num. -1 indicates the row num col doesn't
@@ -93,8 +93,14 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	 */
 	private int crntRowIndex = -1;
 
+	/**
+	 * The current calculated 1-based page number.
+	 */
 	private int crntPage = -1;
 
+	/**
+	 * The calculated number of listing pages.
+	 */
 	private int numPages = 0;
 
 	/**
@@ -142,7 +148,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	/**
 	 * @param listingOperator the listingOperator to set
 	 */
-	public final void setListingOperator(IListingOperator listingOperator) {
+	public final void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
 	}
 
@@ -242,7 +248,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 			if(sender == lnk) {
 				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), column.getIgnoreCase());
 				sc.setDirection(direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
-				listingOperator.sort(sc);
+				listingOperator.sort(new Sorting(sc));
 			}
 		}
 	}
@@ -311,15 +317,14 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		}
 	}
 
-	private void addBodyRows(IPage<R> page) {
-		final int numBodyRows = page.getNumPageElements();
+	private void addBodyRows(List<R> page, int offset) {
+		final int numBodyRows = page.size();
 		resizeRows(numBodyRows + 1);
 		boolean evn = false;
-		int rowNum = page.getFirstIndex();
-		List<R> list = page.getPageElements();
+		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			setRowData(r + 1, ++rowNum, list.get(r), true);
+			setRowData(r + 1, ++rowIndex, page.get(r), true);
 		}
 	}
 
@@ -327,13 +332,16 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		resizeRows(1);
 	}
 
-	public void setPage(IPage<R> page, Sorting sorting) {
-		removeBodyRows();
-		addBodyRows(page);
-		if(sortlinks != null && sorting != null) applySorting(sorting);
-		crntPage = page.getOffset() + 1;
-		numPages = page.getNumPages();
-		actvRowIndex = crntRowIndex = -1; // reset
+	public final void onListingEvent(ListingEvent<R> event) {
+		if(event.getListingOp().isQuery() && event.isSuccess()) {
+			removeBodyRows();
+			addBodyRows(event.getPageElements(), event.getOffset());
+			final Sorting sorting = event.getSorting();
+			if(sortlinks != null && sorting != null) applySorting(sorting);
+			crntPage = event.getPageNum() + 1;
+			numPages = event.getNumPages();
+			actvRowIndex = crntRowIndex = -1; // reset
+		}
 	}
 
 	@Override
@@ -379,12 +387,12 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEUP) {
 			if(crntPage > 1) {
-				listingOperator.navigate(ListingOp.PREVIOUS_PAGE, null);
+				listingOperator.previousPage();
 			}
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEDOWN) {
 			if(crntPage < numPages) {
-				listingOperator.navigate(ListingOp.NEXT_PAGE, null);
+				listingOperator.nextPage();
 			}
 		}
 	}

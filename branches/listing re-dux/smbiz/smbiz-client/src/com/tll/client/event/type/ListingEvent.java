@@ -20,28 +20,83 @@ import com.tll.listhandler.Sorting;
  */
 public final class ListingEvent<R extends IData> extends BaseEvent {
 
+	private final boolean success;
+	private final String listingName;
 	private final ListingOp listingOp;
-	private final ListingPayload<R> listingPayload;
+	private final ListingStatus listingStatus;
+	private final int listSize;
+	private final List<R> pageElements;
+	private final int offset;
+	private final Sorting sorting;
+
+	/**
+	 * The calculated 0-based page number.
+	 */
+	private int pageNum;
+	/**
+	 * The calculated number of pages.
+	 */
+	private int numPages;
 
 	/**
 	 * Constructor
 	 * @param source
 	 * @param listingOp
 	 * @param listingPayload
+	 * @param pageSize
 	 */
-	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload<R> listingPayload) {
+	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload<R> listingPayload, int pageSize) {
 		super(source);
 		if(listingOp == null || listingPayload == null) throw new IllegalArgumentException();
+		this.success = !listingPayload.hasErrors();
 		this.listingOp = listingOp;
-		this.listingPayload = listingPayload;
+		this.listingName = listingPayload.getListingName();
+		this.listingStatus = listingPayload.getListingStatus();
+		this.listSize = listingPayload.getListSize();
+		this.pageElements = listingPayload.getPageElements();
+		this.offset = listingPayload.getOffset();
+		this.sorting = listingPayload.getSorting();
+		setCalculated(pageSize);
+	}
+
+	/**
+	 * Constructor
+	 * @param source
+	 * @param success
+	 * @param listingName
+	 * @param listingOp
+	 * @param listingStatus
+	 * @param listSize
+	 * @param pageElements
+	 * @param offset
+	 * @param sorting
+	 * @param pageSize
+	 */
+	public ListingEvent(Widget source, boolean success, String listingName, ListingOp listingOp,
+			ListingStatus listingStatus, int listSize, List<R> pageElements, int offset, Sorting sorting, int pageSize) {
+		super(source);
+		this.success = success;
+		this.listingName = listingName;
+		this.listingOp = listingOp;
+		this.listingStatus = listingStatus;
+		this.listSize = listSize;
+		this.pageElements = pageElements;
+		this.offset = offset;
+		this.sorting = sorting;
+		setCalculated(pageSize);
+	}
+
+	private void setCalculated(int pageSize) {
+		pageNum = Math.round(offset / pageSize + 0.5f) - 1;
+		numPages = (listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
 	}
 
 	public boolean isSuccess() {
-		return !listingPayload.hasErrors();
+		return success;
 	}
 
 	public String getListingName() {
-		return listingPayload.getListingName();
+		return listingName;
 	}
 
 	public ListingOp getListingOp() {
@@ -49,23 +104,47 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 	}
 
 	public ListingStatus getListingStatus() {
-		return listingPayload.getListingStatus();
+		return listingStatus;
 	}
 
 	public List<R> getPageElements() {
-		return listingPayload.getPageElements();
+		return pageElements;
 	}
 
 	public Integer getListSize() {
-		return listingPayload.getListSize();
+		return listSize;
 	}
 
 	public Integer getOffset() {
-		return listingPayload.getOffset();
+		return offset;
 	}
 
 	public Sorting getSorting() {
-		return listingPayload.getSorting();
+		return sorting;
+	}
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public int getNumPages() {
+		return numPages;
+	}
+
+	public boolean isFirstPage() {
+		return pageNum == 0;
+	}
+
+	public boolean isLastPage() {
+		return pageNum == numPages - 1;
+	}
+
+	public boolean isNextPage() {
+		return pageNum < numPages - 1;
+	}
+
+	public boolean isPreviousPage() {
+		return pageNum > 0;
 	}
 
 	@Override

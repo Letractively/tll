@@ -16,13 +16,11 @@ import com.tll.client.data.ListingRequest;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
-import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -30,7 +28,7 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload<Model>> implements IListingOperator, ISourcesListingEvents<Model> {
+public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload<Model>> implements IListingOperator<Model> {
 
 	private static final IListingServiceAsync<ISearch, Model> svc;
 	static {
@@ -62,12 +60,22 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The current list index offset.
 	 */
-	private final Integer offset = 0;
+	private int offset = 0;
 
 	/**
 	 * The current sorting directive.
 	 */
 	private Sorting sorting;
+
+	/**
+	 * The current list size.
+	 */
+	private int listSize = -1;
+
+	/**
+	 * Has the listing been generated?
+	 */
+	private boolean listingGenerated;
 
 	/**
 	 * The listing request issued to the server.
@@ -158,15 +166,22 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 
 		final ListingOp op = listingRequest.getListingOp();
 
-		if(result.getListingStatus() == ListingStatus.NOT_CACHED && op.isQuery()) {
+		listingGenerated = result.getListingStatus() == ListingStatus.CACHED;
+
+		if(!listingGenerated && op.isQuery()) {
 			// we need to re-create the listing on the server - the cache has expired
 			fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
 			DeferredCommand.addCommand(this);
 		}
 		else {
+			// update client-side listing state
+			offset = result.getOffset();
+			sorting = result.getSorting();
+			listSize = result.getListSize();
+			// reset
+			listingRequest = null;
 			// fire the listing event
-			listingRequest = null; // reset
-			listeners.fireListingEvent(new ListingEvent<Model>(listingWidget, op, result));
+			listeners.fireListingEvent(new ListingEvent<Model>(listingWidget, op, result, listingDef.getPageSize()));
 		}
 	}
 
@@ -178,11 +193,50 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		fetch(offset, sorting);
 	}
 
-	public void sort(SortColumn sortColumn) {
-		fetch(offset, new Sorting(sortColumn));
+	public void sort(Sorting sorting) {
+		if(listingGenerated && this.sorting != null && this.sorting.equals(sorting)) {
+			return;
+		}
+		fetch(offset, sorting);
 	}
 
-	public void navigate(ListingOp navAction, Integer page) {
+	public void firstPage() {
+		if(listingGenerated && offset == 0) {
+			return;
+		}
+		fetch(offset, sorting);
+	}
+
+	public void gotoPage(int pageNum) {
+		// calc the offset
+		final int offset = pageNum == 0 ? 0 : pageNum * listingDef.getPageSize() - 1;
+		if(listingGenerated && this.offset == offset) {
+			return;
+		}
+		fetch(offset, sorting);
+	}
+
+	public void lastPage() {
+		// calc the offset
+		// TODO verify
+		final int pageSize = listingDef.getPageSize();
+		final int numPages =
+				(listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
+		final int offset = (numPages - 1) * pageSize - 1;
+		if(listingGenerated && this.offset == offset) {
+			return;
+		}
+		fetch(offset, sorting);
+	}
+
+	public void nextPage() {
+		final int offset = this.offset + listingDef.getPageSize();
+		if(offset < listSize) fetch(offset, sorting);
+	}
+
+	public void previousPage() {
+		final int offset = this.offset - listingDef.getPageSize();
+		if(offset >= 0) fetch(offset, sorting);
 	}
 
 	public void clear() {

@@ -18,11 +18,11 @@ public class ListingPayload<R extends IData> extends Payload {
 
 	public enum ListingStatus {
 		/**
-		 * Identified listing is cached on the server
+		 * listing is cached on the server.
 		 */
 		CACHED,
 		/**
-		 * No listing is currently cached
+		 * listing is not cached on the server.
 		 */
 		NOT_CACHED;
 	}

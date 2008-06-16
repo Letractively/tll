@@ -6,14 +6,12 @@
 package com.tll.client.ui.listing;
 
 import com.google.gwt.user.client.ui.TableListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.listhandler.IPage;
-import com.tll.listhandler.Sorting;
 
 /**
  * ModelListingWidget - Listing Widget dedicated to handling Model type data.
@@ -34,16 +32,6 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 		table = new ModelListingTable(config);
 		portal.add(table);
 		focusPanel.addKeyboardListener(table);
-	}
-
-	/**
-	 * Sets the listing operator for this listing.
-	 * @param operator the operator to set
-	 */
-	@Override
-	public void setOperator(IListingOperator operator) {
-		super.setOperator(operator);
-		table.setListingOperator(operator);
 	}
 
 	public void addTableListener(TableListener listener) {
@@ -78,12 +66,6 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 		table.markRowDeleted(rowIndex);
 	}
 
-	@Override
-	public void setPage(IPage<Model> page, Sorting sorting) {
-		super.setPage(page, sorting);
-		table.setPage(page, sorting);
-	}
-
 	/**
 	 * Get the row ref for a given row.
 	 * @param row 0-based table row num (considers the header row).
@@ -101,6 +83,12 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 	 */
 	public int getRowIndex(RefKey rowRef) {
 		return table.getRowIndex(rowRef);
+	}
+
+	@Override
+	public void onListingEvent(ListingEvent<Model> event) {
+		super.onListingEvent(event);
+		table.onListingEvent(event);
 	}
 
 	@Override

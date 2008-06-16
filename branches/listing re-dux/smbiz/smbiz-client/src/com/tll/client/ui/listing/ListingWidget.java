@@ -17,23 +17,21 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesMouseEvents;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.ListingOp;
+import com.tll.client.event.IListingListener;
 import com.tll.client.event.IModelChangeListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
-import com.tll.listhandler.IPage;
-import com.tll.listhandler.SortColumn;
-import com.tll.listhandler.Sorting;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
+ * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, IListingOperator, SourcesTableEvents, SourcesMouseEvents, IModelChangeListener {
+public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IListingListener<R>, IModelChangeListener {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -48,7 +46,7 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	/**
 	 * The listing navigation bar.
 	 */
-	protected final ListingNavBar navBar;
+	protected final ListingNavBar<R> navBar;
 
 	/**
 	 * The main "listing" panel containing all widgets comprising this widget.
@@ -59,11 +57,6 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 * Wrapped around the listing table enabling vertical scrolling.
 	 */
 	protected final ScrollPanel portal = new ScrollPanel();
-
-	/**
-	 * The operator that performs actual listing commands for this listing.
-	 */
-	private IListingOperator operator;
 
 	protected RowContextPopup rowPopup;
 
@@ -92,7 +85,7 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 
 		// generate nav bar
 		if(config.isShowNavBar()) {
-			navBar = new ListingNavBar(config);
+			navBar = new ListingNavBar<R>(config);
 			tableViewPanel.add(navBar.getWidget());
 			if(addRowDelegate != null) {
 				navBar.setAddRowDelegate(addRowDelegate);
@@ -107,26 +100,6 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		initWidget(focusPanel);
 	}
 
-	/**
-	 * @return The listing operator.
-	 */
-	public final IListingOperator getOperator() {
-		return operator;
-	}
-
-	/**
-	 * Sets the listing operator for this listing.
-	 * @param operator the operator to set
-	 */
-	public void setOperator(IListingOperator operator) {
-		if(operator == null) {
-			throw new IllegalArgumentException("A listing operator must be specified.");
-		}
-		// table.setListingOperator(operator);
-		if(navBar != null) navBar.setListingOperator(operator);
-		this.operator = operator;
-	}
-
 	public final void setRowPopup(RowContextPopup rowPopup) {
 		if(this.rowPopup != null) {
 			removeMouseListener(this.rowPopup);
@@ -137,26 +110,6 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 			addTableListener(rowPopup);
 			addMouseListener(rowPopup);
 		}
-	}
-
-	public final void clear() {
-		operator.clear();
-	}
-
-	public final void display() {
-		operator.display();
-	}
-
-	public final void navigate(ListingOp navAction, Integer page) {
-		operator.navigate(navAction, page);
-	}
-
-	public final void refresh() {
-		operator.refresh();
-	}
-
-	public final void sort(SortColumn sortColumn) {
-		operator.sort(sortColumn);
 	}
 
 	public void addRow(R rowData) {
@@ -225,18 +178,8 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		focusPanel.removeKeyboardListener(listener);
 	}
 
-	/**
-	 * Updates the listing with row data and the sorting directive.
-	 * @param page The row data
-	 * @param sorting The sorting directive. May be <code>null</code>
-	 */
-	public void setPage(IPage<R> page, Sorting sorting) {
-		// table.setPage(page, sorting);
-		if(navBar != null) {
-			navBar.setPage(page);
-			navBar.getWidget().setVisible(true);
-		}
-		// DeferredCommand.addCommand(new FocusCommand(focusPanel, true));
+	public void onListingEvent(ListingEvent<R> event) {
+		if(navBar != null) navBar.onListingEvent(event);
 	}
 
 	public void onModelChangeEvent(ModelChangeEvent event) {

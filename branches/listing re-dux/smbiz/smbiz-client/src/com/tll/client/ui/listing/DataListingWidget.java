@@ -6,12 +6,10 @@
 package com.tll.client.ui.listing;
 
 import com.google.gwt.user.client.ui.TableListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
-import com.tll.listhandler.IPage;
-import com.tll.listhandler.Sorting;
 
 /**
  * DataListingWidget - Listing that lists artitrary data.
@@ -42,16 +40,6 @@ public final class DataListingWidget<R extends IData> extends ListingWidget<R> {
 		table.removeTableListener(listener);
 	}
 
-	/**
-	 * Sets the listing operator for this listing.
-	 * @param operator the operator to set
-	 */
-	@Override
-	public void setOperator(IListingOperator operator) {
-		super.setOperator(operator);
-		table.setListingOperator(operator);
-	}
-
 	@Override
 	public final void addRow(R rowData) {
 		super.addRow(rowData);
@@ -77,8 +65,9 @@ public final class DataListingWidget<R extends IData> extends ListingWidget<R> {
 	}
 
 	@Override
-	public void setPage(IPage<R> page, Sorting sorting) {
-		super.setPage(page, sorting);
-		table.setPage(page, sorting);
+	public void onListingEvent(ListingEvent<R> event) {
+		super.onListingEvent(event);
+		table.onListingEvent(event);
 	}
+
 }
