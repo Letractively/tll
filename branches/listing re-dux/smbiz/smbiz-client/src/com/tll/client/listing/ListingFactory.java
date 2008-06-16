@@ -19,22 +19,25 @@ import com.tll.client.ui.listing.RowContextPopup;
  */
 public abstract class ListingFactory {
 
+	/**
+	 * Creates a {@link RowContextPopup} and sets this in the listing Widget if
+	 * the given row options handler is not <code>null</code>.
+	 * @param <R>
+	 * @param listingWidget
+	 * @param rowOptionsHandler
+	 */
 	private static <R extends IData> void applyRowOptionsHandler(ListingWidget<R> listingWidget,
 			IRowOptionsDelegate rowOptionsHandler) {
 		if(rowOptionsHandler != null) {
-			RowContextPopup rowContextPopup = new RowContextPopup(rowOptionsHandler);
-			// listingWidget.addTableListener(rowContextPopup);
-			// listingWidget.addMouseListener(rowContextPopup);
-			listingWidget.setRowPopup(rowContextPopup);
+			listingWidget.setRowPopup(new RowContextPopup(rowOptionsHandler));
 		}
 	}
 
 	/**
-	 * Assembles a listing Widget given an ISearch instance serving as server side
-	 * criteria for listing data.
+	 * Assembles a listing Widget from a RemoteListingDefinition.
 	 * @param <S> The search type
 	 * @param config The listing config
-	 * @param listingDef Server side listing definition
+	 * @param listingDef The remote (server-side) listing definition
 	 * @return A new listing Widget
 	 */
 	public static <S extends ISearch> ListingWidget<Model> create(IListingConfig<Model> config,
@@ -61,8 +64,13 @@ public abstract class ListingFactory {
 
 		DataListingWidget<R> listingWidget = new DataListingWidget<R>(config, config.getAddRowHandler());
 
-		listingWidget.setOperator(new DataListingOperator<R>(listingWidget, config.getPageSize(), dataProvider, (config
-				.isSortable() ? config.getDefaultSorting() : null)));
+		DataListingOperator<R> dlo =
+				new DataListingOperator<R>(listingWidget, config.getPageSize(), dataProvider, (config.isSortable() ? config
+						.getDefaultSorting() : null));
+
+		dlo.addListingListener(listingWidget);
+
+		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
 
 		return listingWidget;
 	}

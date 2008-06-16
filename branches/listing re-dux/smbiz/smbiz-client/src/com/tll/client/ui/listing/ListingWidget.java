@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListener;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesMouseEvents;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
@@ -23,6 +22,7 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
 
@@ -31,7 +31,7 @@ import com.tll.client.ui.CSS;
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IListingListener<R>, IModelChangeListener {
+public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IListingOperator<R>, IListingListener<R>, IModelChangeListener {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -57,6 +57,11 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 * Wrapped around the listing table enabling vertical scrolling.
 	 */
 	protected final ScrollPanel portal = new ScrollPanel();
+
+	/**
+	 * The listing operator
+	 */
+	private IListingOperator<R> operator;
 
 	/**
 	 * The optional row popup.
@@ -139,14 +144,6 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 
 	public final void removeMouseListener(MouseListener listener) {
 		focusPanel.removeMouseListener(listener);
-	}
-
-	/**
-	 * @return The parent {@link Panel} containing all constituent listing
-	 *         {@link Widget}s.
-	 */
-	protected final FocusPanel getListingPanel() {
-		return focusPanel;
 	}
 
 	public final int getTabIndex() {
