@@ -18,7 +18,7 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 	/**
 	 * The bound {@link IRowOptionsDelegate}
 	 */
-	private final IRowOptionsDelegate rowOpDelegate;
+	private IRowOptionsDelegate rowOpDelegate;
 
 	/**
 	 * The row index for this row context.
@@ -26,17 +26,23 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 	private int rowIndex = -1;
 
 	/**
-	 * Constructor - Initially populates the options popup panel with the stock
-	 * entries: row edit/delete based on the state of the listing configuration.
-	 * @param rowOpDelegate Provides the Options.
+	 * Constructor
 	 */
-	public RowContextPopup(IRowOptionsDelegate rowOpDelegate) {
+	public RowContextPopup() {
 		super(SHOW_DURATION);
-		assert rowOpDelegate != null;
+	}
+
+	/**
+	 * Sets or re-sets the row op delegate.
+	 * @param rowOpDelegate The row op delgate to set. Can't be <code>null</code>.
+	 */
+	public void setDelegate(IRowOptionsDelegate rowOpDelegate) {
+		if(rowOpDelegate == null) throw new IllegalArgumentException("A row op delegate must be specified");
 		this.rowOpDelegate = rowOpDelegate;
 	}
 
 	private void show(int row) {
+		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
 		setOptions(rowOpDelegate.getOptions(row));
 		super.show();
 	}
@@ -63,8 +69,8 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 
 	@Override
 	public void onOptionSelected(OptionEvent event) {
+		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
 		super.onOptionSelected(event);
-		assert rowOpDelegate != null;
 		rowOpDelegate.handleOptionSelection(event.optionText, rowIndex);
 	}
 

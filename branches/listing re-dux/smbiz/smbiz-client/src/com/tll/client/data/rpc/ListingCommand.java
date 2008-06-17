@@ -21,6 +21,7 @@ import com.tll.client.listing.IListingOperator;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
+import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -44,7 +45,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The listing widget.
 	 */
-	private final ListingWidget<Model> listingWidget;
+	private ModelListingWidget listingWidget;
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -84,25 +85,31 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 
 	/**
 	 * Constructor
-	 * @param listingWidget The listing Widget
 	 * @param listingName The unique listing name
 	 * @param listingDef The remote listing definition
-	 * @throws IllegalArgumentException When any of the arguments are
-	 *         <code>null</code>.
 	 */
-	public ListingCommand(ListingWidget listingWidget, String listingName, RemoteListingDefinition listingDef)
-			throws IllegalArgumentException {
+	public ListingCommand(String listingName, RemoteListingDefinition listingDef) {
 		super();
-		if(listingWidget == null || listingName == null || listingDef == null) {
-			throw new IllegalArgumentException();
-		}
-		this.listingWidget = listingWidget;
 		this.listingName = listingName;
 		this.listingDef = listingDef;
 	}
 
+	public ListingWidget<Model> getListingWidget() {
+		return listingWidget;
+	}
+
+	public void setListingWidget(ModelListingWidget listingWidget) {
+		if(listingWidget == null) throw new IllegalArgumentException();
+		if(this.listingWidget != null) {
+			removeListingListener(this.listingWidget);
+		}
+		this.listingWidget = listingWidget;
+		addListingListener(listingWidget);
+	}
+
 	@Override
 	protected Widget getSourcingWidget() {
+		if(listingWidget == null) throw new IllegalStateException();
 		return listingWidget;
 	}
 
@@ -155,12 +162,15 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		if(listingRequest == null) {
 			throw new IllegalStateException("No listing command set!");
 		}
+		if(listingWidget == null) {
+			throw new IllegalStateException("No listing widget set!");
+		}
 		svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 	}
 
 	@Override
 	public void handleSuccess(ListingPayload result) {
-		assert listingRequest != null;
+		assert listingRequest != null && listingWidget != null;
 		assert result.getListingName() != null && listingName != null && result.getListingName().equals(listingName);
 		super.handleSuccess(result);
 

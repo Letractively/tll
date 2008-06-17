@@ -11,18 +11,13 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SourcesMouseEvents;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingOperator;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
 
@@ -31,7 +26,7 @@ import com.tll.client.ui.CSS;
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, SourcesTableEvents, SourcesMouseEvents, IListingOperator<R>, IListingListener<R>, IModelChangeListener {
+public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, IListingListener<R> {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -42,6 +37,11 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 * The css class for table view captions.
 	 */
 	private static final String STYLE_CAPTION = "caption";
+
+	/**
+	 * The listing table.
+	 */
+	protected final ListingTable<R> table;
 
 	/**
 	 * The listing navigation bar.
@@ -61,8 +61,7 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	/**
 	 * The listing operator
 	 */
-	private IListingOperator<R> operator;
-
+	// private IListingOperator<R> operator;
 	/**
 	 * The optional row popup.
 	 */
@@ -70,13 +69,11 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 
 	/**
 	 * Constructor
-	 * @param config The listing configuration Can't be <code>null</code>.
-	 * @param addRowDelegate The optional delegate for adding rows.
+	 * @param config The listing configuration
+	 * @param table {@link ListingTable} implementation
 	 */
-	public ListingWidget(IListingConfig<R> config, IAddRowDelegate addRowDelegate) {
+	protected ListingWidget(IListingConfig<R> config, ListingTable<R> table) {
 		super();
-		if(config == null) throw new IllegalArgumentException("A listing configuration must be specified.");
-
 		FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(STYLE_TABLE_VIEW);
 
@@ -91,13 +88,15 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		portal.setStyleName(CSS.PORTAL);
 		tableViewPanel.add(portal);
 
+		// table
+		portal.add(table);
+		focusPanel.addKeyboardListener(table);
+		this.table = table;
+
 		// generate nav bar
 		if(config.isShowNavBar()) {
 			navBar = new ListingNavBar<R>(config);
 			tableViewPanel.add(navBar.getWidget());
-			if(addRowDelegate != null) {
-				navBar.setAddRowDelegate(addRowDelegate);
-			}
 		}
 		else {
 			navBar = null;
@@ -108,42 +107,102 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		initWidget(focusPanel);
 	}
 
-	public final void setRowPopup(RowContextPopup rowPopup) {
-		if(this.rowPopup != null) {
-			removeMouseListener(this.rowPopup);
-			removeTableListener(this.rowPopup);
-		}
-		this.rowPopup = rowPopup;
-		if(rowPopup != null) {
-			addTableListener(rowPopup);
-			addMouseListener(rowPopup);
-		}
+	/**
+	 * Sets the operator which is delegated to on behalf of this Widget for
+	 * performing listing ops.
+	 * @param operator The listing operator
+	 */
+	/*
+	public final void setOperator(IListingOperator<R> operator) {
+		assert operator != null;
+		this.operator = operator;
+		operator.addListingListener(this);
 	}
 
-	public void addRow(R rowData) {
-		// table.addRow(rowData);
+	public final void addListingListener(IListingListener<R> listener) {
+		operator.addListingListener(listener);
+	}
+
+	public final void removeListingListener(IListingListener<R> listener) {
+		operator.removeListingListener(listener);
+	}
+
+	public final void clear() {
+		operator.clear();
+	}
+
+	public final void display() {
+		operator.display();
+	}
+
+	public final void firstPage() {
+		operator.firstPage();
+	}
+
+	public final void gotoPage(int pageNum) {
+		operator.gotoPage(pageNum);
+	}
+
+	public final void lastPage() {
+		operator.lastPage();
+	}
+
+	public final void nextPage() {
+		operator.nextPage();
+	}
+
+	public final void previousPage() {
+		operator.previousPage();
+	}
+
+	public final void refresh() {
+		operator.refresh();
+	}
+
+	public final void sort(Sorting sorting) {
+		operator.sort(sorting);
+	}
+	*/
+
+	/**
+	 * Routes row clicks to the given row options delgate.
+	 * @param rowOptionsDelegate The row options delegate
+	 */
+	public final void setRowOptionsDelegate(IRowOptionsDelegate rowOptionsDelegate) {
+		if(rowPopup == null) {
+			rowPopup = new RowContextPopup();
+			table.addTableListener(rowPopup);
+			focusPanel.addMouseListener(rowPopup);
+		}
+		rowPopup.setDelegate(rowOptionsDelegate);
+	}
+
+	/**
+	 * Sets the add row delegate in the nav bar which must already be present.
+	 * @param addRowDelegate The add row delegate which will handle add row
+	 *        requests emanating from the nav bar.
+	 */
+	public final void setAddRowDelegate(IAddRowDelegate addRowDelegate) {
+		if(navBar == null) throw new IllegalStateException();
+		navBar.setAddRowDelegate(addRowDelegate);
+	}
+
+	public final void addRow(R rowData) {
+		table.addRow(rowData);
 		if(navBar != null) navBar.increment();
 	}
 
-	public void updateRow(int rowIndex, R rowData) {
-		// table.updateRow(rowIndex, rowData);
+	public final void updateRow(int rowIndex, R rowData) {
+		table.updateRow(rowIndex, rowData);
 	}
 
-	public void deleteRow(int rowIndex) {
-		// table.deleteRow(rowIndex);
+	public final void deleteRow(int rowIndex) {
+		table.deleteRow(rowIndex);
 		if(navBar != null) navBar.decrement();
 	}
 
-	public void markRowDeleted(int rowIndex) {
-		// table.markRowDeleted(rowIndex);
-	}
-
-	public final void addMouseListener(MouseListener listener) {
-		focusPanel.addMouseListener(listener);
-	}
-
-	public final void removeMouseListener(MouseListener listener) {
-		focusPanel.removeMouseListener(listener);
+	public final void markRowDeleted(int rowIndex) {
+		table.markRowDeleted(rowIndex);
 	}
 
 	public final int getTabIndex() {
@@ -178,12 +237,8 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		focusPanel.removeKeyboardListener(listener);
 	}
 
-	public void onListingEvent(ListingEvent<R> event) {
+	public final void onListingEvent(ListingEvent<R> event) {
+		table.onListingEvent(event);
 		if(navBar != null) navBar.onListingEvent(event);
 	}
-
-	public void onModelChangeEvent(ModelChangeEvent event) {
-		// base impl: no-op
-	}
-
 }

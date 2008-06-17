@@ -30,7 +30,7 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	/**
 	 * The listing widget
 	 */
-	private final ListingWidget<R> listingWidget;
+	private ListingWidget<R> listingWidget;
 
 	/**
 	 * The data provider.
@@ -48,18 +48,28 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 
 	/**
 	 * Constructor
-	 * @param listingWidget
 	 * @param pageSize
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(ListingWidget<R> listingWidget, int pageSize, IDataProvider<R> dataProvider,
-			Sorting sorting) {
+	public DataListingOperator(int pageSize, IDataProvider<R> dataProvider, Sorting sorting) {
 		super();
-		this.listingWidget = listingWidget;
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
+	}
+
+	public ListingWidget<R> getListingWidget() {
+		return listingWidget;
+	}
+
+	public void setListingWidget(ListingWidget<R> listingWidget) {
+		if(listingWidget == null) throw new IllegalArgumentException();
+		if(this.listingWidget != null) {
+			removeListingListener(this.listingWidget);
+		}
+		this.listingWidget = listingWidget;
+		addListingListener(listingWidget);
 	}
 
 	public void addListingListener(IListingListener<R> listener) {

@@ -11,7 +11,6 @@ import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
-import com.tll.client.ui.listing.RowContextPopup;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
@@ -19,59 +18,51 @@ import com.tll.client.ui.listing.RowContextPopup;
  */
 public abstract class ListingFactory {
 
-	/**
-	 * Creates a {@link RowContextPopup} and sets this in the listing Widget if
-	 * the given row options handler is not <code>null</code>.
-	 * @param <R>
-	 * @param listingWidget
-	 * @param rowOptionsHandler
-	 */
-	private static <R extends IData> void applyRowOptionsHandler(ListingWidget<R> listingWidget,
-			IRowOptionsDelegate rowOptionsHandler) {
-		if(rowOptionsHandler != null) {
-			listingWidget.setRowPopup(new RowContextPopup(rowOptionsHandler));
-		}
+	private static <R extends IData> void assemble(ListingWidget<R> listingWidget, IListingConfig<R> config) {
+
+		if(config.getAddRowHandler() != null) listingWidget.setAddRowDelegate(config.getAddRowHandler());
+
+		if(config.getRowOptionsHandler() != null) listingWidget.setRowOptionsDelegate(config.getRowOptionsHandler());
 	}
 
 	/**
-	 * Assembles a listing Widget from a RemoteListingDefinition.
+	 * Assembles a listing based on a remote data source returning the remote data
+	 * operator.
 	 * @param <S> The search type
 	 * @param config The listing config
 	 * @param listingDef The remote (server-side) listing definition
-	 * @return A new listing Widget
+	 * @return The remote listing operator containing the created listing Widget.
 	 */
-	public static <S extends ISearch> ListingWidget<Model> create(IListingConfig<Model> config,
+	public static <S extends ISearch> IListingOperator<Model> create(IListingConfig<Model> config,
 			RemoteListingDefinition<S> listingDef) {
 
-		ModelListingWidget listingWidget = new ModelListingWidget(config, config.getAddRowHandler());
+		final ModelListingWidget lw = new ModelListingWidget(config);
+		assemble(lw, config);
 
-		ListingCommand<S> lc = new ListingCommand<S>(listingWidget, config.getListingName(), listingDef);
-		lc.addListingListener(listingWidget);
+		final ListingCommand<S> lc = new ListingCommand<S>(config.getListingName(), listingDef);
+		lc.setListingWidget(lw);
 
-		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
-
-		return listingWidget;
+		return lc;
 	}
 
 	/**
 	 * Assembles a listing from data provided by an {@link IDataProvider}
-	 * instance.
+	 * returning the client data operator.
 	 * @param config The listing config
-	 * @param dataProvider The listing data collection
-	 * @return A new listing Widget
+	 * @param dataProvider The client listing data provider
+	 * @return The local (client) listing operator containing the created listing
+	 *         Widget.
 	 */
-	public static <R extends IData> ListingWidget<R> create(IListingConfig<R> config, IDataProvider<R> dataProvider) {
+	public static <R extends IData> IListingOperator<R> create(IListingConfig<R> config, IDataProvider<R> dataProvider) {
 
-		DataListingWidget<R> listingWidget = new DataListingWidget<R>(config, config.getAddRowHandler());
+		final DataListingWidget<R> dlw = new DataListingWidget<R>(config);
+		assemble(dlw, config);
 
-		DataListingOperator<R> dlo =
-				new DataListingOperator<R>(listingWidget, config.getPageSize(), dataProvider, (config.isSortable() ? config
+		final DataListingOperator<R> dlo =
+				new DataListingOperator<R>(config.getPageSize(), dataProvider, (config.isSortable() ? config
 						.getDefaultSorting() : null));
+		dlo.setListingWidget(dlw);
 
-		dlo.addListingListener(listingWidget);
-
-		applyRowOptionsHandler(listingWidget, config.getRowOptionsHandler());
-
-		return listingWidget;
+		return dlo;
 	}
 }
