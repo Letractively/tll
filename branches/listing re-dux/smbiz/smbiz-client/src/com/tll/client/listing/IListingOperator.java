@@ -7,7 +7,6 @@ package com.tll.client.listing;
 
 import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.model.IData;
-import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -16,11 +15,6 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 public interface IListingOperator<R extends IData> extends ISourcesListingEvents<R> {
-
-	/**
-	 * @return The listing Widget bound to this operator.
-	 */
-	ListingWidget<R> getListingWidget();
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

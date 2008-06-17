@@ -18,11 +18,24 @@ import com.tll.client.ui.listing.ModelListingWidget;
  */
 public abstract class ListingFactory {
 
-	private static <R extends IData> void assemble(ListingWidget<R> listingWidget, IListingConfig<R> config) {
+	/**
+	 * Does the actual listing Widget assembling.
+	 * @param <R>
+	 * @param config
+	 * @param listingWidget
+	 * @param operator
+	 * @return
+	 */
+	private static <R extends IData> ListingWidget<R> assemble(IListingConfig<R> config, ListingWidget<R> listingWidget,
+			IListingOperator<R> operator) {
 
 		if(config.getAddRowHandler() != null) listingWidget.setAddRowDelegate(config.getAddRowHandler());
 
 		if(config.getRowOptionsHandler() != null) listingWidget.setRowOptionsDelegate(config.getRowOptionsHandler());
+
+		listingWidget.setOperator(operator);
+
+		return listingWidget;
 	}
 
 	/**
@@ -31,18 +44,13 @@ public abstract class ListingFactory {
 	 * @param <S> The search type
 	 * @param config The listing config
 	 * @param listingDef The remote (server-side) listing definition
-	 * @return The remote listing operator containing the created listing Widget.
+	 * @return A new {@link ModelListingWidget}.
 	 */
-	public static <S extends ISearch> IListingOperator<Model> create(IListingConfig<Model> config,
+	public static <S extends ISearch> ModelListingWidget create(IListingConfig<Model> config,
 			RemoteListingDefinition<S> listingDef) {
 
-		final ModelListingWidget lw = new ModelListingWidget(config);
-		assemble(lw, config);
-
-		final ListingCommand<S> lc = new ListingCommand<S>(config.getListingName(), listingDef);
-		lc.setListingWidget(lw);
-
-		return lc;
+		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<S>(config
+				.getListingName(), listingDef));
 	}
 
 	/**
@@ -50,19 +58,11 @@ public abstract class ListingFactory {
 	 * returning the client data operator.
 	 * @param config The listing config
 	 * @param dataProvider The client listing data provider
-	 * @return The local (client) listing operator containing the created listing
-	 *         Widget.
+	 * @return A new {@link DataListingWidget}.
 	 */
-	public static <R extends IData> IListingOperator<R> create(IListingConfig<R> config, IDataProvider<R> dataProvider) {
+	public static <R extends IData> DataListingWidget<R> create(IListingConfig<R> config, IDataProvider<R> dataProvider) {
 
-		final DataListingWidget<R> dlw = new DataListingWidget<R>(config);
-		assemble(dlw, config);
-
-		final DataListingOperator<R> dlo =
-				new DataListingOperator<R>(config.getPageSize(), dataProvider, (config.isSortable() ? config
-						.getDefaultSorting() : null));
-		dlo.setListingWidget(dlw);
-
-		return dlo;
+		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(config
+				.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
 	}
 }

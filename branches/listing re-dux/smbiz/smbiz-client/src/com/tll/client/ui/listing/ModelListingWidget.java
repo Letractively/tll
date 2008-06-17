@@ -56,7 +56,7 @@ public final class ModelListingWidget extends ListingWidget<Model> implements IM
 				break;
 			case UPDATED: {
 				RefKey modelRef = event.getModel().getRefKey();
-				int rowIndex = ((ModelListingTable) table).getRowIndex(modelRef);
+				int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
@@ -66,7 +66,7 @@ public final class ModelListingWidget extends ListingWidget<Model> implements IM
 			}
 			case DELETED: {
 				RefKey modelRef = event.getModelRef();
-				int rowIndex = ((ModelListingTable) table).getRowIndex(modelRef);
+				int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					markRowDeleted(rowIndex);

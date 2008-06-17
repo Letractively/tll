@@ -33,6 +33,7 @@ import com.tll.client.util.StringUtil;
  * @param <R> The row data type.
  * @author jpk
  */
+// TODO make non-static inner class of ListingWidget
 public class ListingNavBar<R extends IData> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener, IListingListener<R> {
 
 	private static final String STYLE_TABLE_VIEW_NAVBAR = "tvnav";

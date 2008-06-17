@@ -42,7 +42,6 @@ import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;

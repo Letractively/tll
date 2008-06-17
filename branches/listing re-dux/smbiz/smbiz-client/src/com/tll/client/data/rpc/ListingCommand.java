@@ -18,10 +18,10 @@ import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IListingOperator;
+import com.tll.client.listing.PagingUtil;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
-import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -45,7 +45,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The listing widget.
 	 */
-	private ModelListingWidget listingWidget;
+	private ListingWidget<Model> listingWidget;
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -94,30 +94,26 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		this.listingDef = listingDef;
 	}
 
-	public ListingWidget<Model> getListingWidget() {
-		return listingWidget;
-	}
-
-	public void setListingWidget(ModelListingWidget listingWidget) {
-		if(listingWidget == null) throw new IllegalArgumentException();
-		if(this.listingWidget != null) {
-			removeListingListener(this.listingWidget);
-		}
-		this.listingWidget = listingWidget;
-		addListingListener(listingWidget);
-	}
-
 	@Override
 	protected Widget getSourcingWidget() {
-		if(listingWidget == null) throw new IllegalStateException();
+		if(listingWidget == null) throw new IllegalStateException("No listing widget set!");
 		return listingWidget;
 	}
 
 	public void addListingListener(IListingListener<Model> listener) {
+		if(listener instanceof ListingWidget) {
+			if(this.listingWidget != null) {
+				throw new IllegalStateException("Listing operator may only be bound to a single listing Widget at a time.");
+			}
+			this.listingWidget = (ListingWidget) listener;
+		}
 		listeners.add(listener);
 	}
 
 	public void removeListingListener(IListingListener<Model> listener) {
+		if(listener != null && this.listingWidget == listener) {
+			this.listingWidget = null;
+		}
 		listeners.remove(listener);
 	}
 
@@ -162,15 +158,12 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		if(listingRequest == null) {
 			throw new IllegalStateException("No listing command set!");
 		}
-		if(listingWidget == null) {
-			throw new IllegalStateException("No listing widget set!");
-		}
 		svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 	}
 
 	@Override
 	public void handleSuccess(ListingPayload result) {
-		assert listingRequest != null && listingWidget != null;
+		assert listingRequest != null;
 		assert result.getListingName() != null && listingName != null && result.getListingName().equals(listingName);
 		super.handleSuccess(result);
 
@@ -211,15 +204,11 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	public void firstPage() {
-		if(listingGenerated && offset == 0) {
-			return;
-		}
-		fetch(offset, sorting);
+		if(!listingGenerated || offset != 0) fetch(0, sorting);
 	}
 
 	public void gotoPage(int pageNum) {
-		// calc the offset
-		final int offset = pageNum == 0 ? 0 : pageNum * listingDef.getPageSize() - 1;
+		final int offset = PagingUtil.listIndexFromPageNum(pageNum, listingDef.getPageSize());
 		if(listingGenerated && this.offset == offset) {
 			return;
 		}
@@ -227,12 +216,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	public void lastPage() {
-		// calc the offset
-		// TODO verify
 		final int pageSize = listingDef.getPageSize();
-		final int numPages =
-				(listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
-		final int offset = (numPages - 1) * pageSize - 1;
+		final int numPages = PagingUtil.numPages(listSize, pageSize);
+		final int offset = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
 		if(listingGenerated && this.offset == offset) {
 			return;
 		}

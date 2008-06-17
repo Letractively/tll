@@ -17,9 +17,11 @@ import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
+import com.tll.listhandler.Sorting;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
@@ -61,7 +63,8 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	/**
 	 * The listing operator
 	 */
-	// private IListingOperator<R> operator;
+	private IListingOperator<R> operator;
+
 	/**
 	 * The optional row popup.
 	 */
@@ -112,19 +115,10 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 * performing listing ops.
 	 * @param operator The listing operator
 	 */
-	/*
 	public final void setOperator(IListingOperator<R> operator) {
 		assert operator != null;
 		this.operator = operator;
 		operator.addListingListener(this);
-	}
-
-	public final void addListingListener(IListingListener<R> listener) {
-		operator.addListingListener(listener);
-	}
-
-	public final void removeListingListener(IListingListener<R> listener) {
-		operator.removeListingListener(listener);
 	}
 
 	public final void clear() {
@@ -162,7 +156,6 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	public final void sort(Sorting sorting) {
 		operator.sort(sorting);
 	}
-	*/
 
 	/**
 	 * Routes row clicks to the given row options delgate.

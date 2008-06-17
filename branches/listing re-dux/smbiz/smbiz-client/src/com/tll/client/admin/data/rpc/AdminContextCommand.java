@@ -18,13 +18,11 @@ import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.event.IUserSessionListener;
 
 /**
- * AdminContextCommand - RPC command to retrieve the admin context from the server.
+ * AdminContextCommand - RPC command to retrieve the admin context from the
+ * server.
  * @author jpk
  */
 public final class AdminContextCommand extends RpcCommand<AdminContextPayload> implements IUserSessionListener {
-
-	private final ListenerCollection adminContextListeners = new ListenerCollection();
-	private ChangeType changeType;
 
 	private static final IAdminContextServiceAsync svc;
 	static {
@@ -32,12 +30,22 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/adminContext");
 	}
 
+	private final ListenerCollection adminContextListeners = new ListenerCollection();
+	private final Widget sourcingWidget;
+	private ChangeType changeType;
+
 	/**
 	 * Constructor
 	 * @param sourcingWidget
 	 */
 	public AdminContextCommand(Widget sourcingWidget) {
-		super(sourcingWidget);
+		super();
+		this.sourcingWidget = sourcingWidget;
+	}
+
+	@Override
+	protected Widget getSourcingWidget() {
+		return sourcingWidget;
 	}
 
 	public void setChangeType(ChangeType changeType) {
