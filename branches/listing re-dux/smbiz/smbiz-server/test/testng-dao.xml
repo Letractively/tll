@@ -3,11 +3,6 @@
 <suite name="smbiz-dao-tests" verbose="5">
   
   <test name="dao.factory">
-    <groups>
-      <run>
-        <include name="dao.schema" />
-      </run>
-    </groups>
     <classes>
       <class name="com.tll.dao.DaoFactoryTest" />
     </classes>
@@ -26,9 +21,9 @@
         <include name="dao" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.dao.impl.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.dao.impl" />
+    </packages>
   </test>
   
   <test name="dao.impl.hibernate">
@@ -38,9 +33,9 @@
         <include name="dao" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.dao.impl.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.dao.impl" />
+    </packages>
   </test>
 
 </suite>

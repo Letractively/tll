@@ -16,7 +16,7 @@ import com.tll.model.IEntity;
  * DaoFactoryTest
  * @author jpk
  */
-@Test(groups = "dao")
+@Test(groups = "dao.factory")
 public class DaoFactoryTest extends TestBase {
 
 	/**
