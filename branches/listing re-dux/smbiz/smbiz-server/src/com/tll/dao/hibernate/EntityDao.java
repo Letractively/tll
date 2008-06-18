@@ -606,6 +606,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				hCrit.setResultTransformer(ENTITY_RESULT_TRANSFORMER);
 
 				rlist = hCrit.setFirstResult(offset).setMaxResults(pageSize).list();
+				break;
 			}
 
 			case ENTITY_NAMED_QUERY: {
@@ -620,6 +621,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				totalCount = count.intValue();
 				final Query q = assembleQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
 				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				break;
 			}
 
 			case SCALAR_NAMED_QUERY: {
@@ -636,6 +638,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 						assembleQuery(queryName, criteria.getQueryParams(), sorting, new ScalarSearchResultTransformer(criteria
 								.getEntityClass()), true);
 				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				break;
 			}
 		}
 		if(rlist == null) {

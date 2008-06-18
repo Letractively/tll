@@ -28,6 +28,7 @@ import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.guice.DaoModule;
+import com.tll.guice.JpaModule;
 import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
@@ -88,6 +89,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(daoMode));
 	}
 
@@ -532,22 +534,23 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
-		startNewTransaction();
 		final ICriteria<? extends E> crit =
 				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+
+		startNewTransaction();
 		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of initial page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(crit, simpleIdSorting, 1, 2);
+		page = dao.getPage(crit, simpleIdSorting, 2, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of subsequent page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(crit, simpleIdSorting, 2, 2);
+		page = dao.getPage(crit, simpleIdSorting, 4, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
 				"Empty or invalid number of last page elements");
 		endTransaction();

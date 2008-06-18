@@ -2,17 +2,15 @@
 <suite name="smbiz-test-shell">
   
   <test verbose="6" name="shell-test" annotations="JDK">
-    <!-- 
     <parameter name="jpaMode" value="SPRING" />
     <parameter name="daoMode" value="ORM" />
     <groups>
     	<run>
-    		<include name="temp" />
+    		<include name="dao" />
     	</run>
     </groups>
-    -->
     <classes>
-      <class name="com.tll.client.model.PropertyPathTest" />
+      <class name="com.tll.dao.impl.AddressDaoTest" />
     </classes>
   </test>
 
