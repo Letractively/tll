@@ -47,7 +47,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 
 	private IAddRowDelegate addRowDelegate;
 
-	private boolean pageable;
+	private int pageSize;
 
 	// page nav related
 	private Image imgPageFirst;
@@ -76,9 +76,12 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	private int lastIndex = -1;
 	private int totalSize = -1;
 	private int numPages = -1;
+	/**
+	 * Current 1-based page number.
+	 */
 	private int crntPage = -1;
 
-	private boolean firstPage, lastPage;
+	private boolean isFirstPage, isLastPage;
 
 	/**
 	 * Constructor
@@ -103,9 +106,9 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 
 		Image split;
 
-		pageable = (config.getPageSize() > 0);
+		pageSize = config.getPageSize();
 
-		if(pageable) {
+		if(pageSize > 0) {
 			imgPageFirst = App.imgs().page_first().createImage();
 			imgPagePrev = App.imgs().page_prev().createImage();
 			imgPageNext = App.imgs().page_next().createImage();
@@ -160,7 +163,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			btnRefresh = new PushButton(imgRefresh, this);
 			btnRefresh.setTitle("Refresh");
 
-			if(pageable) {
+			if(pageSize > 0) {
 				// separator
 				split = App.imgs().split().createImage();
 				split.setStylePrimaryName(CSS_SEPARATOR);
@@ -175,7 +178,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title, this);
 			btnAdd.setTitle(title);
-			if(pageable || config.isShowRefreshBtn()) {
+			if(pageSize > 0 || config.isShowRefreshBtn()) {
 				// separator
 				split = App.imgs().split().createImage();
 				split.setStylePrimaryName(CSS_SEPARATOR);
@@ -216,7 +219,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	}
 
 	public void onClick(Widget sender) {
-		if(pageable) {
+		if(pageSize > 0) {
 			if(sender == btnPageFirst) {
 				listingOperator.firstPage();
 			}
@@ -298,14 +301,12 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 
 	/**
 	 * Re-draws the contents of the nav bar.
-	 * @param isFirstPage
-	 * @param isLastPage
 	 */
 	private void draw() {
-		if(pageable) {
+		if(pageSize > 0) {
 			// first page btn
-			btnPageFirst.setEnabled(!firstPage);
-			if(firstPage) {
+			btnPageFirst.setEnabled(!isFirstPage);
+			if(isFirstPage) {
 				App.imgs().page_first_disabled().applyTo(imgPageFirst);
 			}
 			else {
@@ -313,8 +314,8 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			}
 
 			// last page btn
-			btnPageLast.setEnabled(!lastPage);
-			if(lastPage) {
+			btnPageLast.setEnabled(!isLastPage);
+			if(isLastPage) {
 				App.imgs().page_last_disabled().applyTo(imgPageLast);
 			}
 			else {
@@ -322,8 +323,8 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			}
 
 			// prev page btn
-			btnPagePrev.setEnabled(!firstPage);
-			if(firstPage) {
+			btnPagePrev.setEnabled(!isFirstPage);
+			if(isFirstPage) {
 				App.imgs().page_prev_disabled().applyTo(imgPagePrev);
 			}
 			else {
@@ -331,8 +332,8 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			}
 
 			// next page btn
-			btnPageNext.setEnabled(!lastPage);
-			if(lastPage) {
+			btnPageNext.setEnabled(!isLastPage);
+			if(isLastPage) {
 				App.imgs().page_next_disabled().applyTo(imgPageNext);
 			}
 			else {
@@ -358,12 +359,12 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	public void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery() && event.isSuccess()) {
 			this.firstIndex = event.getOffset() + 1;
-			this.lastIndex = firstIndex + event.getPageElements().size();
+			this.lastIndex = firstIndex + event.getPageElements().length;
 			this.totalSize = event.getListSize();
 			this.numPages = event.getNumPages();
-			this.crntPage = event.getPageNum() + 1;
-			this.firstPage = event.isFirstPage();
-			this.lastPage = event.isLastPage();
+			this.crntPage = event.getPageNum();
+			this.isFirstPage = (crntPage == 1);
+			this.isLastPage = (crntPage == numPages);
 			draw();
 		}
 	}

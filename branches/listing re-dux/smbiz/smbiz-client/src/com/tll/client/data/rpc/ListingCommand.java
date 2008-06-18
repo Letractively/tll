@@ -197,10 +197,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	public void sort(Sorting sorting) {
-		if(listingGenerated && this.sorting != null && this.sorting.equals(sorting)) {
-			return;
+		if(!listingGenerated || (this.sorting != null && this.sorting.equals(sorting))) {
+			fetch(offset, sorting);
 		}
-		fetch(offset, sorting);
 	}
 
 	public void firstPage() {
@@ -209,10 +208,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 
 	public void gotoPage(int pageNum) {
 		final int offset = PagingUtil.listIndexFromPageNum(pageNum, listingDef.getPageSize());
-		if(listingGenerated && this.offset == offset) {
-			return;
-		}
-		fetch(offset, sorting);
+		if(!listingGenerated || this.offset != offset) fetch(offset, sorting);
 	}
 
 	public void lastPage() {

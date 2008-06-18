@@ -4,8 +4,6 @@
  */
 package com.tll.client.event.type;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
@@ -25,7 +23,7 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 	private final ListingOp listingOp;
 	private final ListingStatus listingStatus;
 	private final int listSize;
-	private final List<R> pageElements;
+	private final R[] pageElements;
 	private final int offset;
 	private final Sorting sorting;
 
@@ -65,20 +63,19 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 	 * @param success
 	 * @param listingName
 	 * @param listingOp
-	 * @param listingStatus
 	 * @param listSize
 	 * @param pageElements
 	 * @param offset
 	 * @param sorting
 	 * @param pageSize
 	 */
-	public ListingEvent(Widget source, boolean success, String listingName, ListingOp listingOp,
-			ListingStatus listingStatus, int listSize, List<R> pageElements, int offset, Sorting sorting, int pageSize) {
+	public ListingEvent(Widget source, boolean success, String listingName, ListingOp listingOp, int listSize,
+			R[] pageElements, int offset, Sorting sorting, int pageSize) {
 		super(source);
 		this.success = success;
 		this.listingName = listingName;
 		this.listingOp = listingOp;
-		this.listingStatus = listingStatus;
+		this.listingStatus = null;
 		this.listSize = listSize;
 		this.pageElements = pageElements;
 		this.offset = offset;
@@ -107,7 +104,7 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 		return listingStatus;
 	}
 
-	public List<R> getPageElements() {
+	public R[] getPageElements() {
 		return pageElements;
 	}
 

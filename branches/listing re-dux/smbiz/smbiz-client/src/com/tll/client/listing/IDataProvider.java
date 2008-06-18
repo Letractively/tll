@@ -5,8 +5,6 @@
  */
 package com.tll.client.listing;
 
-import java.util.List;
-
 import com.tll.client.model.IData;
 
 /**
@@ -16,7 +14,7 @@ import com.tll.client.model.IData;
 public interface IDataProvider<D extends IData> {
 
 	/**
-	 * @return List of data.
+	 * @return Array of data.
 	 */
-	List<D> getData();
+	D[] getData();
 }

@@ -5,7 +5,6 @@ package com.tll.client.admin.mvc.view.account;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
-import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
@@ -189,8 +188,7 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.create(config, new RemoteListingDefinition<AccountSearch>(ListHandlerType.PAGE,
-				criteria, null, config.getPageSize(), config.getDefaultSorting())));
+		setListingWidget(ListingFactory.createListingWidget(config, ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

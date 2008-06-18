@@ -10,7 +10,7 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.listing.RowOpDelegate;
+import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.model.AbstractModelChangeHandler;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
@@ -26,7 +26,7 @@ public abstract class ListingView extends AbstractView {
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
 	 * @author jpk
 	 */
-	protected abstract class ModelChangingRowOpDelegate extends RowOpDelegate {
+	protected abstract class ModelChangingRowOpDelegate extends AbstractRowOptions {
 
 		/**
 		 * Provides the necessary sourcing widget enabling the sourcing of potential

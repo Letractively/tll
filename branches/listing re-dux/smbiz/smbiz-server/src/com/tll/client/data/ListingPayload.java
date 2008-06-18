@@ -5,8 +5,6 @@
  */
 package com.tll.client.data;
 
-import java.util.List;
-
 import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
@@ -39,7 +37,7 @@ public class ListingPayload<R extends IData> extends Payload {
 
 	private int listSize;
 
-	private List<R> pageElements;
+	private R[] pageElements;
 
 	private int offset = -1;
 
@@ -70,7 +68,7 @@ public class ListingPayload<R extends IData> extends Payload {
 	 * @param offset
 	 * @param sorting
 	 */
-	public void setPageData(int listSize, List<R> pageElements, int offset, Sorting sorting) {
+	public void setPageData(int listSize, R[] pageElements, int offset, Sorting sorting) {
 		this.listSize = listSize;
 		this.pageElements = pageElements;
 		this.offset = offset;
@@ -89,7 +87,7 @@ public class ListingPayload<R extends IData> extends Payload {
 		return listSize;
 	}
 
-	public List<R> getPageElements() {
+	public R[] getPageElements() {
 		return pageElements;
 	}
 

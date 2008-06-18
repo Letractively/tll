@@ -12,6 +12,16 @@ package com.tll.client.listing;
 public abstract class PagingUtil {
 
 	/**
+	 * Calculates the page number from a list index and a page size.
+	 * @param offset The list index
+	 * @param pageSize The page size
+	 * @return The calculated page number
+	 */
+	public static int pageNumFromListIndex(int offset, int pageSize) {
+		return Math.round(offset / pageSize + 0.5f) - 1;
+	}
+
+	/**
 	 * Calculates the list index from the page number and page size.
 	 * @param pageNum 0-based page number
 	 * @param pageSize The page size

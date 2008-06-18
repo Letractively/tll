@@ -4,6 +4,8 @@
  */
 package com.tll.server.rpc.listing;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.tll.SystemError;
@@ -107,12 +109,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 					if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
 
-					RemoteListingDefinition<S> listingDef = listingRequest.getListingDef();
-					if(listingDef == null) {
-						// tell the client to re-send the "listing definition"
-						status.addMsg("Listing cache for: " + listingName + " has missing or expired", MsgLevel.WARN);
-					}
-					else {
+					final RemoteListingDefinition<S> listingDef = listingRequest.getListingDef();
+					if(listingDef != null) {
 						final S search = listingDef.getSearchCriteria();
 						if(search == null) {
 							throw new ListingException(listingName, "No search criteria specified.");
@@ -233,7 +231,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 		// only generate the table page when it is needed at the client
 		if(handler != null && !listingOp.isClear()) {
 			if(log.isDebugEnabled()) log.debug("Sending page for '" + listingName + "'...");
-			p.setPageData(handler.size(), handler.getElements(), handler.getOffset(), handler.getSorting());
+			final List<Model> list = handler.getElements();
+			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());
 		}
 
 		return p;

@@ -4,8 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -317,14 +315,14 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		}
 	}
 
-	private void addBodyRows(List<R> page, int offset) {
-		final int numBodyRows = page.size();
+	private void addBodyRows(R[] page, int offset) {
+		final int numBodyRows = page.length;
 		resizeRows(numBodyRows + 1);
 		boolean evn = false;
 		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			setRowData(r + 1, ++rowIndex, page.get(r), true);
+			setRowData(r + 1, ++rowIndex, page[r], true);
 		}
 	}
 

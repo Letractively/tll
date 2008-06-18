@@ -12,11 +12,11 @@ import com.tll.client.App;
 import com.tll.client.ui.Option;
 
 /**
- * RowOpDelegate - An adapter for {@link IRowOptionsDelegate} simplifying the
+ * AbstractRowOptions - An adapter for {@link IRowOptionsDelegate} simplifying the
  * implementation.
  * @author jpk
  */
-public abstract class RowOpDelegate implements IRowOptionsDelegate {
+public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 
 	private static final String EDIT_OPTION_PREFIX = "Edit ";
 	private static final String DELETE_OPTION_PREFIX = "Delete ";

@@ -5,8 +5,6 @@
  */
 package com.tll.client.listing;
 
-import java.util.List;
-
 import com.tll.client.data.ListingOp;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
@@ -44,7 +42,9 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	// TODO make private when sorting is implemented
 	/*private*/Sorting sorting;
 
-	// private int numPages = -1;
+	private final int numPages = -1;
+
+	private final int pageNum = -1;
 
 	/**
 	 * Constructor
@@ -88,9 +88,10 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	 */
 	@SuppressWarnings("unchecked")
 	private R[] subArray(int startIndex, int endIndex) {
+		final R[] data = dataProvider.getData();
 		IData[] array = new IData[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
-			array[i] = dataProvider.getData().get(i);
+			array[i] = data[i];
 		}
 		return (R[]) array;
 	}
@@ -101,10 +102,10 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	 * @param listingOp
 	 * @return A new ListingEvent
 	 */
-	private ListingEvent<R> assembleListingEvent(List<R> pageElements, ListingOp listingOp) {
-		final int listSize = pageElements == null ? 0 : pageElements.size();
-		return new ListingEvent<R>(listingWidget, true, null, ListingOp.REFRESH, null, listSize, pageElements, offset,
-				sorting, pageSize);
+	private ListingEvent<R> assembleListingEvent(R[] pageElements, ListingOp listingOp) {
+		final int listSize = pageElements == null ? 0 : pageElements.length;
+		return new ListingEvent<R>(listingWidget, true, null, ListingOp.REFRESH, listSize, pageElements, offset, sorting,
+				pageSize);
 	}
 
 	public void refresh() {
@@ -116,18 +117,32 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	}
 
 	public void firstPage() {
-	}
-
-	public void gotoPage(int pageNum) {
+		if(pageNum != 0) {
+			listeners.fireListingEvent(assembleListingEvent(subArray(0, pageSize - 1), ListingOp.FETCH));
+		}
 	}
 
 	public void lastPage() {
+		if(pageNum == numPages - 1) {
+			listeners.fireListingEvent(assembleListingEvent(subArray(0, numPages - 1), ListingOp.FETCH));
+		}
 	}
 
 	public void nextPage() {
+		// TODO impl
+		throw new UnsupportedOperationException();
 	}
 
 	public void previousPage() {
+		// TODO impl
+		throw new UnsupportedOperationException();
+	}
+
+	public void gotoPage(int pageNum) {
+		if(this.pageNum != pageNum) {
+
+			listeners.fireListingEvent(assembleListingEvent(subArray(0, pageSize - 1), ListingOp.FETCH));
+		}
 	}
 
 	public void sort(Sorting sorting) {

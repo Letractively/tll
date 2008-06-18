@@ -11,12 +11,68 @@ import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
+import com.tll.listhandler.ListHandlerType;
+import com.tll.listhandler.Sorting;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
  * @author jpk
  */
 public abstract class ListingFactory {
+
+	/**
+	 * Assembles a listing from data provided by an {@link IDataProvider}.
+	 * @param config The listing config
+	 * @param dataProvider The client listing data provider
+	 * @return A new {@link DataListingWidget}.
+	 */
+	public static <R extends IData> DataListingWidget<R> createListingWidget(IListingConfig<R> config,
+			IDataProvider<R> dataProvider) {
+
+		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(config
+				.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
+	}
+
+	/**
+	 * Creates a listing command to control acccess to a remote listing.
+	 * @param <S> The search type
+	 * @param listingName The unique remote listing name
+	 * @param listHandlerType The remote list handler type
+	 * @param searchCriteria The search criteria that generates the remote
+	 *        listing.
+	 * @param propKeys Optional OGNL formatted property names representing a
+	 *        white-list of properties to retrieve from those that are queried. If
+	 *        <code>null</code>, all queried properties are provided.
+	 * @param pageSize The desired paging page size.
+	 * @param initialSorting The initial sorting directive
+	 * @return A new {@link ListingCommand}.
+	 */
+	public static <S extends ISearch> ListingCommand<S> createListingCommand(String listingName,
+			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+		return new ListingCommand<S>(listingName, new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys,
+				pageSize, initialSorting));
+	}
+
+	/**
+	 * Crates a listing Widget based on a remote data source.
+	 * @param <S> The search type
+	 * @param config The client listing configuration
+	 * @param listHandlerType The remote list handler type
+	 * @param searchCriteria The search criteria that generates the remote
+	 *        listing.
+	 * @param propKeys Optional OGNL formatted property names representing a
+	 *        white-list of properties to retrieve from those that are queried. If
+	 *        <code>null</code>, all queried properties are provided.
+	 * @param initialSorting The initial sorting directive
+	 * @return A new {@link ModelListingWidget}.
+	 */
+	public static <S extends ISearch> ModelListingWidget createListingWidget(IListingConfig<Model> config,
+			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, Sorting initialSorting) {
+
+		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<S>(config
+				.getListingName(), new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, config
+				.getPageSize(), initialSorting)));
+	}
 
 	/**
 	 * Does the actual listing Widget assembling.
@@ -36,33 +92,5 @@ public abstract class ListingFactory {
 		listingWidget.setOperator(operator);
 
 		return listingWidget;
-	}
-
-	/**
-	 * Assembles a listing based on a remote data source returning the remote data
-	 * operator.
-	 * @param <S> The search type
-	 * @param config The listing config
-	 * @param listingDef The remote (server-side) listing definition
-	 * @return A new {@link ModelListingWidget}.
-	 */
-	public static <S extends ISearch> ModelListingWidget create(IListingConfig<Model> config,
-			RemoteListingDefinition<S> listingDef) {
-
-		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<S>(config
-				.getListingName(), listingDef));
-	}
-
-	/**
-	 * Assembles a listing from data provided by an {@link IDataProvider}
-	 * returning the client data operator.
-	 * @param config The listing config
-	 * @param dataProvider The client listing data provider
-	 * @return A new {@link DataListingWidget}.
-	 */
-	public static <R extends IData> DataListingWidget<R> create(IListingConfig<R> config, IDataProvider<R> dataProvider) {
-
-		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(config
-				.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
 	}
 }
