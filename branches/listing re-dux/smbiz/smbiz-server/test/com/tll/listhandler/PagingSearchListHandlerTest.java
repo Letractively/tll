@@ -18,6 +18,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.model.INamedEntity;
 import com.tll.model.impl.Account;
 import com.tll.service.entity.impl.account.IAccountService;
@@ -39,17 +40,15 @@ public class PagingSearchListHandlerTest extends DbTest {
 	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
+		getDbShell().restub();
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		DaoModule dm = new DaoModule(DaoMode.ORM);
-		modules.add(dm);
-
-		EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(DaoMode.ORM));
+		modules.add(new EntityServiceModule());
 	}
 
 	@Test
@@ -69,16 +68,18 @@ public class PagingSearchListHandlerTest extends DbTest {
 
 		List<SearchResult<Account>> list;
 
-		list = listHandler.getElements(0, pageSize, null);
+		list = listHandler.getElements(0, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize, pageSize * 2, null);
+		list = listHandler.getElements(pageSize, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize * 2, pageSize * 3, null);
+		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		List<SearchResult<Account>> alist = listHandler.getElements(0, pageSize, sorting);
+		List<SearchResult<Account>> alist = listHandler.getElements(0, allAccounts.size(), sorting);
+		assert alist.size() == allAccounts.size();
+
 		for(int i = 0; i < allAccounts.size(); i++) {
 			Account account = alist.get(i).getEntity();
 			assert account != null : "Empty account in list";

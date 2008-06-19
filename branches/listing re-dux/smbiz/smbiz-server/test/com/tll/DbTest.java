@@ -26,7 +26,8 @@ import com.tll.model.IEntity;
 import com.tll.model.key.IPrimaryKey;
 
 /**
- * DbTest
+ * DbTest - Test that supports raw transactions having an accessible
+ * <code>jpaMode</code> member property.
  * @author jpk
  */
 public abstract class DbTest extends TestBase {

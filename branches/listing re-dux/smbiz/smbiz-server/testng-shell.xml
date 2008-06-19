@@ -2,16 +2,21 @@
 <suite name="smbiz-test-shell">
   
   <test verbose="6" name="shell-test" annotations="JDK">
-    <parameter name="jpaMode" value="LOCAL" />
-    <parameter name="daoMode" value="MOCK" />
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
-        <include name="dao" />
+        <include name="listhandler" />
       </run>
     </groups>
+    <!-- 
     <packages>
-      <package name="com.tll.dao.impl" />
+      <package name="com.tll.listhandler" />
     </packages>
+    -->
+    <classes>
+      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest" />
+    </classes>
   </test>
 
 </suite>

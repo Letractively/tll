@@ -4,7 +4,7 @@
   
   <test name="paging">
     <classes>
-      <class name="com.tll.service.entity.PagingSearchListHandlerTest" />
+      <class name="com.tll.listhandler.PagingSearchListHandlerTest" />
     </classes>
   </test>
   

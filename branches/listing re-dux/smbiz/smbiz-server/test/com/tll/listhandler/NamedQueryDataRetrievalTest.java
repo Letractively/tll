@@ -27,6 +27,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
@@ -127,23 +128,17 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	@Override
 	protected void beforeClass() {
 		super.beforeClass();
-
 		if(daoMode == DaoMode.ORM) {
-			getDbShell().create();
-			getDbShell().clear();
-			getDbShell().stub();
+			getDbShell().restub();
 		}
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		final DaoModule dm = new DaoModule(daoMode);
-		modules.add(dm);
-
-		final EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(daoMode));
+		modules.add(new EntityServiceModule());
 	}
 
 	/**

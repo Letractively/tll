@@ -186,9 +186,11 @@ public final class DbShell {
 	}
 
 	/**
-	 * Creates the database.
+	 * Creates the database. If the db already exists, nothing happens.
+	 * @return <code>true</code> if the db was actually created as a result of
+	 *         calling this method and <code>false<code> if the db already exists.
 	 */
-	public void create() {
+	public boolean create() {
 
 		if(log.isInfoEnabled()) {
 			log.info("Creating db: " + dbName + "...");
@@ -202,7 +204,7 @@ public final class DbShell {
 				throw dae;
 			}
 			// presume we have already created the db
-			return;
+			return false;
 		}
 
 		// create db schema
@@ -212,68 +214,45 @@ public final class DbShell {
 		catch(IOException e) {
 			throw new SystemError("Unable to create db schema: " + e.getMessage(), e);
 		}
+		return true;
 	}
 
 	/**
-	 * Deletes the database.
+	 * Deletes the database. If the db doesn't exist, nothing happens.
+	 * @return <code>true</code> if the db was actually deleted as a result of
+	 *         calling this method and
+	 *         <code>false<code> if the db is found not to exist.
 	 */
-	public void delete() {
+	public boolean delete() {
 		if(log.isInfoEnabled()) {
 			log.info("Dropping db: " + dbName + "...");
 		}
 		try {
 			executeSql(rootDataSource, "drop database " + dbName);
+			return true;
 		}
 		catch(DataAccessException dae) {
 			if(!exceptionTranslator.isDropNonExistant(dae)) {
 				throw dae;
 			}
 		}
+		return false;
 	}
 
 	/**
-	 * Stubs the database with the data set gotten from loading the db stub file.
-	 * If the database if found to not-exist, the database is first created then
-	 * stubbed.
+	 * Clears the database of all data. If the db doesn't exist, nothing happens.
+	 * @return <code>true</code> if the db was actually cleared as a result of
+	 *         calling this method and
+	 *         <code>false<code> if the db is <code>not</code> cleared by way of this method.
 	 */
-	public void stub() {
-
-		if(log.isInfoEnabled()) {
-			log.info("Stubbing db: " + dbName + "...");
-		}
-
-		// get a handle to the file resource
-		File f;
-		try {
-			f = (new ClassPathResource(dbDataStubFileName)).getFile();
-		}
-		catch(IOException e) {
-			throw new SystemError(e.getMessage(), e);
-		}
-
-		try {
-			executeSqlCommandsFromFile(dataSource, f);
-		}
-		catch(DataAccessException dae) {
-			if(!exceptionTranslator.isUnknownDatabase(dae)) {
-				throw dae;
-			}
-			// attempt to create database then re-try
-			create();
-			executeSqlCommandsFromFile(dataSource, f);
-		}
-	}
-
-	/**
-	 * Clears the database of all data.
-	 */
-	public void clear() {
+	public boolean clear() {
 		if(log.isInfoEnabled()) {
 			log.info("Clearing db: " + dbName + "...");
 		}
 		try {
 			ClassPathResource resource = new ClassPathResource(dbDataDeleteFileName);
 			executeSqlCommandsFromFile(dataSource, resource.getFile());
+			return true;
 		}
 		catch(DataAccessException dae) {
 			if(!exceptionTranslator.isDropNonExistant(dae)) {
@@ -283,5 +262,49 @@ public final class DbShell {
 		catch(IOException e) {
 			throw new SystemError(e.getMessage(), e);
 		}
+		return false;
+	}
+
+	/**
+	 * Adds data to the db with the data set gotten from loading the db stub file.
+	 * The db <em>must</em> already exist else an error is raised.
+	 * @return <code>true</code> if the db was actually stubbed with the stub
+	 *         data as a result of calling this method.
+	 */
+	public boolean stub() {
+
+		if(log.isInfoEnabled()) {
+			log.info("Stubbing db: " + dbName + "...");
+		}
+
+		try {
+			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbDataStubFileName)).getFile());
+			return true;
+		}
+		catch(IOException e) {
+			throw new SystemError(e.getMessage(), e);
+		}
+		catch(DataAccessException dae) {
+			if(!exceptionTranslator.isUnknownDatabase(dae)) {
+				throw dae;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Stubs or re-stubs the data in the db creating the db if not already created
+	 * and/or clearing the the db if it contains existing data.
+	 */
+	public void restub() {
+		if(log.isInfoEnabled()) {
+			log.info("RE-stubbing db: " + dbName + "...");
+		}
+
+		// fist try to clear
+		if(!clear()) {
+			create();
+		}
+		stub();
 	}
 }
