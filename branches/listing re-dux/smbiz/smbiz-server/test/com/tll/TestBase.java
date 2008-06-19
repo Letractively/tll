@@ -174,7 +174,7 @@ public abstract class TestBase {
 	 * must be added via {@link #addModules(List)}.
 	 * @return The injected {@link DbShell}
 	 */
-	protected DbShell getDbShell() {
+	protected final DbShell getDbShell() {
 		return injector.getInstance(Key.get(DbShell.class, TestDb.class));
 	}
 

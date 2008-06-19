@@ -15,6 +15,7 @@ import javax.persistence.EntityExistsException;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -131,7 +132,16 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		}
 	}
 
+	@AfterClass(alwaysRun = true)
+	public final void onAfterClass() {
+		afterClass();
+	}
+
 	@BeforeMethod(alwaysRun = true)
+	public final void onBeforeMethod() {
+		beforeMethod();
+	}
+
 	@Override
 	protected final void beforeMethod() {
 		super.beforeMethod();
@@ -140,6 +150,10 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	@AfterMethod(alwaysRun = true)
+	public final void onAfterMethod() {
+		afterMethod();
+	}
+
 	@Override
 	protected final void afterMethod() {
 		super.afterMethod();
