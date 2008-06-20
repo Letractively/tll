@@ -85,7 +85,7 @@
       Interface intf
       join intf.options options
     group by intf.name 
-    order by name
+    order by intf.name
     ]]>
     </query>
   </named-query>

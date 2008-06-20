@@ -64,6 +64,9 @@ public abstract class ListHandlerFactory {
 				return create(dataProvider.find(criteria, null), sorting);
 
 			case IDLIST:
+				if(criteria.getCriteriaType().isQuery()) {
+					throw new InvalidCriteriaException("Id list handling does not support query based criteria");
+				}
 				slh = new IdListHandler<E>(dataProvider, criteria, sorting);
 				break;
 

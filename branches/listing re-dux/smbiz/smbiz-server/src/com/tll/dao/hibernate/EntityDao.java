@@ -633,6 +633,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
+				totalCount = count.intValue();
 
 				final Query q =
 						assembleQuery(queryName, criteria.getQueryParams(), sorting, new ScalarSearchResultTransformer(criteria
