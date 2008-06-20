@@ -5,7 +5,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
@@ -29,9 +28,9 @@ import com.tll.listhandler.Sorting;
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload<Model>> implements IListingOperator<Model> {
+public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
 
-	private static final IListingServiceAsync<ISearch, Model> svc;
+	private static final IListingServiceAsync<ISearch> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
@@ -168,7 +167,6 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	public void handleSuccess(ListingPayload result) {
 		assert listingRequest != null;
 		assert result.getListingName() != null && listingName != null && result.getListingName().equals(listingName);
-		super.handleSuccess(result);
 
 		final ListingOp op = listingRequest.getListingOp();
 
@@ -177,9 +175,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 		if(!listingGenerated && op.isQuery()) {
 			// we need to re-create the listing on the server - the cache has expired
 			fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
-			DeferredCommand.addCommand(this);
 		}
 		else {
+			super.handleSuccess(result);
 			// update client-side listing state
 			offset = result.getOffset();
 			sorting = result.getSorting();
@@ -200,7 +198,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	public void sort(Sorting sorting) {
-		if(!listingGenerated || (this.sorting != null && this.sorting.equals(sorting))) {
+		if(!listingGenerated || (this.sorting != null && !this.sorting.equals(sorting))) {
 			fetch(offset, sorting);
 		}
 	}

@@ -144,9 +144,10 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	}
 
 	/**
-	 * @param listingOperator the listingOperator to set
+	 * Sets the listing operator on behalf of the containing listing Widget.
+	 * @param listingOperator The listing operator
 	 */
-	public final void setListingOperator(IListingOperator<R> listingOperator) {
+	final void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
 	}
 

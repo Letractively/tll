@@ -206,12 +206,10 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		void refreshData() {
 			initialized = false;
 			listingCommand.refresh();
-			listingCommand.execute();
 		}
 
 		void clearData() {
 			listingCommand.clear();
-			listingCommand.execute();
 		}
 
 		/**

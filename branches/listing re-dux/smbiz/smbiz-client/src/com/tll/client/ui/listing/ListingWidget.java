@@ -21,7 +21,6 @@ import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
-import com.tll.listhandler.Sorting;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
@@ -116,45 +115,20 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 	 * @param operator The listing operator
 	 */
 	public final void setOperator(IListingOperator<R> operator) {
-		assert operator != null;
 		this.operator = operator;
-		operator.addListingListener(this);
+		if(operator != null) {
+			this.table.setListingOperator(operator);
+			if(navBar != null) navBar.setListingOperator(operator);
+			operator.addListingListener(this);
+		}
 	}
 
 	public final void clear() {
 		operator.clear();
 	}
 
-	public final void display() {
-		operator.display();
-	}
-
-	public final void firstPage() {
-		operator.firstPage();
-	}
-
-	public final void gotoPage(int pageNum) {
-		operator.gotoPage(pageNum);
-	}
-
-	public final void lastPage() {
-		operator.lastPage();
-	}
-
-	public final void nextPage() {
-		operator.nextPage();
-	}
-
-	public final void previousPage() {
-		operator.previousPage();
-	}
-
 	public final void refresh() {
 		operator.refresh();
-	}
-
-	public final void sort(Sorting sorting) {
-		operator.sort(sorting);
 	}
 
 	/**

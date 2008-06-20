@@ -42,7 +42,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * ListingService - Handles client listing requests.
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S, Model> {
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -223,10 +223,11 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				// cache listing state
 				if(log.isDebugEnabled()) log.debug("[Re-]Caching listing state '" + listingName + "'...");
 				ListingCache.storeState(request, listingName, new ListingState(handler.getOffset(), handler.getSorting()));
+				listingStatus = ListingStatus.CACHED;
 			}
 		} // !status.hasErrors()
 
-		ListingPayload p = new ListingPayload(listingName, listingStatus);
+		final ListingPayload p = new ListingPayload(listingName, listingStatus);
 
 		// only generate the table page when it is needed at the client
 		if(handler != null && !listingOp.isClear()) {

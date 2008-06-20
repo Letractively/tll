@@ -43,7 +43,8 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 	 * @param listingPayload
 	 * @param pageSize
 	 */
-	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload<R> listingPayload, int pageSize) {
+	@SuppressWarnings("unchecked")
+	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload listingPayload, int pageSize) {
 		super(source);
 		if(listingOp == null || listingPayload == null) throw new IllegalArgumentException();
 		this.success = !listingPayload.hasErrors();
@@ -51,7 +52,7 @@ public final class ListingEvent<R extends IData> extends BaseEvent {
 		this.listingName = listingPayload.getListingName();
 		this.listingStatus = listingPayload.getListingStatus();
 		this.listSize = listingPayload.getListSize();
-		this.pageElements = listingPayload.getPageElements();
+		this.pageElements = (R[]) listingPayload.getPageElements();
 		this.offset = listingPayload.getOffset();
 		this.sorting = listingPayload.getSorting();
 		setCalculated(pageSize);

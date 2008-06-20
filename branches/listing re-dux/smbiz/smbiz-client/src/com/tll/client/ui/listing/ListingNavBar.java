@@ -198,10 +198,10 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	}
 
 	/**
-	 * Sets the listing operator.
+	 * Sets the listing operator on behalf of the containing listing Widget.
 	 * @param listingOperator
 	 */
-	public void setListingOperator(IListingOperator<R> listingOperator) {
+	void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
 	}
 
@@ -358,11 +358,11 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 
 	public void onListingEvent(ListingEvent<R> event) {
 		if(event.getListingOp().isQuery() && event.isSuccess()) {
-			this.firstIndex = event.getOffset() + 1;
-			this.lastIndex = firstIndex + event.getPageElements().length;
+			this.firstIndex = event.getOffset();
+			this.lastIndex = firstIndex + event.getPageElements().length - 1;
 			this.totalSize = event.getListSize();
 			this.numPages = event.getNumPages();
-			this.crntPage = event.getPageNum();
+			this.crntPage = event.getPageNum() + 1;
 			this.isFirstPage = (crntPage == 1);
 			this.isLastPage = (crntPage == numPages);
 			draw();

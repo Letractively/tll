@@ -82,6 +82,7 @@ public final class ListingRequest<S extends ISearch> implements IMarshalable, ID
 	public ListingRequest(String listingName, Boolean retainStateOnClear) {
 		super();
 		this.listingName = listingName;
+		this.listingOp = ListingOp.CLEAR;
 		this.retainStateOnClear = retainStateOnClear;
 	}
 
