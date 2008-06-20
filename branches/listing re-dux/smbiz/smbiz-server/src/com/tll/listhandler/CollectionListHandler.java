@@ -42,7 +42,7 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 		return rows == null ? 0 : rows.size();
 	}
 
-	public void sort(Sorting sorting) throws ListHandlerException {
+	void sort(Sorting sorting) throws ListHandlerException {
 		if(sorting == null || sorting.size() < 1) {
 			throw new ListHandlerException("No sorting specified.");
 		}
@@ -57,17 +57,11 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 		this.sorting = sorting;
 	}
 
-	public final Sorting getSorting() {
-		return sorting;
-	}
-
 	public List<T> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
-		if(size() < 1) throw new EmptyListException("Unable to retrieve collection list elements: none exist");
-		if(sorting != null) {
-			if(!sorting.equals(this.sorting)) {
-				sort(sorting);
-			}
+		if(size() < 1) throw new EmptyListException("No collection list elements exist");
+		if(sorting != null && !sorting.equals(this.sorting)) {
+			sort(sorting);
 		}
 		return rows.subList(offset, offset + pageSize);
 	}

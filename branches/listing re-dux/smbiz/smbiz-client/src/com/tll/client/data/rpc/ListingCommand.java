@@ -125,9 +125,10 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * @param refresh Force the listing to be re-queried on the server if it is
 	 *        cached?
 	 */
-	private void fetch(Integer offset, Sorting sorting, boolean refresh) {
+	private void fetch(int offset, Sorting sorting, boolean refresh) {
 		this.listingRequest =
 				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
+		execute();
 	}
 
 	/**
@@ -140,8 +141,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
 	 */
-	private void fetch(Integer offset, Sorting sorting) {
+	private void fetch(int offset, Sorting sorting) {
 		listingRequest = new ListingRequest<S>(listingName, offset, sorting);
+		execute();
 	}
 
 	/**
@@ -150,6 +152,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 */
 	private void clear(boolean retainListingState) {
 		listingRequest = new ListingRequest<S>(listingName, retainListingState);
+		execute();
 	}
 
 	@Override

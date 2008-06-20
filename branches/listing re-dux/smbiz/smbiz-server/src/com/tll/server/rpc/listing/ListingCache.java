@@ -15,7 +15,7 @@ import com.tll.server.cache.WebCache;
  * <em>independent</em> of the servlet path.
  * @author jpk
  */
-public class ListingCache {
+public final class ListingCache {
 
 	/**
 	 * Retrieves the cached handler by table view name.

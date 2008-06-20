@@ -43,7 +43,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		assert this.sorting != null;
 
 		// if sorting differs, re-execute search
-		if(sorting != null && !sorting.equals(this.sorting)) {
+		if(sorting != null && !sorting.equals(this.sorting) || (sorting == null && this.sorting != null)) {
 			try {
 				ids = dataProvider.getIds(criteria, sorting);
 			}

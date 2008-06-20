@@ -76,7 +76,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 		if(!status.hasErrors()) {
 
 			final RequestContext requestContext = getRequestContext();
-			final HttpServletRequest request = getRequestContext().getRequest();
+			final HttpServletRequest request = requestContext.getRequest();
 			assert request != null;
 
 			Integer offset = listingRequest.getOffset();
@@ -101,7 +101,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 			}
 
 			handler = ListingCache.getHandler(request, listingName);
-			listingStatus = (handler == null ? ListingStatus.CACHED : ListingStatus.NOT_CACHED);
+			listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
 
 			try {
 				// acquire the listing handler
@@ -141,13 +141,13 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 							throw new ListingException(listingName, "No list handler type specified.");
 						}
 						// resolve the sorting to use
-						final Sorting initialSorting = (sorting == null ? listingDef.getInitialSorting() : sorting);
-						if(initialSorting == null) {
+						sorting = (sorting == null ? listingDef.getInitialSorting() : sorting);
+						if(sorting == null) {
 							throw new ListingException(listingName, "No sorting directive specified.");
 						}
 						IListHandler<SearchResult<E>> listHandler = null;
 						try {
-							listHandler = ListHandlerFactory.create(criteria, initialSorting, lht, dataProvider);
+							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						}
 						catch(final InvalidCriteriaException e) {
 							throw new ListingException(listingName, "Invalid criteria: " + e.getMessage(), e);
@@ -230,7 +230,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 		// only generate the table page when it is needed at the client
 		if(handler != null && !listingOp.isClear()) {
-			if(log.isDebugEnabled()) log.debug("Sending page for '" + listingName + "'...");
+			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingName + "'...");
 			final List<Model> list = handler.getElements();
 			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());
 		}

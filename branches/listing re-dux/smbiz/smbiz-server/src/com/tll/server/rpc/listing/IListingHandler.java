@@ -15,6 +15,7 @@ import com.tll.listhandler.Sorting;
  * @param <T> The list element type.
  * @author jpk
  */
+// TODO we probably don't need this interface!
 public interface IListingHandler<T> {
 
 	/**

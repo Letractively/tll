@@ -46,6 +46,7 @@ public final class RemoteListingDefinition<S extends ISearch> implements IMarsha
 		this.searchCriteria = searchCriteria;
 		this.propKeys = propKeys;
 		this.pageSize = pageSize;
+		this.initialSorting = initialSorting;
 	}
 
 	/**

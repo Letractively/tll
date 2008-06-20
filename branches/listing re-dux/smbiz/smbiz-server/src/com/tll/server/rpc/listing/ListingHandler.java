@@ -36,24 +36,26 @@ public final class ListingHandler<R extends IData> implements IListingHandler<R>
 
 	/**
 	 * Constructor
-	 * @param listHandler
-	 * @param listingName
-	 * @param pageSize
-	 * @throws IllegalArgumentException upon null or invalid arguments
+	 * @param listHandler The wrapped list handler
+	 * @param listingName The unique listing name
+	 * @param pageSize The desired page size
+	 * @throws IllegalArgumentException When one of the arguments is
+	 *         <code>null</code>.
 	 */
 	ListingHandler(IListHandler<R> listHandler, String listingName, int pageSize) throws IllegalArgumentException {
 		super();
 
 		if(listHandler == null) {
-			throw new IllegalArgumentException("Unable to instantiate table model handler: No list handler specified");
+			throw new IllegalArgumentException("Unable to instantiate listing handler: No list handler specified");
 		}
 
 		if(listingName == null) {
-			throw new IllegalArgumentException("Unable to instantiate table model handler: No listing name specified");
+			throw new IllegalArgumentException("Unable to instantiate listing handler: No listing name specified");
 		}
 
 		if(pageSize < 1) {
-			throw new IllegalArgumentException("The page size must be greater than zero.");
+			throw new IllegalArgumentException(
+					"Unable to instantiate listing handler: The page size must be greater than zero.");
 		}
 
 		this.listHandler = listHandler;
@@ -93,13 +95,12 @@ public final class ListingHandler<R extends IData> implements IListingHandler<R>
 	public void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException {
 
-		final int size = listHandler.size();
-		if(size < 1) {
+		if(!force && listHandler.size() < 1) {
 			throw new EmptyListException("No list elements exist");
 		}
 
-		if(offset < 0) {
-			throw new IndexOutOfBoundsException("Negative offset: " + offset);
+		if(offset < 0 || (!force && offset > listHandler.size() - 1)) {
+			throw new IndexOutOfBoundsException("Listing offset " + offset + " is out of bounds");
 		}
 
 		// do we need to actually re-query?
@@ -114,5 +115,9 @@ public final class ListingHandler<R extends IData> implements IListingHandler<R>
 		catch(ListHandlerException e) {
 			throw new ListingException(listingName, e.getMessage());
 		}
+
+		// update state
+		this.offset = offset;
+		this.sorting = sorting;
 	}
 }

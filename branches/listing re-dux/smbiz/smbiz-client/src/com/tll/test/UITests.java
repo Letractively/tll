@@ -326,7 +326,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 						});
 		testPanel.add(vt);
 
-		ListingNavBar listingToolbar = new ListingNavBar(new IListingConfig<Model>() {
+		ListingNavBar<Model> listingToolbar = new ListingNavBar<Model>(new IListingConfig<Model>() {
 
 			public boolean isSortable() {
 				return true;
