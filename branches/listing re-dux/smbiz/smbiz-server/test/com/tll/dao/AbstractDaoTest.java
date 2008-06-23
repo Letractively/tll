@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.guice.DaoModule;
@@ -454,6 +454,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	@Test(groups = "dao")
+	@SuppressWarnings("unchecked")
 	public final void testFindEntities() throws Exception {
 		E e = getTestEntity();
 		e = dao.persist(e);
@@ -462,7 +463,8 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		dbRemove.add(e);
 
 		startNewTransaction();
-		final ICriteria<? extends E> criteria = CriteriaFactory.buildEntityCriteria(KeyFactory.getPrimaryKey(e));
+		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
+		criteria.getPrimaryGroup().addCriterion(KeyFactory.getPrimaryKey(e));
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");
@@ -510,12 +512,12 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		}
 		setComplete();
 		endTransaction();
-		final ICriteria<? extends E> crit =
-				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+		Criteria<? extends E> criteria = new Criteria<E>(entityClass);
+		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
 		startNewTransaction();
-		final List<Integer> dbIdList = dao.getIds(crit, simpleIdSorting);
+		final List<Integer> dbIdList = dao.getIds(criteria, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
@@ -548,8 +550,8 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
-		final ICriteria<? extends E> crit =
-				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+		final Criteria<? extends E> crit = new Criteria<E>(entityClass);
+		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();
 		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);

@@ -15,7 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testng.Assert;
 
 import com.google.inject.Module;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
@@ -113,9 +113,10 @@ public abstract class DbTest extends TestBase {
 	 * @return the entity from the db or <code>null</code> if not found.
 	 */
 	protected static final <E extends IEntity, D extends IEntityDao<E>> E getEntityFromDb(D dao, IPrimaryKey<E> key) {
-		ICriteria<? extends E> c = CriteriaFactory.buildEntityCriteria(key);
+		Criteria<? extends E> criteria = new Criteria<E>(key.getType());
+		criteria.getPrimaryGroup().addCriterion(key);
 		try {
-			return dao.findEntity(c);
+			return dao.findEntity(criteria);
 		}
 		catch(InvalidCriteriaException e) {
 			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());

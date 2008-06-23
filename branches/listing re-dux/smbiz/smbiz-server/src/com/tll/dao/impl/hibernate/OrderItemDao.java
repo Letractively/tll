@@ -10,7 +10,7 @@ import org.hibernate.criterion.Criterion;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IDbDialectHandler;
@@ -44,7 +44,9 @@ public class OrderItemDao extends TimeStampEntityDao<OrderItem> implements IOrde
 
 	public OrderItem load(INameKey<? extends OrderItem> nameKey) {
 		try {
-			return findEntity(CriteriaFactory.buildEntityCriteria(nameKey, true));
+			final Criteria<OrderItem> nc = new Criteria<OrderItem>(OrderItem.class);
+			nc.getPrimaryGroup().addCriterion(nameKey, false);
+			return findEntity(nc);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);

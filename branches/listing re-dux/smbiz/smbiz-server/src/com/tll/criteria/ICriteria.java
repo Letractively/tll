@@ -3,13 +3,14 @@ package com.tll.criteria;
 import java.io.Serializable;
 import java.util.Collection;
 
+import com.tll.client.IMarshalable;
 import com.tll.model.IEntity;
 
 /**
  * A composite of {@link Criterion} objects.
  * @author jpk
  */
-public interface ICriteria<E extends IEntity> extends Serializable, Cloneable {
+public interface ICriteria<E extends IEntity> extends IMarshalable, Serializable {
 
 	/**
 	 * @return The {@link CriteriaType} of this criteria.
@@ -24,7 +25,7 @@ public interface ICriteria<E extends IEntity> extends Serializable, Cloneable {
 	/**
 	 * @return the primary entityGroup.
 	 */
-	ICriterionGroup getPrimaryGroup();
+	CriterionGroup getPrimaryGroup();
 
 	/**
 	 * @return The named query definition.
@@ -47,10 +48,4 @@ public interface ICriteria<E extends IEntity> extends Serializable, Cloneable {
 	 * clear all the {@link Criterion}.
 	 */
 	void clear();
-
-	/**
-	 * Deep copies this criteria.
-	 * @return a deep copy.
-	 */
-	ICriteria<E> copy();
 }

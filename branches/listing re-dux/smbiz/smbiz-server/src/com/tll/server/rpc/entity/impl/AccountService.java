@@ -11,7 +11,6 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.model.RefKey;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
@@ -99,24 +98,23 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 			ICriteria<? extends Account> criteria) {
 
 		// date ranges
-		appendDateRangeCriterion(criteria, search.getDateCreatedRange());
-		appendDateRangeCriterion(criteria, search.getDateModifiedRange());
+		criteria.getPrimaryGroup().addCriterion("dateCreated", search.getDateCreatedRange());
+		criteria.getPrimaryGroup().addCriterion("dateCreated", search.getDateModifiedRange());
 
 		// name
-		criteria.getPrimaryGroup().addCriterion(
-				CriteriaFactory.buildCriterion("name", search.getName(), Comparator.EQUALS, false));
+		criteria.getPrimaryGroup().addCriterion("name", search.getName(), Comparator.EQUALS, false);
 
 		// parent account ref
 		RefKey par = search.getParentAccountRef();
 		if(par != null) {
 			IPrimaryKey<Account> fk = KeyFactory.getPrimaryKey(Account.class, par.getId());
-			criteria.getPrimaryGroup().addCriterion(CriteriaFactory.buildForeignKeyCriterion("parent", fk));
+			criteria.getPrimaryGroup().addCriterion("parent", fk);
 		}
 
 		// status
 		String status = search.getStatus();
 		if(status != null) {
-			CriteriaFactory.buildEnumCriterion("status", EnumUtil.fromString(AccountStatus.class, status));
+			criteria.getPrimaryGroup().addCriterion("status", EnumUtil.fromString(AccountStatus.class, status));
 		}
 	}
 }

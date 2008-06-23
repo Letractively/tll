@@ -12,8 +12,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.CriteriaFactory;
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.impl.IAccountDao;
@@ -162,11 +161,10 @@ public class EntityServiceTest extends DbTest {
 			account = as.persist(account);
 
 			startNewTransaction();
-			final ICriteria<? extends AccountHistory> c =
-					CriteriaFactory.buildForeignKeyCriteria(AccountHistory.class, "account", KeyFactory.getPrimaryKey(
-							Account.class, account.getId()));
+			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
+			criteria.getPrimaryGroup().addCriterion("account", KeyFactory.getPrimaryKey(Account.class, account.getId()));
 			final List<SearchResult<AccountHistory>> list =
-					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), c);
+					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
 			endTransaction();
 			assert list != null && list.size() == 1;
 		}

@@ -1,17 +1,27 @@
 package com.tll.model.key;
 
+import com.tll.key.IKey;
 import com.tll.model.INamedEntity;
 
 /**
- * Key for named entities.
+ * INameKey impl
  * @author jpk
  */
-public class NameKey<N extends INamedEntity> extends BusinessKey<N> implements INameKey<N> {
+public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INameKey<N> {
 
 	private static final long serialVersionUID = -3217664978174156618L;
-	private static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
+
+	public static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
+
+	/**
+	 * The name used to identify the field that holds the name.
+	 */
 	private String fieldName;
-	private Class<N> entityClass;
+
+	/**
+	 * The actual name value.
+	 */
+	private String name;
 
 	/**
 	 * Constructor
@@ -37,31 +47,17 @@ public class NameKey<N extends INamedEntity> extends BusinessKey<N> implements I
 	 * @param fieldName
 	 */
 	public NameKey(Class<N> entityClass, String name, String fieldName) {
-		super();
-		this.entityClass = entityClass;
+		super(entityClass);
 		setName(name);
 		setFieldName(fieldName);
 	}
 
-	public final Class<N> getType() {
-		return entityClass;
-	}
-
-	/*
-	 * This is the default impl. Sub-classes should override this method if there
-	 * are additional fields.
-	 */
-	@Override
-	protected String[] getFields() {
-		return new String[] { DEFAULT_FIELDNAME };
-	}
-
 	public String getName() {
-		return (String) getValue(0);
+		return name;
 	}
 
 	public void setName(String name) {
-		setValue(0, name);
+		this.name = name;
 	}
 
 	public final String getFieldName() {
@@ -69,10 +65,13 @@ public class NameKey<N extends INamedEntity> extends BusinessKey<N> implements I
 	}
 
 	public final void setFieldName(String fieldName) {
+		if(fieldName == null) throw new IllegalArgumentException("A field name must be specified");
 		this.fieldName = fieldName;
 	}
 
+	@Override
 	public void setEntity(N entity) {
+		super.setEntity(entity);
 		entity.setName(getName());
 	}
 
@@ -81,4 +80,33 @@ public class NameKey<N extends INamedEntity> extends BusinessKey<N> implements I
 		return "Name";
 	}
 
+	@Override
+	public void clear() {
+		this.name = null;
+	}
+
+	@Override
+	public boolean isSet() {
+		return name != null;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected NameKey<N> clone() throws CloneNotSupportedException {
+		NameKey<N> cln = (NameKey) super.clone();
+		cln.entityClass = this.entityClass;
+		cln.fieldName = this.fieldName;
+		cln.name = this.name;
+		return cln;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public int compareTo(IKey<N> o) {
+		if(o instanceof NameKey == false) throw new ClassCastException("A key must be a name key to compare");
+		if(!o.isSet()) throw new IllegalArgumentException("The comparing key is not set");
+		NameKey<N> that = (NameKey) o;
+		if(that.fieldName.equals(this.fieldName)) throw new IllegalArgumentException("The field names must be equal");
+		return this.name.compareTo(that.name);
+	}
 }

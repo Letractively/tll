@@ -23,10 +23,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.tll.criteria.Comparator;
+import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.listhandler.IPageResult;
@@ -254,7 +254,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 			else {
 				list = new ArrayList<E>();
 				final BeanWrapper bw = new BeanWrapperImpl();
-				final ICriterionGroup pg = criteria.getPrimaryGroup();
+				final CriterionGroup pg = criteria.getPrimaryGroup();
 				if(pg.size() > 0) {
 					for(final ICriterion ctn : pg) {
 						if(ctn.isGroup()) {

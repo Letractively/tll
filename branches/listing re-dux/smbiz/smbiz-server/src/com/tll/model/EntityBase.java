@@ -239,11 +239,6 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Transient
-	public boolean isDirty() {
-		throw new UnsupportedOperationException("isDirty() is not implemented.");
-	}
-
-	@Transient
 	public final String typeName() {
 		return EntityUtil.typeName(entityClass());
 	}

@@ -1,14 +1,22 @@
 package com.tll.model.impl.key;
 
+import com.tll.key.IKey;
 import com.tll.model.impl.AccountAddress;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.EntityKey;
+import com.tll.model.key.INameKey;
 import com.tll.model.key.NameKey;
 
-public final class AccountAddressNameKey extends NameKey<AccountAddress> {
+public final class AccountAddressNameKey extends BusinessKey<AccountAddress> implements INameKey<AccountAddress> {
 
 	private static final long serialVersionUID = 4730557855914169064L;
 
 	private static final String[] FIELDS = new String[] {
-		"account.id", "name" };
+		"account.id",
+		"name" };
+
+	private Integer accountId;
+	private String name;
 
 	public AccountAddressNameKey() {
 		super(AccountAddress.class);
@@ -21,32 +29,27 @@ public final class AccountAddressNameKey extends NameKey<AccountAddress> {
 	}
 
 	@Override
-	protected String[] getFields() {
-		return FIELDS;
-	}
-
-	@Override
 	public void setEntity(AccountAddress entity) {
 		super.setEntity(entity);
 		entity.getAccount().setId(getAccountId());
 	}
 
 	public Integer getAccountId() {
-		return (Integer) getValue(0);
+		return accountId;
 	}
 
 	public void setAccountId(Integer accountId) {
-		setValue(0, accountId);
+		this.accountId = accountId;
 	}
 
 	@Override
 	public String getName() {
-		return (String) getValue(1);
+		return name;
 	}
 
 	@Override
 	public void setName(String name) {
-		setValue(1, name);
+		this.name = name;
 	}
 
 	@Override
@@ -54,4 +57,38 @@ public final class AccountAddressNameKey extends NameKey<AccountAddress> {
 		return "Account Id and Address Name";
 	}
 
+	@Override
+	protected EntityKey<AccountAddress> clone() throws CloneNotSupportedException {
+		AccountAddressNameKey cln = (AccountAddressNameKey) super.clone();
+		cln.accountId = accountId;
+		cln.name = name;
+		return cln;
+	}
+
+	@Override
+	public String getFieldName() {
+		return NameKey.DEFAULT_FIELDNAME;
+	}
+
+	@Override
+	public void clear() {
+		accountId = null;
+		name = null;
+	}
+
+	@Override
+	public boolean isSet() {
+		return accountId != null && name != null;
+	}
+
+	@Override
+	public int compareTo(IKey<AccountAddress> o) {
+		// TODO impl
+		return 0;
+	}
+
+	@Override
+	public String[] getFieldNames() {
+		return FIELDS;
+	}
 }

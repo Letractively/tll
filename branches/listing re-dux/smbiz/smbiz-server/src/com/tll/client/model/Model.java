@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.model.EntityType;
+import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -19,7 +20,7 @@ import com.tll.model.schema.PropertyType;
  * serves to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IData, Iterable<IPropertyBinding> {
+public final class Model implements IData, IEntity, Iterable<IPropertyBinding> {
 
 	/**
 	 * Entity id property name
@@ -284,8 +285,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * @return true/false
 	 */
 	public boolean isNew() {
-		IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
-		return prop == null ? true : (prop.getInteger() == null);
+		return getVersion() == null;
 	}
 
 	/**
@@ -304,6 +304,17 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	public String getName() {
 		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
 		return prop == null ? null : prop.getString();
+	}
+
+	public Integer getVersion() {
+		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
+		return ipv == null ? null : ipv.getInteger();
+	}
+	
+	public void setVersion(Integer version) {
+		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
+		if(ipv == null) throw new IllegalStateException("No version model property set");
+		ipv.setInteger(version);
 	}
 
 	/**

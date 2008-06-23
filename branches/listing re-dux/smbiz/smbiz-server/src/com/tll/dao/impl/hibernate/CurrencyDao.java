@@ -10,7 +10,7 @@ import org.hibernate.criterion.Criterion;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IDbDialectHandler;
@@ -44,7 +44,9 @@ public class CurrencyDao extends EntityDao<Currency> implements ICurrencyDao {
 
 	public Currency load(INameKey<? extends Currency> nameKey) {
 		try {
-			return findEntity(CriteriaFactory.buildEntityCriteria(nameKey, true));
+			final Criteria<Currency> nc = new Criteria<Currency>(Currency.class);
+			nc.getPrimaryGroup().addCriterion(nameKey, false);
+			return findEntity(nc);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);

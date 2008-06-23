@@ -26,11 +26,6 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	Integer getId();
 
 	/**
-	 * @param id
-	 */
-	void setId(Integer id);
-
-	/**
 	 * True if the identifier for this object was assigned at creation.<br>
 	 * Note that generated entities are expected to provide a constructor that
 	 * takes the initial id as an argument.<br>

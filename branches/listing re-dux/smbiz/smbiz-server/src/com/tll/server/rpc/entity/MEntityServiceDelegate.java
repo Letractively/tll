@@ -15,7 +15,6 @@ import com.tll.client.data.EntityRequest;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
@@ -28,7 +27,7 @@ import com.tll.service.entity.IEntityService;
  * MEntityServiceDelegate
  * @author jpk
  */
-public class MEntityServiceDelegate extends RpcServlet implements IMEntityService<IEntity, ISearch> {
+public class MEntityServiceDelegate extends RpcServlet implements IMEntityService<IEntity> {
 
 	private static final long serialVersionUID = 5017008307371980402L;
 
@@ -42,8 +41,8 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 	 *         {@link EntityPayload}'s {@link Status} is updated with an error
 	 *         message.
 	 */
-	private IMEntityServiceImpl<? extends IEntity, ? extends ISearch> resolveEntityServiceImpl(
-			final EntityRequest request, final EntityPayload payload) {
+	private IMEntityServiceImpl<? extends IEntity> resolveEntityServiceImpl(final EntityRequest request,
+			final EntityPayload payload) {
 		// ensure non-null request
 		if(request == null) {
 			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR);
@@ -117,10 +116,10 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	@SuppressWarnings("unchecked")
 	public IMarshalingListHandler<IEntity> getMarshalingListHandler(final RemoteListingDefinition listingDefinition) {
-		if(listingDefinition == null || listingDefinition.getSearchCriteria() == null) {
+		if(listingDefinition == null || listingDefinition.getCriteria() == null) {
 			throw new IllegalArgumentException("A listing command and member search property must be set.");
 		}
-		final EntityType entityType = listingDefinition.getSearchCriteria().getEntityType();
+		final EntityType entityType = listingDefinition.getCriteria().getEntityType();
 		final MEntityServiceImpl<IEntity, ISearch> svc =
 				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(entityType);
 		return svc.getMarshalingListHandler(getRequestContext(), listingDefinition);

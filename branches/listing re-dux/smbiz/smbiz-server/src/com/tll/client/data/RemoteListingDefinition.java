@@ -6,7 +6,7 @@
 package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
-import com.tll.client.search.ISearch;
+import com.tll.criteria.Criteria;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 
@@ -14,12 +14,11 @@ import com.tll.listhandler.Sorting;
  * RemoteListingDefinition - Definition for server side listings. A unique
  * listing name must be bound to these types.
  * @author jpk
- * @param <S> The search type
  */
-public final class RemoteListingDefinition<S extends ISearch> implements IMarshalable {
+public final class RemoteListingDefinition implements IMarshalable {
 
 	private ListHandlerType listHandlerType;
-	private S searchCriteria;
+	private Criteria criteria;
 	private String[] propKeys;
 	private int pageSize;
 	private Sorting initialSorting;
@@ -34,16 +33,16 @@ public final class RemoteListingDefinition<S extends ISearch> implements IMarsha
 	/**
 	 * Constructor
 	 * @param listHandlerType The required list handler type
-	 * @param searchCriteria The required search criteria
+	 * @param criteria The required search criteria
 	 * @param propKeys The optional property keys filter array
 	 * @param pageSize The required page size. <code>-1</code> means no paging.
 	 * @param initialSorting The required default sorting directive
 	 */
-	public RemoteListingDefinition(ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize,
+	public RemoteListingDefinition(ListHandlerType listHandlerType, Criteria criteria, String[] propKeys, int pageSize,
 			Sorting initialSorting) {
 		super();
 		this.listHandlerType = listHandlerType;
-		this.searchCriteria = searchCriteria;
+		this.criteria = criteria;
 		this.propKeys = propKeys;
 		this.pageSize = pageSize;
 		this.initialSorting = initialSorting;
@@ -77,8 +76,8 @@ public final class RemoteListingDefinition<S extends ISearch> implements IMarsha
 	/**
 	 * @return The search criteria for the listing.
 	 */
-	public S getSearchCriteria() {
-		return searchCriteria;
+	public Criteria getCriteria() {
+		return criteria;
 	}
 
 	/**

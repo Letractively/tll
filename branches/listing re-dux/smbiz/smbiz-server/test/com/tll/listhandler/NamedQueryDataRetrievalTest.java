@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -169,7 +169,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 		// iterator through all defined select named queries
 		for(SelectNamedQuery nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
-			criteria = CriteriaFactory.buildQueryCriteria(nq, queryParamsBindings.get(nq));
+			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types

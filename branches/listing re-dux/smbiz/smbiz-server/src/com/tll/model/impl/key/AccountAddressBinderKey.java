@@ -1,5 +1,6 @@
 package com.tll.model.impl.key;
 
+import com.tll.key.IKey;
 import com.tll.model.impl.AccountAddress;
 import com.tll.model.key.BusinessKey;
 
@@ -11,10 +12,16 @@ import com.tll.model.key.BusinessKey;
 public final class AccountAddressBinderKey extends BusinessKey<AccountAddress> {
 
 	private static final long serialVersionUID = -6492082054153232053L;
-	private static final String[] FIELDS = new String[] { "account.id", "address.id" };
+
+	private static final String[] FIELDS = new String[] {
+		"account.id",
+		"address.id" };
+
+	private Integer accountId;
+	private Integer addressId;
 
 	public AccountAddressBinderKey() {
-		super();
+		super(AccountAddress.class);
 	}
 
 	public AccountAddressBinderKey(Integer accountId, Integer addressId) {
@@ -23,39 +30,51 @@ public final class AccountAddressBinderKey extends BusinessKey<AccountAddress> {
 		setAddressId(addressId);
 	}
 
-	public Class<AccountAddress> getType() {
-		return AccountAddress.class;
-	}
-
 	@Override
 	protected String keyDescriptor() {
 		return "Binder";
 	}
 
 	public Integer getAccountId() {
-		return (Integer) getValue(0);
+		return accountId;
 	}
 
 	public void setAccountId(Integer accountId) {
-		setValue(0, accountId);
+		this.accountId = accountId;
 	}
 
 	public Integer getAddressId() {
-		return (Integer) getValue(1);
+		return addressId;
 	}
 
 	public void setAddressId(Integer addressId) {
-		setValue(1, addressId);
+		this.addressId = addressId;
 	}
 
 	@Override
-	protected String[] getFields() {
-		return FIELDS;
-	}
-
 	public void setEntity(AccountAddress entity) {
 		entity.getAccount().setId(getAccountId());
 		entity.getAddress().setId(getAddressId());
 	}
 
+	@Override
+	public void clear() {
+		accountId = addressId = null;
+	}
+
+	@Override
+	public boolean isSet() {
+		return accountId != null && addressId != null;
+	}
+
+	@Override
+	public int compareTo(IKey<AccountAddress> o) {
+		// TODO impl
+		return 0;
+	}
+
+	@Override
+	public String[] getFieldNames() {
+		return FIELDS;
+	}
 }

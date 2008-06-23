@@ -5,7 +5,6 @@
 package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
-import com.tll.client.search.ISearch;
 import com.tll.listhandler.Sorting;
 import com.tll.util.IDescriptorProvider;
 
@@ -24,7 +23,7 @@ public final class ListingRequest<S extends ISearch> implements IMarshalable, ID
 	/**
 	 * The listing definition used to generate or refresh a listing.
 	 */
-	private RemoteListingDefinition<S> listingDef;
+	private RemoteListingDefinition listingDef;
 
 	private ListingOp listingOp;
 	private Integer offset;

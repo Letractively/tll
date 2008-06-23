@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.dao.impl.IUserDao;
@@ -159,7 +159,9 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	public User findByUsername(String emailAddress) throws EntityNotFoundException {
 		User user;
 		try {
-			user = dao.findEntity(CriteriaFactory.buildEntityCriteria(getEntityClass(), "emailAddress", emailAddress));
+			Criteria<User> criteria = new Criteria<User>(User.class);
+			criteria.getPrimaryGroup().addCriterion("emailAddress", emailAddress, false);
+			user = dao.findEntity(criteria);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new SystemError("Unexpected invalid criteria exception occurred");
@@ -234,7 +236,9 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 		try {
 			// get the user
-			final User user = dao.findEntity(CriteriaFactory.buildEntityCriteria(getEntityClass(), "emailAddress", username));
+			Criteria<User> criteria = new Criteria<User>(User.class);
+			criteria.getPrimaryGroup().addCriterion("emailAddress", username, false);
+			final User user = dao.findEntity(criteria);
 
 			// encode the new password
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);

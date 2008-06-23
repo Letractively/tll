@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tll.SystemError;
-import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -26,8 +25,8 @@ import com.tll.server.rpc.entity.impl.UserService;
  */
 public final class MEntityServiceImplFactory {
 
-	private static final Map<Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>>, IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> map =
-			new HashMap<Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>>, IMEntityServiceImpl<? extends IEntity, ? extends ISearch>>();
+	private static final Map<Class<? extends IMEntityServiceImpl<? extends IEntity>>, IMEntityServiceImpl<? extends IEntity>> map =
+			new HashMap<Class<? extends IMEntityServiceImpl<? extends IEntity>>, IMEntityServiceImpl<? extends IEntity>>();
 
 	/**
 	 * Returns the {@link IMEntityServiceImpl} instance for the given entity
@@ -36,7 +35,7 @@ public final class MEntityServiceImplFactory {
 	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
 	 *         found or an service instantiation related exception occurrs.
 	 */
-	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass) {
+	public static IMEntityServiceImpl<? extends IEntity> instance(Class<? extends IEntity> entityClass) {
 		return instance(EntityUtil.entityTypeFromClass(entityClass));
 	}
 
@@ -48,9 +47,9 @@ public final class MEntityServiceImplFactory {
 	 *         found or an service instantiation related exception occurrs.
 	 */
 	@SuppressWarnings("unchecked")
-	public static IMEntityServiceImpl<IEntity, ISearch> instance(EntityType entityType) {
-		Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> svcType;
-		IMEntityServiceImpl<IEntity, ISearch> svc;
+	public static IMEntityServiceImpl<IEntity> instance(EntityType entityType) {
+		Class<? extends IMEntityServiceImpl<? extends IEntity>> svcType;
+		IMEntityServiceImpl<IEntity> svc;
 		switch(entityType) {
 			case ADDRESS:
 				svcType = AddressService.class;

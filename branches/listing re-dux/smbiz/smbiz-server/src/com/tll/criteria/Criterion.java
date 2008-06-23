@@ -1,8 +1,5 @@
 package com.tll.criteria;
 
-import com.tll.SystemError;
-import com.tll.util.CommonUtil;
-
 /**
  * Object representing a criterion definition. It contains the field name and
  * value as well as the comparator. Any other fields that can be used to
@@ -101,42 +98,33 @@ public class Criterion implements ICriterion {
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-
-		if(obj == null || !(obj instanceof Criterion)) return false;
-
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
 		final Criterion other = (Criterion) obj;
-
-		if(getField() == null || !getField().equals(other.getField())) {
-			return false;
+		if(caseSensitive != other.caseSensitive) return false;
+		if(comparator == null) {
+			if(other.comparator != null) return false;
 		}
-		if(getComparator() == null || !getComparator().equals(other.getComparator())) {
-			return false;
+		else if(!comparator.equals(other.comparator)) return false;
+		if(field == null) {
+			if(other.field != null) return false;
 		}
-		if(isCaseSensitive() != isCaseSensitive()) {
-			return false;
+		else if(!field.equals(other.field)) return false;
+		if(value == null) {
+			if(other.value != null) return false;
 		}
-		if(getValue() == null || !getValue().equals(other.getValue())) {
-			return false;
-		}
-
+		else if(!value.equals(other.value)) return false;
 		return true;
 	}
 
 	@Override
-	protected ICriterion clone() {
-		try {
-			final Criterion result = (Criterion) super.clone();
-			final Object value = getValue();
-			result.setValue(CommonUtil.clone(value));
-			return result;
-		}
-		catch(final CloneNotSupportedException cnse) {
-			throw new SystemError("This should never happen!");
-		}
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (caseSensitive ? 1231 : 1237);
+		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
+		result = prime * result + ((field == null) ? 0 : field.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
 	}
-
-	public ICriterion copy() {
-		return clone();
-	}
-
 }

@@ -2,6 +2,7 @@ package com.tll.model.impl.key;
 
 import java.util.Date;
 
+import com.tll.key.IKey;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.key.BusinessKey;
@@ -10,21 +11,24 @@ public final class AccountHistoryKey extends BusinessKey<AccountHistory> {
 
 	private static final long serialVersionUID = 3274325493560726463L;
 
-	private static final String[] FIELDS = new String[] { "account.id", "transDate", "status" };
+	private static final String[] FIELDS = new String[] {
+		"account.id",
+		"transDate",
+		"status" };
+
+	private Integer accountId;
+	private Date transDate;
+	private AccountStatus accountStatus;
 
 	public AccountHistoryKey() {
-		super();
+		super(AccountHistory.class);
 	}
 
-	public AccountHistoryKey(Integer accountId, Date transDate, AccountStatus status) {
+	public AccountHistoryKey(Integer accountId, Date transDate, AccountStatus accountStatus) {
 		this();
 		setAccountId(accountId);
 		setTransDate(transDate);
-		setAccountStatus(status);
-	}
-
-	public Class<AccountHistory> getType() {
-		return AccountHistory.class;
+		setAccountStatus(accountStatus);
 	}
 
 	@Override
@@ -33,38 +37,57 @@ public final class AccountHistoryKey extends BusinessKey<AccountHistory> {
 	}
 
 	@Override
-	protected String[] getFields() {
-		return FIELDS;
-	}
-
 	public void setEntity(AccountHistory e) {
+		super.setEntity(e);
 		e.getAccount().setId(getAccountId());
 		e.setTransDate(getTransDate());
 		e.setStatus(getAccountStatus());
 	}
 
 	public Integer getAccountId() {
-		return (Integer) getValue(0);
+		return accountId;
 	}
 
 	public void setAccountId(Integer value) {
-		setValue(0, value);
+		this.accountId = value;
 	}
 
 	public Date getTransDate() {
-		return (Date) getValue(1);
+		return transDate;
 	}
 
 	public void setTransDate(Date value) {
-		setValue(1, value);
+		this.transDate = value;
 	}
 
 	public AccountStatus getAccountStatus() {
-		return (AccountStatus) getValue(2);
+		return accountStatus;
 	}
 
 	public void setAccountStatus(AccountStatus value) {
-		setValue(2, value);
+		this.accountStatus = value;
 	}
 
+	@Override
+	public String[] getFieldNames() {
+		return FIELDS;
+	}
+
+	@Override
+	public void clear() {
+		this.accountId = null;
+		this.transDate = null;
+		this.accountStatus = null;
+	}
+
+	@Override
+	public boolean isSet() {
+		return accountId != null && transDate != null && accountStatus != null;
+	}
+
+	@Override
+	public int compareTo(IKey<AccountHistory> o) {
+		// TODO impl
+		return 0;
+	}
 }

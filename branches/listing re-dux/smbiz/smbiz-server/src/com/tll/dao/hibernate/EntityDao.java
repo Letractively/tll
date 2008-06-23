@@ -27,12 +27,11 @@ import org.springframework.util.StringUtils;
 
 import com.google.inject.Provider;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.CriteriaType;
+import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
@@ -119,7 +118,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	public E load(IBusinessKey<? extends E> key) {
 		try {
-			return findEntity(CriteriaFactory.buildEntityCriteria(key, true));
+			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from business key: " + e.getMessage(), e);
@@ -388,7 +387,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
-			final ICriterionGroup pg = criteria.getPrimaryGroup();
+			final CriterionGroup pg = criteria.getPrimaryGroup();
 			Junction j = null;
 			if(pg.size() > 1) {
 				j = pg.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
@@ -410,7 +409,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 
 		if(ctn.isGroup()) {
-			final ICriterionGroup g = (ICriterionGroup) ctn;
+			final CriterionGroup g = (CriterionGroup) ctn;
 			final Junction j = g.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
 			dc.add(j);
 
@@ -531,12 +530,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	@SuppressWarnings("unchecked")
 	public List<E> findByIds(List<Integer> ids, Sorting sorting) {
-		final ICriteria<? extends E> criteria =
-				CriteriaFactory.buildEntityCriteria(getEntityClass(), IEntity.PK_FIELDNAME, ids, Comparator.IN);
-		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
+		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(getEntityClass());
+		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
+		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, criteria, sorting, true);
+			applyCriteriaStrict(dc, nativeCriteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);

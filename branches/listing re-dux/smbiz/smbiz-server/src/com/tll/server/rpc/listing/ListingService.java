@@ -111,7 +111,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 					final RemoteListingDefinition<S> listingDef = listingRequest.getListingDef();
 					if(listingDef != null) {
-						final S search = listingDef.getSearchCriteria();
+						final S search = listingDef.getCriteria();
 						if(search == null) {
 							throw new ListingException(listingName, "No search criteria specified.");
 						}
