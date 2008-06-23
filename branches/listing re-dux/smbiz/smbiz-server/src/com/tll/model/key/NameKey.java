@@ -70,12 +70,6 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INa
 	}
 
 	@Override
-	public void setEntity(N entity) {
-		super.setEntity(entity);
-		entity.setName(getName());
-	}
-
-	@Override
 	protected String keyDescriptor() {
 		return "Name";
 	}

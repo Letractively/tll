@@ -103,11 +103,6 @@ public final class ReflectiveBusinessKey<E extends IEntity> implements IBusiness
 	}
 
 	@Override
-	public void setEntity(E entity) {
-		wrapped.setEntity(entity);
-	}
-
-	@Override
 	public void clear() {
 		wrapped.clear();
 	}

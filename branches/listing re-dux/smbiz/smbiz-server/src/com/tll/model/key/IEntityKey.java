@@ -14,9 +14,4 @@ public interface IEntityKey<E extends IEntity> extends IKey<E> {
 	 * @return the {@link EntityType} this key identifies
 	 */
 	EntityType getEntityType();
-
-	/**
-	 * @param entity
-	 */
-	void setEntity(E entity);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * EntityCache - Generic holder of an arbitrary set of entities. Used, in
@@ -73,7 +73,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	public void addEntity(IEntity e) {
-		if(e != null) map.put(KeyFactory.getPrimaryKey(e), e);
+		if(e != null) map.put(new PrimaryKey<IEntity>(e), e);
 	}
 
 	public void addEntities(Collection<IEntity> entities) {

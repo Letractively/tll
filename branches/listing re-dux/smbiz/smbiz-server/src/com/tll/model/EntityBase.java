@@ -14,8 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.Managed;
 
 /**
@@ -27,9 +27,11 @@ import com.tll.model.schema.Managed;
 public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
+
 	private Integer id;
-	private boolean generated = false;
+	private boolean generated;
 	private Integer version;
+	private PrimaryKey pk;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -174,6 +176,9 @@ public abstract class EntityBase implements IEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
+		if(pk != null) {
+			pk.setId(id);
+		}
 	}
 
 	@Transient
@@ -206,22 +211,34 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	@Transient
+	public final PrimaryKey<? extends IEntity> getPrimaryKey() {
+		if(pk == null) {
+			pk = new PrimaryKey(entityClass(), getId());
+		}
+		return pk;
+	}
+
+	@Override
+	@Transient
+	public final BusinessKey<? extends IEntity>[] getBusinessKeys() {
+		return null;
+	}
+
+	@Override
+	public final boolean equals(Object o) {
 		if(this == o) {
 			return true;
 		}
 		if(o == null || !(o instanceof IEntity)) {
 			return false;
 		}
-		IEntity entity = (IEntity) o;
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return (pk != null && pk.equals(KeyFactory.getPrimaryKey(entity)));
+		return (getPrimaryKey()).equals(((IEntity) o).getPrimaryKey());
 	}
 
 	@Override
-	public int hashCode() {
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return pk == null ? 0 : pk.hashCode();
+	public final int hashCode() {
+		return getPrimaryKey().hashCode();
 	}
 
 	protected ToStringBuilder toStringBuilder() {
@@ -234,7 +251,7 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Transient
-	public boolean isNew() {
+	public final boolean isNew() {
 		return (getVersion() == null);
 	}
 

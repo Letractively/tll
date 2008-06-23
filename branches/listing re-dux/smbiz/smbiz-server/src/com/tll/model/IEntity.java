@@ -1,5 +1,7 @@
 package com.tll.model;
 
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.IDescriptorProvider;
 
 /**
@@ -39,4 +41,15 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return A state independent UI presentable name of the entity
 	 */
 	String typeName();
+
+	/**
+	 * @return The primary key for this entity.
+	 */
+	PrimaryKey<? extends IEntity> getPrimaryKey();
+
+	/**
+	 * @return All defined business keys for this entity type holding the current
+	 *         state of this entity.
+	 */
+	BusinessKey<? extends IEntity>[] getBusinessKeys();
 }

@@ -11,6 +11,9 @@ import com.tll.model.IEntity;
  */
 public abstract class EntityKey<E extends IEntity> implements IEntityKey<E> {
 
+	/**
+	 * The entity type.
+	 */
 	protected Class<E> entityClass;
 
 	/**
@@ -57,11 +60,6 @@ public abstract class EntityKey<E extends IEntity> implements IEntityKey<E> {
 	 * @see #descriptor()
 	 */
 	protected abstract String keyDescriptor();
-
-	@SuppressWarnings("unchecked")
-	public void setEntity(E entity) {
-		this.entityClass = (Class<E>) entity.entityClass();
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
