@@ -15,6 +15,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The customer account entity
@@ -26,15 +28,20 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
-	protected Customer customer;
+	public static final IBusinessKeyDefinition BinderBk =
+			new BusinessKeyDefinition(CustomerAccount.class, "Binder", new String[] {
+				"customer.id",
+				"account.id" });
 
-	protected Account account;
+	private Customer customer;
 
-	protected AccountSource source;
+	private Account account;
 
-	protected AccountStatus status;
+	private AccountSource source;
 
-	protected Visitor initialVisitorRecord;
+	private AccountStatus status;
+
+	private Visitor initialVisitorRecord;
 
 	public Class<? extends IEntity> entityClass() {
 		return CustomerAccount.class;

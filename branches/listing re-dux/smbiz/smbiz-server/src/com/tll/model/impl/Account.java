@@ -29,6 +29,8 @@ import org.hibernate.validator.Valid;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -41,6 +43,9 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+
+	public static final IBusinessKeyDefinition NameBk =
+			new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" });
 
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";

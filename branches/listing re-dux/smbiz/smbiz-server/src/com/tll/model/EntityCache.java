@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tll.model.key.IPrimaryKey;
 import com.tll.model.key.PrimaryKey;
 
 /**
@@ -20,7 +19,7 @@ import com.tll.model.key.PrimaryKey;
  */
 public class EntityCache implements IEntityProvider {
 
-	private final Map<IPrimaryKey<IEntity>, IEntity> map = new HashMap<IPrimaryKey<IEntity>, IEntity>();
+	private final Map<PrimaryKey, IEntity> map = new HashMap<PrimaryKey, IEntity>();
 
 	/**
 	 * Constructor
@@ -39,11 +38,11 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntity(IPrimaryKey<E> key) {
+	public <E extends IEntity> E getEntity(PrimaryKey key) {
 		return (E) map.get(key);
 	}
 
-	public boolean hasEntity(IPrimaryKey<? extends IEntity> key) {
+	public boolean hasEntity(PrimaryKey key) {
 		return map.containsKey(key);
 	}
 
@@ -51,7 +50,7 @@ public class EntityCache implements IEntityProvider {
 	public <E extends IEntity> List<? extends E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
 		List<IEntity> list = new ArrayList<IEntity>();
-		for(IPrimaryKey<? extends IEntity> key : map.keySet()) {
+		for(PrimaryKey key : map.keySet()) {
 			Class<? extends IEntity> etype = key.getType();
 			if(type.isAssignableFrom(etype)) {
 				list.add(map.get(key));
@@ -73,7 +72,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	public void addEntity(IEntity e) {
-		if(e != null) map.put(new PrimaryKey<IEntity>(e), e);
+		if(e != null) map.put(new PrimaryKey(e), e);
 	}
 
 	public void addEntities(Collection<IEntity> entities) {

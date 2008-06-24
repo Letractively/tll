@@ -10,18 +10,23 @@ import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * AppProperty
- * @author jpk
- * 
- * TODO should we eliminate this and just put in config.properties file???
+ * @author jpk TODO should we eliminate this and just put in config.properties
+ *         file???
  */
 @Entity
 @Table(name = "app_property")
 public class AppProperty extends NamedEntity {
 
 	private static final long serialVersionUID = 601145261743504878L;
+
+	public static final IBusinessKeyDefinition NameBk =
+			new BusinessKeyDefinition(AppProperty.class, "Name", new String[] { "name" });
+
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_VALUE = 255;
 

@@ -45,11 +45,11 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	/**
 	 * @return The primary key for this entity.
 	 */
-	PrimaryKey<? extends IEntity> getPrimaryKey();
+	PrimaryKey getPrimaryKey();
 
 	/**
 	 * @return All defined business keys for this entity type holding the current
 	 *         state of this entity.
 	 */
-	BusinessKey<? extends IEntity>[] getBusinessKeys();
+	BusinessKey[] getBusinessKeys();
 }

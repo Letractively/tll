@@ -24,6 +24,8 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
@@ -51,6 +53,9 @@ public abstract class Interface extends NamedTimeStampEntity {
 	public static final String CODE_SALES_TAX = "salestax";
 	public static final String CODE_PAYMENT_METHOD = "pymntmethod";
 	public static final String CODE_CROSS_SELL = "crosssell";
+
+	public static final IBusinessKeyDefinition CodeBk =
+			new BusinessKeyDefinition(Interface.class, "Code", new String[] { "code" });
 
 	protected String code;
 	protected String description;

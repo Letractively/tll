@@ -1,13 +1,12 @@
 package com.tll.model.key;
 
-import com.tll.key.IKey;
 import com.tll.model.INamedEntity;
 
 /**
  * INameKey impl
  * @author jpk
  */
-public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INameKey<N> {
+public class NameKey extends EntityKey {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 
@@ -27,7 +26,7 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INa
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<N> entityClass) {
+	public NameKey(Class<? extends INamedEntity> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -36,7 +35,7 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INa
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<N> entityClass, String name) {
+	public NameKey(Class<? extends INamedEntity> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -46,7 +45,7 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INa
 	 * @param name
 	 * @param fieldName
 	 */
-	public NameKey(Class<N> entityClass, String name, String fieldName) {
+	public NameKey(Class<? extends INamedEntity> entityClass, String name, String fieldName) {
 		super(entityClass);
 		setName(name);
 		setFieldName(fieldName);
@@ -82,25 +81,5 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> implements INa
 	@Override
 	public boolean isSet() {
 		return name != null;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected NameKey<N> clone() throws CloneNotSupportedException {
-		NameKey<N> cln = (NameKey) super.clone();
-		cln.entityClass = this.entityClass;
-		cln.fieldName = this.fieldName;
-		cln.name = this.name;
-		return cln;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public int compareTo(IKey<N> o) {
-		if(o instanceof NameKey == false) throw new ClassCastException("A key must be a name key to compare");
-		if(!o.isSet()) throw new IllegalArgumentException("The comparing key is not set");
-		NameKey<N> that = (NameKey) o;
-		if(that.fieldName.equals(this.fieldName)) throw new IllegalArgumentException("The field names must be equal");
-		return this.name.compareTo(that.name);
 	}
 }

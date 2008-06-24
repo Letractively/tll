@@ -21,217 +21,217 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Binder entity between interface options and an account
- * 
  * @author jpk
  */
 @Entity
 @Table(name = "ioa")
 public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
-  private static final long serialVersionUID = 1185305612828685906L;
 
-  public static final int MAXLEN_PARAM_NAME = 50;
-  public static final int MAXLEN_PARAM_VALUE = 255;
+	private static final long serialVersionUID = 1185305612828685906L;
 
-  protected InterfaceOption option;
+	public static final int MAXLEN_PARAM_NAME = 50;
+	public static final int MAXLEN_PARAM_VALUE = 255;
 
-  protected Account account;
+	public static final IBusinessKeyDefinition BinderBk =
+			new BusinessKeyDefinition(InterfaceOptionAccount.class, "Binder", new String[] {
+				"option.id",
+				"account.id" });
 
-  protected InterfaceStatus status;
+	protected InterfaceOption option;
 
-  protected float setUpPrice = 0f;
+	protected Account account;
 
-  protected float monthlyPrice = 0f;
+	protected InterfaceStatus status;
 
-  protected float annualPrice = 0f;
+	protected float setUpPrice = 0f;
 
-  protected Map<String, String> parameters = new LinkedHashMap<String, String>();
+	protected float monthlyPrice = 0f;
 
-  public Class<? extends IEntity> entityClass() {
-    return InterfaceOptionAccount.class;
-  }
+	protected float annualPrice = 0f;
 
-  /**
-   * @return Returns the option.
-   */
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "option_id")
-  @NotNull
-  public InterfaceOption getOption() {
-    return option;
-  }
+	protected Map<String, String> parameters = new LinkedHashMap<String, String>();
 
-  /**
-   * @param option
-   *          The option to set.
-   */
-  public void setOption(InterfaceOption option) {
-    this.option = option;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return InterfaceOptionAccount.class;
+	}
 
-  /**
-   * @return Returns the account.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "aid")
-  @NotNull
-  public Account getAccount() {
-    return account;
-  }
+	/**
+	 * @return Returns the option.
+	 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "option_id")
+	@NotNull
+	public InterfaceOption getOption() {
+		return option;
+	}
 
-  /**
-   * @param account
-   *          The account to set.
-   */
-  public void setAccount(Account account) {
-    this.account = account;
-  }
+	/**
+	 * @param option The option to set.
+	 */
+	public void setOption(InterfaceOption option) {
+		this.option = option;
+	}
 
-  /**
-   * @return Returns the status.
-   */
-  @Column
-  @NotNull
-  public InterfaceStatus getStatus() {
-    return status;
-  }
+	/**
+	 * @return Returns the account.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "aid")
+	@NotNull
+	public Account getAccount() {
+		return account;
+	}
 
-  /**
-   * @param status
-   *          The status to set.
-   */
-  public void setStatus(InterfaceStatus status) {
-    this.status = status;
-  }
+	/**
+	 * @param account The account to set.
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-  /**
-   * @return Returns the setUpPrice.
-   */
-  @Column(name="set_up_price", precision = 8, scale = 2)
-  @NotNull @Range(min=1L, max=999999L)
-  public float getSetUpPrice() {
-    return setUpPrice;
-  }
+	/**
+	 * @return Returns the status.
+	 */
+	@Column
+	@NotNull
+	public InterfaceStatus getStatus() {
+		return status;
+	}
 
-  /**
-   * @param setUpPrice
-   *          The setUpPrice to set.
-   */
-  public void setSetUpPrice(float setUpPrice) {
-    this.setUpPrice = setUpPrice;
-  }
+	/**
+	 * @param status The status to set.
+	 */
+	public void setStatus(InterfaceStatus status) {
+		this.status = status;
+	}
 
-  /**
-   * @return Returns the monthlyPrice.
-   */
-  @Column(name="monthly_price", precision = 8, scale = 2)
-  @NotNull @Range(min=1L, max=999999L)
-  public float getMonthlyPrice() {
-    return monthlyPrice;
-  }
+	/**
+	 * @return Returns the setUpPrice.
+	 */
+	@Column(name = "set_up_price", precision = 8, scale = 2)
+	@NotNull
+	@Range(min = 1L, max = 999999L)
+	public float getSetUpPrice() {
+		return setUpPrice;
+	}
 
-  /**
-   * @param monthlyPrice
-   *          The monthlyPrice to set.
-   */
-  public void setMonthlyPrice(float monthlyPrice) {
-    this.monthlyPrice = monthlyPrice;
-  }
+	/**
+	 * @param setUpPrice The setUpPrice to set.
+	 */
+	public void setSetUpPrice(float setUpPrice) {
+		this.setUpPrice = setUpPrice;
+	}
 
-  /**
-   * @return Returns the annualPrice.
-   */
-  @Column(name="annual_price", precision = 8, scale = 2)
-  @NotNull @Range(min=1L, max=999999L)
-  public float getAnnualPrice() {
-    return annualPrice;
-  }
+	/**
+	 * @return Returns the monthlyPrice.
+	 */
+	@Column(name = "monthly_price", precision = 8, scale = 2)
+	@NotNull
+	@Range(min = 1L, max = 999999L)
+	public float getMonthlyPrice() {
+		return monthlyPrice;
+	}
 
-  /**
-   * @param annualPrice
-   *          The annualPrice to set.
-   */
-  public void setAnnualPrice(float annualPrice) {
-    this.annualPrice = annualPrice;
-  }
+	/**
+	 * @param monthlyPrice The monthlyPrice to set.
+	 */
+	public void setMonthlyPrice(float monthlyPrice) {
+		this.monthlyPrice = monthlyPrice;
+	}
 
-  /**
-   * @return Returns the parameters.
-   */
-  @CollectionOfElements(fetch = FetchType.EAGER)
-  @JoinTable(name = "ioap", joinColumns = @JoinColumn(name = "ioaid"))
-  @Column(name = "value")
-  @org.hibernate.annotations.MapKey(columns = { @Column(name = "name") })
-  @Valid
-  public Map<String, String> getParameters() {
-    return parameters;
-  }
+	/**
+	 * @return Returns the annualPrice.
+	 */
+	@Column(name = "annual_price", precision = 8, scale = 2)
+	@NotNull
+	@Range(min = 1L, max = 999999L)
+	public float getAnnualPrice() {
+		return annualPrice;
+	}
 
-  /**
-   * @param parameters
-   *          The parameters to set.
-   */
-  public void setParameters(Map<String, String> parameters) {
-    this.parameters = parameters;
-  }
+	/**
+	 * @param annualPrice The annualPrice to set.
+	 */
+	public void setAnnualPrice(float annualPrice) {
+		this.annualPrice = annualPrice;
+	}
 
-  @Transient
-  public void setParameter(String name, String value) {
-    if (name != null && value != null) {
-      parameters.put(name, value);
-    }
-  }
+	/**
+	 * @return Returns the parameters.
+	 */
+	@CollectionOfElements(fetch = FetchType.EAGER)
+	@JoinTable(name = "ioap", joinColumns = @JoinColumn(name = "ioaid"))
+	@Column(name = "value")
+	@org.hibernate.annotations.MapKey(columns = { @Column(name = "name") })
+	@Valid
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
 
-  @Transient
-  public void removeParameter(String name) {
-    if (name != null && parameters != null) {
-      parameters.remove(name);
-    }
-  }
+	/**
+	 * @param parameters The parameters to set.
+	 */
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
 
-  @Transient
-  public void clearParameters() {
-    if (parameters != null) {
-      parameters.clear();
-    }
-  }
+	@Transient
+	public void setParameter(String name, String value) {
+		if(name != null && value != null) {
+			parameters.put(name, value);
+		}
+	}
 
-  @Transient
-  public int getNumParameters() {
-    return parameters == null ? 0 : parameters.size();
-  }
+	@Transient
+	public void removeParameter(String name) {
+		if(name != null && parameters != null) {
+			parameters.remove(name);
+		}
+	}
 
-  @Transient
-  public Account getParent() {
-    return getAccount();
-  }
+	@Transient
+	public void clearParameters() {
+		if(parameters != null) {
+			parameters.clear();
+		}
+	}
 
-  public void setParent(Account e) {
-    setAccount(e);
-  }
+	@Transient
+	public int getNumParameters() {
+		return parameters == null ? 0 : parameters.size();
+	}
 
-  public Integer accountId() {
-    try {
-      return getAccount().getId();
-    }
-    catch(NullPointerException npe) {
-      LOG.warn("Unable to provide related account id due to a NULL nested entity");
-      return null;
-    }
-  }
-  
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
+	@Transient
+	public Account getParent() {
+		return getAccount();
+	}
 
-    .append("option", option == null ? "NULL" : option.descriptor())
-    .append("account", account == null ? "NULL" : account.descriptor())
-    .append("status", status)
-    .append("setUpPrice", setUpPrice)
-    .append("monthlyPrice", monthlyPrice)
-    .append("annualPrice", annualPrice)
-    .append("parameters.size()", parameters == null ? "NULL" : Integer.toString(parameters.size()));
-  }
+	public void setParent(Account e) {
+		setAccount(e);
+	}
+
+	public Integer accountId() {
+		try {
+			return getAccount().getId();
+		}
+		catch(NullPointerException npe) {
+			LOG.warn("Unable to provide related account id due to a NULL nested entity");
+			return null;
+		}
+	}
+
+	@Override
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder()
+
+		.append("option", option == null ? "NULL" : option.descriptor()).append("account",
+				account == null ? "NULL" : account.descriptor()).append("status", status).append("setUpPrice", setUpPrice)
+				.append("monthlyPrice", monthlyPrice).append("annualPrice", annualPrice).append("parameters.size()",
+						parameters == null ? "NULL" : Integer.toString(parameters.size()));
+	}
 }

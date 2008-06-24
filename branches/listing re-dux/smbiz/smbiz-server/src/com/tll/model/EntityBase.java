@@ -212,7 +212,7 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	@Transient
-	public final PrimaryKey<? extends IEntity> getPrimaryKey() {
+	public final PrimaryKey getPrimaryKey() {
 		if(pk == null) {
 			pk = new PrimaryKey(entityClass(), getId());
 		}
@@ -221,12 +221,13 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	@Transient
-	public final BusinessKey<? extends IEntity>[] getBusinessKeys() {
+	public final BusinessKey[] getBusinessKeys() {
+		// TODO defer to subclass ???
 		return null;
 	}
 
 	@Override
-	public final boolean equals(Object o) {
+	public boolean equals(Object o) {
 		if(this == o) {
 			return true;
 		}

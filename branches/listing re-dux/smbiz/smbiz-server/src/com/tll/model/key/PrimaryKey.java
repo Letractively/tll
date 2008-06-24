@@ -1,13 +1,12 @@
 package com.tll.model.key;
 
-import com.tll.key.IKey;
 import com.tll.model.IEntity;
 
 /**
  * Representation of primary keys within the application.
  * @author jpk
  */
-public final class PrimaryKey<E extends IEntity> extends EntityKey<E> implements IPrimaryKey<E> {
+public final class PrimaryKey extends EntityKey {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
@@ -17,16 +16,15 @@ public final class PrimaryKey<E extends IEntity> extends EntityKey<E> implements
 	 * Constructor
 	 * @param e
 	 */
-	@SuppressWarnings("unchecked")
-	public PrimaryKey(E e) {
-		this((Class) e.entityClass(), e.getId());
+	public PrimaryKey(IEntity e) {
+		this(e.entityClass(), e.getId());
 	}
 
 	/**
 	 * Constructor
 	 * @param entityClass
 	 */
-	public PrimaryKey(Class<E> entityClass) {
+	public PrimaryKey(Class<? extends IEntity> entityClass) {
 		this(entityClass, null);
 	}
 
@@ -35,7 +33,7 @@ public final class PrimaryKey<E extends IEntity> extends EntityKey<E> implements
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<E> entityClass, Integer id) {
+	public PrimaryKey(Class<? extends IEntity> entityClass, Integer id) {
 		super(entityClass);
 		setId(id);
 	}
@@ -84,25 +82,5 @@ public final class PrimaryKey<E extends IEntity> extends EntityKey<E> implements
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
 		return result;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public int compareTo(IKey<E> o) {
-		if(o instanceof PrimaryKey == false) throw new ClassCastException("The key must be a primary key to compare");
-		final PrimaryKey other = (PrimaryKey) o;
-		if(!isSet() || !o.isSet() || !typeCompatible(other.entityClass))
-			throw new IllegalArgumentException("The compare keys are not set or are not type compatible");
-		final Integer tid = other.getId();
-		return id.compareTo(tid);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected PrimaryKey<E> clone() throws CloneNotSupportedException {
-		PrimaryKey<E> cln = (PrimaryKey) super.clone();
-		cln.entityClass = this.entityClass;
-		cln.id = id;
-		return cln;
 	}
 }

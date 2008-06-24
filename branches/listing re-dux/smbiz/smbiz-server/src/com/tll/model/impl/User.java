@@ -33,6 +33,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account user entity
@@ -49,6 +51,9 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	public static final int MAXLEN_PASSWORD = 255;
 
 	public static final String SUPERUSER = "jpk";
+
+	public static final IBusinessKeyDefinition bk =
+			new BusinessKeyDefinition(User.class, "Email Address", new String[] { "emailAddress" });
 
 	protected String emailAddress;
 
@@ -225,7 +230,8 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 * @return Returns the address.
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE, CascadeType.PERSIST })
+		CascadeType.MERGE,
+		CascadeType.PERSIST })
 	@JoinColumn(name = "adr_id")
 	public Address getAddress() {
 		return address;

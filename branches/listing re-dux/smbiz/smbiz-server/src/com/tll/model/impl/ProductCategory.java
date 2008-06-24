@@ -16,20 +16,27 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Product category entity
- * 
  * @author jpk
  */
 @Entity
 @Table(name = "product_category")
 public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+
 	private static final long serialVersionUID = 5218888162655443332L;
 
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
+
+	public static final IBusinessKeyDefinition nameBk =
+			new BusinessKeyDefinition(ProductCategory.class, "Account Id and Name", new String[] {
+				"account.id",
+				"name" });
 
 	protected Account account;
 
@@ -41,8 +48,9 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 		return ProductCategory.class;
 	}
 
-  @Column
-  @NotEmpty @Length(max=MAXLEN_NAME)
+	@Column
+	@NotEmpty
+	@Length(max = MAXLEN_NAME)
 	public String getName() {
 		return name;
 	}
@@ -117,11 +125,8 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 
 	@Override
 	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-		.append("account", account == null ? "NULL" : account.descriptor())
-		.append("name", name)
-		.append("description", description)
-		.append("image", image);
+		return super.toStringBuilder().append("account", account == null ? "NULL" : account.descriptor()).append("name",
+				name).append("description", description).append("image", image);
 	}
 
 }
