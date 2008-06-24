@@ -9,10 +9,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
-import com.tll.model.key.IBusinessKeyDefinition;
-import com.tll.model.key.INameKey;
-import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.NameKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.DateRange;
 
 /**
@@ -114,7 +113,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * @param key The primary key
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(IPrimaryKey<? extends IEntity> key) {
+	public CriterionGroup addCriterion(PrimaryKey key) {
 		addCriterion(IEntity.PK_FIELDNAME, key.getId(), Comparator.EQUALS, false);
 		return this;
 	}
@@ -125,7 +124,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(IBusinessKeyDefinition<? extends IEntity> key, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(BusinessKey key, boolean isCaseSensitive) {
 		for(final String fname : key.getFieldNames()) {
 			addCriterion(fname, key.getFieldValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
@@ -138,23 +137,22 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(INameKey<? extends INamedEntity> nameKey, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(NameKey nameKey, boolean isCaseSensitive) {
 		return addCriterion(nameKey.getFieldName(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
 	}
 
 	/**
 	 * Adds a Foreign Key criterion to this group.
-	 * @param <F> The related type
 	 * @param relatedPropertyName The related property name
 	 * @param foreignKeyId The foreign key id
 	 * @return this for method chaining
 	 */
-	public <F extends IEntity> CriterionGroup addCriterion(String relatedPropertyName, IPrimaryKey<F> foreignKeyId) {
+	public CriterionGroup addCriterion(String relatedPropertyName, PrimaryKey foreignKey) {
 		final String fkname = relatedPropertyName + "." + IEntity.PK_FIELDNAME;
-		if(!foreignKeyId.isSet()) {
+		if(!foreignKey.isSet()) {
 			return addCriterion(fkname, DBType.NULL, Comparator.IS, false);
 		}
-		return addCriterion(fkname, foreignKeyId.getId(), Comparator.EQUALS, false);
+		return addCriterion(fkname, foreignKey.getId(), Comparator.EQUALS, false);
 	}
 
 	/**

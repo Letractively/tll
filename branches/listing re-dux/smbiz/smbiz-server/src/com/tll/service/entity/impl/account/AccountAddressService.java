@@ -3,15 +3,12 @@
  */
 package com.tll.service.entity.impl.account;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountAddressDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.AccountAddress;
-import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -34,10 +31,6 @@ public class AccountAddressService extends EntityService<AccountAddress, IAccoun
 	@Override
 	public Class<AccountAddress> getEntityClass() {
 		return AccountAddress.class;
-	}
-
-	public AccountAddress load(INameKey<? extends AccountAddress> key) throws EntityNotFoundException {
-		return dao.load(key);
 	}
 
 }

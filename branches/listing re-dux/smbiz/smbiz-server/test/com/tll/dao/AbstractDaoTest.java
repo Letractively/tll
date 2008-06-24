@@ -35,9 +35,8 @@ import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.EnumUtil;
 
 /**
@@ -280,11 +279,11 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.persist(entity);
 		}
 
-		public E load(IPrimaryKey<? extends E> key) {
+		public E load(PrimaryKey key) {
 			return rawDao.load(key);
 		}
 
-		public E load(IBusinessKey<? extends E> key) {
+		public E load(BusinessKey key) {
 			return rawDao.load(key);
 		}
 
@@ -364,7 +363,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected abstract void verifyLoadedEntityState(E e) throws Exception;
 
-	protected final E getEntityFromDb(IPrimaryKey<E> key) {
+	protected final E getEntityFromDb(PrimaryKey key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
@@ -399,7 +398,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(KeyFactory.getPrimaryKey(entityClass, persistentId));
+		e = dao.load(new PrimaryKey(entityClass, persistentId));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		verifyLoadedEntityState(e);
 		endTransaction();
@@ -413,7 +412,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
+		e = getEntityFromDb(e.getPrimaryKey());
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
 		verifyEntityAlteration(e);
@@ -433,7 +432,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		dbRemove.clear();
 		startNewTransaction();
-		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
+		e = getEntityFromDb(e.getPrimaryKey());
 		endTransaction();
 		Assert.assertNull(e, "The entity was not purged");
 	}
@@ -464,7 +463,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		startNewTransaction();
 		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
-		criteria.getPrimaryGroup().addCriterion(KeyFactory.getPrimaryKey(e));
+		criteria.getPrimaryGroup().addCriterion(e.getPrimaryKey());
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");

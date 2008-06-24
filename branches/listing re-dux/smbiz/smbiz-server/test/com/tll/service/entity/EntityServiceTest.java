@@ -31,7 +31,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.model.impl.User;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 import com.tll.service.entity.impl.account.IAccountService;
 import com.tll.service.entity.impl.user.IUserService;
 
@@ -142,7 +142,7 @@ public class EntityServiceTest extends DbTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), KeyFactory.getPrimaryKey(user));
+			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), user.getPrimaryKey());
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}
@@ -162,7 +162,7 @@ public class EntityServiceTest extends DbTest {
 
 			startNewTransaction();
 			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-			criteria.getPrimaryGroup().addCriterion("account", KeyFactory.getPrimaryKey(Account.class, account.getId()));
+			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey(Account.class, account.getId()));
 			final List<SearchResult<AccountHistory>> list =
 					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
 			endTransaction();

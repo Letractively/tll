@@ -5,15 +5,12 @@
  */
 package com.tll.service.entity.impl.user;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.Authority;
-import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -37,9 +34,4 @@ public class AuthorityService extends EntityService<Authority, IAuthorityDao> im
 	public Class<Authority> getEntityClass() {
 		return Authority.class;
 	}
-
-	public Authority load(INameKey<? extends Authority> key) throws EntityNotFoundException {
-		return dao.load(key);
-	}
-
 }

@@ -50,6 +50,8 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	/**
 	 * @return All defined business keys for this entity type holding the current
 	 *         state of this entity.
+	 * @throws BusinessKeyNotDefinedException When there are no defined business
+	 *         keys for this entity type.
 	 */
-	BusinessKey[] getBusinessKeys();
+	BusinessKey[] getBusinessKeys() throws BusinessKeyNotDefinedException;
 }

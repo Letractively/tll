@@ -39,8 +39,8 @@ import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
-import com.tll.model.key.INameKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.NameKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.service.acl.IBasicAclProviderManager;
 import com.tll.service.entity.StatefulEntityService;
 
@@ -103,10 +103,6 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		return User.class;
 	}
 
-	public User load(INameKey<? extends User> key) throws EntityNotFoundException {
-		return dao.load(key);
-	}
-
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
 			EntityExistsException {
@@ -136,8 +132,8 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(authorityDao.load(KeyFactory.getNameKey(Authority.class, Authority.ROLE_USER,
-				Authority.FIELDNAME_AUTHORITY)));
+		user.addAuthority(authorityDao
+				.load(new NameKey(Authority.class, Authority.ROLE_USER, Authority.FIELDNAME_AUTHORITY)));
 
 		persist(user);
 
@@ -199,7 +195,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	private User getUserById(Integer userId) throws EntityNotFoundException {
-		final User user = dao.load(KeyFactory.getPrimaryKey(User.class, userId));
+		final User user = dao.load(new PrimaryKey(User.class, userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
@@ -265,7 +261,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 		try {
 			// get the user
-			final User user = dao.load(KeyFactory.getPrimaryKey(User.class, userId));
+			final User user = dao.load(new PrimaryKey(User.class, userId));
 			final String username = user.getUsername();
 
 			// encode the new password

@@ -3,15 +3,12 @@
  */
 package com.tll.service.entity.impl.app;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAppPropertyDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.AppProperty;
-import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -35,9 +32,4 @@ public class AppPropertyService extends EntityService<AppProperty, IAppPropertyD
 	public Class<AppProperty> getEntityClass() {
 		return AppProperty.class;
 	}
-
-	public AppProperty load(INameKey<? extends AppProperty> key) throws EntityNotFoundException {
-		return dao.load(key);
-	}
-
 }

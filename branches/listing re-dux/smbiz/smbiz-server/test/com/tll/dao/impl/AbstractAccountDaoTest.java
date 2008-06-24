@@ -15,8 +15,7 @@ import com.tll.model.impl.AccountAddress;
 import com.tll.model.impl.Address;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.PaymentInfo;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractAccountDaoTest
@@ -24,11 +23,11 @@ import com.tll.model.key.KeyFactory;
  */
 public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEntityDaoTest<A> {
 
-	IPrimaryKey<PaymentInfo> piKey;
-	IPrimaryKey<Currency> cKey;
-	IPrimaryKey<Address> a1Key;
-	IPrimaryKey<Address> a2Key;
-	IPrimaryKey<Account> parentKey;
+	PrimaryKey piKey;
+	PrimaryKey cKey;
+	PrimaryKey a1Key;
+	PrimaryKey a2Key;
+	PrimaryKey parentKey;
 
 	/**
 	 * Constructor
@@ -45,7 +44,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 			// load stubbed currency
 			currency = getMockEntityProvider().getEntityCopy(Currency.class);
 			currency = getDao(ICurrencyDao.class).persist(currency);
-			cKey = KeyFactory.getPrimaryKey(currency);
+			cKey = currency.getPrimaryKey();
 		}
 		else {
 			currency = getDao(ICurrencyDao.class).load(cKey);
@@ -64,7 +63,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 				return;
 			}
 			paymentInfo = getDao(IPaymentInfoDao.class).persist(paymentInfo);
-			piKey = KeyFactory.getPrimaryKey(paymentInfo);
+			piKey = paymentInfo.getPrimaryKey();
 		}
 		else {
 			paymentInfo = getDao(IPaymentInfoDao.class).load(piKey);
@@ -82,7 +81,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 					parent.setCurrency(currency);
 					parent.setPaymentInfo(paymentInfo);
 					parent = getDao(IAccountDao.class).persist(parent);
-					parentKey = KeyFactory.getPrimaryKey(parent);
+					parentKey = parent.getPrimaryKey();
 				}
 				else {
 					parent = getDao(IAccountDao.class).load(parentKey);
@@ -95,7 +94,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		Address a1;
 		if(a1Key == null) {
 			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
-			a1Key = KeyFactory.getPrimaryKey(a1);
+			a1Key = a1.getPrimaryKey();
 		}
 		else {
 			a1 = getDao(IAddressDao.class).load(a1Key);
@@ -105,7 +104,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		Address a2;
 		if(a2Key == null) {
 			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
-			a2Key = KeyFactory.getPrimaryKey(a2);
+			a2Key = a2.getPrimaryKey();
 		}
 		else {
 			a2 = getDao(IAddressDao.class).load(a2Key);

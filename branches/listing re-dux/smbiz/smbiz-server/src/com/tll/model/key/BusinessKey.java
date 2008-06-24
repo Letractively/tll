@@ -31,6 +31,26 @@ public final class BusinessKey extends EntityKey {
 		return fieldNames;
 	}
 
+	private int fieldIndex(String fieldName) {
+		for(int i = 0; i < fieldNames.length; ++i) {
+			String fname = fieldNames[i];
+			if(fname != null && fname.equals(fieldName)) return i;
+		}
+		return -1;
+	}
+
+	public Object getFieldValue(String fieldName) {
+		final int index = fieldIndex(fieldName);
+		return (index == -1) ? null : values[index];
+	}
+
+	public void setFieldValue(String fieldName, Object value) {
+		final int index = fieldIndex(fieldName);
+		if(index != -1) {
+			values[index] = value;
+		}
+	}
+
 	@Override
 	protected String keyDescriptor() {
 		return name;

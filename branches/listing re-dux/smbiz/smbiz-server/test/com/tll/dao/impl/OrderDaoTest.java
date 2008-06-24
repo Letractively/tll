@@ -17,8 +17,7 @@ import com.tll.model.impl.Customer;
 import com.tll.model.impl.Order;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.model.impl.Visitor;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderDaoTest
@@ -27,13 +26,13 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao", testName = "OrderDaoTest")
 public class OrderDaoTest extends AbstractDaoTest<Order> {
 
-	IPrimaryKey<Currency> cKey;
-	IPrimaryKey<Address> btKey;
-	IPrimaryKey<Address> stKey;
-	IPrimaryKey<PaymentInfo> piKey;
-	IPrimaryKey<Visitor> vKey;
-	IPrimaryKey<Customer> cstKey;
-	IPrimaryKey<Account> aKey;
+	PrimaryKey cKey;
+	PrimaryKey btKey;
+	PrimaryKey stKey;
+	PrimaryKey piKey;
+	PrimaryKey vKey;
+	PrimaryKey cstKey;
+	PrimaryKey aKey;
 
 	/**
 	 * Constructor
@@ -47,7 +46,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Currency currency;
 		if(cKey == null) {
 			currency = getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class));
-			cKey = KeyFactory.getPrimaryKey(currency);
+			cKey = currency.getPrimaryKey();
 		}
 		else {
 			currency = getDao(ICurrencyDao.class).load(cKey);
@@ -58,7 +57,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Address bta;
 		if(btKey == null) {
 			bta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
-			btKey = KeyFactory.getPrimaryKey(bta);
+			btKey = bta.getPrimaryKey();
 		}
 		else {
 			bta = getDao(IAddressDao.class).load(btKey);
@@ -69,7 +68,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Address sta;
 		if(stKey == null) {
 			sta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
-			stKey = KeyFactory.getPrimaryKey(sta);
+			stKey = sta.getPrimaryKey();
 		}
 		else {
 			sta = getDao(IAddressDao.class).load(stKey);
@@ -80,7 +79,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		PaymentInfo pi;
 		if(piKey == null) {
 			pi = getDao(IPaymentInfoDao.class).persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class));
-			piKey = KeyFactory.getPrimaryKey(pi);
+			piKey = pi.getPrimaryKey();
 		}
 		else {
 			pi = getDao(IPaymentInfoDao.class).load(piKey);
@@ -95,7 +94,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			account.setPaymentInfo(pi);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = account.getPrimaryKey();
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -108,7 +107,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			v = getMockEntityProvider().getEntityCopy(Visitor.class);
 			v.setAccount(account);
 			v = getDao(IVisitorDao.class).persist(v);
-			vKey = KeyFactory.getPrimaryKey(v);
+			vKey = v.getPrimaryKey();
 		}
 		else {
 			v = getDao(IVisitorDao.class).load(vKey);
@@ -123,7 +122,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			customer.setPaymentInfo(pi);
 			customer.setParent(account);
 			customer = (Customer) getDao(IAccountDao.class).persist(customer);
-			cstKey = KeyFactory.getPrimaryKey(customer);
+			cstKey = customer.getPrimaryKey();
 		}
 		else {
 			customer = (Customer) getDao(IAccountDao.class).load(cstKey);

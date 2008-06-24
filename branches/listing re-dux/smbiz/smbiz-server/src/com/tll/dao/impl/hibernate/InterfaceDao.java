@@ -7,22 +7,18 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.hibernate.criterion.Criterion;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.tll.criteria.Criteria;
 import com.tll.criteria.IComparatorTranslator;
-import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IInterfaceDao;
 import com.tll.model.impl.Interface;
 import com.tll.model.impl.InterfaceOption;
 import com.tll.model.impl.InterfaceOptionParameterDefinition;
-import com.tll.model.key.INameKey;
 
 /**
  * InterfaceDao
@@ -63,16 +59,4 @@ public class InterfaceDao extends TimeStampEntityDao<Interface> implements IInte
 			}
 		}
 	}
-
-	public Interface load(INameKey<? extends Interface> nameKey) {
-		try {
-			final Criteria<Interface> nc = new Criteria<Interface>(Interface.class);
-			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			return findEntity(nc);
-		}
-		catch(final InvalidCriteriaException e) {
-			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);
-		}
-	}
-
 }

@@ -11,7 +11,6 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.ICurrencyDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.Currency;
-import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -34,10 +33,6 @@ public class CurrencyService extends EntityService<Currency, ICurrencyDao> imple
 	@Override
 	public Class<Currency> getEntityClass() {
 		return Currency.class;
-	}
-
-	public Currency load(INameKey<? extends Currency> key) throws EntityNotFoundException {
-		return dao.load(key);
 	}
 
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
