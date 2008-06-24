@@ -88,4 +88,10 @@ public final class PrimaryKey extends EntityKey {
 		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return descriptor();
+	}
+
 }

@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -110,13 +109,6 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	public void setType(AddressType type) {
 		this.type = type;
-	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("type", type).append("account",
-				account == null ? "NULL" : account.descriptor()).append("address",
-				address == null ? "NULL" : address.descriptor());
 	}
 
 	@Transient

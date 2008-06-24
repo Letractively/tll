@@ -9,7 +9,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
@@ -234,13 +233,9 @@ public abstract class EntityBase implements IEntity {
 		return getPrimaryKey().hashCode();
 	}
 
-	protected ToStringBuilder toStringBuilder() {
-		return new ToStringBuilder(this).append(IEntity.PK_FIELDNAME, getId()).append("version", getVersion());
-	}
-
 	@Override
-	public String toString() {
-		return toStringBuilder().toString();
+	public final String toString() {
+		return getPrimaryKey().toString() + ", version: " + getVersion();
 	}
 
 	@Transient

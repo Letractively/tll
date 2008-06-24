@@ -4,12 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -55,8 +55,7 @@ public class AppProperty extends NamedEntity {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("name", name).append("value", value);
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] { getName() }) };
 	}
-
 }

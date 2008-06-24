@@ -3,8 +3,6 @@ package com.tll.model;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * Named entity abstract class
  * @author jpk
@@ -23,10 +21,4 @@ public abstract class NamedEntity extends EntityBase implements INamedEntity {
 	public String descriptor() {
 		return typeName() + " '" + getName() + "'";
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("name", getName());
-	}
-
 }

@@ -12,13 +12,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -154,12 +154,11 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("account", account == null ? "NULL" : account.descriptor()).append("transDate",
-				transDate == null ? "NULL" : transDate.toString()).append("status", status).append("notes", notes).append(
-				"pymntTrans", pymntTrans == null ? "NULL" : pymntTrans.descriptor());
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] {
+			accountId(),
+			getTransDate(),
+			getStatus() }) };
 	}
 
 }

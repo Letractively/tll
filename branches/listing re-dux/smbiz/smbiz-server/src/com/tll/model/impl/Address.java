@@ -4,13 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Email;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.PhoneNumber;
@@ -30,7 +30,7 @@ public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 
-	public static final IBusinessKeyDefinition NameBk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(Address.class, "Address and Postal Code", new String[] {
 				"address1",
 				"postalCode" });
@@ -299,13 +299,10 @@ public class Address extends EntityBase {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("emailAddress", emailAddress).append("firstName", firstName).append("lastName", lastName).append("mi", mi)
-				.append("company", company).append("attn", attn).append("address1", address1).append("address2", address2)
-				.append("city", city).append("province", province).append("postalCode", postalCode).append("country", country)
-				.append("phone", phone).append("fax", fax);
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			getAddress1(),
+			getPostalCode() }) };
 	}
 
 }
