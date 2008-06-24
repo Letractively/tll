@@ -125,7 +125,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(BusinessKey key, boolean isCaseSensitive) {
-		for(final String fname : key.getFieldNames()) {
+		for(final String fname : key.getPropertyNames()) {
 			addCriterion(fname, key.getFieldValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
 		return this;

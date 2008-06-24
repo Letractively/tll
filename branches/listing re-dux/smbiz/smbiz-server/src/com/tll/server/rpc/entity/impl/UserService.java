@@ -10,10 +10,7 @@ import java.util.Map;
 import com.tll.SystemError;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.model.RefKey;
-import com.tll.client.search.impl.UserSearch;
-import com.tll.criteria.ICriteria;
 import com.tll.model.impl.User;
-import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -22,7 +19,7 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
  * UserService
  * @author jpk
  */
-public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
+public class UserService extends MNamedEntityServiceImpl<User> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 1);
 
@@ -38,16 +35,5 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 
 	@Override
 	protected void handlePersistOptions(RequestContext requestContext, User e, EntityOptions options) throws SystemError {
-	}
-
-	@Override
-	protected IBusinessKey<? extends User> handleBusinessKeyTranslation(UserSearch search) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void handleSearchTranslation(RequestContext requestContext, UserSearch search,
-			ICriteria<? extends User> criteria) throws IllegalArgumentException {
-		throw new UnsupportedOperationException();
 	}
 }

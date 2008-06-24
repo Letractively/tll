@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.model.EntityType;
-import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -20,7 +19,7 @@ import com.tll.model.schema.PropertyType;
  * serves to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IData, IEntity, Iterable<IPropertyBinding> {
+public final class Model implements IData, Iterable<IPropertyBinding> {
 
 	/**
 	 * Entity id property name
@@ -310,7 +309,7 @@ public final class Model implements IData, IEntity, Iterable<IPropertyBinding> {
 		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
 		return ipv == null ? null : ipv.getInteger();
 	}
-	
+
 	public void setVersion(Integer version) {
 		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
 		if(ipv == null) throw new IllegalStateException("No version model property set");

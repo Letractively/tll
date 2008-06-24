@@ -6,8 +6,8 @@
 package com.tll.client.data;
 
 import com.tll.client.model.RefKey;
-import com.tll.criteria.Criteria;
 import com.tll.model.EntityType;
+import com.tll.model.key.BusinessKey;
 
 /**
  * EntityLoadRequest
@@ -17,11 +17,9 @@ public class EntityLoadRequest extends EntityRequest {
 
 	private RefKey entityRef;
 
-	private Criteria criteria;
+	private BusinessKey businessKey;
 
 	private boolean loadByName;
-
-	private boolean loadByBusinessKey;
 
 	/**
 	 * Constructor
@@ -54,23 +52,19 @@ public class EntityLoadRequest extends EntityRequest {
 	 * Constructor
 	 * @param criteria
 	 */
-	public EntityLoadRequest(Criteria criteria) {
+	public EntityLoadRequest(BusinessKey businessKey) {
 		super();
-		this.criteria = criteria;
-		this.loadByBusinessKey = true;
+		this.businessKey = businessKey;
 	}
 
 	@Override
 	public EntityType getEntityType() {
-		return loadByBusinessKey ? criteria.getEntityType() : entityRef.getType();
+		// TODO fix
+		return null;
 	}
 
 	public boolean isLoadByName() {
 		return loadByName;
-	}
-
-	public boolean isLoadByBusinessKey() {
-		return loadByBusinessKey;
 	}
 
 	/**
@@ -81,10 +75,9 @@ public class EntityLoadRequest extends EntityRequest {
 	}
 
 	/**
-	 * @return The criteria used for marshalling the business key
+	 * @return the businessKey
 	 */
-	public Criteria getCriteria() {
-		return criteria;
+	public BusinessKey getBusinessKey() {
+		return businessKey;
 	}
-
 }

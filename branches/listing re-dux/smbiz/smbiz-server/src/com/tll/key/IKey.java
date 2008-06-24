@@ -20,6 +20,11 @@ public interface IKey extends IDescriptorProvider, Serializable {
 	Class<?> getType();
 
 	/**
+	 * @return A presentation worthy name describing the key type.
+	 */
+	String getTypeName();
+
+	/**
 	 * @return <code>true</code> if the defining key properties have been set.
 	 */
 	boolean isSet();

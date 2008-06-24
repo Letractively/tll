@@ -15,8 +15,8 @@ import com.tll.client.data.EntityRequest;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.RpcServlet;
@@ -68,7 +68,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload getEmptyEntity(final EntityGetEmptyRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.getEmptyEntity(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -77,7 +77,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload load(final EntityLoadRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.load(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -86,7 +86,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload persist(final EntityPersistRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.persist(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -95,7 +95,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 
 	public EntityPayload purge(final EntityPurgeRequest request) {
 		final EntityPayload payload = new EntityPayload();
-		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
+		final IMEntityServiceImpl<? extends IEntity> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {
 			impl.purge(getRequestContext(), request, request.getEntityType(), payload);
 		}
@@ -106,22 +106,14 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		throw new UnsupportedOperationException("getEntityService method is unsupported at the delegate level.");
 	}
 
-	public ICriteria<? extends IEntity> translate(final ISearch search) throws IllegalArgumentException, SystemError {
-		if(search == null) {
-			throw new IllegalArgumentException("Null search argument.");
-		}
-		final EntityType entityType = search.getEntityType();
-		return MEntityServiceImplFactory.instance(entityType).translate(getRequestContext(), entityType, search);
-	}
-
 	@SuppressWarnings("unchecked")
 	public IMarshalingListHandler<IEntity> getMarshalingListHandler(final RemoteListingDefinition listingDefinition) {
 		if(listingDefinition == null || listingDefinition.getCriteria() == null) {
 			throw new IllegalArgumentException("A listing command and member search property must be set.");
 		}
-		final EntityType entityType = listingDefinition.getCriteria().getEntityType();
-		final MEntityServiceImpl<IEntity, ISearch> svc =
-				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(entityType);
+		final MEntityServiceImpl<IEntity> svc =
+				(MEntityServiceImpl<IEntity>) MEntityServiceImplFactory.instance(EntityUtil
+						.entityTypeFromClass(listingDefinition.getCriteria().getEntityClass()));
 		return svc.getMarshalingListHandler(getRequestContext(), listingDefinition);
 	}
 

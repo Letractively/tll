@@ -34,6 +34,6 @@ public interface IMEntityService<E extends IEntity> extends ICrudService {
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(RemoteListingDefinition listingDefinition)
+	IMarshalingListHandler<E> getMarshalingListHandler(RemoteListingDefinition<E> listingDefinition)
 			throws IllegalArgumentException, SystemError;
 }

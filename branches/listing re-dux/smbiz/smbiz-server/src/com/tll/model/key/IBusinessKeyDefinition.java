@@ -11,15 +11,15 @@ public interface IBusinessKeyDefinition {
 	/**
 	 * @return The entity type
 	 */
-	Class<? extends IEntity> getEntityClass();
+	Class<? extends IEntity> getType();
 
 	/**
-	 * @return The key name.
+	 * @return The business key name.
 	 */
-	String getKeyName();
+	String getBusinessKeyName();
 
 	/**
-	 * @return The field names
+	 * @return The OGNL formatted property names that make up this business key.
 	 */
-	String[] getFieldNames();
+	String[] getPropertyNames();
 }

@@ -9,16 +9,17 @@ import com.tll.client.IMarshalable;
 import com.tll.criteria.Criteria;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
+import com.tll.model.IEntity;
 
 /**
  * RemoteListingDefinition - Definition for server side listings. A unique
  * listing name must be bound to these types.
  * @author jpk
  */
-public final class RemoteListingDefinition implements IMarshalable {
+public final class RemoteListingDefinition<E extends IEntity> implements IMarshalable {
 
 	private ListHandlerType listHandlerType;
-	private Criteria criteria;
+	private Criteria<E> criteria;
 	private String[] propKeys;
 	private int pageSize;
 	private Sorting initialSorting;
@@ -38,8 +39,8 @@ public final class RemoteListingDefinition implements IMarshalable {
 	 * @param pageSize The required page size. <code>-1</code> means no paging.
 	 * @param initialSorting The required default sorting directive
 	 */
-	public RemoteListingDefinition(ListHandlerType listHandlerType, Criteria criteria, String[] propKeys, int pageSize,
-			Sorting initialSorting) {
+	public RemoteListingDefinition(ListHandlerType listHandlerType, Criteria<E> criteria, String[] propKeys,
+			int pageSize, Sorting initialSorting) {
 		super();
 		this.listHandlerType = listHandlerType;
 		this.criteria = criteria;
@@ -76,7 +77,7 @@ public final class RemoteListingDefinition implements IMarshalable {
 	/**
 	 * @return The search criteria for the listing.
 	 */
-	public Criteria getCriteria() {
+	public Criteria<E> getCriteria() {
 		return criteria;
 	}
 

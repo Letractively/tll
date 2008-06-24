@@ -8,20 +8,19 @@ package com.tll.client.data.rpc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingRequest;
-import com.tll.client.search.ISearch;
+import com.tll.model.IEntity;
 
 /**
  * IListingService - Handles {@link ListingRequest}s.
- * @param <S> The search type
- * @param <R> The row data type
+ * @param <E> The entity type
  * @author jpk
  */
-public interface IListingService<S extends ISearch> extends RemoteService {
+public interface IListingService<E extends IEntity> extends RemoteService {
 
 	/**
 	 * Processes a listing request.
 	 * @param listingRequest The listing request
 	 * @return ListingPayload The listing response
 	 */
-	ListingPayload process(ListingRequest<S> listingRequest);
+	ListingPayload process(ListingRequest<E> listingRequest);
 }

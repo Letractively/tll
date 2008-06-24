@@ -6,6 +6,7 @@ package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
 import com.tll.listhandler.Sorting;
+import com.tll.model.IEntity;
 import com.tll.util.IDescriptorProvider;
 
 /**
@@ -13,7 +14,7 @@ import com.tll.util.IDescriptorProvider;
  * against a particular listing.
  * @author jpk
  */
-public final class ListingRequest<S extends ISearch> implements IMarshalable, IDescriptorProvider {
+public final class ListingRequest<E extends IEntity> implements IMarshalable, IDescriptorProvider {
 
 	/**
 	 * The unique listing name.
@@ -23,7 +24,7 @@ public final class ListingRequest<S extends ISearch> implements IMarshalable, ID
 	/**
 	 * The listing definition used to generate or refresh a listing.
 	 */
-	private RemoteListingDefinition listingDef;
+	private RemoteListingDefinition<E> listingDef;
 
 	private ListingOp listingOp;
 	private Integer offset;
@@ -46,7 +47,7 @@ public final class ListingRequest<S extends ISearch> implements IMarshalable, ID
 	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
 	 */
-	public ListingRequest(String listingName, RemoteListingDefinition<S> listingDef, ListingOp listingOp, Integer offset,
+	public ListingRequest(String listingName, RemoteListingDefinition<E> listingDef, ListingOp listingOp, Integer offset,
 			Sorting sorting) {
 		super();
 		this.listingName = listingName;
@@ -101,7 +102,7 @@ public final class ListingRequest<S extends ISearch> implements IMarshalable, ID
 	 * @return The listing definition used when generating or refreshing a
 	 *         listing.
 	 */
-	public RemoteListingDefinition<S> getListingDef() {
+	public RemoteListingDefinition<E> getListingDef() {
 		return listingDef;
 	}
 

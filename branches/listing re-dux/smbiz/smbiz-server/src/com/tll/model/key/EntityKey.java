@@ -38,10 +38,6 @@ public abstract class EntityKey implements IKey {
 		this.entityClass = type;
 	}
 
-	public final String descriptor() {
-		return getEntityType().getName() + " " + keyDescriptor();
-	}
-
 	/**
 	 * Is the given class compatible with this key type? Used in
 	 * {@link #compareTo(IKey)} for instance.
@@ -52,6 +48,11 @@ public abstract class EntityKey implements IKey {
 		final Class<? extends IEntity> thisType = getType();
 		return (type == null || thisType == null) ? false : thisType.isAssignableFrom(type)
 				|| type.isAssignableFrom(thisType);
+	}
+
+	@Override
+	public final String descriptor() {
+		return getEntityType().getName() + " " + keyDescriptor();
 	}
 
 	/**

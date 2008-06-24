@@ -38,6 +38,11 @@ public final class PrimaryKey extends EntityKey {
 		setId(id);
 	}
 
+	@Override
+	public String getTypeName() {
+		return "Primary Key";
+	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -48,7 +53,7 @@ public final class PrimaryKey extends EntityKey {
 
 	@Override
 	protected String keyDescriptor() {
-		return "Primary Key";
+		return "Id " + getId();
 	}
 
 	@Override

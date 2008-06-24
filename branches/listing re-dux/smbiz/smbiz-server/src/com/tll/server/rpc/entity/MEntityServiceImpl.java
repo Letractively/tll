@@ -6,7 +6,6 @@ package com.tll.server.rpc.entity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -26,16 +25,11 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.criteria.Criteria;
-import com.tll.criteria.CriteriaType;
-import com.tll.criteria.ICriteria;
-import com.tll.criteria.IQueryParam;
-import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.AuxDataHandler;
@@ -103,20 +97,14 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
 		final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 
-		if(request.isLoadByBusinessKey()) {
-			// load by business key
-			Criteria criteria = request.getCriteria();
-			if(criteria == null) {
-				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
-				return null;
-			}
-			IBusinessKey<? extends E> key = handleBusinessKeyTranslation(search);
-			return svc.load(key);
+		BusinessKey bk = request.getBusinessKey();
+		if(bk != null) {
+			return svc.load(bk);
 		}
 
 		// load by primary key
 		final Integer id = request.getEntityRef().getId();
-		return svc.load(KeyFactory.getPrimaryKey(entityClass, id));
+		return svc.load(new PrimaryKey(entityClass, id));
 	}
 
 	public final void load(final RequestContext requestContext, final EntityLoadRequest request,
@@ -206,7 +194,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}
-			final IPrimaryKey<IEntity> pk = KeyFactory.getPrimaryKey(entityClass, entityRef.getId());
+			final PrimaryKey pk = new PrimaryKey(entityClass, entityRef.getId());
 			final IEntity e = svc.load(pk);
 			svc.purge(e);
 
@@ -225,46 +213,12 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		}
 	}
 
-	/**
-	 * Handles the entity specific search to criteria translation.
-	 * @param search
-	 * @param criteria
-	 * @throws IllegalArgumentException When the <code>search</code> parameter
-	 *         is unsupported.
-	 */
-	protected abstract void handleSearchTranslation(RequestContext requestContext, S search,
-			ICriteria<? extends E> criteria) throws IllegalArgumentException;
-
-	@SuppressWarnings("unchecked")
-	public final ICriteria<? extends E> translate(final RequestContext requestContext, final EntityType entityType,
-			final S search) throws IllegalArgumentException {
-		final CriteriaType criteriaType = search.getCriteriaType();
-		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
-		final Set<IQueryParam> queryParams = search.getQueryParams();
-		Criteria<? extends E> criteria;
-
-		if(criteriaType.isQuery()) {
-			SelectNamedQuery nq = search.getNamedQuery();
-			if(nq == null) {
-				throw new IllegalArgumentException("No named query specified");
-			}
-			criteria = new Criteria<E>(nq, queryParams);
-		}
-		else {
-			// entity
-			criteria = new Criteria<E>(entityClass);
-			handleSearchTranslation(requestContext, search, criteria);
-		}
-
-		return criteria;
-	}
-
 	/*
 	 * Sub-classes should override this method for specific table requirements
 	 * based on the listing command particulars.
 	 */
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
-			final RemoteListingDefinition<S> listingDefinition) {
+			final RemoteListingDefinition<E> listingDefinition) {
 		if(listingDefinition.getPropKeys() != null) {
 			return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext),
 					listingDefinition.getPropKeys());

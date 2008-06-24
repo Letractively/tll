@@ -80,10 +80,10 @@ public final class MEntityServiceImplFactory {
 				throw new SystemError("Unhandled MEntityServiceImpl entity type: " + entityType);
 		}
 
-		svc = (IMEntityServiceImpl<IEntity, ISearch>) map.get(svcType);
+		svc = (IMEntityServiceImpl<IEntity>) map.get(svcType);
 		if(svc == null) {
 			try {
-				svc = (IMEntityServiceImpl<IEntity, ISearch>) svcType.newInstance();
+				svc = (IMEntityServiceImpl<IEntity>) svcType.newInstance();
 			}
 			catch(InstantiationException e) {
 				throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityType, e);

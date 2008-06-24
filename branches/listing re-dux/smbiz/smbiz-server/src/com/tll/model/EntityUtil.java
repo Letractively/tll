@@ -111,13 +111,13 @@ public final class EntityUtil {
 		}
 		try {
 			for(E e : clctn) {
-				BusinessKey[] keys = e.getBusinessKeys();
-				for(BusinessKey key : keys) {
+				BusinessKey[] bks = e.getBusinessKeys();
+				for(BusinessKey bk : bks) {
 					for(E e2 : clctn) {
 						if(e != e2) {
-							BusinessKey[] otherKeys = e.getBusinessKeys();
-							for(BusinessKey otherKey : otherKeys) {
-								if(key.descriptor().equals(otherKey.descriptor()) && key.equals(otherKey)) {
+							BusinessKey[] otherBks = e2.getBusinessKeys();
+							for(BusinessKey bk2 : otherBks) {
+								if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
 									return false;
 								}
 							}

@@ -51,6 +51,11 @@ public class NameKey extends EntityKey {
 		setFieldName(fieldName);
 	}
 
+	@Override
+	public String getTypeName() {
+		return "Name key";
+	}
+
 	public String getName() {
 		return name;
 	}

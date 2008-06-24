@@ -81,6 +81,6 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 * @return The marshaling list handler.
 	 */
 	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext,
-			RemoteListingDefinition listingDefinition);
+			RemoteListingDefinition<E> listingDefinition);
 
 }

@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.key.BusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.Managed;
 
@@ -217,13 +216,6 @@ public abstract class EntityBase implements IEntity {
 			pk = new PrimaryKey(entityClass(), getId());
 		}
 		return pk;
-	}
-
-	@Override
-	@Transient
-	public final BusinessKey[] getBusinessKeys() {
-		// TODO defer to subclass ???
-		return null;
 	}
 
 	@Override

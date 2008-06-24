@@ -19,7 +19,6 @@ import com.tll.client.data.rpc.IListingService;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.listhandler.EmptyListException;
@@ -30,7 +29,6 @@ import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
@@ -42,7 +40,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * ListingService - Handles client listing requests.
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S> {
+public final class ListingService<E extends IEntity> extends RpcServlet implements IListingService<E> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -52,7 +50,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 	 * @return Payload contains the table page and status.
 	 */
 	@SuppressWarnings("unchecked")
-	public ListingPayload process(final ListingRequest<S> listingRequest) {
+	public ListingPayload process(final ListingRequest<E> listingRequest) {
 		final Status status = new Status();
 
 		IListingHandler<Model> handler = null;
@@ -109,31 +107,21 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 					if(log.isDebugEnabled()) log.debug("Generating listing handler for listing: '" + listingName + "'...");
 
-					final RemoteListingDefinition<S> listingDef = listingRequest.getListingDef();
+					final RemoteListingDefinition<E> listingDef = listingRequest.getListingDef();
 					if(listingDef != null) {
-						final S search = listingDef.getCriteria();
-						if(search == null) {
+						final ICriteria<E> criteria = listingDef.getCriteria();
+						if(criteria == null) {
 							throw new ListingException(listingName, "No search criteria specified.");
 						}
 
 						// resolve the entity class and corres. marshaling entity service
-						final Class<E> entityClass = EntityUtil.entityClassFromType(search.getEntityType());
-						final IMEntityServiceImpl<E, S> mEntitySvc =
-								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
-
-						// translate client side criteria to server side criteria
-						final ICriteria<? extends E> criteria;
-						try {
-							criteria = mEntitySvc.translate(requestContext, EntityUtil.entityTypeFromClass(entityClass), search);
-						}
-						catch(final IllegalArgumentException iae) {
-							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
-									+ listingRequest.descriptor(), iae);
-						}
+						final Class<? extends E> entityClass = criteria.getEntityClass();
+						final IMEntityServiceImpl<E> mEntitySvc =
+								(IMEntityServiceImpl<E>) MEntityServiceImplFactory.instance(entityClass);
 
 						// resolve the listing handler data provider
 						final IListHandlerDataProvider<E> dataProvider =
-								requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+								requestContext.getEntityServiceFactory().instanceByEntityType((Class<E>) entityClass);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();

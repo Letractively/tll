@@ -19,12 +19,6 @@ import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.client.data.ListingRequest;
 import com.tll.client.data.RemoteListingDefinition;
-import com.tll.client.model.RefKey;
-import com.tll.client.search.ISearch;
-import com.tll.client.search.impl.AccountSearch;
-import com.tll.client.search.impl.AddressSearch;
-import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.AppRefDataModule;
@@ -35,8 +29,7 @@ import com.tll.guice.MailModule;
 import com.tll.guice.MockEntitiesModule;
 import com.tll.guice.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityType;
-import com.tll.model.IEntity;
+import com.tll.model.impl.Account;
 import com.tll.server.RequestContext;
 import com.tll.util.EnumUtil;
 
@@ -96,14 +89,11 @@ public class ListingServiceTest extends DbTest {
 	}
 
 	public void test() throws Exception {
-		ListingService<IEntity, ISearch> listingService = new ListingService<IEntity, ISearch>();
-		
-		AddressSearch search = new AddressSearch(CriteriaType.ENTITY);
-		search.set
-		search.setParentAccountRef(new RefKey())
-		RemoteListingDefinition<AccountSearch> rld = new RemoteListingDefinition<AccountSearch>(ListHandlerType.PAGE, );
+		ListingService<Account> listingService = new ListingService<Account>();
 
-		ListingRequest<ISearch> listingRequest = new ListingRequest<ISearch>();
+		RemoteListingDefinition<Account> rld = new RemoteListingDefinition<Account>(ListHandlerType.PAGE);
+
+		ListingRequest<Account> listingRequest = new ListingRequest<Account>();
 
 		listingService.process(listingRequest);
 	}

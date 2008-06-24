@@ -5,8 +5,6 @@
  */
 package com.tll.model.key;
 
-import java.util.Arrays;
-
 import com.tll.model.IEntity;
 
 /**
@@ -25,76 +23,48 @@ public final class BusinessKeyDefinition implements IBusinessKeyDefinition {
 	 * OGNL formatted property paths representing the properties of the defined
 	 * business key.
 	 */
-	private final String[] fieldNames;
+	private final String[] propertyNames;
 
 	/**
 	 * The name of this business key.
 	 */
-	private final String keyName;
+	private final String businessKeyName;
 
 	/**
 	 * Constructor
 	 * @param entityClass The entity type
-	 * @param keyName The business key name
-	 * @param fieldNames OGNL formatted String representing the properties of the
-	 *        business key.
+	 * @param businessKeyName The business key name
+	 * @param propertyNames OGNL formatted String representing the properties of
+	 *        the business key.
 	 */
-	public BusinessKeyDefinition(Class<? extends IEntity> entityClass, String keyName, String[] fieldNames) {
+	public BusinessKeyDefinition(Class<? extends IEntity> entityClass, String businessKeyName, String[] propertyNames) {
 		if(entityClass == null) throw new IllegalArgumentException("An entity type must be specified.");
-		if(fieldNames == null || fieldNames.length < 1) {
+		if(propertyNames == null || propertyNames.length < 1) {
 			throw new IllegalArgumentException("At least one property must be specified in a business key");
 		}
 		this.entityClass = entityClass;
-		this.fieldNames = fieldNames;
-		this.keyName = keyName;
+		this.propertyNames = propertyNames;
+		this.businessKeyName = businessKeyName;
 	}
 
 	/**
 	 * @return the entityClass
 	 */
-	public Class<? extends IEntity> getEntityClass() {
+	public Class<? extends IEntity> getType() {
 		return entityClass;
 	}
 
 	/**
 	 * @return the keyName
 	 */
-	public String getKeyName() {
-		return keyName;
+	public String getBusinessKeyName() {
+		return businessKeyName;
 	}
 
 	/**
-	 * @return the fieldNames
+	 * @return the propertyNames
 	 */
-	public String[] getFieldNames() {
-		return fieldNames;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if(getClass() != obj.getClass()) return false;
-		final BusinessKeyDefinition other = (BusinessKeyDefinition) obj;
-		if(entityClass == null) {
-			if(other.entityClass != null) return false;
-		}
-		else if(!entityClass.equals(other.entityClass)) return false;
-		if(!Arrays.equals(fieldNames, other.fieldNames)) return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entityClass == null) ? 0 : entityClass.hashCode());
-		result = prime * result + Arrays.hashCode(fieldNames);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return keyName.toString() + " - " + entityClass.toString();
+	public String[] getPropertyNames() {
+		return propertyNames;
 	}
 }

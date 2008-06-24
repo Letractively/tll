@@ -18,6 +18,7 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -32,13 +33,13 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	private static final long serialVersionUID = 7356724207827323290L;
 
-	public static final IBusinessKeyDefinition BinderBk =
-			new BusinessKeyDefinition(AccountHistory.class, "Binder", new String[] {
+	private static final IBusinessKeyDefinition BinderBk =
+			new BusinessKeyDefinition(AccountAddress.class, "Binder", new String[] {
 				"account.id",
 				"address.id" });
 
-	public static final IBusinessKeyDefinition NameBk =
-			new BusinessKeyDefinition(AccountHistory.class, "Account Id and Name", new String[] {
+	private static final IBusinessKeyDefinition NameBk =
+			new BusinessKeyDefinition(AccountAddress.class, "Account Id and Name", new String[] {
 				"account.id",
 				"name" });
 
@@ -135,6 +136,27 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
+	}
+
+	public Integer addressId() {
+		try {
+			return getAddress().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public final BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(BinderBk, new Object[] {
+				accountId(),
+				addressId() }),
+			new BusinessKey(NameBk, new Object[] {
+				accountId(),
+				getName() }) };
 	}
 
 }
