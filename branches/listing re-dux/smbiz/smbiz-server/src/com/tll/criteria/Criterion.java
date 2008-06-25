@@ -1,5 +1,7 @@
 package com.tll.criteria;
 
+import com.tll.client.model.IPropertyValue;
+
 /**
  * Object representing a criterion definition. It contains the field name and
  * value as well as the comparator. Any other fields that can be used to
@@ -10,26 +12,20 @@ public class Criterion implements ICriterion {
 
 	private static final long serialVersionUID = -9033958462037763702L;
 
-	private String field;
-
-	private Object value;
+	private IPropertyValue propertyValue;
 
 	private Comparator comparator;
 
 	private boolean caseSensitive;
 
 	public Criterion() {
-		this(null, null);
+		this(null, null, false);
 	}
 
-	public Criterion(String field, Object value) {
-		this(field, value, Comparator.EQUALS, true);
-	}
-
-	public Criterion(String field, Object value, Comparator comparator, boolean caseSensitive) {
-		super();
-		setFieldValueComparator(field, value, comparator);
-		setCaseSensitive(caseSensitive);
+	public Criterion(IPropertyValue propertyValue, Comparator comparator, boolean isCaseSensitive) {
+		this.propertyValue = propertyValue;
+		this.comparator = comparator;
+		this.caseSensitive = isCaseSensitive;
 	}
 
 	public boolean isGroup() {
@@ -52,47 +48,27 @@ public class Criterion implements ICriterion {
 		this.comparator = comparator;
 	}
 
-	public String getField() {
-		return field;
+	public IPropertyValue getPropertyValue() {
+		return propertyValue;
 	}
 
-	public void setField(String field) {
-		this.field = field;
-	}
-
-	public String getPropertyName() {
-		return this.field;
-	}
-
-	public Object getValue() {
-		return value;
-	}
-
-	public void setValue(Object value) {
-		this.value = value;
-	}
-
-	public void setFieldValue(String field, Object value) {
-		setField(field);
-		setValue(value);
-	}
-
-	public void setFieldValueComparator(String field, Object value, Comparator comp) {
-		setFieldValue(field, value);
-		setComparator(comp);
+	public void setPropertyValue(IPropertyValue propertyValue) {
+		this.propertyValue = propertyValue;
 	}
 
 	public boolean isSet() {
-		if(Comparator.LIKE.equals(getComparator()) && "%".equals(getValue())) {
+		if(propertyValue == null || propertyValue.getValue() == null || comparator == null) return false;
+		if(Comparator.LIKE.equals(getComparator()) && "%".equals(propertyValue.getValue())) {
 			// if we are doing a like query and the value is just %, then ignore this
 			// criterion
 			return false;
 		}
-		return (getValue() != null);
+		return true;
 	}
 
 	public void clear() {
-		setFieldValue(null, null);
+		this.propertyValue = null;
+		this.comparator = null;
 	}
 
 	@Override
@@ -106,14 +82,10 @@ public class Criterion implements ICriterion {
 			if(other.comparator != null) return false;
 		}
 		else if(!comparator.equals(other.comparator)) return false;
-		if(field == null) {
-			if(other.field != null) return false;
+		if(propertyValue == null) {
+			if(other.propertyValue != null) return false;
 		}
-		else if(!field.equals(other.field)) return false;
-		if(value == null) {
-			if(other.value != null) return false;
-		}
-		else if(!value.equals(other.value)) return false;
+		else if(!propertyValue.equals(other.propertyValue)) return false;
 		return true;
 	}
 
@@ -123,8 +95,7 @@ public class Criterion implements ICriterion {
 		int result = 1;
 		result = prime * result + (caseSensitive ? 1231 : 1237);
 		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
-		result = prime * result + ((field == null) ? 0 : field.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + ((propertyValue == null) ? 0 : propertyValue.hashCode());
 		return result;
 	}
 }

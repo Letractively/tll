@@ -2,6 +2,8 @@ package com.tll.model.key;
 
 import java.util.Arrays;
 
+import com.tll.client.model.IPropertyValue;
+
 /**
  * Abstract base class for all business keys in the application.
  * @author jpk
@@ -12,7 +14,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 
 	private final String businessKeyName;
 	private final String[] propertyNames;
-	private Object[] propertyValues;
+	private IPropertyValue[] propertyValues;
 
 	/**
 	 * Constructor
@@ -30,7 +32,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	 * @param def The business key definition
 	 * @param propertyValues The propertyValues array
 	 */
-	public BusinessKey(IBusinessKeyDefinition def, Object[] propertyValues) {
+	public BusinessKey(IBusinessKeyDefinition def, IPropertyValue[] propertyValues) {
 		this(def);
 		copyValues(propertyValues);
 	}
@@ -55,7 +57,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 		return propertyNames;
 	}
 
-	private void copyValues(Object[] values) {
+	private void copyValues(IPropertyValue[] values) {
 		for(int i = 0; i < this.propertyValues.length; ++i) {
 			this.propertyValues[i] = values[i];
 		}
@@ -74,7 +76,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 		return (index == -1) ? null : propertyValues[index];
 	}
 
-	public void setFieldValue(String fieldName, Object value) {
+	public void setFieldValue(String fieldName, IPropertyValue value) {
 		final int index = fieldIndex(fieldName);
 		if(index != -1) {
 			propertyValues[index] = value;
@@ -83,7 +85,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 
 	@Override
 	public void clear() {
-		this.propertyValues = new Object[propertyNames.length];
+		this.propertyValues = new IPropertyValue[propertyNames.length];
 	}
 
 	@Override

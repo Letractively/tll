@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.tll.client.model.EnumPropertyValue;
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
@@ -18,7 +21,7 @@ import com.tll.util.DateRange;
  * CriterionGroup
  * @author jpk
  */
-public class CriterionGroup implements Iterable<ICriterion> {
+public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 
 	private static final long serialVersionUID = 502701212641369513L;
 
@@ -86,25 +89,24 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	/**
 	 * Adds a criterion to this group with all parameters for a criterion taken in
 	 * as method arguments. This is the generalized way to add a criterion.
-	 * @param fieldName The field name
-	 * @param fieldValue The field value
+	 * @param propertyValue The property value
 	 * @param comp The comparator
 	 * @param isCaseSensitive Is case sensitive?
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String fieldName, Object fieldValue, Comparator comp, boolean isCaseSensitive) {
-		getGroupInternal().add(new Criterion(fieldName, fieldValue, comp, isCaseSensitive));
+	public CriterionGroup addCriterion(IPropertyValue propertyValue, Comparator comp, boolean isCaseSensitive) {
+		getGroupInternal().add(new Criterion(propertyValue, comp, isCaseSensitive));
 		return this;
 	}
 
 	/**
 	 * Adds an enum criterion to this group.
-	 * @param fieldName The field name
+	 * @param propertyName The field name
 	 * @param enm The enum value
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String fieldName, Enum<?> enm) {
-		addCriterion(fieldName, enm, Comparator.EQUALS, true);
+	public CriterionGroup addCriterion(String propertyName, Enum<?> enm) {
+		addCriterion(new EnumPropertyValue(propertyName, enm), Comparator.EQUALS, true);
 		return this;
 	}
 
@@ -114,7 +116,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(PrimaryKey key) {
-		addCriterion(IEntity.PK_FIELDNAME, key.getId(), Comparator.EQUALS, false);
+		addCriterion(new IntPropertyValue(IEntity.PK_FIELDNAME, key.getId()), Comparator.EQUALS, false);
 		return this;
 	}
 
@@ -160,27 +162,27 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	 * wildcards ("%") in the search token argument. If the given search token is
 	 * <code>null</code>, the field will be compared for <code>null</code>
 	 * (i.e.: "is null")
-	 * @param fieldName The field name
+	 * @param propertyName The field name
 	 * @param searchToken The search token
 	 * @param isCaseSensitive Is case sensitive?
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String fieldName, String searchToken, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(String propertyName, String searchToken, boolean isCaseSensitive) {
 		if(searchToken == null) {
-			return addCriterion(fieldName, null, Comparator.IS, false);
+			return addCriterion(propertyName, null, Comparator.IS, false);
 		}
-		return addCriterion(fieldName, searchToken, (searchToken.indexOf('%') < 0) ? Comparator.EQUALS : Comparator.LIKE,
-				isCaseSensitive);
+		return addCriterion(propertyName, searchToken,
+				(searchToken.indexOf('%') < 0) ? Comparator.EQUALS : Comparator.LIKE, isCaseSensitive);
 	}
 
 	/**
 	 * Adds a date range criterion to this group.
-	 * @param fieldName The field name
+	 * @param propertyName The field name
 	 * @param dateRange The date range
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String fieldName, DateRange dateRange) {
-		return addCriterion(fieldName, dateRange, Comparator.BETWEEN, false);
+	public CriterionGroup addCriterion(String propertyName, DateRange dateRange) {
+		return addCriterion(propertyName, dateRange, Comparator.BETWEEN, false);
 	}
 
 	/**

@@ -2,6 +2,8 @@ package com.tll.criteria;
 
 import java.io.Serializable;
 
+import com.tll.client.model.IPropertyValue;
+
 /**
  * Criterion definition.
  * @author jpk
@@ -9,26 +11,9 @@ import java.io.Serializable;
 public interface ICriterion extends Serializable {
 
 	/**
-	 * Returns the property name used by the UI for this criterion. In most cases,
-	 * the property name will be equivalent to the field name. However, in the
-	 * case of foreign key fields, the field value will include the ".id" whereas
-	 * the property name will be only the reference entity name.
-	 * @return the property name
+	 * @return The property value containing the property name and search value.
 	 */
-	String getPropertyName();
-
-	/**
-	 * Returns the name of the field used by the persistence framework.
-	 * @return the name of the field
-	 * @see #getPropertyName()
-	 */
-	String getField();
-
-	/**
-	 * Returns the value for the field that should be applied to the query.
-	 * @return the value to used in the query
-	 */
-	Object getValue();
+	IPropertyValue getPropertyValue();
 
 	/**
 	 * Returns the comparator that should be used in the query as the relationship

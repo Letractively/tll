@@ -449,10 +449,10 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 
 		DetachedCriteria dc2 = dc;
-		String fieldName = ctn.getField();
+		String propName = ctn.getPropertyName();
 
 		// PROPERTY PATH LOGIC
-		final String[] hPaths = StringUtils.delimitedListToStringArray(fieldName, ".");
+		final String[] hPaths = StringUtils.delimitedListToStringArray(propName, ".");
 		// only apply sub-criteria when the path is 2+ deep
 		// (i.e. when the path portion of the field contains at least one dot)
 		if(hPaths.length > 2) {
@@ -460,18 +460,18 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				// create sub-criteria to handle the association path
 				dc2 = dc.createCriteria(hPaths[i]);
 			}
-			fieldName = hPaths[hPaths.length - 1];
+			propName = hPaths[hPaths.length - 1];
 		}
 		else {
 			// apply an alias (if not sorting against this field - else hibernate
 			// duplicate alias exception occurrs)
-			if(sorting == null || sorting.getPrimarySortColumn().getPropertyName().equals(fieldName)) {
-				applyAliasIfNecessary(dc2, fieldName);
+			if(sorting == null || sorting.getPrimarySortColumn().getPropertyName().equals(propName)) {
+				applyAliasIfNecessary(dc2, propName);
 			}
 		}
 
 		final Comparator cmptr = ctn.getComparator();
-		final Criterion expression = comparatorTranslator.translate(cmptr, fieldName, ctn.getValue());
+		final Criterion expression = comparatorTranslator.translate(cmptr, propName, ctn.getValue());
 		applyCaseSensitivity(ctn, expression);
 		if(junction == null) {
 			dc2.add(expression);
