@@ -13,7 +13,6 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	private static final long serialVersionUID = 2415120120614040086L;
 
 	private final String businessKeyName;
-	private final String[] propertyNames;
 	private IPropertyValue[] propertyValues;
 
 	/**

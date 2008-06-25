@@ -26,6 +26,8 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.key.BusinessKey;
@@ -310,6 +312,6 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	@Override
 	@Transient
 	public final BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(nameBk, new Object[] { getName() }) };
+		return new BusinessKey[] { new BusinessKey(nameBk, new IPropertyValue[] { new StringPropertyValue(getName()) }) };
 	}
 }
