@@ -5,14 +5,14 @@
  */
 package com.tll.client.data;
 
-import com.tll.client.model.Model;
+import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
  * ListingPayload - Response to a {@link ListingRequest}.
  * @author jpk
  */
-public class ListingPayload extends Payload {
+public class ListingPayload<R extends IData> extends Payload {
 
 	public enum ListingStatus {
 		/**
@@ -37,7 +37,7 @@ public class ListingPayload extends Payload {
 
 	private int listSize;
 
-	private Model[] pageElements;
+	private R[] pageElements;
 
 	private int offset = -1;
 
@@ -68,7 +68,7 @@ public class ListingPayload extends Payload {
 	 * @param offset
 	 * @param sorting
 	 */
-	public void setPageData(int listSize, Model[] pageElements, int offset, Sorting sorting) {
+	public void setPageData(int listSize, R[] pageElements, int offset, Sorting sorting) {
 		this.listSize = listSize;
 		this.pageElements = pageElements;
 		this.offset = offset;
@@ -87,7 +87,7 @@ public class ListingPayload extends Payload {
 		return listSize;
 	}
 
-	public Model[] getPageElements() {
+	public R[] getPageElements() {
 		return pageElements;
 	}
 

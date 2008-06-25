@@ -42,7 +42,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * ListingService - Handles client listing requests.
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S> {
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 

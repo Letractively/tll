@@ -30,7 +30,7 @@ import com.tll.listhandler.Sorting;
 @SuppressWarnings("unchecked")
 public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
 
-	private static final IListingServiceAsync<ISearch> svc;
+	private static final IListingServiceAsync<ISearch, Model> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
