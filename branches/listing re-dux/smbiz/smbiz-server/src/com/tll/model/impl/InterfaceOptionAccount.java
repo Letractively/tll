@@ -12,7 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
@@ -21,6 +20,7 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -37,7 +37,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	public static final int MAXLEN_PARAM_NAME = 50;
 	public static final int MAXLEN_PARAM_VALUE = 255;
 
-	public static final IBusinessKeyDefinition BinderBk =
+	private static final IBusinessKeyDefinition binderBk =
 			new BusinessKeyDefinition(InterfaceOptionAccount.class, "Binder", new String[] {
 				"option.id",
 				"account.id" });
@@ -225,13 +225,20 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
+	public Integer optionId() {
+		try {
+			return getOption().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
 
-		.append("option", option == null ? "NULL" : option.descriptor()).append("account",
-				account == null ? "NULL" : account.descriptor()).append("status", status).append("setUpPrice", setUpPrice)
-				.append("monthlyPrice", monthlyPrice).append("annualPrice", annualPrice).append("parameters.size()",
-						parameters == null ? "NULL" : Integer.toString(parameters.size()));
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
+			optionId(),
+			accountId() }) };
 	}
 }

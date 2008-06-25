@@ -8,7 +8,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
@@ -71,10 +70,4 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("code", getCode()).append("description", getDescription());
-	}
-
 }

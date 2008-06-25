@@ -17,13 +17,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.BusinessKeyUniqueness;
@@ -54,7 +54,7 @@ public abstract class Interface extends NamedTimeStampEntity {
 	public static final String CODE_PAYMENT_METHOD = "pymntmethod";
 	public static final String CODE_CROSS_SELL = "crosssell";
 
-	public static final IBusinessKeyDefinition CodeBk =
+	private static final IBusinessKeyDefinition codeBk =
 			new BusinessKeyDefinition(Interface.class, "Code", new String[] { "code" });
 
 	protected String code;
@@ -296,19 +296,8 @@ public abstract class Interface extends NamedTimeStampEntity {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-
-		return super.toStringBuilder()
-
-		.append("code", name).append("name", name).append("description", description)
-
-		.append("isAvailableAsp", isAvailableAsp).append("isAvailableIsp", isAvailableIsp).append("isAvailableMerchant",
-				isAvailableMerchant).append("isAvailableCustomer", isAvailableCustomer)
-
-		.append("isRequiredAsp", isRequiredAsp).append("isRequiredIsp", isRequiredIsp).append("isRequiredMerchant",
-				isRequiredMerchant).append("isRequiredCustomer", isRequiredCustomer)
-
-		.append("options.size()", options == null ? "NULL" : Integer.toString(options.size()));
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(codeBk, new Object[] { getCode() }) };
 	}
-
 }

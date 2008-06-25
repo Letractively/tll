@@ -50,7 +50,7 @@ public class EntityLoadRequest extends EntityRequest {
 
 	/**
 	 * Constructor
-	 * @param criteria
+	 * @param businessKey
 	 */
 	public EntityLoadRequest(BusinessKey businessKey) {
 		super();

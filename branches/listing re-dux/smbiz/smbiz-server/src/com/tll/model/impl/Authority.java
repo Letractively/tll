@@ -14,6 +14,7 @@ import org.hibernate.validator.NotEmpty;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -42,7 +43,7 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 
 	public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
-	public static final IBusinessKeyDefinition NameBk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(Authority.class, "Authority", new String[] { FIELDNAME_AUTHORITY });
 
 	private String authority;
@@ -88,8 +89,9 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	}
 
 	@Override
-	public String toString() {
-		return getAuthority();
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getAuthority() }) };
 	}
 
 	@Override

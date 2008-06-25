@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
@@ -22,6 +21,7 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -38,34 +38,34 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 	public static final int MAXLEN_NOTES = 255;
 	public static final int MAXLEN_SITE_CODE = 32;
 
-	public static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Order.class, "Order Key", new String[] {
+	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Order.class, "Order Key", new String[] {
 		"dateCreated",
 		"account.id",
 		"customer.id" });
 
-	protected OrderStatus status;
+	private OrderStatus status;
 
-	protected String notes;
+	private String notes;
 
-	protected String siteCode;
+	private String siteCode;
 
-	protected Account account;
+	private Account account;
 
-	protected Visitor visitor;
+	private Visitor visitor;
 
-	protected Customer customer;
+	private Customer customer;
 
-	protected Currency currency;
+	private Currency currency;
 
-	protected PaymentInfo paymentInfo;
+	private PaymentInfo paymentInfo;
 
-	protected Address billToAddress;
+	private Address billToAddress;
 
-	protected Address shipToAddress;
+	private Address shipToAddress;
 
-	protected Set<OrderItem> orderItems = new LinkedHashSet<OrderItem>();
+	private Set<OrderItem> orderItems = new LinkedHashSet<OrderItem>();
 
-	protected Set<OrderTrans> transactions = new LinkedHashSet<OrderTrans>();
+	private Set<OrderTrans> transactions = new LinkedHashSet<OrderTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return Order.class;
@@ -350,20 +350,21 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("status", status).append("notes", notes).append("siteCode", siteCode).append("account",
-				account == null ? "NULL" : account.descriptor()).append("visitor",
-				visitor == null ? "NULL" : visitor.descriptor()).append("customer",
-				customer == null ? "NULL" : customer.descriptor()).append("currency",
-				currency == null ? "NULL" : currency.descriptor()).append("paymentInfo",
-				paymentInfo == null ? "NULL" : paymentInfo.descriptor()).append("billToAddress",
-				billToAddress == null ? "NULL" : billToAddress.descriptor()).append("shipToAddress",
-				shipToAddress == null ? "NULL" : shipToAddress.descriptor()).append("orderItems.size()",
-				orderItems == null ? "NULL" : Integer.toString(orderItems.size())).append("transactions.size()",
-				transactions == null ? "NULL" : Integer.toString(transactions.size()));
+	public Integer customerId() {
+		try {
+			return getCustomer().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			getDateCreated(),
+			accountId(),
+			customerId() }) };
+	}
 }

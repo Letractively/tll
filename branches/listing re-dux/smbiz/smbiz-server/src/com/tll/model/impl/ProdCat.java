@@ -8,12 +8,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -27,16 +27,16 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 
 	private static final long serialVersionUID = -8353863817821839414L;
 
-	public static final IBusinessKeyDefinition binderBk =
+	private static final IBusinessKeyDefinition binderBk =
 			new BusinessKeyDefinition(ProdCat.class, "Binder", new String[] {
 				"product.id",
 				"category.id" });
 
-	protected boolean isFeaturedProduct = false;
+	private boolean isFeaturedProduct = false;
 
-	protected ProductInventory product;
+	private ProductInventory product;
 
-	protected ProductCategory category;
+	private ProductCategory category;
 
 	public Class<? extends IEntity> entityClass() {
 		return ProdCat.class;
@@ -111,11 +111,29 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
+	public Integer productId() {
+		try {
+			return getProduct().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
 
-		.append("isFeaturedProduct", isFeaturedProduct).append("product", product == null ? "NULL" : product.descriptor())
-				.append("category", category == null ? "NULL" : category.descriptor());
+	public Integer categoryId() {
+		try {
+			return getCategory().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
+			productId(),
+			categoryId() }) };
 	}
 }

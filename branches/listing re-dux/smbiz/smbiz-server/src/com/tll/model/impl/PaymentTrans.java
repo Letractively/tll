@@ -7,8 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -16,6 +16,7 @@ import org.hibernate.validator.Range;
 
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -33,34 +34,34 @@ public class PaymentTrans extends TimeStampEntity {
 	public static final int MAXLEN_RESPONSE = 32;
 	public static final int MAXLEN_RESPONSE_MSG = 128;
 
-	public static final IBusinessKeyDefinition dateOpBk =
+	private static final IBusinessKeyDefinition dateOpBk =
 			new BusinessKeyDefinition(PaymentTrans.class, "Date and Op", new String[] {
 				"payTransDate",
 				"payOp",
 				"payType" });
 
-	public static final IBusinessKeyDefinition refNumBk =
+	private static final IBusinessKeyDefinition refNumBk =
 			new BusinessKeyDefinition(PaymentTrans.class, "Ref Num", new String[] { "refNum" });
 
-	protected Date payTransDate;
+	private Date payTransDate;
 
-	protected PaymentOp payOp;
+	private PaymentOp payOp;
 
-	protected PaymentType payType;
+	private PaymentType payType;
 
-	protected float amount = 0f;
+	private float amount = 0f;
 
-	protected PaymentProcessor paymentProcessor;
+	private PaymentProcessor paymentProcessor;
 
-	protected String authNum;
+	private String authNum;
 
-	protected String refNum;
+	private String refNum;
 
-	protected String response;
+	private String response;
 
-	protected String responseMsg;
+	private String responseMsg;
 
-	protected String notes;
+	private String notes;
 
 	public Class<? extends IEntity> entityClass() {
 		return PaymentTrans.class;
@@ -229,11 +230,13 @@ public class PaymentTrans extends TimeStampEntity {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("payTransDate", payTransDate).append("payOp", payOp).append("payType", payType).append("amount", amount)
-				.append("paymentProcessor", paymentProcessor).append("authNum", authNum).append("refNum", refNum).append(
-						"response", response).append("responseMsg", responseMsg).append("notes", notes);
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(dateOpBk, new Object[] {
+				getPayTransDate(),
+				getPayOp(),
+				getPayType() }),
+			new BusinessKey(refNumBk, new Object[] { getRefNum() }) };
 	}
 }

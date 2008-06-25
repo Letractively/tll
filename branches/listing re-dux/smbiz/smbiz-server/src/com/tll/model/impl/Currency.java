@@ -3,8 +3,8 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.Length;
@@ -15,6 +15,7 @@ import org.hibernate.validator.Range;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -38,20 +39,20 @@ public class Currency extends NamedEntity {
 	 */
 	public static final String DOLLAR_NAME = "dollar";
 
-	public static final IBusinessKeyDefinition NameBk =
+	private static final IBusinessKeyDefinition nameBk =
 			new BusinessKeyDefinition(Currency.class, "Name", new String[] { INamedEntity.NAME });
 
-	public static final IBusinessKeyDefinition SymbolBk =
+	private static final IBusinessKeyDefinition symbolBk =
 			new BusinessKeyDefinition(Currency.class, "Symbol", new String[] { "symbol" });
 
-	public static final IBusinessKeyDefinition iso4217Bk =
+	private static final IBusinessKeyDefinition iso4217Bk =
 			new BusinessKeyDefinition(Currency.class, "iso4217", new String[] { "iso4217" });
 
-	protected String iso4217;
+	private String iso4217;
 
-	protected String symbol;
+	private String symbol;
 
-	protected float usdExchangeRate = 0f;
+	private float usdExchangeRate = 0f;
 
 	public Class<? extends IEntity> entityClass() {
 		return Currency.class;
@@ -116,9 +117,12 @@ public class Currency extends NamedEntity {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("iso4217", iso4217).append("symbol", symbol).append("usdExchangeRate",
-				usdExchangeRate);
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(nameBk, new Object[] { getName() }),
+			new BusinessKey(symbolBk, new Object[] { getSymbol() }),
+			new BusinessKey(iso4217Bk, new Object[] { getIso4217() }) };
 	}
 
 }

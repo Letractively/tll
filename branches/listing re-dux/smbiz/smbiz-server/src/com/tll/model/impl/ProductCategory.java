@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -16,6 +15,7 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -33,16 +33,16 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
 
-	public static final IBusinessKeyDefinition nameBk =
+	private static final IBusinessKeyDefinition nameBk =
 			new BusinessKeyDefinition(ProductCategory.class, "Account Id and Name", new String[] {
 				"account.id",
 				"name" });
 
-	protected Account account;
+	private Account account;
 
-	protected String description;
+	private String description;
 
-	protected String image;
+	private String image;
 
 	public Class<? extends IEntity> entityClass() {
 		return ProductCategory.class;
@@ -124,9 +124,10 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("account", account == null ? "NULL" : account.descriptor()).append("name",
-				name).append("description", description).append("image", image);
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(nameBk, new Object[] {
+			accountId(),
+			getName() }) };
 	}
-
 }

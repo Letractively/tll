@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -16,6 +15,7 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -34,20 +34,20 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	public static final int MAXLEN_REMOTE_USER = 64;
 	public static final int MAXLEN_MC = 16;
 
-	public static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Visitor.class, "Visitor", new String[] {
+	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Visitor.class, "Visitor", new String[] {
 		"account.id",
 		"dateCreated",
 		"remoteHost" });
 
-	protected String remoteHost;
+	private String remoteHost;
 
-	protected String remoteAddr;
+	private String remoteAddr;
 
-	protected String remoteUser;
+	private String remoteUser;
 
-	protected String mc;
+	private String mc;
 
-	protected Account account;
+	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return Visitor.class;
@@ -156,11 +156,11 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("remoteHost", remoteHost).append("remoteAddr", remoteAddr).append("remoteUser", remoteUser)
-				.append("mc", mc).append("account", account == null ? "NULL" : account.descriptor());
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			accountId(),
+			getDateCreated(),
+			getRemoteHost() }) };
 	}
-
 }

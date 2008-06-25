@@ -8,13 +8,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -29,19 +29,19 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 
 	private static final long serialVersionUID = -5074831489410804639L;
 
-	public static final IBusinessKeyDefinition bk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(ShipBoundCost.class, "Bounds", new String[] {
 				"shipMode.id",
 				"lbound",
 				"ubound" });
 
-	protected float lbound = 0f;
+	private float lbound = 0f;
 
-	protected float ubound = 0f;
+	private float ubound = 0f;
 
-	protected float cost = 0f;
+	private float cost = 0f;
 
-	protected ShipMode shipMode;
+	private ShipMode shipMode;
 
 	public Class<? extends IEntity> entityClass() {
 		return ShipBoundCost.class;
@@ -131,12 +131,21 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("lbound", lbound).append("ubound", ubound).append("cost", cost).append("shipMode",
-				shipMode == null ? "NULL" : shipMode.descriptor());
+	public Integer shipModeId() {
+		try {
+			return getShipMode().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			shipModeId(),
+			getLbound(),
+			getUbound() }) };
+	}
 }

@@ -13,13 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Digits;
 import org.hibernate.validator.Min;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.IEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -33,7 +33,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;
 
-	public static final IBusinessKeyDefinition CodeBk =
+	private static final IBusinessKeyDefinition codeBk =
 			new BusinessKeyDefinition(InterfaceOption.class, "Code", new String[] { "code" });
 
 	protected boolean isDefault = false;
@@ -234,14 +234,8 @@ public class InterfaceOption extends InterfaceOptionBase {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-
-		return super.toStringBuilder()
-
-		.append("isDefault", isDefault).append("setUpCost", setUpCost).append("monthlyCost", monthlyCost).append(
-				"annualCost", annualCost).append("baseSetupPrice", baseSetupPrice).append("baseMonthlyPrice", baseMonthlyPrice)
-				.append("baseAnnualPrice", baseAnnualPrice).append("parameters.size()",
-						parameters == null ? "NULL" : Integer.toString(parameters.size()));
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(codeBk, new Object[] { getCode() }) };
 	}
-
 }

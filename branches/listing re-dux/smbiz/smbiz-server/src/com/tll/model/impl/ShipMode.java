@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -17,6 +16,7 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -33,17 +33,17 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_SRC_ZIP = 16;
 
-	public static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(ShipMode.class, "Name", new String[] {
+	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(ShipMode.class, "Name", new String[] {
 		"account.id",
 		"name" });
 
-	protected ShipModeType type;
+	private ShipModeType type;
 
-	protected float surcharge = 0f;
+	private float surcharge = 0f;
 
-	protected String srcZip;
+	private String srcZip;
 
-	protected Account account;
+	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return ShipMode.class;
@@ -141,9 +141,10 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("type", type).append("surcharge", surcharge).append("srcZip", srcZip).append(
-				"account", account == null ? "NULL" : account.descriptor());
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			accountId(),
+			getName() }) };
 	}
-
 }

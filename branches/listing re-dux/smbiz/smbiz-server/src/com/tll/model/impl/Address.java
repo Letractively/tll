@@ -3,6 +3,7 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.validator.Email;
 import org.hibernate.validator.Length;
@@ -49,20 +50,20 @@ public class Address extends EntityBase {
 	public static final int MAXLEN_FAX = 15;
 	public static final int MAXLEN_EMAIL_ADDRESS = 128;
 
-	protected String firstName;
-	protected String lastName;
-	protected Character mi;
-	protected String company;
-	protected String attn;
-	protected String address1;
-	protected String address2;
-	protected String city;
-	protected String province;
-	protected String postalCode;
-	protected String country;
-	protected String phone;
-	protected String fax;
-	protected String emailAddress;
+	private String firstName;
+	private String lastName;
+	private Character mi;
+	private String company;
+	private String attn;
+	private String address1;
+	private String address2;
+	private String city;
+	private String province;
+	private String postalCode;
+	private String country;
+	private String phone;
+	private String fax;
+	private String emailAddress;
 
 	public Class<? extends IEntity> entityClass() {
 		return Address.class;
@@ -299,6 +300,7 @@ public class Address extends EntityBase {
 	}
 
 	@Override
+	@Transient
 	public BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
 			getAddress1(),

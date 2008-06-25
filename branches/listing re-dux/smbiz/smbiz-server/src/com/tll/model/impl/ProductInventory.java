@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
@@ -18,6 +17,7 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -34,45 +34,40 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	public static final int MAXLEN_SKU = 64;
 	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
 
-	public static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(ProductInventory.class, "Account Id and Name", new String[] {
-				"account.id",
-				"name" });
-
-	public static final IBusinessKeyDefinition skuBk =
+	private static final IBusinessKeyDefinition skuBk =
 			new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
 				"account.id",
 				"sku" });
 
-	public static final IBusinessKeyDefinition titleBk =
+	private static final IBusinessKeyDefinition titleBk =
 			new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
 				"account.id",
 				"d1",
 				"d2" });
 
-	protected String sku;
+	private String sku;
 
-	protected ProductStatus status;
+	private ProductStatus status;
 
-	protected float retailPrice = 0f;
+	private float retailPrice = 0f;
 
-	protected float salesPrice = 0f;
+	private float salesPrice = 0f;
 
-	protected float weight = 0f;
+	private float weight = 0f;
 
-	protected boolean onSale;
+	private boolean onSale;
 
-	protected String auxDescriptor;
+	private String auxDescriptor;
 
-	protected int invInStock = 0;
+	private int invInStock = 0;
 
-	protected int invCommitted = 0;
+	private int invCommitted = 0;
 
-	protected int invReorderLevel = 0;
+	private int invReorderLevel = 0;
 
-	protected Account account;
+	private Account account;
 
-	protected ProductGeneral productGeneral;
+	private ProductGeneral productGeneral;
 
 	public Class<? extends IEntity> entityClass() {
 		return ProductInventory.class;
@@ -299,15 +294,34 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("sku", sku).append("status", status).append("retailPrice", retailPrice).append("salesPrice", salesPrice)
-				.append("weight", weight).append("onSale", onSale).append("invInStock", auxDescriptor).append("invCommitted",
-						auxDescriptor).append("invReorderLevel", auxDescriptor).append("account",
-						account == null ? "NULL" : account.descriptor()).append("productGeneral",
-						productGeneral == null ? "NULL" : productGeneral.descriptor());
+	public String d1() {
+		try {
+			return getProductGeneral().getD1();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	public String d2() {
+		try {
+			return getProductGeneral().getD2();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(skuBk, new Object[] {
+				accountId(),
+				getSku() }),
+			new BusinessKey(titleBk, new Object[] {
+				accountId(),
+				d1(),
+				d2() }) };
+	}
 }

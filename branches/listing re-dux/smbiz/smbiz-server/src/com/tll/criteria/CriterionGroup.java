@@ -144,7 +144,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	/**
 	 * Adds a Foreign Key criterion to this group.
 	 * @param relatedPropertyName The related property name
-	 * @param foreignKeyId The foreign key id
+	 * @param foreignKey The foreign key
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(String relatedPropertyName, PrimaryKey foreignKey) {

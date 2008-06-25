@@ -3,6 +3,7 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
@@ -30,7 +31,7 @@ public class AppProperty extends NamedEntity {
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_VALUE = 255;
 
-	protected String value;
+	private String value;
 
 	public Class<? extends IEntity> entityClass() {
 		return AppProperty.class;
@@ -55,6 +56,7 @@ public class AppProperty extends NamedEntity {
 	}
 
 	@Override
+	@Transient
 	public BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] { getName() }) };
 	}

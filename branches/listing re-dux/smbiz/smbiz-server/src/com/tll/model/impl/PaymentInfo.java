@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
@@ -15,6 +14,7 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -32,7 +32,7 @@ public class PaymentInfo extends NamedEntity {
 	private static final long serialVersionUID = -8237732782824087760L;
 	public static final int MAXLEN_NAME = 64;
 
-	public static final IBusinessKeyDefinition bk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(PaymentInfo.class, "Name", new String[] { INamedEntity.NAME });
 
 	private transient PaymentData paymentData;
@@ -66,8 +66,8 @@ public class PaymentInfo extends NamedEntity {
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder();
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getName() }) };
 	}
-
 }

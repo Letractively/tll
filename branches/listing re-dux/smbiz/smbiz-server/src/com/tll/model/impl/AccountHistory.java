@@ -39,15 +39,15 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 				"transDate",
 				"status" });
 
-	protected Account account;
+	private Account account;
 
-	protected Date transDate = new Date();
+	private Date transDate = new Date();
 
-	protected AccountStatus status;
+	private AccountStatus status;
 
-	protected String notes;
+	private String notes;
 
-	protected PaymentTrans pymntTrans;
+	private PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountHistory.class;
@@ -154,6 +154,7 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	}
 
 	@Override
+	@Transient
 	public BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] {
 			accountId(),

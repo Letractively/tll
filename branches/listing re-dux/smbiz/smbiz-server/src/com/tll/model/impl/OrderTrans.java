@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -22,6 +21,7 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -39,41 +39,41 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	public static final int MAXLEN_SHIP_MODE_NAME = 64;
 	public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
 
-	public static final IBusinessKeyDefinition bk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(OrderTrans.class, "Order Trans Key", new String[] {
 				"order.id",
 				"dateCreated",
 				"username" });
 
-	protected Order order;
+	private Order order;
 
-	protected String username; // author of this transaction
+	private String username; // author of this transaction
 
-	protected OrderTransOp orderTransOp;
+	private OrderTransOp orderTransOp;
 
-	protected OrderTransOpResult orderTransResult;
+	private OrderTransOpResult orderTransResult;
 
-	protected String shipModeName;
+	private String shipModeName;
 
-	protected String shipRoutingNum;
+	private String shipRoutingNum;
 
-	protected float itemTotal = 0f;
+	private float itemTotal = 0f;
 
-	protected float salesTax = 0f;
+	private float salesTax = 0f;
 
-	protected float shipCost = 0f;
+	private float shipCost = 0f;
 
-	protected float total = 0f;
+	private float total = 0f;
 
-	protected Address billToAddress;
+	private Address billToAddress;
 
-	protected Address shipToAddress;
+	private Address shipToAddress;
 
-	protected PaymentInfo pymntInfo;
+	private PaymentInfo pymntInfo;
 
-	protected PaymentTrans pymntTrans;
+	private PaymentTrans pymntTrans;
 
-	protected Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
+	private Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderTrans.class;
@@ -275,20 +275,21 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("order", order == null ? "NULL" : order.descriptor())
-
-		.append("username", username).append("orderTransOp", orderTransOp).append("orderTransResult", orderTransResult)
-				.append("shipModeName", shipModeName).append("shipRoutingNum", shipRoutingNum).append("itemTotal", itemTotal)
-				.append("salesTax", salesTax).append("shipCost", shipCost).append("total", total).append("billToAddress",
-						billToAddress == null ? "NULL" : billToAddress.descriptor()).append("shipToAddress",
-						shipToAddress == null ? "NULL" : shipToAddress.descriptor()).append("pymntInfo",
-						pymntInfo == null ? "NULL" : pymntInfo.descriptor()).append("pymntTrans",
-						pymntTrans == null ? "NULL" : pymntTrans.descriptor()).append("itemTransactions.size()",
-						itemTransactions == null ? "NULL" : Integer.toString(itemTransactions.size()));
+	public Integer orderId() {
+		try {
+			return getOrder().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			orderId(),
+			getDateCreated(),
+			getUsername() }) };
+	}
 }

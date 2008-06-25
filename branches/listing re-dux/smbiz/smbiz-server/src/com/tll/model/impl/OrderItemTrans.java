@@ -8,13 +8,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -28,18 +28,18 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 
 	private static final long serialVersionUID = -2106851598169919247L;
 
-	public static final IBusinessKeyDefinition Binderbk =
+	private static final IBusinessKeyDefinition binderBk =
 			new BusinessKeyDefinition(OrderItemTrans.class, "Order Item Trans Binder", new String[] {
 				"orderItem.id",
 				"orderTrans.id" });
 
-	protected OrderItem orderItem;
+	private OrderItem orderItem;
 
-	protected OrderTrans orderTrans;
+	private OrderTrans orderTrans;
 
-	protected OrderItemTransOp orderItemTransOp;
+	private OrderItemTransOp orderItemTransOp;
 
-	protected float amount = 0f;
+	private float amount = 0f;
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderItemTrans.class;
@@ -130,14 +130,29 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("orderItem", orderItem == null ? "NULL" : orderItem.descriptor()).append("orderTrans",
-				orderTrans == null ? "NULL" : orderTrans.descriptor())
-
-		.append("orderItemTransOp", orderItemTransOp).append("amount", amount);
+	public Integer orderItemId() {
+		try {
+			return getOrderItem().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	public Integer orderTransId() {
+		try {
+			return getOrderTrans().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
+			orderItemId(),
+			orderTransId() }) };
+	}
 }

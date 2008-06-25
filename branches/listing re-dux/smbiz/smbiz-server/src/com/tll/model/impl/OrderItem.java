@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -23,6 +22,7 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
 import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
@@ -41,30 +41,30 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 32;
 
-	public static final IBusinessKeyDefinition bk =
+	private static final IBusinessKeyDefinition bk =
 			new BusinessKeyDefinition(OrderItem.class, "Order Id and Product SKU", new String[] {
 				"order.id",
 				"sku" });
 
-	protected Order order;
+	private Order order;
 
-	protected String sku;
+	private String sku;
 
-	protected OrderItemStatus itemStatus;
+	private OrderItemStatus itemStatus;
 
-	protected PaymentItemStatus payStatus;
+	private PaymentItemStatus payStatus;
 
-	protected int qty = 0;
+	private int qty = 0;
 
-	protected float price = 0f;
+	private float price = 0f;
 
-	protected float weight = 0f;
+	private float weight = 0f;
 
-	protected String description;
+	private String description;
 
-	protected String image;
+	private String image;
 
-	protected Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
+	private Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderItem.class;
@@ -289,16 +289,21 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("order", order == null ? "NULL" : order.descriptor()).append("sku", sku)
-
-		.append("itemStatus", itemStatus).append("payStatus", payStatus).append("qty", qty).append("price", price).append(
-				"weight", weight).append("name", name).append("description", description).append("image", image)
-
-		.append("transactions.size()", transactions == null ? "NULL" : Integer.toString(transactions.size()));
+	public Integer orderId() {
+		try {
+			return getOrder().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			orderId(),
+			accountId(),
+			getSku() }) };
+	}
 }
