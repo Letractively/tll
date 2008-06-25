@@ -86,7 +86,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		return criteriaType.isQuery() ? (namedQueryDefinition != null) : (primaryGroup != null && primaryGroup.isSet());
 	}
 
-	public ICriterionGroup getPrimaryGroup() {
+	public CriterionGroup getPrimaryGroup() {
 		return primaryGroup;
 	}
 
@@ -97,26 +97,6 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		if(queryParams != null) {
 			queryParams.clear();
 		}
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected Criteria<E> clone() {
-		Criteria<E> cln;
-		try {
-			cln = (Criteria<E>) super.clone();
-		}
-		catch(final CloneNotSupportedException e) {
-			throw new IllegalStateException("Unable to clone Criteria.");
-		}
-		if(primaryGroup != null) {
-			cln.primaryGroup = primaryGroup.clone();
-		}
-		return cln;
-	}
-
-	public ICriteria<E> copy() {
-		return clone();
 	}
 
 	@Override

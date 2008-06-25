@@ -15,7 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testng.Assert;
 
 import com.google.inject.Module;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
@@ -23,7 +23,7 @@ import com.tll.dao.JpaMode;
 import com.tll.guice.DbShellModule;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.IEntity;
-import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * DbTest - Test that supports raw transactions having an accessible
@@ -112,10 +112,12 @@ public abstract class DbTest extends TestBase {
 	 * @param key the primary key
 	 * @return the entity from the db or <code>null</code> if not found.
 	 */
-	protected static final <E extends IEntity, D extends IEntityDao<E>> E getEntityFromDb(D dao, IPrimaryKey<E> key) {
-		ICriteria<? extends E> c = CriteriaFactory.buildEntityCriteria(key);
+	@SuppressWarnings("unchecked")
+	protected static final <E extends IEntity, D extends IEntityDao<E>> E getEntityFromDb(D dao, PrimaryKey key) {
+		Criteria<? extends E> criteria = new Criteria<E>((Class<E>) key.getType());
+		criteria.getPrimaryGroup().addCriterion(key);
 		try {
-			return dao.findEntity(c);
+			return dao.findEntity(criteria);
 		}
 		catch(InvalidCriteriaException e) {
 			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());

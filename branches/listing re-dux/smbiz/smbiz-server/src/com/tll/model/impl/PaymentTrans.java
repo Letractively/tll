@@ -7,8 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -16,227 +16,227 @@ import org.hibernate.validator.Range;
 
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * payment transaction entity
- * 
  * @author jpk
  */
 @Entity
-@Table(name="payment_trans")
+@Table(name = "payment_trans")
 public class PaymentTrans extends TimeStampEntity {
-  private static final long serialVersionUID = -7701606626029329438L;
+
+	private static final long serialVersionUID = -7701606626029329438L;
 	public static final int MAXLEN_AUTH_NUM = 32;
 	public static final int MAXLEN_REF_NUM = 32;
 	public static final int MAXLEN_RESPONSE = 32;
 	public static final int MAXLEN_RESPONSE_MSG = 128;
 
-  protected Date payTransDate;
+	private static final IBusinessKeyDefinition dateOpBk =
+			new BusinessKeyDefinition(PaymentTrans.class, "Date and Op", new String[] {
+				"payTransDate",
+				"payOp",
+				"payType" });
 
-  protected PaymentOp payOp;
+	private static final IBusinessKeyDefinition refNumBk =
+			new BusinessKeyDefinition(PaymentTrans.class, "Ref Num", new String[] { "refNum" });
 
-  protected PaymentType payType;
+	private Date payTransDate;
 
-  protected float amount = 0f;
+	private PaymentOp payOp;
 
-  protected PaymentProcessor paymentProcessor;
+	private PaymentType payType;
 
-  protected String authNum;
+	private float amount = 0f;
 
-  protected String refNum;
+	private PaymentProcessor paymentProcessor;
 
-  protected String response;
+	private String authNum;
 
-  protected String responseMsg;
+	private String refNum;
 
-  protected String notes;
+	private String response;
 
-  public Class<? extends IEntity> entityClass() {
-    return PaymentTrans.class;
-  }
+	private String responseMsg;
 
-  /**
-   * @return Returns the amount.
-   */
-  @Column(precision = 7, scale = 2)
-  @Range(min=0L, max=999999L)
-  public float getAmount() {
-    return amount;
-  }
+	private String notes;
 
-  /**
-   * @param amount
-   *          The amount to set.
-   */
-  public void setAmount(float amount) {
-    this.amount = amount;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return PaymentTrans.class;
+	}
 
-  /**
-   * @return Returns the authNum.
-   */
-  @Column(name="auth_num")
-  @Length(max=MAXLEN_AUTH_NUM)
-  public String getAuthNum() {
-    return authNum;
-  }
+	/**
+	 * @return Returns the amount.
+	 */
+	@Column(precision = 7, scale = 2)
+	@Range(min = 0L, max = 999999L)
+	public float getAmount() {
+		return amount;
+	}
 
-  /**
-   * @param authNum
-   *          The authNum to set.
-   */
-  public void setAuthNum(String authNum) {
-    this.authNum = authNum;
-  }
+	/**
+	 * @param amount The amount to set.
+	 */
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
-  /**
-   * @return Returns the notes.
-   */
-  @Column
-  public String getNotes() {
-    return notes;
-  }
+	/**
+	 * @return Returns the authNum.
+	 */
+	@Column(name = "auth_num")
+	@Length(max = MAXLEN_AUTH_NUM)
+	public String getAuthNum() {
+		return authNum;
+	}
 
-  /**
-   * @param notes
-   *          The notes to set.
-   */
-  public void setNotes(String notes) {
-    this.notes = notes;
-  }
+	/**
+	 * @param authNum The authNum to set.
+	 */
+	public void setAuthNum(String authNum) {
+		this.authNum = authNum;
+	}
 
-  /**
-   * @return Returns the paymentProcessor.
-   */
-  @Column(name="payment_processor")
-  public PaymentProcessor getPaymentProcessor() {
-    return paymentProcessor;
-  }
+	/**
+	 * @return Returns the notes.
+	 */
+	@Column
+	public String getNotes() {
+		return notes;
+	}
 
-  /**
-   * @param paymentProcessor
-   *          The paymentProcessor to set.
-   */
-  public void setPaymentProcessor(PaymentProcessor paymentProcessor) {
-    this.paymentProcessor = paymentProcessor;
-  }
+	/**
+	 * @param notes The notes to set.
+	 */
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
 
-  /**
-   * @return Returns the payOp.
-   */
-  @Column(name="pay_op")
-  @NotNull
-  public PaymentOp getPayOp() {
-    return payOp;
-  }
+	/**
+	 * @return Returns the paymentProcessor.
+	 */
+	@Column(name = "payment_processor")
+	public PaymentProcessor getPaymentProcessor() {
+		return paymentProcessor;
+	}
 
-  /**
-   * @param payOp
-   *          The payOp to set.
-   */
-  public void setPayOp(PaymentOp payOp) {
-    this.payOp = payOp;
-  }
+	/**
+	 * @param paymentProcessor The paymentProcessor to set.
+	 */
+	public void setPaymentProcessor(PaymentProcessor paymentProcessor) {
+		this.paymentProcessor = paymentProcessor;
+	}
 
-  /**
-   * @return Returns the payTransDate.
-   */
-  @Column(name="pay_trans_date")
-  @Temporal(value = TemporalType.TIMESTAMP)
-  @NotNull
-  public Date getPayTransDate() {
-    return payTransDate;
-  }
+	/**
+	 * @return Returns the payOp.
+	 */
+	@Column(name = "pay_op")
+	@NotNull
+	public PaymentOp getPayOp() {
+		return payOp;
+	}
 
-  /**
-   * @param payTransDate
-   *          The payTransDate to set.
-   */
-  public void setPayTransDate(Date payTransDate) {
-    this.payTransDate = payTransDate;
-  }
+	/**
+	 * @param payOp The payOp to set.
+	 */
+	public void setPayOp(PaymentOp payOp) {
+		this.payOp = payOp;
+	}
 
-  /**
-   * @return Returns the payType.
-   */
-  @Column(name="pay_type")
-  @NotNull
-  public PaymentType getPayType() {
-    return payType;
-  }
+	/**
+	 * @return Returns the payTransDate.
+	 */
+	@Column(name = "pay_trans_date")
+	@Temporal(value = TemporalType.TIMESTAMP)
+	@NotNull
+	public Date getPayTransDate() {
+		return payTransDate;
+	}
 
-  /**
-   * @param payType
-   *          The payType to set.
-   */
-  public void setPayType(PaymentType payType) {
-    this.payType = payType;
-  }
+	/**
+	 * @param payTransDate The payTransDate to set.
+	 */
+	public void setPayTransDate(Date payTransDate) {
+		this.payTransDate = payTransDate;
+	}
 
-  /**
-   * @return Returns the refNum.
-   */
-  @Column(name="ref_num", unique = true)
-  @NotEmpty @Length(max=MAXLEN_REF_NUM)
-  public String getRefNum() {
-    return refNum;
-  }
+	/**
+	 * @return Returns the payType.
+	 */
+	@Column(name = "pay_type")
+	@NotNull
+	public PaymentType getPayType() {
+		return payType;
+	}
 
-  /**
-   * @param refNum
-   *          The refNum to set.
-   */
-  public void setRefNum(String refNum) {
-    this.refNum = refNum;
-  }
+	/**
+	 * @param payType The payType to set.
+	 */
+	public void setPayType(PaymentType payType) {
+		this.payType = payType;
+	}
 
-  /**
-   * @return Returns the response.
-   */
-  @Column
-  @NotEmpty @Length(max=MAXLEN_RESPONSE)
-  public String getResponse() {
-    return response;
-  }
+	/**
+	 * @return Returns the refNum.
+	 */
+	@Column(name = "ref_num", unique = true)
+	@NotEmpty
+	@Length(max = MAXLEN_REF_NUM)
+	public String getRefNum() {
+		return refNum;
+	}
 
-  /**
-   * @param response
-   *          The response to set.
-   */
-  public void setResponse(String response) {
-    this.response = response;
-  }
+	/**
+	 * @param refNum The refNum to set.
+	 */
+	public void setRefNum(String refNum) {
+		this.refNum = refNum;
+	}
 
-  /**
-   * @return Returns the responseMsg.
-   */
-  @Column(name="response_msg")
-  @NotEmpty @Length(max=MAXLEN_RESPONSE_MSG)
-  public String getResponseMsg() {
-    return responseMsg;
-  }
+	/**
+	 * @return Returns the response.
+	 */
+	@Column
+	@NotEmpty
+	@Length(max = MAXLEN_RESPONSE)
+	public String getResponse() {
+		return response;
+	}
 
-  /**
-   * @param responseMsg
-   *          The responseMsg to set.
-   */
-  public void setResponseMsg(String responseMsg) {
-    this.responseMsg = responseMsg;
-  }
+	/**
+	 * @param response The response to set.
+	 */
+	public void setResponse(String response) {
+		this.response = response;
+	}
 
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
-    
-    .append("payTransDate", payTransDate)
-    .append("payOp", payOp)
-    .append("payType", payType)
-    .append("amount", amount)
-    .append("paymentProcessor", paymentProcessor)
-    .append("authNum", authNum)
-    .append("refNum", refNum)
-    .append("response", response)
-    .append("responseMsg", responseMsg)
-    .append("notes", notes);
-  }
+	/**
+	 * @return Returns the responseMsg.
+	 */
+	@Column(name = "response_msg")
+	@NotEmpty
+	@Length(max = MAXLEN_RESPONSE_MSG)
+	public String getResponseMsg() {
+		return responseMsg;
+	}
+
+	/**
+	 * @param responseMsg The responseMsg to set.
+	 */
+	public void setResponseMsg(String responseMsg) {
+		this.responseMsg = responseMsg;
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(dateOpBk, new Object[] {
+				getPayTransDate(),
+				getPayOp(),
+				getPayType() }),
+			new BusinessKey(refNumBk, new Object[] { getRefNum() }) };
+	}
 }

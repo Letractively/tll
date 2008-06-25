@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
@@ -18,289 +17,311 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Product inventory entity
- * 
  * @author jpk
  */
 @Entity
-@Table(name="product_inventory")
+@Table(name = "product_inventory")
 public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
-  private static final long serialVersionUID = 6472483051056869008L;
 
-  public static final int MAXLEN_SKU = 64;
-  public static final int MAXLEN_AUX_DESCRIPTOR = 255;
-  
-  protected String sku;
+	private static final long serialVersionUID = 6472483051056869008L;
 
-  protected ProductStatus status;
+	public static final int MAXLEN_SKU = 64;
+	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
 
-  protected float retailPrice = 0f;
+	private static final IBusinessKeyDefinition skuBk =
+			new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
+				"account.id",
+				"sku" });
 
-  protected float salesPrice = 0f;
+	private static final IBusinessKeyDefinition titleBk =
+			new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
+				"account.id",
+				"d1",
+				"d2" });
 
-  protected float weight = 0f;
+	private String sku;
 
-  protected boolean onSale;
+	private ProductStatus status;
 
-  protected String auxDescriptor;
+	private float retailPrice = 0f;
 
-  protected int invInStock = 0;
+	private float salesPrice = 0f;
 
-  protected int invCommitted = 0;
+	private float weight = 0f;
 
-  protected int invReorderLevel = 0;
+	private boolean onSale;
 
-  protected Account account;
+	private String auxDescriptor;
 
-  protected ProductGeneral productGeneral;
+	private int invInStock = 0;
 
-  public Class<? extends IEntity> entityClass() {
-    return ProductInventory.class;
-  }
+	private int invCommitted = 0;
 
-  /**
-   * @return Returns the account.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "aid")
-  @NotNull
-  public Account getAccount() {
-    return account;
-  }
+	private int invReorderLevel = 0;
 
-  /**
-   * @param account
-   *          The account to set.
-   */
-  public void setAccount(Account account) {
-    this.account = account;
-  }
+	private Account account;
 
-  /**
-   * @return Returns the auxDescriptor.
-   */
-  @Column(name="aux_descriptor")
-  @Length(max=MAXLEN_AUX_DESCRIPTOR)
-  public String getAuxDescriptor() {
-    return auxDescriptor;
-  }
+	private ProductGeneral productGeneral;
 
-  /**
-   * @param auxDescriptor
-   *          The auxDescriptor to set.
-   */
-  public void setAuxDescriptor(String auxDescriptor) {
-    this.auxDescriptor = auxDescriptor;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return ProductInventory.class;
+	}
 
-  /**
-   * @return Returns the invCommitted.
-   */
-  @Column(name="inv_committed")
-  @NotNull @Range(min=0L, max=999999L)
-  public int getInvCommitted() {
-    return invCommitted;
-  }
+	/**
+	 * @return Returns the account.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "aid")
+	@NotNull
+	public Account getAccount() {
+		return account;
+	}
 
-  /**
-   * @param invCommitted
-   *          The invCommitted to set.
-   */
-  public void setInvCommitted(int invCommitted) {
-    this.invCommitted = invCommitted;
-  }
+	/**
+	 * @param account The account to set.
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-  /**
-   * @return Returns the invInStock.
-   */
-  @Column(name="inv_in_stock")
-  @NotNull @Range(min=0L, max=999999L)
-  public int getInvInStock() {
-    return invInStock;
-  }
+	/**
+	 * @return Returns the auxDescriptor.
+	 */
+	@Column(name = "aux_descriptor")
+	@Length(max = MAXLEN_AUX_DESCRIPTOR)
+	public String getAuxDescriptor() {
+		return auxDescriptor;
+	}
 
-  /**
-   * @param invInStock
-   *          The invInStock to set.
-   */
-  public void setInvInStock(int invInStock) {
-    this.invInStock = invInStock;
-  }
+	/**
+	 * @param auxDescriptor The auxDescriptor to set.
+	 */
+	public void setAuxDescriptor(String auxDescriptor) {
+		this.auxDescriptor = auxDescriptor;
+	}
 
-  /**
-   * @return Returns the invReorderLevel.
-   */
-  @Column(name="inv_reorder_level")
-  @NotNull @Range(min=0L, max=999999L)
-  public int getInvReorderLevel() {
-    return invReorderLevel;
-  }
+	/**
+	 * @return Returns the invCommitted.
+	 */
+	@Column(name = "inv_committed")
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public int getInvCommitted() {
+		return invCommitted;
+	}
 
-  /**
-   * @param invReorderLevel
-   *          The invReorderLevel to set.
-   */
-  public void setInvReorderLevel(int invReorderLevel) {
-    this.invReorderLevel = invReorderLevel;
-  }
+	/**
+	 * @param invCommitted The invCommitted to set.
+	 */
+	public void setInvCommitted(int invCommitted) {
+		this.invCommitted = invCommitted;
+	}
 
-  /**
-   * @return Returns the onSale.
-   */
-  @Column(name="on_sale")
-  @NotNull
-  public boolean isOnSale() {
-    return onSale;
-  }
+	/**
+	 * @return Returns the invInStock.
+	 */
+	@Column(name = "inv_in_stock")
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public int getInvInStock() {
+		return invInStock;
+	}
 
-  /**
-   * @param onSale
-   *          The onSale to set.
-   */
-  public void setOnSale(boolean onSale) {
-    this.onSale = onSale;
-  }
+	/**
+	 * @param invInStock The invInStock to set.
+	 */
+	public void setInvInStock(int invInStock) {
+		this.invInStock = invInStock;
+	}
 
-  /**
-   * @return Returns the productGeneral.
-   */
-  @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER )
-  @JoinColumn(name = "pg_id")
-  @NotNull
-  @Valid
-  public ProductGeneral getProductGeneral() {
-    return productGeneral;
-  }
+	/**
+	 * @return Returns the invReorderLevel.
+	 */
+	@Column(name = "inv_reorder_level")
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public int getInvReorderLevel() {
+		return invReorderLevel;
+	}
 
-  /**
-   * @param productGeneral
-   *          The productGeneral to set.
-   */
-  public void setProductGeneral(ProductGeneral productGeneral) {
-    this.productGeneral = productGeneral;
-  }
+	/**
+	 * @param invReorderLevel The invReorderLevel to set.
+	 */
+	public void setInvReorderLevel(int invReorderLevel) {
+		this.invReorderLevel = invReorderLevel;
+	}
 
-  /**
-   * @return Returns the retailPrice.
-   */
-  @Column(name="retail_price", precision = 7, scale = 2)
-  @NotNull @Range(min=0L, max=999999L)
-  public float getRetailPrice() {
-    return retailPrice;
-  }
+	/**
+	 * @return Returns the onSale.
+	 */
+	@Column(name = "on_sale")
+	@NotNull
+	public boolean isOnSale() {
+		return onSale;
+	}
 
-  /**
-   * @param retailPrice
-   *          The retailPrice to set.
-   */
-  public void setRetailPrice(float retailPrice) {
-    this.retailPrice = retailPrice;
-  }
+	/**
+	 * @param onSale The onSale to set.
+	 */
+	public void setOnSale(boolean onSale) {
+		this.onSale = onSale;
+	}
 
-  /**
-   * @return Returns the salesPrice.
-   */
-  @Column(name="sales_price", precision = 7, scale = 2)
-  @NotNull @Range(min=0L, max=999999L)
-  public float getSalesPrice() {
-    return salesPrice;
-  }
+	/**
+	 * @return Returns the productGeneral.
+	 */
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinColumn(name = "pg_id")
+	@NotNull
+	@Valid
+	public ProductGeneral getProductGeneral() {
+		return productGeneral;
+	}
 
-  /**
-   * @param salesPrice
-   *          The salesPrice to set.
-   */
-  public void setSalesPrice(float salesPrice) {
-    this.salesPrice = salesPrice;
-  }
+	/**
+	 * @param productGeneral The productGeneral to set.
+	 */
+	public void setProductGeneral(ProductGeneral productGeneral) {
+		this.productGeneral = productGeneral;
+	}
 
-  /**
-   * @return Returns the sku.
-   */
-  @Column
-  @NotNull @Length(max=MAXLEN_SKU)
-  public String getSku() {
-    return sku;
-  }
+	/**
+	 * @return Returns the retailPrice.
+	 */
+	@Column(name = "retail_price", precision = 7, scale = 2)
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public float getRetailPrice() {
+		return retailPrice;
+	}
 
-  /**
-   * @param sku
-   *          The sku to set.
-   */
-  public void setSku(String sku) {
-    this.sku = sku;
-  }
+	/**
+	 * @param retailPrice The retailPrice to set.
+	 */
+	public void setRetailPrice(float retailPrice) {
+		this.retailPrice = retailPrice;
+	}
 
-  /**
-   * @return Returns the status.
-   */
-  @Column
-  @NotNull
-  public ProductStatus getStatus() {
-    return status;
-  }
+	/**
+	 * @return Returns the salesPrice.
+	 */
+	@Column(name = "sales_price", precision = 7, scale = 2)
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public float getSalesPrice() {
+		return salesPrice;
+	}
 
-  /**
-   * @param status
-   *          The status to set.
-   */
-  public void setStatus(ProductStatus status) {
-    this.status = status;
-  }
+	/**
+	 * @param salesPrice The salesPrice to set.
+	 */
+	public void setSalesPrice(float salesPrice) {
+		this.salesPrice = salesPrice;
+	}
 
-  /**
-   * @return Returns the weight.
-   */
-  @Column(precision = 7, scale = 3)
-  @NotNull @Range(min=0L, max=999999L)
-  public float getWeight() {
-    return weight;
-  }
+	/**
+	 * @return Returns the sku.
+	 */
+	@Column
+	@NotNull
+	@Length(max = MAXLEN_SKU)
+	public String getSku() {
+		return sku;
+	}
 
-  /**
-   * @param weight
-   *          The weight to set.
-   */
-  public void setWeight(float weight) {
-    this.weight = weight;
-  }
+	/**
+	 * @param sku The sku to set.
+	 */
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
 
-  @Transient
-  public Account getParent() {
-    return getAccount();
-  }
+	/**
+	 * @return Returns the status.
+	 */
+	@Column
+	@NotNull
+	public ProductStatus getStatus() {
+		return status;
+	}
 
-  public void setParent(Account e) {
-    setAccount(e);
-  }
+	/**
+	 * @param status The status to set.
+	 */
+	public void setStatus(ProductStatus status) {
+		this.status = status;
+	}
 
-  public Integer accountId() {
-    try {
-      return getAccount().getId();
-    }
-    catch(NullPointerException npe) {
-      LOG.warn("Unable to provide related account id due to a NULL nested entity");
-      return null;
-    }
-  }
-  
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return  super.toStringBuilder()
-    
-    .append("sku", sku)
-    .append("status", status)
-    .append("retailPrice", retailPrice)
-    .append("salesPrice", salesPrice)
-    .append("weight", weight)
-    .append("onSale", onSale)
-    .append("invInStock", auxDescriptor)
-    .append("invCommitted", auxDescriptor)
-    .append("invReorderLevel", auxDescriptor)
-    .append("account", account==null? "NULL" :  account.descriptor())
-    .append("productGeneral", productGeneral==null? "NULL" :  productGeneral.descriptor());
-  }
+	/**
+	 * @return Returns the weight.
+	 */
+	@Column(precision = 7, scale = 3)
+	@NotNull
+	@Range(min = 0L, max = 999999L)
+	public float getWeight() {
+		return weight;
+	}
 
+	/**
+	 * @param weight The weight to set.
+	 */
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+
+	@Transient
+	public Account getParent() {
+		return getAccount();
+	}
+
+	public void setParent(Account e) {
+		setAccount(e);
+	}
+
+	public Integer accountId() {
+		try {
+			return getAccount().getId();
+		}
+		catch(NullPointerException npe) {
+			LOG.warn("Unable to provide related account id due to a NULL nested entity");
+			return null;
+		}
+	}
+
+	public String d1() {
+		try {
+			return getProductGeneral().getD1();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	public String d2() {
+		try {
+			return getProductGeneral().getD2();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] {
+			new BusinessKey(skuBk, new Object[] {
+				accountId(),
+				getSku() }),
+			new BusinessKey(titleBk, new Object[] {
+				accountId(),
+				d1(),
+				d2() }) };
+	}
 }

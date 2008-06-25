@@ -1,5 +1,7 @@
 package com.tll.model;
 
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.IDescriptorProvider;
 
 /**
@@ -26,11 +28,6 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	Integer getId();
 
 	/**
-	 * @param id
-	 */
-	void setId(Integer id);
-
-	/**
 	 * True if the identifier for this object was assigned at creation.<br>
 	 * Note that generated entities are expected to provide a constructor that
 	 * takes the initial id as an argument.<br>
@@ -44,4 +41,17 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return A state independent UI presentable name of the entity
 	 */
 	String typeName();
+
+	/**
+	 * @return The primary key for this entity.
+	 */
+	PrimaryKey getPrimaryKey();
+
+	/**
+	 * @return All defined business keys for this entity type holding the current
+	 *         state of this entity.
+	 * @throws BusinessKeyNotDefinedException When there are no defined business
+	 *         keys for this entity type.
+	 */
+	BusinessKey[] getBusinessKeys() throws BusinessKeyNotDefinedException;
 }

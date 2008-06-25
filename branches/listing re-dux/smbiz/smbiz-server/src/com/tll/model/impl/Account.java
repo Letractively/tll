@@ -21,7 +21,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -29,6 +28,9 @@ import org.hibernate.validator.Valid;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -41,6 +43,9 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+
+	private static final IBusinessKeyDefinition nameBk =
+			new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" });
 
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
@@ -303,13 +308,8 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("name", name).append("status", status).append("persistPymntInfo",
-				persistPymntInfo).append("billingCycle", billingCycle).append("nextChargeDate", nextChargeDate).append(
-				"dateCancelled", dateCancelled).append("paymentInfo", paymentInfo == null ? "NULL" : paymentInfo.descriptor())
-				.append("currency", currency == null ? "NULL" : currency.descriptor())
-				// .append("addresses.size()", addresses == null ? "NULL" :
-				// Integer.toString(addresses.size()))
-				.append("parent", parent == null ? "NULL" : parent.descriptor());
+	@Transient
+	public final BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(nameBk, new Object[] { getName() }) };
 	}
 }

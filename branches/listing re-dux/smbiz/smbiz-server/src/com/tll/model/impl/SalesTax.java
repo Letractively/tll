@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -17,6 +16,9 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Sales tax entity
@@ -32,15 +34,22 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
 
-	protected String province;
+	private static final IBusinessKeyDefinition bk =
+			new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
+				"account.id",
+				"province",
+				"county",
+				"postalCode" });
 
-	protected String county;
+	private String province;
 
-	protected String postalCode;
+	private String county;
 
-	protected float tax;
+	private String postalCode;
 
-	protected Account account;
+	private float tax;
+
+	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SalesTax.class;
@@ -151,11 +160,12 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("province", province).append("county", county).append("postalCode", postalCode).append("tax", tax).append(
-				"account", account == null ? "NULL" : account.descriptor());
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			accountId(),
+			getProvince(),
+			getCounty(),
+			getPostalCode() }) };
 	}
-
 }

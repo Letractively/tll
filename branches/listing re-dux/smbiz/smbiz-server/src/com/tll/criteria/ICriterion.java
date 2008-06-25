@@ -2,12 +2,11 @@ package com.tll.criteria;
 
 import java.io.Serializable;
 
-
 /**
  * Criterion definition.
  * @author jpk
  */
-public interface ICriterion extends Cloneable, Serializable {
+public interface ICriterion extends Serializable {
 
 	/**
 	 * Returns the property name used by the UI for this criterion. In most cases,
@@ -47,8 +46,8 @@ public interface ICriterion extends Cloneable, Serializable {
 	boolean isSet();
 
 	/**
-	 * @return true if this {@link ICriterion} is a {@link ICriterionGroup},
-	 *         false if not.
+	 * @return true if this {@link ICriterion} is a {@link CriterionGroup}, false
+	 *         if not.
 	 */
 	boolean isGroup();
 
@@ -64,10 +63,4 @@ public interface ICriterion extends Cloneable, Serializable {
 	 * @return true if this criterion is case sensitive, false otherwise.
 	 */
 	boolean isCaseSensitive();
-
-	/**
-	 * @return a deep copy of this instance.
-	 */
-	ICriterion copy();
-
 }

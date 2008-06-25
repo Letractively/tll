@@ -3,7 +3,6 @@ package com.tll.service.entity.impl.account;
 import java.util.Collection;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 
 import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
-import com.tll.model.key.INameKey;
 import com.tll.service.entity.StatefulEntityService;
 
 /**
@@ -50,10 +48,6 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 	@Override
 	public Class<Account> getEntityClass() {
 		return Account.class;
-	}
-
-	public Account load(INameKey<? extends Account> key) throws EntityNotFoundException {
-		return dao.load(key);
 	}
 
 	@Override

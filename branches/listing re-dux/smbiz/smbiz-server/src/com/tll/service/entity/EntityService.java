@@ -13,16 +13,19 @@ import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tll.SystemError;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.INamedEntityDao;
 import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.NameKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.validate.EntityValidatorFactory;
 import com.tll.model.validate.IEntityValidator;
 
@@ -105,13 +108,21 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	}
 
 	@Transactional(readOnly = true)
-	public E load(IPrimaryKey<? extends E> key) throws EntityNotFoundException {
+	public E load(PrimaryKey key) throws EntityNotFoundException {
 		return dao.load(key);
 	}
 
 	@Transactional(readOnly = true)
-	public E load(IBusinessKey<? extends E> key) throws EntityNotFoundException {
+	public E load(BusinessKey key) throws EntityNotFoundException {
 		return dao.load(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public E load(NameKey key) throws EntityNotFoundException {
+		if(this instanceof INamedEntityService == false) {
+			throw new SystemError("This entity service does not provide load by name");
+		}
+		return (E) ((INamedEntityDao) dao).load(key);
 	}
 
 	@Transactional(readOnly = true)

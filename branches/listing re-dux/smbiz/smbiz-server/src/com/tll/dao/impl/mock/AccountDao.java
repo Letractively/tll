@@ -18,7 +18,6 @@ import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Isp;
 import com.tll.model.impl.Merchant;
-import com.tll.model.key.INameKey;
 
 public class AccountDao extends EntityDao<Account> implements IAccountDao, IMockDao<Account> {
 
@@ -48,9 +47,5 @@ public class AccountDao extends EntityDao<Account> implements IAccountDao, IMock
 			}
 		}
 		return list;
-	}
-
-	public Account load(INameKey<? extends Account> nameKey) {
-		return loadByName(nameKey);
 	}
 }

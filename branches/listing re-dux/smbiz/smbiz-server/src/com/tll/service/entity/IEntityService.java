@@ -13,8 +13,8 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.listhandler.IListHandlerDataProvider;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.service.IService;
 
 /**
@@ -34,14 +34,14 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	E load(IPrimaryKey<? extends E> key) throws EntityNotFoundException;
+	E load(PrimaryKey key) throws EntityNotFoundException;
 
 	/**
 	 * Load by business key.
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	E load(IBusinessKey<? extends E> key) throws EntityNotFoundException;
+	E load(BusinessKey key) throws EntityNotFoundException;
 
 	/**
 	 * Returns all of the entities in the system managed by this service.

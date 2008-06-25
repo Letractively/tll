@@ -8,13 +8,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The customer account entity
@@ -26,15 +28,20 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
-	protected Customer customer;
+	private static final IBusinessKeyDefinition binderBk =
+			new BusinessKeyDefinition(CustomerAccount.class, "Binder", new String[] {
+				"customer.id",
+				"account.id" });
 
-	protected Account account;
+	private Customer customer;
 
-	protected AccountSource source;
+	private Account account;
 
-	protected AccountStatus status;
+	private AccountSource source;
 
-	protected Visitor initialVisitorRecord;
+	private AccountStatus status;
+
+	private Visitor initialVisitorRecord;
 
 	public Class<? extends IEntity> entityClass() {
 		return CustomerAccount.class;
@@ -142,11 +149,20 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("customer", customer == null ? "NULL" : customer.descriptor()).append(
-				"account", account == null ? "NULL" : account.descriptor()).append("source", source).append("status", status)
-				.append("initialVisitorRecord", initialVisitorRecord == null ? "NULL" : initialVisitorRecord.descriptor());
+	public Integer customerId() {
+		try {
+			return getCustomer().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
 
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
+			customerId(),
+			accountId() }) };
+	}
 }

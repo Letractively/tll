@@ -14,8 +14,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.ShipBoundCost;
 import com.tll.model.impl.ShipMode;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ShipBoundCostDaoTest
@@ -24,8 +23,8 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao", testName = "ShipBoundCostDaoTest")
 public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 
-	IPrimaryKey<Account> aKey;
-	IPrimaryKey<ShipMode> smKey;
+	PrimaryKey aKey;
+	PrimaryKey smKey;
 
 	/**
 	 * Constructor
@@ -43,7 +42,7 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = account.getPrimaryKey();
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -55,7 +54,7 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 			sm = getMockEntityProvider().getEntityCopy(ShipMode.class);
 			sm.setParent(account);
 			sm = getDao(IShipModeDao.class).persist(sm);
-			smKey = KeyFactory.getPrimaryKey(sm);
+			smKey = sm.getPrimaryKey();
 		}
 		else {
 			sm = getDao(IShipModeDao.class).load(smKey);

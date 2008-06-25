@@ -3,7 +3,7 @@ package com.tll.service.entity;
 import javax.persistence.EntityNotFoundException;
 
 import com.tll.model.INamedEntity;
-import com.tll.model.key.INameKey;
+import com.tll.model.key.NameKey;
 
 /**
  * Interface for services that manage named Entities (implement INamedEntity
@@ -18,5 +18,5 @@ public interface INamedEntityService<E extends INamedEntity> extends IEntityServ
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	E load(INameKey<? extends E> key) throws EntityNotFoundException;
+	E load(NameKey key) throws EntityNotFoundException;
 }

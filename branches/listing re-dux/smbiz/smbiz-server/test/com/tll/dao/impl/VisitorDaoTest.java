@@ -13,8 +13,7 @@ import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.Visitor;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * VisitorDaoTest
@@ -23,7 +22,7 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao", testName = "VisitorDaoTest")
 public class VisitorDaoTest extends AbstractDaoTest<Visitor> {
 
-	IPrimaryKey<Account> aKey;
+	PrimaryKey aKey;
 
 	/**
 	 * Constructor
@@ -41,7 +40,7 @@ public class VisitorDaoTest extends AbstractDaoTest<Visitor> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = account.getPrimaryKey();
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

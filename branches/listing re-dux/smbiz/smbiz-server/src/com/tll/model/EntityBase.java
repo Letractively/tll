@@ -9,13 +9,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.Managed;
 
 /**
@@ -27,9 +25,11 @@ import com.tll.model.schema.Managed;
 public abstract class EntityBase implements IEntity {
 
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
+
 	private Integer id;
-	private boolean generated = false;
+	private boolean generated;
 	private Integer version;
+	private PrimaryKey pk;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -174,6 +174,9 @@ public abstract class EntityBase implements IEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
+		if(pk != null) {
+			pk.setId(id);
+		}
 	}
 
 	@Transient
@@ -206,6 +209,15 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
+	@Transient
+	public final PrimaryKey getPrimaryKey() {
+		if(pk == null) {
+			pk = new PrimaryKey(entityClass(), getId());
+		}
+		return pk;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if(this == o) {
 			return true;
@@ -213,34 +225,22 @@ public abstract class EntityBase implements IEntity {
 		if(o == null || !(o instanceof IEntity)) {
 			return false;
 		}
-		IEntity entity = (IEntity) o;
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return (pk != null && pk.equals(KeyFactory.getPrimaryKey(entity)));
+		return (getPrimaryKey()).equals(((IEntity) o).getPrimaryKey());
 	}
 
 	@Override
-	public int hashCode() {
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return pk == null ? 0 : pk.hashCode();
-	}
-
-	protected ToStringBuilder toStringBuilder() {
-		return new ToStringBuilder(this).append(IEntity.PK_FIELDNAME, getId()).append("version", getVersion());
+	public final int hashCode() {
+		return getPrimaryKey().hashCode();
 	}
 
 	@Override
-	public String toString() {
-		return toStringBuilder().toString();
+	public final String toString() {
+		return getPrimaryKey().toString() + ", version: " + getVersion();
 	}
 
 	@Transient
-	public boolean isNew() {
+	public final boolean isNew() {
 		return (getVersion() == null);
-	}
-
-	@Transient
-	public boolean isDirty() {
-		throw new UnsupportedOperationException("isDirty() is not implemented.");
 	}
 
 	@Transient

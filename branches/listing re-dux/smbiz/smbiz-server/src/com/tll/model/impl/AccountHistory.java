@@ -12,13 +12,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account history entity
@@ -31,15 +33,21 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
-	protected Account account;
+	public static final IBusinessKeyDefinition NameBk =
+			new BusinessKeyDefinition(AccountHistory.class, "Name", new String[] {
+				"account.id",
+				"transDate",
+				"status" });
 
-	protected Date transDate = new Date();
+	private Account account;
 
-	protected AccountStatus status;
+	private Date transDate = new Date();
 
-	protected String notes;
+	private AccountStatus status;
 
-	protected PaymentTrans pymntTrans;
+	private String notes;
+
+	private PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountHistory.class;
@@ -146,12 +154,12 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	}
 
 	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("account", account == null ? "NULL" : account.descriptor()).append("transDate",
-				transDate == null ? "NULL" : transDate.toString()).append("status", status).append("notes", notes).append(
-				"pymntTrans", pymntTrans == null ? "NULL" : pymntTrans.descriptor());
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] {
+			accountId(),
+			getTransDate(),
+			getStatus() }) };
 	}
 
 }

@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -22,269 +21,275 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Order trans entity
  * @author jpk
  */
 @Entity
-@Table(name="order_trans")
+@Table(name = "order_trans")
 public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
-  private static final long serialVersionUID = 8026809773722347843L;
 
-  public static final int MAXLEN_USERNAME = 32;
-  public static final int MAXLEN_SHIP_MODE_NAME = 64;
-  public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
-  
-  protected Order order;
+	private static final long serialVersionUID = 8026809773722347843L;
 
-  protected String username; // author of this transaction
+	public static final int MAXLEN_USERNAME = 32;
+	public static final int MAXLEN_SHIP_MODE_NAME = 64;
+	public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
 
-  protected OrderTransOp orderTransOp;
+	private static final IBusinessKeyDefinition bk =
+			new BusinessKeyDefinition(OrderTrans.class, "Order Trans Key", new String[] {
+				"order.id",
+				"dateCreated",
+				"username" });
 
-  protected OrderTransOpResult orderTransResult;
+	private Order order;
 
-  protected String shipModeName;
+	private String username; // author of this transaction
 
-  protected String shipRoutingNum;
+	private OrderTransOp orderTransOp;
 
-  protected float itemTotal = 0f;
+	private OrderTransOpResult orderTransResult;
 
-  protected float salesTax = 0f;
+	private String shipModeName;
 
-  protected float shipCost = 0f;
+	private String shipRoutingNum;
 
-  protected float total = 0f;
+	private float itemTotal = 0f;
 
-  protected Address billToAddress;
+	private float salesTax = 0f;
 
-  protected Address shipToAddress;
+	private float shipCost = 0f;
 
-  protected PaymentInfo pymntInfo;
+	private float total = 0f;
 
-  protected PaymentTrans pymntTrans;
+	private Address billToAddress;
 
-  protected Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
+	private Address shipToAddress;
 
-  public Class<? extends IEntity> entityClass() {
-    return OrderTrans.class;
-  }
+	private PaymentInfo pymntInfo;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "bta_id")
-  public Address getBillToAddress() {
-    return billToAddress;
-  }
+	private PaymentTrans pymntTrans;
 
-  public void setBillToAddress(Address billToAddress) {
-    this.billToAddress = billToAddress;
-  }
+	private Set<OrderItemTrans> itemTransactions = new LinkedHashSet<OrderItemTrans>();
 
-  @Column(name="item_total", precision = 7, scale = 2)
-  @Range(min=0L, max=99999L)
-  public float getItemTotal() {
-    return itemTotal;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return OrderTrans.class;
+	}
 
-  public void setItemTotal(float itemTotal) {
-    this.itemTotal = itemTotal;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bta_id")
+	public Address getBillToAddress() {
+		return billToAddress;
+	}
 
-  @OneToMany(cascade = { CascadeType.ALL }, mappedBy="orderTrans")
-  @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-  public Set<OrderItemTrans> getItemTransactions() {
-    return itemTransactions;
-  }
+	public void setBillToAddress(Address billToAddress) {
+		this.billToAddress = billToAddress;
+	}
 
-  public void setItemTransactions(Set<OrderItemTrans> itemTransactions) {
-    this.itemTransactions = itemTransactions;
-  }
+	@Column(name = "item_total", precision = 7, scale = 2)
+	@Range(min = 0L, max = 99999L)
+	public float getItemTotal() {
+		return itemTotal;
+	}
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "o_id")
-  @NotNull
-  public Order getOrder() {
-    return order;
-  }
+	public void setItemTotal(float itemTotal) {
+		this.itemTotal = itemTotal;
+	}
 
-  public void setOrder(Order order) {
-    this.order = order;
-  }
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "orderTrans")
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	public Set<OrderItemTrans> getItemTransactions() {
+		return itemTransactions;
+	}
 
-  @Column(name="order_trans_op")
-  @NotNull
-  public OrderTransOp getOrderTransOp() {
-    return orderTransOp;
-  }
+	public void setItemTransactions(Set<OrderItemTrans> itemTransactions) {
+		this.itemTransactions = itemTransactions;
+	}
 
-  public void setOrderTransOp(OrderTransOp orderTransOp) {
-    this.orderTransOp = orderTransOp;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "o_id")
+	@NotNull
+	public Order getOrder() {
+		return order;
+	}
 
-  @Column(name="order_trans_result")
-  @NotNull
-  public OrderTransOpResult getOrderTransResult() {
-    return orderTransResult;
-  }
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
-  public void setOrderTransResult(OrderTransOpResult orderTransResult) {
-    this.orderTransResult = orderTransResult;
-  }
+	@Column(name = "order_trans_op")
+	@NotNull
+	public OrderTransOp getOrderTransOp() {
+		return orderTransOp;
+	}
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "pi_id")
-  public PaymentInfo getPymntInfo() {
-    return pymntInfo;
-  }
+	public void setOrderTransOp(OrderTransOp orderTransOp) {
+		this.orderTransOp = orderTransOp;
+	}
 
-  public void setPymntInfo(PaymentInfo pymntInfo) {
-    this.pymntInfo = pymntInfo;
-  }
+	@Column(name = "order_trans_result")
+	@NotNull
+	public OrderTransOpResult getOrderTransResult() {
+		return orderTransResult;
+	}
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "pt_id")
-  public PaymentTrans getPymntTrans() {
-    return pymntTrans;
-  }
+	public void setOrderTransResult(OrderTransOpResult orderTransResult) {
+		this.orderTransResult = orderTransResult;
+	}
 
-  public void setPymntTrans(PaymentTrans pymntTrans) {
-    this.pymntTrans = pymntTrans;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pi_id")
+	public PaymentInfo getPymntInfo() {
+		return pymntInfo;
+	}
 
-  @Column(name="sales_tax", precision = 7, scale = 2)
-  @Range(min=0L, max=999999L)
-  public float getSalesTax() {
-    return salesTax;
-  }
+	public void setPymntInfo(PaymentInfo pymntInfo) {
+		this.pymntInfo = pymntInfo;
+	}
 
-  public void setSalesTax(float salesTax) {
-    this.salesTax = salesTax;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pt_id")
+	public PaymentTrans getPymntTrans() {
+		return pymntTrans;
+	}
 
-  @Column(name="ship_cost", precision = 7, scale = 2)
-  @Range(min=0L, max=999999L)
-  public float getShipCost() {
-    return shipCost;
-  }
+	public void setPymntTrans(PaymentTrans pymntTrans) {
+		this.pymntTrans = pymntTrans;
+	}
 
-  public void setShipCost(float shipCost) {
-    this.shipCost = shipCost;
-  }
+	@Column(name = "sales_tax", precision = 7, scale = 2)
+	@Range(min = 0L, max = 999999L)
+	public float getSalesTax() {
+		return salesTax;
+	}
 
-  @Column(name="ship_mode_name")
-  @Length(max=MAXLEN_SHIP_MODE_NAME)
-  public String getShipModeName() {
-    return shipModeName;
-  }
+	public void setSalesTax(float salesTax) {
+		this.salesTax = salesTax;
+	}
 
-  public void setShipModeName(String shipModeName) {
-    this.shipModeName = shipModeName;
-  }
+	@Column(name = "ship_cost", precision = 7, scale = 2)
+	@Range(min = 0L, max = 999999L)
+	public float getShipCost() {
+		return shipCost;
+	}
 
-  @Column(name="ship_routing_num")
-  @Length(max=MAXLEN_SHIP_ROUTING_NUM)
-  public String getShipRoutingNum() {
-    return shipRoutingNum;
-  }
+	public void setShipCost(float shipCost) {
+		this.shipCost = shipCost;
+	}
 
-  public void setShipRoutingNum(String shipRoutingNum) {
-    this.shipRoutingNum = shipRoutingNum;
-  }
+	@Column(name = "ship_mode_name")
+	@Length(max = MAXLEN_SHIP_MODE_NAME)
+	public String getShipModeName() {
+		return shipModeName;
+	}
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sta_id")
-  public Address getShipToAddress() {
-    return shipToAddress;
-  }
+	public void setShipModeName(String shipModeName) {
+		this.shipModeName = shipModeName;
+	}
 
-  public void setShipToAddress(Address shipToAddress) {
-    this.shipToAddress = shipToAddress;
-  }
+	@Column(name = "ship_routing_num")
+	@Length(max = MAXLEN_SHIP_ROUTING_NUM)
+	public String getShipRoutingNum() {
+		return shipRoutingNum;
+	}
 
-  @Column(precision = 7, scale = 2)
-  @Range(min=0L, max=9999999L)
-  public float getTotal() {
-    return total;
-  }
+	public void setShipRoutingNum(String shipRoutingNum) {
+		this.shipRoutingNum = shipRoutingNum;
+	}
 
-  public void setTotal(float total) {
-    this.total = total;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sta_id")
+	public Address getShipToAddress() {
+		return shipToAddress;
+	}
 
-  @Column
-  @NotEmpty @Length(max=MAXLEN_USERNAME)
-  public String getUsername() {
-    return username;
-  }
+	public void setShipToAddress(Address shipToAddress) {
+		this.shipToAddress = shipToAddress;
+	}
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+	@Column(precision = 7, scale = 2)
+	@Range(min = 0L, max = 9999999L)
+	public float getTotal() {
+		return total;
+	}
 
-  @Transient
-  public OrderItemTrans getOrderItemTrans(int id) {
-    return findEntityInCollection(itemTransactions, id);
-  }
+	public void setTotal(float total) {
+		this.total = total;
+	}
 
-  @Transient
-  public void addOrderItemTrans(OrderItemTrans e) {
-    addEntityToCollection(itemTransactions, e);
-  }
+	@Column
+	@NotEmpty
+	@Length(max = MAXLEN_USERNAME)
+	public String getUsername() {
+		return username;
+	}
 
-  @Transient
-  public void removeOrderItemTrans(OrderItemTrans e) {
-    removeEntityFromCollection(itemTransactions, e);
-  }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-  @Transient
-  public void clearOrderItemTransactions() {
-    clearEntityCollection(itemTransactions);
-  }
+	@Transient
+	public OrderItemTrans getOrderItemTrans(int id) {
+		return findEntityInCollection(itemTransactions, id);
+	}
 
-  @Transient
-  public int getNumItemTransactions() {
-    return getCollectionSize(itemTransactions);
-  }
+	@Transient
+	public void addOrderItemTrans(OrderItemTrans e) {
+		addEntityToCollection(itemTransactions, e);
+	}
 
-  @Transient
-  public Order getParent() {
-    return getOrder();
-  }
+	@Transient
+	public void removeOrderItemTrans(OrderItemTrans e) {
+		removeEntityFromCollection(itemTransactions, e);
+	}
 
-  public void setParent(Order e) {
-    setOrder(e);
-  }
+	@Transient
+	public void clearOrderItemTransactions() {
+		clearEntityCollection(itemTransactions);
+	}
 
-  public Integer accountId() {
-    try {
-      return getOrder().getAccount().getId();
-    }
-    catch(NullPointerException npe) {
-      LOG.warn("Unable to provide related account id due to a NULL nested entity");
-      return null;
-    }
-  }
-  
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
-    
-    .append("order", order==null? "NULL" :  order.descriptor())
-   
-    .append("username", username)
-    .append("orderTransOp", orderTransOp)
-    .append("orderTransResult", orderTransResult)
-    .append("shipModeName", shipModeName)
-    .append("shipRoutingNum", shipRoutingNum)
-    .append("itemTotal", itemTotal)
-    .append("salesTax", salesTax)
-    .append("shipCost", shipCost)
-    .append("total", total)
-    .append("billToAddress", billToAddress==null? "NULL" :  billToAddress.descriptor())
-    .append("shipToAddress", shipToAddress==null? "NULL" :  shipToAddress.descriptor())
-    .append("pymntInfo", pymntInfo==null? "NULL" :  pymntInfo.descriptor())
-    .append("pymntTrans", pymntTrans==null? "NULL" :  pymntTrans.descriptor())
-    .append("itemTransactions.size()", itemTransactions==null? "NULL" :  Integer.toString(itemTransactions.size()));
-  }
+	@Transient
+	public int getNumItemTransactions() {
+		return getCollectionSize(itemTransactions);
+	}
 
+	@Transient
+	public Order getParent() {
+		return getOrder();
+	}
+
+	public void setParent(Order e) {
+		setOrder(e);
+	}
+
+	public Integer accountId() {
+		try {
+			return getOrder().getAccount().getId();
+		}
+		catch(NullPointerException npe) {
+			LOG.warn("Unable to provide related account id due to a NULL nested entity");
+			return null;
+		}
+	}
+
+	public Integer orderId() {
+		try {
+			return getOrder().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	@Override
+	@Transient
+	public BusinessKey[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
+			orderId(),
+			getDateCreated(),
+			getUsername() }) };
+	}
 }
