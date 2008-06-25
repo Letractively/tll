@@ -1,11 +1,14 @@
 package com.tll.service.entity.impl.sitecode;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.ISiteCodeDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.SiteCode;
+import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -28,5 +31,9 @@ public class SiteCodeService extends EntityService<SiteCode, ISiteCodeDao> imple
 	@Override
 	public Class<SiteCode> getEntityClass() {
 		return SiteCode.class;
+	}
+
+	public SiteCode load(INameKey<? extends SiteCode> key) throws EntityNotFoundException {
+		return dao.load(key);
 	}
 }

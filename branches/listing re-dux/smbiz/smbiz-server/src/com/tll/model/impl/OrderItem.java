@@ -14,18 +14,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IntPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * Order item entity
@@ -42,25 +39,25 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 32;
 
-	private Order order;
+	protected Order order;
 
-	private String sku;
+	protected String sku;
 
-	private OrderItemStatus itemStatus;
+	protected OrderItemStatus itemStatus;
 
-	private PaymentItemStatus payStatus;
+	protected PaymentItemStatus payStatus;
 
-	private int qty = 0;
+	protected int qty = 0;
 
-	private float price = 0f;
+	protected float price = 0f;
 
-	private float weight = 0f;
+	protected float weight = 0f;
 
-	private String description;
+	protected String description;
 
-	private String image;
+	protected String image;
 
-	private Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
+	protected Set<OrderItemTrans> transactions = new LinkedHashSet<OrderItemTrans>();
 
 	public Class<? extends IEntity> entityClass() {
 		return OrderItem.class;
@@ -285,20 +282,16 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		}
 	}
 
-	public Integer orderId() {
-		try {
-			return getOrder().getId();
-		}
-		catch(NullPointerException npe) {
-			return null;
-		}
+	@Override
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder()
+
+		.append("order", order == null ? "NULL" : order.descriptor()).append("sku", sku)
+
+		.append("itemStatus", itemStatus).append("payStatus", payStatus).append("qty", qty).append("price", price).append(
+				"weight", weight).append("name", name).append("description", description).append("image", image)
+
+		.append("transactions.size()", transactions == null ? "NULL" : Integer.toString(transactions.size()));
 	}
 
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(OrderItem.class, "Order Id and Product SKU", new IPropertyValue[] {
-			new IntPropertyValue("order.id", orderId()),
-			new StringPropertyValue("sku", getSku()) }) };
-	}
 }

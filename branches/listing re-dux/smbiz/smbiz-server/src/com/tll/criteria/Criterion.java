@@ -1,6 +1,7 @@
 package com.tll.criteria;
 
-import com.tll.client.model.IPropertyValue;
+import com.tll.SystemError;
+import com.tll.util.CommonUtil;
 
 /**
  * Object representing a criterion definition. It contains the field name and
@@ -12,20 +13,26 @@ public class Criterion implements ICriterion {
 
 	private static final long serialVersionUID = -9033958462037763702L;
 
-	private IPropertyValue propertyValue;
+	private String field;
+
+	private Object value;
 
 	private Comparator comparator;
 
 	private boolean caseSensitive;
 
 	public Criterion() {
-		this(null, null, false);
+		this(null, null);
 	}
 
-	public Criterion(IPropertyValue propertyValue, Comparator comparator, boolean isCaseSensitive) {
-		this.propertyValue = propertyValue;
-		this.comparator = comparator;
-		this.caseSensitive = isCaseSensitive;
+	public Criterion(String field, Object value) {
+		this(field, value, Comparator.EQUALS, true);
+	}
+
+	public Criterion(String field, Object value, Comparator comparator, boolean caseSensitive) {
+		super();
+		setFieldValueComparator(field, value, comparator);
+		setCaseSensitive(caseSensitive);
 	}
 
 	public boolean isGroup() {
@@ -48,54 +55,88 @@ public class Criterion implements ICriterion {
 		this.comparator = comparator;
 	}
 
-	public IPropertyValue getPropertyValue() {
-		return propertyValue;
+	public String getField() {
+		return field;
 	}
 
-	public void setPropertyValue(IPropertyValue propertyValue) {
-		this.propertyValue = propertyValue;
+	public void setField(String field) {
+		this.field = field;
+	}
+
+	public String getPropertyName() {
+		return this.field;
+	}
+
+	public Object getValue() {
+		return value;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public void setFieldValue(String field, Object value) {
+		setField(field);
+		setValue(value);
+	}
+
+	public void setFieldValueComparator(String field, Object value, Comparator comp) {
+		setFieldValue(field, value);
+		setComparator(comp);
 	}
 
 	public boolean isSet() {
-		if(propertyValue == null || propertyValue.getValue() == null || comparator == null) return false;
-		if(Comparator.LIKE.equals(getComparator()) && "%".equals(propertyValue.getValue())) {
+		if(Comparator.LIKE.equals(getComparator()) && "%".equals(getValue())) {
 			// if we are doing a like query and the value is just %, then ignore this
 			// criterion
 			return false;
 		}
-		return true;
+		return (getValue() != null);
 	}
 
 	public void clear() {
-		this.propertyValue = null;
-		this.comparator = null;
+		setFieldValue(null, null);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-		if(obj == null) return false;
-		if(getClass() != obj.getClass()) return false;
+
+		if(obj == null || !(obj instanceof Criterion)) return false;
+
 		final Criterion other = (Criterion) obj;
-		if(caseSensitive != other.caseSensitive) return false;
-		if(comparator == null) {
-			if(other.comparator != null) return false;
+
+		if(getField() == null || !getField().equals(other.getField())) {
+			return false;
 		}
-		else if(!comparator.equals(other.comparator)) return false;
-		if(propertyValue == null) {
-			if(other.propertyValue != null) return false;
+		if(getComparator() == null || !getComparator().equals(other.getComparator())) {
+			return false;
 		}
-		else if(!propertyValue.equals(other.propertyValue)) return false;
+		if(isCaseSensitive() != isCaseSensitive()) {
+			return false;
+		}
+		if(getValue() == null || !getValue().equals(other.getValue())) {
+			return false;
+		}
+
 		return true;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (caseSensitive ? 1231 : 1237);
-		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
-		result = prime * result + ((propertyValue == null) ? 0 : propertyValue.hashCode());
-		return result;
+	protected ICriterion clone() {
+		try {
+			final Criterion result = (Criterion) super.clone();
+			final Object value = getValue();
+			result.setValue(CommonUtil.clone(value));
+			return result;
+		}
+		catch(final CloneNotSupportedException cnse) {
+			throw new SystemError("This should never happen!");
+		}
 	}
+
+	public ICriterion copy() {
+		return clone();
+	}
+
 }

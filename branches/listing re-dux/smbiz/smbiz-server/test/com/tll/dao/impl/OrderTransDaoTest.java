@@ -15,7 +15,8 @@ import com.tll.model.impl.Currency;
 import com.tll.model.impl.Order;
 import com.tll.model.impl.OrderTrans;
 import com.tll.model.impl.OrderTransOp;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * OrderTransDaoTest
@@ -24,8 +25,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 
-	PrimaryKey aKey;
-	PrimaryKey oKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Order> oKey;
 
 	/**
 	 * Constructor
@@ -45,7 +46,7 @@ public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -59,7 +60,7 @@ public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = order.getPrimaryKey();
+			oKey = KeyFactory.getPrimaryKey(order);
 		}
 		else {
 			order = getDao(IOrderDao.class).load(oKey);

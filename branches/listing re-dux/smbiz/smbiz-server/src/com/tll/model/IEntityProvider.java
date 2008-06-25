@@ -6,7 +6,7 @@ package com.tll.model;
 
 import java.util.List;
 
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
 
 /**
  * IEntityProvider - Definition for an object to provide entities of particular
@@ -20,14 +20,14 @@ public interface IEntityProvider {
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
-	<E extends IEntity> E getEntity(PrimaryKey key);
+	<E extends IEntity> E getEntity(IPrimaryKey<E> key);
 
 	/**
 	 * Does the entity exist in this provider?
 	 * @param key
 	 * @return true/false
 	 */
-	boolean hasEntity(PrimaryKey key);
+	boolean hasEntity(IPrimaryKey<? extends IEntity> key);
 
 	/**
 	 * Get all entities of the given type and all entities whose type derives from

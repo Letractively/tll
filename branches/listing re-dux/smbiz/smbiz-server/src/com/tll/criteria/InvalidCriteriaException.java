@@ -5,7 +5,7 @@ import com.tll.model.IEntity;
 /**
  * Throw when {@link ICriteria} derived instances are found to be invalid due to
  * either invalid contained values or when the criteria is null or empty
- * (contains no {@link Criterion} objects.
+ * (contains no {@link ICriterion} objects.
  * @author jpk
  */
 public class InvalidCriteriaException extends CriteriaException {

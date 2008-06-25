@@ -1,11 +1,14 @@
 package com.tll.service.entity.impl.ship;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IShipModeDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.ShipMode;
+import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -28,5 +31,9 @@ public class ShipModeService extends EntityService<ShipMode, IShipModeDao> imple
 	@Override
 	public Class<ShipMode> getEntityClass() {
 		return ShipMode.class;
+	}
+
+	public ShipMode load(INameKey<? extends ShipMode> key) throws EntityNotFoundException {
+		return dao.load(key);
 	}
 }

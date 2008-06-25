@@ -27,11 +27,12 @@ import org.springframework.util.StringUtils;
 
 import com.google.inject.Provider;
 import com.tll.criteria.Comparator;
+import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
+import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
@@ -43,9 +44,8 @@ import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.NameKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.IPrimaryKey;
 import com.tll.util.CollectionUtil;
 
 /**
@@ -112,44 +112,17 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return baseClass.cast(maybeProxy);
 	}
 
-	/**
-	 * Ensures the given entity class is the same is this dao's entity class or an
-	 * extended class from it.
-	 * @param entityClass
-	 * @throws IllegalArgumentException
-	 */
-	protected final void ensureTypeCompatible(Class<? extends IEntity> entityClass) throws IllegalArgumentException {
-		if(!getEntityClass().isAssignableFrom(entityClass)) {
-			throw new IllegalArgumentException("Incompatible type: " + entityClass.toString());
-		}
-	}
-
-	public final E load(PrimaryKey key) {
-		ensureTypeCompatible(key.getType());
+	public E load(IPrimaryKey<? extends E> key) {
 		final E e = getEntityManager().getReference(getEntityClass(), key.getId());
 		return deproxy(e, getEntityClass());
 	}
 
-	@SuppressWarnings("unchecked")
-	public final E load(BusinessKey key) {
-		ensureTypeCompatible(key.getType());
+	public E load(IBusinessKey<? extends E> key) {
 		try {
-			return findEntity(new com.tll.criteria.Criteria<E>((Class<? extends E>) key.getType()));
+			return findEntity(CriteriaFactory.buildEntityCriteria(key, true));
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from business key: " + e.getMessage(), e);
-		}
-	}
-
-	public final E load(NameKey nameKey) {
-		ensureTypeCompatible(nameKey.getType());
-		try {
-			final com.tll.criteria.Criteria<E> nc = new com.tll.criteria.Criteria<E>(getEntityClass());
-			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			return findEntity(nc);
-		}
-		catch(final InvalidCriteriaException e) {
-			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);
 		}
 	}
 
@@ -415,7 +388,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
-			final CriterionGroup pg = criteria.getPrimaryGroup();
+			final ICriterionGroup pg = criteria.getPrimaryGroup();
 			Junction j = null;
 			if(pg.size() > 1) {
 				j = pg.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
@@ -437,7 +410,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 
 		if(ctn.isGroup()) {
-			final CriterionGroup g = (CriterionGroup) ctn;
+			final ICriterionGroup g = (ICriterionGroup) ctn;
 			final Junction j = g.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
 			dc.add(j);
 
@@ -449,10 +422,10 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 
 		DetachedCriteria dc2 = dc;
-		String propName = ctn.getPropertyName();
+		String fieldName = ctn.getField();
 
 		// PROPERTY PATH LOGIC
-		final String[] hPaths = StringUtils.delimitedListToStringArray(propName, ".");
+		final String[] hPaths = StringUtils.delimitedListToStringArray(fieldName, ".");
 		// only apply sub-criteria when the path is 2+ deep
 		// (i.e. when the path portion of the field contains at least one dot)
 		if(hPaths.length > 2) {
@@ -460,18 +433,18 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				// create sub-criteria to handle the association path
 				dc2 = dc.createCriteria(hPaths[i]);
 			}
-			propName = hPaths[hPaths.length - 1];
+			fieldName = hPaths[hPaths.length - 1];
 		}
 		else {
 			// apply an alias (if not sorting against this field - else hibernate
 			// duplicate alias exception occurrs)
-			if(sorting == null || sorting.getPrimarySortColumn().getPropertyName().equals(propName)) {
-				applyAliasIfNecessary(dc2, propName);
+			if(sorting == null || sorting.getPrimarySortColumn().getPropertyName().equals(fieldName)) {
+				applyAliasIfNecessary(dc2, fieldName);
 			}
 		}
 
 		final Comparator cmptr = ctn.getComparator();
-		final Criterion expression = comparatorTranslator.translate(cmptr, propName, ctn.getValue());
+		final Criterion expression = comparatorTranslator.translate(cmptr, fieldName, ctn.getValue());
 		applyCaseSensitivity(ctn, expression);
 		if(junction == null) {
 			dc2.add(expression);
@@ -558,12 +531,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	@SuppressWarnings("unchecked")
 	public List<E> findByIds(List<Integer> ids, Sorting sorting) {
-		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(getEntityClass());
-		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
-		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
+		final ICriteria<? extends E> criteria =
+				CriteriaFactory.buildEntityCriteria(getEntityClass(), IEntity.PK_FIELDNAME, ids, Comparator.IN);
+		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, nativeCriteria, sorting, true);
+			applyCriteriaStrict(dc, criteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);

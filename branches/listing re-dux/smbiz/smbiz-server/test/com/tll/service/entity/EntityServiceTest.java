@@ -12,7 +12,8 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.Criteria;
+import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.ICriteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.impl.IAccountDao;
@@ -31,7 +32,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.model.impl.User;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.KeyFactory;
 import com.tll.service.entity.impl.account.IAccountService;
 import com.tll.service.entity.impl.user.IUserService;
 
@@ -142,7 +143,7 @@ public class EntityServiceTest extends DbTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), user.getPrimaryKey());
+			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), KeyFactory.getPrimaryKey(user));
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}
@@ -161,10 +162,11 @@ public class EntityServiceTest extends DbTest {
 			account = as.persist(account);
 
 			startNewTransaction();
-			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey(Account.class, account.getId()));
+			final ICriteria<? extends AccountHistory> c =
+					CriteriaFactory.buildForeignKeyCriteria(AccountHistory.class, "account", KeyFactory.getPrimaryKey(
+							Account.class, account.getId()));
 			final List<SearchResult<AccountHistory>> list =
-					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
+					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), c);
 			endTransaction();
 			assert list != null && list.size() == 1;
 		}

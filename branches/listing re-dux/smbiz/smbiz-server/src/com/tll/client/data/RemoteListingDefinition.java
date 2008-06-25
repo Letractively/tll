@@ -6,20 +6,20 @@
 package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
-import com.tll.criteria.Criteria;
+import com.tll.client.search.ISearch;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
-import com.tll.model.IEntity;
 
 /**
  * RemoteListingDefinition - Definition for server side listings. A unique
  * listing name must be bound to these types.
  * @author jpk
+ * @param <S> The search type
  */
-public final class RemoteListingDefinition<E extends IEntity> implements IMarshalable {
+public final class RemoteListingDefinition<S extends ISearch> implements IMarshalable {
 
 	private ListHandlerType listHandlerType;
-	private Criteria<E> criteria;
+	private S searchCriteria;
 	private String[] propKeys;
 	private int pageSize;
 	private Sorting initialSorting;
@@ -34,16 +34,16 @@ public final class RemoteListingDefinition<E extends IEntity> implements IMarsha
 	/**
 	 * Constructor
 	 * @param listHandlerType The required list handler type
-	 * @param criteria The required search criteria
+	 * @param searchCriteria The required search criteria
 	 * @param propKeys The optional property keys filter array
 	 * @param pageSize The required page size. <code>-1</code> means no paging.
 	 * @param initialSorting The required default sorting directive
 	 */
-	public RemoteListingDefinition(ListHandlerType listHandlerType, Criteria<E> criteria, String[] propKeys,
-			int pageSize, Sorting initialSorting) {
+	public RemoteListingDefinition(ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize,
+			Sorting initialSorting) {
 		super();
 		this.listHandlerType = listHandlerType;
-		this.criteria = criteria;
+		this.searchCriteria = searchCriteria;
 		this.propKeys = propKeys;
 		this.pageSize = pageSize;
 		this.initialSorting = initialSorting;
@@ -77,8 +77,8 @@ public final class RemoteListingDefinition<E extends IEntity> implements IMarsha
 	/**
 	 * @return The search criteria for the listing.
 	 */
-	public Criteria<E> getCriteria() {
-		return criteria;
+	public S getSearchCriteria() {
+		return searchCriteria;
 	}
 
 	/**

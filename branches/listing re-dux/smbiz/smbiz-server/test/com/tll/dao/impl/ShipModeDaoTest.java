@@ -13,7 +13,8 @@ import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.ShipMode;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * ShipModeDaoTest
@@ -22,7 +23,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "ShipModeDaoTest")
 public class ShipModeDaoTest extends NamedEntityDaoTest<ShipMode> {
 
-	PrimaryKey aKey;
+	IPrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -40,7 +41,7 @@ public class ShipModeDaoTest extends NamedEntityDaoTest<ShipMode> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

@@ -13,7 +13,8 @@ import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.SalesTax;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * SalesTaxDaoTest
@@ -22,7 +23,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "SalesTaxDaoTest")
 public class SalesTaxDaoTest extends AbstractDaoTest<SalesTax> {
 
-	PrimaryKey aKey;
+	IPrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -40,7 +41,7 @@ public class SalesTaxDaoTest extends AbstractDaoTest<SalesTax> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

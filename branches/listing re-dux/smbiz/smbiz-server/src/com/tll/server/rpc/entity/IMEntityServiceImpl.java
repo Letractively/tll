@@ -7,6 +7,8 @@ import com.tll.client.data.EntityPersistRequest;
 import com.tll.client.data.EntityPurgeRequest;
 import com.tll.client.data.EntityRequest;
 import com.tll.client.data.RemoteListingDefinition;
+import com.tll.client.search.ISearch;
+import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
@@ -19,7 +21,7 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
  * @author jpk
  * @param <E>
  */
-public interface IMEntityServiceImpl<E extends IEntity> {
+public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 
 	/**
 	 * Get an empty entity.
@@ -68,6 +70,18 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	void purge(RequestContext requestContext, EntityPurgeRequest request, EntityType entityType, EntityPayload payload);
 
 	/**
+	 * Translate client-side search to server-side serach.
+	 * @param requestContext Guaranteed non-<code>null</code>
+	 * @param entityType The guaranteed non-<code>null</code> resolved
+	 *        {@link EntityType} for the {@link ISearch}.
+	 * @param search The client side {@link ISearch} instance
+	 * @return Translated search {@link ICriteria}.
+	 * @throws IllegalArgumentException
+	 */
+	ICriteria<? extends E> translate(RequestContext requestContext, EntityType entityType, S search)
+			throws IllegalArgumentException;
+
+	/**
 	 * Gets the entity type specific marshaling options.
 	 * @param requestContext Guaranteed non-<code>null</code>
 	 * @return The {@link MarshalOptions}
@@ -81,6 +95,6 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 * @return The marshaling list handler.
 	 */
 	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext,
-			RemoteListingDefinition<E> listingDefinition);
+			RemoteListingDefinition<S> listingDefinition);
 
 }

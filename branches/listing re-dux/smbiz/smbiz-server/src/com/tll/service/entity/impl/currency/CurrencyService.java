@@ -6,11 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.criteria.Criteria;
+import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.ICurrencyDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.impl.Currency;
+import com.tll.model.key.INameKey;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -35,11 +36,13 @@ public class CurrencyService extends EntityService<Currency, ICurrencyDao> imple
 		return Currency.class;
 	}
 
+	public Currency load(INameKey<? extends Currency> key) throws EntityNotFoundException {
+		return dao.load(key);
+	}
+
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
 		try {
-			Criteria<Currency> criteria = new Criteria<Currency>(Currency.class);
-			criteria.getPrimaryGroup().addCriterion("iso4217", iso4217, false);
-			return dao.findEntity(criteria);
+			return dao.findEntity(CriteriaFactory.buildEntityCriteria(getEntityClass(), "iso4217", iso4217));
 		}
 		catch(InvalidCriteriaException e) {
 			throw new SystemError("Unexpected invalid criteria exception occurred");

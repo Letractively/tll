@@ -17,15 +17,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
@@ -293,9 +291,19 @@ public abstract class Interface extends NamedTimeStampEntity {
 	}
 
 	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(Interface.class, "Code", new IPropertyValue[] { new StringPropertyValue(
-				"code", getCode()) }) };
+	protected ToStringBuilder toStringBuilder() {
+
+		return super.toStringBuilder()
+
+		.append("code", name).append("name", name).append("description", description)
+
+		.append("isAvailableAsp", isAvailableAsp).append("isAvailableIsp", isAvailableIsp).append("isAvailableMerchant",
+				isAvailableMerchant).append("isAvailableCustomer", isAvailableCustomer)
+
+		.append("isRequiredAsp", isRequiredAsp).append("isRequiredIsp", isRequiredIsp).append("isRequiredMerchant",
+				isRequiredMerchant).append("isRequiredCustomer", isRequiredCustomer)
+
+		.append("options.size()", options == null ? "NULL" : Integer.toString(options.size()));
 	}
+
 }

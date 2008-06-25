@@ -3,30 +3,21 @@ package com.tll.model.key;
 import com.tll.model.INamedEntity;
 
 /**
- * INameKey impl
+ * Key for named entities.
  * @author jpk
  */
-public class NameKey extends EntityKey {
+public class NameKey<N extends INamedEntity> extends BusinessKey<N> implements INameKey<N> {
 
 	private static final long serialVersionUID = -3217664978174156618L;
-
-	public static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
-
-	/**
-	 * The name used to identify the field that holds the name.
-	 */
+	private static final String DEFAULT_FIELDNAME = INamedEntity.NAME;
 	private String fieldName;
-
-	/**
-	 * The actual name value.
-	 */
-	private String name;
+	private Class<N> entityClass;
 
 	/**
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass) {
+	public NameKey(Class<N> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -35,7 +26,7 @@ public class NameKey extends EntityKey {
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name) {
+	public NameKey(Class<N> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -45,23 +36,32 @@ public class NameKey extends EntityKey {
 	 * @param name
 	 * @param fieldName
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name, String fieldName) {
-		super(entityClass);
+	public NameKey(Class<N> entityClass, String name, String fieldName) {
+		super();
+		this.entityClass = entityClass;
 		setName(name);
 		setFieldName(fieldName);
 	}
 
+	public final Class<N> getType() {
+		return entityClass;
+	}
+
+	/*
+	 * This is the default impl. Sub-classes should override this method if there
+	 * are additional fields.
+	 */
 	@Override
-	public String getTypeName() {
-		return "Name key";
+	protected String[] getFields() {
+		return new String[] { DEFAULT_FIELDNAME };
 	}
 
 	public String getName() {
-		return name;
+		return (String) getValue(0);
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		setValue(0, name);
 	}
 
 	public final String getFieldName() {
@@ -69,8 +69,11 @@ public class NameKey extends EntityKey {
 	}
 
 	public final void setFieldName(String fieldName) {
-		if(fieldName == null) throw new IllegalArgumentException("A field name must be specified");
 		this.fieldName = fieldName;
+	}
+
+	public void setEntity(N entity) {
+		entity.setName(getName());
 	}
 
 	@Override
@@ -78,13 +81,4 @@ public class NameKey extends EntityKey {
 		return "Name";
 	}
 
-	@Override
-	public void clear() {
-		this.name = null;
-	}
-
-	@Override
-	public boolean isSet() {
-		return name != null;
-	}
 }

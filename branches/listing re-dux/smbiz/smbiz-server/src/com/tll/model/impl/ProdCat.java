@@ -8,127 +8,111 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IntPropertyValue;
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * product cateory binder entity
+ * 
  * @author jpk
  */
 @Entity
-@Table(name = "prod_cat")
+@Table(name="prod_cat")
 public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
+  private static final long serialVersionUID = -8353863817821839414L;
 
-	private static final long serialVersionUID = -8353863817821839414L;
+  protected boolean isFeaturedProduct = false;
 
-	private boolean isFeaturedProduct = false;
+  protected ProductInventory product;
 
-	private ProductInventory product;
+  protected ProductCategory category;
 
-	private ProductCategory category;
+  public Class<? extends IEntity> entityClass() {
+    return ProdCat.class;
+  }
 
-	public Class<? extends IEntity> entityClass() {
-		return ProdCat.class;
-	}
+  /**
+   * @return Returns the bIsFeaturedProduct.
+   */
+  @Column(name="is_featured_product")
+  @NotNull
+  public boolean getIsFeaturedProduct() {
+    return isFeaturedProduct;
+  }
 
-	/**
-	 * @return Returns the bIsFeaturedProduct.
-	 */
-	@Column(name = "is_featured_product")
-	@NotNull
-	public boolean getIsFeaturedProduct() {
-		return isFeaturedProduct;
-	}
+  /**
+   * @param isFeaturedProduct
+   *          The bIsFeaturedProduct to set.
+   */
+  public void setIsFeaturedProduct(boolean isFeaturedProduct) {
+    this.isFeaturedProduct = isFeaturedProduct;
+  }
 
-	/**
-	 * @param isFeaturedProduct The bIsFeaturedProduct to set.
-	 */
-	public void setIsFeaturedProduct(boolean isFeaturedProduct) {
-		this.isFeaturedProduct = isFeaturedProduct;
-	}
+  /**
+   * @return Returns the category.
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "prodcat_id")
+  @NotNull
+  public ProductCategory getCategory() {
+    return category;
+  }
 
-	/**
-	 * @return Returns the category.
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prodcat_id")
-	@NotNull
-	public ProductCategory getCategory() {
-		return category;
-	}
+  /**
+   * @param category
+   *          The category to set.
+   */
+  public void setCategory(ProductCategory category) {
+    this.category = category;
+  }
 
-	/**
-	 * @param category The category to set.
-	 */
-	public void setCategory(ProductCategory category) {
-		this.category = category;
-	}
+  /**
+   * @return Returns the product.
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "prodinv_id")
+  @NotNull
+  public ProductInventory getProduct() {
+    return product;
+  }
 
-	/**
-	 * @return Returns the product.
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "prodinv_id")
-	@NotNull
-	public ProductInventory getProduct() {
-		return product;
-	}
+  /**
+   * @param product
+   *          The product to set.
+   */
+  public void setProduct(ProductInventory product) {
+    this.product = product;
+  }
 
-	/**
-	 * @param product The product to set.
-	 */
-	public void setProduct(ProductInventory product) {
-		this.product = product;
-	}
+  @Transient
+  public ProductInventory getParent() {
+    return getProduct();
+  }
 
-	@Transient
-	public ProductInventory getParent() {
-		return getProduct();
-	}
+  public void setParent(ProductInventory e) {
+    setProduct(e);
+  }
 
-	public void setParent(ProductInventory e) {
-		setProduct(e);
-	}
-
-	public Integer accountId() {
-		try {
-			return getProduct().getAccount().getId();
-		}
-		catch(NullPointerException npe) {
-			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return null;
-		}
-	}
-
-	public Integer productId() {
-		try {
-			return getProduct().getId();
-		}
-		catch(NullPointerException npe) {
-			return null;
-		}
-	}
-
-	public Integer categoryId() {
-		try {
-			return getCategory().getId();
-		}
-		catch(NullPointerException npe) {
-			return null;
-		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(ProdCat.class, "Binder", new IPropertyValue[] {
-			new IntPropertyValue("product.id", productId()),
-			new IntPropertyValue("category.id", categoryId()) }) };
-	}
+  public Integer accountId() {
+    try {
+      return getProduct().getAccount().getId();
+    }
+    catch(NullPointerException npe) {
+      LOG.warn("Unable to provide related account id due to a NULL nested entity");
+      return null;
+    }
+  }
+  
+  @Override
+  protected ToStringBuilder toStringBuilder() {
+    return super.toStringBuilder()
+    
+    .append("isFeaturedProduct", isFeaturedProduct)
+    .append("product", product==null? "NULL" : product.descriptor())
+    .append("category", category==null? "NULL" : category.descriptor());
+  }
 }

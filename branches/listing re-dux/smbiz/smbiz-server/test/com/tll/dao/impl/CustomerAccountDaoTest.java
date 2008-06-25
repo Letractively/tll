@@ -16,7 +16,8 @@ import com.tll.model.impl.Currency;
 import com.tll.model.impl.Customer;
 import com.tll.model.impl.CustomerAccount;
 import com.tll.model.impl.Visitor;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * CustomerAccountDaoTest
@@ -25,10 +26,10 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 
-	PrimaryKey rKey;
-	PrimaryKey aKey;
-	PrimaryKey cKey;
-	PrimaryKey vKey;
+	IPrimaryKey<Currency> rKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Customer> cKey;
+	IPrimaryKey<Visitor> vKey;
 
 	/**
 	 * Constructor
@@ -43,7 +44,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 		if(rKey == null) {
 			c = getMockEntityProvider().getEntityCopy(Currency.class);
 			c = getDao(ICurrencyDao.class).persist(c);
-			rKey = c.getPrimaryKey();
+			rKey = KeyFactory.getPrimaryKey(c);
 		}
 		else {
 			c = getDao(ICurrencyDao.class).load(rKey);
@@ -56,7 +57,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 			customer.setParent(null);
 			customer.setCurrency(c);
 			customer = (Customer) getDao(IAccountDao.class).persist(customer);
-			cKey = customer.getPrimaryKey();
+			cKey = KeyFactory.getPrimaryKey(customer);
 		}
 		else {
 			customer = (Customer) getDao(IAccountDao.class).load(cKey);
@@ -71,7 +72,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 			account.setParent(null);
 			account.setCurrency(c);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -84,7 +85,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 			visitor = getMockEntityProvider().getEntityCopy(Visitor.class);
 			visitor.setAccount(account);
 			visitor = getDao(IVisitorDao.class).persist(visitor);
-			vKey = visitor.getPrimaryKey();
+			vKey = KeyFactory.getPrimaryKey(visitor);
 		}
 		else {
 			visitor = getDao(IVisitorDao.class).load(vKey);

@@ -21,16 +21,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -305,9 +303,13 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	}
 
 	@Override
-	@Transient
-	public final BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(Account.class, "Name", new IPropertyValue[] { new StringPropertyValue(
-				"name", getName()) }) };
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder().append("name", name).append("status", status).append("persistPymntInfo",
+				persistPymntInfo).append("billingCycle", billingCycle).append("nextChargeDate", nextChargeDate).append(
+				"dateCancelled", dateCancelled).append("paymentInfo", paymentInfo == null ? "NULL" : paymentInfo.descriptor())
+				.append("currency", currency == null ? "NULL" : currency.descriptor())
+				// .append("addresses.size()", addresses == null ? "NULL" :
+				// Integer.toString(addresses.size()))
+				.append("parent", parent == null ? "NULL" : parent.descriptor());
 	}
 }

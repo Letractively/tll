@@ -6,8 +6,8 @@
 package com.tll.client.data;
 
 import com.tll.client.model.RefKey;
+import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
-import com.tll.model.key.BusinessKey;
 
 /**
  * EntityLoadRequest
@@ -17,9 +17,11 @@ public class EntityLoadRequest extends EntityRequest {
 
 	private RefKey entityRef;
 
-	private BusinessKey businessKey;
+	private ISearch search;
 
 	private boolean loadByName;
+
+	private boolean loadByBusinessKey;
 
 	/**
 	 * Constructor
@@ -50,21 +52,25 @@ public class EntityLoadRequest extends EntityRequest {
 
 	/**
 	 * Constructor
-	 * @param businessKey
+	 * @param search
 	 */
-	public EntityLoadRequest(BusinessKey businessKey) {
+	public EntityLoadRequest(ISearch search) {
 		super();
-		this.businessKey = businessKey;
+		this.search = search;
+		this.loadByBusinessKey = true;
 	}
 
 	@Override
 	public EntityType getEntityType() {
-		// TODO fix
-		return null;
+		return loadByBusinessKey ? search.getEntityType() : entityRef.getType();
 	}
 
 	public boolean isLoadByName() {
 		return loadByName;
+	}
+
+	public boolean isLoadByBusinessKey() {
+		return loadByBusinessKey;
 	}
 
 	/**
@@ -75,9 +81,10 @@ public class EntityLoadRequest extends EntityRequest {
 	}
 
 	/**
-	 * @return the businessKey
+	 * @return The search used for marshalling the business key
 	 */
-	public BusinessKey getBusinessKey() {
-		return businessKey;
+	public ISearch getSearch() {
+		return search;
 	}
+
 }

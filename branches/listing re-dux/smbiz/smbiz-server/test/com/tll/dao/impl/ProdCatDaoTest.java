@@ -16,7 +16,8 @@ import com.tll.model.impl.ProdCat;
 import com.tll.model.impl.ProductCategory;
 import com.tll.model.impl.ProductGeneral;
 import com.tll.model.impl.ProductInventory;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * ProdCatDaoTest
@@ -25,9 +26,9 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
-	PrimaryKey aKey;
-	PrimaryKey pKey;
-	PrimaryKey cKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<ProductInventory> pKey;
+	IPrimaryKey<ProductCategory> cKey;
 
 	/**
 	 * Constructor
@@ -45,7 +46,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -60,7 +61,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 			getEntityAssembler().setGenerated(product.getProductGeneral());
 			product.setParent(account);
 			product = getDao(IProductInventoryDao.class).persist(product);
-			pKey = product.getPrimaryKey();
+			pKey = KeyFactory.getPrimaryKey(product);
 		}
 		else {
 			product = getDao(IProductInventoryDao.class).load(pKey);
@@ -73,7 +74,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 			category = getMockEntityProvider().getEntityCopy(ProductCategory.class);
 			category.setParent(account);
 			category = getDao(IProductCategoryDao.class).persist(category);
-			cKey = category.getPrimaryKey();
+			cKey = KeyFactory.getPrimaryKey(category);
 		}
 		else {
 			category = getDao(IProductCategoryDao.class).load(cKey);

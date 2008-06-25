@@ -8,16 +8,9 @@ import com.tll.model.schema.PropertyType;
  * QueryParam - Needed to resolve query param types.
  * @author jpk
  */
-public interface IQueryParam extends IPropertyNameProvider, IMarshalable {
+public interface IQueryParam extends /*Serializable*/IPropertyNameProvider, IMarshalable {
 
-	/**
-	 * @return The property type of the query param necessary for server side type
-	 *         coercion.
-	 */
 	PropertyType getType();
 
-	/**
-	 * @return The property value.
-	 */
 	Object getValue();
 }

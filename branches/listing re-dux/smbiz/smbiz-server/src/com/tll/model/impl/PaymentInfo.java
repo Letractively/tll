@@ -5,18 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
@@ -63,9 +60,8 @@ public class PaymentInfo extends NamedEntity {
 	}
 
 	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(PaymentInfo.class, "Name",
-				new IPropertyValue[] { new StringPropertyValue(INamedEntity.NAME, getName()) }) };
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder();
 	}
+
 }

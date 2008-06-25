@@ -12,11 +12,16 @@ import com.tll.dao.impl.ICurrencyDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Currency;
+import com.tll.model.key.INameKey;
 
 public class CurrencyDao extends EntityDao<Currency> implements ICurrencyDao, IMockDao<Currency> {
 
 	@Inject
 	public CurrencyDao(Set<Currency> set) {
 		super(Currency.class, set);
+	}
+
+	public Currency load(INameKey<? extends Currency> nameKey) {
+		return loadByName(nameKey);
 	}
 }

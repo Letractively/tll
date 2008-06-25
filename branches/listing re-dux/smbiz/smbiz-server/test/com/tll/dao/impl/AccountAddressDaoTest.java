@@ -15,7 +15,8 @@ import com.tll.model.impl.Address;
 import com.tll.model.impl.AddressType;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * AccountAddressDaoTest
@@ -24,8 +25,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
-	PrimaryKey aKey;
-	PrimaryKey adrKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Address> adrKey;
 
 	/**
 	 * Constructor
@@ -44,7 +45,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -55,7 +56,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 		Address address;
 		if(adrKey == null) {
 			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
-			adrKey = address.getPrimaryKey();
+			adrKey = KeyFactory.getPrimaryKey(address);
 		}
 		else {
 			address = getDao(IAddressDao.class).load(adrKey);

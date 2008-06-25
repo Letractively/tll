@@ -10,13 +10,14 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.INameKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * MockEntityProvider - Provides prototype entity instances via a Spring bean
@@ -32,8 +33,7 @@ public final class MockEntityProvider {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface MockEntityBeanFactory {
 	}
@@ -213,26 +213,34 @@ public final class MockEntityProvider {
 	@SuppressWarnings("unchecked")
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e, int uniqueTokenNum)
 			throws BusinessKeyNotDefinedException {
-		BusinessKey[] keys = e.getBusinessKeys();
+		IBusinessKey<E>[] keys = KeyFactory.getBusinessKeys(e);
 		String ut = Integer.toString(uniqueTokenNum);
-		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
-		for(BusinessKey key : keys) {
+		for(IBusinessKey<E> key : keys) {
+			if(key instanceof INameKey) {
+				INameKey n = (INameKey) key;
+				n.setName(n.getName() + ut);
+				key.setEntity(e);
+				continue;
+			}
 			boolean entityAlteredByBk = false;
-			for(String fname : key.getPropertyNames()) {
+			for(String fname : key.getFieldNames()) {
 				Object fval = key.getFieldValue(fname);
 				if(fval instanceof String) {
-					bw.setPropertyValue(fname, fval.toString() + ut);
+					key.setFieldValue(fname, fval.toString() + ut);
+					key.setEntity(e);
 					entityAlteredByBk = true;
 					break;
 				}
 				else if(fval instanceof Date) {
-					bw.setPropertyValue(fname, new Date((new Date()).getTime() - (uniqueTokenNum * 1000)));
+					key.setFieldValue(fname, new Date((new Date()).getTime() - (uniqueTokenNum * 1000)));
+					key.setEntity(e);
 					entityAlteredByBk = true;
 					break;
 				}
 				else if(fval instanceof Float) {
 					Float n = (Float) fval;
-					bw.setPropertyValue(fname, n + uniqueTokenNum);
+					key.setFieldValue(fname, n + uniqueTokenNum);
+					key.setEntity(e);
 					entityAlteredByBk = true;
 					break;
 				}

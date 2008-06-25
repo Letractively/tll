@@ -2,18 +2,34 @@ package com.tll.criteria;
 
 import java.io.Serializable;
 
-import com.tll.client.model.IPropertyValue;
 
 /**
  * Criterion definition.
  * @author jpk
  */
-public interface ICriterion extends Serializable {
+public interface ICriterion extends Cloneable, Serializable {
 
 	/**
-	 * @return The property value containing the property name and search value.
+	 * Returns the property name used by the UI for this criterion. In most cases,
+	 * the property name will be equivalent to the field name. However, in the
+	 * case of foreign key fields, the field value will include the ".id" whereas
+	 * the property name will be only the reference entity name.
+	 * @return the property name
 	 */
-	IPropertyValue getPropertyValue();
+	String getPropertyName();
+
+	/**
+	 * Returns the name of the field used by the persistence framework.
+	 * @return the name of the field
+	 * @see #getPropertyName()
+	 */
+	String getField();
+
+	/**
+	 * Returns the value for the field that should be applied to the query.
+	 * @return the value to used in the query
+	 */
+	Object getValue();
 
 	/**
 	 * Returns the comparator that should be used in the query as the relationship
@@ -31,8 +47,8 @@ public interface ICriterion extends Serializable {
 	boolean isSet();
 
 	/**
-	 * @return true if this {@link ICriterion} is a {@link CriterionGroup}, false
-	 *         if not.
+	 * @return true if this {@link ICriterion} is a {@link ICriterionGroup},
+	 *         false if not.
 	 */
 	boolean isGroup();
 
@@ -48,4 +64,10 @@ public interface ICriterion extends Serializable {
 	 * @return true if this criterion is case sensitive, false otherwise.
 	 */
 	boolean isCaseSensitive();
+
+	/**
+	 * @return a deep copy of this instance.
+	 */
+	ICriterion copy();
+
 }

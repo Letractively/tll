@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.criteria.Criteria;
+import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.dao.impl.IUserDao;
@@ -39,8 +39,8 @@ import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
-import com.tll.model.key.NameKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.INameKey;
+import com.tll.model.key.KeyFactory;
 import com.tll.service.acl.IBasicAclProviderManager;
 import com.tll.service.entity.StatefulEntityService;
 
@@ -103,6 +103,10 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		return User.class;
 	}
 
+	public User load(INameKey<? extends User> key) throws EntityNotFoundException {
+		return dao.load(key);
+	}
+
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
 			EntityExistsException {
@@ -132,8 +136,8 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(authorityDao
-				.load(new NameKey(Authority.class, Authority.ROLE_USER, Authority.FIELDNAME_AUTHORITY)));
+		user.addAuthority(authorityDao.load(KeyFactory.getNameKey(Authority.class, Authority.ROLE_USER,
+				Authority.FIELDNAME_AUTHORITY)));
 
 		persist(user);
 
@@ -155,9 +159,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	public User findByUsername(String emailAddress) throws EntityNotFoundException {
 		User user;
 		try {
-			Criteria<User> criteria = new Criteria<User>(User.class);
-			criteria.getPrimaryGroup().addCriterion("emailAddress", emailAddress, false);
-			user = dao.findEntity(criteria);
+			user = dao.findEntity(CriteriaFactory.buildEntityCriteria(getEntityClass(), "emailAddress", emailAddress));
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new SystemError("Unexpected invalid criteria exception occurred");
@@ -195,7 +197,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	private User getUserById(Integer userId) throws EntityNotFoundException {
-		final User user = dao.load(new PrimaryKey(User.class, userId));
+		final User user = dao.load(KeyFactory.getPrimaryKey(User.class, userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
@@ -232,9 +234,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 		try {
 			// get the user
-			Criteria<User> criteria = new Criteria<User>(User.class);
-			criteria.getPrimaryGroup().addCriterion("emailAddress", username, false);
-			final User user = dao.findEntity(criteria);
+			final User user = dao.findEntity(CriteriaFactory.buildEntityCriteria(getEntityClass(), "emailAddress", username));
 
 			// encode the new password
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
@@ -261,7 +261,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 		try {
 			// get the user
-			final User user = dao.load(new PrimaryKey(User.class, userId));
+			final User user = dao.load(KeyFactory.getPrimaryKey(User.class, userId));
 			final String username = user.getUsername();
 
 			// encode the new password

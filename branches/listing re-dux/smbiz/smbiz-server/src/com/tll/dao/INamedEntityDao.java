@@ -1,7 +1,7 @@
 package com.tll.dao;
 
 import com.tll.model.INamedEntity;
-import com.tll.model.key.NameKey;
+import com.tll.model.key.INameKey;
 
 /**
  * Interface for data access objects that manage named entities (implement
@@ -16,5 +16,5 @@ public interface INamedEntityDao<N extends INamedEntity> extends IEntityDao<N> {
 	 * @param name the name key
 	 * @return the named entity
 	 */
-	N load(NameKey nameKey);
+	N load(INameKey<? extends N> nameKey);
 }

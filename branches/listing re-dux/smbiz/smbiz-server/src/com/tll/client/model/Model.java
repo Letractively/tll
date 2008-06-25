@@ -284,7 +284,8 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * @return true/false
 	 */
 	public boolean isNew() {
-		return getVersion() == null;
+		IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
+		return prop == null ? true : (prop.getInteger() == null);
 	}
 
 	/**
@@ -303,17 +304,6 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	public String getName() {
 		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
 		return prop == null ? null : prop.getString();
-	}
-
-	public Integer getVersion() {
-		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
-		return ipv == null ? null : ipv.getInteger();
-	}
-
-	public void setVersion(Integer version) {
-		final IntPropertyValue ipv = (IntPropertyValue) get(ID_PROPERTY);
-		if(ipv == null) throw new IllegalStateException("No version model property set");
-		ipv.setInteger(version);
 	}
 
 	/**

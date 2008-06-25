@@ -14,7 +14,8 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.Order;
 import com.tll.model.impl.OrderItem;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * OrderItemDaoTest
@@ -23,8 +24,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "OrderItemDaoTest")
 public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
-	PrimaryKey aKey;
-	PrimaryKey oKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Order> oKey;
 
 	/**
 	 * Constructor
@@ -42,7 +43,7 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -56,7 +57,7 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = order.getPrimaryKey();
+			oKey = KeyFactory.getPrimaryKey(order);
 		}
 		else {
 			order = getDao(IOrderDao.class).load(oKey);

@@ -14,7 +14,8 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.User;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * NamedEntityDaoTest
@@ -23,8 +24,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class UserDaoTest extends NamedEntityDaoTest<User> {
 
-	PrimaryKey aKey;
-	PrimaryKey tKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Authority> tKey;
 
 	/**
 	 * Constructor
@@ -42,7 +43,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -54,7 +55,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 		if(tKey == null) {
 			auth = getMockEntityProvider().getEntityCopy(Authority.class);
 			auth = getDao(IAuthorityDao.class).persist(auth);
-			tKey = auth.getPrimaryKey();
+			tKey = KeyFactory.getPrimaryKey(auth);
 		}
 		else {
 			auth = getDao(IAuthorityDao.class).load(tKey);
@@ -131,7 +132,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		dao.clear();
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
 		Assert.assertEquals(e.getUsername(), "newbie@booble.com", "Usernames don't match on user setCredentials() test");
 		Assert.assertEquals(e.getPassword(), "pswd", "Passwords don't match on user setCredentials() test");
 		endTransaction();

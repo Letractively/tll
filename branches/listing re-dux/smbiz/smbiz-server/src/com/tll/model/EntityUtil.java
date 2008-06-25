@@ -6,7 +6,8 @@ package com.tll.model;
 import java.util.Collection;
 
 import com.tll.SystemError;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.KeyFactory;
 import com.tll.util.CommonUtil;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
@@ -111,15 +112,14 @@ public final class EntityUtil {
 		}
 		try {
 			for(E e : clctn) {
-				BusinessKey[] bks = e.getBusinessKeys();
-				for(BusinessKey bk : bks) {
+				IBusinessKey<E>[] keys = KeyFactory.getBusinessKeys(e);
+				for(IBusinessKey<E> key : keys) {
 					for(E e2 : clctn) {
 						if(e != e2) {
-							BusinessKey[] otherBks = e2.getBusinessKeys();
-							for(BusinessKey bk2 : otherBks) {
-								if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
-									return false;
-								}
+							IBusinessKey<E> otherKey = KeyFactory.getBusinessKey(key.getClass());
+							KeyFactory.setBusinessKey(otherKey, e2);
+							if(key.equals(otherKey)) {
+								return false;
 							}
 						}
 					}

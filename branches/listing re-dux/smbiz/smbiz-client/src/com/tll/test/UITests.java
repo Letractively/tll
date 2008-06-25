@@ -56,7 +56,6 @@ import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
-import com.tll.model.key.BusinessKey;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
@@ -231,7 +230,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 					ep.refresh();
 				}
 			});
-			BusinessKey bk = new BusinessKey()
+			AddressSearch search = new AddressSearch("AddressKey");
 			search.setAddress1("home address line 11");
 			search.setPostalCode("94155");
 			cc.loadByBusinessKey(search);

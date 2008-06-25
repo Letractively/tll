@@ -12,17 +12,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
-import com.tll.client.model.DatePropertyValue;
-import com.tll.client.model.EnumPropertyValue;
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IntPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * The account history entity
@@ -35,15 +31,15 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
-	private Account account;
+	protected Account account;
 
-	private Date transDate = new Date();
+	protected Date transDate = new Date();
 
-	private AccountStatus status;
+	protected AccountStatus status;
 
-	private String notes;
+	protected String notes;
 
-	private PaymentTrans pymntTrans;
+	protected PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountHistory.class;
@@ -150,12 +146,12 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	}
 
 	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(AccountHistory.class, "Trans Date and Status", new IPropertyValue[] {
-			new IntPropertyValue("account.id", accountId()),
-			new DatePropertyValue("transDate", getTransDate()),
-			new EnumPropertyValue("status", getStatus()) }) };
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder()
+
+		.append("account", account == null ? "NULL" : account.descriptor()).append("transDate",
+				transDate == null ? "NULL" : transDate.toString()).append("status", status).append("notes", notes).append(
+				"pymntTrans", pymntTrans == null ? "NULL" : pymntTrans.descriptor());
 	}
 
 }

@@ -9,8 +9,8 @@ import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.IPrimaryKey;
 
 /**
  * IEntityDao - DAO definition for {@link IEntity}s.
@@ -29,14 +29,14 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	 * @param key the primary key
 	 * @return the entity
 	 */
-	E load(PrimaryKey key);
+	E load(IPrimaryKey<? extends E> key);
 
 	/**
 	 * Loads a single entity specified by a business key.
 	 * @param key the primary key
 	 * @return the entity
 	 */
-	E load(BusinessKey key);
+	E load(IBusinessKey<? extends E> key);
 
 	/**
 	 * Returns all the entities managed by this DAO. This method will only include

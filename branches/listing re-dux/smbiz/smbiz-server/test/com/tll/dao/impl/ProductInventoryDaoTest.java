@@ -16,7 +16,8 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.ProductGeneral;
 import com.tll.model.impl.ProductInventory;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * ProductInventoryDaoTest
@@ -25,7 +26,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "ProductInventoryDaoTest")
 public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 
-	PrimaryKey aKey;
+	IPrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -47,7 +48,7 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

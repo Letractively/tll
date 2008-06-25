@@ -14,7 +14,8 @@ import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * AccountHistoryDaoTest
@@ -23,7 +24,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "AccountHistoryDaoTest")
 public class AccountHistoryDaoTest extends AbstractDaoTest<AccountHistory> {
 
-	PrimaryKey aKey;
+	IPrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -44,7 +45,7 @@ public class AccountHistoryDaoTest extends AbstractDaoTest<AccountHistory> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

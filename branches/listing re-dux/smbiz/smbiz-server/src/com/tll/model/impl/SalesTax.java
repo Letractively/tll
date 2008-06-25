@@ -8,18 +8,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IntPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * Sales tax entity
@@ -35,15 +32,15 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
 
-	private String province;
+	protected String province;
 
-	private String county;
+	protected String county;
 
-	private String postalCode;
+	protected String postalCode;
 
-	private float tax;
+	protected float tax;
 
-	private Account account;
+	protected Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SalesTax.class;
@@ -154,13 +151,11 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	}
 
 	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(SalesTax.class, "Province, County and Postal Code",
-				new IPropertyValue[] {
-					new IntPropertyValue("account.id", accountId()),
-					new StringPropertyValue("province", getProvince()),
-					new StringPropertyValue("county", getCounty()),
-					new StringPropertyValue("postalCode", getPostalCode()) }) };
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder()
+
+		.append("province", province).append("county", county).append("postalCode", postalCode).append("tax", tax).append(
+				"account", account == null ? "NULL" : account.descriptor());
 	}
+
 }

@@ -8,140 +8,142 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.IntPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * The ship mode entity
+ * 
  * @author jpk
  */
 @Entity
-@Table(name = "ship_mode")
+@Table(name="ship_mode")
 public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+  private static final long serialVersionUID = -8602635055012335230L;
 
-	private static final long serialVersionUID = -8602635055012335230L;
+  public static final int MAXLEN_NAME = 32;
+  public static final int MAXLEN_SRC_ZIP = 16;
+  
+  protected ShipModeType type;
 
-	public static final int MAXLEN_NAME = 32;
-	public static final int MAXLEN_SRC_ZIP = 16;
+  protected float surcharge = 0f;
 
-	private ShipModeType type;
+  protected String srcZip;
 
-	private float surcharge = 0f;
+  protected Account account;
 
-	private String srcZip;
+  public Class<? extends IEntity> entityClass() {
+    return ShipMode.class;
+  }
 
-	private Account account;
-
-	public Class<? extends IEntity> entityClass() {
-		return ShipMode.class;
-	}
-
-	@Column
-	@NotEmpty
-	@Length(max = MAXLEN_NAME)
+  @Column
+  @NotEmpty @Length(max=MAXLEN_NAME)
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return Returns the account.
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aid")
-	@NotNull
-	public Account getAccount() {
-		return account;
-	}
+   * @return Returns the account.
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "aid")
+  @NotNull
+  public Account getAccount() {
+    return account;
+  }
 
-	/**
-	 * @param account The account to set.
-	 */
-	public void setAccount(Account account) {
-		this.account = account;
-	}
+  /**
+   * @param account
+   *          The account to set.
+   */
+  public void setAccount(Account account) {
+    this.account = account;
+  }
 
-	/**
-	 * @return Returns the srcZip.
-	 */
-	@Column(name = "src_zip")
-	@Length(max = MAXLEN_SRC_ZIP)
-	public String getSrcZip() {
-		return srcZip;
-	}
+  /**
+   * @return Returns the srcZip.
+   */
+  @Column(name="src_zip")
+  @Length(max=MAXLEN_SRC_ZIP)
+  public String getSrcZip() {
+    return srcZip;
+  }
 
-	/**
-	 * @param srcZip The srcZip to set.
-	 */
-	public void setSrcZip(String srcZip) {
-		this.srcZip = srcZip;
-	}
+  /**
+   * @param srcZip
+   *          The srcZip to set.
+   */
+  public void setSrcZip(String srcZip) {
+    this.srcZip = srcZip;
+  }
 
-	/**
-	 * @return Returns the surcharge.
-	 */
-	@Column(precision = 8, scale = 2)
-	@Range(min = 0, max = 999999)
-	public float getSurcharge() {
-		return surcharge;
-	}
+  /**
+   * @return Returns the surcharge.
+   */
+  @Column(precision = 8, scale = 2)
+  @Range(min=0, max=999999)
+  public float getSurcharge() {
+    return surcharge;
+  }
 
-	/**
-	 * @param surcharge The surcharge to set.
-	 */
-	public void setSurcharge(float surcharge) {
-		this.surcharge = surcharge;
-	}
+  /**
+   * @param surcharge
+   *          The surcharge to set.
+   */
+  public void setSurcharge(float surcharge) {
+    this.surcharge = surcharge;
+  }
 
-	/**
-	 * @return Returns the type.
-	 */
-	@Column
-	@NotNull
-	public ShipModeType getType() {
-		return type;
-	}
+  /**
+   * @return Returns the type.
+   */
+  @Column
+  @NotNull
+  public ShipModeType getType() {
+    return type;
+  }
 
-	/**
-	 * @param type The type to set.
-	 */
-	public void setType(ShipModeType type) {
-		this.type = type;
-	}
+  /**
+   * @param type
+   *          The type to set.
+   */
+  public void setType(ShipModeType type) {
+    this.type = type;
+  }
 
-	@Transient
-	public Account getParent() {
-		return getAccount();
-	}
+  @Transient
+  public Account getParent() {
+    return getAccount();
+  }
 
-	public void setParent(Account e) {
-		setAccount(e);
-	}
+  public void setParent(Account e) {
+    setAccount(e);
+  }
 
-	public Integer accountId() {
-		try {
-			return getAccount().getId();
-		}
-		catch(NullPointerException npe) {
-			LOG.warn("Unable to provide related account id due to a NULL nested entity");
-			return null;
-		}
-	}
+  public Integer accountId() {
+    try {
+      return getAccount().getId();
+    }
+    catch(NullPointerException npe) {
+      LOG.warn("Unable to provide related account id due to a NULL nested entity");
+      return null;
+    }
+  }
 
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(ShipMode.class, "Name", new IPropertyValue[] {
-			new IntPropertyValue("account.id", accountId()),
-			new StringPropertyValue("name", getName()) }) };
-	}
+  @Override
+  protected ToStringBuilder toStringBuilder() {
+    return super.toStringBuilder()
+    .append("type", type)
+    .append("surcharge", surcharge)
+    .append("srcZip", srcZip)
+    .append("account", account==null? "NULL" :  account.descriptor());
+  }
+
 }

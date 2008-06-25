@@ -7,13 +7,12 @@ import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
+import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
-import com.tll.criteria.Criteria;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
-import com.tll.model.IEntity;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.
@@ -36,10 +35,11 @@ public abstract class ListingFactory {
 
 	/**
 	 * Creates a listing command to control acccess to a remote listing.
-	 * @param <E> The entity type
+	 * @param <S> The search type
 	 * @param listingName The unique remote listing name
 	 * @param listHandlerType The remote list handler type
-	 * @param criteria The search criteria that generates the remote listing.
+	 * @param searchCriteria The search criteria that generates the remote
+	 *        listing.
 	 * @param propKeys Optional OGNL formatted property names representing a
 	 *        white-list of properties to retrieve from those that are queried. If
 	 *        <code>null</code>, all queried properties are provided.
@@ -47,30 +47,31 @@ public abstract class ListingFactory {
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link ListingCommand}.
 	 */
-	public static <E extends IEntity> ListingCommand<E> createListingCommand(String listingName,
-			ListHandlerType listHandlerType, Criteria<E> criteria, String[] propKeys, int pageSize, Sorting initialSorting) {
-		return new ListingCommand<E>(listingName, new RemoteListingDefinition<E>(listHandlerType, criteria, propKeys,
+	public static <S extends ISearch> ListingCommand<S> createListingCommand(String listingName,
+			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
+		return new ListingCommand<S>(listingName, new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys,
 				pageSize, initialSorting));
 	}
 
 	/**
 	 * Crates a listing Widget based on a remote data source.
-	 * @param <E> The entity type
+	 * @param <S> The search type
 	 * @param config The client listing configuration
 	 * @param listHandlerType The remote list handler type
-	 * @param criteria The search criteria that generates the remote listing.
+	 * @param searchCriteria The search criteria that generates the remote
+	 *        listing.
 	 * @param propKeys Optional OGNL formatted property names representing a
 	 *        white-list of properties to retrieve from those that are queried. If
 	 *        <code>null</code>, all queried properties are provided.
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link ModelListingWidget}.
 	 */
-	public static <E extends IEntity> ModelListingWidget createListingWidget(IListingConfig<Model> config,
-			ListHandlerType listHandlerType, Criteria<E> criteria, String[] propKeys, Sorting initialSorting) {
+	public static <S extends ISearch> ModelListingWidget createListingWidget(IListingConfig<Model> config,
+			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, Sorting initialSorting) {
 
-		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<E>(config
-				.getListingName(), new RemoteListingDefinition<E>(listHandlerType, criteria, propKeys, config.getPageSize(),
-				initialSorting)));
+		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<S>(config
+				.getListingName(), new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, config
+				.getPageSize(), initialSorting)));
 	}
 
 	/**

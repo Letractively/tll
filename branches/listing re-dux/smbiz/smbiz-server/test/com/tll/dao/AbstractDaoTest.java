@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.Criteria;
+import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.guice.DaoModule;
@@ -35,8 +35,9 @@ import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 import com.tll.util.EnumUtil;
 
 /**
@@ -279,11 +280,11 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.persist(entity);
 		}
 
-		public E load(PrimaryKey key) {
+		public E load(IPrimaryKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
-		public E load(BusinessKey key) {
+		public E load(IBusinessKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
@@ -363,7 +364,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected abstract void verifyLoadedEntityState(E e) throws Exception;
 
-	protected final E getEntityFromDb(PrimaryKey key) {
+	protected final E getEntityFromDb(IPrimaryKey<E> key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
@@ -398,7 +399,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(new PrimaryKey(entityClass, persistentId));
+		e = dao.load(KeyFactory.getPrimaryKey(entityClass, persistentId));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		verifyLoadedEntityState(e);
 		endTransaction();
@@ -412,7 +413,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
 		verifyEntityAlteration(e);
@@ -432,7 +433,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		dbRemove.clear();
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
 		endTransaction();
 		Assert.assertNull(e, "The entity was not purged");
 	}
@@ -453,7 +454,6 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	@Test(groups = "dao")
-	@SuppressWarnings("unchecked")
 	public final void testFindEntities() throws Exception {
 		E e = getTestEntity();
 		e = dao.persist(e);
@@ -462,8 +462,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		dbRemove.add(e);
 
 		startNewTransaction();
-		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
-		criteria.getPrimaryGroup().addCriterion(e.getPrimaryKey());
+		final ICriteria<? extends E> criteria = CriteriaFactory.buildEntityCriteria(KeyFactory.getPrimaryKey(e));
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");
@@ -511,12 +510,12 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		}
 		setComplete();
 		endTransaction();
-		Criteria<? extends E> criteria = new Criteria<E>(entityClass);
-		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+		final ICriteria<? extends E> crit =
+				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
 		startNewTransaction();
-		final List<Integer> dbIdList = dao.getIds(criteria, simpleIdSorting);
+		final List<Integer> dbIdList = dao.getIds(crit, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
@@ -549,8 +548,8 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
-		final Criteria<? extends E> crit = new Criteria<E>(entityClass);
-		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+		final ICriteria<? extends E> crit =
+				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();
 		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);

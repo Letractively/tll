@@ -8,21 +8,17 @@ import java.io.Serializable;
 import com.tll.util.IDescriptorProvider;
 
 /**
- * IKey - Abstraction serving as an identifier to a particular instance of a
- * particular type.
+ * IKey - Abstraction serving as an identifier to a given type <T> with
+ * clonability and comparability.
+ * @param <T> the key type.
  * @author jpk
  */
-public interface IKey extends IDescriptorProvider, Serializable {
+public interface IKey<T> extends IDescriptorProvider, Cloneable, Comparable<IKey<T>>, Serializable {
 
 	/**
 	 * @return The type of object to which this key refers.
 	 */
-	Class<?> getType();
-
-	/**
-	 * @return A presentation worthy name describing the key type.
-	 */
-	String getTypeName();
+	Class<T> getType();
 
 	/**
 	 * @return <code>true</code> if the defining key properties have been set.
@@ -34,4 +30,10 @@ public interface IKey extends IDescriptorProvider, Serializable {
 	 * default values.
 	 */
 	void clear();
+
+	/**
+	 * Publicly accessible method to clone this key.
+	 * @return A clone of this key.
+	 */
+	IKey<T> copy();
 }

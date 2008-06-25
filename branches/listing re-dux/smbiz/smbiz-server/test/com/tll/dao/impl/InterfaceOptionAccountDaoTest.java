@@ -17,7 +17,8 @@ import com.tll.model.impl.InterfaceOption;
 import com.tll.model.impl.InterfaceOptionAccount;
 import com.tll.model.impl.InterfaceOptionParameterDefinition;
 import com.tll.model.impl.InterfaceSwitch;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.key.IPrimaryKey;
+import com.tll.model.key.KeyFactory;
 
 /**
  * InterfaceOptionAccountDaoTest
@@ -26,8 +27,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOptionAccount> {
 
-	PrimaryKey aKey;
-	PrimaryKey iKey;
+	IPrimaryKey<Account> aKey;
+	IPrimaryKey<Interface> iKey;
 	int numParameters = 0;
 	String removedParamName;
 
@@ -47,7 +48,7 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = KeyFactory.getPrimaryKey(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -65,7 +66,7 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 			option.addParameter(param);
 			intf.addOption(option);
 			intf = getDao(IInterfaceDao.class).persist(intf);
-			iKey = intf.getPrimaryKey();
+			iKey = KeyFactory.getPrimaryKey(intf);
 		}
 		else {
 			intf = getDao(IInterfaceDao.class).load(iKey);

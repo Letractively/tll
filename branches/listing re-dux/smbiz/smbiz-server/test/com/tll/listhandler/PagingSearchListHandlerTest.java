@@ -12,7 +12,8 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.Criteria;
+import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.ICriteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DaoModule;
@@ -60,10 +61,10 @@ public class PagingSearchListHandlerTest extends DbTest {
 		assert allAccounts.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
 
-		Criteria<Account> criteria = new Criteria<Account>(Account.class);
+		ICriteria<Account> c = CriteriaFactory.buildEntityCriteria(Account.class);
 		Sorting sorting = new Sorting(new SortColumn(INamedEntity.NAME));
 		IListHandler<SearchResult<Account>> listHandler =
-				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, accountService);
+				ListHandlerFactory.create(c, sorting, ListHandlerType.PAGE, accountService);
 
 		List<SearchResult<Account>> list;
 

@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
@@ -43,4 +44,10 @@ public class Merchant extends Account {
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
 	}
+
+	@Override
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder().append("storeName", storeName);
+	}
+
 }

@@ -6,25 +6,28 @@ import com.tll.model.IEntity;
  * Representation of primary keys within the application.
  * @author jpk
  */
-public final class PrimaryKey extends EntityKey {
+class PrimaryKey<E extends IEntity> extends EntityKey<E> implements IPrimaryKey<E> {
 
-	private static final long serialVersionUID = 6971947122659535069L;
+	static final long serialVersionUID = 6971947122659535069L;
 
-	private Integer id;
+	private static final String[] FIELDS = new String[] { IEntity.PK_FIELDNAME };
+
+	private final Class<E> entityClass;
 
 	/**
 	 * Constructor
 	 * @param e
 	 */
-	public PrimaryKey(IEntity e) {
-		this(e.entityClass(), e.getId());
+	@SuppressWarnings("unchecked")
+	public PrimaryKey(E e) {
+		this((Class) e.entityClass(), e.getId());
 	}
 
 	/**
 	 * Constructor
 	 * @param entityClass
 	 */
-	public PrimaryKey(Class<? extends IEntity> entityClass) {
+	public PrimaryKey(Class<E> entityClass) {
 		this(entityClass, null);
 	}
 
@@ -33,65 +36,34 @@ public final class PrimaryKey extends EntityKey {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<? extends IEntity> entityClass, Integer id) {
-		super(entityClass);
+	public PrimaryKey(Class<E> entityClass, Integer id) {
+		super();
+		this.entityClass = entityClass;
 		setId(id);
 	}
 
+	public Class<E> getType() {
+		return entityClass;
+	}
+
 	@Override
-	public String getTypeName() {
-		return "Primary Key";
+	protected String[] getFields() {
+		return FIELDS;
 	}
 
 	public void setId(Integer id) {
-		this.id = id;
+		setValue(0, id);
 	}
 
 	public Integer getId() {
-		return id;
+		return (Integer) getValue(0);
 	}
 
-	@Override
-	protected String keyDescriptor() {
-		return "Id " + getId();
+	public void setEntity(E entity) {
+		setId(entity.getId());
 	}
 
-	@Override
-	public void clear() {
-		this.id = null;
+	public String descriptor() {
+		return getType().getSimpleName() + "(Id: " + getId() + ")";
 	}
-
-	@Override
-	public boolean isSet() {
-		return id != null;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null || getClass() != obj.getClass()) return false;
-		final PrimaryKey other = (PrimaryKey) obj;
-		if(!typeCompatible(other.entityClass)) return false;
-		if(id == null) {
-			if(other.id != null) return false;
-		}
-		else if(!id.equals(other.id)) return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((entityClass == null) ? 0 : entityClass.toString().hashCode());
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return descriptor();
-	}
-
 }

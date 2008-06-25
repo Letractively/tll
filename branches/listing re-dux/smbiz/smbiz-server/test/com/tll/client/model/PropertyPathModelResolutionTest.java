@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import com.tll.dao.impl.IAccountDao;
 import com.tll.model.impl.Asp;
-import com.tll.model.key.NameKey;
+import com.tll.model.key.KeyFactory;
 import com.tll.server.rpc.MarshalOptions;
 
 /**
@@ -20,7 +20,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 
 	private Model getTestModel() {
 		final IAccountDao dao = getDaoFactory().instance(IAccountDao.class);
-		final Asp asp = (Asp) dao.load(new NameKey(Asp.class, Asp.ASP_NAME));
+		final Asp asp = (Asp) dao.load(KeyFactory.getNameKey(Asp.class, Asp.ASP_NAME));
 		assert asp != null;
 		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
 	}

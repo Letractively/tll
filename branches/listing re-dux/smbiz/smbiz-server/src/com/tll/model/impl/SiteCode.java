@@ -12,15 +12,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
-import com.tll.client.model.IPropertyValue;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * Defines site codes (online "coupons")
@@ -35,11 +33,11 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	public static final int MAXLEN_CODE = 16;
 	public static final int MAXLEN_NAME = 64;
 
-	private String code; // unique
+	protected String code; // unique
 
-	private Date expirationDate;
+	protected Date expirationDate;
 
-	private Account account;
+	protected Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SiteCode.class;
@@ -119,9 +117,9 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	}
 
 	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(SiteCode.class, "Code", new IPropertyValue[] { new StringPropertyValue(
-				"code", getCode()) }) };
+	protected ToStringBuilder toStringBuilder() {
+		return super.toStringBuilder().append("code", code).append("name", name).append("expirationDate", expirationDate)
+				.append("account", account == null ? "NULL" : account.descriptor());
 	}
+
 }
