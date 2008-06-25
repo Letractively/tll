@@ -11,12 +11,12 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
@@ -31,9 +31,6 @@ public class PaymentInfo extends NamedEntity {
 
 	private static final long serialVersionUID = -8237732782824087760L;
 	public static final int MAXLEN_NAME = 64;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(PaymentInfo.class, "Name", new String[] { INamedEntity.NAME });
 
 	private transient PaymentData paymentData;
 
@@ -68,6 +65,7 @@ public class PaymentInfo extends NamedEntity {
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getName() }) };
+		return new BusinessKey[] { new BusinessKey(PaymentInfo.class, "Name",
+				new IPropertyValue[] { new StringPropertyValue(INamedEntity.NAME, getName()) }) };
 	}
 }

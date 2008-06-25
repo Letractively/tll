@@ -15,12 +15,14 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
+import com.tll.client.model.DatePropertyValue;
+import com.tll.client.model.EnumPropertyValue;
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account history entity
@@ -32,12 +34,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
-
-	public static final IBusinessKeyDefinition NameBk =
-			new BusinessKeyDefinition(AccountHistory.class, "Name", new String[] {
-				"account.id",
-				"transDate",
-				"status" });
 
 	private Account account;
 
@@ -156,10 +152,10 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] {
-			accountId(),
-			getTransDate(),
-			getStatus() }) };
+		return new BusinessKey[] { new BusinessKey(AccountHistory.class, "Trans Date and Status", new IPropertyValue[] {
+			new IntPropertyValue("account.id", accountId()),
+			new DatePropertyValue("transDate", getTransDate()),
+			new EnumPropertyValue("status", getStatus()) }) };
 	}
 
 }

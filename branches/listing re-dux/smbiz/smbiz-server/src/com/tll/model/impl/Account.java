@@ -31,8 +31,6 @@ import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -45,9 +43,6 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
-
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" });
 
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
@@ -312,6 +307,7 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	@Override
 	@Transient
 	public final BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(nameBk, new IPropertyValue[] { new StringPropertyValue(getName()) }) };
+		return new BusinessKey[] { new BusinessKey(Account.class, "Name", new IPropertyValue[] { new StringPropertyValue(
+				"name", getName()) }) };
 	}
 }

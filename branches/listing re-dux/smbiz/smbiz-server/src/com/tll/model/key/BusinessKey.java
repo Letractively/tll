@@ -3,6 +3,7 @@ package com.tll.model.key;
 import java.util.Arrays;
 
 import com.tll.client.model.IPropertyValue;
+import com.tll.model.IEntity;
 
 /**
  * Abstract base class for all business keys in the application.
@@ -17,23 +18,14 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 
 	/**
 	 * Constructor
-	 * @param def The business key definition
+	 * @param entityClass
+	 * @param businessKeyName
+	 * @param propertyValues
 	 */
-	public BusinessKey(IBusinessKeyDefinition def) {
-		super(def.getType());
-		this.businessKeyName = def.getBusinessKeyName();
-		this.propertyNames = def.getPropertyNames();
-		clear();
-	}
-
-	/**
-	 * Constructor
-	 * @param def The business key definition
-	 * @param propertyValues The propertyValues array
-	 */
-	public BusinessKey(IBusinessKeyDefinition def, IPropertyValue[] propertyValues) {
-		this(def);
-		copyValues(propertyValues);
+	public BusinessKey(Class<? extends IEntity> entityClass, String businessKeyName, IPropertyValue[] propertyValues) {
+		super(entityClass);
+		this.businessKeyName = businessKeyName;
+		this.propertyValues = propertyValues;
 	}
 
 	public String getBusinessKeyName() {
@@ -53,18 +45,17 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	 * @return The field names
 	 */
 	public String[] getPropertyNames() {
-		return propertyNames;
-	}
-
-	private void copyValues(IPropertyValue[] values) {
-		for(int i = 0; i < this.propertyValues.length; ++i) {
-			this.propertyValues[i] = values[i];
+		if(propertyValues == null) return null;
+		final String[] pnames = new String[propertyValues.length];
+		for(int i = 0; i < pnames.length; ++i) {
+			pnames[i] = propertyValues[i].getPropertyName();
 		}
+		return pnames;
 	}
 
 	private int fieldIndex(String fieldName) {
-		for(int i = 0; i < propertyNames.length; ++i) {
-			String fname = propertyNames[i];
+		for(int i = 0; i < propertyValues.length; ++i) {
+			String fname = propertyValues[i].getPropertyName();
 			if(fname != null && fname.equals(fieldName)) return i;
 		}
 		return -1;
@@ -72,25 +63,29 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 
 	public Object getFieldValue(String fieldName) {
 		final int index = fieldIndex(fieldName);
-		return (index == -1) ? null : propertyValues[index];
+		return (index == -1) ? null : propertyValues[index].getValue();
 	}
 
-	public void setFieldValue(String fieldName, IPropertyValue value) {
+	public void setFieldValue(String fieldName, Object value) {
 		final int index = fieldIndex(fieldName);
 		if(index != -1) {
-			propertyValues[index] = value;
+			propertyValues[index].setValue(value);
 		}
 	}
 
 	@Override
 	public void clear() {
-		this.propertyValues = new IPropertyValue[propertyNames.length];
+		if(propertyValues != null) {
+			for(IPropertyValue pv : propertyValues) {
+				pv.setValue(null);
+			}
+		}
 	}
 
 	@Override
 	public boolean isSet() {
-		for(Object obj : propertyValues) {
-			if(obj == null) return false;
+		for(IPropertyValue pv : propertyValues) {
+			if(pv == null || pv.getValue() == null) return false;
 		}
 		return true;
 	}

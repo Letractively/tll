@@ -11,12 +11,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Implementation of Acegi's {@link org.acegisecurity.GrantedAuthority}
@@ -42,9 +42,6 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	public static final String ROLE_USER = "ROLE_USER";
 
 	public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(Authority.class, "Authority", new String[] { FIELDNAME_AUTHORITY });
 
 	private String authority;
 
@@ -91,7 +88,8 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getAuthority() }) };
+		return new BusinessKey[] { new BusinessKey(Authority.class, "Authority",
+				new IPropertyValue[] { new StringPropertyValue("authority", getAuthority()) }) };
 	}
 
 	@Override

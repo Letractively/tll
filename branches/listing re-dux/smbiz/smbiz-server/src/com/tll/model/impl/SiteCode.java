@@ -15,12 +15,12 @@ import javax.persistence.Transient;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Defines site codes (online "coupons")
@@ -34,9 +34,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 
 	public static final int MAXLEN_CODE = 16;
 	public static final int MAXLEN_NAME = 64;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(SiteCode.class, "Code", new String[] { "code" });
 
 	private String code; // unique
 
@@ -124,6 +121,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getCode() }) };
+		return new BusinessKey[] { new BusinessKey(SiteCode.class, "Code", new IPropertyValue[] { new StringPropertyValue(
+				"code", getCode()) }) };
 	}
 }

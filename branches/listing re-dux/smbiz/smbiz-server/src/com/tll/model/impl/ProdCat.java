@@ -10,12 +10,12 @@ import javax.persistence.Transient;
 
 import org.hibernate.validator.NotNull;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * product cateory binder entity
@@ -26,11 +26,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8353863817821839414L;
-
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(ProdCat.class, "Binder", new String[] {
-				"product.id",
-				"category.id" });
 
 	private boolean isFeaturedProduct = false;
 
@@ -132,8 +127,8 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
-			productId(),
-			categoryId() }) };
+		return new BusinessKey[] { new BusinessKey(ProdCat.class, "Binder", new IPropertyValue[] {
+			new IntPropertyValue("product.id", productId()),
+			new IntPropertyValue("category.id", categoryId()) }) };
 	}
 }

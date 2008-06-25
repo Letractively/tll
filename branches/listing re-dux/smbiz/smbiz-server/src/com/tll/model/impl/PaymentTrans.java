@@ -14,11 +14,12 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
+import com.tll.client.model.DatePropertyValue;
+import com.tll.client.model.EnumPropertyValue;
+import com.tll.client.model.IPropertyValue;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * payment transaction entity
@@ -33,15 +34,6 @@ public class PaymentTrans extends TimeStampEntity {
 	public static final int MAXLEN_REF_NUM = 32;
 	public static final int MAXLEN_RESPONSE = 32;
 	public static final int MAXLEN_RESPONSE_MSG = 128;
-
-	private static final IBusinessKeyDefinition dateOpBk =
-			new BusinessKeyDefinition(PaymentTrans.class, "Date and Op", new String[] {
-				"payTransDate",
-				"payOp",
-				"payType" });
-
-	private static final IBusinessKeyDefinition refNumBk =
-			new BusinessKeyDefinition(PaymentTrans.class, "Ref Num", new String[] { "refNum" });
 
 	private Date payTransDate;
 
@@ -233,10 +225,11 @@ public class PaymentTrans extends TimeStampEntity {
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] {
-			new BusinessKey(dateOpBk, new Object[] {
-				getPayTransDate(),
-				getPayOp(),
-				getPayType() }),
-			new BusinessKey(refNumBk, new Object[] { getRefNum() }) };
+			new BusinessKey(PaymentTrans.class, "Date and Op", new IPropertyValue[] {
+				new DatePropertyValue("payTransDate", getPayTransDate()),
+				new EnumPropertyValue("payOp", getPayOp()),
+				new EnumPropertyValue("payType", getPayType()) }),
+			new BusinessKey(PaymentTrans.class, "Ref Num", new IPropertyValue[] { new DatePropertyValue("refNum",
+					getPayTransDate()) }) };
 	}
 }

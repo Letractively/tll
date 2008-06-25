@@ -14,12 +14,13 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account address entity holding a refs to a single account and single
@@ -31,16 +32,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7356724207827323290L;
-
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(AccountAddress.class, "Binder", new String[] {
-				"account.id",
-				"address.id" });
-
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(AccountAddress.class, "Account Id and Name", new String[] {
-				"account.id",
-				"name" });
 
 	public static final int MAXLEN_NAME = 32;
 
@@ -143,12 +134,12 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	@Transient
 	public final BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] {
-			new BusinessKey(binderBk, new Object[] {
-				accountId(),
-				addressId() }),
-			new BusinessKey(nameBk, new Object[] {
-				accountId(),
-				getName() }) };
+			new BusinessKey(AccountAddress.class, "Binder", new IPropertyValue[] {
+				new IntPropertyValue("account.id", accountId()),
+				new IntPropertyValue("address.id", addressId()) }),
+			new BusinessKey(AccountAddress.class, "Account Id and Name", new IPropertyValue[] {
+				new IntPropertyValue("account.id", accountId()),
+				new StringPropertyValue("name", getName()) }) };
 	}
 
 }

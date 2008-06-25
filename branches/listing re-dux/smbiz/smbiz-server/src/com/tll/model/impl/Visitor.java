@@ -12,12 +12,14 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
+import com.tll.client.model.DatePropertyValue;
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The visitor entity (those people who visit a storefront site).
@@ -33,11 +35,6 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	public static final int MAXLEN_REMOTE_ADDR = 64;
 	public static final int MAXLEN_REMOTE_USER = 64;
 	public static final int MAXLEN_MC = 16;
-
-	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Visitor.class, "Visitor", new String[] {
-		"account.id",
-		"dateCreated",
-		"remoteHost" });
 
 	private String remoteHost;
 
@@ -158,9 +155,9 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			accountId(),
-			getDateCreated(),
-			getRemoteHost() }) };
+		return new BusinessKey[] { new BusinessKey(Visitor.class, "Visitor", new IPropertyValue[] {
+			new IntPropertyValue("account.id", accountId()),
+			new DatePropertyValue("dateCreated", getDateCreated()),
+			new StringPropertyValue("remoteHost", getRemoteHost()) }) };
 	}
 }

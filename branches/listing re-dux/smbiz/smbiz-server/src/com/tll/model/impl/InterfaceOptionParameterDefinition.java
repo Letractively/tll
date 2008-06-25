@@ -4,10 +4,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Interface option parameter definition entity
@@ -19,9 +19,6 @@ public class InterfaceOptionParameterDefinition extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -5035826060156754280L;
 
-	private static final IBusinessKeyDefinition codeBk =
-			new BusinessKeyDefinition(InterfaceOptionParameterDefinition.class, "Code", new String[] { "code" });
-
 	public Class<? extends IEntity> entityClass() {
 		return InterfaceOptionParameterDefinition.class;
 	}
@@ -29,6 +26,7 @@ public class InterfaceOptionParameterDefinition extends InterfaceOptionBase {
 	@Override
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(codeBk, new Object[] { getCode() }) };
+		return new BusinessKey[] { new BusinessKey(InterfaceOptionParameterDefinition.class, "Code",
+				new IPropertyValue[] { new StringPropertyValue("code", getCode()) }) };
 	}
 }

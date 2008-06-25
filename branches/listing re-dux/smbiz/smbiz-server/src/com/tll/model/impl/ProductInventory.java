@@ -14,12 +14,13 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 import org.hibernate.validator.Valid;
 
+import com.tll.client.model.IPropertyValue;
+import com.tll.client.model.IntPropertyValue;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Product inventory entity
@@ -33,17 +34,6 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 
 	public static final int MAXLEN_SKU = 64;
 	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
-
-	private static final IBusinessKeyDefinition skuBk =
-			new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
-				"account.id",
-				"sku" });
-
-	private static final IBusinessKeyDefinition titleBk =
-			new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
-				"account.id",
-				"d1",
-				"d2" });
 
 	private String sku;
 
@@ -316,12 +306,12 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	@Transient
 	public BusinessKey[] getBusinessKeys() {
 		return new BusinessKey[] {
-			new BusinessKey(skuBk, new Object[] {
-				accountId(),
-				getSku() }),
-			new BusinessKey(titleBk, new Object[] {
-				accountId(),
-				d1(),
-				d2() }) };
+			new BusinessKey(ProductInventory.class, "Account and Product SKU", new IPropertyValue[] {
+				new IntPropertyValue("account.id", accountId()),
+				new StringPropertyValue("sku", getSku()) }),
+			new BusinessKey(ProductInventory.class, "Account and Product Title", new IPropertyValue[] {
+				new IntPropertyValue("account.id", accountId()),
+				new StringPropertyValue("productGeneral.d1", d1()),
+				new StringPropertyValue("productGeneral.d2", d2()) }) };
 	}
 }
