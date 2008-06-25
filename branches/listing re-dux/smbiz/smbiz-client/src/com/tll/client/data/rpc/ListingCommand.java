@@ -19,18 +19,18 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.PagingUtil;
 import com.tll.client.model.Model;
-import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.Sorting;
+import com.tll.model.IEntity;
 
 /**
  * ListingRequest - Issues RPC listing commands to the server.
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
+public final class ListingCommand<E extends IEntity> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
 
-	private static final IListingServiceAsync<ISearch> svc;
+	private static final IListingServiceAsync<IEntity> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
@@ -55,7 +55,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The server-side listing definition.
 	 */
-	private final RemoteListingDefinition<S> listingDef;
+	private final RemoteListingDefinition<E> listingDef;
 
 	/**
 	 * The current list index offset.
@@ -80,7 +80,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The listing request issued to the server.
 	 */
-	private ListingRequest<S> listingRequest;
+	private ListingRequest<E> listingRequest;
 
 	/**
 	 * Constructor
@@ -126,7 +126,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 */
 	private void fetch(int offset, Sorting sorting, boolean refresh) {
 		this.listingRequest =
-				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
+				new ListingRequest<E>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
 		execute();
 	}
 
@@ -141,7 +141,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * @param sorting The sorting directive
 	 */
 	private void fetch(int offset, Sorting sorting) {
-		listingRequest = new ListingRequest<S>(listingName, offset, sorting);
+		listingRequest = new ListingRequest<E>(listingName, offset, sorting);
 		execute();
 	}
 
@@ -150,7 +150,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * @param retainListingState Retain the listing state on the server?
 	 */
 	private void clear(boolean retainListingState) {
-		listingRequest = new ListingRequest<S>(listingName, retainListingState);
+		listingRequest = new ListingRequest<E>(listingName, retainListingState);
 		execute();
 	}
 

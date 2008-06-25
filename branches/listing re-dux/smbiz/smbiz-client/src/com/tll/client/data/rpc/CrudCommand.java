@@ -22,8 +22,8 @@ import com.tll.client.event.ISourcesCrudEvents;
 import com.tll.client.event.type.CrudEvent;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
+import com.tll.model.key.BusinessKey;
 
 /**
  * CrudCommand - Issues CRUD commands to the server.
@@ -106,13 +106,13 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 
 	/**
 	 * Sets the state of this command for loading an entity by business key.
-	 * @param search The search holding the business key properties
+	 * @param bk The business key
 	 */
-	public final void loadByBusinessKey(ISearch search) {
-		if(search == null) {
+	public final void loadByBusinessKey(BusinessKey bk) {
+		if(bk == null) {
 			throw new IllegalArgumentException("A business key search must be specified.");
 		}
-		entityRequest = new EntityLoadRequest(search);
+		entityRequest = new EntityLoadRequest(bk);
 		crudOp = CrudOp.LOAD;
 	}
 

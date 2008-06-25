@@ -3,6 +3,9 @@
  */
 package com.tll.client.admin.mvc.view.account;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.event.type.ShowViewRequest;
@@ -17,15 +20,16 @@ import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
-import com.tll.criteria.CriteriaType;
+import com.tll.criteria.Criteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
+import com.tll.model.impl.Customer;
 
 /**
  * CustomerListingView
@@ -126,9 +130,10 @@ public final class CustomerListingView extends ListingView {
 		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(this, r.ispRef));
 		mercListingLink.setText(mercRef.getName());
 
-		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
-		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
-		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
+		final Set<IQueryParam> params = new HashSet<IQueryParam>();
+		params.add(new IntPropertyValue("merchantId", mercRef.getId()));
+
+		final Criteria<Customer> criteria = new Criteria<Customer>(SelectNamedQuery.CUSTOMER_LISTING, params);
 
 		final AccountListingConfig config = new AccountListingConfig() {
 
@@ -188,7 +193,8 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(config, ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
+		setListingWidget(ListingFactory.createListingWidget(config, ListHandlerType.PAGE, criteria, null, config
+				.getDefaultSorting()));
 	}
 
 	@Override
