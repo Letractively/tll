@@ -22,6 +22,7 @@ import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.dao.impl.IUserDao;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountAddress;
@@ -57,12 +58,9 @@ public class EntityServiceTest extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		final DaoModule dm = new DaoModule(DaoMode.ORM);
-		modules.add(dm);
-
-		final EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(DaoMode.ORM));
+		modules.add(new EntityServiceModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

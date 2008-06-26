@@ -165,8 +165,8 @@ public abstract class BusinessKeyFactory {
 			"sku" }));
 		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
 			"account.id",
-			"d1",
-			"d2" }));
+			"productGeneral.d1",
+			"productGeneral.d2" }));
 
 		set.add(new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
 			"account.id",

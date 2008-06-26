@@ -8,9 +8,9 @@
         <include name="model.schema" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.model.schema.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.model.schema" />
+    </packages>
   </test>
 
   <test name="model.key">
@@ -19,9 +19,9 @@
         <include name="model.key" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.model.key.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.model.key" />
+    </packages>
   </test>
 
   <test name="model.validator">
@@ -30,9 +30,9 @@
         <include name="model.validate" />
       </run>
     </groups>
-    <classes>
-      <class name="com.tll.model.validate.*" />
-    </classes>
+    <packages>
+      <package name="com.tll.model.validate" />
+    </packages>
   </test>
 
 </suite>

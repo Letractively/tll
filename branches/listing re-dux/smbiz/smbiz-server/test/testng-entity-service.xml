@@ -16,9 +16,9 @@
         <include name="entity.service" />
       </run>
     </groups>
-    <classes>
-    	<class name="com.tll.service.entity.*" />
-    </classes>
+    <packages>
+    	<package name="com.tll.service.entity" />
+    </packages>
   </test>
 
 </suite>
