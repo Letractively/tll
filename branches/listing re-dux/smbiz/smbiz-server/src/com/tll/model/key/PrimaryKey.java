@@ -6,7 +6,7 @@ import com.tll.model.IEntity;
  * Representation of primary keys within the application.
  * @author jpk
  */
-public final class PrimaryKey<E extends IEntity> extends EntityKey<E> {
+public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 

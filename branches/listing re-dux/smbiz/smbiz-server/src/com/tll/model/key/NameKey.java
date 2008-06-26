@@ -6,7 +6,7 @@ import com.tll.model.INamedEntity;
  * INameKey impl
  * @author jpk
  */
-public class NameKey<N extends INamedEntity> extends EntityKey<N> {
+public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 

@@ -8,7 +8,7 @@ import com.tll.model.IEntity;
  * Abstract base class for all business keys in the application.
  * @author jpk
  */
-public final class BusinessKey<E extends IEntity> extends EntityKey<E> implements IBusinessKeyDefinition<E> {
+public final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implements IBusinessKeyDefinition<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 

@@ -10,7 +10,7 @@ import com.tll.model.IEntity;
  * @param <E> The entity type.
  * @author jpk
  */
-public abstract class EntityKey<E extends IEntity> implements IKey<E> {
+public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 
 	/**
 	 * The entity type.
@@ -21,7 +21,7 @@ public abstract class EntityKey<E extends IEntity> implements IKey<E> {
 	 * Constructor
 	 * @param entityClass The key type
 	 */
-	protected EntityKey(Class<E> entityClass) {
+	protected AbstractEntityKey(Class<E> entityClass) {
 		super();
 		setType(entityClass);
 	}

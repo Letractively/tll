@@ -38,7 +38,6 @@ import com.tll.model.impl.SiteCode;
 import com.tll.model.impl.User;
 import com.tll.model.impl.Visitor;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
 import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
@@ -48,6 +47,39 @@ import com.tll.model.key.IBusinessKeyDefinition;
  */
 @SuppressWarnings("unchecked")
 public abstract class BusinessKeyFactory {
+
+	/**
+	 * BusinessKeyDefinition - Local impl of {@link IBusinessKeyDefinition}.
+	 * @author jpk
+	 */
+	private static final class BusinessKeyDefinition<E extends IEntity> implements IBusinessKeyDefinition<E> {
+
+		private final Class<E> entityClass;
+		private final String[] propertyNames;
+		private final String businessKeyName;
+
+		public BusinessKeyDefinition(Class<E> entityClass, String businessKeyName, String[] propertyNames) {
+			if(entityClass == null) throw new IllegalArgumentException("An entity type must be specified.");
+			if(propertyNames == null || propertyNames.length < 1) {
+				throw new IllegalArgumentException("At least one property must be specified in a business key");
+			}
+			this.entityClass = entityClass;
+			this.propertyNames = propertyNames;
+			this.businessKeyName = businessKeyName;
+		}
+
+		public Class<E> getType() {
+			return entityClass;
+		}
+
+		public String getBusinessKeyName() {
+			return businessKeyName;
+		}
+
+		public String[] getPropertyNames() {
+			return propertyNames;
+		}
+	}
 
 	private static final Map<Class<? extends IEntity>, IBusinessKeyDefinition[]> map =
 			new HashMap<Class<? extends IEntity>, IBusinessKeyDefinition[]>();
