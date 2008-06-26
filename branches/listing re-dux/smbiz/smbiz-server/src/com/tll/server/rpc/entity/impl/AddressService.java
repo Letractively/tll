@@ -13,8 +13,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.search.impl.AddressSearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.Address;
-import com.tll.model.impl.key.AddressKey;
-import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.BusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MEntityServiceImpl;
@@ -43,8 +42,8 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 	}
 
 	@Override
-	protected IBusinessKey<? extends Address> handleBusinessKeyTranslation(AddressSearch search) {
-		return new AddressKey(search.getAddress1(), search.getPostalCode());
+	protected BusinessKey handleBusinessKeyTranslation(AddressSearch search) {
+		return new BusinessKey(search.getAddress1(), search.getPostalCode());
 	}
 
 	@Override
