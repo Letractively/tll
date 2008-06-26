@@ -5,8 +5,10 @@
  */
 package com.tll.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -81,145 +83,114 @@ public abstract class BusinessKeyFactory {
 		}
 	}
 
-	private static final Map<Class<? extends IEntity>, IBusinessKeyDefinition[]> map =
-			new HashMap<Class<? extends IEntity>, IBusinessKeyDefinition[]>();
+	private static final Set<IBusinessKeyDefinition> set = new HashSet<IBusinessKeyDefinition>();
 
 	static {
+		set.add(new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" }));
 
-		map.put(Account.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Account>(Account.class, "Name",
-				new String[] { "name" }) });
+		set.add(new BusinessKeyDefinition(AccountAddress.class, "Binder", new String[] {
+			"account.id",
+			"address.id" }));
+		set.add(new BusinessKeyDefinition(AccountAddress.class, "Account Id and Name", new String[] {
+			"account.id",
+			"name" }));
 
-		map.put(AccountAddress.class, new IBusinessKeyDefinition[] {
-			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Binder", new String[] {
-				"account.id",
-				"address.id" }),
-			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Account Id and Name", new String[] {
-				"account.id",
-				"name" }) });
+		set.add(new BusinessKeyDefinition(AccountHistory.class, "Name", new String[] {
+			"account.id",
+			"transDate",
+			"status" }));
 
-		map.put(AccountHistory.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<AccountHistory>(
-				AccountHistory.class, "Name", new String[] {
-					"account.id",
-					"transDate",
-					"status" }) });
+		set.add(new BusinessKeyDefinition(Address.class, "Address and Postal Code", new String[] {
+			"address1",
+			"postalCode" }));
 
-		map.put(Address.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Address>(Address.class,
-				"Address and Postal Code", new String[] {
-					"address1",
-					"postalCode" }) });
+		set.add(new BusinessKeyDefinition(AppProperty.class, "Name", new String[] { "name" }));
 
-		map.put(AppProperty.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<AppProperty>(AppProperty.class,
-				"Name", new String[] { "name" }) });
+		set.add(new BusinessKeyDefinition(Authority.class, "Authority", new String[] { Authority.FIELDNAME_AUTHORITY }));
 
-		map.put(Authority.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Authority>(Authority.class,
-				"Authority", new String[] { Authority.FIELDNAME_AUTHORITY }) });
+		set.add(new BusinessKeyDefinition(Currency.class, "Name", new String[] { INamedEntity.NAME }));
+		set.add(new BusinessKeyDefinition(Currency.class, "Symbol", new String[] { "symbol" }));
+		set.add(new BusinessKeyDefinition(Currency.class, "iso4217", new String[] { "iso4217" }));
 
-		map.put(Currency.class, new IBusinessKeyDefinition[] {
-			new BusinessKeyDefinition<Currency>(Currency.class, "Name", new String[] { INamedEntity.NAME }),
-			new BusinessKeyDefinition<Currency>(Currency.class, "Symbol", new String[] { "symbol" }),
-			new BusinessKeyDefinition<Currency>(Currency.class, "iso4217", new String[] { "iso4217" }) });
+		set.add(new BusinessKeyDefinition(CustomerAccount.class, "Binder", new String[] {
+			"customer.id",
+			"account.id" }));
 
-		map.put(CustomerAccount.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<CustomerAccount>(
-				CustomerAccount.class, "Binder", new String[] {
-					"customer.id",
-					"account.id" }) });
+		set.add(new BusinessKeyDefinition(Interface.class, "Code", new String[] { "code" }));
 
-		map.put(Interface.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Interface>(Interface.class,
-				"Code", new String[] { "code" }) });
+		set.add(new BusinessKeyDefinition(InterfaceOption.class, "Code", new String[] { "code" }));
 
-		map.put(InterfaceOption.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<InterfaceOption>(
-				InterfaceOption.class, "Code", new String[] { "code" }) });
+		set.add(new BusinessKeyDefinition(InterfaceOptionAccount.class, "Binder", new String[] {
+			"option.id",
+			"account.id" }));
 
-		map.put(InterfaceOptionAccount.class,
-				new IBusinessKeyDefinition[] { new BusinessKeyDefinition<InterfaceOptionAccount>(InterfaceOptionAccount.class,
-						"Binder", new String[] {
-							"option.id",
-							"account.id" }) });
+		set.add(new BusinessKeyDefinition(InterfaceOptionParameterDefinition.class, "Code", new String[] { "code" }));
 
-		map.put(InterfaceOptionParameterDefinition.class,
-				new IBusinessKeyDefinition[] { new BusinessKeyDefinition<InterfaceOptionParameterDefinition>(
-						InterfaceOptionParameterDefinition.class, "Code", new String[] { "code" }) });
+		set.add(new BusinessKeyDefinition(Order.class, "Order Key", new String[] {
+			"dateCreated",
+			"account.id",
+			"customer.id" }));
 
-		map.put(Order.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Order>(Order.class, "Order Key",
-				new String[] {
-					"dateCreated",
-					"account.id",
-					"customer.id" }) });
+		set.add(new BusinessKeyDefinition(OrderItem.class, "Order Id and Product SKU", new String[] {
+			"order.id",
+			"sku" }));
 
-		map.put(OrderItem.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<OrderItem>(OrderItem.class,
-				"Order Id and Product SKU", new String[] {
-					"order.id",
-					"sku" }) });
+		set.add(new BusinessKeyDefinition(OrderItemTrans.class, "Order Item Trans Binder", new String[] {
+			"orderItem.id",
+			"orderTrans.id" }));
 
-		map.put(OrderItemTrans.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<OrderItemTrans>(
-				OrderItemTrans.class, "Order Item Trans Binder", new String[] {
-					"orderItem.id",
-					"orderTrans.id" }) });
+		set.add(new BusinessKeyDefinition(OrderTrans.class, "Order Trans Key", new String[] {
+			"order.id",
+			"dateCreated",
+			"username" }));
 
-		map.put(OrderTrans.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<OrderTrans>(OrderTrans.class,
-				"Order Trans Key", new String[] {
-					"order.id",
-					"dateCreated",
-					"username" }) });
+		set.add(new BusinessKeyDefinition(PaymentInfo.class, "Name", new String[] { INamedEntity.NAME }));
 
-		map.put(PaymentInfo.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<PaymentInfo>(PaymentInfo.class,
-				"Name", new String[] { INamedEntity.NAME }) });
+		set.add(new BusinessKeyDefinition(PaymentTrans.class, "Date and Op", new String[] {
+			"payTransDate",
+			"payOp",
+			"payType" }));
+		set.add(new BusinessKeyDefinition(PaymentTrans.class, "Ref Num", new String[] { "refNum" }));
 
-		map.put(PaymentTrans.class, new IBusinessKeyDefinition[] {
-			new BusinessKeyDefinition<PaymentTrans>(PaymentTrans.class, "Date and Op", new String[] {
-				"payTransDate",
-				"payOp",
-				"payType" }),
-			new BusinessKeyDefinition<PaymentTrans>(PaymentTrans.class, "Ref Num", new String[] { "refNum" }) });
+		set.add(new BusinessKeyDefinition(ProdCat.class, "Binder", new String[] {
+			"product.id",
+			"category.id" }));
 
-		map.put(ProdCat.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<ProdCat>(ProdCat.class, "Binder",
-				new String[] {
-					"product.id",
-					"category.id" }) });
+		set.add(new BusinessKeyDefinition(ProductCategory.class, "Account Id and Name", new String[] {
+			"account.id",
+			"name" }));
 
-		map.put(ProductCategory.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<ProductCategory>(
-				ProductCategory.class, "Account Id and Name", new String[] {
-					"account.id",
-					"name" }) });
+		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
+			"account.id",
+			"sku" }));
+		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
+			"account.id",
+			"d1",
+			"d2" }));
 
-		map.put(ProductInventory.class, new IBusinessKeyDefinition[] {
-			new BusinessKeyDefinition<ProductInventory>(ProductInventory.class, "Account Id and SKU", new String[] {
-				"account.id",
-				"sku" }),
-			new BusinessKeyDefinition<ProductInventory>(ProductInventory.class, "Account Id and Title", new String[] {
-				"account.id",
-				"d1",
-				"d2" }) });
+		set.add(new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
+			"account.id",
+			"province",
+			"county",
+			"postalCode" }));
 
-		map.put(SalesTax.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<SalesTax>(SalesTax.class,
-				"Province, County and Postal Code", new String[] {
-					"account.id",
-					"province",
-					"county",
-					"postalCode" }) });
+		set.add(new BusinessKeyDefinition(ShipBoundCost.class, "Bounds", new String[] {
+			"shipMode.id",
+			"lbound",
+			"ubound" }));
 
-		map.put(ShipBoundCost.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<ShipBoundCost>(
-				ShipBoundCost.class, "Bounds", new String[] {
-					"shipMode.id",
-					"lbound",
-					"ubound" }) });
+		set.add(new BusinessKeyDefinition(ShipMode.class, "Name", new String[] {
+			"account.id",
+			"name" }));
 
-		map.put(ShipMode.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<ShipMode>(ShipMode.class, "Name",
-				new String[] {
-					"account.id",
-					"name" }) });
+		set.add(new BusinessKeyDefinition(SiteCode.class, "Code", new String[] { "code" }));
 
-		map.put(SiteCode.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<SiteCode>(SiteCode.class, "Code",
-				new String[] { "code" }) });
+		set.add(new BusinessKeyDefinition(User.class, "Email Address", new String[] { "emailAddress" }));
 
-		map.put(User.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<User>(User.class, "Email Address",
-				new String[] { "emailAddress" }) });
-
-		map.put(Visitor.class, new IBusinessKeyDefinition[] { new BusinessKeyDefinition<Visitor>(Visitor.class, "Visitor",
-				new String[] {
-					"account.id",
-					"dateCreated",
-					"remoteHost" }) });
+		set.add(new BusinessKeyDefinition(Visitor.class, "Visitor", new String[] {
+			"account.id",
+			"dateCreated",
+			"remoteHost" }));
 
 	}
 
@@ -233,11 +204,16 @@ public abstract class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
 			throws BusinessKeyNotDefinedException {
-		IBusinessKeyDefinition<E>[] defs = map.get(entityClass);
-		if(defs == null) {
+		List<IBusinessKeyDefinition<? extends E>> list = new ArrayList<IBusinessKeyDefinition<? extends E>>();
+		for(IBusinessKeyDefinition<IEntity> def : set) {
+			if(def.getType().isAssignableFrom(entityClass)) {
+				list.add((IBusinessKeyDefinition<? extends E>) def);
+			}
+		}
+		if(list.size() < 1) {
 			throw new BusinessKeyNotDefinedException(entityClass);
 		}
-		return defs;
+		return list.toArray(new IBusinessKeyDefinition[list.size()]);
 	}
 
 	/**

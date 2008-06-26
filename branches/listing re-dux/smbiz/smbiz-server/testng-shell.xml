@@ -6,7 +6,7 @@
     <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
-        <include name="listhandler" />
+        <include name="server.rpc" />
       </run>
     </groups>
     <!-- 

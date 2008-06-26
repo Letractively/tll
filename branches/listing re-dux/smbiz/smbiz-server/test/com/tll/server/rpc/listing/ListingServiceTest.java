@@ -22,8 +22,10 @@ import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingRequest;
 import com.tll.client.data.RemoteListingDefinition;
+import com.tll.client.data.rpc.IListingService;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -34,12 +36,11 @@ import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
 import com.tll.guice.JpaModule;
 import com.tll.guice.MailModule;
-import com.tll.guice.MockEntitiesModule;
 import com.tll.guice.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
-import com.tll.model.impl.Account;
+import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
 import com.tll.util.EnumUtil;
 
@@ -49,6 +50,17 @@ import com.tll.util.EnumUtil;
  */
 @Test(groups = "server.rpc")
 public class ListingServiceTest extends DbTest {
+
+	static final IListingService<ISearch, Model> theListingService = new IListingService<ISearch, Model>() {
+
+		private final ListingService<IEntity, ISearch> svc = new ListingService<IEntity, ISearch>();
+
+		@Override
+		public ListingPayload<Model> process(ListingRequest<ISearch> listingRequest) {
+			return svc.process(listingRequest);
+		}
+
+	};
 
 	/**
 	 * MockHttpInterceptor - Needed to provide the manually created
@@ -60,7 +72,6 @@ public class ListingServiceTest extends DbTest {
 		@Override
 		@SuppressWarnings("unchecked")
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			assert proxy instanceof ListingService;
 			if(method.getName().equals("getRequestContext")) {
 				assert injector != null;
 				MockServletContext servletContext = new MockServletContext();
@@ -68,7 +79,7 @@ public class ListingServiceTest extends DbTest {
 				// MockHttpServletResponse response = new MockHttpServletResponse();
 				return new RequestContext(request, servletContext, injector);
 			}
-			return method.invoke(proxy, args);
+			return method.invoke(theListingService, args);
 		}
 	}
 
@@ -81,7 +92,7 @@ public class ListingServiceTest extends DbTest {
 		modules.add(new VelocityModule());
 		modules.add(new MailModule());
 		modules.add(new AppRefDataModule());
-		modules.add(new MockEntitiesModule());
+		// modules.add(new MockEntitiesModule());
 		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(daoMode));
 		modules.add(new EntityServiceModule());
@@ -111,9 +122,9 @@ public class ListingServiceTest extends DbTest {
 		search.setQueryParam(new IntPropertyValue("ispId", 1));
 
 		// proxy the listing service
-		final ListingService<Account, AccountSearch> listingService =
-				(ListingService) Proxy.newProxyInstance(ListingService.class.getClassLoader(),
-						new Class[] { ListingService.class }, new MockHttpInterceptor());
+		final IListingService<AccountSearch, Model> listingService =
+				(IListingService) Proxy.newProxyInstance(IListingService.class.getClassLoader(),
+						new Class[] { IListingService.class }, new MockHttpInterceptor());
 
 		Sorting initialSorting = new Sorting("name", "m");
 		RemoteListingDefinition<AccountSearch> rld =
