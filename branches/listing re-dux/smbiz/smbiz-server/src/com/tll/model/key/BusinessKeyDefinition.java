@@ -12,12 +12,12 @@ import com.tll.model.IEntity;
  * key for a particular entity type and ascribes a name to the business key.
  * @author jpk
  */
-public final class BusinessKeyDefinition implements IBusinessKeyDefinition {
+public final class BusinessKeyDefinition<E extends IEntity> implements IBusinessKeyDefinition<E> {
 
 	/**
 	 * The entity to which the business key applies.
 	 */
-	private final Class<? extends IEntity> entityClass;
+	private final Class<E> entityClass;
 
 	/**
 	 * OGNL formatted property paths representing the properties of the defined
@@ -37,7 +37,7 @@ public final class BusinessKeyDefinition implements IBusinessKeyDefinition {
 	 * @param propertyNames OGNL formatted String representing the properties of
 	 *        the business key.
 	 */
-	public BusinessKeyDefinition(Class<? extends IEntity> entityClass, String businessKeyName, String[] propertyNames) {
+	public BusinessKeyDefinition(Class<E> entityClass, String businessKeyName, String[] propertyNames) {
 		if(entityClass == null) throw new IllegalArgumentException("An entity type must be specified.");
 		if(propertyNames == null || propertyNames.length < 1) {
 			throw new IllegalArgumentException("At least one property must be specified in a business key");
@@ -50,7 +50,7 @@ public final class BusinessKeyDefinition implements IBusinessKeyDefinition {
 	/**
 	 * @return the entityClass
 	 */
-	public Class<? extends IEntity> getType() {
+	public Class<E> getType() {
 		return entityClass;
 	}
 

@@ -7,25 +7,26 @@ import com.tll.model.IEntity;
 
 /**
  * Abstract key class for entity related keys.
+ * @param <E> The entity type.
  * @author jpk
  */
-public abstract class EntityKey implements IKey {
+public abstract class EntityKey<E extends IEntity> implements IKey<E> {
 
 	/**
 	 * The entity type.
 	 */
-	protected Class<? extends IEntity> entityClass;
+	protected Class<E> entityClass;
 
 	/**
 	 * Constructor
 	 * @param entityClass The key type
 	 */
-	protected EntityKey(Class<? extends IEntity> entityClass) {
+	protected EntityKey(Class<E> entityClass) {
 		super();
 		setType(entityClass);
 	}
 
-	public final Class<? extends IEntity> getType() {
+	public final Class<E> getType() {
 		return entityClass;
 	}
 
@@ -33,7 +34,7 @@ public abstract class EntityKey implements IKey {
 		return EntityUtil.entityTypeFromClass(getType());
 	}
 
-	public final void setType(Class<? extends IEntity> type) {
+	public final void setType(Class<E> type) {
 		if(type == null) throw new IllegalArgumentException("An entity type must be specified.");
 		this.entityClass = type;
 	}

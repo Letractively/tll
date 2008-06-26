@@ -11,6 +11,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IAccountDao;
 import com.tll.model.impl.Account;
+import com.tll.model.key.NameKey;
 
 /**
  * AccountDao
@@ -33,5 +34,10 @@ public class AccountDao extends TimeStampEntityDao<Account> implements IAccountD
 	@Override
 	public Class<Account> getEntityClass() {
 		return Account.class;
+	}
+
+	@Override
+	public Account load(NameKey<Account> nameKey) {
+		return (Account) loadByName(nameKey);
 	}
 }

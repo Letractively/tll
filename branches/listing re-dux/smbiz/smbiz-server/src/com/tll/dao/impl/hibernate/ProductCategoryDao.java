@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IProductCategoryDao;
 import com.tll.model.impl.ProductCategory;
+import com.tll.model.key.NameKey;
 
 /**
  * ProductCategoryDao
@@ -36,5 +37,10 @@ public class ProductCategoryDao extends TimeStampEntityDao<ProductCategory> impl
 	@Override
 	public Class<ProductCategory> getEntityClass() {
 		return ProductCategory.class;
+	}
+
+	@Override
+	public ProductCategory load(NameKey<ProductCategory> nameKey) {
+		return (ProductCategory) loadByName(nameKey);
 	}
 }

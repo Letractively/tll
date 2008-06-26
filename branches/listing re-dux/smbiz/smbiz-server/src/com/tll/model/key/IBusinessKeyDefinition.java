@@ -6,12 +6,12 @@ import com.tll.model.IEntity;
  * IBusinessKeyDefinition - Defines a business key for given entity type.
  * @author jpk
  */
-public interface IBusinessKeyDefinition {
+public interface IBusinessKeyDefinition<E extends IEntity> {
 
 	/**
 	 * @return The entity type
 	 */
-	Class<? extends IEntity> getType();
+	Class<E> getType();
 
 	/**
 	 * @return The business key name.

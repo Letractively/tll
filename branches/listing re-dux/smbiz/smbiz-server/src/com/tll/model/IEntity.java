@@ -45,7 +45,7 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	/**
 	 * @return The primary key for this entity.
 	 */
-	PrimaryKey getPrimaryKey();
+	PrimaryKey<? extends IEntity> getPrimaryKey();
 
 	/**
 	 * @return All defined business keys for this entity type holding the current
@@ -53,5 +53,5 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @throws BusinessKeyNotDefinedException When there are no defined business
 	 *         keys for this entity type.
 	 */
-	BusinessKey[] getBusinessKeys() throws BusinessKeyNotDefinedException;
+	BusinessKey<? extends IEntity>[] getBusinessKeys() throws BusinessKeyNotDefinedException;
 }

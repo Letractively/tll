@@ -20,14 +20,14 @@ public interface IEntityProvider {
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
-	<E extends IEntity> E getEntity(PrimaryKey key);
+	<E extends IEntity> E getEntity(PrimaryKey<E> key);
 
 	/**
 	 * Does the entity exist in this provider?
 	 * @param key
 	 * @return true/false
 	 */
-	boolean hasEntity(PrimaryKey key);
+	<E extends IEntity> boolean hasEntity(PrimaryKey<E> key);
 
 	/**
 	 * Get all entities of the given type and all entities whose type derives from

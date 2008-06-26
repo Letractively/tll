@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -113,7 +114,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param key The primary key
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(PrimaryKey key) {
+	public CriterionGroup addCriterion(PrimaryKey<? extends IEntity> key) {
 		addCriterion(IEntity.PK_FIELDNAME, key.getId(), Comparator.EQUALS, false);
 		return this;
 	}
@@ -124,7 +125,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(BusinessKey key, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(BusinessKey<? extends IEntity> key, boolean isCaseSensitive) {
 		for(final String fname : key.getPropertyNames()) {
 			addCriterion(fname, key.getFieldValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
@@ -137,7 +138,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(NameKey nameKey, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(NameKey<? extends INamedEntity> nameKey, boolean isCaseSensitive) {
 		return addCriterion(nameKey.getFieldName(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
 	}
 
@@ -147,7 +148,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param foreignKey The foreign key id
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(String relatedPropertyName, PrimaryKey foreignKey) {
+	public CriterionGroup addCriterion(String relatedPropertyName, PrimaryKey<? extends IEntity> foreignKey) {
 		final String fkname = relatedPropertyName + "." + IEntity.PK_FIELDNAME;
 		if(!foreignKey.isSet()) {
 			return addCriterion(fkname, DBType.NULL, Comparator.IS, false);

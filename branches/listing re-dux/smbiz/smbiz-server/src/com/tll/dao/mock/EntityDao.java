@@ -357,11 +357,12 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		// no-op
 	}
 
-	public final E load(final BusinessKey key) {
+	@SuppressWarnings("unchecked")
+	public final E load(final BusinessKey<E> key) {
 		for(final E e : set) {
 			try {
-				final BusinessKey[] bks = e.getBusinessKeys();
-				for(final BusinessKey bk : bks) {
+				final BusinessKey<E>[] bks = (BusinessKey<E>[]) e.getBusinessKeys();
+				for(final BusinessKey<E> bk : bks) {
 					if(bk.equals(key)) {
 						return e;
 					}
@@ -373,7 +374,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
-	public final E load(final PrimaryKey key) {
+	public final E load(final PrimaryKey<E> key) {
 		for(final E e : set) {
 			if(e.equals(key)) {
 				return e;
@@ -490,6 +491,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	public final E load(final NameKey key) {
 		if(key == null || key.getName() == null) return null;
 		if(set != null) {

@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IShipModeDao;
 import com.tll.model.impl.ShipMode;
+import com.tll.model.key.NameKey;
 
 /**
  * ShipModeDao
@@ -37,4 +38,10 @@ public class ShipModeDao extends TimeStampEntityDao<ShipMode> implements IShipMo
 	public Class<ShipMode> getEntityClass() {
 		return ShipMode.class;
 	}
+
+	@Override
+	public ShipMode load(NameKey<ShipMode> nameKey) {
+		return (ShipMode) loadByName(nameKey);
+	}
+
 }

@@ -162,7 +162,7 @@ public class EntityServiceTest extends DbTest {
 
 			startNewTransaction();
 			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
-			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey(Account.class, account.getId()));
+			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
 			final List<SearchResult<AccountHistory>> list =
 					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
 			endTransaction();

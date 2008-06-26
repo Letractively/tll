@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IAppPropertyDao;
 import com.tll.model.impl.AppProperty;
+import com.tll.model.key.NameKey;
 
 /**
  * AppPropertyDao
@@ -36,5 +37,10 @@ public class AppPropertyDao extends EntityDao<AppProperty> implements IAppProper
 	@Override
 	public Class<AppProperty> getEntityClass() {
 		return AppProperty.class;
+	}
+
+	@Override
+	public AppProperty load(NameKey<AppProperty> nameKey) {
+		return (AppProperty) loadByName(nameKey);
 	}
 }

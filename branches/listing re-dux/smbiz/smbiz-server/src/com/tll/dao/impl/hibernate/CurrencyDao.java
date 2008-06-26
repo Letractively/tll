@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.ICurrencyDao;
 import com.tll.model.impl.Currency;
+import com.tll.model.key.NameKey;
 
 /**
  * CurrencyDao
@@ -36,5 +37,10 @@ public class CurrencyDao extends EntityDao<Currency> implements ICurrencyDao {
 	@Override
 	public Class<Currency> getEntityClass() {
 		return Currency.class;
+	}
+
+	@Override
+	public Currency load(NameKey<Currency> nameKey) {
+		return (Currency) loadByName(nameKey);
 	}
 }

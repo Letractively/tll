@@ -29,14 +29,14 @@ public interface IEntityDao<E extends IEntity> extends IDao {
 	 * @param key the primary key
 	 * @return the entity
 	 */
-	E load(PrimaryKey key);
+	E load(PrimaryKey<E> key);
 
 	/**
 	 * Loads a single entity specified by a business key.
 	 * @param key the primary key
 	 * @return the entity
 	 */
-	E load(BusinessKey key);
+	E load(BusinessKey<E> key);
 
 	/**
 	 * Returns all the entities managed by this DAO. This method will only include

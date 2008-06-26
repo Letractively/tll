@@ -41,7 +41,7 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 	}
 
 	@Override
-	protected BusinessKey handleBusinessKeyTranslation(UserSearch search) {
+	protected BusinessKey<User> handleBusinessKeyTranslation(UserSearch search) {
 		throw new UnsupportedOperationException();
 	}
 

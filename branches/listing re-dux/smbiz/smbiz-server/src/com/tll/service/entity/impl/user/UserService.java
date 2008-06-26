@@ -132,8 +132,8 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(authorityDao
-				.load(new NameKey(Authority.class, Authority.ROLE_USER, Authority.FIELDNAME_AUTHORITY)));
+		user.addAuthority(authorityDao.load(new NameKey<Authority>(Authority.class, Authority.ROLE_USER,
+				Authority.FIELDNAME_AUTHORITY)));
 
 		persist(user);
 
@@ -195,7 +195,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	private User getUserById(Integer userId) throws EntityNotFoundException {
-		final User user = dao.load(new PrimaryKey(User.class, userId));
+		final User user = dao.load(new PrimaryKey<User>(User.class, userId));
 		if(user == null) throw new EntityNotFoundException("User of id '" + userId + "' not found");
 		return user;
 	}
@@ -261,7 +261,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 		try {
 			// get the user
-			final User user = dao.load(new PrimaryKey(User.class, userId));
+			final User user = dao.load(new PrimaryKey<User>(User.class, userId));
 			final String username = user.getUsername();
 
 			// encode the new password

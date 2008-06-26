@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.ISiteCodeDao;
 import com.tll.model.impl.SiteCode;
+import com.tll.model.key.NameKey;
 
 /**
  * SiteCodeDao
@@ -36,5 +37,10 @@ public class SiteCodeDao extends TimeStampEntityDao<SiteCode> implements ISiteCo
 	@Override
 	public Class<SiteCode> getEntityClass() {
 		return SiteCode.class;
+	}
+
+	@Override
+	public SiteCode load(NameKey<SiteCode> nameKey) {
+		return (SiteCode) loadByName(nameKey);
 	}
 }

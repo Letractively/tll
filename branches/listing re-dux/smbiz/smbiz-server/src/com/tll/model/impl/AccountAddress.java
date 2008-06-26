@@ -32,13 +32,13 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 
 	private static final long serialVersionUID = 7356724207827323290L;
 
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(AccountAddress.class, "Binder", new String[] {
+	public static final IBusinessKeyDefinition<AccountAddress> binderBk =
+			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Binder", new String[] {
 				"account.id",
 				"address.id" });
 
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(AccountAddress.class, "Account Id and Name", new String[] {
+	public static final IBusinessKeyDefinition<AccountAddress> nameBk =
+			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Account Id and Name", new String[] {
 				"account.id",
 				"name" });
 

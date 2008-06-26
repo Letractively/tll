@@ -231,7 +231,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @param search The search to translate
 	 * @return Translated {@link IBusinessKey}
 	 */
-	protected abstract BusinessKey handleBusinessKeyTranslation(S search);
+	protected abstract BusinessKey<E> handleBusinessKeyTranslation(S search);
 
 	/**
 	 * Handles the entity specific search to criteria translation.

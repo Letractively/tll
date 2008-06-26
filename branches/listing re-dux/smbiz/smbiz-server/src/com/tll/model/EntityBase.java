@@ -210,7 +210,7 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	@Transient
-	public final PrimaryKey getPrimaryKey() {
+	public final PrimaryKey<? extends IEntity> getPrimaryKey() {
 		if(pk == null) {
 			pk = new PrimaryKey(entityClass(), getId());
 		}

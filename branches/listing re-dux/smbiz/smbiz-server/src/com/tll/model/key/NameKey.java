@@ -6,7 +6,7 @@ import com.tll.model.INamedEntity;
  * INameKey impl
  * @author jpk
  */
-public class NameKey extends EntityKey {
+public class NameKey<N extends INamedEntity> extends EntityKey<N> {
 
 	private static final long serialVersionUID = -3217664978174156618L;
 
@@ -26,7 +26,7 @@ public class NameKey extends EntityKey {
 	 * Constructor
 	 * @param entityClass
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass) {
+	public NameKey(Class<N> entityClass) {
 		this(entityClass, null, DEFAULT_FIELDNAME);
 	}
 
@@ -35,7 +35,7 @@ public class NameKey extends EntityKey {
 	 * @param entityClass
 	 * @param name
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name) {
+	public NameKey(Class<N> entityClass, String name) {
 		this(entityClass, name, DEFAULT_FIELDNAME);
 	}
 
@@ -45,7 +45,7 @@ public class NameKey extends EntityKey {
 	 * @param name
 	 * @param fieldName
 	 */
-	public NameKey(Class<? extends INamedEntity> entityClass, String name, String fieldName) {
+	public NameKey(Class<N> entityClass, String name, String fieldName) {
 		super(entityClass);
 		setName(name);
 		setFieldName(fieldName);

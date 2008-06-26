@@ -24,7 +24,7 @@ public class UserDao extends EntityDao<User> implements IUserDao, IMockDao<User>
 
 	public void setCredentials(Integer userId, String newUsername, String newEncPassword)
 			throws ChangeUserCredentialsFailedException {
-		User e = load(new PrimaryKey(User.class, userId));
+		User e = load(new PrimaryKey<User>(User.class, userId));
 		if(e == null) {
 			throw new ChangeUserCredentialsFailedException("Unable to find user of id: " + userId);
 		}

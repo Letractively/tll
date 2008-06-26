@@ -42,8 +42,8 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 	}
 
 	@Override
-	protected BusinessKey handleBusinessKeyTranslation(AddressSearch search) {
-		return new BusinessKey(search.getAddress1(), search.getPostalCode());
+	protected BusinessKey<Address> handleBusinessKeyTranslation(AddressSearch search) {
+		return new BusinessKey<Address>(search.getAddress1(), search.getPostalCode());
 	}
 
 	@Override

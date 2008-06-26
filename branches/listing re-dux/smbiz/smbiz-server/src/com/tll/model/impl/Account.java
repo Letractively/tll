@@ -44,8 +44,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" });
+	public static final IBusinessKeyDefinition<Account> nameBk =
+			new BusinessKeyDefinition<Account>(Account.class, "Name", new String[] { "name" });
 
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
@@ -309,7 +309,8 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 
 	@Override
 	@Transient
-	public final BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(nameBk, new Object[] { getName() }) };
+	@SuppressWarnings("unchecked")
+	public final BusinessKey<Account>[] getBusinessKeys() {
+		return new BusinessKey[] { new BusinessKey<Account>(nameBk, new Object[] { getName() }) };
 	}
 }

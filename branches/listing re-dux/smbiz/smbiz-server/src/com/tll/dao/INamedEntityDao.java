@@ -16,5 +16,5 @@ public interface INamedEntityDao<N extends INamedEntity> extends IEntityDao<N> {
 	 * @param name the name key
 	 * @return the named entity
 	 */
-	N load(NameKey nameKey);
+	N load(NameKey<N> nameKey);
 }

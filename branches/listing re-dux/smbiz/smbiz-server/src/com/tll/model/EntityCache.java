@@ -19,7 +19,7 @@ import com.tll.model.key.PrimaryKey;
  */
 public class EntityCache implements IEntityProvider {
 
-	private final Map<PrimaryKey, IEntity> map = new HashMap<PrimaryKey, IEntity>();
+	private final Map<PrimaryKey<? extends IEntity>, IEntity> map = new HashMap<PrimaryKey<? extends IEntity>, IEntity>();
 
 	/**
 	 * Constructor
@@ -38,11 +38,11 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntity(PrimaryKey key) {
+	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
 		return (E) map.get(key);
 	}
 
-	public boolean hasEntity(PrimaryKey key) {
+	public <E extends IEntity> boolean hasEntity(PrimaryKey<E> key) {
 		return map.containsKey(key);
 	}
 
@@ -72,7 +72,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	public void addEntity(IEntity e) {
-		if(e != null) map.put(new PrimaryKey(e), e);
+		if(e != null) map.put(new PrimaryKey<IEntity>(e), e);
 	}
 
 	public void addEntities(Collection<IEntity> entities) {

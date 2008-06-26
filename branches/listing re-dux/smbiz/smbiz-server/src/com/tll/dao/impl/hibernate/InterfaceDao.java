@@ -19,6 +19,7 @@ import com.tll.dao.impl.IInterfaceDao;
 import com.tll.model.impl.Interface;
 import com.tll.model.impl.InterfaceOption;
 import com.tll.model.impl.InterfaceOptionParameterDefinition;
+import com.tll.model.key.NameKey;
 
 /**
  * InterfaceDao
@@ -58,5 +59,10 @@ public class InterfaceDao extends TimeStampEntityDao<Interface> implements IInte
 				}
 			}
 		}
+	}
+
+	@Override
+	public Interface load(NameKey<Interface> nameKey) {
+		return (Interface) loadByName(nameKey);
 	}
 }

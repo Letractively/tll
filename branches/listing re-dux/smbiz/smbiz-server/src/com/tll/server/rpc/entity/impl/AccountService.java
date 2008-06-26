@@ -73,7 +73,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 		// load parent account ref?
 		if(entityOptions.isRelatedRefRequested(EntityType.ACCOUNT) && e.getParent() != null) {
-			PrimaryKey pk = new PrimaryKey(Account.class, e.getParent().getId());
+			PrimaryKey<Account> pk = new PrimaryKey<Account>(Account.class, e.getParent().getId());
 			IAccountService svc = entityServiceFactory.instance(IAccountService.class);
 			Account parent = svc.load(pk);
 			RefKey er = new RefKey(EntityType.ACCOUNT, parent.getId(), parent.getName());
@@ -88,7 +88,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected BusinessKey handleBusinessKeyTranslation(AccountSearch search) {
+	protected BusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
@@ -106,7 +106,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 		// parent account ref
 		RefKey par = search.getParentAccountRef();
 		if(par != null) {
-			criteria.getPrimaryGroup().addCriterion("parent", new PrimaryKey(Account.class, par.getId()));
+			criteria.getPrimaryGroup().addCriterion("parent", new PrimaryKey<Account>(Account.class, par.getId()));
 		}
 
 		// status

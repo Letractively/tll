@@ -108,12 +108,12 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	}
 
 	@Transactional(readOnly = true)
-	public E load(PrimaryKey key) throws EntityNotFoundException {
+	public E load(PrimaryKey<E> key) throws EntityNotFoundException {
 		return dao.load(key);
 	}
 
 	@Transactional(readOnly = true)
-	public E load(BusinessKey key) throws EntityNotFoundException {
+	public E load(BusinessKey<E> key) throws EntityNotFoundException {
 		return dao.load(key);
 	}
 

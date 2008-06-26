@@ -6,7 +6,7 @@ import com.tll.model.IEntity;
  * Representation of primary keys within the application.
  * @author jpk
  */
-public final class PrimaryKey extends EntityKey {
+public final class PrimaryKey<E extends IEntity> extends EntityKey<E> {
 
 	private static final long serialVersionUID = 6971947122659535069L;
 
@@ -14,17 +14,18 @@ public final class PrimaryKey extends EntityKey {
 
 	/**
 	 * Constructor
-	 * @param e
+	 * @param entity
 	 */
-	public PrimaryKey(IEntity e) {
-		this(e.entityClass(), e.getId());
+	@SuppressWarnings("unchecked")
+	public PrimaryKey(E entity) {
+		this((Class<E>) entity.entityClass(), null);
 	}
 
 	/**
 	 * Constructor
 	 * @param entityClass
 	 */
-	public PrimaryKey(Class<? extends IEntity> entityClass) {
+	public PrimaryKey(Class<E> entityClass) {
 		this(entityClass, null);
 	}
 
@@ -33,7 +34,7 @@ public final class PrimaryKey extends EntityKey {
 	 * @param entityClass
 	 * @param id
 	 */
-	public PrimaryKey(Class<? extends IEntity> entityClass, Integer id) {
+	public PrimaryKey(Class<E> entityClass, Integer id) {
 		super(entityClass);
 		setId(id);
 	}

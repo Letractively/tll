@@ -43,6 +43,7 @@ import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -124,29 +125,28 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 	}
 
-	public final E load(PrimaryKey key) {
+	public final E load(PrimaryKey<E> key) {
 		ensureTypeCompatible(key.getType());
 		final E e = getEntityManager().getReference(getEntityClass(), key.getId());
 		return deproxy(e, getEntityClass());
 	}
 
-	@SuppressWarnings("unchecked")
-	public final E load(BusinessKey key) {
+	public final E load(BusinessKey<E> key) {
 		ensureTypeCompatible(key.getType());
 		try {
-			return findEntity(new com.tll.criteria.Criteria<E>((Class<? extends E>) key.getType()));
+			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from business key: " + e.getMessage(), e);
 		}
 	}
 
-	public final E load(NameKey nameKey) {
+	protected final INamedEntity loadByName(NameKey<? extends INamedEntity> nameKey) {
 		ensureTypeCompatible(nameKey.getType());
 		try {
 			final com.tll.criteria.Criteria<E> nc = new com.tll.criteria.Criteria<E>(getEntityClass());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			return findEntity(nc);
+			return (INamedEntity) findEntity(nc);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);

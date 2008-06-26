@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IOrderItemDao;
 import com.tll.model.impl.OrderItem;
+import com.tll.model.key.NameKey;
 
 /**
  * OrderItemDao
@@ -36,5 +37,10 @@ public class OrderItemDao extends TimeStampEntityDao<OrderItem> implements IOrde
 	@Override
 	public Class<OrderItem> getEntityClass() {
 		return OrderItem.class;
+	}
+
+	@Override
+	public OrderItem load(NameKey<OrderItem> nameKey) {
+		return (OrderItem) loadByName(nameKey);
 	}
 }

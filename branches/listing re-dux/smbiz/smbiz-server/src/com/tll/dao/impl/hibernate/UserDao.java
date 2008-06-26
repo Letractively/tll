@@ -17,6 +17,7 @@ import com.tll.dao.impl.IUserDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.IEntity;
 import com.tll.model.impl.User;
+import com.tll.model.key.NameKey;
 
 /**
  * UserDao
@@ -50,5 +51,10 @@ public class UserDao extends TimeStampEntityDao<User> implements IUserDao {
 		catch(final HibernateException he) {
 			throw new ChangeUserCredentialsFailedException(he.getMessage());
 		}
+	}
+
+	@Override
+	public User load(NameKey<User> nameKey) {
+		return (User) loadByName(nameKey);
 	}
 }

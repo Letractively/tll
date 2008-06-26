@@ -1,5 +1,6 @@
 package com.tll.criteria;
 
+
 /**
  * Object representing a criterion definition. It contains the field name and
  * value as well as the comparator. Any other fields that can be used to
@@ -96,6 +97,7 @@ public class Criterion implements ICriterion {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(obj == null) return false;

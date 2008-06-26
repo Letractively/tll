@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.model.impl.Authority;
+import com.tll.model.key.NameKey;
 
 /**
  * AuthorityDao
@@ -36,5 +37,10 @@ public class AuthorityDao extends EntityDao<Authority> implements IAuthorityDao 
 	@Override
 	public Class<Authority> getEntityClass() {
 		return Authority.class;
+	}
+
+	@Override
+	public Authority load(NameKey<Authority> nameKey) {
+		return (Authority) loadByName(nameKey);
 	}
 }

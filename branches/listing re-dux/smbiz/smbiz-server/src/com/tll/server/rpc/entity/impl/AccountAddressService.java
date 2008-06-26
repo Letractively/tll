@@ -43,7 +43,7 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 	}
 
 	@Override
-	protected BusinessKey handleBusinessKeyTranslation(ISearch search) {
+	protected BusinessKey<AccountAddress> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

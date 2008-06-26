@@ -12,12 +12,12 @@ import com.tll.util.IDescriptorProvider;
  * particular type.
  * @author jpk
  */
-public interface IKey extends IDescriptorProvider, Serializable {
+public interface IKey<T> extends IDescriptorProvider, Serializable {
 
 	/**
 	 * @return The type of object to which this key refers.
 	 */
-	Class<?> getType();
+	Class<T> getType();
 
 	/**
 	 * @return A presentation worthy name describing the key type.

@@ -14,6 +14,7 @@ import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.model.impl.PaymentInfo;
+import com.tll.model.key.NameKey;
 
 /**
  * PaymentInfoDao
@@ -36,5 +37,10 @@ public class PaymentInfoDao extends EntityDao<PaymentInfo> implements IPaymentIn
 	@Override
 	public Class<PaymentInfo> getEntityClass() {
 		return PaymentInfo.class;
+	}
+
+	@Override
+	public PaymentInfo load(NameKey<PaymentInfo> nameKey) {
+		return (PaymentInfo) loadByName(nameKey);
 	}
 }

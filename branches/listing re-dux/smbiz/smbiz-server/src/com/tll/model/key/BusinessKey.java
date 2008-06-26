@@ -2,11 +2,13 @@ package com.tll.model.key;
 
 import java.util.Arrays;
 
+import com.tll.model.IEntity;
+
 /**
  * Abstract base class for all business keys in the application.
  * @author jpk
  */
-public final class BusinessKey extends EntityKey implements IBusinessKeyDefinition {
+public final class BusinessKey<E extends IEntity> extends EntityKey<E> implements IBusinessKeyDefinition<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 
@@ -18,7 +20,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	 * Constructor
 	 * @param def The business key definition
 	 */
-	public BusinessKey(IBusinessKeyDefinition def) {
+	public BusinessKey(IBusinessKeyDefinition<E> def) {
 		super(def.getType());
 		this.businessKeyName = def.getBusinessKeyName();
 		this.propertyNames = def.getPropertyNames();
@@ -30,7 +32,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	 * @param def The business key definition
 	 * @param propertyValues The propertyValues array
 	 */
-	public BusinessKey(IBusinessKeyDefinition def, Object[] propertyValues) {
+	public BusinessKey(IBusinessKeyDefinition<E> def, Object[] propertyValues) {
 		this(def);
 		copyValues(propertyValues);
 	}
@@ -95,6 +97,7 @@ public final class BusinessKey extends EntityKey implements IBusinessKeyDefiniti
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(obj == null) return false;

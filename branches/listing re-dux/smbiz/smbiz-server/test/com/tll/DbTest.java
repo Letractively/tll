@@ -114,7 +114,7 @@ public abstract class DbTest extends TestBase {
 	 */
 	@SuppressWarnings("unchecked")
 	protected static final <E extends IEntity, D extends IEntityDao<E>> E getEntityFromDb(D dao, PrimaryKey key) {
-		Criteria<? extends E> criteria = new Criteria<E>((Class<E>) key.getType());
+		Criteria<? extends E> criteria = new Criteria<E>(key.getType());
 		criteria.getPrimaryGroup().addCriterion(key);
 		try {
 			return dao.findEntity(criteria);

@@ -42,7 +42,7 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 	}
 
 	@Override
-	protected BusinessKey handleBusinessKeyTranslation(ISearch search) {
+	protected BusinessKey<Interface> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException();
 	}
 
