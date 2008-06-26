@@ -140,7 +140,7 @@ public class EntityServiceTest extends DbTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), user.getPrimaryKey());
+			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), new PrimaryKey<User>(user));
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}

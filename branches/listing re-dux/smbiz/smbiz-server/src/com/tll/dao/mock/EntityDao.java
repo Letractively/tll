@@ -359,7 +359,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public final E load(final BusinessKey<E> key) {
+	public final E load(final BusinessKey<? extends E> key) {
 		for(final E e : set) {
 			try {
 				final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
@@ -375,7 +375,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
-	public final E load(final PrimaryKey<E> key) {
+	public final E load(final PrimaryKey<? extends E> key) {
 		for(final E e : set) {
 			if(e.equals(key)) {
 				return e;

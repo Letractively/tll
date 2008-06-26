@@ -40,7 +40,7 @@ public class SiteCodeDao extends TimeStampEntityDao<SiteCode> implements ISiteCo
 	}
 
 	@Override
-	public SiteCode load(NameKey<SiteCode> nameKey) {
+	public SiteCode load(NameKey<? extends SiteCode> nameKey) {
 		return (SiteCode) loadByName(nameKey);
 	}
 }

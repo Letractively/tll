@@ -40,7 +40,7 @@ public class AppPropertyDao extends EntityDao<AppProperty> implements IAppProper
 	}
 
 	@Override
-	public AppProperty load(NameKey<AppProperty> nameKey) {
+	public AppProperty load(NameKey<? extends AppProperty> nameKey) {
 		return (AppProperty) loadByName(nameKey);
 	}
 }

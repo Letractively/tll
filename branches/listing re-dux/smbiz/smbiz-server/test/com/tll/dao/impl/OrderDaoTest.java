@@ -26,13 +26,13 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "OrderDaoTest")
 public class OrderDaoTest extends AbstractDaoTest<Order> {
 
-	PrimaryKey cKey;
-	PrimaryKey btKey;
-	PrimaryKey stKey;
-	PrimaryKey piKey;
-	PrimaryKey vKey;
-	PrimaryKey cstKey;
-	PrimaryKey aKey;
+	PrimaryKey<Currency> cKey;
+	PrimaryKey<Address> btKey;
+	PrimaryKey<Address> stKey;
+	PrimaryKey<PaymentInfo> piKey;
+	PrimaryKey<Visitor> vKey;
+	PrimaryKey<Customer> cstKey;
+	PrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -46,7 +46,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Currency currency;
 		if(cKey == null) {
 			currency = getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class));
-			cKey = currency.getPrimaryKey();
+			cKey = new PrimaryKey<Currency>(currency);
 		}
 		else {
 			currency = getDao(ICurrencyDao.class).load(cKey);
@@ -57,7 +57,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Address bta;
 		if(btKey == null) {
 			bta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
-			btKey = bta.getPrimaryKey();
+			btKey = new PrimaryKey<Address>(bta);
 		}
 		else {
 			bta = getDao(IAddressDao.class).load(btKey);
@@ -68,7 +68,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		Address sta;
 		if(stKey == null) {
 			sta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
-			stKey = sta.getPrimaryKey();
+			stKey = new PrimaryKey<Address>(sta);
 		}
 		else {
 			sta = getDao(IAddressDao.class).load(stKey);
@@ -79,7 +79,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		PaymentInfo pi;
 		if(piKey == null) {
 			pi = getDao(IPaymentInfoDao.class).persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class));
-			piKey = pi.getPrimaryKey();
+			piKey = new PrimaryKey<PaymentInfo>(pi);
 		}
 		else {
 			pi = getDao(IPaymentInfoDao.class).load(piKey);
@@ -94,7 +94,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			account.setPaymentInfo(pi);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -107,7 +107,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			v = getMockEntityProvider().getEntityCopy(Visitor.class);
 			v.setAccount(account);
 			v = getDao(IVisitorDao.class).persist(v);
-			vKey = v.getPrimaryKey();
+			vKey = new PrimaryKey<Visitor>(v);
 		}
 		else {
 			v = getDao(IVisitorDao.class).load(vKey);
@@ -122,7 +122,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			customer.setPaymentInfo(pi);
 			customer.setParent(account);
 			customer = (Customer) getDao(IAccountDao.class).persist(customer);
-			cstKey = customer.getPrimaryKey();
+			cstKey = new PrimaryKey<Customer>(customer);
 		}
 		else {
 			customer = (Customer) getDao(IAccountDao.class).load(cstKey);

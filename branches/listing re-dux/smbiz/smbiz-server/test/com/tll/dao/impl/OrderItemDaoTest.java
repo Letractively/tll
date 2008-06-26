@@ -23,8 +23,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "OrderItemDaoTest")
 public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
-	PrimaryKey aKey;
-	PrimaryKey oKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Order> oKey;
 
 	/**
 	 * Constructor
@@ -42,7 +42,7 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -56,7 +56,7 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = order.getPrimaryKey();
+			oKey = new PrimaryKey<Order>(order);
 		}
 		else {
 			order = getDao(IOrderDao.class).load(oKey);

@@ -23,11 +23,11 @@ import com.tll.model.key.PrimaryKey;
  */
 public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEntityDaoTest<A> {
 
-	PrimaryKey piKey;
-	PrimaryKey cKey;
-	PrimaryKey a1Key;
-	PrimaryKey a2Key;
-	PrimaryKey parentKey;
+	PrimaryKey<PaymentInfo> piKey;
+	PrimaryKey<Currency> cKey;
+	PrimaryKey<Address> a1Key;
+	PrimaryKey<Address> a2Key;
+	PrimaryKey<Account> parentKey;
 
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 			// load stubbed currency
 			currency = getMockEntityProvider().getEntityCopy(Currency.class);
 			currency = getDao(ICurrencyDao.class).persist(currency);
-			cKey = currency.getPrimaryKey();
+			cKey = new PrimaryKey<Currency>(currency);
 		}
 		else {
 			currency = getDao(ICurrencyDao.class).load(cKey);
@@ -63,7 +63,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 				return;
 			}
 			paymentInfo = getDao(IPaymentInfoDao.class).persist(paymentInfo);
-			piKey = paymentInfo.getPrimaryKey();
+			piKey = new PrimaryKey<PaymentInfo>(paymentInfo);
 		}
 		else {
 			paymentInfo = getDao(IPaymentInfoDao.class).load(piKey);
@@ -81,7 +81,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 					parent.setCurrency(currency);
 					parent.setPaymentInfo(paymentInfo);
 					parent = getDao(IAccountDao.class).persist(parent);
-					parentKey = parent.getPrimaryKey();
+					parentKey = new PrimaryKey<Account>(parent);
 				}
 				else {
 					parent = getDao(IAccountDao.class).load(parentKey);
@@ -94,7 +94,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		Address a1;
 		if(a1Key == null) {
 			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
-			a1Key = a1.getPrimaryKey();
+			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
 			a1 = getDao(IAddressDao.class).load(a1Key);
@@ -104,7 +104,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		Address a2;
 		if(a2Key == null) {
 			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
-			a2Key = a2.getPrimaryKey();
+			a2Key = new PrimaryKey<Address>(a2);
 		}
 		else {
 			a2 = getDao(IAddressDao.class).load(a2Key);

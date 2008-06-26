@@ -40,7 +40,7 @@ public class ProductCategoryDao extends TimeStampEntityDao<ProductCategory> impl
 	}
 
 	@Override
-	public ProductCategory load(NameKey<ProductCategory> nameKey) {
+	public ProductCategory load(NameKey<? extends ProductCategory> nameKey) {
 		return (ProductCategory) loadByName(nameKey);
 	}
 }

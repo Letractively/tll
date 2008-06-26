@@ -279,11 +279,11 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.persist(entity);
 		}
 
-		public E load(PrimaryKey key) {
+		public E load(PrimaryKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
-		public E load(BusinessKey key) {
+		public E load(BusinessKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
@@ -363,7 +363,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected abstract void verifyLoadedEntityState(E e) throws Exception;
 
-	protected final E getEntityFromDb(PrimaryKey key) {
+	protected final E getEntityFromDb(PrimaryKey<? extends E> key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
@@ -398,7 +398,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(new PrimaryKey(entityClass, persistentId));
+		e = dao.load(new PrimaryKey<E>(entityClass, persistentId));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		verifyLoadedEntityState(e);
 		endTransaction();
@@ -412,7 +412,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(new PrimaryKey<E>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
 		verifyEntityAlteration(e);
@@ -432,7 +432,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		dbRemove.clear();
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(new PrimaryKey<E>(e));
 		endTransaction();
 		Assert.assertNull(e, "The entity was not purged");
 	}
@@ -463,7 +463,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		startNewTransaction();
 		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
-		criteria.getPrimaryGroup().addCriterion(e.getPrimaryKey());
+		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<E>(e));
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");

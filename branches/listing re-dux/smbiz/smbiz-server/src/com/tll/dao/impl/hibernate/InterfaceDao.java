@@ -62,7 +62,7 @@ public class InterfaceDao extends TimeStampEntityDao<Interface> implements IInte
 	}
 
 	@Override
-	public Interface load(NameKey<Interface> nameKey) {
+	public Interface load(NameKey<? extends Interface> nameKey) {
 		return (Interface) loadByName(nameKey);
 	}
 }

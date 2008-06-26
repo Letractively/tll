@@ -22,7 +22,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "VisitorDaoTest")
 public class VisitorDaoTest extends AbstractDaoTest<Visitor> {
 
-	PrimaryKey aKey;
+	PrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -40,7 +40,7 @@ public class VisitorDaoTest extends AbstractDaoTest<Visitor> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

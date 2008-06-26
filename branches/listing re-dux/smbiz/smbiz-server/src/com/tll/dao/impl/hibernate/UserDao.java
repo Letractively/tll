@@ -54,7 +54,7 @@ public class UserDao extends TimeStampEntityDao<User> implements IUserDao {
 	}
 
 	@Override
-	public User load(NameKey<User> nameKey) {
+	public User load(NameKey<? extends User> nameKey) {
 		return (User) loadByName(nameKey);
 	}
 }

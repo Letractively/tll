@@ -34,14 +34,14 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	E load(PrimaryKey<E> key) throws EntityNotFoundException;
+	E load(PrimaryKey<? extends E> key) throws EntityNotFoundException;
 
 	/**
 	 * Load by business key.
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	E load(BusinessKey<E> key) throws EntityNotFoundException;
+	E load(BusinessKey<? extends E> key) throws EntityNotFoundException;
 
 	/**
 	 * Returns all of the entities in the system managed by this service.

@@ -23,7 +23,7 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao", testName = "AccountHistoryDaoTest")
 public class AccountHistoryDaoTest extends AbstractDaoTest<AccountHistory> {
 
-	PrimaryKey aKey;
+	PrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ public class AccountHistoryDaoTest extends AbstractDaoTest<AccountHistory> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

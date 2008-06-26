@@ -40,7 +40,7 @@ public class AuthorityDao extends EntityDao<Authority> implements IAuthorityDao 
 	}
 
 	@Override
-	public Authority load(NameKey<Authority> nameKey) {
+	public Authority load(NameKey<? extends Authority> nameKey) {
 		return (Authority) loadByName(nameKey);
 	}
 }

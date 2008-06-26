@@ -24,8 +24,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 
-	PrimaryKey aKey;
-	PrimaryKey oKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Order> oKey;
 
 	/**
 	 * Constructor
@@ -45,7 +45,7 @@ public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -59,7 +59,7 @@ public class OrderTransDaoTest extends AbstractDaoTest<OrderTrans> {
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = order.getPrimaryKey();
+			oKey = new PrimaryKey<Order>(order);
 		}
 		else {
 			order = getDao(IOrderDao.class).load(oKey);

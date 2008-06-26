@@ -40,7 +40,7 @@ public class CurrencyDao extends EntityDao<Currency> implements ICurrencyDao {
 	}
 
 	@Override
-	public Currency load(NameKey<Currency> nameKey) {
+	public Currency load(NameKey<? extends Currency> nameKey) {
 		return (Currency) loadByName(nameKey);
 	}
 }

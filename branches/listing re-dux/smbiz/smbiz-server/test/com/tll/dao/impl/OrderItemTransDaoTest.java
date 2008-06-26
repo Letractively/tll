@@ -26,9 +26,9 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
-	PrimaryKey aKey;
-	PrimaryKey oKey;
-	PrimaryKey otKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Order> oKey;
+	PrimaryKey<OrderTrans> otKey;
 
 	/**
 	 * Constructor
@@ -46,7 +46,7 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -66,7 +66,7 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 			oi.setOrder(order);
 			order.addOrderItem(oi);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = order.getPrimaryKey();
+			oKey = new PrimaryKey<Order>(order);
 			oi = order.getOrderItem(oi.getId()); // get non-transient version
 		}
 		else {
@@ -83,7 +83,7 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 			ot.setOrder(order);
 			ot.setPymntTrans(null);
 			ot = getDao(IOrderTransDao.class).persist(ot);
-			otKey = ot.getPrimaryKey();
+			otKey = new PrimaryKey<OrderTrans>(ot);
 		}
 		else {
 			ot = getDao(IOrderTransDao.class).load(otKey);

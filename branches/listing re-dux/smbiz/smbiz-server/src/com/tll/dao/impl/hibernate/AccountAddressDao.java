@@ -40,7 +40,7 @@ public class AccountAddressDao extends TimeStampEntityDao<AccountAddress> implem
 	}
 
 	@Override
-	public AccountAddress load(NameKey<AccountAddress> nameKey) {
+	public AccountAddress load(NameKey<? extends AccountAddress> nameKey) {
 		return (AccountAddress) loadByName(nameKey);
 	}
 }

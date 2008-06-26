@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.Managed;
 
 /**
@@ -29,7 +28,6 @@ public abstract class EntityBase implements IEntity {
 	private Integer id;
 	private boolean generated;
 	private Integer version;
-	private PrimaryKey pk;
 
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
@@ -174,9 +172,6 @@ public abstract class EntityBase implements IEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
-		if(pk != null) {
-			pk.setId(id);
-		}
 	}
 
 	@Transient
@@ -209,33 +204,29 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	@Transient
-	public final PrimaryKey<? extends IEntity> getPrimaryKey() {
-		if(pk == null) {
-			pk = new PrimaryKey(entityClass(), getId());
-		}
-		return pk;
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		final EntityBase other = (EntityBase) obj;
+		if(other.entityClass() != entityClass()) return false;
+		assert this.id != null && other.id != null;
+		if(!id.equals(other.id)) return false;
+		return true;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if(this == o) {
-			return true;
-		}
-		if(o == null || !(o instanceof IEntity)) {
-			return false;
-		}
-		return (getPrimaryKey()).equals(((IEntity) o).getPrimaryKey());
-	}
-
-	@Override
-	public final int hashCode() {
-		return getPrimaryKey().hashCode();
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + entityClass().toString().hashCode();
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
 
 	@Override
 	public final String toString() {
-		return getPrimaryKey().toString() + ", version: " + getVersion();
+		return typeName() + ", id: " + getId() + ", version: " + getVersion();
 	}
 
 	@Transient

@@ -40,7 +40,7 @@ public class OrderItemDao extends TimeStampEntityDao<OrderItem> implements IOrde
 	}
 
 	@Override
-	public OrderItem load(NameKey<OrderItem> nameKey) {
+	public OrderItem load(NameKey<? extends OrderItem> nameKey) {
 		return (OrderItem) loadByName(nameKey);
 	}
 }

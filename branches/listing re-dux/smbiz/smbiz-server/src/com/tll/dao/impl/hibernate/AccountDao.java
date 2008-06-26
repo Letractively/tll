@@ -37,7 +37,7 @@ public class AccountDao extends TimeStampEntityDao<Account> implements IAccountD
 	}
 
 	@Override
-	public Account load(NameKey<Account> nameKey) {
+	public Account load(NameKey<? extends Account> nameKey) {
 		return (Account) loadByName(nameKey);
 	}
 }

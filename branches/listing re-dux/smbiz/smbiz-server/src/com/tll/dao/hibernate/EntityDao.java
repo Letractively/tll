@@ -113,26 +113,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return baseClass.cast(maybeProxy);
 	}
 
-	/**
-	 * Ensures the given entity class is the same is this dao's entity class or an
-	 * extended class from it.
-	 * @param entityClass
-	 * @throws IllegalArgumentException
-	 */
-	protected final void ensureTypeCompatible(Class<? extends IEntity> entityClass) throws IllegalArgumentException {
-		if(!getEntityClass().isAssignableFrom(entityClass)) {
-			throw new IllegalArgumentException("Incompatible type: " + entityClass.toString());
-		}
-	}
-
-	public final E load(PrimaryKey<E> key) {
-		ensureTypeCompatible(key.getType());
+	public final E load(PrimaryKey<? extends E> key) {
 		final E e = getEntityManager().getReference(getEntityClass(), key.getId());
 		return deproxy(e, getEntityClass());
 	}
 
-	public final E load(BusinessKey<E> key) {
-		ensureTypeCompatible(key.getType());
+	public final E load(BusinessKey<? extends E> key) {
 		try {
 			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}
@@ -142,7 +128,6 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	protected final INamedEntity loadByName(NameKey<? extends INamedEntity> nameKey) {
-		ensureTypeCompatible(nameKey.getType());
 		try {
 			final com.tll.criteria.Criteria<E> nc = new com.tll.criteria.Criteria<E>(getEntityClass());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);

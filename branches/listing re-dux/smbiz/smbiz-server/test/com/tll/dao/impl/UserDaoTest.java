@@ -23,8 +23,8 @@ import com.tll.model.key.PrimaryKey;
 @Test(groups = "dao")
 public class UserDaoTest extends NamedEntityDaoTest<User> {
 
-	PrimaryKey aKey;
-	PrimaryKey tKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Authority> tKey;
 
 	/**
 	 * Constructor
@@ -42,7 +42,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = account.getPrimaryKey();
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -54,7 +54,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 		if(tKey == null) {
 			auth = getMockEntityProvider().getEntityCopy(Authority.class);
 			auth = getDao(IAuthorityDao.class).persist(auth);
-			tKey = auth.getPrimaryKey();
+			tKey = new PrimaryKey<Authority>(auth);
 		}
 		else {
 			auth = getDao(IAuthorityDao.class).load(tKey);
@@ -131,7 +131,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		dao.clear();
 		startNewTransaction();
-		e = getEntityFromDb(e.getPrimaryKey());
+		e = getEntityFromDb(new PrimaryKey<User>(e));
 		Assert.assertEquals(e.getUsername(), "newbie@booble.com", "Usernames don't match on user setCredentials() test");
 		Assert.assertEquals(e.getPassword(), "pswd", "Passwords don't match on user setCredentials() test");
 		endTransaction();

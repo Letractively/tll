@@ -18,5 +18,5 @@ public interface INamedEntityService<N extends INamedEntity> extends IEntityServ
 	 * @param key
 	 * @throws EntityNotFoundException
 	 */
-	N load(NameKey<N> key) throws EntityNotFoundException;
+	N load(NameKey<? extends N> key) throws EntityNotFoundException;
 }

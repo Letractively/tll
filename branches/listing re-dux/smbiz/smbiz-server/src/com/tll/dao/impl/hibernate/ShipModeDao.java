@@ -40,7 +40,7 @@ public class ShipModeDao extends TimeStampEntityDao<ShipMode> implements IShipMo
 	}
 
 	@Override
-	public ShipMode load(NameKey<ShipMode> nameKey) {
+	public ShipMode load(NameKey<? extends ShipMode> nameKey) {
 		return (ShipMode) loadByName(nameKey);
 	}
 

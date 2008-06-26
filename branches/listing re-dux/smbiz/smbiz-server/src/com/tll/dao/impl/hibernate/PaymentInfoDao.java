@@ -40,7 +40,7 @@ public class PaymentInfoDao extends EntityDao<PaymentInfo> implements IPaymentIn
 	}
 
 	@Override
-	public PaymentInfo load(NameKey<PaymentInfo> nameKey) {
+	public PaymentInfo load(NameKey<? extends PaymentInfo> nameKey) {
 		return (PaymentInfo) loadByName(nameKey);
 	}
 }
