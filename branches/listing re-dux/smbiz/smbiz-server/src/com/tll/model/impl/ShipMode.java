@@ -16,9 +16,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The ship mode entity
@@ -32,10 +29,6 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 
 	public static final int MAXLEN_NAME = 32;
 	public static final int MAXLEN_SRC_ZIP = 16;
-
-	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(ShipMode.class, "Name", new String[] {
-		"account.id",
-		"name" });
 
 	private ShipModeType type;
 
@@ -138,13 +131,5 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			accountId(),
-			getName() }) };
 	}
 }

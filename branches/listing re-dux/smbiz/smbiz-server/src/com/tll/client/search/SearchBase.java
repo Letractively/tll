@@ -24,25 +24,10 @@ public abstract class SearchBase implements ISearch {
 	private Set<IQueryParam> queryParams;
 
 	/**
-	 * The name of the server side business key
-	 */
-	private String businessKeyName;
-
-	/**
 	 * Constructor
 	 */
 	public SearchBase() {
 		super();
-	}
-
-	/**
-	 * Constructor - Use when this search is intended for translation to a
-	 * business key.
-	 * @param businessKeyName The business key name
-	 */
-	public SearchBase(String businessKeyName) {
-		super();
-		this.businessKeyName = businessKeyName;
 	}
 
 	/**
@@ -98,17 +83,8 @@ public abstract class SearchBase implements ISearch {
 	}
 	*/
 
-	public String getBusinessKeyName() {
-		return businessKeyName;
-	}
-
-	public void setBusinessKeyName(String businessKeyName) {
-		this.businessKeyName = businessKeyName;
-	}
-
 	public void clear() {
 		// this.retrieveAll = false;
-		this.businessKeyName = null;
 	}
 
 	@Override
@@ -125,10 +101,6 @@ public abstract class SearchBase implements ISearch {
 					break;
 			}
 		}
-		else if(businessKeyName != null) {
-			s = "Business key: " + businessKeyName;
-		}
-
 		return s;
 	}
 

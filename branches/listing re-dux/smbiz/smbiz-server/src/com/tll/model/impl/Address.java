@@ -3,7 +3,6 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.validator.Email;
 import org.hibernate.validator.Length;
@@ -11,9 +10,6 @@ import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.PhoneNumber;
 import com.tll.model.validate.PhoneNumbers;
 import com.tll.model.validate.PostalCode;
@@ -30,11 +26,6 @@ import com.tll.model.validate.PostalCode;
 public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(Address.class, "Address and Postal Code", new String[] {
-				"address1",
-				"postalCode" });
 
 	public static final int MAXLEN_FIRST_NAME = 128;
 	public static final int MAXLEN_LAST_NAME = 128;
@@ -298,13 +289,4 @@ public class Address extends EntityBase {
 	public void setPostalCode(String zip) {
 		this.postalCode = zip;
 	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			getAddress1(),
-			getPostalCode() }) };
-	}
-
 }

@@ -127,7 +127,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 */
 	public CriterionGroup addCriterion(BusinessKey<? extends IEntity> key, boolean isCaseSensitive) {
 		for(final String fname : key.getPropertyNames()) {
-			addCriterion(fname, key.getFieldValue(fname), Comparator.EQUALS, isCaseSensitive);
+			addCriterion(fname, key.getPropertyValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
 		return this;
 	}

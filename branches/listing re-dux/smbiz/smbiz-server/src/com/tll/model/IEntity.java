@@ -1,6 +1,5 @@
 package com.tll.model;
 
-import com.tll.model.key.BusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.IDescriptorProvider;
 
@@ -46,12 +45,4 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	 * @return The primary key for this entity.
 	 */
 	PrimaryKey<? extends IEntity> getPrimaryKey();
-
-	/**
-	 * @return All defined business keys for this entity type holding the current
-	 *         state of this entity.
-	 * @throws BusinessKeyNotDefinedException When there are no defined business
-	 *         keys for this entity type.
-	 */
-	BusinessKey<? extends IEntity>[] getBusinessKeys() throws BusinessKeyNotDefinedException;
 }

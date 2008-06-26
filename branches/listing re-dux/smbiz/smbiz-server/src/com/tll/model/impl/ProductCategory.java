@@ -15,9 +15,6 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Product category entity
@@ -32,11 +29,6 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
-
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(ProductCategory.class, "Account Id and Name", new String[] {
-				"account.id",
-				"name" });
 
 	private Account account;
 
@@ -121,13 +113,5 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(nameBk, new Object[] {
-			accountId(),
-			getName() }) };
 	}
 }

@@ -3,7 +3,6 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -13,11 +12,7 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
 import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The currency entity
@@ -38,15 +33,6 @@ public class Currency extends NamedEntity {
 	 * The name of the dollar currency.
 	 */
 	public static final String DOLLAR_NAME = "dollar";
-
-	private static final IBusinessKeyDefinition nameBk =
-			new BusinessKeyDefinition(Currency.class, "Name", new String[] { INamedEntity.NAME });
-
-	private static final IBusinessKeyDefinition symbolBk =
-			new BusinessKeyDefinition(Currency.class, "Symbol", new String[] { "symbol" });
-
-	private static final IBusinessKeyDefinition iso4217Bk =
-			new BusinessKeyDefinition(Currency.class, "iso4217", new String[] { "iso4217" });
 
 	private String iso4217;
 
@@ -115,14 +101,4 @@ public class Currency extends NamedEntity {
 	public void setUsdExchangeRate(float usdExchangeRate) {
 		this.usdExchangeRate = usdExchangeRate;
 	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] {
-			new BusinessKey(nameBk, new Object[] { getName() }),
-			new BusinessKey(symbolBk, new Object[] { getSymbol() }),
-			new BusinessKey(iso4217Bk, new Object[] { getIso4217() }) };
-	}
-
 }

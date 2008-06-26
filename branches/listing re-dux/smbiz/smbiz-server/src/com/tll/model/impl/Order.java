@@ -21,9 +21,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The order entity
@@ -37,11 +34,6 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 
 	public static final int MAXLEN_NOTES = 255;
 	public static final int MAXLEN_SITE_CODE = 32;
-
-	private static final IBusinessKeyDefinition bk = new BusinessKeyDefinition(Order.class, "Order Key", new String[] {
-		"dateCreated",
-		"account.id",
-		"customer.id" });
 
 	private OrderStatus status;
 
@@ -357,14 +349,5 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			getDateCreated(),
-			accountId(),
-			customerId() }) };
 	}
 }

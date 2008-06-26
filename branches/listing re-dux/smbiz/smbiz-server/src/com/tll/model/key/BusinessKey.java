@@ -63,24 +63,32 @@ public final class BusinessKey<E extends IEntity> extends EntityKey<E> implement
 		}
 	}
 
-	private int fieldIndex(String fieldName) {
+	private int propertyIndex(String propertyName) {
 		for(int i = 0; i < propertyNames.length; ++i) {
 			String fname = propertyNames[i];
-			if(fname != null && fname.equals(fieldName)) return i;
+			if(fname != null && fname.equals(propertyName)) return i;
 		}
 		return -1;
 	}
 
-	public Object getFieldValue(String fieldName) {
-		final int index = fieldIndex(fieldName);
+	public Object getPropertyValue(String propertyName) {
+		final int index = propertyIndex(propertyName);
 		return (index == -1) ? null : propertyValues[index];
 	}
 
-	public void setFieldValue(String fieldName, Object value) {
-		final int index = fieldIndex(fieldName);
+	public Object getPropertyValue(int index) {
+		return propertyValues[index];
+	}
+
+	public void setPropertyValue(String propertyName, Object value) {
+		final int index = propertyIndex(propertyName);
 		if(index != -1) {
 			propertyValues[index] = value;
 		}
+	}
+
+	public void setPropertyValue(int index, Object value) {
+		propertyValues[index] = value;
 	}
 
 	@Override

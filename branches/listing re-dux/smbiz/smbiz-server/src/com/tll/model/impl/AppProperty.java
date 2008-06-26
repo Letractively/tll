@@ -3,16 +3,12 @@ package com.tll.model.impl;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * AppProperty
@@ -24,9 +20,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class AppProperty extends NamedEntity {
 
 	private static final long serialVersionUID = 601145261743504878L;
-
-	public static final IBusinessKeyDefinition NameBk =
-			new BusinessKeyDefinition(AppProperty.class, "Name", new String[] { "name" });
 
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_VALUE = 255;
@@ -53,11 +46,5 @@ public class AppProperty extends NamedEntity {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] { getName() }) };
 	}
 }

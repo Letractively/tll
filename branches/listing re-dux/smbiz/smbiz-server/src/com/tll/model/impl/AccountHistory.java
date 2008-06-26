@@ -18,9 +18,6 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account history entity
@@ -32,12 +29,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;
-
-	public static final IBusinessKeyDefinition NameBk =
-			new BusinessKeyDefinition(AccountHistory.class, "Name", new String[] {
-				"account.id",
-				"transDate",
-				"status" });
 
 	private Account account;
 
@@ -152,14 +143,4 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 			return null;
 		}
 	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(NameBk, new Object[] {
-			accountId(),
-			getTransDate(),
-			getStatus() }) };
-	}
-
 }

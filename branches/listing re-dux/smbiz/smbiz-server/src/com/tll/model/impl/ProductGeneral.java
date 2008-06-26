@@ -7,10 +7,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
 
 /**
  * General product entity
@@ -125,10 +123,5 @@ public class ProductGeneral extends EntityBase {
 	 */
 	public void setImage2(String image2) {
 		this.image2 = image2;
-	}
-
-	@Override
-	public BusinessKey[] getBusinessKeys() throws BusinessKeyNotDefinedException {
-		throw new BusinessKeyNotDefinedException(this.getClass(), false);
 	}
 }

@@ -33,6 +33,7 @@ import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.SortColumnBeanComparator;
 import com.tll.listhandler.Sorting;
+import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -361,7 +362,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	public final E load(final BusinessKey<E> key) {
 		for(final E e : set) {
 			try {
-				final BusinessKey<E>[] bks = (BusinessKey<E>[]) e.getBusinessKeys();
+				final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
 				for(final BusinessKey<E> bk : bks) {
 					if(bk.equals(key)) {
 						return e;

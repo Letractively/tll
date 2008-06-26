@@ -32,9 +32,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account user entity
@@ -51,9 +48,6 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	public static final int MAXLEN_PASSWORD = 255;
 
 	public static final String SUPERUSER = "jpk";
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(User.class, "Email Address", new String[] { "emailAddress" });
 
 	private String emailAddress;
 
@@ -302,11 +296,5 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getEmailAddress() }) };
 	}
 }

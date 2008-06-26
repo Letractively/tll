@@ -14,9 +14,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Used to hold shipping rates in terms of upper/lower bounds of a product's
@@ -28,12 +25,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipMode>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -5074831489410804639L;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(ShipBoundCost.class, "Bounds", new String[] {
-				"shipMode.id",
-				"lbound",
-				"ubound" });
 
 	private float lbound = 0f;
 
@@ -138,14 +129,5 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			shipModeId(),
-			getLbound(),
-			getUbound() }) };
 	}
 }

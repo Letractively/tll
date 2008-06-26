@@ -22,9 +22,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Order item entity
@@ -40,11 +37,6 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 32;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(OrderItem.class, "Order Id and Product SKU", new String[] {
-				"order.id",
-				"sku" });
 
 	private Order order;
 
@@ -296,14 +288,5 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			orderId(),
-			accountId(),
-			getSku() }) };
 	}
 }

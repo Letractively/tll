@@ -16,9 +16,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Sales tax entity
@@ -33,13 +30,6 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	public static final int MAXLEN_PROVINCE = 64;
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
-				"account.id",
-				"province",
-				"county",
-				"postalCode" });
 
 	private String province;
 
@@ -157,15 +147,5 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			accountId(),
-			getProvince(),
-			getCounty(),
-			getPostalCode() }) };
 	}
 }

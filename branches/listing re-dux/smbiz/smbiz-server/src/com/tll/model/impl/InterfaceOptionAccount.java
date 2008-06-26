@@ -20,9 +20,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Binder entity between interface options and an account
@@ -36,11 +33,6 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 
 	public static final int MAXLEN_PARAM_NAME = 50;
 	public static final int MAXLEN_PARAM_VALUE = 255;
-
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(InterfaceOptionAccount.class, "Binder", new String[] {
-				"option.id",
-				"account.id" });
 
 	protected InterfaceOption option;
 
@@ -232,13 +224,5 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
-			optionId(),
-			accountId() }) };
 	}
 }

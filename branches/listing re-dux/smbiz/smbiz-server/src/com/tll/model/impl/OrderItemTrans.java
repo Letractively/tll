@@ -14,9 +14,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Order item transaction entity
@@ -27,11 +24,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;
-
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(OrderItemTrans.class, "Order Item Trans Binder", new String[] {
-				"orderItem.id",
-				"orderTrans.id" });
 
 	private OrderItem orderItem;
 
@@ -146,13 +138,5 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
-			orderItemId(),
-			orderTransId() }) };
 	}
 }

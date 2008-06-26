@@ -14,9 +14,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The customer account entity
@@ -27,11 +24,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
-
-	private static final IBusinessKeyDefinition binderBk =
-			new BusinessKeyDefinition(CustomerAccount.class, "Binder", new String[] {
-				"customer.id",
-				"account.id" });
 
 	private Customer customer;
 
@@ -156,13 +148,5 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(binderBk, new Object[] {
-			customerId(),
-			accountId() }) };
 	}
 }

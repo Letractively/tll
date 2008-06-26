@@ -21,9 +21,6 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Order trans entity
@@ -38,12 +35,6 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	public static final int MAXLEN_USERNAME = 32;
 	public static final int MAXLEN_SHIP_MODE_NAME = 64;
 	public static final int MAXLEN_SHIP_ROUTING_NUM = 64;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(OrderTrans.class, "Order Trans Key", new String[] {
-				"order.id",
-				"dateCreated",
-				"username" });
 
 	private Order order;
 
@@ -282,14 +273,5 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] {
-			orderId(),
-			getDateCreated(),
-			getUsername() }) };
 	}
 }

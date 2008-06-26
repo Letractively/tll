@@ -18,9 +18,6 @@ import org.hibernate.validator.NotEmpty;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Defines site codes (online "coupons")
@@ -34,9 +31,6 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 
 	public static final int MAXLEN_CODE = 16;
 	public static final int MAXLEN_NAME = 64;
-
-	private static final IBusinessKeyDefinition bk =
-			new BusinessKeyDefinition(SiteCode.class, "Code", new String[] { "code" });
 
 	private String code; // unique
 
@@ -119,11 +113,5 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(bk, new Object[] { getCode() }) };
 	}
 }

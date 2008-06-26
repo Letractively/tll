@@ -213,13 +213,13 @@ public final class MockEntityProvider {
 	@SuppressWarnings("unchecked")
 	public static <E extends IEntity> void makeBusinessKeyUnique(E e, int uniqueTokenNum)
 			throws BusinessKeyNotDefinedException {
-		BusinessKey[] keys = e.getBusinessKeys();
+		BusinessKey[] keys = BusinessKeyFactory.create(e);
 		String ut = Integer.toString(uniqueTokenNum);
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
 		for(BusinessKey key : keys) {
 			boolean entityAlteredByBk = false;
 			for(String fname : key.getPropertyNames()) {
-				Object fval = key.getFieldValue(fname);
+				Object fval = key.getPropertyValue(fname);
 				if(fval instanceof String) {
 					bw.setPropertyValue(fname, fval.toString() + ut);
 					entityAlteredByBk = true;

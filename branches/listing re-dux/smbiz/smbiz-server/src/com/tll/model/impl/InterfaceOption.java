@@ -19,9 +19,6 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The interface option entity
@@ -32,9 +29,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;
-
-	private static final IBusinessKeyDefinition codeBk =
-			new BusinessKeyDefinition(InterfaceOption.class, "Code", new String[] { "code" });
 
 	protected boolean isDefault = false;
 
@@ -231,11 +225,5 @@ public class InterfaceOption extends InterfaceOptionBase {
 	@Transient
 	public int getNumParameters() {
 		return getCollectionSize(parameters);
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] { new BusinessKey(codeBk, new Object[] { getCode() }) };
 	}
 }

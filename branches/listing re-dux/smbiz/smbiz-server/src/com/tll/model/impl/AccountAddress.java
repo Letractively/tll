@@ -17,9 +17,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * The account address entity holding a refs to a single account and single
@@ -31,16 +28,6 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7356724207827323290L;
-
-	public static final IBusinessKeyDefinition<AccountAddress> binderBk =
-			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Binder", new String[] {
-				"account.id",
-				"address.id" });
-
-	public static final IBusinessKeyDefinition<AccountAddress> nameBk =
-			new BusinessKeyDefinition<AccountAddress>(AccountAddress.class, "Account Id and Name", new String[] {
-				"account.id",
-				"name" });
 
 	public static final int MAXLEN_NAME = 32;
 
@@ -138,17 +125,4 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 			return null;
 		}
 	}
-
-	@Override
-	@Transient
-	public final BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] {
-			new BusinessKey(binderBk, new Object[] {
-				accountId(),
-				addressId() }),
-			new BusinessKey(nameBk, new Object[] {
-				accountId(),
-				getName() }) };
-	}
-
 }

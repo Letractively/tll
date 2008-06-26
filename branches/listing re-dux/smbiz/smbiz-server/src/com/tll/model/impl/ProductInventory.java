@@ -17,9 +17,6 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.BusinessKeyDefinition;
-import com.tll.model.key.IBusinessKeyDefinition;
 
 /**
  * Product inventory entity
@@ -33,17 +30,6 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 
 	public static final int MAXLEN_SKU = 64;
 	public static final int MAXLEN_AUX_DESCRIPTOR = 255;
-
-	private static final IBusinessKeyDefinition skuBk =
-			new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
-				"account.id",
-				"sku" });
-
-	private static final IBusinessKeyDefinition titleBk =
-			new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
-				"account.id",
-				"d1",
-				"d2" });
 
 	private String sku;
 
@@ -310,18 +296,5 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		catch(NullPointerException npe) {
 			return null;
 		}
-	}
-
-	@Override
-	@Transient
-	public BusinessKey[] getBusinessKeys() {
-		return new BusinessKey[] {
-			new BusinessKey(skuBk, new Object[] {
-				accountId(),
-				getSku() }),
-			new BusinessKey(titleBk, new Object[] {
-				accountId(),
-				d1(),
-				d2() }) };
 	}
 }

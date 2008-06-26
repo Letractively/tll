@@ -26,11 +26,8 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.tll.model.BusinessKeyDefinitionFactory;
 import com.tll.model.IChildEntity;
 import com.tll.model.NamedTimeStampEntity;
-import com.tll.model.key.BusinessKey;
-import com.tll.model.key.IBusinessKeyDefinition;
 import com.tll.model.validate.AtLeastOne;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
@@ -302,13 +299,5 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 
 	public Integer accountId() {
 		return super.getId();
-	}
-
-	@Override
-	@Transient
-	@SuppressWarnings("unchecked")
-	public final BusinessKey<Account>[] getBusinessKeys() {
-		IBusinessKeyDefinition<Account>[] defs = BusinessKeyDefinitionFactory.businessKeys(Account.class);
-		return new BusinessKey[] { new BusinessKey<Account>(nameBk, new Object[] { getName() }) };
 	}
 }

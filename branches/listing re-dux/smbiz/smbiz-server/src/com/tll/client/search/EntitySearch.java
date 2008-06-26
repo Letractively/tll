@@ -20,6 +20,11 @@ public abstract class EntitySearch extends SearchBase {
 	protected EntityType entityType;
 
 	/**
+	 * The name of the server side business key
+	 */
+	private String businessKeyName;
+
+	/**
 	 * Constructor
 	 */
 	public EntitySearch() {
@@ -42,8 +47,9 @@ public abstract class EntitySearch extends SearchBase {
 	 * @param entityType
 	 */
 	public EntitySearch(String businessKeyName, EntityType entityType) {
-		super(businessKeyName);
+		super();
 		this.entityType = entityType;
+		this.businessKeyName = businessKeyName;
 	}
 
 	public final EntityType getEntityType() {
@@ -58,6 +64,14 @@ public abstract class EntitySearch extends SearchBase {
 	public void clear() {
 		super.clear();
 		// no-op
+	}
+
+	public final String getBusinessKeyName() {
+		return businessKeyName;
+	}
+
+	public final void setBusinessKeyName(String businessKeyName) {
+		this.businessKeyName = businessKeyName;
 	}
 
 	@Override
