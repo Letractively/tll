@@ -48,7 +48,7 @@ public abstract class EntityKey<E extends IEntity> implements IKey<E> {
 	protected final boolean typeCompatible(Class<? extends IEntity> type) {
 		final Class<? extends IEntity> thisType = getType();
 		return (type == null || thisType == null) ? false : thisType.isAssignableFrom(type)
-				|| type.isAssignableFrom(thisType);
+		/*|| type.isAssignableFrom(thisType)*/;
 	}
 
 	@Override

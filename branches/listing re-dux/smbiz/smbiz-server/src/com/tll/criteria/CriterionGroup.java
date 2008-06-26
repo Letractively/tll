@@ -139,7 +139,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(NameKey<? extends INamedEntity> nameKey, boolean isCaseSensitive) {
-		return addCriterion(nameKey.getFieldName(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
+		return addCriterion(nameKey.getPropertyName(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
 	}
 
 	/**

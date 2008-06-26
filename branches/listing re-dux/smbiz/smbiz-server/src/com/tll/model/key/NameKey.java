@@ -15,7 +15,7 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> {
 	/**
 	 * The name used to identify the field that holds the name.
 	 */
-	private String fieldName;
+	private String propertyName;
 
 	/**
 	 * The actual name value.
@@ -43,12 +43,12 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> {
 	 * Constructor
 	 * @param entityClass
 	 * @param name
-	 * @param fieldName
+	 * @param propertyName
 	 */
-	public NameKey(Class<N> entityClass, String name, String fieldName) {
+	public NameKey(Class<N> entityClass, String name, String propertyName) {
 		super(entityClass);
 		setName(name);
-		setFieldName(fieldName);
+		setPropertyName(propertyName);
 	}
 
 	@Override
@@ -64,13 +64,13 @@ public class NameKey<N extends INamedEntity> extends EntityKey<N> {
 		this.name = name;
 	}
 
-	public final String getFieldName() {
-		return fieldName;
+	public final String getPropertyName() {
+		return propertyName;
 	}
 
-	public final void setFieldName(String fieldName) {
+	public final void setPropertyName(String fieldName) {
 		if(fieldName == null) throw new IllegalArgumentException("A field name must be specified");
-		this.fieldName = fieldName;
+		this.propertyName = fieldName;
 	}
 
 	@Override
