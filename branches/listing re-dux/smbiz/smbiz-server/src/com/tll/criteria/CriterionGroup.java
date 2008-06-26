@@ -18,7 +18,7 @@ import com.tll.util.DateRange;
  * CriterionGroup
  * @author jpk
  */
-public class CriterionGroup implements Iterable<ICriterion> {
+public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 
 	private static final long serialVersionUID = 502701212641369513L;
 
@@ -144,7 +144,7 @@ public class CriterionGroup implements Iterable<ICriterion> {
 	/**
 	 * Adds a Foreign Key criterion to this group.
 	 * @param relatedPropertyName The related property name
-	 * @param foreignKeyId The foreign key id
+	 * @param foreignKey The foreign key id
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(String relatedPropertyName, PrimaryKey foreignKey) {

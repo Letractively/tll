@@ -27,8 +27,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.search.ISearch;
-import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
@@ -36,9 +35,8 @@ import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.server.rpc.AuxDataHandler;
@@ -46,7 +44,6 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.MarshalingListHandler;
 import com.tll.server.rpc.listing.PropKeyListHandler;
 import com.tll.service.entity.IEntityService;
-import com.tll.util.DateRange;
 
 /**
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
@@ -114,13 +111,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
 				return null;
 			}
-			IBusinessKey<? extends E> key = handleBusinessKeyTranslation(search);
+			BusinessKey key = handleBusinessKeyTranslation(search);
 			return svc.load(key);
 		}
 
 		// load by primary key
 		final Integer id = request.getEntityRef().getId();
-		return svc.load(KeyFactory.getPrimaryKey(entityClass, id));
+		return svc.load(new PrimaryKey(entityClass, id));
 	}
 
 	public final void load(final RequestContext requestContext, final EntityLoadRequest request,
@@ -210,7 +207,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}
-			final IPrimaryKey<IEntity> pk = KeyFactory.getPrimaryKey(entityClass, entityRef.getId());
+			final PrimaryKey pk = new PrimaryKey(entityClass, entityRef.getId());
 			final IEntity e = svc.load(pk);
 			svc.purge(e);
 
@@ -234,7 +231,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @param search The search to translate
 	 * @return Translated {@link IBusinessKey}
 	 */
-	protected abstract IBusinessKey<? extends E> handleBusinessKeyTranslation(S search);
+	protected abstract BusinessKey handleBusinessKeyTranslation(S search);
 
 	/**
 	 * Handles the entity specific search to criteria translation.
@@ -251,7 +248,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final S search) throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
-		ICriteria<? extends E> criteria;
+		Criteria<? extends E> criteria;
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
@@ -259,11 +256,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			if(nq == null) {
 				throw new IllegalArgumentException("No named query specified");
 			}
-			criteria = (ICriteria<? extends E>) CriteriaFactory.buildQueryCriteria(nq, queryParams);
+			criteria = new Criteria<E>(nq, queryParams);
 		}
 		else {
 			// entity
-			criteria = CriteriaFactory.buildEntityCriteria(entityClass);
+			criteria = new Criteria<E>(entityClass);
 			handleSearchTranslation(requestContext, search, criteria);
 		}
 
@@ -281,17 +278,5 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 					listingDefinition.getPropKeys());
 		}
 		return new MarshalingListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext));
-	}
-
-	/**
-	 * Adds a date range criterion to the given criteria.
-	 * @param criteria the criteria
-	 * @param dr the date range
-	 */
-	protected void appendDateRangeCriterion(final ICriteria<? extends E> criteria, final DateRange dr) {
-		if(dr != null && !dr.isEmpty()) {
-			criteria.getPrimaryGroup().addCriterion(
-					CriteriaFactory.buildCriterion("dateCreated", dr, Comparator.BETWEEN, false));
-		}
 	}
 }

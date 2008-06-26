@@ -13,7 +13,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.search.impl.UserSearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.impl.User;
-import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.BusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -41,7 +41,7 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 	}
 
 	@Override
-	protected IBusinessKey<? extends User> handleBusinessKeyTranslation(UserSearch search) {
+	protected BusinessKey handleBusinessKeyTranslation(UserSearch search) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -12,7 +12,7 @@ import com.tll.client.search.ISearch;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.NameKey;
 import com.tll.server.RequestContext;
 import com.tll.service.entity.INamedEntityService;
 
@@ -36,7 +36,7 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 			final Class<N> entityClass = EntityUtil.entityClassFromType(entityType);
 			final INamedEntityService<N> namedEntityService =
 					(INamedEntityService<N>) requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
-			return namedEntityService.load(KeyFactory.getNameKey(entityClass, name));
+			return namedEntityService.load(new NameKey(entityClass, name));
 		}
 
 		return super.coreLoad(requestContext, request, entityType, payload);

@@ -3,14 +3,13 @@ package com.tll.criteria;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.tll.client.IMarshalable;
 import com.tll.model.IEntity;
 
 /**
  * A composite of {@link Criterion} objects.
  * @author jpk
  */
-public interface ICriteria<E extends IEntity> extends IMarshalable, Serializable {
+public interface ICriteria<E extends IEntity> extends Serializable {
 
 	/**
 	 * @return The {@link CriteriaType} of this criteria.
