@@ -15,7 +15,7 @@
     </packages>
     -->
     <classes>
-      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest" />
+      <class name="com.tll.server.rpc.listing.ListingServiceTest" />
     </classes>
   </test>
 

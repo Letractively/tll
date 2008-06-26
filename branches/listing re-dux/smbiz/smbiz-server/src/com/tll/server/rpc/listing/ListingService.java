@@ -52,7 +52,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 	 * @return Payload contains the table page and status.
 	 */
 	@SuppressWarnings("unchecked")
-	public ListingPayload process(final ListingRequest<S> listingRequest) {
+	public ListingPayload<Model> process(final ListingRequest<S> listingRequest) {
 		final Status status = new Status();
 
 		IListingHandler<Model> handler = null;
@@ -167,7 +167,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						marshalingListHandler.setWrappedHandler(listHandler);
 
 						// instantiate the handler
-						handler = new ListingHandler(marshalingListHandler, listingName, listingDef.getPageSize());
+						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
 					}
 				}
 
@@ -227,7 +227,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 			}
 		} // !status.hasErrors()
 
-		final ListingPayload p = new ListingPayload(listingName, listingStatus);
+		final ListingPayload<Model> p = new ListingPayload<Model>(listingName, listingStatus);
 
 		// only generate the table page when it is needed at the client
 		if(handler != null && !listingOp.isClear()) {
