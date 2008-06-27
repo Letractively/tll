@@ -54,7 +54,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
 		Address address;
 		if(adrKey == null) {
-			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
+			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
 			adrKey = new PrimaryKey<Address>(address);
 		}
 		else {

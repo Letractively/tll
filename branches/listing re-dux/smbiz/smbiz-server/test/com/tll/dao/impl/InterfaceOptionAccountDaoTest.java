@@ -59,9 +59,9 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 		Interface intf;
 		if(iKey == null) {
 			intf = getMockEntityProvider().getEntityCopy(InterfaceSwitch.class);
-			final InterfaceOption option = getMockEntityProvider().getEntityCopy(InterfaceOption.class, 1);
+			final InterfaceOption option = getMockEntityProvider().getEntityCopy(InterfaceOption.class);
 			final InterfaceOptionParameterDefinition param =
-					getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, 1);
+					getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class);
 			option.addParameter(param);
 			intf.addOption(option);
 			intf = getDao(IInterfaceDao.class).persist(intf);

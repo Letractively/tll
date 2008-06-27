@@ -94,9 +94,10 @@ public final class MockEntityProvider {
 	}
 
 	/**
+	 * Gets an entity copy by type.
 	 * @param <E>
 	 * @param entityClass
-	 * @return An entity copy
+	 * @return A fresh entity copy
 	 * @throws Exception
 	 */
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass) throws Exception {
@@ -112,16 +113,14 @@ public final class MockEntityProvider {
 	 * slightly.
 	 * @param <E>
 	 * @param entityClass
-	 * @param n
-	 * @return N unique entity copies
+	 * @param n The number of copies to provide
+	 * @return n unique entity copies
 	 * @throws Exception
 	 */
 	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n) throws Exception {
 		Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
-			E e = getEntityCopy(entityClass);
-			makeBusinessKeyUnique(e);
-			set.add(e);
+			set.add(getEntityCopy(entityClass));
 		}
 		return set;
 	}
@@ -142,6 +141,7 @@ public final class MockEntityProvider {
 		for(BusinessKey key : keys) {
 			boolean entityAlteredByBk = false;
 			for(String fname : key.getPropertyNames()) {
+				if(fname.endsWith(".id")) continue;
 				Object fval = key.getPropertyValue(fname);
 				if(fval instanceof String) {
 					String sval = fval.toString();
@@ -151,7 +151,7 @@ public final class MockEntityProvider {
 					else {
 						sval += ut;
 					}
-					bw.setPropertyValue(fname, fval.toString() + sval);
+					bw.setPropertyValue(fname, sval);
 					entityAlteredByBk = true;
 					break;
 				}

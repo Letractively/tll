@@ -56,7 +56,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		Address bta;
 		if(btKey == null) {
-			bta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
+			bta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
 			btKey = new PrimaryKey<Address>(bta);
 		}
 		else {
@@ -67,7 +67,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		Address sta;
 		if(stKey == null) {
-			sta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
+			sta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
 			stKey = new PrimaryKey<Address>(sta);
 		}
 		else {

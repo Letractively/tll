@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.NullValueInNestedPathException;
 
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountAddress;
@@ -320,7 +321,12 @@ public abstract class BusinessKeyFactory {
 		BeanWrapperImpl bw = new BeanWrapperImpl(entity);
 		for(BusinessKey<E> bk : bks) {
 			for(String pname : bk.getPropertyNames()) {
-				bw.setPropertyValue(pname, bk.getPropertyValue(pname));
+				try {
+					bw.setPropertyValue(pname, bk.getPropertyValue(pname));
+				}
+				catch(NullValueInNestedPathException e) {
+					// ignore
+				}
 			}
 		}
 	}
@@ -337,7 +343,12 @@ public abstract class BusinessKeyFactory {
 		BeanWrapperImpl bw = new BeanWrapperImpl(entity);
 		for(BusinessKey<E> bk : bks) {
 			for(String pname : bk.getPropertyNames()) {
-				bk.setPropertyValue(pname, bw.getPropertyValue(pname));
+				try {
+					bk.setPropertyValue(pname, bw.getPropertyValue(pname));
+				}
+				catch(NullValueInNestedPathException e) {
+					// ignore
+				}
 			}
 		}
 	}

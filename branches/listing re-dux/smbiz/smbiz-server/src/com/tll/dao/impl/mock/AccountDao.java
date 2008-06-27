@@ -16,6 +16,7 @@ import com.tll.dao.impl.IAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Account;
+import com.tll.model.impl.Customer;
 import com.tll.model.impl.Isp;
 import com.tll.model.impl.Merchant;
 
@@ -41,6 +42,13 @@ public class AccountDao extends EntityDao<Account> implements IAccountDao, IMock
 			else if("account.merchantList".equals(nq.getQueryName())) {
 				for(Account a : set) {
 					if(Merchant.class.equals(a.entityClass())) {
+						list.add(a);
+					}
+				}
+			}
+			else if("account.customerList".equals(nq.getQueryName())) {
+				for(Account a : set) {
+					if(Customer.class.equals(a.entityClass())) {
 						list.add(a);
 					}
 				}

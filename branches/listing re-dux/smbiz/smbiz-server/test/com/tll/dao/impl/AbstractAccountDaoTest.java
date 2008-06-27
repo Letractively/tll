@@ -93,7 +93,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		Address a1;
 		if(a1Key == null) {
-			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 1));
+			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
 			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
@@ -103,7 +103,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		Address a2;
 		if(a2Key == null) {
-			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, 2));
+			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
 			a2Key = new PrimaryKey<Address>(a2);
 		}
 		else {
@@ -111,8 +111,8 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		}
 		Assert.assertNotNull(a2);
 
-		final AccountAddress aa1 = getMockEntityProvider().getEntityCopy(AccountAddress.class, 1);
-		final AccountAddress aa2 = getMockEntityProvider().getEntityCopy(AccountAddress.class, 2);
+		final AccountAddress aa1 = getMockEntityProvider().getEntityCopy(AccountAddress.class);
+		final AccountAddress aa2 = getMockEntityProvider().getEntityCopy(AccountAddress.class);
 		aa1.setAddress(a1);
 		aa2.setAddress(a2);
 		e.addAccountAddress(aa1);
