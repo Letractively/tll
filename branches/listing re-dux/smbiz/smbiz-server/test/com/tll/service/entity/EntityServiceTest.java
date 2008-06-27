@@ -99,17 +99,17 @@ public class EntityServiceTest extends DbTest {
 			final ICurrencyDao currencyDao = injector.getInstance(ICurrencyDao.class);
 			final IPaymentInfoDao piDao = injector.getInstance(IPaymentInfoDao.class);
 
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class);
-			final Address a = getMockEntityProvider().getEntityCopy(Address.class);
+			account = getMockEntityProvider().getEntityCopy(Asp.class, false);
+			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
+			final Address a = getMockEntityProvider().getEntityCopy(Address.class, false);
 			aa.setAddress(a);
 			getEntityAssembler().setGenerated(a);
 			account.addAccountAddress(aa);
 
-			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class));
+			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));
 			account.setCurrency(c);
 
-			pi = piDao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class));
+			pi = piDao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, false));
 			account.setPaymentInfo(pi);
 
 			if(persistAccount) {

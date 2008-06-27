@@ -42,7 +42,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		Currency currency;
 		if(cKey == null) {
 			// load stubbed currency
-			currency = getMockEntityProvider().getEntityCopy(Currency.class);
+			currency = getMockEntityProvider().getEntityCopy(Currency.class, true);
 			currency = getDao(ICurrencyDao.class).persist(currency);
 			cKey = new PrimaryKey<Currency>(currency);
 		}
@@ -56,7 +56,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		if(piKey == null) {
 			// stub payment info
 			try {
-				paymentInfo = getMockEntityProvider().getEntityCopy(PaymentInfo.class);
+				paymentInfo = getMockEntityProvider().getEntityCopy(PaymentInfo.class, true);
 			}
 			catch(final Exception ex) {
 				Assert.fail("Unable to acquire test payment info entity");
@@ -93,7 +93,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		Address a1;
 		if(a1Key == null) {
-			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
+			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
@@ -103,7 +103,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		Address a2;
 		if(a2Key == null) {
-			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
+			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			a2Key = new PrimaryKey<Address>(a2);
 		}
 		else {
@@ -111,8 +111,8 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		}
 		Assert.assertNotNull(a2);
 
-		final AccountAddress aa1 = getMockEntityProvider().getEntityCopy(AccountAddress.class);
-		final AccountAddress aa2 = getMockEntityProvider().getEntityCopy(AccountAddress.class);
+		final AccountAddress aa1 = getMockEntityProvider().getEntityCopy(AccountAddress.class, true);
+		final AccountAddress aa2 = getMockEntityProvider().getEntityCopy(AccountAddress.class, true);
 		aa1.setAddress(a1);
 		aa2.setAddress(a2);
 		e.addAccountAddress(aa1);

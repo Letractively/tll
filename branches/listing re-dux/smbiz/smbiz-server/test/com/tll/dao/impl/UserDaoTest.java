@@ -37,8 +37,9 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 	protected void assembleTestEntity(User e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
@@ -52,7 +53,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		Authority auth;
 		if(tKey == null) {
-			auth = getMockEntityProvider().getEntityCopy(Authority.class);
+			auth = getMockEntityProvider().getEntityCopy(Authority.class, true);
 			auth = getDao(IAuthorityDao.class).persist(auth);
 			tKey = new PrimaryKey<Authority>(auth);
 		}

@@ -97,13 +97,14 @@ public final class MockEntityProvider {
 	 * Gets an entity copy by type.
 	 * @param <E>
 	 * @param entityClass
+	 * @param uniquify Make the copied entity business key unique?
 	 * @return A fresh entity copy
 	 * @throws Exception
 	 */
-	public <E extends IEntity> E getEntityCopy(Class<E> entityClass) throws Exception {
+	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean uniquify) throws Exception {
 		E e = getBean(entityClass);
 		entityAssembler.setGenerated(e);
-		makeBusinessKeyUnique(e);
+		if(uniquify) makeBusinessKeyUnique(e);
 		return e;
 	}
 
@@ -114,13 +115,14 @@ public final class MockEntityProvider {
 	 * @param <E>
 	 * @param entityClass
 	 * @param n The number of copies to provide
-	 * @return n unique entity copies
+	 * @param uniquify Make the copied entities business key unique?
+	 * @return n entity copies
 	 * @throws Exception
 	 */
-	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n) throws Exception {
+	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean uniquify) throws Exception {
 		Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
-			set.add(getEntityCopy(entityClass));
+			set.add(getEntityCopy(entityClass, uniquify));
 		}
 		return set;
 	}

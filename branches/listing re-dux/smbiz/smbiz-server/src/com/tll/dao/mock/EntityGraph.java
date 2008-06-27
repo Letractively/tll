@@ -128,31 +128,31 @@ public final class EntityGraph {
 	private void stubRudimentaryEntities() throws Exception {
 		// currency
 		Set<Currency> currencies = new LinkedHashSet<Currency>();
-		currencies.add(setVersion(mep.getEntityCopy(Currency.class)));
+		currencies.add(setVersion(mep.getEntityCopy(Currency.class, false)));
 		map.put(Currency.class, currencies);
 
 		// app properties
 		Set<AppProperty> aps = new LinkedHashSet<AppProperty>();
-		AppProperty ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		AppProperty ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("locale");
 		ap.setValue("US");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, true));
 		ap.setName("default.iso4217");
 		ap.setValue("usd");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, true));
 		ap.setName("default.country");
 		ap.setValue("usa");
 		aps.add(ap);
 		map.put(AppProperty.class, aps);
 
 		// addresses
-		map.put(Address.class, setVersion(mep.getNEntityCopies(Address.class, 10)));
+		map.put(Address.class, setVersion(mep.getNEntityCopies(Address.class, 10, true)));
 
 		// payment infos
 		Set<PaymentInfo> pis = new LinkedHashSet<PaymentInfo>();
-		pis.add(setVersion(mep.getEntityCopy(PaymentInfo.class)));
+		pis.add(setVersion(mep.getEntityCopy(PaymentInfo.class, false)));
 		map.put(PaymentInfo.class, pis);
 
 		// user authorities
@@ -161,7 +161,7 @@ public final class EntityGraph {
 
 	@SuppressWarnings("unchecked")
 	private <A extends Account> A stubAccount(Class<A> type) throws Exception {
-		A a = setVersion(mep.getEntityCopy(type));
+		A a = setVersion(mep.getEntityCopy(type, true));
 
 		a.setCurrency(getFirstEntity(Currency.class));
 
@@ -169,7 +169,7 @@ public final class EntityGraph {
 
 		// account addresses
 		AddressType ats[] = AddressType.values();
-		Set<AccountAddress> aas = setVersion(mep.getNEntityCopies(AccountAddress.class, ats.length));
+		Set<AccountAddress> aas = setVersion(mep.getNEntityCopies(AccountAddress.class, ats.length, false));
 		List<AccountAddress> aaList = new ArrayList<AccountAddress>(aas);
 		Iterator<AccountAddress> itr = aas.iterator();
 		int i = 0;
@@ -245,7 +245,7 @@ public final class EntityGraph {
 			Customer c = stubAccount(Customer.class);
 
 			// customer account
-			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class));
+			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class, false));
 			ca.setCustomer(c);
 
 			if(i < 2) {
@@ -359,7 +359,7 @@ public final class EntityGraph {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = setVersion(mep.getEntityCopy(User.class));
+		User u = setVersion(mep.getEntityCopy(User.class, true));
 		u.addAuthority((Authority) map.get(Authority.class).iterator().next());
 		u.setAccount(asp);
 		u.setAddress((Address) map.get(Address.class).iterator().next());

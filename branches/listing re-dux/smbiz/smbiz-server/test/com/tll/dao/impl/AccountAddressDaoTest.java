@@ -39,8 +39,9 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
@@ -54,7 +55,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
 		Address address;
 		if(adrKey == null) {
-			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class));
+			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			adrKey = new PrimaryKey<Address>(address);
 		}
 		else {

@@ -35,8 +35,9 @@ public class ShipModeDaoTest extends NamedEntityDaoTest<ShipMode> {
 	protected void assembleTestEntity(ShipMode e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);

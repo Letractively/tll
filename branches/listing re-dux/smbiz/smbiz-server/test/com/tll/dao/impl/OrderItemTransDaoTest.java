@@ -41,8 +41,9 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 	protected void assembleTestEntity(OrderItemTrans e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
@@ -56,13 +57,13 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 		Order order;
 		OrderItem oi;
 		if(oKey == null) {
-			order = getMockEntityProvider().getEntityCopy(Order.class);
+			order = getMockEntityProvider().getEntityCopy(Order.class, true);
 			order.setCurrency(account.getCurrency());
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 
 			// order item
-			oi = getMockEntityProvider().getEntityCopy(OrderItem.class);
+			oi = getMockEntityProvider().getEntityCopy(OrderItem.class, true);
 			oi.setOrder(order);
 			order.addOrderItem(oi);
 			order = getDao(IOrderDao.class).persist(order);
@@ -79,7 +80,7 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
 		OrderTrans ot;
 		if(otKey == null) {
-			ot = getMockEntityProvider().getEntityCopy(OrderTrans.class);
+			ot = getMockEntityProvider().getEntityCopy(OrderTrans.class, true);
 			ot.setOrder(order);
 			ot.setPymntTrans(null);
 			ot = getDao(IOrderTransDao.class).persist(ot);

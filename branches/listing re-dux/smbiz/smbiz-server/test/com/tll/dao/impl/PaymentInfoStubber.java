@@ -39,7 +39,7 @@ public class PaymentInfoStubber extends DbTest {
 	@Test
 	public void stub() throws Exception {
 		startNewTransaction();
-		final PaymentInfo e = getMockEntityProvider().getEntityCopy(PaymentInfo.class);
+		final PaymentInfo e = getMockEntityProvider().getEntityCopy(PaymentInfo.class, false);
 		final IPaymentInfoDao dao = injector.getInstance(IPaymentInfoDao.class);
 		dao.persist(e);
 		setComplete();

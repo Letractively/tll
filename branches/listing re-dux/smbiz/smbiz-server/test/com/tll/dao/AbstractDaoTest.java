@@ -228,7 +228,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	protected final E getTestEntity() throws Exception {
-		final E e = getMockEntityProvider().getEntityCopy(entityClass);
+		final E e = getMockEntityProvider().getEntityCopy(entityClass, false);
 		assembleTestEntity(e);
 		uniquify(e);
 		return e;

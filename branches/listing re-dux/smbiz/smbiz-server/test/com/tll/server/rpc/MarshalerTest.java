@@ -66,7 +66,7 @@ public class MarshalerTest extends TestBase {
 		assert marshaler != null;
 		final Class<? extends IEntity>[] entityClasses = CommonUtil.getClasses("com.tll.model", IEntity.class, true, null);
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
-			final IEntity e = getMockEntityProvider().getEntityCopy(entityClass);
+			final IEntity e = getMockEntityProvider().getEntityCopy(entityClass, false);
 			Assert.assertNotNull(e);
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
@@ -108,7 +108,7 @@ public class MarshalerTest extends TestBase {
 	public void testPaymentInfo() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final IEntity e = getMockEntityProvider().getEntityCopy(PaymentInfo.class);
+		final IEntity e = getMockEntityProvider().getEntityCopy(PaymentInfo.class, false);
 		Assert.assertNotNull(e);
 
 		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);

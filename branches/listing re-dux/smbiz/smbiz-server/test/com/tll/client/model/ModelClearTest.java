@@ -27,12 +27,12 @@ import com.tll.server.rpc.Marshaler;
 public class ModelClearTest extends AbstractModelTest {
 
 	AccountAddress getClearTestEntity() throws Exception {
-		final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class);
+		final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
 
-		final Currency currency = getMockEntityProvider().getEntityCopy(Currency.class);
-		final Asp asp = getMockEntityProvider().getEntityCopy(Asp.class);
-		final Merchant merchant = getMockEntityProvider().getEntityCopy(Merchant.class);
-		final Address address = getMockEntityProvider().getEntityCopy(Address.class);
+		final Currency currency = getMockEntityProvider().getEntityCopy(Currency.class, false);
+		final Asp asp = getMockEntityProvider().getEntityCopy(Asp.class, false);
+		final Merchant merchant = getMockEntityProvider().getEntityCopy(Merchant.class, false);
+		final Address address = getMockEntityProvider().getEntityCopy(Address.class, false);
 
 		asp.setCurrency(currency);
 		merchant.setCurrency(currency);

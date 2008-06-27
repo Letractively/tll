@@ -38,13 +38,13 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 	@Override
 	protected void assembleTestEntity(I e) throws Exception {
 
-		final InterfaceOption o1 = getMockEntityProvider().getEntityCopy(InterfaceOption.class);
+		final InterfaceOption o1 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
 		Set<InterfaceOptionParameterDefinition> params =
 				getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
 		o1.addParameters(params);
 		e.addOption(o1);
 
-		final InterfaceOption o2 = getMockEntityProvider().getEntityCopy(InterfaceOption.class);
+		final InterfaceOption o2 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
 		params = getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
 		o2.addParameters(params);
 		e.addOption(o2);

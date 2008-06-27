@@ -36,14 +36,15 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 
 	@Override
 	protected void assembleTestEntity(ProductInventory e) throws Exception {
-		final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class);
+		final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
 		e.setProductGeneral(gp);
 		getEntityAssembler().setGenerated(e.getProductGeneral());
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);

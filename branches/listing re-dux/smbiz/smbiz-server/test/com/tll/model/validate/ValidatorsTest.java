@@ -76,7 +76,7 @@ public class ValidatorsTest extends TestBase {
 			// dao (e.g. InterfaceOption).
 		}
 		if(e == null) {
-			e = getMockEntityProvider().getEntityCopy(entityType);
+			e = getMockEntityProvider().getEntityCopy(entityType, false);
 		}
 		assert e != null;
 		assembleTestEntity(e);
