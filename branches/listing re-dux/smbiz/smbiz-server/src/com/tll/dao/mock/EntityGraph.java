@@ -137,11 +137,11 @@ public final class EntityGraph {
 		ap.setName("locale");
 		ap.setValue("US");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class, true));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("default.iso4217");
 		ap.setValue("usd");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class, true));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("default.country");
 		ap.setValue("usa");
 		aps.add(ap);
@@ -161,7 +161,7 @@ public final class EntityGraph {
 
 	@SuppressWarnings("unchecked")
 	private <A extends Account> A stubAccount(Class<A> type) throws Exception {
-		A a = setVersion(mep.getEntityCopy(type, true));
+		A a = setVersion(mep.getEntityCopy(type, false));
 
 		a.setCurrency(getFirstEntity(Currency.class));
 
@@ -359,7 +359,7 @@ public final class EntityGraph {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = setVersion(mep.getEntityCopy(User.class, true));
+		User u = setVersion(mep.getEntityCopy(User.class, false));
 		u.addAuthority((Authority) map.get(Authority.class).iterator().next());
 		u.setAccount(asp);
 		u.setAddress((Address) map.get(Address.class).iterator().next());
