@@ -38,7 +38,8 @@ public final class ListingHandler<R extends IData> implements IListingHandler<R>
 	 * Constructor
 	 * @param listHandler The wrapped list handler
 	 * @param listingName The unique listing name
-	 * @param pageSize The desired page size
+	 * @param pageSize The desired page size or <code>-1</code> if not paging is
+	 *        desired.
 	 * @throws IllegalArgumentException When one of the arguments is
 	 *         <code>null</code>.
 	 */
@@ -53,14 +54,9 @@ public final class ListingHandler<R extends IData> implements IListingHandler<R>
 			throw new IllegalArgumentException("Unable to instantiate listing handler: No listing name specified");
 		}
 
-		if(pageSize < 1) {
-			throw new IllegalArgumentException(
-					"Unable to instantiate listing handler: The page size must be greater than zero.");
-		}
-
 		this.listHandler = listHandler;
 		this.listingName = listingName;
-		this.pageSize = pageSize;
+		this.pageSize = pageSize == -1 ? listHandler.size() : pageSize;
 	}
 
 	public String getListingName() {

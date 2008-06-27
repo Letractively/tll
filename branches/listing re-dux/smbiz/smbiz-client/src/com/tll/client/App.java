@@ -28,9 +28,9 @@ public abstract class App {
 	private static final BusyPanel theBusyPanel = new BusyPanel(false, null, 20, new ThrobbingPanel());
 
 	/**
-	 * The global counter used to decide on whether to show/hide the glass panel.
+	 * The global counter used to decide on whether to show/hide the busy panel.
 	 */
-	private static int glassPanelCounter = 0;
+	private static int busyCounter = 0;
 
 	/**
 	 * @return the app scoped {@link ImageBundle} instance.
@@ -40,19 +40,19 @@ public abstract class App {
 	}
 
 	public static void busy() {
-		if(glassPanelCounter++ == 0) {
+		if(busyCounter++ == 0) {
 			RootPanel.get().add(theBusyPanel, 0, 0);
 		}
 	}
 
 	public static void unbusy() {
-		if(--glassPanelCounter == 0) {
+		if(--busyCounter == 0) {
 			theBusyPanel.removeFromParent();
 		}
 	}
 
 	public static void resetBusy() {
-		glassPanelCounter = 0;
+		busyCounter = 0;
 		theBusyPanel.removeFromParent();
 	}
 
