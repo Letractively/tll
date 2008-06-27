@@ -32,6 +32,7 @@ import com.tll.model.impl.PaymentInfo;
 import com.tll.model.impl.PaymentTrans;
 import com.tll.model.impl.ProdCat;
 import com.tll.model.impl.ProductCategory;
+import com.tll.model.impl.ProductGeneral;
 import com.tll.model.impl.ProductInventory;
 import com.tll.model.impl.SalesTax;
 import com.tll.model.impl.ShipBoundCost;
@@ -95,7 +96,7 @@ public abstract class BusinessKeyFactory {
 			"account.id",
 			"name" }));
 
-		set.add(new BusinessKeyDefinition(AccountHistory.class, "Name", new String[] {
+		set.add(new BusinessKeyDefinition(AccountHistory.class, "Trans Date and Status", new String[] {
 			"account.id",
 			"transDate",
 			"status" }));
@@ -163,10 +164,10 @@ public abstract class BusinessKeyFactory {
 		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
 			"account.id",
 			"sku" }));
-		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and Title", new String[] {
-			"account.id",
-			"productGeneral.d1",
-			"productGeneral.d2" }));
+
+		set.add(new BusinessKeyDefinition(ProductGeneral.class, "Title", new String[] {
+			"d1",
+			"d2" }));
 
 		set.add(new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
 			"account.id",
@@ -306,6 +307,22 @@ public abstract class BusinessKeyFactory {
 		BusinessKey<E>[] bks = new BusinessKey[] { new BusinessKey(theDef) };
 		fill(entity, bks);
 		return bks[0];
+	}
+
+	/**
+	 * Updates the the given entity with the property values held in the given
+	 * business keys.
+	 * @param <E> The entity type
+	 * @param entity The entity instance
+	 * @param bks The business keys whose state is applied to the given entity.
+	 */
+	public static <E extends IEntity> void apply(E entity, BusinessKey<E>[] bks) {
+		BeanWrapperImpl bw = new BeanWrapperImpl(entity);
+		for(BusinessKey<E> bk : bks) {
+			for(String pname : bk.getPropertyNames()) {
+				bw.setPropertyValue(pname, bk.getPropertyValue(pname));
+			}
+		}
 	}
 
 	/**

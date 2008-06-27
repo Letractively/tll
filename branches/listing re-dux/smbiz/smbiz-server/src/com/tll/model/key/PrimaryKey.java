@@ -18,7 +18,7 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 	 */
 	@SuppressWarnings("unchecked")
 	public PrimaryKey(E entity) {
-		this((Class<E>) entity.entityClass(), null);
+		this((Class<E>) entity.entityClass(), entity.getId());
 	}
 
 	/**

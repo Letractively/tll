@@ -2,11 +2,11 @@
 <suite name="smbiz-test-shell">
   
   <test verbose="6" name="shell-test" annotations="JDK">
-    <parameter name="jpaMode" value="SPRING" />
-    <parameter name="daoMode" value="ORM" />
+    <parameter name="jpaMode" value="NONE" />
+    <parameter name="daoMode" value="MOCK" />
     <groups>
       <run>
-        <include name="server.rpc" />
+        <include name="dao" />
       </run>
     </groups>
     <!-- 
@@ -15,7 +15,7 @@
     </packages>
     -->
     <classes>
-      <class name="com.tll.server.rpc.listing.ListingServiceTest" />
+      <class name="com.tll.dao.impl.AccountAddressDaoTest" />
     </classes>
   </test>
 

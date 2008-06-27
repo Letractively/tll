@@ -45,7 +45,8 @@ import com.tll.model.impl.User;
  */
 public final class EntityGraph {
 
-	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map = new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
+	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map =
+			new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
 
 	private MockEntityProvider mep;
 
@@ -147,7 +148,7 @@ public final class EntityGraph {
 		map.put(AppProperty.class, aps);
 
 		// addresses
-		map.put(Address.class, setVersion(mep.getNUniqueEntityCopies(Address.class, 10)));
+		map.put(Address.class, setVersion(mep.getNEntityCopies(Address.class, 10)));
 
 		// payment infos
 		Set<PaymentInfo> pis = new LinkedHashSet<PaymentInfo>();
@@ -159,8 +160,8 @@ public final class EntityGraph {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = setVersion(mep.getUniqueEntityCopy(type, num));
+	private <A extends Account> A stubAccount(Class<A> type) throws Exception {
+		A a = setVersion(mep.getEntityCopy(type));
 
 		a.setCurrency(getFirstEntity(Currency.class));
 
@@ -179,9 +180,10 @@ public final class EntityGraph {
 			aa.setType(at);
 			aa.setName(at.getName() + " address");
 		}
-		
-		// create a random number of account addresses for this account (for non-Asp accounts)
-		int maxAdrsIndex = Asp.class.equals(type)? ats.length : RandomUtils.nextInt(ats.length);
+
+		// create a random number of account addresses for this account (for non-Asp
+		// accounts)
+		int maxAdrsIndex = Asp.class.equals(type) ? ats.length : RandomUtils.nextInt(ats.length);
 		i = 0;
 		for(i = maxAdrsIndex + 1; i < ats.length; i++) {
 			if(i > aaList.size() - 1) {
@@ -190,11 +192,11 @@ public final class EntityGraph {
 			if(i < 0) break;
 			aaList.remove(i);
 		}
-		
+
 		if(aaList.size() > 0) {
 			aas = new LinkedHashSet<AccountAddress>(aaList);
 			a.addAccountAddresses(aas);
-			
+
 			// update the general account address set w/ the newly created ones
 			Set<AccountAddress> aaset = (Set<AccountAddress>) map.get(AccountAddress.class);
 			if(aaset == null) {
@@ -210,7 +212,7 @@ public final class EntityGraph {
 	@SuppressWarnings("unchecked")
 	private void stubAccounts() throws Exception {
 		// asp
-		asp = stubAccount(Asp.class, 1);
+		asp = stubAccount(Asp.class);
 		asp.setName(Asp.ASP_NAME);
 		Set<Asp> asps = new LinkedHashSet<Asp>();
 		asps.add(asp);
@@ -219,7 +221,7 @@ public final class EntityGraph {
 		// isps
 		Set<Isp> isps = new LinkedHashSet<Isp>();
 		for(int i = 0; i < numIsps; i++) {
-			Isp isp = stubAccount(Isp.class, i);
+			Isp isp = stubAccount(Isp.class);
 			isp.setParent(asp);
 			isps.add(isp);
 		}
@@ -229,7 +231,7 @@ public final class EntityGraph {
 		// merchants
 		Set<Merchant> merchants = new LinkedHashSet<Merchant>();
 		for(int i = 0; i < numMerchants; i++) {
-			Merchant m = stubAccount(Merchant.class, i);
+			Merchant m = stubAccount(Merchant.class);
 			int ispIndex = i / numIsps;
 			m.setParent(arrIsp[ispIndex]);
 			merchants.add(m);
@@ -240,7 +242,7 @@ public final class EntityGraph {
 		// customers
 		Set<Customer> customers = new LinkedHashSet<Customer>();
 		for(int i = 0; i < numCustomers; i++) {
-			Customer c = stubAccount(Customer.class, i);
+			Customer c = stubAccount(Customer.class);
 
 			// customer account
 			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class));
@@ -302,8 +304,8 @@ public final class EntityGraph {
 		intfs.addAll(setVersion(mep.getAllEntityCopies(InterfaceSwitch.class)));
 		intfs.addAll(setVersion(mep.getAllEntityCopies(InterfaceMulti.class)));
 		Set<InterfaceOption> ios = setVersion(mep.getAllEntityCopies(InterfaceOption.class));
-		Set<InterfaceOptionParameterDefinition> pds = setVersion(mep
-				.getAllEntityCopies(InterfaceOptionParameterDefinition.class));
+		Set<InterfaceOptionParameterDefinition> pds =
+				setVersion(mep.getAllEntityCopies(InterfaceOptionParameterDefinition.class));
 
 		for(Interface intf : intfs) {
 			if(Interface.CODE_CROSS_SELL.equals(intf.getCode())) {

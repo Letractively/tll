@@ -55,15 +55,14 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 	}
 
 	@Override
-	protected void uniquify(I e, int n) {
-		super.uniquify(e, n);
+	protected void uniquify(I e) {
+		super.uniquify(e);
 
 		try {
-			int i = n;
 			for(final InterfaceOption o : e.getOptions()) {
-				MockEntityProvider.makeBusinessKeyUnique(o, ++i);
+				MockEntityProvider.makeBusinessKeyUnique(o);
 				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-					MockEntityProvider.makeBusinessKeyUnique(param, i);
+					MockEntityProvider.makeBusinessKeyUnique(param);
 				}
 			}
 		}

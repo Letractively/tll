@@ -178,15 +178,14 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 	}
 
 	@Override
-	protected void uniquify(A e, int n) {
-		makeUnique(e, n);
+	protected void uniquify(A e) {
+		makeUnique(e);
 
 		try {
 			if(e.getAddresses() != null) {
-				int i = n;
 				for(final AccountAddress aa : e.getAddresses()) {
-					MockEntityProvider.makeBusinessKeyUnique(aa, ++i);
-					MockEntityProvider.makeBusinessKeyUnique(aa.getAddress(), ++i);
+					MockEntityProvider.makeBusinessKeyUnique(aa);
+					MockEntityProvider.makeBusinessKeyUnique(aa.getAddress());
 				}
 			}
 		}

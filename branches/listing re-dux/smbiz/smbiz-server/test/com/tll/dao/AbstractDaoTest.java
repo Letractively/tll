@@ -33,6 +33,8 @@ import com.tll.guice.JpaModule;
 import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
+import com.tll.model.BusinessKeyFactory;
+import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKey;
@@ -214,10 +216,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	/**
 	 * Uniquify the entity - may be overridden by sub-classes.
 	 * @param e
-	 * @param i
 	 */
-	protected void uniquify(E e, int i) {
-		makeUnique(e, i);
+	protected void uniquify(E e) {
+		makeUnique(e);
 	}
 
 	/**
@@ -229,7 +230,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	protected final E getTestEntity() throws Exception {
 		final E e = getMockEntityProvider().getEntityCopy(entityClass);
 		assembleTestEntity(e);
-		uniquify(e, 1);
+		uniquify(e);
 		return e;
 	}
 
@@ -245,7 +246,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		final List<E> list = new ArrayList<E>(n);
 		for(int i = 1; i <= n; i++) {
 			final E e = getTestEntity();
-			uniquify(e, i);
+			uniquify(e);
 			list.add(e);
 		}
 		return list;
@@ -340,6 +341,24 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			rawDao.flush();
 		}
 
+	}
+
+	/**
+	 * Ensures two entities are non-unique by business key.
+	 * @param e1
+	 * @param e2
+	 */
+	protected final void ensureNonUnique(E e1, E e2) {
+		if(e2 instanceof ITimeStampEntity) {
+			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
+			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
+		}
+		try {
+			BusinessKeyFactory.apply(e2, BusinessKeyFactory.create(e1));
+		}
+		catch(BusinessKeyNotDefinedException e) {
+			// assume ok
+		}
 	}
 
 	/**
@@ -585,10 +604,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		startNewTransaction();
 		E e2 = getTestEntity();
-		if(e2 instanceof ITimeStampEntity) {
-			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
-			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
-		}
+		ensureNonUnique(e, e2);
 		try {
 			e2 = dao.persist(e2);
 			setComplete();

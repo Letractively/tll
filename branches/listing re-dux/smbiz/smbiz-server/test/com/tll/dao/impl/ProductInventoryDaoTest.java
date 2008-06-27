@@ -58,10 +58,10 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 	}
 
 	@Override
-	protected void uniquify(ProductInventory e, int n) {
-		super.uniquify(e, n);
+	protected void uniquify(ProductInventory e) {
+		super.uniquify(e);
 		try {
-			MockEntityProvider.makeBusinessKeyUnique(e.getProductGeneral(), n);
+			MockEntityProvider.makeBusinessKeyUnique(e.getProductGeneral());
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			Assert.fail(e1.getMessage());

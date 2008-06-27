@@ -376,8 +376,10 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	}
 
 	public final E load(final PrimaryKey<? extends E> key) {
+		final PrimaryKey<E> pk = new PrimaryKey<E>(entityClass);
 		for(final E e : set) {
-			if(e.equals(key)) {
+			pk.setId(e.getId());
+			if(pk.equals(key)) {
 				return e;
 			}
 		}
@@ -392,6 +394,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 
 	public final E persist(final E entity) {
 		if(!set.remove(entity)) {
+			assert entity.getVersion() == null;
 			// ensure business key unique
 			set.add(entity);
 			if(!EntityUtil.isBusinessKeyUnique(set)) {
@@ -406,7 +409,10 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		if(version == null) {
 			version = new Integer(0);
 		}
-		entity.setVersion(version + 1);
+		else {
+			version++;
+		}
+		entity.setVersion(version);
 		return entity;
 	}
 

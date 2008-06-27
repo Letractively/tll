@@ -289,9 +289,9 @@ public abstract class TestBase {
 	 * @param n The integer value serving as a way to uniquify individual fields
 	 *        that comprise a target {@link BusinessKey}.
 	 */
-	protected final static <ET extends IEntity> void makeUnique(ET e, int n) {
+	protected final static <ET extends IEntity> void makeUnique(ET e) {
 		try {
-			MockEntityProvider.makeBusinessKeyUnique(e, n);
+			MockEntityProvider.makeBusinessKeyUnique(e);
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			// ok
