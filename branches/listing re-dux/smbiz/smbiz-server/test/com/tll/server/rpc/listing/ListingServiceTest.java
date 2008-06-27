@@ -69,6 +69,7 @@ public class ListingServiceTest extends DbTest {
 	 */
 	final class MockHttpInterceptor implements InvocationHandler {
 
+		@SuppressWarnings("synthetic-access")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if(method.getName().equals("getRequestContext")) {

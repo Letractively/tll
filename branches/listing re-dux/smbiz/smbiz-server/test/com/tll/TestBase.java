@@ -209,8 +209,7 @@ public abstract class TestBase {
 	}
 
 	/**
-	 * Validate the given object is empty. Handles {@link Collection}s and
-	 * arrays.
+	 * Validate the given object is empty. Handles {@link Collection}s and arrays.
 	 * @param obj
 	 * @throws Exception When the given object is found not empty
 	 */
@@ -283,8 +282,8 @@ public abstract class TestBase {
 	}
 
 	/**
-	 * Makes the given entity unique based on the defined {@link BusinessKey}s
-	 * for type of the given entity.
+	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
+	 * type of the given entity.
 	 * @param e The entity to uniquify
 	 * @param n The integer value serving as a way to uniquify individual fields
 	 *        that comprise a target {@link BusinessKey}.
