@@ -134,7 +134,6 @@ public class MarshalerTest extends TestBase {
 	 * @throws Exception Upon failure.
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testScalarMarshaling() throws Exception {
 		final IScalar scalar = new IScalar() {
 

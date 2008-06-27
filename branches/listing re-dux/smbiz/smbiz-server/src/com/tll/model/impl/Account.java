@@ -41,6 +41,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
+	private static final long serialVersionUID = -684966689440840694L;
+
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
 	static final String MERCHANT_VALUE = "2";

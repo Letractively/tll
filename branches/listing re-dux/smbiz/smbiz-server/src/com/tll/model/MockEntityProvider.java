@@ -53,8 +53,7 @@ public final class MockEntityProvider {
 	 * @param beanFactory
 	 */
 	@Inject
-	public MockEntityProvider(@MockEntityBeanFactory
-	ListableBeanFactory beanFactory, EntityAssembler entityAssembler) {
+	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, EntityAssembler entityAssembler) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
 		assert entityAssembler != null : "The entityAssembler is null";
@@ -80,7 +79,6 @@ public final class MockEntityProvider {
 	 * @return Set of entity copies
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> Set<E> getAllEntityCopies(Class<E> entityClass) throws Exception {
 		Set<E> set = new LinkedHashSet<E>();
 		E[] arr = getBeansOfType(entityClass);

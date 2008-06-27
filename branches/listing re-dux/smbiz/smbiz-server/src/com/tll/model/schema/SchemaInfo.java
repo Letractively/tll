@@ -51,7 +51,6 @@ public final class SchemaInfo implements ISchemaInfo {
 		load();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void load() {
 		Map<String, ISchemaProperty> classMap;
 		final Class<? extends IEntity>[] entityClasses = EntityUtil.getEntityClasses();

@@ -17,6 +17,8 @@ import com.tll.server.RequestContext;
  */
 public abstract class RpcServlet extends RemoteServiceServlet {
 
+	private static final long serialVersionUID = 5032508084607776181L;
+
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	/**

@@ -54,7 +54,6 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	 * @param entityAssembler
 	 * @param validatorDelegate
 	 */
-	@SuppressWarnings("unchecked")
 	protected EntityService(Class<D> daoClass, D dao, EntityAssembler entityAssembler) {
 		super();
 		this.log = LogFactory.getLog(this.getClass());

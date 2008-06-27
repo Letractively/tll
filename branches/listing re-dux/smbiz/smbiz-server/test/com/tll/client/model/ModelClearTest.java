@@ -60,7 +60,6 @@ public class ModelClearTest extends AbstractModelTest {
 		validateClear(model, new ArrayList<Model>());
 	}
 
-	@SuppressWarnings("unchecked")
 	private void validateClear(final Model source, final List<Model> visited) throws Exception {
 		assert source != null;
 

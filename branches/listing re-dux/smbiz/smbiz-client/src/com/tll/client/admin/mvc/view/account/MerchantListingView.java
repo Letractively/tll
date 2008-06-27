@@ -202,7 +202,8 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(config, ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
+		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
+				.getDefaultSorting()));
 	}
 
 	@Override

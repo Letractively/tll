@@ -11,6 +11,8 @@ import javax.persistence.Transient;
 @MappedSuperclass
 public abstract class NamedTimeStampEntity extends TimeStampEntity implements INamedTimeStampEntity {
 
+	private static final long serialVersionUID = 2186964556332599921L;
+
 	protected String name;
 
 	/**

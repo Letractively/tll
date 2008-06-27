@@ -70,7 +70,6 @@ public class ListingServiceTest extends DbTest {
 	final class MockHttpInterceptor implements InvocationHandler {
 
 		@Override
-		@SuppressWarnings("unchecked")
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if(method.getName().equals("getRequestContext")) {
 				assert injector != null;

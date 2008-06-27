@@ -252,7 +252,6 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException When the criteria type is invalid or
 	 *         otherwise.
 	 */
-	@SuppressWarnings("unchecked")
 	protected final List<?> processCriteria(ICriteria<? extends E> criteria, Sorting sorting, boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
@@ -372,10 +371,10 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	/**
 	 * Translates criterion objects to the hibernate criterion objects. This
-	 * method takes a <code>DetachedCriteria</code> implementation simply
-	 * because there is no common interface for <code>DetachedCriteria</code>
-	 * and <code>Criteria</code>. This method may be overridden by subclasses
-	 * and thus is not called from processUniqueCriteria(ICriteria).
+	 * method takes a <code>DetachedCriteria</code> implementation simply because
+	 * there is no common interface for <code>DetachedCriteria</code> and
+	 * <code>Criteria</code>. This method may be overridden by subclasses and thus
+	 * is not called from processUniqueCriteria(ICriteria).
 	 * @param dc the hibernate criteria object
 	 * @param criteria Criteria object
 	 * @param sorting The optional sorting directive
@@ -582,7 +581,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			applySorting(dc, sorting);
 		}
 		catch(final InvalidCriteriaException e) {
-			throw new PersistenceException("Invalid criteria: " + e.getMessage(), e); // shouldn't
+			throw new PersistenceException("Invalid criteria: " + e.getMessage(), e); // shouldn
+																																								// 't
 			// happen
 		}
 		return (List<E>) findByDetatchedCriteria(dc);

@@ -5,11 +5,11 @@
  */
 package com.tll.client.listing;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.IData;
-import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -26,9 +26,9 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	private final ListingListenerCollection<R> listeners = new ListingListenerCollection<R>();
 
 	/**
-	 * The listing widget
+	 * The Widget that will be passed in dispatched {@link ListingEvent}s.
 	 */
-	private ListingWidget<R> listingWidget;
+	private final Widget sourcingWidget;
 
 	/**
 	 * The data provider.
@@ -48,17 +48,20 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 
 	/**
 	 * Constructor
+	 * @param sourcingWidget
 	 * @param pageSize
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(int pageSize, IDataProvider<R> dataProvider, Sorting sorting) {
+	public DataListingOperator(Widget sourcingWidget, int pageSize, IDataProvider<R> dataProvider, Sorting sorting) {
 		super();
+		this.sourcingWidget = sourcingWidget;
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
 	}
 
+	/*
 	public ListingWidget<R> getListingWidget() {
 		return listingWidget;
 	}
@@ -71,6 +74,7 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 		this.listingWidget = listingWidget;
 		addListingListener(listingWidget);
 	}
+	*/
 
 	public void addListingListener(IListingListener<R> listener) {
 		listeners.add(listener);
@@ -104,7 +108,7 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	 */
 	private ListingEvent<R> assembleListingEvent(R[] pageElements, ListingOp listingOp) {
 		final int listSize = pageElements == null ? 0 : pageElements.length;
-		return new ListingEvent<R>(listingWidget, true, null, ListingOp.REFRESH, listSize, pageElements, offset, sorting,
+		return new ListingEvent<R>(sourcingWidget, true, null, ListingOp.REFRESH, listSize, pageElements, offset, sorting,
 				pageSize);
 	}
 

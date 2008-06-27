@@ -358,7 +358,6 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		// no-op
 	}
 
-	@SuppressWarnings("unchecked")
 	public final E load(final BusinessKey<? extends E> key) {
 		for(final E e : set) {
 			try {

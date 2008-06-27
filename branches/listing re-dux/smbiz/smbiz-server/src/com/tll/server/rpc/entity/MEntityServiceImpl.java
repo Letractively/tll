@@ -237,13 +237,12 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Handles the entity specific search to criteria translation.
 	 * @param search
 	 * @param criteria
-	 * @throws IllegalArgumentException When the <code>search</code> parameter
-	 *         is unsupported.
+	 * @throws IllegalArgumentException When the <code>search</code> parameter is
+	 *         unsupported.
 	 */
 	protected abstract void handleSearchTranslation(RequestContext requestContext, S search,
 			ICriteria<? extends E> criteria) throws IllegalArgumentException;
 
-	@SuppressWarnings("unchecked")
 	public final ICriteria<? extends E> translate(final RequestContext requestContext, final EntityType entityType,
 			final S search) throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();

@@ -35,6 +35,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Interface extends NamedTimeStampEntity {
 
+	private static final long serialVersionUID = 5959712644331302508L;
+
 	static final String SWITCH_VALUE = "0";
 	static final String SINGLE_VALUE = "1";
 	static final String MULTI_VALUE = "2";

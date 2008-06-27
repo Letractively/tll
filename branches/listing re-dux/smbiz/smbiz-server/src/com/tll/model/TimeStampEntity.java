@@ -19,6 +19,8 @@ import com.tll.model.schema.Managed;
 @MappedSuperclass
 public abstract class TimeStampEntity extends EntityBase implements ITimeStampEntity {
 
+	private static final long serialVersionUID = 1800355868972602348L;
+
 	private Date dateCreated;
 	private Date dateModified;
 

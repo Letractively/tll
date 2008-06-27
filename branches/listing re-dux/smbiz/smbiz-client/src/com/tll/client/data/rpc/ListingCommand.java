@@ -20,11 +20,10 @@ import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.PagingUtil;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
-import com.tll.client.ui.listing.ListingWidget;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingRequest - Issues RPC listing commands to the server.
+ * ListingRequest - Issues listing commands to the server.
  * @author jpk
  */
 @SuppressWarnings("unchecked")
@@ -42,9 +41,9 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	private final ListingListenerCollection<Model> listeners = new ListingListenerCollection<Model>();
 
 	/**
-	 * The listing widget.
+	 * The Widget that will be passed in dispatched {@link ListingEvent}s.
 	 */
-	private ListingWidget<Model> listingWidget;
+	private final Widget sourcingWidget;
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -87,32 +86,24 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	 * @param listingName The unique listing name
 	 * @param listingDef The remote listing definition
 	 */
-	public ListingCommand(String listingName, RemoteListingDefinition listingDef) {
+	public ListingCommand(Widget sourcingWidget, String listingName, RemoteListingDefinition listingDef) {
 		super();
+		this.sourcingWidget = sourcingWidget;
 		this.listingName = listingName;
 		this.listingDef = listingDef;
 	}
 
 	@Override
 	protected Widget getSourcingWidget() {
-		if(listingWidget == null) throw new IllegalStateException("No listing widget set!");
-		return listingWidget;
+		if(sourcingWidget == null) throw new IllegalStateException("No sourcing widget set!");
+		return sourcingWidget;
 	}
 
 	public void addListingListener(IListingListener<Model> listener) {
-		if(listener instanceof ListingWidget) {
-			if(this.listingWidget != null) {
-				throw new IllegalStateException("Listing operator may only be bound to a single listing Widget at a time.");
-			}
-			this.listingWidget = (ListingWidget) listener;
-		}
 		listeners.add(listener);
 	}
 
 	public void removeListingListener(IListingListener<Model> listener) {
-		if(listener != null && this.listingWidget == listener) {
-			this.listingWidget = null;
-		}
 		listeners.remove(listener);
 	}
 
@@ -155,7 +146,6 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void doExecute() {
 		if(listingRequest == null) {
 			throw new IllegalStateException("No listing command set!");
@@ -185,7 +175,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 			// reset
 			listingRequest = null;
 			// fire the listing event
-			listeners.fireListingEvent(new ListingEvent<Model>(listingWidget, op, result, listingDef.getPageSize()));
+			listeners.fireListingEvent(new ListingEvent<Model>(sourcingWidget, op, result, listingDef.getPageSize()));
 		}
 	}
 

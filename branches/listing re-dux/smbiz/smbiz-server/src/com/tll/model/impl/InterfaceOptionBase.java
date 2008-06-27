@@ -24,6 +24,8 @@ import com.tll.model.NamedTimeStampEntity;
 @DiscriminatorColumn(name = "record_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 
+	private static final long serialVersionUID = 342581007482865798L;
+
 	public static final int MAXLEN_CODE = 50;
 	public static final int MAXLEN_NAME = 50;
 	public static final int MAXLEN_DESCRIPTION = 50;

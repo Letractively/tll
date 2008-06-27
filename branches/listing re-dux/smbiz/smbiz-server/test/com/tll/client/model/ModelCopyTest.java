@@ -67,7 +67,6 @@ public class ModelCopyTest extends AbstractModelTest {
 	 * @param visited
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	@SuppressWarnings("unchecked")
 	private void validateCopy(final Model source, final Model copy, final List<Model> visited) throws Exception {
 		assert source != null && copy != null;
 

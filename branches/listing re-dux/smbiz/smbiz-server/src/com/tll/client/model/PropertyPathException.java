@@ -9,6 +9,7 @@ package com.tll.client.model;
  * PropertyPathException - Abstract exception class relating to property paths.
  * @author jpk
  */
+@SuppressWarnings("serial")
 abstract class PropertyPathException extends Exception {
 
 	/**

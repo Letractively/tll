@@ -3,8 +3,10 @@
  */
 package com.tll.client.listing;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.rpc.ListingCommand;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
@@ -22,20 +24,24 @@ public abstract class ListingFactory {
 
 	/**
 	 * Assembles a listing from data provided by an {@link IDataProvider}.
+	 * @param sourcingWidget The Widget that will be passed in dispatched
+	 *        {@link ListingEvent}s.
 	 * @param config The listing config
 	 * @param dataProvider The client listing data provider
 	 * @return A new {@link DataListingWidget}.
 	 */
-	public static <R extends IData> DataListingWidget<R> createListingWidget(IListingConfig<R> config,
-			IDataProvider<R> dataProvider) {
+	public static <R extends IData> DataListingWidget<R> createListingWidget(Widget sourcingWidget,
+			IListingConfig<R> config, IDataProvider<R> dataProvider) {
 
-		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(config
-				.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
+		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(
+				sourcingWidget, config.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
 	}
 
 	/**
 	 * Creates a listing command to control acccess to a remote listing.
 	 * @param <S> The search type
+	 * @param sourcingWidget The Widget that will be passed in dispatched
+	 *        {@link ListingEvent}s.
 	 * @param listingName The unique remote listing name
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
@@ -47,15 +53,17 @@ public abstract class ListingFactory {
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link ListingCommand}.
 	 */
-	public static <S extends ISearch> ListingCommand<S> createListingCommand(String listingName,
+	public static <S extends ISearch> ListingCommand<S> createListingCommand(Widget sourcingWidget, String listingName,
 			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, int pageSize, Sorting initialSorting) {
-		return new ListingCommand<S>(listingName, new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys,
-				pageSize, initialSorting));
+		return new ListingCommand<S>(sourcingWidget, listingName, new RemoteListingDefinition<S>(listHandlerType,
+				searchCriteria, propKeys, pageSize, initialSorting));
 	}
 
 	/**
 	 * Crates a listing Widget based on a remote data source.
 	 * @param <S> The search type
+	 * @param sourcingWidget The Widget that will be passed in dispatched
+	 *        {@link ListingEvent}s.
 	 * @param config The client listing configuration
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
@@ -66,12 +74,12 @@ public abstract class ListingFactory {
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link ModelListingWidget}.
 	 */
-	public static <S extends ISearch> ModelListingWidget createListingWidget(IListingConfig<Model> config,
-			ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, Sorting initialSorting) {
+	public static <S extends ISearch> ModelListingWidget createListingWidget(Widget sourcingWidget,
+			IListingConfig<Model> config, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys,
+			Sorting initialSorting) {
 
-		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), new ListingCommand<S>(config
-				.getListingName(), new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, config
-				.getPageSize(), initialSorting)));
+		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), createListingCommand(sourcingWidget,
+				config.getListingName(), listHandlerType, searchCriteria, propKeys, config.getPageSize(), initialSorting));
 	}
 
 	/**

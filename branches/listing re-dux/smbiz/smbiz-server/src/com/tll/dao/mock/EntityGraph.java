@@ -160,8 +160,12 @@ public final class EntityGraph {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <A extends Account> A stubAccount(Class<A> type) throws Exception {
+	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
 		A a = setVersion(mep.getEntityCopy(type, false));
+
+		if(num > 0) {
+			a.setName(a.getName() + " " + Integer.toString(num));
+		}
 
 		a.setCurrency(getFirstEntity(Currency.class));
 
@@ -212,7 +216,7 @@ public final class EntityGraph {
 	@SuppressWarnings("unchecked")
 	private void stubAccounts() throws Exception {
 		// asp
-		asp = stubAccount(Asp.class);
+		asp = stubAccount(Asp.class, 0);
 		asp.setName(Asp.ASP_NAME);
 		Set<Asp> asps = new LinkedHashSet<Asp>();
 		asps.add(asp);
@@ -221,7 +225,7 @@ public final class EntityGraph {
 		// isps
 		Set<Isp> isps = new LinkedHashSet<Isp>();
 		for(int i = 0; i < numIsps; i++) {
-			Isp isp = stubAccount(Isp.class);
+			Isp isp = stubAccount(Isp.class, i + 1);
 			isp.setParent(asp);
 			isps.add(isp);
 		}
@@ -231,7 +235,7 @@ public final class EntityGraph {
 		// merchants
 		Set<Merchant> merchants = new LinkedHashSet<Merchant>();
 		for(int i = 0; i < numMerchants; i++) {
-			Merchant m = stubAccount(Merchant.class);
+			Merchant m = stubAccount(Merchant.class, i + 1);
 			int ispIndex = i / numIsps;
 			m.setParent(arrIsp[ispIndex]);
 			merchants.add(m);
@@ -242,7 +246,7 @@ public final class EntityGraph {
 		// customers
 		Set<Customer> customers = new LinkedHashSet<Customer>();
 		for(int i = 0; i < numCustomers; i++) {
-			Customer c = stubAccount(Customer.class);
+			Customer c = stubAccount(Customer.class, i + 1);
 
 			// customer account
 			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class, false));

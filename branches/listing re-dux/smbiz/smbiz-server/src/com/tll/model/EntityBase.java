@@ -23,6 +23,8 @@ import com.tll.model.schema.Managed;
 @SuppressWarnings("unchecked")
 public abstract class EntityBase implements IEntity {
 
+	private static final long serialVersionUID = -4641847785797486723L;
+
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
 
 	private Integer id;
@@ -180,8 +182,8 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	/**
-	 * This method <b>must only</b> be called when a new entity is created and
-	 * the id is generated. It will set the id and set the generated flag to true.
+	 * This method <b>must only</b> be called when a new entity is created and the
+	 * id is generated. It will set the id and set the generated flag to true.
 	 * @param id the id to set
 	 */
 	public void setGenerated(Integer id) {
