@@ -61,21 +61,6 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 		this.sorting = sorting;
 	}
 
-	/*
-	public ListingWidget<R> getListingWidget() {
-		return listingWidget;
-	}
-
-	public void setListingWidget(ListingWidget<R> listingWidget) {
-		if(listingWidget == null) throw new IllegalArgumentException();
-		if(this.listingWidget != null) {
-			removeListingListener(this.listingWidget);
-		}
-		this.listingWidget = listingWidget;
-		addListingListener(listingWidget);
-	}
-	*/
-
 	public void addListingListener(IListingListener<R> listener) {
 		listeners.add(listener);
 	}
