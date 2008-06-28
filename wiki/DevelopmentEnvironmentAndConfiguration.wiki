@@ -66,6 +66,10 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || aspectj_home || Points to the root install dir of AspectJ. ||
 || gwt_host_webroot || <TLL_ROOT>/smbiz/smbiz-client/tomcat/webapps/ROOT ||
 
+==Add Ons==
+|| subversive || [http://download.eclipse.org/technology/subversive/0.7/update-site/ http://download.eclipse.org/technology/subversive/0.7/update-site/] ||
+|| TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
+ 
 =smbiz project configuration=
 In the <TLL_ROOT>/smbiz/config dir, create the necessary config override file with the following name:
 
