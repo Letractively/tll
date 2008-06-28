@@ -68,10 +68,11 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 
 ==Add Ons==
 || subversive || [http://download.eclipse.org/technology/subversive/0.7/update-site/ http://download.eclipse.org/technology/subversive/0.7/update-site/] ||
+|| subversive connectors || [http://www.polarion.org/projects/subversive/download/integrations/update-site/ http://www.polarion.org/projects/subversive/download/integrations/update-site/] ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
  
 
-=smbiz project configuration=
+ =smbiz project configuration=
 In the <TLL_ROOT>/smbiz/config dir, create the necessary config override file with the following name:
 
 {{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}}
