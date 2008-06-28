@@ -8,44 +8,30 @@ package com.tll.client.data;
 import com.tll.util.INameValueProvider;
 
 /**
- * ListingOp - Encapsulates all available actions on a server side listing.
+ * ListingOp - Defines the possible listing operations on a server-side listing.
  * @author jpk
  */
 public enum ListingOp implements INameValueProvider {
 
 	/**
-	 * [Re-]Generate the listing clearing any cache.
+	 * Generates or refreshes a listing clearing any existing cache.
 	 */
 	REFRESH("Refresh"),
 
 	/**
-	 * Retrieve cached listing data or generate the listing if not cached.
+	 * Fetch page data on an existing listing.
 	 */
-	DISPLAY("Display"),
+	FETCH("Fetch"),
 
-	GOTO_PAGE("Goto page"),
-
-	FIRST_PAGE("First page"),
-
-	LAST_PAGE("Last page"),
-
-	PREVIOUS_PAGE("Previous page"),
-
-	NEXT_PAGE("Next page"),
-
-	SORT("Sort"),
-
+	/**
+	 * Clears any cached listing data for a particular listing.
+	 */
 	CLEAR("Clear"),
 
+	/**
+	 * Clears all cached listing data for <em>all</em> cached listings.
+	 */
 	CLEAR_ALL("Clear all");
-
-	/*
-	INSERT_ROW("Insert row"),
-
-	UPDATE_ROW("Update row"),
-
-	DELETE_ROW("Delete row");
-	*/
 
 	private final String name;
 
@@ -65,12 +51,11 @@ public enum ListingOp implements INameValueProvider {
 		return name();
 	}
 
-	public boolean isClear() {
-		return this == ListingOp.CLEAR || this == ListingOp.CLEAR_ALL;
+	public boolean isQuery() {
+		return this == ListingOp.REFRESH || this == ListingOp.FETCH;
 	}
 
-	public boolean isNavigation() {
-		return this == ListingOp.FIRST_PAGE || this == ListingOp.LAST_PAGE || this == ListingOp.PREVIOUS_PAGE
-				|| this == ListingOp.NEXT_PAGE || this == ListingOp.GOTO_PAGE;
+	public boolean isClear() {
+		return this == ListingOp.CLEAR || this == ListingOp.CLEAR_ALL;
 	}
 }

@@ -17,7 +17,7 @@ import com.tll.client.data.AuxDataRequest;
  * AuxDataCommand
  * @author jpk
  */
-public class AuxDataCommand extends RpcCommand<AuxDataPayload> {
+public final class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 
 	private static final IAuxDataServiceAsync svc;
 	static {
@@ -25,16 +25,24 @@ public class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/aux");
 	}
 
+	private final Widget sourcingWidget;
+
 	private final AuxDataRequest auxDataRequest;
 
 	/**
 	 * Constructor
+	 * @param sourcingWidget
 	 * @param auxDataRequest
 	 */
 	public AuxDataCommand(Widget sourcingWidget, AuxDataRequest auxDataRequest) {
-		super(sourcingWidget);
-		assert auxDataRequest != null;
+		super();
+		this.sourcingWidget = sourcingWidget;
 		this.auxDataRequest = auxDataRequest;
+	}
+
+	@Override
+	protected Widget getSourcingWidget() {
+		return sourcingWidget;
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
@@ -21,120 +20,123 @@ import com.tll.model.IEntity;
  * @author jpk
  */
 @Entity
-@Table(name="order_item_trans")
+@Table(name = "order_item_trans")
 public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
-  private static final long serialVersionUID = -2106851598169919247L;
 
-  protected OrderItem orderItem;
+	private static final long serialVersionUID = -2106851598169919247L;
 
-  protected OrderTrans orderTrans;
+	private OrderItem orderItem;
 
-  protected OrderItemTransOp orderItemTransOp;
+	private OrderTrans orderTrans;
 
-  protected float amount = 0f;
+	private OrderItemTransOp orderItemTransOp;
 
-  public Class<? extends IEntity> entityClass() {
-    return OrderItemTrans.class;
-  }
+	private float amount = 0f;
 
-  /**
-   * @return Returns the orderItemTransOp.
-   */
-  @Column(name="order_item_trans_op")
-  @NotNull
-  public OrderItemTransOp getOrderItemTransOp() {
-    return orderItemTransOp;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return OrderItemTrans.class;
+	}
 
-  /**
-   * @param orderItemTransOp
-   *          The orderItemTransOp to set.
-   */
-  public void setOrderItemTransOp(OrderItemTransOp orderItemTransOp) {
-    this.orderItemTransOp = orderItemTransOp;
-  }
+	/**
+	 * @return Returns the orderItemTransOp.
+	 */
+	@Column(name = "order_item_trans_op")
+	@NotNull
+	public OrderItemTransOp getOrderItemTransOp() {
+		return orderItemTransOp;
+	}
 
-  /**
-   * @return Returns the amount.
-   */
-  @Column(precision = 7, scale = 2)
-  @Range(min=0L, max=99999L)
-  public float getAmount() {
-    return amount;
-  }
+	/**
+	 * @param orderItemTransOp The orderItemTransOp to set.
+	 */
+	public void setOrderItemTransOp(OrderItemTransOp orderItemTransOp) {
+		this.orderItemTransOp = orderItemTransOp;
+	}
 
-  /**
-   * @param amount
-   *          The amount to set.
-   */
-  public void setAmount(float amount) {
-    this.amount = amount;
-  }
+	/**
+	 * @return Returns the amount.
+	 */
+	@Column(precision = 7, scale = 2)
+	@Range(min = 0L, max = 99999L)
+	public float getAmount() {
+		return amount;
+	}
 
-  /**
-   * @return Returns the orderItem.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "oi_id")
-  @NotNull
-  public OrderItem getOrderItem() {
-    return orderItem;
-  }
+	/**
+	 * @param amount The amount to set.
+	 */
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
-  /**
-   * @param orderItem
-   *          The orderItem to set.
-   */
-  public void setOrderItem(OrderItem orderItem) {
-    this.orderItem = orderItem;
-  }
+	/**
+	 * @return Returns the orderItem.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "oi_id")
+	@NotNull
+	public OrderItem getOrderItem() {
+		return orderItem;
+	}
 
-  /**
-   * @return Returns the orderTrans.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "ot_id")
-  @NotNull
-  public OrderTrans getOrderTrans() {
-    return orderTrans;
-  }
+	/**
+	 * @param orderItem The orderItem to set.
+	 */
+	public void setOrderItem(OrderItem orderItem) {
+		this.orderItem = orderItem;
+	}
 
-  /**
-   * @param orderTrans
-   *          The orderTrans to set.
-   */
-  public void setOrderTrans(OrderTrans orderTrans) {
-    this.orderTrans = orderTrans;
-  }
+	/**
+	 * @return Returns the orderTrans.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ot_id")
+	@NotNull
+	public OrderTrans getOrderTrans() {
+		return orderTrans;
+	}
 
-  @Transient
-  public OrderTrans getParent() {
-    return getOrderTrans();
-  }
+	/**
+	 * @param orderTrans The orderTrans to set.
+	 */
+	public void setOrderTrans(OrderTrans orderTrans) {
+		this.orderTrans = orderTrans;
+	}
 
-  public void setParent(OrderTrans e) {
-    setOrderTrans(e);
-  }
+	@Transient
+	public OrderTrans getParent() {
+		return getOrderTrans();
+	}
 
-  public Integer accountId() {
-    try {
-      return getOrderItem().getOrder().getAccount().getId();
-    }
-    catch(NullPointerException npe) {
-      LOG.warn("Unable to provide related account id due to a NULL nested entity");
-      return null;
-    }
-  }
+	public void setParent(OrderTrans e) {
+		setOrderTrans(e);
+	}
 
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
-    
-    .append("orderItem", orderItem==null? "NULL" :  orderItem.descriptor())
-    .append("orderTrans", orderTrans==null? "NULL" :  orderTrans.descriptor())
-    
-    .append("orderItemTransOp", orderItemTransOp)
-    .append("amount", amount);
-  }
+	public Integer accountId() {
+		try {
+			return getOrderItem().getOrder().getAccount().getId();
+		}
+		catch(NullPointerException npe) {
+			LOG.warn("Unable to provide related account id due to a NULL nested entity");
+			return null;
+		}
+	}
 
+	public Integer orderItemId() {
+		try {
+			return getOrderItem().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
+
+	public Integer orderTransId() {
+		try {
+			return getOrderTrans().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
+	}
 }

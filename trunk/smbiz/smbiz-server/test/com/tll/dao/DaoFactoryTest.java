@@ -9,6 +9,8 @@ import com.google.inject.Injector;
 import com.tll.SystemError;
 import com.tll.TestBase;
 import com.tll.guice.DaoModule;
+import com.tll.guice.JpaModule;
+import com.tll.guice.MockEntitiesModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
@@ -16,7 +18,7 @@ import com.tll.model.IEntity;
  * DaoFactoryTest
  * @author jpk
  */
-@Test(groups = "dao")
+@Test(groups = "dao.factory")
 public class DaoFactoryTest extends TestBase {
 
 	/**
@@ -37,7 +39,13 @@ public class DaoFactoryTest extends TestBase {
 	}
 
 	private void doTest(DaoMode daoMode) throws Exception {
-		final Injector injector = buildStaticInjector(new DaoModule(daoMode));
+		Injector injector;
+		if(daoMode == DaoMode.MOCK) {
+			injector = buildStaticInjector(new MockEntitiesModule(), new DaoModule(daoMode));
+		}
+		else {
+			injector = buildStaticInjector(new JpaModule(JpaMode.LOCAL), new DaoModule(daoMode));
+		}
 		final IDaoFactory df = injector.getInstance(IDaoFactory.class);
 		assert df != null;
 		Class<? extends IEntity>[] entityClasses = EntityUtil.getEntityClasses();

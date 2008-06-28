@@ -174,7 +174,7 @@ public abstract class TestBase {
 	 * must be added via {@link #addModules(List)}.
 	 * @return The injected {@link DbShell}
 	 */
-	protected DbShell getDbShell() {
+	protected final DbShell getDbShell() {
 		return injector.getInstance(Key.get(DbShell.class, TestDb.class));
 	}
 
@@ -209,8 +209,7 @@ public abstract class TestBase {
 	}
 
 	/**
-	 * Validate the given object is empty. Handles {@link Collection}s and
-	 * arrays.
+	 * Validate the given object is empty. Handles {@link Collection}s and arrays.
 	 * @param obj
 	 * @throws Exception When the given object is found not empty
 	 */
@@ -283,15 +282,15 @@ public abstract class TestBase {
 	}
 
 	/**
-	 * Makes the given entity unique based on the defined {@link BusinessKey}s
-	 * for type of the given entity.
+	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
+	 * type of the given entity.
 	 * @param e The entity to uniquify
 	 * @param n The integer value serving as a way to uniquify individual fields
 	 *        that comprise a target {@link BusinessKey}.
 	 */
-	protected final static <ET extends IEntity> void makeUnique(ET e, int n) {
+	protected final static <ET extends IEntity> void makeUnique(ET e) {
 		try {
-			MockEntityProvider.makeBusinessKeyUnique(e, n);
+			MockEntityProvider.makeBusinessKeyUnique(e);
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			// ok

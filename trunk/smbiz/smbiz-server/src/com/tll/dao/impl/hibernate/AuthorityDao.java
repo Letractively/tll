@@ -4,20 +4,17 @@
 package com.tll.dao.impl.hibernate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.hibernate.criterion.Criterion;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.IComparatorTranslator;
-import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.model.impl.Authority;
-import com.tll.model.key.INameKey;
+import com.tll.model.key.NameKey;
 
 /**
  * AuthorityDao
@@ -42,13 +39,8 @@ public class AuthorityDao extends EntityDao<Authority> implements IAuthorityDao 
 		return Authority.class;
 	}
 
-	public Authority load(INameKey<? extends Authority> nameKey) {
-		try {
-			return findEntity(CriteriaFactory.buildEntityCriteria(nameKey, true));
-		}
-		catch(final InvalidCriteriaException e) {
-			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);
-		}
+	@Override
+	public Authority load(NameKey<? extends Authority> nameKey) {
+		return (Authority) loadByName(nameKey);
 	}
-
 }

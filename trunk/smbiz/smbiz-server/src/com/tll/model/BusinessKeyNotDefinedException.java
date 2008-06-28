@@ -1,7 +1,5 @@
 package com.tll.model;
 
-import org.apache.commons.lang.ClassUtils;
-
 import com.tll.ApplicationException;
 
 /**
@@ -13,14 +11,21 @@ public class BusinessKeyNotDefinedException extends ApplicationException {
 	private static final long serialVersionUID = -695847771421395166L;
 
 	/**
-	 * @param claz either a entity class or a business key class
-	 * @param isBizKeyClass true if claz argument represents a entity, false if
-	 *        claz argument represents a business key
+	 * Constructor - Use when <em>no</em> business keys are defined for the
+	 * given entity type.
+	 * @param entityClass The entity type
 	 */
-	@SuppressWarnings("unchecked")
-	public BusinessKeyNotDefinedException(Class claz, boolean isBizKeyClass) {
-		super(isBizKeyClass ? ("No business keys exist for entity class: " + ClassUtils.getShortClassName(claz))
-				: ("No business key of class: " + ClassUtils.getShortClassName(claz)) + " exists");
+	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass) {
+		super("No business keys exist for  " + EntityUtil.typeName(entityClass));
 	}
 
+	/**
+	 * Constructor - Use when no business key is found for the given entity type
+	 * and business key name.
+	 * @param entityClass The entity type
+	 * @param businessKeyName The business key name
+	 */
+	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass, String businessKeyName) {
+		super("No business key of name '" + businessKeyName + "' is defined for " + EntityUtil.typeName(entityClass));
+	}
 }

@@ -27,12 +27,12 @@ import com.tll.server.rpc.Marshaler;
 public class ModelCopyTest extends AbstractModelTest {
 
 	AccountAddress getCopyTestEntity() throws Exception {
-		final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class);
+		final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
 
-		final Currency currency = getMockEntityProvider().getEntityCopy(Currency.class);
-		final Asp asp = getMockEntityProvider().getEntityCopy(Asp.class);
-		final Merchant merchant = getMockEntityProvider().getEntityCopy(Merchant.class);
-		final Address address = getMockEntityProvider().getEntityCopy(Address.class);
+		final Currency currency = getMockEntityProvider().getEntityCopy(Currency.class, false);
+		final Asp asp = getMockEntityProvider().getEntityCopy(Asp.class, false);
+		final Merchant merchant = getMockEntityProvider().getEntityCopy(Merchant.class, false);
+		final Address address = getMockEntityProvider().getEntityCopy(Address.class, false);
 
 		asp.setCurrency(currency);
 		merchant.setCurrency(currency);
@@ -67,7 +67,6 @@ public class ModelCopyTest extends AbstractModelTest {
 	 * @param visited
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	@SuppressWarnings("unchecked")
 	private void validateCopy(final Model source, final Model copy, final List<Model> visited) throws Exception {
 		assert source != null && copy != null;
 

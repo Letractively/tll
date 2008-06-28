@@ -5,27 +5,31 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.IListingCommand;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
+import com.tll.client.data.ListingRequest;
+import com.tll.client.data.RemoteListingDefinition;
+import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.ISourcesListingEvents;
 import com.tll.client.event.type.ListingEvent;
+import com.tll.client.listing.IListingOperator;
+import com.tll.client.listing.PagingUtil;
+import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
-import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingCommand - Issues RPC listing commands to the server.
+ * ListingRequest - Issues listing commands to the server.
  * @author jpk
  */
-public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements ISourcesListingEvents {
+@SuppressWarnings("unchecked")
+public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
 
-	private static final IListingServiceAsync svc;
+	private static final IListingServiceAsync<ISearch, Model> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
@@ -34,7 +38,12 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	/**
 	 * The listing event listeners.
 	 */
-	private final ListingListenerCollection listeners = new ListingListenerCollection();
+	private final ListingListenerCollection<Model> listeners = new ListingListenerCollection<Model>();
+
+	/**
+	 * The Widget that will be passed in dispatched {@link ListingEvent}s.
+	 */
+	private final Widget sourcingWidget;
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -43,115 +52,177 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	private final String listingName;
 
 	/**
-	 * The enqueued command to go to the server.
+	 * The server-side listing definition.
 	 */
-	private IListingCommand<S> listingCommand;
+	private final RemoteListingDefinition<S> listingDef;
 
 	/**
-	 * Has the listing been initially generated? This flag is necessary to discern
-	 * between refresh and initial display server listing requests.
+	 * The current list index offset.
+	 */
+	private int offset = 0;
+
+	/**
+	 * The current sorting directive.
+	 */
+	private Sorting sorting;
+
+	/**
+	 * The current list size.
+	 */
+	private int listSize = -1;
+
+	/**
+	 * Has the listing been generated?
 	 */
 	private boolean listingGenerated;
 
 	/**
-	 * Constructor
-	 * @param sourcingWidget
-	 * @param listingName
+	 * The listing request issued to the server.
 	 */
-	public ListingCommand(Widget sourcingWidget, String listingName) {
-		super(sourcingWidget);
-		this.listingName = listingName;
-	}
+	private ListingRequest<S> listingRequest;
 
 	/**
-	 * @return The unique server-side name of targeted listing.
+	 * Constructor
+	 * @param listingName The unique listing name
+	 * @param listingDef The remote listing definition
 	 */
-	public String getListingName() {
-		return listingName;
+	public ListingCommand(Widget sourcingWidget, String listingName, RemoteListingDefinition listingDef) {
+		super();
+		this.sourcingWidget = sourcingWidget;
+		this.listingName = listingName;
+		this.listingDef = listingDef;
 	}
 
-	public void addListingListener(IListingListener listener) {
+	@Override
+	protected Widget getSourcingWidget() {
+		if(sourcingWidget == null) throw new IllegalStateException("No sourcing widget set!");
+		return sourcingWidget;
+	}
+
+	public void addListingListener(IListingListener<Model> listener) {
 		listeners.add(listener);
 	}
 
-	public void removeListingListener(IListingListener listener) {
+	public void removeListingListener(IListingListener<Model> listener) {
 		listeners.remove(listener);
 	}
 
 	/**
-	 * Generate or refresh the listing.
-	 * @param listHandlerType
-	 * @param pageSize
-	 * @param props
-	 * @param searchCriteria The search criteria
+	 * Fetches listing data sending the listing definition in case it isn't cached
+	 * server-side.
+	 * @param offset The listing index offset
 	 * @param sorting The sorting directive
-	 * @param refresh Force a listing refresh if listing data is found cached on
-	 *        the server?
+	 * @param refresh Force the listing to be re-queried on the server if it is
+	 *        cached?
 	 */
-	public void list(ListHandlerType listHandlerType, int pageSize, String[] props, S searchCriteria, Sorting sorting,
-			boolean refresh) {
-		if(searchCriteria == null) {
-			throw new IllegalStateException("No criteria specified.");
-		}
-		ListingOp listingOp = (!listingGenerated || refresh) ? ListingOp.REFRESH : ListingOp.DISPLAY;
-		com.tll.client.data.ListingCommand<S> lc =
-				new com.tll.client.data.ListingCommand<S>(listingName, listHandlerType, props, pageSize, searchCriteria,
-						listingOp);
-		lc.setSorting(sorting);
-		this.listingCommand = lc;
+	private void fetch(int offset, Sorting sorting, boolean refresh) {
+		this.listingRequest =
+				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
+		execute();
 	}
 
 	/**
-	 * Issue a sort command to the server.
-	 * @param sortColumn sortColumn
+	 * Fetches listing data against a listing that is presumed to be cached
+	 * server-side. If the listing is found not to be cached server-side, the
+	 * listing response will indicate this and a subsequent fetch containing the
+	 * listing definition will be issued. This is intended to save on network
+	 * bandwidth as the case when the server-side listing cache is expired is
+	 * assumed to not occurr frequently.
+	 * @param offset The listing index offset
+	 * @param sorting The sorting directive
 	 */
-	public void sort(SortColumn sortColumn) {
-		ListingOp listingOp = ListingOp.SORT;
-		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
-		lc.setSorting(new Sorting(sortColumn));
-		this.listingCommand = lc;
-	}
-
-	/**
-	 * Navigate the listing.
-	 * @param navAction
-	 * @param pageNum
-	 */
-	public void navigate(ListingOp navAction, Integer pageNum) {
-		ListingOp listingOp = navAction;
-		com.tll.client.data.ListingCommand<S> lc = new com.tll.client.data.ListingCommand<S>(listingName, listingOp);
-		lc.setPageNumber(pageNum);
-		this.listingCommand = lc;
+	private void fetch(int offset, Sorting sorting) {
+		listingRequest = new ListingRequest<S>(listingName, offset, sorting);
+		execute();
 	}
 
 	/**
 	 * Clear the listing.
+	 * @param retainListingState Retain the listing state on the server?
 	 */
-	public void clear() {
-		listingCommand = new com.tll.client.data.ListingCommand<S>(listingName, ListingOp.CLEAR);
+	private void clear(boolean retainListingState) {
+		listingRequest = new ListingRequest<S>(listingName, retainListingState);
+		execute();
 	}
 
 	@Override
 	protected void doExecute() {
-		if(listingCommand == null) {
+		if(listingRequest == null) {
 			throw new IllegalStateException("No listing command set!");
 		}
-		svc.process(listingCommand, getAsyncCallback());
+		svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 	}
 
 	@Override
 	public void handleSuccess(ListingPayload result) {
-		assert listingCommand != null;
-		super.handleSuccess(result);
-		final ListingOp op = listingCommand.getListingOp();
-		if(!result.hasErrors() && !op.isClear()) {
-			listingGenerated = true;
-		}
-		final Sorting sorting = listingCommand.getSorting();
-		listingCommand = null; // reset
+		assert listingRequest != null;
+		assert result.getListingName() != null && listingName != null && result.getListingName().equals(listingName);
 
-		listeners.fireListingEvent(new ListingEvent(sourcingWidget, listingName, !result.hasErrors(), op, result.getPage(),
-				sorting));
+		final ListingOp op = listingRequest.getListingOp();
+
+		listingGenerated = result.getListingStatus() == ListingStatus.CACHED;
+
+		if(!listingGenerated && op.isQuery()) {
+			// we need to re-create the listing on the server - the cache has expired
+			fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+		}
+		else {
+			super.handleSuccess(result);
+			// update client-side listing state
+			offset = result.getOffset();
+			sorting = result.getSorting();
+			listSize = result.getListSize();
+			// reset
+			listingRequest = null;
+			// fire the listing event
+			listeners.fireListingEvent(new ListingEvent<Model>(sourcingWidget, op, result, listingDef.getPageSize()));
+		}
 	}
 
+	public void refresh() {
+		fetch(offset, sorting, true);
+	}
+
+	public void display() {
+		fetch(offset, sorting);
+	}
+
+	public void sort(Sorting sorting) {
+		if(!listingGenerated || (this.sorting != null && !this.sorting.equals(sorting))) {
+			fetch(offset, sorting);
+		}
+	}
+
+	public void firstPage() {
+		if(!listingGenerated || offset != 0) fetch(0, sorting);
+	}
+
+	public void gotoPage(int pageNum) {
+		final int offset = PagingUtil.listIndexFromPageNum(pageNum, listingDef.getPageSize());
+		if(!listingGenerated || this.offset != offset) fetch(offset, sorting);
+	}
+
+	public void lastPage() {
+		final int pageSize = listingDef.getPageSize();
+		final int numPages = PagingUtil.numPages(listSize, pageSize);
+		final int offset = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
+		if(listingGenerated && this.offset == offset) {
+			return;
+		}
+		fetch(offset, sorting);
+	}
+
+	public void nextPage() {
+		final int offset = this.offset + listingDef.getPageSize();
+		if(offset < listSize) fetch(offset, sorting);
+	}
+
+	public void previousPage() {
+		final int offset = this.offset - listingDef.getPageSize();
+		if(offset >= 0) fetch(offset, sorting);
+	}
+
+	public void clear() {
+		clear(true);
+	}
 }

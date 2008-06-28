@@ -4,6 +4,7 @@
 package com.tll.dao.impl;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.testng.Assert;
 
@@ -37,33 +38,27 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 	@Override
 	protected void assembleTestEntity(I e) throws Exception {
 
-		final InterfaceOption o1 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, 1);
-		InterfaceOptionParameterDefinition param =
-				getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, 1);
-		InterfaceOptionParameterDefinition param2 =
-				getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, 2);
-		o1.addParameter(param);
-		o1.addParameter(param2);
+		final InterfaceOption o1 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
+		Set<InterfaceOptionParameterDefinition> params =
+				getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+		o1.addParameters(params);
 		e.addOption(o1);
 
-		final InterfaceOption o2 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, 2);
-		param = getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, 1);
-		param2 = getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, 2);
-		o2.addParameter(param);
-		o2.addParameter(param2);
+		final InterfaceOption o2 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
+		params = getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+		o2.addParameters(params);
 		e.addOption(o2);
 	}
 
 	@Override
-	protected void uniquify(I e, int n) {
-		super.uniquify(e, n);
+	protected void uniquify(I e) {
+		super.uniquify(e);
 
 		try {
-			int i = n;
 			for(final InterfaceOption o : e.getOptions()) {
-				MockEntityProvider.makeBusinessKeyUnique(o, ++i);
+				MockEntityProvider.makeBusinessKeyUnique(o);
 				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-					MockEntityProvider.makeBusinessKeyUnique(param, i);
+					MockEntityProvider.makeBusinessKeyUnique(param);
 				}
 			}
 		}

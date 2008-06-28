@@ -29,7 +29,7 @@ import com.tll.model.EntityType;
  * CrudCommand - Issues CRUD commands to the server.
  * @author jpk
  */
-public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
+public final class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
 
 	public enum CrudOp {
 		// TODO change to LOAD_NEW ???
@@ -48,6 +48,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 
 	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
 
+	private final Widget sourcingWidget;
 	private CrudOp crudOp;
 	private EntityRequest entityRequest;
 
@@ -56,7 +57,13 @@ public class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCr
 	 * @param sourcingWidget
 	 */
 	public CrudCommand(Widget sourcingWidget) {
-		super(sourcingWidget);
+		super();
+		this.sourcingWidget = sourcingWidget;
+	}
+
+	@Override
+	protected Widget getSourcingWidget() {
+		return sourcingWidget;
 	}
 
 	/**

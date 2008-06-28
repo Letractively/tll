@@ -16,8 +16,7 @@ import com.tll.model.impl.ProdCat;
 import com.tll.model.impl.ProductCategory;
 import com.tll.model.impl.ProductGeneral;
 import com.tll.model.impl.ProductInventory;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ProdCatDaoTest
@@ -26,9 +25,9 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao")
 public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
-	IPrimaryKey<Account> aKey;
-	IPrimaryKey<ProductInventory> pKey;
-	IPrimaryKey<ProductCategory> cKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<ProductInventory> pKey;
+	PrimaryKey<ProductCategory> cKey;
 
 	/**
 	 * Constructor
@@ -41,12 +40,13 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 	protected void assembleTestEntity(ProdCat e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -55,13 +55,13 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
 		ProductInventory product;
 		if(pKey == null) {
-			product = getMockEntityProvider().getEntityCopy(ProductInventory.class);
-			final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class);
+			product = getMockEntityProvider().getEntityCopy(ProductInventory.class, true);
+			final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
 			product.setProductGeneral(gp);
 			getEntityAssembler().setGenerated(product.getProductGeneral());
 			product.setParent(account);
 			product = getDao(IProductInventoryDao.class).persist(product);
-			pKey = KeyFactory.getPrimaryKey(product);
+			pKey = new PrimaryKey<ProductInventory>(product);
 		}
 		else {
 			product = getDao(IProductInventoryDao.class).load(pKey);
@@ -71,10 +71,10 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
 		ProductCategory category;
 		if(cKey == null) {
-			category = getMockEntityProvider().getEntityCopy(ProductCategory.class);
+			category = getMockEntityProvider().getEntityCopy(ProductCategory.class, true);
 			category.setParent(account);
 			category = getDao(IProductCategoryDao.class).persist(category);
-			cKey = KeyFactory.getPrimaryKey(category);
+			cKey = new PrimaryKey<ProductCategory>(category);
 		}
 		else {
 			category = getDao(IProductCategoryDao.class).load(cKey);

@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -32,15 +31,15 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	public static final int MAXLEN_COUNTY = 64;
 	public static final int MAXLEN_POSTAL_CODE = 16;
 
-	protected String province;
+	private String province;
 
-	protected String county;
+	private String county;
 
-	protected String postalCode;
+	private String postalCode;
 
-	protected float tax;
+	private float tax;
 
-	protected Account account;
+	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SalesTax.class;
@@ -149,13 +148,4 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 			return null;
 		}
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("province", province).append("county", county).append("postalCode", postalCode).append("tax", tax).append(
-				"account", account == null ? "NULL" : account.descriptor());
-	}
-
 }

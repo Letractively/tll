@@ -28,21 +28,19 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
+import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.model.IData;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.InterfaceSearch;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
@@ -73,7 +71,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
 	 */
-	private static final class InterfacesStack extends StackPanel implements IListingListener {
+	private static final class InterfacesStack extends StackPanel implements IListingListener<Model> {
 
 		/**
 		 * InterfaceStack - Binding between a stack index and an {@link EditPanel}
@@ -181,7 +179,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 		}// InterfaceStack
 
-		private final ListingCommand<ISearch> listingCommand;
+		private final ListingCommand<InterfaceSearch> listingCommand;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -196,22 +194,22 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		public InterfacesStack() {
 			super();
 			String listingName = EntityType.INTERFACE.name();
-			listingCommand = new ListingCommand<ISearch>(this, listingName);
+			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
+			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
+			Sorting defaultSorting = new Sorting("name", "intf");
+			listingCommand =
+					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
+							defaultSorting);
 			listingCommand.addListingListener(this);
 		}
 
 		void refreshData() {
 			initialized = false;
-			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
-			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
-			Sorting sorting = new Sorting("name", "intf");
-			listingCommand.list(ListHandlerType.COLLECTION, -1, null, criteria, sorting, true);
-			listingCommand.execute();
+			listingCommand.refresh();
 		}
 
 		void clearData() {
 			listingCommand.clear();
-			listingCommand.execute();
 		}
 
 		/**
@@ -230,32 +228,6 @@ public class InterfacesView extends AbstractView implements ClickListener {
 					+ ") </p><p class=\"" + CSS.SMALL_ITALIC + " " + CSS.FLOAT_RIGHT + "\">" + desc + "</p>";
 		}
 
-		/**
-		 * Populates the stack panel with the returned listing results.
-		 * @param page The data elements
-		 */
-		private void setData(IPage<? extends IData> page) {
-			// reset stack panel
-			clear();
-
-			list.clear();
-			if(page == null || page.getNumPageElements() < 1) return;
-
-			List<? extends IData> dataList = page.getPageElements();
-			for(int i = 0; i < dataList.size(); i++) {
-				// TODO eliminate the need to cast to Model or have stronger typing
-				// somehow!!!
-				Model data = (Model) dataList.get(i);
-				RefKey ref = data.getRefKey();
-				assert ref != null && ref.isSet();
-				InterfaceStack ir = new InterfaceStack(i, ref);
-				list.add(ir);
-				add(ir.editPanel, getStackHtml(data), true);
-			}
-			showStack(-1); // hide all of them upon load
-			initialized = true;
-		}
-
 		@Override
 		public void showStack(int index) {
 			if(initialized) {
@@ -265,8 +237,25 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			super.showStack(index);
 		}
 
-		public void onListingEvent(ListingEvent event) {
-			setData(event.getPage());
+		public void onListingEvent(ListingEvent<Model> event) {
+			// reset stack panel
+			clear();
+
+			list.clear();
+			Model[] intfs = event.getPageElements();
+
+			if(intfs == null || intfs.length < 1) return;
+
+			for(int i = 0; i < intfs.length; i++) {
+				Model data = intfs[i];
+				RefKey ref = data.getRefKey();
+				assert ref != null && ref.isSet();
+				InterfaceStack ir = new InterfaceStack(i, ref);
+				list.add(ir);
+				add(ir.editPanel, getStackHtml(data), true);
+			}
+			showStack(-1); // hide all of them upon load
+			initialized = true;
 		}
 	}
 

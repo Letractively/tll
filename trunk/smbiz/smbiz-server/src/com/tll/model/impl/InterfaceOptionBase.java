@@ -8,7 +8,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
@@ -24,6 +23,8 @@ import com.tll.model.NamedTimeStampEntity;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "record_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
+
+	private static final long serialVersionUID = 342581007482865798L;
 
 	public static final int MAXLEN_CODE = 50;
 	public static final int MAXLEN_NAME = 50;
@@ -71,10 +72,4 @@ public abstract class InterfaceOptionBase extends NamedTimeStampEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("code", getCode()).append("description", getDescription());
-	}
-
 }

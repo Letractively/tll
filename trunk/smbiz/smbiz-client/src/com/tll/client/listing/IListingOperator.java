@@ -5,15 +5,16 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.data.ListingOp;
-import com.tll.listhandler.SortColumn;
+import com.tll.client.event.ISourcesListingEvents;
+import com.tll.client.model.IData;
+import com.tll.listhandler.Sorting;
 
 /**
  * IListingOperator - Performs listing ops on a particular listing. This
  * interface enables a pluggable (generic) way to provide listing data.
  * @author jpk
  */
-public interface IListingOperator {
+public interface IListingOperator<R extends IData> extends ISourcesListingEvents<R> {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then
@@ -24,30 +25,46 @@ public interface IListingOperator {
 	/**
 	 * Dispatches a listing event containing cached listing data and state. If no
 	 * listing data exists, the listing data is acquired as {@link #refresh()}
-	 * would. A corresponding listing event is then dispatched to the listing
-	 * Widget.
+	 * would.
 	 */
 	void display();
 
 	/**
 	 * Sorts the listing. A listing event is then dispatched to the listing
 	 * Widget.
-	 * @param sortColumn
+	 * @param sorting The sorting directive
 	 */
-	void sort(SortColumn sortColumn);
+	void sort(Sorting sorting);
 
 	/**
-	 * Navigates the listing. A listing event is then dispatched to the listing
-	 * Widget and any other listeners.
-	 * @param navAction
-	 * @param page The 0-based page number
+	 * Goto the first page in the listing.
 	 */
-	void navigate(ListingOp navAction, Integer page);
+	void firstPage();
+
+	/**
+	 * Goto the last page in the listing.
+	 */
+	void lastPage();
+
+	/**
+	 * Goto the next page in the listing.
+	 */
+	void nextPage();
+
+	/**
+	 * Goto the previous page in the listing.
+	 */
+	void previousPage();
+
+	/**
+	 * Goto an arbitrary page in the listing.
+	 * @param pageNum 0-based page number
+	 */
+	void gotoPage(int pageNum);
 
 	/**
 	 * Relinquishes any inter-request listing cache and state associated with the
-	 * listing this operator operates on. A listing event is then dispatched to
-	 * the listing Widget.
+	 * listing this operator operates on.
 	 */
 	void clear();
 }

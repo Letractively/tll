@@ -49,7 +49,7 @@
 		</property>
 	</bean>
 
-	<bean name="Address.1" class="com.tll.model.impl.Address" parent="entityBase" scope="prototype">
+	<bean name="Address" class="com.tll.model.impl.Address" parent="entityBase" scope="prototype">
 		<property name="address1">
 			<value>home address line 1</value>
 		</property>
@@ -63,7 +63,7 @@
 			<value>us</value>
 		</property>
 		<property name="emailAddress">
-			<value>homeaddress@domain.com</value>
+			<value>address_email@domain.com</value>
 		</property>
 		<property name="fax">
 			<value>2223334444</value>
@@ -88,51 +88,6 @@
 		</property>
 	</bean>
 
-	<bean name="Address.2" class="com.tll.model.impl.Address" parent="entityBase" scope="prototype">
-		<property name="address1">
-			<value>work address line 1</value>
-		</property>
-		<property name="address2">
-			<value>work address line 2</value>
-		</property>
-		<property name="attn">
-			<value>attn</value>
-		</property>
-		<property name="city">
-			<value>city</value>
-		</property>
-		<property name="company">
-			<value>company</value>
-		</property>
-		<property name="country">
-			<value>us</value>
-		</property>
-		<property name="emailAddress">
-			<value>workaddress@domain.com</value>
-		</property>
-		<property name="fax">
-			<value>2223334444</value>
-		</property>
-		<property name="firstName">
-			<value>firstname</value>
-		</property>
-		<property name="lastName">
-			<value>lastname</value>
-		</property>
-		<property name="mi">
-			<value>m</value>
-		</property>
-		<property name="phone">
-			<value>6667778888</value>
-		</property>
-		<property name="postalCode">
-			<value>99887H</value>
-		</property>
-		<property name="province">
-			<value>MI</value>
-		</property>
-	</bean>
-  
 	<bean name="PaymentInfo" class="com.tll.model.impl.PaymentInfo" parent="entityBase" scope="prototype">
 		<property name="name">
 			<value>paymentinfo</value>
@@ -293,21 +248,12 @@
 		</property>
 	</bean>
 
-	<bean name="AccountAddress.1" class="com.tll.model.impl.AccountAddress" parent="entityBase" scope="prototype">
+	<bean name="AccountAddress" class="com.tll.model.impl.AccountAddress" parent="entityBase" scope="prototype">
 		<property name="name">
-			<value>account address - home</value>
+			<value>home</value>
 		</property>
 		<property name="type">
 			<value>HOME</value>
-		</property>
-	</bean>
-
-	<bean name="AccountAddress.2" class="com.tll.model.impl.AccountAddress" parent="entityBase" scope="prototype">
-		<property name="name">
-			<value>account address - work</value>
-		</property>
-		<property name="type">
-			<value>WORK</value>
 		</property>
 	</bean>
 
@@ -320,19 +266,19 @@
 		</property>
 	</bean>
 
-	<bean name="Authority.1" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
+	<bean name="ROLE_ADMINISTRATOR" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
 		<property name="authority">
 			<value>ROLE_ADMINISTRATOR</value>
 		</property>
 	</bean>
 	
-	<bean name="Authority.2" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
+	<bean name="ROLE_USER" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
 		<property name="authority">
 			<value>ROLE_USER</value>
 		</property>
 	</bean>
 	
-	<bean name="Authority.3" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
+	<bean name="ROLE_ANONYMOUS" class="com.tll.model.impl.Authority" parent="entityBase" scope="prototype">
 		<property name="authority">
 			<value>ROLE_ANONYMOUS</value>
 		</property>
@@ -386,31 +332,31 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceSingle.1" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="Interface1" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Payment Processor</value></property>
 		<property name="code"><value>pymntproc</value></property>
 		<property name="description"><value>Gateway for online payments.</value></property>
 	</bean>
 
-	<bean name="InterfaceSingle.2" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="Interface2" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Shipping Method</value></property>
 		<property name="code"><value>shipmethod</value></property>
 		<property name="description"><value>Method of product delivery.</value></property>
 	</bean>
 
-	<bean name="InterfaceSingle.3" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
+	<bean name="Interface3" class="com.tll.model.impl.InterfaceSingle" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Sales Tax</value></property>
 		<property name="code"><value>salestax</value></property>
 		<property name="description"><value>Sales Tax model.</value></property>
 	</bean>
 
-	<bean name="InterfaceMulti" class="com.tll.model.impl.InterfaceMulti" parent="interfaceBase" scope="prototype">
+	<bean name="Interface4" class="com.tll.model.impl.InterfaceMulti" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Payment Method</value></property>
 		<property name="code"><value>pymntmethod</value></property>
 		<property name="description"><value>Supported payment methods.</value></property>
 	</bean>
 
-	<bean name="InterfaceSwitch" class="com.tll.model.impl.InterfaceSwitch" parent="interfaceBase" scope="prototype">
+	<bean name="Interface5" class="com.tll.model.impl.InterfaceSwitch" parent="interfaceBase" scope="prototype">
 		<property name="name"><value>Cross Selling</value></property>
 		<property name="code"><value>crosssell</value></property>
 		<property name="description"><value>Merchant product cross selling.</value></property>
@@ -461,7 +407,7 @@
 		</property>
 	</bean>
 
-	<bean name="InterfaceOption.1" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption1" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_payproc</value>
 		</property>
@@ -476,7 +422,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.2" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption2" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>verisign_payproc</value>
 		</property>
@@ -491,7 +437,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.3" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption3" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_shipmethod</value>
 		</property>
@@ -506,7 +452,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.4" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption4" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>native_salestax</value>
 		</property>
@@ -521,7 +467,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.5" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption5" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>visa</value>
 		</property>
@@ -536,7 +482,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.6" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption6" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>mc</value>
 		</property>
@@ -551,7 +497,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOption.7" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
+	<bean name="InterfaceOption7" class="com.tll.model.impl.InterfaceOption" parent="ioBase" scope="prototype">
 		<property name="code">
 			<value>crosssell-switch</value>
 		</property>
@@ -566,7 +512,7 @@
 		</property>
 	</bean>
 
-	<bean name="InterfaceOptionParameterDefinition.1" class="com.tll.model.impl.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+	<bean name="InterfaceOptionParameterDefinition1" class="com.tll.model.impl.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
 		<property name="code">
 			<value>verisignP1</value>
 		</property>
@@ -578,7 +524,7 @@
 		</property>
 	</bean>
 	
-	<bean name="InterfaceOptionParameterDefinition.2" class="com.tll.model.impl.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
+	<bean name="InterfaceOptionParameterDefinition2" class="com.tll.model.impl.InterfaceOptionParameterDefinition" parent="entityBase" scope="prototype">
 		<property name="code">
 			<value>verisignP2</value>
 		</property>
@@ -639,26 +585,10 @@
 		<property name="invReorderLevel"><value>5</value></property>
 	</bean>
 	
-	<bean name="ProductCategory.1" class="com.tll.model.impl.ProductCategory" parent="entityBase" scope="prototype">
+	<bean name="ProductCategory" class="com.tll.model.impl.ProductCategory" parent="entityBase" scope="prototype">
 		<property name="name"><value>category A</value></property>
 		<property name="description"><value>description</value></property>
 		<property name="image"><value>image</value></property>
-	</bean>
-	
-	<bean name="ProductCategory.2" class="com.tll.model.impl.ProductCategory" parent="ProductCategory.1" scope="prototype">
-		<property name="name"><value>category B</value></property>
-	</bean>
-	
-	<bean name="ProductCategory.3" class="com.tll.model.impl.ProductCategory" parent="ProductCategory.1" scope="prototype">
-		<property name="name"><value>category C</value></property>
-	</bean>
-	
-	<bean name="ProductCategory.4" class="com.tll.model.impl.ProductCategory" parent="ProductCategory.1" scope="prototype">
-		<property name="name"><value>category D</value></property>
-	</bean>
-	
-	<bean name="ProductCategory.5" class="com.tll.model.impl.ProductCategory" parent="ProductCategory.1" scope="prototype">
-		<property name="name"><value>category E</value></property>
 	</bean>
 	
 	<bean name="ProdCat" class="com.tll.model.impl.ProdCat" parent="entityBase" scope="prototype">
@@ -679,13 +609,13 @@
 		<property name="srcZip"><value>93321</value></property>
 	</bean>
 	
-	<bean name="ShipBoundCost.1" class="com.tll.model.impl.ShipBoundCost" parent="entityBase" scope="prototype">
+	<bean name="ShipBoundCost1" class="com.tll.model.impl.ShipBoundCost" parent="entityBase" scope="prototype">
 		<property name="lbound"><value>0</value></property>
 		<property name="ubound"><value>10</value></property>
 		<property name="cost"><value>5.01</value></property>
 	</bean>
 	
-	<bean name="ShipBoundCost.2" class="com.tll.model.impl.ShipBoundCost" parent="entityBase" scope="prototype">
+	<bean name="ShipBoundCost2" class="com.tll.model.impl.ShipBoundCost" parent="entityBase" scope="prototype">
 		<property name="lbound"><value>11</value></property>
 		<property name="ubound"><value>1000</value></property>
 		<property name="cost"><value>20.01</value></property>
@@ -712,7 +642,7 @@
 		<property name="siteCode"><value>site-code</value></property>
 	</bean>
 	
-	<bean name="OrderItem.1" class="com.tll.model.impl.OrderItem" parent="entityBase" scope="prototype">
+	<bean name="OrderItem1" class="com.tll.model.impl.OrderItem" parent="entityBase" scope="prototype">
 		<property name="sku"><value>sku</value></property>
 		<property name="itemStatus"><value>O</value></property>
 		<property name="payStatus"><value>A</value></property>
@@ -724,7 +654,7 @@
 		<property name="image"><value>image.gif</value></property>
 	</bean>
 
-	<bean name="OrderItem.2" class="com.tll.model.impl.OrderItem" parent="OrderItem.1" scope="prototype">
+	<bean name="OrderItem2" class="com.tll.model.impl.OrderItem" parent="OrderItem1" scope="prototype">
     <property name="name"><value>item name1</value></property>
 		<property name="sku"><value>sku2</value></property>
 	</bean>
@@ -741,12 +671,12 @@
 		<property name="total"><value>26.78</value></property>
 	</bean>
 	
-	<bean name="OrderItemTrans.1" class="com.tll.model.impl.OrderItemTrans" parent="entityBase" scope="prototype">
+	<bean name="OrderItemTrans1" class="com.tll.model.impl.OrderItemTrans" parent="entityBase" scope="prototype">
 		<property name="orderItemTransOp"><value>A</value></property>
 		<property name="amount"><value>22.01</value></property>
 	</bean>
 
-	<bean name="OrderItemTrans.2" class="com.tll.model.impl.OrderItemTrans" parent="entityBase" scope="prototype">
+	<bean name="OrderItemTrans2" class="com.tll.model.impl.OrderItemTrans" parent="entityBase" scope="prototype">
 		<property name="orderItemTransOp"><value>C</value></property>
 		<property name="amount"><value>11.33</value></property>
 	</bean>

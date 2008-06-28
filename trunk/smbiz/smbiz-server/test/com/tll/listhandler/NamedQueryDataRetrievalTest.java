@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
@@ -27,6 +27,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
@@ -127,23 +128,17 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	@Override
 	protected void beforeClass() {
 		super.beforeClass();
-
 		if(daoMode == DaoMode.ORM) {
-			getDbShell().create();
-			getDbShell().clear();
-			getDbShell().stub();
+			getDbShell().restub();
 		}
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		final DaoModule dm = new DaoModule(daoMode);
-		modules.add(dm);
-
-		final EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(daoMode));
+		modules.add(new EntityServiceModule());
 	}
 
 	/**
@@ -162,21 +157,19 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	 */
 	protected <T> void validateListHandler(IListHandler<T> listHandler, Sorting sorting) throws Exception {
 		assert listHandler != null : "The list handler is null";
+		assert listHandler.getElements(0, 1, sorting) != null : "Unable to obtain the first list handler element";
 		assert listHandler.size() > 0 : "No list handler elements exist";
-		assert sorting != null && listHandler.getSorting() != null && listHandler.getSorting().equals(sorting) : "List handler sorting differs";
-		assert listHandler.getElement(0) != null : "Unable to obtain the first list handler element";
 	}
 
 	public void test() throws Exception {
 
-		final int pageSize = 2;
 		IListHandlerDataProvider<IEntity> dataProvider;
 		ICriteria<? extends IEntity> criteria;
 
 		// iterator through all defined select named queries
 		for(SelectNamedQuery nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
-			criteria = CriteriaFactory.buildQueryCriteria(nq, queryParamsBindings.get(nq));
+			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types
@@ -185,11 +178,11 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
 					case COLLECTION:
-						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						break;
 					case IDLIST:
 						try {
-							listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 							Assert.fail("Able to create id list based list handler for a scalar named query!");
 						}
 						catch(InvalidCriteriaException e) {
@@ -197,7 +190,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 						}
 						break;
 					case PAGE:
-						listHandler = ListHandlerFactory.create(criteria, sorting, lht, pageSize, dataProvider);
+						listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						break;
 					default:
 						throw new Error("Unhandled list handler type: " + lht.toString());

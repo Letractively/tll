@@ -14,23 +14,31 @@ import com.tll.client.data.Payload;
  * ForgotPasswordCommand
  * @author jpk
  */
-public class ForgotPasswordCommand extends RpcCommand<Payload> {
+public final class ForgotPasswordCommand extends RpcCommand<Payload> {
 
 	private static final IForgotPasswordServiceAsync svc;
-	private final String emailAddress;
-
 	static {
 		svc = (IForgotPasswordServiceAsync) GWT.create(IForgotPasswordService.class);
 		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/adminForgotPassword");
 	}
 
+	private final Widget sourcingWidget;
+	private final String emailAddress;
+
 	/**
 	 * Constructor
+	 * @param sourcingWidget
 	 * @param emailAddress
 	 */
 	public ForgotPasswordCommand(Widget sourcingWidget, String emailAddress) {
-		super(sourcingWidget);
+		super();
+		this.sourcingWidget = sourcingWidget;
 		this.emailAddress = emailAddress;
+	}
+
+	@Override
+	protected Widget getSourcingWidget() {
+		return sourcingWidget;
 	}
 
 	@Override

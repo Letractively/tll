@@ -19,14 +19,13 @@
       <property name="hibernate.connection.username" value="${db.username}" />
       <property name="hibernate.connection.password" value="${db.password}" />
       <property name="hibernate.connection.url" value="${db.urlprefix}/${db.name}" />
-      <property name="hibernate.connection.pool_size" value="${db.pool.max}" />
 
-      <property name="hibernate.c3p0.acquire_increment" value="${hibernate.c3p0.acquire_increment}" /> 
-      <property name="hibernate.c3p0.idle_test_period" value="${hibernate.c3p0.idle_test_period}" /> 
       <property name="hibernate.c3p0.max_size" value="${hibernate.c3p0.max_size}" /> 
-      <property name="hibernate.c3p0.max_statements" value="${hibernate.c3p0.max_statements}" />
       <property name="hibernate.c3p0.min_size" value="${hibernate.c3p0.min_size}" />
       <property name="hibernate.c3p0.timeout" value="${hibernate.c3p0.timeout}" />
+      <property name="hibernate.c3p0.max_statements" value="${hibernate.c3p0.max_statements}" />
+      <property name="hibernate.c3p0.acquire_increment" value="${hibernate.c3p0.acquire_increment}" /> 
+      <property name="hibernate.c3p0.idle_test_period" value="${hibernate.c3p0.idle_test_period}" /> 
 
       <property name="hibernate.verbose" value="${hibernate.verbose}" />
       <property name="hibernate.show_sql" value="${hibernate.show_sql}" />
@@ -58,7 +57,6 @@
       <property name="hibernate.connection.username" value="${db.username}" />
       <property name="hibernate.connection.password" value="${db.password}" />
       <property name="hibernate.connection.url" value="${db.urlprefix}/${db.test.name}" />
-      <property name="hibernate.connection.pool_size" value="${db.pool.max}" />
 
       <property name="hibernate.c3p0.acquire_increment" value="${hibernate.c3p0.acquire_increment}" /> 
       <property name="hibernate.c3p0.idle_test_period" value="${hibernate.c3p0.idle_test_period}" /> 

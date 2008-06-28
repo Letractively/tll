@@ -23,7 +23,6 @@ import javax.persistence.Transient;
 
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Email;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
@@ -50,9 +49,9 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	public static final String SUPERUSER = "jpk";
 
-	protected String emailAddress;
+	private String emailAddress;
 
-	protected transient String password;
+	private transient String password;
 
 	private boolean locked = true;
 
@@ -62,9 +61,9 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	private Set<Authority> authorities = new LinkedHashSet<Authority>(3);
 
-	protected Account account;
+	private Account account;
 
-	protected Address address;
+	private Address address;
 
 	public Class<? extends IEntity> entityClass() {
 		return User.class;
@@ -225,7 +224,8 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 * @return Returns the address.
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE, CascadeType.PERSIST })
+		CascadeType.MERGE,
+		CascadeType.PERSIST })
 	@JoinColumn(name = "adr_id")
 	public Address getAddress() {
 		return address;
@@ -297,15 +297,4 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-
-		return super.toStringBuilder()
-
-		.append("emailAddress", emailAddress).append("locked", locked).append("expires", expires).append("account",
-				account == null ? "NULL" : account.descriptor()).append("address",
-				address == null ? "NULL" : address.descriptor()).append("authorities: ", authorities);
-	}
-
 }

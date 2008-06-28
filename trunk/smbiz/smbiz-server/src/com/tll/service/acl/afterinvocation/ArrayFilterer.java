@@ -17,13 +17,15 @@ class ArrayFilterer implements IFilterer {
 	protected static final Log logger = LogFactory.getLog(ArrayFilterer.class);
 
 	// ~ Instance fields
-	// ================================================================================================
+	//============================================================================
+	// ====================
 
 	private final Set<Object> removeList;
 	private final Object[] list;
 
 	// ~ Constructors
-	// ===================================================================================================
+	//============================================================================
+	// =======================
 
 	ArrayFilterer(Object[] list) {
 		this.list = list;
@@ -35,7 +37,8 @@ class ArrayFilterer implements IFilterer {
 	}
 
 	// ~ Methods
-	// ========================================================================================================
+	//============================================================================
+	// ============================
 
 	public Object getFilteredObject() {
 		// Recreate an array of same type and filter the removed objects.
@@ -65,7 +68,6 @@ class ArrayFilterer implements IFilterer {
 		return new ArrayIterator(list);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void remove(Object object) {
 		removeList.add(object);
 	}

@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -35,6 +34,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Interface extends NamedTimeStampEntity {
+
+	private static final long serialVersionUID = 5959712644331302508L;
 
 	static final String SWITCH_VALUE = "0";
 	static final String SINGLE_VALUE = "1";
@@ -289,21 +290,4 @@ public abstract class Interface extends NamedTimeStampEntity {
 	public int getNumOptions() {
 		return getCollectionSize(options);
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-
-		return super.toStringBuilder()
-
-		.append("code", name).append("name", name).append("description", description)
-
-		.append("isAvailableAsp", isAvailableAsp).append("isAvailableIsp", isAvailableIsp).append("isAvailableMerchant",
-				isAvailableMerchant).append("isAvailableCustomer", isAvailableCustomer)
-
-		.append("isRequiredAsp", isRequiredAsp).append("isRequiredIsp", isRequiredIsp).append("isRequiredMerchant",
-				isRequiredMerchant).append("isRequiredCustomer", isRequiredCustomer)
-
-		.append("options.size()", options == null ? "NULL" : Integer.toString(options.size()));
-	}
-
 }

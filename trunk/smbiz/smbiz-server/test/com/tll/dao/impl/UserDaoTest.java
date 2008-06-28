@@ -14,8 +14,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.User;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * NamedEntityDaoTest
@@ -24,8 +23,8 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao")
 public class UserDaoTest extends NamedEntityDaoTest<User> {
 
-	IPrimaryKey<Account> aKey;
-	IPrimaryKey<Authority> tKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Authority> tKey;
 
 	/**
 	 * Constructor
@@ -38,12 +37,13 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 	protected void assembleTestEntity(User e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -53,9 +53,9 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		Authority auth;
 		if(tKey == null) {
-			auth = getMockEntityProvider().getEntityCopy(Authority.class);
+			auth = getMockEntityProvider().getEntityCopy(Authority.class, true);
 			auth = getDao(IAuthorityDao.class).persist(auth);
-			tKey = KeyFactory.getPrimaryKey(auth);
+			tKey = new PrimaryKey<Authority>(auth);
 		}
 		else {
 			auth = getDao(IAuthorityDao.class).load(tKey);
@@ -132,7 +132,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		dao.clear();
 		startNewTransaction();
-		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
+		e = getEntityFromDb(new PrimaryKey<User>(e));
 		Assert.assertEquals(e.getUsername(), "newbie@booble.com", "Usernames don't match on user setCredentials() test");
 		Assert.assertEquals(e.getPassword(), "pswd", "Passwords don't match on user setCredentials() test");
 		endTransaction();

@@ -18,17 +18,23 @@ public abstract class BaseEvent extends EventObject {
 	 * Constructor
 	 * @param source The object that sourced the event
 	 */
-	public BaseEvent(Widget source) {
+	public BaseEvent(Object source) {
 		super(source);
 	}
 
+	/**
+	 * @return The sourcing Widget which is <code>null</code> when the source is
+	 *         not a Widget type.
+	 */
 	public final Widget getWidget() {
-		return (Widget) getSource();
+		final Object source = getSource();
+		return source instanceof Widget ? (Widget) source : null;
 	}
 
 	@Override
 	public String toString() {
-		// return "Event: " + GWT.getTypeName(this) + " source: " + GWT.getTypeName(getSource());
+		// return "Event: " + GWT.getTypeName(this) + " source: " +
+		// GWT.getTypeName(getSource());
 		return "Event: " + getClass().getName() + " source: " + getClass().getName();
 	}
 }

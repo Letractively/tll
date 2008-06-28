@@ -99,8 +99,8 @@ public final class Marshaler {
 		/**
 		 * Searches for a {@link Binding} given an {@link Object} ref.
 		 * @param source
-		 * @return The found {@link Binding} or <code>null</code> if not present
-		 *         in this stack.
+		 * @return The found {@link Binding} or <code>null</code> if not present in
+		 *         this stack.
 		 */
 		public Binding find(final Object source) {
 			for(final Binding b : this) {
@@ -114,8 +114,8 @@ public final class Marshaler {
 		/**
 		 * Searches for a {@link Binding} given a {@link Model} ref.
 		 * @param group
-		 * @return The found {@link Binding} or <code>null</code> if not present
-		 *         in this stack.
+		 * @return The found {@link Binding} or <code>null</code> if not present in
+		 *         this stack.
 		 */
 		public Binding find(final Model group) {
 			for(final Binding b : this) {
@@ -363,7 +363,6 @@ public final class Marshaler {
 	 * @return Marshaled object as a {@link Model}.
 	 * @throws SystemError upon any error encountered.
 	 */
-	@SuppressWarnings("unchecked")
 	public <S extends IScalar> Model marshalScalar(final S source, final MarshalOptions options) {
 
 		final Model model = new Model(EntityUtil.entityTypeFromClass(source.getRefType()));
@@ -389,7 +388,6 @@ public final class Marshaler {
 	 * @param entityGroup
 	 * @return Un-marshaled server-side {@link IEntity} instance.
 	 */
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model entityGroup) {
 		BindingStack visited = new BindingStack();
 		final E e = unmarshalEntity(entityClass, entityGroup, visited);

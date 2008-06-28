@@ -15,6 +15,7 @@ import javax.persistence.EntityExistsException;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -24,18 +25,20 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
+import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.guice.DaoModule;
-import com.tll.listhandler.IPage;
+import com.tll.guice.JpaModule;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.Sorting;
+import com.tll.model.BusinessKeyFactory;
+import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.EnumUtil;
 
 /**
@@ -88,6 +91,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(daoMode));
 	}
 
@@ -129,7 +133,16 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		}
 	}
 
+	@AfterClass(alwaysRun = true)
+	public final void onAfterClass() {
+		afterClass();
+	}
+
 	@BeforeMethod(alwaysRun = true)
+	public final void onBeforeMethod() {
+		beforeMethod();
+	}
+
 	@Override
 	protected final void beforeMethod() {
 		super.beforeMethod();
@@ -138,6 +151,10 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	@AfterMethod(alwaysRun = true)
+	public final void onAfterMethod() {
+		afterMethod();
+	}
+
 	@Override
 	protected final void afterMethod() {
 		super.afterMethod();
@@ -199,10 +216,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	/**
 	 * Uniquify the entity - may be overridden by sub-classes.
 	 * @param e
-	 * @param i
 	 */
-	protected void uniquify(E e, int i) {
-		makeUnique(e, i);
+	protected void uniquify(E e) {
+		makeUnique(e);
 	}
 
 	/**
@@ -212,9 +228,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	protected final E getTestEntity() throws Exception {
-		final E e = getMockEntityProvider().getEntityCopy(entityClass);
+		final E e = getMockEntityProvider().getEntityCopy(entityClass, false);
 		assembleTestEntity(e);
-		uniquify(e, 1);
+		uniquify(e);
 		return e;
 	}
 
@@ -230,7 +246,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		final List<E> list = new ArrayList<E>(n);
 		for(int i = 1; i <= n; i++) {
 			final E e = getTestEntity();
-			uniquify(e, i);
+			uniquify(e);
 			list.add(e);
 		}
 		return list;
@@ -264,11 +280,11 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.persist(entity);
 		}
 
-		public E load(IPrimaryKey<? extends E> key) {
+		public E load(PrimaryKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
-		public E load(IBusinessKey<? extends E> key) {
+		public E load(BusinessKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
@@ -312,13 +328,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			return rawDao.find(criteria, sorting);
 		}
 
-		public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
-				throws InvalidCriteriaException {
-			return rawDao.getPage(criteria, sorting, page, pageSize);
-		}
-
-		public IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum) {
-			return rawDao.getPage(currentPage, newPageNum);
+		public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset,
+				int pageSize) throws InvalidCriteriaException {
+			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
 
 		public void clear() {
@@ -329,6 +341,24 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			rawDao.flush();
 		}
 
+	}
+
+	/**
+	 * Ensures two entities are non-unique by business key.
+	 * @param e1
+	 * @param e2
+	 */
+	protected final void ensureNonUnique(E e1, E e2) {
+		if(e2 instanceof ITimeStampEntity) {
+			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
+			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
+		}
+		try {
+			BusinessKeyFactory.apply(e2, BusinessKeyFactory.create(e1));
+		}
+		catch(BusinessKeyNotDefinedException e) {
+			// assume ok
+		}
 	}
 
 	/**
@@ -352,7 +382,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected abstract void verifyLoadedEntityState(E e) throws Exception;
 
-	protected final E getEntityFromDb(IPrimaryKey<E> key) {
+	protected final E getEntityFromDb(PrimaryKey<? extends E> key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
@@ -387,7 +417,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(KeyFactory.getPrimaryKey(entityClass, persistentId));
+		e = dao.load(new PrimaryKey<E>(entityClass, persistentId));
 		Assert.assertNotNull(e, "The loaded entity is null");
 		verifyLoadedEntityState(e);
 		endTransaction();
@@ -401,7 +431,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
+		e = getEntityFromDb(new PrimaryKey<E>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
 		verifyEntityAlteration(e);
@@ -421,7 +451,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		dbRemove.clear();
 		startNewTransaction();
-		e = getEntityFromDb(KeyFactory.getPrimaryKey(e));
+		e = getEntityFromDb(new PrimaryKey<E>(e));
 		endTransaction();
 		Assert.assertNull(e, "The entity was not purged");
 	}
@@ -442,6 +472,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	@Test(groups = "dao")
+	@SuppressWarnings("unchecked")
 	public final void testFindEntities() throws Exception {
 		E e = getTestEntity();
 		e = dao.persist(e);
@@ -450,7 +481,8 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		dbRemove.add(e);
 
 		startNewTransaction();
-		final ICriteria<? extends E> criteria = CriteriaFactory.buildEntityCriteria(KeyFactory.getPrimaryKey(e));
+		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
+		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<E>(e));
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");
@@ -498,12 +530,12 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		}
 		setComplete();
 		endTransaction();
-		final ICriteria<? extends E> crit =
-				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+		Criteria<? extends E> criteria = new Criteria<E>(entityClass);
+		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
 		startNewTransaction();
-		final List<Integer> dbIdList = dao.getIds(crit, simpleIdSorting);
+		final List<Integer> dbIdList = dao.getIds(criteria, simpleIdSorting);
 		Assert.assertTrue(entitiesAndIdsEquals(dbIdList, entityList), "getIds list is empty or has incorrect ids");
 		endTransaction();
 
@@ -536,23 +568,24 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
+		final Criteria<? extends E> crit = new Criteria<E>(entityClass);
+		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
+
 		startNewTransaction();
-		final ICriteria<? extends E> crit =
-				CriteriaFactory.buildEntityCriteria(entityClass, IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
-		IPage<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 2,
+		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of initial page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(page, 1);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 2,
+		page = dao.getPage(crit, simpleIdSorting, 2, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of subsequent page elements");
 		endTransaction();
 
 		startNewTransaction();
-		page = dao.getPage(page, 2);
-		Assert.assertTrue(page != null && page.getPageElements() != null && page.getPageElements().size() == 1,
+		page = dao.getPage(crit, simpleIdSorting, 4, 2);
+		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
 				"Empty or invalid number of last page elements");
 		endTransaction();
 	}
@@ -571,10 +604,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 		startNewTransaction();
 		E e2 = getTestEntity();
-		if(e2 instanceof ITimeStampEntity) {
-			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
-			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
-		}
+		ensureNonUnique(e, e2);
 		try {
 			e2 = dao.persist(e2);
 			setComplete();

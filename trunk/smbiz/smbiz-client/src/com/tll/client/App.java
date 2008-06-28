@@ -7,7 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.ui.GlassPanel;
+import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.ImageBundle;
 import com.tll.client.ui.ThrobbingPanel;
 
@@ -23,14 +23,14 @@ public abstract class App {
 	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
 
 	/**
-	 * The single glass panel that is shared among the client widgets.
+	 * The single busy panel that is shared among the client widgets.
 	 */
-	private static final GlassPanel theGlassPanel = new GlassPanel(false, null, 20, new ThrobbingPanel());
+	private static final BusyPanel theBusyPanel = new BusyPanel(false, null, 20, new ThrobbingPanel());
 
 	/**
-	 * The global counter used to decide on whether to show/hide the glass panel.
+	 * The global counter used to decide on whether to show/hide the busy panel.
 	 */
-	private static int glassPanelCounter = 0;
+	private static int busyCounter = 0;
 
 	/**
 	 * @return the app scoped {@link ImageBundle} instance.
@@ -40,28 +40,28 @@ public abstract class App {
 	}
 
 	public static void busy() {
-		if(glassPanelCounter++ == 0) {
-			RootPanel.get().add(theGlassPanel, 0, 0);
+		if(busyCounter++ == 0) {
+			RootPanel.get().add(theBusyPanel, 0, 0);
 		}
 	}
 
 	public static void unbusy() {
-		if(--glassPanelCounter == 0) {
-			theGlassPanel.removeFromParent();
+		if(--busyCounter == 0) {
+			theBusyPanel.removeFromParent();
 		}
 	}
 
 	public static void resetBusy() {
-		glassPanelCounter = 0;
-		theGlassPanel.removeFromParent();
+		busyCounter = 0;
+		theBusyPanel.removeFromParent();
 	}
 
 	public static void darkenGlassPanel() {
-		theGlassPanel.setOpacity(60);
+		theBusyPanel.setOpacity(60);
 	}
 
 	public static void lightenGlassPanel() {
-		theGlassPanel.setOpacity(20);
+		theBusyPanel.setOpacity(20);
 	}
 
 	/**
@@ -75,8 +75,8 @@ public abstract class App {
 	public static final Constants constants = (Constants) GWT.create(Constants.class);
 
 	/**
-	 * Overrides the {@link GWT#getModuleBaseURL()} behavior so RPC service entry points URL
-	 * calculations may remain agnostic to script/host mode. <br>
+	 * Overrides the {@link GWT#getModuleBaseURL()} behavior so RPC service entry
+	 * points URL calculations may remain agnostic to script/host mode. <br>
 	 * GWT.getModuleBaseURL() doesn't cut it when in host mode.
 	 * @return The base URL of the app
 	 */
@@ -88,7 +88,8 @@ public abstract class App {
 	}
 
 	/**
-	 * Performs initialization stuff that should be invoked immediately in onModuleLoad()
+	 * Performs initialization stuff that should be invoked immediately in
+	 * onModuleLoad()
 	 */
 	public static void init() {
 
@@ -110,6 +111,7 @@ public abstract class App {
 		if(caught != null) {
 			final String stacktrace = getStacktraceAsString(caught);
 			Window.alert(stacktrace);
+			if(!GWT.isScript()) GWT.log("Error", caught);
 		}
 		else {
 			final String message = "An Error occurred, but we have no further information about the cause.";

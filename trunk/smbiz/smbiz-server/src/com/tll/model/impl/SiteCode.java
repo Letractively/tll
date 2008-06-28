@@ -12,7 +12,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
@@ -33,11 +32,11 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 	public static final int MAXLEN_CODE = 16;
 	public static final int MAXLEN_NAME = 64;
 
-	protected String code; // unique
+	private String code; // unique
 
-	protected Date expirationDate;
+	private Date expirationDate;
 
-	protected Account account;
+	private Account account;
 
 	public Class<? extends IEntity> entityClass() {
 		return SiteCode.class;
@@ -115,11 +114,4 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 			return null;
 		}
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("code", code).append("name", name).append("expirationDate", expirationDate)
-				.append("account", account == null ? "NULL" : account.descriptor());
-	}
-
 }

@@ -5,18 +5,20 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
  * IListingConfig - The listing configuration definition encompassing
  * non-runtime listing attributes.
+ * @param <R> The listing row data type
  * @author jpk
  */
-public interface IListingConfig {
+public interface IListingConfig<R extends IData> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
-	public static final ITableCellTransformer DEFAULT_TABLE_CELL_TRANSFORMER = new DefaultTableCellTransformer();
+	public static final ModelDataCellRenderer MODEL_DATA_CELL_RENDERER = new ModelDataCellRenderer();
 
 	/**
 	 * @return A unique name to assign to the listing. Critical for server-side
@@ -41,13 +43,7 @@ public interface IListingConfig {
 	Column[] getColumns();
 
 	/**
-	 * Shall the listing be pageable?
-	 * @return true/false
-	 */
-	boolean isPageable();
-
-	/**
-	 * @return The page size or <code>-1</code> for no paging.
+	 * @return The desired page size or <code>-1</code> for no paging.
 	 */
 	int getPageSize();
 
@@ -66,7 +62,7 @@ public interface IListingConfig {
 	 * @return The table cell transformer responsible for rendering cell values
 	 *         from the backing listing data.
 	 */
-	ITableCellTransformer getTableCellTransformer();
+	ITableCellRenderer<R> getCellRenderer();
 
 	/**
 	 * Show the listing nav bar?
@@ -81,8 +77,19 @@ public interface IListingConfig {
 	boolean isShowRefreshBtn();
 
 	/**
-	 * Show the add row button?
-	 * @return true/false
+	 * Optional add row handler. This is usually used in conjunction w/ the
+	 * oprional add button in the listing's nav bar. If this property is set and
+	 * intended for use, make sure the {@link #isShowNavBar()} is set to
+	 * <code>true</code>.
+	 * @return The optional add row handler.
 	 */
-	boolean isShowAddBtn();
+	IAddRowDelegate getAddRowHandler();
+
+	/**
+	 * Optional row options provider and handler. If set, a contextual poupup with
+	 * vertically laid out options will appear when a listing row is clicked. This
+	 * handler is delegated to for handling option selection.
+	 * @return The optional row context handler.
+	 */
+	IRowOptionsDelegate getRowOptionsHandler();
 }

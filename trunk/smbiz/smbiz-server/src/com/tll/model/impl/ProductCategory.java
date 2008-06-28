@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -19,30 +18,31 @@ import com.tll.model.NamedTimeStampEntity;
 
 /**
  * Product category entity
- * 
  * @author jpk
  */
 @Entity
 @Table(name = "product_category")
 public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+
 	private static final long serialVersionUID = 5218888162655443332L;
 
 	public static final int MAXLEN_NAME = 128;
 	public static final int MAXLEN_DESCRIPTION = 255;
 	public static final int MAXLEN_IMAGE = 64;
 
-	protected Account account;
+	private Account account;
 
-	protected String description;
+	private String description;
 
-	protected String image;
+	private String image;
 
 	public Class<? extends IEntity> entityClass() {
 		return ProductCategory.class;
 	}
 
-  @Column
-  @NotEmpty @Length(max=MAXLEN_NAME)
+	@Column
+	@NotEmpty
+	@Length(max = MAXLEN_NAME)
 	public String getName() {
 		return name;
 	}
@@ -114,14 +114,4 @@ public class ProductCategory extends NamedTimeStampEntity implements IChildEntit
 			return null;
 		}
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-		.append("account", account == null ? "NULL" : account.descriptor())
-		.append("name", name)
-		.append("description", description)
-		.append("image", image);
-	}
-
 }

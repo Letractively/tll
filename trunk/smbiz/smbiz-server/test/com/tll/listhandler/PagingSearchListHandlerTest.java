@@ -12,12 +12,12 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.CriteriaFactory;
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.model.INamedEntity;
 import com.tll.model.impl.Account;
 import com.tll.service.entity.impl.account.IAccountService;
@@ -39,17 +39,15 @@ public class PagingSearchListHandlerTest extends DbTest {
 	@BeforeClass(alwaysRun = true)
 	public void onBeforeClass() {
 		beforeClass();
+		getDbShell().restub();
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		DaoModule dm = new DaoModule(DaoMode.ORM);
-		modules.add(dm);
-
-		EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(DaoMode.ORM));
+		modules.add(new EntityServiceModule());
 	}
 
 	@Test
@@ -62,24 +60,27 @@ public class PagingSearchListHandlerTest extends DbTest {
 		assert allAccounts.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
 
-		ICriteria<Account> c = CriteriaFactory.buildEntityCriteria(Account.class);
+		Criteria<Account> criteria = new Criteria<Account>(Account.class);
 		Sorting sorting = new Sorting(new SortColumn(INamedEntity.NAME));
 		IListHandler<SearchResult<Account>> listHandler =
-				ListHandlerFactory.create(c, sorting, ListHandlerType.PAGE, pageSize, accountService);
+				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, accountService);
 
 		List<SearchResult<Account>> list;
 
-		list = listHandler.getElements(0, pageSize);
+		list = listHandler.getElements(0, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize, pageSize * 2);
+		list = listHandler.getElements(pageSize, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		list = listHandler.getElements(pageSize * 2, pageSize * 3);
+		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
+
+		List<SearchResult<Account>> alist = listHandler.getElements(0, allAccounts.size(), sorting);
+		assert alist.size() == allAccounts.size();
 
 		for(int i = 0; i < allAccounts.size(); i++) {
-			Account account = listHandler.getElement(i).getEntity();
+			Account account = alist.get(i).getEntity();
 			assert account != null : "Empty account in list";
 		}
 	}

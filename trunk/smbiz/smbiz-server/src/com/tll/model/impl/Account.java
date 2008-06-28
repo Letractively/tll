@@ -21,7 +21,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -41,6 +40,8 @@ import com.tll.model.validate.BusinessKeyUniqueness;
  * @author jpk
  */
 public abstract class Account extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+
+	private static final long serialVersionUID = -684966689440840694L;
 
 	static final String ASP_VALUE = "0";
 	static final String ISP_VALUE = "1";
@@ -300,16 +301,5 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 
 	public Integer accountId() {
 		return super.getId();
-	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("name", name).append("status", status).append("persistPymntInfo",
-				persistPymntInfo).append("billingCycle", billingCycle).append("nextChargeDate", nextChargeDate).append(
-				"dateCancelled", dateCancelled).append("paymentInfo", paymentInfo == null ? "NULL" : paymentInfo.descriptor())
-				.append("currency", currency == null ? "NULL" : currency.descriptor())
-				// .append("addresses.size()", addresses == null ? "NULL" :
-				// Integer.toString(addresses.size()))
-				.append("parent", parent == null ? "NULL" : parent.descriptor());
 	}
 }

@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
@@ -26,15 +25,15 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
-	protected Customer customer;
+	private Customer customer;
 
-	protected Account account;
+	private Account account;
 
-	protected AccountSource source;
+	private AccountSource source;
 
-	protected AccountStatus status;
+	private AccountStatus status;
 
-	protected Visitor initialVisitorRecord;
+	private Visitor initialVisitorRecord;
 
 	public Class<? extends IEntity> entityClass() {
 		return CustomerAccount.class;
@@ -142,11 +141,12 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		}
 	}
 
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("customer", customer == null ? "NULL" : customer.descriptor()).append(
-				"account", account == null ? "NULL" : account.descriptor()).append("source", source).append("status", status)
-				.append("initialVisitorRecord", initialVisitorRecord == null ? "NULL" : initialVisitorRecord.descriptor());
+	public Integer customerId() {
+		try {
+			return getCustomer().getId();
+		}
+		catch(NullPointerException npe) {
+			return null;
+		}
 	}
-
 }

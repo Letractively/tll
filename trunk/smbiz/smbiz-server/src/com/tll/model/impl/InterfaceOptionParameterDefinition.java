@@ -12,10 +12,10 @@ import com.tll.model.IEntity;
 @Entity
 @DiscriminatorValue("paramdef")
 public class InterfaceOptionParameterDefinition extends InterfaceOptionBase {
-  private static final long serialVersionUID = -5035826060156754280L;
 
-  public Class<? extends IEntity> entityClass() {
-    return InterfaceOptionParameterDefinition.class;
-  }
+	private static final long serialVersionUID = -5035826060156754280L;
 
+	public Class<? extends IEntity> entityClass() {
+		return InterfaceOptionParameterDefinition.class;
+	}
 }

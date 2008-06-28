@@ -13,8 +13,7 @@ import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.ProductCategory;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * ProductCategoryDaoTest
@@ -23,7 +22,7 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao", testName = "ProductCategoryDaoTest")
 public class ProductCategoryDaoTest extends NamedEntityDaoTest<ProductCategory> {
 
-	IPrimaryKey<Account> aKey;
+	PrimaryKey<Account> aKey;
 
 	/**
 	 * Constructor
@@ -36,12 +35,13 @@ public class ProductCategoryDaoTest extends NamedEntityDaoTest<ProductCategory> 
 	protected void assembleTestEntity(ProductCategory e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);

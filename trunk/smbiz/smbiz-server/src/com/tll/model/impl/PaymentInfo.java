@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
@@ -58,10 +57,4 @@ public class PaymentInfo extends NamedEntity {
 	public void clearPaymentData() {
 		this.paymentData = null;
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder();
-	}
-
 }

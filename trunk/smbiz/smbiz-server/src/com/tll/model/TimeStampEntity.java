@@ -7,7 +7,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.schema.Managed;
@@ -19,6 +18,8 @@ import com.tll.model.schema.Managed;
  */
 @MappedSuperclass
 public abstract class TimeStampEntity extends EntityBase implements ITimeStampEntity {
+
+	private static final long serialVersionUID = 1800355868972602348L;
 
 	private Date dateCreated;
 	private Date dateModified;
@@ -45,10 +46,5 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 
 	public void setDateModified(Date date) {
 		dateModified = date;
-	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("dateCreated", getDateCreated()).append("dateModified", getDateModified());
 	}
 }

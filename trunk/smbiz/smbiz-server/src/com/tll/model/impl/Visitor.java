@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
@@ -19,147 +18,132 @@ import com.tll.model.TimeStampEntity;
 
 /**
  * The visitor entity (those people who visit a storefront site).
- * 
  * @author jpk
  */
 @Entity
-@Table(name="visitor")
+@Table(name = "visitor")
 public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
-  private static final long serialVersionUID = 3466539674112418212L;
-	
-  public static final int MAXLEN_REMOTE_HOST = 64;
+
+	private static final long serialVersionUID = 3466539674112418212L;
+
+	public static final int MAXLEN_REMOTE_HOST = 64;
 	public static final int MAXLEN_REMOTE_ADDR = 64;
 	public static final int MAXLEN_REMOTE_USER = 64;
 	public static final int MAXLEN_MC = 16;
 
-  protected String remoteHost;
+	private String remoteHost;
 
-  protected String remoteAddr;
+	private String remoteAddr;
 
-  protected String remoteUser;
+	private String remoteUser;
 
-  protected String mc;
+	private String mc;
 
-  protected Account account;
+	private Account account;
 
-  public Class<? extends IEntity> entityClass() {
-    return Visitor.class;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return Visitor.class;
+	}
 
-  /**
-   * @return Returns the account.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "aid")
-  @NotNull
-  public Account getAccount() {
-    return account;
-  }
+	/**
+	 * @return Returns the account.
+	 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "aid")
+	@NotNull
+	public Account getAccount() {
+		return account;
+	}
 
-  /**
-   * @param account
-   *          The account to set.
-   */
-  public void setAccount(Account account) {
-    this.account = account;
-  }
+	/**
+	 * @param account The account to set.
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-  /**
-   * @return Returns the mc.
-   */
-  @Column
-  @Length(max=MAXLEN_MC)
-  public String getMc() {
-    return mc;
-  }
+	/**
+	 * @return Returns the mc.
+	 */
+	@Column
+	@Length(max = MAXLEN_MC)
+	public String getMc() {
+		return mc;
+	}
 
-  /**
-   * @param mc
-   *          The mc to set.
-   */
-  public void setMc(String mc) {
-    this.mc = mc;
-  }
+	/**
+	 * @param mc The mc to set.
+	 */
+	public void setMc(String mc) {
+		this.mc = mc;
+	}
 
-  /**
-   * @return Returns the remoteAddr.
-   */
-  @Column(name="remote_addr")
-  @Length(max=MAXLEN_REMOTE_ADDR)
-  public String getRemoteAddr() {
-    return remoteAddr;
-  }
+	/**
+	 * @return Returns the remoteAddr.
+	 */
+	@Column(name = "remote_addr")
+	@Length(max = MAXLEN_REMOTE_ADDR)
+	public String getRemoteAddr() {
+		return remoteAddr;
+	}
 
-  /**
-   * @param remoteAddr
-   *          The remoteAddr to set.
-   */
-  public void setRemoteAddr(String remoteAddr) {
-    this.remoteAddr = remoteAddr;
-  }
+	/**
+	 * @param remoteAddr The remoteAddr to set.
+	 */
+	public void setRemoteAddr(String remoteAddr) {
+		this.remoteAddr = remoteAddr;
+	}
 
-  /**
-   * @return Returns the remoteHost.
-   */
-  @Column(name="remote_host")
-  @NotEmpty @Length(max=MAXLEN_REMOTE_HOST)
-  public String getRemoteHost() {
-    return remoteHost;
-  }
+	/**
+	 * @return Returns the remoteHost.
+	 */
+	@Column(name = "remote_host")
+	@NotEmpty
+	@Length(max = MAXLEN_REMOTE_HOST)
+	public String getRemoteHost() {
+		return remoteHost;
+	}
 
-  /**
-   * @param remoteHost
-   *          The remoteHost to set.
-   */
-  public void setRemoteHost(String remoteHost) {
-    this.remoteHost = remoteHost;
-  }
+	/**
+	 * @param remoteHost The remoteHost to set.
+	 */
+	public void setRemoteHost(String remoteHost) {
+		this.remoteHost = remoteHost;
+	}
 
-  /**
-   * @return Returns the remoteUser.
-   */
-  @Column(name="remote_user")
-  @NotEmpty @Length(max=MAXLEN_REMOTE_USER)
-  public String getRemoteUser() {
-    return remoteUser;
-  }
+	/**
+	 * @return Returns the remoteUser.
+	 */
+	@Column(name = "remote_user")
+	@NotEmpty
+	@Length(max = MAXLEN_REMOTE_USER)
+	public String getRemoteUser() {
+		return remoteUser;
+	}
 
-  /**
-   * @param remoteUser
-   *          The remoteUser to set.
-   */
-  public void setRemoteUser(String remoteUser) {
-    this.remoteUser = remoteUser;
-  }
+	/**
+	 * @param remoteUser The remoteUser to set.
+	 */
+	public void setRemoteUser(String remoteUser) {
+		this.remoteUser = remoteUser;
+	}
 
-  @Transient
-  public Account getParent() {
-    return getAccount();
-  }
+	@Transient
+	public Account getParent() {
+		return getAccount();
+	}
 
-  public void setParent(Account e) {
-    setAccount(e);
-  }
+	public void setParent(Account e) {
+		setAccount(e);
+	}
 
-  public Integer accountId() {
-    try {
-      return getAccount().getId();
-    }
-    catch(NullPointerException npe) {
-      LOG.warn("Unable to provide related account id due to a NULL nested entity");
-      return null;
-    }
-  }
-
-  @Override
-  protected ToStringBuilder toStringBuilder() {
-    return super.toStringBuilder()
-    
-    .append("remoteHost", remoteHost)
-    .append("remoteAddr", remoteAddr)
-    .append("remoteUser", remoteUser)
-    .append("mc", mc)
-    .append("account", account==null? "NULL" :  account.descriptor());
-  }
-  
+	public Integer accountId() {
+		try {
+			return getAccount().getId();
+		}
+		catch(NullPointerException npe) {
+			LOG.warn("Unable to provide related account id due to a NULL nested entity");
+			return null;
+		}
+	}
 }

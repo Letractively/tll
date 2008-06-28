@@ -6,18 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.INameKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
 
 /**
  * MockEntityProvider - Provides prototype entity instances via a Spring bean
@@ -29,16 +28,23 @@ public final class MockEntityProvider {
 	private static final Log log = LogFactory.getLog(MockEntityProvider.class);
 
 	/**
+	 * Use a static counter for created business key wise unique entity copies to
+	 * ensure no collisions!
+	 */
+	private static int uniqueTokenCounter = 0;
+
+	/**
 	 * MockEntityBeanFactory annotation
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD, ElementType.PARAMETER })
+		ElementType.FIELD,
+		ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface MockEntityBeanFactory {
 	}
 
-	private final BeanFactory beanFactory;
+	private final ListableBeanFactory beanFactory;
 
 	private final EntityAssembler entityAssembler;
 
@@ -47,8 +53,7 @@ public final class MockEntityProvider {
 	 * @param beanFactory
 	 */
 	@Inject
-	public MockEntityProvider(@MockEntityBeanFactory
-	BeanFactory beanFactory, EntityAssembler entityAssembler) {
+	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, EntityAssembler entityAssembler) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
 		assert entityAssembler != null : "The entityAssembler is null";
@@ -56,27 +61,16 @@ public final class MockEntityProvider {
 		this.entityAssembler = entityAssembler;
 	}
 
-	private Object getBean(String name) {
-		return beanFactory.getBean(name);
-	}
-
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntityCopy(String beanName) {
-		return (E) getBean(beanName);
+	private <E extends IEntity> E[] getBeansOfType(Class<E> type) {
+		Map<String, E> map = beanFactory.getBeansOfType(type);
+		if(map == null) return null;
+		return (E[]) map.values().toArray(new IEntity[map.size()]);
 	}
 
-	/**
-	 * @param <E>
-	 * @param entityClass
-	 * @param num
-	 * @return
-	 */
-	static <E extends IEntity> String getBeanEntityName(Class<E> entityClass, Integer num) {
-		String s = entityClass.getSimpleName();
-		if(num != null) {
-			s += "." + num.toString();
-		}
-		return s;
+	private <E extends IEntity> E getBean(Class<E> type) {
+		E[] arr = getBeansOfType(type);
+		return (arr == null || arr.length == 0) ? null : arr[0];
 	}
 
 	/**
@@ -85,99 +79,30 @@ public final class MockEntityProvider {
 	 * @return Set of entity copies
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> Set<E> getAllEntityCopies(Class<E> entityClass) throws Exception {
 		Set<E> set = new LinkedHashSet<E>();
-		Integer num = null;
-		do {
-			String name = getBeanEntityName(entityClass, num);
-			try {
-				E e = (E) getBean(name);
+		E[] arr = getBeansOfType(entityClass);
+		if(arr != null && arr.length > 0) {
+			for(E e : arr) {
 				entityAssembler.setGenerated(e);
 				set.add(e);
 			}
-			catch(NoSuchBeanDefinitionException nsbde) {
-				if(num != null) {
-					break;
-				}
-			}
-			if(num == null) {
-				num = 0;
-			}
-			num++;
-		} while(num < 100);
+		}
 		return set;
 	}
 
 	/**
+	 * Gets an entity copy by type.
 	 * @param <E>
 	 * @param entityClass
-	 * @return An entity copy
+	 * @param uniquify Make the copied entity business key unique?
+	 * @return A fresh entity copy
 	 * @throws Exception
 	 */
-	public <E extends IEntity> E getEntityCopy(Class<E> entityClass) throws Exception {
-		return getEntityCopy(entityClass, null);
-	}
-
-	/**
-	 * @param <E>
-	 * @param entityClass
-	 * @param num
-	 * @return An entity copy
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, Integer num) throws Exception {
-		E e = null;
-		do {
-			String name = getBeanEntityName(entityClass, num);
-			try {
-				e = (E) getBean(name);
-				break;
-			}
-			catch(NoSuchBeanDefinitionException nsbde) {
-				if(num == null) {
-					num = 0;
-				}
-				else {
-					break;
-				}
-				num++;
-			}
-		} while(num < 10);
-		if(e == null) {
-			throw new Exception("Unable to retrieve mock entity '" + entityClass.getSimpleName());
-		}
+	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean uniquify) throws Exception {
+		E e = getBean(entityClass);
 		entityAssembler.setGenerated(e);
-		return e;
-	}
-
-	/**
-	 * Generates a specified number of entity copies.
-	 * @param <E>
-	 * @param entityClass
-	 * @param n Set of N entity copies
-	 * @throws Exception
-	 */
-	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n) throws Exception {
-		Set<E> set = new LinkedHashSet<E>(n);
-		for(int i = 0; i < n; i++) {
-			E e = getEntityCopy(entityClass);
-			set.add(e);
-		}
-		return set;
-	}
-
-	/**
-	 * @param <E>
-	 * @param entityClass
-	 * @param n
-	 * @return Unique entity copy
-	 * @throws Exception
-	 */
-	public <E extends IEntity> E getUniqueEntityCopy(Class<E> entityClass, int n) throws Exception {
-		E e = getEntityCopy(entityClass);
-		makeBusinessKeyUnique(e, n);
+		if(uniquify) makeBusinessKeyUnique(e);
 		return e;
 	}
 
@@ -187,16 +112,15 @@ public final class MockEntityProvider {
 	 * slightly.
 	 * @param <E>
 	 * @param entityClass
-	 * @param n
-	 * @return N unique entity copies
+	 * @param n The number of copies to provide
+	 * @param uniquify Make the copied entities business key unique?
+	 * @return n entity copies
 	 * @throws Exception
 	 */
-	public <E extends IEntity> Set<E> getNUniqueEntityCopies(Class<E> entityClass, int n) throws Exception {
+	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean uniquify) throws Exception {
 		Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
-			E e = getEntityCopy(entityClass);
-			makeBusinessKeyUnique(e, i);
-			set.add(e);
+			set.add(getEntityCopy(entityClass, uniquify));
 		}
 		return set;
 	}
@@ -206,41 +130,39 @@ public final class MockEntityProvider {
 	 * the business key field values for all available business keys of the given
 	 * entity.
 	 * @param e the entity to be altered
-	 * @param uniqueTokenNum serves as a suffix on a key field to make the entity
-	 *        unique
 	 * @throws BusinessKeyNotDefinedException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E extends IEntity> void makeBusinessKeyUnique(E e, int uniqueTokenNum)
-			throws BusinessKeyNotDefinedException {
-		IBusinessKey<E>[] keys = KeyFactory.getBusinessKeys(e);
-		String ut = Integer.toString(uniqueTokenNum);
-		for(IBusinessKey<E> key : keys) {
-			if(key instanceof INameKey) {
-				INameKey n = (INameKey) key;
-				n.setName(n.getName() + ut);
-				key.setEntity(e);
-				continue;
-			}
+	public static <E extends IEntity> void makeBusinessKeyUnique(E e) throws BusinessKeyNotDefinedException {
+		BusinessKey[] keys = BusinessKeyFactory.create(e);
+		final int uniqueNum = ++uniqueTokenCounter;
+		String ut = Integer.toString(uniqueNum);
+		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
+		for(BusinessKey key : keys) {
 			boolean entityAlteredByBk = false;
-			for(String fname : key.getFieldNames()) {
-				Object fval = key.getFieldValue(fname);
+			for(String fname : key.getPropertyNames()) {
+				if(fname.endsWith(".id")) continue;
+				Object fval = key.getPropertyValue(fname);
 				if(fval instanceof String) {
-					key.setFieldValue(fname, fval.toString() + ut);
-					key.setEntity(e);
+					String sval = fval.toString();
+					if(sval.length() > ut.length()) {
+						sval = sval.substring(0, sval.length() - ut.length()) + ut;
+					}
+					else {
+						sval += ut;
+					}
+					bw.setPropertyValue(fname, sval);
 					entityAlteredByBk = true;
 					break;
 				}
 				else if(fval instanceof Date) {
-					key.setFieldValue(fname, new Date((new Date()).getTime() - (uniqueTokenNum * 1000)));
-					key.setEntity(e);
+					bw.setPropertyValue(fname, new Date((new Date()).getTime() - (uniqueNum * 1000)));
 					entityAlteredByBk = true;
 					break;
 				}
 				else if(fval instanceof Float) {
 					Float n = (Float) fval;
-					key.setFieldValue(fname, n + uniqueTokenNum);
-					key.setEntity(e);
+					bw.setPropertyValue(fname, n + uniqueNum);
 					entityAlteredByBk = true;
 					break;
 				}

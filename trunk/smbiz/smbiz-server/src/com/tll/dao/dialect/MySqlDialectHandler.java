@@ -81,7 +81,7 @@ public class MySqlDialectHandler implements IDbDialectHandler {
 						String key = WordUtils.capitalize(msg.substring(17, msg.lastIndexOf('\'')));
 						return new EntityExistsException(key);
 					}
-					return new EntityExistsException("Business EntityKey"); // fallback
+					return new EntityExistsException("Business key"); // fallback
 				}
 			}
 		}

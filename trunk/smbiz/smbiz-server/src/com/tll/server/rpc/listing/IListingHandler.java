@@ -5,17 +5,18 @@
 
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.IData;
+import java.util.List;
+
 import com.tll.listhandler.EmptyListException;
-import com.tll.listhandler.IPage;
-import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.Sorting;
 
 /**
- * Manages {@link IPage} instances and retrieval of their row data.
+ * IListingHandler - Manages server-side listing life-cycles.
+ * @param <T> The list element type.
  * @author jpk
  */
-public interface IListingHandler {
+// TODO we probably don't need this interface!
+public interface IListingHandler<T> {
 
 	/**
 	 * @return The name of the listing this handler handles.
@@ -23,43 +24,41 @@ public interface IListingHandler {
 	String getListingName();
 
 	/**
-	 * @return The current 0-based page number.
+	 * @return The page size.
 	 */
-	int getPageNumber();
+	int getPageSize();
 
 	/**
-	 * @return The calculated number of pages.
+	 * @return The total size of the underlying list.
 	 */
-	int getNumPages();
+	int size();
 
 	/**
-	 * Updates the contained listing with rows assoc. with the given page number.
-	 * @param pageNum 0-based page number
-	 * @param adjustPageNum Attempt to adjust the page number if the one given is
-	 *        out of bounds?
-	 * @return The actual page number that was set
-	 * @throws EmptyListException
-	 * @throws PageNumOutOfBoundsException
-	 * @throws ListingException
+	 * @return The current 0-based list index.
 	 */
-	int setCurrentPage(int pageNum, boolean adjustPageNum) throws EmptyListException, PageNumOutOfBoundsException,
+	int getOffset();
+
+	/**
+	 * @return The sorting directive.
+	 */
+	Sorting getSorting();
+
+	/**
+	 * @return The current list elements.
+	 */
+	List<T> getElements();
+
+	/**
+	 * Fetches list elements.
+	 * @param offset The list index at which retriving begins
+	 * @param sorting The sorting directive
+	 * @param force Force a re-query even if the currently held listing data
+	 *        matches the given offset and sorting.
+	 * @throws EmptyListException When no matching list elements are found
+	 * @throws IndexOutOfBoundsException When the offset exceeds the bounds of the
+	 *         underlying list
+	 * @throws ListingException When an unexpected listing related error occurrs
+	 */
+	void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException;
-
-	/**
-	 * Sorts the listing.
-	 * @param sorting
-	 * @throws ListHandlerException
-	 */
-	void sort(Sorting sorting) throws ListHandlerException;
-
-	/**
-	 * Generates a marshallable page suitable for transport to the UI layer.
-	 * @return IPage instance
-	 */
-	IPage<? extends IData> getPage();
-
-	/**
-	 * @return the current state of this handler.
-	 */
-	ListingState getState();
 }

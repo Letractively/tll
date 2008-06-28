@@ -3,58 +3,41 @@ package com.tll.listhandler;
 import java.util.List;
 
 /**
- * The list handler interface.
+ * IListHandler - Definition for fetching chunks of an underlying, possibly very
+ * large, list in a common manner.<br>
+ * {@link IListHandler}s hold state and are <em>not</em> designed to be
+ * thread-safe! Therefore, clients must ensure safe access to them.
+ * @param <T> The list element type.
  * @author jpk
  */
-public interface IListHandler<T> extends Iterable<T> {
+public interface IListHandler<T> {
 
 	/**
-	 * @return The {@link ListHandlerType}
+	 * @return The {@link ListHandlerType}. This is the implementation type.
 	 */
 	ListHandlerType getListHandlerType();
 
 	/**
-	 * @return the number of list elements
+	 * Fetches a chunk of list data based on the given list index (offset from
+	 * start) and the corres. number of elements to retrieve (the page size).
+	 * @param offset 0-based index of the underlying list at which fetching
+	 *        starts.
+	 * @param pageSize The number of list elements to fetch
+	 * @param sorting Optional sorting directive.
+	 * @return Fetched chunk of list elements.
+	 * @throws IndexOutOfBoundsException The the offset exceeds the size of the
+	 *         list or the number of the elements to fetch results in an out of
+	 *         bounds condition.
+	 * @throws EmptyListException When the list is empty.
+	 * @throws ListHandlerException When the sorting directive gives rise to an
+	 *         error.
+	 */
+	List<T> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException, EmptyListException,
+			ListHandlerException;
+
+	/**
+	 * @return The total number of elements in the underlying list or
+	 *         <code>0<code> if no fetching has yet occurred.
 	 */
 	int size();
-
-	/**
-	 * @return true when one or more list elements exist, false otherwise
-	 */
-	boolean hasElements();
-
-	/**
-	 * Returns the element at the given index.
-	 * @param index
-	 * @throws EmptyListException when no list elements exist
-	 * @throws ListHandlerException upon processing error or when the given index
-	 *         is out of bounds.
-	 */
-	T getElement(int index) throws EmptyListException, ListHandlerException;
-
-	/**
-	 * @param start starting 0-based index inclusive
-	 * @param end ending 0-based index EXCLUSIVE
-	 * @return list of 0 or more elements
-	 * @throws EmptyListException when no list elements exist
-	 * @throws ListHandlerException upon processing error or when start and/or end
-	 *         are out of bounds
-	 */
-	List<T> getElements(int start, int end) throws EmptyListException, ListHandlerException;
-
-	/**
-	 * @return the {@link Sorting} used by this list handler.
-	 */
-	Sorting getSorting();
-
-	/**
-	 * Sorts the list elements. <br>
-	 * IMPT some implementations of this method may <b>alter</b> the results as a
-	 * result of re-querying the data store, so clients need to take this into
-	 * account.
-	 * @param sorting sort directives
-	 * @throws ListHandlerException when sort directives are mal-formed or when
-	 *         there are none
-	 */
-	void sort(Sorting sorting) throws ListHandlerException;
 }

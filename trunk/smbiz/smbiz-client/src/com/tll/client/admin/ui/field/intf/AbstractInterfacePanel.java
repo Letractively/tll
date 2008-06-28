@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.widgetideas.table.client.overrides.Grid;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldGroupPanel;

@@ -7,13 +7,19 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.App;
+import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
@@ -89,7 +95,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			params = new Grid(1, 3);
 			params.setWidget(0, 0, new Label("Name"));
 			params.setWidget(0, 1, new Label("Code"));
-			params.setWidget(0, 3, new Label("Desc"));
+			params.setWidget(0, 2, new Label("Desc"));
 			canvas.newRow();
 			canvas.addWidget(params);
 
@@ -109,37 +115,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	@Override
 	public void populateFieldGroup() {
 		super.populateFieldGroup();
-
-		/*
-		// clear existing options
-		for(OptionPanel p : optionPanels) {
-			fields.removeField(p.getFields());
-		}
-		optionPanels.clear();
-		tabOptions.clear();
-
-		// bind options
-		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
-		if(pvOptions != null && pvOptions.size() > 0) {
-			for(IndexedProperty propOption : pvOptions) {
-				Model option = propOption.getModel();
-				OptionPanel pnlOption = new OptionPanel(propOption.getPropertyName());
-				fields.addField(pnlOption.getFields());
-				optionPanels.add(pnlOption);
-				pnlOption.configure();
-				pnlOption.onBeforeBind(option);
-				tabOptions.add(pnlOption, option.getName());
-			}
-		}
-
-		// add new option tab
-		Image img = App.imgs().add().createImage();
-		img.setTitle("Add...");
-		tabOptions.add(new Label("TODO"), img);
-
-		// default select the first tab
-		tabOptions.selectTab(0);
-		*/
 	}
 
 	@Override
@@ -169,25 +144,36 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	@Override
 	protected void applyModel(Model model) {
 
+		// clear existing options
+		for(Widget w : tabOptions) {
+			removeField(((OptionPanel) w).getFields());
+		}
+		tabOptions.clear();
+
+		final PropertyPath path = new PropertyPath();
+
+		// bind options
+		path.parse("options");
+		RelatedManyProperty pvOptions = model.relatedMany(path);
+		if(pvOptions != null && pvOptions.size() > 0) {
+			for(IndexedProperty propOption : pvOptions) {
+				Model option = propOption.getModel();
+				OptionPanel pnlOption = new OptionPanel();
+				addField(propOption.getPropertyName(), pnlOption.getFields());
+				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields()));
+			}
+		}
+
+		// add new option tab
+		Image img = App.imgs().add().createImage();
+		img.setTitle("Add...");
+		tabOptions.add(new Label("TODO"), img);
+
+		// default select the first tab
+		tabOptions.selectTab(0);
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		/*
-		assert sender == tabOptions;
-		if(tabIndex == tabOptions.getTabBar().getTabCount() - 1) {
-			OptionPanel op = new OptionPanel(FieldGroup.getPendingPropertyName());
-
-			Model proto = AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION);
-			assert proto != null;
-			op.bind(proto);
-			fields.addField(op.getFields());
-
-			tabOptions.insert(op, "New Option", tabIndex);
-			// op.getFields().render();
-			// tabOptions.remove(tabIndex + 1);
-			// tabOptions.selectTab(tabIndex);
-		}
-		*/
 		return true;
 	}
 

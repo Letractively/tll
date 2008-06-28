@@ -6,7 +6,7 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.SystemError;
-import com.tll.client.data.IListingCommand;
+import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.rpc.ICrudService;
 import com.tll.client.data.rpc.IListingService;
 import com.tll.client.search.ISearch;
@@ -41,13 +41,13 @@ public interface IMEntityService<E extends IEntity, S extends ISearch> extends I
 	/**
 	 * Provides an {@link IMarshalingListHandler} for use by
 	 * {@link IListingService} implementations.
-	 * @param listingCommand The listing command.
+	 * @param listingDefinition The listing definition.
 	 * @return An entity row list handler.
 	 * @throws IllegalArgumentException When the <code>listingCommand</code> arg
 	 *         is <code>null</code> or invalid.
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(IListingCommand<S> listingCommand)
+	IMarshalingListHandler<E> getMarshalingListHandler(RemoteListingDefinition<S> listingDefinition)
 			throws IllegalArgumentException, SystemError;
 }

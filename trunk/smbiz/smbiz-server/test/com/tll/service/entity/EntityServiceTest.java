@@ -12,8 +12,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
-import com.tll.criteria.CriteriaFactory;
-import com.tll.criteria.ICriteria;
+import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.impl.IAccountDao;
@@ -23,6 +22,7 @@ import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.dao.impl.IUserDao;
 import com.tll.guice.DaoModule;
 import com.tll.guice.EntityServiceModule;
+import com.tll.guice.JpaModule;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountAddress;
@@ -32,7 +32,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.model.impl.User;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 import com.tll.service.entity.impl.account.IAccountService;
 import com.tll.service.entity.impl.user.IUserService;
 
@@ -58,12 +58,9 @@ public class EntityServiceTest extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-
-		final DaoModule dm = new DaoModule(DaoMode.ORM);
-		modules.add(dm);
-
-		final EntityServiceModule esm = new EntityServiceModule();
-		modules.add(esm);
+		modules.add(new JpaModule(jpaMode));
+		modules.add(new DaoModule(DaoMode.ORM));
+		modules.add(new EntityServiceModule());
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -102,17 +99,17 @@ public class EntityServiceTest extends DbTest {
 			final ICurrencyDao currencyDao = injector.getInstance(ICurrencyDao.class);
 			final IPaymentInfoDao piDao = injector.getInstance(IPaymentInfoDao.class);
 
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class);
-			final Address a = getMockEntityProvider().getEntityCopy(Address.class);
+			account = getMockEntityProvider().getEntityCopy(Asp.class, false);
+			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
+			final Address a = getMockEntityProvider().getEntityCopy(Address.class, false);
 			aa.setAddress(a);
 			getEntityAssembler().setGenerated(a);
 			account.addAccountAddress(aa);
 
-			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class));
+			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));
 			account.setCurrency(c);
 
-			pi = piDao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class));
+			pi = piDao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, false));
 			account.setPaymentInfo(pi);
 
 			if(persistAccount) {
@@ -143,7 +140,7 @@ public class EntityServiceTest extends DbTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), KeyFactory.getPrimaryKey(user));
+			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), new PrimaryKey<User>(user));
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}
@@ -162,11 +159,10 @@ public class EntityServiceTest extends DbTest {
 			account = as.persist(account);
 
 			startNewTransaction();
-			final ICriteria<? extends AccountHistory> c =
-					CriteriaFactory.buildForeignKeyCriteria(AccountHistory.class, "account", KeyFactory.getPrimaryKey(
-							Account.class, account.getId()));
+			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
+			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
 			final List<SearchResult<AccountHistory>> list =
-					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), c);
+					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
 			endTransaction();
 			assert list != null && list.size() == 1;
 		}

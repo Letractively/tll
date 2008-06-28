@@ -9,13 +9,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
 import com.tll.model.schema.Managed;
 
 /**
@@ -26,9 +23,12 @@ import com.tll.model.schema.Managed;
 @SuppressWarnings("unchecked")
 public abstract class EntityBase implements IEntity {
 
+	private static final long serialVersionUID = -4641847785797486723L;
+
 	protected static final Log LOG = LogFactory.getLog(EntityBase.class);
+
 	private Integer id;
-	private boolean generated = false;
+	private boolean generated;
 	private Integer version;
 
 	/**
@@ -182,8 +182,8 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	/**
-	 * This method <b>must only</b> be called when a new entity is created and
-	 * the id is generated. It will set the id and set the generated flag to true.
+	 * This method <b>must only</b> be called when a new entity is created and the
+	 * id is generated. It will set the id and set the generated flag to true.
 	 * @param id the id to set
 	 */
 	public void setGenerated(Integer id) {
@@ -206,41 +206,34 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if(this == o) {
-			return true;
-		}
-		if(o == null || !(o instanceof IEntity)) {
-			return false;
-		}
-		IEntity entity = (IEntity) o;
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return (pk != null && pk.equals(KeyFactory.getPrimaryKey(entity)));
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		final EntityBase other = (EntityBase) obj;
+		if(other.entityClass() != entityClass()) return false;
+		assert this.id != null && other.id != null;
+		if(!id.equals(other.id)) return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		final IPrimaryKey<? extends IEntity> pk = KeyFactory.getPrimaryKey(this);
-		return pk == null ? 0 : pk.hashCode();
-	}
-
-	protected ToStringBuilder toStringBuilder() {
-		return new ToStringBuilder(this).append(IEntity.PK_FIELDNAME, getId()).append("version", getVersion());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + entityClass().toString().hashCode();
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
 
 	@Override
-	public String toString() {
-		return toStringBuilder().toString();
+	public final String toString() {
+		return typeName() + ", id: " + getId() + ", version: " + getVersion();
 	}
 
 	@Transient
-	public boolean isNew() {
+	public final boolean isNew() {
 		return (getVersion() == null);
-	}
-
-	@Transient
-	public boolean isDirty() {
-		throw new UnsupportedOperationException("isDirty() is not implemented.");
 	}
 
 	@Transient

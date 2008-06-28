@@ -10,12 +10,11 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.listing.RowOpDelegate;
+import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.listing.AbstractListingWidget;
+import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
  * ListingView - View dedicated to a single listing.
@@ -27,7 +26,7 @@ public abstract class ListingView extends AbstractView {
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
 	 * @author jpk
 	 */
-	protected abstract class ModelChangingRowOpDelegate extends RowOpDelegate {
+	protected abstract class ModelChangingRowOpDelegate extends AbstractRowOptions {
 
 		/**
 		 * Provides the necessary sourcing widget enabling the sourcing of potential
@@ -47,8 +46,9 @@ public abstract class ListingView extends AbstractView {
 		 * @param rowRef The ref of the row to edit
 		 */
 		@Override
-		protected void doEditRow(int rowIndex, RefKey rowRef) {
-			Dispatcher.instance().dispatch(new EditViewRequest(getSourcingWidget(), getEditViewClass(), rowRef));
+		protected void doEditRow(int rowIndex) {
+			Dispatcher.instance().dispatch(
+					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowRef(rowIndex)));
 		}
 
 		/**
@@ -57,7 +57,7 @@ public abstract class ListingView extends AbstractView {
 		 * @param rowRef The ref of the row to delete
 		 */
 		@Override
-		protected void doDeleteRow(int rowIndex, RefKey rowRef) {
+		protected void doDeleteRow(int rowIndex) {
 			AbstractModelChangeHandler handler = new AbstractModelChangeHandler() {
 
 				@Override
@@ -77,7 +77,7 @@ public abstract class ListingView extends AbstractView {
 
 			};
 			handler.addModelChangeListener(ViewManager.instance());
-			handler.handleModelDelete(rowRef);
+			handler.handleModelDelete(listingWidget.getRowRef(rowIndex));
 		}
 
 	}
@@ -85,15 +85,14 @@ public abstract class ListingView extends AbstractView {
 	/**
 	 * The listing widget.
 	 */
-	private AbstractListingWidget listingWidget;
+	protected ModelListingWidget listingWidget;
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
 	 * associated with it.
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
-	protected final void setListingWidget(AbstractListingWidget listingWidget) {
-		assert listingWidget != null;
+	protected final void setListingWidget(ModelListingWidget listingWidget) {
 		this.listingWidget = listingWidget;
 		addWidget(listingWidget);
 	}

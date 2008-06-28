@@ -17,8 +17,7 @@ import com.tll.model.impl.OrderItem;
 import com.tll.model.impl.OrderItemTrans;
 import com.tll.model.impl.OrderItemTransOp;
 import com.tll.model.impl.OrderTrans;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderItemTransDaoTest
@@ -27,9 +26,9 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao")
 public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
-	IPrimaryKey<Account> aKey;
-	IPrimaryKey<Order> oKey;
-	IPrimaryKey<OrderTrans> otKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Order> oKey;
+	PrimaryKey<OrderTrans> otKey;
 
 	/**
 	 * Constructor
@@ -42,12 +41,13 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 	protected void assembleTestEntity(OrderItemTrans e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -57,17 +57,17 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 		Order order;
 		OrderItem oi;
 		if(oKey == null) {
-			order = getMockEntityProvider().getEntityCopy(Order.class);
+			order = getMockEntityProvider().getEntityCopy(Order.class, true);
 			order.setCurrency(account.getCurrency());
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 
 			// order item
-			oi = getMockEntityProvider().getEntityCopy(OrderItem.class);
+			oi = getMockEntityProvider().getEntityCopy(OrderItem.class, true);
 			oi.setOrder(order);
 			order.addOrderItem(oi);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = KeyFactory.getPrimaryKey(order);
+			oKey = new PrimaryKey<Order>(order);
 			oi = order.getOrderItem(oi.getId()); // get non-transient version
 		}
 		else {
@@ -80,11 +80,11 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
 		OrderTrans ot;
 		if(otKey == null) {
-			ot = getMockEntityProvider().getEntityCopy(OrderTrans.class);
+			ot = getMockEntityProvider().getEntityCopy(OrderTrans.class, true);
 			ot.setOrder(order);
 			ot.setPymntTrans(null);
 			ot = getDao(IOrderTransDao.class).persist(ot);
-			otKey = KeyFactory.getPrimaryKey(ot);
+			otKey = new PrimaryKey<OrderTrans>(ot);
 		}
 		else {
 			ot = getDao(IOrderTransDao.class).load(otKey);

@@ -9,10 +9,10 @@ import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IAddRowDelegate;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
@@ -90,19 +90,9 @@ public final class IspListingView extends ListingView {
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
 		criteria.setNamedQuery(SelectNamedQuery.ISP_LISTING);
 
-		final IListingConfig config = new AccountListingConfig() {
+		final AccountListingConfig config = new AccountListingConfig() {
 
-			public String getListingName() {
-				return EntityType.ISP.name() + "_LISTING";
-			}
-
-			public String getListingElementName() {
-				return EntityType.ISP.getName();
-			}
-
-			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "i"));
-			}
+			private final String listingElementName = EntityType.ISP.getName();
 
 			private final Column[] columns = new Column[] {
 				new Column("#", Column.ROW_COUNT_COL_PROP, "i"),
@@ -113,42 +103,65 @@ public final class IspListingView extends ListingView {
 				new Column("Billing Model", "billingModel", "i"),
 				new Column("Billing Cycle", "billingCycle", "i") };
 
+			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
+
+				@Override
+				protected String getListingElementName() {
+					return listingElementName;
+				}
+
+				@Override
+				protected Widget getSourcingWidget() {
+					return IspListingView.this;
+				}
+
+				@Override
+				protected ViewClass getEditViewClass() {
+					return AccountEditView.klas;
+				}
+
+				@Override
+				protected Option[] getCustomRowOps(int rowIndex) {
+					return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
+				}
+
+				@Override
+				protected void handleRowOp(String optionText, int rowIndex) {
+					if(optionText.indexOf("Merchant Listing") == 0) {
+						Dispatcher.instance().dispatch(
+								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowRef(rowIndex)));
+					}
+				}
+			};
+
+			public String getListingName() {
+				return EntityType.ISP.toString() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return listingElementName;
+			}
+
+			public Sorting getDefaultSorting() {
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "i"));
+			}
+
 			public Column[] getColumns() {
 				return columns;
 			}
 
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return rowOps;
+			}
+
+			public IAddRowDelegate getAddRowHandler() {
+				// TODO
+				return null;
+			}
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, null, criteria, ListHandlerType.PAGE,
-				new ModelChangingRowOpDelegate() {
-
-					@Override
-					protected String getListingElementName() {
-						return config.getListingElementName();
-					}
-
-					@Override
-					protected Widget getSourcingWidget() {
-						return IspListingView.this;
-					}
-
-					@Override
-					protected ViewClass getEditViewClass() {
-						return AccountEditView.klas;
-					}
-
-					@Override
-					protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
-						return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
-					}
-
-					@Override
-					protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
-						if(optionText.indexOf("Merchant Listing") == 0) {
-							Dispatcher.instance().dispatch(MerchantListingView.klas.newViewRequest(IspListingView.this, rowRef));
-						}
-					}
-				}, null));
+		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
+				.getDefaultSorting()));
 	}
 
 	public String getLongViewName() {

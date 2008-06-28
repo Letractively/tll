@@ -9,8 +9,6 @@ import java.util.Comparator;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-import com.tll.client.model.PropertyPath;
-
 /**
  * {@link Comparator} that compares properties of beans via reflection employing
  * a {@link SortColumn} that dictates the order and Spring's {@link BeanWrapper}
@@ -41,20 +39,20 @@ public class SortColumnBeanComparator<T> implements Comparator<T>, Serializable 
 
 		int rval = 0;
 
-		String nestedpath = "";
-
-		// HACK
-		// TODO eliminate this
+		// TODO eliminate this HACK
+		String propPath;
 		if(o1 instanceof SearchResult) {
 			assert o2 instanceof SearchResult;
-			nestedpath = "element";
+			propPath = ((SearchResult) o1).getPropertyPath(sortColumn.getPropertyName());
+		}
+		else {
+			propPath = sortColumn.getPropertyName();
 		}
 		// END HACK
 
 		final BeanWrapper bw1 = new BeanWrapperImpl(o1);
 		final BeanWrapper bw2 = new BeanWrapperImpl(o2);
 
-		final String propPath = PropertyPath.getPropertyPath(nestedpath, sortColumn.getPropertyName());
 		final Object v1 = bw1.getPropertyValue(propPath);
 		final Object v2 = bw2.getPropertyValue(propPath);
 

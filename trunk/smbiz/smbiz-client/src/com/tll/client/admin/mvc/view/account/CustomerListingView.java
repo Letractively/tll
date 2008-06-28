@@ -8,7 +8,8 @@ import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IAddRowDelegate;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -129,19 +130,9 @@ public final class CustomerListingView extends ListingView {
 		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
 		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
 
-		final IListingConfig config = new AccountListingConfig() {
+		final AccountListingConfig config = new AccountListingConfig() {
 
-			public String getListingName() {
-				return EntityType.CUSTOMER.name() + "_LISTING";
-			}
-
-			public String getListingElementName() {
-				return EntityType.CUSTOMER.getName();
-			}
-
-			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "c"));
-			}
+			private final String listingElementName = EntityType.CUSTOMER.getName();
 
 			private final Column[] columns = new Column[] {
 				new Column("#", Column.ROW_COUNT_COL_PROP, null),
@@ -152,31 +143,53 @@ public final class CustomerListingView extends ListingView {
 				new Column("Billing Model", "billingModel", "ca"),
 				new Column("Billing Cycle", "billingCycle", "ca") };
 
+			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
+
+				@Override
+				protected Widget getSourcingWidget() {
+					return CustomerListingView.this;
+				}
+
+				@Override
+				protected ViewClass getEditViewClass() {
+					return AccountEditView.klas;
+				}
+
+				@Override
+				protected String getListingElementName() {
+					return listingElementName;
+				}
+
+			};
+
+			public String getListingName() {
+				return EntityType.CUSTOMER.toString() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return listingElementName;
+			}
+
+			public Sorting getDefaultSorting() {
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "c"));
+			}
+
 			public Column[] getColumns() {
 				return columns;
 			}
 
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return rowOps;
+			}
+
+			public IAddRowDelegate getAddRowHandler() {
+				// TODO
+				return null;
+			}
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, null, criteria, ListHandlerType.PAGE,
-				new ModelChangingRowOpDelegate() {
-
-					@Override
-					protected Widget getSourcingWidget() {
-						return CustomerListingView.this;
-					}
-
-					@Override
-					protected ViewClass getEditViewClass() {
-						return AccountEditView.klas;
-					}
-
-					@Override
-					protected String getListingElementName() {
-						return config.getListingElementName();
-					}
-
-				}, null));
+		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
+				.getDefaultSorting()));
 	}
 
 	@Override

@@ -9,7 +9,8 @@ import com.tll.client.admin.ui.listing.AccountListingConfig;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
-import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IAddRowDelegate;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -123,19 +124,9 @@ public final class MerchantListingView extends ListingView {
 		criteria.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
 		criteria.setQueryParam(new IntPropertyValue("ispId", ispRef.getId()));
 
-		final IListingConfig config = new AccountListingConfig() {
+		final AccountListingConfig config = new AccountListingConfig() {
 
-			public String getListingName() {
-				return EntityType.MERCHANT.name() + "_LISTING";
-			}
-
-			public String getListingElementName() {
-				return EntityType.MERCHANT.getName();
-			}
-
-			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "m"));
-			}
+			private final String listingElementName = EntityType.MERCHANT.name();
 
 			private final Column[] columns = new Column[] {
 				new Column("#", Column.ROW_COUNT_COL_PROP, null),
@@ -147,6 +138,50 @@ public final class MerchantListingView extends ListingView {
 				new Column("Billing Cycle", "billingCycle", "m"),
 				new Column("Store Name", "storeName", "m") };
 
+			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
+
+				@Override
+				protected String getListingElementName() {
+					return listingElementName;
+				}
+
+				@Override
+				protected Widget getSourcingWidget() {
+					return MerchantListingView.this;
+				}
+
+				@Override
+				protected ViewClass getEditViewClass() {
+					return AccountEditView.klas;
+				}
+
+				@Override
+				protected Option[] getCustomRowOps(int rowIndex) {
+					return new Option[] { new Option("Customer Listing", App.imgs().arrow_sm_down().createImage()) };
+				}
+
+				@Override
+				protected void handleRowOp(String optionText, int rowIndex) {
+					if(optionText.indexOf("Customer Listing") == 0) {
+						Dispatcher.instance().dispatch(
+								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowRef(rowIndex),
+										ispRef));
+					}
+				}
+			};
+
+			public String getListingName() {
+				return EntityType.MERCHANT.toString() + "_LISTING";
+			}
+
+			public String getListingElementName() {
+				return listingElementName;
+			}
+
+			public Sorting getDefaultSorting() {
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "m"));
+			}
+
 			public Column[] getColumns() {
 				return columns;
 			}
@@ -157,39 +192,18 @@ public final class MerchantListingView extends ListingView {
 				return 2;
 			}
 
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return rowOps;
+			}
+
+			public IAddRowDelegate getAddRowHandler() {
+				return null;
+			}
+
 		};
 
-		setListingWidget(ListingFactory.rpcListing(config, null, criteria, ListHandlerType.PAGE,
-				new ModelChangingRowOpDelegate() {
-
-					@Override
-					protected String getListingElementName() {
-						return config.getListingElementName();
-					}
-
-					@Override
-					protected Widget getSourcingWidget() {
-						return MerchantListingView.this;
-					}
-
-					@Override
-					protected ViewClass getEditViewClass() {
-						return AccountEditView.klas;
-					}
-
-					@Override
-					protected Option[] getCustomRowOps(int rowIndex, RefKey rowRef) {
-						return new Option[] { new Option("Customer Listing", App.imgs().arrow_sm_down().createImage()) };
-					}
-
-					@Override
-					protected void handleRowOp(String optionText, int rowIndex, RefKey rowRef) {
-						if(optionText.indexOf("Customer Listing") == 0) {
-							Dispatcher.instance().dispatch(
-									CustomerListingView.klas.newViewRequest(MerchantListingView.this, rowRef, ispRef));
-						}
-					}
-				}, null));
+		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
+				.getDefaultSorting()));
 	}
 
 	@Override

@@ -27,25 +27,26 @@ import org.springframework.util.StringUtils;
 
 import com.google.inject.Provider;
 import com.tll.criteria.Comparator;
-import com.tll.criteria.CriteriaFactory;
 import com.tll.criteria.CriteriaType;
+import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.IPrimaryKey;
+import com.tll.model.INamedEntity;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.NameKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.CollectionUtil;
 
 /**
@@ -112,17 +113,28 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return baseClass.cast(maybeProxy);
 	}
 
-	public E load(IPrimaryKey<? extends E> key) {
+	public final E load(PrimaryKey<? extends E> key) {
 		final E e = getEntityManager().getReference(getEntityClass(), key.getId());
 		return deproxy(e, getEntityClass());
 	}
 
-	public E load(IBusinessKey<? extends E> key) {
+	public final E load(BusinessKey<? extends E> key) {
 		try {
-			return findEntity(CriteriaFactory.buildEntityCriteria(key, true));
+			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from business key: " + e.getMessage(), e);
+		}
+	}
+
+	protected final INamedEntity loadByName(NameKey<? extends INamedEntity> nameKey) {
+		try {
+			final com.tll.criteria.Criteria<E> nc = new com.tll.criteria.Criteria<E>(getEntityClass());
+			nc.getPrimaryGroup().addCriterion(nameKey, false);
+			return (INamedEntity) findEntity(nc);
+		}
+		catch(final InvalidCriteriaException e) {
+			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);
 		}
 	}
 
@@ -232,14 +244,14 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * whose elements are either {@link SearchResult} or {@link IEntity} instances
 	 * depending on the specified {@link CriteriaType}.
 	 * @param criteria Assumed non-<code>null</code>.
-	 * @param applySorting true/false
+	 * @param sorting The optional sorting directive
+	 * @param applySorting Apply the sorting?
 	 * @param resultTransformer The result transformer. May NOT be
 	 *        <code>null</code>.
 	 * @return List of distinct matching results
 	 * @throws InvalidCriteriaException When the criteria type is invalid or
 	 *         otherwise.
 	 */
-	@SuppressWarnings("unchecked")
 	protected final List<?> processCriteria(ICriteria<? extends E> criteria, Sorting sorting, boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
@@ -359,13 +371,14 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	/**
 	 * Translates criterion objects to the hibernate criterion objects. This
-	 * method takes a <code>DetachedCriteria</code> implementation simply
-	 * because there is no common interface for <code>DetachedCriteria</code>
-	 * and <code>Criteria</code>. This method may be overridden by subclasses
-	 * and thus is not called from processUniqueCriteria(ICriteria).
+	 * method takes a <code>DetachedCriteria</code> implementation simply because
+	 * there is no common interface for <code>DetachedCriteria</code> and
+	 * <code>Criteria</code>. This method may be overridden by subclasses and thus
+	 * is not called from processUniqueCriteria(ICriteria).
 	 * @param dc the hibernate criteria object
 	 * @param criteria Criteria object
-	 * @param sorting
+	 * @param sorting The optional sorting directive
+	 * @param applySorting Apply the sorting?
 	 * @throws InvalidCriteriaException
 	 */
 	protected void applyCriteria(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
@@ -378,14 +391,15 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * may not be overridden.
 	 * @param dc the hibernate criteria object
 	 * @param criteria criteria object
-	 * @param sorting
+	 * @param sorting The optional sorting directive
+	 * @param applySorting Apply the sorting?
 	 * @throws InvalidCriteriaException
 	 * @see #applyCriteria(DetachedCriteria, ICriteria)
 	 */
 	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
-			final ICriterionGroup pg = criteria.getPrimaryGroup();
+			final CriterionGroup pg = criteria.getPrimaryGroup();
 			Junction j = null;
 			if(pg.size() > 1) {
 				j = pg.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
@@ -407,7 +421,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 
 		if(ctn.isGroup()) {
-			final ICriterionGroup g = (ICriterionGroup) ctn;
+			final CriterionGroup g = (CriterionGroup) ctn;
 			final Junction j = g.isConjunction() ? Restrictions.conjunction() : Restrictions.disjunction();
 			dc.add(j);
 
@@ -528,12 +542,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 	@SuppressWarnings("unchecked")
 	public List<E> findByIds(List<Integer> ids, Sorting sorting) {
-		final ICriteria<? extends E> criteria =
-				CriteriaFactory.buildEntityCriteria(getEntityClass(), IEntity.PK_FIELDNAME, ids, Comparator.IN);
-		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
+		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(getEntityClass());
+		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
+		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, criteria, sorting, true);
+			applyCriteriaStrict(dc, nativeCriteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);
@@ -567,53 +581,21 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			applySorting(dc, sorting);
 		}
 		catch(final InvalidCriteriaException e) {
-			throw new PersistenceException("Invalid criteria: " + e.getMessage(), e); // shouldn't
+			throw new PersistenceException("Invalid criteria: " + e.getMessage(), e); // shouldn
+																																								// 't
 			// happen
 		}
 		return (List<E>) findByDetatchedCriteria(dc);
 	}
 
-	/**
-	 * Obtains the page results then generates a {@link DetachedCriteriaPage}
-	 * containing the page results.
-	 * @param hCrit Hibernate criteria
-	 * @param page
-	 * @param pageSize
-	 * @param rowCount
-	 * @param refType
-	 * @param scalar
-	 * @return New {@link DetachedCriteriaPage} instance
-	 */
 	@SuppressWarnings("unchecked")
-	protected DetachedCriteriaPage<SearchResult<E>> generateDetachedCriteriaPage(Criteria hCrit, int page, int pageSize,
-			int rowCount, Class<? extends E> refType, boolean scalar) {
-		final List<SearchResult<E>> list = hCrit.setFirstResult(page * pageSize).setMaxResults(pageSize).list();
-		return new DetachedCriteriaPage<SearchResult<E>>(pageSize, rowCount, list, page, refType, scalar);
-	}
-
-	/**
-	 * Obtains the page results then generates a {@link QueryPage} containing the
-	 * page results.
-	 * @param q The Query
-	 * @param page
-	 * @param pageSize
-	 * @param rowCount
-	 * @param refType
-	 * @param scalar
-	 * @return New {@link QueryPage} instance
-	 */
-	@SuppressWarnings("unchecked")
-	private <T> QueryPage<T> generateQueryPage(Query q, int page, int pageSize, int rowCount, Class<? extends E> refType,
-			boolean scalar) {
-		final List<T> list = q.setFirstResult(page * pageSize).setMaxResults(pageSize).getResultList();
-		return new QueryPage<T>(pageSize, rowCount, list, page, refType, scalar);
-	}
-
-	public IPage<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int page, int pageSize)
+	public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
 			throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		final Class<? extends E> entityClass =
 				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
+		List<SearchResult<E>> rlist = null;
+		int totalCount = -1;
 		switch(criteria.getCriteriaType()) {
 
 			case ENTITY: {
@@ -627,16 +609,16 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				applyCriteria(dc, criteria, sorting, true);
 				final Session session = (Session) getEntityManager().getDelegate();
 				final Criteria hCrit = dc.getExecutableCriteria(session);
-
 				final Integer rowCount = (Integer) hCrit.setProjection(Projections.rowCount()).uniqueResult();
+				assert rowCount != null;
+				totalCount = rowCount.intValue();
+
 				// restore the criteria
 				hCrit.setProjection(null);
 				hCrit.setResultTransformer(ENTITY_RESULT_TRANSFORMER);
 
-				final DetachedCriteriaPage<SearchResult<E>> hPage =
-						generateDetachedCriteriaPage(hCrit, page, pageSize, rowCount, entityClass, false);
-				hPage.setDetachedCriteria(dc);
-				return hPage;
+				rlist = hCrit.setFirstResult(offset).setMaxResults(pageSize).list();
+				break;
 			}
 
 			case ENTITY_NAMED_QUERY: {
@@ -648,11 +630,10 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				final Query cq = assembleQuery(countQueryName, null, null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
-
+				totalCount = count.intValue();
 				final Query q = assembleQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
-				final QueryPage<SearchResult<E>> qp =
-						generateQueryPage(q, page, pageSize, count.intValue(), entityClass, false);
-				return qp;
+				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				break;
 			}
 
 			case SCALAR_NAMED_QUERY: {
@@ -664,37 +645,34 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
+				totalCount = count.intValue();
 
 				final Query q =
 						assembleQuery(queryName, criteria.getQueryParams(), sorting, new ScalarSearchResultTransformer(criteria
 								.getEntityClass()), true);
-				final QueryPage<SearchResult<E>> qp = generateQueryPage(q, page, pageSize, count.intValue(), entityClass, true);
-				return qp;
+				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				break;
 			}
 		}
-		throw new InvalidCriteriaException("Invalid criteria for entity paging: " + criteria.getCriteriaType().name());
-	}
-
-	@SuppressWarnings("unchecked")
-	public IPage<SearchResult<E>> getPage(IPage<SearchResult<E>> currentPage, int newPageNum) {
-		if(currentPage instanceof DetachedCriteriaPage) {
-			// native criteria based
-			final DetachedCriteriaPage<SearchResult<E>> hCrntPage = (DetachedCriteriaPage<SearchResult<E>>) currentPage;
-			final Session session = (Session) getEntityManager().getDelegate();
-			final Criteria hCrit = hCrntPage.getDetachedCriteria().getExecutableCriteria(session);
-			hCrit.setResultTransformer(hCrntPage.scalar ? (new ScalarSearchResultTransformer(hCrntPage.refType))
-					: ENTITY_RESULT_TRANSFORMER);
-			final DetachedCriteriaPage<SearchResult<E>> hPage =
-					generateDetachedCriteriaPage(hCrit, newPageNum, currentPage.getPageSize(), currentPage.getTotalSize(),
-							(Class<? extends E>) hCrntPage.refType, hCrntPage.scalar);
-			hPage.setDetachedCriteria(hCrntPage.getDetachedCriteria());
-			return hPage;
+		if(rlist == null) {
+			throw new InvalidCriteriaException("Invalid paging criteria: " + criteria.getCriteriaType().name());
 		}
 
-		// Query based
-		assert (currentPage instanceof QueryPage);
-		final QueryPage<SearchResult<E>> qp = (QueryPage<SearchResult<E>>) currentPage;
-		return generateQueryPage(qp.getQuery(), newPageNum, currentPage.getPageSize(), currentPage.getTotalSize(),
-				(Class<? extends E>) qp.refType, qp.scalar);
+		final List<SearchResult<E>> list = rlist;
+		final int count = totalCount;
+
+		return new IPageResult() {
+
+			@Override
+			public int getResultCount() {
+				return count;
+			}
+
+			@Override
+			public List getPageList() {
+				return list;
+			}
+
+		};
 	}
 }

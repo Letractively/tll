@@ -12,7 +12,7 @@ import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
 import com.tll.client.data.EntityPurgeRequest;
 import com.tll.client.data.EntityRequest;
-import com.tll.client.data.IListingCommand;
+import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.search.ISearch;
@@ -62,7 +62,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 			return MEntityServiceImplFactory.instance(entityType);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(getRequestContext(), payload, se, se.getMessage(), true);
+			ServletUtil.handleException(getRequestContext(), payload.getStatus(), se, se.getMessage(), true);
 			return null;
 		}
 	}
@@ -116,14 +116,14 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 	}
 
 	@SuppressWarnings("unchecked")
-	public IMarshalingListHandler<IEntity> getMarshalingListHandler(final IListingCommand listingCommand) {
-		if(listingCommand == null || listingCommand.getSearchCriteria() == null) {
+	public IMarshalingListHandler<IEntity> getMarshalingListHandler(final RemoteListingDefinition listingDefinition) {
+		if(listingDefinition == null || listingDefinition.getSearchCriteria() == null) {
 			throw new IllegalArgumentException("A listing command and member search property must be set.");
 		}
-		final EntityType entityType = listingCommand.getSearchCriteria().getEntityType();
+		final EntityType entityType = listingDefinition.getSearchCriteria().getEntityType();
 		final MEntityServiceImpl<IEntity, ISearch> svc =
 				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(entityType);
-		return svc.getMarshalingListHandler(getRequestContext(), listingCommand);
+		return svc.getMarshalingListHandler(getRequestContext(), listingDefinition);
 	}
 
 }

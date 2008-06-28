@@ -10,6 +10,8 @@ import com.tll.util.StringUtil;
  */
 public abstract class ApplicationException extends Exception {
 
+	private static final long serialVersionUID = -3660434051230189619L;
+
 	/**
 	 * Constructor
 	 * @param message

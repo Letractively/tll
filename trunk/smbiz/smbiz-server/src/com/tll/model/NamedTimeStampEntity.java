@@ -3,8 +3,6 @@ package com.tll.model;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * An entity that contains audit information. The information currently stored
  * is the create/modify date and the create/modify user.
@@ -12,6 +10,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 @MappedSuperclass
 public abstract class NamedTimeStampEntity extends TimeStampEntity implements INamedTimeStampEntity {
+
+	private static final long serialVersionUID = 2186964556332599921L;
 
 	protected String name;
 
@@ -26,10 +26,5 @@ public abstract class NamedTimeStampEntity extends TimeStampEntity implements IN
 	@Override
 	public String descriptor() {
 		return typeName() + " '" + getName() + "'";
-	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder().append("name", getName());
 	}
 }

@@ -83,11 +83,6 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	}
 
 	@Override
-	public String toString() {
-		return getAuthority();
-	}
-
-	@Override
 	public String descriptor() {
 		return getAuthority();
 	}

@@ -4,9 +4,6 @@
  */
 package com.tll.client.ui.listing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
@@ -22,26 +19,24 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.ListingOp;
+import com.tll.client.event.IListingListener;
+import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.IData;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
-import com.tll.listhandler.IPage;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingTable - AbstractListingWidget specific HTML table.
+ * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable extends Grid implements TableListener, KeyboardListener {
+public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
@@ -65,20 +60,15 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 
 	protected Column[] columns;
 
-	protected ITableCellTransformer cellTransformer;
+	protected ITableCellRenderer<R> cellRenderer;
 
-	protected IListingOperator listingOperator;
+	protected IListingOperator<R> listingOperator;
 
 	/**
 	 * The column index holding the row num. -1 indicates the row num col doesn't
 	 * exist.
 	 */
 	protected int rowNumColIndex;
-
-	/**
-	 * {@link RefKey}s for each listing element row.
-	 */
-	protected final List<RefKey> rowRefs = new ArrayList<RefKey>();
 
 	/**
 	 * The column index of the currently sorted column.
@@ -101,15 +91,21 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 */
 	private int crntRowIndex = -1;
 
+	/**
+	 * The current calculated 1-based page number.
+	 */
 	private int crntPage = -1;
 
+	/**
+	 * The calculated number of listing pages.
+	 */
 	private int numPages = 0;
 
 	/**
 	 * Constructor
 	 * @para config
 	 */
-	public ListingTable(IListingConfig config) {
+	public ListingTable(IListingConfig<R> config) {
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addTableListener(this);
@@ -120,12 +116,13 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * Initializes the table.
 	 * @param config
 	 */
+	@SuppressWarnings("unchecked")
 	protected void initialize(IListingConfig config) {
 		assert config != null;
 
 		this.columns = config.getColumns();
-		this.cellTransformer = config.getTableCellTransformer();
-		assert columns != null && cellTransformer != null;
+		this.cellRenderer = config.getCellRenderer();
+		assert columns != null && cellRenderer != null;
 
 		int rn = -1;
 		Column[] columns = config.getColumns();
@@ -138,7 +135,7 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		rowNumColIndex = rn;
 
 		if(config.isSortable()) {
-			sortlinks = new SortLink[columns.length];
+			sortlinks = new ListingTable.SortLink[columns.length];
 		}
 
 		setStyleName(STYLE_TABLE);
@@ -147,33 +144,11 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	}
 
 	/**
-	 * @param listingOperator the listingOperator to set
+	 * Sets the listing operator on behalf of the containing listing Widget.
+	 * @param listingOperator The listing operator
 	 */
-	public final void setListingOperator(IListingOperator listingOperator) {
+	final void setListingOperator(IListingOperator<R> listingOperator) {
 		this.listingOperator = listingOperator;
-	}
-
-	public final Widget getTableWidget() {
-		return this;
-	}
-
-	/**
-	 * Get the row ref for a given row.
-	 * @param row 0-based table row num (considers the header row).
-	 * @return RefKey
-	 */
-	public final RefKey getRowRef(int row) {
-		return rowRefs.get(row - 1);
-	}
-
-	/**
-	 * Get the row index given a {@link RefKey}.
-	 * @param rowRef The RefKey for which to find the associated row index.
-	 * @return The row index or <code>-1</code> if no row matching the given ref
-	 *         key is present in the table.
-	 */
-	final int getRowIndex(RefKey rowRef) {
-		return rowRefs.indexOf(rowRef) + 1; // account for header row
 	}
 
 	/**
@@ -272,12 +247,12 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 			if(sender == lnk) {
 				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), column.getIgnoreCase());
 				sc.setDirection(direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
-				listingOperator.sort(sc);
+				listingOperator.sort(new Sorting(sc));
 			}
 		}
 	}
 
-	private void addHeaderRow(IListingConfig config) {
+	private void addHeaderRow(IListingConfig<R> config) {
 		final int numCols = columns.length;
 
 		resize(1, numCols);
@@ -316,12 +291,12 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param overwriteOnNull Overwrite existing cell data when the corresponding
 	 *        row data element is <code>null</code>?
 	 */
-	private void setRowData(int rowIndex, int rowNum, IData rowData, boolean overwriteOnNull) {
+	protected void setRowData(int rowIndex, int rowNum, R rowData, boolean overwriteOnNull) {
 		if(rowIndex == 0) {
 			return; // header row
 		}
 
-		final String[] cellVals = cellTransformer.getCellValues(rowData, columns);
+		final String[] cellVals = cellRenderer.getCellValues(rowData, columns);
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
 				if(rowNum > -1) {
@@ -341,17 +316,14 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 	}
 
-	private void addBodyRows(IPage<? extends IData> page) {
-		final int numBodyRows = page.getNumPageElements();
+	private void addBodyRows(R[] page, int offset) {
+		final int numBodyRows = page.length;
 		resizeRows(numBodyRows + 1);
-		rowRefs.clear();
 		boolean evn = false;
-		int rowNum = page.getFirstIndex();
+		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
 			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
-			IData data = page.getPageElements().get(r);
-			setRowData(r + 1, ++rowNum, page.getPageElements().get(r), true);
-			rowRefs.add(data.getRefKey());
+			setRowData(r + 1, ++rowIndex, page[r], true);
 		}
 	}
 
@@ -359,13 +331,16 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		resizeRows(1);
 	}
 
-	public void setPage(IPage<? extends IData> page, Sorting sorting) {
-		removeBodyRows();
-		addBodyRows(page);
-		if(sortlinks != null && sorting != null) applySorting(sorting);
-		crntPage = page.getPageNumber() + 1;
-		numPages = page.getNumPages();
-		actvRowIndex = crntRowIndex = -1; // reset
+	public final void onListingEvent(ListingEvent<R> event) {
+		if(event.getListingOp().isQuery() && event.isSuccess()) {
+			removeBodyRows();
+			addBodyRows(event.getPageElements(), event.getOffset());
+			final Sorting sorting = event.getSorting();
+			if(sortlinks != null && sorting != null) applySorting(sorting);
+			crntPage = event.getPageNum() + 1;
+			numPages = event.getNumPages();
+			actvRowIndex = crntRowIndex = -1; // reset
+		}
 	}
 
 	@Override
@@ -411,12 +386,12 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEUP) {
 			if(crntPage > 1) {
-				listingOperator.navigate(ListingOp.PREVIOUS_PAGE, null);
+				listingOperator.previousPage();
 			}
 		}
 		else if(keyCode == KeyboardListener.KEY_PAGEDOWN) {
 			if(crntPage < numPages) {
-				listingOperator.navigate(ListingOp.NEXT_PAGE, null);
+				listingOperator.nextPage();
 			}
 		}
 	}
@@ -455,18 +430,28 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	 * @param rowData The row data for the new table row
 	 * @return The index of the newly-created row
 	 */
-	int addRow(Model rowData) {
+	int addRow(R rowData) {
 		// insert a new empty row
 		final int addRowIndex = getRowCount();
 		resizeRows(addRowIndex + 1);
 
 		// set the row data
 		setRowData(addRowIndex, -1, rowData, true);
-		rowRefs.add(rowData.getRefKey());
 
 		getRowFormatter().addStyleName(addRowIndex, CSS_ADDED);
 
 		return addRowIndex;
+	}
+
+	/**
+	 * Updates an existing row's cell contents.
+	 * @param rowIndex The row index of the row to update
+	 * @param rowData The new row data to apply
+	 */
+	void updateRow(int rowIndex, R rowData) {
+		assert rowIndex >= 1 : "Can't update the header row";
+		setRowData(rowIndex, -1, rowData, true);
+		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 
 	/**
@@ -479,7 +464,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 		removeRow(rowIndex);
 		// update the numRows property
 		numRows--;
-		rowRefs.remove(rowIndex - 1);
 		updateRowsBelow(rowIndex, false);
 
 		// reset the current row index
@@ -495,18 +479,6 @@ public class ListingTable extends Grid implements TableListener, KeyboardListene
 	void markRowDeleted(int rowIndex) {
 		assert rowIndex >= 1 : "Can't delete the header row";
 		getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
-	}
-
-	/**
-	 * Updates an existing row's cell contents.
-	 * @param rowIndex The row index of the row to update
-	 * @param rowData The new row data to apply
-	 */
-	void updateRow(int rowIndex, Model rowData) {
-		assert rowIndex >= 1 : "Can't update the header row";
-		setRowData(rowIndex, -1, rowData, true);
-		rowRefs.set(rowIndex - 1, rowData.getRefKey());
-		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
 	}
 
 	private int getPageRowNum(int rowIndex) {

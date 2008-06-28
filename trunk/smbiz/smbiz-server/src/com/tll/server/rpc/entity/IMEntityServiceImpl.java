@@ -6,7 +6,7 @@ import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
 import com.tll.client.data.EntityPurgeRequest;
 import com.tll.client.data.EntityRequest;
-import com.tll.client.data.IListingCommand;
+import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
@@ -91,9 +91,10 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	/**
 	 * Provides the entity type specific {@link IMarshalingListHandler}.
 	 * @param requestContext Guaranteed non-<code>null</code>
-	 * @param listingCommand The {@link IListingCommand}
+	 * @param listingDefinition The listing definition
 	 * @return The marshaling list handler.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext, IListingCommand<S> listingCommand);
+	IMarshalingListHandler<E> getMarshalingListHandler(RequestContext requestContext,
+			RemoteListingDefinition<S> listingDefinition);
 
 }

@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.Digits;
 import org.hibernate.validator.Min;
 import org.hibernate.validator.NotNull;
@@ -28,213 +27,203 @@ import com.tll.model.IEntity;
 @Entity
 @DiscriminatorValue("option")
 public class InterfaceOption extends InterfaceOptionBase {
-  private static final long serialVersionUID = -3858516767622503827L;
-  
-  protected boolean isDefault = false;
 
-  protected float setUpCost = 0f;
+	private static final long serialVersionUID = -3858516767622503827L;
 
-  protected float monthlyCost = 0f;
+	protected boolean isDefault = false;
 
-  protected float annualCost = 0f;
+	protected float setUpCost = 0f;
 
-  protected float baseSetupPrice = 0f;
+	protected float monthlyCost = 0f;
 
-  protected float baseMonthlyPrice = 0f;
+	protected float annualCost = 0f;
 
-  protected float baseAnnualPrice = 0f;
+	protected float baseSetupPrice = 0f;
 
-  protected Set<InterfaceOptionParameterDefinition> parameters = new LinkedHashSet<InterfaceOptionParameterDefinition>();
+	protected float baseMonthlyPrice = 0f;
 
-  public Class<? extends IEntity> entityClass() {
-    return InterfaceOption.class;
-  }
+	protected float baseAnnualPrice = 0f;
 
-  /**
-   * @return Returns the isDefault.
-   */
-  @Column(name="is_default", nullable = false)
-  public boolean isDefault() {
-    return isDefault;
-  }
+	protected Set<InterfaceOptionParameterDefinition> parameters =
+			new LinkedHashSet<InterfaceOptionParameterDefinition>();
 
-  /**
-   * @param isDefault
-   *          The isDefault to set.
-   */
-  public void setDefault(boolean isDefault) {
-    this.isDefault = isDefault;
-  }
+	public Class<? extends IEntity> entityClass() {
+		return InterfaceOption.class;
+	}
 
-  /**
-   * @return Returns the setUpCost.
-   */
-  @Column(name="set_up_cost", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getSetUpCost() {
-    return setUpCost;
-  }
+	/**
+	 * @return Returns the isDefault.
+	 */
+	@Column(name = "is_default", nullable = false)
+	public boolean isDefault() {
+		return isDefault;
+	}
 
-  /**
-   * @param setUpCost
-   *          The setUpCost to set.
-   */
-  public void setSetUpCost(float setUpCost) {
-    this.setUpCost = setUpCost;
-  }
+	/**
+	 * @param isDefault The isDefault to set.
+	 */
+	public void setDefault(boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 
-  /**
-   * @return Returns the monthlyCost.
-   */
-  @Column(name="monthly_cost", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getMonthlyCost() {
-    return monthlyCost;
-  }
+	/**
+	 * @return Returns the setUpCost.
+	 */
+	@Column(name = "set_up_cost", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getSetUpCost() {
+		return setUpCost;
+	}
 
-  /**
-   * @param monthlyCost
-   *          The monthlyCost to set.
-   */
-  public void setMonthlyCost(float monthlyCost) {
-    this.monthlyCost = monthlyCost;
-  }
+	/**
+	 * @param setUpCost The setUpCost to set.
+	 */
+	public void setSetUpCost(float setUpCost) {
+		this.setUpCost = setUpCost;
+	}
 
-  /**
-   * @return Returns the annualCost.
-   */
-  @Column(name="annual_cost", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getAnnualCost() {
-    return annualCost;
-  }
+	/**
+	 * @return Returns the monthlyCost.
+	 */
+	@Column(name = "monthly_cost", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getMonthlyCost() {
+		return monthlyCost;
+	}
 
-  /**
-   * @param annualCost
-   *          The annualCost to set.
-   */
-  public void setAnnualCost(float annualCost) {
-    this.annualCost = annualCost;
-  }
+	/**
+	 * @param monthlyCost The monthlyCost to set.
+	 */
+	public void setMonthlyCost(float monthlyCost) {
+		this.monthlyCost = monthlyCost;
+	}
 
-  /**
-   * @return Returns the baseAnnualPrice.
-   */
-  @Column(name="base_annual_price", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getBaseAnnualPrice() {
-    return baseAnnualPrice;
-  }
+	/**
+	 * @return Returns the annualCost.
+	 */
+	@Column(name = "annual_cost", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getAnnualCost() {
+		return annualCost;
+	}
 
-  /**
-   * @param baseAnnualPrice
-   *          The baseAnnualPrice to set.
-   */
-  public void setBaseAnnualPrice(float baseAnnualPrice) {
-    this.baseAnnualPrice = baseAnnualPrice;
-  }
+	/**
+	 * @param annualCost The annualCost to set.
+	 */
+	public void setAnnualCost(float annualCost) {
+		this.annualCost = annualCost;
+	}
 
-  /**
-   * @return Returns the baseMonthlyPrice.
-   */
-  @Column(name="base_monthly_price", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getBaseMonthlyPrice() {
-    return baseMonthlyPrice;
-  }
+	/**
+	 * @return Returns the baseAnnualPrice.
+	 */
+	@Column(name = "base_annual_price", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getBaseAnnualPrice() {
+		return baseAnnualPrice;
+	}
 
-  /**
-   * @param baseMonthlyPrice
-   *          The baseMonthlyPrice to set.
-   */
-  public void setBaseMonthlyPrice(float baseMonthlyPrice) {
-    this.baseMonthlyPrice = baseMonthlyPrice;
-  }
+	/**
+	 * @param baseAnnualPrice The baseAnnualPrice to set.
+	 */
+	public void setBaseAnnualPrice(float baseAnnualPrice) {
+		this.baseAnnualPrice = baseAnnualPrice;
+	}
 
-  /**
-   * @return Returns the baseSetupPrice.
-   */
-  @Column(name="base_setup_price", nullable=false, precision = 8, scale = 2)
-  @Digits(integerDigits = 6, fractionalDigits = 2) @NotNull @Min(value = 0)
-  public float getBaseSetupPrice() {
-    return baseSetupPrice;
-  }
+	/**
+	 * @return Returns the baseMonthlyPrice.
+	 */
+	@Column(name = "base_monthly_price", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getBaseMonthlyPrice() {
+		return baseMonthlyPrice;
+	}
 
-  /**
-   * @param baseSetupPrice
-   *          The baseSetupPrice to set.
-   */
-  public void setBaseSetupPrice(float baseSetupPrice) {
-    this.baseSetupPrice = baseSetupPrice;
-  }
+	/**
+	 * @param baseMonthlyPrice The baseMonthlyPrice to set.
+	 */
+	public void setBaseMonthlyPrice(float baseMonthlyPrice) {
+		this.baseMonthlyPrice = baseMonthlyPrice;
+	}
 
-  /**
-   * @return Returns the parameters.
-   */
-  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-  @JoinColumn(name="option_id")
-  @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-  @Valid
-  public Set<InterfaceOptionParameterDefinition> getParameters() {
-    return parameters;
-  }
+	/**
+	 * @return Returns the baseSetupPrice.
+	 */
+	@Column(name = "base_setup_price", nullable = false, precision = 8, scale = 2)
+	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@NotNull
+	@Min(value = 0)
+	public float getBaseSetupPrice() {
+		return baseSetupPrice;
+	}
 
-  /**
-   * @param parameters
-   *          The parameters to set.
-   */
-  public void setParameters(Set<InterfaceOptionParameterDefinition> parameters) {
-    this.parameters = parameters;
-  }
-  
-  @Transient
-  public InterfaceOptionParameterDefinition getParameter(int id) {
-    return findEntityInCollection(parameters, id);
-  }
+	/**
+	 * @param baseSetupPrice The baseSetupPrice to set.
+	 */
+	public void setBaseSetupPrice(float baseSetupPrice) {
+		this.baseSetupPrice = baseSetupPrice;
+	}
 
-  @Transient
-  public InterfaceOptionParameterDefinition getParameter(String name) {
-    return findNamedEntityInCollection(parameters, name);
-  }
+	/**
+	 * @return Returns the parameters.
+	 */
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "option_id")
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+	@Valid
+	public Set<InterfaceOptionParameterDefinition> getParameters() {
+		return parameters;
+	}
 
-  @Transient
-  public void addParameter(InterfaceOptionParameterDefinition e) {
-    addEntityToCollection(parameters, e);
-  }
+	/**
+	 * @param parameters The parameters to set.
+	 */
+	public void setParameters(Set<InterfaceOptionParameterDefinition> parameters) {
+		this.parameters = parameters;
+	}
 
-  @Transient
-  public void addParameters(Collection<InterfaceOptionParameterDefinition> clc) {
-    addEntitiesToCollection(clc, parameters);
-  }
+	@Transient
+	public InterfaceOptionParameterDefinition getParameter(int id) {
+		return findEntityInCollection(parameters, id);
+	}
 
-  @Transient
-  public void removeParameter(InterfaceOptionParameterDefinition e) {
-    removeEntityFromCollection(parameters, e);
-  }
+	@Transient
+	public InterfaceOptionParameterDefinition getParameter(String name) {
+		return findNamedEntityInCollection(parameters, name);
+	}
 
-  @Transient
-  public void removeParameters() {
-    clearEntityCollection(parameters);
-  }
+	@Transient
+	public void addParameter(InterfaceOptionParameterDefinition e) {
+		addEntityToCollection(parameters, e);
+	}
 
-  @Transient
-  public int getNumParameters() {
-    return getCollectionSize(parameters);
-  }
+	@Transient
+	public void addParameters(Collection<InterfaceOptionParameterDefinition> clc) {
+		addEntitiesToCollection(clc, parameters);
+	}
 
-  @Override
-  protected ToStringBuilder toStringBuilder() {
+	@Transient
+	public void removeParameter(InterfaceOptionParameterDefinition e) {
+		removeEntityFromCollection(parameters, e);
+	}
 
-    return super.toStringBuilder()
+	@Transient
+	public void removeParameters() {
+		clearEntityCollection(parameters);
+	}
 
-    .append("isDefault", isDefault)
-    .append("setUpCost", setUpCost)
-    .append("monthlyCost", monthlyCost)
-    .append("annualCost", annualCost)
-    .append("baseSetupPrice", baseSetupPrice)
-    .append("baseMonthlyPrice", baseMonthlyPrice)
-    .append("baseAnnualPrice", baseAnnualPrice)
-    .append("parameters.size()", parameters == null ? "NULL" : Integer.toString(parameters.size()));
-  }
-
+	@Transient
+	public int getNumParameters() {
+		return getCollectionSize(parameters);
+	}
 }

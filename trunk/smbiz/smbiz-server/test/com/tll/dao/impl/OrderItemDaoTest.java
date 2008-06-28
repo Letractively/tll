@@ -14,8 +14,7 @@ import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.Order;
 import com.tll.model.impl.OrderItem;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderItemDaoTest
@@ -24,8 +23,8 @@ import com.tll.model.key.KeyFactory;
 @Test(groups = "dao", testName = "OrderItemDaoTest")
 public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
-	IPrimaryKey<Account> aKey;
-	IPrimaryKey<Order> oKey;
+	PrimaryKey<Account> aKey;
+	PrimaryKey<Order> oKey;
 
 	/**
 	 * Constructor
@@ -38,12 +37,13 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 	protected void assembleTestEntity(OrderItem e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class)));
+			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account.setCurrency(getDao(ICurrencyDao.class).persist(
+					getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getDao(IAccountDao.class).persist(account);
-			aKey = KeyFactory.getPrimaryKey(account);
+			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
 			account = getDao(IAccountDao.class).load(aKey);
@@ -52,12 +52,12 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
 		Order order;
 		if(oKey == null) {
-			order = getMockEntityProvider().getEntityCopy(Order.class);
+			order = getMockEntityProvider().getEntityCopy(Order.class, true);
 			order.setCurrency(account.getCurrency());
 			order.setPaymentInfo(null);
 			order.setAccount(account);
 			order = getDao(IOrderDao.class).persist(order);
-			oKey = KeyFactory.getPrimaryKey(order);
+			oKey = new PrimaryKey<Order>(order);
 		}
 		else {
 			order = getDao(IOrderDao.class).load(oKey);

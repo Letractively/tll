@@ -6,8 +6,11 @@
 package com.tll.client.admin.ui.listing;
 
 import com.tll.client.listing.Column;
+import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.ITableCellTransformer;
+import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
+import com.tll.client.model.Model;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
@@ -15,7 +18,7 @@ import com.tll.model.EntityType;
  * InterfaceOptionParamListingConfig
  * @author jpk
  */
-public final class InterfaceOptionParamListingConfig implements IListingConfig {
+public final class InterfaceOptionParamListingConfig implements IListingConfig<Model> {
 
 	public String getListingName() {
 		return EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION.name() + "_LISTING";
@@ -42,20 +45,12 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 		return null;
 	}
 
-	public final ITableCellTransformer getTableCellTransformer() {
-		return IListingConfig.DEFAULT_TABLE_CELL_TRANSFORMER;
-	}
-
-	public final boolean isPageable() {
-		return false;
+	public final ITableCellRenderer<Model> getCellRenderer() {
+		return IListingConfig.MODEL_DATA_CELL_RENDERER;
 	}
 
 	public int getPageSize() {
 		return -1;
-	}
-
-	public final boolean isShowAddBtn() {
-		return true;
 	}
 
 	public final boolean isShowNavBar() {
@@ -68,5 +63,13 @@ public final class InterfaceOptionParamListingConfig implements IListingConfig {
 
 	public final boolean isSortable() {
 		return false;
+	}
+
+	public IAddRowDelegate getAddRowHandler() {
+		return null;
+	}
+
+	public IRowOptionsDelegate getRowOptionsHandler() {
+		return null;
 	}
 }

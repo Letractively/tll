@@ -22,28 +22,27 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.tll.SystemError;
 import com.tll.criteria.Comparator;
+import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
-import com.tll.criteria.ICriterionGroup;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
-import com.tll.listhandler.IPage;
+import com.tll.listhandler.IPageResult;
 import com.tll.listhandler.SearchResult;
 import com.tll.listhandler.SortColumnBeanComparator;
 import com.tll.listhandler.Sorting;
+import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
 import com.tll.model.Scalar;
-import com.tll.model.key.IBusinessKey;
-import com.tll.model.key.INameKey;
-import com.tll.model.key.IPrimaryKey;
-import com.tll.model.key.KeyFactory;
+import com.tll.model.key.BusinessKey;
+import com.tll.model.key.NameKey;
+import com.tll.model.key.PrimaryKey;
 import com.tll.util.CommonUtil;
 import com.tll.util.DateRange;
 
@@ -218,7 +217,8 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return entityClass;
 	}
 
-	public void clear() {
+	public final void clear() {
+		// no op
 	}
 
 	/**
@@ -233,7 +233,8 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return loadAll();
 	}
 
-	public List<E> findEntities(final ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public final List<E> findEntities(final ICriteria<? extends E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -255,7 +256,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 			else {
 				list = new ArrayList<E>();
 				final BeanWrapper bw = new BeanWrapperImpl();
-				final ICriterionGroup pg = criteria.getPrimaryGroup();
+				final CriterionGroup pg = criteria.getPrimaryGroup();
 				if(pg.size() > 0) {
 					for(final ICriterion ctn : pg) {
 						if(ctn.isGroup()) {
@@ -291,7 +292,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return list;
 	}
 
-	public List<SearchResult<E>> find(final ICriteria<? extends E> criteria, Sorting sorting)
+	public final List<SearchResult<E>> find(final ICriteria<? extends E> criteria, Sorting sorting)
 			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -305,7 +306,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return transformEntityList(list, criteria.getCriteriaType().isScalar());
 	}
 
-	protected IScalar scalarize(final E entity) {
+	protected final IScalar scalarize(final E entity) {
 		final BeanWrapper bw = new BeanWrapperImpl(entity);
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
 		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
@@ -317,7 +318,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return new Scalar(entity.entityClass(), map);
 	}
 
-	protected List<SearchResult<E>> transformEntityList(final List<E> entityList, final boolean isScalar) {
+	protected final List<SearchResult<E>> transformEntityList(final List<E> entityList, final boolean isScalar) {
 		final List<SearchResult<E>> slist = new ArrayList<SearchResult<E>>(entityList.size());
 		for(final E e : entityList) {
 			if(isScalar) {
@@ -330,7 +331,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return slist;
 	}
 
-	public List<E> findByIds(final List<Integer> ids, Sorting sorting) {
+	public final List<E> findByIds(final List<Integer> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
 		for(final E e : set) {
 			for(final Integer id : ids) {
@@ -345,7 +346,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return list;
 	}
 
-	public E findEntity(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public final E findEntity(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, null);
 		if(list != null && list.size() == 1) {
 			return list.get(0).getEntity();
@@ -357,11 +358,11 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		// no-op
 	}
 
-	public E load(final IBusinessKey<? extends E> key) {
+	public final E load(final BusinessKey<? extends E> key) {
 		for(final E e : set) {
 			try {
-				final IBusinessKey<E>[] bks = KeyFactory.getBusinessKeys(e);
-				for(final IBusinessKey<E> bk : bks) {
+				final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
+				for(final BusinessKey<E> bk : bks) {
 					if(bk.equals(key)) {
 						return e;
 					}
@@ -373,23 +374,26 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
-	public E load(final IPrimaryKey<? extends E> key) {
+	public final E load(final PrimaryKey<? extends E> key) {
+		final PrimaryKey<E> pk = new PrimaryKey<E>(entityClass);
 		for(final E e : set) {
-			if(KeyFactory.getPrimaryKey(e).equals(key)) {
+			pk.setId(e.getId());
+			if(pk.equals(key)) {
 				return e;
 			}
 		}
 		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
-	public List<E> loadAll() {
+	public final List<E> loadAll() {
 		final List<E> list = new ArrayList<E>();
 		list.addAll(set);
 		return list;
 	}
 
-	public E persist(final E entity) {
+	public final E persist(final E entity) {
 		if(!set.remove(entity)) {
+			assert entity.getVersion() == null;
 			// ensure business key unique
 			set.add(entity);
 			if(!EntityUtil.isBusinessKeyUnique(set)) {
@@ -404,18 +408,21 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		if(version == null) {
 			version = new Integer(0);
 		}
-		entity.setVersion(version + 1);
+		else {
+			version++;
+		}
+		entity.setVersion(version);
 		return entity;
 	}
 
-	public Collection<E> persistAll(final Collection<E> entities) {
+	public final Collection<E> persistAll(final Collection<E> entities) {
 		for(final E e : entities) {
 			persist(e);
 		}
 		return entities;
 	}
 
-	public void purge(final E entity) {
+	public final void purge(final E entity) {
 		for(final E e : set) {
 			if(e.equals(entity)) {
 				set.remove(e);
@@ -424,11 +431,11 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		}
 	}
 
-	public void purgeAll(final Collection<E> entities) {
+	public final void purgeAll(final Collection<E> entities) {
 		set.clear();
 	}
 
-	public List<E> getEntitiesFromIds(final Class<? extends E> entityClass, final Collection<Integer> ids,
+	public final List<E> getEntitiesFromIds(final Class<? extends E> entityClass, final Collection<Integer> ids,
 			final Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
 		for(final E e : set) {
@@ -444,7 +451,8 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return list;
 	}
 
-	public List<Integer> getIds(final ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public final List<Integer> getIds(final ICriteria<? extends E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, sorting);
 		if(list == null) {
 			return null;
@@ -456,44 +464,41 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return idlist;
 	}
 
-	public IPage<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting, final int page,
-			final int pageSize) throws InvalidCriteriaException {
+	public final IPageResult<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting,
+			final int offset, final int pageSize) throws InvalidCriteriaException {
 		List<SearchResult<E>> elist = find(criteria, sorting);
 		if(elist == null) {
 			elist = new ArrayList<SearchResult<E>>();
 		}
 		final int size = elist.size();
-		if(size < 1) {
-			return new NativeCriteriaPage<E>(pageSize, 0, elist, page);
+		if(size >= 1) {
+			int fi = offset;
+			int li = fi + pageSize;
+			if(fi > size - 1) {
+				fi = size - 1;
+			}
+			if(li > size - 1) {
+				li = size; // NOTE: exclusive index
+			}
+			elist = elist.subList(fi, li);
 		}
-		int fi = page * pageSize;
-		int li = fi + pageSize;
-		if(fi > size - 1) {
-			fi = size - 1;
-		}
-		if(li > size - 1) {
-			li = size; // NOTE: exclusive index
-		}
-		final NativeCriteriaPage<E> p = new NativeCriteriaPage<E>(pageSize, size, elist.subList(fi, li), page);
-		p.setCriteria(criteria);
-		return p;
+		final List<SearchResult<E>> subList = elist;
+		return new IPageResult<SearchResult<E>>() {
+
+			@Override
+			public List<SearchResult<E>> getPageList() {
+				return subList;
+			}
+
+			@Override
+			public int getResultCount() {
+				return size;
+			}
+		};
 	}
 
-	public IPage<SearchResult<E>> getPage(final IPage<SearchResult<E>> currentPage, final int newPageNum) {
-		if(currentPage instanceof NativeCriteriaPage == false) {
-			throw new IllegalArgumentException("The currentPage argument must be of type: "
-					+ NativeCriteriaPage.class.getName());
-		}
-		try {
-			final NativeCriteriaPage<E> mCrntPage = (NativeCriteriaPage<E>) currentPage;
-			return getPage(mCrntPage.getCriteria(), null, newPageNum, currentPage.getPageSize());
-		}
-		catch(final InvalidCriteriaException e) {
-			throw new SystemError("Unable to get page: " + e.getMessage(), e);
-		}
-	}
-
-	protected <N extends INamedEntity> E loadByName(final INameKey<N> key) {
+	@SuppressWarnings("unchecked")
+	public final E load(final NameKey key) {
 		if(key == null || key.getName() == null) return null;
 		if(set != null) {
 			final BeanWrapper bw = new BeanWrapperImpl();

@@ -45,7 +45,8 @@ import com.tll.model.impl.User;
  */
 public final class EntityGraph {
 
-	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map = new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
+	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map =
+			new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
 
 	private MockEntityProvider mep;
 
@@ -127,31 +128,31 @@ public final class EntityGraph {
 	private void stubRudimentaryEntities() throws Exception {
 		// currency
 		Set<Currency> currencies = new LinkedHashSet<Currency>();
-		currencies.add(setVersion(mep.getEntityCopy(Currency.class)));
+		currencies.add(setVersion(mep.getEntityCopy(Currency.class, false)));
 		map.put(Currency.class, currencies);
 
 		// app properties
 		Set<AppProperty> aps = new LinkedHashSet<AppProperty>();
-		AppProperty ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		AppProperty ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("locale");
 		ap.setValue("US");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("default.iso4217");
 		ap.setValue("usd");
 		aps.add(ap);
-		ap = setVersion(mep.getEntityCopy(AppProperty.class));
+		ap = setVersion(mep.getEntityCopy(AppProperty.class, false));
 		ap.setName("default.country");
 		ap.setValue("usa");
 		aps.add(ap);
 		map.put(AppProperty.class, aps);
 
 		// addresses
-		map.put(Address.class, setVersion(mep.getNUniqueEntityCopies(Address.class, 10)));
+		map.put(Address.class, setVersion(mep.getNEntityCopies(Address.class, 10, true)));
 
 		// payment infos
 		Set<PaymentInfo> pis = new LinkedHashSet<PaymentInfo>();
-		pis.add(setVersion(mep.getEntityCopy(PaymentInfo.class)));
+		pis.add(setVersion(mep.getEntityCopy(PaymentInfo.class, false)));
 		map.put(PaymentInfo.class, pis);
 
 		// user authorities
@@ -160,7 +161,11 @@ public final class EntityGraph {
 
 	@SuppressWarnings("unchecked")
 	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = setVersion(mep.getUniqueEntityCopy(type, num));
+		A a = setVersion(mep.getEntityCopy(type, false));
+
+		if(num > 0) {
+			a.setName(a.getName() + " " + Integer.toString(num));
+		}
 
 		a.setCurrency(getFirstEntity(Currency.class));
 
@@ -168,7 +173,7 @@ public final class EntityGraph {
 
 		// account addresses
 		AddressType ats[] = AddressType.values();
-		Set<AccountAddress> aas = setVersion(mep.getNEntityCopies(AccountAddress.class, ats.length));
+		Set<AccountAddress> aas = setVersion(mep.getNEntityCopies(AccountAddress.class, ats.length, false));
 		List<AccountAddress> aaList = new ArrayList<AccountAddress>(aas);
 		Iterator<AccountAddress> itr = aas.iterator();
 		int i = 0;
@@ -179,9 +184,10 @@ public final class EntityGraph {
 			aa.setType(at);
 			aa.setName(at.getName() + " address");
 		}
-		
-		// create a random number of account addresses for this account (for non-Asp accounts)
-		int maxAdrsIndex = Asp.class.equals(type)? ats.length : RandomUtils.nextInt(ats.length);
+
+		// create a random number of account addresses for this account (for non-Asp
+		// accounts)
+		int maxAdrsIndex = Asp.class.equals(type) ? ats.length : RandomUtils.nextInt(ats.length);
 		i = 0;
 		for(i = maxAdrsIndex + 1; i < ats.length; i++) {
 			if(i > aaList.size() - 1) {
@@ -190,11 +196,11 @@ public final class EntityGraph {
 			if(i < 0) break;
 			aaList.remove(i);
 		}
-		
+
 		if(aaList.size() > 0) {
 			aas = new LinkedHashSet<AccountAddress>(aaList);
 			a.addAccountAddresses(aas);
-			
+
 			// update the general account address set w/ the newly created ones
 			Set<AccountAddress> aaset = (Set<AccountAddress>) map.get(AccountAddress.class);
 			if(aaset == null) {
@@ -210,7 +216,7 @@ public final class EntityGraph {
 	@SuppressWarnings("unchecked")
 	private void stubAccounts() throws Exception {
 		// asp
-		asp = stubAccount(Asp.class, 1);
+		asp = stubAccount(Asp.class, 0);
 		asp.setName(Asp.ASP_NAME);
 		Set<Asp> asps = new LinkedHashSet<Asp>();
 		asps.add(asp);
@@ -219,7 +225,7 @@ public final class EntityGraph {
 		// isps
 		Set<Isp> isps = new LinkedHashSet<Isp>();
 		for(int i = 0; i < numIsps; i++) {
-			Isp isp = stubAccount(Isp.class, i);
+			Isp isp = stubAccount(Isp.class, i + 1);
 			isp.setParent(asp);
 			isps.add(isp);
 		}
@@ -229,7 +235,7 @@ public final class EntityGraph {
 		// merchants
 		Set<Merchant> merchants = new LinkedHashSet<Merchant>();
 		for(int i = 0; i < numMerchants; i++) {
-			Merchant m = stubAccount(Merchant.class, i);
+			Merchant m = stubAccount(Merchant.class, i + 1);
 			int ispIndex = i / numIsps;
 			m.setParent(arrIsp[ispIndex]);
 			merchants.add(m);
@@ -240,10 +246,10 @@ public final class EntityGraph {
 		// customers
 		Set<Customer> customers = new LinkedHashSet<Customer>();
 		for(int i = 0; i < numCustomers; i++) {
-			Customer c = stubAccount(Customer.class, i);
+			Customer c = stubAccount(Customer.class, i + 1);
 
 			// customer account
-			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class));
+			CustomerAccount ca = setVersion(mep.getEntityCopy(CustomerAccount.class, false));
 			ca.setCustomer(c);
 
 			if(i < 2) {
@@ -302,8 +308,8 @@ public final class EntityGraph {
 		intfs.addAll(setVersion(mep.getAllEntityCopies(InterfaceSwitch.class)));
 		intfs.addAll(setVersion(mep.getAllEntityCopies(InterfaceMulti.class)));
 		Set<InterfaceOption> ios = setVersion(mep.getAllEntityCopies(InterfaceOption.class));
-		Set<InterfaceOptionParameterDefinition> pds = setVersion(mep
-				.getAllEntityCopies(InterfaceOptionParameterDefinition.class));
+		Set<InterfaceOptionParameterDefinition> pds =
+				setVersion(mep.getAllEntityCopies(InterfaceOptionParameterDefinition.class));
 
 		for(Interface intf : intfs) {
 			if(Interface.CODE_CROSS_SELL.equals(intf.getCode())) {
@@ -357,7 +363,7 @@ public final class EntityGraph {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = setVersion(mep.getEntityCopy(User.class));
+		User u = setVersion(mep.getEntityCopy(User.class, false));
 		u.addAuthority((Authority) map.get(Authority.class).iterator().next());
 		u.setAccount(asp);
 		u.setAddress((Address) map.get(Address.class).iterator().next());

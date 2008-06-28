@@ -12,7 +12,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
@@ -31,15 +30,15 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 
 	private static final long serialVersionUID = 5543822993709686604L;
 
-	protected Account account;
+	private Account account;
 
-	protected Date transDate = new Date();
+	private Date transDate = new Date();
 
-	protected AccountStatus status;
+	private AccountStatus status;
 
-	protected String notes;
+	private String notes;
 
-	protected PaymentTrans pymntTrans;
+	private PaymentTrans pymntTrans;
 
 	public Class<? extends IEntity> entityClass() {
 		return AccountHistory.class;
@@ -144,14 +143,4 @@ public class AccountHistory extends TimeStampEntity implements IChildEntity<Acco
 			return null;
 		}
 	}
-
-	@Override
-	protected ToStringBuilder toStringBuilder() {
-		return super.toStringBuilder()
-
-		.append("account", account == null ? "NULL" : account.descriptor()).append("transDate",
-				transDate == null ? "NULL" : transDate.toString()).append("status", status).append("notes", notes).append(
-				"pymntTrans", pymntTrans == null ? "NULL" : pymntTrans.descriptor());
-	}
-
 }
