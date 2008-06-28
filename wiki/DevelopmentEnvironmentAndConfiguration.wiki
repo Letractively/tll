@@ -54,6 +54,10 @@ Lists the necessary local environment and IDE settings for building and deployin
 =eclipse=
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
+==Linked Resources==
+The following _Preferences -> General -> Workspace -> *Linked Resources*_ are required: 
+|| TLL_ROOT || Points to the root dir of the _tll_ source tree. ||
+
 ==Classpath Variables==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
 || LIBS || Root dir containing the 3rd party libraries referenced by the tll/tools project.||
