@@ -335,7 +335,6 @@ public final class Config implements Configuration {
 		return pc;
 	}
 
-	@SuppressWarnings("unchecked")
 	private PropertiesConfiguration filter(IConfigKeyProvider keyProvider) {
 		String[] keys = keyProvider == null ? null : keyProvider.getConfigKeys();
 		if(keys == null) return null;
