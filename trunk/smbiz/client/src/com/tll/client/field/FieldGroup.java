@@ -24,6 +24,7 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -126,8 +127,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * Used to indicate deletion in the underlying Model. Although a FieldGroup
 	 * hierarchy is not required to conform to the Model hierarchy, this property
-	 * is here nonetheless to facilitate data transferance of this information to
-	 * the Model.
+	 * is here nonetheless to support transferance of this information to the
+	 * underlying model.
 	 */
 	private boolean markedDeleted = false;
 
@@ -136,7 +137,15 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	private final Set<IField> fields = new HashSet<IField>();
 
+	/**
+	 * The collection of validators.
+	 */
 	private CompositeValidator validators;
+
+	/**
+	 * The Panel that owns this FieldGroup.
+	 */
+	private final FieldGroupPanel fieldGroupPanel;
 
 	/**
 	 * The Widget to which this field group is bound. May be <code>null</code>.
@@ -145,13 +154,16 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Constructor
-	 * @param displayName
-	 * @param refWidget
+	 * @param displayName The UI display name used for presenting validation
+	 *        feedback to the UI.
+	 * @param fieldGroupPanel The parent Panel that owns this field group.
 	 */
-	public FieldGroup(String displayName, Widget refWidget) {
+	public FieldGroup(String displayName, FieldGroupPanel fieldGroupPanel) {
 		super();
+		if(fieldGroupPanel == null) throw new IllegalArgumentException();
 		this.displayName = displayName;
-		this.refWidget = refWidget;
+		this.fieldGroupPanel = fieldGroupPanel;
+		this.refWidget = fieldGroupPanel;
 	}
 
 	public String descriptor() {
@@ -373,6 +385,17 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	private void onBeforeBind(Model model) {
+		// provide and opportunity for the owning panel to ready their field group
+		// before actual binding
+		fieldGroupPanel.onBeforeBind(model);
+		setMarkedDeleted(false);
+	}
+
+	private void onAfterBind() {
+		fieldGroupPanel.onAfterBind();
+	}
+
 	/**
 	 * Recursively binds a FieldGroup to a Model.
 	 * @param group The FieldGroup
@@ -381,6 +404,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *        binds to the given Model.
 	 */
 	private static void bindModel(final int propertyPathOffset, FieldGroup group, final Model model) {
+		group.onBeforeBind(model);
 		final PropertyPath propPath = new PropertyPath();
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup) {
@@ -401,7 +425,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				}
 			}
 		}
-		group.setMarkedDeleted(false);
+		group.onAfterBind();
 	}
 
 	/**
@@ -600,6 +624,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	@Override
 	public String toString() {
-		return getPropertyName() + " (FieldGroup)";
+		return descriptor() + " (FieldGroup)";
 	}
 }

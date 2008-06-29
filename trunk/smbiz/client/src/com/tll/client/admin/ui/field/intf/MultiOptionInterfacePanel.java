@@ -138,7 +138,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void applyModel(Model model) {
+	protected void applyModel(Model model) {
 
 		// clear existing options
 		for(Widget w : tabOptions) {
@@ -174,7 +174,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				}
 
-				OptionPanel pnlOption = new OptionPanel(new ParameterListingPanel(paramPanels));
+				OptionPanel pnlOption = new OptionPanel(new ParameterListingPanel(getFields(), paramPanels));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields()));
 			}
@@ -190,6 +190,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
+		OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
+		op.paramListing.refresh();
 		return true;
 	}
 

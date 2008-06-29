@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.event.IEditListener;
+import com.tll.client.event.type.EditEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
+import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IDataProvider;
@@ -18,6 +21,8 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.ui.Dialog;
+import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.listhandler.Sorting;
 
@@ -25,112 +30,142 @@ import com.tll.listhandler.Sorting;
  * ParameterListingPanel
  * @author jpk
  */
-public class ParameterListingPanel extends Composite {
+public final class ParameterListingPanel extends Composite implements IEditListener {
 
-	/**
-	 * ParameterListingConfig
-	 * @author jpk
-	 */
-	private static final class ParameterListingConfig implements IListingConfig<FieldGroup> {
+	private static final String listingElementName = "Paremeter";
 
-		private final ITableCellRenderer<FieldGroup> cellRenderer = new ITableCellRenderer<FieldGroup>() {
+	private static final ITableCellRenderer<FieldGroup> cellRenderer = new ITableCellRenderer<FieldGroup>() {
 
-			public String getCellValue(FieldGroup rowData, Column column) {
-				for(IField field : rowData) {
-					if(field.getPropertyName().endsWith(column.getPropertyName())) {
-						return field.getValue();
-					}
+		public String getCellValue(FieldGroup rowData, Column column) {
+			for(IField field : rowData) {
+				if(field.getPropertyName().endsWith(column.getPropertyName())) {
+					return field.getValue();
 				}
-				return null;
 			}
-		};
-
-		private final Column[] columns;
-
-		/**
-		 * Constructor
-		 */
-		public ParameterListingConfig() {
-			super();
-
-			// assemble the columns
-			columns = new Column[3];
-			columns[0] = new Column("Name", "name");
-			columns[1] = new Column("Code", "code");
-			columns[2] = new Column("Description", "description");
-		}
-
-		public String getCaption() {
 			return null;
 		}
+	};
 
-		public ITableCellRenderer<FieldGroup> getCellRenderer() {
-			return cellRenderer;
+	private static final Column[] columns = new Column[] {
+		new Column("Name", "name"),
+		new Column("Code", "code"),
+		new Column("Description", "description") };
+
+	private final AbstractRowOptions rowOptions = new AbstractRowOptions() {
+
+		@Override
+		protected String getListingElementName() {
+			return listingElementName;
 		}
 
-		public Column[] getColumns() {
-			return columns;
+		@Override
+		protected void doDeleteRow(int rowIndex) {
+			// TODO
 		}
 
-		public Sorting getDefaultSorting() {
-			return null;
+		@Override
+		protected void doEditRow(int rowIndex) {
+			// TODO
 		}
+	};
 
-		public String getListingElementName() {
-			return "Param";
+	private static final IAddRowDelegate addRowDelegate = new IAddRowDelegate() {
+
+		public void handleAddRow() {
+			// TODO
 		}
+	};
 
-		public int getPageSize() {
-			return -1;
-		}
-
-		public boolean isShowNavBar() {
-			return true;
-		}
-
-		public boolean isShowRefreshBtn() {
-			return false;
-		}
-
-		public boolean isSortable() {
-			return false;
-		}
-
-		public IRowOptionsDelegate getRowOptionsHandler() {
-			return null;
-		}
-
-		public IAddRowDelegate getAddRowHandler() {
-			return null;
-		}
-	}
-
-	private static final ParameterListingConfig paramListingConfig = new ParameterListingConfig();
+	private final FieldGroup parentFieldGroup;
 
 	private final List<ParameterPanel> panels = new ArrayList<ParameterPanel>();
 
 	private final DataListingWidget<FieldGroup> listing;
 
+	private final EditPanel editPanel;
+	private final Dialog dialog;
+
 	/**
 	 * Constructor
+	 * @param parentFieldGroup Used when adding or deleting parameters
 	 * @param panels
 	 */
-	public ParameterListingPanel(ParameterPanel[] panels) {
+	public ParameterListingPanel(FieldGroup parentFieldGroup, ParameterPanel[] panels) {
 		super();
+		this.parentFieldGroup = parentFieldGroup;
 		if(panels != null) {
 			for(ParameterPanel panel : panels) {
 				this.panels.add(panel);
 			}
 		}
 
-		listing = ListingFactory.createListingWidget(this, paramListingConfig, new IDataProvider<FieldGroup>() {
+		final IListingConfig<FieldGroup> listingConfig = new IListingConfig<FieldGroup>() {
+
+			public String getCaption() {
+				return "Parameters";
+			}
+
+			public ITableCellRenderer<FieldGroup> getCellRenderer() {
+				return cellRenderer;
+			}
+
+			public Column[] getColumns() {
+				return columns;
+			}
+
+			public Sorting getDefaultSorting() {
+				return null;
+			}
+
+			public String getListingElementName() {
+				return listingElementName;
+			}
+
+			public int getPageSize() {
+				return -1;
+			}
+
+			public boolean isShowNavBar() {
+				return true;
+			}
+
+			public boolean isShowRefreshBtn() {
+				return false;
+			}
+
+			public boolean isSortable() {
+				return false;
+			}
+
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return rowOptions;
+			}
+
+			public IAddRowDelegate getAddRowHandler() {
+				return addRowDelegate;
+			}
+		};
+
+		final IDataProvider<FieldGroup> dataProvider = new IDataProvider<FieldGroup>() {
 
 			public FieldGroup[] getData() {
 				return ParameterListingPanel.this.getData();
 			}
-		});
+		};
+
+		listing = ListingFactory.createListingWidget(this, listingConfig, dataProvider);
 
 		initWidget(listing);
+
+		editPanel = new EditPanel(true, false);
+		editPanel.addEditListener(this);
+		dialog = new Dialog(listing, true);
+		dialog.setWidget(editPanel);
+	}
+
+	public void onEditEvent(EditEvent event) {
+		// event.get
+		// TODO
 	}
 
 	private FieldGroup[] getData() {
@@ -142,4 +177,10 @@ public class ParameterListingPanel extends Composite {
 		return arr;
 	}
 
+	/**
+	 * Renders the listing.
+	 */
+	public void refresh() {
+		listing.refresh();
+	}
 }

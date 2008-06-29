@@ -226,8 +226,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				public void onCrudEvent(CrudEvent event) {
 					setTestModel(event.getPayload().getEntity());
-					ep.setModel(testModel);
-					ep.refresh();
+					ep.getFields().bindModel(testModel.getBindingRef());
+					ep.setEditMode(testModel.isNew());
 				}
 			});
 			AddressSearch search = new AddressSearch("AddressKey");
@@ -237,8 +237,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 			cc.execute();
 		}
 		else {
-			ep.setModel(testModel);
-			ep.refresh();
+			ep.getFields().bindModel(testModel.getBindingRef());
+			ep.setEditMode(testModel.isNew());
 		}
 
 		// add button toggle read only/editable

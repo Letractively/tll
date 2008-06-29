@@ -70,7 +70,23 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Panel handles related many sub-Models.
 	 * @param model The underlying Model that will be bound and updated.
 	 */
-	public void applyModel(Model model) {
+	protected void applyModel(Model model) {
+		// base impl no-op
+	}
+
+	/**
+	 * Event hook called by the member FeildGroup just before model binding.
+	 * @param model The model about to be bound
+	 */
+	public final void onBeforeBind(Model model) {
+		init();
+		applyModel(model);
+	}
+
+	/**
+	 * Event hook called by the member FieldGroup just after model binding.
+	 */
+	public void onAfterBind() {
 		// base impl no-op
 	}
 

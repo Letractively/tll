@@ -18,13 +18,10 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.model.Model;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.msg.Msg;
-import com.tll.client.msg.MsgManager;
-import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
 
@@ -74,11 +71,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
 	/**
-	 * The model subject to editing.
-	 */
-	private Model model;
-
-	/**
 	 * Constructor
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
@@ -87,8 +79,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 */
 	public EditPanel(boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
-		// hide the button row until initialized
-		pnlButtonRow.setVisible(false);
 
 		btnSave = new Button("", this);
 		pnlButtonRow.add(btnSave);
@@ -181,14 +171,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 	}
 
-	/**
-	 * Sets the model to edit.
-	 * @param model
-	 */
-	public void setModel(Model model) {
-		this.model = model;
-	}
-
 	public void applyMsgs(final List<Msg> msgs) {
 		fieldPanel.getFields().handleValidationFeedback(new IValidationFeedback() {
 
@@ -200,27 +182,23 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	/**
-	 * Is this edit panel loaded with model data?
-	 * @return true/false
-	 */
-	public boolean isModelLoaded() {
-		return model != null;
-	}
-
-	/**
 	 * Refreshes the edit panel by [re-]applying the entity model to the contained
 	 * {@link FieldGroupPanel} and setting the edit button based on whether the
 	 * entity is new or not.
 	 */
+	/*
 	public void refresh() {
-		if(model == null) {
-			throw new IllegalStateException("No model loaded.");
-		}
 		btnSave.setText(model.isNew() ? "Add" : "Update");
-		fieldPanel.init();
-		fieldPanel.applyModel(model);
 		fieldPanel.getFields().bindModel(model.getBindingRef());
-		pnlButtonRow.setVisible(true);
+	}
+	*/
+
+	public FieldGroup getFields() {
+		return fieldPanel.getFields();
+	}
+
+	public void setEditMode(boolean isAdd) {
+		btnSave.setText(isAdd ? "Add" : "Update");
 	}
 
 	/**
@@ -238,6 +216,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			catch(ValidationException e) {
 				return;
 			}
+			editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE));
+			/*
 			if(fieldPanel.getFields().updateModel(model.getBindingRef())) {
 				editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
 			}
@@ -245,16 +225,17 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 				MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
 						.show();
 			}
+			*/
 		}
 		else if(sender == btnReset) {
 			reset();
 		}
 		else if(sender == btnDelete) {
 			fieldPanel.getFields().setMarkedDeleted(true);
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE, model));
+			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
 		}
 		else if(sender == btnCancel) {
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL, model));
+			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL));
 		}
 	}
 }

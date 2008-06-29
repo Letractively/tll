@@ -17,12 +17,12 @@ public interface IRowOptionsDelegate {
 	 * @param rowIndex The row index of the targeted row
 	 * @return Array of {@link Option}s.
 	 */
-	Option[] getOptions(int rowIndex/*, RefKey rowRef*/);
+	Option[] getOptions(int rowIndex);
 
 	/**
 	 * Handles option events for a single row.
 	 * @param optionText The text of the selected option
 	 * @param rowIndex The row index of associated with the selected option
 	 */
-	void handleOptionSelection(String optionText, int rowIndex/*, RefKey rowRef*/);
+	void handleOptionSelection(String optionText, int rowIndex);
 }

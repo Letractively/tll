@@ -82,7 +82,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			private final int stackIndex;
 			private final RefKey intfRef;
-			private boolean loaded;
+			private Model model; // the interface model
 			private final EditPanel editPanel;
 			private final IModelChangeHandler modelChangeHandler;
 
@@ -140,17 +140,18 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			}
 
 			public void loadInterfaceIfNecessary() {
-				if(!loaded) {
+				if(model == null) {
 					modelChangeHandler.handleModelLoad(intfRef);
 				}
 			}
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp() == EditOp.SAVE) {
-					modelChangeHandler.handleModelPersist(event.getModel());
+					editPanel.getFields().updateModel(model.getBindingRef());
+					modelChangeHandler.handleModelPersist(model);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					modelChangeHandler.handleModelDelete(event.getModel().getRefKey());
+					modelChangeHandler.handleModelDelete(model.getRefKey());
 				}
 			}
 
@@ -161,13 +162,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				}
 				switch(event.getChangeOp()) {
 					case LOADED:
-						loaded = true;
+						model = event.getModel();
 						// open er up
 						showStack(stackIndex);
 						// NOTE: we fall through
 					case UPDATED:
-						editPanel.setModel(event.getModel());
-						editPanel.refresh();
+						editPanel.getFields().bindModel(model.getBindingRef());
+						editPanel.setEditMode(model.isNew());
 						break;
 
 					case DELETED:

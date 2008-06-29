@@ -45,7 +45,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	public void applyModel(Model modelInterface) {
+	protected void applyModel(Model modelInterface) {
 		/*
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {

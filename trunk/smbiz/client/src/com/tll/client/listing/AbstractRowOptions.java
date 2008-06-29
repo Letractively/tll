@@ -12,8 +12,8 @@ import com.tll.client.App;
 import com.tll.client.ui.Option;
 
 /**
- * AbstractRowOptions - An adapter for {@link IRowOptionsDelegate} simplifying the
- * implementation.
+ * AbstractRowOptions - An adapter for {@link IRowOptionsDelegate} simplifying
+ * the implementation.
  * @author jpk
  */
 public abstract class AbstractRowOptions implements IRowOptionsDelegate {
@@ -70,7 +70,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 
 	/**
 	 * @return <code>true</code> when the row options are constant for all
-	 *         elidgible.
+	 *         elidgible rows.
 	 */
 	protected boolean isStaticOptions() {
 		return true;
