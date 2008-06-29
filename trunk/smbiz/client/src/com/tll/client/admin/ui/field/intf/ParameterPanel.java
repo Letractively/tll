@@ -12,14 +12,18 @@ import com.tll.client.ui.field.TextField;
  */
 final class ParameterPanel extends FieldGroupPanel {
 
+	final String propertyName;
 	private TextField name, code;
 	private TextAreaField description;
 
 	/**
 	 * Constructor
+	 * @param propertyName The property name of the indexed parameter property.
+	 *        (e.g.: options[1].parameters[0])
 	 */
-	public ParameterPanel() {
+	public ParameterPanel(String propertyName) {
 		super(null);
+		this.propertyName = propertyName;
 	}
 
 	@Override

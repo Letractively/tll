@@ -165,18 +165,20 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 					int i = 0;
 					for(IndexedProperty propParam : pvParams) {
 						// Model param = propParam.getModel();
-						ParameterPanel pnlParam = new ParameterPanel();
 						path.parse(propOption.getPropertyName());
 						path.append(propParam.getPropertyName());
+						ParameterPanel pnlParam = new ParameterPanel(path.toString());
 						addField(path.toString(), pnlParam.getFields());
 						paramPanels[i++] = pnlParam;
 					}
 
 				}
 
-				OptionPanel pnlOption = new OptionPanel(new ParameterListingPanel(getFields(), paramPanels));
+				OptionPanel pnlOption =
+						new OptionPanel(new ParameterListingPanel(propOption.getPropertyName(), getFields(), paramPanels));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
-				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields()));
+				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
+						.getPropertyName()));
 			}
 		}
 

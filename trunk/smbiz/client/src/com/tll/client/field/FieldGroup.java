@@ -125,14 +125,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private boolean visible = true;
 
 	/**
-	 * Used to indicate deletion in the underlying Model. Although a FieldGroup
-	 * hierarchy is not required to conform to the Model hierarchy, this property
-	 * is here nonetheless to support transferance of this information to the
-	 * underlying model.
-	 */
-	private boolean markedDeleted = false;
-
-	/**
 	 * The collection of child fields.
 	 */
 	private final Set<IField> fields = new HashSet<IField>();
@@ -148,9 +140,23 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final FieldGroupPanel fieldGroupPanel;
 
 	/**
-	 * The Widget to which this field group is bound. May be <code>null</code>.
+	 * The Widget that is used to convey validation feedback. This defaults to the
+	 * {@link #fieldGroupPanel} but may be independently overridden.
 	 */
-	private Widget refWidget;
+	private Widget feedbackWidget;
+
+	/**
+	 * Collection of property paths that are presumed to map nested indexed model
+	 * properties representing pending deletions. These deletions are conveyed to
+	 * the model when the model is updated.
+	 */
+	private Set<String> pendingModelDeletions;
+
+	/**
+	 * Flag to indicate whether or not the contents of this group shall be
+	 * transferred to the model or not.
+	 */
+	private boolean updateModel;
 
 	/**
 	 * Constructor
@@ -163,7 +169,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(fieldGroupPanel == null) throw new IllegalArgumentException();
 		this.displayName = displayName;
 		this.fieldGroupPanel = fieldGroupPanel;
-		this.refWidget = fieldGroupPanel;
+		// the default feedback widget is the field group panel
+		this.feedbackWidget = fieldGroupPanel;
 	}
 
 	public String descriptor() {
@@ -230,21 +237,62 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	public boolean isMarkedDeleted() {
-		return markedDeleted;
+	/**
+	 * Schedules a nested model for deletion.
+	 * @param modelRefPropertyPath The property path that maps to a nested indexed
+	 *        model.
+	 */
+	public void addPendingDeletion(String modelRefPropertyPath) {
+		if(pendingModelDeletions == null) {
+			pendingModelDeletions = new HashSet<String>();
+		}
+		pendingModelDeletions.add(modelRefPropertyPath);
 	}
 
-	public void setMarkedDeleted(boolean markedDeleted) {
-		this.markedDeleted = markedDeleted;
-		setEnabled(!markedDeleted);
+	/**
+	 * Un-schedules a model deletion.
+	 * @param modelRefPropertyPath
+	 * @see #addPendingDeletion(String)
+	 */
+	public void removePendingDeletion(String modelRefPropertyPath) {
+		if(pendingModelDeletions != null) {
+			pendingModelDeletions.remove(modelRefPropertyPath);
+		}
+
 	}
 
-	public Widget getRefWidget() {
-		return refWidget;
+	/**
+	 * Toggle-able flag used to set whether these fields are to be applied to the
+	 * model with it is updated.
+	 * @return <code>true</code> if these fields are to be applied to the model.
+	 */
+	public boolean isUpdateModel() {
+		return updateModel;
 	}
 
-	public void setRefWidget(Widget refWidget) {
-		this.refWidget = refWidget;
+	/**
+	 * Update the model with these fields?
+	 * @param updateModel true/false
+	 */
+	public void setUpdateModel(boolean updateModel) {
+		this.updateModel = updateModel;
+	}
+
+	/**
+	 * Is the given model ref property path scheduled for deletion?
+	 * @param modelRefPropertyPath
+	 * @return true/false
+	 */
+	public boolean isPendingDelete(String modelRefPropertyPath) {
+		return pendingModelDeletions != null && pendingModelDeletions.contains(modelRefPropertyPath);
+	}
+
+	public Widget getFeedbackWidget() {
+		return feedbackWidget;
+	}
+
+	public void setFeedbackWidget(Widget feedbackWidget) {
+		this.feedbackWidget = feedbackWidget;
 	}
 
 	public Iterator<IField> iterator() {
@@ -344,15 +392,14 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public void reset() {
-		MsgManager.instance.clear(refWidget, true);
+		MsgManager.instance.clear(feedbackWidget, true);
 		for(IField field : fields) {
 			field.reset();
 		}
-		markedDeleted = false;
 	}
 
 	public void clear() {
-		MsgManager.instance.clear(refWidget, true);
+		MsgManager.instance.clear(feedbackWidget, true);
 		for(IField field : fields) {
 			field.clear();
 		}
@@ -386,10 +433,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	private void onBeforeBind(Model model) {
+		// reset pending deletes
+		if(pendingModelDeletions != null) pendingModelDeletions.clear();
+		// reset update model flag
+		updateModel = true;
 		// provide and opportunity for the owning panel to ready their field group
 		// before actual binding
 		fieldGroupPanel.onBeforeBind(model);
-		setMarkedDeleted(false);
 	}
 
 	private void onAfterBind() {
@@ -439,92 +489,105 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	private static boolean updateModel(FieldGroup group, final Model model,
 			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {
+
+		if(!group.updateModel) return false;
+
 		boolean changed = false;
 
-		model.setMarkedDeleted(group.markedDeleted);
-		if(!group.markedDeleted) {
-			IPropertyValue pv;
-			final PropertyPath propPath = new PropertyPath();
-			for(IField fld : group) {
-				if(fld instanceof FieldGroup) {
-					updateModel((FieldGroup) fld, model, unboundFields, depth + 1);
-				}
-				else {
-					// non-group field
-					try {
-						propPath.parse(fld.getPropertyName());
-
-						int n = propPath.nextUnboundNode(0);
-						if(n >= 0) {
-							// unbound property!
-							PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
-							assert unboundPath != null && unboundPath.length() > 0;
-							Set<IField> set = unboundFields.get(unboundPath);
-							if(set == null) {
-								set = new HashSet<IField>();
-								unboundFields.put(unboundPath, set);
-							}
-							set.add(fld);
-						}
-						else {
-							// existing model property
-							pv = model.getValue(propPath);
-							if(pv != null) {
-								if(fld.updateModel(pv)) {
-									changed = true;
-								}
-							}
-						}
-					}
-					catch(IllegalArgumentException e) {
-						throw new IllegalStateException(e.getMessage());
-					}
+		// first apply scheduled deletions
+		if(group.pendingModelDeletions != null) {
+			final PropertyPath pp = new PropertyPath();
+			for(String path : group.pendingModelDeletions) {
+				pp.parse(path);
+				IPropertyBinding binding = model.getBinding(pp);
+				if(binding.getType().isModelRef()) {
+					((IModelRefProperty) binding).getModel().setMarkedDeleted(true);
+					changed = true;
 				}
 			}
+		}
 
-			// handle the unbound indexed props (newly created in the ui)
-			if(depth == 0 && unboundFields.size() > 0) {
-				for(PropertyPath upp : unboundFields.keySet()) {
-					// create the missing properties in the model
-					if(upp.isIndexed()) {
-						// unbound indexed property
-						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
-						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
-						if(stub == null)
-							throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
-									+ " model prototype");
+		IPropertyValue pv;
+		final PropertyPath propPath = new PropertyPath();
+		for(IField fld : group) {
+			if(fld instanceof FieldGroup) {
+				updateModel((FieldGroup) fld, model, unboundFields, depth + 1);
+			}
+			else {
+				// non-group field
+				try {
+					propPath.parse(fld.getPropertyName());
 
-						// now we need to propagate the actual property path to the child
-						// fields
-
-						// actual property path RELATIVE TO THE RELATED MANY PROPERTY
-						// BINDING AND NOT THE ROOT MODEL
-						// e.g. relatedMany[1] NOT root.relatedMany[1]
-						final String app = rmp.add(stub);
-
-						// the depth index of the unbound prop path
-						final int depthIndex = upp.depth() - 1;
-						assert depthIndex >= 0;
-
-						Set<IField> ufields = unboundFields.get(upp);
-						for(IField fld : ufields) {
-
-							// replace the indexed property path node
-							propPath.parse(fld.getPropertyName());
-							assert propPath.depth() > depthIndex;
-							propPath.replaceAt(depthIndex, app);
-
-							fld.setPropertyName(propPath.toString());
-							// do the model update
-							pv = model.getValue(propPath);
-							if(pv != null) fld.updateModel(pv);
+					int n = propPath.nextUnboundNode(0);
+					if(n >= 0) {
+						// unbound property!
+						PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
+						assert unboundPath != null && unboundPath.length() > 0;
+						Set<IField> set = unboundFields.get(unboundPath);
+						if(set == null) {
+							set = new HashSet<IField>();
+							unboundFields.put(unboundPath, set);
 						}
-						changed = true;
+						set.add(fld);
 					}
 					else {
-						// unbound non-indexed property
-						throw new UnsupportedOperationException("Only indexed properties may be unbound");
+						// existing model property
+						pv = model.getValue(propPath);
+						if(pv != null) {
+							if(fld.updateModel(pv)) {
+								changed = true;
+							}
+						}
 					}
+				}
+				catch(IllegalArgumentException e) {
+					throw new IllegalStateException(e.getMessage());
+				}
+			}
+		}
+
+		// handle the unbound indexed props (newly created in the ui)
+		if(depth == 0 && unboundFields.size() > 0) {
+			for(PropertyPath upp : unboundFields.keySet()) {
+				// create the missing properties in the model
+				if(upp.isIndexed()) {
+					// unbound indexed property
+					RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
+					Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
+					if(stub == null)
+						throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
+								+ " model prototype");
+
+					// now we need to propagate the actual property path to the child
+					// fields
+
+					// actual property path RELATIVE TO THE RELATED MANY PROPERTY
+					// BINDING AND NOT THE ROOT MODEL
+					// e.g. relatedMany[1] NOT root.relatedMany[1]
+					final String app = rmp.add(stub);
+
+					// the depth index of the unbound prop path
+					final int depthIndex = upp.depth() - 1;
+					assert depthIndex >= 0;
+
+					Set<IField> ufields = unboundFields.get(upp);
+					for(IField fld : ufields) {
+
+						// replace the indexed property path node
+						propPath.parse(fld.getPropertyName());
+						assert propPath.depth() > depthIndex;
+						propPath.replaceAt(depthIndex, app);
+
+						fld.setPropertyName(propPath.toString());
+						// do the model update
+						pv = model.getValue(propPath);
+						if(pv != null) fld.updateModel(pv);
+					}
+					changed = true;
+				}
+				else {
+					// unbound non-indexed property
+					throw new UnsupportedOperationException("Only indexed properties may be unbound");
 				}
 			}
 		}
@@ -617,7 +680,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 		}
 		if(unboundFieldMessages.size() > 0) {
-			MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, refWidget, -1, true).show();
+			MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
 		}
 
 	}

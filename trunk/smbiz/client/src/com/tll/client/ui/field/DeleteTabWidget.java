@@ -24,6 +24,10 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 	private final Label label;
 	private final ToggleButton btnDeleteToggle;
 	private FieldGroup fieldGroup;
+	/**
+	 * If specified, it is presumed that model ref property is existing.
+	 */
+	private String modelRefPropertyPath;
 
 	/**
 	 * Constructor
@@ -50,26 +54,48 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 	 * @param fieldGroup The bound FieldGroup that is displayed in the associated
 	 *        tab Widget. May be <code>null</code> in which case, the
 	 *        delete/un-delete toggle is <em>not</em> displayed.
+	 * @param modelRefPropertyPath The model ref property path to be specified
+	 *        <em>only</em> for existing model ref proeprties.
 	 */
-	public DeleteTabWidget(String text, FieldGroup fieldGroup) {
+	public DeleteTabWidget(String text, FieldGroup fieldGroup, String modelRefPropertyPath) {
 		this(text);
-		setFieldGroup(fieldGroup);
+		setFieldGroup(fieldGroup, modelRefPropertyPath);
 	}
 
 	private void toggle(boolean markDeleted) {
 		assert fieldGroup != null;
-		fieldGroup.setMarkedDeleted(markDeleted);
+		if(modelRefPropertyPath == null) {
+			fieldGroup.setUpdateModel(!markDeleted);
+		}
+		else {
+			if(markDeleted) {
+				fieldGroup.addPendingDeletion(modelRefPropertyPath);
+			}
+			else {
+				fieldGroup.removePendingDeletion(modelRefPropertyPath);
+			}
+		}
+		fieldGroup.setEnabled(!markDeleted);
 	}
 
 	public void onClick(Widget sender) {
 		if(fieldGroup != null) toggle(btnDeleteToggle.isDown());
 	}
 
-	public void setFieldGroup(FieldGroup fieldGroup) {
+	public void setFieldGroup(FieldGroup fieldGroup, String modelRefPropertyPath) {
 		// show or hide the toggle button
+		if(this.fieldGroup != null && this.modelRefPropertyPath != null
+				&& !this.modelRefPropertyPath.equals(modelRefPropertyPath)) {
+			this.fieldGroup.removePendingDeletion(this.modelRefPropertyPath);
+		}
 		this.fieldGroup = fieldGroup;
+		this.modelRefPropertyPath = modelRefPropertyPath;
 		getWidget(1).setVisible(fieldGroup != null);
-		if(fieldGroup != null) toggle(fieldGroup.isMarkedDeleted());
+		if(fieldGroup != null) {
+			boolean deleted =
+					modelRefPropertyPath == null ? !fieldGroup.isUpdateModel() : fieldGroup.isPendingDelete(modelRefPropertyPath);
+			toggle(deleted);
+		}
 	}
 
 }

@@ -231,7 +231,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			pnl.add(rof);
 		}
 		else {
-			pnl.add((Widget) getEditable(null));
+			pnl.add((Widget) getEditable(value));
 		}
 		pnl.getWidget().getElement().setPropertyString("id", domId);
 	}
@@ -331,8 +331,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	/**
 	 * Obtains the editable Widget and optionally sets its value.
 	 * @param value The value to to be populated into the form control. If
-	 *        <code>null</code>, the UI form value shall <em>not</em> be
-	 *        altered.
+	 *        <code>null</code>, the UI form value shall <em>not</em> be altered.
 	 * @return The ui field control.
 	 */
 	protected abstract HasFocus getEditable(String value);

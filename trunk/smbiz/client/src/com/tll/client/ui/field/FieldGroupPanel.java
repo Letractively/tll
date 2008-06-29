@@ -111,13 +111,13 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * Overrides the default behavior of this panel being the ref Widget. This is
-	 * useful when we have Widgets that cloak (hide) fields since the ref Widget
-	 * is employed for posting validation messages in the ui.
-	 * @param refWidget The Widget to set as the ref Widget.
+	 * Overrides the default behavior of this panel being the feedback Widget.
+	 * This is useful when we have Widgets that cloak (hide) fields since the
+	 * feedback Widget is employed for posting validation messages in the ui.
+	 * @param feedbackWidget The Widget to set as the feedback Widget.
 	 */
-	public final void setRefWidget(Widget refWidget) {
-		fields.setRefWidget(refWidget);
+	public final void setFeedbackWidget(Widget feedbackWidget) {
+		fields.setFeedbackWidget(feedbackWidget);
 	}
 
 	/**
@@ -266,6 +266,6 @@ public abstract class FieldGroupPanel extends Composite {
 
 	@Override
 	public final String toString() {
-		return fields.getPropertyName();
+		return fields.toString();
 	}
 }

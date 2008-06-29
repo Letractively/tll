@@ -62,8 +62,6 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	protected PaymentInfoPanel paymentInfoPanel;
 	protected final TabPanel tabAddresses = new TabPanel();
 
-	protected int lastAccountAddressIndex = -1;
-
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
@@ -72,19 +70,16 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 		final AddressType addressType;
 		TextField name;
-		final int index;
 		final AddressPanel addressPanel;
 
 		/**
 		 * Constructor
 		 * @param addressType
-		 * @param index
 		 */
-		public AccountAddressPanel(AddressType addressType, int index) {
+		public AccountAddressPanel(AddressType addressType) {
 			super(addressType.getName());
 
 			this.addressType = addressType;
-			this.index = index;
 
 			addressPanel = new AddressPanel();
 		}
@@ -144,7 +139,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
-		paymentInfoPanel.setRefWidget(dpPaymentInfo);
+		paymentInfoPanel.setFeedbackWidget(dpPaymentInfo);
 
 		// listen to tab events
 		tabAddresses.addTabListener(this);
@@ -209,7 +204,9 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	protected void applyModel(Model model) {
 		// un-bind existing
 		for(Widget w : tabAddresses) {
-			removeField(((AccountAddressPanel) w).getFields());
+			if(w instanceof AccountAddressPanel) {
+				removeField(((AccountAddressPanel) w).getFields());
+			}
 		}
 		tabAddresses.clear();
 
@@ -226,11 +223,9 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
 					if(at == ip.getModel().getValue(path).getValue()) {
-						int index = ip.getIndex();
-						if(lastAccountAddressIndex < index) lastAccountAddressIndex = index;
-						aap = new AccountAddressPanel(at, index);
+						aap = new AccountAddressPanel(at);
 						addField(ip.getPropertyName(), aap.getFields());
-						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFields()));
+						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFields(), ip.getPropertyName()));
 						break;
 					}
 				}
@@ -266,8 +261,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 			// stub aa panel
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
-			AccountAddressPanel aap = new AccountAddressPanel(at, ++lastAccountAddressIndex);
-			String parentPropPath = PropertyPath.indexedUnbound("addresses", aap.index);
+			AccountAddressPanel aap = new AccountAddressPanel(at);
+			String parentPropPath = PropertyPath.indexedUnbound("addresses");
 			addField(parentPropPath, aap.getFields());
 
 			// bind to prototype
@@ -277,7 +272,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			// paths are relative to ACCOUNT!
 			aap.getFields().bindModel(1, aaproto.getBindingRef());
 
-			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFields()), selTabIndx == 0 ? 0 : selTabIndx);
+			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFields(), null), selTabIndx == 0 ? 0
+					: selTabIndx);
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);
 		}

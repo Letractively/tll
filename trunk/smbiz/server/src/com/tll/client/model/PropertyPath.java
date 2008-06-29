@@ -22,17 +22,22 @@ package com.tll.client.model;
  */
 public final class PropertyPath {
 
-	public static final char LEFT_INDEX_CHAR = '[';
+	private static final char LEFT_INDEX_CHAR = '[';
 
-	public static final char RIGHT_INDEX_CHAR = ']';
+	private static final char RIGHT_INDEX_CHAR = ']';
 
 	/**
 	 * Indicates in conjunction with {@link #UNBOUND_RIGHT_INDEX_CHAR} that an
 	 * indexed property path node is unbound.
 	 */
-	public static final char UNBOUND_LEFT_INDEX_CHAR = '{';
+	private static final char UNBOUND_LEFT_INDEX_CHAR = '{';
 
-	public static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
+	private static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
+
+	/**
+	 * Internally maintain unique ubound indexes.
+	 */
+	private static int unboundIndex = 0;
 
 	/**
 	 * Chains the given arguments together to form the corresponding property
@@ -66,7 +71,7 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Assembles an indexed property name given a the indexable property name and
+	 * Assembles an indexed property name given the indexable property name and
 	 * the desired index.
 	 * @param indexablePropName
 	 * @param index
@@ -77,14 +82,15 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Assembles an <em>unbound</em> indexed property name given a the indexable
-	 * property name and the desired index.
+	 * Assembles an <em>unbound</em> indexed property name given the indexable
+	 * property name. <br>
+	 * <em>NOTE: </em>The unbound index is internally assigned and guaranteed to
+	 * be unique.
 	 * @param indexablePropName
-	 * @param index
 	 * @return The unbound indexed property name
 	 */
-	public static String indexedUnbound(String indexablePropName, int index) {
-		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + index + UNBOUND_RIGHT_INDEX_CHAR;
+	public static String indexedUnbound(String indexablePropName) {
+		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + unboundIndex++ + UNBOUND_RIGHT_INDEX_CHAR;
 	}
 
 	/**

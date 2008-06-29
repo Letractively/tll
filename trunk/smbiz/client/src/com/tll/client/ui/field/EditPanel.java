@@ -181,18 +181,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		});
 	}
 
-	/**
-	 * Refreshes the edit panel by [re-]applying the entity model to the contained
-	 * {@link FieldGroupPanel} and setting the edit button based on whether the
-	 * entity is new or not.
-	 */
-	/*
-	public void refresh() {
-		btnSave.setText(model.isNew() ? "Add" : "Update");
-		fieldPanel.getFields().bindModel(model.getBindingRef());
-	}
-	*/
-
 	public FieldGroup getFields() {
 		return fieldPanel.getFields();
 	}
@@ -217,21 +205,12 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 				return;
 			}
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE));
-			/*
-			if(fieldPanel.getFields().updateModel(model.getBindingRef())) {
-				editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE, model));
-			}
-			else {
-				MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, this, -1, true)
-						.show();
-			}
-			*/
 		}
 		else if(sender == btnReset) {
 			reset();
 		}
 		else if(sender == btnDelete) {
-			fieldPanel.getFields().setMarkedDeleted(true);
+			fieldPanel.getFields().addPendingDeletion(null);
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
 		}
 		else if(sender == btnCancel) {
