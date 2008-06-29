@@ -348,10 +348,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return 0;
 			}
 
-			public String getListingName() {
-				return "Test Listing";
-			}
-
 			public String getListingElementName() {
 				return "Test Element";
 			}

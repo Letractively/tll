@@ -27,10 +27,28 @@ public final class Column extends SortColumn {
 
 	/**
 	 * Constructor - This is not used and is for GWT compiler compliance since we
-	 * are (spuriously) extending {@link SortColumn} which is {@link IMarshalable}.
+	 * are (spuriously) extending {@link SortColumn} which is {@link IMarshalable}
+	 * .
 	 */
 	public Column() {
 		this(null, null, null);
+	}
+
+	/**
+	 * Constructor
+	 * @param name
+	 */
+	public Column(String name) {
+		this(name, null, null, null);
+	}
+
+	/**
+	 * Constructor
+	 * @param name
+	 * @param prop
+	 */
+	public Column(String name, String prop) {
+		this(name, prop, null, null);
 	}
 
 	/**

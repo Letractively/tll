@@ -134,10 +134,6 @@ public final class IspListingView extends ListingView {
 				}
 			};
 
-			public String getListingName() {
-				return EntityType.ISP.toString() + "_LISTING";
-			}
-
 			public String getListingElementName() {
 				return listingElementName;
 			}
@@ -160,8 +156,8 @@ public final class IspListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
-				.getDefaultSorting()));
+		setListingWidget(ListingFactory.createListingWidget(this, config, EntityType.ISP.toString() + "_LISTING",
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	public String getLongViewName() {

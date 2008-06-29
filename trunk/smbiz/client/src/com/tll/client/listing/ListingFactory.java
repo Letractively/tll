@@ -65,6 +65,7 @@ public abstract class ListingFactory {
 	 * @param sourcingWidget The Widget that will be passed in dispatched
 	 *        {@link ListingEvent}s.
 	 * @param config The client listing configuration
+	 * @param listingName The unique listing name.
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
 	 *        listing.
@@ -75,11 +76,11 @@ public abstract class ListingFactory {
 	 * @return A new {@link ModelListingWidget}.
 	 */
 	public static <S extends ISearch> ModelListingWidget createListingWidget(Widget sourcingWidget,
-			IListingConfig<Model> config, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys,
-			Sorting initialSorting) {
+			IListingConfig<Model> config, String listingName, ListHandlerType listHandlerType, S searchCriteria,
+			String[] propKeys, Sorting initialSorting) {
 
 		return (ModelListingWidget) assemble(config, new ModelListingWidget(config), createListingCommand(sourcingWidget,
-				config.getListingName(), listHandlerType, searchCriteria, propKeys, config.getPageSize(), initialSorting));
+				listingName, listHandlerType, searchCriteria, propKeys, config.getPageSize(), initialSorting));
 	}
 
 	/**

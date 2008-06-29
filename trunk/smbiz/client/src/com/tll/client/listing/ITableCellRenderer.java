@@ -15,11 +15,10 @@ import com.tll.client.model.IData;
 public interface ITableCellRenderer<R extends IData> {
 
 	/**
-	 * Provides a way for the underlying table rows to be set/updated given a
-	 * model.
+	 * Provides the table cell value given the row data and particular column.
 	 * @param rowData The row data.
-	 * @param columns The defined {@link Column}s
-	 * @return Array of presentation ready table cell value {@link String}s.
+	 * @param column The table column
+	 * @return The table cell value
 	 */
-	String[] getCellValues(R rowData, Column[] columns);
+	String getCellValue(R rowData, Column column);
 }

@@ -38,14 +38,15 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		TextField name, code;
 		TextAreaField description;
 		TextField[] cost, price;
-
-		Grid params;
+		final ParameterListingPanel paramListing;
 
 		/**
 		 * Constructor
+		 * @param paramListing May be <code>null</code>
 		 */
-		public OptionPanel() {
+		public OptionPanel(ParameterListingPanel paramListing) {
 			super("Option");
+			this.paramListing = paramListing;
 		}
 
 		@Override
@@ -91,13 +92,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			g.setWidget(1, 2, price[2]);
 			canvas.addWidget(g);
 
-			// params
-			params = new Grid(1, 3);
-			params.setWidget(0, 0, new Label("Name"));
-			params.setWidget(0, 1, new Label("Code"));
-			params.setWidget(0, 2, new Label("Desc"));
 			canvas.newRow();
-			canvas.addWidget(params);
+			canvas.addWidget(paramListing);
 
 			return canvas.getCanvasWidget();
 		}
@@ -142,7 +138,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void applyModel(Model model) {
+	public void applyModel(Model model) {
 
 		// clear existing options
 		for(Widget w : tabOptions) {
@@ -158,7 +154,27 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		if(pvOptions != null && pvOptions.size() > 0) {
 			for(IndexedProperty propOption : pvOptions) {
 				Model option = propOption.getModel();
-				OptionPanel pnlOption = new OptionPanel();
+
+				// params
+				path.parse(propOption.getPropertyName());
+				path.append("parameters");
+				RelatedManyProperty pvParams = model.relatedMany(path);
+				final ParameterPanel[] paramPanels = new ParameterPanel[(pvParams == null ? 0 : pvParams.size())];
+				if(pvParams != null && pvParams.size() > 0) {
+
+					int i = 0;
+					for(IndexedProperty propParam : pvParams) {
+						// Model param = propParam.getModel();
+						ParameterPanel pnlParam = new ParameterPanel();
+						path.parse(propOption.getPropertyName());
+						path.append(propParam.getPropertyName());
+						addField(path.toString(), pnlParam.getFields());
+						paramPanels[i++] = pnlParam;
+					}
+
+				}
+
+				OptionPanel pnlOption = new OptionPanel(new ParameterListingPanel(paramPanels));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields()));
 			}

@@ -14,6 +14,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.model.IData;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
@@ -44,18 +45,18 @@ import com.tll.util.IDescriptorProvider;
  * To fully support data transfer ("binding") between a FieldGroup instance and
  * a Model instance, the following conventions are established:
  * <ol>
- * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected
- * to have a standard OGNL property name to support binding to/from the
- * underlying Model.
+ * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected to
+ * have a standard OGNL property name to support binding to/from the underlying
+ * Model.
  * <li>Newly created IFields that map to a non-existant related many Model are
  * expected to have a property name that indicates as much:
  * <code>indexableProp{index}.propertyName</code> as opposed to the standard:
- * <code>indexableProp[index].propertyName</code>. In other words, curly
- * braces (<code>{}</code>) are used instead of square braces (<code>[]</code>).
+ * <code>indexableProp[index].propertyName</code>. In other words, curly braces
+ * (<code>{}</code>) are used instead of square braces (<code>[]</code>).
  * </ol>
  * @author jpk
  */
-public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
+public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider, IData {
 
 	/**
 	 * Recursively searches for a single field whose property name matches the
@@ -295,11 +296,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Removes a field by reference searching recursively. If the given field is
-	 * <code>null</code> or is <em>this</em> field group, no field is removed
-	 * and <code>false</code> is returned.
+	 * <code>null</code> or is <em>this</em> field group, no field is removed and
+	 * <code>false</code> is returned.
 	 * @param field The field to remove.
-	 * @return <code>true</code> if the field was removed, <code>false</code>
-	 *         if not.
+	 * @return <code>true</code> if the field was removed, <code>false</code> if
+	 *         not.
 	 */
 	public boolean removeField(IField field) {
 		if(field == null || field == this) return false;
@@ -409,8 +410,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param model The Model to be updated
 	 * @param unboundFieldsMap
 	 * @param depth The recursion depth
-	 * @return <code>true</code> when at least one valid update was transferred
-	 *         to the given model.
+	 * @return <code>true</code> when at least one valid update was transferred to
+	 *         the given model.
 	 */
 	private static boolean updateModel(FieldGroup group, final Model model,
 			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {

@@ -49,12 +49,13 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Calculates the property path. Never returns <code>null</code>. Support
-	 * for <code>null</code> or empty is considered for all arguments.
+	 * Calculates the property path. Never returns <code>null</code>. Support for
+	 * <code>null</code> or empty is considered for all arguments.
 	 * <p>
 	 * FORMAT: property path = <code>parentPropPath</code> + '.' +
 	 * <code>propName</code>
-	 * @param parentPropPath Assumed to NOT end in a dot. May be <code>null</code>.
+	 * @param parentPropPath Assumed to NOT end in a dot. May be <code>null</code>
+	 *        .
 	 * @param propName Assumed to NOT have prefixing/suffixing dots. May be
 	 *        <code>null</code>.
 	 * @return The calculated property path.
@@ -250,8 +251,7 @@ public final class PropertyPath {
 
 	/**
 	 * Does this property path point to an indexed property?<br>
-	 * (E.g.: <code>propA.propB[1]</code> or <code>propA.propB{1}</code>)
-	 * <br>
+	 * (E.g.: <code>propA.propB[1]</code> or <code>propA.propB{1}</code>) <br>
 	 * <em>NOTE: </em>nested indexed properties are not considered.
 	 * @return true/false
 	 */
@@ -296,8 +296,7 @@ public final class PropertyPath {
 	 * Strips the indexing from the end of this property path returninng the
 	 * resultant path which effectively is the parent to the indexed property.
 	 * @return New property path stripped of trailing indexing or
-	 *         <code>null</code> if this property path is not an indexed
-	 *         property.
+	 *         <code>null</code> if this property path is not an indexed property.
 	 */
 	public PropertyPath indexedParent() {
 		if(propPath == null) return null;
@@ -346,8 +345,8 @@ public final class PropertyPath {
 	 * Calculates the node index for the given node path String presumed to be
 	 * part of this property path.
 	 * @param nodePath The node path String that is part of this property path.
-	 * @return The corresponding node index or <code>-1</code> if not found or
-	 *         if this property path has not been set.
+	 * @return The corresponding node index or <code>-1</code> if not found or if
+	 *         this property path has not been set.
 	 */
 	private int nodeIndexOf(String nodePath) {
 		if(nodes == null) return -1;
@@ -389,9 +388,9 @@ public final class PropertyPath {
 	 * @param nodeIndex The index of the node to replace. If the given node index
 	 *        exceeds the depth of this property path, this property path is
 	 *        unaltered.
-	 * @param prop The node replacement String. If <code>null</code> the
-	 *        property path is "shortened" and will <em>not</em> contain the
-	 *        prop at the given node index.
+	 * @param prop The node replacement String. If <code>null</code> the property
+	 *        path is "shortened" and will <em>not</em> contain the prop at the
+	 *        given node index.
 	 */
 	public void replaceAt(int nodeIndex, String prop) {
 		if(nodes == null || nodeIndex > len - 1) return;
@@ -413,6 +412,14 @@ public final class PropertyPath {
 		nodes[ni] = replNodePath;
 		rebuild();
 		return true;
+	}
+
+	/**
+	 * Appends a property path to this property path.
+	 * @param path The property path to append
+	 */
+	public void append(String path) {
+		parse(getPropertyPath(this.propPath, path));
 	}
 
 	@Override

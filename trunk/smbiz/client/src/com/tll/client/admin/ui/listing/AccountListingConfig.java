@@ -20,7 +20,7 @@ public abstract class AccountListingConfig implements IListingConfig<Model> {
 	}
 
 	public final ITableCellRenderer<Model> getCellRenderer() {
-		return IListingConfig.MODEL_DATA_CELL_RENDERER;
+		return IListingConfig.MODEL_CELL_RENDERER;
 	}
 
 	public int getPageSize() {

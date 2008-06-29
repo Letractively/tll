@@ -170,10 +170,6 @@ public final class MerchantListingView extends ListingView {
 				}
 			};
 
-			public String getListingName() {
-				return EntityType.MERCHANT.toString() + "_LISTING";
-			}
-
 			public String getListingElementName() {
 				return listingElementName;
 			}
@@ -202,8 +198,8 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
-				.getDefaultSorting()));
+		setListingWidget(ListingFactory.createListingWidget(this, config, EntityType.MERCHANT.toString() + "_LISTING",
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

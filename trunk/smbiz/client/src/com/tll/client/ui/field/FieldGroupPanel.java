@@ -70,7 +70,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Panel handles related many sub-Models.
 	 * @param model The underlying Model that will be bound and updated.
 	 */
-	protected void applyModel(Model model) {
+	public void applyModel(Model model) {
 		// base impl no-op
 	}
 
@@ -107,8 +107,8 @@ public abstract class FieldGroupPanel extends Composite {
 	/**
 	 * @return The owned FieldGroup for this panel calling {@link #init()} first
 	 *         to ensure the member {@link FieldGroup} is populated as well as the
-	 *         field canvas drawn. This is handy when {@link FieldGroupPanel}s
-	 *         are nested as only a call to {@link #getFields()} will ensure
+	 *         field canvas drawn. This is handy when {@link FieldGroupPanel}s are
+	 *         nested as only a call to {@link #getFields()} will ensure
 	 *         initialization.
 	 */
 	public final FieldGroup getFields() {

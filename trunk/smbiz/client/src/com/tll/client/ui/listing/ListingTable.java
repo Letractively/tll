@@ -296,7 +296,6 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 			return; // header row
 		}
 
-		final String[] cellVals = cellRenderer.getCellValues(rowData, columns);
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
 				if(rowNum > -1) {
@@ -305,7 +304,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 				}
 			}
 			else {
-				String cv = cellVals[c];
+				String cv = cellRenderer.getCellValue(rowData, columns[c]);
 				if(overwriteOnNull || cv != null) {
 					if(cv == null) {
 						cv = "-";
@@ -491,7 +490,8 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	 * or removed
 	 * @param rowIndex The row index at which the successive rows below it are
 	 *        updated
-	 * @param add Due to a row being added (<code>true</code>) or removed (<code>false</code>)?
+	 * @param add Due to a row being added (<code>true</code>) or removed (
+	 *        <code>false</code>)?
 	 */
 	private void updateRowsBelow(int rowIndex, boolean add) {
 		final int numRows = getDOMRowCount();

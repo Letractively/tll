@@ -206,7 +206,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	}
 
 	@Override
-	protected void applyModel(Model model) {
+	public void applyModel(Model model) {
 		// un-bind existing
 		for(Widget w : tabAddresses) {
 			removeField(((AccountAddressPanel) w).getFields());

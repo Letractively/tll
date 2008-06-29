@@ -162,10 +162,6 @@ public final class CustomerListingView extends ListingView {
 
 			};
 
-			public String getListingName() {
-				return EntityType.CUSTOMER.toString() + "_LISTING";
-			}
-
 			public String getListingElementName() {
 				return listingElementName;
 			}
@@ -188,8 +184,8 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, ListHandlerType.PAGE, criteria, null, config
-				.getDefaultSorting()));
+		setListingWidget(ListingFactory.createListingWidget(this, config, EntityType.CUSTOMER.toString() + "_LISTING",
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

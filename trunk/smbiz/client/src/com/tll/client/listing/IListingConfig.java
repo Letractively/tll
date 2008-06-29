@@ -18,13 +18,7 @@ public interface IListingConfig<R extends IData> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
-	public static final ModelDataCellRenderer MODEL_DATA_CELL_RENDERER = new ModelDataCellRenderer();
-
-	/**
-	 * @return A unique name to assign to the listing. Critical for server-side
-	 *         listing handling as listing data is cached.
-	 */
-	String getListingName();
+	public static final ModelCellRenderer MODEL_CELL_RENDERER = new ModelCellRenderer();
 
 	/**
 	 * @return A presentation worthy name for the row type.

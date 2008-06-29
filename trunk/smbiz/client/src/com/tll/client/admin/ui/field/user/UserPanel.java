@@ -93,7 +93,7 @@ public class UserPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void applyModel(Model model) {
+	public void applyModel(Model model) {
 		// set the parent account view link
 		Model parentAccount = model.relatedOne(new PropertyPath("account")).getModel();
 		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
