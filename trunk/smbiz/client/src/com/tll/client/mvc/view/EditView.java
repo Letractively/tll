@@ -191,8 +191,9 @@ public abstract class EditView extends AbstractView implements IEditListener {
 				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey(), false));
 				break;
 			case SAVE:
-				editPanel.getFields().updateModel(model.getBindingRef());
-				modelChangeHandler.handleModelPersist(model);
+				if(editPanel.getFields().updateModel(model.getBindingRef())) {
+					modelChangeHandler.handleModelPersist(model);
+				}
 				break;
 		}
 	}

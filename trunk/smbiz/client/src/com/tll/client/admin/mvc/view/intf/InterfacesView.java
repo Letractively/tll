@@ -147,8 +147,9 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp() == EditOp.SAVE) {
-					editPanel.getFields().updateModel(model.getBindingRef());
-					modelChangeHandler.handleModelPersist(model);
+					if(editPanel.getFields().updateModel(model.getBindingRef())) {
+						modelChangeHandler.handleModelPersist(model);
+					}
 				}
 				else if(event.getOp() == EditOp.DELETE) {
 					modelChangeHandler.handleModelDelete(model.getRefKey());

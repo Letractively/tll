@@ -196,7 +196,7 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 
 		editPanel = new EditPanel(true, false);
 		editPanel.addEditListener(this);
-		dialog = new Dialog(listing, false);
+		dialog = new Dialog(null, false);
 		dialog.setWidget(editPanel);
 	}
 

@@ -305,10 +305,15 @@ public final class PropertyPath {
 	 *         <code>null</code> if this property path is not an indexed property.
 	 */
 	public PropertyPath indexedParent() {
-		if(propPath == null) return null;
-		int i = propPath.lastIndexOf(LEFT_INDEX_CHAR);
-		if(i < 0) i = propPath.lastIndexOf(UNBOUND_LEFT_INDEX_CHAR);
-		return i < 0 ? null : new PropertyPath(propPath.substring(0, i));
+		if(propPath.length() > 4 && isIndexed()) {
+			for(int i = propPath.length() - 3; i >= 0; --i) {
+				final char c = propPath.charAt(i);
+				if(c == LEFT_INDEX_CHAR || c == UNBOUND_LEFT_INDEX_CHAR) {
+					return new PropertyPath(propPath.substring(0, i));
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

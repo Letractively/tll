@@ -142,7 +142,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		// clear existing options
 		for(Widget w : tabOptions) {
-			removeField(((OptionPanel) w).getFields());
+			if(w instanceof OptionPanel) removeField(((OptionPanel) w).getFields());
 		}
 		tabOptions.clear();
 
@@ -186,9 +186,12 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		Image img = App.imgs().add().createImage();
 		img.setTitle("Add...");
 		tabOptions.add(new Label("TODO"), img);
+	}
 
-		// default select the first tab
-		tabOptions.selectTab(0);
+	@Override
+	public void onAfterBind() {
+		// default select the first tab if none are selected
+		if(tabOptions.getTabBar().getSelectedTab() < 0) tabOptions.selectTab(0);
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
