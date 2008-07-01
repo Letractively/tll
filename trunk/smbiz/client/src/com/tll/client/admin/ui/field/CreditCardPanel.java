@@ -4,7 +4,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
@@ -71,33 +71,32 @@ public final class CreditCardPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
-		canvas.addField(type);
+		cmpsr.addField(type);
 
-		canvas.addField(num);
-		canvas.addField(cvv2);
-		canvas.addField(expMn);
-		canvas.addField(expYr);
+		cmpsr.addField(num);
+		cmpsr.addField(cvv2);
+		cmpsr.addField(expMn);
+		cmpsr.addField(expYr);
 
-		canvas.newRow();
-		canvas.addField(name);
+		cmpsr.newRow();
+		cmpsr.addField(name);
 
-		canvas.newRow();
-		canvas.addField(addr1);
+		cmpsr.newRow();
+		cmpsr.addField(addr1);
 
-		canvas.newRow();
-		canvas.addField(addr2);
+		cmpsr.newRow();
+		cmpsr.addField(addr2);
 
-		canvas.newRow();
-		canvas.addField(city);
-		canvas.addField(state);
+		cmpsr.newRow();
+		cmpsr.addField(city);
+		cmpsr.addField(state);
 
-		canvas.newRow();
-		canvas.addField(zip);
-		canvas.addField(country);
-
-		return canvas.getCanvasWidget();
+		cmpsr.newRow();
+		cmpsr.addField(zip);
+		cmpsr.addField(country);
 	}
 }

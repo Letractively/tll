@@ -5,11 +5,12 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.field.IField;
 
 /**
- * IFieldPanelComposer - Implementations are responsible for:
+ * IFieldPanelComposer - Marker indicating the ability to render fields onto a
+ * UI "canvas". Composers of this type are responsible for:
  * <ol>
  * <li>Adding {@link IField}s to the UI
  * <li>Dictating the layout style for the {@link FieldGroupPanel}'s UI
@@ -19,13 +20,8 @@ import com.tll.client.field.IField;
 public interface IFieldPanelComposer {
 
 	/**
-	 * Common style for {@link IField}s.
+	 * Sets the "canvas" on which fields are drawn.
+	 * @param canvas The field UI "canvas" Panel.
 	 */
-	static final String CSS_FIELD = "fld";
-
-	/**
-	 * @return The Widget on which {@link IField}s and supporting {@link Widget}s
-	 *         are drawn.
-	 */
-	Widget getCanvasWidget();
+	void setCanvas(Panel canvas);
 }

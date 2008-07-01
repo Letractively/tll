@@ -23,6 +23,7 @@ import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.validate.CompositeValidator;
@@ -511,7 +512,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		final PropertyPath propPath = new PropertyPath();
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup) {
-				updateModel((FieldGroup) fld, model, unboundFields, depth + 1);
+				if(updateModel((FieldGroup) fld, model, unboundFields, depth + 1)) {
+					changed = true;
+				}
 			}
 			else {
 				// non-group field
@@ -615,7 +618,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(binding instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
 		}
-		return updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
+		if(!updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0)) {
+			MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, feedbackWidget, -1,
+					true).show();
+			return false;
+		}
+		return true;
 	}
 
 	public IValidator getValidators() {

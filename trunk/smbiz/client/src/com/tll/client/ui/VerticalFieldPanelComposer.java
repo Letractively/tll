@@ -6,6 +6,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldLabel;
@@ -29,8 +30,8 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 
 	private int rowIndex = -1;
 
-	public Widget getCanvasWidget() {
-		return grid;
+	public void setCanvas(Panel canvas) {
+		canvas.add(grid);
 	}
 
 	private void add(FieldLabel fldLbl, Widget w) {

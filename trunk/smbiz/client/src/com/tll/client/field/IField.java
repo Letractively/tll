@@ -16,6 +16,11 @@ import com.tll.client.validate.IValidator;
 public interface IField extends IPropertyNameProvider {
 
 	/**
+	 * Common style for {@link IField}s.
+	 */
+	static final String CSS_FIELD = "fld";
+
+	/**
 	 * Sets the property name for this field.
 	 * @param propName The property name
 	 */

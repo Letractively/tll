@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.model.Model;
 import com.tll.client.ui.FlowFieldPanelComposer;
 
@@ -24,24 +24,23 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
 		// first row
-		canvas.addField(name);
-		canvas.addField(code);
-		canvas.addField(description);
+		cmpsr.addField(name);
+		cmpsr.addField(code);
+		cmpsr.addField(description);
 
-		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(timestamps[0]);
-		canvas.stopFlow();
-		canvas.addField(timestamps[1]);
-		canvas.resetAlignment();
+		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cmpsr.addField(timestamps[0]);
+		cmpsr.stopFlow();
+		cmpsr.addField(timestamps[1]);
+		cmpsr.resetAlignment();
 
-		canvas.newRow();
-		canvas.addWidget(createAvailabilityGrid());
-
-		return canvas.getCanvasWidget();
+		cmpsr.newRow();
+		cmpsr.addWidget(createAvailabilityGrid());
 	}
 
 	@Override

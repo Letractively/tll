@@ -4,7 +4,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
@@ -38,36 +38,35 @@ public final class AddressPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
-		canvas.addField(emailAddress);
+		cmpsr.addField(emailAddress);
 
-		canvas.newRow();
-		canvas.addField(firstName);
-		canvas.addField(firstName);
-		canvas.addField(mi);
-		canvas.addField(lastName);
+		cmpsr.newRow();
+		cmpsr.addField(firstName);
+		cmpsr.addField(firstName);
+		cmpsr.addField(mi);
+		cmpsr.addField(lastName);
 
-		canvas.newRow();
-		canvas.addField(attn);
-		canvas.addField(company);
+		cmpsr.newRow();
+		cmpsr.addField(attn);
+		cmpsr.addField(company);
 
-		canvas.newRow();
-		canvas.addField(address1);
+		cmpsr.newRow();
+		cmpsr.addField(address1);
 
-		canvas.newRow();
-		canvas.addField(address2);
+		cmpsr.newRow();
+		cmpsr.addField(address2);
 
-		canvas.newRow();
-		canvas.addField(city);
-		canvas.addField(province);
+		cmpsr.newRow();
+		cmpsr.addField(city);
+		cmpsr.addField(province);
 
-		canvas.newRow();
-		canvas.addField(postalCode);
-		canvas.addField(country);
-
-		return canvas.getCanvasWidget();
+		cmpsr.newRow();
+		cmpsr.addField(postalCode);
+		cmpsr.addField(country);
 	}
 
 	@Override

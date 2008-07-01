@@ -7,7 +7,8 @@ package com.tll.client.ui.field;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
@@ -22,14 +23,19 @@ import com.tll.client.util.GlobalFormat;
 public abstract class FieldGroupPanel extends Composite {
 
 	/**
-	 * The wrapped Panel that contains the canvas that {@link #draw()} generates.
+	 * The Panel containing the drawn fields.
 	 */
-	private final SimplePanel panel = new SimplePanel();
+	private final FlowPanel panel = new FlowPanel();
 
 	/**
 	 * The collective group of all fields in this panel.
 	 */
 	private final FieldGroup fields;
+
+	/**
+	 * Internal flag for tracking whether the fields have been populated or not.
+	 */
+	private boolean populated;
 
 	/**
 	 * Constructor
@@ -41,23 +47,30 @@ public abstract class FieldGroupPanel extends Composite {
 		initWidget(panel);
 	}
 
-	/**
-	 * Initializes the fields in this panel. Subsequent calls to this method are a
-	 * no-op as this method inherently guards against it.
-	 */
-	public final void init() {
-		if(panel.getWidget() == null) {
-			populateFieldGroup();
-			panel.setWidget(draw());
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		if(panel.getWidgetCount() == 0) {
+			init();
+			draw(panel);
 		}
 	}
 
 	/**
-	 * Responsible for drawing the fields and supporting {@link Widget}s onto the
-	 * canvas Widget.
-	 * @return The Widget serving as the drawn canvas
+	 * Ensures the field group is populated.
 	 */
-	protected abstract Widget draw();
+	private void init() {
+		if(!populated) {
+			populateFieldGroup();
+			populated = true;
+		}
+	}
+
+	/**
+	 * Draws the fields onto the UI "canvas".
+	 * @param canvas The "canvas" on which the fields are drawn.
+	 */
+	protected abstract void draw(Panel canvas);
 
 	/**
 	 * Adds {@link IField}s to the member {@link FieldGroup}.
@@ -75,7 +88,7 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * Event hook called by the member FeildGroup just before model binding.
+	 * Event hook called by the member FieldGroup just before model binding.
 	 * @param model The model about to be bound
 	 */
 	public final void onBeforeBind(Model model) {
@@ -121,14 +134,10 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * @return The owned FieldGroup for this panel calling {@link #init()} first
-	 *         to ensure the member {@link FieldGroup} is populated as well as the
-	 *         field canvas drawn. This is handy when {@link FieldGroupPanel}s are
-	 *         nested as only a call to {@link #getFields()} will ensure
-	 *         initialization.
+	 * @return The FieldGroup for this panel ensuring it is first populated.
 	 */
 	public final FieldGroup getFields() {
-		init(); // ensure initialized (a no-op if already init'd)
+		init();
 		return fields;
 	}
 

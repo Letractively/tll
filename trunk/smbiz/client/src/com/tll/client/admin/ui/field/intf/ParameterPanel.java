@@ -1,6 +1,6 @@
 package com.tll.client.admin.ui.field.intf;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextAreaField;
@@ -38,11 +38,12 @@ final class ParameterPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
-		canvas.addField(name);
-		canvas.addField(code);
-		canvas.addField(description);
-		return canvas.getCanvasWidget();
+	protected void draw(Panel canvas) {
+		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
+
+		cmpsr.addField(name);
+		cmpsr.addField(code);
+		cmpsr.addField(description);
 	}
 }

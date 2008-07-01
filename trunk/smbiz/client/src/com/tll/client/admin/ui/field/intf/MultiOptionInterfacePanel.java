@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -73,16 +74,17 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 
 		@Override
-		protected Widget draw() {
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+		protected void draw(Panel canvas) {
+			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+			cmpsr.setCanvas(canvas);
 
 			// first row
-			canvas.addField(name);
-			canvas.addField(code);
-			canvas.addField(description);
+			cmpsr.addField(name);
+			cmpsr.addField(code);
+			cmpsr.addField(description);
 
 			// pricing
-			canvas.newRow();
+			cmpsr.newRow();
 			Grid g = new Grid(2, 3);
 			g.setWidget(0, 0, cost[0]);
 			g.setWidget(0, 1, cost[1]);
@@ -90,12 +92,10 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			g.setWidget(1, 0, price[0]);
 			g.setWidget(1, 1, price[1]);
 			g.setWidget(1, 2, price[2]);
-			canvas.addWidget(g);
+			cmpsr.addWidget(g);
 
-			canvas.newRow();
-			canvas.addWidget(paramListing);
-
-			return canvas.getCanvasWidget();
+			cmpsr.newRow();
+			cmpsr.addWidget(paramListing);
 		}
 
 	}
@@ -114,27 +114,27 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
 		// first row
-		canvas.addField(name);
-		canvas.addField(code);
-		canvas.addField(description);
-		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(timestamps[0]);
-		canvas.stopFlow();
-		canvas.addField(timestamps[1]);
-		canvas.resetAlignment();
+		cmpsr.addField(name);
+		cmpsr.addField(code);
+		cmpsr.addField(description);
+		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cmpsr.addField(timestamps[0]);
+		cmpsr.stopFlow();
+		cmpsr.addField(timestamps[1]);
+		cmpsr.resetAlignment();
 
 		// availability
-		canvas.newRow();
-		canvas.addWidget(createAvailabilityGrid());
+		cmpsr.newRow();
+		cmpsr.addWidget(createAvailabilityGrid());
 
 		// options tab widget
-		canvas.newRow();
-		canvas.addWidget(tabOptions);
-		return canvas.getCanvasWidget();
+		cmpsr.newRow();
+		cmpsr.addWidget(tabOptions);
 	}
 
 	@Override
@@ -164,7 +164,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 					int i = 0;
 					for(IndexedProperty propParam : pvParams) {
-						// Model param = propParam.getModel();
 						path.parse(propOption.getPropertyName());
 						path.append(propParam.getPropertyName());
 						ParameterPanel pnlParam = new ParameterPanel(path.toString());

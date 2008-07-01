@@ -8,8 +8,10 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.field.IField;
 import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.IFieldPanelComposer;
@@ -37,8 +39,8 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	private boolean atCurrent;
 
-	public Widget getCanvasWidget() {
-		return vp;
+	public void setCanvas(Panel canvas) {
+		canvas.add(vp);
 	}
 
 	private HorizontalPanel getCurrentRow() {
@@ -53,7 +55,7 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			fp.setStyleName(IFieldPanelComposer.CSS_FIELD);
+			fp.setStyleName(IField.CSS_FIELD);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");

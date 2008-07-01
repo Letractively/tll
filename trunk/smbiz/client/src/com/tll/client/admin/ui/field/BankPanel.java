@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
@@ -39,13 +39,12 @@ public final class BankPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		VerticalFieldPanelComposer canvas = new VerticalFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		final VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
-		canvas.addField(bankName);
-		canvas.addField(bankAccountNo);
-		canvas.addField(bankRoutingNo);
-
-		return canvas.getCanvasWidget();
+		cmpsr.addField(bankName);
+		cmpsr.addField(bankAccountNo);
+		cmpsr.addField(bankRoutingNo);
 	}
 }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -93,17 +94,16 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		}
 
 		@Override
-		protected Widget draw() {
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+		protected void draw(Panel canvas) {
+			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+			cmpsr.setCanvas(canvas);
 
 			// account address name row
-			canvas.addField(name);
+			cmpsr.addField(name);
 
 			// address row
-			canvas.newRow();
-			canvas.addWidget(addressPanel);
-
-			return canvas.getCanvasWidget();
+			cmpsr.newRow();
+			cmpsr.addWidget(addressPanel);
 		}
 	}
 
@@ -159,45 +159,44 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
 		// first row
-		canvas.addField(name);
-		canvas.addField(status);
-		canvas.addField(dateCancelled);
-		canvas.addField(currency);
-		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		canvas.addField(parent);
-		canvas.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		canvas.addField(timestamps[0]);
-		canvas.stopFlow();
-		canvas.addField(timestamps[1]);
+		cmpsr.addField(name);
+		cmpsr.addField(status);
+		cmpsr.addField(dateCancelled);
+		cmpsr.addField(currency);
+		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		cmpsr.addField(parent);
+		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		cmpsr.addField(timestamps[0]);
+		cmpsr.stopFlow();
+		cmpsr.addField(timestamps[1]);
 
 		// second row (billing)
-		canvas.newRow();
-		canvas.addField(billingModel);
-		canvas.addField(billingCycle);
-		canvas.addField(dateLastCharged);
-		canvas.addField(nextChargeDate);
+		cmpsr.newRow();
+		cmpsr.addField(billingModel);
+		cmpsr.addField(billingCycle);
+		cmpsr.addField(dateLastCharged);
+		cmpsr.addField(nextChargeDate);
 
 		// third row
-		canvas.newRow();
+		cmpsr.newRow();
 		// account addresses block
 		dpAddresses.add(tabAddresses);
-		canvas.addWidget(dpAddresses);
+		cmpsr.addWidget(dpAddresses);
 
 		// payment info block
 		FlowPanel fp = new FlowPanel();
 		fp.add(persistPymntInfo);
 		fp.add(paymentInfoPanel);
 		dpPaymentInfo.add(fp);
-		canvas.addWidget(dpPaymentInfo);
+		cmpsr.addWidget(dpPaymentInfo);
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
-
-		return canvas.getCanvasWidget();
 	}
 
 	@Override

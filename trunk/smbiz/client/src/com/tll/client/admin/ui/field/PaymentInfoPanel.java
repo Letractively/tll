@@ -4,10 +4,10 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.FieldGroupPanel;
 
 /**
@@ -37,10 +37,10 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTa
 	}
 
 	@Override
-	protected Widget draw() {
+	protected void draw(Panel canvas) {
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
-		return tabPanel;
+		canvas.add(tabPanel);
 	}
 
 	public void addTabListener(TabListener listener) {

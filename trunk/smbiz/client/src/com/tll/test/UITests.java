@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
@@ -192,12 +193,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected Widget draw() {
-			FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
-			canvas.addWidget(ap);
-			canvas.addField(bflabel);
-			canvas.addField(bf);
-			return canvas.getCanvasWidget();
+		protected void draw(Panel canvas) {
+			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+			cmpsr.setCanvas(canvas);
+
+			cmpsr.addWidget(ap);
+			cmpsr.addField(bflabel);
+			cmpsr.addField(bf);
 		}
 	}
 

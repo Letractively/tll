@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field.user;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
@@ -45,32 +45,31 @@ public class UserPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected Widget draw() {
-		FlowFieldPanelComposer canvas = new FlowFieldPanelComposer();
+	protected void draw(Panel canvas) {
+		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		cmpsr.setCanvas(canvas);
 
 		// first row
-		canvas.addField(name);
-		canvas.addField(emailAddress);
-		canvas.addField(locked);
-		canvas.stopFlow();
-		canvas.addField(enabled);
-		canvas.resetFlow();
-		canvas.addField(expires);
+		cmpsr.addField(name);
+		cmpsr.addField(emailAddress);
+		cmpsr.addField(locked);
+		cmpsr.stopFlow();
+		cmpsr.addField(enabled);
+		cmpsr.resetFlow();
+		cmpsr.addField(expires);
 
 		// parent account ref link
 		lnkAccount = new ViewRequestLink();
-		canvas.addWidget("Account", lnkAccount);
+		cmpsr.addWidget("Account", lnkAccount);
 
-		canvas.addField(timestamps[0]);
-		canvas.stopFlow();
-		canvas.addField(timestamps[1]);
-		canvas.resetFlow();
+		cmpsr.addField(timestamps[0]);
+		cmpsr.stopFlow();
+		cmpsr.addField(timestamps[1]);
+		cmpsr.resetFlow();
 
 		// third row
-		canvas.newRow();
-		canvas.addWidget(addressPanel);
-
-		return canvas.getCanvasWidget();
+		cmpsr.newRow();
+		cmpsr.addWidget(addressPanel);
 	}
 
 	@Override
