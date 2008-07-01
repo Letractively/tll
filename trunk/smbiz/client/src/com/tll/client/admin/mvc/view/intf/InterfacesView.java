@@ -98,6 +98,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
+				editPanel.setVisible(false); // hide initially
 
 				modelChangeHandler = new AbstractModelChangeHandler() {
 
@@ -165,7 +166,8 @@ public class InterfacesView extends AbstractView implements ClickListener {
 					case LOADED:
 						model = event.getModel();
 						// open er up
-						showStack(stackIndex);
+						// showStack(stackIndex);
+						editPanel.setVisible(true);
 						// NOTE: we fall through
 					case UPDATED:
 						editPanel.getFields().bindModel(model.getBindingRef());
@@ -256,7 +258,6 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				list.add(ir);
 				add(ir.editPanel, getStackHtml(data), true);
 			}
-			showStack(-1); // hide all of them upon load
 			initialized = true;
 		}
 	}

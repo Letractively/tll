@@ -126,7 +126,7 @@ public final class MerchantListingView extends ListingView {
 
 		final AccountListingConfig config = new AccountListingConfig() {
 
-			private final String listingElementName = EntityType.MERCHANT.name();
+			private final String listingElementName = EntityType.MERCHANT.getName();
 
 			private final Column[] columns = new Column[] {
 				new Column("#", Column.ROW_COUNT_COL_PROP, null),
