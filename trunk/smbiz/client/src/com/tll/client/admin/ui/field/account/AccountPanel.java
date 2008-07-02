@@ -242,9 +242,9 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		status = status == null ? null : status.toLowerCase();
 		dateCancelled.setVisible("closed".equals(status));
 
-		dpPaymentInfo.setOpen(false);
-		dpAddresses.setOpen(false);
-		tabAddresses.selectTab(0);
+		// dpPaymentInfo.setOpen(false);
+		// dpAddresses.setOpen(false);
+		// tabAddresses.selectTab(0);
 	}
 
 	public void onClick(Widget sender) {
@@ -292,6 +292,9 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	public void onOpen(DisclosureEvent event) {
 		if(event.getSource() == this.dpAddresses) {
 			tabAddresses.selectTab(0);
+		}
+		else if(event.getSource() == this.dpPaymentInfo) {
+			// TODO default select first tab if none currently selected
 		}
 	}
 

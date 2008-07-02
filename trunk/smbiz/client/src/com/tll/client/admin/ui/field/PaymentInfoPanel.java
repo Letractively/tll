@@ -50,10 +50,4 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTa
 	public void removeTabListener(TabListener listener) {
 		tabPanel.removeTabListener(listener);
 	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		tabPanel.selectTab(0); // reset state
-	}
 }

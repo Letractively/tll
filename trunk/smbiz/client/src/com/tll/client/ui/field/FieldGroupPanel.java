@@ -47,9 +47,11 @@ public abstract class FieldGroupPanel extends Composite {
 		initWidget(panel);
 	}
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
+	/**
+	 * Clients are responsible for calling this method to draw the fields onto
+	 * this Panel.
+	 */
+	public final void draw() {
 		if(panel.getWidgetCount() == 0) {
 			init();
 			draw(panel);
@@ -100,7 +102,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Event hook called by the member FieldGroup just after model binding.
 	 */
 	public void onAfterBind() {
-		// base impl no-op
+		draw();
 	}
 
 	protected final void addField(IField field) {
