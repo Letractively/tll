@@ -189,6 +189,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 	@Override
 	public void onAfterBind() {
+		super.onAfterBind();
 		// default select the first tab if none are selected
 		if(tabOptions.getTabBar().getSelectedTab() < 0) tabOptions.selectTab(0);
 	}

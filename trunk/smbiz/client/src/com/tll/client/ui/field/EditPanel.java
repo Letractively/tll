@@ -80,6 +80,9 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	public EditPanel(boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
+		// hide the button row until initialized
+		pnlButtonRow.setVisible(false);
+
 		btnSave = new Button("", this);
 		pnlButtonRow.add(btnSave);
 
@@ -172,7 +175,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	public void applyMsgs(final List<Msg> msgs) {
-		fieldPanel.getFields().handleValidationFeedback(new IValidationFeedback() {
+		getFields().handleValidationFeedback(new IValidationFeedback() {
 
 			public List<Msg> getValidationMessages() {
 				return msgs;
@@ -187,19 +190,18 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	public void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
+		// now show the button row
+		pnlButtonRow.setVisible(true);
 	}
 
-	/**
-	 * Resets the fields contained in this panel.
-	 */
-	public void reset() {
-		fieldPanel.getFields().reset();
+	private boolean isAdd() {
+		return "Add".equals(btnSave.getText());
 	}
 
 	public void onClick(Widget sender) {
 		if(sender == btnSave) {
 			try {
-				fieldPanel.getFields().validate();
+				getFields().validate();
 			}
 			catch(ValidationException e) {
 				return;
@@ -207,10 +209,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE));
 		}
 		else if(sender == btnReset) {
-			reset();
+			getFields().reset();
 		}
 		else if(sender == btnDelete) {
-			fieldPanel.getFields().addPendingDeletion(null);
+			if(!isAdd()) {
+				// updating
+				getFields().addPendingDeletion(null);
+			}
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
 		}
 		else if(sender == btnCancel) {

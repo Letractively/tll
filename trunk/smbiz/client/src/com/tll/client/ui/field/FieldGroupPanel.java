@@ -48,20 +48,9 @@ public abstract class FieldGroupPanel extends Composite {
 	}
 
 	/**
-	 * Clients are responsible for calling this method to draw the fields onto
-	 * this Panel.
-	 */
-	public final void draw() {
-		if(panel.getWidgetCount() == 0) {
-			init();
-			draw(panel);
-		}
-	}
-
-	/**
 	 * Ensures the field group is populated.
 	 */
-	private void init() {
+	private void ensurePopulated() {
 		if(!populated) {
 			populateFieldGroup();
 			populated = true;
@@ -94,15 +83,19 @@ public abstract class FieldGroupPanel extends Composite {
 	 * @param model The model about to be bound
 	 */
 	public final void onBeforeBind(Model model) {
-		init();
+		ensurePopulated();
 		applyModel(model);
 	}
 
 	/**
-	 * Event hook called by the member FieldGroup just after model binding.
+	 * Event hook called by the member FieldGroup just after model binding. May be
+	 * overridden.
 	 */
 	public void onAfterBind() {
-		draw();
+		if(panel.getWidgetCount() == 0) {
+			ensurePopulated();
+			draw(panel);
+		}
 	}
 
 	protected final void addField(IField field) {
@@ -139,7 +132,7 @@ public abstract class FieldGroupPanel extends Composite {
 	 * @return The FieldGroup for this panel ensuring it is first populated.
 	 */
 	public final FieldGroup getFields() {
-		init();
+		ensurePopulated();
 		return fields;
 	}
 

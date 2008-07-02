@@ -288,10 +288,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return pendingModelDeletions != null && pendingModelDeletions.contains(modelRefPropertyPath);
 	}
 
-	public FieldGroupPanel getFieldGroupPanel() {
-		return fieldGroupPanel;
-	}
-
 	public Widget getFeedbackWidget() {
 		return feedbackWidget;
 	}
