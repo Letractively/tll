@@ -82,7 +82,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 		if(glist != null) {
 			for(FieldGroup fg : glist) {
-				findField(propertyName, fg);
+				final IField rfld = findField(propertyName, fg);
+				if(rfld != null) return rfld;
 			}
 		}
 		return null;

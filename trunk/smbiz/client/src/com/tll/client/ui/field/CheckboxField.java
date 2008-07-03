@@ -6,7 +6,6 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * CheckboxField
@@ -84,15 +83,5 @@ public class CheckboxField extends AbstractField {
 	protected String getReadOnlyHtml() {
 		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
 				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
-	}
-
-	@Override
-	public void onClick(Widget sender) {
-		if(sender == cb) {
-			changed = true;
-		}
-		else {
-			super.onClick(sender);
-		}
 	}
 }

@@ -187,7 +187,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		@Override
 		public void populateFieldGroup() {
-			addField(ap.getFields());
+			addField("address", ap.getFields());
+
+			// set address2 as read only
+			ap.getFields().getField("address.address2").setReadOnly(true);
+
+			// set city as read only
+			ap.getFields().getField("address.city").setReadOnly(true);
+
 			addField(bflabel);
 			addField(bf);
 		}
@@ -232,8 +239,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 					ep.setEditMode(testModel.isNew());
 				}
 			});
-			AddressSearch search = new AddressSearch("AddressKey");
-			search.setAddress1("home address line 11");
+			AddressSearch search = new AddressSearch("Address and Postal Code");
+			search.setAddress1("home address line 2");
 			search.setPostalCode("94155");
 			cc.loadByBusinessKey(search);
 			cc.execute();

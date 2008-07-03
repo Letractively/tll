@@ -27,8 +27,6 @@ import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.StringUtil;
-import com.tll.client.util.Fmt.DateFormat;
-import com.tll.client.util.Fmt.DecimalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
@@ -65,8 +63,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private static final String styleWarn = MsgLevel.WARN.getName().toLowerCase();
 
 	/**
-	 * IntrinsicValidator - validates the field's intrinsic properties. When
-	 * validating, this validator is always invoked first.
+	 * IntrinsicValidator - validates the field's intrinsic properties. <br>
+	 * <em>When validating, this validator is always invoked first.</em>
 	 * @author jpk
 	 */
 	private class IntrinsicValidator implements IValidator {
@@ -115,12 +113,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private HTML rof; // the read-only field
 
 	/**
-	 * The default value to display when the value is empty. Ok if
-	 * <code>null<code>.
-	 */
-	private String defaultUiValue;
-
-	/**
 	 * The field edits.
 	 */
 	private final CompositeValidator validators = new CompositeValidator();
@@ -131,26 +123,25 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private Object modelValue;
 
 	/**
-	 * Internal flag for detecting if the field's value is changed.
-	 */
-	protected boolean changed;
-
-	/**
-	 * The optional FieldLabel created lazily.
+	 * The optional field label that is <em>not</em> a child of this Widget. In
+	 * other words, this field logically owns the field label but <em>not</em>
+	 * physically (dom-wise).
 	 */
 	protected FieldLabel fldLbl;
 
 	/**
-	 * The composite wrapped widget that either the read-only or editable
-	 * {@link Widget} is attached to at load time.
+	 * The Composite wrapped widget containing only the editable field or
+	 * read-only field Widget.
 	 */
 	private final SimplePanel pnl = new SimplePanel();
 
 	/**
-	 * The parents for the field control and field label control. Necessary refs
-	 * to properly show/hide, enable/disable a field and its label.
+	 * The desired ancestor Widget reference for the field and the field label
+	 * necessary to ensure certain styling rules are properly applied since the
+	 * field label is not a child of this Widget. These may or may <em>not</em> be
+	 * the immediate parents hence the need for these declarations.
 	 */
-	private Widget fieldParent, fieldLabelParent;
+	private Widget container, labelContainer;
 
 	/**
 	 * Constructor
@@ -182,12 +173,22 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		addValidator(new IntrinsicValidator());
 	}
 
-	public void setFieldParent(Widget fieldParent) {
-		this.fieldParent = fieldParent;
+	/**
+	 * Sets the Widget to be the field's containing Widget. This is necessary to
+	 * apply certain styling to the appropriate dom node.
+	 * @param container The desired containing Widget
+	 */
+	public final void setContainer(Widget container) {
+		this.container = container;
 	}
 
-	public void setFieldLabelParent(Widget fieldLabelParent) {
-		this.fieldLabelParent = fieldLabelParent;
+	/**
+	 * Sets the Widget to be the field label's containing Widget. This is
+	 * necessary to apply certain styling to the appropriate dom node.
+	 * @param labelContainer The desired Widget containing the label
+	 */
+	public final void setLabelContainer(Widget labelContainer) {
+		this.labelContainer = labelContainer;
 	}
 
 	/**
@@ -216,24 +217,25 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		this.propName = propName;
 	}
 
-	private boolean isDrawn() {
-		return pnl.getWidget() != null;
-	}
-
-	private void redraw() {
-		pnl.clear();
+	private void draw() {
+		Widget fld;
 		if(readOnly) {
 			if(rof == null) {
 				rof = new HTML();
 			}
 			String val = getReadOnlyHtml();
-			if(val != null) rof.setHTML(val);
-			pnl.add(rof);
+			assert val != null;
+			rof.setHTML(val);
+			fld = rof;
 		}
 		else {
-			pnl.add((Widget) getEditable(value));
+			fld = (Widget) getEditable(value);
 		}
-		pnl.getWidget().getElement().setPropertyString("id", domId);
+		assert fld != null;
+		if(pnl.getWidget() != fld) {
+			fld.getElement().setPropertyString("id", domId);
+			pnl.setWidget(fld);
+		}
 	}
 
 	public final boolean isReadOnly() {
@@ -243,17 +245,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	public final void setReadOnly(boolean readOnly) {
 		if(readOnly != this.readOnly) {
 			this.readOnly = readOnly;
-			if(readOnly && defaultUiValue == null) {
-				defaultUiValue = dfltReadOnlyEmptyValue;
-			}
 			if(fldLbl != null) {
 				fldLbl.setRequired(readOnly ? false : required);
 			}
-			redraw();
 			if(!readOnly) {
 				Widget w = (Widget) getEditable(null);
+				assert w != null;
 				w.getElement().setPropertyBoolean("disabled", !enabled);
 			}
+			if(isAttached()) draw();
 		}
 	}
 
@@ -281,16 +281,16 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			clearValidationStyling();
 
 			// resolve the parents
-			Widget parent = fieldParent == null ? this : fieldParent;
-			Widget labelParent = fldLbl == null ? null : fieldLabelParent == null ? fldLbl : fieldLabelParent;
+			final Widget fldContainer = container == null ? this : container;
+			final Widget lblContainer = fldLbl == null ? null : labelContainer == null ? fldLbl : labelContainer;
 
 			if(enabled) {
-				parent.removeStyleName(CSS.DISABLED);
-				if(labelParent != null) labelParent.removeStyleName(CSS.DISABLED);
+				fldContainer.removeStyleName(CSS.DISABLED);
+				if(lblContainer != null) lblContainer.removeStyleName(CSS.DISABLED);
 			}
 			else {
-				parent.addStyleName(CSS.DISABLED);
-				if(labelParent != null) labelParent.addStyleName(CSS.DISABLED);
+				fldContainer.addStyleName(CSS.DISABLED);
+				if(lblContainer != null) lblContainer.addStyleName(CSS.DISABLED);
 			}
 
 			if(!readOnly) {
@@ -302,8 +302,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	@Override
 	public final boolean isVisible() {
-		if(fieldParent != null) return fieldParent.isVisible();
-		return super.isVisible();
+		return container == null ? super.isVisible() : container.isVisible();
 	}
 
 	/**
@@ -312,15 +311,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 */
 	@Override
 	public final void setVisible(boolean visible) {
-		if(fieldParent != null) {
-			fieldParent.setVisible(visible);
+		if(container != null) {
+			container.setVisible(visible);
 		}
 		else {
 			super.setVisible(visible);
 		}
 		if(fldLbl != null) {
-			if(fieldLabelParent != null) {
-				fieldLabelParent.setVisible(visible);
+			if(labelContainer != null) {
+				labelContainer.setVisible(visible);
 			}
 			else {
 				fldLbl.setVisible(visible);
@@ -351,19 +350,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setValue(String value) {
-		value = value == null ? (defaultUiValue == null ? "" : defaultUiValue) : value;
 		this.value = value;
-		if(resetValue == null) resetValue = value;
-
-		if(isAttached()) {
-			if(readOnly) {
-				assert rof != null;
-				rof.setText(value);
-			}
-			else {
-				getEditable(value);
-			}
-		}
 	}
 
 	/**
@@ -373,7 +360,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 *         {@link HasMaxLength}.
 	 */
 	protected String getReadOnlyHtml() {
-		return (value == null || value.length() == 0) ? defaultUiValue : value;
+		return (value == null || value.length() == 0) ? dfltReadOnlyEmptyValue : value;
 	}
 
 	private void clearValidationStyling() {
@@ -390,6 +377,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		clearValidationStyling();
 		clearEditStyling();
 		setValue(resetValue);
+		draw();
 	}
 
 	public void clear() {
@@ -423,9 +411,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 					addValidator(CharacterValidator.INSTANCE);
 					break;
 				case DATE: {
-					DateFormat dateFormat = format == null ? DateFormat.DATE : Fmt.getDateFormat(format);
-					assert dateFormat != null;
-					switch(dateFormat) {
+					switch(format) {
 						case DATE:
 							addValidator(DateValidator.DATE_VALIDATOR);
 							break;
@@ -441,9 +427,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 				}
 				case FLOAT:
 				case DOUBLE: {
-					DecimalFormat decimalFormat = format == null ? DecimalFormat.DECIMAL : Fmt.getDecimalFormat(format);
-					assert decimalFormat != null;
-					switch(decimalFormat) {
+					switch(format) {
 						case CURRENCY:
 							addValidator(DecimalValidator.CURRENCY_VALIDATOR);
 							break;
@@ -528,13 +512,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		if(sender == fldLbl) MsgManager.instance.toggle(this, false);
 	}
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		clearValidationStyling();
-		if(!isDrawn()) redraw();
-	}
-
 	public final void addKeyboardListener(KeyboardListener listener) {
 		if(!isReadOnly()) {
 			getEditable(null).addKeyboardListener(listener);
@@ -610,8 +587,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 				handleValidationFeedback(ve);
 			}
 		}
-
-		changed = false;
 	}
 
 	@Override

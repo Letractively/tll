@@ -94,8 +94,8 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	 */
 	public void addField(AbstractField field) {
 		add(field.getFieldLabel(), field);
-		field.setFieldParent(last.getParent());
-		field.setFieldLabelParent(last.getParent());
+		field.setContainer(last.getParent());
+		field.setLabelContainer(last.getParent());
 	}
 
 	/**

@@ -24,78 +24,21 @@ import com.google.gwt.i18n.client.NumberFormat;
  */
 public abstract class Fmt {
 
-	public static enum DateFormat {
-		TIMESTAMP,
-		DATE,
-		TIME;
-	}
+	public static final Map<GlobalFormat, DateTimeFormat> dateFormatBindings =
+			new HashMap<GlobalFormat, DateTimeFormat>();
 
-	public static enum DecimalFormat {
-		PERCENT,
-		CURRENCY,
-		DECIMAL;
-	}
-
-	public static enum BooleanFormat {
-		YES_NO,
-		TRUE_FALSE;
-	}
-
-	/**
-	 * Translates a global format to a local date format.
-	 * @param format The global format
-	 * @return The corresponding {@link DateFormat}
-	 * @throws IllegalArgumentException When the given global format does not map
-	 *         to a local date format.
-	 */
-	public static DateFormat getDateFormat(GlobalFormat format) {
-		switch(format) {
-			case DATE:
-				return DateFormat.DATE;
-			case TIME:
-				return DateFormat.TIME;
-			case TIMESTAMP:
-				return DateFormat.TIMESTAMP;
-			default:
-				throw new IllegalArgumentException("Not a date format: " + format.toString());
-		}
-	}
-
-	/**
-	 * Translates a global format to a local decimal format.
-	 * @param format The global format
-	 * @return The corresponding {@link DecimalFormat}
-	 * @throws IllegalArgumentException When the given global format does not map
-	 *         to a local decimal format.
-	 */
-	public static DecimalFormat getDecimalFormat(GlobalFormat format) {
-		switch(format) {
-			case PERCENT:
-				return DecimalFormat.PERCENT;
-			case CURRENCY:
-				return DecimalFormat.CURRENCY;
-			case DECIMAL:
-				return DecimalFormat.DECIMAL;
-			default:
-				throw new IllegalArgumentException("Not a decimal format: " + format.toString());
-		}
-	}
-
-	public static final Map<DateFormat, DateTimeFormat> dateFormatBindings = new HashMap<DateFormat, DateTimeFormat>();
-
-	public static final Map<DecimalFormat, NumberFormat> decimalFormatBindings =
-			new HashMap<DecimalFormat, NumberFormat>();
+	public static final Map<GlobalFormat, NumberFormat> decimalFormatBindings = new HashMap<GlobalFormat, NumberFormat>();
 
 	static {
-		dateFormatBindings.put(DateFormat.DATE, DateTimeFormat.getShortDateFormat());
-		dateFormatBindings.put(DateFormat.TIME, DateTimeFormat.getShortTimeFormat());
-		dateFormatBindings.put(DateFormat.TIMESTAMP, DateTimeFormat.getShortDateTimeFormat());
+		dateFormatBindings.put(GlobalFormat.DATE, DateTimeFormat.getShortDateFormat());
+		dateFormatBindings.put(GlobalFormat.TIME, DateTimeFormat.getShortTimeFormat());
+		dateFormatBindings.put(GlobalFormat.TIMESTAMP, DateTimeFormat.getShortDateTimeFormat());
 		// default is timestamp
 		dateFormatBindings.put(null, DateTimeFormat.getShortDateTimeFormat());
 
-		decimalFormatBindings.put(DecimalFormat.CURRENCY, NumberFormat.getCurrencyFormat());
-		decimalFormatBindings.put(DecimalFormat.PERCENT, NumberFormat.getPercentFormat());
-		decimalFormatBindings.put(DecimalFormat.DECIMAL, NumberFormat.getDecimalFormat());
+		decimalFormatBindings.put(GlobalFormat.CURRENCY, NumberFormat.getCurrencyFormat());
+		decimalFormatBindings.put(GlobalFormat.PERCENT, NumberFormat.getPercentFormat());
+		decimalFormatBindings.put(GlobalFormat.DECIMAL, NumberFormat.getDecimalFormat());
 		// default is local dependant decimal format
 		decimalFormatBindings.put(null, NumberFormat.getDecimalFormat());
 	}
@@ -111,40 +54,40 @@ public abstract class Fmt {
 		if(format != null) {
 			switch(format) {
 				case DATE:
-					return date((Date) value, DateFormat.DATE);
+					return date((Date) value, GlobalFormat.DATE);
 				case TIME:
-					return date((Date) value, DateFormat.TIME);
+					return date((Date) value, GlobalFormat.TIME);
 				case TIMESTAMP:
-					return date((Date) value, DateFormat.TIMESTAMP);
+					return date((Date) value, GlobalFormat.TIMESTAMP);
 
 				case CURRENCY:
 					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), DecimalFormat.CURRENCY);
+						return decimal(((Double) value).doubleValue(), GlobalFormat.CURRENCY);
 					}
 					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), DecimalFormat.CURRENCY);
+						return decimal(((Float) value).doubleValue(), GlobalFormat.CURRENCY);
 					}
 
 				case PERCENT:
 					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), DecimalFormat.PERCENT);
+						return decimal(((Double) value).doubleValue(), GlobalFormat.PERCENT);
 					}
 					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), DecimalFormat.PERCENT);
+						return decimal(((Float) value).doubleValue(), GlobalFormat.PERCENT);
 					}
 
 				case DECIMAL:
 					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), DecimalFormat.DECIMAL);
+						return decimal(((Double) value).doubleValue(), GlobalFormat.DECIMAL);
 					}
 					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), DecimalFormat.DECIMAL);
+						return decimal(((Float) value).doubleValue(), GlobalFormat.DECIMAL);
 					}
 
 				case BOOL_TRUEFALSE:
-					return bool(((Boolean) value).booleanValue(), BooleanFormat.TRUE_FALSE);
+					return bool(((Boolean) value).booleanValue(), GlobalFormat.BOOL_TRUEFALSE);
 				case BOOL_YESNO:
-					return bool(((Boolean) value).booleanValue(), BooleanFormat.YES_NO);
+					return bool(((Boolean) value).booleanValue(), GlobalFormat.BOOL_YESNO);
 			}
 		}
 		// resort to toString
@@ -155,10 +98,10 @@ public abstract class Fmt {
 	 * Formats a {@link Date} to a String given a format directive.
 	 * @param date
 	 * @param format May be <code>null</code> in which case
-	 *        {@link DateFormat#TIMESTAMP} formatting is used.
+	 *        {@link GlobalFormat#TIMESTAMP} formatting is used.
 	 * @return Formatted date String (never <code>null</code>).
 	 */
-	public static String date(Date date, DateFormat format) {
+	private static String date(Date date, GlobalFormat format) {
 		return date == null ? "" : dateFormatBindings.get(format).format(date);
 	}
 
@@ -169,7 +112,7 @@ public abstract class Fmt {
 	 *        dependant decimal formatting is applied.
 	 * @return A decimal formatted String.
 	 */
-	public static String decimal(double decimal, DecimalFormat format) {
+	private static String decimal(double decimal, GlobalFormat format) {
 		return decimalFormatBindings.get(format).format(decimal);
 	}
 
@@ -179,7 +122,7 @@ public abstract class Fmt {
 	 * @return Currency formatted String
 	 */
 	public static String currency(double decimal) {
-		return decimalFormatBindings.get(DecimalFormat.CURRENCY).format(decimal);
+		return decimalFormatBindings.get(GlobalFormat.CURRENCY).format(decimal);
 	}
 
 	/**
@@ -188,7 +131,7 @@ public abstract class Fmt {
 	 * @return Percent formatted String
 	 */
 	public static String percent(double decimal) {
-		return decimalFormatBindings.get(DecimalFormat.PERCENT).format(decimal);
+		return decimalFormatBindings.get(GlobalFormat.PERCENT).format(decimal);
 	}
 
 	/**
@@ -197,12 +140,12 @@ public abstract class Fmt {
 	 * @param format
 	 * @return Presentation worthy string
 	 */
-	public static String bool(boolean b, BooleanFormat format) {
+	private static String bool(boolean b, GlobalFormat format) {
 		switch(format) {
-			case YES_NO:
+			case BOOL_YESNO:
 				return b ? "Yes" : "No";
 			default:
-			case TRUE_FALSE:
+			case BOOL_TRUEFALSE:
 				return b ? "True" : "False";
 		}
 	}

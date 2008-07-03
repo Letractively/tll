@@ -46,7 +46,7 @@ import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.util.Fmt;
-import com.tll.client.util.Fmt.DateFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * MainPanel
@@ -268,15 +268,15 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		private void setCurrentUser(Model user) {
 			this.vlUsername.setText(user.asString("emailAddress"));
 			this.vlUsername.setViewRequest(new EditViewRequest(this, UserEditView.klas, user));
-			this.lblUserDateCreated.setText(Fmt.date(user.getDateCreated(), DateFormat.DATE));
+			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			Model account = user.relatedOne(new PropertyPath("account")).getModel();
-			this.lblUserAccount.setText(Fmt.date(account.getDateModified(), DateFormat.DATE));
+			this.lblUserAccount.setText(Fmt.format(account.getDateModified(), GlobalFormat.DATE));
 		}
 
 		private void setCurrentAccount(Model account) {
 			this.lblCrntAcnt.setText(account.getName());
 			this.lblCrntAcntType.setText(account.getEntityType().getName());
-			this.lblCrntAcntDateCreated.setText(Fmt.date(account.getDateCreated(), DateFormat.DATE));
+			this.lblCrntAcntDateCreated.setText(Fmt.format(account.getDateCreated(), GlobalFormat.DATE));
 		}
 
 		private void clearCurrentUser() {

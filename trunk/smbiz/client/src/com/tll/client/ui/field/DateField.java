@@ -4,9 +4,7 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
-import com.tll.client.util.Fmt.DateFormat;
 import com.tll.client.validate.DateValidator;
 
 /**
@@ -24,8 +22,7 @@ public class DateField extends TextField {
 	public DateField(String propName, String lblText, GlobalFormat format) {
 		super(propName, lblText, 10);
 		setFormat(format);
-		DateFormat dateFormat = Fmt.getDateFormat(format);
-		switch(dateFormat) {
+		switch(format) {
 			case DATE:
 				addValidator(DateValidator.DATE_VALIDATOR);
 				break;

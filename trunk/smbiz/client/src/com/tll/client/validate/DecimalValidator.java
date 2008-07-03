@@ -2,7 +2,7 @@ package com.tll.client.validate;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.tll.client.util.Fmt;
-import com.tll.client.util.Fmt.DecimalFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * DecimalValidator
@@ -11,13 +11,13 @@ import com.tll.client.util.Fmt.DecimalFormat;
 public class DecimalValidator implements IValidator {
 
 	public static final DecimalValidator CURRENCY_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(DecimalFormat.CURRENCY));
+			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.CURRENCY));
 
 	public static final DecimalValidator PERCENT_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(DecimalFormat.PERCENT));
+			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.PERCENT));
 
 	public static final DecimalValidator DECIMAL_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(DecimalFormat.DECIMAL));
+			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.DECIMAL));
 
 	private final NumberFormat numberFormat;
 

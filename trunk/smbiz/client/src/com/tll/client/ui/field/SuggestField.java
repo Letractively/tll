@@ -81,7 +81,6 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 	}
 
 	public void onSuggestionSelected(SuggestionEvent event) {
-		changed = true;
 	}
 
 	@Override

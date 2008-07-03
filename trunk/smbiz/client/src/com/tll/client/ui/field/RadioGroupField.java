@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * RadioGroupField
@@ -92,17 +91,6 @@ public final class RadioGroupField extends AbstractDataMapField {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void onClick(Widget sender) {
-		for(RadioButton rb : radioButtons) {
-			if(sender == rb) {
-				changed = true;
-				return;
-			}
-		}
-		super.onClick(sender);
 	}
 
 	@Override

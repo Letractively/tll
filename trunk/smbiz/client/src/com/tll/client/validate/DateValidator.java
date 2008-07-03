@@ -6,7 +6,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.util.Fmt;
-import com.tll.client.util.Fmt.DateFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * DateValidator
@@ -15,11 +15,11 @@ import com.tll.client.util.Fmt.DateFormat;
 public class DateValidator implements IValidator {
 
 	public static final DateValidator TIMESTAMP_VALIDATOR =
-			new DateValidator(Fmt.dateFormatBindings.get(DateFormat.TIMESTAMP));
+			new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.TIMESTAMP));
 
-	public static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(DateFormat.DATE));
+	public static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.DATE));
 
-	public static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(DateFormat.TIME));
+	public static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.TIME));
 
 	private final DateTimeFormat dateFormat;
 
