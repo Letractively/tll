@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
+import com.tll.client.field.IFieldBindingListener;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
 
@@ -20,7 +21,7 @@ import com.tll.client.util.GlobalFormat;
  * Provision for read-only is supported.
  * @author jpk
  */
-public abstract class FieldGroupPanel extends Composite {
+public abstract class FieldGroupPanel extends Composite implements IFieldBindingListener {
 
 	/**
 	 * The Panel containing the drawn fields.
@@ -33,17 +34,21 @@ public abstract class FieldGroupPanel extends Composite {
 	private final FieldGroup fields;
 
 	/**
-	 * Internal flag for tracking whether the fields have been populated or not.
-	 */
-	private boolean populated;
-
-	/**
 	 * Constructor
 	 * @param displayName The display name
 	 */
 	public FieldGroupPanel(String displayName) {
-		super();
-		this.fields = new FieldGroup(displayName, this);
+		this(displayName, null);
+	}
+
+	/**
+	 * Constructor - Use when an already populated FieldGroup is to be applied to
+	 * this Panel.
+	 * @param displayName The display name
+	 * @param fields The FieldGroup
+	 */
+	public FieldGroupPanel(String displayName, FieldGroup fields) {
+		this.fields = fields == null ? new FieldGroup(displayName, this, this) : fields;
 		initWidget(panel);
 	}
 
@@ -51,9 +56,8 @@ public abstract class FieldGroupPanel extends Composite {
 	 * Ensures the field group is populated.
 	 */
 	private void ensurePopulated() {
-		if(!populated) {
+		if(fields.size() < 1) {
 			populateFieldGroup();
-			populated = true;
 		}
 	}
 

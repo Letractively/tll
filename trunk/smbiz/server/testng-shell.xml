@@ -6,7 +6,7 @@
     <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
-        <include name="listhandler" />
+        <include name="client-model" />
       </run>
     </groups>
     <!-- 
@@ -15,7 +15,7 @@
     </packages>
     -->
     <classes>
-      <class name="com.tll.listhandler.NamedQueryDataRetrievalTest" />
+      <class name="com.tll.client.model.PropertyPathTest" />
     </classes>
   </test>
 	

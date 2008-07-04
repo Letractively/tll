@@ -134,6 +134,10 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		editListeners.remove(listener);
 	}
 
+	public FieldGroupPanel getFieldPanel() {
+		return fieldPanel;
+	}
+
 	/**
 	 * Sets or replaces the field panel.
 	 * @param fieldPanel The field panel

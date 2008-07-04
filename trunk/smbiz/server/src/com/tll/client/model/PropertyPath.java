@@ -90,7 +90,17 @@ public final class PropertyPath {
 	 * @return The unbound indexed property name
 	 */
 	public static String indexedUnbound(String indexablePropName) {
-		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + unboundIndex++ + UNBOUND_RIGHT_INDEX_CHAR;
+		return indexedUnbound(indexablePropName, ++unboundIndex);
+	}
+
+	/**
+	 * Assembles an <em>unbound</em> indexed property name given the indexable
+	 * property name and a desired index. <br>
+	 * @param indexablePropName
+	 * @return The unbound indexed property name
+	 */
+	public static String indexedUnbound(String indexablePropName, int index) {
+		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + index + UNBOUND_RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -151,20 +161,14 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * The property path in String form. (That which is parsed).
+	 * The property path buffer.
 	 */
-	private String propPath;
+	private StringBuilder buf;
 
 	/**
 	 * The number of "nodes" in the property path.
 	 */
 	private int len;
-
-	/**
-	 * The constituent property names that make up the property path that are
-	 * separated by dot chars.
-	 */
-	private String[] nodes;
 
 	/**
 	 * Constructor
@@ -175,11 +179,22 @@ public final class PropertyPath {
 
 	/**
 	 * Constructor
-	 * @param propPath
+	 * @param propPath A property path String.
 	 */
 	public PropertyPath(String propPath) {
 		this();
 		parse(propPath);
+	}
+
+	/**
+	 * Constructor
+	 * @param parentPropPath A parent property path
+	 * @param propPath A property path that is appended to the given parent
+	 *        property path
+	 */
+	public PropertyPath(String parentPropPath, String propPath) {
+		this();
+		parse(getPropertyPath(parentPropPath, propPath));
 	}
 
 	/**
@@ -189,70 +204,37 @@ public final class PropertyPath {
 	 */
 	public void parse(String propPath) {
 		if(propPath == null || propPath.length() == 0) {
-			nodes = null;
 			len = 0;
-			this.propPath = null;
+			this.buf = null;
 		}
 		else {
-			final String[] props = propPath.split("\\.");
-			len = props.length;
-
-			nodes = new String[len];
-
-			for(int i = 0; i < len; i++) {
-				String prop = props[i];
-				nodes[i] = prop;
-			}
-
-			this.propPath = propPath;
+			len = propPath.split("\\.").length;
+			this.buf = new StringBuilder(propPath);
 		}
 	}
 
 	/**
-	 * Rebuilds the property path from the {@link #nodes} array resetting the
-	 * {@link #propPath} String. If a nodes element is null or empty, it is
-	 * skipped in the rebuild.
+	 * @return The atomic property "nodes" that makeup this property path. <br>
+	 *         E.g.: <code>propA.propB</code> returns
+	 *         <code>{ propA, propB }</code>
 	 */
-	private void rebuild() {
-		if(nodes == null || nodes.length == 0) {
-			propPath = null;
-			len = 0;
-		}
-		else {
-			StringBuffer sb = new StringBuffer();
-			for(int i = 0; i < len; ++i) {
-				String node = nodes[i];
-				if(node != null && node.length() > 0) {
-					if(sb.length() > 0 && !(sb.charAt(sb.length() - 1) == '.')) sb.append('.');
-					sb.append(node);
-				}
-			}
-			propPath = sb.toString();
-			nodes = propPath.split("\\.");
-			len = nodes.length;
-		}
+	public String[] nodes() {
+		return buf == null ? null : buf.toString().split("\\.");
 	}
 
 	/**
 	 * @return The length, in characters, of the property path String.
 	 */
 	public int length() {
-		return propPath == null ? 0 : propPath.length();
+		return buf == null ? 0 : buf.length();
 	}
 
 	/**
 	 * @return The number of "nodes" in the parsed property path.<br>
-	 *         E.g.: <code>propA.propB[3].propC</code> has a size of 3.
+	 *         E.g.: <code>propA.propB[3].propC</code> has a depth of 3.
 	 */
 	public int depth() {
 		return len;
-	}
-
-	/**
-	 * @return The deepest property path node index.
-	 */
-	public int lastNodeIndex() {
-		return nodes == null ? -1 : len - 1;
 	}
 
 	/**
@@ -262,28 +244,75 @@ public final class PropertyPath {
 	 * @return true/false
 	 */
 	public boolean isIndexed() {
-		if(propPath == null) return false;
-		final char end = propPath.charAt(propPath.length() - 1);
+		if(buf == null) return false;
+		final char end = buf.charAt(buf.length() - 1);
 		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
 	}
 
 	/**
-	 * Returns the node path of the given node index.
+	 * Does this property path point to an <em>unbound</em> indexed property?<br>
+	 * (E.g.: <code>propA.propB{1}</code>) <br>
+	 * <em>NOTE: </em>nested indexed properties are not considered.
+	 * @return true/false
+	 */
+	public boolean isUnboundIndexed() {
+		if(buf == null) return false;
+		final char end = buf.charAt(buf.length() - 1);
+		return (end == UNBOUND_RIGHT_INDEX_CHAR);
+	}
+
+	/**
+	 * Returns the node path of the given node index. <br>
 	 * @param nodeIndex The node index
 	 * @return The node path
+	 * @throws ArrayIndexOutOfBoundsException When the node index is less than 0
+	 *         or greater than number of nodes of this property path.
 	 */
-	public String pathAt(int nodeIndex) {
-		return nodes == null ? null : nodes[nodeIndex];
+	public String pathAt(int nodeIndex) throws ArrayIndexOutOfBoundsException {
+		if(buf == null) return null;
+		if(nodeIndex < 0 || nodeIndex > len - 1) throw new ArrayIndexOutOfBoundsException();
+		int cni = 0;
+		StringBuilder sub = new StringBuilder();
+		for(int i = 0; i < buf.length(); ++i) {
+			if(buf.charAt(i) == '.') {
+				if(cni == nodeIndex) {
+					// done
+					break;
+				}
+				++cni;
+			}
+			else if(cni == nodeIndex) {
+				sub.append(buf.charAt(i));
+			}
+		}
+		return sub.toString();
+	}
+
+	/**
+	 * Calculates the String-wise index from a given node index.
+	 * @param nodeIndex The node index
+	 * @return The corres. String index of this property path.
+	 */
+	private int bufIndex(int nodeIndex) {
+		if(nodeIndex == 0) return 0;
+		if(buf != null) {
+			int cni = 0;
+			for(int i = 0; i < buf.length(); ++i) {
+				if(buf.charAt(i) == '.') {
+					if(++cni == nodeIndex) return i + 1;
+				}
+			}
+		}
+		return -1;
 	}
 
 	/**
 	 * Extracts the property name at the given node index stripping indexing
-	 * chars.
 	 * @param nodeIndex The node index (depth into the property path).
 	 * @return The property name w/o indexing symbols
 	 */
 	public String nameAt(int nodeIndex) {
-		return nodes == null ? null : strip(nodes[nodeIndex]);
+		return buf == null ? null : strip(pathAt(nodeIndex));
 	}
 
 	/**
@@ -295,7 +324,7 @@ public final class PropertyPath {
 	 *         negative.
 	 */
 	public int indexAt(int nodeIndex) throws MalformedPropPathException {
-		return nodes == null ? -1 : resolveIndex(nodes[nodeIndex]);
+		return buf == null ? -1 : resolveIndex(pathAt(nodeIndex));
 	}
 
 	/**
@@ -305,11 +334,11 @@ public final class PropertyPath {
 	 *         <code>null</code> if this property path is not an indexed property.
 	 */
 	public PropertyPath indexedParent() {
-		if(propPath.length() > 4 && isIndexed()) {
-			for(int i = propPath.length() - 3; i >= 0; --i) {
-				final char c = propPath.charAt(i);
+		if(buf.length() > 4 && isIndexed()) {
+			for(int i = buf.length() - 3; i >= 0; --i) {
+				final char c = buf.charAt(i);
 				if(c == LEFT_INDEX_CHAR || c == UNBOUND_LEFT_INDEX_CHAR) {
-					return new PropertyPath(propPath.substring(0, i));
+					return new PropertyPath(buf.substring(0, i));
 				}
 			}
 		}
@@ -317,39 +346,22 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Returns the first found node index that is unbound starting at the given
+	 * Returns the first found node index that is indexed starting at the given
 	 * index.
-	 * @param nodeIndex The node index where searching begins
-	 * @return Node index of the nearest node that is unbound or <code>-1</code>
-	 *         if no unbound node is found.
+	 * @param nodeIndex The node index where searching starts
+	 * @param isUnbound Search for bound or un-bound indexed nodes?
+	 * @return The index of the nearest node that is indexed or <code>-1</code> if
+	 *         no unbound node is found.
 	 */
-	public int nextUnboundNode(int nodeIndex) {
+	public int nextIndexedNode(int nodeIndex, boolean isUnbound) {
 		int i = nodeIndex;
 		do {
-			final String prop = nodes[i];
+			final String prop = pathAt(i);
 			if(prop.charAt(prop.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR) {
 				return i;
 			}
 		} while(++i < len);
 		return -1;
-	}
-
-	/**
-	 * Calculates the offset relative to the {@link #propPath} String of a desired
-	 * node index. The offset, when non-zero, points to the first character after
-	 * the preceeding dot that represents that node.
-	 * @param nodeIndex The node index
-	 * @return The prop path offset or <code>-1</code> if no property path is
-	 *         currently set.
-	 */
-	private int offset(int nodeIndex) {
-		if(len == 0) return -1;
-		if(nodeIndex == 0) return 0;
-		int offset = 0;
-		for(int i = 0; i < nodeIndex; ++i) {
-			offset += (nodes[i].length() + 1);
-		}
-		return offset;
 	}
 
 	/**
@@ -360,9 +372,9 @@ public final class PropertyPath {
 	 *         this property path has not been set.
 	 */
 	private int nodeIndexOf(String nodePath) {
-		if(nodes == null) return -1;
+		if(buf == null) return -1;
 		for(int i = 0; i < len; ++i) {
-			if(nodePath.equals(nodes[i])) return i;
+			if(nodePath.equals(pathAt(i))) return i;
 		}
 		return -1;
 	}
@@ -371,15 +383,15 @@ public final class PropertyPath {
 	 * Returns the ancestor property path of this property path based on a desired
 	 * number of nodes to traverse up the property path starting at the last
 	 * (right-most) node.
-	 * @param delta The number of nodes to upward to traverse
+	 * @param delta The number of nodes to traverse upward
 	 * @return An ancestral property path of this property path or
 	 *         <code>null</code> if the delta exceeds the depth of this property
 	 *         path.
 	 */
 	public PropertyPath ancestor(int delta) {
-		if(nodes == null || delta > len - 1) return null;
-		assert propPath != null && len > 0;
-		return delta == 0 ? this : new PropertyPath(propPath.substring(0, offset(len - delta) - 1));
+		if(buf == null || delta > len - 1) return null;
+		assert buf != null && len > 0;
+		return delta == 0 ? this : new PropertyPath(buf.substring(0, bufIndex(len - delta) - 1));
 	}
 
 	/**
@@ -389,9 +401,9 @@ public final class PropertyPath {
 	 * @return The nested (child) property path
 	 */
 	public PropertyPath nested(int depth) {
-		if(nodes == null || len < 2 || depth > len - 1) return null;
-		assert propPath != null && len >= 0;
-		return depth == 0 ? this : new PropertyPath(propPath.substring(offset(depth)));
+		if(buf == null || len < 2 || depth > len - 1) return null;
+		assert buf != null && len >= 0;
+		return depth == 0 ? this : new PropertyPath(buf.substring(bufIndex(depth)));
 	}
 
 	/**
@@ -402,12 +414,30 @@ public final class PropertyPath {
 	 * @param prop The node replacement String. If <code>null</code> the property
 	 *        path is "shortened" and will <em>not</em> contain the prop at the
 	 *        given node index.
+	 * @return <code>true</code> if the replacement was successful.
 	 */
-	public void replaceAt(int nodeIndex, String prop) {
-		if(nodes == null || nodeIndex > len - 1) return;
-		assert propPath != null && len >= 0;
-		nodes[nodeIndex] = prop;
-		rebuild();
+	public boolean replaceAt(int nodeIndex, String prop) {
+		if(buf == null || nodeIndex > len - 1) return false;
+		assert buf != null && len >= 0;
+		int i = bufIndex(nodeIndex);
+		if(i == -1) return false;
+		int j;
+		if(nodeIndex == len - 1) {
+			j = buf.length();
+		}
+		else {
+			j = bufIndex(nodeIndex + 1) - 1;
+		}
+		if(prop == null) {
+			// remove the node
+			buf.replace(i, j + 1, "");
+			len--;
+			assert len >= 0;
+		}
+		else {
+			buf.replace(i, j, prop);
+		}
+		return true;
 	}
 
 	/**
@@ -417,12 +447,9 @@ public final class PropertyPath {
 	 * @return <code>true</code> if the replacement was successful.
 	 */
 	public boolean replace(String nodePath, String replNodePath) {
-		if(nodes == null) return false;
+		if(buf == null) return false;
 		final int ni = nodeIndexOf(nodePath);
-		if(ni == -1) return false;
-		nodes[ni] = replNodePath;
-		rebuild();
-		return true;
+		return ni == -1 ? false : replaceAt(ni, replNodePath);
 	}
 
 	/**
@@ -430,7 +457,30 @@ public final class PropertyPath {
 	 * @param path The property path to append
 	 */
 	public void append(String path) {
-		parse(getPropertyPath(this.propPath, path));
+		parse(getPropertyPath(this.buf.toString(), path));
+	}
+
+	/**
+	 * Appends an indexed property path to this property path. <br>
+	 * E.g.: A path of <code>parameters</code> and an index of <code>2</code>
+	 * would append: <code>parameters[2]</code>.
+	 * @param path The indexable property name
+	 * @param index The index
+	 */
+	public void append(String path, int index) {
+		append(path, index, false);
+	}
+
+	/**
+	 * Appends a bound or un-bound indexed property path to this property path. <br>
+	 * E.g.: A path of <code>parameters</code> and an index of <code>2</code>
+	 * would append: <code>parameters[2]</code>.
+	 * @param path The indexable property name
+	 * @param index The index
+	 * @param isUnbound Shall the appended indexed path be bound or un-bound?
+	 */
+	public void append(String path, int index, boolean isUnbound) {
+		append(isUnbound ? indexedUnbound(path, index) : indexed(path, index));
 	}
 
 	@Override
@@ -439,10 +489,10 @@ public final class PropertyPath {
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final PropertyPath other = (PropertyPath) obj;
-		if(propPath == null) {
-			if(other.propPath != null) return false;
+		if(buf == null) {
+			if(other.buf != null) return false;
 		}
-		else if(!propPath.equals(other.propPath)) return false;
+		else if(!buf.equals(other.buf)) return false;
 		return true;
 	}
 
@@ -450,12 +500,12 @@ public final class PropertyPath {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((propPath == null) ? 0 : propPath.hashCode());
+		result = prime * result + ((buf == null) ? 0 : buf.hashCode());
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return propPath;
+		return buf == null ? null : buf.toString();
 	}
 }

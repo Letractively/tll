@@ -5,6 +5,7 @@
 package com.tll.client.field;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,7 +15,6 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.model.IData;
 import com.tll.client.model.IModelRefProperty;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
@@ -25,7 +25,6 @@ import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -58,7 +57,7 @@ import com.tll.util.IDescriptorProvider;
  * </ol>
  * @author jpk
  */
-public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider, IData {
+public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
 
 	/**
 	 * Recursively searches for a single field whose property name matches the
@@ -137,13 +136,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private CompositeValidator validators;
 
 	/**
-	 * The Panel that owns this FieldGroup.
+	 * The optional binding listener.
 	 */
-	private final FieldGroupPanel fieldGroupPanel;
+	private final IFieldBindingListener bindingListener;
 
 	/**
 	 * The Widget that is used to convey validation feedback. This defaults to the
-	 * {@link #fieldGroupPanel} but may be independently overridden.
+	 * {@link #bindingListener} but may be independently overridden.
 	 */
 	private Widget feedbackWidget;
 
@@ -164,15 +163,16 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Constructor
 	 * @param displayName The UI display name used for presenting validation
 	 *        feedback to the UI.
-	 * @param fieldGroupPanel The parent Panel that owns this field group.
+	 * @param bindingListener The optional binding listener.
+	 * @param feedbackWidget The feedback Widget
 	 */
-	public FieldGroup(String displayName, FieldGroupPanel fieldGroupPanel) {
+	public FieldGroup(String displayName, IFieldBindingListener bindingListener, Widget feedbackWidget) {
 		super();
-		if(fieldGroupPanel == null) throw new IllegalArgumentException();
+		if(bindingListener == null) throw new IllegalArgumentException();
 		this.displayName = displayName;
-		this.fieldGroupPanel = fieldGroupPanel;
+		this.bindingListener = bindingListener;
 		// the default feedback widget is the field group panel
-		this.feedbackWidget = fieldGroupPanel;
+		this.feedbackWidget = feedbackWidget;
 	}
 
 	public String descriptor() {
@@ -378,6 +378,18 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * Removes a collection of fields from this group.
+	 * @param clc The collection of fields to remove.
+	 */
+	public void removeFields(Collection<IField> clc) {
+		if(clc != null) {
+			for(IField fld : clc) {
+				removeField(fld);
+			}
+		}
+	}
+
+	/**
 	 * Recursively pre-pends the given property path to all child fields' property
 	 * names.
 	 * @param propertyPath The property path to pre-pend
@@ -441,11 +453,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		updateModel = true;
 		// provide and opportunity for the owning panel to ready their field group
 		// before actual binding
-		fieldGroupPanel.onBeforeBind(model);
+		if(bindingListener != null) bindingListener.onBeforeBind(model);
 	}
 
 	private void onAfterBind() {
-		fieldGroupPanel.onAfterBind();
+		if(bindingListener != null) bindingListener.onAfterBind();
 	}
 
 	/**
@@ -522,7 +534,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				try {
 					propPath.parse(fld.getPropertyName());
 
-					int n = propPath.nextUnboundNode(0);
+					int n = propPath.nextIndexedNode(0, true);
 					if(n >= 0) {
 						// unbound property!
 						PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);

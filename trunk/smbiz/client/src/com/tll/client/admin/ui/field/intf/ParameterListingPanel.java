@@ -6,7 +6,10 @@
 package com.tll.client.admin.ui.field.intf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.cache.AuxDataCache;
@@ -64,23 +67,24 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ParameterPanel pp = panels.get(rowIndex - 1);
-			if(pp.propertyName == null) {
+			final PropertyPath pp = getParamPath(rowIndex, false);
+			if(pp.isUnboundIndexed()) {
 				// new param
-				panels.remove(pp);
-				parentFieldGroup.removeField(pp.getFields());
+				parentFieldGroup.removeFields(parentFieldGroup.getFields(pp.toString()));
 				listing.refresh();
 			}
 			else {
-				pp.getFields().addPendingDeletion(pp.propertyName);
+				// existing param
+				parentFieldGroup.addPendingDeletion(pp.toString());
 				listing.markRowDeleted(rowIndex);
 			}
 		}
 
 		@Override
 		protected void doEditRow(int rowIndex) {
-			current = panels.get(rowIndex - 1);
-			editPanel.setFieldPanel(current);
+			final PropertyPath pp = new PropertyPath(paramPaths.get(new Integer(rowIndex - 1)));
+			ParameterPanel ppanel = new ParameterPanel(pp.toString(), parentFieldGroup);
+			editPanel.setFieldPanel(ppanel);
 			editPanel.setEditMode(false);
 			dialog.setText("Edit Parameter");
 			dialog.center();
@@ -90,11 +94,12 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 	private final IAddRowDelegate addRowDelegate = new IAddRowDelegate() {
 
 		public void handleAddRow() {
-			current = new ParameterPanel(null);
+			final PropertyPath pp = new PropertyPath(optionPropertyPath, PropertyPath.indexedUnbound("parameters"));
+			ParameterPanel ppanel = new ParameterPanel(pp.toString(), parentFieldGroup);
 			Model newParam = AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			assert newParam != null;
-			current.getFields().bindModel(newParam.getBindingRef());
-			editPanel.setFieldPanel(current);
+			ppanel.getFields().bindModel(newParam.getBindingRef());
+			editPanel.setFieldPanel(ppanel);
 			editPanel.setEditMode(true);
 			dialog.setText("Add Parameter");
 			dialog.center();
@@ -108,13 +113,6 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 
 	private final FieldGroup parentFieldGroup;
 
-	private final List<ParameterPanel> panels = new ArrayList<ParameterPanel>();
-
-	/**
-	 * The parameter panel currently under editing.
-	 */
-	private ParameterPanel current;
-
 	private final DataListingWidget<FieldGroup> listing;
 
 	private final EditPanel editPanel;
@@ -124,17 +122,11 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 	 * Constructor
 	 * @param optionPropertyPath The parent option path from the root interface
 	 * @param parentFieldGroup Used when adding or deleting parameters
-	 * @param panels
 	 */
-	public ParameterListingPanel(String optionPropertyPath, FieldGroup parentFieldGroup, ParameterPanel[] panels) {
+	public ParameterListingPanel(String optionPropertyPath, FieldGroup parentFieldGroup) {
 		super();
 		this.optionPropertyPath = optionPropertyPath;
 		this.parentFieldGroup = parentFieldGroup;
-		if(panels != null) {
-			for(ParameterPanel panel : panels) {
-				this.panels.add(panel);
-			}
-		}
 
 		final IListingConfig<FieldGroup> listingConfig = new IListingConfig<FieldGroup>() {
 
@@ -200,8 +192,42 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 		dialog.setWidget(editPanel);
 	}
 
+	private PropertyPath getParamPath(int rowIndex, boolean isUnbound) {
+		final PropertyPath p = new PropertyPath(optionPropertyPath);
+		p.append("parameters", rowIndex - 1, isUnbound);
+	}
+
+	private FieldGroup[] getData() {
+		final Map<Integer, List<IField>> map = new HashMap<Integer, List<IField>>();
+
+		final Set<IField> set = parentFieldGroup.getFields(optionPropertyPath);
+		final PropertyPath pp = new PropertyPath();
+
+		List<IField> list = new ArrayList<IField>();
+
+		// split the resultant set of fields based on the parameter portion of the
+		// property path
+		for(IField fld : set) {
+			pp.parse(fld.getPropertyName());
+			// we can safely assume the option property path's depth is 1 since it is
+			// always relative to an interface
+			pp = pp.nested(1);
+			Integer paramIndex = new Integer(pp.indexAt(0));
+			if(!map.containsKey(paramIndex)) {
+				map.put(paramIndex, new ArrayList<IField>());
+			}
+			map.get(paramIndex).add(fld);
+		}
+
+		FieldGroup[] arr = new FieldGroup[ParameterListingPanel.this.panels.size()];
+		int i = 0;
+		for(ParameterPanel panel : ParameterListingPanel.this.panels) {
+			arr[i++] = panel.getFields();
+		}
+		return arr;
+	}
+
 	public void onEditEvent(EditEvent event) {
-		assert current != null;
 		switch(event.getOp()) {
 			case CANCEL:
 				current.getFields().reset();
@@ -230,15 +256,6 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 				break;
 		}
 		dialog.hide();
-	}
-
-	private FieldGroup[] getData() {
-		FieldGroup[] arr = new FieldGroup[ParameterListingPanel.this.panels.size()];
-		int i = 0;
-		for(ParameterPanel panel : ParameterListingPanel.this.panels) {
-			arr[i++] = panel.getFields();
-		}
-		return arr;
 	}
 
 	/**

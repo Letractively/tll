@@ -4,6 +4,7 @@
  */
 package com.tll.client.field;
 
+import com.tll.client.model.IData;
 import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.validate.IValidationFeedback;
@@ -13,7 +14,7 @@ import com.tll.client.validate.IValidator;
  * IField - Abstraction for managing the display editing of model bound data.
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider {
+public interface IField extends IPropertyNameProvider, IData {
 
 	/**
 	 * Common style for {@link IField}s.

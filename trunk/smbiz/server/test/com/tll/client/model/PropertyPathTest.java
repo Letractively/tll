@@ -26,12 +26,19 @@ public class PropertyPathTest {
 		assert pp.nameAt(0) == null;
 		assert pp.indexAt(0) == -1;
 
+		// test path at
+		path = "pathA.pathB.pathC.pathD[3]";
+		pp.parse(path);
+		assert "pathA".equals(pp.pathAt(0));
+		assert "pathB".equals(pp.pathAt(1));
+		assert "pathC".equals(pp.pathAt(2));
+		assert "pathD[3]".equals(pp.pathAt(3));
+
 		// test single node non-indexed property path
 		path = "path";
 		pp.parse(path);
 		assert path.equals(pp.toString());
 		assert pp.depth() == 1;
-		assert pp.nameAt(0) == path;
 		assert pp.indexAt(0) == -1;
 		try {
 			pp.nameAt(1);
@@ -69,12 +76,12 @@ public class PropertyPathTest {
 		assert pp.depth() == 1;
 		assert "path".equals(pp.nameAt(0));
 		assert pp.indexAt(0) == 2;
-		assert pp.nextUnboundNode(0) == 0;
+		assert pp.nextIndexedNode(0, true) == 0;
 
 		// test property path depth
 		path = "pathA.pathB[3].pathC.pathD";
 		pp.parse(path);
-		assert pp.toString() == path;
+		assert path.equals(pp.toString());
 		assert pp.depth() == 4;
 		assert "pathA".equals(pp.nameAt(0));
 		assert "pathB".equals(pp.nameAt(1));
@@ -89,10 +96,10 @@ public class PropertyPathTest {
 		pp.parse(path);
 
 		// test unbound node search
-		assert pp.nextUnboundNode(0) == 1;
-		assert pp.nextUnboundNode(1) == 1;
-		assert pp.nextUnboundNode(2) == -1;
-		assert pp.nextUnboundNode(3) == -1;
+		assert pp.nextIndexedNode(0, true) == 1;
+		assert pp.nextIndexedNode(1, true) == 1;
+		assert pp.nextIndexedNode(2, true) == -1;
+		assert pp.nextIndexedNode(3, true) == -1;
 
 		// test ancestor method
 		assert "pathA.pathB{3}.pathC.pathD".equals(pp.ancestor(0).toString());
