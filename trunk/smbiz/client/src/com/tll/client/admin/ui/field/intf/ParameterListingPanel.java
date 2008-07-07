@@ -94,7 +94,7 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 	private final IAddRowDelegate addRowDelegate = new IAddRowDelegate() {
 
 		public void handleAddRow() {
-			final PropertyPath pp = new PropertyPath(optionPropertyPath, PropertyPath.indexedUnbound("parameters"));
+			final PropertyPath pp = new PropertyPath(optionPropertyPath, PropertyPath.indexUnbound("parameters"));
 			ParameterPanel ppanel = new ParameterPanel(pp.toString(), parentFieldGroup);
 			Model newParam = AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			assert newParam != null;
@@ -129,6 +129,10 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 		this.parentFieldGroup = parentFieldGroup;
 
 		final IListingConfig<FieldGroup> listingConfig = new IListingConfig<FieldGroup>() {
+
+			public boolean isIgnoreCaseWhenSorting() {
+				return true;
+			}
 
 			public String getCaption() {
 				return "Parameters";
@@ -236,7 +240,7 @@ public final class ParameterListingPanel extends Composite implements IEditListe
 				if(current.propertyName == null) {
 					// new param
 					String pendingPath =
-							PropertyPath.getPropertyPath(optionPropertyPath, PropertyPath.indexedUnbound("parameters"));
+							PropertyPath.getPropertyPath(optionPropertyPath, PropertyPath.indexUnbound("parameters"));
 					parentFieldGroup.addField(pendingPath, current.getFields());
 					panels.add(current);
 				}

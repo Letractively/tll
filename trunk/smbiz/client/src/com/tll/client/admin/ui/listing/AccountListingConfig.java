@@ -15,6 +15,10 @@ import com.tll.client.model.Model;
  */
 public abstract class AccountListingConfig implements IListingConfig<Model> {
 
+	public boolean isIgnoreCaseWhenSorting() {
+		return true;
+	}
+
 	public final String getCaption() {
 		return null;
 	}

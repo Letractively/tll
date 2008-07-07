@@ -341,6 +341,10 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return true;
 			}
 
+			public boolean isIgnoreCaseWhenSorting() {
+				return false;
+			}
+
 			public boolean isShowRefreshBtn() {
 				return true;
 			}

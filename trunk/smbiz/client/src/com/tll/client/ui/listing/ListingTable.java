@@ -60,6 +60,8 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 
 	protected Column[] columns;
 
+	protected boolean ignoreCaseWhenSorting;
+
 	protected ITableCellRenderer<R> cellRenderer;
 
 	protected IListingOperator<R> listingOperator;
@@ -123,6 +125,8 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		this.columns = config.getColumns();
 		this.cellRenderer = config.getCellRenderer();
 		assert columns != null && cellRenderer != null;
+
+		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
 
 		int rn = -1;
 		Column[] columns = config.getColumns();
@@ -202,7 +206,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		 * @param column
 		 */
 		public SortLink(Column column) {
-			lnk = new SimpleHyperLink(column.name, this);
+			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
 			this.column = column;
@@ -239,13 +243,13 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 		public void clearSortDirection() {
 			assert direction != null && pnl.getWidgetCount() == 2;
 			direction = null;
-			lnk.setTitle("Sort by " + column.name);
+			lnk.setTitle("Sort by " + column.getName());
 			pnl.remove(0);
 		}
 
 		public void onClick(Widget sender) {
 			if(sender == lnk) {
-				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), column.getIgnoreCase());
+				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), ignoreCaseWhenSorting);
 				sc.setDirection(direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
 				listingOperator.sort(new Sorting(sc));
 			}
@@ -277,7 +281,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 				}
 			}
 			else {
-				setWidget(0, c, new Label(col.name));
+				setWidget(0, c, new Label(col.getName()));
 			}
 		}
 	}

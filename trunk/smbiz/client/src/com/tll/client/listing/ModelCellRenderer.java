@@ -25,6 +25,6 @@ public final class ModelCellRenderer implements ITableCellRenderer<Model> {
 		}
 
 		// format the value..
-		return Fmt.format(pv.getValue(), column.format);
+		return Fmt.format(pv.getValue(), column.getFormat());
 	}
 }

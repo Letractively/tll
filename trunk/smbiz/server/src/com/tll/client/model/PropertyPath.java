@@ -7,7 +7,7 @@ package com.tll.client.model;
 
 /**
  * PropertyPath - Encapsulates a property path String providing convenience
- * methods for accessing its attributes.
+ * methods for accessing and modifying its attributes.
  * <p>
  * A valid property path is: <br>
  * <ol>
@@ -71,36 +71,37 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Creates the index token given the numeric index and whether or not is is to
+	 * be bound or un-bound.
+	 * @param index The numeric index
+	 * @param isUnbound Bound or un-bound index?
+	 * @return The index token.
+	 */
+	private static String indexToken(int index, boolean isUnbound) {
+		return (isUnbound ? UNBOUND_LEFT_INDEX_CHAR : LEFT_INDEX_CHAR) + Integer.toString(index)
+				+ (isUnbound ? UNBOUND_RIGHT_INDEX_CHAR : RIGHT_INDEX_CHAR);
+	}
+
+	/**
 	 * Assembles an indexed property name given the indexable property name and
 	 * the desired index.
 	 * @param indexablePropName
-	 * @param index
+	 * @param index The numeric index
+	 * @param isUnbound Index as bound or un-bound?
 	 * @return The indexed property name
 	 */
-	public static String indexed(String indexablePropName, int index) {
-		return indexablePropName + LEFT_INDEX_CHAR + index + RIGHT_INDEX_CHAR;
+	public static String index(String indexablePropName, int index, boolean isUnbound) {
+		return indexablePropName + indexToken(index, isUnbound);
 	}
 
 	/**
 	 * Assembles an <em>unbound</em> indexed property name given the indexable
-	 * property name. <br>
-	 * <em>NOTE: </em>The unbound index is internally assigned and guaranteed to
-	 * be unique.
+	 * property name. The numeric index used is guaranteed to be unique.
 	 * @param indexablePropName
 	 * @return The unbound indexed property name
 	 */
-	public static String indexedUnbound(String indexablePropName) {
-		return indexedUnbound(indexablePropName, ++unboundIndex);
-	}
-
-	/**
-	 * Assembles an <em>unbound</em> indexed property name given the indexable
-	 * property name and a desired index. <br>
-	 * @param indexablePropName
-	 * @return The unbound indexed property name
-	 */
-	public static String indexedUnbound(String indexablePropName, int index) {
-		return indexablePropName + UNBOUND_LEFT_INDEX_CHAR + index + UNBOUND_RIGHT_INDEX_CHAR;
+	public static String indexUnbound(String indexablePropName) {
+		return index(indexablePropName, ++unboundIndex, true);
 	}
 
 	/**
@@ -198,6 +199,17 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Constructor
+	 * @param parentPropPath A parent property path
+	 * @param index The numeric index
+	 * @param isUnbound
+	 */
+	public PropertyPath(String parentPropPath, int index, boolean isUnbound) {
+		this();
+		parse(index(parentPropPath, index, isUnbound));
+	}
+
+	/**
 	 * Parses a property path.
 	 * @param propPath The property path String to be parsed. When
 	 *        <code>null</code> or empty, en empty property path is set.
@@ -247,6 +259,17 @@ public final class PropertyPath {
 		if(buf == null) return false;
 		final char end = buf.charAt(buf.length() - 1);
 		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
+	}
+
+	/**
+	 * Indexes the property path by simply appending the given index surrounded by
+	 * either bound or un-bound index chars. <br>
+	 * <em>NOTE: </em>No checking for existing indexing is performed.
+	 * @param index The index num
+	 * @param isUnbound Index as un-bound or bound?
+	 */
+	public void index(int index, boolean isUnbound) {
+		if(buf != null) buf.append(indexToken(index, isUnbound));
 	}
 
 	/**
@@ -480,7 +503,7 @@ public final class PropertyPath {
 	 * @param isUnbound Shall the appended indexed path be bound or un-bound?
 	 */
 	public void append(String path, int index, boolean isUnbound) {
-		append(isUnbound ? indexedUnbound(path, index) : indexed(path, index));
+		append(index(path, index, isUnbound));
 	}
 
 	@Override

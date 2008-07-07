@@ -33,7 +33,7 @@ public final class IndexedProperty extends ModelRefProperty {
 	 * @param index
 	 */
 	public IndexedProperty(EntityType indexedType, String propName, boolean reference, Model model, int index) {
-		super(indexedType, PropertyPath.indexed(propName, index), reference, model);
+		super(indexedType, PropertyPath.index(propName, index, false), reference, model);
 		this.index = index;
 	}
 

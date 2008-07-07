@@ -47,16 +47,16 @@ public interface IListingConfig<R extends IData> {
 	boolean isSortable();
 
 	/**
+	 * Ignore case when sorting?
+	 * @return true/false
+	 */
+	boolean isIgnoreCaseWhenSorting();
+
+	/**
 	 * @return The default sorting which is relevant only when
 	 *         {@link #isSortable()} returns <code>true</code>.
 	 */
 	Sorting getDefaultSorting();
-
-	/**
-	 * @return The table cell transformer responsible for rendering cell values
-	 *         from the backing listing data.
-	 */
-	ITableCellRenderer<R> getCellRenderer();
 
 	/**
 	 * Show the listing nav bar?
@@ -69,6 +69,12 @@ public interface IListingConfig<R extends IData> {
 	 * @return true/false
 	 */
 	boolean isShowRefreshBtn();
+
+	/**
+	 * @return The table cell transformer responsible for rendering cell values
+	 *         from the backing listing data.
+	 */
+	ITableCellRenderer<R> getCellRenderer();
 
 	/**
 	 * Optional add row handler. This is usually used in conjunction w/ the

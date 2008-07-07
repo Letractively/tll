@@ -261,8 +261,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			// stub aa panel
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanel aap = new AccountAddressPanel(at);
-			String parentPropPath = PropertyPath.indexedUnbound("addresses");
-			addField(parentPropPath, aap.getFields());
+			addField(PropertyPath.indexUnbound("addresses"), aap.getFields());
 
 			// bind to prototype
 			Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);

@@ -70,7 +70,9 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	/**
 	 * Adds {@link IField}s to the member {@link FieldGroup}.
 	 */
-	protected abstract void populateFieldGroup();
+	protected void populateFieldGroup() {
+		// base impl no-op
+	}
 
 	/**
 	 * Opportunity to embellish the UI and/or the member FieldGroup based on the
