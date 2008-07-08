@@ -8,6 +8,8 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.widgetideas.table.client.overrides.Grid;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IField;
+import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.Column;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.field.AbstractField;
@@ -31,6 +33,16 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 		new Column("Name", "name"),
 		new Column("Code", "code"),
 		new Column("Description", "description") };
+
+	protected static final IFieldProvider paramFieldProvider = new IFieldProvider() {
+
+		public IField[] getFields() {
+			return new IField[] {
+				FieldFactory.createNameEntityField(),
+				FieldFactory.ftext("code", "Code", 20),
+				FieldFactory.ftextarea("description", "Desc", 3, 20) };
+		}
+	};
 
 	final class ParamFieldRenderer implements IFieldRenderer {
 
@@ -66,14 +78,6 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 		}
 
 	}
-
-	protected static final IFieldRenderer paramFieldRenderer = new IFieldRenderer() {
-
-		public void draw(Panel canvas) {
-			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
-			cmpsr.setCanvas(canvas);
-		}
-	};
 
 	protected TextField name, code;
 	protected TextAreaField description;

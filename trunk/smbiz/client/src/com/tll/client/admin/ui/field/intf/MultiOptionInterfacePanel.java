@@ -167,16 +167,14 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 						path.parse(propOption.getPropertyName());
 						path.append(propParam.getPropertyName());
 						// param specific fields:
-						addField(path.toString(), FieldFactory.createNameEntityField());
-						addField(path.toString(), FieldFactory.ftext("code", "Code", 20));
-						addField(path.toString(), FieldFactory.ftextarea("description", "Desc", 3, 20));
+						addFields(path.toString(), paramFieldProvider.getFields());
 					}
 
 				}
 
 				OptionPanel pnlOption =
 						new OptionPanel(new FieldListing("Parameters", paramColumns, pvParams.getPropertyName(), getFields(),
-								new ParamFieldRenderer(getFields(), path.toString())));
+								paramFieldProvider, new ParamFieldRenderer(getFields(), path.toString())));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
 						.getPropertyName()));

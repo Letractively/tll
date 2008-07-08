@@ -29,6 +29,7 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 	 * Constructor
 	 * @param displayName
 	 * @param fields
+	 * @param provider
 	 * @param renderer
 	 */
 	public DelegatingFieldGroupPanel(String displayName, FieldGroup fields, IFieldProvider provider,

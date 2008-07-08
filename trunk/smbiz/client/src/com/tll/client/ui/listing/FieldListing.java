@@ -15,6 +15,7 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
+import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -138,18 +139,21 @@ public final class FieldListing extends Composite implements IEditListener {
 	/**
 	 * Constructor
 	 * @param listingElementName
+	 * @param columns
 	 * @param parentPropertyPath
 	 * @param parentFieldGroup
+	 * @param fieldPopulator
 	 * @param fieldRenderer
 	 */
 	public FieldListing(final String listingElementName, final Column[] columns, String parentPropertyPath,
-			FieldGroup parentFieldGroup, IFieldRenderer fieldRenderer) {
+			FieldGroup parentFieldGroup, IFieldProvider fieldPopulator, IFieldRenderer fieldRenderer) {
 
 		this.listingElementName = listingElementName;
 		this.parentFieldGroup = parentFieldGroup;
 		this.parentPropertyPath = parentPropertyPath;
 
-		fieldGroupPanel = new DelegatingFieldGroupPanel(listingElementName, parentFieldGroup, fieldRenderer);
+		fieldGroupPanel =
+				new DelegatingFieldGroupPanel(listingElementName, parentFieldGroup, fieldPopulator, fieldRenderer);
 
 		editPanel = new EditPanel(true, false);
 		editPanel.setFieldPanel(fieldGroupPanel);
