@@ -6,6 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SelectField;
@@ -42,19 +43,22 @@ public final class CreditCardPanel extends FieldGroupPanel {
 
 	@Override
 	public void populateFieldGroup() {
-		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
-		num = ftext("paymentData_ccNum", "Num", 15);
-		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
-		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2);
-		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4);
-		name = ftext("paymentData_ccName", "Name", 30);
-		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40);
-		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40);
-		city = ftext("paymentData_ccCity", "City", 30);
+		type = FieldFactory.fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
+		num = FieldFactory.ftext("paymentData_ccNum", "Num", 15);
+		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", 4);
+		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", 2);
+		expYr = FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", 4);
+		name = FieldFactory.ftext("paymentData_ccName", "Name", 30);
+		addr1 = FieldFactory.ftext("paymentData_ccAddress1", "Address 1", 40);
+		addr2 = FieldFactory.ftext("paymentData_ccAddress2", "Address 2", 40);
+		city = FieldFactory.ftext("paymentData_ccCity", "City", 30);
 		state =
-				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
-		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15);
-		country = fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
+				FieldFactory.fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(
+						"usps-state-abbrs"));
+		zip = FieldFactory.ftext("paymentData_ccZip", "Zip/Postal Code", 15);
+		country =
+				FieldFactory.fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
+						"iso-country-codes"));
 
 		addField(type);
 		addField(num);

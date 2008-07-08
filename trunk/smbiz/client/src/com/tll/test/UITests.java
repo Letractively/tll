@@ -50,6 +50,7 @@ import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.listing.ListingNavBar;
@@ -181,8 +182,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		public TestFieldPanel() {
 			super("Test Field Panel");
 			ap = new AddressPanel();
-			bf = fbool("bf", null);
-			bflabel = fbool("bflabel", "Boolean with Label");
+			bf = FieldFactory.fbool("bf", null);
+			bflabel = FieldFactory.fbool("bflabel", "Boolean with Label");
 		}
 
 		@Override

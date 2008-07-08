@@ -15,6 +15,7 @@ import com.tll.client.model.RefKey;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
@@ -74,13 +75,13 @@ public class UserPanel extends FieldGroupPanel {
 
 	@Override
 	public void populateFieldGroup() {
-		name = createNameEntityField();
-		timestamps = createTimestampEntityFields();
-		emailAddress = ftext("emailAddress", "Email Address", 30);
+		name = FieldFactory.createNameEntityField();
+		timestamps = FieldFactory.createTimestampEntityFields();
+		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);
-		locked = fbool("locked", "Locked");
-		enabled = fbool("enabled", "Enabled");
-		expires = fdate("expires", "Expires", GlobalFormat.DATE);
+		locked = FieldFactory.fbool("locked", "Locked");
+		enabled = FieldFactory.fbool("enabled", "Enabled");
+		expires = FieldFactory.fdate("expires", "Expires", GlobalFormat.DATE);
 
 		addressPanel = new AddressPanel();
 

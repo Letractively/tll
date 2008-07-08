@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.DataField;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -30,6 +29,7 @@ import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.DeleteTabWidget;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.NoEntityExistsPanel;
@@ -87,8 +87,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 		@Override
 		public void populateFieldGroup() {
-			name = createNameEntityField();
-			addField(new DataField("type", addressType));
+			name = FieldFactory.createNameEntityField();
+			addField(FieldFactory.fdata("type", addressType));
 			addField(name);
 			addField("address", addressPanel.getFields());
 		}
@@ -117,26 +117,26 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 	@Override
 	public void populateFieldGroup() {
-		name = createNameEntityField();
-		timestamps = createTimestampEntityFields();
+		name = FieldFactory.createNameEntityField();
+		timestamps = FieldFactory.createTimestampEntityFields();
 
-		parent = ftext("parent.name", "Parent", 15);
+		parent = FieldFactory.ftext("parent.name", "Parent", 15);
 		parent.setReadOnly(true);
 		// parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
-		status = fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
+		status = FieldFactory.fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
 		status.getListBox().addChangeListener(this);
 
-		dateCancelled = fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE);
+		dateCancelled = FieldFactory.fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE);
 
-		currency = fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap());
+		currency = FieldFactory.fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap());
 
-		billingModel = ftext("billingModel", "Billing Model", 18);
-		billingCycle = ftext("billingCycle", "Billing Cycle", 18);
-		dateLastCharged = fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE);
-		nextChargeDate = fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE);
+		billingModel = FieldFactory.ftext("billingModel", "Billing Model", 18);
+		billingCycle = FieldFactory.ftext("billingCycle", "Billing Cycle", 18);
+		dateLastCharged = FieldFactory.fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE);
+		nextChargeDate = FieldFactory.fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE);
 
-		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
+		persistPymntInfo = FieldFactory.fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
 		paymentInfoPanel.setFeedbackWidget(dpPaymentInfo);

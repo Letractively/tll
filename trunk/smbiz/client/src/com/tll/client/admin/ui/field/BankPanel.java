@@ -6,6 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.field.VerticalFieldPanelComposer;
@@ -29,9 +30,9 @@ public final class BankPanel extends FieldGroupPanel {
 
 	@Override
 	public void populateFieldGroup() {
-		bankName = ftext("paymentData_bankName", "Bank Name", 40);
-		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30);
-		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20);
+		bankName = FieldFactory.ftext("paymentData_bankName", "Bank Name", 40);
+		bankAccountNo = FieldFactory.ftext("paymentData_bankAccountNo", "Account Num", 30);
+		bankRoutingNo = FieldFactory.ftext("paymentData_bankRoutingNo", "Routing Num", 20);
 
 		addField(bankName);
 		addField(bankAccountNo);

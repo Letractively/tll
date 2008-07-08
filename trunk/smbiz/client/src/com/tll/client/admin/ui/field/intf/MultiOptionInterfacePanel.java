@@ -20,6 +20,7 @@ import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.DeleteTabWidget;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
@@ -53,19 +54,19 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		@Override
 		protected void populateFieldGroup() {
-			name = createNameEntityField();
-			code = ftext("code", "Code", 20);
-			description = ftextarea("description", "Desc", 3, 8);
+			name = FieldFactory.createNameEntityField();
+			code = FieldFactory.ftext("code", "Code", 20);
+			description = FieldFactory.ftextarea("description", "Desc", 3, 8);
 
 			cost = new TextField[3];
-			cost[0] = fcurrency("setUpCost", "Set Up");
-			cost[1] = fcurrency("monthlyCost", "Monthly");
-			cost[2] = fcurrency("annualCost", "Annual");
+			cost[0] = FieldFactory.fcurrency("setUpCost", "Set Up");
+			cost[1] = FieldFactory.fcurrency("monthlyCost", "Monthly");
+			cost[2] = FieldFactory.fcurrency("annualCost", "Annual");
 
 			price = new TextField[3];
-			price[0] = fcurrency("baseSetupPrice", "Set Up");
-			price[1] = fcurrency("baseMonthlyPrice", "Monthly");
-			price[2] = fcurrency("baseAnnualPrice", "Annual");
+			price[0] = FieldFactory.fcurrency("baseSetupPrice", "Set Up");
+			price[1] = FieldFactory.fcurrency("baseMonthlyPrice", "Monthly");
+			price[2] = FieldFactory.fcurrency("baseAnnualPrice", "Annual");
 
 			addField(name);
 			addField(code);
@@ -166,9 +167,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 						path.parse(propOption.getPropertyName());
 						path.append(propParam.getPropertyName());
 						// param specific fields:
-						addField(path.toString(), createNameEntityField());
-						addField(path.toString(), ftext("code", "Code", 20));
-						addField(path.toString(), ftextarea("description", "Desc", 3, 20));
+						addField(path.toString(), FieldFactory.createNameEntityField());
+						addField(path.toString(), FieldFactory.ftext("code", "Code", 20));
+						addField(path.toString(), FieldFactory.ftextarea("description", "Desc", 3, 20));
 					}
 
 				}
