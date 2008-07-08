@@ -52,10 +52,6 @@ public class DataField implements IField {
 		// no-op
 	}
 
-	public IValidator getValidators() {
-		return null;
-	}
-
 	public String getValue() {
 		return null;
 	}
@@ -116,5 +112,13 @@ public class DataField implements IField {
 
 	public String getPropertyName() {
 		return propName;
+	}
+
+	public void markReset() {
+		// no-op
+	}
+
+	public void validate() {
+		// no-op
 	}
 }

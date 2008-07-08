@@ -405,6 +405,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	public void markReset() {
+		for(IField field : fields) {
+			field.markReset();
+		}
+	}
+
 	public void reset() {
 		MsgManager.instance.clear(feedbackWidget, true);
 		for(IField field : fields) {
@@ -657,20 +663,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	public void validate() throws ValidationException {
 		boolean valid = true;
 		for(IField field : this) {
-			if(field instanceof FieldGroup) {
-				((FieldGroup) field).validate();
+			try {
+				field.validate();
 			}
-			else {
-				IValidator validator = field.getValidators();
-				if(validator != null) {
-					try {
-						validator.validate(field.getValue());
-					}
-					catch(ValidationException e) {
-						field.handleValidationFeedback(e);
-						valid = false;
-					}
-				}
+			catch(ValidationException e) {
+				valid = false;
 			}
 		}
 		if(validators != null) {

@@ -373,6 +373,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		removeStyleName(styleChanged);
 	}
 
+	public final void markReset() {
+		resetValue = getValue();
+		clearEditStyling();
+	}
+
 	public final void reset() {
 		clearValidationStyling();
 		clearEditStyling();
@@ -473,16 +478,21 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	public boolean updateModel(IPropertyBinding binding) {
 		if(binding instanceof IPropertyValue == false)
 			throw new IllegalArgumentException("Non-group fields may only update model property values.");
-		final IPropertyValue pv = (IPropertyValue) binding;
+		// NOTE: we rely on the null state of modelValue as it is set in the
+		// onLostFocus() event
 		if(modelValue != null) {
 			// NOTE: there is potential for the setProp call to throw an
 			// excecption
 			// but this souldn't happen if the model has been "properly" bound and the
 			// validators property set
-			pv.setValue(modelValue);
+			((IPropertyValue) binding).setValue(modelValue);
 			return true;
 		}
 		return false;
+	}
+
+	public final void validate() throws ValidationException {
+		modelValue = validators.validate(getValue());
 	}
 
 	public final void handleValidationFeedback(IValidationFeedback feedback) {
@@ -498,10 +508,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			addStyleName(styleError);
 		else if(warn) addStyleName(styleWarn);
 		MsgManager.instance.post(false, msgs, Position.BOTTOM, this, -1, true).show();
-	}
-
-	public final IValidator getValidators() {
-		return validators;
 	}
 
 	public final void addValidator(IValidator validator) {
@@ -578,7 +584,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 		else {
 			try {
-				modelValue = validators.validate(currentValue);
+				validate();
 				addStyleName(styleChanged);
 				clearValidationStyling();
 			}

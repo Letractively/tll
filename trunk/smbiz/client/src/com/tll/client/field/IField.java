@@ -9,6 +9,7 @@ import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
+import com.tll.client.validate.ValidationException;
 
 /**
  * IField - Abstraction for managing the display editing of model bound data.
@@ -91,6 +92,12 @@ public interface IField extends IPropertyNameProvider, IData {
 	void reset();
 
 	/**
+	 * Updates the field's current reset value and removes any edit styling that
+	 * would indicate the field is in a "changed" state.
+	 */
+	void markReset();
+
+	/**
 	 * Clears the value setting it to any set default.
 	 */
 	void clear();
@@ -115,10 +122,10 @@ public interface IField extends IPropertyNameProvider, IData {
 	void addValidator(IValidator validator);
 
 	/**
-	 * @return The validator or validators bound to this field aggregated through
-	 *         the {@link IValidator} interface.
+	 * Validates the field.
+	 * @throws ValidationException When found invalid.
 	 */
-	IValidator getValidators();
+	void validate() throws ValidationException;
 
 	/**
 	 * Handles validation feedback.

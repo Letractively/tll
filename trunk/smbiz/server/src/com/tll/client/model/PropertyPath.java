@@ -263,13 +263,20 @@ public final class PropertyPath {
 
 	/**
 	 * Indexes the property path by simply appending the given index surrounded by
-	 * either bound or un-bound index chars. <br>
+	 * bound index chars. <br>
 	 * <em>NOTE: </em>No checking for existing indexing is performed.
 	 * @param index The index num
-	 * @param isUnbound Index as un-bound or bound?
 	 */
-	public void index(int index, boolean isUnbound) {
-		if(buf != null) buf.append(indexToken(index, isUnbound));
+	public void index(int index) {
+		if(buf != null) buf.append(indexToken(index, true));
+	}
+
+	/**
+	 * Indexes the property path by appending an unbound index token
+	 * <em>NOTE: </em>No checking for existing indexing is performed.
+	 */
+	public void indexUnbound() {
+		if(buf != null) buf.append(indexToken(++unboundIndex, true));
 	}
 
 	/**

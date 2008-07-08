@@ -8,7 +8,7 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.model.Model;
-import com.tll.client.ui.FlowFieldPanelComposer;
+import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.

@@ -9,24 +9,35 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
+import com.tll.client.listing.IAddRowDelegate;
+import com.tll.client.listing.IDataProvider;
+import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
+import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.MalformedPropPathException;
+import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.field.DelegatingFieldGroupPanel;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.listhandler.Sorting;
+import com.tll.model.EntityType;
 
 /**
  * FieldListing - Listing Widget dedicated to IField type data.
  * @author jpk
  */
-public class FieldListing extends DataListingWidget<FieldGroup> implements IEditListener {
+public final class FieldListing extends Composite implements IEditListener {
 
 	/**
 	 * The dedicated field type table cell renderer.
@@ -56,12 +67,12 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 			if(pp.isUnboundIndexed()) {
 				// new param
 				parentFieldGroup.removeFields(parentFieldGroup.getFields(pp.toString()));
-				refresh();
+				listing.refresh();
 			}
 			else {
 				// existing param
 				parentFieldGroup.addPendingDeletion(pp.toString());
-				markRowDeleted(rowIndex);
+				listing.markRowDeleted(rowIndex);
 			}
 		}
 
@@ -74,7 +85,26 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 		}
 	};
 
-	private String listingElementName;
+	private final IAddRowDelegate addRowDelegate = new IAddRowDelegate() {
+
+		public void handleAddRow() {
+			final PropertyPath pp = new PropertyPath(parentPropertyPath);
+			pp.indexUnbound();
+			Model newParam = AuxDataCache.instance().getEntityPrototype(entityType);
+			assert newParam != null;
+			editPanel.getFields().bindModel(newParam.getBindingRef());
+			editPanel.setFieldPanel(ppanel);
+			editPanel.setEditMode(true);
+			dialog.setText("Add Parameter");
+			dialog.center();
+		}
+	};
+
+	private final String listingElementName;
+
+	private final EntityType entityType;
+
+	private final DataListingWidget<FieldGroup> listing;
 
 	/**
 	 * The parent path the points to an indexable property that serves as the
@@ -101,15 +131,21 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 	private final Dialog dialog;
 
 	/**
+	 * The "current" property path of the row subject to editing.
+	 */
+	private String editPropertyPath;
+
+	/**
 	 * Constructor
 	 * @param listingElementName
 	 * @param parentPropertyPath
 	 * @param parentFieldGroup
 	 * @param fieldRenderer
 	 */
-	public FieldListing(String listingElementName, String parentPropertyPath, FieldGroup parentFieldGroup,
-			IFieldRenderer fieldRenderer) {
-		super(null);
+	public FieldListing(final String listingElementName, final Column[] columns, String parentPropertyPath,
+			FieldGroup parentFieldGroup, IFieldRenderer fieldRenderer) {
+
+		this.listingElementName = listingElementName;
 		this.parentFieldGroup = parentFieldGroup;
 		this.parentPropertyPath = parentPropertyPath;
 
@@ -121,6 +157,67 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 
 		dialog = new Dialog(null, false);
 		dialog.setWidget(editPanel);
+		final IListingConfig<FieldGroup> listingConfig = new IListingConfig<FieldGroup>() {
+
+			public boolean isIgnoreCaseWhenSorting() {
+				return true;
+			}
+
+			public String getCaption() {
+				return listingElementName;
+			}
+
+			public ITableCellRenderer<FieldGroup> getCellRenderer() {
+				return cellRenderer;
+			}
+
+			public Column[] getColumns() {
+				return columns;
+			}
+
+			public Sorting getDefaultSorting() {
+				return null;
+			}
+
+			public String getListingElementName() {
+				return listingElementName;
+			}
+
+			public int getPageSize() {
+				return -1;
+			}
+
+			public boolean isShowNavBar() {
+				return true;
+			}
+
+			public boolean isShowRefreshBtn() {
+				return false;
+			}
+
+			public boolean isSortable() {
+				return false;
+			}
+
+			public IRowOptionsDelegate getRowOptionsHandler() {
+				return rowOptions;
+			}
+
+			public IAddRowDelegate getAddRowHandler() {
+				return addRowDelegate;
+			}
+		};
+
+		final IDataProvider<FieldGroup> dataProvider = new IDataProvider<FieldGroup>() {
+
+			public FieldGroup[] getData() {
+				return FieldListing.this.getData();
+			}
+		};
+
+		listing = ListingFactory.createListingWidget(this, listingConfig, dataProvider);
+
+		initWidget(listing);
 	}
 
 	private PropertyPath getRowPropertyPath(int rowIndex, boolean isUnbound) {
@@ -142,9 +239,15 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 			// we can safely assume the option property path's depth is 1 since it is
 			// always relative to an interface
 			pp = pp.nested(1);
-			Integer paramIndex = new Integer(pp.indexAt(0));
+			Integer paramIndex;
+			try {
+				paramIndex = new Integer(pp.indexAt(pp.depth() - 1));
+			}
+			catch(MalformedPropPathException e) {
+				throw new IllegalStateException();
+			}
 			if(!map.containsKey(paramIndex)) {
-				map.put(paramIndex, new FieldGroup(listingElementName, null, null));
+				map.put(paramIndex, new FieldGroup(listingElementName, fieldGroupPanel, fieldGroupPanel));
 			}
 			map.get(paramIndex).addField(null, fld);
 		}
@@ -160,31 +263,31 @@ public class FieldListing extends DataListingWidget<FieldGroup> implements IEdit
 	public void onEditEvent(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				current.getFields().reset();
+				fieldGroupPanel.getFields().reset();
 				break;
 			case SAVE:
-				if(current.propertyName == null) {
+				if(editPropertyPath == null) {
 					// new param
-					String pendingPath =
-							PropertyPath.getPropertyPath(optionPropertyPath, PropertyPath.indexUnbound("parameters"));
-					parentFieldGroup.addField(pendingPath, current.getFields());
-					panels.add(current);
+					parentFieldGroup.addField(PropertyPath.indexUnbound(parentPropertyPath), fieldGroupPanel.getFields());
 				}
 				listing.refresh();
 				break;
 			case DELETE:
-				if(current.propertyName == null) {
+				if(editPropertyPath == null) {
 					// new param
-					panels.remove(current);
-					parentFieldGroup.removeField(current.getFields());
+					parentFieldGroup.removeField(fieldGroupPanel.getFields());
 					listing.refresh();
 				}
 				else {
 					// extisting
-					current.getFields().addPendingDeletion(current.propertyName);
+					fieldGroupPanel.getFields().addPendingDeletion(editPropertyPath);
 				}
 				break;
 		}
 		dialog.hide();
+	}
+
+	public void refresh() {
+		listing.refresh();
 	}
 }

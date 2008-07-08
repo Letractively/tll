@@ -6,9 +6,9 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.ui.VerticalFieldPanelComposer;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.field.VerticalFieldPanelComposer;
 
 /**
  * BankPanel

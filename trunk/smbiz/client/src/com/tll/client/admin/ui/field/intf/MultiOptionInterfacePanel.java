@@ -19,11 +19,12 @@ import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.listing.FieldListing;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -39,13 +40,13 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		TextField name, code;
 		TextAreaField description;
 		TextField[] cost, price;
-		final ParameterListingPanel paramListing;
+		FieldListing paramListing;
 
 		/**
 		 * Constructor
 		 * @param paramListing May be <code>null</code>
 		 */
-		public OptionPanel(ParameterListingPanel paramListing) {
+		public OptionPanel(FieldListing paramListing) {
 			super("Option");
 			this.paramListing = paramListing;
 		}
@@ -172,7 +173,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				}
 
-				OptionPanel pnlOption = new OptionPanel(new ParameterListingPanel(propOption.getPropertyName(), getFields()));
+				OptionPanel pnlOption =
+						new OptionPanel(new FieldListing("Parameters", paramColumns, pvParams.getPropertyName(), getFields(),
+								new ParamFieldRenderer(getFields(), path.toString())));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
 						.getPropertyName()));

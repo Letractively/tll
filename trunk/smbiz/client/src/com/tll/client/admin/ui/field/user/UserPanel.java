@@ -12,11 +12,11 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.FlowFieldPanelComposer;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
 

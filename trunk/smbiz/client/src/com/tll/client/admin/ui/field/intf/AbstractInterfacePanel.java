@@ -5,19 +5,74 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.widgetideas.table.client.overrides.Grid;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.listing.Column;
+import com.tll.client.model.PropertyPath;
+import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FieldLabel;
+import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.field.VerticalFieldPanelComposer;
 
 /**
  * AbstractInterfacePanel
  * @author jpk
  */
 public abstract class AbstractInterfacePanel extends FieldGroupPanel {
+
+	protected static final Column[] paramColumns = new Column[] {
+		new Column("Name", "name"),
+		new Column("Code", "code"),
+		new Column("Description", "description") };
+
+	final class ParamFieldRenderer implements IFieldRenderer {
+
+		private final String paramPropName;
+		private final FieldGroup fieldGroup;
+
+		/**
+		 * Constructor
+		 * @param fieldGroup The group containing the paremeter fields
+		 * @param paramPropName The related many parameters property name
+		 */
+		public ParamFieldRenderer(FieldGroup fieldGroup, String paramPropName) {
+			super();
+			this.fieldGroup = fieldGroup;
+			this.paramPropName = paramPropName;
+		}
+
+		public void draw(Panel canvas) {
+			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
+			cmpsr.setCanvas(canvas);
+
+			final PropertyPath pp = new PropertyPath(paramPropName);
+			final int depth = pp.depth();
+
+			pp.append("name");
+			cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+			pp.replaceAt(depth, "code");
+			cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+			pp.replaceAt(depth, "description");
+			cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+		}
+
+	}
+
+	protected static final IFieldRenderer paramFieldRenderer = new IFieldRenderer() {
+
+		public void draw(Panel canvas) {
+			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
+			cmpsr.setCanvas(canvas);
+		}
+	};
 
 	protected TextField name, code;
 	protected TextAreaField description;

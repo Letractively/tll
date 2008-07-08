@@ -3,14 +3,11 @@
  * @author jpk
  * May 24, 2008
  */
-package com.tll.client.ui;
+package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.field.AbstractField;
-import com.tll.client.ui.field.FieldLabel;
-import com.tll.client.ui.field.IFieldPanelComposer;
 
 /**
  * VerticalFieldPanelComposer - Lays out fields in a vertical style having the
