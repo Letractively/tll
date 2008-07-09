@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IFieldProvider;
 
 /**
  * DelegatingFieldGroupPanel
@@ -16,36 +15,50 @@ import com.tll.client.field.IFieldProvider;
 public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 
 	/**
-	 * Provides new instances of the fields used by this Panel.
-	 */
-	private final IFieldProvider provider;
-
-	/**
 	 * The delegate for drawing the fields in the UI.
 	 */
 	private final IFieldRenderer renderer;
 
 	/**
+	 * The parent property path used to filter fields from the referenced
+	 * FieldGroup.
+	 */
+	private String parentPropertyPath;
+
+	/**
 	 * Constructor
-	 * @param displayName
-	 * @param fields
-	 * @param provider
+	 * @param displayName The display name
+	 * @param parentFieldGroup
 	 * @param renderer
 	 */
-	public DelegatingFieldGroupPanel(String displayName, FieldGroup fields, IFieldProvider provider,
-			IFieldRenderer renderer) {
-		super(displayName, fields);
-		this.provider = provider;
+	public DelegatingFieldGroupPanel(String displayName, FieldGroup parentFieldGroup, IFieldRenderer renderer) {
+		super(displayName, parentFieldGroup);
 		this.renderer = renderer;
+	}
+
+	/**
+	 * Sets the parent property path which dictates (or filters) the queried
+	 * fields from the referenced FieldGroup.
+	 * @param parentPropertyPath The parent property path to set
+	 */
+	public void setParentPropertyPath(String parentPropertyPath) {
+		this.parentPropertyPath = parentPropertyPath;
+	}
+
+	@Override
+	public void onAfterBind() {
+		clear(); // we always re-draw to ensure the correct fields are shown
+		super.onAfterBind();
 	}
 
 	@Override
 	protected void populateFieldGroup() {
-		addFields(provider.getFields());
+		// we assume the the group has already been populated!
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected final void draw(Panel canvas) {
-		renderer.draw(canvas);
+		renderer.draw(canvas, getFields(), parentPropertyPath);
 	}
 }

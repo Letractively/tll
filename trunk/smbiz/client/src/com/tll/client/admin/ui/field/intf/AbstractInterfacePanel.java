@@ -44,27 +44,13 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 		}
 	};
 
-	final class ParamFieldRenderer implements IFieldRenderer {
+	protected static final IFieldRenderer paramFieldRenderer = new IFieldRenderer() {
 
-		private final String paramPropName;
-		private final FieldGroup fieldGroup;
-
-		/**
-		 * Constructor
-		 * @param fieldGroup The group containing the paremeter fields
-		 * @param paramPropName The related many parameters property name
-		 */
-		public ParamFieldRenderer(FieldGroup fieldGroup, String paramPropName) {
-			super();
-			this.fieldGroup = fieldGroup;
-			this.paramPropName = paramPropName;
-		}
-
-		public void draw(Panel canvas) {
+		public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
 			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
-			final PropertyPath pp = new PropertyPath(paramPropName);
+			final PropertyPath pp = new PropertyPath(parentPropertyPath);
 			final int depth = pp.depth();
 
 			pp.append("name");
@@ -77,7 +63,7 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 			cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
 		}
 
-	}
+	};
 
 	protected TextField name, code;
 	protected TextAreaField description;

@@ -137,6 +137,13 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 		return fields;
 	}
 
+	/**
+	 * Removes any previously drawn fields from this Panel forcing a re-draw.
+	 */
+	public final void clear() {
+		panel.clear();
+	}
+
 	@Override
 	public final String toString() {
 		return fields.toString();

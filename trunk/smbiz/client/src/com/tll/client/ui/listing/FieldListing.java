@@ -66,12 +66,12 @@ public final class FieldListing extends Composite implements IEditListener {
 		protected void doDeleteRow(int rowIndex) {
 			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
 			if(pp.isUnboundIndexed()) {
-				// new param
+				// new entity
 				parentFieldGroup.removeFields(parentFieldGroup.getFields(pp.toString()));
 				listing.refresh();
 			}
 			else {
-				// existing param
+				// existing entity
 				parentFieldGroup.addPendingDeletion(pp.toString());
 				listing.markRowDeleted(rowIndex);
 			}
@@ -80,7 +80,10 @@ public final class FieldListing extends Composite implements IEditListener {
 		@Override
 		protected void doEditRow(int rowIndex) {
 			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
+			pp.index(rowIndex - 1);
+
 			editPanel.setEditMode(false);
+
 			dialog.setText("Edit Parameter");
 			dialog.center();
 		}
@@ -89,13 +92,19 @@ public final class FieldListing extends Composite implements IEditListener {
 	private final IAddRowDelegate addRowDelegate = new IAddRowDelegate() {
 
 		public void handleAddRow() {
+
+			// stub a new set of fields and add to parent group
 			final PropertyPath pp = new PropertyPath(parentPropertyPath);
 			pp.indexUnbound();
-			Model newParam = AuxDataCache.instance().getEntityPrototype(entityType);
-			assert newParam != null;
-			editPanel.getFields().bindModel(newParam.getBindingRef());
-			editPanel.setFieldPanel(ppanel);
+			parentFieldGroup.addFields(pp.toString(), fieldProvider.getFields());
+
+			// apply model metadata to the newly created fields
+			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
+			assert newEntity != null;
+			editPanel.getFields().bindModel(newEntity.getBindingRef());
+
 			editPanel.setEditMode(true);
+
 			dialog.setText("Add Parameter");
 			dialog.center();
 		}
@@ -119,6 +128,12 @@ public final class FieldListing extends Composite implements IEditListener {
 	 */
 	private final FieldGroup parentFieldGroup;
 
+	/**
+	 * Provides new field instances of those fields to be shown in the UI. Called
+	 * on when <em>adding</em> a listing row.
+	 */
+	private final IFieldProvider fieldProvider;
+
 	private final DelegatingFieldGroupPanel fieldGroupPanel;
 
 	/**
@@ -139,21 +154,23 @@ public final class FieldListing extends Composite implements IEditListener {
 	/**
 	 * Constructor
 	 * @param listingElementName
+	 * @param entityType
 	 * @param columns
 	 * @param parentPropertyPath
 	 * @param parentFieldGroup
-	 * @param fieldPopulator
+	 * @param fieldProvider
 	 * @param fieldRenderer
 	 */
-	public FieldListing(final String listingElementName, final Column[] columns, String parentPropertyPath,
-			FieldGroup parentFieldGroup, IFieldProvider fieldPopulator, IFieldRenderer fieldRenderer) {
+	public FieldListing(final String listingElementName, EntityType entityType, final Column[] columns,
+			String parentPropertyPath, FieldGroup parentFieldGroup, IFieldProvider fieldProvider, IFieldRenderer fieldRenderer) {
 
 		this.listingElementName = listingElementName;
 		this.parentFieldGroup = parentFieldGroup;
 		this.parentPropertyPath = parentPropertyPath;
+		this.fieldProvider = fieldProvider;
+		this.entityType = entityType;
 
-		fieldGroupPanel =
-				new DelegatingFieldGroupPanel(listingElementName, parentFieldGroup, fieldPopulator, fieldRenderer);
+		fieldGroupPanel = new DelegatingFieldGroupPanel(listingElementName, parentFieldGroup, fieldRenderer);
 
 		editPanel = new EditPanel(true, false);
 		editPanel.setFieldPanel(fieldGroupPanel);
@@ -236,24 +253,23 @@ public final class FieldListing extends Composite implements IEditListener {
 		// get all elidgible fields for the listing
 		final Set<IField> set = parentFieldGroup.getFields(parentPropertyPath);
 
-		// split the resultant set of fields based on the parameter portion of the
-		// property path
+		// split the resultant set of fields..
 		for(IField fld : set) {
 			pp.parse(fld.getPropertyName());
 			// we can safely assume the option property path's depth is 1 since it is
 			// always relative to an interface
 			pp = pp.nested(1);
-			Integer paramIndex;
+			Integer index;
 			try {
-				paramIndex = new Integer(pp.indexAt(pp.depth() - 1));
+				index = new Integer(pp.indexAt(pp.depth() - 1));
 			}
 			catch(MalformedPropPathException e) {
 				throw new IllegalStateException();
 			}
-			if(!map.containsKey(paramIndex)) {
-				map.put(paramIndex, new FieldGroup(listingElementName, fieldGroupPanel, fieldGroupPanel));
+			if(!map.containsKey(index)) {
+				map.put(index, new FieldGroup(listingElementName, fieldGroupPanel, fieldGroupPanel));
 			}
-			map.get(paramIndex).addField(null, fld);
+			map.get(index).addField(null, fld);
 		}
 
 		FieldGroup[] arr = new FieldGroup[map.size()];
@@ -271,14 +287,14 @@ public final class FieldListing extends Composite implements IEditListener {
 				break;
 			case SAVE:
 				if(editPropertyPath == null) {
-					// new param
+					// new entity
 					parentFieldGroup.addField(PropertyPath.indexUnbound(parentPropertyPath), fieldGroupPanel.getFields());
 				}
 				listing.refresh();
 				break;
 			case DELETE:
 				if(editPropertyPath == null) {
-					// new param
+					// new entity
 					parentFieldGroup.removeField(fieldGroupPanel.getFields());
 					listing.refresh();
 				}

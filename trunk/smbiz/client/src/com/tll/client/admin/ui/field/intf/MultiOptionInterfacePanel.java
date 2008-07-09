@@ -26,6 +26,7 @@ import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.listing.FieldListing;
+import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -173,8 +174,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 				}
 
 				OptionPanel pnlOption =
-						new OptionPanel(new FieldListing("Parameters", paramColumns, pvParams.getPropertyName(), getFields(),
-								paramFieldProvider, new ParamFieldRenderer(getFields(), path.toString())));
+						new OptionPanel(new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
+								paramColumns, pvParams.getPropertyName(), getFields(), paramFieldProvider, paramFieldRenderer));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
 						.getPropertyName()));
