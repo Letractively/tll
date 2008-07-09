@@ -163,19 +163,19 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 				path.append("parameters");
 				RelatedManyProperty pvParams = model.relatedMany(path);
 				if(pvParams != null && pvParams.size() > 0) {
-
+					PropertyPath paramPath = new PropertyPath();
 					for(IndexedProperty propParam : pvParams) {
-						path.parse(propOption.getPropertyName());
-						path.append(propParam.getPropertyName());
+						paramPath.parse(propOption.getPropertyName());
+						paramPath.append(propParam.getPropertyName());
 						// param specific fields:
-						addFields(path.toString(), paramFieldProvider.getFields());
+						addFields(paramPath.toString(), paramFieldProvider.getFields());
 					}
 
 				}
 
 				OptionPanel pnlOption =
 						new OptionPanel(new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
-								paramColumns, pvParams.getPropertyName(), getFields(), paramFieldProvider, paramFieldRenderer));
+								paramColumns, path.toString(), getFields(), paramFieldProvider, paramFieldRenderer));
 				addField(propOption.getPropertyName(), pnlOption.getFields());
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
 						.getPropertyName()));

@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.field.FieldGroup;
@@ -25,7 +24,6 @@ import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.MalformedPropPathException;
-import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.field.DelegatingFieldGroupPanel;
@@ -81,6 +79,7 @@ public final class FieldListing extends Composite implements IEditListener {
 		protected void doEditRow(int rowIndex) {
 			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
 			pp.index(rowIndex - 1);
+			fieldGroupPanel.setParentPropertyPath(pp.toString());
 
 			editPanel.setEditMode(false);
 
@@ -97,11 +96,14 @@ public final class FieldListing extends Composite implements IEditListener {
 			final PropertyPath pp = new PropertyPath(parentPropertyPath);
 			pp.indexUnbound();
 			parentFieldGroup.addFields(pp.toString(), fieldProvider.getFields());
+			fieldGroupPanel.setParentPropertyPath(pp.toString());
 
 			// apply model metadata to the newly created fields
-			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
-			assert newEntity != null;
-			editPanel.getFields().bindModel(newEntity.getBindingRef());
+			// TODO fix
+			// Model newEntity =
+			// AuxDataCache.instance().getEntityPrototype(entityType);
+			// assert newEntity != null;
+			// editPanel.getFields().bindModel(newEntity.getBindingRef());
 
 			editPanel.setEditMode(true);
 

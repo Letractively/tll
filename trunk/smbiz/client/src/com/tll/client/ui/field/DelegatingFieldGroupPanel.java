@@ -42,13 +42,10 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 	 * @param parentPropertyPath The parent property path to set
 	 */
 	public void setParentPropertyPath(String parentPropertyPath) {
+		if((parentPropertyPath == null && this.parentPropertyPath == null)
+				|| (parentPropertyPath != null && parentPropertyPath.equals(this.parentPropertyPath))) return;
 		this.parentPropertyPath = parentPropertyPath;
-	}
-
-	@Override
-	public void onAfterBind() {
-		clear(); // we always re-draw to ensure the correct fields are shown
-		super.onAfterBind();
+		clear(); // force a re-draw
 	}
 
 	@Override
