@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.listing;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -93,10 +94,10 @@ public final class FieldListing extends Composite implements IEditListener {
 		public void handleAddRow() {
 
 			// stub a new set of fields and add to parent group
-			final PropertyPath pp = new PropertyPath(parentPropertyPath);
-			pp.indexUnbound();
-			parentFieldGroup.addFields(pp.toString(), fieldProvider.getFields());
-			fieldGroupPanel.setParentPropertyPath(pp.toString());
+			editPropertyPath.parse(parentPropertyPath);
+			editPropertyPath.indexUnbound();
+			parentFieldGroup.addFields(editPropertyPath.toString(), fieldProvider.getFields());
+			fieldGroupPanel.setParentPropertyPath(editPropertyPath.toString());
 
 			// apply model metadata to the newly created fields
 			// TODO fix
@@ -104,6 +105,14 @@ public final class FieldListing extends Composite implements IEditListener {
 			// AuxDataCache.instance().getEntityPrototype(entityType);
 			// assert newEntity != null;
 			// editPanel.getFields().bindModel(newEntity.getBindingRef());
+
+			fieldGroupPanel.draw();
+
+			// since we are not binding, we have to reset the target fields
+			final Collection<IField> clc = getEditFields();
+			for(IField fld : clc) {
+				fld.reset();
+			}
 
 			editPanel.setEditMode(true);
 
@@ -151,7 +160,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	/**
 	 * The "current" property path of the row subject to editing.
 	 */
-	private String editPropertyPath;
+	private final PropertyPath editPropertyPath = new PropertyPath();
 
 	/**
 	 * Constructor
@@ -282,27 +291,30 @@ public final class FieldListing extends Composite implements IEditListener {
 		return arr;
 	}
 
+	public Set<IField> getEditFields() {
+		return parentFieldGroup.getFields(editPropertyPath.toString());
+	}
+
 	public void onEditEvent(EditEvent event) {
+		assert editPropertyPath.length() > 0;
 		switch(event.getOp()) {
 			case CANCEL:
-				fieldGroupPanel.getFields().reset();
+				if(editPropertyPath.isUnboundIndexed()) {
+					parentFieldGroup.removeFields(parentFieldGroup.getFields(editPropertyPath.toString()));
+				}
 				break;
 			case SAVE:
-				if(editPropertyPath == null) {
-					// new entity
-					parentFieldGroup.addField(PropertyPath.indexUnbound(parentPropertyPath), fieldGroupPanel.getFields());
-				}
 				listing.refresh();
 				break;
 			case DELETE:
-				if(editPropertyPath == null) {
+				if(editPropertyPath.isUnboundIndexed()) {
 					// new entity
 					parentFieldGroup.removeField(fieldGroupPanel.getFields());
 					listing.refresh();
 				}
 				else {
 					// extisting
-					fieldGroupPanel.getFields().addPendingDeletion(editPropertyPath);
+					fieldGroupPanel.getFields().addPendingDeletion(editPropertyPath.toString());
 				}
 				break;
 		}

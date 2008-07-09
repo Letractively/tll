@@ -59,6 +59,17 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	}
 
 	/**
+	 * Draws the fields onto the UI canvas only if there are no child Widgets
+	 * contained in this Panel.
+	 */
+	public final void draw() {
+		if(panel.getWidgetCount() == 0) {
+			ensurePopulated();
+			draw(panel);
+		}
+	}
+
+	/**
 	 * Draws the fields onto the UI "canvas".
 	 * @param canvas The "canvas" on which the fields are drawn.
 	 */
@@ -93,10 +104,7 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	 * overridden.
 	 */
 	public void onAfterBind() {
-		if(panel.getWidgetCount() == 0) {
-			ensurePopulated();
-			draw(panel);
-		}
+		draw();
 	}
 
 	protected final void addField(IField field) {

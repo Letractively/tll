@@ -17,8 +17,10 @@ public interface IFieldRenderer {
 	/**
 	 * Draws the fields onto the UI "canvas".
 	 * @param canvas The UI canvas
-	 * @param fieldGroup
-	 * @param parentPropertyPath
+	 * @param fieldGroup The field group holding the fields to be drawn.
+	 * @param parentPropertyPath If non-<code>null</code>, this path serves as a
+	 *        filter by which the target fields are identified in the given field
+	 *        group.
 	 */
 	void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath);
 }
