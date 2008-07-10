@@ -7,10 +7,12 @@ package com.tll.client.ui.listing;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.field.FieldGroup;
@@ -24,7 +26,9 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.IData;
 import com.tll.client.model.MalformedPropPathException;
+import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.field.DelegatingFieldGroupPanel;
@@ -40,12 +44,34 @@ import com.tll.model.EntityType;
 public final class FieldListing extends Composite implements IEditListener {
 
 	/**
+	 * FieldRow - Dedicated data type for field listings.
+	 * @author jpk
+	 */
+	private static final class FieldRow implements IData {
+
+		private final IField[] arr;
+
+		/**
+		 * Constructor
+		 * @param arr
+		 */
+		public FieldRow(IField[] arr) {
+			super();
+			this.arr = arr;
+		}
+
+		public IField[] getArr() {
+			return arr;
+		}
+	}
+
+	/**
 	 * The dedicated field type table cell renderer.
 	 */
-	private static final ITableCellRenderer<FieldGroup> cellRenderer = new ITableCellRenderer<FieldGroup>() {
+	private static final ITableCellRenderer<FieldRow> cellRenderer = new ITableCellRenderer<FieldRow>() {
 
-		public String getCellValue(FieldGroup rowData, Column column) {
-			for(IField field : rowData) {
+		public String getCellValue(FieldRow rowData, Column column) {
+			for(IField field : rowData.getArr()) {
 				if(field.getPropertyName().endsWith(column.getPropertyName())) {
 					return field.getValue();
 				}
@@ -100,11 +126,9 @@ public final class FieldListing extends Composite implements IEditListener {
 			fieldGroupPanel.setParentPropertyPath(editPropertyPath.toString());
 
 			// apply model metadata to the newly created fields
-			// TODO fix
-			// Model newEntity =
-			// AuxDataCache.instance().getEntityPrototype(entityType);
-			// assert newEntity != null;
-			// editPanel.getFields().bindModel(newEntity.getBindingRef());
+			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
+			assert newEntity != null;
+			editPanel.getFields().bindModel(editPropertyPath.toString(), newEntity.getBindingRef());
 
 			fieldGroupPanel.draw();
 
@@ -125,7 +149,7 @@ public final class FieldListing extends Composite implements IEditListener {
 
 	private final EntityType entityType;
 
-	private final DataListingWidget<FieldGroup> listing;
+	private final DataListingWidget<FieldRow> listing;
 
 	/**
 	 * The parent path the points to an indexable property that serves as the
@@ -189,7 +213,7 @@ public final class FieldListing extends Composite implements IEditListener {
 
 		dialog = new Dialog(null, false);
 		dialog.setWidget(editPanel);
-		final IListingConfig<FieldGroup> listingConfig = new IListingConfig<FieldGroup>() {
+		final IListingConfig<FieldRow> listingConfig = new IListingConfig<FieldRow>() {
 
 			public boolean isIgnoreCaseWhenSorting() {
 				return true;
@@ -199,7 +223,7 @@ public final class FieldListing extends Composite implements IEditListener {
 				return listingElementName;
 			}
 
-			public ITableCellRenderer<FieldGroup> getCellRenderer() {
+			public ITableCellRenderer<FieldRow> getCellRenderer() {
 				return cellRenderer;
 			}
 
@@ -240,9 +264,9 @@ public final class FieldListing extends Composite implements IEditListener {
 			}
 		};
 
-		final IDataProvider<FieldGroup> dataProvider = new IDataProvider<FieldGroup>() {
+		final IDataProvider<FieldRow> dataProvider = new IDataProvider<FieldRow>() {
 
-			public FieldGroup[] getData() {
+			public FieldRow[] getData() {
 				return FieldListing.this.getData();
 			}
 		};
@@ -256,13 +280,13 @@ public final class FieldListing extends Composite implements IEditListener {
 		return new PropertyPath(parentPropertyPath, rowIndex - 1, isUnbound);
 	}
 
-	private FieldGroup[] getData() {
-		final Map<Integer, FieldGroup> map = new HashMap<Integer, FieldGroup>();
+	private FieldRow[] getData() {
+		final Map<Integer, Set<IField>> map = new HashMap<Integer, Set<IField>>();
 
 		PropertyPath pp = new PropertyPath();
 
 		// get all elidgible fields for the listing
-		final Set<IField> set = parentFieldGroup.getFields(parentPropertyPath);
+		Set<IField> set = parentFieldGroup.getFields(parentPropertyPath);
 
 		// split the resultant set of fields..
 		for(IField fld : set) {
@@ -278,15 +302,19 @@ public final class FieldListing extends Composite implements IEditListener {
 				throw new IllegalStateException();
 			}
 			if(!map.containsKey(index)) {
-				map.put(index, new FieldGroup(listingElementName, fieldGroupPanel, fieldGroupPanel));
+				map.put(index, new HashSet<IField>());
 			}
-			map.get(index).addField(null, fld);
+			map.get(index).add(fld);
 		}
 
-		FieldGroup[] arr = new FieldGroup[map.size()];
-		int i = 0;
-		for(FieldGroup fg : map.values()) {
-			arr[i++] = fg;
+		FieldRow[] arr = new FieldRow[map.size()];
+		int i = 0, j = 0;
+		for(Set<IField> fs : map.values()) {
+			IField[] farr = new IField[fs.size()];
+			for(IField fld : fs) {
+				farr[i++] = fld;
+			}
+			arr[j++] = new FieldRow(farr);
 		}
 		return arr;
 	}

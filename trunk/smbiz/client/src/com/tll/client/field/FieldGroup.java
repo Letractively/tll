@@ -467,6 +467,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * Binds a single IField given a property path and model.
+	 * @param field The field
+	 * @param propertyPath The property path
+	 * @param model The model
+	 */
+	private static void bindModel(IField field, PropertyPath propertyPath, Model model) {
+		IPropertyValue pv = model.getValue(propertyPath);
+		if(pv == null) {
+			field.clear();
+		}
+		else {
+			field.bindModel(pv);
+		}
+	}
+
+	/**
 	 * Recursively binds a FieldGroup to a Model.
 	 * @param group The FieldGroup
 	 * @param model The Model
@@ -486,13 +502,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				if(propertyPathOffset > 0) {
 					resolved = propPath.nested(propertyPathOffset);
 				}
-				IPropertyValue pv = model.getValue(resolved);
-				if(pv == null) {
-					fld.clear();
-				}
-				else {
-					fld.bindModel(pv);
-				}
+				bindModel(fld, resolved, model);
 			}
 		}
 		group.onAfterBind();
@@ -620,17 +630,36 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Binds a Model to this group.
 	 * @param propPathOffset Property path node index representing the parent
 	 *        property path offset that is applied to all non-group child IFields.
-	 * @param binding The Model binding
+	 * @param modelref The Model binding ref property
 	 */
-	public void bindModel(int propPathOffset, IPropertyBinding binding) {
-		if(binding instanceof IModelRefProperty == false) {
-			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
+	public void bindModel(int propPathOffset, IModelRefProperty modelref) {
+		bindModel(propPathOffset, this, modelref.getModel());
+	}
+
+	/**
+	 * Binds a Model to a sub-set of fields contained in this group filtered by
+	 * the given parent property path. <strong>NOTE: </strong>NO
+	 * IFieldBindingListener event hook methods are called in this case!
+	 * @param parentPropertyPath
+	 * @param modelref
+	 */
+	public void bindModel(String parentPropertyPath, IModelRefProperty modelref) {
+		PropertyPath pp = new PropertyPath();
+		final Model model = modelref.getModel();
+		final Set<IField> set = getFields(parentPropertyPath);
+		assert set != null;
+		for(IField fld : set) {
+			pp.parse(fld.getPropertyName());
+			pp.parse(pp.nameAt(pp.depth() - 1));
+			bindModel(fld, pp, model);
 		}
-		bindModel(propPathOffset, this, ((IModelRefProperty) binding).getModel());
 	}
 
 	public void bindModel(IPropertyBinding binding) {
-		bindModel(0, binding);
+		if(binding instanceof IModelRefProperty == false) {
+			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
+		}
+		bindModel(0, (IModelRefProperty) binding);
 	}
 
 	public boolean updateModel(IPropertyBinding binding) {
