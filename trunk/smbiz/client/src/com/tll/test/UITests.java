@@ -20,21 +20,24 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
-import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.ICrudListener;
-import com.tll.client.event.type.CrudEvent;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IField;
+import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.BooleanPropertyValue;
+import com.tll.client.model.CharacterPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedOneProperty;
+import com.tll.client.model.StringPropertyValue;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -42,17 +45,20 @@ import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
-import com.tll.client.search.impl.AddressSearch;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
+import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.VerticalFieldPanelComposer;
+import com.tll.client.ui.listing.FieldListing;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
@@ -72,14 +78,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
 	static final String TEST_FIELDS = "TEST_FIELDS";
-	static final String TEST_INTERFACE_PANEL = "TEST_INTERFACE_PANEL";
+	static final String TEST_FIELD_LISTING = "TEST_FIELD_LISTING";
 
 	static String[] tests = new String[] {
 		TEST_MSG_PANEL,
 		TEST_TOOLBAR,
 		TEST_VIEW_CONTAINER,
 		TEST_FIELDS,
-		TEST_INTERFACE_PANEL };
+		TEST_FIELD_LISTING };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -150,8 +156,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 				else if(TEST_FIELDS.equals(historyToken)) {
 					testFields();
 				}
-				else if(TEST_INTERFACE_PANEL.equals(historyToken)) {
-					testInterfacePanel();
+				else if(TEST_FIELD_LISTING.equals(historyToken)) {
+					testFieldListing();
 				}
 				else if("Back".equals(historyToken)) {
 					gotoTest = false;
@@ -161,9 +167,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		});
 	}
-
-	private static Model testModel;
-	private static Model intf;
 
 	/**
 	 * TestFieldPanel - Used for the fields test.
@@ -211,13 +214,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 	}
 
-	private void setTestModel(Model address) {
-		testModel = new Model();
-		testModel.set(new RelatedOneProperty(EntityType.ADDRESS, "address", true, address));
-		testModel.set(new BooleanPropertyValue("bflabel", true));
-		testModel.set(new BooleanPropertyValue("bf", false));
-	}
-
 	/**
 	 * <p>
 	 * Test: TEST_FIELDS
@@ -230,26 +226,29 @@ public final class UITests implements EntryPoint, HistoryListener {
 		final EditPanel ep = new EditPanel(fieldPanel, true, true);
 		testPanel.add(ep);
 
-		if(testModel == null) {
-			CrudCommand cc = new CrudCommand(testPanel);
-			cc.addCrudListener(new ICrudListener() {
+		Model address = new Model(EntityType.ADDRESS);
+		address.set(new StringPropertyValue("firstName", "Raul"));
+		address.set(new StringPropertyValue("lastName", "Smith"));
+		address.set(new CharacterPropertyValue("mi", 'C'));
+		address.set(new StringPropertyValue("company", "My Company"));
+		address.set(new StringPropertyValue("attn", "Booking Dept."));
+		address.set(new StringPropertyValue("address1", "Address 1"));
+		address.set(new StringPropertyValue("address2", "Address 2"));
+		address.set(new StringPropertyValue("city", "Toledo"));
+		address.set(new StringPropertyValue("province", "OHIO"));
+		address.set(new StringPropertyValue("postalCode", "00998"));
+		address.set(new StringPropertyValue("country", "us"));
+		address.set(new StringPropertyValue("phone", "3345567778"));
+		address.set(new StringPropertyValue("fax", "3345567779"));
+		address.set(new StringPropertyValue("emailAddress", "email@domain.com"));
 
-				public void onCrudEvent(CrudEvent event) {
-					setTestModel(event.getPayload().getEntity());
-					ep.getFields().bindModel(testModel.getBindingRef());
-					ep.setEditMode(testModel.isNew());
-				}
-			});
-			AddressSearch search = new AddressSearch("Address and Postal Code");
-			search.setAddress1("home address line 2");
-			search.setPostalCode("94155");
-			cc.loadByBusinessKey(search);
-			cc.execute();
-		}
-		else {
-			ep.getFields().bindModel(testModel.getBindingRef());
-			ep.setEditMode(testModel.isNew());
-		}
+		Model testModel = new Model();
+		testModel.set(new RelatedOneProperty(EntityType.ADDRESS, "address", true, address));
+		testModel.set(new BooleanPropertyValue("bflabel", true));
+		testModel.set(new BooleanPropertyValue("bf", false));
+
+		ep.getFields().bindModel(testModel.getBindingRef());
+		ep.setEditMode(testModel.isNew());
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {
@@ -294,29 +293,69 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 	/**
 	 * <p>
-	 * Test: TEST_INTERFACE_PANEL
+	 * Test: TEST_FIELD_LISTING
 	 * <p>
-	 * Purpose: Renders an interface panel to verify its DOM/CSS.
+	 * Purpose: Tests the FieldListing class.
 	 */
-	void testInterfacePanel() {
-		final MultiOptionInterfacePanel intfPanel = new MultiOptionInterfacePanel();
-		testPanel.add(intfPanel);
-		if(intf == null) {
-			// stub mock interface
-			CrudCommand cc = new CrudCommand(testPanel);
-			cc.addCrudListener(new ICrudListener() {
+	void testFieldListing() {
 
-				public void onCrudEvent(CrudEvent event) {
-					intf = event.getPayload().getEntity();
-					intfPanel.populateFieldGroup();
-				}
-			});
-			cc.loadByName(EntityType.INTERFACE_SINGLE, "Payment Processor");
-			cc.execute();
-		}
-		else {
-			intfPanel.populateFieldGroup();
-		}
+		Column[] cols = new Column[] {
+			new Column("Address", "address1"),
+			new Column("City", "city"),
+			new Column("Zip", "postalCode") };
+
+		IFieldProvider fieldProvider = new IFieldProvider() {
+
+			public IField[] getFields() {
+				return new IField[] {
+					FieldFactory.ftext("address1", "Address 1", 40),
+					FieldFactory.ftext("city", "City", 30),
+					FieldFactory.ftext("postalCode", "Zip", 20) };
+			}
+		};
+
+		IFieldRenderer fieldRenderer = new IFieldRenderer() {
+
+			public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
+				VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
+				cmpsr.setCanvas(canvas);
+
+				final PropertyPath pp = new PropertyPath(parentPropertyPath);
+				final int depth = pp.depth();
+
+				pp.append("address1");
+				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+				pp.replaceAt(depth, "city");
+				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+				pp.replaceAt(depth, "postalCode");
+				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+			}
+		};
+
+		FieldGroup pfg = new FieldGroup("Parent", null, testPanel);
+		pfg.addField(null, FieldFactory.createNameEntityField());
+		pfg.addFields(null, FieldFactory.createTimestampEntityFields());
+		pfg.addField(null, FieldFactory.createNameEntityField());
+		pfg.addField("addresses[0]", FieldFactory.ftext("emailAddress", "Email Address", 30));
+		pfg.addField("addresses[0]", FieldFactory.ftext("firstName", "First Name", 20));
+		pfg.addField("addresses[0]", FieldFactory.ftext("lastName", "Last Name", 20));
+		pfg.addField("addresses[0]", FieldFactory.ftext("mi", "MI", 1));
+		pfg.addField("addresses[0]", FieldFactory.ftext("company", "Company", 20));
+		pfg.addField("addresses[0]", FieldFactory.ftext("attn", "Attn", 10));
+		pfg.addField("addresses[0]", FieldFactory.ftext("address1", "Address 1", 40));
+		pfg.addField("addresses[0]", FieldFactory.ftext("address2", "Address 2", 40));
+		pfg.addField("addresses[0]", FieldFactory.ftext("city", "City", 30));
+		pfg.addField("addresses[0]", FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
+				.getRefDataMap("usps-state-abbrs")));
+		pfg.addField("addresses[0]", FieldFactory.ftext("postalCode", "Zip", 20));
+		pfg.addField("addresses[0]", FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
+				"iso-country-codes")));
+
+		FieldListing fl =
+				new FieldListing("testListing", EntityType.ADDRESS, cols, "addresses", pfg, fieldProvider, fieldRenderer);
+		testPanel.add(fl);
 	}
 
 	/**

@@ -168,7 +168,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	public FieldGroup(String displayName, IFieldBindingListener bindingListener, Widget feedbackWidget) {
 		super();
-		if(bindingListener == null) throw new IllegalArgumentException();
 		this.displayName = displayName;
 		this.bindingListener = bindingListener;
 		// the default feedback widget is the field group panel
