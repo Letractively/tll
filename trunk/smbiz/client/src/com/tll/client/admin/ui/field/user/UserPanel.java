@@ -89,7 +89,7 @@ public class UserPanel extends FieldGroupPanel {
 		addField(locked);
 		addField(enabled);
 		addField(expires);
-		addField(addressPanel.getFields());
+		addField(addressPanel.getFieldGroup());
 	}
 
 	@Override

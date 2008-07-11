@@ -189,7 +189,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	public FieldGroup getFields() {
-		return fieldPanel.getFields();
+		return fieldPanel.getFieldGroup();
 	}
 
 	public void setEditMode(boolean isAdd) {

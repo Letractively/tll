@@ -32,8 +32,8 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTa
 
 	@Override
 	public void populateFieldGroup() {
-		addField(creditCardPanel.getFields());
-		addField(bankPanel.getFields());
+		addField(creditCardPanel.getFieldGroup());
+		addField(bankPanel.getFieldGroup());
 	}
 
 	@Override

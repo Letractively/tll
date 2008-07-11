@@ -140,7 +140,7 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	/**
 	 * @return The FieldGroup for this panel ensuring it is first populated.
 	 */
-	public final FieldGroup getFields() {
+	public final FieldGroup getFieldGroup() {
 		ensurePopulated();
 		return fields;
 	}

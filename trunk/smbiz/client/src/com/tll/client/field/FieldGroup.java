@@ -91,8 +91,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * Recursively extracts all {@link IField}s whose property name starts with
 	 * the given property path. The found fields are added to the given set.
-	 * @param propPath The property path used to compare against all encountered
-	 *        fields
+	 * @param propPath The property path that all matching fields' property name
+	 *        must start with.
 	 * @param group The field group to search
 	 * @param set The set of found fields
 	 */
@@ -116,16 +116,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * A presentation worthy display name.
-	 */
-	private final String displayName;
-
-	private boolean required = false;
-	private boolean readOnly = false;
-	private boolean enabled = true;
-	private boolean visible = true;
-
-	/**
 	 * The collection of child fields.
 	 */
 	private final Set<IField> fields = new HashSet<IField>();
@@ -136,15 +126,21 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private CompositeValidator validators;
 
 	/**
-	 * The optional binding listener.
+	 * A presentation worthy display name. Mainly used in providing validation
+	 * feedback to the UI.
 	 */
-	private final IFieldBindingListener bindingListener;
+	private final String displayName;
 
 	/**
 	 * The Widget that is used to convey validation feedback. This defaults to the
 	 * {@link #bindingListener} but may be independently overridden.
 	 */
 	private Widget feedbackWidget;
+
+	/**
+	 * The optional binding listener.
+	 */
+	private final IFieldBindingListener bindingListener;
 
 	/**
 	 * Collection of property paths that are presumed to map nested indexed model
@@ -163,15 +159,14 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Constructor
 	 * @param displayName The UI display name used for presenting validation
 	 *        feedback to the UI.
-	 * @param bindingListener The optional binding listener.
 	 * @param feedbackWidget The feedback Widget
+	 * @param bindingListener The optional binding listener.
 	 */
-	public FieldGroup(String displayName, IFieldBindingListener bindingListener, Widget feedbackWidget) {
+	public FieldGroup(String displayName, Widget feedbackWidget, IFieldBindingListener bindingListener) {
 		super();
 		this.displayName = displayName;
-		this.bindingListener = bindingListener;
-		// the default feedback widget is the field group panel
 		this.feedbackWidget = feedbackWidget;
+		this.bindingListener = bindingListener;
 	}
 
 	public String descriptor() {
@@ -179,15 +174,13 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public boolean isRequired() {
-		return required;
+		throw new UnsupportedOperationException();
 	}
 
 	public void setRequired(boolean required) {
-		if(this.required == required) return;
 		for(IField field : fields) {
 			field.setRequired(required);
 		}
-		this.required = required;
 	}
 
 	public String getPropertyName() {
@@ -200,41 +193,41 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public boolean isReadOnly() {
-		return readOnly;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Iterates over the child fields, setting their readOnly property.
+	 */
 	public void setReadOnly(boolean readOnly) {
-		if(readOnly != this.readOnly) {
-			for(IField field : fields) {
-				field.setReadOnly(readOnly);
-			}
-			this.readOnly = readOnly;
+		for(IField field : fields) {
+			field.setReadOnly(readOnly);
 		}
 	}
 
 	public boolean isEnabled() {
-		return enabled;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Iterates over the child fields, setting their enabled property.
+	 */
 	public void setEnabled(boolean enabled) {
-		if(enabled != this.enabled) {
-			for(IField field : fields) {
-				field.setEnabled(enabled);
-			}
-			this.enabled = enabled;
+		for(IField field : fields) {
+			field.setEnabled(enabled);
 		}
 	}
 
 	public boolean isVisible() {
-		return visible;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Iterates over the child fields, setting their visible property.
+	 */
 	public void setVisible(boolean visible) {
-		if(visible != this.visible) {
-			for(IField field : fields) {
-				field.setVisible(visible);
-			}
-			this.visible = visible;
+		for(IField field : fields) {
+			field.setVisible(visible);
 		}
 	}
 
@@ -288,10 +281,18 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return pendingModelDeletions != null && pendingModelDeletions.contains(modelRefPropertyPath);
 	}
 
+	/**
+	 * @return The designated Widget to receive validation messages.
+	 */
 	public Widget getFeedbackWidget() {
 		return feedbackWidget;
 	}
 
+	/**
+	 * Sets the Widget to for which validation messages are bound.
+	 * @param feedbackWidget A Widget designated to be the validation feeback
+	 *        hook.
+	 */
 	public void setFeedbackWidget(Widget feedbackWidget) {
 		this.feedbackWidget = feedbackWidget;
 	}
@@ -301,7 +302,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Recursively searches for a field having the given property name.
+	 * Recursively searches for a field having the given property name. <br>
 	 * @param propertyName
 	 * @return The found field or <code>null</code> if it doesn't exist.
 	 */
@@ -312,7 +313,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * Finds all fields whose property name begins with the given property path.
 	 * @param propPath The property path
-	 * @return Set of matching fields
+	 * @return Set of matching fields never <code>null</code> but may be empty
+	 *         (when no matches found).
 	 */
 	public Set<IField> getFields(String propPath) {
 		Set<IField> set = new HashSet<IField>();
@@ -424,6 +426,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	/**
+	 * @return The number of child fields.
+	 */
 	public int size() {
 		return fields.size();
 	}
@@ -433,7 +438,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * field values for all child {@link IField}s.
 	 */
 	public String getValue() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for(IField field : fields) {
 			sb.append(',');
 			sb.append(field.getValue());
@@ -456,7 +461,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(pendingModelDeletions != null) pendingModelDeletions.clear();
 		// reset update model flag
 		updateModel = true;
-		// provide and opportunity for the owning panel to ready their field group
+		// provide an opportunity for the owning panel to ready their field group
 		// before actual binding
 		if(bindingListener != null) bindingListener.onBeforeBind(model);
 	}
@@ -468,7 +473,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * Binds a single IField given a property path and model.
 	 * @param field The field
-	 * @param propertyPath The property path
+	 * @param propertyPath The resolved property path used, as opposed to the
+	 *        field's own property name, to extract the property value from the
+	 *        model.
 	 * @param model The model
 	 */
 	private static void bindModel(IField field, PropertyPath propertyPath, Model model) {
@@ -577,51 +584,59 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 		}
 
-		// handle the unbound indexed props (newly created in the ui)
-		if(depth == 0 && unboundFields.size() > 0) {
-			for(PropertyPath upp : unboundFields.keySet()) {
-				// create the missing properties in the model
-				if(upp.isIndexed()) {
-					// unbound indexed property
-					RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
-					Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
-					if(stub == null)
-						throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
-								+ " model prototype");
+		if(depth == 0) {
+			// handle the unbound indexed props (newly created in the ui)
+			if(unboundFields.size() > 0) {
+				for(PropertyPath upp : unboundFields.keySet()) {
+					// create the missing properties in the model
+					if(upp.isIndexed()) {
+						// unbound indexed property
+						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
+						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
+						if(stub == null)
+							throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
+									+ " model prototype");
 
-					// now we need to propagate the actual property path to the child
-					// fields
+						// now we need to propagate the actual property path to the child
+						// fields
 
-					// actual property path RELATIVE TO THE RELATED MANY PROPERTY
-					// BINDING AND NOT THE ROOT MODEL
-					// e.g. relatedMany[1] NOT root.relatedMany[1]
-					final String app = rmp.add(stub);
+						// actual property path RELATIVE TO THE RELATED MANY PROPERTY
+						// BINDING AND NOT THE ROOT MODEL
+						// e.g. relatedMany[1] NOT root.relatedMany[1]
+						final String app = rmp.add(stub);
 
-					// the depth index of the unbound prop path
-					final int depthIndex = upp.depth() - 1;
-					assert depthIndex >= 0;
+						// the depth index of the unbound prop path
+						final int depthIndex = upp.depth() - 1;
+						assert depthIndex >= 0;
 
-					Set<IField> ufields = unboundFields.get(upp);
-					for(IField fld : ufields) {
+						Set<IField> ufields = unboundFields.get(upp);
+						for(IField fld : ufields) {
 
-						// replace the indexed property path node
-						propPath.parse(fld.getPropertyName());
-						assert propPath.depth() > depthIndex;
-						propPath.replaceAt(depthIndex, app);
+							// replace the indexed property path node
+							propPath.parse(fld.getPropertyName());
+							assert propPath.depth() > depthIndex;
+							propPath.replaceAt(depthIndex, app);
 
-						fld.setPropertyName(propPath.toString());
-						// do the model update
-						pv = model.getValue(propPath);
-						if(pv != null) fld.updateModel(pv);
+							fld.setPropertyName(propPath.toString());
+							// do the model update
+							pv = model.getValue(propPath);
+							if(pv != null) fld.updateModel(pv);
+						}
+						changed = true;
 					}
-					changed = true;
-				}
-				else {
-					// unbound non-indexed property
-					throw new UnsupportedOperationException("Only indexed properties may be unbound");
+					else {
+						// unbound non-indexed property
+						throw new UnsupportedOperationException("Only indexed properties may be unbound");
+					}
 				}
 			}
+
+			if(!changed) {
+				MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER,
+						group.feedbackWidget, -1, true).show();
+			}
 		}
+
 		return changed;
 	}
 
@@ -637,10 +652,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Binds a Model to a sub-set of fields contained in this group filtered by
-	 * the given parent property path. <strong>NOTE: </strong>NO
-	 * IFieldBindingListener event hook methods are called in this case!
-	 * @param parentPropertyPath
-	 * @param modelref
+	 * the given parent property path. <br>
+	 * <strong>NOTE: </strong>NO {@link IFieldBindingListener} event hook methods
+	 * are called in this case!
+	 * @param parentPropertyPath The filtering parent property path
+	 * @param modelref The model ref
 	 */
 	public void bindModel(String parentPropertyPath, IModelRefProperty modelref) {
 		PropertyPath pp = new PropertyPath();
@@ -665,16 +681,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(binding instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
 		}
-		if(!updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0)) {
-			MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER, feedbackWidget, -1,
-					true).show();
-			return false;
-		}
-		return true;
-	}
-
-	public IValidator getValidators() {
-		return validators;
+		return updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
 	}
 
 	public void addValidator(IValidator validator) {
@@ -684,13 +691,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		validators.add(validator);
 	}
 
-	/**
-	 * Validates the current state of the field group.
-	 * @throws ValidationException When at least one validation error exists.
-	 */
 	public void validate() throws ValidationException {
+		validate(null);
+	}
+
+	/**
+	 * Validates the current state of the field group with optional field
+	 * filtering.
+	 * @param parentPropertyPath Optional property path acting as a filter
+	 *        validating only fields whose property name <em>starts with</em> the
+	 *        given property path
+	 * @throws ValidationException When one or more fields are found invalid.
+	 */
+	public void validate(String parentPropertyPath) throws ValidationException {
 		boolean valid = true;
-		for(IField field : this) {
+		final Set<IField> set = parentPropertyPath == null ? fields : getFields(parentPropertyPath);
+		for(IField field : set) {
 			try {
 				field.validate();
 			}

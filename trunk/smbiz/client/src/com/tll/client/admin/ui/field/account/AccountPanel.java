@@ -90,7 +90,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			name = FieldFactory.createNameEntityField();
 			addField(FieldFactory.fdata("type", addressType));
 			addField(name);
-			addField("address", addressPanel.getFields());
+			addField("address", addressPanel.getFieldGroup());
 		}
 
 		@Override
@@ -155,7 +155,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		addField(nextChargeDate);
 		addField(currency);
 		addField(persistPymntInfo);
-		addField("paymentInfo", paymentInfoPanel.getFields());
+		addField("paymentInfo", paymentInfoPanel.getFieldGroup());
 	}
 
 	@Override
@@ -204,7 +204,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		// un-bind existing
 		for(Widget w : tabAddresses) {
 			if(w instanceof AccountAddressPanel) {
-				removeField(((AccountAddressPanel) w).getFields());
+				removeField(((AccountAddressPanel) w).getFieldGroup());
 			}
 		}
 		tabAddresses.clear();
@@ -223,8 +223,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 					IndexedProperty ip = itr.next();
 					if(at == ip.getModel().getValue(path).getValue()) {
 						aap = new AccountAddressPanel(at);
-						addField(ip.getPropertyName(), aap.getFields());
-						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFields(), ip.getPropertyName()));
+						addField(ip.getPropertyName(), aap.getFieldGroup());
+						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), ip.getPropertyName()));
 						break;
 					}
 				}
@@ -249,7 +249,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 
 	public void onClick(Widget sender) {
 		if(sender == persistPymntInfo.getCheckBox()) {
-			paymentInfoPanel.getFields().setEnabled(persistPymntInfo.getCheckBox().isChecked());
+			paymentInfoPanel.getFieldGroup().setEnabled(persistPymntInfo.getCheckBox().isChecked());
 		}
 		else if(sender instanceof NoEntityExistsPanel) {
 			// non-existant account address
@@ -261,16 +261,16 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			// stub aa panel
 			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 			AccountAddressPanel aap = new AccountAddressPanel(at);
-			addField(PropertyPath.indexUnbound("addresses"), aap.getFields());
+			addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
 
 			// bind to prototype
 			Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 			if(aaproto == null) throw new IllegalStateException();
 			// NOTE: we need a property path offset here since the fields' property
 			// paths are relative to ACCOUNT!
-			aap.getFields().bindModel(1, aaproto.getBindingRef());
+			aap.getFieldGroup().bindModel(1, aaproto.getBindingRef());
 
-			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFields(), null), selTabIndx == 0 ? 0
+			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
 					: selTabIndx);
 			tabAddresses.remove(selTabIndx + 1);
 			tabAddresses.selectTab(selTabIndx);

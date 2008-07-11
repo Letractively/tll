@@ -14,6 +14,7 @@ import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
 import com.tll.model.impl.CreditCardType;
+import com.tll.service.app.RefDataType;
 
 /**
  * CreditCardPanel
@@ -54,11 +55,11 @@ public final class CreditCardPanel extends FieldGroupPanel {
 		city = FieldFactory.ftext("paymentData_ccCity", "City", 30);
 		state =
 				FieldFactory.fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(
-						"usps-state-abbrs"));
+						RefDataType.US_STATES));
 		zip = FieldFactory.ftext("paymentData_ccZip", "Zip/Postal Code", 15);
 		country =
 				FieldFactory.fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
-						"iso-country-codes"));
+						RefDataType.ISO_COUNTRY_CODES));
 
 		addField(type);
 		addField(num);

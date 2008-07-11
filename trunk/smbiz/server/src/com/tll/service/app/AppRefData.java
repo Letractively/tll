@@ -34,10 +34,6 @@ public final class AppRefData {
 
 	public static final String APPREFDATA_FILEPREFIX = "refdata-";
 
-	// ref data [terse] names (keys for all known ref data files)
-	public static final String US_STATES = "usps-state-abbrs";
-	public static final String ISO_COUNTRY_CODES = "iso-country-codes";
-
 	private final HashMap<String, Map<String, String>> resourceData = new HashMap<String, Map<String, String>>();
 
 	private final Map<String, Long> lastModifiedTimes = new HashMap<String, Long>();
@@ -62,28 +58,26 @@ public final class AppRefData {
 	}
 
 	/**
-	 * Provides a map of maps keyed by refdata name of all found ref data.
-	 * Returns <code>null</code> if not found.
+	 * Provides a map of maps keyed by refdata name of all found ref data. Returns
+	 * <code>null</code> if not found.
 	 * @param refDataTerseName
 	 */
-	public Map<String, String> getRefData(String refDataTerseName) {
+	public Map<String, String> getRefData(RefDataType type) {
 		loadOrRefresh();
-		if(!resourceData.containsKey(refDataTerseName)) {
+		if(!resourceData.containsKey(type.getName())) {
 			return null;
 		}
 		Map<String, String> map = new HashMap<String, String>();
-		map.putAll(resourceData.get(refDataTerseName));
+		map.putAll(resourceData.get(type.getName()));
 		return map;
 	}
 
 	private String terseName(String resourceName) {
 		String terse = resourceName;
 		int i = terse.indexOf(APPREFDATA_FILEPREFIX);
-		if(i >= 0)
-			terse = terse.substring(i + APPREFDATA_FILEPREFIX.length());
+		if(i >= 0) terse = terse.substring(i + APPREFDATA_FILEPREFIX.length());
 		i = terse.indexOf(".");
-		if(i >= 0)
-			terse = terse.substring(0, i);
+		if(i >= 0) terse = terse.substring(0, i);
 		return terse;
 	}
 
@@ -115,8 +109,7 @@ public final class AppRefData {
 					if(resource.lastModified() > lmt.longValue()) {
 						// re-load modified file-based resource
 						Map<String, String> rmap = load(resource);
-						if(rmap == null)
-							continue;
+						if(rmap == null) continue;
 						log.info("re-loading stale app ref data from file: " + resourceName);
 						resourceData.put(terseName(resourceName), rmap);
 						lastModifiedTimes.put(resourceName, new Long(resource.lastModified()));
@@ -141,12 +134,10 @@ public final class AppRefData {
 		File[] rFiles = getAppRefDataFiles();
 		for(File resource : rFiles) {
 			String terseName = terseName(resource.getName());
-			if(resourceData.containsKey(terseName))
-				continue;
+			if(resourceData.containsKey(terseName)) continue;
 			try {
 				Map<String, String> rmap = load(resource);
-				if(rmap == null)
-					continue;
+				if(rmap == null) continue;
 				log.info("adding newly found app ref data from file: " + resource.getName());
 				resourceData.put(terseName, rmap);
 				lastModifiedTimes.put(resource.getAbsolutePath(), new Long(resource.lastModified()));
@@ -227,8 +218,7 @@ public final class AppRefData {
 		for(File element : rFiles) {
 			Map<String, String> rmap;
 			try {
-				if((rmap = load(element)) == null)
-					continue;
+				if((rmap = load(element)) == null) continue;
 			}
 			catch(Exception e) {
 				log.error("Unable to load app ref data from file '" + element.getName() + "': " + e.getMessage());

@@ -16,6 +16,7 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.AuxDataRequest.AuxDataType;
 import com.tll.client.model.Model;
 import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * AuxDataCache - Caches Aux data on the client.
@@ -35,9 +36,9 @@ public final class AuxDataCache {
 	}
 
 	/**
-	 * Map of app ref data name/value pairs keyed by the app ref data terse name.<br>
+	 * Map of app ref data name/value pairs keyed by the app ref data type.<br>
 	 */
-	private Map<String, Map<String, String>> refDataMaps;
+	private Map<RefDataType, Map<String, String>> refDataMaps;
 
 	/**
 	 * Map of entity lists keyed by the entity class name.
@@ -63,12 +64,12 @@ public final class AuxDataCache {
 		AuxDataRequest sadr = new AuxDataRequest();
 
 		// ref data
-		Iterator<String> rdi = adr.getRefDataRequests();
+		Iterator<RefDataType> rdi = adr.getRefDataRequests();
 		if(rdi != null) {
 			while(rdi.hasNext()) {
-				String terseName = rdi.next();
-				if(!isCached(AuxDataType.REFDATA, terseName)) {
-					sadr.requestAppRefData(terseName);
+				RefDataType rdt = rdi.next();
+				if(!isCached(AuxDataType.REFDATA, rdt)) {
+					sadr.requestAppRefData(rdt);
 				}
 			}
 		}
@@ -98,11 +99,11 @@ public final class AuxDataCache {
 		return sadr.size() > 0 ? sadr : null;
 	}
 
-	private void cacheRefDataMap(String appRefDataTerseName, Map<String, String> map) {
+	private void cacheRefDataMap(RefDataType refDataType, Map<String, String> map) {
 		if(refDataMaps == null) {
-			refDataMaps = new HashMap<String, Map<String, String>>();
+			refDataMaps = new HashMap<RefDataType, Map<String, String>>();
 		}
-		refDataMaps.put(appRefDataTerseName, map);
+		refDataMaps.put(refDataType, map);
 	}
 
 	private void cacheEntityList(EntityType entityType, List<Model> list) {
@@ -126,9 +127,9 @@ public final class AuxDataCache {
 	public void cache(AuxDataPayload payload) {
 
 		// ref data maps
-		Map<String, Map<String, String>> map = payload.getRefDataMaps();
+		Map<RefDataType, Map<String, String>> map = payload.getRefDataMaps();
 		if(map != null) {
-			for(String key : map.keySet()) {
+			for(RefDataType key : map.keySet()) {
 				cacheRefDataMap(key, map.get(key));
 			}
 		}
@@ -150,8 +151,8 @@ public final class AuxDataCache {
 		}
 	}
 
-	public Map<String, String> getRefDataMap(String appRefDataTerseName) {
-		return refDataMaps == null ? null : refDataMaps.get(appRefDataTerseName);
+	public Map<String, String> getRefDataMap(RefDataType refDataType) {
+		return refDataMaps == null ? null : refDataMaps.get(refDataType);
 	}
 
 	public List<Model> getEntityList(EntityType entityType) {
@@ -162,7 +163,8 @@ public final class AuxDataCache {
 	 * Returns a
 	 * <em>distinct<em> prototype {@link Model} instance of the given entity type.
 	 * @param entityType The entity type
-	 * @return A distinct prototypical {@link Model} instance of the given entity type.
+	 * @return A distinct prototypical {@link Model} instance of the given entity
+	 *         type.
 	 */
 	public Model getEntityPrototype(EntityType entityType) {
 		if(entityPrototypes != null) {

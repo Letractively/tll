@@ -128,7 +128,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			// apply model metadata to the newly created fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
 			assert newEntity != null;
-			editPanel.getFields().bindModel(editPropertyPath.toString(), newEntity.getBindingRef());
+			parentFieldGroup.bindModel(editPropertyPath.toString(), newEntity.getBindingRef());
 
 			fieldGroupPanel.draw();
 
@@ -337,12 +337,12 @@ public final class FieldListing extends Composite implements IEditListener {
 			case DELETE:
 				if(editPropertyPath.isUnboundIndexed()) {
 					// new entity
-					parentFieldGroup.removeField(fieldGroupPanel.getFields());
+					parentFieldGroup.removeField(fieldGroupPanel.getFieldGroup());
 					listing.refresh();
 				}
 				else {
 					// extisting
-					fieldGroupPanel.getFields().addPendingDeletion(editPropertyPath.toString());
+					fieldGroupPanel.getFieldGroup().addPendingDeletion(editPropertyPath.toString());
 				}
 				break;
 		}

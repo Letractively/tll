@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.tll.client.model.Model;
 import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * AuxDataPayload - Construct to hold aux (enum maps, ref data maps and related
@@ -37,7 +38,7 @@ public class AuxDataPayload extends Payload {
 	/**
 	 * Map of app ref data name/value pairs keyed by the app ref data terse name.<br>
 	 */
-	protected Map<String, Map<String, String>> refDataMaps;
+	protected Map<RefDataType, Map<String, String>> refDataMaps;
 
 	/**
 	 * Map of entity lists keyed by the entity class name.
@@ -49,11 +50,11 @@ public class AuxDataPayload extends Payload {
 	 */
 	protected Set<Model> entityPrototypes;
 
-	public Map<String, Map<String, String>> getRefDataMaps() {
+	public Map<RefDataType, Map<String, String>> getRefDataMaps() {
 		return refDataMaps;
 	}
 
-	public void setRefDataMaps(Map<String, Map<String, String>> refDataMaps) {
+	public void setRefDataMaps(Map<RefDataType, Map<String, String>> refDataMaps) {
 		this.refDataMaps = refDataMaps;
 	}
 

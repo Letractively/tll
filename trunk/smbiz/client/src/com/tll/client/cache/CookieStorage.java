@@ -35,6 +35,7 @@ public class CookieStorage extends Storage {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static class CookieConstantsIE6 extends CookieConstants {
 
 		@Override
@@ -65,7 +66,8 @@ public class CookieStorage extends Storage {
 		}
 
 		// set up the hash map from the string
-		setValuesFromString(valueString);
+		// TODO implement
+		// setValuesFromString(valueString);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -79,7 +81,9 @@ public class CookieStorage extends Storage {
 		}
 
 		// get the values as a string and check their length
-		String valueString = getValuesAsString();
+		// String valueString = getValuesAsString();
+		// TODO implement
+		String valueString = null; // temp
 		if(valueString.length() > constants.maxTotalStorage()) {
 			throw new StorageException("Out of cookie storage space");
 		}

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.tll.client.IMarshalable;
 import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.
@@ -17,13 +18,17 @@ import com.tll.model.EntityType;
  */
 public class AuxDataRequest implements IMarshalable {
 
+	public enum RefData {
+
+	}
+
 	public enum AuxDataType {
 		REFDATA,
 		ENTITY,
 		ENTITY_PROTOTYPE;
 	}
 
-	private Set<String> refData;
+	private Set<RefDataType> refData;
 
 	private Set<EntityType> entityTypes;
 
@@ -33,11 +38,11 @@ public class AuxDataRequest implements IMarshalable {
 	 * Request app ref data in the form of a string/string map.
 	 * @param terseName
 	 */
-	public void requestAppRefData(String terseName) {
+	public void requestAppRefData(RefDataType refDataType) {
 		if(refData == null) {
-			refData = new HashSet<String>();
+			refData = new HashSet<RefDataType>();
 		}
-		refData.add(terseName);
+		refData.add(refDataType);
 	}
 
 	/**
@@ -58,7 +63,7 @@ public class AuxDataRequest implements IMarshalable {
 		entityPrototypes.add(entityType);
 	}
 
-	public Iterator<String> getRefDataRequests() {
+	public Iterator<RefDataType> getRefDataRequests() {
 		return refData == null ? null : refData.iterator();
 	}
 

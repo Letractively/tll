@@ -145,7 +145,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		// clear existing options
 		for(Widget w : tabOptions) {
-			if(w instanceof OptionPanel) removeField(((OptionPanel) w).getFields());
+			if(w instanceof OptionPanel) removeField(((OptionPanel) w).getFieldGroup());
 		}
 		tabOptions.clear();
 
@@ -175,9 +175,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				OptionPanel pnlOption =
 						new OptionPanel(new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
-								paramColumns, path.toString(), getFields(), paramFieldProvider, paramFieldRenderer));
-				addField(propOption.getPropertyName(), pnlOption.getFields());
-				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFields(), propOption
+								paramColumns, path.toString(), getFieldGroup(), paramFieldProvider, paramFieldRenderer));
+				addField(propOption.getPropertyName(), pnlOption.getFieldGroup());
+				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), propOption
 						.getPropertyName()));
 			}
 		}

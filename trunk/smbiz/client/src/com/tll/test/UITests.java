@@ -21,7 +21,11 @@ import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.data.AuxDataRequest;
+import com.tll.client.data.rpc.AuxDataCommand;
+import com.tll.client.event.IRpcListener;
 import com.tll.client.event.type.ModelChangeEvent;
+import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldGroup;
@@ -64,6 +68,7 @@ import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
@@ -191,13 +196,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		@Override
 		public void populateFieldGroup() {
-			addField("address", ap.getFields());
+			addField("address", ap.getFieldGroup());
 
 			// set address2 as read only
-			ap.getFields().getField("address.address2").setReadOnly(true);
+			ap.getFieldGroup().getField("address.address2").setReadOnly(true);
 
 			// set city as read only
-			ap.getFields().getField("address.city").setReadOnly(true);
+			ap.getFieldGroup().getField("address.city").setReadOnly(true);
 
 			addField(bflabel);
 			addField(bf);
@@ -256,7 +261,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			public void onClick(Widget sender) {
 				Button b = (Button) sender;
 				boolean readOnly = b.getText().equals("Read Only");
-				fieldPanel.getFields().setReadOnly(readOnly);
+				fieldPanel.getFieldGroup().setReadOnly(readOnly);
 				b.setText(readOnly ? "Editable" : "Read Only");
 			}
 
@@ -269,7 +274,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			public void onClick(Widget sender) {
 				Button b = (Button) sender;
 				boolean enable = b.getText().equals("Enable");
-				fieldPanel.getFields().setEnabled(enable);
+				fieldPanel.getFieldGroup().setEnabled(enable);
 				b.setText(enable ? "Disable" : "Enable");
 			}
 
@@ -292,6 +297,16 @@ public final class UITests implements EntryPoint, HistoryListener {
 	}
 
 	/**
+	 * Gets aux data from the server.
+	 * @param onReadyListener Called when the aux data is ready on the client
+	 */
+	private void getAuxData(AuxDataRequest adr, IRpcListener onReadyListener) {
+		AuxDataCommand cmd = new AuxDataCommand(testPanel, adr);
+		cmd.addRpcListener(onReadyListener);
+		cmd.execute();
+	}
+
+	/**
 	 * <p>
 	 * Test: TEST_FIELD_LISTING
 	 * <p>
@@ -299,63 +314,74 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 */
 	void testFieldListing() {
 
-		Column[] cols = new Column[] {
-			new Column("Address", "address1"),
-			new Column("City", "city"),
-			new Column("Zip", "postalCode") };
+		AuxDataRequest adr = new AuxDataRequest();
+		adr.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
+		adr.requestAppRefData(RefDataType.US_STATES);
+		adr.requestEntityPrototype(EntityType.ADDRESS);
 
-		IFieldProvider fieldProvider = new IFieldProvider() {
+		getAuxData(adr, new IRpcListener() {
 
-			public IField[] getFields() {
-				return new IField[] {
-					FieldFactory.ftext("address1", "Address 1", 40),
-					FieldFactory.ftext("city", "City", 30),
-					FieldFactory.ftext("postalCode", "Zip", 20) };
+			public void onRpcEvent(RpcEvent event) {
+				Column[] cols = new Column[] {
+					new Column("Address", "address1"),
+					new Column("City", "city"),
+					new Column("Zip", "postalCode") };
+
+				IFieldProvider fieldProvider = new IFieldProvider() {
+
+					public IField[] getFields() {
+						return new IField[] {
+							FieldFactory.ftext("address1", "Address 1", 40),
+							FieldFactory.ftext("city", "City", 30),
+							FieldFactory.fsuggest("province", "State", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES)),
+							FieldFactory.ftext("postalCode", "Zip", 20) };
+					}
+				};
+
+				IFieldRenderer fieldRenderer = new IFieldRenderer() {
+
+					public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
+						VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
+						cmpsr.setCanvas(canvas);
+
+						final PropertyPath pp = new PropertyPath(parentPropertyPath);
+						final int depth = pp.depth();
+
+						pp.append("address1");
+						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+						pp.replaceAt(depth, "city");
+						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+
+						pp.replaceAt(depth, "postalCode");
+						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
+					}
+				};
+
+				FieldGroup pfg = new FieldGroup("Parent", testPanel, null);
+				pfg.addField(null, FieldFactory.createNameEntityField());
+				pfg.addFields(null, FieldFactory.createTimestampEntityFields());
+				pfg.addField(null, FieldFactory.createNameEntityField());
+				pfg.addField("addresses[0]", FieldFactory.ftext("emailAddress", "Email Address", 30));
+				pfg.addField("addresses[0]", FieldFactory.ftext("firstName", "First Name", 20));
+				pfg.addField("addresses[0]", FieldFactory.ftext("lastName", "Last Name", 20));
+				pfg.addField("addresses[0]", FieldFactory.ftext("mi", "MI", 1));
+				pfg.addField("addresses[0]", FieldFactory.ftext("company", "Company", 20));
+				pfg.addField("addresses[0]", FieldFactory.ftext("attn", "Attn", 10));
+				pfg.addField("addresses[0]", FieldFactory.ftext("address1", "Address 1", 40));
+				pfg.addField("addresses[0]", FieldFactory.ftext("address2", "Address 2", 40));
+				pfg.addField("addresses[0]", FieldFactory.ftext("city", "City", 30));
+				pfg.addField("addresses[0]", FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
+						.getRefDataMap(RefDataType.US_STATES)));
+				pfg.addField("addresses[0]", FieldFactory.ftext("postalCode", "Zip", 20));
+				pfg.addField("addresses[0]", FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
+						RefDataType.ISO_COUNTRY_CODES)));
+
+				FieldListing fl =
+						new FieldListing("testListing", EntityType.ADDRESS, cols, "addresses", pfg, fieldProvider, fieldRenderer);
+				testPanel.add(fl);
 			}
-		};
-
-		IFieldRenderer fieldRenderer = new IFieldRenderer() {
-
-			public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
-				VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
-				cmpsr.setCanvas(canvas);
-
-				final PropertyPath pp = new PropertyPath(parentPropertyPath);
-				final int depth = pp.depth();
-
-				pp.append("address1");
-				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-				pp.replaceAt(depth, "city");
-				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-				pp.replaceAt(depth, "postalCode");
-				cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-			}
-		};
-
-		FieldGroup pfg = new FieldGroup("Parent", null, testPanel);
-		pfg.addField(null, FieldFactory.createNameEntityField());
-		pfg.addFields(null, FieldFactory.createTimestampEntityFields());
-		pfg.addField(null, FieldFactory.createNameEntityField());
-		pfg.addField("addresses[0]", FieldFactory.ftext("emailAddress", "Email Address", 30));
-		pfg.addField("addresses[0]", FieldFactory.ftext("firstName", "First Name", 20));
-		pfg.addField("addresses[0]", FieldFactory.ftext("lastName", "Last Name", 20));
-		pfg.addField("addresses[0]", FieldFactory.ftext("mi", "MI", 1));
-		pfg.addField("addresses[0]", FieldFactory.ftext("company", "Company", 20));
-		pfg.addField("addresses[0]", FieldFactory.ftext("attn", "Attn", 10));
-		pfg.addField("addresses[0]", FieldFactory.ftext("address1", "Address 1", 40));
-		pfg.addField("addresses[0]", FieldFactory.ftext("address2", "Address 2", 40));
-		pfg.addField("addresses[0]", FieldFactory.ftext("city", "City", 30));
-		pfg.addField("addresses[0]", FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
-				.getRefDataMap("usps-state-abbrs")));
-		pfg.addField("addresses[0]", FieldFactory.ftext("postalCode", "Zip", 20));
-		pfg.addField("addresses[0]", FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
-				"iso-country-codes")));
-
-		FieldListing fl =
-				new FieldListing("testListing", EntityType.ADDRESS, cols, "addresses", pfg, fieldProvider, fieldRenderer);
-		testPanel.add(fl);
+		});
 	}
 
 	/**

@@ -11,6 +11,7 @@ import com.tll.client.ui.field.FieldGroupPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
+import com.tll.service.app.RefDataType;
 
 /**
  * AddressPanel
@@ -50,9 +51,12 @@ public final class AddressPanel extends FieldGroupPanel {
 		address2 = FieldFactory.ftext("address2", "Address 2", 40);
 		city = FieldFactory.ftext("city", "City", 30);
 		province =
-				FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap("usps-state-abbrs"));
+				FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
+						.getRefDataMap(RefDataType.US_STATES));
 		postalCode = FieldFactory.ftext("postalCode", "Zip", 20);
-		country = FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap("iso-country-codes"));
+		country =
+				FieldFactory.fsuggest("country", "Country", AuxDataCache.instance()
+						.getRefDataMap(RefDataType.ISO_COUNTRY_CODES));
 
 		addField(emailAddress);
 		addField(lastName);

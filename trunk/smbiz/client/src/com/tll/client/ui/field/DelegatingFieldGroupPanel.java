@@ -56,6 +56,6 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 
 	@Override
 	protected final void draw(Panel canvas) {
-		renderer.draw(canvas, getFields(), parentPropertyPath);
+		renderer.draw(canvas, getFieldGroup(), parentPropertyPath);
 	}
 }

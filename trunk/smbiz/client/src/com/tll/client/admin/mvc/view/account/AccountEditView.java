@@ -11,6 +11,7 @@ import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * AccountEditView - Base AbstractView for editing accounts.
@@ -60,8 +61,8 @@ public class AccountEditView extends EditView {
 	protected AuxDataRequest getNeededAuxData() {
 		AuxDataRequest auxDataRequest = new AuxDataRequest();
 		auxDataRequest.requestEntityList(EntityType.CURRENCY);
-		auxDataRequest.requestAppRefData("usps-state-abbrs");
-		auxDataRequest.requestAppRefData("iso-country-codes");
+		auxDataRequest.requestAppRefData(RefDataType.US_STATES);
+		auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
 		auxDataRequest.requestEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 		return auxDataRequest;
 	}

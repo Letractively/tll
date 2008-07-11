@@ -21,6 +21,7 @@ import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
+import com.tll.service.app.RefDataType;
 import com.tll.service.entity.IEntityService;
 
 /**
@@ -38,23 +39,23 @@ public abstract class AuxDataHandler {
 	public static void getAuxData(final RequestContext requestContext, final AuxDataRequest auxDataRequest,
 			final AuxDataPayload payload) {
 
-		Map<String, Map<String, String>> appRefDataMap = null;
+		Map<RefDataType, Map<String, String>> appRefDataMap = null;
 		Map<EntityType, List<Model>> entityMap = null;
 		Set<Model> entityPrototypes = null;
 
 		// app ref data
-		Iterator<String> adritr = auxDataRequest.getRefDataRequests();
+		Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
 		while(adritr != null && adritr.hasNext()) {
-			String terseName = adritr.next();
-			final Map<String, String> map = requestContext.getAppRefData().getRefData(terseName);
+			RefDataType rdt = adritr.next();
+			final Map<String, String> map = requestContext.getAppRefData().getRefData(rdt);
 			if(map == null) {
-				payload.getStatus().addMsg("Unable to find app ref data: " + terseName, MsgLevel.ERROR);
+				payload.getStatus().addMsg("Unable to find app ref data: " + rdt.getName(), MsgLevel.ERROR);
 			}
 			else {
 				if(appRefDataMap == null) {
-					appRefDataMap = new HashMap<String, Map<String, String>>();
+					appRefDataMap = new HashMap<RefDataType, Map<String, String>>();
 				}
-				appRefDataMap.put(terseName, map);
+				appRefDataMap.put(rdt, map);
 			}
 		}
 
