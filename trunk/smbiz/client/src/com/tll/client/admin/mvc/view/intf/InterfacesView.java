@@ -80,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 */
 		private final class InterfaceStack implements IEditListener, IModelChangeListener {
 
-			private final int stackIndex;
+			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
 			private final EditPanel editPanel;
@@ -88,12 +88,11 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			/**
 			 * Constructor
-			 * @param stackIndex
 			 * @param intfRef
 			 */
-			public InterfaceStack(int stackIndex, RefKey intfRef) {
+			public InterfaceStack(/*int stackIndex, */RefKey intfRef) {
 				super();
-				this.stackIndex = stackIndex;
+				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
 				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
@@ -254,7 +253,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				Model data = intfs[i];
 				RefKey ref = data.getRefKey();
 				assert ref != null && ref.isSet();
-				InterfaceStack ir = new InterfaceStack(i, ref);
+				InterfaceStack ir = new InterfaceStack(ref);
 				list.add(ir);
 				add(ir.editPanel, getStackHtml(data), true);
 			}

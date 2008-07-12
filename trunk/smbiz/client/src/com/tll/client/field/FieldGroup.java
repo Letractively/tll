@@ -143,17 +143,17 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final IFieldBindingListener bindingListener;
 
 	/**
+	 * Flag to indicate whether or not the contents of this group shall be
+	 * transferred to the model or not.
+	 */
+	private boolean updateModel;
+
+	/**
 	 * Collection of property paths that are presumed to map nested indexed model
 	 * properties representing pending deletions. These deletions are conveyed to
 	 * the model when the model is updated.
 	 */
 	private Set<String> pendingModelDeletions;
-
-	/**
-	 * Flag to indicate whether or not the contents of this group shall be
-	 * transferred to the model or not.
-	 */
-	private boolean updateModel;
 
 	/**
 	 * Constructor
@@ -692,21 +692,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public void validate() throws ValidationException {
-		validate(null);
-	}
-
-	/**
-	 * Validates the current state of the field group with optional field
-	 * filtering.
-	 * @param parentPropertyPath Optional property path acting as a filter
-	 *        validating only fields whose property name <em>starts with</em> the
-	 *        given property path
-	 * @throws ValidationException When one or more fields are found invalid.
-	 */
-	public void validate(String parentPropertyPath) throws ValidationException {
 		boolean valid = true;
-		final Set<IField> set = parentPropertyPath == null ? fields : getFields(parentPropertyPath);
-		for(IField field : set) {
+		for(IField field : fields) {
 			try {
 				field.validate();
 			}
@@ -744,7 +731,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(unboundFieldMessages.size() > 0) {
 			MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
 		}
-
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class CookieStorage extends Storage {
 	}
 
 	@Override
-	public void load() throws StorageException {
+	public void load() /*throws StorageException*/{
 		// read the cookies to build the string
 		String valueString = "";
 		String cookieValue = Cookies.getCookie(constants.cookiePrefix() + "0");

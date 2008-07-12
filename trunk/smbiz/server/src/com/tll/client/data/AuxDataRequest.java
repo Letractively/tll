@@ -36,7 +36,7 @@ public class AuxDataRequest implements IMarshalable {
 
 	/**
 	 * Request app ref data in the form of a string/string map.
-	 * @param terseName
+	 * @param refDataType
 	 */
 	public void requestAppRefData(RefDataType refDataType) {
 		if(refData == null) {

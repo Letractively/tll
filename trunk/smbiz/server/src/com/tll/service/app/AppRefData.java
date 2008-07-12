@@ -60,7 +60,7 @@ public final class AppRefData {
 	/**
 	 * Provides a map of maps keyed by refdata name of all found ref data. Returns
 	 * <code>null</code> if not found.
-	 * @param refDataTerseName
+	 * @param type
 	 */
 	public Map<String, String> getRefData(RefDataType type) {
 		loadOrRefresh();

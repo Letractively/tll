@@ -51,7 +51,7 @@ public abstract class FieldFactory {
 	 * Creates new {@link DateField} instance.
 	 * @param propName
 	 * @param lblTxt
-	 * @param displayFormat
+	 * @param format
 	 */
 	public static final DateField fdate(String propName, String lblTxt, GlobalFormat format) {
 		return new DateField(propName, lblTxt, format);
@@ -63,8 +63,6 @@ public abstract class FieldFactory {
 	 * value respectively.
 	 * @param propName
 	 * @param lblTxt
-	 * @param checkedValue
-	 * @param uncheckedValue
 	 */
 	public static final CheckboxField fbool(String propName, String lblTxt) {
 		return new CheckboxField(propName, lblTxt, "true", "false");

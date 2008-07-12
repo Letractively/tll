@@ -125,14 +125,14 @@ public final class FieldListing extends Composite implements IEditListener {
 			parentFieldGroup.addFields(editPropertyPath.toString(), fieldProvider.getFields());
 			fieldGroupPanel.setParentPropertyPath(editPropertyPath.toString());
 
-			// apply model metadata to the newly created fields
+			// apply model metadata only to the target fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
 			assert newEntity != null;
 			parentFieldGroup.bindModel(editPropertyPath.toString(), newEntity.getBindingRef());
 
 			fieldGroupPanel.draw();
 
-			// since we are not binding, we have to reset the target fields
+			// reset only the target fields
 			final Collection<IField> clc = getEditFields();
 			for(IField fld : clc) {
 				fld.reset();
