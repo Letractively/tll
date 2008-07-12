@@ -272,14 +272,21 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Indexes the property path by appending an unbound index token
+	 * Indexes the property path by appending an unbound index token.
 	 * <em>NOTE: </em>No checking for existing indexing is performed.
 	 * @return The unbound index used in creating the unbound index.
 	 */
 	public int indexUnbound() {
-		final int ui = ++unboundIndex;
-		buf.append(indexToken(ui, true));
-		return ui;
+		indexUnbound(++unboundIndex);
+		return unboundIndex;
+	}
+
+	/**
+	 * Indexes the property path by appending an unbound index token with the
+	 * given index. <em>NOTE: </em>No checking for existing indexing is performed.
+	 */
+	public void indexUnbound(int index) {
+		buf.append(indexToken(index, true));
 	}
 
 	/**

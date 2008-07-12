@@ -14,9 +14,14 @@ import com.google.gwt.user.client.ui.Widget;
 public final class EditEvent extends BaseEvent {
 
 	public enum EditOp {
-		SAVE,
+		ADD,
+		UPDATE,
 		DELETE,
 		CANCEL;
+
+		public boolean isSave() {
+			return this == ADD || this == UPDATE;
+		}
 	}
 
 	private final EditOp op;

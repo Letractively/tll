@@ -149,6 +149,25 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		// no-op
 	}
 
+	public final void onEditEvent(EditEvent event) {
+		switch(event.getOp()) {
+			case CANCEL:
+				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey(), false));
+				break;
+			case ADD:
+			case UPDATE:
+				if(editPanel.getFields().updateModel(model.getBindingRef())) {
+					modelChangeHandler.handleModelPersist(model);
+				}
+				break;
+			case DELETE:
+				if(!model.isNew()) {
+					modelChangeHandler.handleModelDelete(modelRef);
+				}
+				break;
+		}
+	}
+
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		if(modelChangeHandled) {
 			modelChangeHandled = false; // reset
@@ -184,18 +203,4 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		modelChangeHandled = true;
 		ViewManager.instance().onModelChangeEvent(event);
 	}
-
-	public final void onEditEvent(EditEvent event) {
-		switch(event.getOp()) {
-			case CANCEL:
-				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey(), false));
-				break;
-			case SAVE:
-				if(editPanel.getFields().updateModel(model.getBindingRef())) {
-					modelChangeHandler.handleModelPersist(model);
-				}
-				break;
-		}
-	}
-
 }

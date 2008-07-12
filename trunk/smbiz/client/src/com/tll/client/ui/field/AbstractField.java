@@ -478,13 +478,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	public boolean updateModel(IPropertyBinding binding) {
 		if(binding instanceof IPropertyValue == false)
 			throw new IllegalArgumentException("Non-group fields may only update model property values.");
-		// NOTE: we rely on the null state of modelValue as it is set in the
+		// NOTE: we rely on the null state of modelValue which is set in the
 		// onLostFocus() event
 		if(modelValue != null) {
-			// NOTE: there is potential for the setProp call to throw an
-			// excecption
-			// but this souldn't happen if the model has been "properly" bound and the
-			// validators property set
+			// NOTE: there is potential for the setProp call to throw an excecption
+			// but this souldn't happen if the appropriate validators are set for this
+			// field!
 			((IPropertyValue) binding).setValue(modelValue);
 			return true;
 		}

@@ -28,7 +28,7 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	/**
 	 * The collective group of all fields in this panel.
 	 */
-	private final FieldGroup fields;
+	private FieldGroup fields;
 
 	/**
 	 * Constructor
@@ -111,12 +111,20 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 		addField(null, field);
 	}
 
+	protected final void addFields(Iterable<IField> fields) {
+		addFields(null, fields);
+	}
+
 	protected final void addFields(IField[] fields) {
 		addFields(null, fields);
 	}
 
 	protected final void addField(String parentPropPath, IField field) {
 		fields.addField(parentPropPath, field);
+	}
+
+	protected final void addFields(String parentPropPath, Iterable<IField> fields) {
+		this.fields.addFields(parentPropPath, fields);
 	}
 
 	protected final void addFields(String parentPropPath, IField[] fields) {
@@ -143,6 +151,15 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	public final FieldGroup getFieldGroup() {
 		ensurePopulated();
 		return fields;
+	}
+
+	/**
+	 * Replaces the underlying {@link FieldGroup}.
+	 * @param fields The field group which can't be <code>null</code>
+	 */
+	public final void setFieldGroup(FieldGroup fields) {
+		if(fields == null) throw new IllegalArgumentException();
+		this.fields = fields;
 	}
 
 	/**

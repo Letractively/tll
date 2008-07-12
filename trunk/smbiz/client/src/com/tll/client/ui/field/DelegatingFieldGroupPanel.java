@@ -9,7 +9,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.field.FieldGroup;
 
 /**
- * DelegatingFieldGroupPanel
+ * DelegatingFieldGroupPanel - Delegates drawing of the field Panel to an
+ * {@link IFieldRenderer}.
  * @author jpk
  */
 public class DelegatingFieldGroupPanel extends FieldGroupPanel {
@@ -20,32 +21,14 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 	private final IFieldRenderer renderer;
 
 	/**
-	 * The parent property path used to filter fields from the referenced
-	 * FieldGroup.
-	 */
-	private String parentPropertyPath;
-
-	/**
 	 * Constructor
 	 * @param displayName The display name
-	 * @param parentFieldGroup
+	 * @param fieldGroup
 	 * @param renderer
 	 */
-	public DelegatingFieldGroupPanel(String displayName, FieldGroup parentFieldGroup, IFieldRenderer renderer) {
-		super(displayName, parentFieldGroup);
+	public DelegatingFieldGroupPanel(String displayName, FieldGroup fieldGroup, IFieldRenderer renderer) {
+		super(displayName, fieldGroup);
 		this.renderer = renderer;
-	}
-
-	/**
-	 * Sets the parent property path which dictates (or filters) the queried
-	 * fields from the referenced FieldGroup.
-	 * @param parentPropertyPath The parent property path to set
-	 */
-	public void setParentPropertyPath(String parentPropertyPath) {
-		if((parentPropertyPath == null && this.parentPropertyPath == null)
-				|| (parentPropertyPath != null && parentPropertyPath.equals(this.parentPropertyPath))) return;
-		this.parentPropertyPath = parentPropertyPath;
-		clear(); // force a re-draw
 	}
 
 	@Override
@@ -56,6 +39,6 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 
 	@Override
 	protected final void draw(Panel canvas) {
-		renderer.draw(canvas, getFieldGroup(), parentPropertyPath);
+		renderer.draw(canvas, getFieldGroup());
 	}
 }

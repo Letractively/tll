@@ -118,7 +118,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * The collection of child fields.
 	 */
-	private final Set<IField> fields = new HashSet<IField>();
+	private final Set<IField> fields;
 
 	/**
 	 * The collection of validators.
@@ -132,8 +132,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final String displayName;
 
 	/**
-	 * The Widget that is used to convey validation feedback. This defaults to the
-	 * {@link #bindingListener} but may be independently overridden.
+	 * The Widget that is used to convey validation feedback.
 	 */
 	private Widget feedbackWidget;
 
@@ -149,11 +148,26 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private boolean updateModel;
 
 	/**
-	 * Collection of property paths that are presumed to map nested indexed model
-	 * properties representing pending deletions. These deletions are conveyed to
-	 * the model when the model is updated.
+	 * Collection of property paths marked for delete. These deletions are
+	 * conveyed to the model when the model is updated.
 	 */
-	private Set<String> pendingModelDeletions;
+	private Set<String> pendingDeletes;
+
+	/**
+	 * Constructor - Simple field group w/ no display name nor
+	 * {@link IFieldBindingListener}.
+	 * @param fields The fields that will make up this group
+	 * @param displayName The UI display name used for presenting validation
+	 *        feedback to the UI.
+	 * @param feedbackWidget The feedback Widget
+	 */
+	public FieldGroup(Set<IField> fields, String displayName, Widget feedbackWidget) {
+		super();
+		this.fields = fields;
+		this.displayName = displayName;
+		this.feedbackWidget = feedbackWidget;
+		this.bindingListener = null;
+	}
 
 	/**
 	 * Constructor
@@ -163,7 +177,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param bindingListener The optional binding listener.
 	 */
 	public FieldGroup(String displayName, Widget feedbackWidget, IFieldBindingListener bindingListener) {
-		super();
+		this.fields = new HashSet<IField>();
 		this.displayName = displayName;
 		this.feedbackWidget = feedbackWidget;
 		this.bindingListener = bindingListener;
@@ -232,27 +246,25 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Schedules a nested model for deletion.
-	 * @param modelRefPropertyPath The property path that maps to a nested indexed
-	 *        model.
+	 * Associates a property path to a delete request.
+	 * @param propertyPath The property path to be marked for delete
 	 */
-	public void addPendingDeletion(String modelRefPropertyPath) {
-		if(pendingModelDeletions == null) {
-			pendingModelDeletions = new HashSet<String>();
+	public void addPendingDelete(String propertyPath) {
+		if(pendingDeletes == null) {
+			pendingDeletes = new HashSet<String>();
 		}
-		pendingModelDeletions.add(modelRefPropertyPath);
+		pendingDeletes.add(propertyPath);
 	}
 
 	/**
-	 * Un-schedules a model deletion.
-	 * @param modelRefPropertyPath
-	 * @see #addPendingDeletion(String)
+	 * Un-schedules a pending delete for the given property path.
+	 * @param propertyPath The property path to remove from the pending deletions.
+	 * @see #addPendingDelete(String)
 	 */
-	public void removePendingDeletion(String modelRefPropertyPath) {
-		if(pendingModelDeletions != null) {
-			pendingModelDeletions.remove(modelRefPropertyPath);
+	public void removePendingDelete(String propertyPath) {
+		if(pendingDeletes != null) {
+			pendingDeletes.remove(propertyPath);
 		}
-
 	}
 
 	/**
@@ -273,12 +285,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Is the given model ref property path scheduled for deletion?
-	 * @param modelRefPropertyPath
+	 * Is the given property path scheduled for deletion?
+	 * @param propertyPath The property path to check
 	 * @return true/false
 	 */
-	public boolean isPendingDelete(String modelRefPropertyPath) {
-		return pendingModelDeletions != null && pendingModelDeletions.contains(modelRefPropertyPath);
+	public boolean isPendingDelete(String propertyPath) {
+		return pendingDeletes != null && pendingDeletes.contains(propertyPath);
 	}
 
 	/**
@@ -340,6 +352,21 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 		}
 		fields.add(field);
+	}
+
+	/**
+	 * Adds multiple fields to this group.
+	 * @param parentPropPath Pre-pended to the each field's property name before
+	 *        the fields are added. May be <code>null</code> in which case the
+	 *        fields' property names remain un-altered.
+	 * @param fields The fields to add
+	 */
+	public void addFields(String parentPropPath, Iterable<IField> fields) {
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(parentPropPath, fld);
+			}
+		}
 	}
 
 	/**
@@ -458,7 +485,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	private void onBeforeBind(Model model) {
 		// reset pending deletes
-		if(pendingModelDeletions != null) pendingModelDeletions.clear();
+		if(pendingDeletes != null) pendingDeletes.clear();
 		// reset update model flag
 		updateModel = true;
 		// provide an opportunity for the owning panel to ready their field group
@@ -531,9 +558,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		boolean changed = false;
 
 		// first apply scheduled deletions
-		if(group.pendingModelDeletions != null) {
+		if(group.pendingDeletes != null) {
 			final PropertyPath pp = new PropertyPath();
-			for(String path : group.pendingModelDeletions) {
+			for(String path : group.pendingDeletes) {
 				pp.parse(path);
 				IPropertyBinding binding = model.getBinding(pp);
 				if(binding.getType().isModelRef()) {

@@ -154,6 +154,13 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		navBar.setAddRowDelegate(addRowDelegate);
 	}
 
+	/**
+	 * @return The number of rows <em>shown</em> in the listing.
+	 */
+	public final int getNumRows() {
+		return table.getRowCount();
+	}
+
 	public final void addRow(R rowData) {
 		table.addRow(rowData);
 		if(navBar != null) navBar.increment();

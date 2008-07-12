@@ -5,7 +5,7 @@
  */
 package com.tll.client.ui.listing;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -88,30 +88,35 @@ public final class FieldListing extends Composite implements IEditListener {
 		}
 
 		@Override
-		protected void doDeleteRow(int rowIndex) {
-			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
-			if(pp.isUnboundIndexed()) {
-				// new entity
-				parentFieldGroup.removeFields(parentFieldGroup.getFields(pp.toString()));
-				listing.refresh();
-			}
-			else {
-				// existing entity
-				parentFieldGroup.addPendingDeletion(pp.toString());
-				listing.markRowDeleted(rowIndex);
-			}
-		}
-
-		@Override
 		protected void doEditRow(int rowIndex) {
-			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
-			pp.index(rowIndex - 1);
-			fieldGroupPanel.setParentPropertyPath(pp.toString());
+			// calculate the target property path and retain in for use in handling
+			// ensuing edit event
+			editPropertyPath = new PropertyPath(indexablePropertyPath, rowIndex - 1, false);
+
+			// extract the target fields and create a separate edit field group
+			Set<IField> fields = fieldGroup.getFields(editPropertyPath.toString());
+			FieldGroup editGroup = new FieldGroup(fields, entityType.getName(), editPanel);
+			fieldGroupPanel.setFieldGroup(editGroup);
 
 			editPanel.setEditMode(false);
 
 			dialog.setText("Edit Parameter");
 			dialog.center();
+		}
+
+		@Override
+		protected void doDeleteRow(int rowIndex) {
+			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
+			if(pp.isUnboundIndexed()) {
+				// new entity
+				fieldGroup.removeFields(fieldGroup.getFields(pp.toString()));
+				listing.refresh();
+			}
+			else {
+				// existing entity
+				fieldGroup.addPendingDelete(pp.toString());
+				listing.markRowDeleted(rowIndex);
+			}
 		}
 	};
 
@@ -119,24 +124,19 @@ public final class FieldListing extends Composite implements IEditListener {
 
 		public void handleAddRow() {
 
-			// stub a new set of fields and add to parent group
-			editPropertyPath.parse(parentPropertyPath);
-			editPropertyPath.indexUnbound();
-			parentFieldGroup.addFields(editPropertyPath.toString(), fieldProvider.getFields());
-			fieldGroupPanel.setParentPropertyPath(editPropertyPath.toString());
+			// create new field group to hold the pending add fields
+			IField[] fields = fieldProvider.getFields();
+			Set<IField> set = new HashSet<IField>();
+			Collections.addAll(set, fields);
+			FieldGroup addGroup = new FieldGroup(set, listingElementName, editPanel);
+			fieldGroupPanel.setFieldGroup(addGroup);
 
 			// apply model metadata only to the target fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
 			assert newEntity != null;
-			parentFieldGroup.bindModel(editPropertyPath.toString(), newEntity.getBindingRef());
+			addGroup.bindModel(newEntity.getBindingRef());
 
 			fieldGroupPanel.draw();
-
-			// reset only the target fields
-			final Collection<IField> clc = getEditFields();
-			for(IField fld : clc) {
-				fld.reset();
-			}
 
 			editPanel.setEditMode(true);
 
@@ -152,16 +152,15 @@ public final class FieldListing extends Composite implements IEditListener {
 	private final DataListingWidget<FieldRow> listing;
 
 	/**
-	 * The parent path the points to an indexable property that serves as the
-	 * source of the listing data.
+	 * Points to an indexable property by which target fields in the
+	 * {@link #fieldGroup} are resolved.
 	 */
-	private final String parentPropertyPath;
+	private final String indexablePropertyPath;
 
 	/**
-	 * The FieldGroup that contains the fields used as listing data for this
-	 * listing.
+	 * Contains the {@link IField}s used as listing data.
 	 */
-	private final FieldGroup parentFieldGroup;
+	private final FieldGroup fieldGroup;
 
 	/**
 	 * Provides new field instances of those fields to be shown in the UI. Called
@@ -176,6 +175,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	 * listing rows.
 	 */
 	private final EditPanel editPanel;
+
 	/**
 	 * Houses the {@link #editPanel} instance for UI display.
 	 */
@@ -184,31 +184,31 @@ public final class FieldListing extends Composite implements IEditListener {
 	/**
 	 * The "current" property path of the row subject to editing.
 	 */
-	private final PropertyPath editPropertyPath = new PropertyPath();
+	private PropertyPath editPropertyPath = new PropertyPath();
 
 	/**
 	 * Constructor
 	 * @param listingElementName
 	 * @param entityType
 	 * @param columns
-	 * @param parentPropertyPath
-	 * @param parentFieldGroup
+	 * @param indexablePropertyPath
+	 * @param fieldGroup
 	 * @param fieldProvider
 	 * @param fieldRenderer
 	 */
 	public FieldListing(final String listingElementName, EntityType entityType, final Column[] columns,
-			String parentPropertyPath, FieldGroup parentFieldGroup, IFieldProvider fieldProvider, IFieldRenderer fieldRenderer) {
+			String indexablePropertyPath, FieldGroup fieldGroup, IFieldProvider fieldProvider, IFieldRenderer fieldRenderer) {
 
 		this.listingElementName = listingElementName;
-		this.parentFieldGroup = parentFieldGroup;
-		this.parentPropertyPath = parentPropertyPath;
+		this.fieldGroup = fieldGroup;
+		this.indexablePropertyPath = indexablePropertyPath;
 		this.fieldProvider = fieldProvider;
 		this.entityType = entityType;
 
-		fieldGroupPanel = new DelegatingFieldGroupPanel(listingElementName, parentFieldGroup, fieldRenderer);
+		fieldGroupPanel = new DelegatingFieldGroupPanel(listingElementName, fieldGroup, fieldRenderer);
 
 		editPanel = new EditPanel(true, false);
-		editPanel.setFieldPanel(fieldGroupPanel);
+		editPanel.setFieldGroupPanel(fieldGroupPanel);
 		editPanel.addEditListener(this);
 
 		dialog = new Dialog(null, false);
@@ -277,7 +277,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	}
 
 	private PropertyPath getRowPropertyPath(int rowIndex, boolean isUnbound) {
-		return new PropertyPath(parentPropertyPath, rowIndex - 1, isUnbound);
+		return new PropertyPath(indexablePropertyPath, rowIndex - 1, isUnbound);
 	}
 
 	private FieldRow[] getData() {
@@ -286,7 +286,7 @@ public final class FieldListing extends Composite implements IEditListener {
 		PropertyPath pp = new PropertyPath();
 
 		// get all elidgible fields for the listing
-		Set<IField> set = parentFieldGroup.getFields(parentPropertyPath);
+		Set<IField> set = fieldGroup.getFields(indexablePropertyPath);
 
 		// split the resultant set of fields..
 		for(IField fld : set) {
@@ -319,30 +319,29 @@ public final class FieldListing extends Composite implements IEditListener {
 		return arr;
 	}
 
-	public Set<IField> getEditFields() {
-		return parentFieldGroup.getFields(editPropertyPath.toString());
-	}
-
 	public void onEditEvent(EditEvent event) {
-		assert editPropertyPath.length() > 0;
 		switch(event.getOp()) {
-			case CANCEL:
-				if(editPropertyPath.isUnboundIndexed()) {
-					parentFieldGroup.removeFields(parentFieldGroup.getFields(editPropertyPath.toString()));
-				}
-				break;
-			case SAVE:
+			case ADD:
+				// create new unbound index property path
+				PropertyPath pp = new PropertyPath(indexablePropertyPath);
+				pp.indexUnbound();
+				// add the fields to the parent field group pre-pending the unbound
+				// property path
+				fieldGroup.addFields(pp.toString(), editPanel.getFields());
+				// NOTE: we fall through
+			case UPDATE:
 				listing.refresh();
 				break;
 			case DELETE:
+				assert editPropertyPath.length() > 0;
 				if(editPropertyPath.isUnboundIndexed()) {
 					// new entity
-					parentFieldGroup.removeField(fieldGroupPanel.getFieldGroup());
+					fieldGroup.removeField(fieldGroupPanel.getFieldGroup());
 					listing.refresh();
 				}
 				else {
 					// extisting
-					fieldGroupPanel.getFieldGroup().addPendingDeletion(editPropertyPath.toString());
+					fieldGroupPanel.getFieldGroup().addPendingDelete(editPropertyPath.toString());
 				}
 				break;
 		}

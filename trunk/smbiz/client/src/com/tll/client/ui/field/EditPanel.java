@@ -59,7 +59,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private FieldGroupPanel fieldPanel;
+	private FieldGroupPanel fieldGroupPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -115,15 +115,15 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The panel containing the desired fields for edit.
+	 * @param fieldGroupPanel The panel containing the desired fields for edit.
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldGroupPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldGroupPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		this(showCancelBtn, showDeleteBtn);
-		setFieldPanel(fieldPanel);
+		setFieldGroupPanel(fieldGroupPanel);
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -134,21 +134,21 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		editListeners.remove(listener);
 	}
 
-	public FieldGroupPanel getFieldPanel() {
-		return fieldPanel;
+	public FieldGroupPanel getFieldGroupPanel() {
+		return fieldGroupPanel;
 	}
 
 	/**
-	 * Sets or replaces the field panel.
-	 * @param fieldPanel The field panel
+	 * Sets or replaces the {@link FieldGroupPanel}.
+	 * @param fieldGroupPanel The field group panel to employ for editing
 	 */
-	public void setFieldPanel(FieldGroupPanel fieldPanel) {
-		if(this.fieldPanel != null && this.fieldPanel == fieldPanel) return;
-		if(fieldPanel == null) {
+	public void setFieldGroupPanel(FieldGroupPanel fieldGroupPanel) {
+		if(this.fieldGroupPanel != null && this.fieldGroupPanel == fieldGroupPanel) return;
+		if(fieldGroupPanel == null) {
 			throw new IllegalArgumentException("A field panel must be specified.");
 		}
-		this.fieldPanel = fieldPanel;
-		portal.setWidget(fieldPanel);
+		this.fieldGroupPanel = fieldGroupPanel;
+		portal.setWidget(fieldGroupPanel);
 	}
 
 	@Override
@@ -189,7 +189,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	public FieldGroup getFields() {
-		return fieldPanel.getFieldGroup();
+		return fieldGroupPanel.getFieldGroup();
 	}
 
 	public void setEditMode(boolean isAdd) {
@@ -210,16 +210,12 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			catch(ValidationException e) {
 				return;
 			}
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.SAVE));
+			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
 			getFields().reset();
 		}
 		else if(sender == btnDelete) {
-			if(!isAdd()) {
-				// updating
-				getFields().addPendingDeletion(null);
-			}
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
 		}
 		else if(sender == btnCancel) {
