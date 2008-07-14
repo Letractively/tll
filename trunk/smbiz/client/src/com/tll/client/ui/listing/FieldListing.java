@@ -27,7 +27,6 @@ import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IData;
-import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
@@ -49,19 +48,45 @@ public final class FieldListing extends Composite implements IEditListener {
 	 */
 	private static final class FieldRow implements IData {
 
+		/**
+		 * The field row data.
+		 */
 		private final IField[] arr;
+
+		/**
+		 * The row property path (E.g.: <code>propA.propB.propC[{rowIndex}]</code>)
+		 */
+		private final String indexedPropertyPath;
+
+		/**
+		 * The row index (the numeric index contained w/in the
+		 * {@link #indexedPropertyPath}.
+		 */
+		private final int rowIndex;
 
 		/**
 		 * Constructor
 		 * @param arr
+		 * @param indexedPropertyPath
+		 * @param rowIndex
 		 */
-		public FieldRow(IField[] arr) {
+		public FieldRow(IField[] arr, String indexedPropertyPath, int rowIndex) {
 			super();
 			this.arr = arr;
+			this.indexedPropertyPath = indexedPropertyPath;
+			this.rowIndex = rowIndex;
 		}
 
 		public IField[] getArr() {
 			return arr;
+		}
+
+		public String getIndexedPropertyPath() {
+			return indexedPropertyPath;
+		}
+
+		public int getRowIndex() {
+			return rowIndex;
 		}
 	}
 
@@ -106,7 +131,7 @@ public final class FieldListing extends Composite implements IEditListener {
 
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			final PropertyPath pp = getRowPropertyPath(rowIndex, false);
+			PropertyPath pp = new PropertyPath(indexablePropertyPath, rowIndex - 1, false);
 			if(pp.isUnboundIndexed()) {
 				// new entity
 				fieldGroup.removeFields(fieldGroup.getFields(pp.toString()));
@@ -153,7 +178,7 @@ public final class FieldListing extends Composite implements IEditListener {
 
 	/**
 	 * Points to an indexable property by which target fields in the
-	 * {@link #fieldGroup} are resolved.
+	 * {@link #fieldGroup} are resolved for listing data.
 	 */
 	private final String indexablePropertyPath;
 
@@ -161,6 +186,11 @@ public final class FieldListing extends Composite implements IEditListener {
 	 * Contains the {@link IField}s used as listing data.
 	 */
 	private final FieldGroup fieldGroup;
+
+	/**
+	 * The generated row data extracted from the fields in the {@link #fieldGroup}
+	 */
+	private FieldRow[] rowData;
 
 	/**
 	 * Provides new field instances of those fields to be shown in the UI. Called
@@ -267,7 +297,10 @@ public final class FieldListing extends Composite implements IEditListener {
 		final IDataProvider<FieldRow> dataProvider = new IDataProvider<FieldRow>() {
 
 			public FieldRow[] getData() {
-				return FieldListing.this.getData();
+				if(FieldListing.this.rowData == null) {
+					generateRowData();
+				}
+				return FieldListing.this.rowData;
 			}
 		};
 
@@ -276,14 +309,13 @@ public final class FieldListing extends Composite implements IEditListener {
 		initWidget(listing);
 	}
 
-	private PropertyPath getRowPropertyPath(int rowIndex, boolean isUnbound) {
-		return new PropertyPath(indexablePropertyPath, rowIndex - 1, isUnbound);
-	}
-
-	private FieldRow[] getData() {
+	private void generateRowData() {
 		final Map<Integer, Set<IField>> map = new HashMap<Integer, Set<IField>>();
 
-		PropertyPath pp = new PropertyPath();
+		PropertyPath pp = new PropertyPath(indexablePropertyPath);
+
+		final int indexableDepth = pp.depth();
+		assert indexableDepth > 0;
 
 		// get all elidgible fields for the listing
 		Set<IField> set = fieldGroup.getFields(indexablePropertyPath);
@@ -291,16 +323,7 @@ public final class FieldListing extends Composite implements IEditListener {
 		// split the resultant set of fields..
 		for(IField fld : set) {
 			pp.parse(fld.getPropertyName());
-			// we can safely assume the option property path's depth is 1 since it is
-			// always relative to an interface
-			pp = pp.nested(1);
-			Integer index;
-			try {
-				index = new Integer(pp.indexAt(pp.depth() - 1));
-			}
-			catch(MalformedPropPathException e) {
-				throw new IllegalStateException();
-			}
+			Integer index = pp.indexAt(indexableDepth - 1);
 			if(!map.containsKey(index)) {
 				map.put(index, new HashSet<IField>());
 			}
