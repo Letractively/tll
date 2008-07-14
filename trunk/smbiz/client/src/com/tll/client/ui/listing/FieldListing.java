@@ -5,9 +5,11 @@
  */
 package com.tll.client.ui.listing;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IData;
+import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
@@ -54,39 +57,39 @@ public final class FieldListing extends Composite implements IEditListener {
 		private final IField[] arr;
 
 		/**
-		 * The row property path (E.g.: <code>propA.propB.propC[{rowIndex}]</code>)
-		 */
-		private final String indexedPropertyPath;
-
-		/**
 		 * The row index (the numeric index contained w/in the
 		 * {@link #indexedPropertyPath}.
 		 */
 		private final int rowIndex;
 
 		/**
-		 * Constructor
-		 * @param arr
-		 * @param indexedPropertyPath
-		 * @param rowIndex
+		 * Is this row data unbound?
 		 */
-		public FieldRow(IField[] arr, String indexedPropertyPath, int rowIndex) {
+		private final boolean unbound;
+
+		/**
+		 * Constructor
+		 * @param arr The row data array
+		 * @param rowIndex The row index
+		 * @param unbound Is the row data unbound?
+		 */
+		public FieldRow(IField[] arr, int rowIndex, boolean unbound) {
 			super();
 			this.arr = arr;
-			this.indexedPropertyPath = indexedPropertyPath;
 			this.rowIndex = rowIndex;
+			this.unbound = unbound;
 		}
 
 		public IField[] getArr() {
 			return arr;
 		}
 
-		public String getIndexedPropertyPath() {
-			return indexedPropertyPath;
-		}
-
 		public int getRowIndex() {
 			return rowIndex;
+		}
+
+		public boolean isUnbound() {
+			return unbound;
 		}
 	}
 
@@ -131,8 +134,9 @@ public final class FieldListing extends Composite implements IEditListener {
 
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			PropertyPath pp = new PropertyPath(indexablePropertyPath, rowIndex - 1, false);
-			if(pp.isUnboundIndexed()) {
+			FieldRow fr = rowData.get(rowIndex - 1);
+			PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, false);
+			if(fr.isUnbound()) {
 				// new entity
 				fieldGroup.removeFields(fieldGroup.getFields(pp.toString()));
 				listing.refresh();
@@ -156,7 +160,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			FieldGroup addGroup = new FieldGroup(set, listingElementName, editPanel);
 			fieldGroupPanel.setFieldGroup(addGroup);
 
-			// apply model metadata only to the target fields
+			// apply model metadata to the target fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
 			assert newEntity != null;
 			addGroup.bindModel(newEntity.getBindingRef());
@@ -190,7 +194,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	/**
 	 * The generated row data extracted from the fields in the {@link #fieldGroup}
 	 */
-	private FieldRow[] rowData;
+	private final List<FieldRow> rowData = new ArrayList<FieldRow>();
 
 	/**
 	 * Provides new field instances of those fields to be shown in the UI. Called
@@ -300,7 +304,7 @@ public final class FieldListing extends Composite implements IEditListener {
 				if(FieldListing.this.rowData == null) {
 					generateRowData();
 				}
-				return FieldListing.this.rowData;
+				return FieldListing.this.rowData.toArray(new FieldRow[FieldListing.this.rowData.size()]);
 			}
 		};
 
@@ -310,12 +314,18 @@ public final class FieldListing extends Composite implements IEditListener {
 	}
 
 	private void generateRowData() {
+		assert rowData != null;
+		rowData.clear();
+
+		// map of fields keyed by index
 		final Map<Integer, Set<IField>> map = new HashMap<Integer, Set<IField>>();
+		// map of unbound flags keyed by index
+		final Map<Integer, Boolean> map2 = new HashMap<Integer, Boolean>();
 
 		PropertyPath pp = new PropertyPath(indexablePropertyPath);
 
-		final int indexableDepth = pp.depth();
-		assert indexableDepth > 0;
+		final int indexOffset = pp.depth() - 1;
+		assert indexOffset >= 0;
 
 		// get all elidgible fields for the listing
 		Set<IField> set = fieldGroup.getFields(indexablePropertyPath);
@@ -323,23 +333,34 @@ public final class FieldListing extends Composite implements IEditListener {
 		// split the resultant set of fields..
 		for(IField fld : set) {
 			pp.parse(fld.getPropertyName());
-			Integer index = pp.indexAt(indexableDepth - 1);
+			Integer index;
+			try {
+				index = pp.indexAt(indexOffset);
+			}
+			catch(MalformedPropPathException e) {
+				throw new IllegalStateException(e.getMessage(), e);
+			}
 			if(!map.containsKey(index)) {
 				map.put(index, new HashSet<IField>());
+				map2.put(index, pp.isUnboundIndexed() ? Boolean.TRUE : Boolean.FALSE);
 			}
 			map.get(index).add(fld);
 		}
 
-		FieldRow[] arr = new FieldRow[map.size()];
-		int i = 0, j = 0;
-		for(Set<IField> fs : map.values()) {
+		// sort the map by the index key
+		final List<Integer> keyList = new ArrayList<Integer>(map.size());
+		Collections.sort(keyList);
+
+		int i;
+		for(Integer index : keyList) {
+			Set<IField> fs = map.get(index);
 			IField[] farr = new IField[fs.size()];
+			i = 0; // reset
 			for(IField fld : fs) {
 				farr[i++] = fld;
 			}
-			arr[j++] = new FieldRow(farr);
+			rowData.add(new FieldRow(farr, index.intValue(), map2.get(index).booleanValue()));
 		}
-		return arr;
 	}
 
 	public void onEditEvent(EditEvent event) {
@@ -353,14 +374,14 @@ public final class FieldListing extends Composite implements IEditListener {
 				fieldGroup.addFields(pp.toString(), editPanel.getFields());
 				// NOTE: we fall through
 			case UPDATE:
-				listing.refresh();
+				refresh();
 				break;
 			case DELETE:
 				assert editPropertyPath.length() > 0;
 				if(editPropertyPath.isUnboundIndexed()) {
 					// new entity
 					fieldGroup.removeField(fieldGroupPanel.getFieldGroup());
-					listing.refresh();
+					refresh();
 				}
 				else {
 					// extisting
@@ -372,6 +393,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	}
 
 	public void refresh() {
+		rowData.clear();
 		listing.refresh();
 	}
 }
