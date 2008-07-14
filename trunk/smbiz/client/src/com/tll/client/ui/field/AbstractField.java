@@ -369,6 +369,10 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		removeStyleName(styleWarn);
 	}
 
+	private void addEditStyling() {
+		addStyleName(styleChanged);
+	}
+
 	private void clearEditStyling() {
 		removeStyleName(styleChanged);
 	}
@@ -478,20 +482,26 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	public boolean updateModel(IPropertyBinding binding) {
 		if(binding instanceof IPropertyValue == false)
 			throw new IllegalArgumentException("Non-group fields may only update model property values.");
-		// NOTE: we rely on the null state of modelValue which is set in the
-		// onLostFocus() event
-		if(modelValue != null) {
-			// NOTE: there is potential for the setProp call to throw an excecption
-			// but this souldn't happen if the appropriate validators are set for this
-			// field!
+
+		try {
 			((IPropertyValue) binding).setValue(modelValue);
-			return true;
 		}
-		return false;
+		catch(IllegalArgumentException e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public final void validate() throws ValidationException {
-		modelValue = validators.validate(getValue());
+		try {
+			modelValue = validators.validate(getValue());
+			clearValidationStyling();
+		}
+		catch(ValidationException ve) {
+			handleValidationFeedback(ve);
+			throw ve;
+		}
 	}
 
 	public final void handleValidationFeedback(IValidationFeedback feedback) {
@@ -506,6 +516,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		if(error)
 			addStyleName(styleError);
 		else if(warn) addStyleName(styleWarn);
+		clearEditStyling();
 		MsgManager.instance.post(false, msgs, Position.BOTTOM, this, -1, true).show();
 	}
 
@@ -575,22 +586,19 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		final String currentValue = getValue();
 		assert currentValue != null;
 
-		// check if changed
-		if(currentValue.equals(resetValue)) {
-			clearValidationStyling();
-			removeStyleName(styleChanged);
-			modelValue = null;
+		try {
+			validate();
+
+			// we are valid so check if changed
+			if(currentValue.equals(resetValue)) {
+				clearEditStyling();
+			}
+			else {
+				addEditStyling();
+			}
 		}
-		else {
-			try {
-				validate();
-				addStyleName(styleChanged);
-				clearValidationStyling();
-			}
-			catch(ValidationException ve) {
-				removeStyleName(styleChanged);
-				handleValidationFeedback(ve);
-			}
+		catch(ValidationException e) {
+			// no-op
 		}
 	}
 

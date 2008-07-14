@@ -368,6 +368,17 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Is there un-bound indexing at the given node index?
+	 * @param nodeIndex The node index to check
+	 * @return true/false
+	 */
+	public boolean isUnboundAt(int nodeIndex) {
+		String path = pathAt(nodeIndex);
+		final char end = path.charAt(path.length() - 1);
+		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
+	}
+
+	/**
 	 * Strips the indexing from the end of this property path returninng the
 	 * resultant path which effectively is the parent to the indexed property.
 	 * @return New property path stripped of trailing indexing or

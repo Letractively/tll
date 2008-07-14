@@ -16,8 +16,9 @@ public interface IPropertyValue extends IPropertyBinding {
 	/**
 	 * Set the property value.
 	 * @param value The value to be set
+	 * @throws IllegalArgumentException When the value is invalid
 	 */
-	void setValue(Object value);
+	void setValue(Object value) throws IllegalArgumentException;
 
 	/**
 	 * Clears the property value

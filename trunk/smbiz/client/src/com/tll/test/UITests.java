@@ -147,6 +147,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 			public void execute() {
 				testPanel.clear();
+				MsgManager.instance.clear();
 
 				boolean gotoTest = true;
 				if(TEST_MSG_PANEL.equals(historyToken)) {

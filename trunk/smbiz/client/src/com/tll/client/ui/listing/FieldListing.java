@@ -119,12 +119,19 @@ public final class FieldListing extends Composite implements IEditListener {
 		protected void doEditRow(int rowIndex) {
 			// calculate the target property path and retain in for use in handling
 			// ensuing edit event
-			editPropertyPath = new PropertyPath(indexablePropertyPath, rowIndex - 1, false);
+			FieldRow fr = rowData.get(rowIndex - 1);
+			editPropertyPath = new PropertyPath(indexablePropertyPath, rowIndex - 1, fr.isUnbound());
 
 			// extract the target fields and create a separate edit field group
 			Set<IField> fields = fieldGroup.getFields(editPropertyPath.toString());
 			FieldGroup editGroup = new FieldGroup(fields, entityType.getName(), editPanel);
+
+			fieldGroupPanel.clear();
 			fieldGroupPanel.setFieldGroup(editGroup);
+
+			// TODO: need to account for the property path prefix since we are an
+			// *existing* property - FIX
+			fieldGroupPanel.draw();
 
 			editPanel.setEditMode(false);
 
@@ -135,11 +142,11 @@ public final class FieldListing extends Composite implements IEditListener {
 		@Override
 		protected void doDeleteRow(int rowIndex) {
 			FieldRow fr = rowData.get(rowIndex - 1);
-			PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, false);
+			PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, fr.isUnbound());
 			if(fr.isUnbound()) {
 				// new entity
 				fieldGroup.removeFields(fieldGroup.getFields(pp.toString()));
-				listing.refresh();
+				refresh();
 			}
 			else {
 				// existing entity
@@ -159,6 +166,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			Collections.addAll(set, fields);
 			FieldGroup addGroup = new FieldGroup(set, listingElementName, editPanel);
 			fieldGroupPanel.setFieldGroup(addGroup);
+			fieldGroupPanel.clear();
 
 			// apply model metadata to the target fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
@@ -301,7 +309,7 @@ public final class FieldListing extends Composite implements IEditListener {
 		final IDataProvider<FieldRow> dataProvider = new IDataProvider<FieldRow>() {
 
 			public FieldRow[] getData() {
-				if(FieldListing.this.rowData == null) {
+				if(FieldListing.this.rowData.size() < 1) {
 					generateRowData();
 				}
 				return FieldListing.this.rowData.toArray(new FieldRow[FieldListing.this.rowData.size()]);
@@ -340,15 +348,16 @@ public final class FieldListing extends Composite implements IEditListener {
 			catch(MalformedPropPathException e) {
 				throw new IllegalStateException(e.getMessage(), e);
 			}
+			boolean unbound = pp.isUnboundAt(indexOffset);
 			if(!map.containsKey(index)) {
 				map.put(index, new HashSet<IField>());
-				map2.put(index, pp.isUnboundIndexed() ? Boolean.TRUE : Boolean.FALSE);
+				map2.put(index, unbound ? Boolean.TRUE : Boolean.FALSE);
 			}
 			map.get(index).add(fld);
 		}
 
 		// sort the map by the index key
-		final List<Integer> keyList = new ArrayList<Integer>(map.size());
+		final List<Integer> keyList = new ArrayList<Integer>(map.keySet());
 		Collections.sort(keyList);
 
 		int i;
@@ -368,7 +377,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			case ADD:
 				// create new unbound index property path
 				PropertyPath pp = new PropertyPath(indexablePropertyPath);
-				pp.indexUnbound();
+				pp.indexUnbound(rowData.size());
 				// add the fields to the parent field group pre-pending the unbound
 				// property path
 				fieldGroup.addFields(pp.toString(), editPanel.getFields());
