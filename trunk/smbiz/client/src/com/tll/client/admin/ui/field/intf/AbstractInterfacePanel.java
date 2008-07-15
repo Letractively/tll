@@ -11,6 +11,7 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.Column;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -45,15 +46,16 @@ public abstract class AbstractInterfacePanel extends FieldGroupPanel {
 
 	protected static final IFieldRenderer paramFieldRenderer = new IFieldRenderer() {
 
-		public void draw(Panel canvas, FieldGroup fieldGroup) {
+		public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
 			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
-			cmpsr.addField((AbstractField) fieldGroup.getField("name"));
+			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath.getPropertyPath(parentPropertyPath, "name")));
 
-			cmpsr.addField((AbstractField) fieldGroup.getField("code"));
+			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath.getPropertyPath(parentPropertyPath, "code")));
 
-			cmpsr.addField((AbstractField) fieldGroup.getField("description"));
+			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath
+					.getPropertyPath(parentPropertyPath, "description")));
 		}
 
 	};

@@ -341,11 +341,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				IFieldRenderer fieldRenderer = new IFieldRenderer() {
 
-					public void draw(Panel canvas, FieldGroup fieldGroup) {
+					public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
 						VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
 						cmpsr.setCanvas(canvas);
 
-						final PropertyPath pp = new PropertyPath("address");
+						final PropertyPath pp = new PropertyPath(parentPropertyPath);
 						final int depth = pp.depth();
 
 						pp.append("address1");
@@ -357,6 +357,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 						pp.replaceAt(depth, "postalCode");
 						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
 					}
+
 				};
 
 				FieldGroup pfg = new FieldGroup("Parent", testPanel, null);

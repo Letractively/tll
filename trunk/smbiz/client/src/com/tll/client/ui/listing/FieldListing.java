@@ -129,8 +129,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			fieldGroupPanel.clear();
 			fieldGroupPanel.setFieldGroup(editGroup);
 
-			// TODO: need to account for the property path prefix since we are an
-			// *existing* property - FIX
+			fieldGroupPanel.setParentPropertyPath(editPropertyPath.toString());
 			fieldGroupPanel.draw();
 
 			editPanel.setEditMode(false);
@@ -173,6 +172,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			assert newEntity != null;
 			addGroup.bindModel(newEntity.getBindingRef());
 
+			fieldGroupPanel.setParentPropertyPath(null);
 			fieldGroupPanel.draw();
 
 			editPanel.setEditMode(true);
@@ -384,18 +384,6 @@ public final class FieldListing extends Composite implements IEditListener {
 				// NOTE: we fall through
 			case UPDATE:
 				refresh();
-				break;
-			case DELETE:
-				assert editPropertyPath.length() > 0;
-				if(editPropertyPath.isUnboundIndexed()) {
-					// new entity
-					fieldGroup.removeField(fieldGroupPanel.getFieldGroup());
-					refresh();
-				}
-				else {
-					// extisting
-					fieldGroupPanel.getFieldGroup().addPendingDelete(editPropertyPath.toString());
-				}
 				break;
 		}
 		dialog.hide();

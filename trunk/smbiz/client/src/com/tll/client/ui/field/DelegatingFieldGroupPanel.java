@@ -21,6 +21,12 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 	private final IFieldRenderer renderer;
 
 	/**
+	 * The parent property path of the target fields to be drawn. May be
+	 * <code>null</code>.
+	 */
+	private String parentPropertyPath;
+
+	/**
 	 * Constructor
 	 * @param displayName The display name
 	 * @param fieldGroup
@@ -31,14 +37,18 @@ public class DelegatingFieldGroupPanel extends FieldGroupPanel {
 		this.renderer = renderer;
 	}
 
+	public void setParentPropertyPath(String parentPropertyPath) {
+		this.parentPropertyPath = parentPropertyPath;
+	}
+
 	@Override
 	protected void populateFieldGroup() {
-		// we assume the the group has already been populated!
+		// we assume the group has already been populated!
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected final void draw(Panel canvas) {
-		renderer.draw(canvas, getFieldGroup());
+		renderer.draw(canvas, getFieldGroup(), parentPropertyPath);
 	}
 }
