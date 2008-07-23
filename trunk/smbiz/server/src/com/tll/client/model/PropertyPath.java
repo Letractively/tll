@@ -374,8 +374,7 @@ public final class PropertyPath {
 	 */
 	public boolean isUnboundAt(int nodeIndex) {
 		String path = pathAt(nodeIndex);
-		final char end = path.charAt(path.length() - 1);
-		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
+		return path.charAt(path.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -543,16 +542,13 @@ public final class PropertyPath {
 		if(buf == null) {
 			if(other.buf != null) return false;
 		}
-		else if(!buf.equals(other.buf)) return false;
+		else if(!buf.toString().equals(other.buf == null ? null : other.buf.toString())) return false;
 		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((buf == null) ? 0 : buf.hashCode());
-		return result;
+		return (buf == null) ? 0 : 31 + buf.toString().hashCode();
 	}
 
 	@Override
