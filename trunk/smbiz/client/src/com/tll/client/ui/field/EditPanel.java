@@ -59,7 +59,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private FieldGroupPanel fieldGroupPanel;
+	private final FieldGroupPanel fieldGroupPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -72,12 +72,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
+	 * @param fieldGroupPanel The field group panel
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldGroupPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
 		// hide the button row until initialized
@@ -110,20 +111,10 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		panel.add(portal);
 		panel.add(pnlButtonRow);
 		initWidget(panel);
-		setStyleName(STYLE_ENTITY_EDIT);
-	}
 
-	/**
-	 * Constructor
-	 * @param fieldGroupPanel The panel containing the desired fields for edit.
-	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
-	 *        when clicked.
-	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
-	 *        when clicked.
-	 */
-	public EditPanel(FieldGroupPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
-		this(showCancelBtn, showDeleteBtn);
-		setFieldGroupPanel(fieldGroupPanel);
+		setStyleName(STYLE_ENTITY_EDIT);
+		this.fieldGroupPanel = fieldGroupPanel;
+		portal.setWidget(fieldGroupPanel);
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -132,23 +123,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	public void removeEditListener(IEditListener listener) {
 		editListeners.remove(listener);
-	}
-
-	public FieldGroupPanel getFieldGroupPanel() {
-		return fieldGroupPanel;
-	}
-
-	/**
-	 * Sets or replaces the {@link FieldGroupPanel}.
-	 * @param fieldGroupPanel The field group panel to employ for editing
-	 */
-	public void setFieldGroupPanel(FieldGroupPanel fieldGroupPanel) {
-		if(this.fieldGroupPanel != null && this.fieldGroupPanel == fieldGroupPanel) return;
-		if(fieldGroupPanel == null) {
-			throw new IllegalArgumentException("A field panel must be specified.");
-		}
-		this.fieldGroupPanel = fieldGroupPanel;
-		portal.setWidget(fieldGroupPanel);
 	}
 
 	@Override
