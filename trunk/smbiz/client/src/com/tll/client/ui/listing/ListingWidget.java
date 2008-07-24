@@ -175,8 +175,8 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		if(navBar != null) navBar.decrement();
 	}
 
-	public final void markRowDeleted(int rowIndex) {
-		table.markRowDeleted(rowIndex);
+	public final void markRowDeleted(int rowIndex, boolean markDeleted) {
+		table.markRowDeleted(rowIndex, markDeleted);
 	}
 
 	public final int getTabIndex() {

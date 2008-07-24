@@ -69,7 +69,7 @@ public final class ModelListingWidget extends ListingWidget<Model> implements IM
 				int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					markRowDeleted(rowIndex);
+					markRowDeleted(rowIndex, true);
 				}
 				break;
 			}

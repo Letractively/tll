@@ -75,6 +75,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	}
 
 	private void clearOptions() {
+		crntIndx = -1;
 		for(Option option : options) {
 			removeOption(option, false);
 		}

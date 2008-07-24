@@ -478,10 +478,15 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 	/**
 	 * Marks a row as deleted but does not actually remove the table row.
 	 * @param rowIndex The index of the row to mark deleted
+	 * @param markDeleted Toggle on whether or not to mark or un-mark a row as
+	 *        deleted
 	 */
-	void markRowDeleted(int rowIndex) {
+	void markRowDeleted(int rowIndex, boolean markDeleted) {
 		assert rowIndex >= 1 : "Can't delete the header row";
-		getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
+		if(markDeleted)
+			getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
+		else
+			getRowFormatter().removeStyleName(rowIndex, CSS_DELETED);
 	}
 
 	private int getPageRowNum(int rowIndex) {

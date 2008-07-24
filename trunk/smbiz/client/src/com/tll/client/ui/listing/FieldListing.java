@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.App;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.type.EditEvent;
@@ -33,6 +34,7 @@ import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.Dialog;
+import com.tll.client.ui.Option;
 import com.tll.client.ui.field.DelegatingFieldGroupPanel;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -54,18 +56,23 @@ public final class FieldListing extends Composite implements IEditListener {
 		/**
 		 * The field row data.
 		 */
-		private final IField[] arr;
+		final IField[] arr;
 
 		/**
 		 * The row index (the numeric index contained w/in the
 		 * {@link #indexedPropertyPath}.
 		 */
-		private final int rowIndex;
+		final int rowIndex;
 
 		/**
 		 * Is this row data unbound?
 		 */
-		private final boolean unbound;
+		final boolean unbound;
+
+		/**
+		 * Is this row marked as deleted?
+		 */
+		boolean markedDeleted;
 
 		/**
 		 * Constructor
@@ -79,18 +86,6 @@ public final class FieldListing extends Composite implements IEditListener {
 			this.rowIndex = rowIndex;
 			this.unbound = unbound;
 		}
-
-		public IField[] getArr() {
-			return arr;
-		}
-
-		public int getRowIndex() {
-			return rowIndex;
-		}
-
-		public boolean isUnbound() {
-			return unbound;
-		}
 	}
 
 	/**
@@ -99,7 +94,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	private static final ITableCellRenderer<FieldRow> cellRenderer = new ITableCellRenderer<FieldRow>() {
 
 		public String getCellValue(FieldRow rowData, Column column) {
-			for(IField field : rowData.getArr()) {
+			for(IField field : rowData.arr) {
 				if(field.getPropertyName().endsWith(column.getPropertyName())) {
 					return field.getValue();
 				}
@@ -108,7 +103,9 @@ public final class FieldListing extends Composite implements IEditListener {
 		}
 	};
 
-	private final AbstractRowOptions rowOptions = new AbstractRowOptions() {
+	private final IRowOptionsDelegate rowOptions = new AbstractRowOptions() {
+
+		private Option[] customRowOps;
 
 		@Override
 		protected String getListingElementName() {
@@ -116,11 +113,26 @@ public final class FieldListing extends Composite implements IEditListener {
 		}
 
 		@Override
+		protected boolean isStaticOptions() {
+			return false;
+		}
+
+		@Override
+		protected boolean isRowDeletable(int rowIndex) {
+			return !rowData.get(rowIndex - 1).markedDeleted;
+		}
+
+		@Override
+		protected boolean isRowEditable(int rowIndex) {
+			return isRowDeletable(rowIndex);
+		}
+
+		@Override
 		protected void doEditRow(int rowIndex) {
 			// calculate the target property path and retain in for use in handling
 			// ensuing edit event
 			FieldRow fr = rowData.get(rowIndex - 1);
-			editPropertyPath = new PropertyPath(indexablePropertyPath, rowIndex - 1, fr.isUnbound());
+			editPropertyPath = new PropertyPath(indexablePropertyPath, rowIndex - 1, fr.unbound);
 
 			// extract the target fields and create a separate edit field group
 			Set<IField> fields = fieldGroup.getFields(editPropertyPath.toString());
@@ -141,8 +153,8 @@ public final class FieldListing extends Composite implements IEditListener {
 		@Override
 		protected void doDeleteRow(int rowIndex) {
 			FieldRow fr = rowData.get(rowIndex - 1);
-			PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, fr.isUnbound());
-			if(fr.isUnbound()) {
+			PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, fr.unbound);
+			if(fr.unbound) {
 				// new entity
 				fieldGroup.removeFields(fieldGroup.getFields(pp.toString()));
 				refresh();
@@ -150,7 +162,33 @@ public final class FieldListing extends Composite implements IEditListener {
 			else {
 				// existing entity
 				fieldGroup.addPendingDelete(pp.toString());
-				listing.markRowDeleted(rowIndex);
+				listing.markRowDeleted(rowIndex, true);
+				fr.markedDeleted = true;
+			}
+		}
+
+		@Override
+		protected Option[] getCustomRowOps(int rowIndex) {
+			if(isRowDeletable(rowIndex)) return null;
+			if(customRowOps == null) {
+				customRowOps = new Option[] { new Option("Un-Delete " + listingElementName, App.imgs().warn().createImage()) };
+			}
+			return customRowOps;
+		}
+
+		@Override
+		protected void handleRowOp(String optionText, int rowIndex) {
+			if(optionText.startsWith("Un-Delete ")) {
+
+				FieldRow fr = rowData.get(rowIndex - 1);
+				assert fr.markedDeleted == true && fr.unbound == false;
+
+				PropertyPath pp = new PropertyPath(indexablePropertyPath, fr.rowIndex, fr.unbound);
+
+				// existing entity
+				fieldGroup.removePendingDelete(pp.toString());
+				listing.markRowDeleted(rowIndex, false);
+				fr.markedDeleted = false;
 			}
 		}
 	};
@@ -249,8 +287,7 @@ public final class FieldListing extends Composite implements IEditListener {
 
 		fieldGroupPanel = new DelegatingFieldGroupPanel(listingElementName, fieldGroup, fieldRenderer);
 
-		editPanel = new EditPanel(true, false);
-		editPanel.setFieldGroupPanel(fieldGroupPanel);
+		editPanel = new EditPanel(fieldGroupPanel, true, false);
 		editPanel.addEditListener(this);
 
 		dialog = new Dialog(null, false);
