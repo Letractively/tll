@@ -20,12 +20,12 @@ public final class EntityOptions implements IMarshalable {
 	/**
 	 * Collection of entity types as {@link String}s
 	 */
-	private final Set<EntityType> relatedRequests = new HashSet<EntityType>();
+	private Set<EntityType> relatedRequests = new HashSet<EntityType>();
 
 	/**
 	 * Collection of entity types as {@link String}s
 	 */
-	private final Set<EntityType> relatedRefRequests = new HashSet<EntityType>();
+	private Set<EntityType> relatedRefRequests = new HashSet<EntityType>();
 
 	/**
 	 * Instructs the server to provide the related entity type ref for a CRUD load
