@@ -113,21 +113,6 @@ public final class FieldListing extends Composite implements IEditListener {
 		}
 
 		@Override
-		protected boolean isStaticOptions() {
-			return false;
-		}
-
-		@Override
-		protected boolean isRowDeletable(int rowIndex) {
-			return !rowData.get(rowIndex - 1).markedDeleted;
-		}
-
-		@Override
-		protected boolean isRowEditable(int rowIndex) {
-			return isRowDeletable(rowIndex);
-		}
-
-		@Override
 		protected void doEditRow(int rowIndex) {
 			// calculate the target property path and retain in for use in handling
 			// ensuing edit event
