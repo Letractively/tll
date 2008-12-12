@@ -1,0 +1,42 @@
+<module>
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.i18n.I18N" />
+
+	<inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+	<!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+
+	<source>
+		<include name="util/DateRange.java" />
+		<include name="util/IDescriptorProvider.java" />
+		<include name="util/INameValueProvider.java" />
+		<include name="model/schema/PropertyType.java" />
+		<include name="model/schema/ISchemaProperty.java" />
+		<include name="model/schema/AbstractSchemaProperty.java" />
+		<include name="model/schema/PropertyMetadata.java" />
+		<include name="model/EntityType.java" />
+		<include name="model/impl/AccountStatus.java" />
+		<include name="model/impl/AddressType.java" />
+		<include name="model/impl/CreditCardType.java" />
+		<include name="criteria/CriteriaType.java" />
+		<include name="criteria/SelectNamedQuery.java" />
+		<include name="criteria/IQueryParam.java" />
+		<include name="listhandler/ListHandlerType.java" />
+		<include name="listhandler/SortDir.java" />
+		<include name="listhandler/SortColumn.java" />
+		<include name="listhandler/Sorting.java" />
+		<include name="service/app/RefDataType.java" />
+	</source>
+
+  <replace-with class="com.tll.client.cache.CookieStorage.CookieConstants">
+    <when-type-is class="com.tll.client.cache.CookieStorage.CookieConstantsIE6" />
+    <when-property-is name="user.agent" value="ie6" />
+  </replace-with>
+  
+	<replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
+		<when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
+		<any>
+			<when-property-is name="user.agent" value="ie6" />
+		</any>
+	</replace-with>
+
+</module>

@@ -1,0 +1,22 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-test-shell">
+  
+  <test verbose="6" name="shell-test" annotations="JDK">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="client-model" />
+      </run>
+    </groups>
+    <!-- 
+    <packages>
+      <package name="com.tll.listhandler" />
+    </packages>
+    -->
+    <classes>
+      <class name="com.tll.client.model.PropertyPathTest" />
+    </classes>
+  </test>
+	
+</suite>
