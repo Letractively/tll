@@ -3,7 +3,7 @@
  */
 package com.tll.client.model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.tll.model.schema.PropertyMetadata;
@@ -15,7 +15,7 @@ import com.tll.model.schema.PropertyType;
  */
 public class StringMapPropertyValue extends AbstractPropertyValue {
 
-	private Map<String, String> map;
+	private LinkedHashMap<String, String> map;
 
 	/**
 	 * Constructor
@@ -32,7 +32,7 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	 */
 	public StringMapPropertyValue(String name, PropertyMetadata metadata, Map<String, String> map) {
 		super(name, metadata);
-		this.map = map;
+		setStringMap(map);
 	}
 
 	public PropertyType getType() {
@@ -46,7 +46,8 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new StringMapPropertyValue(getPropertyName(), null, map == null ? null : new HashMap<String, String>(map));
+		return new StringMapPropertyValue(getPropertyName(), null, map == null ? null : new LinkedHashMap<String, String>(
+				map));
 	}
 
 	public final Object getValue() {
@@ -66,6 +67,9 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 	}
 
 	public void setStringMap(Map<String, String> map) {
-		this.map = map;
+		if(this.map == null) {
+			this.map = new LinkedHashMap<String, String>();
+		}
+		this.map.putAll(map);
 	}
 }
