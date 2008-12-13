@@ -195,7 +195,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			return getSelfRef();
 		}
 		try {
-			return resolvePropertyPath(propPath).getModelProperty();
+			return resolvePropertyPath(propPath);
 		}
 		catch(NullNodeInPropPathException e) {
 			return null;
@@ -331,13 +331,13 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws PropertyPathException When an error occurrs whilst resolving the
 	 *         property path
 	 */
-	private PropPathBinding resolvePropertyPath(final PropertyPath propPath) throws PropertyPathException {
+	private IModelProperty resolvePropertyPath(final PropertyPath propPath) throws PropertyPathException {
 		if(propPath == null || propPath.depth() < 1) {
 			throw new MalformedPropPathException("No property specified.");
 		}
 
 		IModelProperty prop = null;
-		Model model = this, parentModel = null;
+		Model model = this;
 		final int len = propPath.depth();
 		for(int i = 0; i < len; i++) {
 			final String pname = propPath.nameAt(i);
@@ -349,7 +349,8 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			prop = model.get(pname);
 			if(prop == null) {
 				if(atEnd) {
-					return new UnsetPropPathBinding(model, propPath);
+					throw new UnsetPropertyException(propPath.toString());
+					// return new UnsetPropPathBinding(model, propPath);
 				}
 				throw new NullNodeInPropPathException(propPath.toString(), pname);
 			}
@@ -362,7 +363,9 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				if(!atEnd) {
 					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(), "Relational");
 				}
-				return new PropertyValuePropPathBinding(propPath, (AbstractPropertyValue) prop);
+				// return new PropertyValuePropPathBinding(propPath,
+				// (AbstractPropertyValue) prop);
+				return prop;
 			}
 
 			// related one prop val
@@ -371,17 +374,17 @@ public final class Model implements IData, Iterable<IModelProperty> {
 					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(),
 							PropertyType.RELATED_MANY.toString());
 				}
-				ModelRefProperty gpv = (ModelRefProperty) prop;
+				ModelRefProperty mrp = (ModelRefProperty) prop;
 				if(atEnd) {
-					return new RelatedOnePropPathBinding(parentModel, propPath, gpv);
+					// return new RelatedOnePropPathBinding(parentModel, propPath, gpv);
+					return new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
 				}
 				// get the nested group...
-				Model ng = gpv.getModel();
+				Model ng = mrp.getModel();
 				if(ng == null) {
 					throw new NullNodeInPropPathException(propPath.toString(), pname);
 				}
 				// reset for next path
-				parentModel = model;
 				model = ng;
 			}
 
@@ -390,7 +393,8 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(!indexed) {
 					if(atEnd) {
-						return new IndexablePropPathBinding(parentModel, propPath, rmp);
+						// return new IndexablePropPathBinding(parentModel, propPath, rmp);
+						return rmp;
 					}
 					// and index is expected if were not at the end
 					throw new MalformedPropPathException(propPath.toString());
@@ -404,19 +408,89 @@ public final class Model implements IData, Iterable<IModelProperty> {
 						rmp.setList(nlist);
 					}
 					if(atEnd) {
-						return new IndexedPropPathBinding(parentModel, propPath, rmp.isReference(), rmp.getRelatedType(), nlist,
-								index);
+						if(index >= nlist.size()) {
+							throw new UnsetPropertyException(propPath.toString());
+						}
+						Model ng = nlist.get(index);
+						return new IndexedProperty(rmp.getRelatedType(), propPath.nameAt(propPath.depth() - 1), rmp.isReference(),
+								ng, index);
+						// return new IndexedPropPathBinding(parentModel, propPath,
+						// rmp.isReference(), rmp.getRelatedType(), nlist,
+						// index);
 					}
 					if(index >= nlist.size()) {
 						throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
 					}
 					// reset for next path
-					parentModel = model;
 					model = nlist.get(index);
 				}
 			}
 		}
 		throw new MalformedPropPathException(propPath.toString());
+	}
+
+	/**
+	 * PropBinding
+	 * @author jpk
+	 */
+	static class PropBinding {
+
+		Model model;
+
+		/**
+		 * Constructor
+		 */
+		PropBinding() {
+			super();
+		}
+
+		/**
+		 * Constructor
+		 * @param model
+		 */
+		PropBinding(Model model) {
+			super();
+			this.model = model;
+		}
+	}
+
+	/**
+	 * CopyBinding - Used for deep copying {@link Model} instances.
+	 * @author jpk
+	 */
+	static final class CopyBinding extends PropBinding {
+
+		Model target;
+
+		/**
+		 * Constructor
+		 * @param source
+		 * @param target
+		 */
+		CopyBinding(Model source, Model target) {
+			super(source);
+			this.target = target;
+		}
+	}
+
+	/**
+	 * BindingStack
+	 * @author jpk
+	 */
+	@SuppressWarnings("serial")
+	static final class BindingStack<B extends PropBinding> extends ArrayList<B> {
+
+		/**
+		 * Locates an {@link Binding} given a model ref.
+		 * @param model The sought model in this list of bindings
+		 * @return The containing binding or <code>null</code> if not present.
+		 */
+		PropBinding find(final Model model) {
+			for(final PropBinding b : this) {
+				if(b.model == model) return b;
+			}
+			return null;
+		}
 	}
 
 	/**
