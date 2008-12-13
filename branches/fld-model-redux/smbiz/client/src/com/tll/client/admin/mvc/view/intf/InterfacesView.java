@@ -147,7 +147,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp().isSave()) {
-					if(editPanel.getFields().updateModel(model.getBindingRef())) {
+					if(editPanel.getFields().updateModel(model.getSelfRef())) {
 						modelChangeHandler.handleModelPersist(model);
 					}
 				}
@@ -169,7 +169,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 						editPanel.setVisible(true);
 						// NOTE: we fall through
 					case UPDATED:
-						editPanel.getFields().bindModel(model.getBindingRef());
+						editPanel.getFields().bindModel(model.getSelfRef());
 						editPanel.setEditMode(model.isNew());
 						break;
 

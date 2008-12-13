@@ -25,7 +25,7 @@ import com.tll.client.model.CharacterPropertyValue;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
 import com.tll.client.model.FloatPropertyValue;
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.LongPropertyValue;
 import com.tll.client.model.Model;
@@ -158,12 +158,12 @@ public final class Marshaler {
 	 * @param pname The property name
 	 * @param obj The value. May be <code>null</code>.
 	 * @param metadata The property meta data. May be <code>null</code>.
-	 * @return new IPropertyBinding instance or <code>null</code> if the given
+	 * @return new IModelProperty instance or <code>null</code> if the given
 	 *         property type does NOT corres. to a rudimentary property value.
 	 */
-	private IPropertyBinding createPropertyValueBinding(final Class<?> ptype, final String pname, final Object obj,
+	private IModelProperty createModelProperty(final Class<?> ptype, final String pname, final Object obj,
 			final PropertyMetadata pdata) {
-		IPropertyBinding prop = null;
+		IModelProperty prop = null;
 
 		if(String.class.isAssignableFrom(ptype)) {
 			prop = new StringPropertyValue(pname, pdata, (String) obj);
@@ -290,7 +290,7 @@ public final class Marshaler {
 
 			final PropertyMetadata pdata = generatePropertyData(entityClass, pname);
 
-			IPropertyBinding prop = createPropertyValueBinding(ptype, pname, obj, pdata);
+			IModelProperty prop = createModelProperty(ptype, pname, obj, pdata);
 
 			if(prop == null) {
 				// related one
@@ -372,7 +372,7 @@ public final class Marshaler {
 			final Object obj = tupleMap.get(pname);
 			// NOTE: if we have a null tuple value, then default the type to String!
 			final Class<?> ptype = obj == null ? String.class : obj.getClass();
-			final IPropertyBinding prop = createPropertyValueBinding(ptype, pname, obj, null);
+			final IModelProperty prop = createModelProperty(ptype, pname, obj, null);
 			if(prop != null) {
 				model.set(prop);
 			}
@@ -437,7 +437,7 @@ public final class Marshaler {
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
 
 		for(final Iterator itr = entityGroup.iterator(); itr.hasNext();) {
-			final IPropertyBinding prop = (IPropertyBinding) itr.next();
+			final IModelProperty prop = (IModelProperty) itr.next();
 			String propName = prop.getPropertyName();
 			final Object pval = prop.getValue();
 			Object val = null;

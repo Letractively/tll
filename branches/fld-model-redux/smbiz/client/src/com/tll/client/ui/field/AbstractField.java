@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.HasFormat;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
@@ -395,7 +395,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		setValue(null);
 	}
 
-	public final void bindModel(IPropertyBinding binding) {
+	public final void bindModel(IModelProperty binding) {
 		if(binding instanceof IPropertyValue == false)
 			throw new IllegalArgumentException("Non-group fields may only bind to property values.");
 		final IPropertyValue pv = (IPropertyValue) binding;
@@ -479,7 +479,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		reset();
 	}
 
-	public boolean updateModel(IPropertyBinding binding) {
+	public boolean updateModel(IModelProperty binding) {
 		if(binding instanceof IPropertyValue == false)
 			throw new IllegalArgumentException("Non-group fields may only update model property values.");
 
@@ -580,7 +580,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	/**
 	 * This is when we perform actual field validation and retain the validated
 	 * model value for later application when
-	 * {@link #updateModel(IPropertyBinding)} is called.
+	 * {@link #updateModel(IModelProperty)} is called.
 	 */
 	public final void onLostFocus(Widget sender) {
 		final String currentValue = getValue();

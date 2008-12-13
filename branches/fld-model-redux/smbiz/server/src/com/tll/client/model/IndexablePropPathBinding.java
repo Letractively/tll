@@ -25,7 +25,7 @@ final class IndexablePropPathBinding extends PropPathBinding {
 	}
 
 	@Override
-	IPropertyBinding getPropertyBinding() throws UnsetPropertyException {
+	IModelProperty getModelProperty() throws UnsetPropertyException {
 		if(rmpv == null) {
 			throw new UnsetPropertyException(propPath.toString());
 		}

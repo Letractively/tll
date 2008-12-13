@@ -15,11 +15,11 @@ import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
- * Model - Encapsulates a set of {@link IPropertyBinding}s. This construct
- * serves to represent an entity instance object graph on the client.
+ * Model - Encapsulates a set of {@link IModelProperty}s. This construct serves
+ * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IData, Iterable<IPropertyBinding> {
+public final class Model implements IData, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -52,7 +52,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	/**
 	 * Set of {@link IPropertyValue}s holding the actual model data.
 	 */
-	private Set<IPropertyBinding> props = new HashSet<IPropertyBinding>();
+	private Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The entity type.
@@ -60,15 +60,16 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	private EntityType entityType;
 
 	/**
-	 * The marked deleted flag. When <code>true</code>, this indicates this
-	 * model data is scheduled for deletion.
+	 * The marked deleted flag. When <code>true</code>, this indicates this model
+	 * data is scheduled for deletion.
 	 */
 	private boolean markedDeleted;
 
 	/**
-	 * IPropertyBinding ref to this Model that is lazily instantiated
+	 * Ref to self (this {@link Model}) that is lazily instantiated and is exists
+	 * to be able to pass a {@link Model} ref as an {@link IModelProperty}.
 	 */
-	private RelatedOneProperty bindingRef;
+	private RelatedOneProperty selfRef;
 
 	/**
 	 * Constructor
@@ -94,18 +95,17 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	}
 
 	/**
-	 * Provides the <em>unique</em> {@link RefKey} for this model/entity
-	 * instance.
+	 * Provides the <em>unique</em> {@link RefKey} for this model/entity instance.
 	 */
 	public RefKey getRefKey() {
 		Integer id = null;
-		IPropertyBinding pvId = get(ID_PROPERTY);
+		IModelProperty pvId = get(ID_PROPERTY);
 		if(pvId != null && pvId.getType() == PropertyType.INT) {
 			id = ((IntPropertyValue) pvId).getInteger();
 		}
 
 		String name = null;
-		IPropertyBinding pvName = get(NAME_PROPERTY);
+		IModelProperty pvName = get(NAME_PROPERTY);
 		if(pvName != null && pvName.getType() == PropertyType.STRING) {
 			name = ((StringPropertyValue) pvName).getString();
 		}
@@ -118,13 +118,13 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 
 	/**
 	 * @return Reference to <em>this</em> Model expressed as an
-	 *         {@link IPropertyBinding}.
+	 *         {@link IModelProperty}.
 	 */
-	public RelatedOneProperty getBindingRef() {
-		if(bindingRef == null) {
-			bindingRef = new RelatedOneProperty(getEntityType(), null, true, this);
+	public RelatedOneProperty getSelfRef() {
+		if(selfRef == null) {
+			selfRef = new RelatedOneProperty(getEntityType(), null, true, this);
 		}
-		return bindingRef;
+		return selfRef;
 	}
 
 	/**
@@ -134,9 +134,9 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * @return The found {@link IPropertyValue} or <code>null</code> if not
 	 *         present.
 	 */
-	public IPropertyBinding get(String name) {
+	public IModelProperty get(String name) {
 		if(name == null) return null;
-		for(IPropertyBinding prop : props) {
+		for(IModelProperty prop : props) {
 			if(name.equals(prop.getPropertyName())) return prop;
 		}
 		return null;
@@ -148,9 +148,9 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * mapped to the ascribed property name, it is replaced by the one given.
 	 * @param propValue The replacing {@link IPropertyValue}
 	 */
-	public void set(IPropertyBinding propValue) {
+	public void set(IModelProperty propValue) {
 		if(propValue == null) return;
-		IPropertyBinding prop = get(propValue.getPropertyName());
+		IModelProperty prop = get(propValue.getPropertyName());
 		if(prop != null) {
 			props.remove(prop);
 		}
@@ -167,7 +167,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getBinding(new PropertyPath(propPath));
+		IModelProperty prop = getBinding(new PropertyPath(propPath));
 		if(prop == null) return null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
@@ -176,7 +176,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	}
 
 	/**
-	 * Resolves a property path to the nested {@link IPropertyBinding}. This is a
+	 * Resolves a property path to the nested {@link IModelProperty}. This is a
 	 * generic way to obtain a defined model property.
 	 * <p>
 	 * <strong>NOTE: </strong>When a property path element having no associated
@@ -190,12 +190,12 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * @throws IllegalArgumentException When the given property path is
 	 *         <code>null</code> or mal-formed.
 	 */
-	public IPropertyBinding getBinding(PropertyPath propPath) throws IllegalArgumentException {
+	public IModelProperty getBinding(PropertyPath propPath) throws IllegalArgumentException {
 		if(propPath == null || propPath.length() < 1) {
-			return getBindingRef();
+			return getSelfRef();
 		}
 		try {
-			return resolvePropertyPath(propPath).getPropertyBinding();
+			return resolvePropertyPath(propPath).getModelProperty();
 		}
 		catch(NullNodeInPropPathException e) {
 			return null;
@@ -219,7 +219,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 *         resolved or does not map to an {@link IPropertyValue}.
 	 */
 	public IPropertyValue getValue(PropertyPath propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getBinding(propPath);
+		IModelProperty prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a value property");
@@ -236,7 +236,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 *         resolved or does not map to a related one property.
 	 */
 	public RelatedOneProperty relatedOne(PropertyPath propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getBinding(propPath);
+		IModelProperty prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
@@ -253,7 +253,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(PropertyPath propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getBinding(propPath);
+		IModelProperty prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related many property");
@@ -271,7 +271,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(PropertyPath propPath) throws IllegalArgumentException {
-		IPropertyBinding prop = getBinding(propPath);
+		IModelProperty prop = getBinding(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");
@@ -336,7 +336,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 			throw new MalformedPropPathException("No property specified.");
 		}
 
-		IPropertyBinding prop = null;
+		IModelProperty prop = null;
 		Model model = this, parentModel = null;
 		final int len = propPath.depth();
 		for(int i = 0; i < len; i++) {
@@ -447,7 +447,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 
 		copy.markedDeleted = source.markedDeleted;
 
-		for(IPropertyBinding prop : source.props) {
+		for(IModelProperty prop : source.props) {
 			assert prop != null;
 
 			// related one or indexed prop...
@@ -506,7 +506,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 		// TODO do we want to reset markedDeleted?
 		model.markedDeleted = false;
 
-		for(IPropertyBinding prop : model.props) {
+		for(IModelProperty prop : model.props) {
 			assert prop != null;
 
 			// model prop (relational) val...
@@ -541,7 +541,7 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 	 * @return IPropertyValue Iterator for the referenced property values for this
 	 *         model.
 	 */
-	public Iterator<IPropertyBinding> iterator() {
+	public Iterator<IModelProperty> iterator() {
 		assert props != null;
 		return props.iterator();
 	}
@@ -583,8 +583,8 @@ public final class Model implements IData, Iterable<IPropertyBinding> {
 		}
 
 		sb.append(" props[");
-		for(Iterator<IPropertyBinding> itr = props.iterator(); itr.hasNext();) {
-			IPropertyBinding val = itr.next();
+		for(Iterator<IModelProperty> itr = props.iterator(); itr.hasNext();) {
+			IModelProperty val = itr.next();
 			sb.append(val.toString());
 			if(itr.hasNext()) {
 				sb.append(" ");

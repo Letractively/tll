@@ -51,7 +51,7 @@ class IndexedPropPathBinding extends PropPathBinding {
 	}
 
 	@Override
-	IPropertyBinding getPropertyBinding() throws UnsetPropertyException {
+	IModelProperty getModelProperty() throws UnsetPropertyException {
 		if(ipv == null) {
 			if(index >= list.size()) {
 				throw new UnsetPropertyException(propPath.toString());

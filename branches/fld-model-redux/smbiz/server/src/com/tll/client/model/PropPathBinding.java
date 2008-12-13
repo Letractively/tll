@@ -37,9 +37,10 @@ abstract class PropPathBinding extends PropBinding {
 	}
 
 	/**
-	 * @return The bound property value with <em>no</em> alterations made to the
+	 * @return The bound model property with <em>no</em> alterations made to the
 	 *         model
-	 * @throws UnsetPropertyException When the bound property value is not set (<code>null</code>).
+	 * @throws UnsetPropertyException When the model property is not set (
+	 *         <code>null</code>).
 	 */
-	abstract IPropertyBinding getPropertyBinding() throws UnsetPropertyException;
+	abstract IModelProperty getModelProperty() throws UnsetPropertyException;
 }

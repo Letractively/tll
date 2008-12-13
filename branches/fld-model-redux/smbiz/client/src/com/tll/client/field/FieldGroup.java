@@ -15,8 +15,8 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IModelRefProperty;
-import com.tll.client.model.IPropertyBinding;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -550,9 +550,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			final PropertyPath pp = new PropertyPath();
 			for(String path : group.pendingDeletes) {
 				pp.parse(path);
-				IPropertyBinding binding = model.getBinding(pp);
-				if(binding.getType().isModelRef()) {
-					((IModelRefProperty) binding).getModel().setMarkedDeleted(true);
+				IModelProperty prop = model.getBinding(pp);
+				if(prop.getType().isModelRef()) {
+					((IModelRefProperty) prop).getModel().setMarkedDeleted(true);
 					changed = true;
 				}
 			}
@@ -659,24 +659,24 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Binds a Model to this group.
 	 * @param propPathOffset Property path node index representing the parent
 	 *        property path offset that is applied to all non-group child IFields.
-	 * @param modelref The Model binding ref property
+	 * @param modelref The model ref property
 	 */
 	public void bindModel(int propPathOffset, IModelRefProperty modelref) {
 		bindModel(propPathOffset, this, modelref.getModel());
 	}
 
-	public void bindModel(IPropertyBinding binding) {
-		if(binding instanceof IModelRefProperty == false) {
+	public void bindModel(IModelProperty prop) {
+		if(prop instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
 		}
-		bindModel(0, (IModelRefProperty) binding);
+		bindModel(0, (IModelRefProperty) prop);
 	}
 
-	public boolean updateModel(IPropertyBinding binding) {
-		if(binding instanceof IModelRefProperty == false) {
+	public boolean updateModel(IModelProperty prop) {
+		if(prop instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
 		}
-		return updateModel(this, ((IModelRefProperty) binding).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
+		return updateModel(this, ((IModelRefProperty) prop).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
 	}
 
 	public void addValidator(IValidator validator) {

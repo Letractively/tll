@@ -10,7 +10,7 @@ import com.tll.model.EntityType;
  * relational.
  * @author jpk
  */
-public abstract class AbstractRelationalProperty extends AbstractPropertyBinding implements IRelationalProperty {
+public abstract class AbstractRelationalProperty extends AbstractModelProperty implements IRelationalProperty {
 
 	/**
 	 * The related type.

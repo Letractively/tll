@@ -193,7 +193,7 @@ public final class FieldListing extends Composite implements IEditListener {
 			// apply model metadata to the target fields
 			Model newEntity = AuxDataCache.instance().getEntityPrototype(entityType);
 			assert newEntity != null;
-			addGroup.bindModel(newEntity.getBindingRef());
+			addGroup.bindModel(newEntity.getSelfRef());
 
 			fieldGroupPanel.setParentPropertyPath(null);
 			fieldGroupPanel.draw();

@@ -22,7 +22,7 @@ final class UnsetPropPathBinding extends PropPathBinding {
 	}
 
 	@Override
-	IPropertyValue getPropertyBinding() throws UnsetPropertyException {
+	IPropertyValue getModelProperty() throws UnsetPropertyException {
 		throw new UnsetPropertyException(propPath.toString());
 	}
 }

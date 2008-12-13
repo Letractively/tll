@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.TestBase;
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.dao.DaoMode;
@@ -154,9 +154,9 @@ public class MarshalerTest extends TestBase {
 		assert marshaler != null;
 		final Model model = marshaler.marshalScalar(scalar, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
-		final Iterator<IPropertyBinding> itr = model.iterator();
+		final Iterator<IModelProperty> itr = model.iterator();
 		while(itr.hasNext()) {
-			final IPropertyBinding prop = itr.next();
+			final IModelProperty prop = itr.next();
 			assert prop != null;
 			final Object val = tupleMap.get(prop.getPropertyName());
 			assert val != null;

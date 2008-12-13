@@ -5,7 +5,7 @@
  */
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.model.IEntity;
@@ -48,7 +48,7 @@ public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler
 		Model xgrp = new Model(model.getEntityType());
 		for(int i = 0; i < numCols; i++) {
 			pp.parse(propKeys[i]);
-			IPropertyBinding prop = model.getBinding(pp);
+			IModelProperty prop = model.getBinding(pp);
 			xgrp.set(prop);
 		}
 		return xgrp;

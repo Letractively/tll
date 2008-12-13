@@ -5,7 +5,7 @@
  */
 package com.tll.client.field;
 
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -43,7 +43,7 @@ public class DataField implements IField {
 		throw new UnsupportedOperationException();
 	}
 
-	public void bindModel(IPropertyBinding binding) {
+	public void bindModel(IModelProperty binding) {
 		// value = binding.getValue();
 		// no-op
 	}
@@ -104,7 +104,7 @@ public class DataField implements IField {
 		// no-op
 	}
 
-	public boolean updateModel(IPropertyBinding binding) {
+	public boolean updateModel(IModelProperty binding) {
 		IPropertyValue pv = (IPropertyValue) binding;
 		pv.setValue(value);
 		return true;

@@ -12,7 +12,7 @@ import com.tll.model.schema.PropertyMetadata;
  * AbstractPropertyValue
  * @author jpk
  */
-public abstract class AbstractPropertyValue extends AbstractPropertyBinding implements IPropertyValue, IQueryParam {
+public abstract class AbstractPropertyValue extends AbstractModelProperty implements IPropertyValue, IQueryParam {
 
 	/**
 	 * The optional property meta data.

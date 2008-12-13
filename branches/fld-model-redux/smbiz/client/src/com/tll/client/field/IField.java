@@ -4,7 +4,7 @@
  */
 package com.tll.client.field;
 
-import com.tll.client.model.IPropertyBinding;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -103,16 +103,16 @@ public interface IField extends IPropertyNameProvider {
 
 	/**
 	 * Binds model data to this field.
-	 * @param binding The model to bind.
+	 * @param prop The model to bind.
 	 */
-	void bindModel(IPropertyBinding binding);
+	void bindModel(IModelProperty prop);
 
 	/**
 	 * Updates the given model.
-	 * @param binding The model to update.
+	 * @param prop The model to update.
 	 * @return <code>true</code> if the model was successfully altered.
 	 */
-	boolean updateModel(IPropertyBinding binding);
+	boolean updateModel(IModelProperty prop);
 
 	/**
 	 * Adds a validator to the field.

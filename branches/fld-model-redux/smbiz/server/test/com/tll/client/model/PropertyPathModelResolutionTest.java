@@ -32,7 +32,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 	 */
 	@Test
 	public void testResolution() throws Exception {
-		IPropertyBinding prop;
+		IModelProperty prop;
 		PropertyPath path = new PropertyPath();
 		Model model;
 

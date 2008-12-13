@@ -9,10 +9,10 @@ import com.tll.client.IMarshalable;
 import com.tll.model.schema.PropertyType;
 
 /**
- * IPropertyBinding - Represents a single model property.
+ * IModelProperty - Represents a single model property.
  * @author jpk
  */
-public interface IPropertyBinding extends IPropertyNameProvider, IMarshalable {
+public interface IModelProperty extends IPropertyNameProvider, IMarshalable {
 
 	/**
 	 * @return The property type.

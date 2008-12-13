@@ -5,10 +5,10 @@
 package com.tll.client.model;
 
 /**
- * AbstractPropertyBinding
+ * AbstractModelProperty
  * @author jpk
  */
-public abstract class AbstractPropertyBinding implements IPropertyBinding {
+public abstract class AbstractModelProperty implements IModelProperty {
 
 	/**
 	 * The property name.
@@ -18,7 +18,7 @@ public abstract class AbstractPropertyBinding implements IPropertyBinding {
 	/**
 	 * Constructor
 	 */
-	public AbstractPropertyBinding() {
+	public AbstractModelProperty() {
 		super();
 	}
 
@@ -26,7 +26,7 @@ public abstract class AbstractPropertyBinding implements IPropertyBinding {
 	 * Constructor
 	 * @param propertyName
 	 */
-	protected AbstractPropertyBinding(String propertyName) {
+	protected AbstractModelProperty(String propertyName) {
 		super();
 		this.propertyName = propertyName;
 	}
@@ -52,7 +52,7 @@ public abstract class AbstractPropertyBinding implements IPropertyBinding {
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		final AbstractPropertyBinding other = (AbstractPropertyBinding) obj;
+		final AbstractModelProperty other = (AbstractModelProperty) obj;
 		if(propertyName == null) {
 			if(other.propertyName != null) return false;
 		}

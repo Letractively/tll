@@ -268,7 +268,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 			if(aaproto == null) throw new IllegalStateException();
 			// NOTE: we need a property path offset here since the fields' property
 			// paths are relative to ACCOUNT!
-			aap.getFieldGroup().bindModel(1, aaproto.getBindingRef());
+			aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
 
 			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
 					: selTabIndx);

@@ -26,7 +26,7 @@ class PropertyValuePropPathBinding extends PropPathBinding {
 	}
 
 	@Override
-	IPropertyValue getPropertyBinding() throws UnsetPropertyException {
+	IPropertyValue getModelProperty() throws UnsetPropertyException {
 		if(rpv == null) {
 			throw new UnsetPropertyException(propPath.toString());
 		}

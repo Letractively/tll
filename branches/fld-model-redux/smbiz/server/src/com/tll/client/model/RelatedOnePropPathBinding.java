@@ -30,7 +30,7 @@ final class RelatedOnePropPathBinding extends PropPathBinding {
 	}
 
 	@Override
-	IPropertyBinding getPropertyBinding() throws UnsetPropertyException {
+	IModelProperty getModelProperty() throws UnsetPropertyException {
 		if(mpv == null) {
 			throw new UnsetPropertyException(propPath.toString());
 		}

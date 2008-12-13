@@ -140,7 +140,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		}
 		else if(!modelChangeHandler.handleAuxDataFetch()) {
 			editPanel.setEditMode(model.isNew());
-			editPanel.getFields().bindModel(model.getBindingRef());
+			editPanel.getFields().bindModel(model.getSelfRef());
 		}
 	}
 
@@ -156,7 +156,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 				break;
 			case ADD:
 			case UPDATE:
-				if(editPanel.getFields().updateModel(model.getBindingRef())) {
+				if(editPanel.getFields().updateModel(model.getSelfRef())) {
 					modelChangeHandler.handleModelPersist(model);
 				}
 				break;
