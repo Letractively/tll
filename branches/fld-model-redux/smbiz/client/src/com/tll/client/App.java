@@ -56,11 +56,11 @@ public abstract class App {
 		theBusyPanel.removeFromParent();
 	}
 
-	public static void darkenGlassPanel() {
+	public static void darkenBusyPanel() {
 		theBusyPanel.setOpacity(60);
 	}
 
-	public static void lightenGlassPanel() {
+	public static void lightenBusyPanel() {
 		theBusyPanel.setOpacity(20);
 	}
 
