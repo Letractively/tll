@@ -350,7 +350,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			if(prop == null) {
 				if(atEnd) {
 					throw new UnsetPropertyException(propPath.toString());
-					// return new UnsetPropPathBinding(model, propPath);
 				}
 				throw new NullNodeInPropPathException(propPath.toString(), pname);
 			}
@@ -363,8 +362,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				if(!atEnd) {
 					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(), "Relational");
 				}
-				// return new PropertyValuePropPathBinding(propPath,
-				// (AbstractPropertyValue) prop);
 				return prop;
 			}
 
@@ -376,7 +373,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				}
 				ModelRefProperty mrp = (ModelRefProperty) prop;
 				if(atEnd) {
-					// return new RelatedOnePropPathBinding(parentModel, propPath, gpv);
 					return new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
 				}
 				// get the nested group...
@@ -393,7 +389,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(!indexed) {
 					if(atEnd) {
-						// return new IndexablePropPathBinding(parentModel, propPath, rmp);
 						return rmp;
 					}
 					// and index is expected if were not at the end
@@ -409,17 +404,11 @@ public final class Model implements IData, Iterable<IModelProperty> {
 					}
 					if(atEnd) {
 						if(index >= nlist.size()) {
-							throw new UnsetPropertyException(propPath.toString());
+							throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
 						}
 						Model ng = nlist.get(index);
 						return new IndexedProperty(rmp.getRelatedType(), propPath.nameAt(propPath.depth() - 1), rmp.isReference(),
 								ng, index);
-						// return new IndexedPropPathBinding(parentModel, propPath,
-						// rmp.isReference(), rmp.getRelatedType(), nlist,
-						// index);
-					}
-					if(index >= nlist.size()) {
-						throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
 					}
 					// reset for next path
 					model = nlist.get(index);
