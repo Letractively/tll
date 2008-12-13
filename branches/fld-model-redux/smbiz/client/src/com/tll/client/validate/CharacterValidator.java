@@ -5,7 +5,7 @@ package com.tll.client.validate;
 
 /**
  * CharacterValidator
- * @author jkirton
+ * @author jpk
  */
 public class CharacterValidator implements IValidator {
 

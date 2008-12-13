@@ -22,8 +22,7 @@ public class CompositeValidator implements IValidator {
 	 * @return this
 	 */
 	public CompositeValidator add(IValidator validator) {
-		// ensure distinct
-		if(validators.indexOf(validator) < 0) validators.add(validator);
+		validators.add(validator);
 		return this;
 	}
 
