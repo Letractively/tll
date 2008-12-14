@@ -10,7 +10,7 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.model.IData;
 
 /**
- * DataListingWidget - Listing that lists artitrary data. May be extended to
+ * DataListingWidget - Listing that lists arbitrary data. May be extended to
  * handle say model change events.
  * @author jpk
  */

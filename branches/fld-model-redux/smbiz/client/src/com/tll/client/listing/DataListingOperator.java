@@ -13,8 +13,8 @@ import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
- * DataCollectionListingOperator - {@link IListingOperator} based on an existing
- * collection of listing elements of arbitrary type.
+ * DataListingOperator - {@link IListingOperator} based on an existing
+ * collection of data elements.
  * @author jpk
  */
 // TODO implemenet sorting!!!
