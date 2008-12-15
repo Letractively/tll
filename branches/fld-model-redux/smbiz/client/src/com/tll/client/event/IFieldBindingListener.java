@@ -3,14 +3,13 @@
  * @author jpk
  * Jul 4, 2008
  */
-package com.tll.client.field;
+package com.tll.client.event;
 
 /**
  * IFieldBindingListener - Definition to embellish field binding before and
  * after the core binding operation.
  * @author jpk
  */
-// TODO move to event package!
 public interface IFieldBindingListener {
 
 	/**

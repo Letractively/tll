@@ -14,6 +14,7 @@ import java.util.Set;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.Msg;

@@ -7,7 +7,6 @@ package com.tll.client.event;
 
 import java.util.ArrayList;
 
-import com.tll.client.field.IFieldBindingListener;
 
 /**
  * ISourcesFieldBindingEvents
