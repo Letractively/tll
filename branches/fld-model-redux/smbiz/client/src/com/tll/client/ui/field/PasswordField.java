@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
@@ -15,6 +16,14 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 public class PasswordField extends AbstractField {
 
 	protected PasswordTextBox tb;
+
+	public void addChangeListener(ChangeListener listener) {
+		getPasswordTextBox().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getPasswordTextBox().removeChangeListener(listener);
+	}
 
 	/**
 	 * Constructor
@@ -28,7 +37,7 @@ public class PasswordField extends AbstractField {
 	public PasswordTextBox getPasswordTextBox() {
 		if(tb == null) {
 			tb = new PasswordTextBox();
-			tb.addFocusListener(this);
+			// tb.addFocusListener(this);
 		}
 		return tb;
 	}

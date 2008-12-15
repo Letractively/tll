@@ -4,6 +4,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.tll.client.field.HasMaxLength;
@@ -57,9 +58,17 @@ public class TextAreaField extends AbstractField implements HasMaxLength {
 			if(numRows > -1) {
 				ta.setVisibleLines(numRows);
 			}
-			ta.addFocusListener(this);
+			// ta.addFocusListener(this);
 		}
 		return ta;
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		getTextArea().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getTextArea().removeChangeListener(listener);
 	}
 
 	public int getMaxLen() {

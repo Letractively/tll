@@ -37,6 +37,14 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	private boolean atCurrent;
 
+	/**
+	 * Constructor
+	 */
+	public FlowFieldPanelComposer() {
+		super();
+		vp.setStyleName(IField.STYLE_FIELD);
+	}
+
 	public void setCanvas(Panel canvas) {
 		canvas.add(vp);
 	}
@@ -53,7 +61,7 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			fp.setStyleName(IField.CSS_FIELD);
+			// fp.setStyleName(IField.STYLE_FIELD);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");

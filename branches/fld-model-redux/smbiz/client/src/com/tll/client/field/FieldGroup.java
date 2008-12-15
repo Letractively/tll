@@ -6,29 +6,18 @@ package com.tll.client.field;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
-import com.tll.client.model.IModelProperty;
-import com.tll.client.model.IModelRefProperty;
-import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
-import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.validate.CompositeValidator;
-import com.tll.client.validate.IValidationFeedback;
-import com.tll.client.validate.IValidator;
-import com.tll.client.validate.ValidationException;
 import com.tll.util.IDescriptorProvider;
 
 /**
@@ -121,11 +110,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final Set<IField> fields;
 
 	/**
-	 * The collection of validators.
-	 */
-	private CompositeValidator validators;
-
-	/**
 	 * A presentation worthy display name. Mainly used in providing validation
 	 * feedback to the UI.
 	 */
@@ -135,11 +119,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * The Widget that is used to convey validation feedback.
 	 */
 	private Widget feedbackWidget;
-
-	/**
-	 * The optional binding listener.
-	 */
-	private final IFieldBindingListener bindingListener;
 
 	/**
 	 * Flag to indicate whether or not the contents of this group shall be
@@ -163,10 +142,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	public FieldGroup(Set<IField> fields, String displayName, Widget feedbackWidget) {
 		super();
+		if(fields == null) throw new IllegalArgumentException("A set of fields must be specified.");
 		this.fields = fields;
 		this.displayName = displayName;
 		this.feedbackWidget = feedbackWidget;
-		this.bindingListener = null;
 	}
 
 	/**
@@ -174,17 +153,21 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param displayName The UI display name used for presenting validation
 	 *        feedback to the UI.
 	 * @param feedbackWidget The feedback Widget
-	 * @param bindingListener The optional binding listener.
 	 */
-	public FieldGroup(String displayName, Widget feedbackWidget, IFieldBindingListener bindingListener) {
-		this.fields = new HashSet<IField>();
-		this.displayName = displayName;
-		this.feedbackWidget = feedbackWidget;
-		this.bindingListener = bindingListener;
+	public FieldGroup(String displayName, Widget feedbackWidget) {
+		this(new HashSet<IField>(), displayName, feedbackWidget);
 	}
 
 	public String descriptor() {
 		return displayName;
+	}
+
+	public void addFocusListener(FocusListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void removeFocusListener(FocusListener listener) {
+		throw new UnsupportedOperationException();
 	}
 
 	public boolean isRequired() {
@@ -433,23 +416,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	public void markReset() {
-		for(IField field : fields) {
-			field.markReset();
-		}
-	}
-
 	public void reset() {
-		MsgManager.instance.clear(feedbackWidget, true);
+		MsgManager.instance.clear(feedbackWidget, false);
 		for(IField field : fields) {
 			field.reset();
-		}
-	}
-
-	public void clear() {
-		MsgManager.instance.clear(feedbackWidget, true);
-		for(IField field : fields) {
-			field.clear();
 		}
 	}
 
@@ -483,6 +453,30 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
+	/**
+	 * For the case of a {@link FieldGroup}, we provide a comma delimited list of
+	 * field reset values for all child {@link IField}s.
+	 */
+	public final String getResetValue() {
+		StringBuilder sb = new StringBuilder();
+		for(IField field : fields) {
+			sb.append(',');
+			sb.append(field.getResetValue());
+		}
+		return sb.length() > 1 ? sb.substring(1) : sb.toString();
+	}
+
+	/**
+	 * Setting a reset value on a {@link FieldGroup}, means we recursively set the
+	 * same reset value to all child fields.
+	 */
+	public final void setResetValue(String resetValue) {
+		for(IField field : fields) {
+			field.setResetValue(resetValue);
+		}
+	}
+
+	/*
 	private void onBeforeBind(Model model) {
 		// reset pending deletes
 		if(pendingDeletes != null) pendingDeletes.clear();
@@ -496,6 +490,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private void onAfterBind() {
 		if(bindingListener != null) bindingListener.onAfterBind();
 	}
+	*/
 
 	/**
 	 * Recursively binds a FieldGroup to a Model.
@@ -504,6 +499,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param propertyPathOffset The node index at which the given FieldGroup
 	 *        binds to the given Model.
 	 */
+	/*
 	private static void bindModel(final int propertyPathOffset, FieldGroup group, final Model model) {
 		group.onBeforeBind(model);
 		final PropertyPath propPath = new PropertyPath();
@@ -528,6 +524,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 		group.onAfterBind();
 	}
+	*/
 
 	/**
 	 * Updates the model by recursively traversing the given FieldGroup.
@@ -538,6 +535,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @return <code>true</code> when at least one valid update was transferred to
 	 *         the given model.
 	 */
+	/*
 	private static boolean updateModel(FieldGroup group, final Model model,
 			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {
 
@@ -654,17 +652,18 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 		return changed;
 	}
+	*/
 
 	/**
 	 * Binds a Model to this group.
-	 * @param propPathOffset Property path node index representing the parent
-	 *        property path offset that is applied to all non-group child IFields.
-	 * @param modelref The model ref property
 	 */
+	/*
 	public void bindModel(int propPathOffset, IModelRefProperty modelref) {
 		bindModel(propPathOffset, this, modelref.getModel());
 	}
+	*/
 
+	/*
 	public void bindModel(IModelProperty prop) {
 		if(prop instanceof IModelRefProperty == false) {
 			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
@@ -727,9 +726,43 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
 		}
 	}
+	*/
 
 	@Override
 	public String toString() {
 		return descriptor() + " (FieldGroup)";
+	}
+
+	public void draw() {
+		for(IField field : fields) {
+			field.draw();
+		}
+	}
+
+	public boolean isDirty() {
+		for(IField field : fields) {
+			if(field.isDirty()) return true;
+		}
+		return false;
+	}
+
+	public void markDirty(boolean dirty) {
+		for(IField field : fields) {
+			field.markDirty(dirty);
+		}
+	}
+
+	public void markInvalid(boolean invalid, List<Msg> msgs) {
+		for(IField field : fields) {
+			field.markInvalid(invalid, msgs);
+		}
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		throw new UnsupportedOperationException();
 	}
 }

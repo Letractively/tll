@@ -1,6 +1,6 @@
 @CHARSET "ISO-8859-1";
 
-.fld {
+.fld input, .fld select, .fld textarea {
 	padding: 0;
 	margin: 3px 6px 3px 0;
 }
@@ -12,7 +12,7 @@
 
 .fld input[type='checkbox'] {
 	height: 1.22em;
-	margin-right: 3px;
+	margin-right: 3px !important;
 }
 /* END non IE rules */
 
@@ -32,7 +32,7 @@ label .rqd {
 	background-color: #FFFFCC;
 }
 
-.changed input, .changed select, .changed textarea {
+.dirty input, .dirty select, .dirty textarea {
 	border: 1px solid #007BBF !important;
 	background-color: #DFF4FF;
 }

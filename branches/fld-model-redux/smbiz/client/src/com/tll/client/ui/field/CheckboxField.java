@@ -4,8 +4,11 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * CheckboxField
@@ -25,6 +28,24 @@ public class CheckboxField extends AbstractField {
 	protected String cbLblTxt;
 
 	/**
+	 * The change listeners.
+	 */
+	private ChangeListenerCollection changeListeners;
+
+	public void addChangeListener(ChangeListener listener) {
+		if(changeListeners == null) {
+			changeListeners = new ChangeListenerCollection();
+		}
+		changeListeners.add(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		if(changeListeners != null) {
+			changeListeners.remove(listener);
+		}
+	}
+
+	/**
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt The checkbox [label] text
@@ -42,14 +63,14 @@ public class CheckboxField extends AbstractField {
 		if(cb == null) {
 			cb = new CheckBox(cbLblTxt);
 			cb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
-			cb.addFocusListener(this);
+			// cb.addFocusListener(this);
 			cb.addClickListener(this);
 		}
 		return cb;
 	}
 
 	public final void setChecked(boolean checked) {
-		this.value = checked ? checkedValue : uncheckedValue;
+		setValue(checked ? checkedValue : uncheckedValue);
 		getCheckBox().setChecked(checked);
 	}
 
@@ -83,5 +104,12 @@ public class CheckboxField extends AbstractField {
 	protected String getReadOnlyHtml() {
 		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
 				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
+	}
+
+	@Override
+	public void onClick(Widget sender) {
+		super.onClick(sender);
+		assert sender == cb;
+		if(changeListeners != null) changeListeners.fireChange(this);
 	}
 }

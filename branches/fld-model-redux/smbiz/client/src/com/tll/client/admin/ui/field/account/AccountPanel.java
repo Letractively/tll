@@ -88,7 +88,8 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		@Override
 		public void populateFieldGroup() {
 			name = FieldFactory.createNameEntityField();
-			addField(FieldFactory.fdata("type", addressType));
+			// TODO fix since we don't have data fields anymore
+			// addField(FieldFactory.fdata("type", addressType));
 			addField(name);
 			addField("address", addressPanel.getFieldGroup());
 		}
@@ -139,7 +140,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 		persistPymntInfo = FieldFactory.fbool("persistPymntInfo", "PersistPayment Info?");
 		persistPymntInfo.getCheckBox().addClickListener(this);
 
-		paymentInfoPanel.setFeedbackWidget(dpPaymentInfo);
+		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 
 		// listen to tab events
 		tabAddresses.addTabListener(this);

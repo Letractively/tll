@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.CellPanel;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * RadioGroupField
@@ -35,6 +38,24 @@ public final class RadioGroupField extends AbstractDataMapField {
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();
 
 	/**
+	 * The change listeners.
+	 */
+	private ChangeListenerCollection changeListeners;
+
+	public void addChangeListener(ChangeListener listener) {
+		if(changeListeners == null) {
+			changeListeners = new ChangeListenerCollection();
+		}
+		changeListeners.add(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		if(changeListeners != null) {
+			changeListeners.remove(listener);
+		}
+	}
+
+	/**
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
@@ -50,7 +71,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 			rbPanel = new VerticalPanel();
 		}
 		fp.add(rbPanel);
-		fp.addFocusListener(this);
+		// fp.addFocusListener(this);
 	}
 
 	public RadioButton[] getRadioButtons() {
@@ -99,4 +120,9 @@ public final class RadioGroupField extends AbstractDataMapField {
 		rbPanel.clear(); // force re-create
 	}
 
+	@Override
+	public void onClick(Widget sender) {
+		super.onClick(sender);
+		changeListeners.fireChange(this);
+	}
 }

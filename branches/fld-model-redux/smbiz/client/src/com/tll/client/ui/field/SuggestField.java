@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -42,10 +43,18 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 			else {
 				sb = new SuggestBox();
 			}
-			sb.addFocusListener(this);
+			// sb.addFocusListener(this);
 			sb.addEventHandler(this);
 		}
 		return sb;
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		getSuggestBox().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getSuggestBox().removeChangeListener(listener);
 	}
 
 	@Override

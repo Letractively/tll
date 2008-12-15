@@ -7,10 +7,9 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
-import com.tll.client.field.IFieldBindingListener;
 import com.tll.client.model.Model;
 
 /**
@@ -18,7 +17,8 @@ import com.tll.client.model.Model;
  * Provision for read-only is supported.
  * @author jpk
  */
-public abstract class FieldGroupPanel extends Composite implements IFieldBindingListener {
+// TODO re-name to FieldPanel
+public abstract class FieldGroupPanel extends Composite /*implements IFieldBindingListener*/{
 
 	/**
 	 * The Panel containing the drawn fields.
@@ -29,6 +29,11 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	 * The collective group of all fields in this panel.
 	 */
 	private FieldGroup fields;
+
+	/**
+	 * The field bindings.
+	 */
+	private FieldBindingGroup bindings;
 
 	/**
 	 * Constructor
@@ -45,14 +50,14 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	 * @param fields The FieldGroup
 	 */
 	public FieldGroupPanel(String displayName, FieldGroup fields) {
-		this.fields = fields == null ? new FieldGroup(displayName, this, this) : fields;
+		setFieldGroup(fields == null ? new FieldGroup(displayName, this) : fields);
 		initWidget(panel);
 	}
 
 	/**
 	 * Ensures the field group is populated.
 	 */
-	private void ensurePopulated() {
+	private void ensureFieldGroupPopulated() {
 		if(fields.size() < 1) {
 			populateFieldGroup();
 		}
@@ -64,7 +69,7 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	 */
 	public final void draw() {
 		if(panel.getWidgetCount() == 0) {
-			ensurePopulated();
+			ensureFieldGroupPopulated();
 			draw(panel);
 		}
 	}
@@ -91,20 +96,83 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 	}
 
 	/**
+	 * Creates the data transfer points between {@link IField}s and the underlying
+	 * {@link Model}.
+	 * @param bindings The group to which the created bindings are added
+	 * @param model The model from which properties are extracted and bound to the
+	 *        desired fields
+	 */
+	protected void createFieldBindings(FieldBindingGroup bindings, Model model) {
+		// base impl no-op
+	}
+
+	public final void bindModel(Model model) {
+
+		// ensure fields are created
+		ensureFieldGroupPopulated();
+
+		// ensure field bindings created
+		if(bindings == null) {
+			bindings = new FieldBindingGroup();
+			createFieldBindings(bindings, model);
+		}
+
+	}
+
+	public void unbindModel() {
+		if(bindings != null) {
+			bindings.unbind();
+		}
+	}
+
+	/**
 	 * Event hook called by the member FieldGroup just before model binding.
 	 * @param model The model about to be bound
 	 */
+	/*
 	public final void onBeforeBind(Model model) {
 		ensurePopulated();
 		applyModel(model);
 	}
+	*/
 
 	/**
 	 * Event hook called by the member FieldGroup just after model binding. May be
 	 * overridden.
 	 */
+	/*
 	public void onAfterBind() {
 		draw();
+	}
+	*/
+
+	protected final void removeField(IField field) {
+		fields.removeField(field);
+	}
+
+	/**
+	 * @return The FieldGroup for this panel ensuring it is first populated.
+	 */
+	public final FieldGroup getFieldGroup() {
+		ensureFieldGroupPopulated();
+		return fields;
+	}
+
+	/**
+	 * Replaces the underlying {@link FieldGroup}.
+	 * @param fields The field group which can't be <code>null</code>
+	 */
+	public final void setFieldGroup(FieldGroup fields) {
+		if(fields == null) throw new IllegalArgumentException();
+		this.fields = fields;
+	}
+
+	/**
+	 * Removes any previously drawn fields from this Panel forcing a subsequent
+	 * re-draw.
+	 */
+	public final void clear() {
+		panel.clear();
 	}
 
 	protected final void addField(IField field) {
@@ -129,44 +197,6 @@ public abstract class FieldGroupPanel extends Composite implements IFieldBinding
 
 	protected final void addFields(String parentPropPath, IField[] fields) {
 		this.fields.addFields(parentPropPath, fields);
-	}
-
-	protected final void removeField(IField field) {
-		fields.removeField(field);
-	}
-
-	/**
-	 * Overrides the default behavior of this panel being the feedback Widget.
-	 * This is useful when we have Widgets that cloak (hide) fields since the
-	 * feedback Widget is employed for posting validation messages in the ui.
-	 * @param feedbackWidget The Widget to set as the feedback Widget.
-	 */
-	public final void setFeedbackWidget(Widget feedbackWidget) {
-		fields.setFeedbackWidget(feedbackWidget);
-	}
-
-	/**
-	 * @return The FieldGroup for this panel ensuring it is first populated.
-	 */
-	public final FieldGroup getFieldGroup() {
-		ensurePopulated();
-		return fields;
-	}
-
-	/**
-	 * Replaces the underlying {@link FieldGroup}.
-	 * @param fields The field group which can't be <code>null</code>
-	 */
-	public final void setFieldGroup(FieldGroup fields) {
-		if(fields == null) throw new IllegalArgumentException();
-		this.fields = fields;
-	}
-
-	/**
-	 * Removes any previously drawn fields from this Panel forcing a re-draw.
-	 */
-	public final void clear() {
-		panel.clear();
 	}
 
 	@Override

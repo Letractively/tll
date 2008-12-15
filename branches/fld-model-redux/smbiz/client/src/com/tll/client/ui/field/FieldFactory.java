@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
-import com.tll.client.field.DataField;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
 
@@ -16,15 +15,6 @@ import com.tll.client.util.GlobalFormat;
  * @author jpk
  */
 public abstract class FieldFactory {
-
-	/**
-	 * Creates a new {@link DataField} instance.
-	 * @param propName
-	 * @param value
-	 */
-	public static final DataField fdata(String propName, Object value) {
-		return new DataField(propName, value);
-	}
 
 	/**
 	 * Creates a new {@link TextField} instance.
@@ -143,8 +133,7 @@ public abstract class FieldFactory {
 		dateCreated.setReadOnly(true);
 		dateModified.setReadOnly(true);
 		return new DateField[] {
-			dateCreated,
-			dateModified };
+			dateCreated, dateModified };
 	}
 
 	/**

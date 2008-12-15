@@ -86,11 +86,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	static final String TEST_FIELD_LISTING = "TEST_FIELD_LISTING";
 
 	static String[] tests = new String[] {
-		TEST_MSG_PANEL,
-		TEST_TOOLBAR,
-		TEST_VIEW_CONTAINER,
-		TEST_FIELDS,
-		TEST_FIELD_LISTING };
+		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS, TEST_FIELD_LISTING };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -324,16 +320,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 			public void onRpcEvent(RpcEvent event) {
 				Column[] cols = new Column[] {
-					new Column("Address", "address1"),
-					new Column("City", "city"),
-					new Column("Zip", "postalCode") };
+					new Column("Address", "address1"), new Column("City", "city"), new Column("Zip", "postalCode") };
 
 				IFieldProvider fieldProvider = new IFieldProvider() {
 
 					public IField[] getFields() {
 						return new IField[] {
-							FieldFactory.ftext("address1", "Address 1", 40),
-							FieldFactory.ftext("city", "City", 30),
+							FieldFactory.ftext("address1", "Address 1", 40), FieldFactory.ftext("city", "City", 30),
 							FieldFactory.fsuggest("province", "State", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES)),
 							FieldFactory.ftext("postalCode", "Zip", 20) };
 					}
@@ -360,7 +353,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				};
 
-				FieldGroup pfg = new FieldGroup("Parent", testPanel, null);
+				FieldGroup pfg = new FieldGroup("Parent", testPanel);
 				pfg.addField(null, FieldFactory.createNameEntityField());
 				pfg.addFields(null, FieldFactory.createTimestampEntityFields());
 				pfg.addField(null, FieldFactory.createNameEntityField());

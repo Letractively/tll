@@ -8,6 +8,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.field.IField;
 
 /**
  * VerticalFieldPanelComposer - Lays out fields in a vertical style having the
@@ -26,6 +27,14 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 	private final Grid grid = new Grid(0, 2);
 
 	private int rowIndex = -1;
+
+	/**
+	 * Constructor
+	 */
+	public VerticalFieldPanelComposer() {
+		super();
+		grid.addStyleName(IField.STYLE_FIELD);
+	}
 
 	public void setCanvas(Panel canvas) {
 		canvas.add(grid);

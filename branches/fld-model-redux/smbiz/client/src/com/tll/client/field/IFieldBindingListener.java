@@ -5,23 +5,31 @@
  */
 package com.tll.client.field;
 
-import com.tll.client.model.Model;
-
 /**
  * IFieldBindingListener - Definition to embellish field binding before and
  * after the core binding operation.
  * @author jpk
  */
+// TODO move to event package!
 public interface IFieldBindingListener {
 
 	/**
-	 * Called just before the given model is bound to a FieldGroup.
-	 * @param model The model to be bound.
+	 * Called just before field binding.
 	 */
-	void onBeforeBind(Model model);
+	void onBeforeBind();
 
 	/**
-	 * Called just after a Model is bound.
+	 * Called just after a field binding.
 	 */
 	void onAfterBind();
+
+	/**
+	 * Called just before field un-binding.
+	 */
+	void onBeforeUnbind();
+
+	/**
+	 * Called just after field un-binding.
+	 */
+	void onAfterUnbind();
 }
