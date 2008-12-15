@@ -8,13 +8,13 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 
 /**
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTabEvents {
+public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEvents {
 
 	private final TabPanel tabPanel = new TabPanel();
 

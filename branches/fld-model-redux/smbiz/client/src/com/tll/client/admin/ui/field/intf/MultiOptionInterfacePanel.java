@@ -21,7 +21,7 @@ import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
@@ -37,7 +37,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 	private final TabPanel tabOptions = new TabPanel();
 
-	private static final class OptionPanel extends FieldGroupPanel {
+	private static final class OptionPanel extends FieldPanel {
 
 		TextField name, code;
 		TextAreaField description;

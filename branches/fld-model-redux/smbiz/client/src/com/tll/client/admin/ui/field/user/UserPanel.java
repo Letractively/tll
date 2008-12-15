@@ -16,7 +16,7 @@ import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
@@ -25,7 +25,7 @@ import com.tll.client.util.GlobalFormat;
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends FieldGroupPanel {
+public class UserPanel extends FieldPanel {
 
 	private TextField name;
 	private DateField[] timestamps;

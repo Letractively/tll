@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.field.VerticalFieldPanelComposer;
 
@@ -15,7 +15,7 @@ import com.tll.client.ui.field.VerticalFieldPanelComposer;
  * BankPanel
  * @author jpk
  */
-public final class BankPanel extends FieldGroupPanel {
+public final class BankPanel extends FieldPanel {
 
 	private TextField bankName;
 	private TextField bankAccountNo;

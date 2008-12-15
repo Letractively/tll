@@ -27,9 +27,9 @@ import com.tll.client.validate.ValidationException;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
- * consist of a {@link ScrollPanel} containing a {@link FieldGroupPanel} and
+ * consist of a {@link ScrollPanel} containing a {@link FieldPanel} and
  * another {@link FlowPanel} containing edit buttons. The {@link ScrollPanel}
- * enables the the {@link FieldGroupPanel} content to always be navigable and
+ * enables the the {@link FieldPanel} content to always be navigable and
  * keeps the edit and cancel buttons in constant position.
  * @author jpk
  */
@@ -51,7 +51,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	private final FlowPanel panel = new FlowPanel();
 
 	/**
-	 * This panel contains the {@link FieldGroupPanel}.
+	 * This panel contains the {@link FieldPanel}.
 	 */
 	// private final ScrollPanel portal = new ScrollPanel();
 	private final SimplePanel portal = new SimplePanel();
@@ -59,7 +59,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldGroupPanel fieldGroupPanel;
+	private final FieldPanel fieldGroupPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -78,7 +78,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldGroupPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
 		// hide the button row until initialized

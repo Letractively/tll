@@ -13,7 +13,7 @@ import com.tll.client.field.FieldGroup;
  * {@link IFieldRenderer}.
  * @author jpk
  */
-public class DelegatingFieldGroupPanel extends FieldGroupPanel {
+public class DelegatingFieldGroupPanel extends FieldPanel {
 
 	/**
 	 * The delegate for drawing the fields in the UI.

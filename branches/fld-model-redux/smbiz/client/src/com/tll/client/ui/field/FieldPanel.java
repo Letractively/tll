@@ -13,12 +13,11 @@ import com.tll.client.field.IField;
 import com.tll.client.model.Model;
 
 /**
- * FieldGroupPanel - Common base class for panels that display form data.
+ * FieldPanel - Common base class for panels that display form data.
  * Provision for read-only is supported.
  * @author jpk
  */
-// TODO re-name to FieldPanel
-public abstract class FieldGroupPanel extends Composite /*implements IFieldBindingListener*/{
+public abstract class FieldPanel extends Composite /*implements IFieldBindingListener*/{
 
 	/**
 	 * The Panel containing the drawn fields.
@@ -39,7 +38,7 @@ public abstract class FieldGroupPanel extends Composite /*implements IFieldBindi
 	 * Constructor
 	 * @param displayName The display name
 	 */
-	public FieldGroupPanel(String displayName) {
+	public FieldPanel(String displayName) {
 		this(displayName, null);
 	}
 
@@ -49,7 +48,7 @@ public abstract class FieldGroupPanel extends Composite /*implements IFieldBindi
 	 * @param displayName The display name
 	 * @param fields The FieldGroup
 	 */
-	public FieldGroupPanel(String displayName, FieldGroup fields) {
+	public FieldPanel(String displayName, FieldGroup fields) {
 		setFieldGroup(fields == null ? new FieldGroup(displayName, this) : fields);
 		initWidget(panel);
 	}

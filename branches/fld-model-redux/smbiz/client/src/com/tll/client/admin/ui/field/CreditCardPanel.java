@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
@@ -20,7 +20,7 @@ import com.tll.service.app.RefDataType;
  * CreditCardPanel
  * @author jpk
  */
-public final class CreditCardPanel extends FieldGroupPanel {
+public final class CreditCardPanel extends FieldPanel {
 
 	private SelectField type;
 	private TextField num;

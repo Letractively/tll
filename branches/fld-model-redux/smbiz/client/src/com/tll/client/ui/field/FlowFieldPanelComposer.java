@@ -87,7 +87,7 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	 * <code>null</code>, no label is added. If the Widget is an IField
 	 * {@link #addField(AbstractField)} should be called instead.
 	 * @param label The label text
-	 * @param w The non-IField and non-FieldGroupPanel Widget to add
+	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);

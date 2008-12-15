@@ -30,7 +30,7 @@ import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
@@ -45,7 +45,7 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends FieldGroupPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
+public class AccountPanel extends FieldPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
 
 	protected TextField parent;
 	protected TextField name;
@@ -67,7 +67,7 @@ public class AccountPanel extends FieldGroupPanel implements ClickListener, TabL
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FieldGroupPanel {
+	static final class AccountAddressPanel extends FieldPanel {
 
 		final AddressType addressType;
 		TextField name;

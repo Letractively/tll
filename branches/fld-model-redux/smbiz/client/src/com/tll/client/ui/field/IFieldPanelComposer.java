@@ -13,7 +13,7 @@ import com.tll.client.field.IField;
  * UI "canvas". Composers of this type are responsible for:
  * <ol>
  * <li>Adding {@link IField}s to the UI
- * <li>Dictating the layout style for the {@link FieldGroupPanel}'s UI
+ * <li>Dictating the layout style for the {@link FieldPanel}'s UI
  * </ol>
  * @author jpk
  */

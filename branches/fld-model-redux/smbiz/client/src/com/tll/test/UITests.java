@@ -58,7 +58,7 @@ import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.VerticalFieldPanelComposer;
@@ -174,7 +174,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel extends FieldGroupPanel {
+	private static final class TestFieldPanel extends FieldPanel {
 
 		private final AddressPanel ap;
 

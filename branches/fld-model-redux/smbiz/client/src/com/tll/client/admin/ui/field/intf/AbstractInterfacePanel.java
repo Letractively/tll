@@ -16,7 +16,7 @@ import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TextAreaField;
@@ -27,7 +27,7 @@ import com.tll.client.ui.field.VerticalFieldPanelComposer;
  * AbstractInterfacePanel
  * @author jpk
  */
-public abstract class AbstractInterfacePanel extends FieldGroupPanel {
+public abstract class AbstractInterfacePanel extends FieldPanel {
 
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"),

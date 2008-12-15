@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
@@ -17,7 +17,7 @@ import com.tll.service.app.RefDataType;
  * AddressPanel
  * @author jpk
  */
-public final class AddressPanel extends FieldGroupPanel {
+public final class AddressPanel extends FieldPanel {
 
 	private TextField emailAddress;
 	private TextField lastName;
