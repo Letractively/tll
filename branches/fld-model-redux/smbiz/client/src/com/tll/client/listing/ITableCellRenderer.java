@@ -4,7 +4,6 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.model.IData;
 
 /**
  * ITableCellRenderer - Responsible for transforming row data to presentation
@@ -12,7 +11,7 @@ import com.tll.client.model.IData;
  * @param <R> The row data type
  * @author jpk
  */
-public interface ITableCellRenderer<R extends IData> {
+public interface ITableCellRenderer<R> {
 
 	/**
 	 * Provides the table cell value given the row data and particular column.

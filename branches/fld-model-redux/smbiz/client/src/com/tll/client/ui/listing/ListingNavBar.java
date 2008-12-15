@@ -20,7 +20,6 @@ import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
-import com.tll.client.model.IData;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -34,7 +33,7 @@ import com.tll.client.util.StringUtil;
  * @author jpk
  */
 // TODO make non-static inner class of ListingWidget
-public class ListingNavBar<R extends IData> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener, IListingListener<R> {
+public class ListingNavBar<R> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener, IListingListener<R> {
 
 	private static final String STYLE_TABLE_VIEW_NAVBAR = "tvnav";
 	private static final String CSS_PAGE_CONTAINER = "page";
@@ -87,7 +86,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	 * Constructor
 	 * @param config Must be specified.
 	 */
-	public ListingNavBar(IListingConfig<? extends IData> config) {
+	public ListingNavBar(IListingConfig<R> config) {
 		super();
 		initialize(config);
 	}
@@ -96,7 +95,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 	 * Initializes the nav bar.
 	 * @param config
 	 */
-	protected void initialize(IListingConfig<? extends IData> config) {
+	protected void initialize(IListingConfig<R> config) {
 		assert config != null;
 
 		this.listingElementName = config.getListingElementName();
@@ -273,8 +272,7 @@ public class ListingNavBar<R extends IData> extends Toolbar implements ClickList
 			}
 			if(!valid) {
 				String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
-					new Integer(1),
-					new Integer(numPages) });
+					new Integer(1), new Integer(numPages) });
 				MsgManager.instance.post(true, new Msg(smsg, MsgLevel.ERROR), Position.BOTTOM, tbPage, 3000, true).show();
 				tbPage.setText(Integer.toString(crntPage));
 				return;

@@ -19,7 +19,6 @@ import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
 
 /**
@@ -27,7 +26,7 @@ import com.tll.client.ui.CSS;
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, IListingListener<R> {
+public abstract class ListingWidget<R> extends Composite implements HasFocus, IListingListener<R> {
 
 	/**
 	 * The css class the top-most containing div gets.

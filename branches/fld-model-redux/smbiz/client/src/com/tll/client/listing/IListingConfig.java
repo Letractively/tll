@@ -5,7 +5,6 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -14,7 +13,7 @@ import com.tll.listhandler.Sorting;
  * @param <R> The listing row data type
  * @author jpk
  */
-public interface IListingConfig<R extends IData> {
+public interface IListingConfig<R> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 

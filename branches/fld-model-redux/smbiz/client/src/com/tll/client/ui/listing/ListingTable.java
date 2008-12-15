@@ -25,7 +25,6 @@ import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.model.IData;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.listhandler.SortColumn;
@@ -36,7 +35,7 @@ import com.tll.listhandler.Sorting;
  * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
+public class ListingTable<R> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
 	 * The actual HTML table tag containing the listing data gets this style (CSS
