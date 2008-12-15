@@ -29,7 +29,6 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.IData;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -51,7 +50,7 @@ public final class FieldListing extends Composite implements IEditListener {
 	 * FieldRow - Dedicated data type for field listings.
 	 * @author jpk
 	 */
-	private static final class FieldRow implements IData {
+	private static final class FieldRow {
 
 		/**
 		 * The field row data.
