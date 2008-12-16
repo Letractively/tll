@@ -158,7 +158,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void onModelChangeEvent(ModelChangeEvent event) {
 				if(event.isError()) {
-					editPanel.applyMsgs(event.getErrors());
+					editPanel.applyErrorMsgs(event.getErrors());
 					return;
 				}
 				switch(event.getChangeOp()) {

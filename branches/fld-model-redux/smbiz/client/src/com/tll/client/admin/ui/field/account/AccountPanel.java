@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field.account;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
@@ -21,13 +22,16 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IField;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
-import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
@@ -47,20 +51,10 @@ import com.tll.model.impl.AddressType;
  */
 public class AccountPanel extends FieldPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
 
-	protected TextField parent;
-	protected TextField name;
-	protected DateField[] timestamps;
-	protected SelectField status;
-	protected DateField dateCancelled;
-	protected SelectField currency;
-	protected TextField billingModel;
-	protected TextField billingCycle;
-	protected DateField dateLastCharged;
-	protected DateField nextChargeDate;
-	protected CheckboxField persistPymntInfo;
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
-	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
 	protected PaymentInfoPanel paymentInfoPanel;
+
+	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
 	protected final TabPanel tabAddresses = new TabPanel();
 
 	/**
@@ -79,23 +73,26 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 		 */
 		public AccountAddressPanel(AddressType addressType) {
 			super(addressType.getName());
-
 			this.addressType = addressType;
-
 			addressPanel = new AddressPanel();
 		}
 
 		@Override
-		public void populateFieldGroup() {
+		public void populateFieldGroup(FieldGroup fields) {
 			name = FieldFactory.createNameEntityField();
 			// TODO fix since we don't have data fields anymore
-			// addField(FieldFactory.fdata("type", addressType));
-			addField(name);
-			addField("address", addressPanel.getFieldGroup());
+			// fields.addField(FieldFactory.fdata("type", addressType));
+			fields.addField(name);
+			fields.addField("address", addressPanel.getFieldGroup());
 		}
 
 		@Override
-		protected void draw(Panel canvas) {
+		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+				Model model) {
+		}
+
+		@Override
+		protected void draw(Panel canvas, FieldGroup fields) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -117,71 +114,72 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 	}
 
 	@Override
-	public void populateFieldGroup() {
-		name = FieldFactory.createNameEntityField();
-		timestamps = FieldFactory.createTimestampEntityFields();
+	public void populateFieldGroup(FieldGroup fields) {
+		IField f;
 
-		parent = FieldFactory.ftext("parent.name", "Parent", 15);
-		parent.setReadOnly(true);
-		// parent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		fields.addField(FieldFactory.createNameEntityField());
+		fields.addFields(FieldFactory.createTimestampEntityFields());
 
-		status = FieldFactory.fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
-		status.getListBox().addChangeListener(this);
+		f = FieldFactory.ftext("parent.name", "Parent", 15);
+		f.setReadOnly(true);
+		fields.addField(f);
 
-		dateCancelled = FieldFactory.fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE);
+		f = FieldFactory.fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
+		((SelectField) f).getListBox().addChangeListener(this);
 
-		currency = FieldFactory.fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap());
+		fields.addField(FieldFactory.fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE));
 
-		billingModel = FieldFactory.ftext("billingModel", "Billing Model", 18);
-		billingCycle = FieldFactory.ftext("billingCycle", "Billing Cycle", 18);
-		dateLastCharged = FieldFactory.fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE);
-		nextChargeDate = FieldFactory.fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE);
+		fields.addField(FieldFactory.fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap()));
 
-		persistPymntInfo = FieldFactory.fbool("persistPymntInfo", "PersistPayment Info?");
-		persistPymntInfo.getCheckBox().addClickListener(this);
+		fields.addField(FieldFactory.ftext("billingModel", "Billing Model", 18));
+		fields.addField(FieldFactory.ftext("billingCycle", "Billing Cycle", 18));
+		fields.addField(FieldFactory.fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE));
+		fields.addField(FieldFactory.fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE));
+
+		f = FieldFactory.fbool("persistPymntInfo", "PersistPayment Info?");
+		((CheckboxField) f).getCheckBox().addClickListener(new ClickListener() {
+
+			public void onClick(Widget sender) {
+				paymentInfoPanel.getFieldGroup().setEnabled(((CheckBox) sender).isChecked());
+			}
+		});
 
 		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 
 		// listen to tab events
 		tabAddresses.addTabListener(this);
 
-		addField(name);
-		addFields(timestamps);
-		addField(parent);
-		addField(status);
-		addField(dateCancelled);
-		addField(billingModel);
-		addField(billingCycle);
-		addField(dateLastCharged);
-		addField(nextChargeDate);
-		addField(currency);
-		addField(persistPymntInfo);
-		addField("paymentInfo", paymentInfoPanel.getFieldGroup());
+		fields.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+			Model model) {
+	}
+
+	@Override
+	protected void draw(Panel canvas, FieldGroup fields) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
 		// first row
-		cmpsr.addField(name);
-		cmpsr.addField(status);
-		cmpsr.addField(dateCancelled);
-		cmpsr.addField(currency);
+		cmpsr.addField((AbstractField) fields.getField(Model.NAME_PROPERTY));
+		cmpsr.addField((AbstractField) fields.getField("status"));
+		cmpsr.addField((AbstractField) fields.getField("dateCancelled"));
+		cmpsr.addField((AbstractField) fields.getField("currency.id"));
 		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		cmpsr.addField(parent);
+		cmpsr.addField((AbstractField) fields.getField("parent.name"));
 		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		cmpsr.addField(timestamps[0]);
+		cmpsr.addField((AbstractField) fields.getField("dateCreated"));
 		cmpsr.stopFlow();
-		cmpsr.addField(timestamps[1]);
+		cmpsr.addField((AbstractField) fields.getField("dateModified"));
 
 		// second row (billing)
 		cmpsr.newRow();
-		cmpsr.addField(billingModel);
-		cmpsr.addField(billingCycle);
-		cmpsr.addField(dateLastCharged);
-		cmpsr.addField(nextChargeDate);
+		cmpsr.addField((AbstractField) fields.getField("billingModel"));
+		cmpsr.addField((AbstractField) fields.getField("billingCycle"));
+		cmpsr.addField((AbstractField) fields.getField("dateLastCharged"));
+		cmpsr.addField((AbstractField) fields.getField("nextChargeDate"));
 
 		// third row
 		cmpsr.newRow();
@@ -191,7 +189,7 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 
 		// payment info block
 		FlowPanel fp = new FlowPanel();
-		fp.add(persistPymntInfo);
+		fp.add((AbstractField) fields.getField("persistPymntInfo"));
 		fp.add(paymentInfoPanel);
 		dpPaymentInfo.add(fp);
 		cmpsr.addWidget(dpPaymentInfo);
@@ -201,11 +199,11 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 	}
 
 	@Override
-	protected void applyModel(Model model) {
+	protected void applyModel(Model model, final FieldGroup fields) {
 		// un-bind existing
 		for(Widget w : tabAddresses) {
 			if(w instanceof AccountAddressPanel) {
-				removeField(((AccountAddressPanel) w).getFieldGroup());
+				fields.removeField(((AccountAddressPanel) w).getFieldGroup());
 			}
 		}
 		tabAddresses.clear();
@@ -222,9 +220,9 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 				Iterator<IndexedProperty> itr = pvAddresses.iterator();
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
-					if(at == ip.getModel().getValue(path).getValue()) {
+					if(at == ip.getModel().getPropertyValue(path).getValue()) {
 						aap = new AccountAddressPanel(at);
-						addField(ip.getPropertyName(), aap.getFieldGroup());
+						fields.addField(ip.getPropertyName(), aap.getFieldGroup());
 						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), ip.getPropertyName()));
 						break;
 					}
@@ -233,7 +231,34 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 			if(aap == null) {
 				NoEntityExistsPanel neep =
 						new NoEntityExistsPanel(at, "No " + at.getName() + " address set.", "Create " + at.getName() + " address");
-				neep.addClickListener(this);
+				neep.addClickListener(new ClickListener() {
+
+					public void onClick(Widget sender) {
+						// non-existant account address
+
+						// resolve tab index
+						int selTabIndx = tabAddresses.getTabBar().getSelectedTab();
+						assert selTabIndx >= 0;
+
+						// stub aa panel
+						AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
+						AccountAddressPanel aap = new AccountAddressPanel(at);
+						fields.addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
+
+						// bind to prototype
+						Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+						if(aaproto == null) throw new IllegalStateException();
+						// NOTE: we need a property path offset here since the fields'
+						// property
+						// paths are relative to ACCOUNT!
+						aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
+
+						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
+								: selTabIndx);
+						tabAddresses.remove(selTabIndx + 1);
+						tabAddresses.selectTab(selTabIndx);
+					}
+				});
 				tabAddresses.add(neep, at.getName());
 			}
 		}
@@ -241,41 +266,11 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 		// show/hide date cancelled according to the account's status
 		String status = model.asString("status");
 		status = status == null ? null : status.toLowerCase();
-		dateCancelled.setVisible("closed".equals(status));
+		fields.getField("dateCancelled").setVisible("closed".equals(status));
 
 		// dpPaymentInfo.setOpen(false);
 		// dpAddresses.setOpen(false);
 		// tabAddresses.selectTab(0);
-	}
-
-	public void onClick(Widget sender) {
-		if(sender == persistPymntInfo.getCheckBox()) {
-			paymentInfoPanel.getFieldGroup().setEnabled(persistPymntInfo.getCheckBox().isChecked());
-		}
-		else if(sender instanceof NoEntityExistsPanel) {
-			// non-existant account address
-
-			// resolve tab index
-			int selTabIndx = tabAddresses.getTabBar().getSelectedTab();
-			assert selTabIndx >= 0;
-
-			// stub aa panel
-			AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
-			AccountAddressPanel aap = new AccountAddressPanel(at);
-			addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
-
-			// bind to prototype
-			Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
-			if(aaproto == null) throw new IllegalStateException();
-			// NOTE: we need a property path offset here since the fields' property
-			// paths are relative to ACCOUNT!
-			aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
-
-			tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
-					: selTabIndx);
-			tabAddresses.remove(selTabIndx + 1);
-			tabAddresses.selectTab(selTabIndx);
-		}
 	}
 
 	public void onClose(DisclosureEvent event) {
@@ -323,5 +318,4 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 			dateCancelled.setRequired(closed);
 		}
 	}
-
 }

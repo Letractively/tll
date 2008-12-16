@@ -11,9 +11,11 @@ import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.client.validate.IValidator;
+import com.tll.client.validate.ValidationException;
 
 /**
- * IField - Abstraction for managing the display editing of model bound data.
+ * IField - Abstraction for managing the display and editing of data.
  * @author jpk
  */
 public interface IField extends IPropertyNameProvider, SourcesFocusEvents, SourcesChangeEvents {
@@ -125,10 +127,17 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	boolean isDirty();
 
 	/**
-	 * Styles the field as dirty or removes this styling.
-	 * @param dirty Mark or unmark as dirty?
+	 * Styles the field as dirty if the field is dirty otherwise any dirty styling
+	 * is removed.
 	 */
-	void markDirty(boolean dirty);
+	void dirtyCheck();
+
+	/**
+	 * Validates the field.
+	 * @return The validated value
+	 * @throws ValidationException When the field is found invalid
+	 */
+	Object validate() throws ValidationException;
 
 	/**
 	 * Styles the field as either valid or invalid.
@@ -138,4 +147,16 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	 *        when the <code>invalid</code> param is <code>false</code>.
 	 */
 	void markInvalid(boolean invalid, List<Msg> msgs);
+
+	/**
+	 * Adds a validator.
+	 * @param validator
+	 */
+	void addValidator(IValidator validator);
+
+	/**
+	 * Removes a validator.
+	 * @param validator
+	 */
+	void removeValidator(IValidator validator);
 }

@@ -14,11 +14,13 @@ import java.util.Set;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IFieldBindingListener;
-import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.IValidator;
+import com.tll.client.validate.ValidationException;
 import com.tll.util.IDescriptorProvider;
 
 /**
@@ -27,24 +29,11 @@ import com.tll.util.IDescriptorProvider;
  * {@link IField}s.
  * <p>
  * Non-FieldGroup children of {@link FieldGroup}s are expected to have a unique
- * property name that allows the field to be mapped to the underlying
- * {@link Model}.
+ * property name thus allowing any contained field to be retrieved via a
+ * property path.
  * <p>
  * A FieldGroup represents a grouping of {@link IField}s for UI purposes and as
  * such <em>does not necessarily represent model hierarchy boundaries</em>
- * <p>
- * To fully support data transfer ("binding") between a FieldGroup instance and
- * a Model instance, the following conventions are established:
- * <ol>
- * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected to
- * have a standard OGNL property name to support binding to/from the underlying
- * Model.
- * <li>Newly created IFields that map to a non-existant related many Model are
- * expected to have a property name that indicates as much:
- * <code>indexableProp{index}.propertyName</code> as opposed to the standard:
- * <code>indexableProp[index].propertyName</code>. In other words, curly braces
- * (<code>{}</code>) are used instead of square braces (<code>[]</code>).
- * </ol>
  * @author jpk
  */
 public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
@@ -111,6 +100,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final Set<IField> fields;
 
 	/**
+	 * The field group validator(s)
+	 */
+	private IValidator validator;
+
+	/**
 	 * A presentation worthy display name. Mainly used in providing validation
 	 * feedback to the UI.
 	 */
@@ -134,8 +128,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private Set<String> pendingDeletes;
 
 	/**
-	 * Constructor - Simple field group w/ no display name nor
-	 * {@link IFieldBindingListener}.
+	 * Constructor - Simple field group w/ no display name.
 	 * @param fields The fields that will make up this group
 	 * @param displayName The UI display name used for presenting validation
 	 *        feedback to the UI.
@@ -319,6 +312,15 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
+	 * Adds a field directly under this field group.
+	 * @param field
+	 * @see #addField(String, IField)
+	 */
+	public void addField(IField field) {
+		addField(null, field);
+	}
+
+	/**
 	 * Adds a field directly under this field group pre-pending the given parent
 	 * property path to the field's <em>existing</em> property name.
 	 * @param parentPropPath Pre-pended to the field's property name before the
@@ -336,6 +338,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 		}
 		fields.add(field);
+	}
+
+	/**
+	 * Adds multiple fields to this group.
+	 * @param fields The fields to add
+	 */
+	public void addFields(Iterable<IField> fields) {
+		addFields(null, fields);
+	}
+
+	/**
+	 * Adds an array of fields to this group.
+	 * @param fields The array of fields to add
+	 */
+	public void addFields(IField[] fields) {
+		addFields(null, fields);
 	}
 
 	/**
@@ -477,258 +495,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	/*
-	private void onBeforeBind(Model model) {
-		// reset pending deletes
-		if(pendingDeletes != null) pendingDeletes.clear();
-		// reset update model flag
-		updateModel = true;
-		// provide an opportunity for the owning panel to ready their field group
-		// before actual binding
-		if(bindingListener != null) bindingListener.onBeforeBind(model);
-	}
-
-	private void onAfterBind() {
-		if(bindingListener != null) bindingListener.onAfterBind();
-	}
-	*/
-
-	/**
-	 * Recursively binds a FieldGroup to a Model.
-	 * @param group The FieldGroup
-	 * @param model The Model
-	 * @param propertyPathOffset The node index at which the given FieldGroup
-	 *        binds to the given Model.
-	 */
-	/*
-	private static void bindModel(final int propertyPathOffset, FieldGroup group, final Model model) {
-		group.onBeforeBind(model);
-		final PropertyPath propPath = new PropertyPath();
-		for(IField fld : group) {
-			if(fld instanceof FieldGroup) {
-				bindModel(propertyPathOffset, (FieldGroup) fld, model);
-			}
-			else {
-				PropertyPath resolved = propPath;
-				propPath.parse(fld.getPropertyName());
-				if(propertyPathOffset > 0) {
-					resolved = propPath.nested(propertyPathOffset);
-				}
-				IPropertyValue pv = model.getValue(resolved);
-				if(pv == null) {
-					fld.clear();
-				}
-				else {
-					fld.bindModel(pv);
-				}
-			}
-		}
-		group.onAfterBind();
-	}
-	*/
-
-	/**
-	 * Updates the model by recursively traversing the given FieldGroup.
-	 * @param group The FieldGroup
-	 * @param model The Model to be updated
-	 * @param unboundFieldsMap
-	 * @param depth The recursion depth
-	 * @return <code>true</code> when at least one valid update was transferred to
-	 *         the given model.
-	 */
-	/*
-	private static boolean updateModel(FieldGroup group, final Model model,
-			final Map<PropertyPath, Set<IField>> unboundFields, int depth) {
-
-		if(!group.updateModel) return false;
-
-		boolean changed = false;
-
-		// first apply scheduled deletions
-		if(group.pendingDeletes != null) {
-			final PropertyPath pp = new PropertyPath();
-			for(String path : group.pendingDeletes) {
-				pp.parse(path);
-				IModelProperty prop = model.getBinding(pp);
-				if(prop.getType().isModelRef()) {
-					((IModelRefProperty) prop).getModel().setMarkedDeleted(true);
-					changed = true;
-				}
-			}
-		}
-
-		IPropertyValue pv;
-		final PropertyPath propPath = new PropertyPath();
-		for(IField fld : group) {
-			if(fld instanceof FieldGroup) {
-				if(updateModel((FieldGroup) fld, model, unboundFields, depth + 1)) {
-					changed = true;
-				}
-			}
-			else {
-				// non-group field
-				try {
-					propPath.parse(fld.getPropertyName());
-
-					int n = propPath.nextIndexedNode(0, true);
-					if(n >= 0) {
-						// unbound property!
-						PropertyPath unboundPath = n == 0 ? new PropertyPath(propPath.pathAt(0)) : propPath.ancestor(n);
-						assert unboundPath != null && unboundPath.length() > 0;
-						Set<IField> set = unboundFields.get(unboundPath);
-						if(set == null) {
-							set = new HashSet<IField>();
-							unboundFields.put(unboundPath, set);
-						}
-						set.add(fld);
-					}
-					else {
-						// existing model property
-						pv = model.getValue(propPath);
-						if(pv != null) {
-							if(fld.updateModel(pv)) {
-								changed = true;
-							}
-						}
-					}
-				}
-				catch(IllegalArgumentException e) {
-					throw new IllegalStateException(e.getMessage());
-				}
-			}
-		}
-
-		if(depth == 0) {
-			// handle the unbound indexed props (newly created in the ui)
-			if(unboundFields.size() > 0) {
-				for(PropertyPath upp : unboundFields.keySet()) {
-					// create the missing properties in the model
-					if(upp.isIndexed()) {
-						// unbound indexed property
-						RelatedManyProperty rmp = (RelatedManyProperty) model.getBinding(upp.indexedParent());
-						Model stub = AuxDataCache.instance().getEntityPrototype(rmp.getRelatedType());
-						if(stub == null)
-							throw new IllegalStateException("Unable to acquire a " + rmp.getRelatedType().getName()
-									+ " model prototype");
-
-						// now we need to propagate the actual property path to the child
-						// fields
-
-						// actual property path RELATIVE TO THE RELATED MANY PROPERTY
-						// BINDING AND NOT THE ROOT MODEL
-						// e.g. relatedMany[1] NOT root.relatedMany[1]
-						final String app = rmp.add(stub);
-
-						// the depth index of the unbound prop path
-						final int depthIndex = upp.depth() - 1;
-						assert depthIndex >= 0;
-
-						Set<IField> ufields = unboundFields.get(upp);
-						for(IField fld : ufields) {
-
-							// replace the indexed property path node
-							propPath.parse(fld.getPropertyName());
-							assert propPath.depth() > depthIndex;
-							propPath.replaceAt(depthIndex, app);
-
-							fld.setPropertyName(propPath.toString());
-							// do the model update
-							pv = model.getValue(propPath);
-							if(pv != null) fld.updateModel(pv);
-						}
-						changed = true;
-					}
-					else {
-						// unbound non-indexed property
-						throw new UnsupportedOperationException("Only indexed properties may be unbound");
-					}
-				}
-			}
-
-			if(!changed) {
-				MsgManager.instance.post(true, new Msg("No edits detected.", MsgLevel.WARN), Position.CENTER,
-						group.feedbackWidget, -1, true).show();
-			}
-		}
-
-		return changed;
-	}
-	*/
-
-	/**
-	 * Binds a Model to this group.
-	 */
-	/*
-	public void bindModel(int propPathOffset, IModelRefProperty modelref) {
-		bindModel(propPathOffset, this, modelref.getModel());
-	}
-	*/
-
-	/*
-	public void bindModel(IModelProperty prop) {
-		if(prop instanceof IModelRefProperty == false) {
-			throw new IllegalArgumentException("Only model refs are bindable to field groups.");
-		}
-		bindModel(0, (IModelRefProperty) prop);
-	}
-
-	public boolean updateModel(IModelProperty prop) {
-		if(prop instanceof IModelRefProperty == false) {
-			throw new IllegalArgumentException("Only model refs are updatable by field groups.");
-		}
-		return updateModel(this, ((IModelRefProperty) prop).getModel(), new HashMap<PropertyPath, Set<IField>>(), 0);
-	}
-
-	public void addValidator(IValidator validator) {
-		if(validators == null) {
-			validators = new CompositeValidator();
-		}
-		validators.add(validator);
-	}
-
-	public void validate() throws ValidationException {
-		boolean valid = true;
-		for(IField field : fields) {
-			try {
-				field.validate();
-			}
-			catch(ValidationException e) {
-				valid = false;
-			}
-		}
-		if(validators != null) {
-			try {
-				validators.validate(null);
-			}
-			catch(ValidationException e) {
-				valid = false;
-			}
-		}
-		if(!valid) {
-			throw new ValidationException(descriptor() + " has errors.");
-		}
-	}
-
-	public void handleValidationFeedback(IValidationFeedback feedback) {
-		final List<Msg> msgs = feedback.getValidationMessages();
-		if(msgs == null) return;
-		List<Msg> unboundFieldMessages = new ArrayList<Msg>();
-		for(Msg fm : msgs) {
-			IField fld = getField(fm.getRefToken());
-			if(fld != null) {
-				fld.handleValidationFeedback(new ValidationException(fm));
-			}
-			else {
-				// field not found
-				unboundFieldMessages.add(fm);
-			}
-		}
-		if(unboundFieldMessages.size() > 0) {
-			MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
-		}
-	}
-	*/
-
 	@Override
 	public String toString() {
 		return descriptor() + " (FieldGroup)";
@@ -747,18 +513,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return false;
 	}
 
-	public void markDirty(boolean dirty) {
-		for(IField field : fields) {
-			field.markDirty(dirty);
-		}
-	}
-
-	public void markInvalid(boolean invalid, List<Msg> msgs) {
-		for(IField field : fields) {
-			field.markInvalid(invalid, msgs);
-		}
-	}
-
 	public void addChangeListener(ChangeListener listener) {
 		throw new UnsupportedOperationException();
 	}
@@ -766,4 +520,98 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	public void removeChangeListener(ChangeListener listener) {
 		throw new UnsupportedOperationException();
 	}
+
+	public void dirtyCheck() {
+		for(IField f : fields) {
+			f.dirtyCheck();
+		}
+	}
+
+	/**
+	 * Adds a field validator to this binding.
+	 * @param validator The validator to add
+	 */
+	public final void addValidator(IValidator validator) {
+		assert validator != null;
+		if(this.validator == null) {
+			this.validator = validator;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			((CompositeValidator) this.validator).add(validator);
+		}
+		else {
+			CompositeValidator cv = new CompositeValidator();
+			cv.add(this.validator);
+			cv.add(validator);
+			this.validator = cv;
+		}
+	}
+
+	/**
+	 * Removes a validator from this binding.
+	 * @param validator The validator to remove
+	 */
+	public final void removeValidator(IValidator validator) {
+		assert validator != null;
+		if(this.validator == validator) {
+			this.validator = null;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			((CompositeValidator) this.validator).remove(validator);
+		}
+	}
+
+	public Object validate() throws ValidationException {
+		boolean valid = true;
+		for(IField field : fields) {
+			try {
+				field.validate();
+			}
+			catch(ValidationException e) {
+				valid = false;
+			}
+		}
+		if(validator != null) {
+			try {
+				validator.validate(null);
+			}
+			catch(ValidationException e) {
+				valid = false;
+				// handle UI msg if we have a feedback widget specified
+				if(feedbackWidget != null) {
+					MsgManager.instance.post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false).show();
+				}
+			}
+		}
+		if(!valid) {
+			throw new ValidationException(descriptor() + " has errors.");
+		}
+		return null;
+	}
+
+	public void markInvalid(boolean invalid, List<Msg> msgs) {
+		if(invalid) {
+			if(msgs == null) return;
+			List<Msg> unboundFieldMessages = new ArrayList<Msg>();
+			for(Msg fm : msgs) {
+				IField fld = getField(fm.getRefToken());
+				if(fld != null) {
+					List<Msg> l = new ArrayList<Msg>();
+					l.add(fm);
+					fld.markInvalid(true, l);
+				}
+				else {
+					// field not found
+					unboundFieldMessages.add(fm);
+				}
+			}
+			if(unboundFieldMessages.size() > 0) {
+				MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
+			}
+		}
+		else {
+			if(feedbackWidget != null) MsgManager.instance.clear(feedbackWidget, false);
+		}
+	}
+
 }

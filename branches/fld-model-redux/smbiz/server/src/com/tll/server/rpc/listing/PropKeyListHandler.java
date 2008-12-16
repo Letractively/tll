@@ -48,7 +48,7 @@ public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler
 		Model xgrp = new Model(model.getEntityType());
 		for(int i = 0; i < numCols; i++) {
 			pp.parse(propKeys[i]);
-			IModelProperty prop = model.getBinding(pp);
+			IModelProperty prop = model.getProperty(pp);
 			xgrp.set(prop);
 		}
 		return xgrp;

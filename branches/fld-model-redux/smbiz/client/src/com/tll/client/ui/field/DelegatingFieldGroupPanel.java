@@ -6,7 +6,9 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.model.Model;
 
 /**
  * DelegatingFieldGroupPanel - Delegates drawing of the field Panel to an
@@ -42,13 +44,18 @@ public class DelegatingFieldGroupPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void populateFieldGroup() {
+	protected void populateFieldGroup(FieldGroup fields) {
 		// we assume the group has already been populated!
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected final void draw(Panel canvas) {
+	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+			Model model) {
+	}
+
+	@Override
+	protected final void draw(Panel canvas, FieldGroup fields) {
 		renderer.draw(canvas, getFieldGroup(), parentPropertyPath);
 	}
 }

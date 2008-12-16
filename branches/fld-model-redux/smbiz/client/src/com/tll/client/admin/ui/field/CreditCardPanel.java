@@ -6,6 +6,9 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
@@ -13,6 +16,7 @@ import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
+import com.tll.client.validate.CreditCardValidator;
 import com.tll.model.impl.CreditCardType;
 import com.tll.service.app.RefDataType;
 
@@ -43,9 +47,10 @@ public final class CreditCardPanel extends FieldPanel {
 	}
 
 	@Override
-	public void populateFieldGroup() {
+	public void populateFieldGroup(FieldGroup fields) {
 		type = FieldFactory.fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
 		num = FieldFactory.ftext("paymentData_ccNum", "Num", 15);
+		num.addValidator(CreditCardValidator.INSTANCE);
 		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", 4);
 		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", 2);
 		expYr = FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", 4);
@@ -61,22 +66,39 @@ public final class CreditCardPanel extends FieldPanel {
 				FieldFactory.fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
 						RefDataType.ISO_COUNTRY_CODES));
 
-		addField(type);
-		addField(num);
-		addField(cvv2);
-		addField(expMn);
-		addField(expYr);
-		addField(name);
-		addField(addr1);
-		addField(addr2);
-		addField(city);
-		addField(state);
-		addField(zip);
-		addField(country);
+		fields.addField(type);
+		fields.addField(num);
+		fields.addField(cvv2);
+		fields.addField(expMn);
+		fields.addField(expYr);
+		fields.addField(name);
+		fields.addField(addr1);
+		fields.addField(addr2);
+		fields.addField(city);
+		fields.addField(state);
+		fields.addField(zip);
+		fields.addField(country);
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+			Model model) {
+		bindings.add(createFieldBinding("paymentData_ccType", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccNum", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccCvv2", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccExpMonth", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccExpYear", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccName", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccAddress1", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccAddress2", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccCity", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccState", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccZip", model, parentPropertyPath));
+		bindings.add(createFieldBinding("paymentData_ccCountry", model, parentPropertyPath));
+	}
+
+	@Override
+	protected void draw(Panel canvas, FieldGroup fields) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

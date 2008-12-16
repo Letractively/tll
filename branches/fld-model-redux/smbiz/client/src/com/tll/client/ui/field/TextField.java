@@ -65,7 +65,8 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 	public TextBox getTextBox() {
 		if(tb == null) {
 			tb = new TextBox();
-			// tb.addFocusListener(this);
+			tb.addFocusListener(this);
+			tb.addChangeListener(this);
 		}
 		return tb;
 	}

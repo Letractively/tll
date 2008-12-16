@@ -17,7 +17,7 @@ import com.tll.client.util.Fmt;
 public final class ModelCellRenderer implements ITableCellRenderer<Model> {
 
 	public String getCellValue(Model rowData, Column column) {
-		IPropertyValue pv = rowData.getValue(new PropertyPath(column.getPropertyName()));
+		IPropertyValue pv = rowData.getPropertyValue(new PropertyPath(column.getPropertyName()));
 
 		// self formatting type..
 		if(pv.getType().isSelfFormatting()) {

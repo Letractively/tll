@@ -6,11 +6,13 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.model.Model;
+import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
-import com.tll.client.ui.field.SuggestField;
-import com.tll.client.ui.field.TextField;
 import com.tll.service.app.RefDataType;
 
 /**
@@ -18,19 +20,6 @@ import com.tll.service.app.RefDataType;
  * @author jpk
  */
 public final class AddressPanel extends FieldPanel {
-
-	private TextField emailAddress;
-	private TextField lastName;
-	private TextField firstName;
-	private TextField mi;
-	private TextField company;
-	private TextField attn;
-	private TextField address1;
-	private TextField address2;
-	private TextField city;
-	private SuggestField province;
-	private TextField postalCode;
-	private SuggestField country;
 
 	/**
 	 * Constructor
@@ -40,67 +29,67 @@ public final class AddressPanel extends FieldPanel {
 	}
 
 	@Override
-	public void populateFieldGroup() {
-		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", 30);
-		lastName = FieldFactory.ftext("firstName", "First Name", 20);
-		firstName = FieldFactory.ftext("lastName", "Last Name", 20);
-		mi = FieldFactory.ftext("mi", "MI", 1);
-		company = FieldFactory.ftext("company", "Company", 20);
-		attn = FieldFactory.ftext("attn", "Attn", 10);
-		address1 = FieldFactory.ftext("address1", "Address 1", 40);
-		address2 = FieldFactory.ftext("address2", "Address 2", 40);
-		city = FieldFactory.ftext("city", "City", 30);
-		province =
-				FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
-						.getRefDataMap(RefDataType.US_STATES));
-		postalCode = FieldFactory.ftext("postalCode", "Zip", 20);
-		country =
-				FieldFactory.fsuggest("country", "Country", AuxDataCache.instance()
-						.getRefDataMap(RefDataType.ISO_COUNTRY_CODES));
-
-		addField(emailAddress);
-		addField(lastName);
-		addField(firstName);
-		addField(mi);
-		addField(company);
-		addField(attn);
-		addField(address1);
-		addField(address2);
-		addField(city);
-		addField(province);
-		addField(postalCode);
-		addField(country);
+	public void populateFieldGroup(FieldGroup fields) {
+		fields.addField(FieldFactory.ftext("emailAddress", "Email Address", 30));
+		fields.addField(FieldFactory.ftext("firstName", "First Name", 20));
+		fields.addField(FieldFactory.ftext("lastName", "Last Name", 20));
+		fields.addField(FieldFactory.ftext("mi", "MI", 1));
+		fields.addField(FieldFactory.ftext("company", "Company", 20));
+		fields.addField(FieldFactory.ftext("attn", "Attn", 10));
+		fields.addField(FieldFactory.ftext("address1", "Address 1", 40));
+		fields.addField(FieldFactory.ftext("address2", "Address 2", 40));
+		fields.addField(FieldFactory.ftext("city", "City", 30));
+		fields.addField(FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(
+				RefDataType.US_STATES)));
+		fields.addField(FieldFactory.ftext("postalCode", "Zip", 20));
+		fields.addField(FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
+				RefDataType.ISO_COUNTRY_CODES)));
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+			Model model) {
+		bindings.add(createFieldBinding("emailAddress", model, parentPropertyPath));
+		bindings.add(createFieldBinding("firstName", model, parentPropertyPath));
+		bindings.add(createFieldBinding("lastName", model, parentPropertyPath));
+		bindings.add(createFieldBinding("mi", model, parentPropertyPath));
+		bindings.add(createFieldBinding("company", model, parentPropertyPath));
+		bindings.add(createFieldBinding("attn", model, parentPropertyPath));
+		bindings.add(createFieldBinding("address1", model, parentPropertyPath));
+		bindings.add(createFieldBinding("address2", model, parentPropertyPath));
+		bindings.add(createFieldBinding("city", model, parentPropertyPath));
+		bindings.add(createFieldBinding("province", model, parentPropertyPath));
+		bindings.add(createFieldBinding("country", model, parentPropertyPath));
+	}
+
+	@Override
+	protected void draw(Panel canvas, FieldGroup fields) {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
-		cmpsr.addField(emailAddress);
+		cmpsr.addField((AbstractField) fields.getField("emailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField(firstName);
-		cmpsr.addField(firstName);
-		cmpsr.addField(mi);
-		cmpsr.addField(lastName);
+		cmpsr.addField((AbstractField) fields.getField("firstName"));
+		cmpsr.addField((AbstractField) fields.getField("mi"));
+		cmpsr.addField((AbstractField) fields.getField("lastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(attn);
-		cmpsr.addField(company);
+		cmpsr.addField((AbstractField) fields.getField("attn"));
+		cmpsr.addField((AbstractField) fields.getField("company"));
 
 		cmpsr.newRow();
-		cmpsr.addField(address1);
+		cmpsr.addField((AbstractField) fields.getField("address1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(address2);
+		cmpsr.addField((AbstractField) fields.getField("address2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(city);
-		cmpsr.addField(province);
+		cmpsr.addField((AbstractField) fields.getField("city"));
+		cmpsr.addField((AbstractField) fields.getField("province"));
 
 		cmpsr.newRow();
-		cmpsr.addField(postalCode);
-		cmpsr.addField(country);
+		cmpsr.addField((AbstractField) fields.getField("postalCode"));
+		cmpsr.addField((AbstractField) fields.getField("country"));
 	}
 }

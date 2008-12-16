@@ -11,7 +11,8 @@ import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingEvent - Fired when listing data is retrieved for a targeted listing.
+ * ListingEvent - Fired when listing data is retrieved or updated for a targeted
+ * listing.
  * @param <R> The row data type
  * @author jpk
  */

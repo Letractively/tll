@@ -28,6 +28,7 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.field.IFieldProvider;
@@ -192,8 +193,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		public void populateFieldGroup() {
-			addField("address", ap.getFieldGroup());
+		public void populateFieldGroup(FieldGroup fields) {
+			fields.addField("address", ap.getFieldGroup());
 
 			// set address2 as read only
 			ap.getFieldGroup().getField("address.address2").setReadOnly(true);
@@ -201,12 +202,17 @@ public final class UITests implements EntryPoint, HistoryListener {
 			// set city as read only
 			ap.getFieldGroup().getField("address.city").setReadOnly(true);
 
-			addField(bflabel);
-			addField(bf);
+			fields.addField(bflabel);
+			fields.addField(bf);
 		}
 
 		@Override
-		protected void draw(Panel canvas) {
+		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+				Model model) {
+		}
+
+		@Override
+		protected void draw(Panel canvas, FieldGroup fields) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 

@@ -5,25 +5,16 @@
  */
 package com.tll.client.field;
 
-import java.util.List;
-
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyValue;
-import com.tll.client.msg.Msg;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
-import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
-import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
-import com.tll.client.validate.NotEmptyValidator;
-import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.model.schema.PropertyMetadata;
 
@@ -35,9 +26,23 @@ import com.tll.model.schema.PropertyMetadata;
  * <li>Field change tracking. Fields are styled when their onChange event
  * occurrs to indicate whether or not their value is dirty.
  * <li>Field validation tracking. Field's are validated when they loose focus.
+ * </ol>
+ * <p>
+ * To fully support data transfer ("binding"), the following conventions are
+ * established:
+ * <ol>
+ * <li>Non-FieldGroup {@link IField}s contained in a FieldGroup are expected to
+ * have a standard OGNL compliant property name to support binding to/from the
+ * underlying Model.
+ * <li>Newly created IFields that map to a non-existant related many Model are
+ * expected to have a property name that indicates as much:
+ * <code>indexableProp{index}.propertyName</code> as opposed to the standard:
+ * <code>indexableProp[index].propertyName</code>. In other words, curly braces
+ * (<code>{}</code>) are used instead of square braces (<code>[]</code>).
+ * </ol>
  * @author jpk
  */
-public final class FieldBinding implements IFieldBinding, ChangeListener, FocusListener {
+public final class FieldBinding implements IFieldBinding/*, ChangeListener, FocusListener*/{
 
 	/**
 	 * The bound field.
@@ -50,14 +55,15 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 	private IPropertyValue prop;
 
 	/**
-	 * The optional validator.
-	 */
-	private IValidator validator;
-
-	/**
 	 * Internal flag indicating whether this binding is bound.
 	 */
 	private boolean bound;
+
+	/**
+	 * Ref to the field validator added as a result of binding. This ref is
+	 * retained so it may be removed when unbinding occurrs.
+	 */
+	private IValidator bindingValidator;
 
 	/**
 	 * Constructor
@@ -71,6 +77,16 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 		this.field = field;
 	}
 
+	/**
+	 * Constructor
+	 * @param field
+	 * @param prop
+	 */
+	public FieldBinding(IField field, IPropertyValue prop) {
+		this(field);
+		setModelProperty(prop);
+	}
+
 	public IField getField() {
 		return field;
 	}
@@ -81,40 +97,6 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 
 	public void setModelProperty(IPropertyValue prop) {
 		this.prop = prop;
-	}
-
-	/**
-	 * Adds a field validator to this binding.
-	 * @param validator The validator to add
-	 */
-	public void addValidator(IValidator validator) {
-		assert validator != null;
-		if(this.validator == null) {
-			this.validator = validator;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).add(validator);
-		}
-		else {
-			CompositeValidator cv = new CompositeValidator();
-			cv.add(this.validator);
-			cv.add(validator);
-			this.validator = cv;
-		}
-	}
-
-	/**
-	 * Removes a validator from this binding.
-	 * @param validator The validator to remove
-	 */
-	public void removeValidator(IValidator validator) {
-		assert validator != null;
-		if(this.validator == validator) {
-			this.validator = null;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).remove(validator);
-		}
 	}
 
 	private GlobalFormat getFieldFormat() {
@@ -137,25 +119,26 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 			required = metadata.isRequired() && !metadata.isManaged();
 			maxlen = metadata.getMaxLen();
 
-			// add the type coercion validator
+			// set the binding (type coercion) validator
+			assert bindingValidator == null;
 			switch(metadata.getPropertyType()) {
 				case BOOL:
-					addValidator(BooleanValidator.INSTANCE);
+					bindingValidator = BooleanValidator.INSTANCE;
 					break;
 				case CHAR:
-					addValidator(CharacterValidator.INSTANCE);
+					bindingValidator = CharacterValidator.INSTANCE;
 					break;
 				case DATE: {
 					switch(getFieldFormat()) {
 						case DATE:
-							addValidator(DateValidator.DATE_VALIDATOR);
+							bindingValidator = DateValidator.DATE_VALIDATOR;
 							break;
 						case TIME:
-							addValidator(DateValidator.TIME_VALIDATOR);
+							bindingValidator = DateValidator.TIME_VALIDATOR;
 							break;
 						default:
 						case TIMESTAMP:
-							addValidator(DateValidator.TIMESTAMP_VALIDATOR);
+							bindingValidator = DateValidator.TIMESTAMP_VALIDATOR;
 							break;
 					}
 					break;
@@ -164,20 +147,20 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 				case DOUBLE: {
 					switch(getFieldFormat()) {
 						case CURRENCY:
-							addValidator(DecimalValidator.CURRENCY_VALIDATOR);
+							bindingValidator = DecimalValidator.CURRENCY_VALIDATOR;
 							break;
 						case PERCENT:
-							addValidator(DecimalValidator.PERCENT_VALIDATOR);
+							bindingValidator = DecimalValidator.PERCENT_VALIDATOR;
 							break;
 						case DECIMAL:
-							addValidator(DecimalValidator.DECIMAL_VALIDATOR);
+							bindingValidator = DecimalValidator.DECIMAL_VALIDATOR;
 							break;
 					}
 					break;
 				}
 				case INT:
 				case LONG:
-					addValidator(IntegerValidator.INSTANCE);
+					bindingValidator = IntegerValidator.INSTANCE;
 					break;
 
 				case ENUM:
@@ -186,7 +169,9 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 					break;
 
 				case STRING_MAP:
-					// TODO handle string map type coercion
+					// TODO impl
+					throw new UnsupportedOperationException();
+
 				default:
 					throw new IllegalStateException("Unhandled model property type: " + metadata.getPropertyType().name());
 			}
@@ -201,8 +186,9 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 			((HasMaxLength) field).setMaxLen(maxlen);
 		}
 
-		field.addChangeListener(this);
-		field.addFocusListener(this);
+		if(bindingValidator != null) {
+			field.addValidator(bindingValidator);
+		}
 
 		bound = true;
 	}
@@ -210,10 +196,11 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 	public void unbind() {
 		if(!bound) return;
 
-		validator = null;
-
-		field.removeFocusListener(this);
-		field.removeChangeListener(this);
+		// remove the binding validator if specified
+		if(bindingValidator != null) {
+			field.removeValidator(bindingValidator);
+			bindingValidator = null;
+		}
 
 		bound = false;
 	}
@@ -222,9 +209,6 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 		if(!bound) throw new IllegalStateException("Field binding not bound.");
 	}
 
-	/**
-	 * Transfers model data to the field.
-	 */
 	public void push() {
 		ensureBound();
 
@@ -239,68 +223,8 @@ public final class FieldBinding implements IFieldBinding, ChangeListener, FocusL
 		// field.reset();
 	}
 
-	/**
-	 * Transfers field data to the model property.
-	 * @throws ValidationException When the field data is invalid for the bound
-	 *         model property.
-	 */
 	public void pull() throws ValidationException {
 		ensureBound();
-		prop.setValue(validate(field.getValue()));
-	}
-
-	public Object validate(Object value) throws ValidationException {
-		ensureBound();
-
-		IValidationFeedback feedback = null;
-
-		try {
-			// "intrinsic" validation
-			assert field != null;
-			if(field.isRequired()) {
-				value = NotEmptyValidator.INSTANCE.validate(value);
-			}
-			if(field instanceof HasMaxLength) {
-				final int maxlen = ((HasMaxLength) field).getMaxLen();
-				if(maxlen != -1) {
-					value = StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-
-			// additional validation
-			if(validator != null) {
-				value = validator.validate(value);
-			}
-
-			return value;
-		}
-		catch(ValidationException ve) {
-			feedback = ve;
-			throw ve;
-		}
-		finally {
-			final List<Msg> msgs = feedback == null ? null : feedback.getValidationMessages();
-			field.markInvalid(msgs != null, msgs);
-		}
-	}
-
-	public void onChange(Widget sender) {
-		assert sender == field;
-		field.markDirty(field.isDirty());
-	}
-
-	public void onFocus(Widget sender) {
-		// no-op
-	}
-
-	public void onLostFocus(Widget sender) {
-		assert sender == field;
-		// validate the field and adjust its styling accordingly
-		try {
-			validate(field.getValue());
-		}
-		catch(ValidationException e) {
-			// no-op
-		}
+		prop.setValue(field.validate());
 	}
 }

@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusListener;
@@ -21,12 +22,17 @@ import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
+import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.IValidator;
+import com.tll.client.validate.NotEmptyValidator;
+import com.tll.client.validate.StringLengthValidator;
+import com.tll.client.validate.ValidationException;
 
 /**
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends Composite implements IField, ClickListener, HasFocus {
+public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, ChangeListener, FocusListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -92,6 +98,11 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 	private Widget container, labelContainer;
 
 	/**
+	 * The field validator(s).
+	 */
+	private IValidator validator;
+
+	/**
 	 * Constructor
 	 * @param propName The required property name to associate w/ this field.
 	 * @param lblTxt The field label text. If <code>null</code>, no field label is
@@ -117,6 +128,9 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 		else {
 			fldLbl = null;
 		}
+
+		addValidator(new RequirednessValidator());
+		addValidator(new MaxLengthValidator());
 	}
 
 	/**
@@ -209,8 +223,8 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 	}
 
 	/**
-	 * We override to handle setting the visibility for the label as well and also
-	 * to apply visibility to the directed parent Widget.
+	 * We override to handle setting the visibility for the label as well as the
+	 * visibility to the containing Widget.
 	 */
 	@Override
 	public final void setVisible(boolean visible) {
@@ -269,13 +283,103 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 		return ((cv == null && resetValue == null) || cv != null && cv.equals(resetValue));
 	}
 
-	public void markDirty(boolean dirty) {
-		if(dirty) {
+	public void dirtyCheck() {
+		if(isDirty()) {
 			addStyleName(STYLE_DIRTY);
 		}
 		else {
 			removeStyleName(STYLE_DIRTY);
 		}
+	}
+
+	/**
+	 * Adds a field validator to this binding.
+	 * @param validator The validator to add
+	 */
+	public final void addValidator(IValidator validator) {
+		assert validator != null;
+		if(this.validator == null) {
+			this.validator = validator;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			((CompositeValidator) this.validator).add(validator);
+		}
+		else {
+			CompositeValidator cv = new CompositeValidator();
+			cv.add(this.validator);
+			cv.add(validator);
+			this.validator = cv;
+		}
+	}
+
+	/**
+	 * Removes a validator from this binding.
+	 * @param validator The validator to remove
+	 */
+	public final void removeValidator(IValidator validator) {
+		assert validator != null;
+		if(this.validator == validator) {
+			this.validator = null;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			((CompositeValidator) this.validator).remove(validator);
+		}
+	}
+
+	/**
+	 * RequirednessValidator - Validator for checking a field's requireness.
+	 * @author jpk
+	 */
+	protected final class RequirednessValidator implements IValidator {
+
+		public Object validate(Object value) throws ValidationException {
+			if(isRequired()) {
+				value = NotEmptyValidator.INSTANCE.validate(value);
+			}
+			return value;
+		}
+
+	}
+
+	/**
+	 * MaxLengthValidator - Validator for checking a field value's maximum
+	 * allowable length.
+	 * @author jpk
+	 */
+	protected final class MaxLengthValidator implements IValidator {
+
+		public Object validate(Object value) throws ValidationException {
+			if(AbstractField.this instanceof HasMaxLength) {
+				final int maxlen = ((HasMaxLength) AbstractField.this).getMaxLen();
+				if(maxlen != -1) {
+					value = StringLengthValidator.validate(value, -1, maxlen);
+				}
+			}
+			return value;
+		}
+
+	}
+
+	public Object validate() throws ValidationException {
+		// we start with the field's current value
+		Object value = getValue();
+
+		List<Msg> errorMsgs = null;
+
+		try {
+			if(validator != null) {
+				value = validator.validate(value);
+			}
+		}
+		catch(ValidationException ve) {
+			errorMsgs = ve.getValidationMessages();
+			throw ve;
+		}
+		finally {
+			markInvalid(errorMsgs != null, errorMsgs);
+		}
+
+		return value;
 	}
 
 	public void markInvalid(boolean invalid, List<Msg> msgs) {
@@ -293,9 +397,10 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 
 	public final void reset() {
 		setValue(resetValue);
-		markDirty(false);
-		markInvalid(false, null);
-		draw();
+		clearMsgs();
+		removeStyleName(STYLE_DIRTY);
+		removeStyleName(STYLE_INVALID);
+		// draw(); // don't draw here
 	}
 
 	/**
@@ -431,6 +536,26 @@ public abstract class AbstractField extends Composite implements IField, ClickLi
 	public final void setTabIndex(int index) {
 		if(!isReadOnly()) {
 			getEditable(null).setTabIndex(index);
+		}
+	}
+
+	public void onChange(Widget sender) {
+		assert sender == this;
+		// dirty check
+		dirtyCheck();
+	}
+
+	public void onFocus(Widget sender) {
+		// no-op
+	}
+
+	public void onLostFocus(Widget sender) {
+		// valid check
+		try {
+			validate();
+		}
+		catch(ValidationException e) {
+			// no-op
 		}
 	}
 

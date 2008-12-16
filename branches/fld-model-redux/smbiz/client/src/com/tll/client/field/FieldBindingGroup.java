@@ -9,19 +9,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tll.client.event.IFieldBindingListener;
-import com.tll.client.event.ISourcesFieldBindingEvents;
 import com.tll.client.validate.ValidationException;
 
 /**
  * FieldBindingGroup - A collection of {@link FieldBinding}s.
  * @author jpk
  */
-public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding>, ISourcesFieldBindingEvents {
+public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding> {
 
 	private final Set<FieldBinding> set = new HashSet<FieldBinding>();
-
-	private FieldBindingListenerCollection bindingListeners;
 
 	/**
 	 * Constructor
@@ -30,20 +26,8 @@ public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding>,
 		super();
 	}
 
-	public void addFieldBindingListener(IFieldBindingListener listener) {
-		if(bindingListeners == null) {
-			bindingListeners = new FieldBindingListenerCollection();
-		}
-		bindingListeners.add(listener);
-	}
-
-	public void removeFieldBindingListener(IFieldBindingListener listener) {
-		if(bindingListeners != null) {
-			bindingListeners.remove(listener);
-		}
-	}
-
 	public void add(FieldBinding binding) {
+		if(binding == null) throw new IllegalArgumentException("The field binding can't be null.");
 		set.add(binding);
 	}
 
@@ -56,30 +40,31 @@ public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding>,
 	}
 
 	public void bind() {
-		if(bindingListeners != null) bindingListeners.fireBeforeBindEvent();
 		for(FieldBinding b : set) {
 			b.bind();
 		}
-		if(bindingListeners != null) bindingListeners.fireAfterBindEvent();
 	}
 
 	public void unbind() {
-		if(bindingListeners != null) bindingListeners.fireBeforeUnbindEvent();
 		for(FieldBinding b : set) {
 			b.unbind();
 		}
-		if(bindingListeners != null) bindingListeners.fireAfterUnbindEvent();
 	}
 
-	public Object validate(Object value) {
+	public void push() {
 		for(FieldBinding b : set) {
-			try {
-				b.validate(b.getField().getValue());
-			}
-			catch(ValidationException e) {
-				// no-op
-			}
+			b.push();
 		}
-		return null;
+	}
+
+	public void pull() throws ValidationException {
+		for(FieldBinding b : set) {
+			b.pull();
+		}
+	}
+
+	public void clear() {
+		unbind();
+		set.clear();
 	}
 }

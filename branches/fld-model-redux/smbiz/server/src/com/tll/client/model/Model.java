@@ -167,7 +167,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IModelProperty prop = getBinding(new PropertyPath(propPath));
+		IModelProperty prop = getProperty(new PropertyPath(propPath));
 		if(prop == null) return null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
@@ -188,9 +188,9 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *        returned.
 	 * @return The nested property or <code>null</code> if not present
 	 * @throws IllegalArgumentException When the given property path is
-	 *         <code>null</code> or mal-formed.
+	 *         mal-formed.
 	 */
-	public IModelProperty getBinding(PropertyPath propPath) throws IllegalArgumentException {
+	public IModelProperty getProperty(PropertyPath propPath) throws IllegalArgumentException {
 		if(propPath == null || propPath.length() < 1) {
 			return getSelfRef();
 		}
@@ -212,19 +212,40 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
-	 * Retrieves a property value from the model given a property path.
+	 * Retrieves an IPropertyValue from the model given a property path. This
+	 * method is {@link #getProperty(PropertyPath)} with a filter that targets on
+	 * {@link IPropertyValue} type {@link IModelProperty}s.
 	 * @param propPath A parsed property path
-	 * @return The resolved IPropertyValue or <code>null</code> if not set.
+	 * @return The resolved {@link IPropertyValue} or <code>null</code> if not
+	 *         set.
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IPropertyValue}.
 	 */
-	public IPropertyValue getValue(PropertyPath propPath) throws IllegalArgumentException {
-		IModelProperty prop = getBinding(propPath);
+	public IPropertyValue getPropertyValue(PropertyPath propPath) throws IllegalArgumentException {
+		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a value property");
 		}
 		return (IPropertyValue) prop;
+	}
+
+	/**
+	 * Extracts a nested Model from a targeted {@link IModelRefProperty}.
+	 * @param propPath The property path that points to the desired model ref
+	 *        property. If <code>null</code> or empty, this {@link Model} is
+	 *        returned.
+	 * @return The nested {@link Model}
+	 * @throws IllegalArgumentException When the given property path can't be
+	 *         resolved or does not map to an {@link IModelRefProperty}.
+	 */
+	public Model getNestedModel(PropertyPath propPath) throws IllegalArgumentException {
+		IModelProperty prop = getProperty(propPath);
+		if(prop == null) return null;
+		if(!prop.getType().isModelRef()) {
+			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a model ref property");
+		}
+		return ((IModelRefProperty) prop).getModel();
 	}
 
 	/**
@@ -236,7 +257,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to a related one property.
 	 */
 	public RelatedOneProperty relatedOne(PropertyPath propPath) throws IllegalArgumentException {
-		IModelProperty prop = getBinding(propPath);
+		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
@@ -253,7 +274,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(PropertyPath propPath) throws IllegalArgumentException {
-		IModelProperty prop = getBinding(propPath);
+		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related many property");
@@ -271,7 +292,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(PropertyPath propPath) throws IllegalArgumentException {
-		IModelProperty prop = getBinding(propPath);
+		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");

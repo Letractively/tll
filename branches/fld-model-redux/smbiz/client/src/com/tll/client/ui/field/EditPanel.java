@@ -18,19 +18,20 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
+import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
- * consist of a {@link ScrollPanel} containing a {@link FieldPanel} and
- * another {@link FlowPanel} containing edit buttons. The {@link ScrollPanel}
- * enables the the {@link FieldPanel} content to always be navigable and
- * keeps the edit and cancel buttons in constant position.
+ * consist of a {@link ScrollPanel} containing a {@link FieldPanel} and another
+ * {@link FlowPanel} containing edit buttons. The {@link ScrollPanel} enables
+ * the the {@link FieldPanel} content to always be navigable and keeps the edit
+ * and cancel buttons in constant position.
  * @author jpk
  */
 public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
@@ -53,13 +54,17 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * This panel contains the {@link FieldPanel}.
 	 */
-	// private final ScrollPanel portal = new ScrollPanel();
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel fieldGroupPanel;
+	private final FieldPanel fieldPanel;
+
+	/**
+	 * The field bindings.
+	 */
+	private final FieldBindingGroup bindings;
 
 	/**
 	 * The panel containing the edit buttons
@@ -72,13 +77,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
-	 * @param fieldGroupPanel The field group panel
+	 * @param fieldPanel The field group panel
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel fieldGroupPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
 		// hide the button row until initialized
@@ -113,8 +118,10 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		initWidget(panel);
 
 		setStyleName(STYLE_ENTITY_EDIT);
-		this.fieldGroupPanel = fieldGroupPanel;
-		portal.setWidget(fieldGroupPanel);
+		this.fieldPanel = fieldPanel;
+		portal.setWidget(fieldPanel);
+
+		bindings = new FieldBindingGroup();
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -152,18 +159,33 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 	}
 
-	public void applyMsgs(final List<Msg> msgs) {
-		getFields().handleValidationFeedback(new IValidationFeedback() {
+	public void bindModel(Model model) {
+		// create field bindings
+		bindings.unbind();
+		bindings.clear();
 
-			public List<Msg> getValidationMessages() {
-				return msgs;
-			}
+		fieldPanel.createFieldBindings(model);
 
-		});
+		// bind
+	}
+
+	public boolean updateModel() {
+		if(bindings.size() < 1) throw new IllegalStateException("No field bindings exist.");
+		try {
+			bindings.pull();
+			return true;
+		}
+		catch(ValidationException e) {
+			return false;
+		}
+	}
+
+	public void applyErrorMsgs(final List<Msg> msgs) {
+		getFields().markInvalid(true, msgs);
 	}
 
 	public FieldGroup getFields() {
-		return fieldGroupPanel.getFieldGroup();
+		return fieldPanel.getFieldGroup();
 	}
 
 	public void setEditMode(boolean isAdd) {
@@ -178,12 +200,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	public void onClick(Widget sender) {
 		if(sender == btnSave) {
-			try {
-				getFields().validate();
-			}
-			catch(ValidationException e) {
-				return;
-			}
+			if(!updateModel()) return;
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
