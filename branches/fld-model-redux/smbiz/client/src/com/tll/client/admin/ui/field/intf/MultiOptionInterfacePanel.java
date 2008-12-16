@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -25,8 +27,6 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
-import com.tll.client.ui.listing.FieldListing;
-import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -42,19 +42,18 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		TextField name, code;
 		TextAreaField description;
 		TextField[] cost, price;
-		FieldListing paramListing;
+
+		// FieldListing paramListing;
 
 		/**
 		 * Constructor
-		 * @param paramListing May be <code>null</code>
 		 */
-		public OptionPanel(FieldListing paramListing) {
+		public OptionPanel() {
 			super("Option");
-			this.paramListing = paramListing;
 		}
 
 		@Override
-		protected void populateFieldGroup() {
+		protected void populateFieldGroup(FieldGroup fields) {
 			name = FieldFactory.createNameEntityField();
 			code = FieldFactory.ftext("code", "Code", 20);
 			description = FieldFactory.ftextarea("description", "Desc", 3, 8);
@@ -69,15 +68,20 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			price[1] = FieldFactory.fcurrency("baseMonthlyPrice", "Monthly");
 			price[2] = FieldFactory.fcurrency("baseAnnualPrice", "Annual");
 
-			addField(name);
-			addField(code);
-			addField(description);
-			addFields(cost);
-			addFields(price);
+			fields.addField(name);
+			fields.addField(code);
+			fields.addField(description);
+			fields.addFields(cost);
+			fields.addFields(price);
 		}
 
 		@Override
-		protected void draw(Panel canvas) {
+		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+				Model model) {
+		}
+
+		@Override
+		protected void draw(Panel canvas, FieldGroup fields) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -97,10 +101,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 			g.setWidget(1, 2, price[2]);
 			cmpsr.addWidget(g);
 
-			cmpsr.newRow();
-			cmpsr.addWidget(paramListing);
+			// cmpsr.newRow();
+			// cmpsr.addWidget(paramListing);
 		}
-
 	}
 
 	/**
@@ -112,12 +115,12 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void populateFieldGroup() {
-		super.populateFieldGroup();
+	public void populateFieldGroup(FieldGroup fields) {
+		super.populateFieldGroup(fields);
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void draw(Panel canvas, FieldGroup fields) {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
@@ -141,11 +144,11 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void applyModel(Model model) {
+	protected void applyModel(Model model, FieldGroup fields) {
 
 		// clear existing options
 		for(Widget w : tabOptions) {
-			if(w instanceof OptionPanel) removeField(((OptionPanel) w).getFieldGroup());
+			if(w instanceof OptionPanel) fields.removeField(((OptionPanel) w).getFieldGroup());
 		}
 		tabOptions.clear();
 
@@ -173,10 +176,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				}
 
-				OptionPanel pnlOption =
-						new OptionPanel(new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
-								paramColumns, path.toString(), getFieldGroup(), paramFieldProvider, paramFieldRenderer));
-				addField(propOption.getPropertyName(), pnlOption.getFieldGroup());
+				OptionPanel pnlOption = new OptionPanel(/*new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
+												paramColumns, path.toString(), getFieldGroup(), paramFieldProvider, paramFieldRenderer));
+								addField(propOption.getPropertyName(), pnlOption.getFieldGroup()*/);
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), propOption
 						.getPropertyName()));
 			}
@@ -188,16 +190,18 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		tabOptions.add(new Label("TODO"), img);
 	}
 
+	/*
 	@Override
 	public void onAfterBind() {
 		super.onAfterBind();
 		// default select the first tab if none are selected
 		if(tabOptions.getTabBar().getSelectedTab() < 0) tabOptions.selectTab(0);
 	}
+	*/
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 		OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
-		op.paramListing.refresh();
+		// op.paramListing.refresh();
 		return true;
 	}
 

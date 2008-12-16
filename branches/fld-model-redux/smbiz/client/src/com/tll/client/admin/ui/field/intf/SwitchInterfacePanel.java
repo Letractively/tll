@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.field.FieldGroup;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
@@ -24,7 +25,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void draw(Panel canvas, FieldGroup fields) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
@@ -44,7 +45,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected void applyModel(Model modelInterface) {
+	protected void applyModel(Model modelInterface, FieldGroup fields) {
 		/*
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {

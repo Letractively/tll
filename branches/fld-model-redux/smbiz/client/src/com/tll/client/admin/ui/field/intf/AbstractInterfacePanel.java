@@ -5,60 +5,28 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.widgetideas.table.client.overrides.Grid;
+import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
-import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.Column;
-import com.tll.client.model.PropertyPath;
-import com.tll.client.ui.field.AbstractField;
+import com.tll.client.model.Model;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldLabel;
-import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
-import com.tll.client.ui.field.VerticalFieldPanelComposer;
 
 /**
- * AbstractInterfacePanel
+ * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
+ * interfaces (not Options).
  * @author jpk
  */
 public abstract class AbstractInterfacePanel extends FieldPanel {
 
 	protected static final Column[] paramColumns = new Column[] {
-		new Column("Name", "name"),
-		new Column("Code", "code"),
-		new Column("Description", "description") };
-
-	protected static final IFieldProvider paramFieldProvider = new IFieldProvider() {
-
-		public IField[] getFields() {
-			return new IField[] {
-				FieldFactory.createNameEntityField(),
-				FieldFactory.ftext("code", "Code", 20),
-				FieldFactory.ftextarea("description", "Desc", 3, 20) };
-		}
-	};
-
-	protected static final IFieldRenderer paramFieldRenderer = new IFieldRenderer() {
-
-		public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
-			VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
-			cmpsr.setCanvas(canvas);
-
-			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath.getPropertyPath(parentPropertyPath, "name")));
-
-			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath.getPropertyPath(parentPropertyPath, "code")));
-
-			cmpsr.addField((AbstractField) fieldGroup.getField(PropertyPath
-					.getPropertyPath(parentPropertyPath, "description")));
-		}
-
-	};
+		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };
 
 	protected TextField name, code;
 	protected TextAreaField description;
@@ -74,7 +42,7 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 	}
 
 	@Override
-	public void populateFieldGroup() {
+	public void populateFieldGroup(FieldGroup fields) {
 		name = FieldFactory.createNameEntityField();
 		code = FieldFactory.ftext("code", "Code", 20);
 		description = FieldFactory.ftextarea("description", "Desc", 3, 8);
@@ -90,19 +58,24 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 		isRequiredMerchant = FieldFactory.fbool("isRequiredMerchant", null);
 		isRequiredCustomer = FieldFactory.fbool("isRequiredCustomer", null);
 
-		addField(name);
-		addField(code);
-		addField(description);
-		addFields(timestamps);
+		fields.addField(name);
+		fields.addField(code);
+		fields.addField(description);
+		fields.addFields(timestamps);
 
-		addField(isAvailableAsp);
-		addField(isAvailableIsp);
-		addField(isAvailableMerchant);
-		addField(isAvailableCustomer);
-		addField(isRequiredAsp);
-		addField(isRequiredIsp);
-		addField(isRequiredMerchant);
-		addField(isRequiredCustomer);
+		fields.addField(isAvailableAsp);
+		fields.addField(isAvailableIsp);
+		fields.addField(isAvailableMerchant);
+		fields.addField(isAvailableCustomer);
+		fields.addField(isRequiredAsp);
+		fields.addField(isRequiredIsp);
+		fields.addField(isRequiredMerchant);
+		fields.addField(isRequiredCustomer);
+	}
+
+	@Override
+	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
+			Model model) {
 	}
 
 	protected Grid createAvailabilityGrid() {
