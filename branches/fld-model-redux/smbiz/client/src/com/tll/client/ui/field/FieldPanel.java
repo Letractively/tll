@@ -30,24 +30,14 @@ public abstract class FieldPanel extends Composite {
 	/**
 	 * The collective group of all fields in this panel.
 	 */
-	private FieldGroup fields;
+	private final FieldGroup fields;
 
 	/**
 	 * Constructor
 	 * @param displayName The display name
 	 */
 	public FieldPanel(String displayName) {
-		this(displayName, null);
-	}
-
-	/**
-	 * Constructor - Use when an already populated FieldGroup is to be applied to
-	 * this Panel.
-	 * @param displayName The display name
-	 * @param fields The FieldGroup
-	 */
-	public FieldPanel(String displayName, FieldGroup fields) {
-		setFieldGroup(fields == null ? new FieldGroup(displayName, this) : fields);
+		fields = new FieldGroup(displayName, this);
 		initWidget(panel);
 	}
 
@@ -57,15 +47,6 @@ public abstract class FieldPanel extends Composite {
 	public final FieldGroup getFieldGroup() {
 		ensureFieldGroupPopulated();
 		return fields;
-	}
-
-	/**
-	 * Replaces the underlying {@link FieldGroup}.
-	 * @param fields The field group which can't be <code>null</code>
-	 */
-	public final void setFieldGroup(FieldGroup fields) {
-		if(fields == null) throw new IllegalArgumentException();
-		this.fields = fields;
 	}
 
 	/**
@@ -93,8 +74,8 @@ public abstract class FieldPanel extends Composite {
 	}
 
 	/**
-	 * Creates a populated FieldBindingGroup based on this panel's
-	 * {@link FieldGroup} and the given {@link Model}.
+	 * Creates {@link FieldBinding}s from the given {@link Model}. This panel's
+	 * {@link FieldGroup} is populated if not already.
 	 * @param model The model subject to binding
 	 */
 	public final FieldBindingGroup createFieldBindings(Model model) {
@@ -106,14 +87,15 @@ public abstract class FieldPanel extends Composite {
 	}
 
 	/**
-	 * Populates the given {@link FieldBindingGroup} with field bindings based on
-	 * the fields and the model.
-	 * @param bindings The field binding group
+	 * Populates the given {@link FieldBindingGroup} with {@link FieldBinding}s
+	 * based on the existing fields and the given {@link Model}.
+	 * @param bindings The {@link FieldBindingGroup} to which new
+	 *        {@link FieldBinding}s are added
 	 * @param parentPropertyPath The parent property path that is pre-pended to
-	 *        each field's property name which resolves the field from the field
-	 *        group
-	 * @param fields The field group
-	 * @param model The resolved model whose child properties map directly to this
+	 *        each field's property name which serves to resolve fields from the
+	 *        given {@link FieldGroup}
+	 * @param fields The {@link FieldGroup} containing the fields to be bound
+	 * @param model The resolved model whose child properties map to this
 	 *        {@link FieldPanel}.
 	 */
 	protected abstract void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath,

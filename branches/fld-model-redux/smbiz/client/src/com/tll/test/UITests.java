@@ -20,18 +20,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.cache.AuxDataCache;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.rpc.AuxDataCommand;
-import com.tll.client.event.IRpcListener;
 import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
-import com.tll.client.field.IFieldProvider;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -40,7 +33,6 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.CharacterPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.client.msg.Msg;
@@ -55,21 +47,16 @@ import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
-import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.VerticalFieldPanelComposer;
-import com.tll.client.ui.listing.FieldListing;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
@@ -84,10 +71,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
 	static final String TEST_FIELDS = "TEST_FIELDS";
-	static final String TEST_FIELD_LISTING = "TEST_FIELD_LISTING";
 
 	static String[] tests = new String[] {
-		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS, TEST_FIELD_LISTING };
+		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -158,9 +144,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 				}
 				else if(TEST_FIELDS.equals(historyToken)) {
 					testFields();
-				}
-				else if(TEST_FIELD_LISTING.equals(historyToken)) {
-					testFieldListing();
 				}
 				else if("Back".equals(historyToken)) {
 					gotoTest = false;
@@ -297,92 +280,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		});
 		testPanel.add(btnVisible);
 
-	}
-
-	/**
-	 * Gets aux data from the server.
-	 * @param onReadyListener Called when the aux data is ready on the client
-	 */
-	private void getAuxData(AuxDataRequest adr, IRpcListener onReadyListener) {
-		AuxDataCommand cmd = new AuxDataCommand(testPanel, adr);
-		cmd.addRpcListener(onReadyListener);
-		cmd.execute();
-	}
-
-	/**
-	 * <p>
-	 * Test: TEST_FIELD_LISTING
-	 * <p>
-	 * Purpose: Tests the FieldListing class.
-	 */
-	void testFieldListing() {
-
-		AuxDataRequest adr = new AuxDataRequest();
-		adr.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
-		adr.requestAppRefData(RefDataType.US_STATES);
-		adr.requestEntityPrototype(EntityType.ADDRESS);
-
-		getAuxData(adr, new IRpcListener() {
-
-			public void onRpcEvent(RpcEvent event) {
-				Column[] cols = new Column[] {
-					new Column("Address", "address1"), new Column("City", "city"), new Column("Zip", "postalCode") };
-
-				IFieldProvider fieldProvider = new IFieldProvider() {
-
-					public IField[] getFields() {
-						return new IField[] {
-							FieldFactory.ftext("address1", "Address 1", 40), FieldFactory.ftext("city", "City", 30),
-							FieldFactory.fsuggest("province", "State", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES)),
-							FieldFactory.ftext("postalCode", "Zip", 20) };
-					}
-				};
-
-				IFieldRenderer fieldRenderer = new IFieldRenderer() {
-
-					public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
-						VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
-						cmpsr.setCanvas(canvas);
-
-						final PropertyPath pp = new PropertyPath(parentPropertyPath);
-						final int depth = pp.depth();
-
-						pp.append("address1");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-						pp.replaceAt(depth, "city");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-						pp.replaceAt(depth, "postalCode");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-					}
-
-				};
-
-				FieldGroup pfg = new FieldGroup("Parent", testPanel);
-				pfg.addField(null, FieldFactory.createNameEntityField());
-				pfg.addFields(null, FieldFactory.createTimestampEntityFields());
-				pfg.addField(null, FieldFactory.createNameEntityField());
-				pfg.addField("addresses[0]", FieldFactory.ftext("emailAddress", "Email Address", 30));
-				pfg.addField("addresses[0]", FieldFactory.ftext("firstName", "First Name", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("lastName", "Last Name", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("mi", "MI", 1));
-				pfg.addField("addresses[0]", FieldFactory.ftext("company", "Company", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("attn", "Attn", 10));
-				pfg.addField("addresses[0]", FieldFactory.ftext("address1", "Address 1", 40));
-				pfg.addField("addresses[0]", FieldFactory.ftext("address2", "Address 2", 40));
-				pfg.addField("addresses[0]", FieldFactory.ftext("city", "City", 30));
-				pfg.addField("addresses[0]", FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
-						.getRefDataMap(RefDataType.US_STATES)));
-				pfg.addField("addresses[0]", FieldFactory.ftext("postalCode", "Zip", 20));
-				pfg.addField("addresses[0]", FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
-						RefDataType.ISO_COUNTRY_CODES)));
-
-				FieldListing fl =
-						new FieldListing("testListing", EntityType.ADDRESS, cols, "addresses", pfg, fieldProvider, fieldRenderer);
-				testPanel.add(fl);
-			}
-		});
 	}
 
 	/**

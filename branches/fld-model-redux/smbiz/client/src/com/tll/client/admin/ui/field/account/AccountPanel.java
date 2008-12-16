@@ -49,7 +49,7 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends FieldPanel implements ClickListener, TabListener, DisclosureHandler, ChangeListener {
+public class AccountPanel extends FieldPanel implements TabListener, DisclosureHandler {
 
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
 	protected PaymentInfoPanel paymentInfoPanel;
@@ -114,7 +114,7 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 	}
 
 	@Override
-	public void populateFieldGroup(FieldGroup fields) {
+	public void populateFieldGroup(final FieldGroup fields) {
 		IField f;
 
 		fields.addField(FieldFactory.createNameEntityField());
@@ -125,7 +125,16 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 		fields.addField(f);
 
 		f = FieldFactory.fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
-		((SelectField) f).getListBox().addChangeListener(this);
+		((SelectField) f).getListBox().addChangeListener(new ChangeListener() {
+
+			public void onChange(Widget sender) {
+				String s = fields.getField("status").getValue().toLowerCase();
+				final boolean closed = "closed".equals(s);
+				IField f = fields.getField("dateCancelled");
+				f.setVisible(closed);
+				f.setRequired(closed);
+			}
+		});
 
 		fields.addField(FieldFactory.fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE));
 
@@ -308,14 +317,5 @@ public class AccountPanel extends FieldPanel implements ClickListener, TabListen
 
 	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
 		// no-op
-	}
-
-	public void onChange(Widget sender) {
-		if(sender == status.getListBox()) {
-			String s = status.getValue().toLowerCase();
-			final boolean closed = "closed".equals(s);
-			dateCancelled.setVisible(closed);
-			dateCancelled.setRequired(closed);
-		}
 	}
 }
