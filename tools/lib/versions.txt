@@ -19,19 +19,20 @@ dom4j.jar 1.6.1
 ehcache.jar 1.4.1
 ejb3-persistence.jar [from hibernate-annotations]
 guice.jar 1.0
-hibernate3.jar 3.2.6 ga
-hibernate-annotations.jar 3.3.0 ga
+hibernate3.jar 3.3.1
+hibernate-annotations.jar 3.4.0 ga
 hibernate-commons-annotations.jar [from hibernate-annotations]
-hibernate-entitymanager.jar 3.3.1 ga
-hibernate-validator.jar 3.0.0 ga
+hibernate-entitymanager.jar 3.4.0 ga
+hibernate-validator.jar 3.1.0 ga
 javassist.jar [from hibernate3]
-jboss-arvhive-browsing.jar [from hibernate-entitymanager]
 log4j.jar 1.2.15
 jakarta-oro.jar 2.0.8
 jta.jar 1.1
 mail.jar 1.4.1
 mysql-connector-java-bin.jar 5.0.7
 servlet-api.jar 2.4
+slf4j-api.jar 1.5.6
+slf4j-log4j12.jar 1.5.6
 spring.jar 2.5.1
 spring-aspects.jar 2.5.1
 spring-test.jar 2.5.1
