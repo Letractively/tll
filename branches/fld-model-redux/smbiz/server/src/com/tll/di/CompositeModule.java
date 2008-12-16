@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.guice;
+package com.tll.di;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;

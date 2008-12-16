@@ -3,7 +3,7 @@
  * @author jpk
  * Nov 5, 2007
  */
-package com.tll.guice;
+package com.tll.di;
 
 import com.tll.service.app.AppRefData;
 

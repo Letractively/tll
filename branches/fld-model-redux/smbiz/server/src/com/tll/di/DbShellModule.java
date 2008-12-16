@@ -1,4 +1,4 @@
-package com.tll.guice;
+package com.tll.di;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
