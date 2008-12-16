@@ -23,14 +23,13 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ehcache.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ejb3-persistence.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/guice.jar" sourcepath="/LIBS/guice/src/"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar" sourcepath="/LIBS/hibernate-3.2/src"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-core-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-annotations.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-commons-annotations.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-entitymanager.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-validator.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-entitymanager.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-entitymanager-src.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-validator.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-validator-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jakarta-oro.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/javassist.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jboss-archive-browsing.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jta.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/log4j.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/mail.jar"/>
@@ -45,5 +44,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/mail/dist/tll-mail.jar" sourcepath="/TLL_ROOT/mail/src"/>
 	<classpathentry kind="var" path="TLL_ROOT/config/dist/tll-config.jar" sourcepath="/TLL_ROOT/config/src"/>
 	<classpathentry kind="var" path="TLL_ROOT/util/dist/tll-util.jar" sourcepath="/TLL_ROOT/util/src"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

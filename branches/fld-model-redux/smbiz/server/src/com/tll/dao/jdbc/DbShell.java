@@ -117,7 +117,7 @@ public final class DbShell {
 		this.exceptionTranslator = exceptionTranslator;
 
 		if(log.isInfoEnabled()) {
-			log.info("db shell instantiated for db:" + dbName);
+			log.info("db shell instantiated for db: " + dbName);
 		}
 	}
 
@@ -243,7 +243,8 @@ public final class DbShell {
 	 * Clears the database of all data. If the db doesn't exist, nothing happens.
 	 * @return <code>true</code> if the db was actually cleared as a result of
 	 *         calling this method and
-	 *         <code>false<code> if the db is <code>not</code> cleared by way of this method.
+	 *         <code>false<code> if the db is <code>not</code> cleared by way of
+	 *         this method.
 	 */
 	public boolean clear() {
 		if(log.isInfoEnabled()) {
@@ -268,8 +269,8 @@ public final class DbShell {
 	/**
 	 * Adds data to the db with the data set gotten from loading the db stub file.
 	 * The db <em>must</em> already exist else an error is raised.
-	 * @return <code>true</code> if the db was actually stubbed with the stub
-	 *         data as a result of calling this method.
+	 * @return <code>true</code> if the db was actually stubbed with the stub data
+	 *         as a result of calling this method.
 	 */
 	public boolean stub() {
 

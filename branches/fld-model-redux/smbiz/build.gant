@@ -43,6 +43,7 @@ Ant.patternset(id:'ps_libs') {
 }
 
 // NOTE: we copy test related jars too!
+// TODO: make this a whitelist since we may put other non needed libs in this generalized lib location!! 
 Ant.patternset(id:'ps_libsDeploy') {
 	patternset(refid:"ps_libs")
 	exclude(name:"servlet-api.jar")
