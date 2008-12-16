@@ -8,7 +8,7 @@ import org.hibernate.validator.Validator;
 import org.hibernate.validator.interpolator.DefaultMessageInterpolator;
 
 /**
- * PropRefInterpolator
+ * MessageInterpolator
  * @author jpk
  */
 class MessageInterpolator extends DefaultMessageInterpolator {

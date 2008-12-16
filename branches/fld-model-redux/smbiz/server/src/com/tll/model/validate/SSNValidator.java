@@ -13,15 +13,14 @@ import org.hibernate.validator.Validator;
 
 import com.tll.util.ValidationUtil;
 
-
 /**
- * SSNValidator
+ * SSNValidator - Validates artifacts annotated with {@link SSN}.
  * @author jpk
  */
 public class SSNValidator implements Validator<SSN>, PropertyConstraint {
 
 	public void initialize(SSN parameters) {
-  	// no-op
+		// no-op
 	}
 
 	public boolean isValid(Object value) {
@@ -32,7 +31,7 @@ public class SSNValidator implements Validator<SSN>, PropertyConstraint {
 	}
 
 	public void apply(Property property) {
-	  // no-op
+		// no-op
 	}
 
 }

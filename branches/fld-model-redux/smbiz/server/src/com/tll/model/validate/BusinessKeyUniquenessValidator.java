@@ -12,7 +12,8 @@ import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 /**
- * BusinessKeyUniquenessValidator
+ * BusinessKeyUniquenessValidator - Validates business key uniqueness.
+ * @see BusinessKeyUniqueness
  * @author jpk
  */
 public class BusinessKeyUniquenessValidator implements Validator<BusinessKeyUniqueness> {

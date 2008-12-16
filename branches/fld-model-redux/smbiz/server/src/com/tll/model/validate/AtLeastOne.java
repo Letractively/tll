@@ -13,9 +13,7 @@ import java.lang.annotation.Target;
 import org.hibernate.validator.ValidatorClass;
 
 /**
- * AtLeastOne - Applied on a collection of entities. This edit
- * ensures all entities w/in the collection are unique against oneanother based
- * on the defined business keys for the entity type of the collection.
+ * AtLeastOne - Signifies "at least one" requirement.
  * @author jpk
  */
 @ValidatorClass(AtLeastOneValidator.class)
@@ -23,6 +21,8 @@ import org.hibernate.validator.ValidatorClass;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AtLeastOne {
+
 	String type();
+
 	String message() default "{validator.at_least_one}";
 }
