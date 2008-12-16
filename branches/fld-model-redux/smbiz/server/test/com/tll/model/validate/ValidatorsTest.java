@@ -15,7 +15,7 @@ import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IDaoFactory;
 import com.tll.dao.IEntityDao;
-import com.tll.guice.DaoModule;
+import com.tll.di.DaoModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.impl.AccountAddress;

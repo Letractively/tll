@@ -20,7 +20,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
-import com.tll.guice.DbShellModule;
+import com.tll.di.DbShellModule;
 import com.tll.listhandler.SearchResult;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;

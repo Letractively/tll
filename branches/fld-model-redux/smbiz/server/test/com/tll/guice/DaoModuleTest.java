@@ -10,6 +10,9 @@ import com.google.inject.Injector;
 import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
+import com.tll.di.DaoModule;
+import com.tll.di.JpaModule;
+import com.tll.di.MockEntitiesModule;
 
 /**
  * DaoModuleTest - Verifies loading of the DAO module

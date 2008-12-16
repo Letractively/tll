@@ -20,7 +20,7 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.mock.EntityGraph;
-import com.tll.guice.DaoModule;
+import com.tll.di.DaoModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;

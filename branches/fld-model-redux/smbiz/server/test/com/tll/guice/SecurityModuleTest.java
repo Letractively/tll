@@ -8,6 +8,9 @@ import org.testng.annotations.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.tll.TestBase;
+import com.tll.di.DaoModule;
+import com.tll.di.EntityServiceModule;
+import com.tll.di.SecurityModule;
 
 /**
  * SecurityModuleTest
