@@ -41,7 +41,6 @@ import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
 import com.tll.client.util.GlobalFormat;
-import com.tll.model.EntityType;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -255,12 +254,14 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 						fields.addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
 
 						// bind to prototype
+						/*
 						Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 						if(aaproto == null) throw new IllegalStateException();
 						// NOTE: we need a property path offset here since the fields'
 						// property
 						// paths are relative to ACCOUNT!
 						aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
+						*/
 
 						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
 								: selTabIndx);

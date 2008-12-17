@@ -18,6 +18,8 @@ import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.mvc.view.user.UserEditView;
 import com.tll.client.admin.ui.MainPanel;
 import com.tll.client.event.IUserSessionListener;
+import com.tll.client.model.ModelChangeManager;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.LoginDialog;
 
@@ -47,6 +49,10 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		// try/catch is necessary here because GWT.setUncaughtExceptionHandler()
 		// will work not until onModuleLoad() has returned
 		try {
+			// set the main model change listener so model change events trickle into
+			// the views
+			ModelChangeManager.instance().addModelChangeListener(ViewManager.instance());
+
 			// declare the available views
 			populateViewClasses();
 
@@ -66,8 +72,8 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 	}
 
 	/**
-	 * Sets all defined {@link ViewClass}es for later factory method instantiation of the associated
-	 * views.
+	 * Sets all defined {@link ViewClass}es for later factory method instantiation
+	 * of the associated views.
 	 */
 	private void populateViewClasses() {
 		ViewClass.addClass(AspMain.klas);

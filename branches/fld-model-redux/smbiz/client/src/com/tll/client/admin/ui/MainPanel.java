@@ -38,7 +38,6 @@ import com.tll.client.event.type.StatusEvent;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.StatusDisplay;
 import com.tll.client.ui.ViewRequestLink;
@@ -109,7 +108,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentAccount(account);
 
 			// set the initial view based on the user's account type
-			Dispatcher.instance().dispatch(
+			ViewManager.instance().dispatch(
 					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ACCOUNT_CHANGE) {

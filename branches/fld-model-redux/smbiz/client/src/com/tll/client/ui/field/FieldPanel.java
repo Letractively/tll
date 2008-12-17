@@ -76,14 +76,13 @@ public abstract class FieldPanel extends Composite {
 	/**
 	 * Creates {@link FieldBinding}s from the given {@link Model}. This panel's
 	 * {@link FieldGroup} is populated if not already.
+	 * @param bindings The FieldBindingGroup that recieves the new field bindings
 	 * @param model The model subject to binding
 	 */
-	public final FieldBindingGroup createFieldBindings(Model model) {
+	public final void createFieldBindings(FieldBindingGroup bindings, Model model) {
 		FieldGroup fg = getFieldGroup();
 		applyModel(model, fg);
-		FieldBindingGroup bindings = new FieldBindingGroup();
 		populateFieldBindingGroup(bindings, null, fg, model);
-		return bindings;
 	}
 
 	/**

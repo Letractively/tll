@@ -22,7 +22,7 @@ import com.tll.client.event.type.DragEvent;
 import com.tll.client.event.type.PinPopViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.mvc.Dispatcher;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewState;
 
@@ -360,12 +360,12 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		// pop the view
 		if(sender == toolbar.btnPop) {
 			boolean popped = isPopped();
-			Dispatcher.instance().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
+			ViewManager.instance().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
 		}
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			Dispatcher.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), false));
+			ViewManager.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), false));
 		}
 
 		// minimize/mazimize the view

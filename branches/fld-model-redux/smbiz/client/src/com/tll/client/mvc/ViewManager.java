@@ -8,22 +8,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.ISourcesViewEvents;
 import com.tll.client.event.IViewEventListener;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ViewChangedEvent;
+import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
- * ViewManager - Singleton managing {@link IView} life-cycles and view caching.
+ * ViewManager - Singleton managing view life-cycles and view caching. Also
+ * serves as an MVC dispatcher dispatching view requests to the appropriate view
+ * controller. View history is also managed here.
  * @author jpk
  */
-public final class ViewManager implements ISourcesViewEvents, IModelChangeListener {
+public final class ViewManager implements ISourcesViewEvents, IModelChangeListener, HistoryListener {
 
 	/**
 	 * The default number of views to cache.
@@ -71,11 +76,37 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 */
 	private final ViewEventListenerCollection viewListeners = new ViewEventListenerCollection();
 
+	private final List<IController> controllers = new ArrayList<IController>();
+
+	/**
+	 * The view request that is pending.
+	 * <p>
+	 * In order to comply with the history event system, we must be routed from
+	 * the {@link HistoryListener#onHistoryChanged(String)} context.
+	 * <p>
+	 * <strong>AbstractView request procedure:</strong>
+	 * <ol>
+	 * <li>Dispatch a view request via {@link #dispatch(ViewRequestEvent)}.
+	 * <li>Temporarily cache the view request in {@link #pendingViewRequest}.
+	 * <li>Invoke {@link History#newItem(String)}
+	 * <li>Re-acquire the view request held in {@link #pendingViewRequest}.
+	 * <li>Dispatch normally
+	 * </ol>
+	 */
+	private ViewRequestEvent pendingViewRequest;
+
 	/**
 	 * Constructor
 	 */
 	private ViewManager() {
 		super();
+
+		History.addHistoryListener(this);
+
+		// add supported controllers
+		controllers.add(new ShowViewController());
+		controllers.add(new UnloadViewController());
+		controllers.add(new PinPopViewController());
 	}
 
 	public void addViewEventListener(IViewEventListener listener) {
@@ -169,9 +200,9 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * view.
 	 * @param vc The view container of the view to unload
 	 * @param removeFromCache Remove the view from the view cache?
-	 * @return The most recently viewed pinned IView <em>never</em> equalling
-	 *         the IView being unloaded or <code>null</code> if no alternate
-	 *         pinned IView is available.
+	 * @return The most recently viewed pinned IView <em>never</em> equalling the
+	 *         IView being unloaded or <code>null</code> if no alternate pinned
+	 *         IView is available.
 	 */
 	IView unloadView(ViewContainer vc, boolean removeFromCache) {
 		assert vc != null;
@@ -247,8 +278,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	/**
 	 * Locates a cached view given the view widget or child view widget.
 	 * @param child
-	 * @return The found {@link IView} or <code>null</code> if not present in
-	 *         the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in the
+	 *         view cache.
 	 */
 	/*
 	ViewContainer findView(Widget child) {
@@ -269,8 +300,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	/**
 	 * Locates a cached view given a view key.
 	 * @param viewKey The view key
-	 * @return The found {@link IView} or <code>null</code> if not present in
-	 *         the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in the
+	 *         view cache.
 	 */
 	ViewContainer findView(ViewKey viewKey) {
 		Iterator<ViewContainer> itr = cache.cacheIterator(0);
@@ -288,8 +319,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	/**
 	 * Locates a cached view given a view key hash.
 	 * @param viewKeyHash
-	 * @return The found {@link IView} or <code>null</code> if not present in
-	 *         the view cache.
+	 * @return The found {@link IView} or <code>null</code> if not present in the
+	 *         view cache.
 	 */
 	ViewContainer findView(int viewKeyHash) {
 		Iterator<ViewContainer> itr = cache.cacheIterator(0);
@@ -431,4 +462,71 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		}
 	}
 
+	/**
+	 * Dispatches the view request event to the appropriate controller for the
+	 * ultimate purpose of changing the current view.
+	 * @param request The view request event
+	 * @throws IllegalStateException When no supporting controller can be found
+	 *         for the given view requset.
+	 */
+	public void dispatch(ViewRequestEvent request) {
+		assert request != null : "A view request must be set";
+
+		if(pendingViewRequest == null) {
+			// need to update history first
+			if(request.addHistory()) {
+				assert request.getViewKey() != null : "Unable to add history: No view name specified.";
+				if(request.getViewKey().getViewKeyHistoryToken().equals(History.getToken())) {
+					doDispatch(request);
+				}
+				else {
+					this.pendingViewRequest = request;
+					History.newItem(request.getViewKey().getViewKeyHistoryToken());
+				}
+			}
+			else {
+				doDispatch(request);
+			}
+		}
+		else {
+			assert request == pendingViewRequest;
+			pendingViewRequest = null; // reset
+			doDispatch(request);
+		}
+	}
+
+	private void doDispatch(ViewRequestEvent request) {
+		// do actual disptach
+		for(IController c : controllers) {
+			if(c.canHandle(request)) {
+				c.handle(request);
+				return;
+			}
+		}
+		throw new IllegalStateException("Unhandled view request: " + request.toString());
+	}
+
+	public void onHistoryChanged(String historyToken) {
+		final int viewKeyHash = ViewKey.extractViewKeyHash(historyToken);
+		if(viewKeyHash == -1) return;
+
+		if(pendingViewRequest == null) {
+			// presume user pressed the back button (or an IController impl altered
+			// history directly)
+
+			// is the view still cached?
+			ViewContainer vc = findView(viewKeyHash);
+			if(vc != null) {
+				setCurrentView(vc.getView());
+			}
+			else {
+				// TODO figure out what to do here
+				// currently a no-op
+			}
+			return;
+		}
+
+		// dispatch the view request
+		dispatch(pendingViewRequest);
+	}
 }

@@ -6,13 +6,10 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.AbstractRowOptions;
-import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.mvc.Dispatcher;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.listing.ModelListingWidget;
 
@@ -47,7 +44,7 @@ public abstract class ListingView extends AbstractView {
 		 */
 		@Override
 		protected void doEditRow(int rowIndex) {
-			Dispatcher.instance().dispatch(
+			ViewManager.instance().dispatch(
 					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowRef(rowIndex)));
 		}
 
@@ -58,26 +55,7 @@ public abstract class ListingView extends AbstractView {
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			AbstractModelChangeHandler handler = new AbstractModelChangeHandler() {
-
-				@Override
-				protected Widget getSourcingWidget() {
-					return ListingView.this;
-				}
-
-				@Override
-				protected AuxDataRequest getNeededAuxData() {
-					return null;
-				}
-
-				@Override
-				protected EntityOptions getEntityOptions() {
-					return null;
-				}
-
-			};
-			handler.addModelChangeListener(ViewManager.instance());
-			handler.handleModelDelete(listingWidget.getRowRef(rowIndex));
+			ModelChangeManager.instance().handleModelDelete(ListingView.this, listingWidget.getRowRef(rowIndex), null);
 		}
 
 	}

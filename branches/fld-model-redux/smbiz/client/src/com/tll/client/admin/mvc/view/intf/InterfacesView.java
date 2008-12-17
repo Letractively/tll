@@ -16,7 +16,6 @@ import com.tll.client.admin.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.admin.ui.field.intf.SwitchInterfacePanel;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.IListingListener;
@@ -29,9 +28,8 @@ import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
@@ -84,7 +82,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			private final RefKey intfRef;
 			private Model model; // the interface model
 			private final EditPanel editPanel;
-			private final IModelChangeHandler modelChangeHandler;
+			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
 			 * Constructor
@@ -99,32 +97,11 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
-				modelChangeHandler = new AbstractModelChangeHandler() {
-
-					@Override
-					protected Widget getSourcingWidget() {
-						return InterfacesStack.this;
-					}
-
-					@Override
-					protected AuxDataRequest getNeededAuxData() {
-						AuxDataRequest auxDataRequest = new AuxDataRequest();
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
-						return auxDataRequest;
-					}
-
-					@Override
-					protected EntityOptions getEntityOptions() {
-						return null;
-					}
-
-				};
-
-				modelChangeHandler.addModelChangeListener(this);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
 			private AbstractInterfacePanel resolveInterfacePanel(EntityType intfType) {
@@ -141,18 +118,18 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					modelChangeHandler.handleModelLoad(intfRef);
+					ModelChangeManager.instance().handleModelLoad(InterfacesStack.this, intfRef, null, auxDataRequest);
 				}
 			}
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp().isSave()) {
 					if(editPanel.updateModel()) {
-						modelChangeHandler.handleModelPersist(model);
+						ModelChangeManager.instance().handleModelPersist(InterfacesStack.this, model, null);
 					}
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					modelChangeHandler.handleModelDelete(model.getRefKey());
+					ModelChangeManager.instance().handleModelDelete(InterfacesStack.this, model.getRefKey(), null);
 				}
 			}
 

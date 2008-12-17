@@ -238,8 +238,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bflabel", true));
 		testModel.set(new BooleanPropertyValue("bf", false));
 
-		ep.getFields().bindModel(testModel.getSelfRef());
+		ep.bindModel(testModel);
 		ep.setEditMode(testModel.isNew());
+		ep.getFields().draw();
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {

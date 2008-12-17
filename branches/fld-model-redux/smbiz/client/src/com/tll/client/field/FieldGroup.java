@@ -5,7 +5,6 @@
 package com.tll.client.field;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -116,18 +115,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private Widget feedbackWidget;
 
 	/**
-	 * Flag to indicate whether or not the contents of this group shall be
-	 * transferred to the model or not.
-	 */
-	private boolean updateModel;
-
-	/**
-	 * Collection of property paths marked for delete. These deletions are
-	 * conveyed to the model when the model is updated.
-	 */
-	private Set<String> pendingDeletes;
-
-	/**
 	 * Constructor - Simple field group w/ no display name.
 	 * @param fields The fields that will make up this group
 	 * @param displayName The UI display name used for presenting validation
@@ -220,54 +207,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		for(IField field : fields) {
 			field.setVisible(visible);
 		}
-	}
-
-	/**
-	 * Associates a property path to a delete request.
-	 * @param propertyPath The property path to be marked for delete
-	 */
-	public void addPendingDelete(String propertyPath) {
-		if(pendingDeletes == null) {
-			pendingDeletes = new HashSet<String>();
-		}
-		pendingDeletes.add(propertyPath);
-	}
-
-	/**
-	 * Un-schedules a pending delete for the given property path.
-	 * @param propertyPath The property path to remove from the pending deletions.
-	 * @see #addPendingDelete(String)
-	 */
-	public void removePendingDelete(String propertyPath) {
-		if(pendingDeletes != null) {
-			pendingDeletes.remove(propertyPath);
-		}
-	}
-
-	/**
-	 * Toggle-able flag used to set whether these fields are to be applied to the
-	 * model with it is updated.
-	 * @return <code>true</code> if these fields are to be applied to the model.
-	 */
-	public boolean isUpdateModel() {
-		return updateModel;
-	}
-
-	/**
-	 * Update the model with these fields?
-	 * @param updateModel true/false
-	 */
-	public void setUpdateModel(boolean updateModel) {
-		this.updateModel = updateModel;
-	}
-
-	/**
-	 * Is the given property path scheduled for deletion?
-	 * @param propertyPath The property path to check
-	 * @return true/false
-	 */
-	public boolean isPendingDelete(String propertyPath) {
-		return pendingDeletes != null && pendingDeletes.contains(propertyPath);
 	}
 
 	/**
@@ -411,7 +350,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Removes a collection of fields from this group.
 	 * @param clc The collection of fields to remove.
 	 */
-	public void removeFields(Collection<IField> clc) {
+	public void removeFields(Iterable<IField> clc) {
 		if(clc != null) {
 			for(IField fld : clc) {
 				removeField(fld);
@@ -561,7 +500,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	public Object validate() throws ValidationException {
+	public void validate() throws ValidationException {
 		boolean valid = true;
 		for(IField field : fields) {
 			try {
@@ -586,7 +525,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(!valid) {
 			throw new ValidationException(descriptor() + " has errors.");
 		}
-		return null;
+	}
+
+	public Object getValidatedValue() {
+		throw new UnsupportedOperationException();
 	}
 
 	public void markInvalid(boolean invalid, List<Msg> msgs) {

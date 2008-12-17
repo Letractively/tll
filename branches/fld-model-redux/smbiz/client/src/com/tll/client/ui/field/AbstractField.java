@@ -103,6 +103,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private IValidator validator;
 
 	/**
+	 * The cached validated value.
+	 */
+	private Object validatedValue;
+
+	/**
 	 * Constructor
 	 * @param propName The required property name to associate w/ this field.
 	 * @param lblTxt The field label text. If <code>null</code>, no field label is
@@ -360,7 +365,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	}
 
-	public Object validate() throws ValidationException {
+	public final void validate() throws ValidationException {
 		// we start with the field's current value
 		Object value = getValue();
 
@@ -379,7 +384,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			markInvalid(errorMsgs != null, errorMsgs);
 		}
 
-		return value;
+		this.validatedValue = value;
+	}
+
+	public final Object getValidatedValue() {
+		return validatedValue;
 	}
 
 	public void markInvalid(boolean invalid, List<Msg> msgs) {
@@ -397,6 +406,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public final void reset() {
 		setValue(resetValue);
+		validatedValue = null;
 		clearMsgs();
 		removeStyleName(STYLE_DIRTY);
 		removeStyleName(STYLE_INVALID);

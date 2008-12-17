@@ -13,7 +13,7 @@ import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
-import com.tll.client.mvc.Dispatcher;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
@@ -94,14 +94,13 @@ public final class IspListingView extends ListingView {
 
 			private final String listingElementName = EntityType.ISP.getName();
 
-			private final Column[] columns = new Column[] {
-				new Column("#", Column.ROW_COUNT_COL_PROP, "i"),
-				new Column("Name", Model.NAME_PROPERTY, "i"),
-				new Column("Created", Model.DATE_CREATED_PROPERTY, "i", GlobalFormat.DATE),
-				new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "i", GlobalFormat.DATE),
-				new Column("Status", "status", "i"),
-				new Column("Billing Model", "billingModel", "i"),
-				new Column("Billing Cycle", "billingCycle", "i") };
+			private final Column[] columns =
+					new Column[] {
+						new Column("#", Column.ROW_COUNT_COL_PROP, "i"), new Column("Name", Model.NAME_PROPERTY, "i"),
+						new Column("Created", Model.DATE_CREATED_PROPERTY, "i", GlobalFormat.DATE),
+						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "i", GlobalFormat.DATE),
+						new Column("Status", "status", "i"), new Column("Billing Model", "billingModel", "i"),
+						new Column("Billing Cycle", "billingCycle", "i") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -128,7 +127,7 @@ public final class IspListingView extends ListingView {
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Merchant Listing") == 0) {
-						Dispatcher.instance().dispatch(
+						ViewManager.instance().dispatch(
 								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowRef(rowIndex)));
 					}
 				}

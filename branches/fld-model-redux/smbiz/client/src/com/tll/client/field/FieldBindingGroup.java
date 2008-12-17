@@ -9,13 +9,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tll.client.validate.ValidationException;
-
 /**
  * FieldBindingGroup - A collection of {@link FieldBinding}s.
  * @author jpk
  */
-public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding> {
+public class FieldBindingGroup implements Iterable<FieldBinding> {
 
 	private final Set<FieldBinding> set = new HashSet<FieldBinding>();
 
@@ -51,13 +49,19 @@ public class FieldBindingGroup implements IFieldBinding, Iterable<FieldBinding> 
 		}
 	}
 
+	/**
+	 * Data transfer (model -> field).
+	 */
 	public void push() {
 		for(FieldBinding b : set) {
 			b.push();
 		}
 	}
 
-	public void pull() throws ValidationException {
+	/**
+	 * Data transfer (field -> model).
+	 */
+	public void pull() {
 		for(FieldBinding b : set) {
 			b.pull();
 		}

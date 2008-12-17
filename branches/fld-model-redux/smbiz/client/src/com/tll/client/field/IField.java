@@ -94,7 +94,7 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	/**
 	 * Sets the field's value.
 	 * <p>
-	 * NOTE: To clear the field, pass <code>null</code> as the value.
+	 * NOTE: To clear the field's value, pass <code>null</code> as the value.
 	 * @param value The value to set
 	 */
 	void setValue(String value);
@@ -134,10 +134,16 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 
 	/**
 	 * Validates the field.
-	 * @return The validated value
 	 * @throws ValidationException When the field is found invalid
 	 */
-	Object validate() throws ValidationException;
+	void validate() throws ValidationException;
+
+	/**
+	 * Provides the validated value set by the last invocation of
+	 * {@link #validate()}.
+	 * @return The validated value
+	 */
+	Object getValidatedValue();
 
 	/**
 	 * Styles the field as either valid or invalid.

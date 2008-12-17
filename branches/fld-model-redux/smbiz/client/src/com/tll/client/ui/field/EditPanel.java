@@ -159,25 +159,37 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 	}
 
+	/**
+	 * Binds the given model to the fields contained in this edit panel.
+	 * @param model The model to bind
+	 */
 	public void bindModel(Model model) {
-		// create field bindings
-		bindings.unbind();
+		// [re]create field bindings
 		bindings.clear();
-
-		fieldPanel.createFieldBindings(model);
-
-		// bind
+		fieldPanel.createFieldBindings(bindings, model);
 	}
 
+	/**
+	 * Binds a model to the fields within this edit panel. First, the fields are
+	 * validated and if successful, the field data is transferred to the model. If
+	 * one or more fields are invalid, no model alteration occurs.
+	 * @return <code>true</code> if the model is successfully updated.
+	 */
 	public boolean updateModel() {
 		if(bindings.size() < 1) throw new IllegalStateException("No field bindings exist.");
+
+		// first validate the fields
 		try {
-			bindings.pull();
-			return true;
+			getFields().validate();
 		}
 		catch(ValidationException e) {
 			return false;
 		}
+
+		// fields are all valid to send field values to the model
+		bindings.pull();
+
+		return true;
 	}
 
 	public void applyErrorMsgs(final List<Msg> msgs) {

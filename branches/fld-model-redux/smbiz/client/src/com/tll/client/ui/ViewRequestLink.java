@@ -7,7 +7,7 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.mvc.Dispatcher;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ViewKey;
 
 /**
@@ -22,8 +22,8 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickListe
 	private ViewRequestEvent viewRequest;
 
 	/**
-	 * Constructor - Default constructor. The view request property <em>must</em> be set prior to an
-	 * onclick event.
+	 * Constructor - Default constructor. The view request property <em>must</em>
+	 * be set prior to an onclick event.
 	 */
 	public ViewRequestLink() {
 		this(null, null, null);
@@ -49,7 +49,7 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickListe
 	public void onClick(Widget sender) {
 		if(sender == this) {
 			assert viewRequest != null;
-			Dispatcher.instance().dispatch(viewRequest);
+			ViewManager.instance().dispatch(viewRequest);
 		}
 	}
 

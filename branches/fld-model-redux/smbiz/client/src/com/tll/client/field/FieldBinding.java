@@ -15,7 +15,6 @@ import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
-import com.tll.client.validate.ValidationException;
 import com.tll.model.schema.PropertyMetadata;
 
 /**
@@ -42,7 +41,7 @@ import com.tll.model.schema.PropertyMetadata;
  * </ol>
  * @author jpk
  */
-public final class FieldBinding implements IFieldBinding/*, ChangeListener, FocusListener*/{
+public final class FieldBinding {
 
 	/**
 	 * The bound field.
@@ -52,12 +51,7 @@ public final class FieldBinding implements IFieldBinding/*, ChangeListener, Focu
 	/**
 	 * The bound model property.
 	 */
-	private IPropertyValue prop;
-
-	/**
-	 * Internal flag indicating whether this binding is bound.
-	 */
-	private boolean bound;
+	private final IPropertyValue prop;
 
 	/**
 	 * Ref to the field validator added as a result of binding. This ref is
@@ -67,24 +61,15 @@ public final class FieldBinding implements IFieldBinding/*, ChangeListener, Focu
 
 	/**
 	 * Constructor
-	 * @param field The field for binding. May not be <code>null</code> and must
-	 *        be a {@link Widget}.
-	 */
-	public FieldBinding(IField field) {
-		super();
-		if(field == null) throw new IllegalArgumentException("A field must be specified.");
-		if(field instanceof Widget == false) throw new IllegalArgumentException("The field must be a Widget.");
-		this.field = field;
-	}
-
-	/**
-	 * Constructor
-	 * @param field
-	 * @param prop
+	 * @param field The required field to bind
+	 * @param prop The required model property to bind
 	 */
 	public FieldBinding(IField field, IPropertyValue prop) {
-		this(field);
-		setModelProperty(prop);
+		if(field == null) throw new IllegalArgumentException("A field must be specified.");
+		if(field instanceof Widget == false) throw new IllegalArgumentException("The field must be a Widget.");
+		if(prop == null) throw new IllegalArgumentException("A model property must be specified.");
+		this.field = field;
+		this.prop = prop;
 	}
 
 	public IField getField() {
@@ -95,15 +80,11 @@ public final class FieldBinding implements IFieldBinding/*, ChangeListener, Focu
 		return prop;
 	}
 
-	public void setModelProperty(IPropertyValue prop) {
-		this.prop = prop;
-	}
-
 	private GlobalFormat getFieldFormat() {
 		return (field instanceof HasFormat) ? ((HasFormat) field).getFormat() : null;
 	}
 
-	public void bind() {
+	void bind() {
 		assert field != null;
 		if(prop == null) throw new IllegalStateException("A model property must be specified.");
 
@@ -189,42 +170,31 @@ public final class FieldBinding implements IFieldBinding/*, ChangeListener, Focu
 		if(bindingValidator != null) {
 			field.addValidator(bindingValidator);
 		}
-
-		bound = true;
 	}
 
-	public void unbind() {
-		if(!bound) return;
-
+	void unbind() {
 		// remove the binding validator if specified
 		if(bindingValidator != null) {
 			field.removeValidator(bindingValidator);
 			bindingValidator = null;
 		}
-
-		bound = false;
 	}
 
-	private void ensureBound() {
-		if(!bound) throw new IllegalStateException("Field binding not bound.");
-	}
-
-	public void push() {
-		ensureBound();
-
+	/**
+	 * Data transfer (model -> field).
+	 */
+	void push() {
 		// string-ize model prop value
 		final String sval = Fmt.format(prop.getValue(), getFieldFormat());
 		// assign it to the field
 		field.setResetValue(sval);
 		field.setValue(sval);
-
-		// TODO don't opt to do field drawing here
-		// do a field re-draw (this will set the field's value to the reset value)
-		// field.reset();
 	}
 
-	public void pull() throws ValidationException {
-		ensureBound();
-		prop.setValue(field.validate());
+	/**
+	 * Data transfer (field -> model).
+	 */
+	void pull() {
+		prop.setValue(field.getValidatedValue());
 	}
 }

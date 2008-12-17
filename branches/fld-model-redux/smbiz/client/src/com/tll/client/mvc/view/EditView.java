@@ -4,7 +4,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.event.IEditListener;
@@ -14,11 +13,9 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
-import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldPanel;
@@ -47,11 +44,9 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	private final EditPanel editPanel;
 
 	/**
-	 * Handles model change events
+	 * Optional entity options when performing model change ops.
 	 */
-	private final IModelChangeHandler modelChangeHandler;
-
-	private boolean modelChangeHandled;
+	private final EntityOptions entityOptions;
 
 	/**
 	 * Constructor
@@ -64,25 +59,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		editPanel = new EditPanel(fldGrpPnl, true, false);
 		editPanel.addEditListener(this);
 
-		modelChangeHandler = new AbstractModelChangeHandler() {
-
-			@Override
-			protected Widget getSourcingWidget() {
-				return EditView.this;
-			}
-
-			@Override
-			protected AuxDataRequest getNeededAuxData() {
-				return EditView.this.getNeededAuxData();
-			}
-
-			@Override
-			protected EntityOptions getEntityOptions() {
-				return entityOptions;
-			}
-		};
-
-		modelChangeHandler.addModelChangeListener(this);
+		this.entityOptions = entityOptions;
 
 		addWidget(editPanel);
 	}
@@ -136,11 +113,12 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			modelChangeHandler.handleModelLoad(modelRef);
+			ModelChangeManager.instance().handleModelLoad(this, modelRef, entityOptions, getNeededAuxData());
 		}
-		else if(!modelChangeHandler.handleAuxDataFetch()) {
+		else if(!ModelChangeManager.instance().handleAuxDataFetch(this, getNeededAuxData())) {
 			editPanel.setEditMode(model.isNew());
 			editPanel.bindModel(model);
+			editPanel.getFields().draw();
 		}
 	}
 
@@ -152,27 +130,23 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	public final void onEditEvent(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey(), false));
+				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
 				if(editPanel.updateModel()) {
-					modelChangeHandler.handleModelPersist(model);
+					ModelChangeManager.instance().handleModelPersist(this, model, entityOptions);
 				}
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					modelChangeHandler.handleModelDelete(modelRef);
+					ModelChangeManager.instance().handleModelDelete(this, modelRef, entityOptions);
 				}
 				break;
 		}
 	}
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(modelChangeHandled) {
-			modelChangeHandled = false; // reset
-			return;
-		}
 		if(event.isError()) {
 			editPanel.applyErrorMsgs(event.getErrors());
 			return;
@@ -194,13 +168,8 @@ public abstract class EditView extends AbstractView implements IEditListener {
 				refresh();
 				break;
 			case DELETED:
-				Dispatcher.instance().dispatch(new UnloadViewRequest(EditView.this, getViewKey(), true));
+				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), true));
 				break;
 		}
-
-		// dispatch to other loaded view flagging this view as already handled this
-		// event
-		modelChangeHandled = true;
-		ViewManager.instance().onModelChangeEvent(event);
 	}
 }
