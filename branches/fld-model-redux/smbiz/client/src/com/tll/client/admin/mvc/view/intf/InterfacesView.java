@@ -19,7 +19,6 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
@@ -76,7 +75,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IEditListener, IModelChangeListener {
+		private final class InterfaceStack implements IEditListener {
 
 			// private final int stackIndex;
 			private final RefKey intfRef;
@@ -118,26 +117,26 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					ModelChangeManager.instance().handleModelLoad(InterfacesStack.this, intfRef, null, auxDataRequest);
+					ModelChangeManager.instance().loadModel(editPanel, intfRef, null, auxDataRequest);
 				}
 			}
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp().isSave()) {
 					if(editPanel.updateModel()) {
-						ModelChangeManager.instance().handleModelPersist(InterfacesStack.this, model, null);
+						ModelChangeManager.instance().persistModel(editPanel, model, null);
 					}
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					ModelChangeManager.instance().handleModelDelete(InterfacesStack.this, model.getRefKey(), null);
+					ModelChangeManager.instance().deleteModel(editPanel, model.getRefKey(), null);
 				}
 			}
 
-			public void onModelChangeEvent(ModelChangeEvent event) {
-				if(event.isError()) {
-					editPanel.applyErrorMsgs(event.getErrors());
-					return;
-				}
+			void handleModelChangeError(ModelChangeEvent event) {
+				editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+			}
+
+			void handleModelChangeSuccess(ModelChangeEvent event) {
 				switch(event.getChangeOp()) {
 					case LOADED:
 						model = event.getModel();
@@ -235,7 +234,28 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			}
 			initialized = true;
 		}
-	}
+
+		void handleModelChangeSuccess(ModelChangeEvent event) {
+			final Widget ew = event.getWidget();
+			for(InterfaceStack iv : list) {
+				if(ew == iv.editPanel) {
+					iv.handleModelChangeSuccess(event);
+					return;
+				}
+			}
+		}
+
+		void handleModelChangeError(ModelChangeEvent event) {
+			final Widget ew = event.getWidget();
+			for(InterfaceStack iv : list) {
+				if(ew == iv.editPanel) {
+					iv.handleModelChangeError(event);
+					return;
+				}
+			}
+		}
+
+	} // InterfacesStack
 
 	private final InterfacesStack intfStack = new InterfacesStack();
 
@@ -284,14 +304,19 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		return new StaticViewRequest(this, klas);
 	}
 
-	public void onModelChangeEvent(ModelChangeEvent event) {
-		// no-op
-	}
-
 	public void onClick(Widget sender) {
 		if(sender == btnAddIntf) {
 			// TODO add an interface
 		}
 	}
 
+	@Override
+	protected void handleModelChangeError(ModelChangeEvent event) {
+		intfStack.handleModelChangeError(event);
+	}
+
+	@Override
+	protected void handleModelChangeSuccess(ModelChangeEvent event) {
+		intfStack.handleModelChangeSuccess(event);
+	}
 }

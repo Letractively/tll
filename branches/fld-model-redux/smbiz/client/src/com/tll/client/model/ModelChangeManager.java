@@ -1,7 +1,5 @@
 package com.tll.client.model;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
@@ -17,7 +15,6 @@ import com.tll.client.event.type.CrudEvent;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.RpcEvent;
 import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
-import com.tll.client.msg.Msg;
 import com.tll.model.EntityType;
 
 /**
@@ -32,12 +29,9 @@ import com.tll.model.EntityType;
  */
 public final class ModelChangeManager implements IRpcListener, ICrudListener, ISourcesModelChangeEvents {
 
-	private static ModelChangeManager instance;
+	private static ModelChangeManager instance = new ModelChangeManager();
 
 	public static ModelChangeManager instance() {
-		if(instance == null) {
-			instance = new ModelChangeManager();
-		}
 		return instance;
 	}
 
@@ -71,7 +65,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 *         <code>false</code> when no aux data is needed. I.e.: it is already
 	 *         cached on the client.
 	 */
-	public boolean handleAuxDataFetch(Widget sourcingWidget, AuxDataRequest adr) {
+	public boolean fetchAuxData(Widget sourcingWidget, AuxDataRequest adr) {
 		// do we need any aux data from the server?
 		adr = AuxDataCache.instance().filterRequest(adr);
 		if(adr == null) return false;
@@ -91,7 +85,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 *         server and <code>false</code> when the prototype is already cached
 	 *         on the client.
 	 */
-	public boolean handleModelPrototypeFetch(Widget sourcingWidget, EntityType entityType) {
+	public boolean fetchModelPrototype(Widget sourcingWidget, EntityType entityType) {
 		if(!AuxDataCache.instance().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
 			AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
@@ -109,7 +103,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * change event is anticipated.
 	 * @param modelRef The reference of the model to fetch
 	 */
-	public void handleModelLoad(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions, AuxDataRequest adr) {
+	public void loadModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions, AuxDataRequest adr) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);
 		cmd.load(modelRef);
 		cmd.setEntityOptions(entityOptions);
@@ -122,7 +116,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * change event. A subsequent model change event is anticipated.
 	 * @param model The model to persist
 	 */
-	public void handleModelPersist(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
+	public void persistModel(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);
 		if(model.isNew()) {
 			cmd.add(model);
@@ -139,7 +133,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * upon a successful delete.
 	 * @param modelRef The model to delete
 	 */
-	public void handleModelDelete(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions) {
+	public void deleteModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);
 		cmd.purge(modelRef);
 		cmd.setEntityOptions(entityOptions);
@@ -155,26 +149,32 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 
 	public void onCrudEvent(CrudEvent event) {
 
-		final List<Msg> errors = event.getPayload().getStatus().getFieldMsgs();
-
 		ModelChangeEvent mce = null;
 
 		switch(event.getCrudOp()) {
 
 			case LOAD:
-				mce = new ModelChangeEvent(event.getWidget(), ModelChangeOp.LOADED, event.getPayload().getEntity(), errors);
+				mce =
+						new ModelChangeEvent(event.getWidget(), ModelChangeOp.LOADED, event.getPayload().getEntity(), event
+								.getPayload().getStatus());
 				break;
 
 			case ADD:
-				mce = new ModelChangeEvent(event.getWidget(), ModelChangeOp.ADDED, event.getPayload().getEntity(), errors);
+				mce =
+						new ModelChangeEvent(event.getWidget(), ModelChangeOp.ADDED, event.getPayload().getEntity(), event
+								.getPayload().getStatus());
 				break;
 
 			case UPDATE:
-				mce = new ModelChangeEvent(event.getWidget(), ModelChangeOp.UPDATED, event.getPayload().getEntity(), errors);
+				mce =
+						new ModelChangeEvent(event.getWidget(), ModelChangeOp.UPDATED, event.getPayload().getEntity(), event
+								.getPayload().getStatus());
 				break;
 
 			case PURGE:
-				mce = new ModelChangeEvent(event.getWidget(), ModelChangeOp.DELETED, event.getPayload().getEntityRef(), errors);
+				mce =
+						new ModelChangeEvent(event.getWidget(), ModelChangeOp.DELETED, event.getPayload().getEntityRef(), event
+								.getPayload().getStatus());
 				break;
 		}
 

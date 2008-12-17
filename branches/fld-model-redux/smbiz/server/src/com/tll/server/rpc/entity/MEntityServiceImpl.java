@@ -15,7 +15,7 @@ import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 
 import com.tll.SystemError;
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.data.EntityPayload;
@@ -73,7 +73,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	protected abstract void handlePersistOptions(RequestContext requestContext, E e, EntityOptions options)
 			throws SystemError;
 
-	public final void getEmptyEntity(final RequestContext requestContext, final EntityGetEmptyRequest request,
+	public final void getEmptyEntity(final RequestContext requestContext, final EntityFetchPrototypeRequest request,
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			final IEntity e = requestContext.getEntityAssembler().assembleEntity(entityType, null, request.isGenerate());

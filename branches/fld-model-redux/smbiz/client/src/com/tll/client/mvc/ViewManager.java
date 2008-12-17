@@ -123,7 +123,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 *        container. Must not be <code>null</code>.
 	 */
 	public void initialize(Panel parentViewPanel) {
-		assert parentViewPanel != null;
+		if(parentViewPanel == null) throw new IllegalArgumentException("A parent view panel must be specified.");
 		this.parentViewPanel = parentViewPanel;
 	}
 

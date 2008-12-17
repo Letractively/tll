@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldBindingGroup;
@@ -399,9 +398,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		@Override
 		public ShowViewRequest newViewRequest() {
 			return null;
-		}
-
-		public void onModelChangeEvent(ModelChangeEvent event) {
 		}
 	}
 

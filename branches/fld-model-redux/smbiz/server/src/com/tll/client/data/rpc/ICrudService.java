@@ -6,7 +6,7 @@ package com.tll.client.data.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.data.EntityPayload;
@@ -26,7 +26,7 @@ public interface ICrudService extends RemoteService {
 	 * @param request The {@link EntityRequest} specifying the entity type.
 	 * @return EntityPayload
 	 */
-	EntityPayload getEmptyEntity(EntityGetEmptyRequest request);
+	EntityPayload getEmptyEntity(EntityFetchPrototypeRequest request);
 
 	/**
 	 * Loads an existing entity.

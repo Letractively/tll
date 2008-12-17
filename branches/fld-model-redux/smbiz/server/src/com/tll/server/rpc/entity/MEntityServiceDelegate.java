@@ -6,7 +6,7 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.SystemError;
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
@@ -67,7 +67,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		}
 	}
 
-	public EntityPayload getEmptyEntity(final EntityGetEmptyRequest request) {
+	public EntityPayload getEmptyEntity(final EntityFetchPrototypeRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl = resolveEntityServiceImpl(request, payload);
 		if(impl != null) {

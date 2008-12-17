@@ -55,7 +55,7 @@ public abstract class ListingView extends AbstractView {
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ModelChangeManager.instance().handleModelDelete(ListingView.this, listingWidget.getRowRef(rowIndex), null);
+			ModelChangeManager.instance().deleteModel(ListingView.this, listingWidget.getRowRef(rowIndex), null);
 		}
 
 	}
@@ -86,8 +86,8 @@ public abstract class ListingView extends AbstractView {
 		}
 	}
 
-	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(listingWidget != null) listingWidget.onModelChangeEvent(event);
+	@Override
+	protected void handleModelChangeSuccess(ModelChangeEvent event) {
+		if(listingWidget != null) listingWidget.handleModelChange(event);
 	}
-
 }

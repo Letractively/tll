@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.data.EntityPayload;
@@ -32,8 +32,7 @@ import com.tll.model.EntityType;
 public final class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
 
 	public enum CrudOp {
-		// TODO change to LOAD_NEW ???
-		RECIEVE_EMPTY_ENTITY,
+		FETCH_PROTOTYPE,
 		LOAD,
 		ADD,
 		UPDATE,
@@ -71,12 +70,12 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * @param entityType
 	 * @param generate
 	 */
-	public final void receiveEmpty(EntityType entityType, boolean generate) {
+	public final void fetchPrototype(EntityType entityType, boolean generate) {
 		if(entityType == null) {
 			throw new IllegalArgumentException("An entity type must be specified.");
 		}
-		entityRequest = new EntityGetEmptyRequest(entityType, generate);
-		crudOp = CrudOp.RECIEVE_EMPTY_ENTITY;
+		entityRequest = new EntityFetchPrototypeRequest(entityType, generate);
+		crudOp = CrudOp.FETCH_PROTOTYPE;
 	}
 
 	/**
@@ -141,20 +140,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	}
 
 	/**
-	 * Sets the state of this command for persisting the given entity.
-	 * @param entity
-	 */
-	public final void persist(Model entity) {
-		if(entity == null) {
-			throw new IllegalArgumentException("A non-null entity must be specified.");
-		}
-		if(entity.isNew())
-			add(entity);
-		else
-			update(entity);
-	}
-
-	/**
 	 * Sets the state of this command for purging an entity.
 	 * @param entityRef The ref of the entity to be purged.
 	 */
@@ -196,8 +181,8 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	@Override
 	protected void doExecute() {
 		switch(crudOp) {
-			case RECIEVE_EMPTY_ENTITY:
-				svc.getEmptyEntity((EntityGetEmptyRequest) entityRequest, getAsyncCallback());
+			case FETCH_PROTOTYPE:
+				svc.getEmptyEntity((EntityFetchPrototypeRequest) entityRequest, getAsyncCallback());
 				break;
 
 			case LOAD:

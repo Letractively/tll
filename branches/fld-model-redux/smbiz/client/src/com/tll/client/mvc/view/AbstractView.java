@@ -7,6 +7,7 @@ package com.tll.client.mvc.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 
@@ -122,6 +123,36 @@ public abstract class AbstractView extends Composite implements IView {
 	 * before this view looses reference-ability
 	 */
 	protected abstract void doDestroy();
+
+	/**
+	 * Handles model change errors. Sub-classes should override as necessary.
+	 * @param event The {@link ModelChangeEvent}
+	 */
+	protected void handleModelChangeError(ModelChangeEvent event) {
+		// base impl no-op
+	}
+
+	/**
+	 * Handles successful model changes. Sub-classes should override as necessary.
+	 * @param event The {@link ModelChangeEvent}
+	 */
+	protected void handleModelChangeSuccess(ModelChangeEvent event) {
+		// base impl no-op
+	}
+
+	public final void onModelChangeEvent(ModelChangeEvent event) {
+		// is this our model change?
+		if(event.getWidget() != this || !event.getWidget().getElement().isOrHasChild(this.getElement())) return;
+
+		// errors?
+		if(event.getStatus().hasErrors()) {
+			handleModelChangeError(event);
+			return;
+		}
+
+		// ahh success
+		handleModelChangeSuccess(event);
+	}
 
 	@Override
 	public final String toString() {

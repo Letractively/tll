@@ -113,9 +113,9 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			ModelChangeManager.instance().handleModelLoad(this, modelRef, entityOptions, getNeededAuxData());
+			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
-		else if(!ModelChangeManager.instance().handleAuxDataFetch(this, getNeededAuxData())) {
+		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
 			editPanel.bindModel(model);
 			editPanel.getFields().draw();
 		}
@@ -134,22 +134,24 @@ public abstract class EditView extends AbstractView implements IEditListener {
 			case ADD:
 			case UPDATE:
 				if(editPanel.updateModel()) {
-					ModelChangeManager.instance().handleModelPersist(this, model, entityOptions);
+					ModelChangeManager.instance().persistModel(this, model, entityOptions);
 				}
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					ModelChangeManager.instance().handleModelDelete(this, modelRef, entityOptions);
+					ModelChangeManager.instance().deleteModel(this, modelRef, entityOptions);
 				}
 				break;
 		}
 	}
 
-	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(event.isError()) {
-			editPanel.applyErrorMsgs(event.getErrors());
-			return;
-		}
+	@Override
+	protected void handleModelChangeError(ModelChangeEvent event) {
+		editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+	}
+
+	@Override
+	protected void handleModelChangeSuccess(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 
 			case LOADED:

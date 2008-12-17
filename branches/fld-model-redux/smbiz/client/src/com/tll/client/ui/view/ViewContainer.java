@@ -286,7 +286,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 			toolbar.btnPop.setDown(true);
 			toolbar.btnPop.setTitle(ViewToolbar.TITLE_PIN);
 
-			addDragListener(MsgManager.instance);
+			addDragListener(MsgManager.instance());
 
 			DOM.addEventPreview(this);
 		}
@@ -302,7 +302,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 			DOM.removeEventPreview(this);
 
-			removeDragListener(MsgManager.instance);
+			removeDragListener(MsgManager.instance());
 
 			Element elm = getElement();
 			elm.getStyle().setProperty("position", "");

@@ -8,10 +8,10 @@ package com.tll.client.data;
 import com.tll.model.EntityType;
 
 /**
- * EntityGetEmptyRequest
+ * EntityFetchPrototypeRequest
  * @author jpk
  */
-public class EntityGetEmptyRequest extends EntityRequest {
+public class EntityFetchPrototypeRequest extends EntityRequest {
 
 	private EntityType entityType;
 
@@ -23,7 +23,7 @@ public class EntityGetEmptyRequest extends EntityRequest {
 	/**
 	 * Constructor
 	 */
-	public EntityGetEmptyRequest() {
+	public EntityFetchPrototypeRequest() {
 		super();
 	}
 
@@ -32,7 +32,7 @@ public class EntityGetEmptyRequest extends EntityRequest {
 	 * @param entityType
 	 * @param generate
 	 */
-	public EntityGetEmptyRequest(EntityType entityType, boolean generate) {
+	public EntityFetchPrototypeRequest(EntityType entityType, boolean generate) {
 		super();
 		this.entityType = entityType;
 		this.generate = generate;
