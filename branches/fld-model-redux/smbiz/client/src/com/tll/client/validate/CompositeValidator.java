@@ -26,16 +26,6 @@ public class CompositeValidator implements IValidator {
 		return this;
 	}
 
-	/**
-	 * Removes a validator
-	 * @param validator The validator to remove
-	 * @return this
-	 */
-	public CompositeValidator remove(IValidator validator) {
-		validators.remove(validator);
-		return this;
-	}
-
 	public Object validate(Object value) throws ValidationException {
 		Object retValue = value;
 		for(IValidator v : validators) {

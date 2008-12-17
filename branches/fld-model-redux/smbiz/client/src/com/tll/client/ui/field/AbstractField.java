@@ -318,20 +318,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	/**
-	 * Removes a validator from this binding.
-	 * @param validator The validator to remove
-	 */
-	public final void removeValidator(IValidator validator) {
-		assert validator != null;
-		if(this.validator == validator) {
-			this.validator = null;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).remove(validator);
-		}
-	}
-
-	/**
 	 * RequirednessValidator - Validator for checking a field's requireness.
 	 * @author jpk
 	 */

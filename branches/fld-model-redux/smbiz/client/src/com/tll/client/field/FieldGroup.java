@@ -486,20 +486,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	/**
-	 * Removes a validator from this binding.
-	 * @param validator The validator to remove
-	 */
-	public final void removeValidator(IValidator validator) {
-		assert validator != null;
-		if(this.validator == validator) {
-			this.validator = null;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).remove(validator);
-		}
-	}
-
 	public void validate() throws ValidationException {
 		boolean valid = true;
 		for(IField field : fields) {
@@ -518,7 +504,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				valid = false;
 				// handle UI msg if we have a feedback widget specified
 				if(feedbackWidget != null) {
-					MsgManager.instance().post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false).show();
+					MsgManager.instance().post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false)
+							.show();
 				}
 			}
 		}

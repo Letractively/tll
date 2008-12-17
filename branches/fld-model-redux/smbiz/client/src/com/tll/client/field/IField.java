@@ -159,10 +159,4 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	 * @param validator
 	 */
 	void addValidator(IValidator validator);
-
-	/**
-	 * Removes a validator.
-	 * @param validator
-	 */
-	void removeValidator(IValidator validator);
 }
