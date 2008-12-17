@@ -18,7 +18,7 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
@@ -64,7 +64,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * The field bindings.
 	 */
-	private final FieldBindingGroup bindings;
+	private final FieldModelBinding bindings;
 
 	/**
 	 * The panel containing the edit buttons
@@ -121,7 +121,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		this.fieldPanel = fieldPanel;
 		portal.setWidget(fieldPanel);
 
-		bindings = new FieldBindingGroup();
+		bindings = new FieldModelBinding();
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -165,7 +165,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	public void bindModel(Model model) {
 		// [re]create field bindings
 		bindings.clear();
-		fieldPanel.createFieldBindings(bindings, model);
+		fieldPanel.applyModel(model);
+		fieldPanel.setFieldBindings(model, bindings);
 		setEditMode(model.isNew());
 	}
 
@@ -187,7 +188,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 
 		// fields are all valid to send field values to the model
-		bindings.pull();
+		bindings.setModelValues();
 
 		return true;
 	}

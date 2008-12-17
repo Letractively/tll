@@ -24,4 +24,10 @@ public interface IFieldPanelComposer {
 	 * @param canvas The field UI "canvas" Panel.
 	 */
 	void setCanvas(Panel canvas);
+
+	/**
+	 * Adds a field to the canvas.
+	 * @param field
+	 */
+	void addField(IField field);
 }

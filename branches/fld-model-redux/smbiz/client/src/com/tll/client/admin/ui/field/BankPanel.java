@@ -6,8 +6,8 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
@@ -43,15 +43,14 @@ public final class BankPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-		bindings.add(createFieldBinding("paymentData_bankName", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_bankAccountNo", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_bankRoutingNo", model, parentPropertyPath));
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		bindings.addBinding(bankName, model, "paymentData_bankName");
+		bindings.addBinding(bankAccountNo, model, "paymentData_bankAccountNo");
+		bindings.addBinding(bankRoutingNo, model, "paymentData_bankRoutingNo");
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	protected void drawInternal(Panel canvas) {
 		final VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

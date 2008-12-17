@@ -6,10 +6,9 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.Model;
-import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
@@ -47,49 +46,50 @@ public final class AddressPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-		bindings.add(createFieldBinding("emailAddress", model, parentPropertyPath));
-		bindings.add(createFieldBinding("firstName", model, parentPropertyPath));
-		bindings.add(createFieldBinding("lastName", model, parentPropertyPath));
-		bindings.add(createFieldBinding("mi", model, parentPropertyPath));
-		bindings.add(createFieldBinding("company", model, parentPropertyPath));
-		bindings.add(createFieldBinding("attn", model, parentPropertyPath));
-		bindings.add(createFieldBinding("address1", model, parentPropertyPath));
-		bindings.add(createFieldBinding("address2", model, parentPropertyPath));
-		bindings.add(createFieldBinding("city", model, parentPropertyPath));
-		bindings.add(createFieldBinding("province", model, parentPropertyPath));
-		bindings.add(createFieldBinding("country", model, parentPropertyPath));
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		final FieldGroup fields = getFieldGroup();
+		bindings.addBinding(fields.getField("emailAddress"), model, "emailAddress");
+		bindings.addBinding(fields.getField("firstName"), model, "firstName");
+		bindings.addBinding(fields.getField("lastName"), model, "lastName");
+		bindings.addBinding(fields.getField("mi"), model, "mi");
+		bindings.addBinding(fields.getField("company"), model, "company");
+		bindings.addBinding(fields.getField("attn"), model, "attn");
+		bindings.addBinding(fields.getField("address1"), model, "address1");
+		bindings.addBinding(fields.getField("address2"), model, "address2");
+		bindings.addBinding(fields.getField("city"), model, "city");
+		bindings.addBinding(fields.getField("province"), model, "province");
+		bindings.addBinding(fields.getField("country"), model, "country");
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	protected void drawInternal(Panel canvas) {
+		final FieldGroup fields = getFieldGroup();
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
-		cmpsr.addField((AbstractField) fields.getField("emailAddress"));
+		cmpsr.addField(fields.getField("emailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("firstName"));
-		cmpsr.addField((AbstractField) fields.getField("mi"));
-		cmpsr.addField((AbstractField) fields.getField("lastName"));
+		cmpsr.addField(fields.getField("firstName"));
+		cmpsr.addField(fields.getField("mi"));
+		cmpsr.addField(fields.getField("lastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("attn"));
-		cmpsr.addField((AbstractField) fields.getField("company"));
+		cmpsr.addField(fields.getField("attn"));
+		cmpsr.addField(fields.getField("company"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("address1"));
+		cmpsr.addField(fields.getField("address1"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("address2"));
+		cmpsr.addField(fields.getField("address2"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("city"));
-		cmpsr.addField((AbstractField) fields.getField("province"));
+		cmpsr.addField(fields.getField("city"));
+		cmpsr.addField(fields.getField("province"));
 
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("postalCode"));
-		cmpsr.addField((AbstractField) fields.getField("country"));
+		cmpsr.addField(fields.getField("postalCode"));
+		cmpsr.addField(fields.getField("country"));
 	}
 }

@@ -56,8 +56,8 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 
 	/**
 	 * Adds a field label and Widget row. If the label text is <code>null</code>,
-	 * no label is added. If the Widget is an IField
-	 * {@link #addField(AbstractField)} should be called instead.
+	 * no label is added. If the Widget is an IField {@link #addField(IField)}
+	 * should be called instead.
 	 * @param label The label text
 	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
@@ -70,7 +70,8 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(AbstractField field) {
-		add(field.getFieldLabel(), field);
+	public void addField(IField field) {
+		AbstractField af = (AbstractField) field;
+		add(af.getFieldLabel(), af);
 	}
 }

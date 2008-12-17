@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.tll.client.util.StringUtil;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
@@ -167,7 +168,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IModelProperty prop = getProperty(new PropertyPath(propPath));
+		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
@@ -190,7 +191,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path is
 	 *         mal-formed.
 	 */
-	public IModelProperty getProperty(PropertyPath propPath) throws IllegalArgumentException {
+	public IModelProperty getProperty(String propPath) throws IllegalArgumentException {
 		if(propPath == null || propPath.length() < 1) {
 			return getSelfRef();
 		}
@@ -213,7 +214,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 	/**
 	 * Retrieves an IPropertyValue from the model given a property path. This
-	 * method is {@link #getProperty(PropertyPath)} with a filter that targets on
+	 * method is {@link #getProperty(String)} with a filter that targets on
 	 * {@link IPropertyValue} type {@link IModelProperty}s.
 	 * @param propPath A parsed property path
 	 * @return The resolved {@link IPropertyValue} or <code>null</code> if not
@@ -221,7 +222,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IPropertyValue}.
 	 */
-	public IPropertyValue getPropertyValue(PropertyPath propPath) throws IllegalArgumentException {
+	public IPropertyValue getPropertyValue(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
@@ -239,7 +240,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
-	public Model getNestedModel(PropertyPath propPath) throws IllegalArgumentException {
+	public Model getNestedModel(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isModelRef()) {
@@ -256,7 +257,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related one property.
 	 */
-	public RelatedOneProperty relatedOne(PropertyPath propPath) throws IllegalArgumentException {
+	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
@@ -273,7 +274,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
-	public RelatedManyProperty relatedMany(PropertyPath propPath) throws IllegalArgumentException {
+	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
@@ -291,7 +292,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws IllegalArgumentException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
-	public IndexedProperty indexed(PropertyPath propPath) throws IllegalArgumentException {
+	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(prop.getType() != PropertyType.INDEXED) {
@@ -352,17 +353,18 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @throws PropertyPathException When an error occurrs whilst resolving the
 	 *         property path
 	 */
-	private IModelProperty resolvePropertyPath(final PropertyPath propPath) throws PropertyPathException {
-		if(propPath == null || propPath.depth() < 1) {
-			throw new MalformedPropPathException("No property specified.");
+	private IModelProperty resolvePropertyPath(final String propPath) throws PropertyPathException {
+		if(StringUtil.isEmpty(propPath)) {
+			throw new MalformedPropPathException("No property path specified.");
 		}
 
+		final PropertyPath pp = new PropertyPath(propPath);
 		IModelProperty prop = null;
 		Model model = this;
-		final int len = propPath.depth();
+		final int len = pp.depth();
 		for(int i = 0; i < len; i++) {
-			final String pname = propPath.nameAt(i);
-			final int index = propPath.indexAt(i);
+			final String pname = pp.nameAt(i);
+			final int index = pp.indexAt(i);
 			boolean indexed = (index >= 0);
 			boolean atEnd = (i == len - 1);
 
@@ -370,9 +372,9 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			prop = model.get(pname);
 			if(prop == null) {
 				if(atEnd) {
-					throw new UnsetPropertyException(propPath.toString());
+					throw new UnsetPropertyException(pp.toString());
 				}
-				throw new NullNodeInPropPathException(propPath.toString(), pname);
+				throw new NullNodeInPropPathException(pp.toString(), pname);
 			}
 
 			// get the bound prop val type for this prop path element
@@ -381,7 +383,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			// non-relational prop val
 			if(!pvType.isRelational()) {
 				if(!atEnd) {
-					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(), "Relational");
+					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), "Relational");
 				}
 				return prop;
 			}
@@ -389,8 +391,8 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			// related one prop val
 			else if(pvType == PropertyType.RELATED_ONE) {
 				if(indexed) {
-					throw new PropPathNodeMismatchException(propPath.toString(), pname, pvType.toString(),
-							PropertyType.RELATED_MANY.toString());
+					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), PropertyType.RELATED_MANY
+							.toString());
 				}
 				ModelRefProperty mrp = (ModelRefProperty) prop;
 				if(atEnd) {
@@ -399,7 +401,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				// get the nested group...
 				Model ng = mrp.getModel();
 				if(ng == null) {
-					throw new NullNodeInPropPathException(propPath.toString(), pname);
+					throw new NullNodeInPropPathException(pp.toString(), pname);
 				}
 				// reset for next path
 				model = ng;
@@ -413,7 +415,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 						return rmp;
 					}
 					// and index is expected if were not at the end
-					throw new MalformedPropPathException(propPath.toString());
+					throw new MalformedPropPathException(pp.toString());
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
@@ -425,18 +427,17 @@ public final class Model implements IData, Iterable<IModelProperty> {
 					}
 					if(atEnd) {
 						if(index >= nlist.size()) {
-							throw new IndexOutOfRangeInPropPathException(propPath.toString(), pname, index);
+							throw new IndexOutOfRangeInPropPathException(pp.toString(), pname, index);
 						}
 						Model ng = nlist.get(index);
-						return new IndexedProperty(rmp.getRelatedType(), propPath.nameAt(propPath.depth() - 1), rmp.isReference(),
-								ng, index);
+						return new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), ng, index);
 					}
 					// reset for next path
 					model = nlist.get(index);
 				}
 			}
 		}
-		throw new MalformedPropPathException(propPath.toString());
+		throw new MalformedPropPathException(pp.toString());
 	}
 
 	/**

@@ -7,7 +7,6 @@ package com.tll.client.listing;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.ISelfFormattingPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.util.Fmt;
 
 /**
@@ -17,7 +16,7 @@ import com.tll.client.util.Fmt;
 public final class ModelCellRenderer implements ITableCellRenderer<Model> {
 
 	public String getCellValue(Model rowData, Column column) {
-		IPropertyValue pv = rowData.getPropertyValue(new PropertyPath(column.getPropertyName()));
+		IPropertyValue pv = rowData.getPropertyValue(column.getPropertyName());
 
 		// self formatting type..
 		if(pv.getType().isSelfFormatting()) {

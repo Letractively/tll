@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -76,12 +76,12 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 
 		@Override
-		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-				Model model) {
+		public void setFieldBindings(Model model, FieldModelBinding bindings) {
+			// TODO
 		}
 
 		@Override
-		protected void draw(Panel canvas, FieldGroup fields) {
+		protected void drawInternal(Panel canvas) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -120,7 +120,12 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		// TODO
+	}
+
+	@Override
+	protected void drawInternal(Panel canvas) {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
@@ -144,7 +149,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void applyModel(Model model, FieldGroup fields) {
+	public void applyModel(Model model) {
+		final FieldGroup fields = getFieldGroup();
 
 		// clear existing options
 		for(Widget w : tabOptions) {
@@ -152,19 +158,15 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 		tabOptions.clear();
 
-		final PropertyPath path = new PropertyPath();
-
 		// bind options
-		path.parse("options");
-		RelatedManyProperty pvOptions = model.relatedMany(path);
+		RelatedManyProperty pvOptions = model.relatedMany("options");
 		if(pvOptions != null && pvOptions.size() > 0) {
 			for(IndexedProperty propOption : pvOptions) {
 				Model option = propOption.getModel();
 
 				// params
-				path.parse(propOption.getPropertyName());
-				path.append("parameters");
-				RelatedManyProperty pvParams = model.relatedMany(path);
+				RelatedManyProperty pvParams =
+						model.relatedMany(PropertyPath.getPropertyPath(propOption.getPropertyName(), "parameters"));
 				if(pvParams != null && pvParams.size() > 0) {
 					PropertyPath paramPath = new PropertyPath();
 					for(IndexedProperty propParam : pvParams) {
@@ -176,9 +178,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				}
 
-				OptionPanel pnlOption = new OptionPanel(/*new FieldListing("Parameters", EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION,
-												paramColumns, path.toString(), getFieldGroup(), paramFieldProvider, paramFieldRenderer));
-								addField(propOption.getPropertyName(), pnlOption.getFieldGroup()*/);
+				OptionPanel pnlOption = new OptionPanel();
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), propOption
 						.getPropertyName()));
 			}

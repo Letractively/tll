@@ -7,13 +7,11 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.field.FieldBinding;
-import com.tll.client.field.FieldBindingGroup;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.IField;
-import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 
 /**
  * FieldPanel - Common base class for panels that display form data. Provision
@@ -45,17 +43,10 @@ public abstract class FieldPanel extends Composite {
 	 * @return The FieldGroup for this panel ensuring it is first populated.
 	 */
 	public final FieldGroup getFieldGroup() {
-		ensureFieldGroupPopulated();
-		return fields;
-	}
-
-	/**
-	 * Ensures the field group is populated.
-	 */
-	private void ensureFieldGroupPopulated() {
 		if(fields.size() < 1) {
 			populateFieldGroup(fields);
 		}
+		return fields;
 	}
 
 	/**
@@ -64,89 +55,50 @@ public abstract class FieldPanel extends Composite {
 	protected abstract void populateFieldGroup(FieldGroup fields);
 
 	/**
-	 * Hook to add fields to the field group that are dependent on the model.
-	 * @param model The model that corres. directly to this field panel in terms
-	 *        of the model type.
-	 * @param fields The field group
+	 * Applies the model to the fields of this panel providing an opportunity to
+	 * create fields whose existence are dependent on interrogating the model.
+	 * @param model The model to apply
 	 */
-	protected void applyModel(Model model, FieldGroup fields) {
+	public void applyModel(Model model) {
 		// base impl no-op
 	}
 
 	/**
-	 * Creates {@link FieldBinding}s from the given {@link Model}. This panel's
-	 * {@link FieldGroup} is populated if not already.
-	 * @param bindings The FieldBindingGroup that recieves the new field bindings
-	 * @param model The model subject to binding
+	 * Creates the necessary field bindings for fields in this panel to fully
+	 * support bi-diretional field/model data transfer.
+	 * <p>
+	 * This method is responsible for:
+	 * <ol>
+	 * <li>Adding
+	 * <li>Adding field bindings to the given {@link FieldModelBinding} to fully
+	 * support bi-directional field/model data transfer.
+	 * </ol>
+	 * @param model The model subject to binding for this field panel
+	 * @param bindings The field bindings that receive newly created field
+	 *        bindings
 	 */
-	public final void createFieldBindings(FieldBindingGroup bindings, Model model) {
-		FieldGroup fg = getFieldGroup();
-		applyModel(model, fg);
-		populateFieldBindingGroup(bindings, null, fg, model);
-	}
+	public abstract void setFieldBindings(Model model, FieldModelBinding bindings);
 
 	/**
-	 * Populates the given {@link FieldBindingGroup} with {@link FieldBinding}s
-	 * based on the existing fields and the given {@link Model}.
-	 * @param bindings The {@link FieldBindingGroup} to which new
-	 *        {@link FieldBinding}s are added
-	 * @param parentPropertyPath The parent property path that is pre-pended to
-	 *        each field's property name which serves to resolve fields from the
-	 *        given {@link FieldGroup}
-	 * @param fields The {@link FieldGroup} containing the fields to be bound
-	 * @param model The resolved model whose child properties map to this
-	 *        {@link FieldPanel}.
-	 */
-	protected abstract void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath,
-			FieldGroup fields, Model model);
-
-	/**
-	 * Draws the fields onto the UI canvas only if there are no child Widgets
-	 * contained in this Panel.
+	 * Draws or re-draws this field panel.
 	 */
 	public final void draw() {
-		if(panel.getWidgetCount() == 0) {
-			draw(panel, getFieldGroup());
-		}
+		clear();
+		drawInternal(panel);
 	}
 
 	/**
-	 * Draws the fields onto the UI "canvas".
+	 * Draws the fields onto the given {@link Panel} and supporting {@link Widget}
+	 * s.
 	 * @param canvas The "canvas" on which the fields are drawn.
-	 * @param fields The field group
 	 */
-	protected abstract void draw(Panel canvas, FieldGroup fields);
+	protected abstract void drawInternal(Panel canvas);
 
 	/**
-	 * Removes any previously drawn fields from this Panel forcing a subsequent
-	 * re-draw.
+	 * Removes all child {@link Widget}s from this {@link FieldPanel}.
 	 */
 	public final void clear() {
 		panel.clear();
-	}
-
-	/**
-	 * Factory method for creating {@link FieldBinding}s.
-	 * @param propName The non-property path field property name
-	 * @param model The model
-	 * @param parentPropertyPath The parent property path that resolves the target
-	 *        field in the field group. May be <code>null</code>.
-	 * @return The created {@link FieldBinding} or <code>null</code> if either the
-	 *         field or the model property is unresolvable.
-	 */
-	protected final FieldBinding createFieldBinding(String propName, Model model, String parentPropertyPath) {
-		final PropertyPath pPropName = new PropertyPath(propName);
-
-		final PropertyPath path = new PropertyPath(parentPropertyPath);
-		path.append(propName);
-
-		IField f = fields.getField(path.toString());
-		if(f == null) return null;
-
-		IPropertyValue pv = model.getPropertyValue(pPropName);
-		if(pv == null) return null;
-
-		return new FieldBinding(f, pv);
 	}
 
 	@Override

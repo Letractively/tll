@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -34,6 +35,11 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	 * Style indicating the field's value is invalid.
 	 */
 	static final String STYLE_INVALID = MsgLevel.ERROR.getName().toLowerCase();
+
+	/**
+	 * @return The field {@link Widget}.
+	 */
+	Widget getFieldWidget();
 
 	/**
 	 * Sets the property name for this field.
@@ -133,6 +139,12 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	void dirtyCheck();
 
 	/**
+	 * Adds a validator.
+	 * @param validator
+	 */
+	void addValidator(IValidator validator);
+
+	/**
 	 * Validates the field.
 	 * @throws ValidationException When the field is found invalid
 	 */
@@ -141,7 +153,7 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	/**
 	 * Provides the validated value set by the last invocation of
 	 * {@link #validate()}.
-	 * @return The validated value
+	 * @return The cached validated value
 	 */
 	Object getValidatedValue();
 
@@ -153,10 +165,4 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	 *        when the <code>invalid</code> param is <code>false</code>.
 	 */
 	void markInvalid(boolean invalid, List<Msg> msgs);
-
-	/**
-	 * Adds a validator.
-	 * @param validator
-	 */
-	void addValidator(IValidator validator);
 }

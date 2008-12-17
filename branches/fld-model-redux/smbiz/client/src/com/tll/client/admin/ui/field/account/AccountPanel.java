@@ -22,15 +22,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.IField;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldFactory;
@@ -87,12 +86,12 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		}
 
 		@Override
-		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-				Model model) {
+		public void setFieldBindings(Model model, FieldModelBinding bindings) {
+			// TODO
 		}
 
 		@Override
-		protected void draw(Panel canvas, FieldGroup fields) {
+		protected void drawInternal(Panel canvas) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -162,33 +161,30 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-	}
-
-	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	protected void drawInternal(Panel canvas) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
+		final FieldGroup fields = getFieldGroup();
+
 		// first row
-		cmpsr.addField((AbstractField) fields.getField(Model.NAME_PROPERTY));
-		cmpsr.addField((AbstractField) fields.getField("status"));
-		cmpsr.addField((AbstractField) fields.getField("dateCancelled"));
-		cmpsr.addField((AbstractField) fields.getField("currency.id"));
+		cmpsr.addField(fields.getField(Model.NAME_PROPERTY));
+		cmpsr.addField(fields.getField("status"));
+		cmpsr.addField(fields.getField("dateCancelled"));
+		cmpsr.addField(fields.getField("currency.id"));
 		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		cmpsr.addField((AbstractField) fields.getField("parent.name"));
+		cmpsr.addField(fields.getField("parent.name"));
 		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		cmpsr.addField((AbstractField) fields.getField("dateCreated"));
+		cmpsr.addField(fields.getField("dateCreated"));
 		cmpsr.stopFlow();
-		cmpsr.addField((AbstractField) fields.getField("dateModified"));
+		cmpsr.addField(fields.getField("dateModified"));
 
 		// second row (billing)
 		cmpsr.newRow();
-		cmpsr.addField((AbstractField) fields.getField("billingModel"));
-		cmpsr.addField((AbstractField) fields.getField("billingCycle"));
-		cmpsr.addField((AbstractField) fields.getField("dateLastCharged"));
-		cmpsr.addField((AbstractField) fields.getField("nextChargeDate"));
+		cmpsr.addField(fields.getField("billingModel"));
+		cmpsr.addField(fields.getField("billingCycle"));
+		cmpsr.addField(fields.getField("dateLastCharged"));
+		cmpsr.addField(fields.getField("nextChargeDate"));
 
 		// third row
 		cmpsr.newRow();
@@ -198,7 +194,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 
 		// payment info block
 		FlowPanel fp = new FlowPanel();
-		fp.add((AbstractField) fields.getField("persistPymntInfo"));
+		fp.add((Widget) fields.getField("persistPymntInfo"));
 		fp.add(paymentInfoPanel);
 		dpPaymentInfo.add(fp);
 		cmpsr.addWidget(dpPaymentInfo);
@@ -208,7 +204,9 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	}
 
 	@Override
-	protected void applyModel(Model model, final FieldGroup fields) {
+	public void applyModel(Model model) {
+		final FieldGroup fields = getFieldGroup();
+
 		// un-bind existing
 		for(Widget w : tabAddresses) {
 			if(w instanceof AccountAddressPanel) {
@@ -217,19 +215,15 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		}
 		tabAddresses.clear();
 
-		final PropertyPath path = new PropertyPath();
-
 		// bind
-		path.parse("addresses");
-		RelatedManyProperty pvAddresses = model.relatedMany(path);
-		path.parse("type");
+		RelatedManyProperty pvAddresses = model.relatedMany("addresses");
 		for(AddressType at : AddressType.values()) {
 			AccountAddressPanel aap = null;
 			if(pvAddresses != null) {
 				Iterator<IndexedProperty> itr = pvAddresses.iterator();
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
-					if(at == ip.getModel().getPropertyValue(path).getValue()) {
+					if(at == ip.getModel().getPropertyValue("type").getValue()) {
 						aap = new AccountAddressPanel(at);
 						fields.addField(ip.getPropertyName(), aap.getFieldGroup());
 						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), ip.getPropertyName()));
@@ -279,6 +273,11 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		// dpPaymentInfo.setOpen(false);
 		// dpAddresses.setOpen(false);
 		// tabAddresses.selectTab(0);
+	}
+
+	@Override
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		// TODO
 	}
 
 	public void onClose(DisclosureEvent event) {

@@ -9,10 +9,9 @@ import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
@@ -69,28 +68,27 @@ public class UserPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-		bindings.add(createFieldBinding(Model.NAME_PROPERTY, model, parentPropertyPath));
-		bindings.add(createFieldBinding(Model.DATE_CREATED_PROPERTY, model, parentPropertyPath));
-		bindings.add(createFieldBinding(Model.DATE_MODIFIED_PROPERTY, model, parentPropertyPath));
-		bindings.add(createFieldBinding("emailAddress", model, parentPropertyPath));
-		bindings.add(createFieldBinding("locked", model, parentPropertyPath));
-		bindings.add(createFieldBinding("enabled", model, parentPropertyPath));
-		bindings.add(createFieldBinding("expires", model, parentPropertyPath));
-	}
-
-	@Override
-	protected void applyModel(Model model, FieldGroup fields) {
+	public void applyModel(Model model) {
 		// set the parent account view link
-		Model parentAccount = model.relatedOne(new PropertyPath("account")).getModel();
+		Model parentAccount = model.relatedOne("account").getModel();
 		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
 		lnkAccount.setText(par.getName());
 		lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		bindings.addBinding(name, model, Model.NAME_PROPERTY);
+		bindings.addBinding(timestamps[0], model, Model.DATE_CREATED_PROPERTY);
+		bindings.addBinding(timestamps[1], model, Model.DATE_MODIFIED_PROPERTY);
+		bindings.addBinding(emailAddress, model, "emailAddress");
+		bindings.addBinding(locked, model, "locked");
+		bindings.addBinding(enabled, model, "enabled");
+		bindings.addBinding(expires, model, "expires");
+	}
+
+	@Override
+	protected void drawInternal(Panel canvas) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

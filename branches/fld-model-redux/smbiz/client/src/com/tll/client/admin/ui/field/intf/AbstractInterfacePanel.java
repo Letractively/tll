@@ -6,10 +6,8 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.widgetideas.table.client.overrides.Grid;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.listing.Column;
-import com.tll.client.model.Model;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
@@ -71,11 +69,6 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 		fields.addField(isRequiredIsp);
 		fields.addField(isRequiredMerchant);
 		fields.addField(isRequiredCustomer);
-	}
-
-	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
 	}
 
 	protected Grid createAvailabilityGrid() {

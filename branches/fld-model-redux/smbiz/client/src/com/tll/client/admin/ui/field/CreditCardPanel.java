@@ -6,7 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldFactory;
@@ -81,24 +81,23 @@ public final class CreditCardPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-		bindings.add(createFieldBinding("paymentData_ccType", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccNum", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccCvv2", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccExpMonth", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccExpYear", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccName", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccAddress1", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccAddress2", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccCity", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccState", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccZip", model, parentPropertyPath));
-		bindings.add(createFieldBinding("paymentData_ccCountry", model, parentPropertyPath));
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		bindings.addBinding(type, model, "paymentData_ccType");
+		bindings.addBinding(num, model, "paymentData_ccNum");
+		bindings.addBinding(cvv2, model, "paymentData_ccCvv2");
+		bindings.addBinding(expMn, model, "paymentData_ccExpMonth");
+		bindings.addBinding(expYr, model, "paymentData_ccExpYear");
+		bindings.addBinding(name, model, "paymentData_ccName");
+		bindings.addBinding(addr1, model, "paymentData_ccAddress1");
+		bindings.addBinding(addr2, model, "paymentData_ccAddress2");
+		bindings.addBinding(city, model, "paymentData_ccCity");
+		bindings.addBinding(state, model, "paymentData_ccState");
+		bindings.addBinding(zip, model, "paymentData_ccZip");
+		bindings.addBinding(country, model, "paymentData_ccProvince");
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	protected void drawInternal(Panel canvas) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

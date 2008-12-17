@@ -22,7 +22,7 @@ import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.field.FieldBindingGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -189,12 +189,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-				Model model) {
+		public void setFieldBindings(Model model, FieldModelBinding bindings) {
 		}
 
 		@Override
-		protected void draw(Panel canvas, FieldGroup fields) {
+		protected void drawInternal(Panel canvas) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 

@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.field.FieldBindingGroup;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldPanel;
 
@@ -40,14 +40,13 @@ public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEven
 	}
 
 	@Override
-	protected void populateFieldBindingGroup(FieldBindingGroup bindings, String parentPropertyPath, FieldGroup fields,
-			Model model) {
-		creditCardPanel.populateFieldBindingGroup(bindings, parentPropertyPath, fields, model);
-		bankPanel.populateFieldBindingGroup(bindings, parentPropertyPath, fields, model);
+	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		creditCardPanel.setFieldBindings(model, bindings);
+		bankPanel.setFieldBindings(model, bindings);
 	}
 
 	@Override
-	protected void draw(Panel canvas, FieldGroup fields) {
+	protected void drawInternal(Panel canvas) {
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
 		canvas.add(tabPanel);

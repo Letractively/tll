@@ -45,24 +45,24 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @return The found IField or <code>null</code> if no matching field found
 	 */
 	private static IField findField(final String propertyName, FieldGroup group) {
-		List<FieldGroup> glist = null;
+
+		// first go through the non-group child fields
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().equals(propertyName)) {
 					return fld;
 				}
 			}
-			else {
-				if(glist == null) glist = new ArrayList<FieldGroup>();
-				glist.add((FieldGroup) fld);
-			}
 		}
-		if(glist != null) {
-			for(FieldGroup fg : glist) {
-				final IField rfld = findField(propertyName, fg);
+
+		IField rfld;
+		for(IField fld : group) {
+			if(fld instanceof FieldGroup) {
+				rfld = findField(propertyName, (FieldGroup) fld);
 				if(rfld != null) return rfld;
 			}
 		}
+
 		return null;
 	}
 
@@ -137,6 +137,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	public FieldGroup(String displayName, Widget feedbackWidget) {
 		this(new HashSet<IField>(), displayName, feedbackWidget);
+	}
+
+	public Widget getFieldWidget() {
+		throw new UnsupportedOperationException();
 	}
 
 	public String descriptor() {
@@ -542,5 +546,4 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			if(feedbackWidget != null) MsgManager.instance().clear(feedbackWidget, false);
 		}
 	}
-
 }
