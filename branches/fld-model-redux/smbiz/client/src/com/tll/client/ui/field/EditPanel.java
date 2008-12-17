@@ -132,21 +132,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		editListeners.remove(listener);
 	}
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		// portal.addScrollListener(MsgManager.instance);
-		if(btnCancel != null) {
-			DeferredCommand.addCommand(new FocusCommand(btnCancel, true));
-		}
-	}
-
-	@Override
-	protected void onUnload() {
-		super.onUnload();
-		// portal.removeScrollListener(MsgManager.instance);
-	}
-
 	public void addClickListener(ClickListener listener) {
 		if(btnCancel != null) {
 			btnCancel.addClickListener(listener);
@@ -159,6 +144,20 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 	}
 
+	public FieldGroup getFields() {
+		return fieldPanel.getFieldGroup();
+	}
+
+	private void setEditMode(boolean isAdd) {
+		btnSave.setText(isAdd ? "Add" : "Update");
+		// now show the button row
+		pnlButtonRow.setVisible(true);
+	}
+
+	private boolean isAdd() {
+		return "Add".equals(btnSave.getText());
+	}
+
 	/**
 	 * Binds the given model to the fields contained in this edit panel.
 	 * @param model The model to bind
@@ -167,6 +166,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		// [re]create field bindings
 		bindings.clear();
 		fieldPanel.createFieldBindings(bindings, model);
+		setEditMode(model.isNew());
 	}
 
 	/**
@@ -196,20 +196,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		getFields().markInvalid(true, msgs);
 	}
 
-	public FieldGroup getFields() {
-		return fieldPanel.getFieldGroup();
-	}
-
-	public void setEditMode(boolean isAdd) {
-		btnSave.setText(isAdd ? "Add" : "Update");
-		// now show the button row
-		pnlButtonRow.setVisible(true);
-	}
-
-	private boolean isAdd() {
-		return "Add".equals(btnSave.getText());
-	}
-
 	public void onClick(Widget sender) {
 		if(sender == btnSave) {
 			if(!updateModel()) return;
@@ -224,5 +210,20 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		else if(sender == btnCancel) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL));
 		}
+	}
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		// portal.addScrollListener(MsgManager.instance);
+		if(btnCancel != null) {
+			DeferredCommand.addCommand(new FocusCommand(btnCancel, true));
+		}
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		// portal.removeScrollListener(MsgManager.instance);
 	}
 }

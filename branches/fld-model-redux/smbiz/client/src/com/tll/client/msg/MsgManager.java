@@ -26,7 +26,11 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	/**
 	 * the singleton instance
 	 */
-	public static final MsgManager instance = new MsgManager();
+	private static final MsgManager instance = new MsgManager();
+
+	public static final MsgManager instance() {
+		return instance;
+	}
 
 	private enum PopupState {
 		SHOWING,

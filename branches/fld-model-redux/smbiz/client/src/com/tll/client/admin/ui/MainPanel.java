@@ -36,6 +36,7 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.StatusEvent;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
@@ -309,20 +310,23 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			super.onLoad();
 			StatusEventDispatcher.instance().addStatusListener(this);
 			ViewManager.instance().initialize(this);
+			// set the main model change listener so views see all model change events
+			ModelChangeManager.instance().addModelChangeListener(ViewManager.instance());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
+			ModelChangeManager.instance().removeModelChangeListener(ViewManager.instance());
 			ViewManager.instance().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
-			MsgManager.instance.clear();
+			MsgManager.instance().clear();
 		}
 
 		public void onStatusEvent(StatusEvent event) {
 			Status status = event.getStatus();
 			if(status != null) {
-				MsgManager.instance.post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
+				MsgManager.instance().post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
 			}
 		}
 

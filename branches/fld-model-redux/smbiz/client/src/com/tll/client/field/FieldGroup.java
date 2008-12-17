@@ -375,7 +375,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	public void reset() {
-		MsgManager.instance.clear(feedbackWidget, false);
+		MsgManager.instance().clear(feedbackWidget, false);
 		for(IField field : fields) {
 			field.reset();
 		}
@@ -518,7 +518,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				valid = false;
 				// handle UI msg if we have a feedback widget specified
 				if(feedbackWidget != null) {
-					MsgManager.instance.post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false).show();
+					MsgManager.instance().post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false).show();
 				}
 			}
 		}
@@ -548,11 +548,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				}
 			}
 			if(unboundFieldMessages.size() > 0) {
-				MsgManager.instance.post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
+				MsgManager.instance().post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
 			}
 		}
 		else {
-			if(feedbackWidget != null) MsgManager.instance.clear(feedbackWidget, false);
+			if(feedbackWidget != null) MsgManager.instance().clear(feedbackWidget, false);
 		}
 	}
 

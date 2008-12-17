@@ -21,10 +21,13 @@ import com.tll.client.msg.Msg;
 import com.tll.model.EntityType;
 
 /**
- * ModelChangeManager - Acts as a mediator and centralizes the handling of model
- * change events via {@link CrudCommand}s. This centralizes model aux data
- * fetching as well as CRUD ops and should be used in place of "naked"
- * {@link CrudCommand}s.
+ * ModelChangeManager - Acts as a mediator centralizing app-wide handling of
+ * model change events ensuring the model changes are fully disseminated
+ * throughout the app thus keeping all open views in sync with the underlying
+ * model.
+ * <p>
+ * Consequently, <em>all</em> model change (CRUD ops) should be directed here
+ * and no "naked" {@link CrudCommand}s should exist in the app.
  * @author jpk
  */
 public final class ModelChangeManager implements IRpcListener, ICrudListener, ISourcesModelChangeEvents {

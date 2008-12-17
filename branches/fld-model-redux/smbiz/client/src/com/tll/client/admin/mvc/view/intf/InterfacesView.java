@@ -147,7 +147,6 @@ public class InterfacesView extends AbstractView implements ClickListener {
 						// NOTE: we fall through
 					case UPDATED:
 						editPanel.bindModel(model);
-						editPanel.setEditMode(model.isNew());
 						break;
 
 					case DELETED:

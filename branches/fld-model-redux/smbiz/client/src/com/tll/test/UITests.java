@@ -130,7 +130,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 			public void execute() {
 				testPanel.clear();
-				MsgManager.instance.clear();
+				MsgManager.instance().clear();
 
 				boolean gotoTest = true;
 				if(TEST_MSG_PANEL.equals(historyToken)) {
@@ -239,7 +239,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bf", false));
 
 		ep.bindModel(testModel);
-		ep.setEditMode(testModel.isNew());
 		ep.getFields().draw();
 
 		// add button toggle read only/editable
@@ -452,6 +451,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
 		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
 
-		MsgManager.instance.post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
+		MsgManager.instance().post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
 	}
 }

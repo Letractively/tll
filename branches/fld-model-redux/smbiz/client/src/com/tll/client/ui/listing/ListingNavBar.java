@@ -273,7 +273,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			if(!valid) {
 				String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
 					new Integer(1), new Integer(numPages) });
-				MsgManager.instance.post(true, new Msg(smsg, MsgLevel.ERROR), Position.BOTTOM, tbPage, 3000, true).show();
+				MsgManager.instance().post(true, new Msg(smsg, MsgLevel.ERROR), Position.BOTTOM, tbPage, 3000, true).show();
 				tbPage.setText(Integer.toString(crntPage));
 				return;
 			}

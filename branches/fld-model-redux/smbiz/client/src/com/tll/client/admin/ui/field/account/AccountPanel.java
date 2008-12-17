@@ -41,6 +41,7 @@ import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -251,17 +252,14 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 						// stub aa panel
 						AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 						AccountAddressPanel aap = new AccountAddressPanel(at);
+
+						// add the new aa panel's field group to the account field group
 						fields.addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
 
-						// bind to prototype
-						/*
+						// add the field bindings for these new fields
 						Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 						if(aaproto == null) throw new IllegalStateException();
-						// NOTE: we need a property path offset here since the fields'
-						// property
-						// paths are relative to ACCOUNT!
 						aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
-						*/
 
 						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
 								: selTabIndx);
@@ -287,10 +285,10 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		// need to hide any field messages that are "cloaked" by the disclosure
 		// panel
 		if(event.getSource() == dpAddresses) {
-			MsgManager.instance.show(dpAddresses, false, true);
+			MsgManager.instance().show(dpAddresses, false, true);
 		}
 		else if(event.getSource() == dpPaymentInfo) {
-			MsgManager.instance.show(dpPaymentInfo, false, true);
+			MsgManager.instance().show(dpPaymentInfo, false, true);
 		}
 	}
 
@@ -310,7 +308,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 			int csti = tabAddresses.getTabBar().getSelectedTab();
 			if(csti != -1) {
 				Widget w = tabAddresses.getWidget(csti);
-				if(w instanceof AccountAddressPanel) MsgManager.instance.show(w, false, true);
+				if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
 			}
 		}
 		return true;

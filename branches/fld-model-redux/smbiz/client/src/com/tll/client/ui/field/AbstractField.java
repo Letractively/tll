@@ -424,15 +424,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	private void addMsgs(List<Msg> msgs) {
-		MsgManager.instance.post(false, msgs, Position.BOTTOM, this, -1, false).show();
+		MsgManager.instance().post(false, msgs, Position.BOTTOM, this, -1, false).show();
 	}
 
 	private void clearMsgs() {
-		MsgManager.instance.clear(this, true);
+		MsgManager.instance().clear(this, true);
 	}
 
 	private void toggleMsgs() {
-		MsgManager.instance.toggle(this, true);
+		MsgManager.instance().toggle(this, true);
 	}
 
 	public void draw() {
