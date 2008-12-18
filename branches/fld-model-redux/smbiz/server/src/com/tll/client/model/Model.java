@@ -364,13 +364,15 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
-	 * Resolves a given property path against the hierarchy of this model.
+	 * Resolves a given property path against the hierarchy of this model throwing
+	 * a specific {@link PropertyPathException} when an error occurs.
 	 * @param propPath The property path
-	 * @return Property path binding
+	 * @return The non-<code>null</code> resolved model property
 	 * @throws PropertyPathException When an error occurrs whilst resolving the
-	 *         property path
+	 *         property path or when the given property path does not resolve to
+	 *         an existant property
 	 */
-	private IModelProperty resolvePropertyPath(final String propPath) throws PropertyPathException {
+	public IModelProperty resolvePropertyPath(final String propPath) throws PropertyPathException {
 		if(StringUtil.isEmpty(propPath)) {
 			throw new MalformedPropPathException("No property path specified.");
 		}

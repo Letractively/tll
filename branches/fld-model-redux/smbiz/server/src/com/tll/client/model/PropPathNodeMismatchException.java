@@ -5,6 +5,7 @@
  */
 package com.tll.client.model;
 
+
 /**
  * PropPathNodeMismatchException - Indicates the wrong relational
  * {@link IPropertyValue} instance was encountered while resolving a given
@@ -12,27 +13,45 @@ package com.tll.client.model;
  * @author jpk
  */
 @SuppressWarnings("serial")
-class PropPathNodeMismatchException extends PropertyPathException {
+public final class PropPathNodeMismatchException extends PropertyPathException {
+
+	private final String property, actualType, expectedType;
 
 	/**
 	 * Constructor
 	 * @param propPath
-	 * @param prop
-	 * @param actualPropValType
-	 * @param expectedPropValType
+	 * @param property
+	 * @param actualType
+	 * @param expectedType
 	 */
-	PropPathNodeMismatchException(final String propPath, final String prop, final String actualPropValType,
-			final String expectedPropValType) {
-		super(prop + " in property path: " + propPath + " was expected to be of type " + expectedPropValType
-				+ " but was actually " + actualPropValType);
+	PropPathNodeMismatchException(final String propPath, final String property, final String actualType,
+			final String expectedType) {
+		super(property + " in property path: " + propPath + " was expected to be of type " + expectedType
+				+ " but was actually " + actualType, property);
+		this.property = property;
+		this.actualType = actualType;
+		this.expectedType = expectedType;
 	}
 
 	/**
-	 * Constructor
-	 * @param message
+	 * @return the property
 	 */
-	public PropPathNodeMismatchException(final String message) {
-		super(message);
+	public String getProperty() {
+		return property;
+	}
+
+	/**
+	 * @return the actualType
+	 */
+	public String getActualType() {
+		return actualType;
+	}
+
+	/**
+	 * @return the expectedType
+	 */
+	public String getExpectedType() {
+		return expectedType;
 	}
 
 }

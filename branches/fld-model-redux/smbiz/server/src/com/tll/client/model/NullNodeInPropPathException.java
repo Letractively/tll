@@ -6,13 +6,15 @@
 package com.tll.client.model;
 
 /**
- * NullNodeInPropPathException - Indicates a <code>null</code> path element
- * was encountered before reaching the end of a given property path while
- * attempting to resolve it against a given {@link Model}.
+ * NullNodeInPropPathException - Indicates a <code>null</code> path element was
+ * encountered before reaching the end of a given property path while attempting
+ * to resolve it against a given {@link Model}.
  * @author jpk
  */
 @SuppressWarnings("serial")
-class NullNodeInPropPathException extends PropertyPathException {
+public final class NullNodeInPropPathException extends PropertyPathException {
+
+	private final String nullProp;
 
 	/**
 	 * Constructor
@@ -20,16 +22,15 @@ class NullNodeInPropPathException extends PropertyPathException {
 	 * @param nullProp
 	 */
 	public NullNodeInPropPathException(final String propPath, final String nullProp) {
-		super(nullProp + " is not set for path: " + propPath);
+		super(nullProp + " is not set for path: " + propPath, propPath);
+		this.nullProp = nullProp;
 	}
 
 	/**
-	 * Constructor
-	 * @param message
+	 * @return The property in the property path that mapped to a
+	 *         <code>null</code> model property.
 	 */
-	/*
-	public NullNodeInPropPathException(String message) {
-		super(message);
+	public String getNullPropertyNode() {
+		return nullProp;
 	}
-	*/
 }
