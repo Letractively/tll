@@ -33,4 +33,30 @@ public class CompositeValidator implements IValidator {
 		}
 		return retValue;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		CompositeValidator other = (CompositeValidator) obj;
+		if(validators == null) {
+			if(other.validators != null) return false;
+		}
+		else if(validators.size() != other.validators.size()) {
+			return false;
+		}
+		for(int i = 0; i < validators.size(); i++) {
+			if(!validators.get(i).equals(other.validators.get(i))) return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((validators == null) ? 0 : validators.hashCode());
+		return result;
+	}
 }

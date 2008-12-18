@@ -17,6 +17,13 @@ public class CreditCardValidator implements IValidator {
 
 	public static final CreditCardValidator INSTANCE = new CreditCardValidator();
 
+	/**
+	 * Constructor
+	 */
+	private CreditCardValidator() {
+		super();
+	}
+
 	public Object validate(Object value) throws ValidationException {
 		if(value != null) {
 			if(!(value instanceof String)) throw new ValidationException("Not a string.");

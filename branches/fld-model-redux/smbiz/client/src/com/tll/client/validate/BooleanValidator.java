@@ -18,7 +18,7 @@ public class BooleanValidator implements IValidator {
 	/**
 	 * Constructor
 	 */
-	private BooleanValidator() {
+	public BooleanValidator() {
 		trueStr = DEFAULT_TRUE_STRING;
 	}
 
@@ -32,5 +32,26 @@ public class BooleanValidator implements IValidator {
 
 	public Object validate(Object value) {
 		return (trueStr.equals(value)) ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		BooleanValidator other = (BooleanValidator) obj;
+		if(trueStr == null) {
+			if(other.trueStr != null) return false;
+		}
+		else if(!trueStr.equals(other.trueStr)) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((trueStr == null) ? 0 : trueStr.hashCode());
+		return result;
 	}
 }

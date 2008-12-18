@@ -62,4 +62,25 @@ public class DateValidator implements IValidator {
 					MsgLevel.ERROR));
 		}
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		DateValidator other = (DateValidator) obj;
+		if(dateFormat == null) {
+			if(other.dateFormat != null) return false;
+		}
+		else if(!dateFormat.getPattern().equals(other.dateFormat.getPattern())) return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((dateFormat == null) ? 0 : dateFormat.getPattern().hashCode());
+		return result;
+	}
 }
