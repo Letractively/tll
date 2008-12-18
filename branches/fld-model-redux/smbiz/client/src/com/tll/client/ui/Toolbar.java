@@ -10,13 +10,13 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 
 /**
  * Toolbar - Simple extension of {@link FlowPanel} that sets common
  * styles/properties relating to a "toolbar" widget implementation.
  * <p>
- * Refer to <code>toolbar.css</code> toolbar CSS styles.
+ * Refer to <code>toolbar.css</code> toolbar Style styles.
  * @author jpk
  */
 public abstract class Toolbar extends Composite {
@@ -42,7 +42,7 @@ public abstract class Toolbar extends Composite {
 
 	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
-		td.setClassName(CSS.BUTTON);
+		td.setClassName(Style.BUTTON);
 		if(title != null) {
 			b.setTitle(title);
 		}

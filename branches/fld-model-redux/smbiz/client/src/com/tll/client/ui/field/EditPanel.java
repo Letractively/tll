@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
@@ -110,7 +110,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			btnCancel = null;
 		}
 
-		portal.setStyleName(CSS.PORTAL);
+		portal.setStyleName(Style.PORTAL);
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);

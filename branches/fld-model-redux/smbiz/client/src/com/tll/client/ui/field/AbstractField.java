@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
 import com.tll.client.msg.Msg;
@@ -438,7 +438,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		else {
 			fw = (Widget) getEditable(value);
 			// apply disabled property to form control directly
-			fw.getElement().setPropertyBoolean(CSS.DISABLED, !enabled);
+			fw.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
 		}
 
 		// set the field widget and its dom id property
@@ -453,12 +453,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 		// apply enabled property to "containing" widget
 		if(enabled) {
-			fldContainer.removeStyleName(CSS.DISABLED);
-			if(lblContainer != null) lblContainer.removeStyleName(CSS.DISABLED);
+			fldContainer.removeStyleName(Style.DISABLED);
+			if(lblContainer != null) lblContainer.removeStyleName(Style.DISABLED);
 		}
 		else {
-			fldContainer.addStyleName(CSS.DISABLED);
-			if(lblContainer != null) lblContainer.addStyleName(CSS.DISABLED);
+			fldContainer.addStyleName(Style.DISABLED);
+			if(lblContainer != null) lblContainer.addStyleName(Style.DISABLED);
 		}
 
 		if(!enabled || readOnly) {

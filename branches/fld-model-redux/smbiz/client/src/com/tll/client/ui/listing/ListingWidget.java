@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IAddRowDelegate;
@@ -86,7 +86,7 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 		}
 
 		// portal
-		portal.setStyleName(CSS.PORTAL);
+		portal.setStyleName(Style.PORTAL);
 		tableViewPanel.add(portal);
 
 		// table

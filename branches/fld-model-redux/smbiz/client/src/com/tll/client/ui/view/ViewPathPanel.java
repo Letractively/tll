@@ -6,7 +6,7 @@ package com.tll.client.ui.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 import com.tll.client.event.IViewEventListener;
 import com.tll.client.event.type.ViewChangedEvent;
 import com.tll.client.mvc.ViewManager;
@@ -39,7 +39,7 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 	 */
 	public ViewPathPanel() {
 		super();
-		container.addStyleName(CSS.HNAV);
+		container.addStyleName(Style.HNAV);
 		container.addStyleName(CSS_VIEWPATH);
 		container.add(ulPanel);
 		initWidget(container);

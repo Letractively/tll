@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.CSS;
+import com.tll.client.Style;
 import com.tll.client.admin.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.admin.ui.field.intf.SwitchInterfacePanel;
@@ -202,8 +202,8 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			String type = model.getEntityType().getName();
 			int i = type.indexOf('-');
 			if(i > 0) type = type.substring(0, i);
-			return "<p class=\"" + CSS.FLOAT_LEFT + "\"><span class=\"" + CSS.BOLD + "\">" + name + " </span> (" + type
-					+ ") </p><p class=\"" + CSS.SMALL_ITALIC + " " + CSS.FLOAT_RIGHT + "\">" + desc + "</p>";
+			return "<p class=\"" + Style.FLOAT_LEFT + "\"><span class=\"" + Style.BOLD + "\">" + name + " </span> (" + type
+					+ ") </p><p class=\"" + Style.SMALL_ITALIC + " " + Style.FLOAT_RIGHT + "\">" + desc + "</p>";
 		}
 
 		@Override

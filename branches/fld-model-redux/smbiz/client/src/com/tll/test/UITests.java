@@ -58,7 +58,7 @@ import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**
- * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
+ * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
  * compiled GWT code.
  */
 public final class UITests implements EntryPoint, HistoryListener {
@@ -207,7 +207,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_FIELDS
 	 * <p>
-	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/Style.
 	 */
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
@@ -284,7 +284,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_TOOLBAR
 	 * <p>
-	 * Purpose: Renders populated {@link Toolbar} impls to verify its DOM/CSS.
+	 * Purpose: Renders populated {@link Toolbar} impls to verify its DOM/Style.
 	 */
 	void testToolbar() {
 		ViewToolbar vt =
@@ -404,7 +404,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_VIEW_CONTAINER
 	 * <p>
-	 * Purpose: Renders a populated {@link ViewContainer} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link ViewContainer} to verify its DOM/Style.
 	 */
 	void testViewContainer() {
 
@@ -431,7 +431,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_MSG_PANEL
 	 * <p>
-	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/Style.
 	 */
 	void testMsgPanel() {
 

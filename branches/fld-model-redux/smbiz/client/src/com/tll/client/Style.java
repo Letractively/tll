@@ -5,14 +5,14 @@
 package com.tll.client;
 
 /**
- * CSS - Consolidates general [app independent] CSS related constants for use in the app.
+ * Style - Consolidates general [app independent] Style related constants for use in the app.
  * <p>
- * IMPT: These constants correspond to particular declarations declared in referenced CSS files.
+ * IMPT: These constants correspond to particular declarations declared in referenced Style files.
  * <p>
  * Most of these constants should corres. to those found in base.css.
  * @author jpk
  */
-public abstract class CSS {
+public abstract class Style {
 
 	public static final String FLOAT_LEFT = "left";
 	public static final String FLOAT_RIGHT = "right";
