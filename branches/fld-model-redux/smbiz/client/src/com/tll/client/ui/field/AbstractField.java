@@ -134,9 +134,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		else {
 			fldLbl = null;
 		}
-
-		addValidator(new RequirednessValidator());
-		addValidator(new MaxLengthValidator());
 	}
 
 	public final Widget getFieldWidget() {
@@ -307,7 +304,9 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 * @param validator The validator to add
 	 */
 	public final void addValidator(IValidator validator) {
-		assert validator != null;
+		if(validator == null || validator == NotEmptyValidator.INSTANCE || validator instanceof StringLengthValidator) {
+			throw new IllegalArgumentException("Invalid field validator");
+		}
 		if(this.validator == null) {
 			this.validator = validator;
 		}
@@ -322,38 +321,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 	}
 
-	/**
-	 * RequirednessValidator - Validator for checking a field's requireness.
-	 * @author jpk
-	 */
-	protected final class RequirednessValidator implements IValidator {
-
-		public Object validate(Object value) throws ValidationException {
-			if(isRequired()) {
-				value = NotEmptyValidator.INSTANCE.validate(value);
-			}
-			return value;
+	public final void removeValidator(IValidator validator) {
+		if(validator == null || this.validator == null) return;
+		if(this.validator == validator) {
+			this.validator = null;
 		}
-
-	}
-
-	/**
-	 * MaxLengthValidator - Validator for checking a field value's maximum
-	 * allowable length.
-	 * @author jpk
-	 */
-	protected final class MaxLengthValidator implements IValidator {
-
-		public Object validate(Object value) throws ValidationException {
-			if(AbstractField.this instanceof HasMaxLength) {
-				final int maxlen = ((HasMaxLength) AbstractField.this).getMaxLen();
-				if(maxlen != -1) {
-					value = StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-			return value;
+		else if(this.validator instanceof CompositeValidator) {
+			CompositeValidator cv = (CompositeValidator) this.validator;
+			cv.remove(validator);
 		}
-
 	}
 
 	public final void validate() throws ValidationException {
@@ -363,12 +339,35 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		List<Msg> errorMsgs = null;
 
 		try {
+			// check field requiredness
+			if(isRequired()) {
+				value = NotEmptyValidator.INSTANCE.validate(value);
+			}
+
+			// check max length
+			if(this instanceof HasMaxLength) {
+				final int maxlen = ((HasMaxLength) this).getMaxLen();
+				if(maxlen != -1) {
+					value = StringLengthValidator.validate(value, -1, maxlen);
+				}
+			}
+		}
+		catch(ValidationException ve) {
+			errorMsgs = ve.getValidationMessages();
+		}
+
+		try {
 			if(validator != null) {
 				value = validator.validate(value);
 			}
 		}
 		catch(ValidationException ve) {
-			errorMsgs = ve.getValidationMessages();
+			if(errorMsgs == null) {
+				errorMsgs = ve.getValidationMessages();
+			}
+			else {
+				errorMsgs.addAll(ve.getValidationMessages());
+			}
 			throw ve;
 		}
 		finally {

@@ -21,6 +21,7 @@ import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyMetadata;
@@ -90,6 +91,16 @@ public class FieldModelBinding {
 		private final IPropertyValue prop;
 
 		/**
+		 * Internal flag to track whether this binding is bound.
+		 */
+		private boolean bound;
+
+		/**
+		 * The validator added to the field as a result of binding.
+		 */
+		private IValidator boundValidator;
+
+		/**
 		 * Constructor
 		 * @param field The required field to bind
 		 * @param prop The required model property to bind
@@ -100,7 +111,6 @@ public class FieldModelBinding {
 			if(prop == null) throw new IllegalArgumentException("A model property must be specified.");
 			this.field = field;
 			this.prop = prop;
-			bind();
 		}
 
 		private GlobalFormat getFieldFormat() {
@@ -108,9 +118,12 @@ public class FieldModelBinding {
 		}
 
 		/**
-		 * One-time binding of an IField to a model {@link IPropertyValue}.
+		 * Binds an IField to a model {@link IPropertyValue}.
 		 */
-		private void bind() {
+		void bind() {
+			// we only allow binding when not already bound
+			if(bound) throw new IllegalStateException();
+
 			boolean required;
 			int maxlen;
 
@@ -185,6 +198,17 @@ public class FieldModelBinding {
 			if(field instanceof HasMaxLength) {
 				((HasMaxLength) field).setMaxLen(maxlen);
 			}
+
+			bound = true;
+		}
+
+		void unbind() {
+			if(bound) {
+				if(boundValidator != null) {
+					field.removeValidator(boundValidator);
+				}
+				bound = false;
+			}
 		}
 
 		/**
@@ -229,6 +253,11 @@ public class FieldModelBinding {
 	private final Set<FieldBinding> set = new HashSet<FieldBinding>();
 
 	/**
+	 * Flag for tracking bound/unbound state.
+	 */
+	private boolean bound;
+
+	/**
 	 * Constructor
 	 * @param fields The mandatory root field group
 	 * @param model The mandatory root model
@@ -257,6 +286,29 @@ public class FieldModelBinding {
 	 */
 	public FieldGroup getRootFieldGroup() {
 		return fields;
+	}
+
+	/**
+	 * Binds the root {@link FieldGroup} to the root {@link Model}.
+	 */
+	public void bind() {
+		if(bound) throw new IllegalStateException("Already bound");
+		for(FieldBinding b : set) {
+			b.bind();
+		}
+		bound = true;
+	}
+
+	/**
+	 * Unbinds the root {@link FieldGroup} from the root {@link Model}.
+	 */
+	public void unbind() {
+		if(bound) {
+			for(FieldBinding b : set) {
+				b.unbind();
+			}
+			bound = false;
+		}
 	}
 
 	private void addModelPropDef(ModelPropertyDefinition d) {

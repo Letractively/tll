@@ -145,6 +145,12 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	void addValidator(IValidator validator);
 
 	/**
+	 * Removes a validator.
+	 * @param validator
+	 */
+	void removeValidator(IValidator validator);
+
+	/**
 	 * Validates the field.
 	 * @throws ValidationException When the field is found invalid
 	 */

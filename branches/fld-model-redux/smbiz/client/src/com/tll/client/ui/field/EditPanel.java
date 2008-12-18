@@ -76,13 +76,19 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The field group panel
+	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
 	public EditPanel(FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
+
+		this.fieldPanel = fieldPanel;
+		portal.setStyleName(Style.PORTAL);
+		portal.setWidget(fieldPanel);
+
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
 		// hide the button row until initialized
@@ -110,15 +116,11 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			btnCancel = null;
 		}
 
-		portal.setStyleName(Style.PORTAL);
-
 		panel.add(portal);
 		panel.add(pnlButtonRow);
-		initWidget(panel);
 
 		setStyleName(STYLE_ENTITY_EDIT);
-		this.fieldPanel = fieldPanel;
-		portal.setWidget(fieldPanel);
+		initWidget(panel);
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -127,18 +129,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	public void removeEditListener(IEditListener listener) {
 		editListeners.remove(listener);
-	}
-
-	public void addClickListener(ClickListener listener) {
-		if(btnCancel != null) {
-			btnCancel.addClickListener(listener);
-		}
-	}
-
-	public void removeClickListener(ClickListener listener) {
-		if(btnCancel != null) {
-			btnCancel.removeClickListener(listener);
-		}
 	}
 
 	private void setEditMode(boolean isAdd) {
@@ -151,33 +141,32 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		return "Add".equals(btnSave.getText());
 	}
 
-	/**
-	 * Binds the given model to the fields contained in this edit panel.
-	 * @param model The model to bind
-	 */
-	public void bindModel(Model model) {
-		// apply the model to the field panel
-		fieldPanel.applyModel(bindings, null);
-
-		// [re]create field bindings
-		bindings = new FieldModelBinding(fieldPanel.getFieldGroup(), model);
-		fieldPanel.setBindingDefinition(bindings, null);
-
-		setEditMode(model.isNew());
-	}
-
 	public void draw() {
 		fieldPanel.getFieldGroup().draw();
 	}
 
 	/**
-	 * Binds a model to the fields within this edit panel. First, the fields are
-	 * validated and if successful, the field data is transferred to the model. If
-	 * one or more fields are invalid, no model alteration occurs.
-	 * @return <code>true</code> if the model is successfully updated.
+	 * Binds the given model to the fields contained in this edit panel.
+	 * @param model The model to bind
 	 */
-	public boolean updateModel() {
-		if(bindings.size() < 1) throw new IllegalStateException("No field bindings exist.");
+	public void bindModel(Model model) {
+
+		// [re]create field bindings
+		bindings = new FieldModelBinding(fieldPanel.getFieldGroup(), model);
+
+		fieldPanel.setBindingDefinition(bindings, null);
+
+		setEditMode(model.isNew());
+	}
+
+	/**
+	 * Validates the fields and if successful, the field data is transferred to
+	 * the underlying model.
+	 * @return <code>true</code> if the model was successfully updated,
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean updateModel() {
+		assert bindings != null;
 
 		// first validate the fields
 		try {
@@ -193,6 +182,11 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		return true;
 	}
 
+	/**
+	 * Applies error messages to the fields contained in the member
+	 * {@link FieldPanel}.
+	 * @param msgs The error messages to apply
+	 */
 	public void applyErrorMsgs(final List<Msg> msgs) {
 		fieldPanel.getFieldGroup().markInvalid(true, msgs);
 	}

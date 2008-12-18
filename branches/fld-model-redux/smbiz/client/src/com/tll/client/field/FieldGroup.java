@@ -474,8 +474,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Adds a field validator to this binding.
 	 * @param validator The validator to add
 	 */
-	public final void addValidator(IValidator validator) {
-		assert validator != null;
+	public void addValidator(IValidator validator) {
+		if(validator == null) return;
 		if(this.validator == null) {
 			this.validator = validator;
 		}
@@ -487,6 +487,17 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			cv.add(this.validator);
 			cv.add(validator);
 			this.validator = cv;
+		}
+	}
+
+	public void removeValidator(IValidator validator) {
+		if(validator == null || this.validator == null) return;
+		if(this.validator == validator) {
+			this.validator = null;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			CompositeValidator cv = (CompositeValidator) this.validator;
+			cv.remove(validator);
 		}
 	}
 
