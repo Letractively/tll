@@ -76,7 +76,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 
 		@Override
-		public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 			// TODO
 		}
 
@@ -120,7 +120,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 		// TODO
 	}
 
@@ -149,8 +149,9 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void applyModel(Model model) {
+	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
 		final FieldGroup fields = getFieldGroup();
+		final Model model = bindingDef.getModel(modelPropertyPath);
 
 		// clear existing options
 		for(Widget w : tabOptions) {

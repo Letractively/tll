@@ -6,9 +6,8 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.model.Model;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
@@ -46,19 +45,19 @@ public final class AddressPanel extends FieldPanel {
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 		final FieldGroup fields = getFieldGroup();
-		bindings.addBinding(fields.getField("emailAddress"), model, "emailAddress");
-		bindings.addBinding(fields.getField("firstName"), model, "firstName");
-		bindings.addBinding(fields.getField("lastName"), model, "lastName");
-		bindings.addBinding(fields.getField("mi"), model, "mi");
-		bindings.addBinding(fields.getField("company"), model, "company");
-		bindings.addBinding(fields.getField("attn"), model, "attn");
-		bindings.addBinding(fields.getField("address1"), model, "address1");
-		bindings.addBinding(fields.getField("address2"), model, "address2");
-		bindings.addBinding(fields.getField("city"), model, "city");
-		bindings.addBinding(fields.getField("province"), model, "province");
-		bindings.addBinding(fields.getField("country"), model, "country");
+		bindingDef.addBinding(fields.getField("emailAddress"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("firstName"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("lastName"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("mi"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("company"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("attn"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("address1"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("address2"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("city"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("province"), modelPropertyPath);
+		bindingDef.addBinding(fields.getField("country"), modelPropertyPath);
 	}
 
 	@Override

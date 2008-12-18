@@ -7,8 +7,8 @@ import java.util.List;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.view.ViewContainer;
+import com.tll.client.ui.view.ViewRequestLink;
 
 /**
  * ViewStack - Manages two lists:

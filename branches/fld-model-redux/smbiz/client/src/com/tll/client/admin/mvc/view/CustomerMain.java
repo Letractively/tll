@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.ViewRequestLink;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.model.EntityType;
 
 /**

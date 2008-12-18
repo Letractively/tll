@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 31, 2007
  */
-package com.tll.client.ui;
+package com.tll.client;
 
 /**
  * CSS - Consolidates general [app independent] CSS related constants for use in the app.

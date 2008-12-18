@@ -86,8 +86,9 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		}
 
 		@Override
-		public void setFieldBindings(Model model, FieldModelBinding bindings) {
-			// TODO
+		public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
+			bindingDef.addBinding(name, modelPropertyPath);
+			addressPanel.addFieldBindings(bindingDef, PropertyPath.getPropertyPath(modelPropertyPath, "address"));
 		}
 
 		@Override
@@ -113,7 +114,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	}
 
 	@Override
-	public void populateFieldGroup(final FieldGroup fields) {
+	public void populateFieldGroup(FieldGroup fields) {
 		IField f;
 
 		fields.addField(FieldFactory.createNameEntityField());
@@ -127,7 +128,8 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		((SelectField) f).getListBox().addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
-				String s = fields.getField("status").getValue().toLowerCase();
+				final FieldGroup fields = getFieldGroup();
+				String s = getFieldGroup().getField("status").getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
 				IField f = fields.getField("dateCancelled");
 				f.setVisible(closed);
@@ -204,8 +206,9 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	}
 
 	@Override
-	public void applyModel(Model model) {
+	public void applyModel(final FieldModelBinding bindingDef, String modelPropertyPath) {
 		final FieldGroup fields = getFieldGroup();
+		// final Model model = bindingDef.getModel(modelPropertyPath);
 
 		// un-bind existing
 		for(Widget w : tabAddresses) {
@@ -247,13 +250,8 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 						AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 						AccountAddressPanel aap = new AccountAddressPanel(at);
 
-						// add the new aa panel's field group to the account field group
-						fields.addField(PropertyPath.indexUnbound("addresses"), aap.getFieldGroup());
-
-						// add the field bindings for these new fields
-						Model aaproto = AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
-						if(aaproto == null) throw new IllegalStateException();
-						aap.getFieldGroup().bindModel(1, aaproto.getSelfRef());
+						bindingDef.bindIndexedModel(aap.getFieldGroup(), "addresses", AuxDataCache.instance().getEntityPrototype(
+								EntityType.ACCOUNT_ADDRESS));
 
 						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
 								: selTabIndx);
@@ -270,13 +268,13 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		status = status == null ? null : status.toLowerCase();
 		fields.getField("dateCancelled").setVisible("closed".equals(status));
 
-		// dpPaymentInfo.setOpen(false);
-		// dpAddresses.setOpen(false);
-		// tabAddresses.selectTab(0);
+		dpPaymentInfo.setOpen(false);
+		dpAddresses.setOpen(false);
+		tabAddresses.selectTab(0);
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 		// TODO
 	}
 

@@ -13,7 +13,7 @@ import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.ViewRequestLink;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
 import com.tll.model.EntityType;

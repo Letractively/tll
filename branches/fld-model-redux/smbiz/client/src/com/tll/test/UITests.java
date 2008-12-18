@@ -22,8 +22,8 @@ import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -189,7 +189,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		public void setFieldBindings(Model model, FieldModelBinding bindings) {
+		public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 		}
 
 		@Override
@@ -237,7 +237,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bf", false));
 
 		ep.bindModel(testModel);
-		ep.getFields().draw();
+		ep.draw();
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {

@@ -13,6 +13,8 @@ import java.util.Set;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPath;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
@@ -67,39 +69,7 @@ public class FieldModelBinding {
 			this.propType = propType;
 			this.entityType = entityType;
 		}
-	}
-
-	/**
-	 * ModelAction
-	 * @author jpk
-	 */
-	private enum ModelAction {
-		CREATE,
-		REMOVE;
-	}
-
-	/**
-	 * ModelBindingAction
-	 * @author jpk
-	 */
-	private static final class ModelBindingAction {
-
-		ModelPropertyDefinition propDef;
-
-		ModelAction action;
-
-		/**
-		 * Constructor
-		 * @param propDef
-		 * @param action
-		 */
-		public ModelBindingAction(ModelPropertyDefinition propDef, ModelAction action) {
-			super();
-			this.propDef = propDef;
-			this.action = action;
-		}
-
-	}
+	} // ModelPropertyDefinition
 
 	/**
 	 * FieldBinding - A coupling between an {@link IField} and a model
@@ -234,76 +204,216 @@ public class FieldModelBinding {
 		void pull() {
 			prop.setValue(field.getValidatedValue());
 		}
-	}
+	} // FieldBinding
 
 	/**
-	 * List of model binding actions that are processed when data is sent from the
-	 * fields to the model.
+	 * The mandatory root field group.
 	 */
-	private List<ModelBindingAction> modelBindingActions;
+	private final FieldGroup fields;
 
 	/**
-	 * The set of individual field bindings.
+	 * The mandatory root model.
+	 */
+	private final Model model;
+
+	/**
+	 * List of model property definitions serving to create model properties as
+	 * necessary during data transfer.
+	 */
+	private List<ModelPropertyDefinition> modelPropDefs;
+
+	/**
+	 * The field bindings that connect a single field to a single non-relational
+	 * model property.
 	 */
 	private final Set<FieldBinding> set = new HashSet<FieldBinding>();
 
 	/**
 	 * Constructor
+	 * @param fields The mandatory root field group
+	 * @param model The mandatory root model
 	 */
-	public FieldModelBinding() {
+	public FieldModelBinding(FieldGroup fields, Model model) {
 		super();
-	}
-
-	private void addModelBindingAction(ModelBindingAction a) {
-		if(modelBindingActions == null) {
-			modelBindingActions = new ArrayList<ModelBindingAction>();
-		}
-		modelBindingActions.add(a);
-	}
-
-	private void removeModelBindingAction(ModelBindingAction a) {
-		if(modelBindingActions != null) {
-			modelBindingActions.remove(a);
-		}
-	}
-
-	public void addRelatedOneModel(String propertyPath, EntityType entityType) {
-		addModelBindingAction(new ModelBindingAction(new ModelPropertyDefinition(propertyPath, PropertyType.RELATED_ONE,
-				entityType), ModelAction.CREATE));
-	}
-
-	public void removeRelatedOneModel(String propertyPath, EntityType entityType) {
-		addModelBindingAction(new ModelBindingAction(new ModelPropertyDefinition(propertyPath, PropertyType.RELATED_ONE,
-				entityType), ModelAction.REMOVE));
-	}
-
-	public void addIndexedModel(String propertyPath, EntityType entityType) {
-		addModelBindingAction(new ModelBindingAction(new ModelPropertyDefinition(propertyPath, PropertyType.INDEXED,
-				entityType), ModelAction.CREATE));
-	}
-
-	public void removeIndexedModel(String propertyPath, EntityType entityType) {
-		addModelBindingAction(new ModelBindingAction(new ModelPropertyDefinition(propertyPath, PropertyType.INDEXED,
-				entityType), ModelAction.REMOVE));
+		if(fields == null) throw new IllegalArgumentException("A field group must be specified.");
+		if(model == null) throw new IllegalArgumentException("A model must be specified.");
+		this.fields = fields;
+		this.model = model;
 	}
 
 	/**
-	 * Adds a field binding.
-	 * @param model The {@link Model}
+	 * Gets either the root model or a nested model.
+	 * @param propPath The property resolving to the model ref property in the
+	 *        root model
+	 * @return The resolved model
+	 * @see Model#getNestedModel(String)
+	 */
+	public Model getModel(String propPath) {
+		return model.getNestedModel(propPath);
+	}
+
+	/**
+	 * @return The root field group
+	 */
+	public FieldGroup getRootFieldGroup() {
+		return fields;
+	}
+
+	private void addModelPropDef(ModelPropertyDefinition d) {
+		if(modelPropDefs == null) {
+			modelPropDefs = new ArrayList<ModelPropertyDefinition>();
+		}
+		modelPropDefs.add(d);
+	}
+
+	/**
+	 * Adds a related one model property defintion for a model property which may
+	 * <em>not</em> be present. This definition is accessed if necessary when
+	 * transferring data to the model.
+	 * @param modelPropertyPath Relative to the root model, this param resolves to
+	 *        the property definition
+	 * @param modelType The related one model type
+	 */
+	public void addRelatedOnePropertyDefinition(String modelPropertyPath, EntityType modelType) {
+		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_ONE, modelType));
+	}
+
+	/**
+	 * Adds a related many model property defintion in the same manner as a
+	 * related one model property is added.
+	 * @param modelPropertyPath Relative to the root model, this param resolves to
+	 *        the property definition
+	 * @param modelType The model type of the indexed model properties under this
+	 *        related many property
+	 * @see #addRelatedOnePropertyDefinition(String, EntityType)
+	 */
+	public void addRelatedManyPropertyDefinition(String modelPropertyPath, EntityType modelType) {
+		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_MANY, modelType));
+	}
+
+	/**
+	 * List of pending relational property additions.
+	 */
+	// private Set<String> pendingRelationalPropertyAdditions;
+	/**
+	 * List of pending relational property deletions.
+	 */
+	// private Set<String> pendingRelationalPropertyDeletions;
+	/*
+	private void addPendingRelationalPropertyAddition(String propPath) {
+		if(pendingRelationalPropertyAdditions == null) {
+			pendingRelationalPropertyAdditions = new HashSet<String>();
+		}
+		pendingRelationalPropertyAdditions.add(propPath);
+	}
+
+	private void removePendingRelationalPropertyAddition(String propPath) {
+		if(pendingRelationalPropertyAdditions != null) {
+			pendingRelationalPropertyAdditions.remove(propPath);
+		}
+	}
+
+	private void addPendingRelationalPropertyDeletion(String propPath) {
+		if(pendingRelationalPropertyDeletions == null) {
+			pendingRelationalPropertyDeletions = new HashSet<String>();
+		}
+		pendingRelationalPropertyDeletions.add(propPath);
+	}
+
+	private void removePendingRelationalPropertyDeletion(String propPath) {
+		if(pendingRelationalPropertyDeletions != null) {
+			pendingRelationalPropertyDeletions.remove(propPath);
+		}
+	}
+	*/
+
+	/**
+	 * Binds the given model to the given fields then adds the fields to the root
+	 * field group.
+	 * @param indexFields The fields to bind to the indexed model
+	 * @param relatedManyPropPath The path relative to the root field group that
+	 *        resolves to the related many model property to which the indexed
+	 *        model property will be added
+	 * @param model The model subject to binding
+	 * @return The property path of the bound indexed model
+	 */
+	public String bindIndexedModel(FieldGroup indexFields, String relatedManyPropPath, Model model) {
+		final RelatedManyProperty rmp = model.relatedMany(relatedManyPropPath);
+		FieldBinding fb;
+
+		// determine the indexed property path
+		final int index = rmp == null ? 0 : rmp.size();
+		final String indexedPropPath = PropertyPath.index(relatedManyPropPath, index);
+
+		IPropertyValue pv;
+		final PropertyPath pp = new PropertyPath();
+		for(IField f : indexFields) {
+			pp.parse(f.getPropertyName());
+			f.setPropertyName(PropertyPath.getPropertyPath(relatedManyPropPath, pp.last()));
+			pv = model.getPropertyValue(f.getPropertyName());
+			if(pv != null) {
+				fb = new FieldBinding(f, pv);
+				addBinding(fb);
+				fb.push();
+			}
+		}
+
+		return indexedPropPath;
+	}
+
+	/**
+	 * Unbinds either a single field or field group.
+	 * @param field The field to unbind
+	 */
+	public void unbindField(IField field) {
+		if(field == null || field == fields) return;
+
+		// remove field bindings
+		if(field instanceof FieldGroup) {
+			FieldGroup fg = (FieldGroup) field;
+			for(IField f : fg) {
+				if(f instanceof FieldGroup) {
+					unbindField(f);
+				}
+				else {
+					for(FieldBinding b : set) {
+						if(b.field == f) {
+							set.remove(f);
+						}
+					}
+				}
+			}
+		}
+		else {
+			for(FieldBinding b : set) {
+				if(b.field == field) {
+					set.remove(field);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds a field binding resolving the model property given a model property
+	 * path.
 	 * @param modelPropertyPath The property path targeting the model property in
 	 *        the given {@link Model}
 	 */
-	public void addBinding(IField field, Model model, String modelPropertyPath) {
-		addBinding(field, model.getPropertyValue(modelPropertyPath));
+	public void addBinding(IField field, String modelPropertyPath) {
+		addBinding(field, model.getPropertyValue(PropertyPath.getPropertyPath(modelPropertyPath, field.getPropertyName())));
 	}
 
 	/**
-	 * Adds a field binding.
+	 * Adds a field binding given a field ref and model property ref.
 	 * @param field The resolved field to be bound
 	 * @param prop The resolved model property
 	 */
 	private void addBinding(IField field, IPropertyValue prop) {
-		set.add(new FieldBinding(field, prop));
+		addBinding(new FieldBinding(field, prop));
+	}
+
+	private void addBinding(FieldBinding b) {
+		set.add(b);
 	}
 
 	public int size() {
@@ -323,9 +433,7 @@ public class FieldModelBinding {
 	 * Data transfer (field -> model).
 	 */
 	public void setModelValues() {
-
-		// handle model definitions
-
+		// iterate the bound fields
 		for(FieldBinding b : set) {
 			b.pull();
 		}

@@ -40,10 +40,10 @@ import com.tll.client.model.ModelChangeManager;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.StatusDisplay;
-import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 

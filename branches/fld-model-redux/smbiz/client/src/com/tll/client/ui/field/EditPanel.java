@@ -14,15 +14,14 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.CSS;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.field.FieldModelBinding;
-import com.tll.client.field.FieldGroup;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.validate.ValidationException;
 
@@ -64,7 +63,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	/**
 	 * The field bindings.
 	 */
-	private final FieldModelBinding bindings;
+	private FieldModelBinding bindings;
 
 	/**
 	 * The panel containing the edit buttons
@@ -120,8 +119,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		setStyleName(STYLE_ENTITY_EDIT);
 		this.fieldPanel = fieldPanel;
 		portal.setWidget(fieldPanel);
-
-		bindings = new FieldModelBinding();
 	}
 
 	public void addEditListener(IEditListener listener) {
@@ -144,10 +141,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 	}
 
-	public FieldGroup getFields() {
-		return fieldPanel.getFieldGroup();
-	}
-
 	private void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
 		// now show the button row
@@ -163,11 +156,18 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * @param model The model to bind
 	 */
 	public void bindModel(Model model) {
+		// apply the model to the field panel
+		fieldPanel.applyModel(bindings, null);
+
 		// [re]create field bindings
-		bindings.clear();
-		fieldPanel.applyModel(model);
-		fieldPanel.setFieldBindings(model, bindings);
+		bindings = new FieldModelBinding(fieldPanel.getFieldGroup(), model);
+		fieldPanel.setBindingDefinition(bindings, null);
+
 		setEditMode(model.isNew());
+	}
+
+	public void draw() {
+		fieldPanel.getFieldGroup().draw();
 	}
 
 	/**
@@ -181,7 +181,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 		// first validate the fields
 		try {
-			getFields().validate();
+			fieldPanel.getFieldGroup().validate();
 		}
 		catch(ValidationException e) {
 			return false;
@@ -194,7 +194,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	public void applyErrorMsgs(final List<Msg> msgs) {
-		getFields().markInvalid(true, msgs);
+		fieldPanel.getFieldGroup().markInvalid(true, msgs);
 	}
 
 	public void onClick(Widget sender) {
@@ -203,7 +203,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			getFields().reset();
+			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));

@@ -6,14 +6,13 @@ package com.tll.client.ui.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.CSS;
 import com.tll.client.event.IViewEventListener;
 import com.tll.client.event.type.ViewChangedEvent;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewRef;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
-import com.tll.client.ui.ViewRequestLink;
 
 /**
  * ViewPathPanel - Renders the current view path.

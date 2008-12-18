@@ -13,10 +13,6 @@ package com.tll.client.model;
  * <ol>
  * <li>Standard OGNL format.<br>
  * E.g.: <code>propA.propB.propC[i].propD</code>
- * <li>Unbound format:<br>
- * <code>propA.propB{i}.propC</code> (indicates <code>propB</code> is an
- * "unbound" <em>indexed</em> property)<br>
- * <em>NOTE: </em>Currently, only indexed properties may be marked as unbound.
  * </ol>
  * @author jpk
  */
@@ -25,19 +21,6 @@ public final class PropertyPath {
 	private static final char LEFT_INDEX_CHAR = '[';
 
 	private static final char RIGHT_INDEX_CHAR = ']';
-
-	/**
-	 * Indicates in conjunction with {@link #UNBOUND_RIGHT_INDEX_CHAR} that an
-	 * indexed property path node is unbound.
-	 */
-	private static final char UNBOUND_LEFT_INDEX_CHAR = '{';
-
-	private static final char UNBOUND_RIGHT_INDEX_CHAR = '}';
-
-	/**
-	 * Internally maintain unique ubound indexes.
-	 */
-	private static int unboundIndex = 0;
 
 	/**
 	 * Chains the given arguments together to form the corresponding property
@@ -74,12 +57,10 @@ public final class PropertyPath {
 	 * Creates the index token given the numeric index and whether or not is is to
 	 * be bound or un-bound.
 	 * @param index The numeric index
-	 * @param isUnbound Bound or un-bound index?
 	 * @return The index token.
 	 */
-	private static String indexToken(int index, boolean isUnbound) {
-		return (isUnbound ? UNBOUND_LEFT_INDEX_CHAR : LEFT_INDEX_CHAR) + Integer.toString(index)
-				+ (isUnbound ? UNBOUND_RIGHT_INDEX_CHAR : RIGHT_INDEX_CHAR);
+	private static String indexToken(int index) {
+		return LEFT_INDEX_CHAR + Integer.toString(index) + RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -87,26 +68,15 @@ public final class PropertyPath {
 	 * the desired index.
 	 * @param indexablePropName
 	 * @param index The numeric index
-	 * @param isUnbound Index as bound or un-bound?
 	 * @return The indexed property name
 	 */
-	public static String index(String indexablePropName, int index, boolean isUnbound) {
-		return indexablePropName + indexToken(index, isUnbound);
+	public static String index(String indexablePropName, int index) {
+		return indexablePropName + indexToken(index);
 	}
 
 	/**
-	 * Assembles an <em>unbound</em> indexed property name given the indexable
-	 * property name. The numeric index used is guaranteed to be unique.
-	 * @param indexablePropName
-	 * @return The unbound indexed property name
-	 */
-	public static String indexUnbound(String indexablePropName) {
-		return index(indexablePropName, ++unboundIndex, true);
-	}
-
-	/**
-	 * Removes all indexing and unbound symbols from a property node String
-	 * returning the property name.
+	 * Removes all indexing symbols from a property node String returning the
+	 * property name.
 	 * @param prop The property path node String
 	 * @return The stripped property name or <code>null</code> if the given prop
 	 *         is <code>null</code>.
@@ -115,9 +85,6 @@ public final class PropertyPath {
 		if(prop == null) return null;
 
 		int si = prop.indexOf(LEFT_INDEX_CHAR);
-		if(si > 0) return prop.substring(0, si);
-
-		si = prop.indexOf(UNBOUND_LEFT_INDEX_CHAR);
 		if(si > 0) return prop.substring(0, si);
 
 		return prop;
@@ -134,16 +101,7 @@ public final class PropertyPath {
 	 */
 	private static int resolveIndex(String path) throws MalformedPropPathException {
 		if(path == null) return -1;
-		int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = -1;
-		if(bi < 0) {
-			bi = path.indexOf(UNBOUND_LEFT_INDEX_CHAR);
-			if(bi > 0) {
-				ebi = path.indexOf(UNBOUND_RIGHT_INDEX_CHAR);
-			}
-		}
-		else {
-			ebi = path.indexOf(RIGHT_INDEX_CHAR);
-		}
+		int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = path.indexOf(RIGHT_INDEX_CHAR);
 		if(bi > 0) {
 			// indexed property prop name
 			final String sindx = path.substring(bi + 1, ebi);
@@ -202,11 +160,10 @@ public final class PropertyPath {
 	 * Constructor
 	 * @param parentPropPath A parent property path
 	 * @param index The numeric index
-	 * @param isUnbound
 	 */
-	public PropertyPath(String parentPropPath, int index, boolean isUnbound) {
+	public PropertyPath(String parentPropPath, int index) {
 		this();
-		parse(index(parentPropPath, index, isUnbound));
+		parse(index(parentPropPath, index));
 	}
 
 	/**
@@ -258,7 +215,7 @@ public final class PropertyPath {
 	public boolean isIndexed() {
 		if(buf == null) return false;
 		final char end = buf.charAt(buf.length() - 1);
-		return (end == RIGHT_INDEX_CHAR || end == UNBOUND_RIGHT_INDEX_CHAR);
+		return end == RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -268,37 +225,7 @@ public final class PropertyPath {
 	 * @param index The index num
 	 */
 	public void index(int index) {
-		if(buf != null) buf.append(indexToken(index, true));
-	}
-
-	/**
-	 * Indexes the property path by appending an unbound index token.
-	 * <em>NOTE: </em>No checking for existing indexing is performed.
-	 * @return The unbound index used in creating the unbound index.
-	 */
-	public int indexUnbound() {
-		indexUnbound(++unboundIndex);
-		return unboundIndex;
-	}
-
-	/**
-	 * Indexes the property path by appending an unbound index token with the
-	 * given index. <em>NOTE: </em>No checking for existing indexing is performed.
-	 */
-	public void indexUnbound(int index) {
-		buf.append(indexToken(index, true));
-	}
-
-	/**
-	 * Does this property path point to an <em>unbound</em> indexed property?<br>
-	 * (E.g.: <code>propA.propB{1}</code>) <br>
-	 * <em>NOTE: </em>nested indexed properties are not considered.
-	 * @return true/false
-	 */
-	public boolean isUnboundIndexed() {
-		if(buf == null) return false;
-		final char end = buf.charAt(buf.length() - 1);
-		return (end == UNBOUND_RIGHT_INDEX_CHAR);
+		if(buf != null) buf.append(indexToken(index));
 	}
 
 	/**
@@ -326,6 +253,20 @@ public final class PropertyPath {
 			}
 		}
 		return sub.toString();
+	}
+
+	/**
+	 * @return The first node path.
+	 */
+	public String first() {
+		return buf == null ? null : pathAt(0);
+	}
+
+	/**
+	 * @return The last node path.
+	 */
+	public String last() {
+		return buf == null ? null : pathAt(depth() - 1);
 	}
 
 	/**
@@ -368,16 +309,6 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Is there un-bound indexing at the given node index?
-	 * @param nodeIndex The node index to check
-	 * @return true/false
-	 */
-	public boolean isUnboundAt(int nodeIndex) {
-		String path = pathAt(nodeIndex);
-		return path.charAt(path.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR;
-	}
-
-	/**
 	 * Strips the indexing from the end of this property path returninng the
 	 * resultant path which effectively is the parent to the indexed property.
 	 * @return New property path stripped of trailing indexing or
@@ -387,7 +318,7 @@ public final class PropertyPath {
 		if(buf.length() > 4 && isIndexed()) {
 			for(int i = buf.length() - 3; i >= 0; --i) {
 				final char c = buf.charAt(i);
-				if(c == LEFT_INDEX_CHAR || c == UNBOUND_LEFT_INDEX_CHAR) {
+				if(c == LEFT_INDEX_CHAR) {
 					return new PropertyPath(buf.substring(0, i));
 				}
 			}
@@ -399,15 +330,14 @@ public final class PropertyPath {
 	 * Returns the first found node index that is indexed starting at the given
 	 * index.
 	 * @param nodeIndex The node index where searching starts
-	 * @param isUnbound Search for bound or un-bound indexed nodes?
 	 * @return The index of the nearest node that is indexed or <code>-1</code> if
-	 *         no unbound node is found.
+	 *         no indexed node is found.
 	 */
-	public int nextIndexedNode(int nodeIndex, boolean isUnbound) {
+	public int nextIndexedNode(int nodeIndex) {
 		int i = nodeIndex;
 		do {
 			final String prop = pathAt(i);
-			if(prop.charAt(prop.length() - 1) == UNBOUND_RIGHT_INDEX_CHAR) {
+			if(prop.charAt(prop.length() - 1) == RIGHT_INDEX_CHAR) {
 				return i;
 			}
 		} while(++i < len);
@@ -518,19 +448,7 @@ public final class PropertyPath {
 	 * @param index The index
 	 */
 	public void append(String path, int index) {
-		append(path, index, false);
-	}
-
-	/**
-	 * Appends a bound or un-bound indexed property path to this property path. <br>
-	 * E.g.: A path of <code>parameters</code> and an index of <code>2</code>
-	 * would append: <code>parameters[2]</code>.
-	 * @param path The indexable property name
-	 * @param index The index
-	 * @param isUnbound Shall the appended indexed path be bound or un-bound?
-	 */
-	public void append(String path, int index, boolean isUnbound) {
-		append(index(path, index, isUnbound));
+		append(index(path, index));
 	}
 
 	@Override

@@ -15,11 +15,11 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.CSS;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
 import com.tll.client.validate.CompositeValidator;
@@ -52,7 +52,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private final String domId;
 
 	/**
-	 * The designated property name for this field. This is the form input name.
+	 * The designated property name for this field. This is used as the the form
+	 * input name.
 	 */
 	private String propName;
 
@@ -109,11 +110,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	/**
 	 * Constructor
-	 * @param propName The required property name to associate w/ this field.
+	 * @param propName The unique field propName.
 	 * @param lblTxt The field label text. If <code>null</code>, no field label is
 	 *        created.
 	 * @throws IllegalArgumentException When a <code>null</code> or zero-length
-	 *         property name is given.
+	 *         property propName is given.
 	 */
 	public AbstractField(String propName, String lblTxt) {
 		domId = 'f' + Integer.toString(++fieldCounter);
@@ -182,7 +183,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public final void setPropertyName(String propName) {
 		if(StringUtil.isEmpty(propName)) {
-			throw new IllegalArgumentException("A field property name can't be empty.");
+			throw new IllegalArgumentException("A field propName can't be empty.");
 		}
 		this.propName = propName;
 	}
@@ -500,41 +501,39 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void addFocusListener(FocusListener listener) {
-		// NOTE: we *always* add a focus listener to ensure proper field binding
-		// behavior
-		// TODO can we optimize this?
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
 		// if(!isReadOnly()) {
 		getEditable(null).addFocusListener(listener);
 		// }
 	}
 
 	public final void removeFocusListener(FocusListener listener) {
-		// NOTE: we *always* remove a focus listener to ensure proper field binding
-		// behavior
-		// TODO can we optimize this?
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
 		// if(!isReadOnly()) {
 		getEditable(null).removeFocusListener(listener);
 		// }
 	}
 
 	public final int getTabIndex() {
-		return isReadOnly() ? -1 : getEditable(null).getTabIndex();
+		return readOnly ? -1 : getEditable(null).getTabIndex();
 	}
 
 	public final void setAccessKey(char key) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setTabIndex(key);
 		}
 	}
 
 	public final void setFocus(boolean focused) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setFocus(focused);
 		}
 	}
 
 	public final void setTabIndex(int index) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setTabIndex(index);
 		}
 	}

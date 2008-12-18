@@ -13,13 +13,13 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 
 /**
@@ -68,7 +68,8 @@ public class UserPanel extends FieldPanel {
 	}
 
 	@Override
-	public void applyModel(Model model) {
+	public void applyModel(FieldModelBinding bindingDef, String modelPropPath) {
+		Model model = bindingDef.getModel(modelPropPath);
 		// set the parent account view link
 		Model parentAccount = model.relatedOne("account").getModel();
 		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
@@ -77,14 +78,14 @@ public class UserPanel extends FieldPanel {
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
-		bindings.addBinding(name, model, Model.NAME_PROPERTY);
-		bindings.addBinding(timestamps[0], model, Model.DATE_CREATED_PROPERTY);
-		bindings.addBinding(timestamps[1], model, Model.DATE_MODIFIED_PROPERTY);
-		bindings.addBinding(emailAddress, model, "emailAddress");
-		bindings.addBinding(locked, model, "locked");
-		bindings.addBinding(enabled, model, "enabled");
-		bindings.addBinding(expires, model, "expires");
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
+		bindingDef.addBinding(name, modelPropertyPath);
+		bindingDef.addBinding(timestamps[0], modelPropertyPath);
+		bindingDef.addBinding(timestamps[1], modelPropertyPath);
+		bindingDef.addBinding(emailAddress, modelPropertyPath);
+		bindingDef.addBinding(locked, modelPropertyPath);
+		bindingDef.addBinding(enabled, modelPropertyPath);
+		bindingDef.addBinding(expires, modelPropertyPath);
 	}
 
 	@Override

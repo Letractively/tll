@@ -6,9 +6,8 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.model.Model;
+import com.tll.client.field.FieldModelBinding;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
@@ -81,19 +80,19 @@ public final class CreditCardPanel extends FieldPanel {
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
-		bindings.addBinding(type, model, "paymentData_ccType");
-		bindings.addBinding(num, model, "paymentData_ccNum");
-		bindings.addBinding(cvv2, model, "paymentData_ccCvv2");
-		bindings.addBinding(expMn, model, "paymentData_ccExpMonth");
-		bindings.addBinding(expYr, model, "paymentData_ccExpYear");
-		bindings.addBinding(name, model, "paymentData_ccName");
-		bindings.addBinding(addr1, model, "paymentData_ccAddress1");
-		bindings.addBinding(addr2, model, "paymentData_ccAddress2");
-		bindings.addBinding(city, model, "paymentData_ccCity");
-		bindings.addBinding(state, model, "paymentData_ccState");
-		bindings.addBinding(zip, model, "paymentData_ccZip");
-		bindings.addBinding(country, model, "paymentData_ccProvince");
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
+		bindingDef.addBinding(type, modelPropertyPath);
+		bindingDef.addBinding(num, modelPropertyPath);
+		bindingDef.addBinding(cvv2, modelPropertyPath);
+		bindingDef.addBinding(expMn, modelPropertyPath);
+		bindingDef.addBinding(expYr, modelPropertyPath);
+		bindingDef.addBinding(name, modelPropertyPath);
+		bindingDef.addBinding(addr1, modelPropertyPath);
+		bindingDef.addBinding(addr2, modelPropertyPath);
+		bindingDef.addBinding(city, modelPropertyPath);
+		bindingDef.addBinding(state, modelPropertyPath);
+		bindingDef.addBinding(zip, modelPropertyPath);
+		bindingDef.addBinding(country, modelPropertyPath);
 	}
 
 	@Override

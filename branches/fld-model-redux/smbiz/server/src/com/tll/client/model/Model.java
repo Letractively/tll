@@ -51,9 +51,10 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	public static final String DATE_MODIFIED_PROPERTY = "dateModified";
 
 	/**
-	 * Set of {@link IPropertyValue}s holding the actual model data.
+	 * The set of model properties. <br>
+	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private/*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The entity type.
@@ -96,6 +97,51 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
+	 * Is this model entity new?
+	 * @return true/false
+	 */
+	public boolean isNew() {
+		IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
+		return prop == null ? true : (prop.getInteger() == null);
+	}
+
+	/**
+	 * Retrieves the id property
+	 * @return The entity id
+	 */
+	public Integer getId() {
+		IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
+		return prop == null ? null : prop.getInteger();
+	}
+
+	/**
+	 * Retrieves the entities' name property value
+	 * @return The entities' name
+	 */
+	public String getName() {
+		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
+		return prop == null ? null : prop.getString();
+	}
+
+	/**
+	 * @return The date created. May be <code>null</code> for entity types that
+	 *         don't support this property.
+	 */
+	public Date getDateCreated() {
+		DatePropertyValue prop = (DatePropertyValue) get(DATE_CREATED_PROPERTY);
+		return prop == null ? null : prop.getDate();
+	}
+
+	/**
+	 * @return The date last modified. May be <code>null</code> for entity types
+	 *         that don't support this property.
+	 */
+	public Date getDateModified() {
+		DatePropertyValue prop = (DatePropertyValue) get(DATE_MODIFIED_PROPERTY);
+		return prop == null ? null : prop.getDate();
+	}
+
+	/**
 	 * Provides the <em>unique</em> {@link RefKey} for this model/entity instance.
 	 */
 	public RefKey getRefKey() {
@@ -121,7 +167,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @return Reference to <em>this</em> Model expressed as an
 	 *         {@link IModelProperty}.
 	 */
-	public RelatedOneProperty getSelfRef() {
+	private RelatedOneProperty getSelfRef() {
 		if(selfRef == null) {
 			selfRef = new RelatedOneProperty(getEntityType(), null, true, this);
 		}
@@ -174,6 +220,22 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
 		}
 		return ((ISelfFormattingPropertyValue) prop).asString();
+	}
+
+	/**
+	 * Does a property exist?
+	 * @param propPath The property path to test
+	 * @return true/false
+	 */
+	public boolean propertyExists(String propPath) {
+		try {
+			Object o = getProperty(propPath);
+			return o != null;
+		}
+		catch(IllegalArgumentException e) {
+			// no-op
+		}
+		return false;
 	}
 
 	/**
@@ -299,51 +361,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");
 		}
 		return (IndexedProperty) prop;
-	}
-
-	/**
-	 * Is this model entity new?
-	 * @return true/false
-	 */
-	public boolean isNew() {
-		IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
-		return prop == null ? true : (prop.getInteger() == null);
-	}
-
-	/**
-	 * Retrieves the id property
-	 * @return The entity id
-	 */
-	public Integer getId() {
-		IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
-		return prop == null ? null : prop.getInteger();
-	}
-
-	/**
-	 * Retrieves the entities' name property value
-	 * @return The entities' name
-	 */
-	public String getName() {
-		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
-		return prop == null ? null : prop.getString();
-	}
-
-	/**
-	 * @return The date created. May be <code>null</code> for entity types that
-	 *         don't support this property.
-	 */
-	public Date getDateCreated() {
-		DatePropertyValue prop = (DatePropertyValue) get(DATE_CREATED_PROPERTY);
-		return prop == null ? null : prop.getDate();
-	}
-
-	/**
-	 * @return The date last modified. May be <code>null</code> for entity types
-	 *         that don't support this property.
-	 */
-	public Date getDateModified() {
-		DatePropertyValue prop = (DatePropertyValue) get(DATE_MODIFIED_PROPERTY);
-		return prop == null ? null : prop.getDate();
 	}
 
 	/**
@@ -627,7 +644,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         model.
 	 */
 	public Iterator<IModelProperty> iterator() {
-		assert props != null;
 		return props.iterator();
 	}
 

@@ -2,13 +2,14 @@
  * The Logic Lab
  * @author jpk Jan 25, 2008
  */
-package com.tll.client.ui;
+package com.tll.client.ui.view;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.ui.SimpleHyperLink;
 
 /**
  * ViewRequestLink - Link that delegates a view request to the mvc dispatcher.

@@ -8,7 +8,9 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.field.FieldModelBinding;
+import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
@@ -25,8 +27,8 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	public void applyModel(Model modelInterface) {
-		/*
+	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
+		final Model modelInterface = bindingDef.getModel(modelPropertyPath);
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
 			throw new IllegalArgumentException();
@@ -34,13 +36,12 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		IndexedProperty ip = pvOptions.getIndexedProperty(0);
 		assert ip != null;
 		pnlOption.getFields().setPropertyName(ip.getPropertyName());
-		fields.addField(pnlOption.getFields());
+		getFieldGroup().addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
-		*/
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
 		// TODO
 	}
 

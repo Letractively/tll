@@ -8,7 +8,6 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.FieldModelBinding;
-import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
@@ -43,10 +42,10 @@ public final class BankPanel extends FieldPanel {
 	}
 
 	@Override
-	public void setFieldBindings(Model model, FieldModelBinding bindings) {
-		bindings.addBinding(bankName, model, "paymentData_bankName");
-		bindings.addBinding(bankAccountNo, model, "paymentData_bankAccountNo");
-		bindings.addBinding(bankRoutingNo, model, "paymentData_bankRoutingNo");
+	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
+		bindingDef.addBinding(bankName, modelPropertyPath);
+		bindingDef.addBinding(bankAccountNo, modelPropertyPath);
+		bindingDef.addBinding(bankRoutingNo, modelPropertyPath);
 	}
 
 	@Override

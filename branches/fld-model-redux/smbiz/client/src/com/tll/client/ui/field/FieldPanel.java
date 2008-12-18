@@ -11,11 +11,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.IField;
-import com.tll.client.model.Model;
 
 /**
- * FieldPanel - Common base class for panels that display form data. Provision
- * for read-only is supported.
+ * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
+ * s.
  * @author jpk
  */
 public abstract class FieldPanel extends Composite {
@@ -57,27 +56,35 @@ public abstract class FieldPanel extends Composite {
 	/**
 	 * Applies the model to the fields of this panel providing an opportunity to
 	 * create fields whose existence are dependent on interrogating the model.
-	 * @param model The model to apply
+	 * @param modelPropertyPath The property path that resolves the target model
+	 *        under the binding def's root model.
 	 */
-	public void applyModel(Model model) {
+	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
 		// base impl no-op
 	}
 
 	/**
-	 * Creates the necessary field bindings for fields in this panel to fully
-	 * support bi-diretional field/model data transfer.
-	 * <p>
-	 * This method is responsible for:
-	 * <ol>
-	 * <li>Adding
-	 * <li>Adding field bindings to the given {@link FieldModelBinding} to fully
-	 * support bi-directional field/model data transfer.
-	 * </ol>
-	 * @param model The model subject to binding for this field panel
-	 * @param bindings The field bindings that receive newly created field
-	 *        bindings
+	 * Sets the working field/model binding "definition".
+	 * @param bindingDef The binding definition
+	 * @param modelPropertyPath The property path that resolves the target model
+	 *        under the binding def's root model.
 	 */
-	public abstract void setFieldBindings(Model model, FieldModelBinding bindings);
+	public final void setBindingDefinition(FieldModelBinding bindingDef, String modelPropertyPath) {
+		addFieldBindings(bindingDef, modelPropertyPath);
+	}
+
+	/**
+	 * Adds the non-relational field bindings for the fields managed by this
+	 * {@link FieldPanel}.
+	 * <p>
+	 * This method is reponsible for calling this method for all its child
+	 * {@link FieldPanel}s and thus must resolve the appropriate nested model from
+	 * the root model.
+	 * @param modelPropertyPath The property path that resolves the [nested] model
+	 *        contained under the binding def's root model. model or a nested
+	 *        model under the root model.
+	 */
+	public abstract void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath);
 
 	/**
 	 * Draws or re-draws this field panel.
