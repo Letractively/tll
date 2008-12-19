@@ -22,7 +22,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 || tll.config.user.name || The tll configuration system property user name. ||
 
   * Append the *Path* environment variable to include:
-|| <JAVA_HOME>/bin ||
+|| {JAVA_HOME}/bin ||
 || <GROOVY_HOME>/bin ||
 || <ANT_HOME>/bin ||
 || {subversion install dir}/bin ||
