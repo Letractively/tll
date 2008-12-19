@@ -23,27 +23,27 @@ Lists the necessary local environment and IDE settings for building and deployin
 
   * Append the *Path* environment variable to include:
 || {JAVA_HOME}/bin ||
-|| <GROOVY_HOME>/bin ||
-|| <ANT_HOME>/bin ||
+|| {GROOVY_HOME}/bin ||
+|| {ANT_HOME}/bin ||
 || {subversion install dir}/bin ||
 
   * Build the tll-config.jar:
 {{{
-<TLL_ROOT>/config/gant dist
+{TLL_ROOT}/config/gant dist
 }}}
- This will create the tll-config.jar and place it in the <TLL_ROOT>/config/dist dir.
+ This will create the tll-config.jar and place it in the {TLL_ROOT}/config/dist dir.
 
   * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
-|| <TLL_ROOT>/tools/commons-lang.jar ||
-|| <TLL_ROOT>/tools/commons-logging.jar ||
-|| <TLL_ROOT>/tools/commons-collections.jar ||
-|| <TLL_ROOT>/tools/commons-configuration.jar ||
-|| <TLL_ROOT>/config/dist/tll-config.jar ||
+|| {TLL_ROOT}/tools/commons-lang.jar ||
+|| {TLL_ROOT}/tools/commons-logging.jar ||
+|| {TLL_ROOT}/tools/commons-collections.jar ||
+|| {TLL_ROOT}/tools/commons-configuration.jar ||
+|| {TLL_ROOT}/config/dist/tll-config.jar ||
 || {AspectJ install dir}/bin/aspectjtools.jar ||
 
  These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
 
-  * Add the following to the <GROOVY_HOME>/conf/groovy-starter.conf file:
+  * Add the following to the {GROOVY_HOME}/conf/groovy-starter.conf file:
 {{{
     # for tll projects
     load ./config
@@ -64,7 +64,7 @@ The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are r
 ==String Substitution==
 The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || aspectj_home || Points to the root install dir of AspectJ. ||
-|| gwt_host_webroot || <TLL_ROOT>/smbiz/smbiz-client/tomcat/webapps/ROOT ||
+|| gwt_host_webroot || {TLL_ROOT}/smbiz/smbiz-client/tomcat/webapps/ROOT ||
 
 ==Add Ons==
 || subversive || [http://download.eclipse.org/technology/subversive/0.7/update-site/ http://download.eclipse.org/technology/subversive/0.7/update-site/] ||
@@ -74,11 +74,11 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 
 ----
 =smbiz project configuration=
-In the <TLL_ROOT>/smbiz/config dir, create the necessary config override file with the following name:
+In the {TLL_ROOT}/smbiz/config dir, create the necessary config override file with the following name:
 
 {{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}}
 
-This file must declare all properties contained in <TLL_ROOT>/smbiz/config/config.properties whose value is "UNSPECIFIED".
+This file must declare all properties contained in {TLL_ROOT}/smbiz/config/config.properties whose value is "UNSPECIFIED".
 
 Example:
 {{{
