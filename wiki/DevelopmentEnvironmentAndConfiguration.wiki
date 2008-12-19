@@ -31,13 +31,13 @@ Lists the necessary local environment and IDE settings for building and deployin
 {{{
 {TLL_ROOT}/config/gant dist
 }}}
- This will create the tll-config.jar and place it in the {TLL_ROOT}/config/dist dir.
+ This will create the tll-config.jar in the {TLL_ROOT}/config/dist dir.
 
   * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
-|| {TLL_ROOT}/tools/commons-lang.jar ||
-|| {TLL_ROOT}/tools/commons-logging.jar ||
-|| {TLL_ROOT}/tools/commons-collections.jar ||
-|| {TLL_ROOT}/tools/commons-configuration.jar ||
+|| {TLL_ROOT}/tools/lib/commons-lang.jar ||
+|| {TLL_ROOT}/tools/lib/commons-logging.jar ||
+|| {TLL_ROOT}/tools/lib/commons-collections.jar ||
+|| {TLL_ROOT}/tools/lib/commons-configuration.jar ||
 || {TLL_ROOT}/config/dist/tll-config.jar ||
 || {AspectJ install dir}/bin/aspectjtools.jar ||
 
