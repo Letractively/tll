@@ -20,10 +20,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
+import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -48,7 +49,6 @@ import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.listing.ListingNavBar;
@@ -170,8 +170,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		public TestFieldPanel() {
 			super("Test Field Panel");
 			ap = new AddressPanel();
-			bf = FieldFactory.fbool("bf", null);
-			bflabel = FieldFactory.fbool("bflabel", "Boolean with Label");
+			bf = fbool("bf", null);
+			bflabel = fbool("bflabel", "Boolean with Label");
 		}
 
 		@Override
@@ -189,10 +189,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		}
-
-		@Override
 		protected void drawInternal(Panel canvas) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
@@ -207,12 +203,42 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_FIELDS
 	 * <p>
-	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/Style.
+	 * Purpose: Renders a populated {@link InterfacesView} to verify its
+	 * DOM/Style.
 	 */
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
 		final TestFieldPanel fieldPanel = new TestFieldPanel();
-		final EditPanel ep = new EditPanel(fieldPanel, true, true);
+		final EditPanel ep = new EditPanel(new IFieldGroupModelBinding() {
+
+			public void removeFieldBindingEventListener(IFieldBindingListener listener) {
+			}
+
+			public void addFieldBindingEventListener(IFieldBindingListener listener) {
+			}
+
+			public void unbind() {
+			}
+
+			public void setRootModel(Model model) {
+			}
+
+			public void setRootFieldGroup(FieldGroup fields) {
+			}
+
+			public void setModelValues() {
+			}
+
+			public void setFieldValues() {
+			}
+
+			public Model getModel(String propPath) {
+				return null;
+			}
+
+			public void bind() {
+			}
+		}, fieldPanel, true, true);
 		testPanel.add(ep);
 
 		Model address = new Model(EntityType.ADDRESS);
@@ -236,7 +262,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bflabel", true));
 		testModel.set(new BooleanPropertyValue("bf", false));
 
-		ep.bindModel(testModel);
+		ep.setModel(testModel);
 		ep.draw();
 
 		// add button toggle read only/editable

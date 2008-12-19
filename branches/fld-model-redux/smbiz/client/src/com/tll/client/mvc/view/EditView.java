@@ -13,6 +13,7 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
@@ -39,24 +40,26 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	private Model model;
 
 	/**
-	 * The Panel containing the UI edit Widgets.
-	 */
-	private final EditPanel editPanel;
-
-	/**
 	 * Optional entity options when performing model change ops.
 	 */
 	private final EntityOptions entityOptions;
 
 	/**
-	 * Constructor
-	 * @param fldGrpPnl The field group panel. May NOT be <code>null</code>.
-	 * @param entityOptions
+	 * The Panel containing the UI edit Widgets.
 	 */
-	public EditView(FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
+	private final EditPanel editPanel;
+
+	/**
+	 * Constructor
+	 * @param binding The required binding instance to employ for field/model data
+	 *        transfer
+	 * @param fldGrpPnl The required field group panel
+	 * @param entityOptions Optional entity options
+	 */
+	public EditView(IFieldGroupModelBinding binding, FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(fldGrpPnl, true, false);
+		editPanel = new EditPanel(binding, fldGrpPnl, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;
@@ -64,6 +67,10 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		addWidget(editPanel);
 	}
 
+	/**
+	 * @return All possible aux data that may be accessed throughout the life of
+	 *         the edit panel.
+	 */
 	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
@@ -116,7 +123,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
 		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
-			editPanel.bindModel(model);
+			editPanel.setModel(model);
 			editPanel.draw();
 		}
 	}
@@ -133,9 +140,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 				break;
 			case ADD:
 			case UPDATE:
-				if(editPanel.updateModel()) {
-					ModelChangeManager.instance().persistModel(this, model, entityOptions);
-				}
+				ModelChangeManager.instance().persistModel(this, model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {

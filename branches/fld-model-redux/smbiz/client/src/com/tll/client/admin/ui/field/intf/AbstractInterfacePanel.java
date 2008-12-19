@@ -10,7 +10,6 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.listing.Column;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextAreaField;
@@ -41,20 +40,20 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		name = FieldFactory.createNameEntityField();
-		code = FieldFactory.ftext("code", "Code", 20);
-		description = FieldFactory.ftextarea("description", "Desc", 3, 8);
-		timestamps = FieldFactory.createTimestampEntityFields();
+		name = entityNameField();
+		code = ftext("code", "Code", 20);
+		description = ftextarea("description", "Desc", 3, 8);
+		timestamps = entityTimestampFields();
 
-		isAvailableAsp = FieldFactory.fbool("isAvailableAsp", null);
-		isAvailableIsp = FieldFactory.fbool("isAvailableIsp", null);
-		isAvailableMerchant = FieldFactory.fbool("isAvailableMerchant", null);
-		isAvailableCustomer = FieldFactory.fbool("isAvailableCustomer", null);
+		isAvailableAsp = fbool("isAvailableAsp", null);
+		isAvailableIsp = fbool("isAvailableIsp", null);
+		isAvailableMerchant = fbool("isAvailableMerchant", null);
+		isAvailableCustomer = fbool("isAvailableCustomer", null);
 
-		isRequiredAsp = FieldFactory.fbool("isRequiredAsp", null);
-		isRequiredIsp = FieldFactory.fbool("isRequiredIsp", null);
-		isRequiredMerchant = FieldFactory.fbool("isRequiredMerchant", null);
-		isRequiredCustomer = FieldFactory.fbool("isRequiredCustomer", null);
+		isRequiredAsp = fbool("isRequiredAsp", null);
+		isRequiredIsp = fbool("isRequiredIsp", null);
+		isRequiredMerchant = fbool("isRequiredMerchant", null);
+		isRequiredCustomer = fbool("isRequiredCustomer", null);
 
 		fields.addField(name);
 		fields.addField(code);

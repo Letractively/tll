@@ -123,9 +123,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp().isSave()) {
-					if(editPanel.updateModel()) {
-						ModelChangeManager.instance().persistModel(editPanel, model, null);
-					}
+					ModelChangeManager.instance().persistModel(editPanel, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
 					ModelChangeManager.instance().deleteModel(editPanel, model.getRefKey(), null);
@@ -145,7 +143,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 						editPanel.setVisible(true);
 						// NOTE: we fall through
 					case UPDATED:
-						editPanel.bindModel(model);
+						editPanel.setModel(model);
 						break;
 
 					case DELETED:

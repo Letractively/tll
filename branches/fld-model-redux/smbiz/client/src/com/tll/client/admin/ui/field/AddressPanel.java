@@ -7,8 +7,6 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.service.app.RefDataType;
@@ -28,36 +26,20 @@ public final class AddressPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		fields.addField(FieldFactory.ftext("emailAddress", "Email Address", 30));
-		fields.addField(FieldFactory.ftext("firstName", "First Name", 20));
-		fields.addField(FieldFactory.ftext("lastName", "Last Name", 20));
-		fields.addField(FieldFactory.ftext("mi", "MI", 1));
-		fields.addField(FieldFactory.ftext("company", "Company", 20));
-		fields.addField(FieldFactory.ftext("attn", "Attn", 10));
-		fields.addField(FieldFactory.ftext("address1", "Address 1", 40));
-		fields.addField(FieldFactory.ftext("address2", "Address 2", 40));
-		fields.addField(FieldFactory.ftext("city", "City", 30));
-		fields.addField(FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(
-				RefDataType.US_STATES)));
-		fields.addField(FieldFactory.ftext("postalCode", "Zip", 20));
-		fields.addField(FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
-				RefDataType.ISO_COUNTRY_CODES)));
-	}
-
-	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		final FieldGroup fields = getFieldGroup();
-		bindingDef.addBinding(fields.getField("emailAddress"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("firstName"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("lastName"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("mi"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("company"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("attn"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("address1"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("address2"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("city"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("province"), modelPropertyPath);
-		bindingDef.addBinding(fields.getField("country"), modelPropertyPath);
+		fields.addField(ftext("emailAddress", "Email Address", 30));
+		fields.addField(ftext("firstName", "First Name", 20));
+		fields.addField(ftext("lastName", "Last Name", 20));
+		fields.addField(ftext("mi", "MI", 1));
+		fields.addField(ftext("company", "Company", 20));
+		fields.addField(ftext("attn", "Attn", 10));
+		fields.addField(ftext("address1", "Address 1", 40));
+		fields.addField(ftext("address2", "Address 2", 40));
+		fields.addField(ftext("city", "City", 30));
+		fields
+				.addField(fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES)));
+		fields.addField(ftext("postalCode", "Zip", 20));
+		fields
+				.addField(fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(RefDataType.ISO_COUNTRY_CODES)));
 	}
 
 	@Override

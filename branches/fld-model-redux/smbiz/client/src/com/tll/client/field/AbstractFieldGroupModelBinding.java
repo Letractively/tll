@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.event.IFieldBindingListener;
+import com.tll.client.event.type.FieldBindingEvent;
+import com.tll.client.event.type.FieldBindingEvent.FieldBindingEventType;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -28,17 +31,18 @@ import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
- * FieldModelBinding - A collection of field bindings.
+ * AbstractFieldGroupModelBinding - Base class for all declared field/model
+ * binding definitions.
  * @author jpk
  */
-public class FieldModelBinding {
+public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModelBinding {
 
 	/**
 	 * ModelPropertyDefinition - Defines a model property at a given property path
 	 * relative to a given model.
 	 * @author jpk
 	 */
-	private static final class ModelPropertyDefinition {
+	protected static final class ModelPropertyDefinition {
 
 		/**
 		 * The property path identifying the target model property.
@@ -78,7 +82,7 @@ public class FieldModelBinding {
 	 * two.
 	 * @author jpk
 	 */
-	private static final class FieldBinding {
+	protected static final class FieldBinding {
 
 		/**
 		 * The bound field.
@@ -89,11 +93,6 @@ public class FieldModelBinding {
 		 * The bound model property.
 		 */
 		private final IPropertyValue prop;
-
-		/**
-		 * Internal flag to track whether this binding is bound.
-		 */
-		private boolean bound;
 
 		/**
 		 * The validator added to the field as a result of binding.
@@ -118,11 +117,10 @@ public class FieldModelBinding {
 		}
 
 		/**
-		 * Binds an IField to a model {@link IPropertyValue}.
+		 * Binds an {@link IField} to a model {@link IPropertyValue}.
 		 */
 		void bind() {
-			// we only allow binding when not already bound
-			if(bound) throw new IllegalStateException();
+			assert field != null && prop != null;
 
 			boolean required;
 			int maxlen;
@@ -198,16 +196,12 @@ public class FieldModelBinding {
 			if(field instanceof HasMaxLength) {
 				((HasMaxLength) field).setMaxLen(maxlen);
 			}
-
-			bound = true;
 		}
 
 		void unbind() {
-			if(bound) {
-				if(boundValidator != null) {
-					field.removeValidator(boundValidator);
-				}
-				bound = false;
+			if(boundValidator != null) {
+				field.removeValidator(boundValidator);
+				boundValidator = null;
 			}
 		}
 
@@ -231,14 +225,14 @@ public class FieldModelBinding {
 	} // FieldBinding
 
 	/**
-	 * The mandatory root field group.
+	 * The root field group.
 	 */
-	private final FieldGroup fields;
+	private FieldGroup fields;
 
 	/**
-	 * The mandatory root model.
+	 * The root model.
 	 */
-	private final Model model;
+	private Model model;
 
 	/**
 	 * List of model property definitions serving to create model properties as
@@ -257,25 +251,53 @@ public class FieldModelBinding {
 	 */
 	private boolean bound;
 
+	private FieldBindingEventListenerCollection bindingListeners;
+
 	/**
 	 * Constructor
-	 * @param fields The mandatory root field group
-	 * @param model The mandatory root model
 	 */
-	public FieldModelBinding(FieldGroup fields, Model model) {
+	public AbstractFieldGroupModelBinding() {
 		super();
-		if(fields == null) throw new IllegalArgumentException("A field group must be specified.");
-		if(model == null) throw new IllegalArgumentException("A model must be specified.");
+	}
+
+	public void addFieldBindingEventListener(IFieldBindingListener listener) {
+		if(bindingListeners == null) {
+			bindingListeners = new FieldBindingEventListenerCollection();
+		}
+		bindingListeners.add(listener);
+	}
+
+	public void removeFieldBindingEventListener(IFieldBindingListener listener) {
+		if(bindingListeners != null) {
+			bindingListeners.remove(listener);
+		}
+	}
+
+	public void setRootFieldGroup(FieldGroup fields) {
+		if(fields == null) {
+			throw new IllegalStateException("A root field group must be specified.");
+		}
+		if(this.fields == fields) return;
+		if(bound && this.fields != null) unbind();
 		this.fields = fields;
-		this.model = model;
+	}
+
+	public void setRootModel(Model model) {
+		if(model == null) {
+			throw new IllegalStateException("A root model must be specified.");
+		}
+		if(this.model != model) {
+			clear();
+			this.model = model;
+		}
 	}
 
 	/**
-	 * Gets either the root model or a nested model.
+	 * Gets either the root or a nested model.
 	 * @param propPath The property resolving to the model ref property in the
-	 *        root model
-	 * @return The resolved model
-	 * @see Model#getNestedModel(String)
+	 *        root model. If <code>null</code>, the root {@link Model} is
+	 *        returned.
+	 * @return The resolved {@link Model}
 	 */
 	public Model getModel(String propPath) {
 		return model.getNestedModel(propPath);
@@ -289,13 +311,34 @@ public class FieldModelBinding {
 	}
 
 	/**
+	 * Populates the internally held set of {@link FieldBinding}s.
+	 */
+	protected abstract void createFieldBindings();
+
+	/**
 	 * Binds the root {@link FieldGroup} to the root {@link Model}.
 	 */
 	public void bind() {
 		if(bound) throw new IllegalStateException("Already bound");
+		if(fields == null) throw new IllegalStateException("No root field group specified");
+		if(model == null) throw new IllegalStateException("No root model specified");
+
+		// fire before bind event
+		if(bindingListeners != null)
+			bindingListeners.fireOnFieldBindingEvent(new FieldBindingEvent(this, this, FieldBindingEventType.BEFORE_BIND));
+
+		// create the field bindings
+		createFieldBindings();
+
+		// bind each field binding
 		for(FieldBinding b : set) {
 			b.bind();
 		}
+
+		// fire after bind event
+		if(bindingListeners != null)
+			bindingListeners.fireOnFieldBindingEvent(new FieldBindingEvent(this, this, FieldBindingEventType.AFTER_BIND));
+
 		bound = true;
 	}
 
@@ -326,7 +369,7 @@ public class FieldModelBinding {
 	 *        the property definition
 	 * @param modelType The related one model type
 	 */
-	public void addRelatedOnePropertyDefinition(String modelPropertyPath, EntityType modelType) {
+	protected final void addRelatedOnePropertyDefinition(String modelPropertyPath, EntityType modelType) {
 		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_ONE, modelType));
 	}
 
@@ -339,7 +382,7 @@ public class FieldModelBinding {
 	 *        related many property
 	 * @see #addRelatedOnePropertyDefinition(String, EntityType)
 	 */
-	public void addRelatedManyPropertyDefinition(String modelPropertyPath, EntityType modelType) {
+	protected final void addRelatedManyPropertyDefinition(String modelPropertyPath, EntityType modelType) {
 		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_MANY, modelType));
 	}
 
@@ -389,7 +432,7 @@ public class FieldModelBinding {
 	 * @param model The model subject to binding
 	 * @return The property path of the bound indexed model
 	 */
-	public String bindIndexedModel(FieldGroup indexFields, String relatedManyPropPath, Model model) {
+	public final String bindIndexedModel(FieldGroup indexFields, String relatedManyPropPath, Model model) {
 		final RelatedManyProperty rmp = model.relatedMany(relatedManyPropPath);
 		FieldBinding fb;
 
@@ -417,7 +460,7 @@ public class FieldModelBinding {
 	 * Unbinds either a single field or field group.
 	 * @param field The field to unbind
 	 */
-	public void unbindField(IField field) {
+	protected final void unbindField(IField field) {
 		if(field == null || field == fields) return;
 
 		// remove field bindings
@@ -451,7 +494,7 @@ public class FieldModelBinding {
 	 * @param modelPropertyPath The property path targeting the model property in
 	 *        the given {@link Model}
 	 */
-	public void addBinding(IField field, String modelPropertyPath) {
+	protected final void addBinding(IField field, String modelPropertyPath) {
 		addBinding(field, model.getPropertyValue(PropertyPath.getPropertyPath(modelPropertyPath, field.getPropertyName())));
 	}
 
@@ -460,22 +503,23 @@ public class FieldModelBinding {
 	 * @param field The resolved field to be bound
 	 * @param prop The resolved model property
 	 */
-	private void addBinding(IField field, IPropertyValue prop) {
+	protected void addBinding(IField field, IPropertyValue prop) {
 		addBinding(new FieldBinding(field, prop));
 	}
 
-	private void addBinding(FieldBinding b) {
+	/**
+	 * Adds a {@link FieldBinding}.
+	 * @param b The {@link FieldBinding} to add
+	 */
+	protected void addBinding(FieldBinding b) {
 		set.add(b);
-	}
-
-	public int size() {
-		return set.size();
 	}
 
 	/**
 	 * Data transfer (model -> field).
 	 */
-	public void setFieldValues() {
+	public final void setFieldValues() {
+		if(!bound) throw new IllegalStateException("Unable to set field values: field/model binding not bound");
 		for(FieldBinding b : set) {
 			b.push();
 		}
@@ -484,14 +528,19 @@ public class FieldModelBinding {
 	/**
 	 * Data transfer (field -> model).
 	 */
-	public void setModelValues() {
+	public final void setModelValues() {
+		if(!bound) throw new IllegalStateException("Unable to set model values: field/model binding not bound");
 		// iterate the bound fields
 		for(FieldBinding b : set) {
 			b.pull();
 		}
 	}
 
-	public void clear() {
+	/**
+	 * Unbinds then removes all field bindings.
+	 */
+	protected final void clear() {
+		unbind();
 		set.clear();
 	}
 }

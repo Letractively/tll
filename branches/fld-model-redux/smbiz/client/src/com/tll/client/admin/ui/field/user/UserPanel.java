@@ -10,12 +10,10 @@ import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
@@ -48,13 +46,13 @@ public class UserPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		name = FieldFactory.createNameEntityField();
-		timestamps = FieldFactory.createTimestampEntityFields();
-		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", 30);
+		name = entityNameField();
+		timestamps = entityTimestampFields();
+		emailAddress = ftext("emailAddress", "Email Address", 30);
 		emailAddress.setReadOnly(true);
-		locked = FieldFactory.fbool("locked", "Locked");
-		enabled = FieldFactory.fbool("enabled", "Enabled");
-		expires = FieldFactory.fdate("expires", "Expires", GlobalFormat.DATE);
+		locked = fbool("locked", "Locked");
+		enabled = fbool("enabled", "Enabled");
+		expires = fdate("expires", "Expires", GlobalFormat.DATE);
 
 		addressPanel = new AddressPanel();
 
@@ -68,24 +66,13 @@ public class UserPanel extends FieldPanel {
 	}
 
 	@Override
-	public void applyModel(FieldModelBinding bindingDef, String modelPropPath) {
+	public void applyModel() {
 		Model model = bindingDef.getModel(modelPropPath);
 		// set the parent account view link
 		Model parentAccount = model.relatedOne("account").getModel();
 		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
 		lnkAccount.setText(par.getName());
 		lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
-	}
-
-	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		bindingDef.addBinding(name, modelPropertyPath);
-		bindingDef.addBinding(timestamps[0], modelPropertyPath);
-		bindingDef.addBinding(timestamps[1], modelPropertyPath);
-		bindingDef.addBinding(emailAddress, modelPropertyPath);
-		bindingDef.addBinding(locked, modelPropertyPath);
-		bindingDef.addBinding(enabled, modelPropertyPath);
-		bindingDef.addBinding(expires, modelPropertyPath);
 	}
 
 	@Override

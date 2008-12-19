@@ -7,7 +7,6 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
@@ -27,7 +26,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
+	public void applyModel() {
 		final Model modelInterface = bindingDef.getModel(modelPropertyPath);
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
@@ -38,11 +37,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		pnlOption.getFields().setPropertyName(ip.getPropertyName());
 		getFieldGroup().addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
-	}
-
-	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		// TODO
 	}
 
 	@Override

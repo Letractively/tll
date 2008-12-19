@@ -16,13 +16,11 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.DeleteTabWidget;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
@@ -54,30 +52,25 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		@Override
 		protected void populateFieldGroup(FieldGroup fields) {
-			name = FieldFactory.createNameEntityField();
-			code = FieldFactory.ftext("code", "Code", 20);
-			description = FieldFactory.ftextarea("description", "Desc", 3, 8);
+			name = entityNameField();
+			code = ftext("code", "Code", 20);
+			description = ftextarea("description", "Desc", 3, 8);
 
 			cost = new TextField[3];
-			cost[0] = FieldFactory.fcurrency("setUpCost", "Set Up");
-			cost[1] = FieldFactory.fcurrency("monthlyCost", "Monthly");
-			cost[2] = FieldFactory.fcurrency("annualCost", "Annual");
+			cost[0] = fcurrency("setUpCost", "Set Up");
+			cost[1] = fcurrency("monthlyCost", "Monthly");
+			cost[2] = fcurrency("annualCost", "Annual");
 
 			price = new TextField[3];
-			price[0] = FieldFactory.fcurrency("baseSetupPrice", "Set Up");
-			price[1] = FieldFactory.fcurrency("baseMonthlyPrice", "Monthly");
-			price[2] = FieldFactory.fcurrency("baseAnnualPrice", "Annual");
+			price[0] = fcurrency("baseSetupPrice", "Set Up");
+			price[1] = fcurrency("baseMonthlyPrice", "Monthly");
+			price[2] = fcurrency("baseAnnualPrice", "Annual");
 
 			fields.addField(name);
 			fields.addField(code);
 			fields.addField(description);
 			fields.addFields(cost);
 			fields.addFields(price);
-		}
-
-		@Override
-		public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-			// TODO
 		}
 
 		@Override
@@ -120,11 +113,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		// TODO
-	}
-
-	@Override
 	protected void drawInternal(Panel canvas) {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
@@ -149,7 +137,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
+	public void applyModel() {
 		final FieldGroup fields = getFieldGroup();
 		final Model model = bindingDef.getModel(modelPropertyPath);
 

@@ -10,8 +10,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.event.IFieldBindingListener;
+import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.field.IField;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
@@ -22,7 +23,7 @@ import com.tll.client.validate.EmailAddressValidator;
  * s.
  * @author jpk
  */
-public abstract class FieldPanel extends Composite {
+public abstract class FieldPanel extends Composite implements IFieldBindingListener {
 
 	/**
 	 * Creates a new {@link TextField} instance.
@@ -147,7 +148,7 @@ public abstract class FieldPanel extends Composite {
 	 * them in an array where the first element is the date created field.
 	 * @return DateField array
 	 */
-	public static final DateField[] createTimestampEntityFields() {
+	public static final DateField[] entityTimestampFields() {
 		DateField dateCreated = fdate(Model.DATE_CREATED_PROPERTY, "Created", GlobalFormat.DATE);
 		DateField dateModified = fdate(Model.DATE_MODIFIED_PROPERTY, "Modified", GlobalFormat.DATE);
 		dateCreated.setReadOnly(true);
@@ -160,7 +161,7 @@ public abstract class FieldPanel extends Composite {
 	 * Creates an entity name text field.
 	 * @return The created entity name field
 	 */
-	public static final TextField createNameEntityField() {
+	public static final TextField entityNameField() {
 		return ftext(Model.NAME_PROPERTY, "Name", 30);
 	}
 
@@ -199,39 +200,6 @@ public abstract class FieldPanel extends Composite {
 	protected abstract void populateFieldGroup(FieldGroup fields);
 
 	/**
-	 * Applies the model to the fields of this panel providing an opportunity to
-	 * create fields whose existence are dependent on interrogating the model.
-	 * @param modelPropertyPath The property path that resolves the target model
-	 *        under the binding def's root model.
-	 */
-	public void applyModel(FieldModelBinding bindingDef, String modelPropertyPath) {
-		// base impl no-op
-	}
-
-	/**
-	 * Sets the working field/model binding "definition".
-	 * @param bindingDef The binding definition
-	 * @param modelPropertyPath The property path that resolves the target model
-	 *        under the binding def's root model.
-	 */
-	public final void setBindingDefinition(FieldModelBinding bindingDef, String modelPropertyPath) {
-		addFieldBindings(bindingDef, modelPropertyPath);
-	}
-
-	/**
-	 * Adds the non-relational field bindings for the fields managed by this
-	 * {@link FieldPanel}.
-	 * <p>
-	 * This method is reponsible for calling this method for all its child
-	 * {@link FieldPanel}s and thus must resolve the appropriate nested model from
-	 * the root model.
-	 * @param modelPropertyPath The property path that resolves the [nested] model
-	 *        contained under the binding def's root model. model or a nested
-	 *        model under the root model.
-	 */
-	public abstract void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath);
-
-	/**
 	 * Draws or re-draws this field panel.
 	 */
 	public final void draw() {
@@ -256,5 +224,9 @@ public abstract class FieldPanel extends Composite {
 	@Override
 	public final String toString() {
 		return fields.toString();
+	}
+
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		// base impl no-op
 	}
 }

@@ -460,10 +460,23 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
+	 * Drills down through the model properties searching for nested models of the
+	 * given type.
+	 * @param type The type to search for
+	 * @param ignoreIndexed Ignore indexed model properties?
+	 * @return Set of matching model ref properties or <code>null</code> if none
+	 *         found
+	 */
+	Set<IModelRefProperty> getModelsOfType(EntityType type, boolean ignoreIndexed) {
+		// TODO impl
+		return null;
+	}
+
+	/**
 	 * PropBinding
 	 * @author jpk
 	 */
-	static class PropBinding {
+	private static class PropBinding {
 
 		Model model;
 
@@ -488,7 +501,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * CopyBinding - Used for deep copying {@link Model} instances.
 	 * @author jpk
 	 */
-	static final class CopyBinding extends PropBinding {
+	private static final class CopyBinding extends PropBinding {
 
 		Model target;
 

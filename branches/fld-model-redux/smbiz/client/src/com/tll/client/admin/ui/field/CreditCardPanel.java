@@ -7,8 +7,6 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SelectField;
@@ -47,22 +45,21 @@ public final class CreditCardPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		type = FieldFactory.fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
-		num = FieldFactory.ftext("paymentData_ccNum", "Num", 15);
+		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
+		num = ftext("paymentData_ccNum", "Num", 15);
 		num.addValidator(CreditCardValidator.INSTANCE);
-		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", 4);
-		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", 2);
-		expYr = FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", 4);
-		name = FieldFactory.ftext("paymentData_ccName", "Name", 30);
-		addr1 = FieldFactory.ftext("paymentData_ccAddress1", "Address 1", 40);
-		addr2 = FieldFactory.ftext("paymentData_ccAddress2", "Address 2", 40);
-		city = FieldFactory.ftext("paymentData_ccCity", "City", 30);
+		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
+		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2);
+		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4);
+		name = ftext("paymentData_ccName", "Name", 30);
+		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40);
+		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40);
+		city = ftext("paymentData_ccCity", "City", 30);
 		state =
-				FieldFactory.fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(
-						RefDataType.US_STATES));
-		zip = FieldFactory.ftext("paymentData_ccZip", "Zip/Postal Code", 15);
+				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES));
+		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15);
 		country =
-				FieldFactory.fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
+				fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
 						RefDataType.ISO_COUNTRY_CODES));
 
 		fields.addField(type);
@@ -77,22 +74,6 @@ public final class CreditCardPanel extends FieldPanel {
 		fields.addField(state);
 		fields.addField(zip);
 		fields.addField(country);
-	}
-
-	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		bindingDef.addBinding(type, modelPropertyPath);
-		bindingDef.addBinding(num, modelPropertyPath);
-		bindingDef.addBinding(cvv2, modelPropertyPath);
-		bindingDef.addBinding(expMn, modelPropertyPath);
-		bindingDef.addBinding(expYr, modelPropertyPath);
-		bindingDef.addBinding(name, modelPropertyPath);
-		bindingDef.addBinding(addr1, modelPropertyPath);
-		bindingDef.addBinding(addr2, modelPropertyPath);
-		bindingDef.addBinding(city, modelPropertyPath);
-		bindingDef.addBinding(state, modelPropertyPath);
-		bindingDef.addBinding(zip, modelPropertyPath);
-		bindingDef.addBinding(country, modelPropertyPath);
 	}
 
 	@Override

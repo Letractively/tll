@@ -19,7 +19,7 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.field.FieldModelBinding;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.ui.FocusCommand;
@@ -56,14 +56,14 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
+	 * The field/model binding.
+	 */
+	private final IFieldGroupModelBinding binding;
+
+	/**
 	 * Contains the actual edit fields.
 	 */
 	private final FieldPanel fieldPanel;
-
-	/**
-	 * The field bindings.
-	 */
-	private FieldModelBinding bindings;
 
 	/**
 	 * The panel containing the edit buttons
@@ -76,23 +76,31 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
+	 * @param binding The required field/model binding
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
-		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
+	public EditPanel(IFieldGroupModelBinding binding, FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
+		if(binding == null) throw new IllegalArgumentException("A field/model binding must be specified.");
+		this.binding = binding;
+
+		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
+
+		// set the root field group in the binding
+		binding.setRootFieldGroup(fieldPanel.getFieldGroup());
+
+		// have the field panel listen to binding events
+		binding.addFieldBindingEventListener(fieldPanel);
+
 		portal.setStyleName(Style.PORTAL);
 		portal.setWidget(fieldPanel);
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
-
-		// hide the button row until initialized
-		pnlButtonRow.setVisible(false);
 
 		btnSave = new Button("", this);
 		pnlButtonRow.add(btnSave);
@@ -115,6 +123,9 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		else {
 			btnCancel = null;
 		}
+
+		// hide the button row until initialized
+		pnlButtonRow.setVisible(false);
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);
@@ -146,40 +157,15 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	/**
-	 * Binds the given model to the fields contained in this edit panel.
+	 * Binds the given model to the fields contained in this edit panel then
+	 * transfers the model data to the fields.
 	 * @param model The model to bind
 	 */
-	public void bindModel(Model model) {
-
-		// [re]create field bindings
-		bindings = new FieldModelBinding(fieldPanel.getFieldGroup(), model);
-
-		fieldPanel.setBindingDefinition(bindings, null);
-
+	public void setModel(Model model) {
+		binding.setRootModel(model);
+		binding.bind();
+		binding.setFieldValues();
 		setEditMode(model.isNew());
-	}
-
-	/**
-	 * Validates the fields and if successful, the field data is transferred to
-	 * the underlying model.
-	 * @return <code>true</code> if the model was successfully updated,
-	 *         <code>false</code> otherwise.
-	 */
-	private boolean updateModel() {
-		assert bindings != null;
-
-		// first validate the fields
-		try {
-			fieldPanel.getFieldGroup().validate();
-		}
-		catch(ValidationException e) {
-			return false;
-		}
-
-		// fields are all valid to send field values to the model
-		bindings.setModelValues();
-
-		return true;
 	}
 
 	/**
@@ -189,6 +175,28 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 */
 	public void applyErrorMsgs(final List<Msg> msgs) {
 		fieldPanel.getFieldGroup().markInvalid(true, msgs);
+	}
+
+	/**
+	 * Validates the fields and if successful, the field data is transferred to
+	 * the underlying model.
+	 * @return <code>true</code> if the model was successfully updated,
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean updateModel() {
+
+		// validate the fields
+		try {
+			fieldPanel.getFieldGroup().validate();
+		}
+		catch(ValidationException e) {
+			return false;
+		}
+
+		// fields are all valid to send field values to the model
+		binding.setModelValues();
+
+		return true;
 	}
 
 	public void onClick(Widget sender) {
@@ -220,5 +228,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	protected void onUnload() {
 		super.onUnload();
 		// portal.removeScrollListener(MsgManager.instance);
+
+		// TODO should this be here ?
+		binding.unbind();
 	}
 }

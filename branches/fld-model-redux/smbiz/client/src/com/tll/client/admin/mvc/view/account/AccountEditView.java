@@ -4,6 +4,7 @@
  */
 package com.tll.client.admin.mvc.view.account;
 
+import com.tll.client.admin.field.AccountEditBinding;
 import com.tll.client.admin.ui.field.account.AccountPanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
@@ -49,7 +50,7 @@ public class AccountEditView extends EditView {
 	 * Constructor
 	 */
 	public AccountEditView() {
-		super(new AccountPanel(), entityOptions);
+		super(new AccountEditBinding(), new AccountPanel(), entityOptions);
 	}
 
 	@Override

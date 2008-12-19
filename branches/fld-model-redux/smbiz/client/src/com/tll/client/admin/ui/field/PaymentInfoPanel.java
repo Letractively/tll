@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.FieldModelBinding;
 import com.tll.client.ui.field.FieldPanel;
 
 /**
@@ -36,12 +35,6 @@ public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEven
 	public void populateFieldGroup(FieldGroup fields) {
 		fields.addField(creditCardPanel.getFieldGroup());
 		fields.addField(bankPanel.getFieldGroup());
-	}
-
-	@Override
-	public void addFieldBindings(FieldModelBinding bindingDef, String modelPropertyPath) {
-		creditCardPanel.addFieldBindings(bindingDef, modelPropertyPath);
-		bankPanel.addFieldBindings(bindingDef, modelPropertyPath);
 	}
 
 	@Override
