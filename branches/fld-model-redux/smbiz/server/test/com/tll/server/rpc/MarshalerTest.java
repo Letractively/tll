@@ -163,4 +163,22 @@ public class MarshalerTest extends TestBase {
 		}
 
 	}
+
+	/**
+	 * Test to ensure that a related many property is created in the the
+	 * client-bound marshaled construct when there are no actual related many
+	 * entities present.
+	 */
+	@Test
+	public void testEmptyRelatedMany() throws Exception {
+		final Marshaler marshaler = getMarshaler();
+		assert marshaler != null;
+		final Account e = getMockEntityProvider().getEntityCopy(Account.class, false);
+		assert e != null;
+		e.setAddresses(null);
+		Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		assert m != null;
+		IModelProperty mp = m.get("addresses");
+		assert mp != null;
+	}
 }

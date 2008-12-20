@@ -156,7 +156,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	@Override
 	public String toString() {
-		if(list == null) return "<null>";
 		final StringBuffer sb = new StringBuffer();
 		sb.append(getPropertyName());
 		sb.append("|ref:");
