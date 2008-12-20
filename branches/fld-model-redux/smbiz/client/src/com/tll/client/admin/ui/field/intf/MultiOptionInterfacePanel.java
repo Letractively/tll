@@ -20,7 +20,7 @@ import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.DeleteTabWidget;
 import com.tll.client.ui.field.FieldPanel;
@@ -160,12 +160,20 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		tabOptions.clear();
 
 		// bind options
-		RelatedManyProperty pvOptions = model.relatedMany("options");
+		RelatedManyProperty pvOptions;
+		try {
+			pvOptions = model.relatedMany("options");
+		}
+		catch(PropertyPathException e) {
+			throw new IllegalStateException();
+		}
 		if(pvOptions != null && pvOptions.size() > 0) {
 			for(IndexedProperty propOption : pvOptions) {
 				Model option = propOption.getModel();
 
 				// params
+				// TODO re-impl!
+				/*
 				RelatedManyProperty pvParams =
 						model.relatedMany(PropertyPath.getPropertyPath(propOption.getPropertyName(), "parameters"));
 				if(pvParams != null && pvParams.size() > 0) {
@@ -178,6 +186,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 					}
 
 				}
+				*/
 
 				OptionPanel pnlOption = new OptionPanel();
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), bindingDef,
@@ -201,7 +210,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	*/
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
+		// TODO re-impl
+		// OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
 		// op.paramListing.refresh();
 		return true;
 	}

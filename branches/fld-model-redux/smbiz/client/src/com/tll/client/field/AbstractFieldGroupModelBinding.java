@@ -7,7 +7,9 @@ package com.tll.client.field;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.event.IFieldBindingListener;
@@ -16,12 +18,14 @@ import com.tll.client.event.type.FieldBindingEvent.FieldBindingEventType;
 import com.tll.client.model.IPropertyValue;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
+import com.tll.client.model.NullNodeInPropPathException;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.util.StringUtil;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.DateValidator;
@@ -200,8 +204,8 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 			}
 		}
 
-		void unbind() {
-			if(boundValidator != null) {
+		void unbind(boolean retainFieldValidator) {
+			if(!retainFieldValidator && boundValidator != null) {
 				field.removeValidator(boundValidator);
 				boundValidator = null;
 			}
@@ -238,7 +242,7 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 * BindingInstance
 	 * @author jpk
 	 */
-	private static final class BindingInstance {
+	private static final class BindingInstance implements Iterable<FieldBinding> {
 
 		IField field;
 		Model model;
@@ -255,6 +259,10 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 			this.field = field;
 			this.model = model;
 			this.set = set;
+		}
+
+		public Iterator<FieldBinding> iterator() {
+			return set.iterator();
 		}
 	}
 
@@ -293,7 +301,13 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 * Map of scheduled bindings keyed by property path that is relative to the
 	 * root model.
 	 */
-	private Map<String, BindingInstance> scheduledBindings;
+	private Map<String, BindingInstance> scheduledAdditions;
+
+	/**
+	 * Set of property paths that point to nested model ref properties under the
+	 * root model that are scheduled for deletion.
+	 */
+	private Set<String> scheduledDeletions;
 
 	/**
 	 * Constructor
@@ -316,8 +330,8 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	}
 
 	private void scheduleBinding(String rootPropertyPath, BindingInstance binding) {
-		if(scheduledBindings == null) scheduledBindings = new HashMap<String, BindingInstance>();
-		scheduledBindings.put(rootPropertyPath, binding);
+		if(scheduledAdditions == null) scheduledAdditions = new HashMap<String, BindingInstance>();
+		scheduledAdditions.put(rootPropertyPath, binding);
 	}
 
 	/**
@@ -328,8 +342,8 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 *         successfully, <code>false</code> otherwise.
 	 */
 	private boolean unscheduleBinding(String rootPropertyPath) {
-		if(scheduledBindings != null) {
-			scheduledBindings.remove(rootPropertyPath);
+		if(scheduledAdditions != null) {
+			scheduledAdditions.remove(rootPropertyPath);
 		}
 		return false;
 	}
@@ -366,9 +380,9 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 */
 	protected abstract Model doResolveModel(EntityType modelType) throws IllegalArgumentException;
 
-	public Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
+	public final Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
 		final Model m = doResolveModel(type);
-		if(m == null) throw new IllegalStateException("Unresolvable model: " + type.getName());
+		if(m == null) throw new IllegalArgumentException("Unresolvable model: " + type.getName());
 		return m;
 	}
 
@@ -379,7 +393,7 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 *         root model.
 	 * @throws IllegalArgumentException When the property path is mal-formed.
 	 */
-	protected Model getModel(String propPath) throws IllegalArgumentException {
+	protected final Model getModel(String propPath) throws IllegalArgumentException {
 		try {
 			return model.getNestedModel(propPath);
 		}
@@ -391,7 +405,7 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		}
 	}
 
-	public void bind() {
+	public final void bind() {
 		if(bound)
 			throw new IllegalStateException("Already bound");
 		else if(fields == null)
@@ -417,10 +431,10 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		bound = true;
 	}
 
-	public void unbind() {
+	public final void unbind() {
 		if(bound) {
 			for(FieldBinding b : set) {
-				b.unbind();
+				b.unbind(false);
 			}
 			set.clear();
 			bound = false;
@@ -454,19 +468,6 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	}
 
 	/**
-	 * Adds a field binding resolving the model property given a model property
-	 * path.
-	 * @param modelPropertyPath The property path targeting the model property in
-	 *        the given {@link Model}
-	 */
-	/*
-	public final void addFieldBinding(IField field, String modelPropertyPath) throws PropertyPathException {
-		addFieldBinding(field, model.getPropertyValue(PropertyPath.getPropertyPath(modelPropertyPath, field
-				.getPropertyName())));
-	}
-	*/
-
-	/**
 	 * Adds a field binding given a field ref and model property ref.
 	 * @param field The resolved field to be bound
 	 * @param prop The resolved model property
@@ -482,14 +483,11 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		try {
 			rmp = model.relatedMany(relatedManyPropPath);
 		}
-		catch(UnsetPropertyException e) {
-			// TODO create this if not present as we don't want to rely on the server
-			// side binding process to put this there if there aren't initially at
-			// least one indexed model under this property
-			throw new IllegalArgumentException(e);
-		}
 		catch(PropertyPathException e) {
-			throw new IllegalArgumentException(e);
+			// NOTE: *any* PropertyPathException is in error since the server
+			// marshaler guarantees the related many property to exist even if there
+			// are no related many entities.
+			throw new IllegalArgumentException("Unable to bind indexed model", e);
 		}
 		assert rmp != null;
 
@@ -519,8 +517,11 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 				catch(UnsetPropertyException e) {
 					// ok don't bind this field
 				}
+				catch(NullNodeInPropPathException e) {
+					// ok don't bind this field
+				}
 				catch(PropertyPathException e) {
-					throw new IllegalArgumentException(e);
+					throw new IllegalArgumentException("Unable to bind indexed model", e);
 				}
 			}
 		}
@@ -531,6 +532,9 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 				bs.add(fb);
 			}
 			catch(UnsetPropertyException e) {
+				// ok don't bind this field
+			}
+			catch(NullNodeInPropPathException e) {
 				// ok don't bind this field
 			}
 			catch(PropertyPathException e) {
@@ -570,6 +574,7 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 				else {
 					for(FieldBinding b : set) {
 						if(b.field == f) {
+							b.unbind(true);
 							set.remove(f);
 						}
 					}
@@ -579,16 +584,46 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		else {
 			for(FieldBinding b : set) {
 				if(b.field == field) {
+					b.unbind(true);
 					set.remove(field);
 				}
 			}
 		}
 	}
 
-	public void markModelDeleted() {
+	public final void markDeleted(String modelPropPath, boolean markDeleted) {
+		if(StringUtil.isEmpty(modelPropPath)) throw new IllegalArgumentException("A model path must be specified.");
+
+		// first check scheduled bindings map
+		final BindingInstance bi = scheduledAdditions == null ? null : scheduledAdditions.get(modelPropPath);
+		if(bi != null) {
+			for(FieldBinding b : bi) {
+				b.field.setEnabled(!markDeleted);
+			}
+		}
+		else {
+			// not scheduled
+
+			// disable all subject fields that are bound
+			for(FieldBinding b : set) {
+				if(b.field.getPropertyName().startsWith(modelPropPath)) {
+					b.field.setEnabled(!markDeleted);
+				}
+			}
+
+			// schedule as deleted
+			if(markDeleted) {
+				if(scheduledDeletions == null) scheduledDeletions = new HashSet<String>();
+				scheduledDeletions.add(modelPropPath);
+			}
+			else {
+				if(scheduledDeletions != null) scheduledDeletions.remove(modelPropPath);
+			}
+		}
 	}
 
-	public void unmarkModelDeleted() {
+	public final boolean isMarkedDeleted(String modelPropPath) {
+		return scheduledDeletions == null ? false : scheduledDeletions.contains(modelPropPath);
 	}
 
 	/**
@@ -596,9 +631,9 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 * @param push push (model -> field) or pull (model <- field)?
 	 */
 	private void xfr(boolean push) {
-		if(!bound) throw new IllegalStateException("Unable to perform data transfer: field/model binding not bound");
+		if(!bound) throw new IllegalStateException("Unable to perform data transfer: Binding not bound.");
 
-		// xfr on the un-scheduled
+		// transfer the main bindings
 		for(FieldBinding b : set) {
 			if(push)
 				b.push();
@@ -606,14 +641,39 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 				b.pull();
 		}
 
-		// xfr on the scheduled
-		if(scheduledBindings != null) {
-			for(BindingInstance bi : scheduledBindings.values()) {
-				for(FieldBinding b : bi.set) {
-					if(push)
-						b.push();
-					else
-						b.pull();
+		// handle the scheduled additions
+		if(scheduledAdditions != null) {
+			BindingInstance bi;
+			for(String modelPropPath : scheduledAdditions.keySet()) {
+				// ensure not scheduled for deletion
+				if(scheduledDeletions != null && !scheduledDeletions.contains(modelPropPath)) {
+					// transfer
+					bi = scheduledAdditions.get(modelPropPath);
+					for(FieldBinding b : bi.set) {
+						if(push)
+							b.push();
+						else
+							b.pull();
+					}
+				}
+			}
+			scheduledAdditions = null;
+		}
+
+		// handle the scheduled deletions
+		if(scheduledDeletions != null) {
+			for(String modelPropPath : scheduledDeletions) {
+				try {
+					model.getNestedModel(modelPropPath).setMarkedDeleted(true);
+				}
+				catch(UnsetPropertyException e) {
+					// ok
+				}
+				catch(NullNodeInPropPathException e) {
+					// ok
+				}
+				catch(PropertyPathException e) {
+					throw new IllegalStateException("Bad model reference: " + modelPropPath);
 				}
 			}
 		}
@@ -626,78 +686,4 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	public final void setModelValues() {
 		xfr(false);
 	}
-
-	/*
-	private void addModelPropDef(ModelPropertyDefinition d) {
-		if(modelPropDefs == null) {
-			modelPropDefs = new ArrayList<ModelPropertyDefinition>();
-		}
-		modelPropDefs.add(d);
-	}
-	*/
-
-	/**
-	 * Adds a related one model property defintion for a model property which may
-	 * <em>not</em> be present. This definition is accessed if necessary when
-	 * transferring data to the model.
-	 * @param modelPropertyPath Relative to the root model, this param resolves to
-	 *        the property definition
-	 * @param modelType The related one model type
-	 */
-	/*
-	protected final void addRelatedOnePropertyDefinition(String modelPropertyPath, EntityType modelType) {
-		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_ONE, modelType));
-	}
-	*/
-
-	/**
-	 * Adds a related many model property defintion in the same manner as a
-	 * related one model property is added.
-	 * @param modelPropertyPath Relative to the root model, this param resolves to
-	 *        the property definition
-	 * @param modelType The model type of the indexed model properties under this
-	 *        related many property
-	 * @see #addRelatedOnePropertyDefinition(String, EntityType)
-	 */
-	/*
-	protected final void addRelatedManyPropertyDefinition(String modelPropertyPath, EntityType modelType) {
-		addModelPropDef(new ModelPropertyDefinition(modelPropertyPath, PropertyType.RELATED_MANY, modelType));
-	}
-	*/
-
-	/**
-	 * List of pending relational property additions.
-	 */
-	// private Set<String> pendingRelationalPropertyAdditions;
-	/**
-	 * List of pending relational property deletions.
-	 */
-	// private Set<String> pendingRelationalPropertyDeletions;
-	/*
-	private void addPendingRelationalPropertyAddition(String propPath) {
-		if(pendingRelationalPropertyAdditions == null) {
-			pendingRelationalPropertyAdditions = new HashSet<String>();
-		}
-		pendingRelationalPropertyAdditions.add(propPath);
-	}
-
-	private void removePendingRelationalPropertyAddition(String propPath) {
-		if(pendingRelationalPropertyAdditions != null) {
-			pendingRelationalPropertyAdditions.remove(propPath);
-		}
-	}
-
-	private void addPendingRelationalPropertyDeletion(String propPath) {
-		if(pendingRelationalPropertyDeletions == null) {
-			pendingRelationalPropertyDeletions = new HashSet<String>();
-		}
-		pendingRelationalPropertyDeletions.add(propPath);
-	}
-
-	private void removePendingRelationalPropertyDeletion(String propPath) {
-		if(pendingRelationalPropertyDeletions != null) {
-			pendingRelationalPropertyDeletions.remove(propPath);
-		}
-	}
-	*/
 }

@@ -244,9 +244,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 				return null;
 			}
 
-			public void markModelDeleted() {
-			}
-
 			public Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
 				return null;
 			}
@@ -254,7 +251,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 			public void unbindField(IField field) {
 			}
 
-			public void unmarkModelDeleted() {
+			public boolean isMarkedDeleted(String modelPropPath) {
+				return false;
+			}
+
+			public void markDeleted(String modelPropPath, boolean markDeleted) {
 			}
 		}, fieldPanel, true, true);
 		testPanel.add(ep);

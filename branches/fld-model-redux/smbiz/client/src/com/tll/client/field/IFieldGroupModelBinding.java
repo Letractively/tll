@@ -83,14 +83,19 @@ public interface IFieldGroupModelBinding extends ISourcesFieldBindingEvents {
 	String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType);
 
 	/**
-	 * Schedules a nested model under the root model for deletion.
+	 * Schedules or un-schedules a nested model under the root model for deletion.
+	 * @param modelPropPath The target model property path relative to the bound
+	 *        root model.
+	 * @param markDeleted Mark or un-mark as deleted?
 	 */
-	void markModelDeleted();
+	void markDeleted(String modelPropPath, boolean markDeleted);
 
 	/**
-	 * Unschedules a nested model under the root model for deletion.
+	 * Is the given model path scheduled for deletion?
+	 * @param modelPropPath The model path relative to the root model
+	 * @return true/false
 	 */
-	void unmarkModelDeleted();
+	boolean isMarkedDeleted(String modelPropPath);
 
 	/**
 	 * Data transfer (model -> field).

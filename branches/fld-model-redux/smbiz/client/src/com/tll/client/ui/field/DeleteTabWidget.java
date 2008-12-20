@@ -81,30 +81,12 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 		this.field = field;
 		this.binding = binding;
 		this.modelRefPropertyPath = modelRefPropertyPath;
-
-		/*
-		// show or hide the toggle button
-		if(this.fieldGroup != null && this.modelRefPropertyPath != null
-				&& !this.modelRefPropertyPath.equals(modelRefPropertyPath)) {
-			this.fieldGroup.removePendingDelete(this.modelRefPropertyPath);
-		}
-		this.fieldGroup = fieldGroup;
-		this.modelRefPropertyPath = modelRefPropertyPath;
-		getWidget(1).setVisible(fieldGroup != null);
-		if(fieldGroup != null) {
-			boolean deleted =
-					modelRefPropertyPath == null ? !fieldGroup.isUpdateModel() : fieldGroup.isPendingDelete(modelRefPropertyPath);
-			toggle(deleted);
-		}
-		*/
+		toggle(binding.isMarkedDeleted(modelRefPropertyPath));
 	}
 
 	private void toggle(boolean markDeleted) {
 		assert initialized == true;
-		if(markDeleted) {
-		}
-		else {
-		}
+		binding.markDeleted(modelRefPropertyPath, markDeleted);
 		field.setEnabled(!markDeleted);
 	}
 
