@@ -24,6 +24,7 @@ import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IField;
 import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -232,11 +233,28 @@ public final class UITests implements EntryPoint, HistoryListener {
 			public void setFieldValues() {
 			}
 
-			public Model getModel(String propPath) {
+			public void bind() {
+			}
+
+			public String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType) {
 				return null;
 			}
 
-			public void bind() {
+			public FieldGroup getRootFieldGroup() {
+				return null;
+			}
+
+			public void markModelDeleted() {
+			}
+
+			public Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
+				return null;
+			}
+
+			public void unbindField(IField field) {
+			}
+
+			public void unmarkModelDeleted() {
 			}
 		}, fieldPanel, true, true);
 		testPanel.add(ep);

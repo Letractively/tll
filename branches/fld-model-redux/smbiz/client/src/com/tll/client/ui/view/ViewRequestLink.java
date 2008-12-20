@@ -54,24 +54,6 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickListe
 		}
 	}
 
-	/*
-	public String getLongName() {
-		return getTitle();
-	}
-
-	public void setLongName(String name) {
-		setTitle(name);
-	}
-
-	public String getShortName() {
-		return getText();
-	}
-
-	public void setShortName(String name) {
-		setText(name);
-	}
-	*/
-
 	public ViewKey getViewKey() {
 		return viewRequest == null ? null : viewRequest.getViewKey();
 	}

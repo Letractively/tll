@@ -15,7 +15,9 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPath;
@@ -25,6 +27,7 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
+import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -137,9 +140,18 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	public void applyModel() {
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		switch(event.getType()) {
+			case BEFORE_BIND:
+				rebuildOptions(event.getBinding());
+				break;
+		}
+	}
+
+	private void rebuildOptions(IFieldGroupModelBinding bindingDef) {
 		final FieldGroup fields = getFieldGroup();
-		final Model model = bindingDef.getModel(modelPropertyPath);
+		final Model model = bindingDef.resolveModel(EntityType.ACCOUNT);
+		assert model != null && fields != null;
 
 		// clear existing options
 		for(Widget w : tabOptions) {
@@ -168,8 +180,8 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 				}
 
 				OptionPanel pnlOption = new OptionPanel();
-				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), propOption
-						.getPropertyName()));
+				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), bindingDef,
+						propOption.getPropertyName()));
 			}
 		}
 

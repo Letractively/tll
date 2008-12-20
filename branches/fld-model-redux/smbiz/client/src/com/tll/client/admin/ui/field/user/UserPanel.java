@@ -9,8 +9,11 @@ import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
+import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RefKey;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -19,6 +22,7 @@ import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
 
 /**
  * UserPanel
@@ -66,13 +70,27 @@ public class UserPanel extends FieldPanel {
 	}
 
 	@Override
-	public void applyModel() {
-		Model model = bindingDef.getModel(modelPropPath);
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		switch(event.getType()) {
+			case AFTER_BIND:
+				setParentAccountViewLink(event.getBinding());
+				break;
+		}
+	}
+
+	private void setParentAccountViewLink(IFieldGroupModelBinding bindingDef) {
 		// set the parent account view link
-		Model parentAccount = model.relatedOne("account").getModel();
-		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
-		lnkAccount.setText(par.getName());
-		lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
+		Model accountModel = bindingDef.resolveModel(EntityType.ACCOUNT);
+		Model parentAccount;
+		try {
+			parentAccount = accountModel.relatedOne("account").getModel();
+			RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
+			lnkAccount.setText(par.getName());
+			lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
+		}
+		catch(PropertyPathException e) {
+			lnkAccount.setText("-");
+		}
 	}
 
 	@Override

@@ -7,10 +7,13 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.event.type.FieldBindingEvent;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
+import com.tll.model.EntityType;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
@@ -26,8 +29,16 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	public void applyModel() {
-		final Model modelInterface = bindingDef.getModel(modelPropertyPath);
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		switch(event.getType()) {
+			case BEFORE_BIND:
+				applyModel(event.getBinding());
+				break;
+		}
+	}
+
+	private void applyModel(IFieldGroupModelBinding bindingDef) {
+		final Model modelInterface = bindingDef.resolveModel(EntityType.INTERFACE);
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
 			throw new IllegalArgumentException();

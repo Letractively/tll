@@ -136,10 +136,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 	}
 
-	public final Widget getFieldWidget() {
-		return this;
-	}
-
 	/**
 	 * Sets the Widget to be the field's containing Widget. This is necessary to
 	 * apply certain styling to the appropriate dom node.

@@ -27,6 +27,7 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
+import com.tll.client.field.AbstractFieldGroupModelBinding;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
@@ -64,6 +65,20 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	}
 
 	/**
+	 * InterfaceEditBinding
+	 * @author jpk
+	 */
+	private static final class InterfaceEditBinding extends AbstractFieldGroupModelBinding {
+
+		@Override
+		protected Model doResolveModel(EntityType modelType) throws IllegalArgumentException {
+			if(modelType == EntityType.INTERFACE) return getModel(null);
+			return null;
+		}
+
+	}
+
+	/**
 	 * InterfacesStack - Extended {@link StackPanel} tailored for on demand
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
@@ -92,7 +107,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(new InterfaceEditBinding(), resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 

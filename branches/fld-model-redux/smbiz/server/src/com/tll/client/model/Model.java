@@ -214,8 +214,14 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         or is not self-formatting.
 	 */
 	public String asString(String propPath) throws IllegalArgumentException {
-		IModelProperty prop = getProperty(propPath);
-		if(prop == null) return null;
+		IModelProperty prop = null;
+		try {
+			prop = getProperty(propPath);
+		}
+		catch(PropertyPathException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		assert prop != null;
 		if(prop instanceof ISelfFormattingPropertyValue == false) {
 			throw new IllegalArgumentException("Non self-formatting property: " + propPath);
 		}
@@ -232,7 +238,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			Object o = getProperty(propPath);
 			return o != null;
 		}
-		catch(IllegalArgumentException e) {
+		catch(PropertyPathException e) {
 			// no-op
 		}
 		return false;
@@ -249,46 +255,26 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @param propPath The property path. When <code>null</code>, a
 	 *        {@link RelatedOneProperty} that references <em>this</em> model is
 	 *        returned.
-	 * @return The nested property or <code>null</code> if not present
-	 * @throws IllegalArgumentException When the given property path is
-	 *         mal-formed.
+	 * @return The resolved non-<code>null</code> model property
+	 * @throws PropertyPathException When the model property can't be resolved.
 	 */
-	public IModelProperty getProperty(String propPath) throws IllegalArgumentException {
-		if(propPath == null || propPath.length() < 1) {
-			return getSelfRef();
-		}
-		try {
-			return resolvePropertyPath(propPath);
-		}
-		catch(NullNodeInPropPathException e) {
-			return null;
-		}
-		catch(IndexOutOfRangeInPropPathException ie) {
-			return null;
-		}
-		catch(UnsetPropertyException e) {
-			return null;
-		}
-		catch(PropertyPathException ppe) {
-			throw new IllegalArgumentException(ppe.getMessage());
-		}
+	public IModelProperty getProperty(String propPath) throws PropertyPathException {
+		return StringUtil.isEmpty(propPath) ? getSelfRef() : resolvePropertyPath(propPath);
 	}
 
 	/**
-	 * Retrieves an IPropertyValue from the model given a property path. This
-	 * method is {@link #getProperty(String)} with a filter that targets on
-	 * {@link IPropertyValue} type {@link IModelProperty}s.
-	 * @param propPath A parsed property path
-	 * @return The resolved {@link IPropertyValue} or <code>null</code> if not
-	 *         set.
-	 * @throws IllegalArgumentException When the given property path can't be
-	 *         resolved or does not map to an {@link IPropertyValue}.
+	 * Retrieves a non-relational property value from this {@link Model} given a
+	 * property path. This method is behaves like {@link #getProperty(String)}
+	 * with a filter that targets {@link IPropertyValue}s only.
+	 * @param propPath Points to the desired model property
+	 * @return The resolved non-<code>null</code> {@link IPropertyValue}
+	 * @throws PropertyPathException When the property value can't be resolved.
 	 */
-	public IPropertyValue getPropertyValue(String propPath) throws IllegalArgumentException {
+	public IPropertyValue getPropertyValue(String propPath) throws PropertyPathException {
 		IModelProperty prop = getProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a value property");
+			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "value");
 		}
 		return (IPropertyValue) prop;
 	}
@@ -298,15 +284,16 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @param propPath The property path that points to the desired model ref
 	 *        property. If <code>null</code> or empty, this {@link Model} is
 	 *        returned.
-	 * @return The nested {@link Model}
-	 * @throws IllegalArgumentException When the given property path can't be
+	 * @return The resolved non-<code>null</code> {@link Model}
+	 * @throws PropertyPathException When the given property path can't be
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
-	public Model getNestedModel(String propPath) throws IllegalArgumentException {
+	public Model getNestedModel(String propPath) throws PropertyPathException {
 		IModelProperty prop = getProperty(propPath);
-		if(prop == null) return null;
+		assert prop != null;
 		if(!prop.getType().isModelRef()) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a model ref property");
+			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+					"model reference");
 		}
 		return ((IModelRefProperty) prop).getModel();
 	}
@@ -315,15 +302,16 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * Retrieves a related one property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.relatedModelPropName")
-	 * @return Related one property value or <code>null</code> if not set.
-	 * @throws IllegalArgumentException When the given property path can't be
-	 *         resolved or does not map to a related one property.
+	 * @return The non-<code>null</code> resolved related one property.
+	 * @throws PropertyPathException When the given property path can't be
+	 *         resolved or does not map to related one property.
 	 */
-	public RelatedOneProperty relatedOne(String propPath) throws IllegalArgumentException {
+	public RelatedOneProperty relatedOne(String propPath) throws PropertyPathException {
 		IModelProperty prop = getProperty(propPath);
-		if(prop == null) return null;
+		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related one property");
+			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+					"related one");
 		}
 		return (RelatedOneProperty) prop;
 	}
@@ -332,15 +320,16 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * Retrieves a related many property value from the model given a property
 	 * path.
 	 * @param propPath The property path (E.g.: "root.listProperty")
-	 * @return Related many property value or <code>null</code> if not set.
-	 * @throws IllegalArgumentException When the given property path can't be
+	 * @return The resolved non-<code>null</code> related many property.
+	 * @throws PropertyPathException When the given property path can't be
 	 *         resolved or does not map to a related many property.
 	 */
-	public RelatedManyProperty relatedMany(String propPath) throws IllegalArgumentException {
+	public RelatedManyProperty relatedMany(String propPath) throws PropertyPathException {
 		IModelProperty prop = getProperty(propPath);
-		if(prop == null) return null;
+		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not map to a related many property");
+			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
+					"related many");
 		}
 		return (RelatedManyProperty) prop;
 	}
@@ -350,15 +339,15 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * This is a property value that wraps a nested Model that is a child of a
 	 * related many property.
 	 * @param propPath The property path. (E.g.: "root.listProperty[1]")
-	 * @return Indexed property value or <code>null</code> if not set.
-	 * @throws IllegalArgumentException When the given property path can't be
+	 * @return The resolved non-<code>null</code> indexed property.
+	 * @throws PropertyPathException When the given property path can't be
 	 *         resolved or does not map to an indexed property.
 	 */
-	public IndexedProperty indexed(String propPath) throws IllegalArgumentException {
+	public IndexedProperty indexed(String propPath) throws PropertyPathException {
 		IModelProperty prop = getProperty(propPath);
-		if(prop == null) return null;
+		assert prop != null;
 		if(prop.getType() != PropertyType.INDEXED) {
-			throw new IllegalArgumentException("Property '" + propPath + "' does not map to an indexed property");
+			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
 		}
 		return (IndexedProperty) prop;
 	}

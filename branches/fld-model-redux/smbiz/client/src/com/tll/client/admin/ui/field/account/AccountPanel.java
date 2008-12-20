@@ -28,6 +28,7 @@ import com.tll.client.field.IField;
 import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
@@ -205,19 +206,20 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 				rebuildAddresses(event.getBinding());
 				break;
 			case AFTER_BIND:
-				// add address tabs
 				break;
 		}
 	}
 
+	/**
+	 * Handles the late binding of an account's related many addressses.
+	 * @param binding The operating field/model binding
+	 */
 	private void rebuildAddresses(final IFieldGroupModelBinding binding) {
 		final FieldGroup fields = getFieldGroup();
-		final Model accountModel = binding.getModel(null);
-		if(accountModel.getEntityType() != EntityType.ACCOUNT) {
-			throw new IllegalArgumentException();
-		}
+		final Model accountModel = binding.resolveModel(EntityType.ACCOUNT);
+		assert accountModel != null && fields != null;
 
-		// un-bind existing
+		// un-bind existing addresses
 		for(Widget w : tabAddresses) {
 			if(w instanceof AccountAddressPanel) {
 				fields.removeField(((AccountAddressPanel) w).getFieldGroup());
@@ -225,19 +227,31 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		}
 		tabAddresses.clear();
 
-		// bind
-		RelatedManyProperty pvAddresses = accountModel.relatedMany("addresses");
+		// bind addresses contained in the bound model
+		RelatedManyProperty pvAddresses;
+		try {
+			pvAddresses = accountModel.relatedMany("addresses");
+		}
+		catch(PropertyPathException e) {
+			pvAddresses = null;
+		}
 		for(AddressType at : AddressType.values()) {
 			AccountAddressPanel aap = null;
 			if(pvAddresses != null) {
 				Iterator<IndexedProperty> itr = pvAddresses.iterator();
 				while(itr.hasNext()) {
 					IndexedProperty ip = itr.next();
-					if(at == ip.getModel().getPropertyValue("type").getValue()) {
-						aap = new AccountAddressPanel(at);
-						fields.addField(ip.getPropertyName(), aap.getFieldGroup());
-						tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), ip.getPropertyName()));
-						break;
+					try {
+						if(at == ip.getModel().getPropertyValue("type").getValue()) {
+							aap = new AccountAddressPanel(at);
+							fields.addField(ip.getPropertyName(), aap.getFieldGroup());
+							tabAddresses.add(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), binding, ip
+									.getPropertyName()));
+							break;
+						}
+					}
+					catch(PropertyPathException e) {
+						throw new IllegalStateException(e);
 					}
 				}
 			}
@@ -257,11 +271,13 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 						AddressType at = (AddressType) ((NoEntityExistsPanel) sender).getRefToken();
 						AccountAddressPanel aap = new AccountAddressPanel(at);
 
-						binding.bindIndexedModel(aap.getFieldGroup(), "addresses", AuxDataCache.instance().getEntityPrototype(
-								EntityType.ACCOUNT_ADDRESS));
+						// tentatively bind the indexed model
+						String indexedModelPath =
+								binding.bindIndexedModel(aap.getFieldGroup(), "addresses", EntityType.ACCOUNT_ADDRESS);
 
-						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), null), selTabIndx == 0 ? 0
-								: selTabIndx);
+						// insert the tab widget holding the new address fields
+						tabAddresses.insert(aap, new DeleteTabWidget(at.getName(), aap.getFieldGroup(), binding, indexedModelPath),
+								selTabIndx == 0 ? 0 : selTabIndx);
 						tabAddresses.remove(selTabIndx + 1);
 						tabAddresses.selectTab(selTabIndx);
 					}

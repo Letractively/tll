@@ -5,8 +5,10 @@
  */
 package com.tll.client.field;
 
+import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.event.ISourcesFieldBindingEvents;
 import com.tll.client.model.Model;
+import com.tll.model.EntityType;
 
 /**
  * IFieldGroupModelBinding - Contract for bi-directional data transfer between a
@@ -28,13 +30,23 @@ public interface IFieldGroupModelBinding extends ISourcesFieldBindingEvents {
 	void setRootModel(Model model);
 
 	/**
-	 * Gets either the root or a nested model.
-	 * @param propPath The property resolving to the model ref property in the
-	 *        root model. If <code>null</code>, the root {@link Model} is
-	 *        returned.
-	 * @return The resolved {@link Model}
+	 * @return The root field group
 	 */
-	Model getModel(String propPath);
+	FieldGroup getRootFieldGroup();
+
+	/**
+	 * Resolves a single, possibly nested <em>non-indexed</em> model under the
+	 * root model of the given type. The resolved model may be the root model.
+	 * <p>
+	 * This serves as a way for {@link IFieldBindingListener}s to obtain a needed
+	 * model reference in a loosely coupled way.
+	 * @return The resolved non-<code>null</code> model
+	 * @throws IllegalArgumentException When the given model type is not supported
+	 *         by this binding.
+	 * @throws IllegalStateException When the target model is not preset (
+	 *         <code>null</code>) under the root model but is supported.
+	 */
+	Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException;
 
 	/**
 	 * Binds the root {@link FieldGroup} to the root {@link Model}.
@@ -42,9 +54,43 @@ public interface IFieldGroupModelBinding extends ISourcesFieldBindingEvents {
 	void bind();
 
 	/**
-	 * Unbinds the root {@link FieldGroup} from the root {@link Model}.
+	 * Unbinds the root {@link FieldGroup} from the root {@link Model} destroying
+	 * all added field bindings.
 	 */
 	void unbind();
+
+	/**
+	 * Unbinds the given field removing all related field bindings. This binding
+	 * must already be bound.
+	 * @param field The field to unbind which may be a nested {@link FieldGroup}.
+	 */
+	void unbindField(IField field);
+
+	/**
+	 * Adds field bindings based on an indexed model. This binding must already be
+	 * bound and as such this is operation is considered a "late binding".
+	 * @param fields The field subject to binding to the indexed model. May be a
+	 *        {@link FieldGroup}.
+	 * @param relatedManyPropPath Resolves to the related many model property
+	 *        under the root model defining how the given fields will map back to
+	 *        the root model
+	 * @param modelType The required model type used to obtain a prototype model
+	 *        instance in which to bind
+	 * @return The resultant property path of the bound indexed model
+	 * @throws IllegalArgumentException When a property path related or other type
+	 *         of error occurs
+	 */
+	String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType);
+
+	/**
+	 * Schedules a nested model under the root model for deletion.
+	 */
+	void markModelDeleted();
+
+	/**
+	 * Unschedules a nested model under the root model for deletion.
+	 */
+	void unmarkModelDeleted();
 
 	/**
 	 * Data transfer (model -> field).
@@ -55,5 +101,4 @@ public interface IFieldGroupModelBinding extends ISourcesFieldBindingEvents {
 	 * Data transfer (field -> model).
 	 */
 	void setModelValues();
-
 }

@@ -139,10 +139,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		this(new HashSet<IField>(), displayName, feedbackWidget);
 	}
 
-	public Widget getFieldWidget() {
-		throw new UnsupportedOperationException();
-	}
-
 	public String descriptor() {
 		return displayName;
 	}

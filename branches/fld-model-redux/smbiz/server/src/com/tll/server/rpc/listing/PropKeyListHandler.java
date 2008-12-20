@@ -5,8 +5,8 @@
  */
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.IModelProperty;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPathException;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.Marshaler;
@@ -43,10 +43,14 @@ public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler
 			return model;
 		}
 		final int numCols = propKeys.length;
-		Model xgrp = new Model(model.getEntityType());
+		final Model xgrp = new Model(model.getEntityType());
 		for(int i = 0; i < numCols; i++) {
-			IModelProperty prop = model.getProperty(propKeys[i]);
-			xgrp.set(prop);
+			try {
+				xgrp.set(model.getProperty(propKeys[i]));
+			}
+			catch(PropertyPathException e) {
+				throw new IllegalStateException(e);
+			}
 		}
 		return xgrp;
 	}

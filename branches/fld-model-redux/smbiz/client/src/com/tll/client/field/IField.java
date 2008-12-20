@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -35,11 +34,6 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	 * Style indicating the field's value is invalid.
 	 */
 	static final String STYLE_INVALID = MsgLevel.ERROR.getName().toLowerCase();
-
-	/**
-	 * @return The field {@link Widget}.
-	 */
-	Widget getFieldWidget();
 
 	/**
 	 * Sets the property name for this field.
