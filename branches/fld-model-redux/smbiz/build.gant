@@ -20,23 +20,23 @@ def property = config.asMap(null, null);
 
 def NL = System.getProperty("line.separator")
 
-Ant.taskdef ( resource : 'org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties' , classpath: "${property.'aspectj.dir.install'}/lib/aspectjtools.jar" )
-Ant.taskdef ( resource : 'testngtasks' , classpath: property.'testng.jar' )
+ant.taskdef ( resource : 'org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties' , classpath: "${property.'aspectj.dir.install'}/lib/aspectjtools.jar" )
+ant.taskdef ( resource : 'testngtasks' , classpath: property.'testng.jar' )
 
-Ant.patternset(id:'ps_classpathResourceFiles') {
+ant.patternset(id:'ps_classpathResourceFiles') {
 	include(name:"**/*.properties")
 	include(name:"**/*.xml")
 	exclude(name:"**/context-s*.xml")
 }
 
-Ant.patternset(id:'ps_metaFiles') {
+ant.patternset(id:'ps_metaFiles') {
 	include(name:"**/*.MF")
 	include(name:"**/*.properties")
 	include(name:"**/*.xml")
 	exclude(name:"**/context-s*.xml")
 }
 
-Ant.patternset(id:'ps_libs') {
+ant.patternset(id:'ps_libs') {
 	include(name:"**/*.jar")
 	include(name:"**/*.zip")
 	exclude(name:"**/src/*")
@@ -44,13 +44,13 @@ Ant.patternset(id:'ps_libs') {
 
 // NOTE: we copy test related jars too!
 // TODO: make this a whitelist since we may put other non needed libs in this generalized lib location!! 
-Ant.patternset(id:'ps_libsDeploy') {
+ant.patternset(id:'ps_libsDeploy') {
 	patternset(refid:"ps_libs")
 	exclude(name:"servlet-api.jar")
 }
 	
 //	compile classpath for javac server 
-def java_compile_server_classpath = Ant.path {
+def java_compile_server_classpath = ant.path {
 	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
@@ -62,7 +62,7 @@ def java_compile_server_classpath = Ant.path {
 }
 	
 // compile classpath for javac server test
-def java_compile_server_test_classpath = Ant.path {
+def java_compile_server_test_classpath = ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
 	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
@@ -74,7 +74,7 @@ def java_compile_server_test_classpath = Ant.path {
 }
 	
 // compile classpath for javac client 
-def java_compile_client_classpath = Ant.path {
+def java_compile_client_classpath = ant.path {
 	pathelement(location: "${property.'project.dir.build'}/server-classes")
 	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
 	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
@@ -84,14 +84,14 @@ def java_compile_client_classpath = Ant.path {
 }
 	
 // run classpath for db tasks
-def db_task_classpath = Ant.path {
+def db_task_classpath = ant.path {
 	fileset(dir: property.'project.dir.tll.libs') {
 		include(name: 'mysql-connector-java-bin.jar')
 	}
 }
 	
 // test run classpath
-def java_run_server_test_classpath = Ant.path {
+def java_run_server_test_classpath = ant.path {
 	pathelement(location: "${property.'project.dir.build.web'}/WEB-INF/classes")
 	pathelement(location: "${property.'project.dir.build'}/server-classes-test")
 	fileset(dir: "${property.'project.dir.build.web'}/WEB-INF/lib") {
@@ -103,7 +103,7 @@ def java_run_server_test_classpath = Ant.path {
 }
 	
 // compile classpath for the gwt compiler 
-def gwt_compile_classpath = Ant.path {
+def gwt_compile_classpath = ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-dev-windows.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'gwt.incubator.dir.install'}/build/dist/gwt-incubator.jar")
@@ -115,7 +115,7 @@ def gwt_compile_classpath = Ant.path {
 }
 	
 // classpath for javadoc 
-def javadoc_classpath = Ant.path {
+def javadoc_classpath = ant.path {
 	pathelement(location: "${property.'project.dir.build'}/client-classes")
 	pathelement(location: "${property.'project.dir.build'}/server-classes")
 	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
@@ -202,14 +202,14 @@ def buildGwtConstantsFile = {
 def gwtClean = { module ->
 	println()
 	println "Deleting GWT compiler output dir: " + module + "..."
-	Ant.delete(quiet:'true', includeemptydirs:'true') {
+	ant.delete(quiet:'true', includeemptydirs:'true') {
 		fileset(dir: "${property.'project.dir.build'}/${module}") {
 			include(name:'**/*')
 		}
 	}
 	println "Deleting GWT host mode module dir: " + module + " files..."
 	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
-	Ant.delete(quiet:'true', includeemptydirs:'true') {
+	ant.delete(quiet:'true', includeemptydirs:'true') {
 		fileset(dir: hostModeModuleDir) {
 			include(name:'**/*')
 		}
@@ -220,7 +220,7 @@ def gwtCompile = { module ->
 	gwtClean(module)
 	println()
 	println "Compiling GWT module: ${module} (style: ${property.'gwt.compile.style'})..."
-	Ant.java(classname: 'com.google.gwt.dev.GWTCompiler', classpath: gwt_compile_classpath, fork: true) {
+	ant.java(classname: 'com.google.gwt.dev.GWTCompiler', classpath: gwt_compile_classpath, fork: true) {
 		jvmarg(value: property.'gwt.compile.memory')
 		arg (value: '-out')
 		arg (value: property.'project.dir.build') 
@@ -230,7 +230,7 @@ def gwtCompile = { module ->
 	}
 	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
 	println "Copying " + module + " RPC serialization policy files to : " + hostModeModuleDir + "...";
-	Ant.copy(todir: hostModeModuleDir) {
+	ant.copy(todir: hostModeModuleDir) {
 		fileset(dir: "${property.'project.dir.build'}/${module}") {
 			include(name: '*.rpc')
 		}
@@ -242,7 +242,7 @@ def gwtCompile = { module ->
 def gwtDeleteOldDeploy = {
 	println()
 	println 'Removing old GWT deployed files...'
-	Ant.delete() {
+	ant.delete() {
 		fileset(dir: property.'project.dir.build.web') {
 			include(name: '*.*')
 		}
@@ -253,7 +253,7 @@ def gwtDeleteOldDeploy = {
 def manifest = {
 	println()
 	println 'Building manifest...'
-		Ant.manifest(file: "${property.'project.dir.build'}/META-INF/MANIFEST.MF") {
+		ant.manifest(file: "${property.'project.dir.build'}/META-INF/MANIFEST.MF") {
 			section(name: 'common') {
 				attribute(name: 'Specification-Title', value: property.'project.name')
 					attribute(name: 'Specification-Version', value: property.'project.spec.version')
@@ -269,7 +269,7 @@ def manifest = {
 def clearClientClasses = {
 	println()
 	println 'Deleting client classes dir...'
-	Ant.delete(dir: "${property.'project.dir.build'}/client-classes")
+	ant.delete(dir: "${property.'project.dir.build'}/client-classes")
 }
 
 // creates a log4j.properties file in the deploy WEB-INF/classes dir
@@ -307,28 +307,28 @@ def createBuildPersistenceXmlFile = {
 }
 
 def dbCreate = { String dbName ->
-	Ant.sql(url:"${property.'db.urlprefix'}/${property.'db.name.root'}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
+	ant.sql(url:"${property.'db.urlprefix'}/${property.'db.name.root'}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
 		transaction("create database ${dbName}")
 	}
-	Ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
+	ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
 		transaction(src:"${property.'project.server.dir'}/resources/db/${property.'db.file.schema'}")
 	}
 }
 
 def dbDelete = { String dbName ->
-	Ant.sql(url:"${property.'db.urlprefix'}/${property.'db.name.root'}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
+	ant.sql(url:"${property.'db.urlprefix'}/${property.'db.name.root'}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
 		transaction("drop database ${dbName}")
 	}
 }
 
 def dbStub = { String dbName ->
-	Ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
+	ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
 		transaction(src:"${property.'project.server.dir'}/resources/db/${property.'db.file.stub'}")
 	}
 }
 
 def dbClear = { String dbName ->
-	Ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
+	ant.sql(url:"${property.'db.urlprefix'}/${dbName}", classpath:db_task_classpath, driver:property.'db.driver', userid:property.'db.username', password:property.'db.password', print:true) {
 		transaction(src:"${property.'project.server.dir'}/resources/db/${property.'db.file.delete'}")
 	}
 }
@@ -358,44 +358,44 @@ boolean isDeploy = false;
 
 ////// TARGETS
 
-target(info: 'Echos the loaded Ant and Config properties') {
+target(info: 'Echos the loaded ant and Config properties') {
 	
 	// ant properties
 	println('ANT PROPERTIES...')
-	Ant.echoproperties()
+	ant.echoproperties()
 	
 	// config properties
 	println()
 	println('CONFIG PROPERTIES...')
 	String s = ''
 	property.each( { String key, String val -> s += key + ' = ' + val + NL } )
-	Ant.echo(s)
+	ant.echo(s)
 }
 
 target (prepare: 'create directories') {
 	targetStart()
 	println()
 	println 'preparing...'
-	Ant.mkdir(dir: property.'project.dir.build')
-	Ant.mkdir(dir: property.'project.dir.build' + '/client-classes')
-	Ant.mkdir(dir: property.'project.dir.build' + '/server-classes')
-	Ant.mkdir(dir: property.'project.dir.build' + '/server-classes-woven')	// for aspectj compile time weaving
-	Ant.mkdir(dir: property.'project.dir.build' + '/server-classes-test')
-	Ant.mkdir(dir: property.'project.dir.build' + '/src')	// for javadocs
-	Ant.mkdir(dir: property.'project.dir.build' + '/META-INF')	// war file manifest
-	Ant.mkdir(dir: property.'project.dir.build.web')
-	Ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF')
-	Ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/classes')
-	Ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/classes/META-INF')
-	Ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/lib')
-	Ant.mkdir(dir: property.'project.dir.build.docs')
-	Ant.mkdir(dir: property.'project.dir.dist')
-	Ant.mkdir(dir: property.'project.dir.dist' + '/docs')
-	Ant.mkdir(dir: property.'project.dir.dist' + '/docs/api')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/WEB-INF')
-	Ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/email-templates')
+	ant.mkdir(dir: property.'project.dir.build')
+	ant.mkdir(dir: property.'project.dir.build' + '/client-classes')
+	ant.mkdir(dir: property.'project.dir.build' + '/server-classes')
+	ant.mkdir(dir: property.'project.dir.build' + '/server-classes-woven')	// for aspectj compile time weaving
+	ant.mkdir(dir: property.'project.dir.build' + '/server-classes-test')
+	ant.mkdir(dir: property.'project.dir.build' + '/src')	// for javadocs
+	ant.mkdir(dir: property.'project.dir.build' + '/META-INF')	// war file manifest
+	ant.mkdir(dir: property.'project.dir.build.web')
+	ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF')
+	ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/classes')
+	ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/classes/META-INF')
+	ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF/lib')
+	ant.mkdir(dir: property.'project.dir.build.docs')
+	ant.mkdir(dir: property.'project.dir.dist')
+	ant.mkdir(dir: property.'project.dir.dist' + '/docs')
+	ant.mkdir(dir: property.'project.dir.dist' + '/docs/api')
+	ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
+	ant.mkdir(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
+	ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/WEB-INF')
+	ant.mkdir(dir: property.'gwt.dir.shell.server' + '/webapps/ROOT/email-templates')
 	targetEnd()
 }
 
@@ -403,11 +403,11 @@ target (clean: 'clean directories') {
 	targetStart()
 	println()
 	println 'Cleaning directories...'
- 	Ant.delete(dir: property.'project.dir.build')
-	Ant.delete(dir: property.'project.dir.dist')
-	Ant.delete(dir: property.'gwt.dir.shell.server.deploy')
-	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
-	//Ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
+ 	ant.delete(dir: property.'project.dir.build')
+	ant.delete(dir: property.'project.dir.dist')
+	ant.delete(dir: property.'gwt.dir.shell.server.deploy')
+	//ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.admin')
+	//ant.delete(dir: property.'gwt.dir.shell.server.deploy' + '/' + property.'gwt.module.smbiz.tests')
 	targetEnd()
 }
 
@@ -415,8 +415,8 @@ target (cleanServerCompile: 'clean the compiled server classes from the build di
 	targetStart()
 	println()
 	println 'Cleaning compiled server classes...'
-	Ant.delete(dir: property.'project.dir.build' + '/server-classes')
-	Ant.mkdir(dir: property.'project.dir.build' + '/server-classes')
+	ant.delete(dir: property.'project.dir.build' + '/server-classes')
+	ant.mkdir(dir: property.'project.dir.build' + '/server-classes')
 	targetEnd()
 }
 
@@ -424,8 +424,8 @@ target (cleanServerCompileTest: 'clean the compiled server test classes from the
 	targetStart()
 	println()
 	println 'Cleaning compiled server test classes...'
-	Ant.delete(dir: property.'project.dir.build' + '/server-classes-test')
-	Ant.mkdir(dir: property.'project.dir.build' + '/server-classes-test')
+	ant.delete(dir: property.'project.dir.build' + '/server-classes-test')
+	ant.mkdir(dir: property.'project.dir.build' + '/server-classes-test')
 	targetEnd()
 }
 
@@ -434,7 +434,7 @@ target (compileServer: 'compile server code') {
 	depends(prepare)
 	println()
 	println 'Compiling server code...'	
-	Ant.javac(
+	ant.javac(
 		destdir: "${property.'project.dir.build'}/server-classes", 
 		classpath: java_compile_server_classpath,
 		debug: property.'project.compile.debug', 
@@ -446,7 +446,7 @@ target (compileServer: 'compile server code') {
 	if(property.'aspectj.ctwOnDeploy' == 'true' && isDeploy && property.'db.dao.mode' == 'SPRING') {
 		println()
 		println 'Weaving server classes with AspectJ...'
-		Ant.iajc(
+		ant.iajc(
 			classpath:java_compile_server_classpath, 
 			source:property.'project.server.source', 
 			target:property.'project.server.target', 
@@ -474,7 +474,7 @@ target (compileServerTest: 'compile server test code') {
 	depends(compileServer)
 	println()
 	println 'Compiling server test classes...'	
-	Ant.javac(destdir: "${property.'project.dir.build'}/server-classes-test", 
+	ant.javac(destdir: "${property.'project.dir.build'}/server-classes-test", 
 		srcdir: property.'project.server.dir' + '/test', 
 		classpath: java_compile_server_test_classpath,
 		debug: property.'project.compile.debug', 
@@ -487,7 +487,7 @@ target (compileClient: 'compile GWT client code') {
 	depends(compileServer)
 	println()
 	println 'Compiling client code...'
-	Ant.javac(destdir: "${property.'project.dir.build'}/client-classes", 
+	ant.javac(destdir: "${property.'project.dir.build'}/client-classes", 
 		srcdir: property.'project.client.dir' + '/src', 
 		classpath: java_compile_client_classpath,
 		debug: property.'project.compile.debug', 
@@ -499,7 +499,7 @@ target (javadocs: 'Generate documentation') {
 	targetStart()
 	depends(compileServer)
 	depends(compileClient)
-	Ant.copy(todir: "${property.'project.dir.build'}/src") {
+	ant.copy(todir: "${property.'project.dir.build'}/src") {
 		fileset(dir: property.'project.server.dir' + '/src') {
 			include(name: '**/*.java')
 		}
@@ -507,7 +507,7 @@ target (javadocs: 'Generate documentation') {
 			include(name: '**/*.java')
 		}
 	}
-	Ant.javadoc(destdir: property.'project.dir.build.docs', 
+	ant.javadoc(destdir: property.'project.dir.build.docs', 
 		author: true,	
 		version: true, 
 		source: property.'project.server.source',
@@ -518,12 +518,12 @@ target (javadocs: 'Generate documentation') {
 		sourcepath: "${property.'project.dir.build'}/src",
 		classpath: javadoc_classpath)
 
-	Ant.zip(zipfile: "${property.'project.dir.dist'}/${property.'project.path'}-${property.'project.version'}-src.zip",
+	ant.zip(zipfile: "${property.'project.dir.dist'}/${property.'project.path'}-${property.'project.version'}-src.zip",
 		basedir: "${property.'project.dir.build'}/src")
-	Ant.copy(todir: "${property.'project.dir.dist'}/docs/api") {
+	ant.copy(todir: "${property.'project.dir.dist'}/docs/api") {
 		fileset(dir: property.'project.dir.build.docs')
 	}
-	Ant.zip(zipfile: "${property.'project.dir.dist'}/${property.'project.path'}-${property.'project.version'}-doc.zip",
+	ant.zip(zipfile: "${property.'project.dir.dist'}/${property.'project.path'}-${property.'project.version'}-doc.zip",
 		basedir: property.'project.dir.build.docs')
 	targetEnd()
 }
@@ -548,7 +548,7 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	// remaining classes/META-INF files
 	println()
 	println('Copying remaining classpath/META-INF resource files...')
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes/META-INF", preservelastmodified:true) {
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes/META-INF", preservelastmodified:true) {
 		fileset(dir: "${property.'project.server.dir'}/resources") {
 			include(name:"aop.xml")
 			include(name:"orm.xml")
@@ -558,7 +558,7 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	// classpath resource files
 	println()
 	println('Copying remaining classpath resource files...')
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true, flatten:true) {
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true, flatten:true) {
 		fileset(dir: "${property.'project.server.dir'}/resources") {
 			include(name:"ehcache.xml")
 			include(name:"mock-entities.xml")
@@ -576,7 +576,7 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	if(property.'project.deploy.mergeTestFiles' == 'true') {
 		println()
 		println('Copying server test resource files (continuous integration testing!)...')
-		Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
+		ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
 			fileset(dir: "${property.'project.server.dir'}/test") {
 				patternset(refid:'ps_classpathResourceFiles')
 			}
@@ -586,7 +586,7 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	// email templates
 	println()
 	println('Copying email templates...')
-	Ant.copy(todir: property.'project.dir.build.web' + '/email-templates', preservelastmodified:true) {
+	ant.copy(todir: property.'project.dir.build.web' + '/email-templates', preservelastmodified:true) {
 		fileset(dir: "${property.'project.server.dir'}/resources/email-templates") {
 			include(name:"**/*")
 		}
@@ -595,14 +595,14 @@ target (copyServerStatic: 'Copies server dependant non-Java class files to build
 	// copy refdata files to classpath root
 	println()
 	println('Copying refdata files...')
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
 		fileset(dir: "${property.'project.server.dir'}/resources/refdata")
 	}
 	
 	// clone email-templates dir under GWT host dir to keep velocity from fucking up
 	println()
 	println('Cloning email-templates dir under GWT host dir so velocity sees the files in host mode...')
-	Ant.copy(todir: "${property.'gwt.dir.shell.server'}/webapps/ROOT/email-templates") {
+	ant.copy(todir: "${property.'gwt.dir.shell.server'}/webapps/ROOT/email-templates") {
 		fileset(dir: "${property.'project.server.dir'}/resources/email-templates")
 	}
 
@@ -616,21 +616,21 @@ target (copyServerLib: 'Copies needed library files for the server') {
 	println()
 	println 'Aggregating server library files under the build dir...'
 	
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
 		fileset(dir: property.'project.dir.tll.libs') {
 			patternset(refid:'ps_libsDeploy')
 		}
 	}
 	
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
 	
 	println 'gwt-servlet.jar...'
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'gwt.dir.install'}/gwt-servlet.jar")
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'gwt.dir.install'}/gwt-servlet.jar")
 	
 	println 'aspectjrt.jar...'
-	Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'aspectj.dir.install'}/lib/aspectjrt.jar")
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'aspectj.dir.install'}/lib/aspectjrt.jar")
 	
 	targetEnd()
 }
@@ -643,18 +643,18 @@ target (copyServerClasses: 'Copies server classes to build dir') {
 	
 	// copy server .class files to web dist WEB-INF/classes dir
 	if(property.'aspectj.ctwOnDeploy' == 'true' && isDeploy && property.'db.dao.mode' == 'SPRING') {
-		Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
+		ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
 			fileset(dir: "${property.'project.dir.build'}/server-classes-woven")
 		}
 	} else {
-		Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
+		ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
 			fileset(dir: "${property.'project.dir.build'}/server-classes")
 		}
 	}
 	
 	if(property.'project.deploy.mergeTestFiles' == 'true') {
 		// copy server test .class files to web dist WEB-INF/classes dir as well (continuous integration testing!)
-		Ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
+		ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/classes", preservelastmodified:true) {
 			fileset(dir: "${property.'project.dir.build'}/server-classes-test")
 		}
 	}
@@ -691,7 +691,7 @@ target (copyClient: 'Copies client files to build dir') {
 	gwtDeleteOldDeploy()
 	println()
 	println 'Copying GWT compiler output to build web dir...'
-	Ant.copy(todir: property.'project.dir.build.web', preservelastmodified:true) {
+	ant.copy(todir: property.'project.dir.build.web', preservelastmodified:true) {
 		fileset(dir: "${property.'project.dir.build'}/${property.'gwt.module.smbiz.admin'}") {
 			include(name: '**/*')	// all found files
 			exclude(name: 'Thumbs.db')
@@ -726,7 +726,7 @@ target (createWAR: 'Creates a WAR file from the current state of the app') {
 	targetStart()
 	println()
 	println 'Creating WAR file...'
-	Ant.jar(destfile: "${property.'project.dir.dist'}/${property.'app.name'}.war", basedir: property.'project.dir.build.web', manifest: "${property.'project.dir.build'}/META-INF/MANIFEST.MF")
+	ant.jar(destfile: "${property.'project.dir.dist'}/${property.'app.name'}.war", basedir: property.'project.dir.build.web', manifest: "${property.'project.dir.build'}/META-INF/MANIFEST.MF")
 	targetEnd()
 }
 
@@ -747,10 +747,10 @@ target (undeploy: 'Removes the app from the deployed server location') {
 	if(property.'server.type' == 'tomcat') {
 	println('Removing old Tomcat deployment (if present)...')
 	// remove deployment dir (if present)
-	Ant.delete(dir: "${property.'server.dir.deploy'}/${property.'app.name'}", quiet:'true')
+	ant.delete(dir: "${property.'server.dir.deploy'}/${property.'app.name'}", quiet:'true')
 	}
 	// remove WAR file (if present)
-	Ant.delete(file: "${property.'server.dir.deploy'}/${property.'app.name'}.war", quiet:'true')
+	ant.delete(file: "${property.'server.dir.deploy'}/${property.'app.name'}.war", quiet:'true')
 	targetEnd()
 }
 
@@ -759,11 +759,11 @@ target (copyDist: 'Copies the app distribution to the deployment directory') {
 	println()
 	if(property.'project.deploy.asWar' == 'true') {
 		println 'Deploying app WAR file...'
-			Ant.copy(file: "${property.'project.dir.dist'}/${property.'app.name'}.war", tofile: "${property.'server.dir.deploy'}/${property.'app.name'}.war")
+			ant.copy(file: "${property.'project.dir.dist'}/${property.'app.name'}.war", tofile: "${property.'server.dir.deploy'}/${property.'app.name'}.war")
 	}
 	else {
 		println 'Deploying app dir...'
-		Ant.copy(todir: "${property.'server.dir.deploy'}/${property.'app.name'}", preservelastmodified:true) {
+		ant.copy(todir: "${property.'server.dir.deploy'}/${property.'app.name'}", preservelastmodified:true) {
 			fileset(dir: property.'project.dir.build.web')
 		}
 	}
@@ -857,7 +857,7 @@ def runTest = { String xmlFileName ->
 */
 
 def testPrepare = {
-	//Ant.delete(dir: "${property.'project.server.dir'}/test-output", quiet:'true')
+	//ant.delete(dir: "${property.'project.server.dir'}/test-output", quiet:'true')
 }
 
 target(testBootstrap: 'Runs the bootstrapping related tests') {
@@ -919,4 +919,4 @@ target(testServer: 'Runs the server related tests') {
 	}
 }
 
-setDefaultTarget(build)
+//setDefaultTarget(build)
