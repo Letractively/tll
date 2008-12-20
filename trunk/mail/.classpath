@@ -10,5 +10,6 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/log4j.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

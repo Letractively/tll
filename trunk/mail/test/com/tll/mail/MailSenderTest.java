@@ -14,7 +14,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.tll.config.Config;
-import com.tll.guice.MailModule;
+import com.tll.di.MailModule;
 
 /**
  * {@link IMailSender} test.

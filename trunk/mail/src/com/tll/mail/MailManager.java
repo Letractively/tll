@@ -5,7 +5,7 @@ import java.util.Map;
 import org.springframework.mail.MailSendException;
 
 import com.google.inject.Inject;
-import com.tll.guice.MailModule.DefaultMailRouting;
+import com.tll.di.MailModule.DefaultMailRouting;
 
 /**
  * Builds {@link IMailContext} implementations. Client's should obtain a

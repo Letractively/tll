@@ -6,17 +6,17 @@
 def NL = System.getProperty("line.separator")
 
 def readProperties() {
-	Ant.property(file: Ant.project.properties.'basedir' + '/build.properties')
-	def props = Ant.project.properties
+	ant.property(file: ant.project.properties.'basedir' + '/build.properties')
+	def props = ant.project.properties
 	return props;
 }
 
 def property = readProperties()
 
-Ant.taskdef ( resource : 'testngtasks' , classpath: property.'lib.testng' )
+ant.taskdef ( resource : 'testngtasks' , classpath: property.'lib.testng' )
 
 // compile classpath 
-def java_compile_classpath = Ant.path {
+def java_compile_classpath = ant.path {
 	pathelement(location: "${property.'project.dir'}/src")
 	pathelement(location: "${property.'project.dir'}/test")
 	pathelement(location: property.'lib.commons-lang')
@@ -25,7 +25,7 @@ def java_compile_classpath = Ant.path {
 }
 	
 // test run classpath
-def java_run_test_classpath = Ant.path {
+def java_run_test_classpath = ant.path {
 	pathelement(location: "${property.'project.dir'}/test")
 	pathelement(location: "${property.'project.dir'}/build/classes")
 	pathelement(location: "${property.'lib.commons-lang'}")
@@ -50,16 +50,16 @@ def targetEnd = {
 	
 ////// TARGETS
 
-target(antInfo: 'Echos the loaded Ant properties') {
-	Ant.echoproperties()
+target(antInfo: 'Echos the loaded ant properties') {
+	ant.echoproperties()
 }
 
 target (prepare: 'create directories') {
 	targetStart()
 	println()
 	println 'prepare'
-	Ant.mkdir(dir: property.'project.dir' + '/build/classes')
-	Ant.mkdir(dir: property.'project.dir' + '/dist')
+	ant.mkdir(dir: property.'project.dir' + '/build/classes')
+	ant.mkdir(dir: property.'project.dir' + '/dist')
 	targetEnd()
 }
 
@@ -67,8 +67,8 @@ target (clean: 'clean directories') {
 	targetStart()
 	println()
 	println 'Cleaning directories...'
- 	Ant.delete(dir: property.'project.dir' + '/build')
-	Ant.delete(dir: property.'project.dir' + '/dist')
+ 	ant.delete(dir: property.'project.dir' + '/build')
+	ant.delete(dir: property.'project.dir' + '/dist')
 	targetEnd()
 }
 
@@ -77,7 +77,7 @@ target (compile: 'compile the project') {
 	depends(prepare)
 	println()
  	println 'compiling...'
-	Ant.javac(
+	ant.javac(
 		destdir: "${property.'project.dir'}/build/classes", 
 		classpath: java_compile_classpath,
 		optimize: 'true',
@@ -105,7 +105,7 @@ target (dist: 'distribute the project') {
 	depends(test)
 	println()
  	println 'distributing...'
-	Ant.jar(
+	ant.jar(
 		destfile: property.'project.dir' + '/dist/tll-config.jar', 
 		basedir: property.'project.dir' + '/build/classes',
 		excludes: '**/*Test.class **/*.properties')
