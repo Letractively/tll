@@ -121,7 +121,7 @@ target (test: 'perform testing') {
 
 target (dist: 'distribute the project') {
 	targetStart()
-	depends(test)
+	depends(compile)
 	println()
  	println 'distributing...'
 	ant.jar(
