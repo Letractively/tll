@@ -39,6 +39,8 @@ public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEven
 
 	@Override
 	protected void drawInternal(Panel canvas) {
+		creditCardPanel.draw();
+		bankPanel.draw();
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
 		canvas.add(tabPanel);

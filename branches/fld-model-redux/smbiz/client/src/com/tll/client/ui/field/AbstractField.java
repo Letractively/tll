@@ -67,7 +67,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	/**
 	 * The value the field is set to when {@link #reset()} is called.
 	 */
-	private String resetValue;
+	private String resetValue = "";
 
 	private boolean required = false;
 	private boolean readOnly = false;
@@ -192,11 +192,10 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 
 		// hide the field label required indicator if we are in read-only state
-		if(fldLbl != null) {
-			fldLbl.setRequired(readOnly ? false : required);
-		}
+		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
 
 		this.readOnly = readOnly;
+		if(isAttached()) draw();
 	}
 
 	public final boolean isRequired() {
@@ -218,6 +217,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public final void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		if(isAttached()) draw();
 	}
 
 	@Override
@@ -278,12 +278,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setResetValue(String resetValue) {
-		this.resetValue = resetValue;
+		this.resetValue = resetValue == null ? "" : resetValue;
 	}
 
 	public final boolean isDirty() {
-		final String cv = getValue();
-		return ((cv == null && resetValue == null) || cv != null && cv.equals(resetValue));
+		return !resetValue.equals(getValue());
 	}
 
 	public void dirtyCheck() {
@@ -367,6 +366,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			throw ve;
 		}
 		finally {
+			clearMsgs();
 			markInvalid(errorMsgs != null, errorMsgs);
 		}
 
@@ -385,7 +385,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			}
 		}
 		else {
-			clearMsgs();
 			removeStyleName(STYLE_INVALID);
 		}
 	}
@@ -396,7 +395,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		clearMsgs();
 		removeStyleName(STYLE_DIRTY);
 		removeStyleName(STYLE_INVALID);
-		// draw(); // don't draw here
+		if(isAttached()) draw();
 	}
 
 	/**
@@ -421,7 +420,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		MsgManager.instance().toggle(this, true);
 	}
 
-	public void draw() {
+	private void draw() {
 		Widget fw;
 		if(readOnly) {
 			if(rof == null) {
@@ -534,7 +533,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public void onChange(Widget sender) {
-		assert sender == this;
 		// dirty check
 		dirtyCheck();
 	}
@@ -551,6 +549,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		catch(ValidationException e) {
 			// no-op
 		}
+	}
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		draw();
 	}
 
 	@Override

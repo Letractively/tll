@@ -51,6 +51,7 @@ import com.tll.model.schema.SchemaInfoException;
  * Marshaler
  * @author jpk
  */
+// TODO remove dependence on IEntity!
 public final class Marshaler {
 
 	private final EntityAssembler entityAssembler;

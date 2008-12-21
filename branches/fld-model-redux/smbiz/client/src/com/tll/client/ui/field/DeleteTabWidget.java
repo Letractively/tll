@@ -42,8 +42,6 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 	 */
 	private IField field;
 
-	private boolean initialized;
-
 	/**
 	 * Constructor
 	 * @param name The name describing the thing subject to delete toggling
@@ -74,10 +72,19 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 	 */
 	public DeleteTabWidget(String name, IField field, IFieldGroupModelBinding binding, String modelRefPropertyPath) {
 		this(name);
-		init(field, binding, modelRefPropertyPath);
+		configure(field, binding, modelRefPropertyPath);
 	}
 
-	public void init(IField field, IFieldGroupModelBinding binding, String modelRefPropertyPath) {
+	/**
+	 * Sets this Widget to be fully functional.
+	 * @param field
+	 * @param binding
+	 * @param modelRefPropertyPath
+	 */
+	private void configure(IField field, IFieldGroupModelBinding binding, String modelRefPropertyPath) {
+		if(field == null || binding == null || modelRefPropertyPath == null) {
+			throw new IllegalArgumentException("One or more init args is null.");
+		}
 		this.field = field;
 		this.binding = binding;
 		this.modelRefPropertyPath = modelRefPropertyPath;
@@ -85,9 +92,7 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 	}
 
 	private void toggle(boolean markDeleted) {
-		assert initialized == true;
 		binding.markDeleted(modelRefPropertyPath, markDeleted);
-		field.setEnabled(!markDeleted);
 	}
 
 	public void onClick(Widget sender) {

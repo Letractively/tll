@@ -203,7 +203,13 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * Draws or re-draws this field panel.
 	 */
 	public final void draw() {
+		// clear out the panel
 		clear();
+
+		// [re]draw the fields
+		// getFieldGroup().draw();
+
+		// draw the panel
 		drawInternal(panel);
 	}
 

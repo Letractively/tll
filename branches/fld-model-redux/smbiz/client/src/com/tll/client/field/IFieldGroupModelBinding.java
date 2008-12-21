@@ -64,7 +64,7 @@ public interface IFieldGroupModelBinding extends ISourcesFieldBindingEvents {
 	 * must already be bound.
 	 * @param field The field to unbind which may be a nested {@link FieldGroup}.
 	 */
-	void unbindField(IField field);
+	//void unbindField(IField field);
 
 	/**
 	 * Adds field bindings based on an indexed model. This binding must already be

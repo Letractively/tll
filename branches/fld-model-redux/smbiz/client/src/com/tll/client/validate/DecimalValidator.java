@@ -54,25 +54,4 @@ public class DecimalValidator implements IValidator {
 			throw new ValidationException("Must be a decimal of format: '" + numberFormat.getPattern() + "'.");
 		}
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if(getClass() != obj.getClass()) return false;
-		DecimalValidator other = (DecimalValidator) obj;
-		if(numberFormat == null) {
-			if(other.numberFormat != null) return false;
-		}
-		else if(!numberFormat.getPattern().equals(other.numberFormat.getPattern())) return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((numberFormat == null) ? 0 : numberFormat.getPattern().hashCode());
-		return result;
-	}
 }

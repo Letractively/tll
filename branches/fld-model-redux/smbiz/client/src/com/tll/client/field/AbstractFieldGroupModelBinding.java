@@ -445,35 +445,18 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 	 * Populates the internally held set of {@link FieldBinding}s.
 	 */
 	private void createFieldBindings(FieldGroup fg) {
-		assert bound == true;
+		assert bound == false;
 
 		// iterate the root field group and create field bindings for all found
 		// non-group fields
-		for(IField f : fields) {
+		for(IField f : fg) {
 			if(f instanceof FieldGroup) {
 				createFieldBindings((FieldGroup) f);
 			}
 			else {
-				try {
-					addFieldBinding(f, model.getPropertyValue(f.getPropertyName()));
-				}
-				catch(MalformedPropPathException e) {
-					throw new IllegalArgumentException("Unable to create field bindings", e);
-				}
-				catch(PropertyPathException e) {
-					// skip this field
-				}
+				bindField(f, null, set);
 			}
 		}
-	}
-
-	/**
-	 * Adds a field binding given a field ref and model property ref.
-	 * @param field The resolved field to be bound
-	 * @param prop The resolved model property
-	 */
-	protected final void addFieldBinding(IField field, IPropertyValue prop) {
-		set.add(new FieldBinding(field, prop));
 	}
 
 	public final String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType) {
@@ -491,8 +474,6 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		}
 		assert rmp != null;
 
-		FieldBinding fb;
-
 		// determine the indexed property path
 		final int index = rmp.size();
 		final String indexedPropPath = PropertyPath.index(relatedManyPropPath, index);
@@ -501,46 +482,9 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		Model proto = AuxDataCache.instance().getEntityPrototype(modelType);
 		if(proto == null) throw new IllegalStateException("Unable to obtain model prototype");
 
-		// iterate through the given fields
+		// bind the given field
 		final FieldBindingSet bs = new FieldBindingSet();
-		IPropertyValue pv;
-		final PropertyPath pp = new PropertyPath();
-		if(field instanceof FieldGroup) {
-			for(IField f : (FieldGroup) field) {
-				pp.parse(f.getPropertyName());
-				f.setPropertyName(PropertyPath.getPropertyPath(relatedManyPropPath, pp.last()));
-				try {
-					pv = model.getPropertyValue(f.getPropertyName());
-					fb = new FieldBinding(f, pv);
-					bs.add(fb);
-				}
-				catch(UnsetPropertyException e) {
-					// ok don't bind this field
-				}
-				catch(NullNodeInPropPathException e) {
-					// ok don't bind this field
-				}
-				catch(PropertyPathException e) {
-					throw new IllegalArgumentException("Unable to bind indexed model", e);
-				}
-			}
-		}
-		else {
-			try {
-				pv = model.getPropertyValue(field.getPropertyName());
-				fb = new FieldBinding(field, pv);
-				bs.add(fb);
-			}
-			catch(UnsetPropertyException e) {
-				// ok don't bind this field
-			}
-			catch(NullNodeInPropPathException e) {
-				// ok don't bind this field
-			}
-			catch(PropertyPathException e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
+		bindField(field, relatedManyPropPath, bs);
 
 		// bind each created field binding
 		for(FieldBinding b : bs) {
@@ -554,11 +498,33 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 		return indexedPropPath;
 	}
 
-	/**
-	 * Unbinds either a single field or field group.
-	 * @param field The field to unbind
-	 */
-	public final void unbindField(IField field) {
+	private void bindField(IField field, final String parentPropPath, final FieldBindingSet bs) {
+		if(field instanceof FieldGroup) {
+			for(IField f : (FieldGroup) field) {
+				bindField(f, parentPropPath, bs);
+			}
+		}
+		else {
+			final PropertyPath pp = new PropertyPath();
+			pp.parse(field.getPropertyName());
+			field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, pp.last()));
+			try {
+				bs.add(new FieldBinding(field, model.getPropertyValue(field.getPropertyName())));
+			}
+			catch(UnsetPropertyException e) {
+				// ok don't bind this field
+			}
+			catch(NullNodeInPropPathException e) {
+				// ok don't bind this field
+			}
+			catch(PropertyPathException e) {
+				throw new IllegalArgumentException("Unable to bind indexed model", e);
+			}
+		}
+	}
+
+	/*
+	private void unbindField(IField field) {
 		if(field == null || field == fields) return;
 
 		// first check the scheduled bindings
@@ -590,6 +556,7 @@ public abstract class AbstractFieldGroupModelBinding implements IFieldGroupModel
 			}
 		}
 	}
+	*/
 
 	public final void markDeleted(String modelPropPath, boolean markDeleted) {
 		if(StringUtil.isEmpty(modelPropPath)) throw new IllegalArgumentException("A model path must be specified.");

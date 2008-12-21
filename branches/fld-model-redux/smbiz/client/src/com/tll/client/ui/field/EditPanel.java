@@ -91,12 +91,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 
-		// set the root field group in the binding
-		binding.setRootFieldGroup(fieldPanel.getFieldGroup());
-
-		// have the field panel listen to binding events
-		binding.addFieldBindingEventListener(fieldPanel);
-
 		portal.setStyleName(Style.PORTAL);
 		portal.setWidget(fieldPanel);
 
@@ -129,8 +123,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);
+		panel.setStyleName(STYLE_ENTITY_EDIT);
 
-		setStyleName(STYLE_ENTITY_EDIT);
 		initWidget(panel);
 	}
 
@@ -153,7 +147,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	}
 
 	public void draw() {
-		fieldPanel.getFieldGroup().draw();
+		fieldPanel.draw();
 	}
 
 	/**
@@ -162,6 +156,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * @param model The model to bind
 	 */
 	public void setModel(Model model) {
+		// NOTE: we do this binding init stuff here as we need to wait to ensure the
+		// aux data set the root field group in the binding
+		binding.setRootFieldGroup(fieldPanel.getFieldGroup());
+
+		// have the *root* field panel listen to binding events
+		binding.addFieldBindingEventListener(fieldPanel);
+
 		binding.setRootModel(model);
 		binding.bind();
 		binding.setFieldValues();

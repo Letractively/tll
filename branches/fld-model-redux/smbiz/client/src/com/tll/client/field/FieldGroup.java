@@ -439,12 +439,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return descriptor() + " (FieldGroup)";
 	}
 
-	public void draw() {
-		for(IField field : fields) {
-			field.draw();
-		}
-	}
-
 	public boolean isDirty() {
 		for(IField field : fields) {
 			if(field.isDirty()) return true;

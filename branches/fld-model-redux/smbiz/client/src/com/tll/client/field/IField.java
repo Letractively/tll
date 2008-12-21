@@ -117,11 +117,6 @@ public interface IField extends IPropertyNameProvider, SourcesFocusEvents, Sourc
 	void reset();
 
 	/**
-	 * Draws or re-draws the field in the UI.
-	 */
-	void draw();
-
-	/**
 	 * Does the current field value differ from the reset value?
 	 */
 	boolean isDirty();
