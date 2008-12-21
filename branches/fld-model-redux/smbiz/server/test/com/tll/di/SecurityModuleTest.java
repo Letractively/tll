@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.guice;
+package com.tll.di;
 
 import org.testng.annotations.Test;
 
