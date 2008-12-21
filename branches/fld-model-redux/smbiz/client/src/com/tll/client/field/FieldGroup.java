@@ -75,7 +75,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param set The set of found fields
 	 */
 	private static void findFields(final String propPath, FieldGroup group, Set<IField> set) {
-		List<FieldGroup> glist = new ArrayList<FieldGroup>();
+		List<FieldGroup> glist = null;
 		for(IField fld : group) {
 			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().startsWith(propPath)) {
@@ -83,13 +83,32 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 				}
 			}
 			else {
+				if(glist == null) glist = new ArrayList<FieldGroup>();
 				glist.add((FieldGroup) fld);
 			}
 		}
-		if(glist.size() > 0) {
+		if(glist != null) {
 			for(FieldGroup fg : glist) {
 				findFields(propPath, fg, set);
 			}
+		}
+	}
+
+	/**
+	 * Recursively sets the given parent property path to all child fields'
+	 * property names.
+	 * @param parentPropPath The parent property path to set
+	 */
+	private static void setParentPropertyPath(IField field, String parentPropPath) {
+		if(field instanceof FieldGroup) {
+			for(IField f : (FieldGroup) field) {
+				setParentPropertyPath(f, parentPropPath);
+			}
+		}
+		else {
+			final PropertyPath p = new PropertyPath(field.getPropertyName());
+			p.setParentPropertyPath(parentPropPath);
+			field.setPropertyName(p.toString());
 		}
 	}
 
@@ -251,7 +270,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Adds a field directly under this field group.
+	 * Adds a field to this field group.
 	 * @param field
 	 * @see #addField(String, IField)
 	 */
@@ -260,22 +279,16 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	}
 
 	/**
-	 * Adds a field directly under this field group pre-pending the given parent
-	 * property path to the field's <em>existing</em> property name.
-	 * @param parentPropPath Pre-pended to the field's property name before the
-	 *        field is added. May be <code>null</code> in which case the field's
-	 *        property name remains un-altered.
+	 * Adds a field to this field group pre-pending the given parent property path
+	 * to the field's <em>existing</em> property name.
+	 * @param parentPropPath Pre-pended to the field's "root" (non-path) property
+	 *        name before the field is added. May be <code>null</code> in which
+	 *        case the field's property name remains un-altered. If the field has
+	 *        an parent property path is is <em>replaced</em>.
 	 * @param field The field to add
 	 */
 	public void addField(String parentPropPath, IField field) {
-		if(parentPropPath != null) {
-			if(field instanceof FieldGroup) {
-				((FieldGroup) field).prePendPropertyName(parentPropPath);
-			}
-			else {
-				field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
-			}
-		}
+		setParentPropertyPath(field, parentPropPath);
 		fields.add(field);
 	}
 
@@ -354,22 +367,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(clc != null) {
 			for(IField fld : clc) {
 				removeField(fld);
-			}
-		}
-	}
-
-	/**
-	 * Recursively pre-pends the given property path to all child fields' property
-	 * names.
-	 * @param propertyPath The property path to pre-pend
-	 */
-	private void prePendPropertyName(String propertyPath) {
-		for(IField fld : this) {
-			if(fld instanceof FieldGroup) {
-				((FieldGroup) fld).prePendPropertyName(propertyPath);
-			}
-			else {
-				fld.setPropertyName(PropertyPath.getPropertyPath(propertyPath, fld.getPropertyName()));
 			}
 		}
 	}

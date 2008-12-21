@@ -263,7 +263,8 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * @return The last node path.
+	 * @return The last node path. This can be considered as the property name in
+	 *         a property path.
 	 */
 	public String last() {
 		return buf == null ? null : pathAt(depth() - 1);
@@ -309,42 +310,6 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Strips the indexing from the end of this property path returninng the
-	 * resultant path which effectively is the parent to the indexed property.
-	 * @return New property path stripped of trailing indexing or
-	 *         <code>null</code> if this property path is not an indexed property.
-	 */
-	public PropertyPath indexedParent() {
-		if(buf.length() > 4 && isIndexed()) {
-			for(int i = buf.length() - 3; i >= 0; --i) {
-				final char c = buf.charAt(i);
-				if(c == LEFT_INDEX_CHAR) {
-					return new PropertyPath(buf.substring(0, i));
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the first found node index that is indexed starting at the given
-	 * index.
-	 * @param nodeIndex The node index where searching starts
-	 * @return The index of the nearest node that is indexed or <code>-1</code> if
-	 *         no indexed node is found.
-	 */
-	public int nextIndexedNode(int nodeIndex) {
-		int i = nodeIndex;
-		do {
-			final String prop = pathAt(i);
-			if(prop.charAt(prop.length() - 1) == RIGHT_INDEX_CHAR) {
-				return i;
-			}
-		} while(++i < len);
-		return -1;
-	}
-
-	/**
 	 * Calculates the node index for the given node path String presumed to be
 	 * part of this property path.
 	 * @param nodePath The node path String that is part of this property path.
@@ -360,30 +325,38 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Returns the ancestor property path of this property path based on a desired
-	 * number of nodes to traverse up the property path starting at the last
-	 * (right-most) node.
-	 * @param delta The number of nodes to traverse upward
-	 * @return An ancestral property path of this property path or
-	 *         <code>null</code> if the delta exceeds the depth of this property
-	 *         path.
+	 * @return The sub-property path beginning from the first node to second to
+	 *         last node or <code>null</code> if this path is empty or has only
+	 *         one node.
 	 */
-	public PropertyPath ancestor(int delta) {
-		if(buf == null || delta > len - 1) return null;
-		assert buf != null && len > 0;
-		return delta == 0 ? this : new PropertyPath(buf.substring(0, bufIndex(len - delta) - 1));
+	public String getParentPropertyPath() {
+		final int d = depth();
+		if(d < 2) return null;
+		final int indx = bufIndex(d - 1);
+		return buf.substring(0, indx - 1);
 	}
 
 	/**
-	 * Extracts a child property path from this property path starting from the
-	 * top-most node traversing a desired number of child nodes.
-	 * @param depth The number of nested nodes to traverse
-	 * @return The nested (child) property path
+	 * Sets the parent property path or removes the existing one if the given
+	 * parent property path is <code>null</code>.
+	 * @param parentPropPath The parent property path. May be <code>null</code> in
+	 *        which case, the existing parent property path is removed.
+	 * @return <code>true</code> if the parent property path was successfully set
+	 *         or <code>false</code> when this property path is empty.
 	 */
-	public PropertyPath nested(int depth) {
-		if(buf == null || len < 2 || depth > len - 1) return null;
-		assert buf != null && len >= 0;
-		return depth == 0 ? this : new PropertyPath(buf.substring(bufIndex(depth)));
+	public boolean setParentPropertyPath(String parentPropPath) {
+		final int d = depth();
+		if(d == 0) {
+			return false;
+		}
+		else if(d == 1) {
+			parse(getPropertyPath(parentPropPath, buf.toString()));
+		}
+		else {
+			// d > 1
+			parse(getPropertyPath(parentPropPath, last()));
+		}
+		return true;
 	}
 
 	/**
@@ -437,7 +410,7 @@ public final class PropertyPath {
 	 * @param path The property path to append
 	 */
 	public void append(String path) {
-		parse(getPropertyPath(this.buf.toString(), path));
+		parse(getPropertyPath(buf == null ? null : buf.toString(), path));
 	}
 
 	/**
