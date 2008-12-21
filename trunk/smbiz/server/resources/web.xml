@@ -11,14 +11,14 @@
   <context-param>
     <param-name>guice.module.classnames</param-name>
     <param-value>
-      com.tll.guice.VelocityModule
-      com.tll.guice.MailModule
-      com.tll.guice.AppRefDataModule
-      com.tll.guice.MockEntitiesModule
-      com.tll.guice.JpaModule
-      com.tll.guice.DaoModule
-      com.tll.guice.EntityServiceModule
-      com.tll.guice.SecurityModule
+      com.tll.di.VelocityModule
+      com.tll.di.MailModule
+      com.tll.di.AppRefDataModule
+      com.tll.di.MockEntitiesModule
+      com.tll.di.JpaModule
+      com.tll.di.DaoModule
+      com.tll.di.EntityServiceModule
+      com.tll.di.SecurityModule
     </param-value>
   </context-param>
 

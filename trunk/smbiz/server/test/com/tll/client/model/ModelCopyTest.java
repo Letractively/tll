@@ -70,10 +70,10 @@ public class ModelCopyTest extends AbstractModelTest {
 	private void validateCopy(final Model source, final Model copy, final List<Model> visited) throws Exception {
 		assert source != null && copy != null;
 
-		for(final Iterator<IPropertyBinding> itr = source.iterator(); itr.hasNext();) {
-			final IPropertyBinding srcPv = itr.next();
+		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
+			final IModelProperty srcPv = itr.next();
 			final String propName = srcPv.getPropertyName();
-			final IPropertyBinding cpyPv = copy.getBinding(new PropertyPath(propName));
+			final IModelProperty cpyPv = copy.getProperty(propName);
 
 			// verify like types
 			validateEqualTypes(srcPv, cpyPv);

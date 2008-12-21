@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.EventListener;
 
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.model.IData;
 
 /**
  * ISourcesListingEvents - Propagates listing related events.
  * @see IListingListener
  * @author jpk
  */
-public interface ISourcesListingEvents<R extends IData> extends EventListener {
+public interface ISourcesListingEvents<R> extends EventListener {
 
 	/**
 	 * Adds a listener to receive edit related events.
@@ -33,7 +32,7 @@ public interface ISourcesListingEvents<R extends IData> extends EventListener {
 	 * ListingListenerCollection
 	 * @author jpk
 	 */
-	public static final class ListingListenerCollection<R extends IData> extends ArrayList<IListingListener<R>> {
+	public static final class ListingListenerCollection<R> extends ArrayList<IListingListener<R>> {
 
 		public void fireListingEvent(ListingEvent<R> event) {
 			for(IListingListener<R> listener : this) {

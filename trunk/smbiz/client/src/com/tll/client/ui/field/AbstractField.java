@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusListener;
@@ -14,37 +15,24 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.HasFormat;
+import com.tll.client.Style;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
-import com.tll.client.model.IPropertyBinding;
-import com.tll.client.model.IPropertyValue;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.StringUtil;
-import com.tll.client.validate.BooleanValidator;
-import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
-import com.tll.client.validate.DateValidator;
-import com.tll.client.validate.DecimalValidator;
-import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
-import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, FocusListener {
+public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, ChangeListener, FocusListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -58,76 +46,44 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	private static final String dfltReadOnlyEmptyValue = "-";
 
-	private static final String styleChanged = "changed";
-	private static final String styleError = MsgLevel.ERROR.getName().toLowerCase();
-	private static final String styleWarn = MsgLevel.WARN.getName().toLowerCase();
-
-	/**
-	 * IntrinsicValidator - validates the field's intrinsic properties. <br>
-	 * <em>When validating, this validator is always invoked first.</em>
-	 * @author jpk
-	 */
-	private class IntrinsicValidator implements IValidator {
-
-		public Object validate(Object value) throws ValidationException {
-			if(isRequired()) {
-				NotEmptyValidator.INSTANCE.validate(value);
-			}
-			if(this instanceof HasMaxLength) {
-				final int maxlen = ((HasMaxLength) this).getMaxLen();
-				if(maxlen != -1) {
-					StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-			return value;
-		}
-
-	}
-
 	/**
 	 * The unique DOM element id of this field.
 	 */
 	private final String domId;
 
 	/**
-	 * The field name synonymous w/ the property name when considered in a
-	 * property path context. Can NOT be <code>null</code>.
+	 * The designated property name for this field. This is used as the the form
+	 * input name.
 	 */
 	private String propName;
 
 	/**
-	 * The field value. This property is necessary when considering read-only
-	 * state and needing the ability to set a field's value PRIOR to rendering.
+	 * The field value. This property is necessary since a field has the ability
+	 * to toggle between editable and read-only states and the value may be set
+	 * before the field is initially drawn in the UI.
 	 */
-	protected String value;
+	private String value;
 
 	/**
-	 * The value the field is set at when {@link #reset()} is called.
+	 * The value the field is set to when {@link #reset()} is called.
 	 */
-	private String resetValue;
+	private String resetValue = "";
 
 	private boolean required = false;
 	private boolean readOnly = false;
 	private boolean enabled = true;
 
-	private HTML rof; // the read-only field
+	/**
+	 * The read-only field Widget.
+	 */
+	private HTML rof;
 
 	/**
-	 * The field edits.
+	 * The optional field label that is <em>not</em> a child of this Widget. This
+	 * class only *logically* owns the field label and <em>not</em> physically
+	 * (dom-wise).
 	 */
-	private final CompositeValidator validators = new CompositeValidator();
-
-	/**
-	 * The validated model value that is set only when the field value is altered.
-	 */
-	private Object modelValue;
-
-	/**
-	 * The optional field label that is <em>not</em> a child of this Widget. In
-	 * other words, this field logically owns the field label but <em>not</em>
-	 * physically (dom-wise).
-	 */
-	protected FieldLabel fldLbl;
+	private final FieldLabel fldLbl;
 
 	/**
 	 * The Composite wrapped widget containing only the editable field or
@@ -137,27 +93,37 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	/**
 	 * The desired ancestor Widget reference for the field and the field label
-	 * necessary to ensure certain styling rules are properly applied since the
-	 * field label is not a child of this Widget. These may or may <em>not</em> be
-	 * the immediate parents hence the need for these declarations.
+	 * necessary respectively ensuring certain styling rules are properly applied
+	 * since the field label is not necessarily a child of this Widget.
 	 */
 	private Widget container, labelContainer;
 
 	/**
+	 * The field validator(s).
+	 */
+	private IValidator validator;
+
+	/**
+	 * The cached validated value.
+	 */
+	private Object validatedValue;
+
+	/**
 	 * Constructor
-	 * @param propName The property name to associate w/ this field.
-	 * @param lblTxt The field label text.
+	 * @param propName The unique field propName.
+	 * @param lblTxt The field label text. If <code>null</code>, no field label is
+	 *        created.
 	 * @throws IllegalArgumentException When a <code>null</code> or zero-length
-	 *         property name is given.
+	 *         property propName is given.
 	 */
 	public AbstractField(String propName, String lblTxt) {
-
-		this.domId = 'f' + Integer.toString(++fieldCounter);
-
-		// pnl.setStyleName(CSS_FIELD);
-		initWidget(pnl);
-
+		domId = 'f' + Integer.toString(++fieldCounter);
 		setPropertyName(propName);
+
+		// TODO is this style setting necessary?
+		pnl.setStyleName(STYLE_FIELD);
+
+		initWidget(pnl);
 
 		// create field label if label text specified
 		if(lblTxt != null) {
@@ -165,12 +131,9 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 			fldLbl.setFor(domId);
 			fldLbl.addClickListener(this);
 		}
-
-		// do core field validation
-		// IMPT: the core validator is first in the list of validators where the
-		// last in the list
-		// shall provide the transformed model value
-		addValidator(new IntrinsicValidator());
+		else {
+			fldLbl = null;
+		}
 	}
 
 	/**
@@ -192,8 +155,9 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	/**
-	 * @return The {@link FieldLabel}. <em>NOTE: </em>The field label is
-	 *         <em>NOT</em> a child of this composite Widget.
+	 * @return The {@link FieldLabel}. <br>
+	 *         <em>NOTE: </em>The field label is <em>NOT</em> a child of this
+	 *         composite Widget.
 	 */
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
@@ -212,30 +176,9 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public final void setPropertyName(String propName) {
 		if(StringUtil.isEmpty(propName)) {
-			throw new IllegalArgumentException("A field property name can't be empty.");
+			throw new IllegalArgumentException("A field propName can't be empty.");
 		}
 		this.propName = propName;
-	}
-
-	private void draw() {
-		Widget fld;
-		if(readOnly) {
-			if(rof == null) {
-				rof = new HTML();
-			}
-			String val = getReadOnlyHtml();
-			assert val != null;
-			rof.setHTML(val);
-			fld = rof;
-		}
-		else {
-			fld = (Widget) getEditable(value);
-		}
-		assert fld != null;
-		if(pnl.getWidget() != fld) {
-			fld.getElement().setPropertyString("id", domId);
-			pnl.setWidget(fld);
-		}
 	}
 
 	public final boolean isReadOnly() {
@@ -243,18 +186,16 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setReadOnly(boolean readOnly) {
-		if(readOnly != this.readOnly) {
-			this.readOnly = readOnly;
-			if(fldLbl != null) {
-				fldLbl.setRequired(readOnly ? false : required);
-			}
-			if(!readOnly) {
-				Widget w = (Widget) getEditable(null);
-				assert w != null;
-				w.getElement().setPropertyBoolean("disabled", !enabled);
-			}
-			if(isAttached()) draw();
+		// if we go from editable to read-only mode, carry the value over
+		if(isAttached() && !this.readOnly) {
+			value = getEditableValue();
 		}
+
+		// hide the field label required indicator if we are in read-only state
+		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
+
+		this.readOnly = readOnly;
+		if(isAttached()) draw();
 	}
 
 	public final boolean isRequired() {
@@ -262,12 +203,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setRequired(boolean required) {
-		if(this.required != required) {
-			this.required = required;
-			if(fldLbl != null) {
-				fldLbl.setRequired(readOnly ? false : required);
-			}
+		// show/hide the field label required indicator
+		if(fldLbl != null) {
+			fldLbl.setRequired(readOnly ? false : required);
 		}
+
+		this.required = required;
 	}
 
 	public final boolean isEnabled() {
@@ -275,29 +216,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setEnabled(boolean enabled) {
-		if(enabled != this.enabled) {
-			this.enabled = enabled;
-
-			clearValidationStyling();
-
-			// resolve the parents
-			final Widget fldContainer = container == null ? this : container;
-			final Widget lblContainer = fldLbl == null ? null : labelContainer == null ? fldLbl : labelContainer;
-
-			if(enabled) {
-				fldContainer.removeStyleName(CSS.DISABLED);
-				if(lblContainer != null) lblContainer.removeStyleName(CSS.DISABLED);
-			}
-			else {
-				fldContainer.addStyleName(CSS.DISABLED);
-				if(lblContainer != null) lblContainer.addStyleName(CSS.DISABLED);
-			}
-
-			if(!readOnly) {
-				Widget w = (Widget) getEditable(null);
-				w.getElement().setPropertyBoolean("disabled", !enabled);
-			}
-		}
+		this.enabled = enabled;
+		if(isAttached()) draw();
 	}
 
 	@Override
@@ -306,8 +226,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	/**
-	 * We override to handle setting the visibility for the label as well and also
-	 * to apply visibility to the directed parent Widget.
+	 * We override to handle setting the visibility for the label as well as the
+	 * visibility to the containing Widget.
 	 */
 	@Override
 	public final void setVisible(boolean visible) {
@@ -331,14 +251,14 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 * Obtains the editable Widget and optionally sets its value.
 	 * @param value The value to to be populated into the form control. If
 	 *        <code>null</code>, the UI form value shall <em>not</em> be altered.
-	 * @return The ui field control.
+	 * @return The editable UI field (form) control.
 	 */
 	protected abstract HasFocus getEditable(String value);
 
 	/**
-	 * The method grabs the current form element value and is employed when this
-	 * field is editable and a call to {@link #getValue()} is invoked.
-	 * @return The editable form element value.
+	 * The method grabs the current form element value in a consistent manner.
+	 * Since the various form controls inherently do <em>not</em> have single
+	 * common method to do so, this method exists.
 	 */
 	protected abstract String getEditableValue();
 
@@ -353,249 +273,278 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		this.value = value;
 	}
 
+	public final String getResetValue() {
+		return resetValue;
+	}
+
+	public final void setResetValue(String resetValue) {
+		this.resetValue = resetValue == null ? "" : resetValue;
+	}
+
+	public final boolean isDirty() {
+		return !resetValue.equals(getValue());
+	}
+
+	public void dirtyCheck() {
+		if(isDirty()) {
+			addStyleName(STYLE_DIRTY);
+		}
+		else {
+			removeStyleName(STYLE_DIRTY);
+		}
+	}
+
+	/**
+	 * Adds a field validator to this binding.
+	 * @param validator The validator to add
+	 */
+	public final void addValidator(IValidator validator) {
+		if(validator == null || validator == NotEmptyValidator.INSTANCE || validator instanceof StringLengthValidator) {
+			throw new IllegalArgumentException("Invalid field validator");
+		}
+		if(this.validator == null) {
+			this.validator = validator;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			((CompositeValidator) this.validator).add(validator);
+		}
+		else {
+			CompositeValidator cv = new CompositeValidator();
+			cv.add(this.validator);
+			cv.add(validator);
+			this.validator = cv;
+		}
+	}
+
+	public final void removeValidator(IValidator validator) {
+		if(validator == null || this.validator == null) return;
+		if(this.validator == validator) {
+			this.validator = null;
+		}
+		else if(this.validator instanceof CompositeValidator) {
+			CompositeValidator cv = (CompositeValidator) this.validator;
+			cv.remove(validator);
+		}
+	}
+
+	public final void validate() throws ValidationException {
+		// we start with the field's current value
+		Object value = getValue();
+
+		List<Msg> errorMsgs = null;
+
+		try {
+			// check field requiredness
+			if(isRequired()) {
+				value = NotEmptyValidator.INSTANCE.validate(value);
+			}
+
+			// check max length
+			if(this instanceof HasMaxLength) {
+				final int maxlen = ((HasMaxLength) this).getMaxLen();
+				if(maxlen != -1) {
+					value = StringLengthValidator.validate(value, -1, maxlen);
+				}
+			}
+		}
+		catch(ValidationException ve) {
+			errorMsgs = ve.getValidationMessages();
+		}
+
+		try {
+			if(validator != null) {
+				value = validator.validate(value);
+			}
+		}
+		catch(ValidationException ve) {
+			if(errorMsgs == null) {
+				errorMsgs = ve.getValidationMessages();
+			}
+			else {
+				errorMsgs.addAll(ve.getValidationMessages());
+			}
+			throw ve;
+		}
+		finally {
+			clearMsgs();
+			markInvalid(errorMsgs != null, errorMsgs);
+		}
+
+		this.validatedValue = value;
+	}
+
+	public final Object getValidatedValue() {
+		return validatedValue;
+	}
+
+	public void markInvalid(boolean invalid, List<Msg> msgs) {
+		if(invalid) {
+			addStyleName(STYLE_INVALID);
+			if(msgs != null) {
+				addMsgs(msgs);
+			}
+		}
+		else {
+			removeStyleName(STYLE_INVALID);
+		}
+	}
+
+	public final void reset() {
+		setValue(resetValue);
+		validatedValue = null;
+		clearMsgs();
+		removeStyleName(STYLE_DIRTY);
+		removeStyleName(STYLE_INVALID);
+		if(isAttached()) draw();
+	}
+
 	/**
 	 * @return Valid HTML String displayed in the UI when this field is read-only.
-	 *         Sub-classes should override for special bahavior. E.g.:
-	 *         abbreviating the value for those fields that implement
+	 *         Sub-classes should override for special behavior. <br>
+	 *         E.g.: abbreviating the value for those fields that implement
 	 *         {@link HasMaxLength}.
 	 */
 	protected String getReadOnlyHtml() {
 		return (value == null || value.length() == 0) ? dfltReadOnlyEmptyValue : value;
 	}
 
-	private void clearValidationStyling() {
-		MsgManager.instance.clear(this, false);
-		removeStyleName(styleError);
-		removeStyleName(styleWarn);
+	private void addMsgs(List<Msg> msgs) {
+		MsgManager.instance().post(false, msgs, Position.BOTTOM, this, -1, false).show();
 	}
 
-	private void addEditStyling() {
-		addStyleName(styleChanged);
+	private void clearMsgs() {
+		MsgManager.instance().clear(this, true);
 	}
 
-	private void clearEditStyling() {
-		removeStyleName(styleChanged);
+	private void toggleMsgs() {
+		MsgManager.instance().toggle(this, true);
 	}
 
-	public final void markReset() {
-		resetValue = getValue();
-		clearEditStyling();
-	}
-
-	public final void reset() {
-		clearValidationStyling();
-		clearEditStyling();
-		setValue(resetValue);
-		draw();
-	}
-
-	public void clear() {
-		clearValidationStyling();
-		clearEditStyling();
-		setValue(null);
-	}
-
-	public final void bindModel(IPropertyBinding binding) {
-		if(binding instanceof IPropertyValue == false)
-			throw new IllegalArgumentException("Non-group fields may only bind to property values.");
-		final IPropertyValue pv = (IPropertyValue) binding;
-
-		GlobalFormat format = (this instanceof HasFormat) ? ((HasFormat) this).getFormat() : null;
-
-		// set property meta data related field properties
-		PropertyMetadata metadata = pv.getMetadata();
-		if(metadata != null) {
-
-			setRequired(metadata.isRequired() && !metadata.isManaged());
-			if(this instanceof HasMaxLength) {
-				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
+	private void draw() {
+		Widget fw;
+		if(readOnly) {
+			if(rof == null) {
+				rof = new HTML();
 			}
+			rof.setHTML(getReadOnlyHtml());
+			fw = rof;
+		}
+		else {
+			fw = (Widget) getEditable(value);
+			// apply disabled property to form control directly
+			fw.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
+		}
 
-			// critical: set the type coercion validator
-			switch(metadata.getPropertyType()) {
-				case BOOL:
-					addValidator(BooleanValidator.INSTANCE);
-					break;
-				case CHAR:
-					addValidator(CharacterValidator.INSTANCE);
-					break;
-				case DATE: {
-					switch(format) {
-						case DATE:
-							addValidator(DateValidator.DATE_VALIDATOR);
-							break;
-						case TIME:
-							addValidator(DateValidator.TIME_VALIDATOR);
-							break;
-						default:
-						case TIMESTAMP:
-							addValidator(DateValidator.TIMESTAMP_VALIDATOR);
-							break;
-					}
-					break;
-				}
-				case FLOAT:
-				case DOUBLE: {
-					switch(format) {
-						case CURRENCY:
-							addValidator(DecimalValidator.CURRENCY_VALIDATOR);
-							break;
-						case PERCENT:
-							addValidator(DecimalValidator.PERCENT_VALIDATOR);
-							break;
-						case DECIMAL:
-							addValidator(DecimalValidator.DECIMAL_VALIDATOR);
-							break;
-					}
-					break;
-				}
-				case INT:
-				case LONG:
-					addValidator(IntegerValidator.INSTANCE);
-					break;
+		// set the field widget and its dom id property
+		if(pnl.getWidget() != fw) {
+			fw.getElement().setPropertyString("id", domId);
+			pnl.setWidget(fw);
+		}
 
-				case STRING_MAP:
-					// TODO handle string map type coercion ?
-					break;
+		// resolve the containers
+		final Widget fldContainer = container == null ? this : container;
+		final Widget lblContainer = fldLbl == null ? null : labelContainer == null ? fldLbl : labelContainer;
 
-				case ENUM:
-				case STRING:
-					// no type coercion validator needed
-					break;
+		// apply enabled property to "containing" widget
+		if(enabled) {
+			fldContainer.removeStyleName(Style.DISABLED);
+			if(lblContainer != null) lblContainer.removeStyleName(Style.DISABLED);
+		}
+		else {
+			fldContainer.addStyleName(Style.DISABLED);
+			if(lblContainer != null) lblContainer.addStyleName(Style.DISABLED);
+		}
 
-				default:
-					throw new IllegalStateException("Unhandled model property type: " + metadata.getPropertyType().name());
+		if(!enabled || readOnly) {
+			// remove all msgs, edit and validation styling
+			clearMsgs();
+			removeStyleName(STYLE_INVALID);
+			removeStyleName(STYLE_DIRTY);
+		}
+		else if(enabled && !readOnly) {
+			// show/hide edit styling
+			if(isDirty()) {
+				addStyleName(STYLE_DIRTY);
+			}
+			else {
+				removeStyleName(STYLE_DIRTY);
 			}
 		}
-
-		// stringize value of the model property value
-		String strval = Fmt.format(pv.getValue(), format);
-
-		// assign the reset value
-		resetValue = strval;
-
-		// clear out styling and set the current value to the just assigned reset
-		// value
-		reset();
-	}
-
-	public boolean updateModel(IPropertyBinding binding) {
-		if(binding instanceof IPropertyValue == false)
-			throw new IllegalArgumentException("Non-group fields may only update model property values.");
-
-		try {
-			((IPropertyValue) binding).setValue(modelValue);
-		}
-		catch(IllegalArgumentException e) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public final void validate() throws ValidationException {
-		try {
-			modelValue = validators.validate(getValue());
-			clearValidationStyling();
-		}
-		catch(ValidationException ve) {
-			handleValidationFeedback(ve);
-			throw ve;
-		}
-	}
-
-	public final void handleValidationFeedback(IValidationFeedback feedback) {
-		List<Msg> msgs = feedback.getValidationMessages();
-		if(msgs == null) return;
-		boolean error = false, warn = false;
-		for(Msg msg : msgs) {
-			if(msg.getLevel().isError())
-				error = true;
-			else if(msg.getLevel() == MsgLevel.WARN) warn = true;
-		}
-		if(error)
-			addStyleName(styleError);
-		else if(warn) addStyleName(styleWarn);
-		clearEditStyling();
-		MsgManager.instance.post(false, msgs, Position.BOTTOM, this, -1, true).show();
-	}
-
-	public final void addValidator(IValidator validator) {
-		validators.add(validator);
 	}
 
 	public void onClick(Widget sender) {
-		if(sender == fldLbl) MsgManager.instance.toggle(this, false);
+		// toggle the display of any bound UI msgs for this field when the field
+		// label is clicked
+		if(sender == fldLbl) toggleMsgs();
 	}
 
 	public final void addKeyboardListener(KeyboardListener listener) {
-		if(!isReadOnly()) {
-			getEditable(null).addKeyboardListener(listener);
-		}
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
+		// if(!isReadOnly()) {
+		getEditable(null).addKeyboardListener(listener);
+		// }
 	}
 
 	public final void removeKeyboardListener(KeyboardListener listener) {
-		if(!isReadOnly()) {
-			getEditable(null).removeKeyboardListener(listener);
-		}
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
+		// if(!isReadOnly()) {
+		getEditable(null).removeKeyboardListener(listener);
+		// }
 	}
 
 	public final void addFocusListener(FocusListener listener) {
-		if(!isReadOnly()) {
-			getEditable(null).addFocusListener(listener);
-		}
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
+		// if(!isReadOnly()) {
+		getEditable(null).addFocusListener(listener);
+		// }
 	}
 
 	public final void removeFocusListener(FocusListener listener) {
-		if(!isReadOnly()) {
-			getEditable(null).removeFocusListener(listener);
-		}
+		// NOTE: we must be deterministic here as the editability may intermittently
+		// change
+		// if(!isReadOnly()) {
+		getEditable(null).removeFocusListener(listener);
+		// }
 	}
 
 	public final int getTabIndex() {
-		return isReadOnly() ? -1 : getEditable(null).getTabIndex();
+		return readOnly ? -1 : getEditable(null).getTabIndex();
 	}
 
 	public final void setAccessKey(char key) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setTabIndex(key);
 		}
 	}
 
 	public final void setFocus(boolean focused) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setFocus(focused);
 		}
 	}
 
 	public final void setTabIndex(int index) {
-		if(!isReadOnly()) {
+		if(!readOnly) {
 			getEditable(null).setTabIndex(index);
 		}
 	}
 
-	public final void onFocus(Widget sender) {
+	public void onChange(Widget sender) {
+		// dirty check
+		dirtyCheck();
 	}
 
-	/**
-	 * This is when we perform actual field validation and retain the validated
-	 * model value for later application when
-	 * {@link #updateModel(IPropertyBinding)} is called.
-	 */
-	public final void onLostFocus(Widget sender) {
-		final String currentValue = getValue();
-		assert currentValue != null;
+	public void onFocus(Widget sender) {
+		// no-op
+	}
 
+	public void onLostFocus(Widget sender) {
+		// valid check
 		try {
 			validate();
-
-			// we are valid so check if changed
-			if(currentValue.equals(resetValue)) {
-				clearEditStyling();
-			}
-			else {
-				addEditStyling();
-			}
 		}
 		catch(ValidationException e) {
 			// no-op
@@ -603,9 +552,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	@Override
+	protected void onLoad() {
+		super.onLoad();
+		draw();
+	}
+
+	@Override
 	protected void onUnload() {
 		super.onUnload();
-		MsgManager.instance.clear(this, false);
+		clearMsgs();
 	}
 
 	@Override

@@ -8,9 +8,9 @@ import org.testng.annotations.Test;
 import com.google.inject.Injector;
 import com.tll.SystemError;
 import com.tll.TestBase;
-import com.tll.guice.DaoModule;
-import com.tll.guice.JpaModule;
-import com.tll.guice.MockEntitiesModule;
+import com.tll.di.DaoModule;
+import com.tll.di.JpaModule;
+import com.tll.di.MockEntitiesModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 

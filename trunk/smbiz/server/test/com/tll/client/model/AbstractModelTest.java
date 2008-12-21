@@ -12,7 +12,7 @@ import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
-import com.tll.guice.DaoModule;
+import com.tll.di.DaoModule;
 
 /**
  * ModelCopyTest - Test the {@link Model#copy()} method.

@@ -37,6 +37,14 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 
 	private boolean atCurrent;
 
+	/**
+	 * Constructor
+	 */
+	public FlowFieldPanelComposer() {
+		super();
+		vp.setStyleName(IField.STYLE_FIELD);
+	}
+
 	public void setCanvas(Panel canvas) {
 		canvas.add(vp);
 	}
@@ -53,7 +61,7 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			fp.setStyleName(IField.CSS_FIELD);
+			// fp.setStyleName(IField.STYLE_FIELD);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");
@@ -77,9 +85,9 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	/**
 	 * Adds a field label and Widget to the canvas. If the label text is
 	 * <code>null</code>, no label is added. If the Widget is an IField
-	 * {@link #addField(AbstractField)} should be called instead.
+	 * {@link #addField(IField)} should be called instead.
 	 * @param label The label text
-	 * @param w The non-IField and non-FieldGroupPanel Widget to add
+	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
@@ -90,10 +98,11 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(AbstractField field) {
-		add(field.getFieldLabel(), field);
-		field.setContainer(last.getParent());
-		field.setLabelContainer(last.getParent());
+	public void addField(IField field) {
+		AbstractField af = (AbstractField) field;
+		add(af.getFieldLabel(), af);
+		af.setContainer(last.getParent());
+		af.setLabelContainer(last.getParent());
 	}
 
 	/**

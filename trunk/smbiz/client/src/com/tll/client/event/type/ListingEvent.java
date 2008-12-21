@@ -8,15 +8,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingPayload.ListingStatus;
-import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
- * ListingEvent - Fired when listing data is retrieved for a targeted listing.
+ * ListingEvent - Fired when listing data is retrieved or updated for a targeted
+ * listing.
  * @param <R> The row data type
  * @author jpk
  */
-public final class ListingEvent<R extends IData> extends BaseEvent {
+public final class ListingEvent<R> extends BaseEvent {
 
 	private final boolean success;
 	private final String listingName;

@@ -11,14 +11,14 @@ package com.tll.client.model;
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class MalformedPropPathException extends PropertyPathException {
+public final class MalformedPropPathException extends PropertyPathException {
 
 	/**
 	 * Constructor
 	 * @param propPath
 	 */
 	public MalformedPropPathException(final String propPath) {
-		super("Unable to resolve property path: " + propPath);
+		super("Unable to resolve property path: " + propPath, propPath);
 	}
 
 }

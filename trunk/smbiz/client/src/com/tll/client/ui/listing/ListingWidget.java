@@ -13,21 +13,20 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.Style;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.model.IData;
-import com.tll.client.ui.CSS;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R extends IData> extends Composite implements HasFocus, IListingListener<R> {
+public abstract class ListingWidget<R> extends Composite implements HasFocus, IListingListener<R> {
 
 	/**
 	 * The css class the top-most containing div gets.
@@ -87,7 +86,7 @@ public abstract class ListingWidget<R extends IData> extends Composite implement
 		}
 
 		// portal
-		portal.setStyleName(CSS.PORTAL);
+		portal.setStyleName(Style.PORTAL);
 		tableViewPanel.add(portal);
 
 		// table

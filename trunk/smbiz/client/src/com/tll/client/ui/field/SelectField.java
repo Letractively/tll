@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -38,8 +39,17 @@ public class SelectField extends AbstractDataMapField {
 				}
 			}
 			lb.addFocusListener(this);
+			lb.addChangeListener(this);
 		}
 		return lb;
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		getListBox().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getListBox().removeChangeListener(listener);
 	}
 
 	@Override
@@ -69,5 +79,4 @@ public class SelectField extends AbstractDataMapField {
 		super.setDataMap(dataMap);
 		lb = null; // force re-create for case when already created
 	}
-
 }

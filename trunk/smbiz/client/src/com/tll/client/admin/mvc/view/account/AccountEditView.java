@@ -7,6 +7,8 @@ package com.tll.client.admin.mvc.view.account;
 import com.tll.client.admin.ui.field.account.AccountPanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
+import com.tll.client.field.AbstractFieldGroupModelBinding;
+import com.tll.client.model.Model;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
@@ -46,10 +48,25 @@ public class AccountEditView extends EditView {
 	}
 
 	/**
+	 * AccountEditBinding
+	 * @author jpk
+	 */
+	private static final class AccountEditBinding extends AbstractFieldGroupModelBinding {
+
+		@Override
+		protected Model doResolveModel(EntityType type) {
+			if(type == EntityType.ACCOUNT) {
+				return getModel(null);
+			}
+			throw new IllegalArgumentException("Unsupported model type");
+		}
+	}
+
+	/**
 	 * Constructor
 	 */
 	public AccountEditView() {
-		super(new AccountPanel(), entityOptions);
+		super(new AccountEditBinding(), new AccountPanel(), entityOptions);
 	}
 
 	@Override

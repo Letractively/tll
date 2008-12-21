@@ -5,7 +5,6 @@
  */
 package com.tll.model.schema;
 
-import com.tll.client.model.Model;
 
 /**
  * PropertyType - Generic and basic representation of bean properties such that
@@ -54,8 +53,8 @@ public enum PropertyType {
 	private static final int RELATIONAL_TYPES = RELATED_ONE.flag | RELATED_MANY.flag;
 
 	/**
-	 * {@link #MODEL_TYPES} corres. to relational types that map to a single
-	 * {@link Model} ref.
+	 * {@link #MODEL_TYPES} corres. to relational types that map to a single model
+	 * ref.
 	 */
 	private static final int MODEL_TYPES = RELATED_ONE.flag | INDEXED.flag;
 

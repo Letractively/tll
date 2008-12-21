@@ -20,17 +20,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.cache.AuxDataCache;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.rpc.AuxDataCommand;
-import com.tll.client.event.IRpcListener;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.RpcEvent;
+import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
-import com.tll.client.field.IFieldProvider;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -39,7 +34,6 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.CharacterPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.client.msg.Msg;
@@ -54,24 +48,18 @@ import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.EditPanel;
-import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
-import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.VerticalFieldPanelComposer;
-import com.tll.client.ui.listing.FieldListing;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
 
 /**
- * UI Tests - GWT module for the sole purpose of verifying the DOM/CSS of
+ * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
  * compiled GWT code.
  */
 public final class UITests implements EntryPoint, HistoryListener {
@@ -83,14 +71,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
 	static final String TEST_FIELDS = "TEST_FIELDS";
-	static final String TEST_FIELD_LISTING = "TEST_FIELD_LISTING";
 
 	static String[] tests = new String[] {
-		TEST_MSG_PANEL,
-		TEST_TOOLBAR,
-		TEST_VIEW_CONTAINER,
-		TEST_FIELDS,
-		TEST_FIELD_LISTING };
+		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -147,7 +130,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 			public void execute() {
 				testPanel.clear();
-				MsgManager.instance.clear();
+				MsgManager.instance().clear();
 
 				boolean gotoTest = true;
 				if(TEST_MSG_PANEL.equals(historyToken)) {
@@ -162,9 +145,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 				else if(TEST_FIELDS.equals(historyToken)) {
 					testFields();
 				}
-				else if(TEST_FIELD_LISTING.equals(historyToken)) {
-					testFieldListing();
-				}
 				else if("Back".equals(historyToken)) {
 					gotoTest = false;
 				}
@@ -178,7 +158,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel extends FieldGroupPanel {
+	private static final class TestFieldPanel extends FieldPanel {
 
 		private final AddressPanel ap;
 
@@ -191,13 +171,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 		public TestFieldPanel() {
 			super("Test Field Panel");
 			ap = new AddressPanel();
-			bf = FieldFactory.fbool("bf", null);
-			bflabel = FieldFactory.fbool("bflabel", "Boolean with Label");
+			bf = fbool("bf", null);
+			bflabel = fbool("bflabel", "Boolean with Label");
 		}
 
 		@Override
-		public void populateFieldGroup() {
-			addField("address", ap.getFieldGroup());
+		public void populateFieldGroup(FieldGroup fields) {
+			fields.addField("address", ap.getFieldGroup());
 
 			// set address2 as read only
 			ap.getFieldGroup().getField("address.address2").setReadOnly(true);
@@ -205,12 +185,12 @@ public final class UITests implements EntryPoint, HistoryListener {
 			// set city as read only
 			ap.getFieldGroup().getField("address.city").setReadOnly(true);
 
-			addField(bflabel);
-			addField(bf);
+			fields.addField(bflabel);
+			fields.addField(bf);
 		}
 
 		@Override
-		protected void draw(Panel canvas) {
+		protected void drawInternal(Panel canvas) {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -224,12 +204,60 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_FIELDS
 	 * <p>
-	 * Purpose: Renders a populated {@link InterfacesView} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link InterfacesView} to verify its
+	 * DOM/Style.
 	 */
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
 		final TestFieldPanel fieldPanel = new TestFieldPanel();
-		final EditPanel ep = new EditPanel(fieldPanel, true, true);
+		final EditPanel ep = new EditPanel(new IFieldGroupModelBinding() {
+
+			public void removeFieldBindingEventListener(IFieldBindingListener listener) {
+			}
+
+			public void addFieldBindingEventListener(IFieldBindingListener listener) {
+			}
+
+			public void unbind() {
+			}
+
+			public void setRootModel(Model model) {
+			}
+
+			public void setRootFieldGroup(FieldGroup fields) {
+			}
+
+			public void setModelValues() {
+			}
+
+			public void setFieldValues() {
+			}
+
+			public void bind() {
+			}
+
+			public String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType) {
+				return null;
+			}
+
+			public FieldGroup getRootFieldGroup() {
+				return null;
+			}
+
+			public Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
+				return null;
+			}
+
+			public void unbindField(IField field) {
+			}
+
+			public boolean isMarkedDeleted(String modelPropPath) {
+				return false;
+			}
+
+			public void markDeleted(String modelPropPath, boolean markDeleted) {
+			}
+		}, fieldPanel, true, true);
 		testPanel.add(ep);
 
 		Model address = new Model(EntityType.ADDRESS);
@@ -253,8 +281,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bflabel", true));
 		testModel.set(new BooleanPropertyValue("bf", false));
 
-		ep.getFields().bindModel(testModel.getBindingRef());
-		ep.setEditMode(testModel.isNew());
+		ep.setModel(testModel);
+		ep.draw();
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {
@@ -298,99 +326,10 @@ public final class UITests implements EntryPoint, HistoryListener {
 	}
 
 	/**
-	 * Gets aux data from the server.
-	 * @param onReadyListener Called when the aux data is ready on the client
-	 */
-	private void getAuxData(AuxDataRequest adr, IRpcListener onReadyListener) {
-		AuxDataCommand cmd = new AuxDataCommand(testPanel, adr);
-		cmd.addRpcListener(onReadyListener);
-		cmd.execute();
-	}
-
-	/**
-	 * <p>
-	 * Test: TEST_FIELD_LISTING
-	 * <p>
-	 * Purpose: Tests the FieldListing class.
-	 */
-	void testFieldListing() {
-
-		AuxDataRequest adr = new AuxDataRequest();
-		adr.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
-		adr.requestAppRefData(RefDataType.US_STATES);
-		adr.requestEntityPrototype(EntityType.ADDRESS);
-
-		getAuxData(adr, new IRpcListener() {
-
-			public void onRpcEvent(RpcEvent event) {
-				Column[] cols = new Column[] {
-					new Column("Address", "address1"),
-					new Column("City", "city"),
-					new Column("Zip", "postalCode") };
-
-				IFieldProvider fieldProvider = new IFieldProvider() {
-
-					public IField[] getFields() {
-						return new IField[] {
-							FieldFactory.ftext("address1", "Address 1", 40),
-							FieldFactory.ftext("city", "City", 30),
-							FieldFactory.fsuggest("province", "State", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES)),
-							FieldFactory.ftext("postalCode", "Zip", 20) };
-					}
-				};
-
-				IFieldRenderer fieldRenderer = new IFieldRenderer() {
-
-					public void draw(Panel canvas, FieldGroup fieldGroup, String parentPropertyPath) {
-						VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
-						cmpsr.setCanvas(canvas);
-
-						final PropertyPath pp = new PropertyPath(parentPropertyPath);
-						final int depth = pp.depth();
-
-						pp.append("address1");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-						pp.replaceAt(depth, "city");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-
-						pp.replaceAt(depth, "postalCode");
-						cmpsr.addField((AbstractField) fieldGroup.getField(pp.toString()));
-					}
-
-				};
-
-				FieldGroup pfg = new FieldGroup("Parent", testPanel, null);
-				pfg.addField(null, FieldFactory.createNameEntityField());
-				pfg.addFields(null, FieldFactory.createTimestampEntityFields());
-				pfg.addField(null, FieldFactory.createNameEntityField());
-				pfg.addField("addresses[0]", FieldFactory.ftext("emailAddress", "Email Address", 30));
-				pfg.addField("addresses[0]", FieldFactory.ftext("firstName", "First Name", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("lastName", "Last Name", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("mi", "MI", 1));
-				pfg.addField("addresses[0]", FieldFactory.ftext("company", "Company", 20));
-				pfg.addField("addresses[0]", FieldFactory.ftext("attn", "Attn", 10));
-				pfg.addField("addresses[0]", FieldFactory.ftext("address1", "Address 1", 40));
-				pfg.addField("addresses[0]", FieldFactory.ftext("address2", "Address 2", 40));
-				pfg.addField("addresses[0]", FieldFactory.ftext("city", "City", 30));
-				pfg.addField("addresses[0]", FieldFactory.fsuggest("province", "State/Province", AuxDataCache.instance()
-						.getRefDataMap(RefDataType.US_STATES)));
-				pfg.addField("addresses[0]", FieldFactory.ftext("postalCode", "Zip", 20));
-				pfg.addField("addresses[0]", FieldFactory.fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(
-						RefDataType.ISO_COUNTRY_CODES)));
-
-				FieldListing fl =
-						new FieldListing("testListing", EntityType.ADDRESS, cols, "addresses", pfg, fieldProvider, fieldRenderer);
-				testPanel.add(fl);
-			}
-		});
-	}
-
-	/**
 	 * <p>
 	 * Test: TEST_TOOLBAR
 	 * <p>
-	 * Purpose: Renders populated {@link Toolbar} impls to verify its DOM/CSS.
+	 * Purpose: Renders populated {@link Toolbar} impls to verify its DOM/Style.
 	 */
 	void testToolbar() {
 		ViewToolbar vt =
@@ -504,16 +443,13 @@ public final class UITests implements EntryPoint, HistoryListener {
 		public ShowViewRequest newViewRequest() {
 			return null;
 		}
-
-		public void onModelChangeEvent(ModelChangeEvent event) {
-		}
 	}
 
 	/**
 	 * <p>
 	 * Test: TEST_VIEW_CONTAINER
 	 * <p>
-	 * Purpose: Renders a populated {@link ViewContainer} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link ViewContainer} to verify its DOM/Style.
 	 */
 	void testViewContainer() {
 
@@ -540,7 +476,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * <p>
 	 * Test: TEST_MSG_PANEL
 	 * <p>
-	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/CSS.
+	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/Style.
 	 */
 	void testMsgPanel() {
 
@@ -555,6 +491,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
 		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
 
-		MsgManager.instance.post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
+		MsgManager.instance().post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
 	}
 }

@@ -9,7 +9,9 @@ import java.util.Collection;
 import org.hibernate.validator.Validator;
 
 /**
- * BusinessKeyUniquenessValidator
+ * AtLeastOneValidator - Ensures at least one elements exists in a
+ * {@link Collection}.
+ * @see AtLeastOne
  * @author jpk
  */
 public class AtLeastOneValidator implements Validator<AtLeastOne> {

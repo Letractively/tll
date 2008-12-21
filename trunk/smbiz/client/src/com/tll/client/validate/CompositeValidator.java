@@ -17,24 +17,22 @@ public class CompositeValidator implements IValidator {
 	}
 
 	/**
-	 * Adds a validator
+	 * Adds a validator.
 	 * @param validator The validator to add
 	 * @return this
 	 */
 	public CompositeValidator add(IValidator validator) {
-		// ensure distinct
-		if(validators.indexOf(validator) < 0) validators.add(validator);
+		validators.add(validator);
 		return this;
 	}
 
 	/**
-	 * Removes a validator
+	 * Removes a validator by reference only.
 	 * @param validator The validator to remove
-	 * @return this
+	 * @return <code>true</code> if the validator was successfully remvoed.
 	 */
-	public CompositeValidator remove(IValidator validator) {
-		validators.remove(validator);
-		return this;
+	public boolean remove(IValidator validator) {
+		return validators.remove(validator);
 	}
 
 	public Object validate(Object value) throws ValidationException {

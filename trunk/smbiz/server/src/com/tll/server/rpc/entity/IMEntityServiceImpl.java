@@ -1,6 +1,6 @@
 package com.tll.server.rpc.entity;
 
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
@@ -27,13 +27,13 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * Get an empty entity.
 	 * @param requestContext Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityGetEmptyRequest}
+	 *        {@link EntityFetchPrototypeRequest}
 	 * @param entityType The guaranteed non-<code>null</code> resolved
 	 *        {@link EntityType} for the {@link EntityRequest}.
 	 * @param payload
 	 */
 	// TODO change to generateEntity where generate is always true ?
-	void getEmptyEntity(RequestContext requestContext, EntityGetEmptyRequest request, EntityType entityType,
+	void getEmptyEntity(RequestContext requestContext, EntityFetchPrototypeRequest request, EntityType entityType,
 			EntityPayload payload);
 
 	/**

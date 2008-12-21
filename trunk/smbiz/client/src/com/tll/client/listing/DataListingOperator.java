@@ -9,16 +9,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
- * DataCollectionListingOperator - {@link IListingOperator} based on an existing
- * collection of listing elements of arbitrary type.
+ * DataListingOperator - {@link IListingOperator} based on an existing
+ * collection of data elements.
  * @author jpk
  */
 // TODO implemenet sorting!!!
-public class DataListingOperator<R extends IData> implements IListingOperator<R> {
+public class DataListingOperator<R> implements IListingOperator<R> {
 
 	/**
 	 * The listing event listeners.
@@ -78,7 +77,7 @@ public class DataListingOperator<R extends IData> implements IListingOperator<R>
 	@SuppressWarnings("unchecked")
 	private R[] subArray(int startIndex, int endIndex) {
 		final R[] data = dataProvider.getData();
-		IData[] array = new IData[endIndex - startIndex];
+		Object[] array = new Object[endIndex - startIndex];
 		for(int i = startIndex; i < endIndex; i++) {
 			array[i] = data[i];
 		}

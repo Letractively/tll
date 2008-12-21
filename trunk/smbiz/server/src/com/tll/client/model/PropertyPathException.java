@@ -10,13 +10,24 @@ package com.tll.client.model;
  * @author jpk
  */
 @SuppressWarnings("serial")
-abstract class PropertyPathException extends Exception {
+public abstract class PropertyPathException extends Exception {
+
+	private final String propPath;
 
 	/**
 	 * Constructor
+	 * @param message The error message
+	 * @param propPath The property path that raised the exception
 	 */
-	protected PropertyPathException(String message) {
+	protected PropertyPathException(String message, String propPath) {
 		super(message);
+		this.propPath = propPath;
 	}
 
+	/**
+	 * @return The property path that raised this exception
+	 */
+	public final String getPropertyPath() {
+		return propPath;
+	}
 }

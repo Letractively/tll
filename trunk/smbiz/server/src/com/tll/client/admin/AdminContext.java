@@ -7,8 +7,7 @@ package com.tll.client.admin;
 
 import com.tll.client.IMarshalable;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
-import com.tll.client.model.RelatedOneProperty;
+import com.tll.client.model.PropertyPathException;
 
 /**
  * AdminContext - Marshalable object definining key environment and logged in
@@ -89,8 +88,12 @@ public final class AdminContext implements IMarshalable {
 	 */
 	public Model getUserAccount() {
 		assert user != null;
-		RelatedOneProperty apv = user.relatedOne(new PropertyPath("account"));
-		return apv == null ? null : apv.getModel();
+		try {
+			return user.relatedOne("account").getModel();
+		}
+		catch(PropertyPathException e) {
+			return null;
+		}
 	}
 
 	/**

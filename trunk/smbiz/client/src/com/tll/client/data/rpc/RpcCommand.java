@@ -87,13 +87,13 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	static void rpc(boolean sending) {
 		if(sending) {
 			rpcCounter++;
-			App.darkenGlassPanel();
+			App.darkenBusyPanel();
 			App.busy();
 		}
 		else {
 			--rpcCounter;
 			App.unbusy();
-			App.lightenGlassPanel();
+			App.lightenBusyPanel();
 		}
 	}
 

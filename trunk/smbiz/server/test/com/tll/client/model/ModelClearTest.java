@@ -63,8 +63,8 @@ public class ModelClearTest extends AbstractModelTest {
 	private void validateClear(final Model source, final List<Model> visited) throws Exception {
 		assert source != null;
 
-		for(final Iterator<IPropertyBinding> itr = source.iterator(); itr.hasNext();) {
-			final IPropertyBinding srcPv = itr.next();
+		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
+			final IModelProperty srcPv = itr.next();
 			final PropertyType pvType = srcPv.getType();
 			if(pvType.isValue()) {
 				// require cleared property value

@@ -49,31 +49,12 @@ public class DateValidator implements IValidator {
 	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Date) return value;
 
-		final String s = value.toString();
-		// HACK
-		if(s.length() == 0) return null;
-		// END HACK
-
 		try {
-			return dateFormat.parse(s);
+			return dateFormat.parse(value.toString());
 		}
-		catch(IllegalArgumentException e) {
+		catch(Throwable e) {
 			throw new ValidationException(new Msg("Must be a date of format: '" + dateFormat.getPattern() + "'.",
 					MsgLevel.ERROR));
 		}
-	}
-
-	@Override
-	public final int hashCode() {
-		return dateFormat.getPattern().hashCode();
-	}
-
-	@Override
-	public final boolean equals(Object obj) {
-		if(this == obj) return true;
-		if(obj == null) return false;
-		if(getClass() != obj.getClass()) return false;
-		final DateValidator other = (DateValidator) obj;
-		return other.dateFormat.getPattern().equals(dateFormat.getPattern());
 	}
 }

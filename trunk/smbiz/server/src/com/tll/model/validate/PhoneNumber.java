@@ -13,8 +13,7 @@ import java.lang.annotation.Target;
 import org.hibernate.validator.ValidatorClass;
 
 /**
- * PhoneNumber - Phone number validation annotation applied at the bean level
- * in order to determine the instance based property (parameter): us or international.
+ * PhoneNumber - Indicates the annotatee is a phone number.
  * @author jpk
  */
 @ValidatorClass(PhoneNumberValidator.class)

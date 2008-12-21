@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.Style;
 import com.tll.client.event.IOptionListener;
 import com.tll.client.event.ISourcesOptionEvents;
 import com.tll.client.event.type.OptionEvent;
@@ -120,7 +121,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		}
 
 		// set new current
-		options.get(index).getElement().getParentElement().setClassName(CSS.ACTIVE);
+		options.get(index).getElement().getParentElement().setClassName(Style.ACTIVE);
 		this.crntIndx = index;
 
 		if(fireCurrentOptionChanged && optionListeners != null) {

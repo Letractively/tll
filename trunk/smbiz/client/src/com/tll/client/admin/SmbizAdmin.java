@@ -66,8 +66,8 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 	}
 
 	/**
-	 * Sets all defined {@link ViewClass}es for later factory method instantiation of the associated
-	 * views.
+	 * Sets all defined {@link ViewClass}es for later factory method instantiation
+	 * of the associated views.
 	 */
 	private void populateViewClasses() {
 		ViewClass.addClass(AspMain.klas);

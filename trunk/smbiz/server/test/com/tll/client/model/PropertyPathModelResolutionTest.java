@@ -32,52 +32,52 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 	 */
 	@Test
 	public void testResolution() throws Exception {
-		IPropertyBinding prop;
-		PropertyPath path = new PropertyPath();
+		IModelProperty prop;
+		String path;
 		Model model;
 
 		model = getTestModel();
 
-		path.parse("name");
-		prop = model.getBinding(path);
+		path = "name";
+		prop = model.getProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
 
-		path.parse("currency.iso4217");
-		prop = model.getBinding(path);
+		path = "currency.iso4217";
+		prop = model.getProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
 
 		// test non-existant model one before end of path
-		path.parse("parent.name");
-		prop = model.getBinding(path);
+		path = "parent.name";
+		prop = model.getProperty(path);
 		assert prop == null : "Resolved should have been null path node";
 
-		path.parse("addresses");
-		prop = model.getBinding(path);
+		path = "addresses";
+		prop = model.getProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
 		assert prop instanceof RelatedManyProperty : "Related many property value is the wrong type";
 
-		path.parse("addresses[0]");
-		prop = model.getBinding(path);
+		path = "addresses[0]";
+		prop = model.getProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
 		assert prop instanceof ModelRefProperty : "Expected ModelRefProperty impl at property path: " + path;
 
-		path.parse("addresses[20]");
-		prop = model.getBinding(path);
+		path = "addresses[20]";
+		prop = model.getProperty(path);
 		assert prop == null : "Got a non-null prop value for a non-existant indexed property!";
 
-		path.parse("addresses[0].address.firstName");
-		prop = model.getBinding(path);
+		path = "addresses[0].address.firstName";
+		prop = model.getProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;
 
 		// test paymentInfo resolution
-		path.parse("paymentInfo.paymentData_bankName");
-		prop = model.getBinding(path);
+		path = "paymentInfo.paymentData_bankName";
+		prop = model.getProperty(path);
 		assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
 
 		// malformed
 		try {
-			path.parse("paymentInfo[2].name");
-			prop = model.getBinding(path);
+			path = "paymentInfo[2].name";
+			prop = model.getProperty(path);
 			assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
 		}
 		catch(final IllegalArgumentException e) {

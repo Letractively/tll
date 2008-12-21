@@ -69,15 +69,6 @@ public class PropertyPathTest {
 			// expected
 		}
 
-		// test single node unbound indexed property path
-		path = "path{2}";
-		pp.parse(path);
-		assert path.equals(pp.toString());
-		assert pp.depth() == 1;
-		assert "path".equals(pp.nameAt(0));
-		assert pp.indexAt(0) == 2;
-		assert pp.nextIndexedNode(0, true) == 0;
-
 		// test property path depth
 		path = "pathA.pathB[3].pathC.pathD";
 		pp.parse(path);
@@ -92,42 +83,33 @@ public class PropertyPathTest {
 		assert pp.indexAt(2) == -1;
 		assert pp.indexAt(3) == -1;
 
-		path = "pathA.pathB{3}.pathC.pathD";
-		pp.parse(path);
-
-		// test unbound node search
-		assert pp.nextIndexedNode(0, true) == 1;
-		assert pp.nextIndexedNode(1, true) == 1;
-		assert pp.nextIndexedNode(2, true) == -1;
-		assert pp.nextIndexedNode(3, true) == -1;
-
 		// test ancestor method
-		assert "pathA.pathB{3}.pathC.pathD".equals(pp.ancestor(0).toString());
-		assert "pathA.pathB{3}.pathC".equals(pp.ancestor(1).toString());
-		assert "pathA.pathB{3}".equals(pp.ancestor(2).toString());
+		assert "pathA.pathB[3].pathC.pathD".equals(pp.ancestor(0).toString());
+		assert "pathA.pathB[3].pathC".equals(pp.ancestor(1).toString());
+		assert "pathA.pathB[3]".equals(pp.ancestor(2).toString());
 		assert "pathA".equals(pp.ancestor(3).toString());
 
 		// test indexedParent method
 		assert "pathA.pathB".equals(pp.ancestor(2).indexedParent().toString());
 
 		// test nested method
-		assert "pathA.pathB{3}.pathC.pathD".equals(pp.nested(0).toString());
-		assert "pathB{3}.pathC.pathD".equals(pp.nested(1).toString());
+		assert "pathA.pathB[3].pathC.pathD".equals(pp.nested(0).toString());
+		assert "pathB[3].pathC.pathD".equals(pp.nested(1).toString());
 		assert "pathC.pathD".equals(pp.nested(2).toString());
 		assert "pathD".equals(pp.nested(3).toString());
 
 		// test replace at
 		pp.replaceAt(0, "pathAU");
-		assert "pathAU.pathB{3}.pathC.pathD".equals(pp.toString());
+		assert "pathAU.pathB[3].pathC.pathD".equals(pp.toString());
 		pp.replaceAt(3, "pathDU");
-		assert "pathAU.pathB{3}.pathC.pathDU".equals(pp.toString());
+		assert "pathAU.pathB[3].pathC.pathDU".equals(pp.toString());
 		pp.replaceAt(2, null);
-		assert "pathAU.pathB{3}.pathDU".equals(pp.toString());
+		assert "pathAU.pathB[3].pathDU".equals(pp.toString());
 
 		// test replace
 		pp.replace("pathAU", "pathA");
-		assert "pathA.pathB{3}.pathDU".equals(pp.toString());
-		pp.replace("pathB{3}", "pathB[3]");
+		assert "pathA.pathB[3].pathDU".equals(pp.toString());
+		pp.replace("pathB[3]", "pathB[3]");
 		assert "pathA.pathB[3].pathDU".equals(pp.toString());
 		pp.replace("pathDU", "pathD");
 		assert "pathA.pathB[3].pathD".equals(pp.toString());

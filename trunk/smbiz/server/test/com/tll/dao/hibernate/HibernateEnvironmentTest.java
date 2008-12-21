@@ -16,8 +16,8 @@ import com.google.inject.Stage;
 import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
-import com.tll.guice.DaoModule;
-import com.tll.guice.JpaModule;
+import com.tll.di.DaoModule;
+import com.tll.di.JpaModule;
 
 /**
  * HibernateEnvironmentTest - Verifies hibernate loads error free

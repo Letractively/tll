@@ -26,7 +26,11 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	/**
 	 * the singleton instance
 	 */
-	public static final MsgManager instance = new MsgManager();
+	private static final MsgManager instance = new MsgManager();
+
+	public static final MsgManager instance() {
+		return instance;
+	}
 
 	private enum PopupState {
 		SHOWING,
@@ -104,8 +108,8 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	}
 
 	/**
-	 * Shows the {@link MsgPanel} bound to the given Widget and if specified, all
-	 * {@link MsgPanel}s bound to the child {@link Widget}s.
+	 * Shows or hides the {@link MsgPanel} bound to the given Widget and if
+	 * specified, all {@link MsgPanel}s bound to the child {@link Widget}s.
 	 * @param w The widget for which to show the {@link MsgPanel}.
 	 * @param show Show or hide?
 	 * @param drillDown Apply to the child Widgets?
@@ -203,8 +207,8 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	}
 
 	/**
-	 * Finds the msg panel bound the given element returning <code>null</code>
-	 * if no msg panel is bound.
+	 * Finds the msg panel bound the given element returning <code>null</code> if
+	 * no msg panel is bound.
 	 * @param refElement The Element to check
 	 * @return The bound MsgPanel or <code>null</code> if none bound.
 	 */
@@ -219,8 +223,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 
 	/**
 	 * Finds all {@link MsgPanel}s <em>contained in</em> the given Widget.
-	 * @param w The widget If <code>null</code>, <code>null</code> is
-	 *        returned
+	 * @param w The widget If <code>null</code>, <code>null</code> is returned
 	 * @param state The desired MsgPanel state filtering the results
 	 * @return List of the contained {@link MsgPanel}s.
 	 */

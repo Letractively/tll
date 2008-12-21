@@ -4,22 +4,36 @@
  */
 package com.tll.client.field;
 
-import com.tll.client.model.IPropertyBinding;
+import java.util.List;
+
+import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.tll.client.model.IPropertyNameProvider;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.msg.Msg;
+import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 
 /**
- * IField - Abstraction for managing the display editing of model bound data.
+ * IField - Abstraction for managing the display and editing of data.
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider {
+public interface IField extends IPropertyNameProvider, SourcesFocusEvents, SourcesChangeEvents {
 
 	/**
-	 * Common style for {@link IField}s.
+	 * Style indicating a UI artifact is a field or that its children are.
 	 */
-	static final String CSS_FIELD = "fld";
+	static final String STYLE_FIELD = "fld";
+
+	/**
+	 * Style indicating the field's value is dirty (changed).
+	 */
+	static final String STYLE_DIRTY = "dirty";
+
+	/**
+	 * Style indicating the field's value is invalid.
+	 */
+	static final String STYLE_INVALID = MsgLevel.ERROR.getName().toLowerCase();
 
 	/**
 	 * Sets the property name for this field.
@@ -50,7 +64,7 @@ public interface IField extends IPropertyNameProvider {
 	void setReadOnly(boolean readOnly);
 
 	/**
-	 * @return <code>true</code> if this field is able to be edited.
+	 * @return <code>true</code> if this field is not disabled.
 	 */
 	boolean isEnabled();
 
@@ -80,55 +94,70 @@ public interface IField extends IPropertyNameProvider {
 	/**
 	 * Sets the field's value.
 	 * <p>
-	 * NOTE: To clear the field, pass <code>null</code> as the value.
-	 * @param value
+	 * NOTE: To clear the field's value, pass <code>null</code> as the value.
+	 * @param value The value to set
 	 */
 	void setValue(String value);
 
 	/**
-	 * Resets the field's UI value to the default.
+	 * Gets the reset value.
+	 */
+	String getResetValue();
+
+	/**
+	 * Sets the reset value.
+	 * @param resetValue The reset value to set
+	 */
+	void setResetValue(String resetValue);
+
+	/**
+	 * Resets the field's UI value to the last set reset value clearing out dirty
+	 * styling, validation styling and messages.
 	 */
 	void reset();
 
 	/**
-	 * Updates the field's current reset value and removes any edit styling that
-	 * would indicate the field is in a "changed" state.
+	 * Does the current field value differ from the reset value?
 	 */
-	void markReset();
+	boolean isDirty();
 
 	/**
-	 * Clears the value setting it to any set default.
+	 * Styles the field as dirty if the field is dirty otherwise any dirty styling
+	 * is removed.
 	 */
-	void clear();
+	void dirtyCheck();
 
 	/**
-	 * Binds model data to this field.
-	 * @param binding The model to bind.
-	 */
-	void bindModel(IPropertyBinding binding);
-
-	/**
-	 * Updates the given model.
-	 * @param binding The model to update.
-	 * @return <code>true</code> if the model was successfully altered.
-	 */
-	boolean updateModel(IPropertyBinding binding);
-
-	/**
-	 * Adds a validator to the field.
-	 * @param validator The validator to add
+	 * Adds a validator.
+	 * @param validator
 	 */
 	void addValidator(IValidator validator);
 
 	/**
+	 * Removes a validator.
+	 * @param validator
+	 */
+	void removeValidator(IValidator validator);
+
+	/**
 	 * Validates the field.
-	 * @throws ValidationException When found invalid.
+	 * @throws ValidationException When the field is found invalid
 	 */
 	void validate() throws ValidationException;
 
 	/**
-	 * Handles validation feedback.
-	 * @param feedback The validation feedback
+	 * Provides the validated value set by the last invocation of
+	 * {@link #validate()}.
+	 * @return The cached validated value
 	 */
-	void handleValidationFeedback(IValidationFeedback feedback);
+	Object getValidatedValue();
+
+	/**
+	 * Styles the field as either valid or invalid.
+	 * @param invalid Mark or unmark as invalid
+	 * @param msgs Optional collection of messages to show near the field when
+	 *        marking as invalid. May be <code>null</code>. This param is ignored
+	 *        when the <code>invalid</code> param is <code>false</code>.
+	 */
+	void markInvalid(boolean invalid, List<Msg> msgs);
 }

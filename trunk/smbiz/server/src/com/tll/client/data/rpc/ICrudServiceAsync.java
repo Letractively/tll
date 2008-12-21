@@ -6,7 +6,7 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.tll.client.data.EntityGetEmptyRequest;
+import com.tll.client.data.EntityFetchPrototypeRequest;
 import com.tll.client.data.EntityLoadRequest;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityPersistRequest;
@@ -19,7 +19,7 @@ import com.tll.client.data.EntityPurgeRequest;
  */
 public interface ICrudServiceAsync {
 
-	void getEmptyEntity(EntityGetEmptyRequest request, AsyncCallback<EntityPayload> callback);
+	void getEmptyEntity(EntityFetchPrototypeRequest request, AsyncCallback<EntityPayload> callback);
 
 	void load(EntityLoadRequest request, AsyncCallback<EntityPayload> callback);
 

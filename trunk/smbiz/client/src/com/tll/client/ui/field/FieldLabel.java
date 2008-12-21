@@ -97,8 +97,9 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 	}
 
 	public void setRequired(boolean required) {
-		if(this.required == required) return;
-		getElement().setInnerHTML(required ? text + requiredToken : text);
-		this.required = required;
+		if(this.required != required) {
+			getElement().setInnerHTML(required ? text + requiredToken : text);
+			this.required = required;
+		}
 	}
 }

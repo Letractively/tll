@@ -12,15 +12,14 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.Style;
 import com.tll.client.admin.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.admin.ui.field.intf.SwitchInterfacePanel;
 import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.IEditListener;
 import com.tll.client.event.IListingListener;
-import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.event.type.ModelChangeEvent;
@@ -28,16 +27,15 @@ import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
+import com.tll.client.field.AbstractFieldGroupModelBinding;
 import com.tll.client.listing.ListingFactory;
-import com.tll.client.model.AbstractModelChangeHandler;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.InterfaceSearch;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -67,6 +65,20 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	}
 
 	/**
+	 * InterfaceEditBinding
+	 * @author jpk
+	 */
+	private static final class InterfaceEditBinding extends AbstractFieldGroupModelBinding {
+
+		@Override
+		protected Model doResolveModel(EntityType modelType) throws IllegalArgumentException {
+			if(modelType == EntityType.INTERFACE) return getModel(null);
+			return null;
+		}
+
+	}
+
+	/**
 	 * InterfacesStack - Extended {@link StackPanel} tailored for on demand
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
@@ -78,13 +90,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IEditListener, IModelChangeListener {
+		private final class InterfaceStack implements IEditListener {
 
 			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
 			private final EditPanel editPanel;
-			private final IModelChangeHandler modelChangeHandler;
+			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
 			 * Constructor
@@ -95,36 +107,15 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(new InterfaceEditBinding(), resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
-				modelChangeHandler = new AbstractModelChangeHandler() {
-
-					@Override
-					protected Widget getSourcingWidget() {
-						return InterfacesStack.this;
-					}
-
-					@Override
-					protected AuxDataRequest getNeededAuxData() {
-						AuxDataRequest auxDataRequest = new AuxDataRequest();
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
-						auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
-						return auxDataRequest;
-					}
-
-					@Override
-					protected EntityOptions getEntityOptions() {
-						return null;
-					}
-
-				};
-
-				modelChangeHandler.addModelChangeListener(this);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
+				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
 			private AbstractInterfacePanel resolveInterfacePanel(EntityType intfType) {
@@ -141,26 +132,24 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					modelChangeHandler.handleModelLoad(intfRef);
+					ModelChangeManager.instance().loadModel(editPanel, intfRef, null, auxDataRequest);
 				}
 			}
 
 			public void onEditEvent(EditEvent event) {
 				if(event.getOp().isSave()) {
-					if(editPanel.getFields().updateModel(model.getBindingRef())) {
-						modelChangeHandler.handleModelPersist(model);
-					}
+					ModelChangeManager.instance().persistModel(editPanel, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					modelChangeHandler.handleModelDelete(model.getRefKey());
+					ModelChangeManager.instance().deleteModel(editPanel, model.getRefKey(), null);
 				}
 			}
 
-			public void onModelChangeEvent(ModelChangeEvent event) {
-				if(event.isError()) {
-					editPanel.applyMsgs(event.getErrors());
-					return;
-				}
+			void handleModelChangeError(ModelChangeEvent event) {
+				editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+			}
+
+			void handleModelChangeSuccess(ModelChangeEvent event) {
 				switch(event.getChangeOp()) {
 					case LOADED:
 						model = event.getModel();
@@ -169,8 +158,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 						editPanel.setVisible(true);
 						// NOTE: we fall through
 					case UPDATED:
-						editPanel.getFields().bindModel(model.getBindingRef());
-						editPanel.setEditMode(model.isNew());
+						editPanel.setModel(model);
 						break;
 
 					case DELETED:
@@ -227,8 +215,8 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			String type = model.getEntityType().getName();
 			int i = type.indexOf('-');
 			if(i > 0) type = type.substring(0, i);
-			return "<p class=\"" + CSS.FLOAT_LEFT + "\"><span class=\"" + CSS.BOLD + "\">" + name + " </span> (" + type
-					+ ") </p><p class=\"" + CSS.SMALL_ITALIC + " " + CSS.FLOAT_RIGHT + "\">" + desc + "</p>";
+			return "<p class=\"" + Style.FLOAT_LEFT + "\"><span class=\"" + Style.BOLD + "\">" + name + " </span> (" + type
+					+ ") </p><p class=\"" + Style.SMALL_ITALIC + " " + Style.FLOAT_RIGHT + "\">" + desc + "</p>";
 		}
 
 		@Override
@@ -259,7 +247,28 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			}
 			initialized = true;
 		}
-	}
+
+		void handleModelChangeSuccess(ModelChangeEvent event) {
+			final Widget ew = event.getWidget();
+			for(InterfaceStack iv : list) {
+				if(ew == iv.editPanel) {
+					iv.handleModelChangeSuccess(event);
+					return;
+				}
+			}
+		}
+
+		void handleModelChangeError(ModelChangeEvent event) {
+			final Widget ew = event.getWidget();
+			for(InterfaceStack iv : list) {
+				if(ew == iv.editPanel) {
+					iv.handleModelChangeError(event);
+					return;
+				}
+			}
+		}
+
+	} // InterfacesStack
 
 	private final InterfacesStack intfStack = new InterfacesStack();
 
@@ -308,14 +317,19 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		return new StaticViewRequest(this, klas);
 	}
 
-	public void onModelChangeEvent(ModelChangeEvent event) {
-		// no-op
-	}
-
 	public void onClick(Widget sender) {
 		if(sender == btnAddIntf) {
 			// TODO add an interface
 		}
 	}
 
+	@Override
+	protected void handleModelChangeError(ModelChangeEvent event) {
+		intfStack.handleModelChangeError(event);
+	}
+
+	@Override
+	protected void handleModelChangeSuccess(ModelChangeEvent event) {
+		intfStack.handleModelChangeSuccess(event);
+	}
 }

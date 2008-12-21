@@ -11,7 +11,7 @@ package com.tll.client.model;
  * @author jpk
  */
 @SuppressWarnings("serial")
-class IndexOutOfRangeInPropPathException extends PropertyPathException {
+public final class IndexOutOfRangeInPropPathException extends PropertyPathException {
 
 	/**
 	 * Constructor
@@ -20,15 +20,6 @@ class IndexOutOfRangeInPropPathException extends PropertyPathException {
 	 * @param index
 	 */
 	IndexOutOfRangeInPropPathException(final String propPath, final String prop, final int index) {
-		super("Property index : " + index + " for prop: '" + prop + "' is out of range in prop path: " + propPath);
+		super("Property index : " + index + " for prop: '" + prop + "' is out of range in prop path: " + propPath, propPath);
 	}
-
-	/**
-	 * Constructor
-	 * @param message
-	 */
-	public IndexOutOfRangeInPropPathException(final String message) {
-		super(message);
-	}
-
 }

@@ -15,7 +15,7 @@ import com.tll.client.msg.Msg.MsgLevel;
  * ValidationException
  * @author jpk
  */
-public class ValidationException extends Exception implements IValidationFeedback {
+public class ValidationException extends Exception {
 
 	private final List<Msg> msgs;
 

@@ -130,7 +130,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			throw new IllegalArgumentException("The indexable model must be a " + relatedType.getName());
 		}
 		list.add(indexable);
-		return PropertyPath.index(getPropertyName(), list.size() - 1, false);
+		return PropertyPath.index(getPropertyName(), list.size() - 1);
 	}
 
 	/**
@@ -156,7 +156,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	@Override
 	public String toString() {
-		if(list == null) return "<null>";
 		final StringBuffer sb = new StringBuffer();
 		sb.append(getPropertyName());
 		sb.append("|ref:");

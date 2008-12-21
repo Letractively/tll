@@ -7,7 +7,8 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.model.Model;
+import com.tll.client.event.type.FieldBindingEvent;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
@@ -24,7 +25,32 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		switch(event.getType()) {
+			case BEFORE_BIND:
+				applyModel(event.getBinding());
+				break;
+		}
+	}
+
+	private void applyModel(IFieldGroupModelBinding bindingDef) {
+		// TODO re-impl
+		/*
+		final Model modelInterface = bindingDef.resolveModel(EntityType.INTERFACE);
+		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
+		if(pvOptions == null || pvOptions.size() != 1) {
+			throw new IllegalArgumentException();
+		}
+		IndexedProperty ip = pvOptions.getIndexedProperty(0);
+		assert ip != null;
+		pnlOption.getFields().setPropertyName(ip.getPropertyName());
+		getFieldGroup().addField(pnlOption.getFields());
+		pnlOption.onBeforeBind(ip.getModel());
+		*/
+	}
+
+	@Override
+	protected void drawInternal(Panel canvas) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
@@ -41,20 +67,5 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 		cmpsr.newRow();
 		cmpsr.addWidget(createAvailabilityGrid());
-	}
-
-	@Override
-	protected void applyModel(Model modelInterface) {
-		/*
-		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
-		if(pvOptions == null || pvOptions.size() != 1) {
-			throw new IllegalArgumentException();
-		}
-		IndexedProperty ip = pvOptions.getIndexedProperty(0);
-		assert ip != null;
-		pnlOption.getFields().setPropertyName(ip.getPropertyName());
-		fields.addField(pnlOption.getFields());
-		pnlOption.onBeforeBind(ip.getModel());
-		*/
 	}
 }

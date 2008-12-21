@@ -8,13 +8,14 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
 
 /**
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTabEvents {
+public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEvents {
 
 	private final TabPanel tabPanel = new TabPanel();
 
@@ -31,13 +32,15 @@ public final class PaymentInfoPanel extends FieldGroupPanel implements SourcesTa
 	}
 
 	@Override
-	public void populateFieldGroup() {
-		addField(creditCardPanel.getFieldGroup());
-		addField(bankPanel.getFieldGroup());
+	public void populateFieldGroup(FieldGroup fields) {
+		fields.addField(creditCardPanel.getFieldGroup());
+		fields.addField(bankPanel.getFieldGroup());
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	protected void drawInternal(Panel canvas) {
+		creditCardPanel.draw();
+		bankPanel.draw();
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
 		canvas.add(tabPanel);

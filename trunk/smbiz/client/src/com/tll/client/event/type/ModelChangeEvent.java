@@ -4,12 +4,10 @@
  */
 package com.tll.client.event.type;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.data.Status;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.msg.Msg;
 
 /**
  * ModelChangeEvent - Used to dissemminate model changes.
@@ -29,21 +27,21 @@ public final class ModelChangeEvent extends BaseEvent {
 	private final Model model;
 	private final RefKey modelRef;
 
-	private final List<Msg> errors;
+	private final Status status;
 
 	/**
 	 * Constructor - Use for add and update model change events.
 	 * @param source
 	 * @param change
 	 * @param model
-	 * @param errors
+	 * @param status
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, Model model, List<Msg> errors) {
+	public ModelChangeEvent(Widget source, ModelChangeOp change, Model model, Status status) {
 		super(source);
 		this.change = change;
 		this.model = model;
 		this.modelRef = null;
-		this.errors = errors;
+		this.status = status;
 	}
 
 	/**
@@ -51,14 +49,14 @@ public final class ModelChangeEvent extends BaseEvent {
 	 * @param source
 	 * @param change
 	 * @param modelRef
-	 * @param errors
+	 * @param status
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, RefKey modelRef, List<Msg> errors) {
+	public ModelChangeEvent(Widget source, ModelChangeOp change, RefKey modelRef, Status status) {
 		super(source);
 		this.change = change;
 		this.model = null;
 		this.modelRef = modelRef;
-		this.errors = errors;
+		this.status = status;
 	}
 
 	/**
@@ -83,11 +81,7 @@ public final class ModelChangeEvent extends BaseEvent {
 		return modelRef;
 	}
 
-	public boolean isError() {
-		return errors != null && errors.size() > 0;
-	}
-
-	public List<Msg> getErrors() {
-		return errors;
+	public Status getStatus() {
+		return status;
 	}
 }

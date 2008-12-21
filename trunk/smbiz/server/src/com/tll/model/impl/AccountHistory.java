@@ -12,7 +12,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Immutable;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.IChildEntity;
@@ -25,7 +24,9 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "account_history")
-@Immutable
+// TODO re-instate immutable (hibernate 3.3.1 seems to break this!)
+// http://opensource.atlassian.com/projects/hibernate/browse/HHH-3662
+// @Immutable
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;

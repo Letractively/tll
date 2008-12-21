@@ -6,18 +6,24 @@
 package com.tll.client.model;
 
 /**
- * UnsetPropertyException
+ * UnsetPropertyException - Indicates a model property is unset.
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class UnsetPropertyException extends PropertyPathException {
+public final class UnsetPropertyException extends PropertyPathException {
 
 	/**
 	 * Constructor
 	 * @param propPath
 	 */
 	public UnsetPropertyException(final String propPath) {
-		super("Property: '" + propPath + "' does not exist.");
+		super("Property: '" + propPath + "' does not exist.", propPath);
 	}
 
+	/**
+	 * @return The unset property
+	 */
+	public String getUnsetProperty() {
+		return getPropertyPath();
+	}
 }

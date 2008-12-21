@@ -6,7 +6,7 @@ import com.tll.model.schema.PropertyMetadata;
  * IPropertyValue - A property binding that whose value is non-relational.
  * @author jpk
  */
-public interface IPropertyValue extends IPropertyBinding {
+public interface IPropertyValue extends IModelProperty {
 
 	/**
 	 * @return The property meta data

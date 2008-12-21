@@ -12,7 +12,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import com.tll.util.ValidationUtil;
 
 /**
- * PostalCodeValidator
+ * PostalCodeValidator - Validates artifacts annotated with {@link PhoneNumber}.
  * @author jpk
  */
 public class PostalCodeValidator implements Validator<PostalCode>, IPropertyReference {
@@ -31,13 +31,11 @@ public class PostalCodeValidator implements Validator<PostalCode>, IPropertyRefe
 	}
 
 	public boolean isValid(Object value) {
-		if(value == null)
-			return true;
+		if(value == null) return true;
 		bw.setWrappedInstance(value);
 		Object pvPostalCode = bw.getPropertyValue(postalCodePropertyName);
 		Object pvCountry = bw.getPropertyValue(countryPropertyName);
-		if(pvPostalCode == null)
-			return true;
+		if(pvPostalCode == null) return true;
 
 		final String postalCode = ((String) pvPostalCode).trim().toLowerCase();
 		final String country = pvCountry == null ? "us" : ((String) pvCountry).trim().toLowerCase();

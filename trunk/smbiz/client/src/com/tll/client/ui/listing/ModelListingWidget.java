@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.listing;
 
-import com.tll.client.event.IModelChangeListener;
 import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.model.Model;
@@ -15,7 +14,7 @@ import com.tll.client.model.RefKey;
  * ModelListingWidget - Listing Widget dedicated to handling Model type data.
  * @author jpk
  */
-public final class ModelListingWidget extends ListingWidget<Model> implements IModelChangeListener {
+public final class ModelListingWidget extends ListingWidget<Model> {
 
 	/**
 	 * Constructor
@@ -44,15 +43,15 @@ public final class ModelListingWidget extends ListingWidget<Model> implements IM
 		return ((ModelListingTable) table).getRowIndex(rowRef);
 	}
 
-	public void onModelChangeEvent(ModelChangeEvent event) {
+	/**
+	 * Handles successful model change events.
+	 * <p>
+	 * NOTE: This method is <em>not</em> automatically invoked.
+	 */
+	public void handleModelChange(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 			case ADDED:
-				// TODO make this check more robust
-				if(this.getElement().isOrHasChild(event.getWidget().getElement())) {
-					// i.e. the add button in the nav bar was the source of the model
-					// change..
-					addRow(event.getModel());
-				}
+				addRow(event.getModel());
 				break;
 			case UPDATED: {
 				RefKey modelRef = event.getModel().getRefKey();
@@ -73,7 +72,6 @@ public final class ModelListingWidget extends ListingWidget<Model> implements IM
 				}
 				break;
 			}
-
 		}
 	}
 }

@@ -12,7 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IField;
+import com.tll.client.field.IFieldGroupModelBinding;
 
 /**
  * DeleteTabWidget - Tab Widget used for displaying a related many entity in a
@@ -22,26 +23,40 @@ import com.tll.client.field.FieldGroup;
 public class DeleteTabWidget extends FlowPanel implements ClickListener {
 
 	private final Label label;
+
 	private final ToggleButton btnDeleteToggle;
-	private FieldGroup fieldGroup;
+
 	/**
-	 * If specified, it is presumed that model ref property is existing.
+	 * The field/model binding.
+	 */
+	private IFieldGroupModelBinding binding;
+
+	/**
+	 * Points to the target model ref property in the binding relative to the root
+	 * model.
 	 */
 	private String modelRefPropertyPath;
 
 	/**
-	 * Constructor
-	 * @param text The label text. May not be <code>null</code>.
+	 * The subject field (usually a group).
 	 */
-	public DeleteTabWidget(String text) {
+	private IField field;
+
+	/**
+	 * Constructor
+	 * @param name The name describing the thing subject to delete toggling
+	 */
+	public DeleteTabWidget(String name) {
 		super();
-		if(text == null) throw new IllegalArgumentException();
-		this.label = new Label(text);
+		if(name == null) throw new IllegalArgumentException();
+
+		this.label = new Label(name);
+
 		// delete img btn
 		final Image imgDelete = App.imgs().delete().createImage();
-		imgDelete.setTitle("Delete " + text);
+		imgDelete.setTitle("Delete " + name);
 		final Image imgUndo = App.imgs().undo().createImage();
-		imgUndo.setTitle("Un-delete " + text);
+		imgUndo.setTitle("Un-delete " + name);
 		btnDeleteToggle = new ToggleButton(imgDelete, imgUndo, this);
 		btnDeleteToggle.addStyleName("btnDeleteToggle");
 		add(label);
@@ -50,52 +65,37 @@ public class DeleteTabWidget extends FlowPanel implements ClickListener {
 
 	/**
 	 * Constructor
-	 * @param text
-	 * @param fieldGroup The bound FieldGroup that is displayed in the associated
-	 *        tab Widget. May be <code>null</code> in which case, the
-	 *        delete/un-delete toggle is <em>not</em> displayed.
-	 * @param modelRefPropertyPath The model ref property path to be specified
-	 *        <em>only</em> for existing model ref proeprties.
+	 * @param name
+	 * @param field
+	 * @param binding
+	 * @param modelRefPropertyPath
 	 */
-	public DeleteTabWidget(String text, FieldGroup fieldGroup, String modelRefPropertyPath) {
-		this(text);
-		setFieldGroup(fieldGroup, modelRefPropertyPath);
+	public DeleteTabWidget(String name, IField field, IFieldGroupModelBinding binding, String modelRefPropertyPath) {
+		this(name);
+		configure(field, binding, modelRefPropertyPath);
+	}
+
+	/**
+	 * Sets this Widget to be fully functional.
+	 * @param field
+	 * @param binding
+	 * @param modelRefPropertyPath
+	 */
+	private void configure(IField field, IFieldGroupModelBinding binding, String modelRefPropertyPath) {
+		if(field == null || binding == null || modelRefPropertyPath == null) {
+			throw new IllegalArgumentException("One or more init args is null.");
+		}
+		this.field = field;
+		this.binding = binding;
+		this.modelRefPropertyPath = modelRefPropertyPath;
+		toggle(binding.isMarkedDeleted(modelRefPropertyPath));
 	}
 
 	private void toggle(boolean markDeleted) {
-		assert fieldGroup != null;
-		if(modelRefPropertyPath == null) {
-			fieldGroup.setUpdateModel(!markDeleted);
-		}
-		else {
-			if(markDeleted) {
-				fieldGroup.addPendingDelete(modelRefPropertyPath);
-			}
-			else {
-				fieldGroup.removePendingDelete(modelRefPropertyPath);
-			}
-		}
-		fieldGroup.setEnabled(!markDeleted);
+		binding.markDeleted(modelRefPropertyPath, markDeleted);
 	}
 
 	public void onClick(Widget sender) {
-		if(fieldGroup != null) toggle(btnDeleteToggle.isDown());
+		if(field != null) toggle(btnDeleteToggle.isDown());
 	}
-
-	public void setFieldGroup(FieldGroup fieldGroup, String modelRefPropertyPath) {
-		// show or hide the toggle button
-		if(this.fieldGroup != null && this.modelRefPropertyPath != null
-				&& !this.modelRefPropertyPath.equals(modelRefPropertyPath)) {
-			this.fieldGroup.removePendingDelete(this.modelRefPropertyPath);
-		}
-		this.fieldGroup = fieldGroup;
-		this.modelRefPropertyPath = modelRefPropertyPath;
-		getWidget(1).setVisible(fieldGroup != null);
-		if(fieldGroup != null) {
-			boolean deleted =
-					modelRefPropertyPath == null ? !fieldGroup.isUpdateModel() : fieldGroup.isPendingDelete(modelRefPropertyPath);
-			toggle(deleted);
-		}
-	}
-
 }

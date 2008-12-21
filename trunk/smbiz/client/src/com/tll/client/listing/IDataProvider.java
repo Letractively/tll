@@ -5,13 +5,12 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.model.IData;
 
 /**
  * IDataProvider - Generification of providing data to a listing.
  * @author jpk
  */
-public interface IDataProvider<D extends IData> {
+public interface IDataProvider<D> {
 
 	/**
 	 * @return Array of data.

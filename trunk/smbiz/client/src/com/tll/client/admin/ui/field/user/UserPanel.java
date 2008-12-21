@@ -9,23 +9,26 @@ import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
+import com.tll.client.event.type.FieldBindingEvent;
+import com.tll.client.field.FieldGroup;
+import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RefKey;
-import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldFactory;
-import com.tll.client.ui.field.FieldGroupPanel;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
+import com.tll.model.EntityType;
 
 /**
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends FieldGroupPanel {
+public class UserPanel extends FieldPanel {
 
 	private TextField name;
 	private DateField[] timestamps;
@@ -46,7 +49,52 @@ public class UserPanel extends FieldGroupPanel {
 	}
 
 	@Override
-	protected void draw(Panel canvas) {
+	public void populateFieldGroup(FieldGroup fields) {
+		name = entityNameField();
+		timestamps = entityTimestampFields();
+		emailAddress = ftext("emailAddress", "Email Address", 30);
+		emailAddress.setReadOnly(true);
+		locked = fbool("locked", "Locked");
+		enabled = fbool("enabled", "Enabled");
+		expires = fdate("expires", "Expires", GlobalFormat.DATE);
+
+		addressPanel = new AddressPanel();
+
+		fields.addField(name);
+		fields.addFields(timestamps);
+		fields.addField(emailAddress);
+		fields.addField(locked);
+		fields.addField(enabled);
+		fields.addField(expires);
+		fields.addField(addressPanel.getFieldGroup());
+	}
+
+	@Override
+	public void onFieldBindingEvent(FieldBindingEvent event) {
+		switch(event.getType()) {
+			case AFTER_BIND:
+				setParentAccountViewLink(event.getBinding());
+				break;
+		}
+	}
+
+	private void setParentAccountViewLink(IFieldGroupModelBinding bindingDef) {
+		// set the parent account view link
+		Model accountModel = bindingDef.resolveModel(EntityType.ACCOUNT);
+		Model parentAccount;
+		try {
+			parentAccount = accountModel.relatedOne("account").getModel();
+			RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
+			lnkAccount.setText(par.getName());
+			lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
+		}
+		catch(PropertyPathException e) {
+			lnkAccount.setText("-");
+		}
+	}
+
+	@Override
+	protected void drawInternal(Panel canvas) {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 
@@ -71,33 +119,5 @@ public class UserPanel extends FieldGroupPanel {
 		// third row
 		cmpsr.newRow();
 		cmpsr.addWidget(addressPanel);
-	}
-
-	@Override
-	public void populateFieldGroup() {
-		name = FieldFactory.createNameEntityField();
-		timestamps = FieldFactory.createTimestampEntityFields();
-		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", 30);
-		emailAddress.setReadOnly(true);
-		locked = FieldFactory.fbool("locked", "Locked");
-		enabled = FieldFactory.fbool("enabled", "Enabled");
-		expires = FieldFactory.fdate("expires", "Expires", GlobalFormat.DATE);
-
-		addressPanel = new AddressPanel();
-
-		addField(emailAddress);
-		addField(locked);
-		addField(enabled);
-		addField(expires);
-		addField(addressPanel.getFieldGroup());
-	}
-
-	@Override
-	protected void applyModel(Model model) {
-		// set the parent account view link
-		Model parentAccount = model.relatedOne(new PropertyPath("account")).getModel();
-		RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
-		lnkAccount.setText(par.getName());
-		lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
 	}
 }

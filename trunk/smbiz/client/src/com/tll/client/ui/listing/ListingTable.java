@@ -19,14 +19,13 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
+import com.tll.client.Style;
 import com.tll.client.event.IListingListener;
 import com.tll.client.event.type.ListingEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.model.IData;
-import com.tll.client.ui.CSS;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.listhandler.SortColumn;
 import com.tll.listhandler.SortDir;
@@ -36,10 +35,10 @@ import com.tll.listhandler.Sorting;
  * ListingTable - ListingWidget specific HTML table.
  * @author jpk
  */
-public class ListingTable<R extends IData> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
+public class ListingTable<R> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
-	 * The actual HTML table tag containing the listing data gets this style (CSS
+	 * The actual HTML table tag containing the listing data gets this style (Style
 	 * class).
 	 */
 	protected static final String STYLE_TABLE = "table";
@@ -363,7 +362,7 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 
 			case Event.ONMOUSEOUT:
 				if(actvRowIndex >= 0) {
-					getRowFormatter().removeStyleName(actvRowIndex, CSS.ACTIVE);
+					getRowFormatter().removeStyleName(actvRowIndex, Style.ACTIVE);
 					actvRowIndex = -1;
 				}
 				break;
@@ -410,9 +409,9 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 			return;
 		}
 		if(actvRowIndex >= 0) {
-			getRowFormatter().removeStyleName(actvRowIndex, CSS.ACTIVE);
+			getRowFormatter().removeStyleName(actvRowIndex, Style.ACTIVE);
 		}
-		getRowFormatter().addStyleName(rowIndex, CSS.ACTIVE);
+		getRowFormatter().addStyleName(rowIndex, Style.ACTIVE);
 		actvRowIndex = rowIndex;
 	}
 
@@ -421,9 +420,9 @@ public class ListingTable<R extends IData> extends Grid implements TableListener
 			return;
 		}
 		if(crntRowIndex >= 0) {
-			getRowFormatter().removeStyleName(crntRowIndex, CSS.CURRENT);
+			getRowFormatter().removeStyleName(crntRowIndex, Style.CURRENT);
 		}
-		getRowFormatter().addStyleName(rowIndex, CSS.CURRENT);
+		getRowFormatter().addStyleName(rowIndex, Style.CURRENT);
 		crntRowIndex = rowIndex;
 		// DOM.scrollIntoView(targetTd);
 	}

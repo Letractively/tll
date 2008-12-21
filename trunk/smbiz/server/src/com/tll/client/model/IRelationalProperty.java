@@ -11,7 +11,7 @@ import com.tll.model.EntityType;
  * IRelationalProperty - Indicates a relationship within a model.
  * @author jpk
  */
-public interface IRelationalProperty extends IPropertyBinding {
+public interface IRelationalProperty extends IModelProperty {
 
 	/**
 	 * @return The related entity/model type.

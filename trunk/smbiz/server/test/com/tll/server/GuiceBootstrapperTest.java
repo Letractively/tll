@@ -25,14 +25,14 @@ public class GuiceBootstrapperTest extends TestBase {
 	private ServletContext getMockServletContext() {
 		MockServletContext context = new MockServletContext();
 		context.addInitParameter(Constants.GUICE_MODULE_CLASS_NAMES, 
-				"com.tll.guice.VelocityModule \r\n"
-				+ "com.tll.guice.MailModule \r\n" 
-				+ "com.tll.guice.AppRefDataModule \r\n"
-				+ "com.tll.guice.MockEntitiesModule \r\n" 
-				+ "com.tll.guice.JpaModule \r\n" 
-				+ "com.tll.guice.DaoModule \r\n"
-				+ "com.tll.guice.EntityServiceModule \r\n" 
-				+ "com.tll.guice.SecurityModule \r\n");
+				"com.tll.di.VelocityModule \r\n"
+				+ "com.tll.di.MailModule \r\n" 
+				+ "com.tll.di.AppRefDataModule \r\n"
+				+ "com.tll.di.MockEntitiesModule \r\n" 
+				+ "com.tll.di.JpaModule \r\n" 
+				+ "com.tll.di.DaoModule \r\n"
+				+ "com.tll.di.EntityServiceModule \r\n" 
+				+ "com.tll.di.SecurityModule \r\n");
 		return context;
 	}
 

@@ -4,6 +4,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextBox;
 import com.tll.client.field.HasFormat;
@@ -65,8 +66,17 @@ public class TextField extends AbstractField implements HasMaxLength, HasFormat 
 		if(tb == null) {
 			tb = new TextBox();
 			tb.addFocusListener(this);
+			tb.addChangeListener(this);
 		}
 		return tb;
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		getTextBox().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getTextBox().removeChangeListener(listener);
 	}
 
 	@Override

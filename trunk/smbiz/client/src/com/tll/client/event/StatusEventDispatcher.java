@@ -8,7 +8,8 @@ package com.tll.client.event;
 import com.tll.client.event.type.StatusEvent;
 
 /**
- * StatusEventDispatcher
+ * StatusEventDispatcher - Dispatches {@link StatusEvent}s to its subscribed
+ * {@link IStatusListener}s.
  * @author jpk
  */
 public final class StatusEventDispatcher implements ISourcesStatusEvents {

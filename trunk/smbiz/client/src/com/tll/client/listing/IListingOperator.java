@@ -6,7 +6,6 @@
 package com.tll.client.listing;
 
 import com.tll.client.event.ISourcesListingEvents;
-import com.tll.client.model.IData;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -14,7 +13,7 @@ import com.tll.listhandler.Sorting;
  * interface enables a pluggable (generic) way to provide listing data.
  * @author jpk
  */
-public interface IListingOperator<R extends IData> extends ISourcesListingEvents<R> {
+public interface IListingOperator<R> extends ISourcesListingEvents<R> {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

@@ -13,9 +13,8 @@ import java.lang.annotation.Target;
 
 import org.hibernate.validator.ValidatorClass;
 
-
 /**
- * SSN - Social Security Number validation annotation.
+ * SSN - Indicates the annotatee is a social security number.
  * @author jpk
  */
 @ValidatorClass(SSNValidator.class)
@@ -23,5 +22,6 @@ import org.hibernate.validator.ValidatorClass;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SSN {
+
 	String message() default "{validator.ssn}";
 }

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 import org.hibernate.validator.ValidatorClass;
 
 /**
- * PostalCode
+ * PostalCode - Indicates the annotatee is a postal code (zip code for US).
  * @author jpk
  */
 @ValidatorClass(PostalCodeValidator.class)

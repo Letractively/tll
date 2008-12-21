@@ -8,6 +8,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.field.IField;
 
 /**
  * VerticalFieldPanelComposer - Lays out fields in a vertical style having the
@@ -26,6 +27,14 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 	private final Grid grid = new Grid(0, 2);
 
 	private int rowIndex = -1;
+
+	/**
+	 * Constructor
+	 */
+	public VerticalFieldPanelComposer() {
+		super();
+		grid.addStyleName(IField.STYLE_FIELD);
+	}
 
 	public void setCanvas(Panel canvas) {
 		canvas.add(grid);
@@ -47,10 +56,10 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 
 	/**
 	 * Adds a field label and Widget row. If the label text is <code>null</code>,
-	 * no label is added. If the Widget is an IField
-	 * {@link #addField(AbstractField)} should be called instead.
+	 * no label is added. If the Widget is an IField {@link #addField(IField)}
+	 * should be called instead.
 	 * @param label The label text
-	 * @param w The non-IField and non-FieldGroupPanel Widget to add
+	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
@@ -61,7 +70,8 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(AbstractField field) {
-		add(field.getFieldLabel(), field);
+	public void addField(IField field) {
+		AbstractField af = (AbstractField) field;
+		add(af.getFieldLabel(), af);
 	}
 }

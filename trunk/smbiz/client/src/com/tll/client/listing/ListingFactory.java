@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.event.type.ListingEvent;
-import com.tll.client.model.IData;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.DataListingWidget;
@@ -30,8 +29,8 @@ public abstract class ListingFactory {
 	 * @param dataProvider The client listing data provider
 	 * @return A new {@link DataListingWidget}.
 	 */
-	public static <R extends IData> DataListingWidget<R> createListingWidget(Widget sourcingWidget,
-			IListingConfig<R> config, IDataProvider<R> dataProvider) {
+	public static <R> DataListingWidget<R> createListingWidget(Widget sourcingWidget, IListingConfig<R> config,
+			IDataProvider<R> dataProvider) {
 
 		return (DataListingWidget<R>) assemble(config, new DataListingWidget<R>(config), new DataListingOperator<R>(
 				sourcingWidget, config.getPageSize(), dataProvider, (config.isSortable() ? config.getDefaultSorting() : null)));
@@ -91,7 +90,7 @@ public abstract class ListingFactory {
 	 * @param operator
 	 * @return
 	 */
-	private static <R extends IData> ListingWidget<R> assemble(IListingConfig<R> config, ListingWidget<R> listingWidget,
+	private static <R> ListingWidget<R> assemble(IListingConfig<R> config, ListingWidget<R> listingWidget,
 			IListingOperator<R> operator) {
 
 		if(config.getAddRowHandler() != null) listingWidget.setAddRowDelegate(config.getAddRowHandler());

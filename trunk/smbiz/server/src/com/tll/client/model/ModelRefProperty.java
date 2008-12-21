@@ -23,8 +23,8 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 
 	/**
 	 * Constructor
-	 * @param relatedType The related Model type. This <em>must</em> match that
-	 *        of the given Model's type if the given Model is non-<code>null</code>.
+	 * @param relatedType The related Model type. This <em>must</em> match that of
+	 *        the given Model's type if the given Model is non-<code>null</code>.
 	 * @param propName
 	 * @param reference
 	 * @param model
@@ -60,7 +60,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		sb.append(isReference());
 		sb.append('|');
 		if(model != null) {
-			sb.append("(grphash:");
+			sb.append("(modelhash:");
 			sb.append(Integer.toString(model.hashCode()));
 			sb.append(")");
 		}

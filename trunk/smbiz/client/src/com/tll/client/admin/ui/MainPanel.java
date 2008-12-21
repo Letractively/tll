@@ -36,15 +36,15 @@ import com.tll.client.event.type.EditViewRequest;
 import com.tll.client.event.type.StaticViewRequest;
 import com.tll.client.event.type.StatusEvent;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPath;
+import com.tll.client.model.ModelChangeManager;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.mvc.Dispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.StatusDisplay;
-import com.tll.client.ui.ViewRequestLink;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 
@@ -109,7 +109,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentAccount(account);
 
 			// set the initial view based on the user's account type
-			Dispatcher.instance().dispatch(
+			ViewManager.instance().dispatch(
 					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ACCOUNT_CHANGE) {
@@ -269,8 +269,15 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			this.vlUsername.setText(user.asString("emailAddress"));
 			this.vlUsername.setViewRequest(new EditViewRequest(this, UserEditView.klas, user));
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
-			Model account = user.relatedOne(new PropertyPath("account")).getModel();
-			this.lblUserAccount.setText(Fmt.format(account.getDateModified(), GlobalFormat.DATE));
+			String dm;
+			try {
+				Model account = user.relatedOne("account").getModel();
+				dm = Fmt.format(account.getDateModified(), GlobalFormat.DATE);
+			}
+			catch(PropertyPathException e) {
+				dm = "";
+			}
+			this.lblUserAccount.setText(dm);
 		}
 
 		private void setCurrentAccount(Model account) {
@@ -310,20 +317,23 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			super.onLoad();
 			StatusEventDispatcher.instance().addStatusListener(this);
 			ViewManager.instance().initialize(this);
+			// set the main model change listener so views see all model change events
+			ModelChangeManager.instance().addModelChangeListener(ViewManager.instance());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
+			ModelChangeManager.instance().removeModelChangeListener(ViewManager.instance());
 			ViewManager.instance().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
-			MsgManager.instance.clear();
+			MsgManager.instance().clear();
 		}
 
 		public void onStatusEvent(StatusEvent event) {
 			Status status = event.getStatus();
 			if(status != null) {
-				MsgManager.instance.post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
+				MsgManager.instance().post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
 			}
 		}
 

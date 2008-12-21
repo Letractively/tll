@@ -15,13 +15,13 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
-import com.tll.client.mvc.Dispatcher;
+import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.Option;
-import com.tll.client.ui.ViewRequestLink;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
@@ -128,15 +128,13 @@ public final class MerchantListingView extends ListingView {
 
 			private final String listingElementName = EntityType.MERCHANT.getName();
 
-			private final Column[] columns = new Column[] {
-				new Column("#", Column.ROW_COUNT_COL_PROP, null),
-				new Column("Name", Model.NAME_PROPERTY, "m"),
-				new Column("Created", Model.DATE_CREATED_PROPERTY, "m", GlobalFormat.DATE),
-				new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "m", GlobalFormat.DATE),
-				new Column("Status", "status", "m"),
-				new Column("Billing Model", "billingModel", "m"),
-				new Column("Billing Cycle", "billingCycle", "m"),
-				new Column("Store Name", "storeName", "m") };
+			private final Column[] columns =
+					new Column[] {
+						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "m"),
+						new Column("Created", Model.DATE_CREATED_PROPERTY, "m", GlobalFormat.DATE),
+						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "m", GlobalFormat.DATE),
+						new Column("Status", "status", "m"), new Column("Billing Model", "billingModel", "m"),
+						new Column("Billing Cycle", "billingCycle", "m"), new Column("Store Name", "storeName", "m") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -163,7 +161,7 @@ public final class MerchantListingView extends ListingView {
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Customer Listing") == 0) {
-						Dispatcher.instance().dispatch(
+						ViewManager.instance().dispatch(
 								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowRef(rowIndex),
 										ispRef));
 					}
