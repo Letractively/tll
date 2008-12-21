@@ -275,7 +275,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @see #addField(String, IField)
 	 */
 	public void addField(IField field) {
-		addField(null, field);
+		fields.add(field);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 */
 	public void addField(String parentPropPath, IField field) {
 		setParentPropertyPath(field, parentPropPath);
-		fields.add(field);
+		addField(field);
 	}
 
 	/**
@@ -297,7 +297,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param fields The fields to add
 	 */
 	public void addFields(Iterable<IField> fields) {
-		addFields(null, fields);
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(fld);
+			}
+		}
 	}
 
 	/**
@@ -305,7 +309,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param fields The array of fields to add
 	 */
 	public void addFields(IField[] fields) {
-		addFields(null, fields);
+		if(fields != null) {
+			for(IField fld : fields) {
+				addField(fld);
+			}
+		}
 	}
 
 	/**
