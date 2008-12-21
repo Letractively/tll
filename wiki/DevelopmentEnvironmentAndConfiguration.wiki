@@ -27,6 +27,11 @@ Lists the necessary local environment and IDE settings for building and deployin
 || {ANT_HOME}/bin ||
 || {subversion install dir}/bin ||
 
+  * Append these global ignores to the installed SVN config file:
+{{{
+global-ignores = build classes dist Desktop.ini *.log local.properties *.tmp .gwt-cache test-output tomcat Constants.properties local.config.properties
+}}}
+
   * Build the tll-config.jar:
 {{{
 {TLL_ROOT}/config/gant dist
