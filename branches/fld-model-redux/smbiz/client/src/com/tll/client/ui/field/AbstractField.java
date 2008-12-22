@@ -533,8 +533,15 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public void onChange(Widget sender) {
-		// dirty check
-		dirtyCheck();
+		// valid check
+		try {
+			validate();
+			// we are valid so do dirty check
+			dirtyCheck();
+		}
+		catch(ValidationException e) {
+			// no-op
+		}
 	}
 
 	public void onFocus(Widget sender) {
@@ -542,13 +549,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public void onLostFocus(Widget sender) {
-		// valid check
-		try {
-			validate();
-		}
-		catch(ValidationException e) {
-			// no-op
-		}
+		// no-op
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.util.StringUtil;
 
 /**
  * DateValidator
@@ -48,9 +49,10 @@ public class DateValidator implements IValidator {
 
 	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Date) return value;
-
+		final String s = value.toString();
+		if(StringUtil.isEmpty(s)) return value;
 		try {
-			return dateFormat.parse(value.toString());
+			return dateFormat.parse(s);
 		}
 		catch(Throwable e) {
 			throw new ValidationException(new Msg("Must be a date of format: '" + dateFormat.getPattern() + "'.",

@@ -7,7 +7,6 @@ package com.tll.client.field;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
-import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -18,7 +17,7 @@ import com.tll.client.validate.ValidationException;
  * IField - Abstraction for managing the display and editing of data.
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider, SourcesFocusEvents, SourcesChangeEvents {
+public interface IField extends IPropertyNameProvider, SourcesChangeEvents {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
