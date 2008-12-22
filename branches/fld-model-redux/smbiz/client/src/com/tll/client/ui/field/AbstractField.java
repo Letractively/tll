@@ -32,7 +32,7 @@ import com.tll.client.validate.ValidationException;
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, ChangeListener, FocusListener {
+public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -186,11 +186,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void setReadOnly(boolean readOnly) {
-		// if we go from editable to read-only mode, carry the value over
-		if(isAttached() && !this.readOnly) {
-			value = getEditableValue();
-		}
-
 		// hide the field label required indicator if we are in read-only state
 		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
 
@@ -263,9 +258,12 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	protected abstract String getEditableValue();
 
 	public final String getValue() {
+		// this isn't necessary as the onChange event now handles it
+		/*
 		if(!readOnly && isAttached()) {
 			value = getEditableValue();
 		}
+		*/
 		return value;
 	}
 
@@ -379,6 +377,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public void markInvalid(boolean invalid, List<Msg> msgs) {
 		if(invalid) {
+			removeStyleName(STYLE_DIRTY);
 			addStyleName(STYLE_INVALID);
 			if(msgs != null) {
 				addMsgs(msgs);
@@ -472,12 +471,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 	}
 
-	public void onClick(Widget sender) {
-		// toggle the display of any bound UI msgs for this field when the field
-		// label is clicked
-		if(sender == fldLbl) toggleMsgs();
-	}
-
 	public final void addKeyboardListener(KeyboardListener listener) {
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
@@ -532,7 +525,18 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		}
 	}
 
-	public void onChange(Widget sender) {
+	public void onClick(Widget sender) {
+		// toggle the display of any bound UI msgs for this field when the field
+		// label is clicked
+		if(sender == fldLbl) toggleMsgs();
+	}
+
+	public final void onChange(Widget sender) {
+		assert sender == getEditable(null);
+
+		// update the value
+		this.value = getEditableValue();
+
 		// valid check
 		try {
 			validate();
@@ -542,14 +546,6 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		catch(ValidationException e) {
 			// no-op
 		}
-	}
-
-	public void onFocus(Widget sender) {
-		// no-op
-	}
-
-	public void onLostFocus(Widget sender) {
-		// no-op
 	}
 
 	@Override

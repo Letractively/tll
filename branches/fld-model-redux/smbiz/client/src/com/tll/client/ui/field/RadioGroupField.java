@@ -71,7 +71,7 @@ public final class RadioGroupField extends AbstractDataMapField {
 			rbPanel = new VerticalPanel();
 		}
 		fp.add(rbPanel);
-		fp.addFocusListener(this);
+		// fp.addFocusListener(this);
 		addChangeListener(this);
 	}
 

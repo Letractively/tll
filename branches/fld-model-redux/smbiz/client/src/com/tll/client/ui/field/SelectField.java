@@ -38,7 +38,7 @@ public class SelectField extends AbstractDataMapField {
 					lb.addItem(n, v);
 				}
 			}
-			lb.addFocusListener(this);
+			// lb.addFocusListener(this);
 			lb.addChangeListener(this);
 		}
 		return lb;
