@@ -4,6 +4,10 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.bind.IPropertyChangeListener;
+import com.tll.client.bind.ISourcesPropertyChangeEvents;
+import com.tll.client.bind.PropertyChangeSupport;
+
 /**
  * AbstractModelProperty
  * @author jpk
@@ -14,6 +18,12 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 * The property name.
 	 */
 	protected String propertyName;
+
+	/**
+	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
+	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
+	 */
+	private final transient PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	/**
 	 * Constructor
@@ -37,6 +47,37 @@ public abstract class AbstractModelProperty implements IModelProperty {
 
 	public final void setPropertyName(String name) {
 		this.propertyName = name;
+	}
+
+	public final Object getProperty(String propPath) {
+		return getValue();
+	}
+
+	public final void setProperty(String propPath, Object value) throws PropertyPathException {
+		if(!propertyName.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		setValue(value);
+	}
+
+	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public final IPropertyChangeListener[] getPropertyChangeListeners() {
+		return changeSupport.getPropertyChangeListeners();
+	}
+
+	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
 	@Override

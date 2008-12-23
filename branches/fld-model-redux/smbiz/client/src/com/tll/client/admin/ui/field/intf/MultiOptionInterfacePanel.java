@@ -15,9 +15,7 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
@@ -56,18 +54,18 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		@Override
 		protected void populateFieldGroup(FieldGroup fields) {
 			name = entityNameField();
-			code = ftext("code", "Code", 20);
-			description = ftextarea("description", "Desc", 3, 8);
+			code = ftext("code", "Code", 20, null);
+			description = ftextarea("description", "Desc", 3, 8, null);
 
 			cost = new TextField[3];
-			cost[0] = fcurrency("setUpCost", "Set Up");
-			cost[1] = fcurrency("monthlyCost", "Monthly");
-			cost[2] = fcurrency("annualCost", "Annual");
+			cost[0] = fcurrency("setUpCost", "Set Up", null);
+			cost[1] = fcurrency("monthlyCost", "Monthly", null);
+			cost[2] = fcurrency("annualCost", "Annual", null);
 
 			price = new TextField[3];
-			price[0] = fcurrency("baseSetupPrice", "Set Up");
-			price[1] = fcurrency("baseMonthlyPrice", "Monthly");
-			price[2] = fcurrency("baseAnnualPrice", "Annual");
+			price[0] = fcurrency("baseSetupPrice", "Set Up", null);
+			price[1] = fcurrency("baseMonthlyPrice", "Monthly", null);
+			price[2] = fcurrency("baseAnnualPrice", "Annual", null);
 
 			fields.addField(name);
 			fields.addField(code);
@@ -137,15 +135,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		// options tab widget
 		cmpsr.newRow();
 		cmpsr.addWidget(tabOptions);
-	}
-
-	@Override
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		switch(event.getType()) {
-			case BEFORE_BIND:
-				rebuildOptions(event.getBinding());
-				break;
-		}
 	}
 
 	private void rebuildOptions(IFieldGroupModelBinding bindingDef) {

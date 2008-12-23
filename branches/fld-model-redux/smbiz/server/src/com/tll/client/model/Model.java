@@ -11,6 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.tll.client.IMarshalable;
+import com.tll.client.bind.IBindable;
+import com.tll.client.bind.IPropertyChangeListener;
+import com.tll.client.bind.ISourcesPropertyChangeEvents;
+import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.util.StringUtil;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
@@ -20,7 +25,7 @@ import com.tll.model.schema.PropertyType;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IData, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -72,6 +77,12 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * to be able to pass a {@link Model} ref as an {@link IModelProperty}.
 	 */
 	private RelatedOneProperty selfRef;
+
+	/**
+	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
+	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
+	 */
+	private transient final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	/**
 	 * Constructor
@@ -216,7 +227,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	public String asString(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = null;
 		try {
-			prop = getProperty(propPath);
+			prop = getModelProperty(propPath);
 		}
 		catch(PropertyPathException e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -228,6 +239,14 @@ public final class Model implements IData, Iterable<IModelProperty> {
 		return ((ISelfFormattingPropertyValue) prop).asString();
 	}
 
+	public Object getProperty(String propPath) throws PropertyPathException {
+		return getModelProperty(propPath).getValue();
+	}
+
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
+		getModelProperty(propPath).setValue(value);
+	}
+
 	/**
 	 * Does a property exist?
 	 * @param propPath The property path to test
@@ -235,7 +254,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 */
 	public boolean propertyExists(String propPath) {
 		try {
-			Object o = getProperty(propPath);
+			Object o = getModelProperty(propPath);
 			return o != null;
 		}
 		catch(PropertyPathException e) {
@@ -258,20 +277,21 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * @return The resolved non-<code>null</code> model property
 	 * @throws PropertyPathException When the model property can't be resolved.
 	 */
-	public IModelProperty getProperty(String propPath) throws PropertyPathException {
+	public IModelProperty getModelProperty(String propPath) throws PropertyPathException {
 		return StringUtil.isEmpty(propPath) ? getSelfRef() : resolvePropertyPath(propPath);
 	}
 
 	/**
 	 * Retrieves a non-relational property value from this {@link Model} given a
-	 * property path. This method is behaves like {@link #getProperty(String)}
-	 * with a filter that targets {@link IPropertyValue}s only.
+	 * property path. This method is behaves like
+	 * {@link #getModelProperty(String)} with a filter that targets
+	 * {@link IPropertyValue}s only.
 	 * @param propPath Points to the desired model property
 	 * @return The resolved non-<code>null</code> {@link IPropertyValue}
 	 * @throws PropertyPathException When the property value can't be resolved.
 	 */
 	public IPropertyValue getPropertyValue(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "value");
@@ -289,7 +309,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
 	public Model getNestedModel(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(!prop.getType().isModelRef()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -307,7 +327,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to related one property.
 	 */
 	public RelatedOneProperty relatedOne(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -325,7 +345,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -344,7 +364,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
@@ -449,19 +469,6 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
-	 * Drills down through the model properties searching for nested models of the
-	 * given type.
-	 * @param type The type to search for
-	 * @param ignoreIndexed Ignore indexed model properties?
-	 * @return Set of matching model ref properties or <code>null</code> if none
-	 *         found
-	 */
-	Set<IModelRefProperty> getModelsOfType(EntityType type, boolean ignoreIndexed) {
-		// TODO impl
-		return null;
-	}
-
-	/**
 	 * PropBinding
 	 * @author jpk
 	 */
@@ -513,7 +520,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	static final class BindingStack<B extends PropBinding> extends ArrayList<B> {
 
 		/**
-		 * Locates an {@link Binding} given a model ref.
+		 * Locates an {@link PropBinding} given a model ref.
 		 * @param model The sought model in this list of bindings
 		 * @return The containing binding or <code>null</code> if not present.
 		 */
@@ -664,6 +671,31 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 */
 	public void setMarkedDeleted(boolean markedDeleted) {
 		this.markedDeleted = markedDeleted;
+	}
+
+	@Override
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public IPropertyChangeListener[] getPropertyChangeListeners() {
+		return changeSupport.getPropertyChangeListeners();
+	}
+
+	@Override
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
 	@Override

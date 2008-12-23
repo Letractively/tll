@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.client.model;
+package com.tll.client.data;
 
 
 /**

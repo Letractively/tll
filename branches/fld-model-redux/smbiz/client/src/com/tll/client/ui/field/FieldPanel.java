@@ -10,8 +10,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IFieldBindingListener;
-import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
 import com.tll.client.model.Model;
@@ -23,15 +21,16 @@ import com.tll.client.validate.EmailAddressValidator;
  * s.
  * @author jpk
  */
-public abstract class FieldPanel extends Composite implements IFieldBindingListener {
+public abstract class FieldPanel extends Composite {
 
 	/**
 	 * Creates a new {@link TextField} instance.
 	 * @param propName
 	 * @param lblTxt
 	 * @param visibleLength
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final TextField ftext(String propName, String lblTxt, int visibleLength) {
+	public static final TextField ftext(String propName, String lblTxt, int visibleLength, String helpText) {
 		return new TextField(propName, lblTxt, visibleLength);
 	}
 
@@ -40,9 +39,10 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param propName
 	 * @param lblTxt
 	 * @param visibleLength
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final TextField femail(String propName, String lblTxt, int visibleLength) {
-		TextField f = ftext(propName, lblTxt, visibleLength);
+	public static final TextField femail(String propName, String lblTxt, int visibleLength, String helpText) {
+		TextField f = ftext(propName, lblTxt, visibleLength, null);
 		f.addValidator(EmailAddressValidator.INSTANCE);
 		return f;
 	}
@@ -51,9 +51,10 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * Creates a new {@link TextField} instance with currency formatting.
 	 * @param propName
 	 * @param lblTxt
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final TextField fcurrency(String propName, String lblTxt) {
-		TextField fld = ftext(propName, lblTxt, 15);
+	public static final TextField fcurrency(String propName, String lblTxt, String helpText) {
+		TextField fld = ftext(propName, lblTxt, 15, null);
 		fld.setFormat(GlobalFormat.CURRENCY);
 		return fld;
 	}
@@ -63,8 +64,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param propName
 	 * @param lblTxt
 	 * @param format
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final DateField fdate(String propName, String lblTxt, GlobalFormat format) {
+	public static final DateField fdate(String propName, String lblTxt, GlobalFormat format, String helpText) {
 		return new DateField(propName, lblTxt, format);
 	}
 
@@ -74,8 +76,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * value respectively.
 	 * @param propName
 	 * @param lblTxt
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final CheckboxField fbool(String propName, String lblTxt) {
+	public static final CheckboxField fbool(String propName, String lblTxt, String helpText) {
 		return new CheckboxField(propName, lblTxt, "true", "false");
 	}
 
@@ -86,8 +89,10 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param lblTxt
 	 * @param checkedValue
 	 * @param uncheckedValue
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final CheckboxField fcheckbox(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
+	public static final CheckboxField fcheckbox(String propName, String lblTxt, String checkedValue,
+			String uncheckedValue, String helpText) {
 		return new CheckboxField(propName, lblTxt, checkedValue, uncheckedValue);
 	}
 
@@ -97,8 +102,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param lblTxt
 	 * @param numRows
 	 * @param numCols
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final TextAreaField ftextarea(String propName, String lblTxt, int numRows, int numCols) {
+	public static final TextAreaField ftextarea(String propName, String lblTxt, int numRows, int numCols, String helpText) {
 		return new TextAreaField(propName, lblTxt, numRows, numCols);
 	}
 
@@ -106,8 +112,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * Creates a new {@link PasswordField} instance.
 	 * @param propName
 	 * @param lblTxt
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final PasswordField fpassword(String propName, String lblTxt) {
+	public static final PasswordField fpassword(String propName, String lblTxt, String helpText) {
 		return new PasswordField(propName, lblTxt);
 	}
 
@@ -116,8 +123,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param propName
 	 * @param lblTxt
 	 * @param dataMap
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final SelectField fselect(String propName, String lblTxt, Map<String, String> dataMap) {
+	public static final SelectField fselect(String propName, String lblTxt, Map<String, String> dataMap, String helpText) {
 		return new SelectField(propName, lblTxt, dataMap);
 	}
 
@@ -126,8 +134,9 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param propName
 	 * @param lblTxt
 	 * @param dataMap
+	 * @param helpText The on hover tool tip text
 	 */
-	public static final SuggestField fsuggest(String propName, String lblTxt, Map<String, String> dataMap) {
+	public static final SuggestField fsuggest(String propName, String lblTxt, Map<String, String> dataMap, String helpText) {
 		return new SuggestField(propName, lblTxt, dataMap);
 	}
 
@@ -137,9 +146,10 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @param lblTxt
 	 * @param dataMap
 	 * @param renderHorizontal
+	 * @param helpText The on hover tool tip text
 	 */
 	public static final RadioGroupField fradiogroup(String propName, String lblTxt, Map<String, String> dataMap,
-			boolean renderHorizontal) {
+			boolean renderHorizontal, String helpText) {
 		return new RadioGroupField(propName, lblTxt, dataMap, renderHorizontal);
 	}
 
@@ -149,8 +159,8 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @return DateField array
 	 */
 	public static final DateField[] entityTimestampFields() {
-		DateField dateCreated = fdate(Model.DATE_CREATED_PROPERTY, "Created", GlobalFormat.DATE);
-		DateField dateModified = fdate(Model.DATE_MODIFIED_PROPERTY, "Modified", GlobalFormat.DATE);
+		DateField dateCreated = fdate(Model.DATE_CREATED_PROPERTY, "Created", GlobalFormat.DATE, null);
+		DateField dateModified = fdate(Model.DATE_MODIFIED_PROPERTY, "Modified", GlobalFormat.DATE, null);
 		dateCreated.setReadOnly(true);
 		dateModified.setReadOnly(true);
 		return new DateField[] {
@@ -162,7 +172,7 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	 * @return The created entity name field
 	 */
 	public static final TextField entityNameField() {
-		return ftext(Model.NAME_PROPERTY, "Name", 30);
+		return ftext(Model.NAME_PROPERTY, "Name", 30, null);
 	}
 
 	/**
@@ -230,9 +240,5 @@ public abstract class FieldPanel extends Composite implements IFieldBindingListe
 	@Override
 	public final String toString() {
 		return fields.toString();
-	}
-
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		// base impl no-op
 	}
 }

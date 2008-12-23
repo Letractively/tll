@@ -2,7 +2,6 @@ package com.tll.server.rpc.listing;
 
 import java.util.List;
 
-import com.tll.client.model.IData;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerException;
@@ -11,8 +10,9 @@ import com.tll.listhandler.Sorting;
 /**
  * The {@link IListingHandler} implementation.
  * @author jpk
+ * @param <R> The row data type.
  */
-public final class ListingHandler<R extends IData> implements IListingHandler<R> {
+public final class ListingHandler<R> implements IListingHandler<R> {
 
 	private final int pageSize;
 	private final String listingName;

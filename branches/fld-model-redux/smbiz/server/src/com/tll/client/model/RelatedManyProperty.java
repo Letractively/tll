@@ -50,6 +50,22 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value) throws IllegalArgumentException {
+		if(value != null && !(value instanceof List)) {
+			throw new IllegalArgumentException("The value must be a list of Model instances");
+		}
+
+		List<?> list = (List<?>) value;
+		for(Object o : list) {
+			if(o.getClass() != Model.class) {
+				throw new IllegalArgumentException("Element in list is not a Model instance.");
+			}
+		}
+
+		this.list = (List<Model>) value;
+	}
+
 	/**
 	 * Provides the encased List of {@link Model}s.
 	 */

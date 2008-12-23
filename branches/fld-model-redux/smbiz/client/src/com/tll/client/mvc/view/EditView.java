@@ -13,7 +13,6 @@ import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
@@ -51,15 +50,13 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 	/**
 	 * Constructor
-	 * @param binding The required binding instance to employ for field/model data
-	 *        transfer
 	 * @param fldGrpPnl The required field group panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(IFieldGroupModelBinding binding, FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
+	public EditView(FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(binding, fldGrpPnl, true, false);
+		editPanel = new EditPanel(fldGrpPnl, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;

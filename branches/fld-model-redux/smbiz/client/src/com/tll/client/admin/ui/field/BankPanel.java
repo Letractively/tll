@@ -30,9 +30,9 @@ public final class BankPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		bankName = ftext("paymentData_bankName", "Bank Name", 40);
-		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30);
-		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20);
+		bankName = ftext("paymentData_bankName", "Bank Name", 40, null);
+		bankAccountNo = ftext("paymentData_bankAccountNo", "Account Num", 30, null);
+		bankRoutingNo = ftext("paymentData_bankRoutingNo", "Routing Num", 20, null);
 
 		fields.addField(bankName);
 		fields.addField(bankAccountNo);

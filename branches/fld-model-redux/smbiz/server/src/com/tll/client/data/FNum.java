@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.client.model;
+package com.tll.client.data;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.tll.client.IMarshalable;

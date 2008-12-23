@@ -41,40 +41,40 @@ public final class AddressPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		emailAddress = femail("emailAddress", "Email Address", 30);
+		emailAddress = femail("emailAddress", "Email Address", 30, null);
 		fields.addField(emailAddress);
 
-		firstName = ftext("firstName", "First Name", 20);
+		firstName = ftext("firstName", "First Name", 20, null);
 		fields.addField(firstName);
 
-		lastName = ftext("lastName", "Last Name", 20);
+		lastName = ftext("lastName", "Last Name", 20, null);
 		fields.addField(lastName);
 
-		mi = ftext("mi", "MI", 1);
+		mi = ftext("mi", "MI", 1, null);
 		fields.addField(mi);
 
-		company = ftext("company", "Company", 20);
+		company = ftext("company", "Company", 20, null);
 		fields.addField(company);
 
-		attn = ftext("attn", "Attn", 10);
+		attn = ftext("attn", "Attn", 10, null);
 		fields.addField(attn);
 
-		address1 = ftext("address1", "Address 1", 40);
+		address1 = ftext("address1", "Address 1", 40, null);
 		fields.addField(address1);
 
-		address2 = ftext("address2", "Address 2", 40);
+		address2 = ftext("address2", "Address 2", 40, null);
 		fields.addField(address2);
 
-		city = ftext("city", "City", 30);
+		city = ftext("city", "City", 30, null);
 		fields.addField(city);
 
-		province = fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES));
+		province = fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES), null);
 		fields.addField(province);
 
-		postalCode = ftext("postalCode", "Zip", 20);
+		postalCode = ftext("postalCode", "Zip", 20, null);
 		fields.addField(postalCode);
 
-		country = fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(RefDataType.ISO_COUNTRY_CODES));
+		country = fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(RefDataType.ISO_COUNTRY_CODES), null);
 		fields.addField(country);
 	}
 

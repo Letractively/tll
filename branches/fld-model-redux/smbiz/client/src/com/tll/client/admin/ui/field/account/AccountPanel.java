@@ -22,10 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.field.IField;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.IndexedProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
@@ -129,16 +127,16 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		timestamps = entityTimestampFields();
 		fields.addFields(timestamps);
 
-		parent = ftext("parent.name", "Parent", 15);
+		parent = ftext("parent.name", "Parent", 15, null);
 		parent.setReadOnly(true);
 		fields.addField(parent);
 
-		status = fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class));
+		status = fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class), null);
 		status.getListBox().addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
 				final FieldGroup fields = getFieldGroup();
-				String s = getFieldGroup().getField("status").getValue().toLowerCase();
+				String s = getFieldGroup().getField("status").getFieldValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
 				IField f = fields.getField("dateCancelled");
 				f.setVisible(closed);
@@ -147,25 +145,25 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		});
 		fields.addField(status);
 
-		dateCancelled = fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE);
+		dateCancelled = fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE, null);
 		fields.addField(dateCancelled);
 
-		currency = fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap());
+		currency = fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap(), null);
 		fields.addField(currency);
 
-		billingModel = ftext("billingModel", "Billing Model", 18);
+		billingModel = ftext("billingModel", "Billing Model", 18, null);
 		fields.addField(billingModel);
 
-		billingCycle = ftext("billingCycle", "Billing Cycle", 18);
+		billingCycle = ftext("billingCycle", "Billing Cycle", 18, null);
 		fields.addField(billingCycle);
 
-		dateLastCharged = fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE);
+		dateLastCharged = fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE, null);
 		fields.addField(dateLastCharged);
 
-		nextChargeDate = fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE);
+		nextChargeDate = fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE, null);
 		fields.addField(nextChargeDate);
 
-		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?");
+		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?", null);
 		persistPymntInfo.getCheckBox().addClickListener(new ClickListener() {
 
 			public void onClick(Widget sender) {
@@ -223,17 +221,6 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 
 		dpPaymentInfo.addEventHandler(this);
 		dpAddresses.addEventHandler(this);
-	}
-
-	@Override
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		switch(event.getType()) {
-			case BEFORE_BIND:
-				rebuildAddresses(event.getBinding());
-				break;
-			case AFTER_BIND:
-				break;
-		}
 	}
 
 	/**

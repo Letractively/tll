@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasFocus;
@@ -16,10 +15,17 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
+import com.tll.client.bind.IBindable;
+import com.tll.client.bind.IBindingAction;
 import com.tll.client.field.HasMaxLength;
 import com.tll.client.field.IField;
+import com.tll.client.model.MalformedPropPathException;
+import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.ToStringRenderer;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
 import com.tll.client.validate.CompositeValidator;
@@ -32,7 +38,8 @@ import com.tll.client.validate.ValidationException;
  * AbstractField - Input field abstraction.
  * @author jpk
  */
-public abstract class AbstractField extends Composite implements IField, HasFocus, ClickListener, ChangeListener {
+
+public abstract class AbstractField extends AbstractBoundWidget<Object, String, IBindingAction<IBindable>, Model> implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -62,7 +69,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 * to toggle between editable and read-only states and the value may be set
 	 * before the field is initially drawn in the UI.
 	 */
-	private String value;
+	private String fvalue;
 
 	/**
 	 * The value the field is set to when {@link #reset()} is called.
@@ -72,6 +79,8 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	private boolean required = false;
 	private boolean readOnly = false;
 	private boolean enabled = true;
+
+	private String helpText;
 
 	/**
 	 * The read-only field Widget.
@@ -134,6 +143,9 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		else {
 			fldLbl = null;
 		}
+
+		// set the default renderer
+		setRenderer(ToStringRenderer.INSTANCE);
 	}
 
 	/**
@@ -243,6 +255,21 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	/**
+	 * @return the helpText
+	 */
+	public final String getHelpText() {
+		return helpText;
+	}
+
+	/**
+	 * @param helpText the helpText to set
+	 */
+	public final void setHelpText(String helpText) {
+		this.helpText = helpText;
+		if(isAttached()) draw();
+	}
+
+	/**
 	 * Obtains the editable Widget and optionally sets its value.
 	 * @param value The value to to be populated into the form control. If
 	 *        <code>null</code>, the UI form value shall <em>not</em> be altered.
@@ -257,18 +284,18 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 */
 	protected abstract String getEditableValue();
 
-	public final String getValue() {
+	// this is allowed to be overridden
+	public/*final*/String getFieldValue() {
 		// this isn't necessary as the onChange event now handles it
-		/*
-		if(!readOnly && isAttached()) {
-			value = getEditableValue();
-		}
-		*/
-		return value;
+		// if(!readOnly && isAttached()) {
+		// value = getEditableValue();
+		// }
+		return fvalue;
 	}
 
-	public final void setValue(String value) {
-		this.value = value;
+	public final void setFieldValue(String value) {
+		this.fvalue = value;
+		if(isAttached()) draw();
 	}
 
 	public final String getResetValue() {
@@ -280,10 +307,10 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final boolean isDirty() {
-		return !resetValue.equals(getValue());
+		return !resetValue.equals(getFieldValue());
 	}
 
-	public void dirtyCheck() {
+	public final void dirtyCheck() {
 		if(isDirty()) {
 			addStyleName(STYLE_DIRTY);
 		}
@@ -327,7 +354,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 
 	public final void validate() throws ValidationException {
 		// we start with the field's current value
-		Object value = getValue();
+		Object value = getFieldValue();
 
 		List<Msg> errorMsgs = null;
 
@@ -375,7 +402,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		return validatedValue;
 	}
 
-	public void markInvalid(boolean invalid, List<Msg> msgs) {
+	public final void markInvalid(boolean invalid, List<Msg> msgs) {
 		if(invalid) {
 			removeStyleName(STYLE_DIRTY);
 			addStyleName(STYLE_INVALID);
@@ -389,7 +416,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	}
 
 	public final void reset() {
-		setValue(resetValue);
+		setFieldValue(resetValue);
 		validatedValue = null;
 		clearMsgs();
 		removeStyleName(STYLE_DIRTY);
@@ -404,7 +431,7 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 	 *         {@link HasMaxLength}.
 	 */
 	protected String getReadOnlyHtml() {
-		return (value == null || value.length() == 0) ? dfltReadOnlyEmptyValue : value;
+		return (fvalue == null || fvalue.length() == 0) ? dfltReadOnlyEmptyValue : fvalue;
 	}
 
 	private void addMsgs(List<Msg> msgs) {
@@ -424,12 +451,16 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		if(readOnly) {
 			if(rof == null) {
 				rof = new HTML();
+				// set help text
+				rof.setTitle(helpText);
 			}
 			rof.setHTML(getReadOnlyHtml());
 			fw = rof;
 		}
 		else {
-			fw = (Widget) getEditable(value);
+			fw = (Widget) getEditable(fvalue);
+			// set help text
+			fw.setTitle(helpText);
 			// apply disabled property to form control directly
 			fw.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
 		}
@@ -531,11 +562,11 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		if(sender == fldLbl) toggleMsgs();
 	}
 
-	public final void onChange(Widget sender) {
+	public void onChange(Widget sender) {
 		assert sender == getEditable(null);
 
 		// update the value
-		this.value = getEditableValue();
+		this.fvalue = getEditableValue();
 
 		// valid check
 		try {
@@ -546,6 +577,24 @@ public abstract class AbstractField extends Composite implements IField, HasFocu
 		catch(ValidationException e) {
 			// no-op
 		}
+	}
+
+	public final Object getProperty(String propPath) throws PropertyPathException {
+		if(!this.propName.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		return getValue();
+	}
+
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
+		if(!this.propName.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		setValue(value);
+	}
+
+	public final String getValue() {
+		return getFieldValue();
 	}
 
 	@Override

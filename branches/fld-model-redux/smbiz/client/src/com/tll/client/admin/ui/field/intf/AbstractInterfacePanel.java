@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.google.gwt.widgetideas.table.client.overrides.Grid;
+import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.field.FieldGroup;
 import com.tll.client.listing.Column;
 import com.tll.client.ui.field.CheckboxField;
@@ -41,19 +41,19 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
 		name = entityNameField();
-		code = ftext("code", "Code", 20);
-		description = ftextarea("description", "Desc", 3, 8);
+		code = ftext("code", "Code", 20, null);
+		description = ftextarea("description", "Desc", 3, 8, null);
 		timestamps = entityTimestampFields();
 
-		isAvailableAsp = fbool("isAvailableAsp", null);
-		isAvailableIsp = fbool("isAvailableIsp", null);
-		isAvailableMerchant = fbool("isAvailableMerchant", null);
-		isAvailableCustomer = fbool("isAvailableCustomer", null);
+		isAvailableAsp = fbool("isAvailableAsp", null, null);
+		isAvailableIsp = fbool("isAvailableIsp", null, null);
+		isAvailableMerchant = fbool("isAvailableMerchant", null, null);
+		isAvailableCustomer = fbool("isAvailableCustomer", null, null);
 
-		isRequiredAsp = fbool("isRequiredAsp", null);
-		isRequiredIsp = fbool("isRequiredIsp", null);
-		isRequiredMerchant = fbool("isRequiredMerchant", null);
-		isRequiredCustomer = fbool("isRequiredCustomer", null);
+		isRequiredAsp = fbool("isRequiredAsp", null, null);
+		isRequiredIsp = fbool("isRequiredIsp", null, null);
+		isRequiredMerchant = fbool("isRequiredMerchant", null, null);
+		isRequiredCustomer = fbool("isRequiredCustomer", null, null);
 
 		fields.addField(name);
 		fields.addField(code);

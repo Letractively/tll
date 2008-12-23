@@ -6,13 +6,14 @@
 package com.tll.client.model;
 
 import com.tll.client.IMarshalable;
+import com.tll.client.bind.IBindable;
 import com.tll.model.schema.PropertyType;
 
 /**
  * IModelProperty - Represents a single model property.
  * @author jpk
  */
-public interface IModelProperty extends IPropertyNameProvider, IMarshalable {
+public interface IModelProperty extends IPropertyNameProvider, IBindable, IMarshalable {
 
 	/**
 	 * @return The property type.
@@ -25,4 +26,11 @@ public interface IModelProperty extends IPropertyNameProvider, IMarshalable {
 	 * @return The raw bound value of the bound property.
 	 */
 	Object getValue();
+
+	/**
+	 * Generic way to set the model property value.
+	 * @param value The value to set
+	 * @throws IllegalArgumentException
+	 */
+	void setValue(Object value) throws IllegalArgumentException;
 }

@@ -20,12 +20,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.event.IFieldBindingListener;
 import com.tll.client.event.type.ShowViewRequest;
 import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -171,8 +168,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		public TestFieldPanel() {
 			super("Test Field Panel");
 			ap = new AddressPanel();
-			bf = fbool("bf", null);
-			bflabel = fbool("bflabel", "Boolean with Label");
+			bf = fbool("bf", null, null);
+			bflabel = fbool("bflabel", "Boolean with Label", null);
 		}
 
 		@Override
@@ -210,54 +207,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
 		final TestFieldPanel fieldPanel = new TestFieldPanel();
-		final EditPanel ep = new EditPanel(new IFieldGroupModelBinding() {
-
-			public void removeFieldBindingEventListener(IFieldBindingListener listener) {
-			}
-
-			public void addFieldBindingEventListener(IFieldBindingListener listener) {
-			}
-
-			public void unbind() {
-			}
-
-			public void setRootModel(Model model) {
-			}
-
-			public void setRootFieldGroup(FieldGroup fields) {
-			}
-
-			public void setModelValues() {
-			}
-
-			public void setFieldValues() {
-			}
-
-			public void bind() {
-			}
-
-			public String bindIndexedModel(IField field, String relatedManyPropPath, EntityType modelType) {
-				return null;
-			}
-
-			public FieldGroup getRootFieldGroup() {
-				return null;
-			}
-
-			public Model resolveModel(EntityType type) throws IllegalArgumentException, IllegalStateException {
-				return null;
-			}
-
-			public void unbindField(IField field) {
-			}
-
-			public boolean isMarkedDeleted(String modelPropPath) {
-				return false;
-			}
-
-			public void markDeleted(String modelPropPath, boolean markDeleted) {
-			}
-		}, fieldPanel, true, true);
+		final EditPanel ep = new EditPanel(fieldPanel, true, true);
 		testPanel.add(ep);
 
 		Model address = new Model(EntityType.ADDRESS);

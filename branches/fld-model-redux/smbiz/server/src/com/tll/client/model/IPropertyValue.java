@@ -3,7 +3,7 @@ package com.tll.client.model;
 import com.tll.model.schema.PropertyMetadata;
 
 /**
- * IPropertyValue - A property binding that whose value is non-relational.
+ * IPropertyValue - A single non-relational model property.
  * @author jpk
  */
 public interface IPropertyValue extends IModelProperty {

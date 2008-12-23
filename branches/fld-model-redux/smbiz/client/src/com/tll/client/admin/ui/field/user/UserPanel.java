@@ -9,9 +9,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.FieldBindingEvent;
 import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RefKey;
@@ -52,11 +50,11 @@ public class UserPanel extends FieldPanel {
 	public void populateFieldGroup(FieldGroup fields) {
 		name = entityNameField();
 		timestamps = entityTimestampFields();
-		emailAddress = ftext("emailAddress", "Email Address", 30);
+		emailAddress = ftext("emailAddress", "Email Address", 30, null);
 		emailAddress.setReadOnly(true);
-		locked = fbool("locked", "Locked");
-		enabled = fbool("enabled", "Enabled");
-		expires = fdate("expires", "Expires", GlobalFormat.DATE);
+		locked = fbool("locked", "Locked", null);
+		enabled = fbool("enabled", "Enabled", null);
+		expires = fdate("expires", "Expires", GlobalFormat.DATE, null);
 
 		addressPanel = new AddressPanel();
 
@@ -67,15 +65,6 @@ public class UserPanel extends FieldPanel {
 		fields.addField(enabled);
 		fields.addField(expires);
 		fields.addField(addressPanel.getFieldGroup());
-	}
-
-	@Override
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		switch(event.getType()) {
-			case AFTER_BIND:
-				setParentAccountViewLink(event.getBinding());
-				break;
-		}
 	}
 
 	private void setParentAccountViewLink(IFieldGroupModelBinding bindingDef) {

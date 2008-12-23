@@ -88,7 +88,7 @@ public interface IField extends IPropertyNameProvider, SourcesChangeEvents {
 	/**
 	 * @return The field's value.
 	 */
-	String getValue();
+	String getFieldValue();
 
 	/**
 	 * Sets the field's value.
@@ -96,7 +96,7 @@ public interface IField extends IPropertyNameProvider, SourcesChangeEvents {
 	 * NOTE: To clear the field's value, pass <code>null</code> as the value.
 	 * @param value The value to set
 	 */
-	void setValue(String value);
+	void setFieldValue(String value);
 
 	/**
 	 * Gets the reset value.

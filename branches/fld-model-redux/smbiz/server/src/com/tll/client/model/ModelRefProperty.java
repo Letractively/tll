@@ -38,6 +38,13 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		return model;
 	}
 
+	public final void setValue(Object value) throws IllegalArgumentException {
+		if(value != null && value instanceof Model == false) {
+			throw new IllegalArgumentException("The value is not a Model instance.");
+		}
+		model = (Model) value;
+	}
+
 	public final Model getModel() {
 		return model;
 	}

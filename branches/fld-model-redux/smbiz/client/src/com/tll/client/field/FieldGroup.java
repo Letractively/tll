@@ -397,11 +397,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * For the case of a {@link FieldGroup}, we provide a comma delimited list of
 	 * field values for all child {@link IField}s.
 	 */
-	public String getValue() {
+	public String getFieldValue() {
 		StringBuilder sb = new StringBuilder();
 		for(IField field : fields) {
 			sb.append(',');
-			sb.append(field.getValue());
+			sb.append(field.getFieldValue());
 		}
 		return sb.length() > 1 ? sb.substring(1) : sb.toString();
 	}
@@ -410,9 +410,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Setting a value on a {@link FieldGroup}, means we recursively set the same
 	 * value to all child fields.
 	 */
-	public void setValue(String value) {
+	public void setFieldValue(String value) {
 		for(IField field : fields) {
-			field.setValue(value);
+			field.setFieldValue(value);
 		}
 	}
 

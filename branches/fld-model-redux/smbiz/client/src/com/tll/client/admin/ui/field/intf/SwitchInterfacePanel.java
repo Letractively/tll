@@ -7,8 +7,6 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.event.type.FieldBindingEvent;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
@@ -22,15 +20,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 	 */
 	public SwitchInterfacePanel() {
 		super();
-	}
-
-	@Override
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		switch(event.getType()) {
-			case BEFORE_BIND:
-				applyModel(event.getBinding());
-				break;
-		}
 	}
 
 	private void applyModel(IFieldGroupModelBinding bindingDef) {

@@ -45,22 +45,22 @@ public final class CreditCardPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class));
-		num = ftext("paymentData_ccNum", "Num", 15);
+		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class), null);
+		num = ftext("paymentData_ccNum", "Num", 15, null);
 		num.addValidator(CreditCardValidator.INSTANCE);
-		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4);
-		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2);
-		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4);
-		name = ftext("paymentData_ccName", "Name", 30);
-		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40);
-		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40);
-		city = ftext("paymentData_ccCity", "City", 30);
+		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4, null);
+		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2, null);
+		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4, null);
+		name = ftext("paymentData_ccName", "Name", 30, null);
+		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40, null);
+		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40, null);
+		city = ftext("paymentData_ccCity", "City", 30, null);
 		state =
-				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES));
-		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15);
+				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES), null);
+		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15, null);
 		country =
 				fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
-						RefDataType.ISO_COUNTRY_CODES));
+						RefDataType.ISO_COUNTRY_CODES), null);
 
 		fields.addField(type);
 		fields.addField(num);

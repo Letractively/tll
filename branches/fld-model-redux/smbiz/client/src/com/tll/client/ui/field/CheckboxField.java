@@ -14,10 +14,13 @@ import com.google.gwt.user.client.ui.Widget;
  * CheckboxField
  * @author jpk
  */
-public class CheckboxField extends AbstractField {
+public final class CheckboxField extends AbstractField {
 
-	protected String checkedValue;
-	protected String uncheckedValue;
+	private static final String DEFAULT_CHECKED_VALUE = Boolean.toString(true);
+	private static final String DEFAULT_UNCHECKED_VALUE = Boolean.toString(false);
+
+	private final String checkedValue;
+	private final String uncheckedValue;
 
 	private CheckBox cb;
 
@@ -48,13 +51,27 @@ public class CheckboxField extends AbstractField {
 	/**
 	 * Constructor
 	 * @param propName
+	 * @param lblTxt
+	 */
+	public CheckboxField(String propName, String lblTxt) {
+		this(propName, lblTxt, DEFAULT_CHECKED_VALUE, DEFAULT_UNCHECKED_VALUE);
+	}
+
+	/**
+	 * Constructor
+	 * @param propName
 	 * @param lblTxt The checkbox [label] text
-	 * @param checkedValue
-	 * @param uncheckedValue
+	 * @param checkedValue The value to provide when this checkbox is in the
+	 *        checked state
+	 * @param uncheckedValue The value to provide when this checkbox is in the
+	 *        un-checked state
 	 */
 	public CheckboxField(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
 		super(propName, null);
 		this.cbLblTxt = lblTxt;
+		if(checkedValue == null || uncheckedValue == null) {
+			throw new IllegalArgumentException("Both the checked value and unchecked values must be specified.");
+		}
 		this.checkedValue = checkedValue;
 		this.uncheckedValue = uncheckedValue;
 	}
@@ -68,19 +85,6 @@ public class CheckboxField extends AbstractField {
 			addChangeListener(this);
 		}
 		return cb;
-	}
-
-	public final void setChecked(boolean checked) {
-		setValue(checked ? checkedValue : uncheckedValue);
-		getCheckBox().setChecked(checked);
-	}
-
-	public final void setCheckedValue(String checkedValue) {
-		this.checkedValue = checkedValue;
-	}
-
-	public final void setUncheckedValue(String uncheckedValue) {
-		this.uncheckedValue = uncheckedValue;
 	}
 
 	private boolean isCheckedValue(String value) {
@@ -103,8 +107,7 @@ public class CheckboxField extends AbstractField {
 
 	@Override
 	protected String getReadOnlyHtml() {
-		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
-				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
+		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ") + getFieldValue();
 	}
 
 	@Override
@@ -112,5 +115,28 @@ public class CheckboxField extends AbstractField {
 		super.onClick(sender);
 		assert sender == cb;
 		if(changeListeners != null) changeListeners.fireChange(this);
+	}
+
+	public boolean isChecked() {
+		return checkedValue.equals(getFieldValue());
+	}
+
+	public void setChecked(boolean checked) {
+		setFieldValue(checked ? checkedValue : uncheckedValue);
+		getCheckBox().setChecked(checked);
+	}
+
+	@Override
+	public String getFieldValue() {
+		return isCheckedValue(getFieldValue()) ? checkedValue : uncheckedValue;
+	}
+
+	public void setValue(Object value) {
+		String old = getValue();
+		setChecked(value == null ? false : value.equals(checkedValue));
+
+		if((old != getValue()) && !old.equals(getValue())) {
+			changeSupport.firePropertyChange("value", old, this.getValue());
+		}
 	}
 }

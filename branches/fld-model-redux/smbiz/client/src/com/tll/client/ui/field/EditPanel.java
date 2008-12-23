@@ -19,7 +19,6 @@ import com.tll.client.event.IEditListener;
 import com.tll.client.event.ISourcesEditEvents;
 import com.tll.client.event.type.EditEvent;
 import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.ui.FocusCommand;
@@ -56,11 +55,6 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
-	 * The field/model binding.
-	 */
-	private final IFieldGroupModelBinding binding;
-
-	/**
 	 * Contains the actual edit fields.
 	 */
 	private final FieldPanel fieldPanel;
@@ -76,17 +70,13 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 	/**
 	 * Constructor
-	 * @param binding The required field/model binding
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(IFieldGroupModelBinding binding, FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
-
-		if(binding == null) throw new IllegalArgumentException("A field/model binding must be specified.");
-		this.binding = binding;
+	public EditPanel(FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
