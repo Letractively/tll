@@ -7,9 +7,7 @@ package com.tll.client.mvc.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.model.ModelChangeEvent;
 
 /**
  * AbstractView - Base view class for all defined views in the app.

@@ -5,8 +5,8 @@
  */
 package com.tll.client.ui.listing;
 
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.model.ModelChangeEvent;
 
 /**
  * DataListingWidget - Listing that lists arbitrary data. May be extended to

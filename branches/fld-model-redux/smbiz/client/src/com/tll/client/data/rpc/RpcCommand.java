@@ -10,12 +10,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.Payload;
 import com.tll.client.data.Status;
-import com.tll.client.event.IRpcListener;
-import com.tll.client.event.ISourcesRpcEvents;
-import com.tll.client.event.StatusEventDispatcher;
-import com.tll.client.event.type.RpcEvent;
-import com.tll.client.event.type.StatusEvent;
 import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.client.ui.StatusEvent;
+import com.tll.client.ui.StatusEventDispatcher;
 
 /**
  * RpcCommand - Impl of {@link IRpcCommand} serving as a way to chain rpc calls

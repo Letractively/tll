@@ -5,12 +5,12 @@
  */
 package com.tll.client.admin.mvc.view;
 
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.StaticViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.mvc.view.AbstractView;
+import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.model.EntityType;
 
 /**

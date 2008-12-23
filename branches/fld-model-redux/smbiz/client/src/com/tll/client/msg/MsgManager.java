@@ -11,8 +11,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IDragListener;
-import com.tll.client.event.type.DragEvent;
+import com.tll.client.ui.DragEvent;
+import com.tll.client.ui.IDragListener;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 

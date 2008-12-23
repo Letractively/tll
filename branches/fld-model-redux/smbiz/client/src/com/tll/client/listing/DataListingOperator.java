@@ -7,8 +7,6 @@ package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
-import com.tll.client.event.IListingListener;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.listhandler.Sorting;
 
 /**

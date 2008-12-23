@@ -4,8 +4,8 @@
  */
 package com.tll.client.mvc;
 
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.ViewRequestEvent;
 
 /**
  * ShowViewController

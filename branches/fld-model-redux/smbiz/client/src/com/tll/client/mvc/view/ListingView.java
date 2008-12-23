@@ -6,9 +6,8 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.AbstractRowOptions;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.listing.ModelListingWidget;

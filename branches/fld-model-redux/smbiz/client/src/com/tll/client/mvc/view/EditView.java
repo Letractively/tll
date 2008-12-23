@@ -6,17 +6,13 @@ package com.tll.client.mvc.view;
 
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.event.IEditListener;
-import com.tll.client.event.type.EditEvent;
-import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.UnloadViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.ui.EditEvent;
+import com.tll.client.ui.IEditListener;
 import com.tll.client.ui.field.EditPanel;
 import com.tll.client.ui.field.FieldPanel;
 

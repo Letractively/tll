@@ -7,10 +7,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.event.IViewEventListener;
-import com.tll.client.event.type.ViewChangedEvent;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.view.IViewEventListener;
 import com.tll.client.mvc.view.IViewRef;
+import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
 

@@ -7,14 +7,9 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.data.AuxDataRequest.AuxDataType;
 import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.event.ICrudListener;
-import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.IRpcListener;
-import com.tll.client.event.ISourcesModelChangeEvents;
-import com.tll.client.event.type.CrudEvent;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.RpcEvent;
-import com.tll.client.event.type.ModelChangeEvent.ModelChangeOp;
+import com.tll.client.data.rpc.IRpcListener;
+import com.tll.client.data.rpc.RpcEvent;
+import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.model.EntityType;
 
 /**

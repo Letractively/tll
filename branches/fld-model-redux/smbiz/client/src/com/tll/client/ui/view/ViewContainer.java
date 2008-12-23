@@ -16,15 +16,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IDragListener;
-import com.tll.client.event.ISourcesDragEvents;
-import com.tll.client.event.type.DragEvent;
-import com.tll.client.event.type.PinPopViewRequest;
-import com.tll.client.event.type.UnloadViewRequest;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewState;
+import com.tll.client.mvc.view.PinPopViewRequest;
+import com.tll.client.mvc.view.UnloadViewRequest;
+import com.tll.client.ui.DragEvent;
+import com.tll.client.ui.IDragListener;
+import com.tll.client.ui.ISourcesDragEvents;
 
 /**
  * ViewContainer - UI container for {@link IView} implementations.

@@ -13,9 +13,6 @@ import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.event.IOptionListener;
-import com.tll.client.event.ISourcesOptionEvents;
-import com.tll.client.event.type.OptionEvent;
 
 /**
  * OptionsPanel - Panel containing a vertical list of options that are

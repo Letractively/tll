@@ -5,8 +5,6 @@ package com.tll.client.admin.mvc.view.account;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
@@ -16,7 +14,9 @@ import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
+import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;

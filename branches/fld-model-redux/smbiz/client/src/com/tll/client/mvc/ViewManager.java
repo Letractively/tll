@@ -11,15 +11,15 @@ import java.util.List;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.ISourcesViewEvents;
-import com.tll.client.event.IViewEventListener;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ViewChangedEvent;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.model.IModelChangeListener;
+import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.mvc.view.ISourcesViewEvents;
 import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.IViewEventListener;
 import com.tll.client.mvc.view.IViewRef;
+import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.view.ViewContainer;
 
 /**

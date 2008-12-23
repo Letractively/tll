@@ -10,9 +10,6 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerCollection;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IOptionListener;
-import com.tll.client.event.ISourcesOptionEvents;
-import com.tll.client.event.type.OptionEvent;
 
 /**
  * OptionsPopup

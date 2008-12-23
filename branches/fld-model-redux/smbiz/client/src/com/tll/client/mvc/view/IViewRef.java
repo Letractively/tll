@@ -7,7 +7,6 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.type.ViewRequestEvent;
 import com.tll.client.ui.view.ViewRequestLink;
 
 /**

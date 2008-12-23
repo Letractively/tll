@@ -17,7 +17,7 @@ import com.tll.client.admin.mvc.view.account.MerchantListingView;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.mvc.view.user.UserEditView;
 import com.tll.client.admin.ui.MainPanel;
-import com.tll.client.event.IUserSessionListener;
+import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.LoginDialog;
 

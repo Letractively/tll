@@ -15,13 +15,13 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.event.IEditListener;
-import com.tll.client.event.ISourcesEditEvents;
-import com.tll.client.event.type.EditEvent;
-import com.tll.client.event.type.EditEvent.EditOp;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
+import com.tll.client.ui.EditEvent;
 import com.tll.client.ui.FocusCommand;
+import com.tll.client.ui.IEditListener;
+import com.tll.client.ui.ISourcesEditEvents;
+import com.tll.client.ui.EditEvent.EditOp;
 import com.tll.client.validate.ValidationException;
 
 /**

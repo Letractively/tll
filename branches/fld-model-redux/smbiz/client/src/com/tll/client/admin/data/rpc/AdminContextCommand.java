@@ -14,8 +14,8 @@ import com.tll.client.App;
 import com.tll.client.admin.AdminContext;
 import com.tll.client.admin.event.IAdminContextListener;
 import com.tll.client.admin.event.IAdminContextListener.ChangeType;
+import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
-import com.tll.client.event.IUserSessionListener;
 
 /**
  * AdminContextCommand - RPC command to retrieve the admin context from the
