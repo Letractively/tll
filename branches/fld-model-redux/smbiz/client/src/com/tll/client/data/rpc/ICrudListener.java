@@ -3,7 +3,7 @@
  * @author jpk
  * Sep 14, 2007
  */
-package com.tll.client.model;
+package com.tll.client.data.rpc;
 
 import java.util.EventListener;
 

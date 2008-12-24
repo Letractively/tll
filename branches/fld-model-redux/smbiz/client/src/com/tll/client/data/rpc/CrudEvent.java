@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 13, 2008
  */
-package com.tll.client.model;
+package com.tll.client.data.rpc;
 
 import java.util.EventObject;
 
