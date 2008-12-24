@@ -4,14 +4,15 @@
  */
 package com.tll.client.ui;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 
 /**
  * DragEvent - Event object containing information about UI artifact dragging.
  * @author jpk
  */
-public class DragEvent extends BaseEvent {
+public class DragEvent extends EventObject {
 
 	public final int deltaX, deltaY;
 

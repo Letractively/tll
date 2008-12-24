@@ -137,7 +137,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 
 	public void onRpcEvent(RpcEvent event) {
 		if(!event.getPayload().hasErrors()) {
-			ModelChangeEvent mce = new ModelChangeEvent(event.getWidget(), ModelChangeOp.AUXDATA_READY, (Model) null, null);
+			ModelChangeEvent mce = new ModelChangeEvent(event.getSource(), ModelChangeOp.AUXDATA_READY, (Model) null, null);
 			listeners.fireOnModelChange(mce);
 		}
 	}
@@ -150,25 +150,25 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 
 			case LOAD:
 				mce =
-						new ModelChangeEvent(event.getWidget(), ModelChangeOp.LOADED, event.getPayload().getEntity(), event
+						new ModelChangeEvent(event.getSource(), ModelChangeOp.LOADED, event.getPayload().getEntity(), event
 								.getPayload().getStatus());
 				break;
 
 			case ADD:
 				mce =
-						new ModelChangeEvent(event.getWidget(), ModelChangeOp.ADDED, event.getPayload().getEntity(), event
+						new ModelChangeEvent(event.getSource(), ModelChangeOp.ADDED, event.getPayload().getEntity(), event
 								.getPayload().getStatus());
 				break;
 
 			case UPDATE:
 				mce =
-						new ModelChangeEvent(event.getWidget(), ModelChangeOp.UPDATED, event.getPayload().getEntity(), event
+						new ModelChangeEvent(event.getSource(), ModelChangeOp.UPDATED, event.getPayload().getEntity(), event
 								.getPayload().getStatus());
 				break;
 
 			case PURGE:
 				mce =
-						new ModelChangeEvent(event.getWidget(), ModelChangeOp.DELETED, event.getPayload().getEntityRef(), event
+						new ModelChangeEvent(event.getSource(), ModelChangeOp.DELETED, event.getPayload().getEntityRef(), event
 								.getPayload().getStatus());
 				break;
 		}

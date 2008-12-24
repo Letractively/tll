@@ -4,17 +4,15 @@
  */
 package com.tll.client.model;
 
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
+import java.util.EventObject;
+
 import com.tll.client.data.Status;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
 
 /**
  * ModelChangeEvent - Used to dissemminate model changes.
  * @author jpk
  */
-public final class ModelChangeEvent extends BaseEvent {
+public final class ModelChangeEvent extends EventObject {
 
 	public static enum ModelChangeOp {
 		AUXDATA_READY,
@@ -37,7 +35,7 @@ public final class ModelChangeEvent extends BaseEvent {
 	 * @param model
 	 * @param status
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, Model model, Status status) {
+	public ModelChangeEvent(Object source, ModelChangeOp change, Model model, Status status) {
 		super(source);
 		this.change = change;
 		this.model = model;
@@ -52,7 +50,7 @@ public final class ModelChangeEvent extends BaseEvent {
 	 * @param modelRef
 	 * @param status
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change, RefKey modelRef, Status status) {
+	public ModelChangeEvent(Object source, ModelChangeOp change, RefKey modelRef, Status status) {
 		super(source);
 		this.change = change;
 		this.model = null;
@@ -65,7 +63,7 @@ public final class ModelChangeEvent extends BaseEvent {
 	 * @param source
 	 * @param change Expected to be a {@link ModelChangeOp#AUXDATA_READY} event
 	 */
-	public ModelChangeEvent(Widget source, ModelChangeOp change) {
+	public ModelChangeEvent(Object source, ModelChangeOp change) {
 		this(source, change, (Model) null, null);
 
 	}

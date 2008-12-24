@@ -5,14 +5,15 @@
  */
 package com.tll.client.ui;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 
 /**
  * EditEvent
  * @author jpk
  */
-public final class EditEvent extends BaseEvent {
+public final class EditEvent extends EventObject {
 
 	public enum EditOp {
 		ADD,

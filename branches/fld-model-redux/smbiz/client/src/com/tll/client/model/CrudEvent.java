@@ -4,8 +4,9 @@
  */
 package com.tll.client.model;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 import com.tll.client.data.EntityPayload;
 import com.tll.client.data.EntityRequest;
 import com.tll.client.data.rpc.CrudCommand.CrudOp;
@@ -14,7 +15,7 @@ import com.tll.client.data.rpc.CrudCommand.CrudOp;
  * CrudEvent
  * @author jpk
  */
-public final class CrudEvent extends BaseEvent {
+public final class CrudEvent extends EventObject {
 
 	private final CrudOp crudOp;
 	private final EntityRequest request;

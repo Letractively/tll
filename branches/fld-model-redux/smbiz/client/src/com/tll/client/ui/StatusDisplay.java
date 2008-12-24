@@ -9,6 +9,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.data.Status;
+import com.tll.client.data.rpc.IStatusListener;
+import com.tll.client.data.rpc.StatusEvent;
+import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.msg.Msg;
 
 /**

@@ -4,8 +4,9 @@
  */
 package com.tll.client.listing;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingPayload.ListingStatus;
@@ -17,7 +18,7 @@ import com.tll.listhandler.Sorting;
  * @param <R> The row data type
  * @author jpk
  */
-public final class ListingEvent<R> extends BaseEvent {
+public final class ListingEvent<R> extends EventObject {
 
 	private final boolean success;
 	private final String listingName;

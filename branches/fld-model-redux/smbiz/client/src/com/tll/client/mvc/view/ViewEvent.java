@@ -5,14 +5,15 @@
  */
 package com.tll.client.mvc.view;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 
 /**
  * ViewEvent - Base class for all view related events in the system
  * @author jpk
  */
-public abstract class ViewEvent extends BaseEvent {
+public abstract class ViewEvent extends EventObject {
 
 	/**
 	 * Constructor

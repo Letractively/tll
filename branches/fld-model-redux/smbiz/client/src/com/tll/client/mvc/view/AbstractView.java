@@ -140,7 +140,8 @@ public abstract class AbstractView extends Composite implements IView {
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		// is this our model change?
-		if(event.getWidget() != this || !event.getWidget().getElement().isOrHasChild(this.getElement())) return;
+		final Widget w = (event.getSource() instanceof Widget) ? (Widget) event.getSource() : null;
+		if(w != this || !w.getElement().isOrHasChild(this.getElement())) return;
 
 		// errors?
 		if(event.getStatus().hasErrors()) {

@@ -11,8 +11,6 @@ import com.tll.client.App;
 import com.tll.client.data.Payload;
 import com.tll.client.data.Status;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.ui.StatusEvent;
-import com.tll.client.ui.StatusEventDispatcher;
 
 /**
  * RpcCommand - Impl of {@link IRpcCommand} serving as a way to chain rpc calls

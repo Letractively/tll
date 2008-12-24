@@ -234,7 +234,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		}
 
 		void handleModelChangeSuccess(ModelChangeEvent event) {
-			final Widget ew = event.getWidget();
+			final Widget ew = (Widget) event.getSource();
 			for(InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeSuccess(event);
@@ -244,7 +244,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		}
 
 		void handleModelChangeError(ModelChangeEvent event) {
-			final Widget ew = event.getWidget();
+			final Widget ew = (Widget) event.getSource();
 			for(InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeError(event);

@@ -5,14 +5,15 @@
  */
 package com.tll.client.ui;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 
 /**
  * OptionEvent - Event type for {@link ISourcesOptionEvents}
  * @author jpk
  */
-public class OptionEvent extends BaseEvent {
+public class OptionEvent extends EventObject {
 
 	/**
 	 * The text of the {@link Option} that was clicked.

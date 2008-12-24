@@ -12,8 +12,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.AdminContext;
-import com.tll.client.admin.event.IAdminContextListener;
-import com.tll.client.admin.event.IAdminContextListener.ChangeType;
+import com.tll.client.admin.data.rpc.IAdminContextListener.ChangeType;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
 
@@ -87,7 +86,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 
 	@Override
 	protected void handleFailure(Throwable caught) {
-		adminContextListeners.fire(null, IAdminContextListener.INVALIDATE);
+		adminContextListeners.fire(null, ChangeType.INVALIDATE);
 	}
 
 	public void onLogin() {
@@ -95,7 +94,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	}
 
 	public void onLogout() {
-		adminContextListeners.fire(null, IAdminContextListener.INVALIDATE);
+		adminContextListeners.fire(null, ChangeType.INVALIDATE);
 	}
 
 }

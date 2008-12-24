@@ -3,7 +3,7 @@
  * @author jpk
  * Aug 25, 2007
  */
-package com.tll.client.admin.event;
+package com.tll.client.admin.data.rpc;
 
 import java.util.EventListener;
 
@@ -15,12 +15,16 @@ import com.tll.client.admin.AdminContext;
  */
 public interface IAdminContextListener extends EventListener {
 
-	public final class ChangeType {}
-	
-	public static final ChangeType USER_CHANGE = new ChangeType();
-	public static final ChangeType ACCOUNT_CHANGE = new ChangeType();
-	public static final ChangeType INVALIDATE = new ChangeType();
-	
+	/**
+	 * ChangeType
+	 * @author jpk
+	 */
+	public enum ChangeType {
+		USER_CHANGE,
+		ACCOUNT_CHANGE,
+		INVALIDATE;
+	}
+
 	/**
 	 * @param ac the admin context
 	 */

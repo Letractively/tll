@@ -80,12 +80,12 @@ public abstract class OptionsPopup extends TimedPopup implements MouseListener, 
 	}
 
 	public void onCurrentOptionChanged(OptionEvent event) {
-		assert (event.getWidget() == optionsPanel);
+		assert (event.getSource() == optionsPanel);
 		cancelTimer();
 	}
 
 	public void onOptionSelected(OptionEvent event) {
-		assert (event.getWidget() == optionsPanel);
+		assert (event.getSource() == optionsPanel);
 		hide();
 	}
 

@@ -5,15 +5,16 @@
  */
 package com.tll.client.data.rpc;
 
+import java.util.EventObject;
+
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.BaseEvent;
 import com.tll.client.data.Payload;
 
 /**
  * RpcEvent
  * @author jpk
  */
-public final class RpcEvent extends BaseEvent {
+public final class RpcEvent extends EventObject {
 
 	/**
 	 * The RPC result
