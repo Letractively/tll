@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 6, 2007
  */
-package com.tll.client.ui;
+package com.tll.client.ui.option;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Nov 3, 2007
  */
-package com.tll.client.ui.field;
+package com.tll.client.ui.edit;
 
 import java.util.List;
 
@@ -17,11 +17,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
-import com.tll.client.ui.EditEvent;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.IEditListener;
-import com.tll.client.ui.ISourcesEditEvents;
-import com.tll.client.ui.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.validate.ValidationException;
 
 /**

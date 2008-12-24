@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 11, 2007
  */
-package com.tll.client.ui;
+package com.tll.client.ui.option;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Event;
@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerCollection;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.TimedPopup;
 
 /**
  * OptionsPopup

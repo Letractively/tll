@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 30, 2007
  */
-package com.tll.client.ui;
+package com.tll.client;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.DisclosurePanel;

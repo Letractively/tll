@@ -20,7 +20,7 @@ import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.search.impl.AccountSearch;
-import com.tll.client.ui.Option;
+import com.tll.client.ui.option.Option;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;

@@ -1,9 +1,10 @@
-package com.tll.client.ui;
+package com.tll.client.ui.option;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.tll.client.ui.ImageContainer;
 
 /**
  * Option - A single option in an {@link OptionsPanel}.

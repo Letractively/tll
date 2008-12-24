@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.App;
-import com.tll.client.ui.Option;
+import com.tll.client.ui.option.Option;
 
 /**
  * AbstractRowOptions - An adapter for {@link IRowOptionsDelegate} simplifying

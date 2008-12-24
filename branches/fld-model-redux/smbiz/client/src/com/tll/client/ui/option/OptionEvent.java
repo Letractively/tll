@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 23, 2008
  */
-package com.tll.client.ui;
+package com.tll.client.ui.option;
 
 import java.util.EventObject;
 

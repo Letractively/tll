@@ -3,9 +3,9 @@ package com.tll.client.ui.listing;
 import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.tll.client.listing.IRowOptionsDelegate;
-import com.tll.client.ui.Option;
-import com.tll.client.ui.OptionEvent;
-import com.tll.client.ui.OptionsPopup;
+import com.tll.client.ui.option.Option;
+import com.tll.client.ui.option.OptionEvent;
+import com.tll.client.ui.option.OptionsPopup;
 
 /**
  * RowContextPopup - The {@link Option}s panel pop-up.

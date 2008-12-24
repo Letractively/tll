@@ -11,9 +11,9 @@ import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.EditEvent;
-import com.tll.client.ui.IEditListener;
-import com.tll.client.ui.field.EditPanel;
+import com.tll.client.ui.edit.EditEvent;
+import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.field.FieldPanel;
 
 /**
