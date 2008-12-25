@@ -19,7 +19,7 @@ The following software is required:
 || JAVA_HOME || Points to the root Java install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
-|| SUBVERSION_HOME || Points to the root Subversion install dir 
+|| SUBVERSION_HOME || Points to the root Subversion install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 || TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
