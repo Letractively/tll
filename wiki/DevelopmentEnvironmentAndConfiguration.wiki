@@ -2,14 +2,14 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 =Required Software=
-|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ ||
-|| [http://groovy.codehaus.org/ groovy] || 1.5.7+ ||
-|| [http://ant.apache.org/ ant] || 1.7.1+ ||
-|| [http://gant.codehaus.org/ gant] || 1.5.0+ ||
-|| [http://subversion.tigris.org/ subversion client] || 1.5.4+ ||
-|| [http://www.eclipse.org/ eclipse] || 3.4.1+||
-|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ ||
-|| [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.5.4+ ||
+||*Name*||*Version*||*Environment Variable Name*||*Path environment variable*||
+|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ || || ||
+|| [http://groovy.codehaus.org/ groovy] || 1.5.7+ || || ||
+|| [http://ant.apache.org/ ant] || 1.7.1+ || || ||
+|| [http://gant.codehaus.org/ gant] || 1.5.0+ || || ||
+|| [http://subversion.tigris.org/ subversion client] || 1.5.4+ || || ||
+|| [http://www.eclipse.org/ eclipse] || 3.4.1+|| || ||
+|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ || || ||
 
 =environment=
   * The following environment variables are required:
