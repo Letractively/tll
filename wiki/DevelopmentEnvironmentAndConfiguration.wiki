@@ -2,25 +2,27 @@
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
 =Required Software=
+The following software is required:
 || *Name* || *Version* ||
-|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ || || ||
-|| [http://www.eclipse.org/ eclipse] || 3.4.1+|| || ||
-|| [http://groovy.codehaus.org/ groovy] || 1.5.7+ || || ||
-|| [http://ant.apache.org/ ant] || 1.7.1+ || || ||
-|| [http://gant.codehaus.org/ gant] || 1.5.0+ || || ||
-|| [http://subversion.tigris.org/ subversion client] || 1.5.4+ || || ||
-|| [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ || || ||
-|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ || || ||
+|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ ||
+|| [http://www.eclipse.org/ eclipse] || 3.4.1+||
+|| [http://groovy.codehaus.org/ groovy] || 1.5.7+ ||
+|| [http://ant.apache.org/ ant] || 1.7.1+ ||
+|| [http://gant.codehaus.org/ gant] || 1.5.0+ ||
+|| [http://subversion.tigris.org/ subversion client] || 1.5.4+ ||
+|| [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ ||
+|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ ||
 
 =environment=
-  * The following environment variables are required:
+  * Ensure the following environment variables exist:
+|| *Name* || *Description* ||
 || JAVA_HOME || Points to the root Java install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root ant install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
-|| TLL_ROOT || The main tll project dir containing all the tll projects ||
-|| TLL_TOOLS || The tll tools dir containing dependencies (mostly jar files) for the various tll projects ||
+|| TLL_ROOT || The dir containing all the tll projects. ||
+|| TLL_TOOLS || The dir containing dependencies (mostly jar files) used by the tll projects. ||
 || tll.config.machine.name || The tll configuration system property machine name. ||
 || tll.config.user.name || The tll configuration system property user name. ||
 
@@ -28,12 +30,16 @@ Lists the necessary local environment and IDE settings for building and deployin
 || {JAVA_HOME}/bin ||
 || {GROOVY_HOME}/bin ||
 || {ANT_HOME}/bin ||
-|| {subversion install dir}/bin ||
+|| {subversion install dir} ||
 
   * Append these global ignores to the installed SVN config file:
 {{{
 global-ignores = build classes dist Desktop.ini *.log local.properties *.tmp .gwt-cache test-output tomcat Constants.properties local.config.properties
 }}}
+
+  * Invoke the svn checkout command for:
+|| tll projects || http://tll.googlecode.com/svn/trunk/ {TLL_ROOT} ||
+|| tll tools || http://tll.googlecode.com/svn/tools/ {TLL_TOOLS} ||
 
   * Build the tll-config.jar:
 {{{
