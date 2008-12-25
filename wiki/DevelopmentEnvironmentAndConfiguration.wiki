@@ -17,9 +17,10 @@ The following software is required:
   * Ensure the following environment variables exist:
 || *Name* || *Description* ||
 || JAVA_HOME || Points to the root Java install dir. ||
+|| ASPECTJ_HOME || Points to the root AspectJ install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
-|| SUBVERSION_HOME || Points to the root Subversion install dir. ||
+|| SUBVERSION_HOME || Points to the root Subversion Client install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 || TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
@@ -29,9 +30,10 @@ The following software is required:
 
   * Add the following paths to the system path:
 || {JAVA_HOME}/bin ||
+|| {ASPECTJ_HOME/bin ||
 || {GROOVY_HOME}/bin ||
 || {ANT_HOME}/bin ||
-|| {subversion install dir} ||
+|| {SUBVERSION_HOME} ||
 
   * Append these global ignores to the installed SVN config file:
 {{{
