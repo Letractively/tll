@@ -37,9 +37,9 @@ The following software is required:
 global-ignores = build classes dist Desktop.ini *.log local.properties *.tmp .gwt-cache test-output tomcat Constants.properties local.config.properties
 }}}
 
-  * Invoke the svn checkout command for:
-|| tll projects || http://tll.googlecode.com/svn/trunk/ {TLL_ROOT} ||
-|| tll tools || http://tll.googlecode.com/svn/tools/ {TLL_TOOLS} ||
+  * Establish local working copies of the root tll project dir and tll tools dir:
+|| svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT} ||
+|| svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS} ||
 
   * Build the tll-config.jar:
 {{{
