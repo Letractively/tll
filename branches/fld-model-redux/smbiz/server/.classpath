@@ -22,7 +22,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/dom4j.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ehcache.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ejb3-persistence.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/guice.jar" sourcepath="/LIBS/guice/src/"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/guice.jar" sourcepath="/TLL_ROOT/guice/src/"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-core-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-annotations.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-commons-annotations.jar"/>
@@ -37,7 +37,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/servlet-api.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar" sourcepath="/TLL_ROOT/tools/lib/src/spring-sources.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-aspects.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-test.jar" sourcepath="/LIBS/spring-framework-2.5.1/mock"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-test.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
