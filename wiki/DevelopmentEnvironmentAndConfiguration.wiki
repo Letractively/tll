@@ -20,53 +20,61 @@ The following software is required:
 || ASPECTJ_HOME || Points to the root AspectJ install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
+|| GANT_HOME || Points to the root Gant install dir. ||
 || SUBVERSION_HOME || Points to the root Subversion Client install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 || TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
-|| TLL_TOOLS || Points to the local working copy dir of tll tools root dir which ('http://tll.googlecode.com/svn/tools'). ||
+|| TLL_TOOLS || Points to the local working copy dir of tll tools root dir ('http://tll.googlecode.com/svn/tools'). ||
 || tll.config.machine.name || The tll configuration system property machine name. ||
 || tll.config.user.name || The tll configuration system property user name. ||
 
   * Add the following paths to the system path:
-|| {JAVA_HOME}/bin ||
-|| {ASPECTJ_HOME/bin ||
-|| {GROOVY_HOME}/bin ||
-|| {ANT_HOME}/bin ||
-|| {SUBVERSION_HOME} ||
+ {{{
+{JAVA_HOME}/bin
+{ASPECTJ_HOME/bin
+{GROOVY_HOME}/bin
+{ANT_HOME}/bin
+{SUBVERSION_HOME}
+}}}
 
   * Append these global ignores to the installed SVN config file:
-{{{
+ {{{
 global-ignores = build classes dist Desktop.ini *.log local.properties *.tmp .gwt-cache test-output tomcat Constants.properties local.config.properties
 }}}
 
   * Establish local working copies of the root tll project dir and tll tools dir:
-|| svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT} ||
-|| svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS} ||
-
-  * Build the tll-config.jar:
-{{{
-{TLL_ROOT}/config/gant dist
+ {{{
+svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
+svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 }}}
- This will create the tll-config.jar in the {TLL_ROOT}/config/dist dir.
 
-  * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
-|| {TLL_ROOT}/tools/lib/commons-lang.jar ||
-|| {TLL_ROOT}/tools/lib/commons-logging.jar ||
-|| {TLL_ROOT}/tools/lib/commons-collections.jar ||
-|| {TLL_ROOT}/tools/lib/commons-configuration.jar ||
-|| {TLL_ROOT}/config/dist/tll-config.jar ||
-|| {AspectJ install dir}/bin/aspectjtools.jar ||
-
- These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
-
-  * Add the following to the {GROOVY_HOME}/conf/groovy-starter.conf file:
-{{{
+  * Add the following to the {{{{GANT_HOME}/conf/gant-starter.conf}}} file:
+ {{{
     # for tll projects
     load ./config
 }}}
 
- This adds the stated path to groovy's CLASSPATH before invoking gant. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
+ This adds the stated path to gant's CLASSPATH. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
+
+  * Build the tll libraries by invoking {{{gant dist}}} from a command line prompt in the following dirs:
+ {{{
+{TLL_ROOT}/config/
+{TLL_ROOT}/util/
+{TLL_ROOT}/mail/
+}}}
+
+  * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
+ {{{
+{TLL_ROOT}/tools/lib/commons-lang.jar
+{TLL_ROOT}/tools/lib/commons-logging.jar
+{TLL_ROOT}/tools/lib/commons-collections.jar
+{TLL_ROOT}/tools/lib/commons-configuration.jar
+{TLL_ROOT}/config/dist/tll-config.jar
+{ASPECTJ_HOME}/bin/aspectjtools.jar
+}}}
+
+ These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
 
 =eclipse=
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
