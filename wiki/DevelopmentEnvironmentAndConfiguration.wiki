@@ -57,7 +57,7 @@ svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 
  This adds the stated path to gant's CLASSPATH. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
 
-  * Build the tll libraries by invoking {{{gant dist}}} from a command line prompt in the following dirs:
+  * Build the tll libraries by invoking {{{gant dist}}} from a command line in the following in the listed order:
  {{{
 {TLL_ROOT}/config/
 {TLL_ROOT}/util/
@@ -84,6 +84,7 @@ The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are r
 || TLL_TOOLS || Replica of the environment variable defined above. ||
 || TLL_ROOT || Replica of the environment variable defined above. ||
 || GWT_HOME || Points to the root install dir of the Google Web Toolkit. ||
+|| GWT_INCUBATOR_HOME || Points to the root install dir of the Google Web Toolkit. ||
 
 ==String Substitution==
 The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
@@ -100,12 +101,15 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 =smbiz project configuration=
 In the {TLL_ROOT}/smbiz/config dir, create the necessary config override file with the following name:
 
-{{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}}
+ {{{
+{tll.config.machine.name}.{tll.config.user.name}.config.properties
+local.config.properties
+}}}
 
-This file must declare all properties contained in {TLL_ROOT}/smbiz/config/config.properties whose value is "UNSPECIFIED".
+ This file must declare all properties contained in {TLL_ROOT}/smbiz/config/config.properties whose value is "UNSPECIFIED".
 
 Example:
-{{{
+ {{{
 environment dev
 debug true
 
