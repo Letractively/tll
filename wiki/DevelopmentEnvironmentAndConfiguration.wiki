@@ -12,6 +12,7 @@ The following software is required:
 || [http://subversion.tigris.org/ subversion client] || 1.5.4+ ||
 || [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ ||
 || [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ ||
+|| [http://tomcat.apache.org/ Tomcat] || 6.0.18+ ||
 
 =environment=
   * Ensure the following environment variables exist:
@@ -76,6 +77,7 @@ svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 
  These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
 
+----
 =eclipse=
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
@@ -99,7 +101,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 
 ----
 =smbiz project configuration=
-In the {TLL_ROOT}/smbiz/config dir, create the necessary config override file with the following name:
+  * In the {TLL_ROOT}/smbiz/config dir, create the necessary config override file with the following name:
 
  {{{
 {tll.config.machine.name}.{tll.config.user.name}.config.properties
@@ -108,7 +110,7 @@ local.config.properties
 
  This file must declare all properties contained in {TLL_ROOT}/smbiz/config/config.properties whose value is "UNSPECIFIED".
 
-Example:
+ Example:
  {{{
 environment dev
 debug true
