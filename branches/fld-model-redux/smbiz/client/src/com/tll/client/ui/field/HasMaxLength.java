@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 22, 2008
  */
-package com.tll.client.field;
+package com.tll.client.ui.field;
 
 /**
  * HasMaxLength - Incidates support for a max length property. Used in field

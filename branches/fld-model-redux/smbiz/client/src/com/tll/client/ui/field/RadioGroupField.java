@@ -37,6 +37,8 @@ public final class RadioGroupField extends AbstractDataMapField {
 	 */
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();
 
+	private String old;
+
 	/**
 	 * The change listeners.
 	 */
@@ -124,6 +126,16 @@ public final class RadioGroupField extends AbstractDataMapField {
 	@Override
 	public void onClick(Widget sender) {
 		super.onClick(sender);
+		changeSupport.firePropertyChange("value", old, getValue());
+		old = getValue();
 		if(changeListeners != null) changeListeners.fireChange(this);
+	}
+
+	public void setValue(Object value) {
+		String old = this.getValue();
+		setText(this.getRenderer() != null ? getRenderer().render(value) : "" + value);
+		if(this.getValue() != old && this.getValue() != null && this.getValue().equals(old)) {
+			changeSupport.firePropertyChange("value", old, this.getValue());
+		}
 	}
 }

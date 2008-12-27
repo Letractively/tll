@@ -6,10 +6,10 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
-import com.tll.client.field.FieldGroup;
 import com.tll.client.listing.Column;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextAreaField;

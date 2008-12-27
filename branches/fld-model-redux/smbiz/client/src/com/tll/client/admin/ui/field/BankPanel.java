@@ -6,7 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.field.FieldGroup;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.field.VerticalFieldPanelComposer;

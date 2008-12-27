@@ -27,6 +27,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
+import com.tll.client.util.IRenderer;
 
 /**
  * AbstractBoundWidget
@@ -42,10 +43,16 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 
 	private A action;
 
+	/**
+	 * Responsible for converting a <B> type to a <V> type.
+	 */
 	private IRenderer<V, B> renderer;
 
 	private Comparator<B> comparator;
 
+	/**
+	 * The subjugated model. This is a placeholder data member.
+	 */
 	private M model;
 
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
@@ -115,7 +122,7 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 		return renderer;
 	}
 
-	public final void setRenderer(IRenderer<V, B> renderer) {
+	public void setRenderer(IRenderer<V, B> renderer) {
 		if(renderer == null) throw new IllegalArgumentException("A renderer must be specified.");
 		this.renderer = renderer;
 	}

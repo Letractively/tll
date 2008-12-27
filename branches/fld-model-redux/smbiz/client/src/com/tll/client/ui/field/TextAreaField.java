@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
-import com.tll.client.field.HasMaxLength;
 import com.tll.client.util.StringUtil;
 
 /**

@@ -10,8 +10,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IField;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.EmailAddressValidator;

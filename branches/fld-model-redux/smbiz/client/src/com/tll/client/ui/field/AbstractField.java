@@ -17,15 +17,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
-import com.tll.client.field.HasMaxLength;
-import com.tll.client.field.IField;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.ToStringRenderer;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
 import com.tll.client.validate.CompositeValidator;
@@ -39,7 +36,7 @@ import com.tll.client.validate.ValidationException;
  * @author jpk
  */
 
-public abstract class AbstractField extends AbstractBoundWidget<Object, String, IBindingAction<IBindable>, Model> implements IField, HasFocus, ClickListener, ChangeListener {
+public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindingAction<IBindable>, Model> implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -145,7 +142,7 @@ public abstract class AbstractField extends AbstractBoundWidget<Object, String, 
 		}
 
 		// set the default renderer
-		setRenderer(ToStringRenderer.INSTANCE);
+		// setRenderer(ToStringRenderer.INSTANCE);
 	}
 
 	/**
@@ -591,10 +588,6 @@ public abstract class AbstractField extends AbstractBoundWidget<Object, String, 
 			throw new MalformedPropPathException(propPath);
 		}
 		setValue(value);
-	}
-
-	public final String getValue() {
-		return getFieldValue();
 	}
 
 	@Override

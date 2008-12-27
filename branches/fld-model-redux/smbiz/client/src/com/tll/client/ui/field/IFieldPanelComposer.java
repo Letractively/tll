@@ -6,7 +6,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.field.IField;
 
 /**
  * IFieldPanelComposer - Marker indicating the ability to render fields onto a

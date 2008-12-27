@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Nov 5, 2007
  */
-package com.tll.client.field;
+package com.tll.client.ui.field;
 
 import java.util.List;
 

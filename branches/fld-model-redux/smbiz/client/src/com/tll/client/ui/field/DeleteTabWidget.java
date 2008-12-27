@@ -12,8 +12,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.field.IField;
-import com.tll.client.field.IFieldGroupModelBinding;
 
 /**
  * DeleteTabWidget - Tab Widget used for displaying a related many entity in a

@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk
  */
-package com.tll.client.field;
+package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.HashSet;

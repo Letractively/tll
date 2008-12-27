@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.field.FieldGroup;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 
 /**
