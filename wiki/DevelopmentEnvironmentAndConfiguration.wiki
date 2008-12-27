@@ -101,14 +101,13 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 
 ----
 =smbiz project configuration=
-  * In the {TLL_ROOT}/smbiz/config dir, create the necessary config override file with the following name:
+  * In the {{{{TLL_ROOT}/smbiz/config}}} dir, create the necessary config override files with the following names:
 
- {{{
-{tll.config.machine.name}.{tll.config.user.name}.config.properties
-local.config.properties
-}}}
+|| *Name* || *Required?* ||
+|| {{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}} || Yes ||
+|| {{{ local.config.properties }}} || No ||
 
- This file must declare all properties contained in {TLL_ROOT}/smbiz/config/config.properties whose value is "UNSPECIFIED".
+ These files must declare, at a minimum, all properties contained in {{{{TLL_ROOT}/smbiz/config/config.properties}}} whose value is "UNSPECIFIED".
 
  Example:
  {{{
