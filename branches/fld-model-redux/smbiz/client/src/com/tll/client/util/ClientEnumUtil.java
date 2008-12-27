@@ -24,13 +24,14 @@ public class ClientEnumUtil {
 	 * @param enumType
 	 * @return a name/value Map
 	 */
+	@SuppressWarnings("unchecked")
 	public static <E extends Enum<?>> Map<String, String> toMap(Class<E> enumType) {
 		// TODO temp commented out until GWT fully supports LinkedHashMaps!!!
 		// final Map<String, String> map = new LinkedHashMap<String, String>();
 		final Map<String, String> map = new HashMap<String, String>();
 		for(final Object e : enumType.getEnumConstants()) {
 			if(e instanceof INameValueProvider) {
-				final INameValueProvider senum = (INameValueProvider) e;
+				final INameValueProvider<String> senum = (INameValueProvider<String>) e;
 				final Object ov = senum.getValue();
 				final String val = ov == null ? null : ov.toString();
 				map.put(senum.getName(), val);

@@ -4,30 +4,27 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.util.GlobalFormat;
+import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.util.SimpleComparator;
 import com.tll.client.util.StringUtil;
 
 /**
  * TextField
  * @author jpk
  */
-public final class TextField extends AbstractField implements HasMaxLength, HasFormat, HasText {
+public final class TextField extends AbstractField<String> implements HasMaxLength, HasText {
 
 	private int visibleLen = -1, maxLen = -1;
 	private TextBox tb;
 	private String old;
-
-	/**
-	 * The display format directive. Its meaning is dependent on the
-	 * implementation.
-	 */
-	protected GlobalFormat format;
 
 	private final ChangeListenerCollection changeListeners = new ChangeListenerCollection();
 
@@ -36,10 +33,14 @@ public final class TextField extends AbstractField implements HasMaxLength, HasF
 	 * @param propName
 	 * @param lblTxt
 	 * @param visibleLen
+	 * @param maxLen
 	 */
-	public TextField(String propName, String lblTxt, int visibleLen) {
+	public TextField(String propName, String lblTxt, int visibleLen, int maxLen) {
 		super(propName, lblTxt);
 		this.visibleLen = visibleLen;
+		this.maxLen = maxLen;
+		setRenderer(ToStringRenderer.INSTANCE);
+		setComparator(SimpleComparator.INSTANCE);
 	}
 
 	public int getVisibleLen() {
@@ -50,14 +51,6 @@ public final class TextField extends AbstractField implements HasMaxLength, HasF
 		this.visibleLen = visibleLength;
 	}
 
-	public String getText() {
-		return getFieldValue();
-	}
-
-	public void setText(String text) {
-		setFieldValue(text);
-	}
-
 	public int getMaxLen() {
 		return maxLen;
 	}
@@ -66,12 +59,17 @@ public final class TextField extends AbstractField implements HasMaxLength, HasF
 		this.maxLen = maxLen;
 	}
 
-	public final GlobalFormat getFormat() {
-		return format;
+	public String getText() {
+		return getFieldValue();
 	}
 
-	public final void setFormat(GlobalFormat format) {
-		this.format = format;
+	public void setText(String text) {
+		if(!isReadOnly()) {
+			getTextBox().setText(text);
+		}
+		else {
+			setFieldValue(text);
+		}
 	}
 
 	public TextBox getTextBox() {
@@ -79,27 +77,43 @@ public final class TextField extends AbstractField implements HasMaxLength, HasF
 			tb = new TextBox();
 			// tb.addFocusListener(this);
 			tb.addChangeListener(this);
+			addKeyboardListener(new KeyboardListener() {
+
+				public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+				}
+
+				public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+					if(keyCode == KeyboardListener.KEY_ENTER) {
+						setFocus(false);
+						setFocus(true);
+					}
+				}
+
+				public void onKeyDown(Widget sender, char keyCode, int modifiers) {
+				}
+
+			});
 		}
-		return tb;
-	}
-
-	public void addChangeListener(ChangeListener listener) {
-		changeListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		changeListeners.remove(listener);
-	}
-
-	@Override
-	protected HasFocus getEditable(String value) {
-		getTextBox();
 		if(visibleLen > -1) {
 			tb.setVisibleLength(visibleLen);
 		}
 		if(maxLen > -1) {
 			tb.setMaxLength(maxLen);
 		}
+		return tb;
+	}
+
+	public void addChangeListener(ChangeListener listener) {
+		getTextBox().addChangeListener(listener);
+	}
+
+	public void removeChangeListener(ChangeListener listener) {
+		getTextBox().removeChangeListener(listener);
+	}
+
+	@Override
+	protected HasFocus getEditable(String value) {
+		getTextBox();
 		if(value != null) {
 			tb.setText(value);
 		}
@@ -116,11 +130,22 @@ public final class TextField extends AbstractField implements HasMaxLength, HasF
 		return StringUtil.abbr(super.getReadOnlyHtml(), visibleLen);
 	}
 
+	public String getValue() {
+		final TextBox tb = getTextBox();
+		try {
+			return tb.getText().length() == 0 ? null : tb.getText();
+		}
+		catch(RuntimeException re) {
+			GWT.log("" + tb, re);
+			return null;
+		}
+	}
+
 	public void setValue(Object value) {
-		String old = this.getValue();
-		setText(this.getRenderer() != null ? getRenderer().render(value) : "" + value);
-		if(this.getValue() != old && this.getValue() != null && this.getValue().equals(old)) {
-			changeSupport.firePropertyChange("value", old, this.getValue());
+		String old = getValue();
+		setText(getRenderer() != null ? getRenderer().render(value) : "" + value);
+		if(getValue() != old && getValue() != null && getValue().equals(old)) {
+			changeSupport.firePropertyChange("value", old, getValue());
 		}
 	}
 

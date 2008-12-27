@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.util.ToBooleanRenderer;
+import com.tll.client.renderer.ToBooleanRenderer;
 
 /**
  * CheckboxField
@@ -98,11 +98,6 @@ public final class CheckboxField extends AbstractField<Boolean> {
 
 	public void setChecked(boolean checked) {
 		cb.setChecked(checked);
-	}
-
-	@Override
-	public String getFieldValue() {
-		return getValue().toString();
 	}
 
 	public Boolean getValue() {

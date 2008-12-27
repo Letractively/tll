@@ -12,7 +12,7 @@ import java.util.Map;
  * data maps.
  * @author jpk
  */
-public abstract class AbstractDataMapField extends AbstractField {
+public abstract class AbstractDataMapField extends AbstractField<String> {
 
 	/**
 	 * Map of name/value pairs.<br>

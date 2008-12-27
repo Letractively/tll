@@ -11,13 +11,13 @@ import com.tll.client.util.GlobalFormat;
 public class DecimalValidator implements IValidator {
 
 	public static final DecimalValidator CURRENCY_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.CURRENCY));
+			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.CURRENCY));
 
 	public static final DecimalValidator PERCENT_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.PERCENT));
+			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.PERCENT));
 
 	public static final DecimalValidator DECIMAL_VALIDATOR =
-			new DecimalValidator(Fmt.decimalFormatBindings.get(GlobalFormat.DECIMAL));
+			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.DECIMAL));
 
 	private final NumberFormat numberFormat;
 

@@ -13,8 +13,7 @@ import com.tll.client.model.PropertyPathException;
  * Indicates the ability to be "bound". The meaning of bound is context
  * dependent.
  * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em> @author
- * <a href="mailto:cooper@screaming-penguin.com">Robert "kebernet" Cooper</a>
+ * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
 public interface IBindable extends ISourcesPropertyChangeEvents {

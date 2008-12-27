@@ -6,20 +6,27 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * SuggestField
  * @author jpk
  */
-public final class SuggestField extends AbstractDataMapField implements SuggestionHandler {
+public final class SuggestField extends AbstractDataMapField implements SuggestionHandler, HasText {
 
 	private SuggestBox sb;
+	private String old;
+
+	private final ChangeListenerCollection changeListeners = new ChangeListenerCollection();
 
 	/**
 	 * Constructor
@@ -56,6 +63,19 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 
 	public void removeChangeListener(ChangeListener listener) {
 		getSuggestBox().removeChangeListener(listener);
+	}
+
+	public String getText() {
+		return getFieldValue();
+	}
+
+	public void setText(String text) {
+		if(!isReadOnly()) {
+			getSuggestBox().setText(text);
+		}
+		else {
+			setFieldValue(text);
+		}
 	}
 
 	@Override
@@ -99,4 +119,30 @@ public final class SuggestField extends AbstractDataMapField implements Suggesti
 		sb = null; // force re-create if already set
 	}
 
+	public String getValue() {
+		final SuggestBox sb = getSuggestBox();
+		try {
+			return sb.getText().length() == 0 ? null : sb.getText();
+		}
+		catch(RuntimeException re) {
+			GWT.log("" + sb, re);
+			return null;
+		}
+	}
+
+	public void setValue(Object value) {
+		String old = getValue();
+		setText(getRenderer() != null ? getRenderer().render(value) : "" + value);
+		if(getValue() != old && getValue() != null && getValue().equals(old)) {
+			changeSupport.firePropertyChange("value", old, getValue());
+		}
+	}
+
+	@Override
+	public void onChange(Widget sender) {
+		super.onChange(sender);
+		changeSupport.firePropertyChange("value", old, getValue());
+		old = getValue();
+		changeListeners.fireChange(this);
+	}
 }

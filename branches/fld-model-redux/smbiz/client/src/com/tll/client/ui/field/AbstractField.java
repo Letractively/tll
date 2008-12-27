@@ -25,8 +25,6 @@ import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
-import com.tll.client.validate.CompositeValidator;
-import com.tll.client.validate.IValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
@@ -68,15 +66,18 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 */
 	private String fvalue;
 
-	/**
-	 * The value the field is set to when {@link #reset()} is called.
-	 */
-	private String resetValue = "";
-
 	private boolean required = false;
 	private boolean readOnly = false;
 	private boolean enabled = true;
 
+	/**
+	 * Is this field's value different that the initial "reset" value?
+	 */
+	private boolean dirty;
+
+	/**
+	 * Text that appears when the mouse hovers over the field.
+	 */
 	private String helpText;
 
 	/**
@@ -103,16 +104,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 * since the field label is not necessarily a child of this Widget.
 	 */
 	private Widget container, labelContainer;
-
-	/**
-	 * The field validator(s).
-	 */
-	private IValidator validator;
-
-	/**
-	 * The cached validated value.
-	 */
-	private Object validatedValue;
 
 	/**
 	 * Constructor
@@ -275,14 +266,13 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	protected abstract HasFocus getEditable(String value);
 
 	/**
-	 * The method grabs the current form element value in a consistent manner.
-	 * Since the various form controls inherently do <em>not</em> have single
-	 * common method to do so, this method exists.
+	 * The method grabs the current form element value in a consistent manner in
+	 * String form. Since the various form controls inherently do <em>not</em>
+	 * have single common method to do so, this method exists.
 	 */
 	protected abstract String getEditableValue();
 
-	// this is allowed to be overridden
-	public/*final*/String getFieldValue() {
+	protected final String getFieldValue() {
 		// this isn't necessary as the onChange event now handles it
 		// if(!readOnly && isAttached()) {
 		// value = getEditableValue();
@@ -290,25 +280,13 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return fvalue;
 	}
 
-	public final void setFieldValue(String value) {
+	protected final void setFieldValue(String value) {
 		this.fvalue = value;
 		if(isAttached()) draw();
 	}
 
-	public final String getResetValue() {
-		return resetValue;
-	}
-
-	public final void setResetValue(String resetValue) {
-		this.resetValue = resetValue == null ? "" : resetValue;
-	}
-
-	public final boolean isDirty() {
-		return !resetValue.equals(getFieldValue());
-	}
-
-	public final void dirtyCheck() {
-		if(isDirty()) {
+	private void dirtyCheck() {
+		if(dirty) {
 			addStyleName(STYLE_DIRTY);
 		}
 		else {
@@ -316,11 +294,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 	}
 
-	/**
-	 * Adds a field validator to this binding.
-	 * @param validator The validator to add
-	 */
-	public final void addValidator(IValidator validator) {
+	/*
+	protected final void addValidator(IValidator validator) {
 		if(validator == null || validator == NotEmptyValidator.INSTANCE || validator instanceof StringLengthValidator) {
 			throw new IllegalArgumentException("Invalid field validator");
 		}
@@ -337,8 +312,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 			this.validator = cv;
 		}
 	}
-
-	public final void removeValidator(IValidator validator) {
+	
+	protected final void removeValidator(IValidator validator) {
 		if(validator == null || this.validator == null) return;
 		if(this.validator == validator) {
 			this.validator = null;
@@ -348,13 +323,29 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 			cv.remove(validator);
 		}
 	}
+	*/
 
 	public final void validate() throws ValidationException {
-		// we start with the field's current value
-		Object value = getFieldValue();
+		validate(getValue());
+	}
 
+	public Object validate(Object value) throws ValidationException {
+		// check field requiredness
+		if(isRequired()) {
+			value = NotEmptyValidator.INSTANCE.validate(value);
+		}
+
+		// check max length
+		if(this instanceof HasMaxLength) {
+			final int maxlen = ((HasMaxLength) this).getMaxLen();
+			if(maxlen != -1) {
+				value = StringLengthValidator.validate(value, -1, maxlen);
+			}
+		}
+
+		/*
 		List<Msg> errorMsgs = null;
-
+		
 		try {
 			// check field requiredness
 			if(isRequired()) {
@@ -393,10 +384,9 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 
 		this.validatedValue = value;
-	}
+		*/
 
-	public final Object getValidatedValue() {
-		return validatedValue;
+		return value;
 	}
 
 	public final void markInvalid(boolean invalid, List<Msg> msgs) {
@@ -413,11 +403,18 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public final void reset() {
-		setFieldValue(resetValue);
-		validatedValue = null;
+
+		// reset the value
+		// TODO verify this
+		getAction().execute(this);
+
+		dirty = false;
+
+		// handle styling
 		clearMsgs();
 		removeStyleName(STYLE_DIRTY);
 		removeStyleName(STYLE_INVALID);
+
 		if(isAttached()) draw();
 	}
 
@@ -490,12 +487,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 		else if(enabled && !readOnly) {
 			// show/hide edit styling
-			if(isDirty()) {
-				addStyleName(STYLE_DIRTY);
-			}
-			else {
-				removeStyleName(STYLE_DIRTY);
-			}
+			dirtyCheck();
 		}
 	}
 
@@ -562,6 +554,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	public void onChange(Widget sender) {
 		assert sender == getEditable(null);
 
+		dirty = true;
+
 		// update the value
 		this.fvalue = getEditableValue();
 
@@ -576,7 +570,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 	}
 
-	public final Object getProperty(String propPath) throws PropertyPathException {
+	public final V getProperty(String propPath) throws PropertyPathException {
 		if(!this.propName.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}

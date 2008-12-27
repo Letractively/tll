@@ -16,4 +16,16 @@ public enum GlobalFormat {
 	DECIMAL,
 	BOOL_YESNO,
 	BOOL_TRUEFALSE;
+
+	public boolean isDateFormat() {
+		return this == TIMESTAMP || this == DATE || this == TIME;
+	}
+
+	public boolean isNumericFormat() {
+		return this == CURRENCY || this == PERCENT || this == PERCENT || this == DECIMAL;
+	}
+
+	public boolean isBooleanFormat() {
+		return this == BOOL_YESNO || this == BOOL_TRUEFALSE;
+	}
 }

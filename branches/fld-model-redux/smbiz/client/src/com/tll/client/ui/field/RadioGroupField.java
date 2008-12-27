@@ -131,11 +131,35 @@ public final class RadioGroupField extends AbstractDataMapField {
 		if(changeListeners != null) changeListeners.fireChange(this);
 	}
 
+	public String getValue() {
+		if(isReadOnly()) {
+			return getFieldValue();
+		}
+		for(RadioButton rb : getRadioButtons()) {
+			if(rb.isChecked()) {
+				return rb.getText();
+			}
+		}
+		return null;
+	}
+
 	public void setValue(Object value) {
-		String old = this.getValue();
-		setText(this.getRenderer() != null ? getRenderer().render(value) : "" + value);
-		if(this.getValue() != old && this.getValue() != null && this.getValue().equals(old)) {
-			changeSupport.firePropertyChange("value", old, this.getValue());
+		final String old = getValue();
+		final String pending = getRenderer().render(value);
+		if(isReadOnly()) {
+			setFieldValue(pending);
+		}
+		else {
+			int i = 0;
+			for(String v : dataMap.keySet()) {
+				if(v.equals(pending)) {
+					this.radioButtons.get(i).setChecked(true);
+				}
+				i++;
+			}
+		}
+		if(pending != old && pending != null && !pending.equals(old)) {
+			changeSupport.firePropertyChange("value", old, pending);
 		}
 	}
 }

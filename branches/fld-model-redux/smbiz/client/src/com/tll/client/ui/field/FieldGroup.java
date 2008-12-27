@@ -17,7 +17,6 @@ import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.util.IDescriptorProvider;
@@ -393,62 +392,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return fields.size();
 	}
 
-	/**
-	 * For the case of a {@link FieldGroup}, we provide a comma delimited list of
-	 * field values for all child {@link IField}s.
-	 */
-	public String getFieldValue() {
-		StringBuilder sb = new StringBuilder();
-		for(IField field : fields) {
-			sb.append(',');
-			sb.append(field.getFieldValue());
-		}
-		return sb.length() > 1 ? sb.substring(1) : sb.toString();
-	}
-
-	/**
-	 * Setting a value on a {@link FieldGroup}, means we recursively set the same
-	 * value to all child fields.
-	 */
-	public void setFieldValue(String value) {
-		for(IField field : fields) {
-			field.setFieldValue(value);
-		}
-	}
-
-	/**
-	 * For the case of a {@link FieldGroup}, we provide a comma delimited list of
-	 * field reset values for all child {@link IField}s.
-	 */
-	public final String getResetValue() {
-		StringBuilder sb = new StringBuilder();
-		for(IField field : fields) {
-			sb.append(',');
-			sb.append(field.getResetValue());
-		}
-		return sb.length() > 1 ? sb.substring(1) : sb.toString();
-	}
-
-	/**
-	 * Setting a reset value on a {@link FieldGroup}, means we recursively set the
-	 * same reset value to all child fields.
-	 */
-	public final void setResetValue(String resetValue) {
-		for(IField field : fields) {
-			field.setResetValue(resetValue);
-		}
-	}
-
 	@Override
 	public String toString() {
 		return descriptor() + " (FieldGroup)";
-	}
-
-	public boolean isDirty() {
-		for(IField field : fields) {
-			if(field.isDirty()) return true;
-		}
-		return false;
 	}
 
 	public void addChangeListener(ChangeListener listener) {
@@ -457,43 +403,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	public void removeChangeListener(ChangeListener listener) {
 		throw new UnsupportedOperationException();
-	}
-
-	public void dirtyCheck() {
-		for(IField f : fields) {
-			f.dirtyCheck();
-		}
-	}
-
-	/**
-	 * Adds a field validator to this binding.
-	 * @param validator The validator to add
-	 */
-	public void addValidator(IValidator validator) {
-		if(validator == null) return;
-		if(this.validator == null) {
-			this.validator = validator;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).add(validator);
-		}
-		else {
-			CompositeValidator cv = new CompositeValidator();
-			cv.add(this.validator);
-			cv.add(validator);
-			this.validator = cv;
-		}
-	}
-
-	public void removeValidator(IValidator validator) {
-		if(validator == null || this.validator == null) return;
-		if(this.validator == validator) {
-			this.validator = null;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			CompositeValidator cv = (CompositeValidator) this.validator;
-			cv.remove(validator);
-		}
 	}
 
 	public void validate() throws ValidationException {
@@ -522,6 +431,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		if(!valid) {
 			throw new ValidationException(descriptor() + " has errors.");
 		}
+	}
+
+	public Object validate(Object value) {
+		throw new UnsupportedOperationException();
 	}
 
 	public Object getValidatedValue() {

@@ -15,9 +15,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.util.IRenderer;
+import com.tll.client.renderer.IRenderer;
+import com.tll.client.renderer.ToStringRenderer;
 import com.tll.client.util.SimpleComparator;
-import com.tll.client.util.ToStringRenderer;
 
 /**
  * SelectField
@@ -34,7 +34,7 @@ public final class SelectField extends AbstractField<Object> {
 
 	private Collection<Object> options;
 
-	private final Vector<Object> changeListeners = new Vector<Object>();
+	private final Vector<ChangeListener> changeListeners = new Vector<ChangeListener>();
 
 	/**
 	 * Constructor
@@ -163,8 +163,7 @@ public final class SelectField extends AbstractField<Object> {
 
 	public void setOptions(Collection<Object> options) {
 		if(this.options == null) this.options = new ArrayList<Object>();
-		this.options = new ArrayList<Object>();
-		lb.clear();
+		getListBox().clear();
 
 		ArrayList<Object> newSelected = new ArrayList<Object>();
 
@@ -199,19 +198,23 @@ public final class SelectField extends AbstractField<Object> {
 	}
 
 	@Override
-	public void setRenderer(IRenderer<String, Object> renderer) {
+	public void setRenderer(IRenderer<Object, Object> renderer) {
 		super.setRenderer(renderer);
 		setOptions(options);
 	}
 
 	public int getSelectedIndex() {
-		int retValue;
-		retValue = lb.getSelectedIndex();
-		return retValue;
+		return lb == null ? -1 : lb.getSelectedIndex();
+	}
+
+	public Object getValue() {
+		return getListBox().isMultipleSelect() ? selected : (selected == null ? null : (selected.size() == 0 ? null
+				: selected.get(0)));
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setValue(Object value) {
+		if(options == null) throw new IllegalStateException();
 		int i = 0;
 		ArrayList<Object> old = selected;
 		selected = new ArrayList<Object>();
@@ -258,31 +261,17 @@ public final class SelectField extends AbstractField<Object> {
 		fireChangeListeners();
 	}
 
-	public Object getValue() {
-		final Object returnValue;
-		if(lb.isMultipleSelect()) {
-			returnValue = selected;
-		}
-		else if(selected.size() == 0) {
-			returnValue = null;
-		}
-		else {
-			returnValue = selected.get(0);
-		}
-		return returnValue;
+	public int getVisibleItemCount() {
+		return getListBox().getVisibleItemCount();
 	}
 
 	public void setVisibleItemCount(final int visibleItems) {
-		lb.setVisibleItemCount(visibleItems);
-	}
-
-	public int getVisibleItemCount() {
-		return lb.getVisibleItemCount();
+		getListBox().setVisibleItemCount(visibleItems);
 	}
 
 	public void addItem(final Object o) {
 		options.add(o);
-		lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(o)));
+		getListBox().addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(o)));
 	}
 
 	public void removeItem(final Object o) {
@@ -313,8 +302,7 @@ public final class SelectField extends AbstractField<Object> {
 	}
 
 	private void fireChangeListeners() {
-		for(Iterator<Object> it = this.changeListeners.iterator(); it.hasNext();) {
-			ChangeListener l = (ChangeListener) it.next();
+		for(ChangeListener l : changeListeners) {
 			l.onChange(this);
 		}
 		if(getAction() != null) {
@@ -349,6 +337,7 @@ public final class SelectField extends AbstractField<Object> {
 		fireChangeListeners();
 	}
 
+	/*
 	@Override
 	public boolean equals(final Object obj) {
 		if(obj == this) return true;
@@ -361,4 +350,5 @@ public final class SelectField extends AbstractField<Object> {
 	public int hashCode() {
 		return lb.hashCode();
 	}
+	*/
 }

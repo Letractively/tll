@@ -17,7 +17,7 @@ import com.tll.client.validate.ValidationException;
  * IField - Abstraction for managing the display and editing of data.
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider, SourcesChangeEvents {
+public interface IField extends IPropertyNameProvider, IValidator, SourcesChangeEvents {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
@@ -86,70 +86,16 @@ public interface IField extends IPropertyNameProvider, SourcesChangeEvents {
 	void setVisible(boolean visible);
 
 	/**
-	 * @return The field's value.
-	 */
-	String getFieldValue();
-
-	/**
-	 * Sets the field's value.
-	 * <p>
-	 * NOTE: To clear the field's value, pass <code>null</code> as the value.
-	 * @param value The value to set
-	 */
-	void setFieldValue(String value);
-
-	/**
-	 * Gets the reset value.
-	 */
-	String getResetValue();
-
-	/**
-	 * Sets the reset value.
-	 * @param resetValue The reset value to set
-	 */
-	void setResetValue(String resetValue);
-
-	/**
 	 * Resets the field's UI value to the last set reset value clearing out dirty
 	 * styling, validation styling and messages.
 	 */
 	void reset();
 
 	/**
-	 * Does the current field value differ from the reset value?
-	 */
-	boolean isDirty();
-
-	/**
-	 * Styles the field as dirty if the field is dirty otherwise any dirty styling
-	 * is removed.
-	 */
-	void dirtyCheck();
-
-	/**
-	 * Adds a validator.
-	 * @param validator
-	 */
-	void addValidator(IValidator validator);
-
-	/**
-	 * Removes a validator.
-	 * @param validator
-	 */
-	void removeValidator(IValidator validator);
-
-	/**
-	 * Validates the field.
-	 * @throws ValidationException When the field is found invalid
+	 * Validates the field's held value.
+	 * @throws ValidationException
 	 */
 	void validate() throws ValidationException;
-
-	/**
-	 * Provides the validated value set by the last invocation of
-	 * {@link #validate()}.
-	 * @return The cached validated value
-	 */
-	Object getValidatedValue();
 
 	/**
 	 * Styles the field as either valid or invalid.

@@ -24,10 +24,11 @@ import com.google.gwt.i18n.client.NumberFormat;
  */
 public abstract class Fmt {
 
-	public static final Map<GlobalFormat, DateTimeFormat> dateFormatBindings =
+	private static final Map<GlobalFormat, DateTimeFormat> dateFormatBindings =
 			new HashMap<GlobalFormat, DateTimeFormat>();
 
-	public static final Map<GlobalFormat, NumberFormat> decimalFormatBindings = new HashMap<GlobalFormat, NumberFormat>();
+	private static final Map<GlobalFormat, NumberFormat> decimalFormatBindings =
+			new HashMap<GlobalFormat, NumberFormat>();
 
 	static {
 		dateFormatBindings.put(GlobalFormat.DATE, DateTimeFormat.getShortDateFormat());
@@ -41,6 +42,32 @@ public abstract class Fmt {
 		decimalFormatBindings.put(GlobalFormat.DECIMAL, NumberFormat.getDecimalFormat());
 		// default is local dependant decimal format
 		decimalFormatBindings.put(null, NumberFormat.getDecimalFormat());
+	}
+
+	/**
+	 * Translates a {@link GlobalFormat} instance to a {@link DateTimeFormat}
+	 * instance.
+	 * @param format The {@link GlobalFormat} instance
+	 * @return The translated {@link DateTimeFormat} instance
+	 * @throws IllegalArgumentException When the given global format instance does
+	 *         not represent a date format.
+	 */
+	public static DateTimeFormat getDateTimeFormat(GlobalFormat format) throws IllegalArgumentException {
+		if(!format.isDateFormat()) throw new IllegalArgumentException("Not a date format");
+		return dateFormatBindings.get(format);
+	}
+
+	/**
+	 * Translates a {@link GlobalFormat} instance to a {@link NumberFormat}
+	 * instance.
+	 * @param format The {@link GlobalFormat} instance
+	 * @return The translated {@link NumberFormat} instance
+	 * @throws IllegalArgumentException When the given global format instance does
+	 *         not represent a decimal format.
+	 */
+	public static NumberFormat getDecimalFormat(GlobalFormat format) throws IllegalArgumentException {
+		if(!format.isDateFormat()) throw new IllegalArgumentException("Not a number format");
+		return decimalFormatBindings.get(format);
 	}
 
 	/**

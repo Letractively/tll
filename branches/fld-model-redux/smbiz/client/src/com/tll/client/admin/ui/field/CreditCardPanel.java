@@ -13,7 +13,6 @@ import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.ClientEnumUtil;
-import com.tll.client.validate.CreditCardValidator;
 import com.tll.model.impl.CreditCardType;
 import com.tll.service.app.RefDataType;
 
@@ -47,7 +46,7 @@ public final class CreditCardPanel extends FieldPanel {
 	public void populateFieldGroup(FieldGroup fields) {
 		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class), null);
 		num = ftext("paymentData_ccNum", "Num", 15, null);
-		num.addValidator(CreditCardValidator.INSTANCE);
+		// num.addValidator(CreditCardValidator.INSTANCE);
 		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4, null);
 		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2, null);
 		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4, null);
@@ -56,7 +55,8 @@ public final class CreditCardPanel extends FieldPanel {
 		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40, null);
 		city = ftext("paymentData_ccCity", "City", 30, null);
 		state =
-				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES), null);
+				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES),
+						null);
 		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15, null);
 		country =
 				fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(

@@ -3,7 +3,7 @@
  * @author jpk
  * Dec 22, 2008
  */
-package com.tll.client.util;
+package com.tll.client.renderer;
 
 /**
  * IRenderer - Simple contract for rendering.
