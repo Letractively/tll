@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Order Item Status
  * @author jpk
  */
-public enum OrderItemStatus implements INameValueProvider {
+public enum OrderItemStatus implements INameValueProvider<String> {
 	N("none"),
 	O("Ordered"),
 	C("Committed"),
@@ -24,7 +24,7 @@ public enum OrderItemStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

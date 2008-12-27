@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Ship Mode Type
  * @author jpk
  */
-public enum ShipModeType implements INameValueProvider {
+public enum ShipModeType implements INameValueProvider<String> {
 	USPS("United States Postal Service"),
 	UPS("UPS"),
 	FEDEX("Federal Express");
@@ -21,7 +21,7 @@ public enum ShipModeType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

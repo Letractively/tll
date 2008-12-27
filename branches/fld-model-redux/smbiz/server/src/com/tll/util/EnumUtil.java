@@ -37,7 +37,7 @@ public final class EnumUtil {
 	public static <E extends Enum<?>> E fromString(Class<E> enumType, String text) throws IllegalArgumentException {
 
 		for(final E e : enumType.getEnumConstants()) {
-			if(e instanceof INameValueProvider && ((INameValueProvider) e).getValue().equals(text)) {
+			if(e instanceof INameValueProvider && ((INameValueProvider<?>) e).getValue().equals(text)) {
 				return e;
 			}
 			else if(e.toString().equals(text)) {
@@ -56,7 +56,7 @@ public final class EnumUtil {
 	 */
 	public static String toString(Enum<?> enm) {
 		if(enm instanceof INameValueProvider) {
-			final Object ov = ((INameValueProvider) enm).getValue();
+			final Object ov = ((INameValueProvider<?>) enm).getValue();
 			return ov == null ? null : ov.toString();
 		}
 		return enm.toString();
@@ -70,7 +70,7 @@ public final class EnumUtil {
 	 */
 	public static String name(Enum<?> enm) {
 		if(enm instanceof INameValueProvider) {
-			return ((INameValueProvider) enm).getName();
+			return ((INameValueProvider<?>) enm).getName();
 		}
 		return enm.toString();
 	}
@@ -82,14 +82,13 @@ public final class EnumUtil {
 	 * @param enumType
 	 * @return a name/value Map
 	 */
+	@SuppressWarnings("unchecked")
 	public static <E extends Enum<?>> Map<String, String> toMap(Class<E> enumType) {
 		final Map<String, String> map = new LinkedHashMap<String, String>();
 		for(final Object e : enumType.getEnumConstants()) {
 			if(e instanceof INameValueProvider) {
-				final INameValueProvider senum = (INameValueProvider) e;
-				final Object ov = senum.getValue();
-				final String val = ov == null ? null : ov.toString();
-				map.put(senum.getName(), val);
+				final INameValueProvider<String> senum = (INameValueProvider<String>) e;
+				map.put(senum.getName(), senum.getValue());
 			}
 			else {
 				final String s = e.toString();

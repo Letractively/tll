@@ -7,7 +7,7 @@ import com.tll.util.INameValueProvider;
  * in the name/package of an entity will not affect data in the database.
  * @author jpk
  */
-public enum EntityType implements INameValueProvider {
+public enum EntityType implements INameValueProvider<String> {
 	ACCOUNT("Account"),
 	ASP("Asp"),
 	ISP("Isp"),
@@ -55,7 +55,7 @@ public enum EntityType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

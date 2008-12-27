@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Order Status
  * @author jpk
  */
-public enum OrderStatus implements INameValueProvider {
+public enum OrderStatus implements INameValueProvider<String> {
 	N("none"),
 	I("Incomplete"),
 	C("Completed"),
@@ -22,7 +22,7 @@ public enum OrderStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

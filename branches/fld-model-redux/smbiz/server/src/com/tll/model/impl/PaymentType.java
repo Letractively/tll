@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Payment Type
  * @author jpk
  */
-public enum PaymentType implements INameValueProvider {
+public enum PaymentType implements INameValueProvider<String> {
 	M("Manual"),
 	CC("Credit Card"),
 	BANK("Bank"),
@@ -22,7 +22,7 @@ public enum PaymentType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

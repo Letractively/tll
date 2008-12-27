@@ -7,7 +7,7 @@ import com.tll.util.INameValueProvider;
  * Sort direction enumeration.
  * @author jpk
  */
-public enum SortDir implements INameValueProvider, IMarshalable {
+public enum SortDir implements INameValueProvider<String>, IMarshalable {
 	ASC("Ascending", "asc"),
 	DESC("Descending", "desc");
 
@@ -27,7 +27,7 @@ public enum SortDir implements INameValueProvider, IMarshalable {
 		return sqlclause;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return toString();
 	}
 

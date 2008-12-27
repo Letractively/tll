@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Order Item Trans Op
  * @author jpk
  */
-public enum OrderTransOp implements INameValueProvider {
+public enum OrderTransOp implements INameValueProvider<String> {
 	CO("Create Order"),
 	DO("Delete Order"),
 	AN("Add Notes"),
@@ -46,7 +46,7 @@ public enum OrderTransOp implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

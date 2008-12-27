@@ -1,10 +1,12 @@
 package com.tll.util;
 
 /**
- * INameValueProvider - Definition for providing a name and an associated Object value.
+ * INameValueProvider - Definition for providing a name and an associated Object
+ * value.
  * @author jpk
+ * @param <V> The value type.
  */
-public interface INameValueProvider {
+public interface INameValueProvider<V> {
 
 	/**
 	 * @return The ascribed name.
@@ -14,6 +16,6 @@ public interface INameValueProvider {
 	/**
 	 * @return The value.
 	 */
-	Object getValue();
+	V getValue();
 
 }

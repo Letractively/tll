@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Order Trans Op Result
  * @author jpk
  */
-public enum OrderTransOpResult implements INameValueProvider {
+public enum OrderTransOpResult implements INameValueProvider<String> {
 	S("Successful"),
 	F("Failed");
 
@@ -20,7 +20,7 @@ public enum OrderTransOpResult implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Payment Item Status
  * @author jpk
  */
-public enum PaymentItemStatus implements INameValueProvider {
+public enum PaymentItemStatus implements INameValueProvider<String> {
 	N("None"),
 	A("Authorized"),
 	S("Sold"),
@@ -23,7 +23,7 @@ public enum PaymentItemStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

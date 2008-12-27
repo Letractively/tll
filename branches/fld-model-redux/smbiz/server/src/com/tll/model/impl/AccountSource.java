@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Account source enumeration.
  * @author jpk
  */
-public enum AccountSource implements INameValueProvider {
+public enum AccountSource implements INameValueProvider<String> {
 	ADMIN("Admin"),
 	STOREFRONT("Storefront");
 
@@ -20,7 +20,7 @@ public enum AccountSource implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 }

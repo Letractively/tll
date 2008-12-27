@@ -11,7 +11,7 @@ import com.tll.util.INameValueProvider;
  * ListingOp - Defines the possible listing operations on a server-side listing.
  * @author jpk
  */
-public enum ListingOp implements INameValueProvider {
+public enum ListingOp implements INameValueProvider<String> {
 
 	/**
 	 * Generates or refreshes a listing clearing any existing cache.
@@ -47,7 +47,7 @@ public enum ListingOp implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

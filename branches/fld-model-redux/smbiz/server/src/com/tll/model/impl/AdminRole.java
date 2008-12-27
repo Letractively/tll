@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * The Admin role
  * @author jpk
  */
-public enum AdminRole implements INameValueProvider {
+public enum AdminRole implements INameValueProvider<String> {
 	ROLE_ASP("The Asp role - all powerful."),
 	ROLE_ISP("The Isp role"),
 	ROLE_MERCHANT("The Merchant role"),
@@ -23,7 +23,7 @@ public enum AdminRole implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

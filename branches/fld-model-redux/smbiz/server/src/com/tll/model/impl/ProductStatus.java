@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Product Status
  * @author jpk
  */
-public enum ProductStatus implements INameValueProvider {
+public enum ProductStatus implements INameValueProvider<String> {
 	A("Active"),
 	I("Inactive");
 
@@ -20,7 +20,7 @@ public enum ProductStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

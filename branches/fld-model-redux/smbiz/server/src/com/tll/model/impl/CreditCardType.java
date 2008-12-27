@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Credit card types.
  * @author jpk
  */
-public enum CreditCardType implements INameValueProvider {
+public enum CreditCardType implements INameValueProvider<String> {
 	VISA("Visa"),
 	MC("Master Card");
 
@@ -20,7 +20,7 @@ public enum CreditCardType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

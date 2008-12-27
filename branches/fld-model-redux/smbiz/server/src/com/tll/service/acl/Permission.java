@@ -12,7 +12,7 @@ import com.tll.util.StringUtil;
  * @see org.acegisecurity.acl.basic.SimpleAclEntry
  * @author jpk
  */
-public enum Permission implements INameValueProvider {
+public enum Permission implements INameValueProvider<String> {
 	NOTHING(SimpleAclEntry.NOTHING),
 	ADMINISTRATION(SimpleAclEntry.ADMINISTRATION),
 
@@ -40,7 +40,7 @@ public enum Permission implements INameValueProvider {
 		return StringUtil.formatEnumValue(name());
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 }

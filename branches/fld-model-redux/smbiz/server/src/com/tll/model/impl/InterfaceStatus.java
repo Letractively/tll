@@ -6,7 +6,7 @@ import com.tll.util.INameValueProvider;
  * Interface (entity) status
  * @author jpk
  */
-public enum InterfaceStatus implements INameValueProvider {
+public enum InterfaceStatus implements INameValueProvider<String> {
 	ON("On"),
 	OFF("Off");
 
@@ -20,7 +20,7 @@ public enum InterfaceStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 
