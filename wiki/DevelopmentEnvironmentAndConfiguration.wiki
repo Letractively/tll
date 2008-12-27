@@ -36,6 +36,7 @@ The following software is required:
 {ASPECTJ_HOME/bin
 {GROOVY_HOME}/bin
 {ANT_HOME}/bin
+{GANT_HOME}/bin
 {SUBVERSION_HOME}
 }}}
 
@@ -86,7 +87,7 @@ The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are r
 || TLL_TOOLS || Replica of the environment variable defined above. ||
 || TLL_ROOT || Replica of the environment variable defined above. ||
 || GWT_HOME || Points to the root install dir of the Google Web Toolkit. ||
-|| GWT_INCUBATOR_HOME || Points to the root install dir of the Google Web Toolkit. ||
+|| GWT_INCUBATOR_HOME || Points to the root install dir of the [http://code.google.com/p/google-web-toolkit-incubator/ GWT Incubator] project. ||
 
 ==String Substitution==
 The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
