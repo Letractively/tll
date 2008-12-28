@@ -6,23 +6,22 @@ package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.ui.CellPanel;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.renderer.IRenderer;
+import com.tll.client.renderer.ToStringRenderer;
 
 /**
  * RadioGroupField
  * @author jpk
  */
-public final class RadioGroupField extends AbstractDataMapField {
+public final class RadioGroupField extends AbstractField<String> {
 
 	private final FocusPanel fp = new FocusPanel();
 
@@ -33,39 +32,29 @@ public final class RadioGroupField extends AbstractDataMapField {
 	private final CellPanel rbPanel;
 
 	/**
-	 * List of radio buttons contained in {@link #rbPanel}.
+	 * The options.
+	 */
+	private List<Object> options;
+
+	/**
+	 * List of radio buttons contained in {@link #rbPanel}. There is one for each
+	 * option.
 	 */
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();
 
 	private String old;
 
 	/**
-	 * The change listeners.
-	 */
-	private ChangeListenerCollection changeListeners;
-
-	public void addChangeListener(ChangeListener listener) {
-		if(changeListeners == null) {
-			changeListeners = new ChangeListenerCollection();
-		}
-		changeListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		if(changeListeners != null) {
-			changeListeners.remove(listener);
-		}
-	}
-
-	/**
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
-	 * @param dataMap
+	 * @param options
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String lblTxt, Map<String, String> dataMap, boolean renderHorizontal) {
-		super(propName, lblTxt, dataMap);
+	public RadioGroupField(String propName, String lblTxt, List<Object> options, boolean renderHorizontal) {
+		super(propName, lblTxt);
+		setRenderer(ToStringRenderer.INSTANCE);
+		setOptions(options);
 		if(renderHorizontal) {
 			rbPanel = new HorizontalPanel();
 		}
@@ -77,89 +66,82 @@ public final class RadioGroupField extends AbstractDataMapField {
 		addChangeListener(this);
 	}
 
-	public RadioButton[] getRadioButtons() {
-		if(rbPanel.getWidgetCount() == 0) {
-			radioButtons.clear();
-			if(dataMap != null) {
-				for(String n : dataMap.keySet()) {
-					RadioButton rb = new RadioButton("rg_" + getDomId(), n);
-					rb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
-					rb.addClickListener(this);
-					rbPanel.add(rb);
-					radioButtons.add(rb);
-				}
+	/**
+	 * Builds or re-builds the radio buttons firing change events if the current
+	 * value becomes orphaned.
+	 */
+	public void setOptions(List<Object> options) {
+		if(options == null || options.size() < 1) {
+			throw new IllegalArgumentException("No options specified.");
+		}
+		boolean valueBound = false;
+		old = getValue();
+		rbPanel.clear();
+		radioButtons.clear();
+		IRenderer<String, Object> renderer = getRenderer();
+		for(Object n : options) {
+			Object ro = renderer.render(n);
+			String sval = ro == null ? null : ro.toString();
+			RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
+			rb.setStyleName(IField.STYLE_FIELD_LABEL);
+			rb.addClickListener(this);
+			rbPanel.add(rb);
+			radioButtons.add(rb);
+			assert ro != null;
+			if(ro == old || ro.equals(old)) {
+				valueBound = true;
 			}
 		}
-		return radioButtons.toArray(new RadioButton[radioButtons.size()]);
+		if(!valueBound && old != null) {
+			changeSupport.firePropertyChange("value", old, null);
+			fireWidgetChange();
+		}
 	}
 
 	@Override
-	public HasFocus getEditable(String value) {
-		getRadioButtons();
-		if(value != null) {
-			for(RadioButton rb : radioButtons) {
-				String rbVal = dataMap.get(rb.getText());
-				rb.setChecked(value != null && value.equals(rbVal));
-			}
-		}
+	public HasFocus getEditable() {
 		return fp;
 	}
 
-	@Override
-	public String getEditableValue() {
-		if(radioButtons != null && dataMap != null) {
-			for(RadioButton rb : radioButtons) {
-				if(rb.isChecked()) {
-					return dataMap.get(rb.getText());
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void setDataMap(Map<String, String> dataMap) {
-		super.setDataMap(dataMap);
-		rbPanel.clear(); // force re-create
-	}
-
-	@Override
-	public void onClick(Widget sender) {
-		super.onClick(sender);
-		changeSupport.firePropertyChange("value", old, getValue());
-		old = getValue();
-		if(changeListeners != null) changeListeners.fireChange(this);
-	}
-
 	public String getValue() {
-		if(isReadOnly()) {
-			return getFieldValue();
-		}
-		for(RadioButton rb : getRadioButtons()) {
+		int i = 0;
+		for(RadioButton rb : radioButtons) {
 			if(rb.isChecked()) {
-				return rb.getText();
+				return getRenderer().render(options.get(i));
 			}
+			i++;
 		}
 		return null;
 	}
 
 	public void setValue(Object value) {
+		setText(getRenderer().render(value));
+	}
+
+	public String getText() {
+		return getValue();
+	}
+
+	public void setText(String text) {
 		final String old = getValue();
-		final String pending = getRenderer().render(value);
-		if(isReadOnly()) {
-			setFieldValue(pending);
-		}
-		else {
-			int i = 0;
-			for(String v : dataMap.keySet()) {
-				if(v.equals(pending)) {
-					this.radioButtons.get(i).setChecked(true);
-				}
-				i++;
+		int i = 0;
+		for(Object o : options) {
+			if(o.equals(text)) {
+				radioButtons.get(i).setChecked(true);
 			}
+			i++;
 		}
-		if(pending != old && pending != null && !pending.equals(old)) {
-			changeSupport.firePropertyChange("value", old, pending);
+		if(text != old && text != null && !text.equals(old)) {
+			changeSupport.firePropertyChange("value", old, text);
 		}
+	}
+
+	@Override
+	public void onClick(Widget sender) {
+		super.onClick(sender);
+		String cv = getValue();
+		changeSupport.firePropertyChange("value", old, cv);
+		old = cv;
+		fireWidgetChange();
 	}
 }

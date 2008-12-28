@@ -6,11 +6,8 @@ package com.tll.client.ui.field;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
@@ -22,7 +19,7 @@ import com.tll.client.validate.DateValidator;
  * DateField
  * @author jpk
  */
-public class DateField extends AbstractField<Date> implements ChangeHandler<Date>, HasText {
+public class DateField extends AbstractField<Date> implements ChangeHandler<Date> {
 
 	/**
 	 * DateBox - Extended to support {@link HasFocus}.
@@ -48,10 +45,9 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 
 	}
 
-	private DateBox db;
-	private final GlobalFormat dateFormat;
+	private final DateBox db;
 
-	private final ChangeListenerCollection changeListeners = new ChangeListenerCollection();
+	// private final GlobalFormat dateFormat;
 
 	/**
 	 * Constructor
@@ -74,75 +70,39 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 			default:
 				throw new IllegalArgumentException("A date type format must be specified.");
 		}
-		this.dateFormat = dateFormat;
-	}
-
-	/**
-	 * @return The ascribed date format.
-	 */
-	public GlobalFormat getDateFormat() {
-		return dateFormat;
-	}
-
-	public DateBox getDateBox() {
-		if(db == null) {
-			db = new DateBox();
-			db.getDatePicker().addChangeHandler(this);
-			db.setDateFormat(Fmt.getDateTimeFormat(dateFormat));
-		}
-		return db;
+		db = new DateBox();
+		db.getDatePicker().addChangeHandler(this);
+		db.setDateFormat(Fmt.getDateTimeFormat(dateFormat));
 	}
 
 	public void onChange(ChangeEvent<Date> event) {
 		super.onChange(this);
-		changeListeners.fireChange(this);
+		fireWidgetChange();
+		changeSupport.firePropertyChange("value", event.getOldValue(), event.getNewValue());
 	}
 
 	@Override
-	protected HasFocus getEditable(String value) {
-		return getDateBox();
-	}
-
-	@Override
-	protected String getEditableValue() {
-		return db == null ? null : db.getText();
+	protected HasFocus getEditable() {
+		return db;
 	}
 
 	public String getText() {
-		if(isReadOnly()) {
-			return getFieldValue();
-		}
-		return getEditableValue();
+		return db.getText();
 	}
 
 	public void setText(String text) {
-		if(isReadOnly()) {
-			setFieldValue(text);
-		}
-		throw new IllegalStateException("Date fields only provide text when they are read-only.");
+		throw new UnsupportedOperationException();
 	}
 
 	public Date getValue() {
-		if(isReadOnly()) {
-			return getRenderer().render(getFieldValue());
-		}
 		return db.getDatePicker().getSelectedDate();
 	}
 
 	public void setValue(Object value) {
-		final Date dvalue = getRenderer().render(value);
-		if(isReadOnly()) {
-			setFieldValue(dvalue == null ? null : Fmt.format(dvalue, dateFormat));
+		final Date old = getValue();
+		final Date newval = value == null ? null : getRenderer().render(value);
+		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
+			db.getDatePicker().setSelectedDate(newval);
 		}
-		getDateBox().getDatePicker().setSelectedDate(getRenderer().render(value));
 	}
-
-	public void addChangeListener(ChangeListener listener) {
-		changeListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		changeListeners.remove(listener);
-	}
-
 }

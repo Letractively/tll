@@ -8,11 +8,12 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
@@ -59,13 +60,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 */
 	private String propName;
 
-	/**
-	 * The field value. This property is necessary since a field has the ability
-	 * to toggle between editable and read-only states and the value may be set
-	 * before the field is initially drawn in the UI.
-	 */
-	private String fvalue;
-
 	private boolean required = false;
 	private boolean readOnly = false;
 	private boolean enabled = true;
@@ -90,13 +84,12 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 * class only *logically* owns the field label and <em>not</em> physically
 	 * (dom-wise).
 	 */
-	private final FieldLabel fldLbl;
+	private FieldLabel fldLbl;
 
 	/**
-	 * The Composite wrapped widget containing only the editable field or
-	 * read-only field Widget.
+	 * The {@link Composite} widget containing the field's contents.
 	 */
-	private final SimplePanel pnl = new SimplePanel();
+	private final FlowPanel pnl = new FlowPanel();
 
 	/**
 	 * The desired ancestor Widget reference for the field and the field label
@@ -107,42 +100,38 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 	/**
 	 * Constructor
-	 * @param propName The unique field propName.
-	 * @param lblTxt The field label text. If <code>null</code>, no field label is
-	 *        created.
-	 * @throws IllegalArgumentException When a <code>null</code> or zero-length
-	 *         property propName is given.
+	 * @param propName The property name associated with this field
+	 * @param lblTxt The optional field label text
+	 * @throws IllegalArgumentException When no property propName is given
 	 */
 	public AbstractField(String propName, String lblTxt) {
 		domId = 'f' + Integer.toString(++fieldCounter);
 		setPropertyName(propName);
 
+		// set the label
+		setLabelText(lblTxt);
+
 		// TODO is this style setting necessary?
 		pnl.setStyleName(STYLE_FIELD);
 
 		initWidget(pnl);
+	}
 
-		// create field label if label text specified
-		if(lblTxt != null) {
-			fldLbl = new FieldLabel(lblTxt);
-			fldLbl.setFor(domId);
-			fldLbl.addClickListener(this);
-		}
-		else {
-			fldLbl = null;
-		}
-
-		// set the default renderer
-		// setRenderer(ToStringRenderer.INSTANCE);
+	/*
+	 * We need to honor the IField contract and this method is declated soley to make it publicly visible.
+	 */
+	@Override
+	public final Widget getWidget() {
+		return super.getWidget();
 	}
 
 	/**
 	 * Sets the Widget to be the field's containing Widget. This is necessary to
 	 * apply certain styling to the appropriate dom node.
-	 * @param container The desired containing Widget
+	 * @param fieldContainer The desired containing Widget
 	 */
-	public final void setContainer(Widget container) {
-		this.container = container;
+	public final void setFieldContainer(Widget fieldContainer) {
+		this.container = fieldContainer;
 	}
 
 	/**
@@ -150,7 +139,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 * necessary to apply certain styling to the appropriate dom node.
 	 * @param labelContainer The desired Widget containing the label
 	 */
-	public final void setLabelContainer(Widget labelContainer) {
+	public final void setFieldLabelContainer(Widget labelContainer) {
 		this.labelContainer = labelContainer;
 	}
 
@@ -161,6 +150,20 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 */
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
+	}
+
+	/**
+	 * Set the field's associated label.
+	 * @param lblTxt The label text. If <code>null</code>, the label will be
+	 *        removed.
+	 */
+	public void setLabelText(String lblTxt) {
+		if(fldLbl == null) {
+			fldLbl = new FieldLabel();
+			fldLbl.setFor(domId);
+			fldLbl.addClickListener(this);
+		}
+		fldLbl.setText(lblTxt == null ? "" : lblTxt);
 	}
 
 	/**
@@ -185,7 +188,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return readOnly;
 	}
 
-	public final void setReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) {
 		// hide the field label required indicator if we are in read-only state
 		if(fldLbl != null) fldLbl.setRequired(readOnly ? false : required);
 
@@ -197,12 +200,11 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return required;
 	}
 
-	public final void setRequired(boolean required) {
+	public void setRequired(boolean required) {
 		// show/hide the field label required indicator
 		if(fldLbl != null) {
 			fldLbl.setRequired(readOnly ? false : required);
 		}
-
 		this.required = required;
 	}
 
@@ -210,35 +212,28 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return enabled;
 	}
 
-	public final void setEnabled(boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		if(isAttached()) draw();
 	}
 
-	@Override
-	public final boolean isVisible() {
-		return container == null ? super.isVisible() : container.isVisible();
-	}
-
 	/**
 	 * We override to handle setting the visibility for the label as well as the
-	 * visibility to the containing Widget.
+	 * visibility to the field and label containers.
 	 */
 	@Override
-	public final void setVisible(boolean visible) {
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+
+		if(fldLbl != null) {
+			fldLbl.setVisible(visible);
+		}
+
 		if(container != null) {
 			container.setVisible(visible);
 		}
-		else {
-			super.setVisible(visible);
-		}
-		if(fldLbl != null) {
-			if(labelContainer != null) {
-				labelContainer.setVisible(visible);
-			}
-			else {
-				fldLbl.setVisible(visible);
-			}
+		if(labelContainer != null) {
+			labelContainer.setVisible(visible);
 		}
 	}
 
@@ -252,38 +247,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	/**
 	 * @param helpText the helpText to set
 	 */
-	public final void setHelpText(String helpText) {
+	public void setHelpText(String helpText) {
 		this.helpText = helpText;
 		if(isAttached()) draw();
 	}
 
 	/**
-	 * Obtains the editable Widget and optionally sets its value.
-	 * @param value The value to to be populated into the form control. If
-	 *        <code>null</code>, the UI form value shall <em>not</em> be altered.
-	 * @return The editable UI field (form) control.
+	 * Obtains the editable form control Widget.
+	 * @return The form control Widget
 	 */
-	protected abstract HasFocus getEditable(String value);
-
-	/**
-	 * The method grabs the current form element value in a consistent manner in
-	 * String form. Since the various form controls inherently do <em>not</em>
-	 * have single common method to do so, this method exists.
-	 */
-	protected abstract String getEditableValue();
-
-	protected final String getFieldValue() {
-		// this isn't necessary as the onChange event now handles it
-		// if(!readOnly && isAttached()) {
-		// value = getEditableValue();
-		// }
-		return fvalue;
-	}
-
-	protected final void setFieldValue(String value) {
-		this.fvalue = value;
-		if(isAttached()) draw();
-	}
+	protected abstract HasFocus getEditable();
 
 	private void dirtyCheck() {
 		if(dirty) {
@@ -343,49 +316,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 			}
 		}
 
-		/*
-		List<Msg> errorMsgs = null;
-		
-		try {
-			// check field requiredness
-			if(isRequired()) {
-				value = NotEmptyValidator.INSTANCE.validate(value);
-			}
-
-			// check max length
-			if(this instanceof HasMaxLength) {
-				final int maxlen = ((HasMaxLength) this).getMaxLen();
-				if(maxlen != -1) {
-					value = StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-		}
-		catch(ValidationException ve) {
-			errorMsgs = ve.getValidationMessages();
-		}
-
-		try {
-			if(validator != null) {
-				value = validator.validate(value);
-			}
-		}
-		catch(ValidationException ve) {
-			if(errorMsgs == null) {
-				errorMsgs = ve.getValidationMessages();
-			}
-			else {
-				errorMsgs.addAll(ve.getValidationMessages());
-			}
-			throw ve;
-		}
-		finally {
-			clearMsgs();
-			markInvalid(errorMsgs != null, errorMsgs);
-		}
-
-		this.validatedValue = value;
-		*/
-
 		return value;
 	}
 
@@ -418,16 +348,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		if(isAttached()) draw();
 	}
 
-	/**
-	 * @return Valid HTML String displayed in the UI when this field is read-only.
-	 *         Sub-classes should override for special behavior. <br>
-	 *         E.g.: abbreviating the value for those fields that implement
-	 *         {@link HasMaxLength}.
-	 */
-	protected String getReadOnlyHtml() {
-		return (fvalue == null || fvalue.length() == 0) ? dfltReadOnlyEmptyValue : fvalue;
-	}
-
 	private void addMsgs(List<Msg> msgs) {
 		MsgManager.instance().post(false, msgs, Position.BOTTOM, this, -1, false).show();
 	}
@@ -440,30 +360,50 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		MsgManager.instance().toggle(this, true);
 	}
 
-	private void draw() {
-		Widget fw;
-		if(readOnly) {
-			if(rof == null) {
-				rof = new HTML();
-				// set help text
-				rof.setTitle(helpText);
-			}
-			rof.setHTML(getReadOnlyHtml());
-			fw = rof;
+	protected void draw() {
+
+		Widget formWidget;
+
+		// assemble?
+		// NOTE: we *always* have the editable form control part of the DOM so as to
+		// make sure change type events are handled etc.
+		// the editable form control widget drives the field's behavior and is the
+		// master
+		formWidget = (Widget) getEditable();
+		if(pnl.getWidgetCount() == 0) {
+			formWidget.getElement().setPropertyString("id", domId);
+			pnl.add(formWidget);
 		}
-		else {
-			fw = (Widget) getEditable(fvalue);
+		else if(formWidget != pnl.getWidget(0)) {
+			pnl.insert(formWidget, 0);
+		}
+		assert formWidget != null;
+		formWidget.setTitle(helpText);
+
+		if(readOnly) {
+			if(pnl.getWidgetCount() != 2) {
+				assert rof == null;
+				rof = new HTML();
+				pnl.add(rof);
+			}
+			assert rof != null;
 			// set help text
-			fw.setTitle(helpText);
-			// apply disabled property to form control directly
-			fw.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
+			rof.setTitle(helpText);
+
+			// final Object val = getValue();
+			// String sval = val == null ? null :
+			// ToStringRenderer.INSTANCE.render(val);
+			String sval = getText();
+			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
+			rof.setText(sval);
 		}
 
-		// set the field widget and its dom id property
-		if(pnl.getWidget() != fw) {
-			fw.getElement().setPropertyString("id", domId);
-			pnl.setWidget(fw);
-		}
+		// set readonly/editable display
+		if(rof != null) rof.setVisible(readOnly);
+		formWidget.setVisible(!readOnly);
+
+		// apply disabled property
+		formWidget.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
 
 		// resolve the containers
 		final Widget fldContainer = container == null ? this : container;
@@ -495,7 +435,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		getEditable(null).addKeyboardListener(listener);
+		getEditable().addKeyboardListener(listener);
 		// }
 	}
 
@@ -503,7 +443,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		getEditable(null).removeKeyboardListener(listener);
+		getEditable().removeKeyboardListener(listener);
 		// }
 	}
 
@@ -511,7 +451,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		getEditable(null).addFocusListener(listener);
+		getEditable().addFocusListener(listener);
 		// }
 	}
 
@@ -519,29 +459,29 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		getEditable(null).removeFocusListener(listener);
+		getEditable().removeFocusListener(listener);
 		// }
 	}
 
 	public final int getTabIndex() {
-		return readOnly ? -1 : getEditable(null).getTabIndex();
+		return readOnly ? -1 : getEditable().getTabIndex();
 	}
 
 	public final void setAccessKey(char key) {
 		if(!readOnly) {
-			getEditable(null).setTabIndex(key);
+			getEditable().setTabIndex(key);
 		}
 	}
 
 	public final void setFocus(boolean focused) {
 		if(!readOnly) {
-			getEditable(null).setFocus(focused);
+			getEditable().setFocus(focused);
 		}
 	}
 
 	public final void setTabIndex(int index) {
 		if(!readOnly) {
-			getEditable(null).setTabIndex(index);
+			getEditable().setTabIndex(index);
 		}
 	}
 
@@ -552,12 +492,9 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public void onChange(Widget sender) {
-		assert sender == getEditable(null);
+		assert sender == getEditable();
 
 		dirty = true;
-
-		// update the value
-		this.fvalue = getEditableValue();
 
 		// valid check
 		try {
@@ -570,7 +507,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 	}
 
-	public final V getProperty(String propPath) throws PropertyPathException {
+	public final Object getProperty(String propPath) throws PropertyPathException {
 		if(!this.propName.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}

@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.msg.Msg;
@@ -159,14 +158,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	public String descriptor() {
 		return displayName;
-	}
-
-	public void addFocusListener(FocusListener listener) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void removeFocusListener(FocusListener listener) {
-		throw new UnsupportedOperationException();
 	}
 
 	public boolean isRequired() {
@@ -437,10 +428,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		throw new UnsupportedOperationException();
 	}
 
-	public Object getValidatedValue() {
-		throw new UnsupportedOperationException();
-	}
-
 	public void markInvalid(boolean invalid, List<Msg> msgs) {
 		if(invalid) {
 			if(msgs == null) return;
@@ -465,4 +452,29 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			if(feedbackWidget != null) MsgManager.instance().clear(feedbackWidget, false);
 		}
 	}
+
+	public FieldLabel getFieldLabel() {
+		throw new UnsupportedOperationException();
+	}
+
+	public Widget getWidget() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setFieldContainer(Widget fieldContainer) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setFieldLabelContainer(Widget fieldLabelContainer) {
+		throw new UnsupportedOperationException();
+	}
+
+	public String getText() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setText(String text) {
+		throw new UnsupportedOperationException();
+	}
+
 }

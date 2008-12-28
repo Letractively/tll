@@ -4,12 +4,11 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.renderer.ToBooleanRenderer;
+import com.tll.client.renderer.ToStringRenderer;
 
 /**
  * CheckboxField
@@ -17,31 +16,13 @@ import com.tll.client.renderer.ToBooleanRenderer;
  */
 public final class CheckboxField extends AbstractField<Boolean> {
 
-	private CheckBox cb;
+	private final CheckBox cb;
 
 	/**
 	 * This text overrides the base field label text mechanism in order to have
 	 * the text appear to the right of the form control.
 	 */
 	protected String cbLblTxt;
-
-	/**
-	 * The change listeners.
-	 */
-	private ChangeListenerCollection changeListeners;
-
-	public void addChangeListener(ChangeListener listener) {
-		if(changeListeners == null) {
-			changeListeners = new ChangeListenerCollection();
-		}
-		changeListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		if(changeListeners != null) {
-			changeListeners.remove(listener);
-		}
-	}
 
 	/**
 	 * Constructor
@@ -51,37 +32,52 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	public CheckboxField(String propName, String lblTxt) {
 		super(propName, null);
 		this.cbLblTxt = lblTxt;
+		setRenderer(ToBooleanRenderer.INSTANCE);
+		cb = new CheckBox(cbLblTxt);
+		cb.setStyleName(STYLE_FIELD_LABEL);
+		// cb.addFocusListener(this);
+		cb.addClickListener(this);
+		addChangeListener(this);
 	}
 
-	public CheckBox getCheckBox() {
-		if(cb == null) {
-			cb = new CheckBox(cbLblTxt);
-			cb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
-			// cb.addFocusListener(this);
-			cb.addClickListener(this);
-			addChangeListener(this);
-			setRenderer(ToBooleanRenderer.INSTANCE);
-		}
+	@Override
+	protected HasFocus getEditable() {
 		return cb;
 	}
 
+	public boolean isChecked() {
+		return cb.isChecked();
+	}
+
 	@Override
-	protected final HasFocus getEditable(String value) {
-		getCheckBox();
-		if(value != null) {
-			cb.setChecked(Boolean.TRUE.toString().equals(value) ? true : false);
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		setLabelText(readOnly ? cbLblTxt : null);
+	}
+
+	public String getText() {
+		return ToStringRenderer.INSTANCE.render(getValue());
+	}
+
+	public void setText(String text) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setChecked(boolean checked) {
+		cb.setChecked(checked);
+	}
+
+	public Boolean getValue() {
+		return cb.isChecked() ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	public void setValue(Object value) {
+		Boolean old = getValue();
+		setChecked(value == null ? false : this.getRenderer().render(value).booleanValue());
+		Boolean newval = getValue();
+		if((old != newval) && !old.equals(newval)) {
+			changeSupport.firePropertyChange("value", old, newval);
 		}
-		return cb;
-	}
-
-	@Override
-	public final String getEditableValue() {
-		return cb == null ? null : (cb.isChecked() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
-	}
-
-	@Override
-	protected String getReadOnlyHtml() {
-		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ") + getFieldValue();
 	}
 
 	@Override
@@ -90,25 +86,5 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		super.onClick(sender);
 		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
 		changeSupport.firePropertyChange("value", old, getValue());
-	}
-
-	public boolean isChecked() {
-		return cb.isChecked();
-	}
-
-	public void setChecked(boolean checked) {
-		cb.setChecked(checked);
-	}
-
-	public Boolean getValue() {
-		return isChecked() ? Boolean.TRUE : Boolean.FALSE;
-	}
-
-	public void setValue(Object value) {
-		Boolean old = getValue();
-		setChecked(value == null ? false : getRenderer().render(value).booleanValue());
-		if((old != getValue()) && !old.equals(getValue())) {
-			changeSupport.firePropertyChange("value", old, getValue());
-		}
 	}
 }

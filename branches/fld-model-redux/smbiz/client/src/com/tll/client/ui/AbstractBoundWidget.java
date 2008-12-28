@@ -21,6 +21,8 @@ package com.tll.client.ui;
 
 import java.util.Comparator;
 
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IAction;
 import com.tll.client.bind.IBindable;
@@ -41,6 +43,9 @@ import com.tll.client.renderer.IRenderer;
  */
 public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindable>, M> extends Composite implements IBoundWidget<B, V, A, M> {
 
+	/**
+	 * The binding action.
+	 */
 	private A action;
 
 	/**
@@ -48,19 +53,51 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 	 */
 	private IRenderer<V, B> renderer;
 
+	/**
+	 * The comparator.
+	 */
 	private Comparator<B> comparator;
 
 	/**
-	 * The subjugated model. This is a placeholder data member.
+	 * The subjugated model
 	 */
 	private M model;
 
+	/**
+	 * The widget specific change listeners.
+	 */
+	private ChangeListenerCollection changeListeners;
+
+	/**
+	 * Responsible for disseminating <em>property</em> change events.
+	 */
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	/**
 	 * Constructor
 	 */
 	public AbstractBoundWidget() {
+		super();
+	}
+
+	public final void addChangeListener(ChangeListener listener) {
+		if(changeListeners == null) {
+			changeListeners = new ChangeListenerCollection();
+		}
+		changeListeners.add(listener);
+	}
+
+	public final void removeChangeListener(ChangeListener listener) {
+		if(changeListeners != null) {
+			changeListeners.remove(listener);
+		}
+	}
+
+	/**
+	 * Fires a change event for subscribed {@link ChangeListener}s.
+	 */
+	protected final void fireWidgetChange() {
+		changeListeners.fireChange(this);
 	}
 
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
@@ -83,11 +120,11 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
-	public final A getAction() {
+	public A getAction() {
 		return action;
 	}
 
-	public final void setAction(A action) {
+	public void setAction(A action) {
 		this.action = action;
 	}
 
@@ -104,21 +141,26 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 	}
 
 	public final void setModel(M model) {
-		Object old = this.getModel();
-		if(this.getModel() != null) {
-			getAction().unbind(this);
+		final Object old = getModel();
+		final A action = getAction();
+
+		if(old != null && action != null) {
+			action.unbind(this);
 		}
 
 		this.model = model;
 
-		getAction().set(this);
-		if(this.isAttached() && (this.getModel() != null)) {
-			getAction().bind(this);
+		if(action != null) action.set(this);
+
+		if(isAttached() && model != null && action != null) {
+			action.bind(this);
 		}
-		this.changeSupport.firePropertyChange("model", old, model);
+
+		changeSupport.firePropertyChange("model", old, model);
 	}
 
 	public final IRenderer<V, B> getRenderer() {
+		if(renderer == null) throw new IllegalStateException("No renderer specified.");
 		return renderer;
 	}
 
@@ -129,21 +171,21 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 
 	@Override
 	protected void onAttach() {
-		getAction().set(this);
+		if(getAction() != null) getAction().set(this);
 		super.onAttach();
-		this.changeSupport.firePropertyChange("attached", false, true);
+		changeSupport.firePropertyChange("attached", false, true);
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		getAction().bind(this);
+		if(getAction() != null) getAction().bind(this);
 	}
 
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		getAction().unbind(this);
-		this.changeSupport.firePropertyChange("attached", true, false);
+		if(getAction() != null) getAction().unbind(this);
+		changeSupport.firePropertyChange("attached", true, false);
 	}
 }

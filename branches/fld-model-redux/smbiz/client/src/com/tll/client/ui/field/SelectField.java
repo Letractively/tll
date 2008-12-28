@@ -7,15 +7,12 @@ package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Vector;
 
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.IRenderer;
 import com.tll.client.renderer.ToStringRenderer;
 import com.tll.client.util.SimpleComparator;
 
@@ -28,153 +25,63 @@ public final class SelectField extends AbstractField<Object> {
 	/**
 	 * The list box widget.
 	 */
-	private ListBox lb;
+	private final ListBox lb;
 
-	private ArrayList<Object> selected;
-
+	/**
+	 * The list options.
+	 */
 	private Collection<Object> options;
 
-	private final Vector<ChangeListener> changeListeners = new Vector<ChangeListener>();
+	/**
+	 * The selected list options.
+	 */
+	private ArrayList<Object> selected;
 
 	/**
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
+	 * @param isMultipleSelect
 	 */
-	public SelectField(String propName, String lblTxt) {
+	public SelectField(String propName, String lblTxt, boolean isMultipleSelect) {
 		super(propName, lblTxt);
 		setComparator(SimpleComparator.INSTANCE);
+		lb = new ListBox(isMultipleSelect);
+		lb.addClickListener(this);
+		lb.addChangeListener(this);
+		// lb.addFocusListener(this);
+		lb.addChangeListener(this);
+
 	}
 
 	/**
 	 * Constructor
 	 * @param propName
 	 * @param lblTxt
+	 * @param isMultipleSelect
 	 * @param options
 	 */
-	public SelectField(String propName, String lblTxt, Collection<Object> options) {
-		this(propName, lblTxt);
+	public SelectField(String propName, String lblTxt, boolean isMultipleSelect, Collection<Object> options) {
+		this(propName, lblTxt, isMultipleSelect);
 		setOptions(options);
 	}
 
-	private ListBox getListBox() {
-		if(lb == null) {
-			lb.addClickListener(new ClickListener() {
-
-				public void onClick(Widget sender) {
-					update();
-				}
-			});
-			lb.addChangeListener(new ChangeListener() {
-
-				public void onChange(Widget sender) {
-					update();
-				}
-			});
-
-			// lb.addFocusListener(this);
-			lb.addChangeListener(this);
-		}
-		return lb;
-	}
-
-	@Override
-	protected HasFocus getEditable(String value) {
-		getListBox();
-		if(value != null) {
-			for(int i = 0; i < lb.getItemCount(); i++) {
-				if(value.equals(lb.getValue(i))) {
-					lb.setSelectedIndex(i);
-					break;
-				}
-			}
-		}
-		return lb;
-	}
-
-	@Override
-	protected String getEditableValue() {
-		if(lb != null && lb.getSelectedIndex() >= 0) {
-			return lb.getValue(lb.getSelectedIndex());
-		}
-		return null;
-	}
-
-	public void addChangeListener(ChangeListener listener) {
-		getListBox().addChangeListener(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		getListBox().removeChangeListener(listener);
-	}
-
-	public int getItemCount() {
-		int retValue;
-
-		retValue = lb.getItemCount();
-
-		return retValue;
-	}
-
-	public boolean isItemSelected(int index) {
-		boolean retValue;
-
-		retValue = lb.isItemSelected(index);
-
-		return retValue;
-	}
-
-	public void setItemText(int index, String text) {
-		lb.setItemText(index, text);
-	}
-
-	public String getItemText(int index) {
-		String retValue;
-
-		retValue = lb.getItemText(index);
-
-		return retValue;
-	}
-
-	public void setMultipleSelect(boolean multiple) {
-		lb.setMultipleSelect(multiple);
-		if(selected.size() > 1) {
-			Object o = selected.get(0);
-			selected.clear();
-			selected.add(o);
-		}
-	}
-
-	public boolean isMultipleSelect() {
-		return lb.isMultipleSelect();
-	}
-
-	public void setName(String name) {
-		lb.setName(name);
-	}
-
-	public String getName() {
-		String retValue;
-
-		retValue = lb.getName();
-
-		return retValue;
-	}
-
+	/**
+	 * Sets the options.
+	 * @param options The options to set
+	 */
 	public void setOptions(Collection<Object> options) {
 		if(this.options == null) this.options = new ArrayList<Object>();
-		getListBox().clear();
+		lb.clear();
 
 		ArrayList<Object> newSelected = new ArrayList<Object>();
 
 		for(Object item : options) {
 			lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(item)));
-
 			if(contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
 				newSelected.add(item);
 			}
-
 			this.options.add(item);
 		}
 
@@ -186,35 +93,89 @@ public final class SelectField extends AbstractField<Object> {
 		}
 		else {
 			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
-			Object curr = (this.selected.size() == 0) ? null : this.selected.get(0);
+			Object curr = (selected.size() == 0) ? null : selected.get(0);
 			changeSupport.firePropertyChange("value", prev, curr);
 		}
 
-		fireChangeListeners();
-	}
-
-	public Collection<Object> getOptions() {
-		return options;
+		fireWidgetChange();
 	}
 
 	@Override
-	public void setRenderer(IRenderer<Object, Object> renderer) {
-		super.setRenderer(renderer);
-		setOptions(options);
+	protected HasFocus getEditable() {
+		return lb;
+	}
+
+	public int getItemCount() {
+		return lb.getItemCount();
+	}
+
+	public boolean isItemSelected(int index) {
+		return lb.isItemSelected(index);
+	}
+
+	public String getItemText(int index) {
+		return lb.getItemText(index);
+	}
+
+	public void setItemText(int index, String text) {
+		lb.setItemText(index, text);
+	}
+
+	public boolean isMultipleSelect() {
+		return lb.isMultipleSelect();
+	}
+
+	public void setMultipleSelect(boolean multiple) {
+		lb.setMultipleSelect(multiple);
+		if(selected.size() > 1) {
+			Object o = selected.get(0);
+			selected.clear();
+			selected.add(o);
+		}
+	}
+
+	public int getVisibleItemCount() {
+		return lb.getVisibleItemCount();
+	}
+
+	public void setVisibleItemCount(final int visibleItems) {
+		lb.setVisibleItemCount(visibleItems);
+	}
+
+	public void addItem(final Object o) {
+		options.add(o);
+		lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(o)));
+	}
+
+	public void removeItem(final Object o) {
+		int i = 0;
+		for(Iterator<Object> it = this.options.iterator(); it.hasNext(); i++) {
+			Object option = it.next();
+			if(getComparator().compare(option, o) == 0) {
+				options.remove(option);
+				lb.removeItem(i);
+				update();
+			}
+		}
+	}
+
+	public void removeItem(final int index) {
+		lb.removeItem(index);
+		update();
 	}
 
 	public int getSelectedIndex() {
-		return lb == null ? -1 : lb.getSelectedIndex();
+		return lb.getSelectedIndex();
 	}
 
 	public Object getValue() {
-		return getListBox().isMultipleSelect() ? selected : (selected == null ? null : (selected.size() == 0 ? null
-				: selected.get(0)));
+		return lb.isMultipleSelect() ? selected : (selected == null ? null
+				: (selected.size() == 0 ? null : selected.get(0)));
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setValue(Object value) {
-		if(options == null) throw new IllegalStateException();
+		if(options == null) throw new IllegalStateException("No options specified.");
 		int i = 0;
 		ArrayList<Object> old = selected;
 		selected = new ArrayList<Object>();
@@ -258,61 +219,31 @@ public final class SelectField extends AbstractField<Object> {
 			changeSupport.firePropertyChange("value", prev, curr);
 		}
 
-		fireChangeListeners();
+		fireWidgetChange();
 	}
 
-	public int getVisibleItemCount() {
-		return getListBox().getVisibleItemCount();
+	public String getText() {
+		final int si = getSelectedIndex();
+		return si < 0 ? "" : lb.getItemText(si);
 	}
 
-	public void setVisibleItemCount(final int visibleItems) {
-		getListBox().setVisibleItemCount(visibleItems);
-	}
-
-	public void addItem(final Object o) {
-		options.add(o);
-		getListBox().addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(o)));
-	}
-
-	public void removeItem(final Object o) {
-		int i = 0;
-		for(Iterator<Object> it = this.options.iterator(); it.hasNext(); i++) {
-			Object option = it.next();
-			if(getComparator().compare(option, o) == 0) {
-				options.remove(option);
-				lb.removeItem(i);
-				update();
-			}
-		}
-	}
-
-	public void removeItem(final int index) {
-		lb.removeItem(index);
-		update();
+	public void setText(String text) {
+		throw new UnsupportedOperationException();
 	}
 
 	private boolean contains(final Collection<Object> c, final Object o) {
-		for(Iterator<Object> it = c.iterator(); it.hasNext();) {
-			Object next = it.next();
-			if(getComparator().compare(o, next) == 0) {
+		final Comparator<Object> cmp = getComparator();
+		for(Object next : c) {
+			if(cmp.compare(o, next) == 0) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private void fireChangeListeners() {
-		for(ChangeListener l : changeListeners) {
-			l.onChange(this);
-		}
-		if(getAction() != null) {
-			this.getAction().execute(this);
-		}
-	}
-
 	private void update() {
 		ArrayList<Object> selected = new ArrayList<Object>();
-		Iterator<Object> it = this.options.iterator();
+		Iterator<Object> it = options.iterator();
 		for(int i = 0; (i < lb.getItemCount()) && it.hasNext(); i++) {
 			Object item = it.next();
 			if(lb.isItemSelected(i)) {
@@ -320,21 +251,33 @@ public final class SelectField extends AbstractField<Object> {
 			}
 		}
 
-		ArrayList<Object> old = this.selected;
-		this.selected.clear();
-		this.selected.addAll(selected);
+		ArrayList<Object> old = selected;
+		selected.clear();
+		selected.addAll(selected);
 		// this.selected = selected;
 
 		if(isMultipleSelect()) {
 			changeSupport.firePropertyChange("value", old, selected);
 		}
 		else {
-			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
-			Object curr = (this.selected.size() == 0) ? null : this.selected.get(0);
+			Object prev = ((old.size() == 0)) ? null : old.get(0);
+			Object curr = (selected.size() == 0) ? null : selected.get(0);
 			changeSupport.firePropertyChange("value", prev, curr);
 		}
 
-		fireChangeListeners();
+		fireWidgetChange();
+	}
+
+	@Override
+	public void onChange(Widget sender) {
+		super.onChange(sender);
+		update();
+	}
+
+	@Override
+	public void onClick(Widget sender) {
+		super.onClick(sender);
+		update();
 	}
 
 	/*

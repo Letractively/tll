@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
-import com.tll.client.validate.EmailAddressValidator;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -30,31 +29,6 @@ public abstract class FieldPanel extends Composite {
 	 */
 	public static final TextField ftext(String propName, String lblTxt, int visibleLength, String helpText) {
 		return new TextField(propName, lblTxt, visibleLength);
-	}
-
-	/**
-	 * Creates a new {@link TextField} instance with email address validation.
-	 * @param propName
-	 * @param lblTxt
-	 * @param visibleLength
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final TextField femail(String propName, String lblTxt, int visibleLength, String helpText) {
-		TextField f = ftext(propName, lblTxt, visibleLength, null);
-		f.addValidator(EmailAddressValidator.INSTANCE);
-		return f;
-	}
-
-	/**
-	 * Creates a new {@link TextField} instance with currency formatting.
-	 * @param propName
-	 * @param lblTxt
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final TextField fcurrency(String propName, String lblTxt, String helpText) {
-		TextField fld = ftext(propName, lblTxt, 15, null);
-		fld.setFormat(GlobalFormat.CURRENCY);
-		return fld;
 	}
 
 	/**
@@ -76,22 +50,8 @@ public abstract class FieldPanel extends Composite {
 	 * @param lblTxt
 	 * @param helpText The on hover tool tip text
 	 */
-	public static final CheckboxField fbool(String propName, String lblTxt, String helpText) {
-		return new CheckboxField(propName, lblTxt, "true", "false");
-	}
-
-	/**
-	 * Creates a new {@link CheckboxField} instance that is designed to be bound
-	 * to a String type.
-	 * @param propName
-	 * @param lblTxt
-	 * @param checkedValue
-	 * @param uncheckedValue
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final CheckboxField fcheckbox(String propName, String lblTxt, String checkedValue,
-			String uncheckedValue, String helpText) {
-		return new CheckboxField(propName, lblTxt, checkedValue, uncheckedValue);
+	public static final CheckboxField fcheckbox(String propName, String lblTxt, String helpText) {
+		return new CheckboxField(propName, lblTxt);
 	}
 
 	/**

@@ -19,6 +19,7 @@
  */
 package com.tll.client.renderer;
 
+import com.tll.util.INameValueProvider;
 
 /**
  * ToStringRenderer - Renders an arbitrary {@link Object} to a {@link String}.
@@ -36,7 +37,18 @@ public class ToStringRenderer implements IRenderer<String, Object> {
 	private ToStringRenderer() {
 	}
 
+	/**
+	 * Translates an arbitrary {@link Object} instance to a non-<code>null</code>
+	 * {@link String} instance.
+	 * @return A never <code>null</code> {@link String}.
+	 */
+	@SuppressWarnings("unchecked")
 	public String render(Object o) {
-		return (o == null) ? "" : o.toString();
+		if(o != null) {
+			if(o instanceof INameValueProvider) {
+				return ((INameValueProvider) o).getName();
+			}
+		}
+		return o == null ? "" : o.toString();
 	}
 }

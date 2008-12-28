@@ -70,7 +70,6 @@ public class VerticalFieldPanelComposer implements IFieldPanelComposer {
 	 * @param field The field to add
 	 */
 	public void addField(IField field) {
-		AbstractField af = (AbstractField) field;
-		add(af.getFieldLabel(), af);
+		add(field.getFieldLabel(), field.getWidget());
 	}
 }

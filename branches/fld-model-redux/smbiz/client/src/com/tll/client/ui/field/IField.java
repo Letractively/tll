@@ -6,7 +6,9 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -17,12 +19,22 @@ import com.tll.client.validate.ValidationException;
  * IField - Abstraction for managing the display and editing of data.
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider, IValidator, SourcesChangeEvents {
+public interface IField extends IPropertyNameProvider, IValidator, SourcesChangeEvents, HasText {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
 	 */
 	static final String STYLE_FIELD = "fld";
+
+	/**
+	 * Style indicating a field label.
+	 */
+	public static final String STYLE_FIELD_LABEL = "lbl";
+
+	/**
+	 * Style indicating a field's requiredness.
+	 */
+	public static final String STYLE_FIELD_REQUIRED_TOKEN = "rqd";
 
 	/**
 	 * Style indicating the field's value is dirty (changed).
@@ -84,6 +96,28 @@ public interface IField extends IPropertyNameProvider, IValidator, SourcesChange
 	 * @param visible true/false
 	 */
 	void setVisible(boolean visible);
+
+	/**
+	 * @return The field Widget.
+	 */
+	Widget getWidget();
+
+	/**
+	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
+	 */
+	FieldLabel getFieldLabel();
+
+	/**
+	 * Sets the ancestor Widget that contains this field.
+	 * @param fieldContainer The desired ancestor {@link Widget}
+	 */
+	void setFieldContainer(Widget fieldContainer);
+
+	/**
+	 * Sets the ancestor Widget for this field's label {@link Widget}.
+	 * @param fieldLabelContainer The desired ancestor {@link Widget}
+	 */
+	void setFieldLabelContainer(Widget fieldLabelContainer);
 
 	/**
 	 * Resets the field's UI value to the last set reset value clearing out dirty

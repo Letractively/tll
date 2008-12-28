@@ -12,9 +12,9 @@ import java.util.Map;
  * <p>
  * Note: The emulated version differs from the JDK version in that it is
  * <em>not</em> Serializable.
- * <p><em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
+ * <p>
+ * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
- *         </p>
  */
 public class PropertyChangeSupport {
 
