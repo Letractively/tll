@@ -6,6 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
@@ -41,40 +42,44 @@ public final class AddressPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		emailAddress = femail("emailAddress", "Email Address", 30, null);
+		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", "Email Address", 30);
 		fields.addField(emailAddress);
 
-		firstName = ftext("firstName", "First Name", 20, null);
+		firstName = FieldFactory.ftext("firstName", "First Name", "First Name", 20);
 		fields.addField(firstName);
 
-		lastName = ftext("lastName", "Last Name", 20, null);
+		lastName = FieldFactory.ftext("lastName", "Last Name", "Last Name", 20);
 		fields.addField(lastName);
 
-		mi = ftext("mi", "MI", 1, null);
+		mi = FieldFactory.ftext("mi", "MI", "Middle Initial", 1);
 		fields.addField(mi);
 
-		company = ftext("company", "Company", 20, null);
+		company = FieldFactory.ftext("company", "Company", "Company", 20);
 		fields.addField(company);
 
-		attn = ftext("attn", "Attn", 10, null);
+		attn = FieldFactory.ftext("attn", "Attn", "Attention", 10);
 		fields.addField(attn);
 
-		address1 = ftext("address1", "Address 1", 40, null);
+		address1 = FieldFactory.ftext("address1", "Address 1", "Address 1", 40);
 		fields.addField(address1);
 
-		address2 = ftext("address2", "Address 2", 40, null);
+		address2 = FieldFactory.ftext("address2", "Address 2", "Address 2", 40);
 		fields.addField(address2);
 
-		city = ftext("city", "City", 30, null);
+		city = FieldFactory.ftext("city", "City", "City", 30);
 		fields.addField(city);
 
-		province = fsuggest("province", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES), null);
+		province =
+				FieldFactory.fsuggest("province", "State/Province", "State/Province", AuxDataCache.instance().getRefDataMap(
+						RefDataType.US_STATES).values());
 		fields.addField(province);
 
-		postalCode = ftext("postalCode", "Zip", 20, null);
+		postalCode = FieldFactory.ftext("postalCode", "Zip", "Zip", 20);
 		fields.addField(postalCode);
 
-		country = fsuggest("country", "Country", AuxDataCache.instance().getRefDataMap(RefDataType.ISO_COUNTRY_CODES), null);
+		country =
+				FieldFactory.fsuggest("country", "Country", "Country", AuxDataCache.instance().getRefDataMap(
+						RefDataType.ISO_COUNTRY_CODES).values());
 		fields.addField(country);
 	}
 

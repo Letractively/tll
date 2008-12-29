@@ -7,25 +7,16 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
-import com.tll.client.model.IndexedProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.field.DeleteTabWidget;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
-import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -53,19 +44,19 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 		@Override
 		protected void populateFieldGroup(FieldGroup fields) {
-			name = entityNameField();
-			code = ftext("code", "Code", 20, null);
-			description = ftextarea("description", "Desc", 3, 8, null);
+			name = FieldFactory.entityNameField();
+			code = FieldFactory.ftext("code", "Code", "Code", 20);
+			description = FieldFactory.ftextarea("description", "Desc", "Description", 3, 8);
 
 			cost = new TextField[3];
-			cost[0] = fcurrency("setUpCost", "Set Up", null);
-			cost[1] = fcurrency("monthlyCost", "Monthly", null);
-			cost[2] = fcurrency("annualCost", "Annual", null);
+			cost[0] = FieldFactory.ftext("setUpCost", "Set Up", "Set Up Cost", 8);
+			cost[1] = FieldFactory.ftext("monthlyCost", "Monthly", "Monthly Cost", 8);
+			cost[2] = FieldFactory.ftext("annualCost", "Annual", "Annual Cost", 8);
 
 			price = new TextField[3];
-			price[0] = fcurrency("baseSetupPrice", "Set Up", null);
-			price[1] = fcurrency("baseMonthlyPrice", "Monthly", null);
-			price[2] = fcurrency("baseAnnualPrice", "Annual", null);
+			price[0] = FieldFactory.ftext("baseSetupPrice", "Set Up", "Base Set Up Price", 8);
+			price[1] = FieldFactory.ftext("baseMonthlyPrice", "Monthly", "Base Monthly Price", 8);
+			price[2] = FieldFactory.ftext("baseAnnualPrice", "Annual", "Base Annual Price", 8);
 
 			fields.addField(name);
 			fields.addField(code);
@@ -137,6 +128,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		cmpsr.addWidget(tabOptions);
 	}
 
+	/*
 	private void rebuildOptions(IFieldGroupModelBinding bindingDef) {
 		final FieldGroup fields = getFieldGroup();
 		final Model model = bindingDef.resolveModel(EntityType.ACCOUNT);
@@ -162,7 +154,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 
 				// params
 				// TODO re-impl!
-				/*
 				RelatedManyProperty pvParams =
 						model.relatedMany(PropertyPath.getPropertyPath(propOption.getPropertyName(), "parameters"));
 				if(pvParams != null && pvParams.size() > 0) {
@@ -175,7 +166,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 					}
 
 				}
-				*/
 
 				OptionPanel pnlOption = new OptionPanel();
 				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), bindingDef,
@@ -188,6 +178,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		img.setTitle("Add...");
 		tabOptions.add(new Label("TODO"), img);
 	}
+	*/
 
 	/*
 	@Override

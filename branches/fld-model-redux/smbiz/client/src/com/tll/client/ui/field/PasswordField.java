@@ -25,9 +25,10 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 	 * Constructor
 	 * @param propName
 	 * @param lblText
+	 * @param helpText
 	 */
-	public PasswordField(String propName, String lblText) {
-		super(propName, lblText);
+	public PasswordField(String propName, String lblText, String helpText) {
+		super(propName, lblText, helpText);
 		setRenderer(ToStringRenderer.INSTANCE);
 		tb = new PasswordTextBox();
 		// tb.addFocusListener(this);

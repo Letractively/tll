@@ -44,22 +44,9 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		this.metadata = metadata;
 	}
 
-	/**
-	 * NOTE: This method is used for debugging.
-	 */
 	@Override
 	public final String toString() {
 		String pn = propertyName;
 		return pn + "=" + (getValue() == null ? "<UNSET>" : getValue().toString());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
 	}
 }

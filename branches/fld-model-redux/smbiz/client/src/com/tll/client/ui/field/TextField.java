@@ -24,11 +24,12 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param lblTxt
+	 * @param labelText
+	 * @param helpText
 	 * @param visibleLen
 	 */
-	public TextField(String propName, String lblTxt, int visibleLen) {
-		super(propName, lblTxt);
+	public TextField(String propName, String labelText, String helpText, int visibleLen) {
+		super(propName, labelText, helpText);
 		setRenderer(ToStringRenderer.INSTANCE);
 		tb = new PasswordTextBox();
 		// tb.addFocusListener(this);

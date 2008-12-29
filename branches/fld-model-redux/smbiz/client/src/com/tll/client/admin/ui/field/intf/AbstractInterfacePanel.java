@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.listing.Column;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
@@ -40,20 +41,20 @@ public abstract class AbstractInterfacePanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		name = entityNameField();
-		code = ftext("code", "Code", 20, null);
-		description = ftextarea("description", "Desc", 3, 8, null);
-		timestamps = entityTimestampFields();
+		name = FieldFactory.entityNameField();
+		code = FieldFactory.ftext("code", "Code", "Code", 20);
+		description = FieldFactory.ftextarea("description", "Desc", "Description", 3, 8);
+		timestamps = FieldFactory.entityTimestampFields();
 
-		isAvailableAsp = fbool("isAvailableAsp", null, null);
-		isAvailableIsp = fbool("isAvailableIsp", null, null);
-		isAvailableMerchant = fbool("isAvailableMerchant", null, null);
-		isAvailableCustomer = fbool("isAvailableCustomer", null, null);
+		isAvailableAsp = FieldFactory.fcheckbox("isAvailableAsp", null, null);
+		isAvailableIsp = FieldFactory.fcheckbox("isAvailableIsp", null, null);
+		isAvailableMerchant = FieldFactory.fcheckbox("isAvailableMerchant", null, null);
+		isAvailableCustomer = FieldFactory.fcheckbox("isAvailableCustomer", null, null);
 
-		isRequiredAsp = fbool("isRequiredAsp", null, null);
-		isRequiredIsp = fbool("isRequiredIsp", null, null);
-		isRequiredMerchant = fbool("isRequiredMerchant", null, null);
-		isRequiredCustomer = fbool("isRequiredCustomer", null, null);
+		isRequiredAsp = FieldFactory.fcheckbox("isRequiredAsp", null, null);
+		isRequiredIsp = FieldFactory.fcheckbox("isRequiredIsp", null, null);
+		isRequiredMerchant = FieldFactory.fcheckbox("isRequiredMerchant", null, null);
+		isRequiredCustomer = FieldFactory.fcheckbox("isRequiredCustomer", null, null);
 
 		fields.addField(name);
 		fields.addField(code);

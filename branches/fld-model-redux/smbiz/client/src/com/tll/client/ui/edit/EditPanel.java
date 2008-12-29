@@ -18,6 +18,7 @@ import com.tll.client.Style;
 import com.tll.client.model.Model;
 import com.tll.client.msg.Msg;
 import com.tll.client.ui.FocusCommand;
+import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.validate.ValidationException;
 

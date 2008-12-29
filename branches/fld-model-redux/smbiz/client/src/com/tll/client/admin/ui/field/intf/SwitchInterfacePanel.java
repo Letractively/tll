@@ -22,9 +22,9 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		super();
 	}
 
+	/*
 	private void applyModel(IFieldGroupModelBinding bindingDef) {
 		// TODO re-impl
-		/*
 		final Model modelInterface = bindingDef.resolveModel(EntityType.INTERFACE);
 		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
 		if(pvOptions == null || pvOptions.size() != 1) {
@@ -35,8 +35,8 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		pnlOption.getFields().setPropertyName(ip.getPropertyName());
 		getFieldGroup().addField(pnlOption.getFields());
 		pnlOption.onBeforeBind(ip.getModel());
-		*/
 	}
+		*/
 
 	@Override
 	protected void drawInternal(Panel canvas) {

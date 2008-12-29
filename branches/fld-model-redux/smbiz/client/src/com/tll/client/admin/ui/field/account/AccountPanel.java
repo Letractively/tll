@@ -4,11 +4,10 @@
  */
 package com.tll.client.admin.ui.field.account;
 
-import java.util.Iterator;
+import java.util.Arrays;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -22,24 +21,17 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.model.IndexedProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.DeleteTabWidget;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.IField;
-import com.tll.client.ui.field.NoEntityExistsPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
-import com.tll.client.util.ClientEnumUtil;
 import com.tll.client.util.GlobalFormat;
-import com.tll.model.EntityType;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -89,7 +81,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 
 		@Override
 		public void populateFieldGroup(FieldGroup fields) {
-			name = entityNameField();
+			name = FieldFactory.entityNameField();
 			// TODO fix since we don't have data fields anymore
 			// fields.addField(fdata("type", addressType));
 			fields.addField(name);
@@ -121,22 +113,22 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		name = entityNameField();
+		name = FieldFactory.entityNameField();
 		fields.addField(name);
 
-		timestamps = entityTimestampFields();
+		timestamps = FieldFactory.entityTimestampFields();
 		fields.addFields(timestamps);
 
-		parent = ftext("parent.name", "Parent", 15, null);
+		parent = FieldFactory.ftext("parent.name", "Parent", "Parent Account", 15);
 		parent.setReadOnly(true);
 		fields.addField(parent);
 
-		status = fselect("status", "Status", ClientEnumUtil.toMap(AccountStatus.class), null);
-		status.getListBox().addChangeListener(new ChangeListener() {
+		status = FieldFactory.fselect("status", "Status", "Status", false, Arrays.asList(AccountStatus.values()));
+		status.addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
 				final FieldGroup fields = getFieldGroup();
-				String s = getFieldGroup().getField("status").getFieldValue().toLowerCase();
+				String s = getFieldGroup().getField("status").getText().toLowerCase();
 				final boolean closed = "closed".equals(s);
 				IField f = fields.getField("dateCancelled");
 				f.setVisible(closed);
@@ -145,28 +137,30 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		});
 		fields.addField(status);
 
-		dateCancelled = fdate("dateCancelled", "Date Cancelled", GlobalFormat.DATE, null);
+		dateCancelled = FieldFactory.fdate("dateCancelled", "Date Cancelled", "Date Cancelled", GlobalFormat.DATE);
 		fields.addField(dateCancelled);
 
-		currency = fselect("currency.id", "Currency", AuxDataCache.instance().getCurrencyDataMap(), null);
+		currency =
+				FieldFactory.fselect("currency.id", "Currency", "Currency", false, AuxDataCache.instance().getCurrencyDataMap()
+						.values());
 		fields.addField(currency);
 
-		billingModel = ftext("billingModel", "Billing Model", 18, null);
+		billingModel = FieldFactory.ftext("billingModel", "Billing Model", "Billing Model", 18);
 		fields.addField(billingModel);
 
-		billingCycle = ftext("billingCycle", "Billing Cycle", 18, null);
+		billingCycle = FieldFactory.ftext("billingCycle", "Billing Cycle", "Billing Cycle", 18);
 		fields.addField(billingCycle);
 
-		dateLastCharged = fdate("dateLastCharged", "Last Charged", GlobalFormat.DATE, null);
+		dateLastCharged = FieldFactory.fdate("dateLastCharged", "Last Charged", "Last Charged", GlobalFormat.DATE);
 		fields.addField(dateLastCharged);
 
-		nextChargeDate = fdate("nextChargeDate", "Next Charge", GlobalFormat.DATE, null);
+		nextChargeDate = FieldFactory.fdate("nextChargeDate", "Next Charge", "Next Charge", GlobalFormat.DATE);
 		fields.addField(nextChargeDate);
 
-		persistPymntInfo = fbool("persistPymntInfo", "PersistPayment Info?", null);
-		persistPymntInfo.getCheckBox().addClickListener(new ClickListener() {
+		persistPymntInfo = FieldFactory.fcheckbox("persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?");
+		persistPymntInfo.addChangeListener(new ChangeListener() {
 
-			public void onClick(Widget sender) {
+			public void onChange(Widget sender) {
 				paymentInfoPanel.getFieldGroup().setEnabled(((CheckBox) sender).isChecked());
 			}
 		});
@@ -227,6 +221,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	 * Handles the late binding of an account's related many addressses.
 	 * @param binding The operating field/model binding
 	 */
+	/*
 	private void rebuildAddresses(final IFieldGroupModelBinding binding) {
 		final FieldGroup fields = getFieldGroup();
 		final Model accountModel = binding.resolveModel(EntityType.ACCOUNT);
@@ -309,6 +304,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		dpAddresses.setOpen(false);
 		tabAddresses.selectTab(0);
 	}
+	*/
 
 	public void onClose(DisclosureEvent event) {
 		// need to hide any field messages that are "cloaked" by the disclosure

@@ -560,7 +560,7 @@ public final class Binding {
 		 */
 		public IValidator validator;
 
-		private NestedPropertyChangeListener nestedListener = null;
+		private NestedPropertyChangeListener nestedListener;
 
 		/**
 		 * Constructor

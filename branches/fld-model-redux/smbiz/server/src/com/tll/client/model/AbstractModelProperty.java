@@ -49,11 +49,14 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		this.propertyName = name;
 	}
 
-	public final Object getProperty(String propPath) {
+	public Object getProperty(String propPath) throws PropertyPathException {
+		if(!propertyName.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
 		return getValue();
 	}
 
-	public final void setProperty(String propPath, Object value) throws PropertyPathException {
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
 		if(!propertyName.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}

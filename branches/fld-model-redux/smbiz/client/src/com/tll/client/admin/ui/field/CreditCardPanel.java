@@ -4,16 +4,18 @@
  */
 package com.tll.client.admin.ui.field;
 
+import java.util.Arrays;
+
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
-import com.tll.client.util.ClientEnumUtil;
-import com.tll.model.impl.CreditCardType;
+import com.tll.model.impl.PaymentType;
 import com.tll.service.app.RefDataType;
 
 /**
@@ -44,23 +46,22 @@ public final class CreditCardPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		type = fselect("paymentData_ccType", "Type", ClientEnumUtil.toMap(CreditCardType.class), null);
-		num = ftext("paymentData_ccNum", "Num", 15, null);
-		// num.addValidator(CreditCardValidator.INSTANCE);
-		cvv2 = ftext("paymentData_ccCvv2", "CVV2", 4, null);
-		expMn = ftext("paymentData_ccExpMonth", "Exp Month", 2, null);
-		expYr = ftext("paymentData_ccExpYear", "Exp Year", 4, null);
-		name = ftext("paymentData_ccName", "Name", 30, null);
-		addr1 = ftext("paymentData_ccAddress1", "Address 1", 40, null);
-		addr2 = ftext("paymentData_ccAddress2", "Address 2", 40, null);
-		city = ftext("paymentData_ccCity", "City", 30, null);
+		type = FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays.asList(PaymentType.values()));
+		num = FieldFactory.ftext("paymentData_ccNum", "Num", null, 15);
+		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", "CVV2", 4);
+		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2);
+		expYr = FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", "Expiration Year", 4);
+		name = FieldFactory.ftext("paymentData_ccName", "Name", "Name", 30);
+		addr1 = FieldFactory.ftext("paymentData_ccAddress1", "Address 1", "Address 1", 40);
+		addr2 = FieldFactory.ftext("paymentData_ccAddress2", "Address 2", "Address 2", 40);
+		city = FieldFactory.ftext("paymentData_ccCity", "City", "City", 30);
 		state =
-				fsuggest("paymentData_ccState", "State/Province", AuxDataCache.instance().getRefDataMap(RefDataType.US_STATES),
-						null);
-		zip = ftext("paymentData_ccZip", "Zip/Postal Code", 15, null);
+				FieldFactory.fsuggest("paymentData_ccState", "State/Province", "State", AuxDataCache.instance().getRefDataMap(
+						RefDataType.US_STATES).values());
+		zip = FieldFactory.ftext("paymentData_ccZip", "Postal Code", "Postal Code", 15);
 		country =
-				fsuggest("paymentData_ccCountry", "Country", AuxDataCache.instance().getRefDataMap(
-						RefDataType.ISO_COUNTRY_CODES), null);
+				FieldFactory.fsuggest("paymentData_ccCountry", "Country", "Country", AuxDataCache.instance().getRefDataMap(
+						RefDataType.ISO_COUNTRY_CODES).values());
 
 		fields.addField(type);
 		fields.addField(num);

@@ -5,6 +5,7 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.CellPanel;
@@ -34,7 +35,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	/**
 	 * The options.
 	 */
-	private List<Object> options;
+	private List<? extends Object> options;
 
 	/**
 	 * List of radio buttons contained in {@link #rbPanel}. There is one for each
@@ -47,12 +48,14 @@ public final class RadioGroupField extends AbstractField<String> {
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param lblTxt
+	 * @param labelText
+	 * @param helpText
 	 * @param options
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String lblTxt, List<Object> options, boolean renderHorizontal) {
-		super(propName, lblTxt);
+	public RadioGroupField(String propName, String labelText, String helpText, Collection<? extends Object> options,
+			boolean renderHorizontal) {
+		super(propName, labelText, helpText);
 		setRenderer(ToStringRenderer.INSTANCE);
 		setOptions(options);
 		if(renderHorizontal) {
@@ -70,7 +73,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	 * Builds or re-builds the radio buttons firing change events if the current
 	 * value becomes orphaned.
 	 */
-	public void setOptions(List<Object> options) {
+	public void setOptions(Collection<? extends Object> options) {
 		if(options == null || options.size() < 1) {
 			throw new IllegalArgumentException("No options specified.");
 		}

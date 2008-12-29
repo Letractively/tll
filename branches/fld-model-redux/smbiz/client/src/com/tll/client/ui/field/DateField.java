@@ -47,16 +47,15 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 
 	private final DateBox db;
 
-	// private final GlobalFormat dateFormat;
-
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param lblTxt
+	 * @param labelText
+	 * @param helpText
 	 * @param dateFormat
 	 */
-	public DateField(String propName, String lblTxt, GlobalFormat dateFormat) {
-		super(propName, lblTxt);
+	public DateField(String propName, String labelText, String helpText, GlobalFormat dateFormat) {
+		super(propName, labelText, helpText);
 		switch(dateFormat) {
 			case DATE:
 				setRenderer(DateValidator.DATE_VALIDATOR);

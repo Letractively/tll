@@ -6,21 +6,16 @@
 package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.admin.mvc.view.account.AccountEditView;
 import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.RefKey;
-import com.tll.client.mvc.view.EditViewRequest;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
-import com.tll.model.EntityType;
 
 /**
  * UserPanel
@@ -48,13 +43,13 @@ public class UserPanel extends FieldPanel {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		name = entityNameField();
-		timestamps = entityTimestampFields();
-		emailAddress = ftext("emailAddress", "Email Address", 30, null);
+		name = FieldFactory.entityNameField();
+		timestamps = FieldFactory.entityTimestampFields();
+		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", "Email Address", 30);
 		emailAddress.setReadOnly(true);
-		locked = fbool("locked", "Locked", null);
-		enabled = fbool("enabled", "Enabled", null);
-		expires = fdate("expires", "Expires", GlobalFormat.DATE, null);
+		locked = FieldFactory.fcheckbox("locked", "Locked", "Locked");
+		enabled = FieldFactory.fcheckbox("enabled", "Enabled", "Enabled");
+		expires = FieldFactory.fdate("expires", "Expires", "Expires", GlobalFormat.DATE);
 
 		addressPanel = new AddressPanel();
 
@@ -67,6 +62,7 @@ public class UserPanel extends FieldPanel {
 		fields.addField(addressPanel.getFieldGroup());
 	}
 
+	/*
 	private void setParentAccountViewLink(IFieldGroupModelBinding bindingDef) {
 		// set the parent account view link
 		Model accountModel = bindingDef.resolveModel(EntityType.ACCOUNT);
@@ -81,6 +77,7 @@ public class UserPanel extends FieldPanel {
 			lnkAccount.setText("-");
 		}
 	}
+	*/
 
 	@Override
 	protected void drawInternal(Panel canvas) {

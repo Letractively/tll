@@ -101,15 +101,20 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	/**
 	 * Constructor
 	 * @param propName The property name associated with this field
-	 * @param lblTxt The optional field label text
+	 * @param labelText The optional field label text
+	 * @param helpText The options field help text that will appear when the mouse
+	 *        hovers.
 	 * @throws IllegalArgumentException When no property propName is given
 	 */
-	public AbstractField(String propName, String lblTxt) {
+	public AbstractField(String propName, String labelText, String helpText) {
 		domId = 'f' + Integer.toString(++fieldCounter);
 		setPropertyName(propName);
 
 		// set the label
-		setLabelText(lblTxt);
+		setLabelText(labelText);
+
+		// set the help text
+		setHelpText(helpText);
 
 		// TODO is this style setting necessary?
 		pnl.setStyleName(STYLE_FIELD);
@@ -154,16 +159,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 	/**
 	 * Set the field's associated label.
-	 * @param lblTxt The label text. If <code>null</code>, the label will be
+	 * @param labelText The label text. If <code>null</code>, the label will be
 	 *        removed.
 	 */
-	public void setLabelText(String lblTxt) {
+	public void setLabelText(String labelText) {
 		if(fldLbl == null) {
 			fldLbl = new FieldLabel();
 			fldLbl.setFor(domId);
 			fldLbl.addClickListener(this);
 		}
-		fldLbl.setText(lblTxt == null ? "" : lblTxt);
+		fldLbl.setText(labelText == null ? "" : labelText);
 	}
 
 	/**

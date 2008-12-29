@@ -4,14 +4,10 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.Map;
-
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.Model;
-import com.tll.client.util.GlobalFormat;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -19,119 +15,6 @@ import com.tll.client.util.GlobalFormat;
  * @author jpk
  */
 public abstract class FieldPanel extends Composite {
-
-	/**
-	 * Creates a new {@link TextField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param visibleLength
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final TextField ftext(String propName, String lblTxt, int visibleLength, String helpText) {
-		return new TextField(propName, lblTxt, visibleLength);
-	}
-
-	/**
-	 * Creates new {@link DateField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param format
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final DateField fdate(String propName, String lblTxt, GlobalFormat format, String helpText) {
-		return new DateField(propName, lblTxt, format);
-	}
-
-	/**
-	 * Creates a Check box field that is designed to be bound to a boolean type
-	 * using String-wise constants "true" and "false" to indicate the boolean
-	 * value respectively.
-	 * @param propName
-	 * @param lblTxt
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final CheckboxField fcheckbox(String propName, String lblTxt, String helpText) {
-		return new CheckboxField(propName, lblTxt);
-	}
-
-	/**
-	 * Creates a new {@link TextAreaField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param numRows
-	 * @param numCols
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final TextAreaField ftextarea(String propName, String lblTxt, int numRows, int numCols, String helpText) {
-		return new TextAreaField(propName, lblTxt, numRows, numCols);
-	}
-
-	/**
-	 * Creates a new {@link PasswordField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final PasswordField fpassword(String propName, String lblTxt, String helpText) {
-		return new PasswordField(propName, lblTxt);
-	}
-
-	/**
-	 * Creates a new {@link SelectField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param dataMap
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final SelectField fselect(String propName, String lblTxt, Map<String, String> dataMap, String helpText) {
-		return new SelectField(propName, lblTxt, dataMap);
-	}
-
-	/**
-	 * Creates a new {@link SuggestField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param dataMap
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final SuggestField fsuggest(String propName, String lblTxt, Map<String, String> dataMap, String helpText) {
-		return new SuggestField(propName, lblTxt, dataMap);
-	}
-
-	/**
-	 * Creates a new {@link RadioGroupField} instance.
-	 * @param propName
-	 * @param lblTxt
-	 * @param dataMap
-	 * @param renderHorizontal
-	 * @param helpText The on hover tool tip text
-	 */
-	public static final RadioGroupField fradiogroup(String propName, String lblTxt, Map<String, String> dataMap,
-			boolean renderHorizontal, String helpText) {
-		return new RadioGroupField(propName, lblTxt, dataMap, renderHorizontal);
-	}
-
-	/**
-	 * Creates entity date created and date modified read only fields returning
-	 * them in an array where the first element is the date created field.
-	 * @return DateField array
-	 */
-	public static final DateField[] entityTimestampFields() {
-		DateField dateCreated = fdate(Model.DATE_CREATED_PROPERTY, "Created", GlobalFormat.DATE, null);
-		DateField dateModified = fdate(Model.DATE_MODIFIED_PROPERTY, "Modified", GlobalFormat.DATE, null);
-		dateCreated.setReadOnly(true);
-		dateModified.setReadOnly(true);
-		return new DateField[] {
-			dateCreated, dateModified };
-	}
-
-	/**
-	 * Creates an entity name text field.
-	 * @return The created entity name field
-	 */
-	public static final TextField entityNameField() {
-		return ftext(Model.NAME_PROPERTY, "Name", 30, null);
-	}
 
 	/**
 	 * The Panel containing the drawn fields.
@@ -171,13 +54,7 @@ public abstract class FieldPanel extends Composite {
 	 * Draws or re-draws this field panel.
 	 */
 	public final void draw() {
-		// clear out the panel
 		clear();
-
-		// [re]draw the fields
-		// getFieldGroup().draw();
-
-		// draw the panel
 		drawInternal(panel);
 	}
 

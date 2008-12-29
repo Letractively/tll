@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/smbiz-server"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
 	<classpathentry kind="var" path="GWT_INCUBATOR_ROOT/build/dist/gwt-incubator.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
