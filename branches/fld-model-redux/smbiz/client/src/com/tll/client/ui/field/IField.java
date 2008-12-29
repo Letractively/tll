@@ -120,12 +120,6 @@ public interface IField extends IPropertyNameProvider, IValidator, SourcesChange
 	void setFieldLabelContainer(Widget fieldLabelContainer);
 
 	/**
-	 * Resets the field's UI value to the last set reset value clearing out dirty
-	 * styling, validation styling and messages.
-	 */
-	void reset();
-
-	/**
 	 * Validates the field's held value.
 	 * @throws ValidationException
 	 */

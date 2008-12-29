@@ -369,13 +369,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		}
 	}
 
-	public void reset() {
-		MsgManager.instance().clear(feedbackWidget, false);
-		for(IField field : fields) {
-			field.reset();
-		}
-	}
-
 	/**
 	 * @return The number of child fields.
 	 */

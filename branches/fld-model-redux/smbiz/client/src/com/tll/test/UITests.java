@@ -208,7 +208,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
 		final TestFieldPanel fieldPanel = new TestFieldPanel();
-		final EditPanel ep = new EditPanel(fieldPanel, true, true);
+		final EditPanel<Model> ep = new EditPanel<Model>(fieldPanel, true, true);
 		testPanel.add(ep);
 
 		Model address = new Model(EntityType.ADDRESS);

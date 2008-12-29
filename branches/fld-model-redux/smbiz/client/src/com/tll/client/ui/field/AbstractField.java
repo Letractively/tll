@@ -337,22 +337,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 	}
 
-	public final void reset() {
-
-		// reset the value
-		// TODO verify this
-		getAction().execute(this);
-
-		dirty = false;
-
-		// handle styling
-		clearMsgs();
-		removeStyleName(STYLE_DIRTY);
-		removeStyleName(STYLE_INVALID);
-
-		if(isAttached()) draw();
-	}
-
 	private void addMsgs(List<Msg> msgs) {
 		MsgManager.instance().post(false, msgs, Position.BOTTOM, this, -1, false).show();
 	}

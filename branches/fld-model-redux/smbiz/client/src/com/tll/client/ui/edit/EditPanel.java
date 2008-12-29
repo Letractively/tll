@@ -7,16 +7,18 @@ package com.tll.client.ui.edit;
 import java.util.List;
 
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.model.Model;
+import com.tll.client.bind.IBindable;
+import com.tll.client.bind.IBindingAction;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
+import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.BoundButton;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
@@ -29,8 +31,10 @@ import com.tll.client.validate.ValidationException;
  * the the {@link FieldPanel} content to always be navigable and keeps the edit
  * and cancel buttons in constant position.
  * @author jpk
+ * @param <M> The model type
+ * @param <A> The binding action type
  */
-public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
+public final class EditPanel<M, A extends IBindingAction<IBindable>> extends AbstractBoundWidget<M, M, A, M> implements ClickListener, ISourcesEditEvents {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -62,7 +66,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
-	private final Button btnSave, btnDelete, btnReset, btnCancel;
+	private final BoundButton<M> btnSave, btnDelete, btnReset, btnCancel;
 
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
@@ -84,14 +88,14 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
-		btnSave = new Button("", this);
+		btnSave = new BoundButton<M>("", this);
 		pnlButtonRow.add(btnSave);
 
-		btnReset = new Button("Reset", this);
+		btnReset = new BoundButton<M>("Reset", this);
 		pnlButtonRow.add(btnReset);
 
 		if(showDeleteBtn) {
-			btnDelete = new Button("Delete", this);
+			btnDelete = new BoundButton<M>("Delete", this);
 			pnlButtonRow.add(btnDelete);
 		}
 		else {
@@ -99,7 +103,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 
 		if(showCancelBtn) {
-			btnCancel = new Button("Cancel", this);
+			btnCancel = new BoundButton<M>("Cancel", this);
 			pnlButtonRow.add(btnCancel);
 		}
 		else {
@@ -134,15 +138,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		return "Add".equals(btnSave.getText());
 	}
 
-	public void draw() {
-		fieldPanel.draw();
-	}
-
-	/**
-	 * Binds the given model to the fields contained in this edit panel then
-	 * transfers the model data to the fields.
-	 * @param model The model to bind
-	 */
+	/*
 	public void setModel(Model model) {
 		// NOTE: we do this binding init stuff here as we need to wait to ensure the
 		// aux data set the root field group in the binding
@@ -155,6 +151,21 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		binding.bind();
 		binding.setFieldValues();
 		setEditMode(model.isNew());
+	}
+	*/
+
+	public Object getProperty(String propPath) throws PropertyPathException {
+		return null;
+	}
+
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
+	}
+
+	public M getValue() {
+		return null;
+	}
+
+	public void setValue(M value) {
 	}
 
 	/**
@@ -183,7 +194,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		}
 
 		// fields are all valid to send field values to the model
-		binding.setModelValues();
+		// binding.setModelValues();
 
 		return true;
 	}
@@ -194,7 +205,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			fieldPanel.getFieldGroup().reset();
+			// TODO fix
+			// fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
@@ -217,8 +229,5 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	protected void onUnload() {
 		super.onUnload();
 		// portal.removeScrollListener(MsgManager.instance);
-
-		// TODO should this be here ?
-		binding.unbind();
 	}
 }
