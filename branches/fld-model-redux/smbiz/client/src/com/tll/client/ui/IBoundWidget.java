@@ -16,21 +16,20 @@ import com.tll.client.renderer.IRenderer;
  *        binding that binds this bindable.
  * @param <V> The value type or the type this instance internally holds as the
  *        value.
- * @param <A> The {@link IBindingAction} type
  * @param <M> The model type
  */
-public interface IBoundWidget<B, V, A extends IBindingAction<IBindable>, M> extends IBindable, SourcesChangeEvents {
+public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
 
 	/**
 	 * @return The action
 	 */
-	A getAction();
+	IBindingAction<IBoundWidget<B, V, M>> getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action The action to set
 	 */
-	void setAction(A action);
+	void setAction(IBindingAction<IBoundWidget<B, V, M>> action);
 
 	/**
 	 * @return The employed {@link Comparator} for this bound widget.

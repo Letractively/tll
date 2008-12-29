@@ -2,27 +2,26 @@ package com.tll.client.bind;
 
 /**
  * IBindingAction - "Controls" a given component participating in a binding.
- * 
- * <p><em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em> @author jpk
- * @param <B> The {@link IBindable} type.
+ * <p>
+ * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em> @author
+ * jpk
  */
-public interface IBindingAction<B extends IBindable> extends IAction<B> {
+public interface IBindingAction<B extends IBindable> extends IAction {
 
 	/**
-	 * Sets the initial values.
-	 * @param bindable
+	 * Sets the bindable.
+	 * @param bindable The bindable to set
 	 */
-	void set(B bindable);
+	void setBindable(B bindable);
 
 	/**
-	 * Establishes the bindings.
-	 * @param bindable
+	 * Establishes the bindings. A prior call to {@link #setBindable(IBindable)}
+	 * is required.
 	 */
-	void bind(B bindable);
+	void bind();
 
 	/**
-	 * Unbinds what is bound performing necessary clean up.
-	 * @param bindable
+	 * Unbinds what is currently bound performing necessary clean up.
 	 */
-	void unbind(B bindable);
+	void unbind();
 }

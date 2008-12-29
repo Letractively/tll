@@ -1,22 +1,3 @@
-/*
- * AbstractBoundWidget.java
- *
- * Created on June 14, 2007, 9:55 AM
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
 package com.tll.client.ui;
 
 import java.util.Comparator;
@@ -24,8 +5,6 @@ import java.util.Comparator;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
-import com.tll.client.bind.IAction;
-import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
@@ -37,16 +16,15 @@ import com.tll.client.renderer.IRenderer;
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @param <B> The bound value type
  * @param <V> The native widget value type
- * @param <A> The {@link IAction} type
  * @param <M> The model type
  * @author jpk
  */
-public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindable>, M> extends Composite implements IBoundWidget<B, V, A, M> {
+public abstract class AbstractBoundWidget<B, V, M> extends Composite implements IBoundWidget<B, V, M> {
 
 	/**
 	 * The binding action.
 	 */
-	private A action;
+	private IBindingAction<IBoundWidget<B, V, M>> action;
 
 	/**
 	 * Responsible for converting a <B> type to a <V> type.
@@ -120,11 +98,11 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
-	public A getAction() {
+	public IBindingAction<IBoundWidget<B, V, M>> getAction() {
 		return action;
 	}
 
-	public void setAction(A action) {
+	public void setAction(IBindingAction<IBoundWidget<B, V, M>> action) {
 		this.action = action;
 	}
 
@@ -142,18 +120,18 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 
 	public final void setModel(M model) {
 		final Object old = getModel();
-		final A action = getAction();
+		final IBindingAction<IBoundWidget<B, V, M>> action = getAction();
 
 		if(old != null && action != null) {
-			action.unbind(this);
+			action.unbind();
 		}
 
 		this.model = model;
 
-		if(action != null) action.set(this);
+		if(action != null) action.setBindable(this);
 
 		if(isAttached() && model != null && action != null) {
-			action.bind(this);
+			action.bind();
 		}
 
 		changeSupport.firePropertyChange("model", old, model);
@@ -171,7 +149,7 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 
 	@Override
 	protected void onAttach() {
-		if(getAction() != null) getAction().set(this);
+		if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
 		changeSupport.firePropertyChange("attached", false, true);
 	}
@@ -179,13 +157,13 @@ public abstract class AbstractBoundWidget<B, V, A extends IBindingAction<IBindab
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		if(getAction() != null) getAction().bind(this);
+		if(getAction() != null) getAction().bind();
 	}
 
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-		if(getAction() != null) getAction().unbind(this);
+		if(getAction() != null) getAction().unbind();
 		changeSupport.firePropertyChange("attached", true, false);
 	}
 }

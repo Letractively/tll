@@ -16,8 +16,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.bind.IBindable;
-import com.tll.client.bind.IBindingAction;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
@@ -35,7 +33,7 @@ import com.tll.client.validate.ValidationException;
  * @author jpk
  */
 
-public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindingAction<IBindable>, Model> implements IField, HasFocus, ClickListener, ChangeListener {
+public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Model> implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is

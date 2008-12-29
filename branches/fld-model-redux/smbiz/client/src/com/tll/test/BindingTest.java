@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
@@ -83,7 +82,7 @@ public class BindingTest extends GWTTestCase {
 	 * AbstractBoundWidget<B, V, IBindingAction<IBindable>, M>
 	 * @author jpk
 	 */
-	final class ModelEdit extends AbstractBoundWidget<Model, Model, IBindingAction<IBindable>, Model> {
+	final class ModelEdit extends AbstractBoundWidget<Model, Model, Model> {
 
 		public Model getValue() {
 			return null;
@@ -107,16 +106,16 @@ public class BindingTest extends GWTTestCase {
 	 */
 	static final class TestModelEditAction implements IBindingAction<Model> {
 
-		public void bind(Model bindable) {
+		public void setBindable(Model bindable) {
 		}
 
-		public void set(Model bindable) {
+		public void bind() {
 		}
 
-		public void unbind(Model bindable) {
+		public void unbind() {
 		}
 
-		public void execute(Model target) {
+		public void execute() {
 		}
 
 	}

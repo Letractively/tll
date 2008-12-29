@@ -73,8 +73,7 @@ public final class Binding {
 	 * @param feedback A feedback implementation for validation errors.
 	 * @param modelProperty The property on the Widgets model object to bind to.
 	 */
-	public Binding(IBoundWidget<Object, Object, IBindingAction<IBindable>, Object> widget, IValidator validator,
-			IValidationFeedback feedback, String modelProperty) {
+	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String modelProperty) {
 		this(widget, "value", validator, feedback, (IBindable) widget.getModel(), "modelProperty", null, null);
 	}
 

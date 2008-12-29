@@ -6,8 +6,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindable;
-import com.tll.client.bind.IBindingAction;
 import com.tll.client.model.PropertyPathException;
 
 /**
@@ -15,7 +13,7 @@ import com.tll.client.model.PropertyPathException;
  * @author jpk
  * @param <M> The model type
  */
-public class BoundButton<M> extends AbstractBoundWidget<String, String, IBindingAction<IBindable>, M> implements SourcesClickEvents, HasFocus {
+public class BoundButton<M> extends AbstractBoundWidget<String, String, M> implements SourcesClickEvents, HasFocus {
 
 	private final com.google.gwt.user.client.ui.Button base = new com.google.gwt.user.client.ui.Button();
 	private String value;
@@ -101,7 +99,7 @@ public class BoundButton<M> extends AbstractBoundWidget<String, String, IBinding
 
 			public void onClick(Widget sender) {
 				if(getAction() != null) {
-					getAction().execute(BoundButton.this);
+					getAction().execute();
 				}
 			}
 		};

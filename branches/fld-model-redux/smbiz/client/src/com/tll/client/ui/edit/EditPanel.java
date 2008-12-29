@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.bind.IBindable;
-import com.tll.client.bind.IBindingAction;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.ui.AbstractBoundWidget;
@@ -32,9 +30,8 @@ import com.tll.client.validate.ValidationException;
  * and cancel buttons in constant position.
  * @author jpk
  * @param <M> The model type
- * @param <A> The binding action type
  */
-public final class EditPanel<M, A extends IBindingAction<IBindable>> extends AbstractBoundWidget<M, M, A, M> implements ClickListener, ISourcesEditEvents {
+public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements ClickListener, ISourcesEditEvents {
 
 	/**
 	 * The style name for {@link EditPanel}s.
