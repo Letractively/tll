@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
@@ -156,9 +155,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel extends FieldPanel {
+	private static final class TestFieldPanel<M> extends FieldPanel<M> {
 
-		private final AddressPanel ap;
+		private final FlowPanel canvas = new FlowPanel();
+
+		private final AddressPanel<M> ap;
 
 		private final CheckboxField bf;
 		private final CheckboxField bflabel;
@@ -168,9 +169,10 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 */
 		public TestFieldPanel() {
 			super("Test Field Panel");
-			ap = new AddressPanel();
+			ap = new AddressPanel<M>();
 			bf = FieldFactory.fcheckbox("bf", null, null);
 			bflabel = FieldFactory.fcheckbox("bflabel", "Boolean with Label", "Help Text");
+			initWidget(canvas);
 		}
 
 		@Override
@@ -188,7 +190,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 
 		@Override
-		protected void drawInternal(Panel canvas) {
+		protected void draw() {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -233,7 +235,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testModel.set(new BooleanPropertyValue("bf", false));
 
 		ep.setModel(testModel);
-		ep.draw();
+		// ep.draw();
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {

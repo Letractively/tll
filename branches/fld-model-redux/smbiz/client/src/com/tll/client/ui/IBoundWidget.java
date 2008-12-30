@@ -21,6 +21,24 @@ import com.tll.client.renderer.IRenderer;
 public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
 
 	/**
+	 * Generic token indicating the "value property". Used when firing property
+	 * change events.
+	 */
+	static final String PROPERTY_VALUE = "value";
+
+	/**
+	 * Generic token indicating DOM attachment. Used when firing property change
+	 * events.
+	 */
+	static final String PROPERTY_ATTACHED = "attached";
+
+	/**
+	 * Generic token indicating the "model property". Used when firing property
+	 * change events.
+	 */
+	static final String PROPERTY_MODEL = "model";
+
+	/**
 	 * @return The action
 	 */
 	IBindingAction<IBoundWidget<B, V, M>> getAction();
@@ -37,8 +55,8 @@ public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
 	Comparator<B> getComparator();
 
 	/**
-	 * Used in determining whether a given bound value is the same as that
-	 * currently held in this widget.
+	 * Optional tool used in determining whether a given bound value is the same
+	 * as that currently held in this widget.
 	 * @param comparator
 	 */
 	void setComparator(Comparator<B> comparator);

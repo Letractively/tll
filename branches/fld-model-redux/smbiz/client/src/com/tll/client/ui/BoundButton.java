@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.PropertyPathException;
 
 /**
  * BoundButton
@@ -57,11 +56,12 @@ public class BoundButton<M> extends AbstractBoundWidget<String, String, M> imple
 		base.addKeyboardListener(listener);
 	}
 
-	public Object getProperty(String propPath) throws PropertyPathException {
+	public Object getProperty(String propPath) {
 		return null;
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
+	public void setProperty(String propPath, Object value) {
+		// no-op
 	}
 
 	public String getHTML() {
@@ -105,8 +105,6 @@ public class BoundButton<M> extends AbstractBoundWidget<String, String, M> imple
 		};
 
 		base.addClickListener(listener);
-		// TODO fix
-		// setRenderer(new ToStringRenderer());
 		initWidget(base);
 	}
 
@@ -149,8 +147,8 @@ public class BoundButton<M> extends AbstractBoundWidget<String, String, M> imple
 
 	public void setValue(String value) {
 		String old = value;
-		setText(this.getRenderer() != null ? (String) this.getRenderer().render(value) : "" + value);
-		changeSupport.firePropertyChange("value", old, value);
+		setText(value);
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, value);
 	}
 
 	public boolean isEnabled() {

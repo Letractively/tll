@@ -4,7 +4,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -18,7 +18,9 @@ import com.tll.service.app.RefDataType;
  * AddressPanel
  * @author jpk
  */
-public final class AddressPanel extends FieldPanel {
+public final class AddressPanel<M> extends FieldPanel<M> {
+
+	private final FlowPanel canvas = new FlowPanel();
 
 	private TextField emailAddress;
 	private TextField lastName;
@@ -38,6 +40,7 @@ public final class AddressPanel extends FieldPanel {
 	 */
 	public AddressPanel() {
 		super("Address");
+		initWidget(canvas);
 	}
 
 	@Override
@@ -84,7 +87,7 @@ public final class AddressPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

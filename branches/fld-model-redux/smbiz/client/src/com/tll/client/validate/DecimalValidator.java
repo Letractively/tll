@@ -10,14 +10,33 @@ import com.tll.client.util.GlobalFormat;
  */
 public class DecimalValidator implements IValidator {
 
-	public static final DecimalValidator CURRENCY_VALIDATOR =
+	private static final DecimalValidator CURRENCY_VALIDATOR =
 			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.CURRENCY));
 
-	public static final DecimalValidator PERCENT_VALIDATOR =
+	private static final DecimalValidator PERCENT_VALIDATOR =
 			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.PERCENT));
 
-	public static final DecimalValidator DECIMAL_VALIDATOR =
+	private static final DecimalValidator DECIMAL_VALIDATOR =
 			new DecimalValidator(Fmt.getDecimalFormat(GlobalFormat.DECIMAL));
+
+	/**
+	 * Factory method for obtaining a pre-baked {@link DecimalValidator}.
+	 * @param numberFormat
+	 * @return The appropriate {@link DecimalValidator}
+	 * @throws IllegalArgumentException When the given number format is
+	 *         <code>null</code> or invalid.
+	 */
+	public static final DecimalValidator instance(GlobalFormat numberFormat) {
+		switch(numberFormat) {
+			case CURRENCY:
+				return CURRENCY_VALIDATOR;
+			case DECIMAL:
+				return DECIMAL_VALIDATOR;
+			case PERCENT:
+				return PERCENT_VALIDATOR;
+		}
+		throw new IllegalArgumentException("A valid number format must be specified.");
+	}
 
 	private final NumberFormat numberFormat;
 

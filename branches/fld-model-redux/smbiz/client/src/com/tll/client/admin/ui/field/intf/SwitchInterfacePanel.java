@@ -5,21 +5,24 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
  */
-public final class SwitchInterfacePanel extends AbstractInterfacePanel {
+public final class SwitchInterfacePanel<M> extends AbstractInterfacePanel<M> {
+
+	private final FlowPanel canvas = new FlowPanel();
 
 	/**
 	 * Constructor
 	 */
 	public SwitchInterfacePanel() {
 		super();
+		initWidget(canvas);
 	}
 
 	/*
@@ -39,7 +42,7 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 		*/
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

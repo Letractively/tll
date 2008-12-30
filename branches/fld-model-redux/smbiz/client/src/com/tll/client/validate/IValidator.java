@@ -11,7 +11,7 @@ package com.tll.client.validate;
  * validator implementations thus enabling the ability to determine whether a
  * particular validator exists in a collection which is key for composite
  * validator implementations.
- * @author jkirton
+ * @author jpk
  */
 public interface IValidator {
 

@@ -80,7 +80,7 @@ public final class SelectField extends AbstractField<Object> {
 		ArrayList<Object> newSelected = new ArrayList<Object>();
 
 		for(Object item : options) {
-			lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(item)));
+			lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer() == null ? item : getRenderer().render(item)));
 			if(contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
 				newSelected.add(item);
@@ -92,12 +92,12 @@ public final class SelectField extends AbstractField<Object> {
 		this.selected = newSelected;
 
 		if(isMultipleSelect()) {
-			changeSupport.firePropertyChange("value", old, selected);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
 		}
 		else {
 			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
 			Object curr = (selected.size() == 0) ? null : selected.get(0);
-			changeSupport.firePropertyChange("value", prev, curr);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
 		fireWidgetChange();
@@ -214,12 +214,12 @@ public final class SelectField extends AbstractField<Object> {
 		}
 
 		if(this.isMultipleSelect()) {
-			changeSupport.firePropertyChange("value", old, selected);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
 		}
 		else {
 			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
 			Object curr = (this.selected.size() == 0) ? null : this.selected.get(0);
-			changeSupport.firePropertyChange("value", prev, curr);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
 		fireWidgetChange();
@@ -260,12 +260,12 @@ public final class SelectField extends AbstractField<Object> {
 		// this.selected = selected;
 
 		if(isMultipleSelect()) {
-			changeSupport.firePropertyChange("value", old, selected);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
 		}
 		else {
 			Object prev = ((old.size() == 0)) ? null : old.get(0);
 			Object curr = (selected.size() == 0) ? null : selected.get(0);
-			changeSupport.firePropertyChange("value", prev, curr);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
 		fireWidgetChange();

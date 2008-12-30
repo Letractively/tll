@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -16,8 +16,9 @@ import com.tll.client.ui.field.VerticalFieldPanelComposer;
  * BankPanel
  * @author jpk
  */
-public final class BankPanel extends FieldPanel {
+public final class BankPanel<M> extends FieldPanel<M> {
 
+	private final FlowPanel canvas = new FlowPanel();
 	private TextField bankName;
 	private TextField bankAccountNo;
 	private TextField bankRoutingNo;
@@ -27,6 +28,7 @@ public final class BankPanel extends FieldPanel {
 	 */
 	public BankPanel() {
 		super("Bank Info");
+		initWidget(canvas);
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public final class BankPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		final VerticalFieldPanelComposer cmpsr = new VerticalFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

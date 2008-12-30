@@ -261,11 +261,15 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	/**
 	 * Adds a field to this field group.
-	 * @param field
-	 * @see #addField(String, IField)
+	 * @param field The field to add
+	 * @throws IllegalArgumentException When this field instance already exists or
+	 *         another field exists with the same property name.
 	 */
-	public void addField(IField field) {
-		fields.add(field);
+	public void addField(IField field) throws IllegalArgumentException {
+		if(!fields.add(field)) {
+			throw new IllegalArgumentException(
+					"This field instance was already added or a field having the same property name already exists.");
+		}
 	}
 
 	/**

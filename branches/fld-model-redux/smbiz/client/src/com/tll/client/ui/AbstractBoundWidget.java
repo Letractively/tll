@@ -37,7 +37,7 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 	private Comparator<B> comparator;
 
 	/**
-	 * The subjugated model
+	 * The subjugated model.
 	 */
 	private M model;
 
@@ -134,16 +134,14 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 			action.bind();
 		}
 
-		changeSupport.firePropertyChange("model", old, model);
+		changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
 	}
 
 	public final IRenderer<V, B> getRenderer() {
-		if(renderer == null) throw new IllegalStateException("No renderer specified.");
 		return renderer;
 	}
 
 	public void setRenderer(IRenderer<V, B> renderer) {
-		if(renderer == null) throw new IllegalArgumentException("A renderer must be specified.");
 		this.renderer = renderer;
 	}
 
@@ -151,7 +149,7 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 	protected void onAttach() {
 		if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
-		changeSupport.firePropertyChange("attached", false, true);
+		changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
 	}
 
 	@Override
@@ -164,6 +162,6 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 	protected void onDetach() {
 		super.onDetach();
 		if(getAction() != null) getAction().unbind();
-		changeSupport.firePropertyChange("attached", true, false);
+		changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
 	}
 }

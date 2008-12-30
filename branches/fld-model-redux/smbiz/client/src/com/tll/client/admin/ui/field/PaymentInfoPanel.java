@@ -4,7 +4,6 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -15,20 +14,21 @@ import com.tll.client.ui.field.FieldPanel;
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEvents {
+public final class PaymentInfoPanel<M> extends FieldPanel<M> implements SourcesTabEvents {
 
 	private final TabPanel tabPanel = new TabPanel();
 
-	private final CreditCardPanel creditCardPanel;
-	private final BankPanel bankPanel;
+	private final CreditCardPanel<M> creditCardPanel;
+	private final BankPanel<M> bankPanel;
 
 	/**
 	 * Constructor
 	 */
 	public PaymentInfoPanel() {
 		super("Payment Info");
-		creditCardPanel = new CreditCardPanel();
-		bankPanel = new BankPanel();
+		creditCardPanel = new CreditCardPanel<M>();
+		bankPanel = new BankPanel<M>();
+		initWidget(tabPanel);
 	}
 
 	@Override
@@ -38,12 +38,9 @@ public final class PaymentInfoPanel extends FieldPanel implements SourcesTabEven
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
-		creditCardPanel.draw();
-		bankPanel.draw();
+	protected void draw() {
 		tabPanel.add(creditCardPanel, "Credit Card");
 		tabPanel.add(bankPanel, "Bank");
-		canvas.add(tabPanel);
 	}
 
 	public void addTabListener(TabListener listener) {

@@ -74,10 +74,10 @@ public final class CheckboxField extends AbstractField<Boolean> {
 
 	public void setValue(Object value) {
 		Boolean old = getValue();
-		setChecked(value == null ? false : this.getRenderer().render(value).booleanValue());
+		setChecked(value == null ? false : getRenderer().render(value).booleanValue());
 		Boolean newval = getValue();
 		if((old != newval) && !old.equals(newval)) {
-			changeSupport.firePropertyChange("value", old, newval);
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
 	}
 
@@ -86,6 +86,6 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		assert sender == cb;
 		super.onClick(sender);
 		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
-		changeSupport.firePropertyChange("value", old, getValue());
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 	}
 }

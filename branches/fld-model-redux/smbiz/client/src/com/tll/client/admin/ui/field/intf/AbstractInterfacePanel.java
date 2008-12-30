@@ -21,7 +21,7 @@ import com.tll.client.ui.field.TextField;
  * interfaces (not Options).
  * @author jpk
  */
-public abstract class AbstractInterfacePanel extends FieldPanel {
+public abstract class AbstractInterfacePanel<M> extends FieldPanel<M> {
 
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };

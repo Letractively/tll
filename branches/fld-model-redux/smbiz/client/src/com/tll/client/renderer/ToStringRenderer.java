@@ -19,7 +19,6 @@
  */
 package com.tll.client.renderer;
 
-import com.tll.util.INameValueProvider;
 
 /**
  * ToStringRenderer - Renders an arbitrary {@link Object} to a {@link String}.
@@ -27,9 +26,9 @@ import com.tll.util.INameValueProvider;
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
-public class ToStringRenderer implements IRenderer<String, Object> {
+public class ToStringRenderer<I> implements IRenderer<String, I> {
 
-	public static final ToStringRenderer INSTANCE = new ToStringRenderer();
+	public static final ToStringRenderer<Object> INSTANCE = new ToStringRenderer<Object>();
 
 	/**
 	 * Constructor
@@ -42,13 +41,7 @@ public class ToStringRenderer implements IRenderer<String, Object> {
 	 * {@link String} instance.
 	 * @return A never <code>null</code> {@link String}.
 	 */
-	@SuppressWarnings("unchecked")
 	public String render(Object o) {
-		if(o != null) {
-			if(o instanceof INameValueProvider) {
-				return ((INameValueProvider) o).getName();
-			}
-		}
 		return o == null ? "" : o.toString();
 	}
 }

@@ -6,7 +6,7 @@ package com.tll.client.admin.ui.field;
 
 import java.util.Arrays;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -22,7 +22,9 @@ import com.tll.service.app.RefDataType;
  * CreditCardPanel
  * @author jpk
  */
-public final class CreditCardPanel extends FieldPanel {
+public final class CreditCardPanel<M> extends FieldPanel<M> {
+
+	private final FlowPanel canvas = new FlowPanel();
 
 	private SelectField type;
 	private TextField num;
@@ -42,6 +44,7 @@ public final class CreditCardPanel extends FieldPanel {
 	 */
 	public CreditCardPanel() {
 		super("Credit Card");
+		initWidget(canvas);
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public final class CreditCardPanel extends FieldPanel {
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

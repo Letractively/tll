@@ -17,6 +17,8 @@ import com.tll.client.validate.ValidationException;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
+ * <p>
+ * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
  * @author jpk
  */
 public interface IField extends IPropertyNameProvider, IValidator, SourcesChangeEvents, HasText {

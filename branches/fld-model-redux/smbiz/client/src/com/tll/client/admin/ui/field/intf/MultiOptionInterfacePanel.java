@@ -5,9 +5,9 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -23,11 +23,19 @@ import com.tll.client.ui.field.TextField;
  * one option is allowed.
  * @author jpk
  */
-public final class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
+public final class MultiOptionInterfacePanel<M> extends AbstractInterfacePanel<M> implements TabListener {
+
+	private final FlowPanel canvas = new FlowPanel();
 
 	private final TabPanel tabOptions = new TabPanel();
 
-	private static final class OptionPanel extends FieldPanel {
+	/**
+	 * OptionPanel
+	 * @author jpk
+	 */
+	private static final class OptionPanel<M> extends FieldPanel<M> {
+
+		FlowPanel canvas = new FlowPanel();
 
 		TextField name, code;
 		TextAreaField description;
@@ -40,6 +48,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		 */
 		public OptionPanel() {
 			super("Option");
+			initWidget(canvas);
 		}
 
 		@Override
@@ -66,7 +75,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 
 		@Override
-		protected void drawInternal(Panel canvas) {
+		protected void draw() {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -97,6 +106,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	public MultiOptionInterfacePanel() {
 		super();
 		tabOptions.addTabListener(this);
+		initWidget(canvas);
 	}
 
 	@Override
@@ -105,7 +115,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

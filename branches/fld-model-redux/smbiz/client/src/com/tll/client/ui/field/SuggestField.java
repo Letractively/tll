@@ -71,16 +71,16 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 
 	public void setValue(Object value) {
 		String old = getValue();
-		setText(getRenderer() != null ? getRenderer().render(value) : "" + value);
+		setText(getRenderer().render(value));
 		if(getValue() != old && getValue() != null && getValue().equals(old)) {
-			changeSupport.firePropertyChange("value", old, getValue());
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
 	}
 
 	@Override
 	public void onChange(Widget sender) {
 		super.onChange(sender);
-		changeSupport.firePropertyChange("value", old, getValue());
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireWidgetChange();
 	}

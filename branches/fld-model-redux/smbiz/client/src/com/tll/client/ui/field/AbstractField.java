@@ -29,10 +29,9 @@ import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
 
 /**
- * AbstractField - Input field abstraction.
+ * AbstractField - Base class for non-group {@link IField}s.
  * @author jpk
  */
-
 public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Model> implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
@@ -518,6 +517,24 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 	protected void onUnload() {
 		super.onUnload();
 		clearMsgs();
+	}
+
+	/**
+	 * Fields are considered if their property names match.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		AbstractField other = (AbstractField) obj;
+		return (!propName.equals(other.propName));
+	}
+
+	@Override
+	public final int hashCode() {
+		return 31 + propName.hashCode();
 	}
 
 	@Override

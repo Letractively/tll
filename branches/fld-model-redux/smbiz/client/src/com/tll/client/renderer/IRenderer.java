@@ -19,6 +19,8 @@ public interface IRenderer<O, I> {
 	 * Render.
 	 * @param o The object to render
 	 * @return The rendered object
+	 * @throws IllegalArgumentException When the given object to render can't be
+	 *         rendered.
 	 */
-	O render(I o);
+	O render(I o) throws IllegalArgumentException;
 }

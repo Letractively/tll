@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field.user;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -21,7 +21,9 @@ import com.tll.client.util.GlobalFormat;
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends FieldPanel {
+public class UserPanel<M> extends FieldPanel<M> {
+
+	private final FlowPanel canvas = new FlowPanel();
 
 	private TextField name;
 	private DateField[] timestamps;
@@ -32,7 +34,7 @@ public class UserPanel extends FieldPanel {
 
 	private ViewRequestLink lnkAccount;
 
-	private AddressPanel addressPanel;
+	private AddressPanel<M> addressPanel;
 
 	/**
 	 * Constructor
@@ -51,7 +53,7 @@ public class UserPanel extends FieldPanel {
 		enabled = FieldFactory.fcheckbox("enabled", "Enabled", "Enabled");
 		expires = FieldFactory.fdate("expires", "Expires", "Expires", GlobalFormat.DATE);
 
-		addressPanel = new AddressPanel();
+		addressPanel = new AddressPanel<M>();
 
 		fields.addField(name);
 		fields.addFields(timestamps);
@@ -80,7 +82,7 @@ public class UserPanel extends FieldPanel {
 	*/
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
 		cmpsr.setCanvas(canvas);
 

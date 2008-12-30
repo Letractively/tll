@@ -5,7 +5,6 @@ import java.util.Date;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.renderer.IRenderer;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.StringUtil;
@@ -14,14 +13,33 @@ import com.tll.client.util.StringUtil;
  * DateValidator
  * @author jpk
  */
-public class DateValidator implements IValidator, IRenderer<Date, Object> {
+public class DateValidator implements IValidator {
 
-	public static final DateValidator TIMESTAMP_VALIDATOR =
+	private static final DateValidator TIMESTAMP_VALIDATOR =
 			new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIMESTAMP));
 
-	public static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.DATE));
+	private static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.DATE));
 
-	public static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIME));
+	private static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIME));
+
+	/**
+	 * Factory method for obtaining a pre-baked {@link DateValidator}.
+	 * @param dateFormat
+	 * @return The appropriate {@link DateValidator}
+	 * @throws IllegalArgumentException When the given date format is
+	 *         <code>null</code> or invalid.
+	 */
+	public static final DateValidator instance(GlobalFormat dateFormat) {
+		switch(dateFormat) {
+			case DATE:
+				return DATE_VALIDATOR;
+			case TIME:
+				return TIME_VALIDATOR;
+			case TIMESTAMP:
+				return TIMESTAMP_VALIDATOR;
+		}
+		throw new IllegalArgumentException("A valid date format must be specified.");
+	}
 
 	private final DateTimeFormat dateFormat;
 
@@ -48,35 +66,12 @@ public class DateValidator implements IValidator, IRenderer<Date, Object> {
 		this.dateFormat = dateFormat;
 	}
 
-	/**
-	 * Translates an {@link Object} instance to a {@link Date} instance.
-	 * @param value The object to translate
-	 * @return A potentially <code>null</code> Date instance.
-	 * @throws RuntimeException When the given value can't be translated into a
-	 *         date.
-	 */
-	private Date translate(Object value) throws RuntimeException {
-		if(value == null || value instanceof Date) return (Date) value;
-		try {
-			return dateFormat.parse(value.toString());
-		}
-		catch(Throwable t) {
-			if(t instanceof RuntimeException == false) {
-				throw new RuntimeException(t);
-			}
-			throw (RuntimeException) t;
-		}
-	}
-
-	public Date render(Object o) {
-		return translate(o);
-	}
-
 	public Object validate(Object value) throws ValidationException {
+		if(value == null || value instanceof Date) return value;
+		final String s = value.toString();
+		if(StringUtil.isEmpty(s)) return value;
 		try {
-			final String s = value.toString();
-			if(StringUtil.isEmpty(s)) return value;
-			return translate(value);
+			return dateFormat.parse(s);
 		}
 		catch(Throwable e) {
 			throw new ValidationException(new Msg("Must be a date of format: '" + dateFormat.getPattern() + "'.",

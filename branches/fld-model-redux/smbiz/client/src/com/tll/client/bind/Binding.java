@@ -36,9 +36,6 @@ import com.tll.client.validate.ValidationException;
  * Binding - This class represents a DataBinding between two objects. It also
  * supports Child bindings.
  * <p>
- * For more information, see <a
- * href="http://code.google.com/p/gwittir/wiki/Binding">Binding</a> in the Wiki.
- * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
@@ -55,30 +52,15 @@ public final class Binding {
 	private boolean bound = false;
 
 	/**
-	 * Creates an empty Binding object. This is mostly useful for top-of-tree
-	 * parent Bindings.
+	 * Constructor - Creates an empty Binding object. This is mostly useful for
+	 * top-of-tree parent Bindings.
 	 */
 	public Binding() {
 		super();
 	}
 
 	/**
-	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding,
-	 * and the "value" property of the bound widget will be bound to the property
-	 * specified by modelProperty of the object on the IBoundWidget's "model"
-	 * property.
-	 * @param widget IBoundWidget containing the model.
-	 * @param validator A validator for the BouldWidget's value property.
-	 * @param feedback A feedback implementation for validation errors.
-	 * @param modelProperty The property on the Widgets model object to bind to.
-	 */
-	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String modelProperty) {
-		this(widget, "value", validator, feedback, (IBindable) widget.getModel(), "modelProperty", null, null);
-	}
-
-	/**
-	 * Creates a new instance of Binding
+	 * Constructor
 	 * @param left The left hand object.
 	 * @param leftProperty Property on the left object.
 	 * @param right The right hand object
@@ -93,7 +75,18 @@ public final class Binding {
 	}
 
 	/**
-	 * Creates a new Binding instance.
+	 * Constructor
+	 * @param left The left hand object.
+	 * @param right The right hand object
+	 * @param property The common property name for <em>both</em> the left and
+	 *        right objects.
+	 */
+	public Binding(IBindable left, IBindable right, String property) {
+		this(left, property, right, property);
+	}
+
+	/**
+	 * Constructor
 	 * @param left The left hand object.
 	 * @param leftProperty The property of the left hand object.
 	 * @param leftIValidator A validator for the left hand property.
@@ -118,6 +111,23 @@ public final class Binding {
 	}
 
 	/**
+	 * Constructor
+	 * @param left The left hand object.
+	 * @param leftIValidator A validator for the left hand property.
+	 * @param leftFeedback Feedback for the left hand validator.
+	 * @param right The right hand object.
+	 * @param rightIValidator IValidator for the right hand property.
+	 * @param rightFeedback Feedback for the right hand validator.
+	 * @param property The common property name for <em>both</em> the left and
+	 *        right objects.
+	 */
+	public Binding(IBindable left, IValidator leftIValidator, IValidationFeedback leftFeedback, IBindable right,
+			IValidator rightIValidator, IValidationFeedback rightFeedback, String property) {
+		this(left, property, leftIValidator, leftFeedback, right, property, rightIValidator, rightFeedback);
+	}
+
+	/**
+	 * Constructor
 	 * @param left
 	 * @param leftProperty
 	 * @param leftConverter
@@ -125,8 +135,8 @@ public final class Binding {
 	 * @param rightProperty
 	 * @param rightConverter
 	 */
-	public Binding(IBindable left, String leftProperty, IConverter leftConverter, IBindable right, String rightProperty,
-			IConverter rightConverter) {
+	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter, IBindable right,
+			String rightProperty, IConverter<Object, Object> rightConverter) {
 		this.left = createBindingInstance(left, leftProperty);
 		this.left.converter = leftConverter;
 		this.right = createBindingInstance(right, rightProperty);
@@ -134,6 +144,36 @@ public final class Binding {
 
 		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
 		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
+	}
+
+	/**
+	 * Constructor
+	 * @param left
+	 * @param leftConverter
+	 * @param right
+	 * @param rightConverter
+	 * @param property The common property name for <em>both</em> the left and
+	 *        right objects.
+	 */
+	public Binding(IBindable left, IConverter<Object, Object> leftConverter, IBindable right, String rightProperty,
+			IConverter<Object, Object> rightConverter, String property) {
+		this(left, property, leftConverter, right, property, rightConverter);
+	}
+
+	/**
+	 * Creates a new binding. This method is a shorthand for working with
+	 * BoundWidgets. The bound widget provided will become the left-hand binding,
+	 * and the "value" property of the bound widget will be bound to the property
+	 * specified by modelProperty of the object on the IBoundWidget's "model"
+	 * property.
+	 * @param widget IBoundWidget containing the model.
+	 * @param validator A validator for the BouldWidget's value property.
+	 * @param feedback A feedback implementation for validation errors.
+	 * @param modelProperty The property on the Widgets model object to bind to.
+	 */
+	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String modelProperty) {
+		this(widget, IBoundWidget.PROPERTY_VALUE, validator, feedback, (IBindable) widget.getModel(),
+				IBoundWidget.PROPERTY_MODEL, null, null);
 	}
 
 	/**
@@ -540,7 +580,7 @@ public final class Binding {
 		/**
 		 * A converter when needed.
 		 */
-		public IConverter converter;
+		public IConverter<Object, Object> converter;
 
 		/**
 		 * The full property path of the property being bound.

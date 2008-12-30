@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -39,7 +38,9 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends FieldPanel implements TabListener, DisclosureHandler {
+public class AccountPanel<M> extends FieldPanel<M> {
+
+	private final FlowPanel panel = new FlowPanel();
 
 	protected TextField parent;
 	protected TextField name;
@@ -54,20 +55,21 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	protected CheckboxField persistPymntInfo;
 
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
-	protected PaymentInfoPanel paymentInfoPanel;
+	protected final PaymentInfoPanel<M> paymentInfoPanel = new PaymentInfoPanel<M>();
 
 	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
-	protected final TabPanel tabAddresses = new TabPanel();
+	protected final AddressesPanel<M> addressesPanel = new AddressesPanel<M>();
 
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FieldPanel {
+	static final class AccountAddressPanel<M> extends FieldPanel<M> {
 
+		final FlowPanel panel = new FlowPanel();
 		final AddressType addressType;
 		TextField name;
-		final AddressPanel addressPanel;
+		AddressPanel<M> addressPanel;
 
 		/**
 		 * Constructor
@@ -76,7 +78,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		public AccountAddressPanel(AddressType addressType) {
 			super(addressType.getName());
 			this.addressType = addressType;
-			addressPanel = new AddressPanel();
+			initWidget(panel);
 		}
 
 		@Override
@@ -89,17 +91,63 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		}
 
 		@Override
-		protected void drawInternal(Panel canvas) {
+		protected void draw() {
 			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-			cmpsr.setCanvas(canvas);
+			cmpsr.setCanvas(panel);
 
 			// account address name row
 			cmpsr.addField(name);
 
 			// address row
-			addressPanel.draw();
 			cmpsr.newRow();
+			addressPanel = new AddressPanel<M>();
 			cmpsr.addWidget(addressPanel);
+		}
+	}
+
+	/**
+	 * AddressesPanel
+	 * @author jpk
+	 * @param <M>
+	 */
+	static final class AddressesPanel<M> extends FieldPanel<M> implements TabListener {
+
+		private final TabPanel tabAddresses = new TabPanel();
+
+		/**
+		 * Constructor
+		 */
+		public AddressesPanel() {
+			super("Addresses");
+			// listen to tab events
+			tabAddresses.addTabListener(this);
+			initWidget(tabAddresses);
+		}
+
+		@Override
+		protected void draw() {
+		}
+
+		@Override
+		protected void populateFieldGroup(FieldGroup fields) {
+			// nothing
+		}
+
+		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
+			if(sender == tabAddresses) {
+				// need to hide any field messages bound to fields on the tab that is
+				// going out of view
+				int csti = tabAddresses.getTabBar().getSelectedTab();
+				if(csti != -1) {
+					Widget w = tabAddresses.getWidget(csti);
+					if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
+				}
+			}
+			return true;
+		}
+
+		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
+			// no-op
 		}
 	}
 
@@ -108,7 +156,7 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 	 */
 	public AccountPanel() {
 		super("Account");
-		paymentInfoPanel = new PaymentInfoPanel();
+		initWidget(panel);
 	}
 
 	@Override
@@ -167,18 +215,16 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		fields.addField(persistPymntInfo);
 
 		fields.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
-
 		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 
-		// listen to tab events
-		tabAddresses.addTabListener(this);
-
+		fields.addField("addresses", addressesPanel.getFieldGroup());
+		addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 	}
 
 	@Override
-	protected void drawInternal(Panel canvas) {
+	protected void draw() {
 		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-		cmpsr.setCanvas(canvas);
+		cmpsr.setCanvas(panel);
 
 		// first row
 		cmpsr.addField(name);
@@ -202,25 +248,36 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		// third row
 		cmpsr.newRow();
 		// account addresses block
-		dpAddresses.add(tabAddresses);
+		dpAddresses.add(addressesPanel);
 		cmpsr.addWidget(dpAddresses);
 
 		// payment info block
-		paymentInfoPanel.draw();
 		FlowPanel fp = new FlowPanel();
 		fp.add(persistPymntInfo);
 		fp.add(paymentInfoPanel);
 		dpPaymentInfo.add(fp);
 		cmpsr.addWidget(dpPaymentInfo);
 
-		dpPaymentInfo.addEventHandler(this);
-		dpAddresses.addEventHandler(this);
+		dpPaymentInfo.addEventHandler(new DisclosureHandler() {
+
+			public void onOpen(DisclosureEvent event) {
+				// TODO default select first tab if none currently selected
+			}
+
+			public void onClose(DisclosureEvent event) {
+			}
+		});
+		dpAddresses.addEventHandler(new DisclosureHandler() {
+
+			public void onOpen(DisclosureEvent event) {
+				addressesPanel.tabAddresses.selectTab(0);
+			}
+
+			public void onClose(DisclosureEvent event) {
+			}
+		});
 	}
 
-	/**
-	 * Handles the late binding of an account's related many addressses.
-	 * @param binding The operating field/model binding
-	 */
 	/*
 	private void rebuildAddresses(final IFieldGroupModelBinding binding) {
 		final FieldGroup fields = getFieldGroup();
@@ -315,31 +372,5 @@ public class AccountPanel extends FieldPanel implements TabListener, DisclosureH
 		else if(event.getSource() == dpPaymentInfo) {
 			MsgManager.instance().show(dpPaymentInfo, false, true);
 		}
-	}
-
-	public void onOpen(DisclosureEvent event) {
-		if(event.getSource() == this.dpAddresses) {
-			tabAddresses.selectTab(0);
-		}
-		else if(event.getSource() == this.dpPaymentInfo) {
-			// TODO default select first tab if none currently selected
-		}
-	}
-
-	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		if(sender == tabAddresses) {
-			// need to hide any field messages bound to fields on the tab that is
-			// going out of view
-			int csti = tabAddresses.getTabBar().getSelectedTab();
-			if(csti != -1) {
-				Widget w = tabAddresses.getWidget(csti);
-				if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
-			}
-		}
-		return true;
-	}
-
-	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-		// no-op
 	}
 }

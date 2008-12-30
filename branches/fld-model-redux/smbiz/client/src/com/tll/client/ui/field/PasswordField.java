@@ -90,14 +90,14 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 		setText(getRenderer().render(value));
 		String newval = getValue();
 		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
-			changeSupport.firePropertyChange("value", old, getValue());
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
 	}
 
 	@Override
 	public void onChange(Widget sender) {
 		super.onChange(sender);
-		changeSupport.firePropertyChange("value", old, getValue());
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireWidgetChange();
 	}

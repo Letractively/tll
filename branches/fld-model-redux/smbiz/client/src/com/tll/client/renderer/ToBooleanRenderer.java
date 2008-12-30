@@ -5,15 +5,13 @@
  */
 package com.tll.client.renderer;
 
-
-
 /**
  * ToBooleanRenderer
  * @author jpk
  */
-public class ToBooleanRenderer implements IRenderer<Boolean, Object> {
+public class ToBooleanRenderer<I> implements IRenderer<Boolean, I> {
 
-	public static final ToBooleanRenderer INSTANCE = new ToBooleanRenderer();
+	public static final ToBooleanRenderer<Object> INSTANCE = new ToBooleanRenderer<Object>();
 
 	/**
 	 * Constructor
