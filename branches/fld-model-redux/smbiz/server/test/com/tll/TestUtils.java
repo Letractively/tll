@@ -122,11 +122,7 @@ public final class TestUtils {
 	}
 
 	/**
-	 * Validates two {@link Model}s verifying
-	 * @param source
-	 * @param copy
-	 * @param visited
-	 * @throws Exception When a copy discrepancy is encountered
+	 * Called by {@link #validateCopy(Model, Model)} and enables recursion.
 	 */
 	private static void validateCopy(final Model source, final Model copy, final List<Model> visited) throws Exception {
 		assert source != null && copy != null;

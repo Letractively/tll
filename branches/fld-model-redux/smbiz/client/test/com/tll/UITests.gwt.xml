@@ -1,0 +1,25 @@
+<module>
+  <inherits name='com.tll.Smbiz' />
+
+  <entry-point class='com.tll.client.UITests' />
+
+  <source path="client">
+    <exclude name="bind/BindingTest.java" />
+  </source>
+
+  <public path="public" />  
+
+  <stylesheet src="css/reset.css" />
+  <stylesheet src="css/base.css" />
+  <stylesheet src="css/widget.css" />
+  <stylesheet src="css/hnav.css" />
+  <stylesheet src="css/msg.css" />
+  <stylesheet src="css/field.css" />
+  <stylesheet src="css/options.css" />
+  <stylesheet src="css/tableview.css" />
+  <stylesheet src="css/status.css" />
+  <stylesheet src="css/toolbar.css" />
+  <stylesheet src="css/viewpath.css" />
+  <stylesheet src="css/view.css" />
+  <stylesheet src="css/admin.css" />
+</module>

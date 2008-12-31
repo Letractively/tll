@@ -8,5 +8,6 @@
 	<classpathentry kind="var" path="GWT_INCUBATOR_ROOT/build/dist/gwt-incubator.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/junit.jar"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-dev-windows.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

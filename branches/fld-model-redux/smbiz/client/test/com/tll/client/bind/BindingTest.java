@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import com.tll.TestUtils;
 import com.tll.client.model.DatePropertyValue;
@@ -26,6 +26,7 @@ import com.tll.model.impl.AddressType;
  * BindingTest - Test that verifies client side data binding.
  * @author jpk
  */
+@Test(groups = "client-bind")
 public class BindingTest {
 
 	@Test
@@ -33,7 +34,11 @@ public class BindingTest {
 
 		Model left = stubModel();
 		Model right = left.copy(true);
-		right.clearPropertyValues(true);
+
+		// sanity check: verify we are equal before we bind
+		TestUtils.validateCopy(left, right);
+
+		// right.clearPropertyValues(true);
 
 		Binding binding = new Binding();
 		List<Binding> children = binding.getChildren();
@@ -42,12 +47,19 @@ public class BindingTest {
 		children.add(new Binding(left, right, Model.DATE_CREATED_PROPERTY));
 		children.add(new Binding(left, right, Model.DATE_MODIFIED_PROPERTY));
 		children.add(new Binding(left, right, "parent.name"));
-		children.add(new Binding(left, right, Model.ID_PROPERTY));
+		children.add(new Binding(left, right, "addresses[0].address.firstName"));
 
 		binding.bind();
-		binding.setRight();
 
+		// validate setting right side..
+		binding.setRight();
 		TestUtils.validateCopy(left, right);
+
+		// validate setting left side..
+		binding.setLeft();
+		TestUtils.validateCopy(left, right);
+
+		binding.unbind();
 	}
 
 	Model stubModel() {

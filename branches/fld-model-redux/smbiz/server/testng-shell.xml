@@ -2,11 +2,11 @@
 <suite name="smbiz-test-shell">
   
   <test verbose="6" name="shell-test" annotations="JDK">
-    <parameter name="jpaMode" value="SPRING" />
-    <parameter name="daoMode" value="ORM" />
+    <parameter name="jpaMode" value="NONE" />
+    <parameter name="daoMode" value="MOCK" />
     <groups>
       <run>
-        <include name="client-model" />
+        <include name="client-bind" />
       </run>
     </groups>
     <!-- 
@@ -15,7 +15,7 @@
     </packages>
     -->
     <classes>
-      <class name="com.tll.client.model.PropertyPathModelResolutionTest" />
+      <class name="com.tll.client.bind.BindingTest" />
     </classes>
   </test>
 	
