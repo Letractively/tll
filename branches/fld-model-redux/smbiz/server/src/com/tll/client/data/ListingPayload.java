@@ -5,6 +5,7 @@
  */
 package com.tll.client.data;
 
+import com.tll.client.IMarshalable;
 import com.tll.listhandler.Sorting;
 
 /**
@@ -12,7 +13,7 @@ import com.tll.listhandler.Sorting;
  * @param <R> The row data type
  * @author jpk
  */
-public class ListingPayload<R> extends Payload {
+public class ListingPayload<R extends IMarshalable> extends Payload {
 
 	public enum ListingStatus {
 		/**

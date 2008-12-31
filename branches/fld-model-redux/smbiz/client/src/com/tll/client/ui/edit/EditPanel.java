@@ -147,24 +147,14 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 		// TODO impl
 	}
 
-	/**
-	 * Validates the fields and if successful, the field data is transferred to
-	 * the underlying model.
-	 * @return <code>true</code> if the model was successfully updated,
-	 *         <code>false</code> otherwise.
-	 */
-	private boolean updateModel() {
-		fieldPanel.getAction().execute();
-	}
-
 	public void onClick(Widget sender) {
 		if(sender == btnSave) {
-			if(!updateModel()) return;
+			fieldPanel.getAction().execute();
+			// TODO propagate
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			// TODO fix
-			// fieldPanel.getFieldGroup().reset();
+			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));

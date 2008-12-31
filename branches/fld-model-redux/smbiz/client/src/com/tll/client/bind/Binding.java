@@ -512,47 +512,49 @@ public final class Binding {
 	private BindingInstance createBindingInstance(IBindable object, String propertyName) {
 		int dotIndex = propertyName.indexOf(".");
 		BindingInstance instance = new BindingInstance();
+
 		NestedPropertyChangeListener rtpcl =
 				(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
-		ArrayList<IBindable> parents = new ArrayList<IBindable>();
-		ArrayList<String> propertyNames = new ArrayList<String>();
 
-		while(dotIndex != -1) {
-			String pname = propertyName.substring(0, dotIndex);
-			propertyName = propertyName.substring(dotIndex + 1);
-			parents.add(object);
+		if(dotIndex != -1) {
+			ArrayList<IBindable> parents = new ArrayList<IBindable>();
+			ArrayList<String> propertyNames = new ArrayList<String>();
 
-			try {
-				String discriminator = null;
-				int descIndex = pname.indexOf("[");
+			while(dotIndex != -1) {
+				String pname = propertyName.substring(0, dotIndex);
+				propertyName = propertyName.substring(dotIndex + 1);
+				parents.add(object);
 
-				if(descIndex != -1) {
-					discriminator = pname.substring(descIndex + 1, pname.indexOf("]", descIndex));
-					pname = pname.substring(0, descIndex);
+				try {
+					String discriminator = null;
+					int descIndex = pname.indexOf("[");
+
+					if(descIndex != -1) {
+						discriminator = pname.substring(descIndex + 1, pname.indexOf("]", descIndex));
+						pname = pname.substring(0, descIndex);
+					}
+
+					propertyNames.add(pname);
+
+					if(discriminator != null) {
+						// TODO Need a loop here to handle multi-dimensional/collections of
+						// collections
+						object = getDiscriminatedObject(object.getProperty(pname), discriminator);
+					}
+					else {
+						object = (IBindable) object.getProperty(pname);
+					}
+				}
+				catch(ClassCastException cce) {
+					throw new RuntimeException("Nonbindable sub property: " + object + " . " + pname, cce);
+				}
+				catch(Exception e) {
+					throw new RuntimeException(e);
 				}
 
-				propertyNames.add(pname);
-
-				if(discriminator != null) {
-					// TODO Need a loop here to handle multi-dimensional/collections of
-					// collections
-					object = getDiscriminatedObject(object.getProperty(pname), discriminator);
-				}
-				else {
-					object = (IBindable) object.getProperty(pname);
-				}
-			}
-			catch(ClassCastException cce) {
-				throw new RuntimeException("Nonbindable sub property: " + object + " . " + pname, cce);
-			}
-			catch(Exception e) {
-				throw new RuntimeException(e);
+				dotIndex = propertyName.indexOf(".");
 			}
 
-			dotIndex = propertyName.indexOf(".");
-		}
-
-		if(rtpcl != null) {
 			rtpcl.parents = new IBindable[parents.size()];
 			parents.toArray(rtpcl.parents);
 			rtpcl.propertyNames = new String[propertyNames.size()];
@@ -641,7 +643,6 @@ public final class Binding {
 						if(lastException != null) {
 							instance.feedback.resolve(propertyChangeEvent.getSource());
 						}
-
 						instance.feedback.handleException(propertyChangeEvent.getSource(), ve);
 						lastException = ve;
 					}

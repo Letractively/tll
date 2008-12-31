@@ -8,7 +8,7 @@ import javax.persistence.PersistenceException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.TestBase;
+import com.tll.TestUtils;
 import com.tll.model.INamedEntity;
 
 /**
@@ -49,7 +49,7 @@ public abstract class NamedEntityDaoTest<N extends INamedEntity> extends Abstrac
 			return;
 		}
 		final N e = getTestEntity();
-		e.setName(TestBase.LENGTH_257_STRING);
+		e.setName(TestUtils.LENGTH_257_STRING);
 		try {
 			dao.persist(e);
 			Assert.fail("Expected runtime exception didn't occur");

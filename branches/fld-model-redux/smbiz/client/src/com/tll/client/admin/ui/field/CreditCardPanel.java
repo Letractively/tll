@@ -16,7 +16,7 @@ import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.SuggestField;
 import com.tll.client.ui.field.TextField;
-import com.tll.model.impl.PaymentType;
+import com.tll.model.impl.CreditCardType;
 import com.tll.service.app.RefDataType;
 
 /**
@@ -50,7 +50,7 @@ public final class CreditCardPanel<M extends IBindable> extends FieldPanel<M> {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		type = FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays.asList(PaymentType.values()));
+		type = FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays.asList(CreditCardType.values()));
 		num = FieldFactory.fcreditcard("paymentData_ccNum", "Num", null, 15);
 		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", "CVV2", 4);
 		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2);

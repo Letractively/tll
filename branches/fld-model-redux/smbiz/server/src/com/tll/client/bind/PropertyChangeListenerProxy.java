@@ -1,10 +1,10 @@
 package com.tll.client.bind;
 
-import java.util.EventListenerProxy;
-
 /**
  * PropertyChangeListenerProxy
- * <p><em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>* @author jpk
+ * <p>
+ * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
+ * @author jpk
  */
 public class PropertyChangeListenerProxy extends EventListenerProxy implements IPropertyChangeListener {
 

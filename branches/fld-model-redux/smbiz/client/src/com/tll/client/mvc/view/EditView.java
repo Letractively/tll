@@ -42,17 +42,17 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	private final EditPanel editPanel;
+	private final EditPanel<Model> editPanel;
 
 	/**
 	 * Constructor
-	 * @param fldGrpPnl The required field group panel
+	 * @param fieldPanel The required field panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<Model> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(fldGrpPnl, true, false);
+		editPanel = new EditPanel<Model>(fieldPanel, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;

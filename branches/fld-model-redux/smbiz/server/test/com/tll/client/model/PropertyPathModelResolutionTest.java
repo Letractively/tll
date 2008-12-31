@@ -48,8 +48,12 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 
 		// test non-existant model one before end of path
 		path = "parent.name";
-		prop = model.getModelProperty(path);
-		assert prop == null : "Resolved should have been null path node";
+		try {
+			prop = model.getModelProperty(path);
+		}
+		catch(NullNodeInPropPathException e) {
+			// expected
+		}
 
 		path = "addresses";
 		prop = model.getModelProperty(path);
@@ -62,8 +66,12 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		assert prop instanceof ModelRefProperty : "Expected ModelRefProperty impl at property path: " + path;
 
 		path = "addresses[20]";
-		prop = model.getModelProperty(path);
-		assert prop == null : "Got a non-null prop value for a non-existant indexed property!";
+		try {
+			prop = model.getModelProperty(path);
+		}
+		catch(IndexOutOfRangeInPropPathException e) {
+			// expected
+		}
 
 		path = "addresses[0].address.firstName";
 		prop = model.getModelProperty(path);
@@ -74,13 +82,21 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		prop = model.getModelProperty(path);
 		assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
 
-		// malformed
+		// node mismatch
 		try {
 			path = "paymentInfo[2].name";
 			prop = model.getModelProperty(path);
-			assert prop != null && prop instanceof StringPropertyValue : "Unable to resolve property path: " + path;
 		}
-		catch(final IllegalArgumentException e) {
+		catch(final PropPathNodeMismatchException e) {
+			// expected
+		}
+
+		// malformed
+		try {
+			path = "..??-";
+			prop = model.getModelProperty(path);
+		}
+		catch(final PropertyPathException e) {
 			// expected
 		}
 	}

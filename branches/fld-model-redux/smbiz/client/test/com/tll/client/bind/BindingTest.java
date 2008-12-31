@@ -3,23 +3,22 @@
  * @author jpk
  * Dec 28, 2008
  */
-package com.tll.test;
+package com.tll.client.bind;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.bind.IBindingAction;
+import org.junit.Test;
+
+import com.tll.TestUtils;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringPropertyValue;
-import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.model.EntityType;
 import com.tll.model.impl.AddressType;
 
@@ -27,9 +26,28 @@ import com.tll.model.impl.AddressType;
  * BindingTest - Test that verifies client side data binding.
  * @author jpk
  */
-public class BindingTest extends GWTTestCase {
+public class BindingTest {
 
-	public void test() {
+	@Test
+	public void test() throws Exception {
+
+		Model left = stubModel();
+		Model right = left.copy(true);
+		right.clearPropertyValues(true);
+
+		Binding binding = new Binding();
+		List<Binding> children = binding.getChildren();
+		children.add(new Binding(left, right, Model.ID_PROPERTY));
+		children.add(new Binding(left, right, Model.NAME_PROPERTY));
+		children.add(new Binding(left, right, Model.DATE_CREATED_PROPERTY));
+		children.add(new Binding(left, right, Model.DATE_MODIFIED_PROPERTY));
+		children.add(new Binding(left, right, "parent.name"));
+		children.add(new Binding(left, right, Model.ID_PROPERTY));
+
+		binding.bind();
+		binding.setRight();
+
+		TestUtils.validateCopy(left, right);
 	}
 
 	Model stubModel() {
@@ -75,53 +93,5 @@ public class BindingTest extends GWTTestCase {
 		account.set(new RelatedManyProperty(EntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
 		return account;
-	}
-
-	/**
-	 * ModelEdit <br>
-	 * AbstractBoundWidget<B, V, IBindingAction<IBindable>, M>
-	 * @author jpk
-	 */
-	final class ModelEdit extends AbstractBoundWidget<Model, Model, Model> {
-
-		public Model getValue() {
-			return null;
-		}
-
-		public void setValue(Model value) {
-		}
-
-		public Object getProperty(String propPath) throws PropertyPathException {
-			return null;
-		}
-
-		public void setProperty(String propPath, Object value) throws PropertyPathException {
-		}
-
-	}
-
-	/**
-	 * TestModelEditAction
-	 * @author jpk
-	 */
-	static final class TestModelEditAction implements IBindingAction<Model> {
-
-		public void setBindable(Model bindable) {
-		}
-
-		public void bind() {
-		}
-
-		public void unbind() {
-		}
-
-		public void execute() {
-		}
-
-	}
-
-	@Override
-	public String getModuleName() {
-		return null;
 	}
 }

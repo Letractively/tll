@@ -534,19 +534,23 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	/**
 	 * Deep copies this instance.
+	 * @param copyReferences Copy relational properties that are marked as
+	 *        reference?
 	 * @return Clone of this instance
 	 */
-	public Model copy() {
-		return copy(this, new BindingStack<CopyBinding>());
+	public Model copy(final boolean copyReferences) {
+		return copy(this, copyReferences, new BindingStack<CopyBinding>());
 	}
 
 	/**
 	 * Recursive copy routine to guard against re-copying entities
 	 * @param source The model to be copied
+	 * @param copyReferences Copy relational properties that are marked as
+	 *        reference?
 	 * @param visited
 	 * @return A deep copy of the model
 	 */
-	private static Model copy(Model source, BindingStack<CopyBinding> visited) {
+	private static Model copy(Model source, final boolean copyReferences, BindingStack<CopyBinding> visited) {
 
 		if(source == null) return null;
 
@@ -566,7 +570,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 			// related one or indexed prop...
 			if(prop instanceof ModelRefProperty) {
 				ModelRefProperty mrp = (ModelRefProperty) prop;
-				Model model = mrp.isReference() ? mrp.getModel() : copy(mrp.getModel(), visited);
+				Model model =
+						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, visited) : mrp.getModel();
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
@@ -578,7 +583,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
 					for(Model model : list) {
-						nlist.add(rmp.isReference() ? model : copy(model, visited));
+						nlist.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, visited) : model);
 					}
 				}
 				copy.props.add(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), nlist));
@@ -586,7 +591,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 			// prop val..
 			else {
-				copy.props.add(((AbstractPropertyValue) prop).copy());
+				copy.props.add(((IPropertyValue) prop).copy());
 			}
 		}
 
@@ -596,17 +601,20 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	/**
 	 * Walks the held collection of {@link IPropertyValue}s clearing all values
 	 * recursing as necessary to ensure all have been visited.
+	 * @param clearReferences
 	 */
-	public void clearPropertyValues() {
-		clearProps(this, new BindingStack<PropBinding>());
+	public void clearPropertyValues(boolean clearReferences) {
+		clearProps(this, clearReferences, new BindingStack<PropBinding>());
 	}
 
 	/**
 	 * Clears all nested property values of the given model.
 	 * @param model The group to be cleared
+	 * @param clearReferences Clear property values contained in reference
+	 *        relations?
 	 * @param visited
 	 */
-	private static void clearProps(Model model, BindingStack<PropBinding> visited) {
+	private static void clearProps(Model model, final boolean clearReferences, BindingStack<PropBinding> visited) {
 
 		if(model == null) return;
 
@@ -625,19 +633,19 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 			// model prop (relational) val...
 			if(prop instanceof ModelRefProperty) {
 				ModelRefProperty gpv = (ModelRefProperty) prop;
-				if(!gpv.isReference()) {
-					clearProps(gpv.getModel(), visited);
+				if(clearReferences || !gpv.isReference()) {
+					clearProps(gpv.getModel(), clearReferences, visited);
 				}
 			}
 
 			// model list (relational) prop val...
 			else if(prop instanceof RelatedManyProperty) {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				if(!rmp.isReference()) {
+				if(clearReferences || !rmp.isReference()) {
 					List<Model> list = rmp.getList();
 					if(list != null) {
 						for(Model m : list) {
-							clearProps(m, visited);
+							clearProps(m, clearReferences, visited);
 						}
 					}
 				}
@@ -645,7 +653,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 			// property values...
 			else {
-				((AbstractPropertyValue) prop).clear();
+				((IPropertyValue) prop).clear();
 			}
 		}
 	}
@@ -673,27 +681,22 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 		this.markedDeleted = markedDeleted;
 	}
 
-	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(listener);
 	}
 
-	@Override
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
-	@Override
 	public IPropertyChangeListener[] getPropertyChangeListeners() {
 		return changeSupport.getPropertyChangeListeners();
 	}
 
-	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(listener);
 	}
 
-	@Override
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(propertyName, listener);
 	}

@@ -25,6 +25,7 @@ import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.Model;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -78,12 +79,12 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<Model> {
+	static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<M> {
 
 		final FlowPanel panel = new FlowPanel();
 		final AddressType addressType;
 		TextField name;
-		AddressPanel<Model> addressPanel;
+		AddressPanel<M> addressPanel;
 
 		/**
 		 * Constructor
@@ -114,7 +115,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 
 			// address row
 			cmpsr.newRow();
-			addressPanel = new AddressPanel<Model>();
+			addressPanel = new AddressPanel<M>();
 			cmpsr.addWidget(addressPanel);
 		}
 	}
@@ -122,9 +123,9 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	/**
 	 * AddressesPanel
 	 * @author jpk
-	 * @param <Model>
+	 * @param <M>
 	 */
-	static final class AddressesPanel<M extends IBindable> extends FieldPanel<Model> implements TabListener {
+	static final class AddressesPanel<M extends IBindable> extends FieldPanel<M> implements TabListener {
 
 		private final TabPanel tabAddresses = new TabPanel();
 
@@ -192,6 +193,28 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		super("Account");
 		initWidget(panel);
 		setAction(new AccountEditAction());
+	}
+
+	@Override
+	public Object getProperty(String propPath) throws PropertyPathException {
+		if("paymentInfo".equals(propPath)) {
+			return paymentInfoPanel;
+		}
+		else if("addresses".equals(propPath)) {
+			return addressesPanel;
+		}
+		return super.getProperty(propPath);
+	}
+
+	@Override
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
+		if("paymentInfo".equals(propPath)) {
+			// return paymentInfoPanel;
+		}
+		else if("addresses".equals(propPath)) {
+			// return addressesPanel;
+		}
+		super.setProperty(propPath, value);
 	}
 
 	@Override

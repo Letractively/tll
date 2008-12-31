@@ -73,11 +73,11 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		return (IBindable) f;
 	}
 
-	public final Object getProperty(String propPath) throws PropertyPathException {
+	public Object getProperty(String propPath) throws PropertyPathException {
 		return getBindableField(propPath).getProperty(propPath);
 	}
 
-	public final void setProperty(String propPath, Object value) throws PropertyPathException {
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
 		getBindableField(propPath).setProperty(propPath, value);
 	}
 

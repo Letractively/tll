@@ -1,0 +1,9 @@
+<module>
+  <inherits name='com.tll.Smbiz' />
+
+  <entry-point class='com.tll.UITests' />
+
+  <source path="client" />
+
+  <public path="public" />  
+</module>

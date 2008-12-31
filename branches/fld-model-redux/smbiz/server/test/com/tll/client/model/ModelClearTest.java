@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
+import com.tll.TestUtils;
 import com.tll.model.impl.AccountAddress;
 import com.tll.model.impl.Address;
 import com.tll.model.impl.Asp;
@@ -20,7 +21,7 @@ import com.tll.server.rpc.MarshalOptions;
 import com.tll.server.rpc.Marshaler;
 
 /**
- * ModelCopyTest - Test the {@link Model#copy()} method.
+ * ModelCopyTest - Test the {@link Model#copy(boolean)} method.
  * @author jpk
  */
 @Test(groups = "client-model")
@@ -56,7 +57,7 @@ public class ModelClearTest extends AbstractModelTest {
 		final Marshaler em = getMarshaler();
 		final AccountAddress aa = getClearTestEntity();
 		final Model model = em.marshalEntity(aa, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		model.clearPropertyValues();
+		model.clearPropertyValues(true);
 		validateClear(model, new ArrayList<Model>());
 	}
 
@@ -69,7 +70,7 @@ public class ModelClearTest extends AbstractModelTest {
 			if(pvType.isValue()) {
 				// require cleared property value
 				final Object srcValue = srcPv.getValue();
-				validateEmpty(srcValue);
+				TestUtils.validateEmpty(srcValue);
 			}
 			else if(pvType == PropertyType.RELATED_ONE) {
 				// drill into if not already visited
