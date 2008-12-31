@@ -6,13 +6,14 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.IBindable;
 
 /**
  * BoundButton
  * @author jpk
  * @param <M> The model type
  */
-public class BoundButton<M> extends AbstractBoundWidget<String, String, M> implements SourcesClickEvents, HasFocus {
+public class BoundButton<M extends IBindable> extends AbstractBoundWidget<String, String, M> implements SourcesClickEvents, HasFocus {
 
 	private final com.google.gwt.user.client.ui.Button base = new com.google.gwt.user.client.ui.Button();
 	private String value;

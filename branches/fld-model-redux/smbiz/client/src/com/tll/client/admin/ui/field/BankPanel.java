@@ -6,6 +6,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -16,7 +17,7 @@ import com.tll.client.ui.field.VerticalFieldPanelComposer;
  * BankPanel
  * @author jpk
  */
-public final class BankPanel<M> extends FieldPanel<M> {
+public final class BankPanel<M extends IBindable> extends FieldPanel<M> {
 
 	private final FlowPanel canvas = new FlowPanel();
 	private TextField bankName;

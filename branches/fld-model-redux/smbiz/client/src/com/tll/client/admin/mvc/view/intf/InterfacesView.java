@@ -80,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
-			private final EditPanel editPanel;
+			private final EditPanel<Model> editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
@@ -92,7 +92,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel<Model>(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -103,13 +103,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel resolveInterfacePanel(EntityType intfType) {
+			private AbstractInterfacePanel<Model> resolveInterfacePanel(EntityType intfType) {
 				switch(intfType) {
 					case INTERFACE_MULTI:
 					case INTERFACE_SINGLE:
-						return new MultiOptionInterfacePanel();
+						return new MultiOptionInterfacePanel<Model>();
 					case INTERFACE_SWITCH:
-						return new SwitchInterfacePanel();
+						return new SwitchInterfacePanel<Model>();
 					default:
 						throw new IllegalArgumentException();
 				}

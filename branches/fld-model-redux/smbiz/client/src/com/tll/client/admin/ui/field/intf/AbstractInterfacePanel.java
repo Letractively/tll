@@ -6,6 +6,7 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.tll.client.bind.IBindable;
 import com.tll.client.listing.Column;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -21,7 +22,7 @@ import com.tll.client.ui.field.TextField;
  * interfaces (not Options).
  * @author jpk
  */
-public abstract class AbstractInterfacePanel<M> extends FieldPanel<M> {
+public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldPanel<M> {
 
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };

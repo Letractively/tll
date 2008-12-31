@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field;
 import java.util.Arrays;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -22,7 +23,7 @@ import com.tll.service.app.RefDataType;
  * CreditCardPanel
  * @author jpk
  */
-public final class CreditCardPanel<M> extends FieldPanel<M> {
+public final class CreditCardPanel<M extends IBindable> extends FieldPanel<M> {
 
 	private final FlowPanel canvas = new FlowPanel();
 
@@ -50,7 +51,7 @@ public final class CreditCardPanel<M> extends FieldPanel<M> {
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
 		type = FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays.asList(PaymentType.values()));
-		num = FieldFactory.ftext("paymentData_ccNum", "Num", null, 15);
+		num = FieldFactory.fcreditcard("paymentData_ccNum", "Num", null, 15);
 		cvv2 = FieldFactory.ftext("paymentData_ccCvv2", "CVV2", "CVV2", 4);
 		expMn = FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2);
 		expYr = FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", "Expiration Year", 4);

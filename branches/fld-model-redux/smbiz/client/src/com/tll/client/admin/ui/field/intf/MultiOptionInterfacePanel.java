@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -23,7 +24,7 @@ import com.tll.client.ui.field.TextField;
  * one option is allowed.
  * @author jpk
  */
-public final class MultiOptionInterfacePanel<M> extends AbstractInterfacePanel<M> implements TabListener {
+public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> implements TabListener {
 
 	private final FlowPanel canvas = new FlowPanel();
 
@@ -33,7 +34,7 @@ public final class MultiOptionInterfacePanel<M> extends AbstractInterfacePanel<M
 	 * OptionPanel
 	 * @author jpk
 	 */
-	private static final class OptionPanel<M> extends FieldPanel<M> {
+	private static final class OptionPanel<M extends IBindable> extends FieldPanel<M> {
 
 		FlowPanel canvas = new FlowPanel();
 

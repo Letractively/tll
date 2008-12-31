@@ -5,6 +5,7 @@ import java.util.Comparator;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
@@ -19,12 +20,12 @@ import com.tll.client.renderer.IRenderer;
  * @param <M> The model type
  * @author jpk
  */
-public abstract class AbstractBoundWidget<B, V, M> extends Composite implements IBoundWidget<B, V, M> {
+public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Composite implements IBoundWidget<B, V, M> {
 
 	/**
 	 * The binding action.
 	 */
-	private IBindingAction<IBoundWidget<B, V, M>> action;
+	private IBindingAction<? extends IBoundWidget<B, V, M>> action;
 
 	/**
 	 * Responsible for converting a <B> type to a <V> type.
@@ -98,11 +99,11 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
-	public IBindingAction<IBoundWidget<B, V, M>> getAction() {
+	public final IBindingAction<? extends IBoundWidget<B, V, M>> getAction() {
 		return action;
 	}
 
-	public void setAction(IBindingAction<IBoundWidget<B, V, M>> action) {
+	public final void setAction(IBindingAction<? extends IBoundWidget<B, V, M>> action) {
 		this.action = action;
 	}
 
@@ -118,9 +119,13 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 		return model;
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void setModel(M model) {
 		final Object old = getModel();
-		final IBindingAction<IBoundWidget<B, V, M>> action = getAction();
+
+		if(old == this.model) return; // TODO verify if this is ok to do
+
+		final IBindingAction action = getAction();
 
 		if(old != null && action != null) {
 			action.unbind();
@@ -130,7 +135,7 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 
 		if(action != null) action.setBindable(this);
 
-		if(isAttached() && model != null && action != null) {
+		if(/*isAttached() && */model != null && action != null) {
 			action.bind();
 		}
 
@@ -141,10 +146,12 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 		return renderer;
 	}
 
-	public void setRenderer(IRenderer<V, B> renderer) {
+	public final void setRenderer(IRenderer<V, B> renderer) {
 		this.renderer = renderer;
 	}
 
+	// This is driven in setModel()!!!!!
+	/*
 	@Override
 	protected void onAttach() {
 		if(getAction() != null) getAction().setBindable(this);
@@ -164,4 +171,5 @@ public abstract class AbstractBoundWidget<B, V, M> extends Composite implements 
 		if(getAction() != null) getAction().unbind();
 		changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
 	}
+	*/
 }

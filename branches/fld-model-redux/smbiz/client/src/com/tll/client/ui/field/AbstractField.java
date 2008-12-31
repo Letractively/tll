@@ -16,14 +16,16 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
+import com.tll.client.bind.IBindable;
 import com.tll.client.model.MalformedPropPathException;
-import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.StringUtil;
+import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.IValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
@@ -32,7 +34,7 @@ import com.tll.client.validate.ValidationException;
  * AbstractField - Base class for non-group {@link IField}s.
  * @author jpk
  */
-public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Model> implements IField, HasFocus, ClickListener, ChangeListener {
+public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -62,11 +64,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 	private boolean enabled = true;
 
 	/**
-	 * Is this field's value different that the initial "reset" value?
-	 */
-	private boolean dirty;
-
-	/**
 	 * Text that appears when the mouse hovers over the field.
 	 */
 	private String helpText;
@@ -94,6 +91,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 	 * since the field label is not necessarily a child of this Widget.
 	 */
 	private Widget container, labelContainer;
+
+	/**
+	 * The field validator(s).
+	 */
+	private CompositeValidator validator;
+
+	/**
+	 * The initial value needed to perform a reset operation.
+	 */
+	private V initialValue;
 
 	/**
 	 * Constructor
@@ -260,8 +267,12 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 	 */
 	protected abstract HasFocus getEditable();
 
-	private void dirtyCheck() {
-		if(dirty) {
+	/**
+	 * Either marks or un-marks this field as dirty in the UI based on its current
+	 * value and the set initial value.
+	 */
+	private void markDirty() {
+		if(initialValue == null ? false : initialValue.equals(getValue())) {
 			addStyleName(STYLE_DIRTY);
 		}
 		else {
@@ -269,42 +280,23 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 		}
 	}
 
-	/*
-	protected final void addValidator(IValidator validator) {
-		if(validator == null || validator == NotEmptyValidator.INSTANCE || validator instanceof StringLengthValidator) {
-			throw new IllegalArgumentException("Invalid field validator");
+	public final void addValidator(IValidator validator) {
+		if(validator != null && validator != NotEmptyValidator.INSTANCE
+				&& (validator instanceof StringLengthValidator == false)) {
+			if(this.validator == null) {
+				this.validator = new CompositeValidator();
+			}
+			this.validator.add(validator);
 		}
-		if(this.validator == null) {
-			this.validator = validator;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			((CompositeValidator) this.validator).add(validator);
-		}
-		else {
-			CompositeValidator cv = new CompositeValidator();
-			cv.add(this.validator);
-			cv.add(validator);
-			this.validator = cv;
-		}
-	}
-	
-	protected final void removeValidator(IValidator validator) {
-		if(validator == null || this.validator == null) return;
-		if(this.validator == validator) {
-			this.validator = null;
-		}
-		else if(this.validator instanceof CompositeValidator) {
-			CompositeValidator cv = (CompositeValidator) this.validator;
-			cv.remove(validator);
-		}
-	}
-	*/
-
-	public final void validate() throws ValidationException {
-		validate(getValue());
 	}
 
-	public Object validate(Object value) throws ValidationException {
+	public final void removeValidator(IValidator validator) {
+		if(validator != null && this.validator != null) {
+			this.validator.remove(validator);
+		}
+	}
+
+	public final Object validate(Object value) throws ValidationException {
 		// check field requiredness
 		if(isRequired()) {
 			value = NotEmptyValidator.INSTANCE.validate(value);
@@ -318,10 +310,14 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 			}
 		}
 
+		if(validator != null) {
+			value = validator.validate(value);
+		}
+
 		return value;
 	}
 
-	public final void markInvalid(boolean invalid, List<Msg> msgs) {
+	private void markInvalid(boolean invalid, List<Msg> msgs) {
 		if(invalid) {
 			removeStyleName(STYLE_DIRTY);
 			addStyleName(STYLE_INVALID);
@@ -413,7 +409,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 		}
 		else if(enabled && !readOnly) {
 			// show/hide edit styling
-			dirtyCheck();
+			markDirty();
 		}
 	}
 
@@ -480,16 +476,17 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, Mo
 	public void onChange(Widget sender) {
 		assert sender == getEditable();
 
-		dirty = true;
+		// dirty check
+		markDirty();
 
 		// valid check
 		try {
-			validate();
-			// we are valid so do dirty check
-			dirtyCheck();
+			validate(getValue());
+			markInvalid(false, null);
 		}
 		catch(ValidationException e) {
-			// no-op
+			// mark invalid
+			markInvalid(true, e.getErrors());
 		}
 	}
 

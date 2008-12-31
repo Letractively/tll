@@ -71,16 +71,23 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 *        Widget first?
 	 * @return The message panel bound to the given Widget. Usually, a call to
 	 *         {@link MsgPanel#show()} will ensue.
+	 * @throws IllegalArgumentException When no messages are specified or the
+	 *         given reference is <code>null</code>.
 	 */
 	public MsgPanel post(boolean autoHide, List<Msg> msgs, Position position, Widget refWidget, int duration,
-			boolean clearExisting) {
-		if(refWidget == null) refWidget = RootPanel.get();
+			boolean clearExisting) throws IllegalArgumentException {
+		if(msgs == null || msgs.size() < 1) {
+			throw new IllegalArgumentException("No messages specified.");
+		}
+		if(refWidget == null) {
+			throw new IllegalArgumentException("A reference widget must be specified.");
+		}
 		MsgPanel mp = findMsgPanel(refWidget.getElement());
 		if(mp == null) {
 			mp = stubMsgPanel(autoHide, position, refWidget.getElement(), duration, false);
 		}
 		if(clearExisting) mp.removeMsgs();
-		if(msgs != null) mp.addMsgs(msgs);
+		mp.addMsgs(msgs);
 		return mp;
 	}
 
@@ -99,11 +106,16 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 *        Widget first?
 	 * @return The message panel bound to the given Widget. Usually, a call to
 	 *         {@link MsgPanel#show()} will ensue.
+	 * @throws IllegalArgumentException When either the msg or the reference
+	 *         widget is not specified.
 	 */
 	public MsgPanel post(boolean autoHide, Msg msg, Position position, Widget refWidget, int duration,
 			boolean clearExisting) {
-		final List<Msg> msgs = msg == null ? null : new ArrayList<Msg>(1);
-		if(msgs != null) msgs.add(msg);
+		if(msg == null) {
+			throw new IllegalArgumentException("No message specified.");
+		}
+		final List<Msg> msgs = new ArrayList<Msg>(1);
+		msgs.add(msg);
 		return post(autoHide, msgs, position, refWidget, duration, clearExisting);
 	}
 
@@ -224,7 +236,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	/**
 	 * Finds all {@link MsgPanel}s <em>contained in</em> the given Widget.
 	 * @param w The widget If <code>null</code>, <code>null</code> is returned
-	 * @param state The desired MsgPanel state filtering the results
+	 * @param state The desired MsgPanel state which filters the results
 	 * @return List of the contained {@link MsgPanel}s.
 	 */
 	private List<MsgPanel> findContainedMsgPanels(Widget w, PopupState state) {

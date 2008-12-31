@@ -162,50 +162,34 @@ public final class Binding {
 
 	/**
 	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding,
-	 * and the "value" property of the bound widget will be bound to the property
-	 * specified by modelProperty of the object on the IBoundWidget's "model"
-	 * property.
+	 * BoundWidgets. The bound widget provided will become the left-hand binding.
 	 * @param widget IBoundWidget containing the model.
 	 * @param validator A validator for the BouldWidget's value property.
 	 * @param feedback A feedback implementation for validation errors.
-	 * @param modelProperty The property on the Widgets model object to bind to.
+	 * @param property The common property name for <em>both</em> the left and
+	 *        right objects.
 	 */
-	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String modelProperty) {
-		this(widget, IBoundWidget.PROPERTY_VALUE, validator, feedback, (IBindable) widget.getModel(),
-				IBoundWidget.PROPERTY_MODEL, null, null);
+	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String property) {
+		this(widget, property, validator, feedback, widget.getModel(), property, null, null);
 	}
 
 	/**
-	 * Creates a Binding with two populated binding instances.
-	 * @param left The left binding instance.
-	 * @param right The right binding instance
+	 * Creates a new binding. This method is a shorthand for working with
+	 * BoundWidgets. The bound widget provided will become the left-hand binding.
+	 * @param widget IBoundWidget containing the model.
+	 * @param property The common property name for <em>both</em> the left and
+	 *        right objects.
 	 */
-	public Binding(BindingInstance left, BindingInstance right) {
-		this.left = left;
-		this.right = right;
+	public Binding(IBoundWidget<?, ?, ?> widget, String property) {
+		this(widget, property, null, null, widget.getModel(), property, null, null);
 	}
 
 	/**
-	 * Sets the right object's property to the current value of the left.
+	 * Returns a list of child Bindings.
+	 * @return List of child bindings.
 	 */
-	public void setRight() {
-		if((left != null) && (right != null)) {
-			try {
-				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
-						.getProperty(left.property)));
-			}
-			catch(Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
-			child.setRight();
-		}
-
-		lastSet = Boolean.FALSE;
+	public List<Binding> getChildren() {
+		return children = (children == null) ? new ArrayList<Binding>() : children;
 	}
 
 	/**
@@ -223,11 +207,31 @@ public final class Binding {
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
-			child.setLeft();
+			children.get(i).setLeft();
 		}
 
 		lastSet = Boolean.TRUE;
+	}
+
+	/**
+	 * Sets the right object's property to the current value of the left.
+	 */
+	public void setRight() {
+		if((left != null) && (right != null)) {
+			try {
+				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
+						.getProperty(left.property)));
+			}
+			catch(Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		for(int i = 0; (children != null) && (i < children.size()); i++) {
+			children.get(i).setRight();
+		}
+
+		lastSet = Boolean.FALSE;
 	}
 
 	/**
@@ -257,13 +261,35 @@ public final class Binding {
 	}
 
 	/**
-	 * Returns a list of child Bindings.
-	 * @return List of child bindings.
+	 * Breaks the two way binding and removes all listeners.
 	 */
-	public List<Binding> getChildren() {
-		return children = (children == null) ? new ArrayList<Binding>() : children;
+	public void unbind() {
+		if((left != null) && (right != null)) {
+			left.object.removePropertyChangeListener(left.property, left.listener);
+
+			if(left.nestedListener != null) {
+				left.nestedListener.cleanup();
+			}
+
+			right.object.removePropertyChangeListener(right.property, right.listener);
+
+			if(right.nestedListener != null) {
+				right.nestedListener.cleanup();
+			}
+		}
+
+		for(int i = 0; (children != null) && (i < children.size()); i++) {
+			Binding child = children.get(i);
+			child.unbind();
+		}
+
+		bound = false;
 	}
 
+	/**
+	 * Validates <em>all</em> bindings in this binding.
+	 * @return boolean indicating this binding is valid.
+	 */
 	public boolean validate() {
 		boolean valid = true;
 
@@ -315,14 +341,14 @@ public final class Binding {
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
 			Binding child = children.get(i);
-			valid = valid & child.isValid();
+			valid = valid & child.validate();
 		}
 
 		return valid;
 	}
 
 	/**
-	 * Performs a quick validation on the Binding to determine if it is valid.
+	 * Validates stopping at the first found invalid binding.
 	 * @return boolean indicating all values are valid.
 	 */
 	public boolean isValid() {
@@ -355,32 +381,6 @@ public final class Binding {
 		catch(Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	/**
-	 * Breaks the two way binding and removes all listeners.
-	 */
-	public void unbind() {
-		if((left != null) && (right != null)) {
-			left.object.removePropertyChangeListener(left.property, left.listener);
-
-			if(left.nestedListener != null) {
-				left.nestedListener.cleanup();
-			}
-
-			right.object.removePropertyChangeListener(right.property, right.listener);
-
-			if(right.nestedListener != null) {
-				right.nestedListener.cleanup();
-			}
-		}
-
-		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
-			child.unbind();
-		}
-
-		bound = false;
 	}
 
 	/**
@@ -587,17 +587,17 @@ public final class Binding {
 		 */
 		public String property;
 
-		private IPropertyChangeListener listener;
+		/**
+		 * A IValidator object when needed.
+		 */
+		public IValidator validator;
 
 		/**
 		 * A IValidationFeedback object when needed.
 		 */
 		public IValidationFeedback feedback;
 
-		/**
-		 * A IValidator object when needed.
-		 */
-		public IValidator validator;
+		private IPropertyChangeListener listener;
 
 		private NestedPropertyChangeListener nestedListener;
 
@@ -617,7 +617,7 @@ public final class Binding {
 
 		private final BindingInstance instance;
 		private final BindingInstance target;
-		private ValidationException lastException = null;
+		private ValidationException lastException;
 
 		/**
 		 * Constructor
@@ -664,10 +664,9 @@ public final class Binding {
 
 			try {
 				target.object.setProperty(target.property, value);
-				// target.property.getMutatorMethod().invoke(target.object, args);
 			}
 			catch(Exception e) {
-				throw new RuntimeException("Exception setting property: " + target.property, e);
+				throw new RuntimeException("Unable to set property: " + target.property, e);
 			}
 		}
 

@@ -18,12 +18,8 @@ import com.tll.client.ui.AbstractBoundWidget;
  * @author jpk
  * @param <M> The model type
  */
-public abstract class FieldPanel<M> extends AbstractBoundWidget<M, M, M> {
+public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidget<M, M, M> {
 
-	/**
-	 * The wrapped {@link Panel} containing the drawn fields.
-	 */
-	// private final FlowPanel panel = new FlowPanel();
 	/**
 	 * The collective group of all fields in this panel.
 	 */
@@ -35,7 +31,6 @@ public abstract class FieldPanel<M> extends AbstractBoundWidget<M, M, M> {
 	 */
 	public FieldPanel(String displayName) {
 		fields = new FieldGroup(displayName, this);
-		// initWidget(panel);
 	}
 
 	/**
@@ -73,7 +68,7 @@ public abstract class FieldPanel<M> extends AbstractBoundWidget<M, M, M> {
 			throw new UnsetPropertyException(propPath);
 		}
 		else if(f instanceof IBindable == false) {
-			throw new MalformedPropPathException("The property points to a non-bindable field.", propPath);
+			throw new MalformedPropPathException("The property points to a non-boundWidget field.", propPath);
 		}
 		return (IBindable) f;
 	}

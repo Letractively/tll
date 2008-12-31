@@ -282,19 +282,4 @@ public final class SelectField extends AbstractField<Object> {
 		super.onClick(sender);
 		update();
 	}
-
-	/*
-	@Override
-	public boolean equals(final Object obj) {
-		if(obj == this) return true;
-		if(obj == null || (obj instanceof SelectField == false)) return false;
-		final SelectField other = (SelectField) obj;
-		return ((this.options != other.options) && ((this.options == null) || !this.options.equals(other.options)));
-	}
-
-	@Override
-	public int hashCode() {
-		return lb.hashCode();
-	}
-	*/
 }

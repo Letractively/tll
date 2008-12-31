@@ -5,6 +5,7 @@
 package com.tll.client.admin.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -18,7 +19,7 @@ import com.tll.service.app.RefDataType;
  * AddressPanel
  * @author jpk
  */
-public final class AddressPanel<M> extends FieldPanel<M> {
+public final class AddressPanel<M extends IBindable> extends FieldPanel<M> {
 
 	private final FlowPanel canvas = new FlowPanel();
 
@@ -45,7 +46,7 @@ public final class AddressPanel<M> extends FieldPanel<M> {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fields) {
-		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", "Email Address", 30);
+		emailAddress = FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30);
 		fields.addField(emailAddress);
 
 		firstName = FieldFactory.ftext("firstName", "First Name", "First Name", 20);

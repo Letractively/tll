@@ -8,17 +8,17 @@ import com.tll.client.bind.IBindingAction;
 import com.tll.client.renderer.IRenderer;
 
 /**
- * IBoundWidget - Common base class for a UI widgets that are bindable.
+ * IBoundWidget - Common base class for a UI widgets that are boundWidget.
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em> @author
  * jpk
  * @param <B> The "bound" type. That is the value type on the other side of the
- *        binding that binds this bindable.
+ *        binding that binds this boundWidget.
  * @param <V> The value type or the type this instance internally holds as the
  *        value.
- * @param <M> The model type
+ * @param <M> The model type which must be boundWidget.
  */
-public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
+public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, SourcesChangeEvents {
 
 	/**
 	 * Generic token indicating the "value property". Used when firing property
@@ -30,8 +30,7 @@ public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
 	 * Generic token indicating DOM attachment. Used when firing property change
 	 * events.
 	 */
-	static final String PROPERTY_ATTACHED = "attached";
-
+	// static final String PROPERTY_ATTACHED = "attached";
 	/**
 	 * Generic token indicating the "model property". Used when firing property
 	 * change events.
@@ -41,13 +40,13 @@ public interface IBoundWidget<B, V, M> extends IBindable, SourcesChangeEvents {
 	/**
 	 * @return The action
 	 */
-	IBindingAction<IBoundWidget<B, V, M>> getAction();
+	IBindingAction<? extends IBoundWidget<B, V, M>> getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action The action to set
 	 */
-	void setAction(IBindingAction<IBoundWidget<B, V, M>> action);
+	void setAction(IBindingAction<? extends IBoundWidget<B, V, M>> action);
 
 	/**
 	 * @return The employed {@link Comparator} for this bound widget.

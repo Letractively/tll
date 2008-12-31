@@ -7,7 +7,9 @@ package com.tll.client.validate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 
@@ -17,37 +19,61 @@ import com.tll.client.msg.Msg.MsgLevel;
  */
 public class ValidationException extends Exception {
 
-	private final List<Msg> msgs;
+	private final List<Msg> errors;
+
+	private final Map<Widget, List<Msg>> sourcedErrors;
 
 	/**
 	 * Constructor
-	 * @param msg
+	 * @param error
 	 */
-	public ValidationException(Msg msg) {
+	public ValidationException(Msg error) {
 		super();
-		msgs = new ArrayList<Msg>(1);
-		msgs.add(msg);
+		errors = new ArrayList<Msg>(1);
+		errors.add(error);
+		sourcedErrors = null;
 	}
 
 	/**
 	 * Constructor
-	 * @param msgs
+	 * @param errors
 	 */
-	public ValidationException(List<Msg> msgs) {
+	public ValidationException(List<Msg> errors) {
 		super();
-		this.msgs = msgs;
+		this.errors = errors;
+		sourcedErrors = null;
 	}
 
 	/**
 	 * Constructor
-	 * @param errorMessage
+	 * @param error
 	 */
-	public ValidationException(String errorMessage) {
-		this(new Msg(errorMessage, MsgLevel.ERROR));
+	public ValidationException(String error) {
+		this(new Msg(error, MsgLevel.ERROR));
 	}
 
-	public List<Msg> getValidationMessages() {
-		return msgs;
+	/**
+	 * Constructor - Use when this exception contains error messages for
+	 * <em>more than one</em> target.
+	 * @param sourcedErrors Map of sourced error messages keyed by the source.
+	 */
+	public ValidationException(Map<Widget, List<Msg>> sourcedErrors) {
+		super();
+		this.errors = null;
+		this.sourcedErrors = sourcedErrors;
 	}
 
+	/**
+	 * @return The error messages.
+	 */
+	public List<Msg> getErrors() {
+		return errors;
+	}
+
+	/**
+	 * @return The error messages for multiple sources.
+	 */
+	public Map<Widget, List<Msg>> getSourcedErrors() {
+		return sourcedErrors;
+	}
 }

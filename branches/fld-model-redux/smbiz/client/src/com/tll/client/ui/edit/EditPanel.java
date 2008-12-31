@@ -8,19 +8,18 @@ import java.util.List;
 
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.model.PropertyPathException;
+import com.tll.client.bind.IBindable;
 import com.tll.client.msg.Msg;
-import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.BoundButton;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.validate.ValidationException;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
@@ -31,7 +30,7 @@ import com.tll.client.validate.ValidationException;
  * @author jpk
  * @param <M> The model type
  */
-public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements ClickListener, ISourcesEditEvents {
+public final class EditPanel<M extends IBindable> extends Composite implements ClickListener, ISourcesEditEvents {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -56,7 +55,7 @@ public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements 
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel fieldPanel;
+	private final FieldPanel<M> fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -75,7 +74,7 @@ public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements 
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel<M> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
@@ -135,34 +134,8 @@ public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements 
 		return "Add".equals(btnSave.getText());
 	}
 
-	/*
-	public void setModel(Model model) {
-		// NOTE: we do this binding init stuff here as we need to wait to ensure the
-		// aux data set the root field group in the binding
-		binding.setRootFieldGroup(fieldPanel.getFieldGroup());
-
-		// have the *root* field panel listen to binding events
-		binding.addFieldBindingEventListener(fieldPanel);
-
-		binding.setRootModel(model);
-		binding.bind();
-		binding.setFieldValues();
-		setEditMode(model.isNew());
-	}
-	*/
-
-	public Object getProperty(String propPath) throws PropertyPathException {
-		return null;
-	}
-
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
-	}
-
-	public M getValue() {
-		return null;
-	}
-
-	public void setValue(M value) {
+	public void setModel(M model) {
+		fieldPanel.setModel(model);
 	}
 
 	/**
@@ -171,7 +144,7 @@ public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements 
 	 * @param msgs The error messages to apply
 	 */
 	public void applyErrorMsgs(final List<Msg> msgs) {
-		fieldPanel.getFieldGroup().markInvalid(true, msgs);
+		// TODO impl
 	}
 
 	/**
@@ -181,19 +154,7 @@ public final class EditPanel<M> extends AbstractBoundWidget<M, M, M> implements 
 	 *         <code>false</code> otherwise.
 	 */
 	private boolean updateModel() {
-
-		// validate the fields
-		try {
-			fieldPanel.getFieldGroup().validate();
-		}
-		catch(ValidationException e) {
-			return false;
-		}
-
-		// fields are all valid to send field values to the model
-		// binding.setModelValues();
-
-		return true;
+		fieldPanel.getAction().execute();
 	}
 
 	public void onClick(Widget sender) {

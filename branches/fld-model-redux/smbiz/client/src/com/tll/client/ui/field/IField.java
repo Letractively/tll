@@ -4,16 +4,12 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.IPropertyNameProvider;
-import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.validate.IValidator;
-import com.tll.client.validate.ValidationException;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
@@ -122,17 +118,14 @@ public interface IField extends IPropertyNameProvider, IValidator, SourcesChange
 	void setFieldLabelContainer(Widget fieldLabelContainer);
 
 	/**
-	 * Validates the field's held value.
-	 * @throws ValidationException
+	 * Adds a validator.
+	 * @param validator The validtor to add
 	 */
-	void validate() throws ValidationException;
+	void addValidator(IValidator validator);
 
 	/**
-	 * Styles the field as either valid or invalid.
-	 * @param invalid Mark or unmark as invalid
-	 * @param msgs Optional collection of messages to show near the field when
-	 *        marking as invalid. May be <code>null</code>. This param is ignored
-	 *        when the <code>invalid</code> param is <code>false</code>.
+	 * Removes a validator.
+	 * @param validator The validtor to remove
 	 */
-	void markInvalid(boolean invalid, List<Msg> msgs);
+	void removeValidator(IValidator validator);
 }

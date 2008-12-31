@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.admin.ui.field.AddressPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
@@ -21,7 +22,7 @@ import com.tll.client.util.GlobalFormat;
  * UserPanel
  * @author jpk
  */
-public class UserPanel<M> extends FieldPanel<M> {
+public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 
 	private final FlowPanel canvas = new FlowPanel();
 
@@ -47,7 +48,7 @@ public class UserPanel<M> extends FieldPanel<M> {
 	public void populateFieldGroup(FieldGroup fields) {
 		name = FieldFactory.entityNameField();
 		timestamps = FieldFactory.entityTimestampFields();
-		emailAddress = FieldFactory.ftext("emailAddress", "Email Address", "Email Address", 30);
+		emailAddress = FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30);
 		emailAddress.setReadOnly(true);
 		locked = FieldFactory.fcheckbox("locked", "Locked", "Locked");
 		enabled = FieldFactory.fcheckbox("enabled", "Enabled", "Enabled");

@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -155,7 +156,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel<M> extends FieldPanel<M> {
+	private static final class TestFieldPanel<M extends IBindable> extends FieldPanel<M> {
 
 		private final FlowPanel canvas = new FlowPanel();
 

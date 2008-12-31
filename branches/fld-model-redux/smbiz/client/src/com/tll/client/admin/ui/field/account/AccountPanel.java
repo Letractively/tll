@@ -5,6 +5,7 @@
 package com.tll.client.admin.ui.field.account;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -19,7 +20,11 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.admin.ui.field.PaymentInfoPanel;
+import com.tll.client.bind.AbstractModelEditAction;
+import com.tll.client.bind.Binding;
+import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.model.Model;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.DateField;
@@ -31,6 +36,8 @@ import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.ValidationFeedbackManager;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -38,38 +45,45 @@ import com.tll.model.impl.AddressType;
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel<M> extends FieldPanel<M> {
+public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 
-	private final FlowPanel panel = new FlowPanel();
+	/**
+	 * AccountEditAction
+	 * @author jpk
+	 */
+	class AccountEditAction extends AbstractModelEditAction<M, AccountPanel<M>> {
 
-	protected TextField parent;
-	protected TextField name;
-	protected DateField[] timestamps;
-	protected SelectField status;
-	protected DateField dateCancelled;
-	protected SelectField currency;
-	protected TextField billingModel;
-	protected TextField billingCycle;
-	protected DateField dateLastCharged;
-	protected DateField nextChargeDate;
-	protected CheckboxField persistPymntInfo;
-
-	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
-	protected final PaymentInfoPanel<M> paymentInfoPanel = new PaymentInfoPanel<M>();
-
-	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
-	protected final AddressesPanel<M> addressesPanel = new AddressesPanel<M>();
+		@Override
+		protected void populateBinding(AccountPanel<M> ap) {
+			final List<Binding> children = binding.getChildren();
+			final IValidationFeedback vb = ValidationFeedbackManager.instance();
+			children.add(new Binding(ap, name, vb, Model.NAME_PROPERTY));
+			children.add(new Binding(ap, timestamps[0], vb, Model.DATE_CREATED_PROPERTY));
+			children.add(new Binding(ap, timestamps[1], vb, Model.DATE_MODIFIED_PROPERTY));
+			children.add(new Binding(ap, parent, vb, "parent.name"));
+			children.add(new Binding(ap, status, vb, "status"));
+			children.add(new Binding(ap, dateCancelled, vb, "dateCancelled"));
+			children.add(new Binding(ap, currency, vb, "currency.id"));
+			children.add(new Binding(ap, billingModel, vb, "billingModel"));
+			children.add(new Binding(ap, billingCycle, vb, "billingCycle"));
+			children.add(new Binding(ap, dateLastCharged, vb, "dateLastCharged"));
+			children.add(new Binding(ap, nextChargeDate, vb, "nextChargeDate"));
+			children.add(new Binding(ap, persistPymntInfo, vb, "persistPymntInfo"));
+			children.add(new Binding(ap, "paymentInfo"));
+			children.add(new Binding(ap, "addresses"));
+		}
+	}
 
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel<M> extends FieldPanel<M> {
+	static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<Model> {
 
 		final FlowPanel panel = new FlowPanel();
 		final AddressType addressType;
 		TextField name;
-		AddressPanel<M> addressPanel;
+		AddressPanel<Model> addressPanel;
 
 		/**
 		 * Constructor
@@ -100,7 +114,7 @@ public class AccountPanel<M> extends FieldPanel<M> {
 
 			// address row
 			cmpsr.newRow();
-			addressPanel = new AddressPanel<M>();
+			addressPanel = new AddressPanel<Model>();
 			cmpsr.addWidget(addressPanel);
 		}
 	}
@@ -108,9 +122,9 @@ public class AccountPanel<M> extends FieldPanel<M> {
 	/**
 	 * AddressesPanel
 	 * @author jpk
-	 * @param <M>
+	 * @param <Model>
 	 */
-	static final class AddressesPanel<M> extends FieldPanel<M> implements TabListener {
+	static final class AddressesPanel<M extends IBindable> extends FieldPanel<Model> implements TabListener {
 
 		private final TabPanel tabAddresses = new TabPanel();
 
@@ -151,12 +165,33 @@ public class AccountPanel<M> extends FieldPanel<M> {
 		}
 	}
 
+	private final FlowPanel panel = new FlowPanel();
+
+	protected TextField parent;
+	protected TextField name;
+	protected DateField[] timestamps;
+	protected SelectField status;
+	protected DateField dateCancelled;
+	protected SelectField currency;
+	protected TextField billingModel;
+	protected TextField billingCycle;
+	protected DateField dateLastCharged;
+	protected DateField nextChargeDate;
+	protected CheckboxField persistPymntInfo;
+
+	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
+	protected final PaymentInfoPanel<M> paymentInfoPanel = new PaymentInfoPanel<M>();
+
+	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
+	protected final AddressesPanel<M> addressesPanel = new AddressesPanel<M>();
+
 	/**
 	 * Constructor
 	 */
 	public AccountPanel() {
 		super("Account");
 		initWidget(panel);
+		setAction(new AccountEditAction());
 	}
 
 	@Override
@@ -362,15 +397,4 @@ public class AccountPanel<M> extends FieldPanel<M> {
 		tabAddresses.selectTab(0);
 	}
 	*/
-
-	public void onClose(DisclosureEvent event) {
-		// need to hide any field messages that are "cloaked" by the disclosure
-		// panel
-		if(event.getSource() == dpAddresses) {
-			MsgManager.instance().show(dpAddresses, false, true);
-		}
-		else if(event.getSource() == dpPaymentInfo) {
-			MsgManager.instance().show(dpPaymentInfo, false, true);
-		}
-	}
 }

@@ -7,6 +7,7 @@ package com.tll.client.admin.ui.field;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 
@@ -14,7 +15,7 @@ import com.tll.client.ui.field.FieldPanel;
  * PaymentInfoPanel
  * @author jpk
  */
-public final class PaymentInfoPanel<M> extends FieldPanel<M> implements SourcesTabEvents {
+public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> implements SourcesTabEvents {
 
 	private final TabPanel tabPanel = new TabPanel();
 

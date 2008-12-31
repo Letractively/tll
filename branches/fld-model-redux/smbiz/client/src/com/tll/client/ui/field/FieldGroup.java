@@ -5,17 +5,20 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.IBindable;
 import com.tll.client.model.PropertyPath;
+import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
-import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.util.IDescriptorProvider;
@@ -116,11 +119,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private final Set<IField> fields;
 
 	/**
-	 * The field group validator(s)
-	 */
-	private IValidator validator;
-
-	/**
 	 * A presentation worthy display name. Mainly used in providing validation
 	 * feedback to the UI.
 	 */
@@ -130,6 +128,11 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * The Widget that is used to convey validation feedback.
 	 */
 	private Widget feedbackWidget;
+
+	/**
+	 * The field group validator(s).
+	 */
+	private CompositeValidator validator;
 
 	/**
 	 * Constructor - Simple field group w/ no display name.
@@ -393,61 +396,50 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		throw new UnsupportedOperationException();
 	}
 
-	public void validate() throws ValidationException {
-		boolean valid = true;
-		for(IField field : fields) {
-			try {
-				field.validate();
+	public void addValidator(IValidator validator) {
+		if(validator != null) {
+			if(this.validator == null) {
+				this.validator = new CompositeValidator();
 			}
-			catch(ValidationException e) {
-				valid = false;
+			this.validator.add(validator);
+		}
+	}
+
+	public void removeValidator(IValidator validator) {
+		if(validator != null && this.validator != null) {
+			this.validator.remove(validator);
+		}
+	}
+
+	public Object validate(Object value) throws ValidationException {
+		if(value != this) throw new IllegalArgumentException();
+		Map<Widget, List<Msg>> errors = new HashMap<Widget, List<Msg>>();
+		for(IField field : fields) {
+			if(field instanceof IBindable) {
+				try {
+					field.validate(((IBindable) field).getProperty(field.getPropertyName()));
+				}
+				catch(PropertyPathException e) {
+					// won't happen
+					throw new IllegalStateException();
+				}
+				catch(ValidationException e) {
+					errors.put(field.getWidget(), e.getErrors());
+				}
 			}
 		}
 		if(validator != null) {
 			try {
-				validator.validate(null);
+				value = validator.validate(value);
 			}
 			catch(ValidationException e) {
-				valid = false;
-				// handle UI msg if we have a feedback widget specified
-				if(feedbackWidget != null) {
-					MsgManager.instance().post(false, e.getValidationMessages(), Position.BOTTOM, feedbackWidget, -1, false)
-							.show();
-				}
+				errors.put(feedbackWidget, e.getErrors());
 			}
 		}
-		if(!valid) {
-			throw new ValidationException(descriptor() + " has errors.");
+		if(errors.size() > 0) {
+			throw new ValidationException(errors);
 		}
-	}
-
-	public Object validate(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void markInvalid(boolean invalid, List<Msg> msgs) {
-		if(invalid) {
-			if(msgs == null) return;
-			List<Msg> unboundFieldMessages = new ArrayList<Msg>();
-			for(Msg fm : msgs) {
-				IField fld = getField(fm.getRefToken());
-				if(fld != null) {
-					List<Msg> l = new ArrayList<Msg>();
-					l.add(fm);
-					fld.markInvalid(true, l);
-				}
-				else {
-					// field not found
-					unboundFieldMessages.add(fm);
-				}
-			}
-			if(unboundFieldMessages.size() > 0) {
-				MsgManager.instance().post(true, unboundFieldMessages, Position.BOTTOM, feedbackWidget, -1, true).show();
-			}
-		}
-		else {
-			if(feedbackWidget != null) MsgManager.instance().clear(feedbackWidget, false);
-		}
+		return value;
 	}
 
 	public FieldLabel getFieldLabel() {
@@ -473,5 +465,4 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
-
 }

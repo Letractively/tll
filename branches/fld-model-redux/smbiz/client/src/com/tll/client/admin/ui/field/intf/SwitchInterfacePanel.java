@@ -7,13 +7,14 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
  */
-public final class SwitchInterfacePanel<M> extends AbstractInterfacePanel<M> {
+public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
 
 	private final FlowPanel canvas = new FlowPanel();
 

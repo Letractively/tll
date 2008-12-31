@@ -9,6 +9,8 @@ import java.util.Collection;
 
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.CreditCardValidator;
+import com.tll.client.validate.EmailAddressValidator;
 
 /**
  * FieldFactory
@@ -25,6 +27,33 @@ public abstract class FieldFactory {
 	 */
 	public static final TextField ftext(String propName, String labelText, String helpText, int visibleLength) {
 		return new TextField(propName, labelText, helpText, visibleLength);
+	}
+
+	/**
+	 * Creates a new {@link TextField} instance with email address validation.
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param visibleLength
+	 */
+	public static final TextField femail(String propName, String labelText, String helpText, int visibleLength) {
+		TextField f = new TextField(propName, labelText, helpText, visibleLength);
+		f.addValidator(EmailAddressValidator.INSTANCE);
+		return f;
+	}
+
+	/**
+	 * Creates a new {@link TextField} instance with credit card number
+	 * validation.
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param visibleLength
+	 */
+	public static final TextField fcreditcard(String propName, String labelText, String helpText, int visibleLength) {
+		TextField f = new TextField(propName, labelText, helpText, visibleLength);
+		f.addValidator(CreditCardValidator.INSTANCE);
+		return f;
 	}
 
 	/**
