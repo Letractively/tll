@@ -44,16 +44,11 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		this.metadata = metadata;
 	}
 
-	/**
-	 * Sub-classes implement this method to handle the clear operation.
-	 */
-	protected abstract void doClear();
-
 	@Override
 	public final void clear() {
 		final Object oldValue = getValue();
 		if(oldValue != null) {
-			doClear();
+			doSetValue(null);
 			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
 		}
 	}

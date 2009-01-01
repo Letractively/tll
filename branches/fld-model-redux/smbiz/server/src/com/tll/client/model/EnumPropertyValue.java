@@ -55,13 +55,8 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
-	@Override
 	protected void doSetValue(Object value) {
-		if(value instanceof Enum == false) {
+		if(value != null && value instanceof Enum == false) {
 			throw new IllegalArgumentException("The value must be an Enum");
 		}
 		this.value = (Enum<?>) value;

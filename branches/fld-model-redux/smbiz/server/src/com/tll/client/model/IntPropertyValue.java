@@ -44,11 +44,6 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 		return PropertyType.INT;
 	}
 
-	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
 		return new IntPropertyValue(getPropertyName(), metadata, value == null ? null : new Integer(value.intValue()));
 	}
@@ -63,7 +58,10 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 
 	@Override
 	protected void doSetValue(Object obj) {
-		if(obj instanceof Integer) {
+		if(obj == null) {
+			this.value = null;
+		}
+		else if(obj instanceof Integer) {
 			this.value = (Integer) obj;
 		}
 		else if(obj instanceof Number) {

@@ -47,11 +47,6 @@ public class DatePropertyValue extends AbstractPropertyValue {
 		return PropertyType.DATE;
 	}
 
-	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
 		return new DatePropertyValue(getPropertyName(), metadata, value == null ? null : new Date(value.getTime()));
 	}
@@ -62,7 +57,7 @@ public class DatePropertyValue extends AbstractPropertyValue {
 
 	@Override
 	protected void doSetValue(Object obj) {
-		if(obj instanceof Date == false) {
+		if(obj != null && obj instanceof Date == false) {
 			throw new IllegalArgumentException("The value must be a Date");
 		}
 		this.value = (Date) obj;

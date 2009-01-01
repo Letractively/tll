@@ -189,7 +189,6 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * Finds a property value in this model's collection of property values given
 	 * a non-path property name. (No property path resolution is performed.)
 	 * <p>
-	 * <em><b>IMPT:</b> This method do not fire property change events</em>
 	 * @param name The non-path property name (i.e. no dots)
 	 * @return The found {@link IPropertyValue} or <code>null</code> if not
 	 *         present.
@@ -207,7 +206,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * property path resolution preformed. If an existing prop val is currently
 	 * mapped to the ascribed property name, it is replaced by the one given.
 	 * <p>
-	 * <em><b>IMPT:</b> This method do not fire property change events</em>
+	 * <em><b>IMPT:</b> This method does not fire property change events.</em>
 	 * @param propValue The replacing {@link IPropertyValue}
 	 */
 	public void set(IModelProperty propValue) {
@@ -258,13 +257,11 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 */
 	public boolean propertyExists(String propPath) {
 		try {
-			Object o = getModelProperty(propPath);
-			return o != null;
+			return getModelProperty(propPath) != null;
 		}
 		catch(PropertyPathException e) {
-			// no-op
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -275,7 +272,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * property is encoutered before reaching the end of the given property path
 	 * or when a given index is found out of range for an indexable property in
 	 * the given property path, <code>null</code> is returned.
-	 * @param propPath The property path. When <code>null</code>, a
+	 * @param propPath The property path. When <code>null</code> or empty, a
 	 *        {@link RelatedOneProperty} that references <em>this</em> model is
 	 *        returned.
 	 * @return The resolved non-<code>null</code> model property
@@ -579,7 +576,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
-			// model list relation...
+			// related many...
 			else if(prop instanceof RelatedManyProperty) {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				List<Model> list = rmp.getList();
@@ -638,7 +635,6 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 		visited.add(new PropBinding(model));
 
-		// TODO do we want to reset markedDeleted?
 		model.markedDeleted = false;
 
 		for(IModelProperty prop : model.props) {
@@ -704,13 +700,18 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * @param visited
 	 */
 	private static void setPropertyChangeSupport(Model model, final PropertyChangeSupport changeSupport,
-			BindingStack<PropBinding> visited) {
+			final BindingStack<PropBinding> visited) {
 
 		assert model != null;
 
 		// check visited
 		PropBinding binding = visited.find(model);
 		if(binding != null) return;
+
+		if((model.changeSupport == null && changeSupport == null) || (model.changeSupport != null && changeSupport != null)) {
+			throw new IllegalStateException("Model change support aggregation is out of sync.");
+		}
+		model.changeSupport = changeSupport;
 
 		visited.add(new PropBinding(model));
 
@@ -723,7 +724,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 			prop.setPropertyChangeSupport(changeSupport);
 
-			// model ref...
+			// model ref (indexed or related one)...
 			if(ptype.isModelRef()) {
 				IModelRefProperty gpv = (IModelRefProperty) prop;
 				if(gpv.getModel() != null) {
@@ -748,23 +749,25 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	/**
 	 * Automated way to ensure an <em>aggregated</em>
-	 * {@link PropertyChangeSupport} is referenced or <code>null</code> for all
-	 * child {@link IModelProperty}s in this {@link Model} instance.
-	 * @param add When <code>true</code>, the
+	 * {@link PropertyChangeSupport} is referenced for all child
+	 * {@link IModelProperty}s in this {@link Model} instance.
+	 * @param add When <code>true</code>, the non-<code>null</code>
+	 *        {@link PropertyChangeSupport} member of this Model instance is set
+	 *        for all child {@link IModelProperty}s. If <code>false</code>, a
+	 *        <code>null</code> {@link PropertyChangeSupport} ref is propagated to
+	 *        all child {@link IModelProperty}s.
 	 */
 	private void aggregatePropertyChangeSupport(boolean add) {
 		if(add) {
 			if(changeSupport == null) {
 				// aggregate
-				changeSupport = new PropertyChangeSupport(this);
-				setPropertyChangeSupport(this, changeSupport, new BindingStack<PropBinding>());
+				setPropertyChangeSupport(this, new PropertyChangeSupport(this), new BindingStack<PropBinding>());
 			}
 		}
 		else {
-			if(changeSupport != null && !changeSupport.hasListeners(null)) {
+			if(changeSupport != null && !changeSupport.hasAnyListeners()) {
 				// de-aggregate
 				setPropertyChangeSupport(this, null, new BindingStack<PropBinding>());
-				changeSupport = null;
 			}
 		}
 	}
@@ -807,24 +810,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("hash:");
-		sb.append(hashCode());
-		if(markedDeleted) {
-			sb.append(" MRKD DELETED! ");
-		}
-
-		sb.append(" props[");
-		for(Iterator<IModelProperty> itr = props.iterator(); itr.hasNext();) {
-			IModelProperty val = itr.next();
-			sb.append(val.toString());
-			if(itr.hasNext()) {
-				sb.append(" ");
-			}
-		}
-		sb.append("]");
-
-		return sb.toString();
+		return getRefKey().toString() + " [" + ((Object) this).hashCode() + ']';
 	}
 
 }

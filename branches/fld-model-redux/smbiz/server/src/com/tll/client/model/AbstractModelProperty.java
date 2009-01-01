@@ -9,7 +9,8 @@ import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
 
 /**
- * AbstractModelProperty
+ * AbstractModelProperty - Base class for all implemented {@link IModelProperty}
+ * s.
  * @author jpk
  */
 public abstract class AbstractModelProperty implements IModelProperty {

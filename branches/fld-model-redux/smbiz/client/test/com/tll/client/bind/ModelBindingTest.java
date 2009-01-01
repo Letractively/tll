@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import com.tll.TestUtils;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
+import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.RelatedManyProperty;
@@ -24,20 +25,61 @@ import com.tll.model.EntityType;
 import com.tll.model.impl.AddressType;
 
 /**
- * BindingTest - Test that verifies client side data binding.
+ * ModelBindingTest - Test that verifies client side data binding using
+ * {@link Model} {@link IBindable} implementation.
  * @author jpk
  */
-@Test(groups = "client-bind")
-public class BindingTest {
+@Test(groups = {
+	"client-bind", "client-model" })
+public class ModelBindingTest {
 
+	/**
+	 * Verifies the aggregation of a {@link Model}'s {@link PropertyChangeSupport}
+	 * instance among its {@link IModelProperty}s.
+	 * @throws Exception
+	 */
 	@Test
-	public void test() throws Exception {
+	public void testModelChangeSupportAggregation() throws Exception {
 
 		Model left = stubModel();
 		Model right = left.copy(true);
 
 		// sanity check: verify we are equal before we bind
-		TestUtils.validateCopy(left, right, true);
+		verifyInSync(left, right);
+
+		Binding binding = new Binding();
+		List<Binding> children = binding.getChildren();
+		children.add(new Binding(left, right, Model.ID_PROPERTY));
+		children.add(new Binding(left, right, Model.NAME_PROPERTY));
+		children.add(new Binding(left, right, Model.DATE_CREATED_PROPERTY));
+		children.add(new Binding(left, right, Model.DATE_MODIFIED_PROPERTY));
+		children.add(new Binding(left, right, "parent.name"));
+		children.add(new Binding(left, right, "addresses[0].address.firstName"));
+
+		Object[] pcls;
+
+		binding.bind();
+		pcls = left.getPropertyChangeListeners();
+		assert pcls != null && pcls.length > 0;
+
+		binding.unbind();
+		pcls = left.getPropertyChangeListeners();
+		assert pcls == null || pcls.length == 0;
+	}
+
+	/**
+	 * Tests the {@link Binding}'s auto-propagation of property changes from one
+	 * binding end point to the other (right <--> left).
+	 * @throws Exception
+	 */
+	@Test
+	public void testPropertyChangeSyncing() throws Exception {
+
+		Model left = stubModel();
+		Model right = left.copy(true);
+
+		// sanity check: verify we are equal before we bind
+		verifyInSync(left, right);
 
 		Binding binding = new Binding();
 		List<Binding> children = binding.getChildren();
@@ -58,44 +100,73 @@ public class BindingTest {
 		right.clearPropertyValue("parent.name");
 		right.clearPropertyValue("addresses[0].address.firstName");
 
-		// verify the properties are cleared
-		try {
-			TestUtils.validateCopy(left, right, true);
-			Assert.fail();
-		}
-		catch(Exception e) {
-			// expected
-		}
+		verifyInSync(left, right);
 
-		// validate setting right side..
-		binding.setRight();
-		TestUtils.validateCopy(left, right, true);
+		// set bound properties on the left..
+		left.setProperty(Model.ID_PROPERTY, 33);
+		left.setProperty(Model.NAME_PROPERTY, "new name");
+		left.setProperty(Model.DATE_CREATED_PROPERTY, new Date());
+		left.setProperty(Model.DATE_MODIFIED_PROPERTY, new Date());
+		left.setProperty("parent.name", "newboy");
+		left.setProperty("addresses[0].address.firstName", "new first");
 
-		// clear out the bound properties on the right..
-		left.clearPropertyValue(Model.ID_PROPERTY);
-		left.clearPropertyValue(Model.NAME_PROPERTY);
-		left.clearPropertyValue(Model.DATE_CREATED_PROPERTY);
-		left.clearPropertyValue(Model.DATE_MODIFIED_PROPERTY);
-		left.clearPropertyValue("parent.name");
-		left.clearPropertyValue("addresses[0].address.firstName");
-
-		// verify the properties are cleared
-		try {
-			TestUtils.validateCopy(left, right, true);
-			Assert.fail();
-		}
-		catch(Exception e) {
-			// expected
-		}
-
-		// validate setting left side..
-		binding.setLeft();
-		TestUtils.validateCopy(left, right, true);
+		verifyInSync(left, right);
 
 		binding.unbind();
 	}
 
-	Model stubModel() {
+	/**
+	 * Test index property change handling.
+	 * @throws Exception
+	 */
+	@Test
+	public void testIndexPropertyChange() throws Exception {
+		Model left = stubModel();
+		Model right = left.copy(true);
+
+		// sanity check: verify we are equal before we bind
+		verifyInSync(left, right);
+
+		// create the binding
+		// Binding binding = new Binding(left, right, "addresses");
+		Binding binding = new Binding(left, right, "addresses");
+		binding.getChildren().add(new Binding(left, right, "addresses[0].address.firstName"));
+		binding.bind();
+
+		// mutate the left
+		left.setProperty("addresses[0].address", null);
+
+		// verify the the index property was removed on the right
+		verifyInSync(left, right);
+
+		// mutate the right
+		right.setProperty("addresses[1].address", null);
+
+		// verify the the index property was removed on the right
+		verifyInSync(left, right);
+	}
+
+	/**
+	 * Verifies two given {@link Model} instances are memory address distinct but
+	 * have equal model property values.
+	 * @param left
+	 * @param right
+	 * @throws Exception
+	 */
+	private void verifyInSync(Model left, Model right) throws Exception {
+		// verify the properties changes are syncd
+		try {
+			TestUtils.validateCopy(left, right, true);
+		}
+		catch(Exception e) {
+			Assert.fail("Model " + left.toString() + " is out of sync with: " + right.toString(), e);
+		}
+	}
+
+	/**
+	 * @return A stubbed model for testing.
+	 */
+	protected Model stubModel() {
 
 		Model parentAccount = new Model(EntityType.ASP);
 		parentAccount.set(new IntPropertyValue(Model.ID_PROPERTY, 1));

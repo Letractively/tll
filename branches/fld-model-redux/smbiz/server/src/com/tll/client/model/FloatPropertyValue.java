@@ -44,11 +44,6 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 		return PropertyType.FLOAT;
 	}
 
-	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
 		return new FloatPropertyValue(getPropertyName(), metadata, value == null ? null : new Float(value.floatValue()));
 	}
@@ -59,6 +54,9 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 
 	@Override
 	protected void doSetValue(Object obj) {
+		if(obj == null) {
+			this.value = null;
+		}
 		if(obj instanceof Float) {
 			this.value = (Float) obj;
 		}

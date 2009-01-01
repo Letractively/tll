@@ -49,11 +49,6 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 		return PropertyType.STRING;
 	}
 
-	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
 		return new StringPropertyValue(getPropertyName(), metadata, value);
 	}
@@ -68,7 +63,7 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 
 	@Override
 	protected void doSetValue(Object obj) {
-		if(obj instanceof String == false) {
+		if(obj != null && obj instanceof String == false) {
 			throw new IllegalArgumentException("The value must be a String");
 		}
 		this.value = (String) obj;

@@ -45,11 +45,6 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 		return PropertyType.BOOL;
 	}
 
-	@Override
-	protected void doClear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
 		return new BooleanPropertyValue(getPropertyName(), metadata, value == null ? null : new Boolean(value
 				.booleanValue()));
@@ -61,7 +56,7 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 
 	@Override
 	protected void doSetValue(Object obj) {
-		if(obj instanceof Boolean == false) {
+		if(obj != null && obj instanceof Boolean == false) {
 			throw new IllegalArgumentException("The value must be a Boolean");
 		}
 		this.value = (Boolean) obj;

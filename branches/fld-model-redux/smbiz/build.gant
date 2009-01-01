@@ -632,7 +632,7 @@ target (copyServerClasses: 'Copies server classes to build dir') {
 	targetEnd()
 }
 
-target (copyTestClasses: 'Copies test classes to the WEB-INF/classes dir') {
+target (copyTestClasses: 'Copies test classes to the build WEB-INF/classes dir') {
 	targetStart()
 	depends(compileTest) // i.e.: both server and client classes
 	
@@ -658,7 +658,12 @@ target (copyTestClasses: 'Copies test classes to the WEB-INF/classes dir') {
 	targetEnd()
 }
 
-target (copyServer: 'Copies server dependant files to build dir') {
+target (copyClasses: 'Copies server, client and test classes to the build WEB-INF/classes dir') {
+	depends(copyServerClasses)
+	depends(copyTestClasses)
+}
+
+target (copyServer: 'Copies server dependant files to build WEB-INF/classes dir') {
 	targetStart()
 	depends(copyServerClasses)
 	depends(copyServerLib)
