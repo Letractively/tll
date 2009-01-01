@@ -48,4 +48,9 @@ public final class IndexedProperty extends ModelRefProperty {
 		return index;
 	}
 
+	@Override
+	protected void fireModelChangeEvent(Model oldModel, Model newModel) {
+		assert changeSupport != null;
+		changeSupport.fireIndexedPropertyChange(propertyName, index, oldModel, newModel);
+	}
 }

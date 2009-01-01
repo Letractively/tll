@@ -18,9 +18,9 @@ public abstract class AbstractRelationalProperty extends AbstractModelProperty i
 	protected EntityType relatedType;
 
 	/**
-	 * Indicates the encased model is a "reference" and the model shall NOT be
-	 * cleared or cloned when traversing a Model hierarchy. The "reference" to
-	 * this model is always honored.
+	 * Indicates the encased model is a "reference" and the model shall NOT, by
+	 * default, be cleared or cloned when traversing a Model hierarchy. The
+	 * "reference" to this model is always honored.
 	 */
 	protected boolean reference;
 

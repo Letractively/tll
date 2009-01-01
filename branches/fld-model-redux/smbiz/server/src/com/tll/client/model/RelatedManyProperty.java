@@ -52,6 +52,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	@SuppressWarnings("unchecked")
 	public void setValue(Object value) throws IllegalArgumentException {
+		if(this.list == value) return;
+
 		if(value != null && !(value instanceof List)) {
 			throw new IllegalArgumentException("The value must be a list of Model instances");
 		}
@@ -63,7 +65,9 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			}
 		}
 
+		final List<Model> old = this.list;
 		this.list = (List<Model>) value;
+		if(changeSupport != null) changeSupport.firePropertyChange(propertyName, old, value);
 	}
 
 	/**

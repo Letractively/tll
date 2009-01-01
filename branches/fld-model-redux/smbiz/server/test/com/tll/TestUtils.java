@@ -115,16 +115,20 @@ public final class TestUtils {
 	 * copied model's properties.
 	 * @param source
 	 * @param copy
+	 * @param ignoreReferenceFlag Ignore the isReference property for related
+	 *        model properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	public static void validateCopy(final Model source, final Model copy) throws Exception {
-		validateCopy(source, copy, new ArrayList<Model>());
+	public static void validateCopy(final Model source, final Model copy, final boolean ignoreReferenceFlag)
+			throws Exception {
+		validateCopy(source, copy, ignoreReferenceFlag, new ArrayList<Model>());
 	}
 
 	/**
 	 * Called by {@link #validateCopy(Model, Model)} and enables recursion.
 	 */
-	private static void validateCopy(final Model source, final Model copy, final List<Model> visited) throws Exception {
+	private static void validateCopy(Model source, Model copy, final boolean ignoreReferenceFlag, List<Model> visited)
+			throws Exception {
 		assert source != null && copy != null;
 
 		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
@@ -154,9 +158,9 @@ public final class TestUtils {
 				if(srcPvg == null && cpyPvg != null) {
 					throw new Exception("Source prop val group found null but not the copy!");
 				}
-				else if(!srcGpv.isReference() && srcPvg != null && !visited.contains(srcPvg)) {
+				else if((ignoreReferenceFlag || !srcGpv.isReference()) && srcPvg != null && !visited.contains(srcPvg)) {
 					visited.add(srcPvg);
-					validateCopy(srcPvg, cpyPvg, visited);
+					validateCopy(srcPvg, cpyPvg, ignoreReferenceFlag, visited);
 				}
 			}
 			else if(pvType == PropertyType.RELATED_MANY) {
@@ -172,13 +176,13 @@ public final class TestUtils {
 					if(srcList.size() != cpyList.size()) {
 						throw new Exception("Source and copy group list property sizes differ");
 					}
-					if(!srcGlpv.isReference()) {
+					if(ignoreReferenceFlag || !srcGlpv.isReference()) {
 						final Iterator<Model> citr = cpyList.iterator();
 						for(final Model srcPvg : srcList) {
 							final Model cpyPvg = citr.next();
 							if(!visited.contains(srcPvg)) {
 								visited.add(srcPvg);
-								validateCopy(srcPvg, cpyPvg, visited);
+								validateCopy(srcPvg, cpyPvg, ignoreReferenceFlag, visited);
 							}
 						}
 					}

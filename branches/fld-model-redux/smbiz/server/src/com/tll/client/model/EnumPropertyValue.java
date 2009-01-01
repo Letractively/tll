@@ -14,9 +14,7 @@ import com.tll.util.INameValueProvider;
 @SuppressWarnings("unchecked")
 public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFormattingPropertyValue {
 
-	// TODO paramterize (Enum<?>)
-	// see http://code.google.com/p/google-web-toolkit/issues/detail?id=2281
-	private Enum value;
+	private Enum<?> value;
 
 	/**
 	 * Constructor
@@ -56,19 +54,17 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 		return value;
 	}
 
-	public void setEnum(Enum<?> value) {
-		this.value = value;
-	}
-
-	public void clear() {
+	@Override
+	protected void doClear() {
 		this.value = null;
 	}
 
-	public void setValue(Object value) {
+	@Override
+	protected void doSetValue(Object value) {
 		if(value instanceof Enum == false) {
 			throw new IllegalArgumentException("The value must be an Enum");
 		}
-		setEnum((Enum<?>) value);
+		this.value = (Enum<?>) value;
 	}
 
 	public Object getValue() {

@@ -82,7 +82,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
 	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
 	 */
-	private transient final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	private transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -188,6 +188,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	/**
 	 * Finds a property value in this model's collection of property values given
 	 * a non-path property name. (No property path resolution is performed.)
+	 * <p>
+	 * <em><b>IMPT:</b> This method do not fire property change events</em>
 	 * @param name The non-path property name (i.e. no dots)
 	 * @return The found {@link IPropertyValue} or <code>null</code> if not
 	 *         present.
@@ -204,6 +206,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * Sets the given {@link IPropertyValue} as a child to this model with no
 	 * property path resolution preformed. If an existing prop val is currently
 	 * mapped to the ascribed property name, it is replaced by the one given.
+	 * <p>
+	 * <em><b>IMPT:</b> This method do not fire property change events</em>
 	 * @param propValue The replacing {@link IPropertyValue}
 	 */
 	public void set(IModelProperty propValue) {
@@ -422,7 +426,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), PropertyType.RELATED_MANY
 							.toString());
 				}
-				ModelRefProperty mrp = (ModelRefProperty) prop;
+				IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {
 					return new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
 				}
@@ -568,8 +572,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 			assert prop != null;
 
 			// related one or indexed prop...
-			if(prop instanceof ModelRefProperty) {
-				ModelRefProperty mrp = (ModelRefProperty) prop;
+			if(prop instanceof IModelRefProperty) {
+				IModelRefProperty mrp = (IModelRefProperty) prop;
 				Model model =
 						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, visited) : mrp.getModel();
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
@@ -599,9 +603,19 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	}
 
 	/**
-	 * Walks the held collection of {@link IPropertyValue}s clearing all values
+	 * Clears a single property value.
+	 * @param propPath Identifies the property value to clear
+	 * @throws PropertyPathException
+	 */
+	public void clearPropertyValue(String propPath) throws PropertyPathException {
+		getPropertyValue(propPath).clear();
+	}
+
+	/**
+	 * Walks the held collection of {@link IPropertyValue}s clearing then
 	 * recursing as necessary to ensure all have been visited.
-	 * @param clearReferences
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
 	 */
 	public void clearPropertyValues(boolean clearReferences) {
 		clearProps(this, clearReferences, new BindingStack<PropBinding>());
@@ -610,8 +624,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	/**
 	 * Clears all nested property values of the given model.
 	 * @param model The group to be cleared
-	 * @param clearReferences Clear property values contained in reference
-	 *        relations?
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
 	 * @param visited
 	 */
 	private static void clearProps(Model model, final boolean clearReferences, BindingStack<PropBinding> visited) {
@@ -631,8 +645,8 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 			assert prop != null;
 
 			// model prop (relational) val...
-			if(prop instanceof ModelRefProperty) {
-				ModelRefProperty gpv = (ModelRefProperty) prop;
+			if(prop instanceof IModelRefProperty) {
+				IModelRefProperty gpv = (IModelRefProperty) prop;
 				if(clearReferences || !gpv.isReference()) {
 					clearProps(gpv.getModel(), clearReferences, visited);
 				}
@@ -681,11 +695,87 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 		this.markedDeleted = markedDeleted;
 	}
 
+	/**
+	 * Sets or clears the {@link PropertyChangeSupport} instance for all child
+	 * {@link IModelProperty}s in the given model reference.
+	 * @param model The subject model
+	 * @param changeSupport The {@link PropertyChangeSupport} to apply which may
+	 *        be <code>null</code> in which the references are cleared
+	 * @param visited
+	 */
+	private static void setPropertyChangeSupport(Model model, final PropertyChangeSupport changeSupport,
+			BindingStack<PropBinding> visited) {
+
+		assert model != null;
+
+		// check visited
+		PropBinding binding = visited.find(model);
+		if(binding != null) return;
+
+		visited.add(new PropBinding(model));
+
+		PropertyType ptype;
+
+		for(IModelProperty prop : model.props) {
+			assert prop != null;
+
+			ptype = prop.getType();
+
+			prop.setPropertyChangeSupport(changeSupport);
+
+			// model ref...
+			if(ptype.isModelRef()) {
+				IModelRefProperty gpv = (IModelRefProperty) prop;
+				if(gpv.getModel() != null) {
+					setPropertyChangeSupport(gpv.getModel(), changeSupport, visited);
+				}
+			}
+
+			// related many...
+			else if(prop.getType() == PropertyType.RELATED_MANY) {
+				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				List<Model> list = rmp.getList();
+				if(list != null) {
+					for(Model m : list) {
+						if(m != null) {
+							setPropertyChangeSupport(m, changeSupport, visited);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Automated way to ensure an <em>aggregated</em>
+	 * {@link PropertyChangeSupport} is referenced or <code>null</code> for all
+	 * child {@link IModelProperty}s in this {@link Model} instance.
+	 * @param add When <code>true</code>, the
+	 */
+	private void aggregatePropertyChangeSupport(boolean add) {
+		if(add) {
+			if(changeSupport == null) {
+				// aggregate
+				changeSupport = new PropertyChangeSupport(this);
+				setPropertyChangeSupport(this, changeSupport, new BindingStack<PropBinding>());
+			}
+		}
+		else {
+			if(changeSupport != null && !changeSupport.hasListeners(null)) {
+				// de-aggregate
+				setPropertyChangeSupport(this, null, new BindingStack<PropBinding>());
+				changeSupport = null;
+			}
+		}
+	}
+
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		aggregatePropertyChangeSupport(true);
 		changeSupport.addPropertyChangeListener(listener);
 	}
 
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		aggregatePropertyChangeSupport(true);
 		changeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
@@ -695,10 +785,12 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(listener);
+		aggregatePropertyChangeSupport(false);
 	}
 
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(propertyName, listener);
+		aggregatePropertyChangeSupport(false);
 	}
 
 	@Override

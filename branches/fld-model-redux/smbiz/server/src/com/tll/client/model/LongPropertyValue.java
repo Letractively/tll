@@ -44,7 +44,8 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 		return PropertyType.LONG;
 	}
 
-	public void clear() {
+	@Override
+	protected void doClear() {
 		this.value = null;
 	}
 
@@ -60,15 +61,12 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 		return value == null ? null : value.toString();
 	}
 
-	public void setValue(Object obj) {
+	@Override
+	public void doSetValue(Object obj) {
 		if(obj instanceof Long == false) {
 			throw new IllegalArgumentException("The value must be a Long");
 		}
-		setLong((Long) obj);
-	}
-
-	public void setLong(Long value) {
-		this.value = value;
+		this.value = (Long) obj;
 	}
 
 	public Long getLong() {

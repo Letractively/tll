@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.TestUtils;
@@ -36,9 +37,7 @@ public class BindingTest {
 		Model right = left.copy(true);
 
 		// sanity check: verify we are equal before we bind
-		TestUtils.validateCopy(left, right);
-
-		// right.clearPropertyValues(true);
+		TestUtils.validateCopy(left, right, true);
 
 		Binding binding = new Binding();
 		List<Binding> children = binding.getChildren();
@@ -51,13 +50,47 @@ public class BindingTest {
 
 		binding.bind();
 
+		// clear out the bound properties on the right..
+		right.clearPropertyValue(Model.ID_PROPERTY);
+		right.clearPropertyValue(Model.NAME_PROPERTY);
+		right.clearPropertyValue(Model.DATE_CREATED_PROPERTY);
+		right.clearPropertyValue(Model.DATE_MODIFIED_PROPERTY);
+		right.clearPropertyValue("parent.name");
+		right.clearPropertyValue("addresses[0].address.firstName");
+
+		// verify the properties are cleared
+		try {
+			TestUtils.validateCopy(left, right, true);
+			Assert.fail();
+		}
+		catch(Exception e) {
+			// expected
+		}
+
 		// validate setting right side..
 		binding.setRight();
-		TestUtils.validateCopy(left, right);
+		TestUtils.validateCopy(left, right, true);
+
+		// clear out the bound properties on the right..
+		left.clearPropertyValue(Model.ID_PROPERTY);
+		left.clearPropertyValue(Model.NAME_PROPERTY);
+		left.clearPropertyValue(Model.DATE_CREATED_PROPERTY);
+		left.clearPropertyValue(Model.DATE_MODIFIED_PROPERTY);
+		left.clearPropertyValue("parent.name");
+		left.clearPropertyValue("addresses[0].address.firstName");
+
+		// verify the properties are cleared
+		try {
+			TestUtils.validateCopy(left, right, true);
+			Assert.fail();
+		}
+		catch(Exception e) {
+			// expected
+		}
 
 		// validate setting left side..
 		binding.setLeft();
-		TestUtils.validateCopy(left, right);
+		TestUtils.validateCopy(left, right, true);
 
 		binding.unbind();
 	}

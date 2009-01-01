@@ -44,7 +44,8 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 		return PropertyType.FLOAT;
 	}
 
-	public void clear() {
+	@Override
+	protected void doClear() {
 		this.value = null;
 	}
 
@@ -56,12 +57,13 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 		return value;
 	}
 
-	public void setValue(Object obj) {
+	@Override
+	protected void doSetValue(Object obj) {
 		if(obj instanceof Float) {
-			setFloat((Float) obj);
+			this.value = (Float) obj;
 		}
 		else if(obj instanceof Number) {
-			setFloat(((Number) obj).floatValue());
+			this.value = ((Number) obj).floatValue();
 		}
 		else {
 			throw new IllegalArgumentException("The value must be a Float");
@@ -70,10 +72,6 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 
 	public Float getFloat() {
 		return value;
-	}
-
-	public void setFloat(Float value) {
-		this.value = value;
 	}
 
 	@Override

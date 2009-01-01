@@ -23,7 +23,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
 	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
 	 */
-	private final transient PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	protected transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -63,6 +63,14 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		setValue(value);
 	}
 
+	public final void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
+		if(this.changeSupport != null && changeSupport != null && this.changeSupport != changeSupport) {
+			throw new IllegalStateException("Model property '" + propertyName
+					+ "' is already bound to a different property change support reference!");
+		}
+		this.changeSupport = changeSupport;
+	}
+
 	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
 		changeSupport.addPropertyChangeListener(listener);
 	}
@@ -85,10 +93,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((propertyName == null) ? 0 : propertyName.hashCode());
-		return result;
+		return 31 + ((propertyName == null) ? 0 : propertyName.hashCode());
 	}
 
 	@Override

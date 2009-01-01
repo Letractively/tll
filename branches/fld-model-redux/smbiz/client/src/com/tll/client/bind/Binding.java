@@ -253,8 +253,7 @@ public final class Binding {
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
-			child.bind();
+			children.get(i).bind();
 		}
 
 		bound = true;
@@ -279,8 +278,7 @@ public final class Binding {
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
-			child.unbind();
+			children.get(i).unbind();
 		}
 
 		bound = false;

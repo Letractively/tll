@@ -44,7 +44,8 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 		return PropertyType.CHAR;
 	}
 
-	public void clear() {
+	@Override
+	protected void doClear() {
 		this.value = null;
 	}
 
@@ -61,15 +62,12 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 		return value == null ? null : value.toString();
 	}
 
-	public void setValue(Object obj) {
+	@Override
+	protected void doSetValue(Object obj) {
 		if(obj instanceof Character == false) {
 			throw new IllegalArgumentException("The value must be a Character");
 		}
-		setCharacter((Character) obj);
-	}
-
-	public void setCharacter(Character value) {
-		this.value = value;
+		this.value = (Character) obj;
 	}
 
 	public Character getCharacter() {

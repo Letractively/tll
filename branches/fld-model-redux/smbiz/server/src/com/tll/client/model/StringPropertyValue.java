@@ -27,7 +27,6 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	 */
 	public StringPropertyValue(String propertyName, String value) {
 		this(propertyName, null, value);
-
 	}
 
 	/**
@@ -50,7 +49,8 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 		return PropertyType.STRING;
 	}
 
-	public void clear() {
+	@Override
+	protected void doClear() {
 		this.value = null;
 	}
 
@@ -66,19 +66,16 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 		return value;
 	}
 
-	public void setValue(Object obj) {
+	@Override
+	protected void doSetValue(Object obj) {
 		if(obj instanceof String == false) {
 			throw new IllegalArgumentException("The value must be a String");
 		}
-		setString((String) obj);
+		this.value = (String) obj;
 	}
 
 	public String getString() {
 		return value;
-	}
-
-	public void setString(String value) {
-		this.value = value;
 	}
 
 	@Override

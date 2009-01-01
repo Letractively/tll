@@ -44,6 +44,37 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		this.metadata = metadata;
 	}
 
+	/**
+	 * Sub-classes implement this method to handle the clear operation.
+	 */
+	protected abstract void doClear();
+
+	@Override
+	public final void clear() {
+		final Object oldValue = getValue();
+		if(oldValue != null) {
+			doClear();
+			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+		}
+	}
+
+	/**
+	 * Sub-classes implment this method to perform the actual value setting.
+	 * @param value
+	 * @throws IllegalArgumentException
+	 */
+	protected abstract void doSetValue(Object value) throws IllegalArgumentException;
+
+	@Override
+	public final void setValue(Object value) throws IllegalArgumentException {
+		final Object oldValue = getValue();
+		if((value != oldValue) || (value != null && !value.equals(oldValue))
+				|| (oldValue != null && !oldValue.equals(value))) {
+			doSetValue(value);
+			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+		}
+	}
+
 	@Override
 	public final String toString() {
 		String pn = propertyName;

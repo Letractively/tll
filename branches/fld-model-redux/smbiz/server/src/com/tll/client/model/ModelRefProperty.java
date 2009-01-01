@@ -3,6 +3,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.bind.PropertyChangeEvent;
 import com.tll.model.EntityType;
 
 /**
@@ -42,21 +43,33 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		if(value != null && value instanceof Model == false) {
 			throw new IllegalArgumentException("The value is not a Model instance.");
 		}
-		model = (Model) value;
+		setModel((Model) value);
 	}
 
 	public final Model getModel() {
 		return model;
 	}
 
-	final void setModel(Model model) {
-		// NOTE: we don't *require* the relatedType to be set but if it is, we
-		// enfore type compatability
-		if(relatedType != null && model != null
-				&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
-			throw new IllegalArgumentException("The model must be a " + relatedType.getName());
+	/**
+	 * Responsible for firing the appropriate type of {@link PropertyChangeEvent}
+	 * which is based on {@link IModelRefProperty} implmentation.
+	 * @param oldModel
+	 * @param newModel
+	 */
+	protected abstract void fireModelChangeEvent(Model oldModel, Model newModel);
+
+	private void setModel(Model model) {
+		if(this.model != model) {
+			// NOTE: we don't *require* the relatedType to be set but if it is, we
+			// enfore type compatability
+			if(relatedType != null && model != null
+					&& !(relatedType == model.getEntityType() || relatedType.isSubtype(model.getEntityType()))) {
+				throw new IllegalArgumentException("The model must be a " + relatedType.getName());
+			}
+			final Model oldModel = this.model;
+			this.model = model;
+			if(changeSupport != null) fireModelChangeEvent(oldModel, model);
 		}
-		this.model = model;
 	}
 
 	@Override

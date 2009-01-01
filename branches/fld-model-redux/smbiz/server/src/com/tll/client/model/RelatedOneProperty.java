@@ -37,4 +37,9 @@ public final class RelatedOneProperty extends ModelRefProperty {
 		return PropertyType.RELATED_ONE;
 	}
 
+	@Override
+	protected void fireModelChangeEvent(Model oldModel, Model newModel) {
+		assert changeSupport != null;
+		changeSupport.firePropertyChange(propertyName, oldModel, newModel);
+	}
 }

@@ -52,7 +52,7 @@ public class ModelCopyTest extends AbstractModelTest {
 		final Marshaler em = getMarshaler();
 		final AccountAddress aa = getCopyTestEntity();
 		final Model model = em.marshalEntity(aa, MarshalOptions.UNCONSTRAINED_MARSHALING);
-		final Model copy = model.copy(false);
-		TestUtils.validateCopy(model, copy);
+		final Model copy = model.copy(true);
+		TestUtils.validateCopy(model, copy, true);
 	}
 }

@@ -39,7 +39,8 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 		return PropertyType.STRING_MAP;
 	}
 
-	public void clear() {
+	@Override
+	protected void doClear() {
 		if(map != null) {
 			map.clear();
 		}
@@ -54,8 +55,9 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 		return map;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(Object obj) {
+	protected void doSetValue(Object obj) {
 		if(obj instanceof Map == false) {
 			throw new IllegalArgumentException("The value must be a String-wise Map");
 		}
@@ -66,7 +68,7 @@ public class StringMapPropertyValue extends AbstractPropertyValue {
 		return map;
 	}
 
-	public void setStringMap(Map<String, String> map) {
+	private void setStringMap(Map<String, String> map) {
 		if(this.map == null) {
 			this.map = new LinkedHashMap<String, String>();
 		}
