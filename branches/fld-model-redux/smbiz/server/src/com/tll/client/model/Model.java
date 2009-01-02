@@ -425,7 +425,10 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 				}
 				IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {
-					return new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
+					// return new RelatedOneProperty(mrp.getRelatedType(),
+					// mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
+					// TODO figure out why we were creating a *new* instance !!!!
+					return mrp;
 				}
 				// get the nested group...
 				Model ng = mrp.getModel();
@@ -459,7 +462,10 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 							throw new IndexOutOfRangeInPropPathException(pp.toString(), pname, index);
 						}
 						Model ng = nlist.get(index);
-						return new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), ng, index);
+						final IndexedProperty ip =
+								new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), ng, index);
+						ip.changeSupport = changeSupport;
+						return ip;
 					}
 					// reset for next path
 					model = nlist.get(index);

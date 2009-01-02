@@ -57,7 +57,7 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 		if(obj == null) {
 			this.value = null;
 		}
-		if(obj instanceof Float) {
+		else if(obj instanceof Float) {
 			this.value = (Float) obj;
 		}
 		else if(obj instanceof Number) {

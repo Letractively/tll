@@ -21,7 +21,7 @@ public interface IBindable extends ISourcesPropertyChangeEvents {
 	/**
 	 * Retrieves the property value of the property identified by a property path.
 	 * @param propPath The property path
-	 * @return The non-<code>null</code> properties' held value
+	 * @return The properties' held value which may be <code>null</code>.
 	 * @throws PropertyPathException When the given property is invalid.
 	 */
 	Object getProperty(String propPath) throws PropertyPathException;

@@ -1,22 +1,3 @@
-/*
- * Binding.java
- *
- * Created on July 16, 2007, 12:49 PM
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
 package com.tll.client.bind;
 
 import java.util.ArrayList;
@@ -36,10 +17,139 @@ import com.tll.client.validate.ValidationException;
  * Binding - This class represents a DataBinding between two objects. It also
  * supports Child bindings.
  * <p>
+ * <b>IMPT:</b> This construct currently does <em>not</em> support adding or
+ * removing relational type properties! In other words, the assumption in this
+ * class' logic is always a non-<code>null</code> ref on bound properties.
+ * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
+// TODO enable support for relational/index removal and addition (i.e.: support
+// null as a new property value).
 public final class Binding {
+
+	/**
+	 * DefaultPropertyChangeListener
+	 * @author jpk
+	 */
+	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
+
+		private final BindingInstance instance;
+		private final BindingInstance target;
+		private ValidationException lastException;
+
+		/**
+		 * Constructor
+		 * @param instance
+		 * @param target
+		 */
+		DefaultPropertyChangeListener(BindingInstance instance, BindingInstance target) {
+			this.instance = instance;
+			this.target = target;
+		}
+
+		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+			Object value = propertyChangeEvent.getNewValue();
+
+			if(instance.validator != null) {
+				try {
+					value = instance.validator.validate(value);
+				}
+				catch(ValidationException ve) {
+					if(instance.feedback != null) {
+						if(lastException != null) {
+							instance.feedback.resolve(propertyChangeEvent.getSource());
+						}
+						instance.feedback.handleException(propertyChangeEvent.getSource(), ve);
+						lastException = ve;
+					}
+					else {
+						lastException = ve;
+						throw new RuntimeException(ve);
+					}
+				}
+			}
+
+			if(instance.feedback != null) {
+				instance.feedback.resolve(propertyChangeEvent.getSource());
+			}
+
+			lastException = null;
+
+			if(instance.converter != null) {
+				value = instance.converter.convert(value);
+			}
+
+			try {
+				target.object.setProperty(target.property, value);
+			}
+			catch(Exception e) {
+				throw new RuntimeException("Unable to set property: " + target.property, e);
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "[Listener on : " + instance.object + " ] ";
+		}
+	} // DefaultPropertyChangeListener
+
+	/**
+	 * NestedPropertyChangeListener
+	 * @author jpk
+	 */
+	private final class NestedPropertyChangeListener implements IPropertyChangeListener {
+
+		BindingInstance target;
+		IBindable sourceObject;
+		String propertyName;
+		IBindable[] parents;
+		String[] propertyNames;
+
+		NestedPropertyChangeListener(BindingInstance target, IBindable sourceObject, String propertyName) {
+			this.target = target;
+			this.sourceObject = sourceObject;
+			this.propertyName = propertyName;
+		}
+
+		public void propertyChange(PropertyChangeEvent evt) {
+
+			if(bound) {
+				unbind();
+				bound = true;
+			}
+
+			BindingInstance newInstance = createBindingInstance(sourceObject, propertyName);
+
+			bound = newInstance.object != null;
+
+			target.object = newInstance.object;
+			target.nestedListener = newInstance.nestedListener;
+
+			if(lastSet == Boolean.TRUE) {
+				setLeft();
+			}
+			else if(lastSet == Boolean.FALSE) {
+				setRight();
+			}
+
+			if(bound) {
+				bind();
+			}
+		}
+
+		public void setup() {
+			for(int i = 0; i < parents.length; i++) {
+				parents[i].addPropertyChangeListener(propertyNames[i], this);
+			}
+		}
+
+		public void cleanup() {
+			for(int i = parents.length - 1; i >= 0; i--) {
+				parents[i].removePropertyChangeListener(propertyNames[i], this);
+			}
+		}
+	} // NestedPropertyChangeListener
 
 	private BindingInstance left;
 	private BindingInstance right;
@@ -67,11 +177,7 @@ public final class Binding {
 	 * @param rightProperty Property on the right object.
 	 */
 	public Binding(IBindable left, String leftProperty, IBindable right, String rightProperty) {
-		this.left = createBindingInstance(left, leftProperty);
-		this.right = createBindingInstance(right, rightProperty);
-
-		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
-		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
+		this(left, leftProperty, null, null, null, right, rightProperty, null, null, null);
 	}
 
 	/**
@@ -89,41 +195,33 @@ public final class Binding {
 	 * Constructor
 	 * @param left The left hand object.
 	 * @param leftProperty The property of the left hand object.
-	 * @param leftIValidator A validator for the left hand property.
+	 * @param leftValidator A validator for the left hand property.
 	 * @param leftFeedback Feedback for the left hand validator.
 	 * @param right The right hand object.
 	 * @param rightProperty The property on the right hand object
-	 * @param rightIValidator IValidator for the right hand property.
+	 * @param rightValidator IValidator for the right hand property.
 	 * @param rightFeedback Feedback for the right hand validator.
 	 */
-	public Binding(IBindable left, String leftProperty, IValidator leftIValidator, IValidationFeedback leftFeedback,
-			IBindable right, String rightProperty, IValidator rightIValidator, IValidationFeedback rightFeedback) {
-		this.left = createBindingInstance(left, leftProperty);
-		this.left.validator = leftIValidator;
-		this.left.feedback = leftFeedback;
-
-		this.right = createBindingInstance(right, rightProperty);
-		this.right.validator = rightIValidator;
-		this.right.feedback = rightFeedback;
-
-		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
-		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
+	public Binding(IBindable left, String leftProperty, IValidator leftValidator, IValidationFeedback leftFeedback,
+			IBindable right, String rightProperty, IValidator rightValidator, IValidationFeedback rightFeedback) {
+		this(left, leftProperty, null, leftValidator, leftFeedback, right, rightProperty, null, rightValidator,
+				rightFeedback);
 	}
 
 	/**
 	 * Constructor
 	 * @param left The left hand object.
-	 * @param leftIValidator A validator for the left hand property.
+	 * @param leftValidator A validator for the left hand property.
 	 * @param leftFeedback Feedback for the left hand validator.
 	 * @param right The right hand object.
-	 * @param rightIValidator IValidator for the right hand property.
+	 * @param rightValidator IValidator for the right hand property.
 	 * @param rightFeedback Feedback for the right hand validator.
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
-	public Binding(IBindable left, IValidator leftIValidator, IValidationFeedback leftFeedback, IBindable right,
-			IValidator rightIValidator, IValidationFeedback rightFeedback, String property) {
-		this(left, property, leftIValidator, leftFeedback, right, property, rightIValidator, rightFeedback);
+	public Binding(IBindable left, IValidator leftValidator, IValidationFeedback leftFeedback, IBindable right,
+			IValidator rightValidator, IValidationFeedback rightFeedback, String property) {
+		this(left, property, leftValidator, leftFeedback, right, property, rightValidator, rightFeedback);
 	}
 
 	/**
@@ -137,13 +235,7 @@ public final class Binding {
 	 */
 	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter, IBindable right,
 			String rightProperty, IConverter<Object, Object> rightConverter) {
-		this.left = createBindingInstance(left, leftProperty);
-		this.left.converter = leftConverter;
-		this.right = createBindingInstance(right, rightProperty);
-		this.right.converter = rightConverter;
-
-		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
-		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
+		this(left, leftProperty, leftConverter, null, null, right, rightProperty, rightConverter, null, null);
 	}
 
 	/**
@@ -162,7 +254,8 @@ public final class Binding {
 
 	/**
 	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding.
+	 * BoundWidgets. The bound widget provided will become the left-hand binding
+	 * and the bound widget's model property becomes the right-hand binding.
 	 * @param widget IBoundWidget containing the model.
 	 * @param validator A validator for the BouldWidget's value property.
 	 * @param feedback A feedback implementation for validation errors.
@@ -170,18 +263,50 @@ public final class Binding {
 	 *        right objects.
 	 */
 	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String property) {
-		this(widget, property, validator, feedback, widget.getModel(), property, null, null);
+		this(widget, property, null, validator, feedback, widget.getModel(), property, null, null, null);
 	}
 
 	/**
 	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding.
+	 * BoundWidgets. The bound widget provided will become the left-hand binding
+	 * and the bound widget's model property becomes the right hand binding.
 	 * @param widget IBoundWidget containing the model.
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
 	public Binding(IBoundWidget<?, ?, ?> widget, String property) {
-		this(widget, property, null, null, widget.getModel(), property, null, null);
+		this(widget, property, null, null, null, widget.getModel(), property, null, null, null);
+	}
+
+	/**
+	 * Constructor - The base constructor.
+	 * @param left
+	 * @param leftProperty
+	 * @param leftConverter
+	 * @param leftValidator
+	 * @param leftFeedback
+	 * @param right
+	 * @param rightProperty
+	 * @param rightConverter
+	 * @param rightValidator
+	 * @param rightFeedback
+	 */
+	private Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
+			IValidator leftValidator, IValidationFeedback leftFeedback, IBindable right, String rightProperty,
+			IConverter<Object, Object> rightConverter, IValidator rightValidator, IValidationFeedback rightFeedback) {
+
+		this.left = createBindingInstance(left, leftProperty);
+		this.left.converter = leftConverter;
+		this.left.validator = leftValidator;
+		this.left.feedback = leftFeedback;
+
+		this.right = createBindingInstance(right, rightProperty);
+		this.right.converter = rightConverter;
+		this.right.validator = rightValidator;
+		this.right.feedback = rightFeedback;
+
+		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
+		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
 	}
 
 	/**
@@ -198,8 +323,9 @@ public final class Binding {
 	public void setLeft() {
 		if((left != null) && (right != null)) {
 			try {
-				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
-						.getProperty(right.property)));
+				Object source = right.object == null ? this : right.object;
+				Object pv = right.object == null ? null : right.object.getProperty(right.property);
+				right.listener.propertyChange(new PropertyChangeEvent(source, right.property, null, pv));
 			}
 			catch(Exception e) {
 				throw new RuntimeException(e);
@@ -219,8 +345,9 @@ public final class Binding {
 	public void setRight() {
 		if((left != null) && (right != null)) {
 			try {
-				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
-						.getProperty(left.property)));
+				Object source = left.object == null ? this : left.object;
+				Object pv = left.object == null ? null : left.object.getProperty(left.property);
+				left.listener.propertyChange(new PropertyChangeEvent(source, left.property, null, pv));
 			}
 			catch(Exception e) {
 				throw new RuntimeException(e);
@@ -347,7 +474,7 @@ public final class Binding {
 
 	/**
 	 * Validates stopping at the first found invalid binding.
-	 * @return boolean indicating all values are valid.
+	 * @return boolean indicating if all values are valid.
 	 */
 	public boolean isValid() {
 		try {
@@ -364,8 +491,7 @@ public final class Binding {
 			boolean valid = true;
 
 			for(int i = 0; (children != null) && (i < children.size()); i++) {
-				Binding child = children.get(i);
-				valid = valid & child.isValid();
+				valid = valid & children.get(i).isValid();
 			}
 
 			return valid;
@@ -397,36 +523,69 @@ public final class Binding {
 		return right;
 	}
 
-	@Override
-	public boolean equals(final Object obj) {
-		if(obj == null) {
-			return false;
-		}
-
-		final Binding other = (Binding) obj;
-		if(left != other.left && (left == null || !left.equals(other.left))) {
-			return false;
-		}
-		if(right != other.right && (right == null || !right.equals(other.right))) {
-			return false;
-		}
-		return true;
-	}
-
 	/**
-	 * @return int based on hash of the two objects being bound.
+	 * Creates an instance of {@link BindingInstance}.
+	 * @param object
+	 * @param propertyName
+	 * @return A new {@link BindingInstance}.
 	 */
-	@Override
-	public int hashCode() {
-		return right.object.hashCode() ^ left.object.hashCode();
-	}
+	private BindingInstance createBindingInstance(IBindable object, String propertyName) {
+		int dotIndex = propertyName.indexOf(".");
+		BindingInstance instance = new BindingInstance();
 
-	/**
-	 * @return String value representing the binding.
-	 */
-	@Override
-	public String toString() {
-		return "Binding [ \n + " + right.object + " \n " + left.object + "\n ]";
+		NestedPropertyChangeListener rtpcl =
+				(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
+
+		if(dotIndex != -1) {
+			ArrayList<IBindable> parents = new ArrayList<IBindable>();
+			ArrayList<String> propertyNames = new ArrayList<String>();
+
+			while(dotIndex != -1) {
+				String pname = propertyName.substring(0, dotIndex);
+				propertyName = propertyName.substring(dotIndex + 1);
+				parents.add(object);
+
+				try {
+					String discriminator = null;
+					int descIndex = pname.indexOf("[");
+
+					if(descIndex != -1) {
+						discriminator = pname.substring(descIndex + 1, pname.indexOf("]", descIndex));
+						pname = pname.substring(0, descIndex);
+					}
+
+					propertyNames.add(pname);
+
+					if(discriminator != null) {
+						// TODO Need a loop here to handle multi-dimensional/collections of
+						// collections
+						object = getDiscriminatedObject(object.getProperty(pname), discriminator);
+					}
+					else {
+						object = (IBindable) object.getProperty(pname);
+					}
+				}
+				catch(ClassCastException cce) {
+					throw new RuntimeException("Nonbindable sub property: " + object + " . " + pname, cce);
+				}
+				catch(Exception e) {
+					throw new RuntimeException(e);
+				}
+
+				dotIndex = propertyName.indexOf(".");
+			}
+
+			rtpcl.parents = new IBindable[parents.size()];
+			parents.toArray(rtpcl.parents);
+			rtpcl.propertyNames = new String[propertyNames.size()];
+			propertyNames.toArray(rtpcl.propertyNames);
+		}
+
+		instance.object = object;
+		instance.property = propertyName;
+		instance.nestedListener = rtpcl;
+
+		return instance;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -507,65 +666,6 @@ public final class Binding {
 		throw new IndexOutOfBoundsException("Binding discriminator too high: " + index);
 	}
 
-	private BindingInstance createBindingInstance(IBindable object, String propertyName) {
-		int dotIndex = propertyName.indexOf(".");
-		BindingInstance instance = new BindingInstance();
-
-		NestedPropertyChangeListener rtpcl =
-				(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
-
-		if(dotIndex != -1) {
-			ArrayList<IBindable> parents = new ArrayList<IBindable>();
-			ArrayList<String> propertyNames = new ArrayList<String>();
-
-			while(dotIndex != -1) {
-				String pname = propertyName.substring(0, dotIndex);
-				propertyName = propertyName.substring(dotIndex + 1);
-				parents.add(object);
-
-				try {
-					String discriminator = null;
-					int descIndex = pname.indexOf("[");
-
-					if(descIndex != -1) {
-						discriminator = pname.substring(descIndex + 1, pname.indexOf("]", descIndex));
-						pname = pname.substring(0, descIndex);
-					}
-
-					propertyNames.add(pname);
-
-					if(discriminator != null) {
-						// TODO Need a loop here to handle multi-dimensional/collections of
-						// collections
-						object = getDiscriminatedObject(object.getProperty(pname), discriminator);
-					}
-					else {
-						object = (IBindable) object.getProperty(pname);
-					}
-				}
-				catch(ClassCastException cce) {
-					throw new RuntimeException("Nonbindable sub property: " + object + " . " + pname, cce);
-				}
-				catch(Exception e) {
-					throw new RuntimeException(e);
-				}
-
-				dotIndex = propertyName.indexOf(".");
-			}
-
-			rtpcl.parents = new IBindable[parents.size()];
-			parents.toArray(rtpcl.parents);
-			rtpcl.propertyNames = new String[propertyNames.size()];
-			propertyNames.toArray(rtpcl.propertyNames);
-		}
-
-		instance.object = object;
-		instance.property = propertyName;
-		instance.nestedListener = rtpcl;
-
-		return instance;
-	}
-
 	/**
 	 * A data class containing the relevant data for one half of a binding
 	 * relationship.
@@ -578,14 +678,14 @@ public final class Binding {
 		public IBindable object;
 
 		/**
-		 * A converter when needed.
-		 */
-		public IConverter<Object, Object> converter;
-
-		/**
 		 * The full property path of the property being bound.
 		 */
 		public String property;
+
+		/**
+		 * A converter when needed.
+		 */
+		public IConverter<Object, Object> converter;
 
 		/**
 		 * A IValidator object when needed.
@@ -609,122 +709,35 @@ public final class Binding {
 		}
 	}
 
-	/**
-	 * DefaultPropertyChangeListener
-	 * @author jpk
-	 */
-	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
-
-		private final BindingInstance instance;
-		private final BindingInstance target;
-		private ValidationException lastException;
-
-		/**
-		 * Constructor
-		 * @param instance
-		 * @param target
-		 */
-		DefaultPropertyChangeListener(BindingInstance instance, BindingInstance target) {
-			this.instance = instance;
-			this.target = target;
+	@Override
+	public boolean equals(final Object obj) {
+		if(obj == null) {
+			return false;
 		}
 
-		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-			Object value = propertyChangeEvent.getNewValue();
-
-			if(instance.validator != null) {
-				try {
-					value = instance.validator.validate(value);
-				}
-				catch(ValidationException ve) {
-					if(instance.feedback != null) {
-						if(lastException != null) {
-							instance.feedback.resolve(propertyChangeEvent.getSource());
-						}
-						instance.feedback.handleException(propertyChangeEvent.getSource(), ve);
-						lastException = ve;
-					}
-					else {
-						lastException = ve;
-						throw new RuntimeException(ve);
-					}
-				}
-			}
-
-			if(instance.feedback != null) {
-				instance.feedback.resolve(propertyChangeEvent.getSource());
-			}
-
-			lastException = null;
-
-			if(instance.converter != null) {
-				value = instance.converter.convert(value);
-			}
-
-			try {
-				target.object.setProperty(target.property, value);
-			}
-			catch(Exception e) {
-				throw new RuntimeException("Unable to set property: " + target.property, e);
-			}
+		final Binding other = (Binding) obj;
+		if(left != other.left && (left == null || !left.equals(other.left))) {
+			return false;
 		}
-
-		@Override
-		public String toString() {
-			return "[Listener on : " + instance.object + " ] ";
+		if(right != other.right && (right == null || !right.equals(other.right))) {
+			return false;
 		}
+		return true;
 	}
 
 	/**
-	 * NestedPropertyChangeListener
-	 * @author jpk
+	 * @return int based on hash of the two objects being bound.
 	 */
-	private final class NestedPropertyChangeListener implements IPropertyChangeListener {
+	@Override
+	public int hashCode() {
+		return right.object.hashCode() ^ left.object.hashCode();
+	}
 
-		BindingInstance target;
-		IBindable sourceObject;
-		String propertyName;
-		IBindable[] parents;
-		String[] propertyNames;
-
-		NestedPropertyChangeListener(BindingInstance target, IBindable sourceObject, String propertyName) {
-			this.target = target;
-			this.sourceObject = sourceObject;
-			this.propertyName = propertyName;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt) {
-			if(bound) {
-				unbind();
-				bound = true;
-			}
-
-			BindingInstance newInstance = createBindingInstance(sourceObject, propertyName);
-			target.object = newInstance.object;
-			target.nestedListener = newInstance.nestedListener;
-
-			if(lastSet == Boolean.TRUE) {
-				setLeft();
-			}
-			else if(lastSet == Boolean.FALSE) {
-				setRight();
-			}
-
-			if(bound) {
-				bind();
-			}
-		}
-
-		public void setup() {
-			for(int i = 0; i < parents.length; i++) {
-				parents[i].addPropertyChangeListener(propertyNames[i], this);
-			}
-		}
-
-		public void cleanup() {
-			for(int i = 0; i < parents.length; i++) {
-				parents[i].removePropertyChangeListener(propertyNames[i], this);
-			}
-		}
+	/**
+	 * @return String value representing the binding.
+	 */
+	@Override
+	public String toString() {
+		return "Binding [ \n + " + right.object + " \n " + left.object + "\n ]";
 	}
 }
