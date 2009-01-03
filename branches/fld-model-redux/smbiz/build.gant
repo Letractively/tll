@@ -53,9 +53,21 @@ def compile_server_classpath = ant.path {
 	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
 	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
 	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
 	fileset(dir: property.'project.dir.tll.libs') {
+		include(name: '*.jar')
+	}
+}
+	
+def compile_client_classpath = ant.path {
+	pathelement(location: "${property.'project.dir.build'}/classes-server")
+	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
+	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
+	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
+	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
 }
@@ -65,6 +77,7 @@ def compile_test_classpath = ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-dev-windows.jar")
 	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
 	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
+	pathelement(location: "${property.'project.dir.tll'}/util/core/tll-core.jar")
 	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
 	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
 	fileset(dir: property.'project.dir.tll.libs') {
@@ -72,15 +85,6 @@ def compile_test_classpath = ant.path {
 	}
 	pathelement(location: "${property.'project.dir.build'}/classes-server")
 	pathelement(location: "${property.'project.dir.build'}/classes-client")
-}
-	
-def compile_client_classpath = ant.path {
-	pathelement(location: "${property.'project.dir.build'}/classes-server")
-	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
-	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
-	fileset(dir: property.'project.client.dir' + '/lib') {
-		include(name: '*.jar')
-	}
 }
 	
 // run classpath for db tasks
@@ -113,6 +117,8 @@ def gwt_compile_classpath = ant.path {
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
+	pathelement(location: "${property.'project.dir.tll'}/util/core/tll-core.jar")
+	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
 }
 	
 // classpath for javadoc 
@@ -600,6 +606,7 @@ target (copyServerLib: 'Copies needed library files for the server') {
 	}
 	
 	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
+	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/core/dist/tll-core.jar", preservelastmodified:true)
 	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
 	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
 	
