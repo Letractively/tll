@@ -65,30 +65,30 @@ public class ModelClearTest extends AbstractModelTest {
 		assert source != null;
 
 		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
-			final IModelProperty srcPv = itr.next();
-			final PropertyType pvType = srcPv.getType();
+			final IModelProperty srcMp = itr.next();
+			final PropertyType pvType = srcMp.getType();
 			if(pvType.isValue()) {
 				// require cleared property value
-				final Object srcValue = srcPv.getValue();
+				final Object srcValue = srcMp.getValue();
 				TestUtils.validateEmpty(srcValue);
 			}
 			else if(pvType == PropertyType.RELATED_ONE) {
 				// drill into if not already visited
-				final ModelRefProperty srcGpv = (ModelRefProperty) srcPv;
-				final Model srcPvg = srcGpv.getModel();
-				visited.add(srcPvg);
-				if(srcPvg != null) {
-					validateClear(srcPvg, visited);
+				final ModelRefProperty srcMrp = (ModelRefProperty) srcMp;
+				final Model m = srcMrp.getModel();
+				visited.add(m);
+				if(m != null) {
+					validateClear(m, visited);
 				}
 			}
 			else if(pvType == PropertyType.RELATED_MANY) {
-				final RelatedManyProperty srcGlpv = (RelatedManyProperty) srcPv;
-				final List<Model> srcList = srcGlpv.getList();
-				if(srcList != null) {
-					for(final Model srcPvg : srcList) {
-						if(!visited.contains(srcPvg)) {
-							visited.add(srcPvg);
-							validateClear(srcPvg, visited);
+				final RelatedManyProperty srcRmp = (RelatedManyProperty) srcMp;
+				final List<Model> srcSet = srcRmp.getList();
+				if(srcSet != null) {
+					for(final Model m : srcSet) {
+						if(!visited.contains(m)) {
+							visited.add(m);
+							validateClear(m, visited);
 						}
 					}
 				}

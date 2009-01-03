@@ -48,7 +48,7 @@ public class DatePropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new DatePropertyValue(getPropertyName(), metadata, value == null ? null : new Date(value.getTime()));
+		return new DatePropertyValue(propertyName, metadata, value == null ? null : new Date(value.getTime()));
 	}
 
 	public final Object getValue() {

@@ -45,7 +45,7 @@ public class FloatPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new FloatPropertyValue(getPropertyName(), metadata, value == null ? null : new Float(value.floatValue()));
+		return new FloatPropertyValue(propertyName, metadata, value == null ? null : new Float(value.floatValue()));
 	}
 
 	public final Object getValue() {

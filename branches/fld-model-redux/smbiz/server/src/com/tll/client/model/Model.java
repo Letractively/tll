@@ -247,7 +247,13 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	}
 
 	public void setProperty(String propPath, Object value) throws PropertyPathException {
-		getModelProperty(propPath).setValue(value);
+		PropertyPath pp = new PropertyPath(propPath);
+		if(pp.isIndexed()) {
+			relatedMany(pp.deIndex()).setProperty(propPath, value);
+		}
+		else {
+			getModelProperty(propPath).setProperty(propPath, value);
+		}
 	}
 
 	/**
@@ -451,28 +457,22 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
-					List<Model> nlist = rmp.getList();
-					if(nlist == null) {
-						// ensure we have a list to attach indexed groups to later
-						nlist = new ArrayList<Model>(0);
-						rmp.setList(nlist);
-					}
+					List<Model> nset = rmp.getList();
 					if(atEnd) {
-						if(index >= nlist.size()) {
+						if(index >= nset.size()) {
 							throw new IndexOutOfRangeInPropPathException(pp.toString(), pname, index);
 						}
-						Model ng = nlist.get(index);
 						final IndexedProperty ip =
-								new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), ng, index);
+								new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), nset, index);
 						ip.changeSupport = changeSupport;
 						return ip;
 					}
 					// reset for next path
-					model = nlist.get(index);
+					model = rmp.getIndexedProperty(index).getModel();
 				}
 			}
 		}
-		throw new MalformedPropPathException(pp.toString());
+		throw new MalformedPropPathException(propPath);
 	}
 
 	/**
@@ -714,9 +714,6 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 		PropBinding binding = visited.find(model);
 		if(binding != null) return;
 
-		if((model.changeSupport == null && changeSupport == null) || (model.changeSupport != null && changeSupport != null)) {
-			throw new IllegalStateException("Model change support aggregation is out of sync.");
-		}
 		model.changeSupport = changeSupport;
 
 		visited.add(new PropBinding(model));
@@ -754,52 +751,50 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	}
 
 	/**
-	 * Automated way to ensure an <em>aggregated</em>
-	 * {@link PropertyChangeSupport} is referenced for all child
-	 * {@link IModelProperty}s in this {@link Model} instance.
-	 * @param add When <code>true</code>, the non-<code>null</code>
-	 *        {@link PropertyChangeSupport} member of this Model instance is set
-	 *        for all child {@link IModelProperty}s. If <code>false</code>, a
-	 *        <code>null</code> {@link PropertyChangeSupport} ref is propagated to
-	 *        all child {@link IModelProperty}s.
+	 * Propagates <em>this</em> model's {@link PropertyChangeSupport} reference to
+	 * all child model properies which is requird for <em>proper</em> handling of
+	 * property change events!
+	 * <p>
+	 * Used client-side only.
 	 */
-	private void aggregatePropertyChangeSupport(boolean add) {
-		if(add) {
-			if(changeSupport == null) {
-				// aggregate
-				setPropertyChangeSupport(this, new PropertyChangeSupport(this), new BindingStack<PropBinding>());
-			}
+	public void setAsRoot() {
+		if(changeSupport == null) {
+			changeSupport = new PropertyChangeSupport(this);
 		}
-		else {
-			if(changeSupport != null && !changeSupport.hasAnyListeners()) {
-				// de-aggregate
-				setPropertyChangeSupport(this, null, new BindingStack<PropBinding>());
-			}
+		else if(changeSupport.hasAnyListeners()) {
+			throw new IllegalStateException("Ineligable model for root");
+		}
+		setPropertyChangeSupport(this, changeSupport, new BindingStack<PropBinding>());
+	}
+
+	private void ensureChangeSupportAggregated() throws IllegalStateException {
+		if(changeSupport == null) {
+			throw new IllegalStateException("A root model must first be declared");
 		}
 	}
 
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		aggregatePropertyChangeSupport(true);
+		ensureChangeSupportAggregated();
 		changeSupport.addPropertyChangeListener(listener);
 	}
 
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		aggregatePropertyChangeSupport(true);
+		ensureChangeSupportAggregated();
 		changeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
 	public IPropertyChangeListener[] getPropertyChangeListeners() {
+		ensureChangeSupportAggregated();
 		return changeSupport.getPropertyChangeListeners();
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		ensureChangeSupportAggregated();
 		changeSupport.removePropertyChangeListener(listener);
-		aggregatePropertyChangeSupport(false);
 	}
 
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		changeSupport.removePropertyChangeListener(propertyName, listener);
-		aggregatePropertyChangeSupport(false);
 	}
 
 	@Override
@@ -816,7 +811,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	@Override
 	public String toString() {
-		return getRefKey().toString() + " [" + ((Object) this).hashCode() + ']';
+		return getRefKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
 	}
 
 }

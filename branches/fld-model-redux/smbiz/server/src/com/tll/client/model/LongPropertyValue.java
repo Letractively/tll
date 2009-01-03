@@ -45,7 +45,7 @@ public class LongPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new LongPropertyValue(getPropertyName(), metadata, value == null ? null : new Long(value.longValue()));
+		return new LongPropertyValue(propertyName, metadata, value == null ? null : new Long(value.longValue()));
 	}
 
 	public final Object getValue() {

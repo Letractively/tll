@@ -5,6 +5,8 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.util.StringUtil;
+
 /**
  * PropertyPath - Encapsulates a property path String providing convenience
  * methods for accessing and modifying its attributes.
@@ -54,13 +56,12 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Creates the index token given the numeric index and whether or not is is to
-	 * be bound or un-bound.
-	 * @param index The numeric index
-	 * @return The index token.
+	 * Is the given property path indexed?
+	 * @param propPath
+	 * @return true/false
 	 */
-	private static String indexToken(int index) {
-		return LEFT_INDEX_CHAR + Integer.toString(index) + RIGHT_INDEX_CHAR;
+	public static boolean isIndexed(String propPath) {
+		return StringUtil.isEmpty(propPath) ? false : (propPath.charAt(propPath.length() - 1) == RIGHT_INDEX_CHAR);
 	}
 
 	/**
@@ -75,19 +76,28 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Removes all indexing symbols from a property node String returning the
-	 * property name.
-	 * @param prop The property path node String
-	 * @return The stripped property name or <code>null</code> if the given prop
+	 * Removes indexing tokens from the end of the given property path.
+	 * @param indexedPropName The indexed property path
+	 * @return The de-indexed property name or <code>null</code> if the given prop
 	 *         is <code>null</code>.
 	 */
-	private static String strip(String prop) {
-		if(prop == null) return null;
+	public static String deIndex(String indexedPropName) {
+		if(indexedPropName != null && indexedPropName.length() > 0
+				&& indexedPropName.charAt(indexedPropName.length() - 1) == RIGHT_INDEX_CHAR) {
+			int si = indexedPropName.indexOf(LEFT_INDEX_CHAR);
+			if(si > 0) return indexedPropName.substring(0, si);
+		}
+		return indexedPropName;
+	}
 
-		int si = prop.indexOf(LEFT_INDEX_CHAR);
-		if(si > 0) return prop.substring(0, si);
-
-		return prop;
+	/**
+	 * Creates the index token given the numeric index and whether or not is is to
+	 * be bound or un-bound.
+	 * @param index The numeric index
+	 * @return The index token.
+	 */
+	private static String indexToken(int index) {
+		return LEFT_INDEX_CHAR + Integer.toString(index) + RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -229,6 +239,29 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Returns the numeric index.
+	 * <p>
+	 * E.g.: "indexable[3]" returns 3.
+	 * @return The resolved numeric index or <code>-1</code> if this property path
+	 *         empty or is not indexed.
+	 * @throws MalformedPropPathException When the index is non-numeric or
+	 *         negative.
+	 */
+	public int index() throws MalformedPropPathException {
+		return buf == null ? -1 : indexAt(len - 1);
+	}
+
+	/**
+	 * Strips indexing from the tail of this property path.
+	 * <p>
+	 * E.g.: "indexable[3]" will return "indexable"
+	 * @return String with ending index tokens stripped.
+	 */
+	public String deIndex() {
+		return deIndex(buf.toString());
+	}
+
+	/**
 	 * Returns the node path of the given node index. <br>
 	 * @param nodeIndex The node index
 	 * @return The node path
@@ -294,7 +327,7 @@ public final class PropertyPath {
 	 * @return The property name w/o indexing symbols
 	 */
 	public String nameAt(int nodeIndex) {
-		return buf == null ? null : strip(pathAt(nodeIndex));
+		return buf == null ? null : deIndex(pathAt(nodeIndex));
 	}
 
 	/**

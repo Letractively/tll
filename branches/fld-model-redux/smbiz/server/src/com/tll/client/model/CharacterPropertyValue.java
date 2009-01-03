@@ -45,8 +45,7 @@ public class CharacterPropertyValue extends AbstractPropertyValue implements ISe
 	}
 
 	public IPropertyValue copy() {
-		return new CharacterPropertyValue(getPropertyName(), metadata, value == null ? null : new Character(value
-				.charValue()));
+		return new CharacterPropertyValue(propertyName, metadata, value == null ? null : new Character(value.charValue()));
 	}
 
 	public final Object getValue() {

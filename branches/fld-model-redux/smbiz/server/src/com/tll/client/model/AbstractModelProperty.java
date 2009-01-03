@@ -7,6 +7,7 @@ package com.tll.client.model;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
+import com.tll.client.util.StringUtil;
 
 /**
  * AbstractModelProperty - Base class for all implemented {@link IModelProperty}
@@ -18,7 +19,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	/**
 	 * The property name.
 	 */
-	protected String propertyName;
+	protected/*final*/String propertyName;
 
 	/**
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
@@ -39,6 +40,9 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	protected AbstractModelProperty(String propertyName) {
 		super();
+		if(StringUtil.isEmpty(propertyName)) {
+			throw new IllegalArgumentException("A property name must be specified");
+		}
 		this.propertyName = propertyName;
 	}
 
@@ -46,21 +50,14 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		return propertyName;
 	}
 
-	public final void setPropertyName(String name) {
-		this.propertyName = name;
-	}
-
-	public Object getProperty(String propPath) throws PropertyPathException {
-		if(!propertyName.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
+	// NOTE: we ignore the propPath
+	public Object getProperty(String propPath) {
 		return getValue();
 	}
 
+	// NOTE: we ignore the propPath
+	@SuppressWarnings("unused")
 	public void setProperty(String propPath, Object value) throws PropertyPathException {
-		if(!propertyName.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
 		setValue(value);
 	}
 

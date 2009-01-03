@@ -50,7 +50,7 @@ public class StringPropertyValue extends AbstractPropertyValue implements ISelfF
 	}
 
 	public IPropertyValue copy() {
-		return new StringPropertyValue(getPropertyName(), metadata, value);
+		return new StringPropertyValue(propertyName, metadata, value);
 	}
 
 	public final Object getValue() {

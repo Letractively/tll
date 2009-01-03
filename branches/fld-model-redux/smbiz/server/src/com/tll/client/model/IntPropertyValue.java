@@ -45,7 +45,7 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 	}
 
 	public IPropertyValue copy() {
-		return new IntPropertyValue(getPropertyName(), metadata, value == null ? null : new Integer(value.intValue()));
+		return new IntPropertyValue(propertyName, metadata, value == null ? null : new Integer(value.intValue()));
 	}
 
 	public final Object getValue() {

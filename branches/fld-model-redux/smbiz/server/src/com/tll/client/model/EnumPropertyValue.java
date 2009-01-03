@@ -47,7 +47,7 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new EnumPropertyValue(getPropertyName(), metadata, value);
+		return new EnumPropertyValue(propertyName, metadata, value);
 	}
 
 	public Enum<?> getEnum() {

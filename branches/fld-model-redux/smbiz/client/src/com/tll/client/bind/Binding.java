@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
+import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -29,7 +30,9 @@ import com.tll.client.validate.ValidationException;
 public final class Binding {
 
 	/**
-	 * DefaultPropertyChangeListener
+	 * DefaultPropertyChangeListener - Listens for property changes for a property
+	 * in a given <em>instance</em> and propagates changes to this property to a
+	 * given <em>target<em> property.
 	 * @author jpk
 	 */
 	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
@@ -80,8 +83,15 @@ public final class Binding {
 				value = instance.converter.convert(value);
 			}
 
+			// resolve the property
+			String targetProperty = target.property;
+			if(propertyChangeEvent instanceof IndexedPropertyChangeEvent) {
+				targetProperty =
+						PropertyPath.index(targetProperty, ((IndexedPropertyChangeEvent) propertyChangeEvent).getIndex());
+			}
+
 			try {
-				target.object.setProperty(target.property, value);
+				target.object.setProperty(targetProperty, value);
 			}
 			catch(Exception e) {
 				throw new RuntimeException("Unable to set property: " + target.property, e);
@@ -148,6 +158,11 @@ public final class Binding {
 			for(int i = parents.length - 1; i >= 0; i--) {
 				parents[i].removePropertyChangeListener(propertyNames[i], this);
 			}
+		}
+
+		@Override
+		public String toString() {
+			return "[Nested Listener for: " + propertyName + " ] ";
 		}
 	} // NestedPropertyChangeListener
 
@@ -321,11 +336,10 @@ public final class Binding {
 	 * Sets the left hand property to the current value of the right.
 	 */
 	public void setLeft() {
-		if((left != null) && (right != null)) {
+		if((left != null) && (right != null) && right.object != null) {
 			try {
-				Object source = right.object == null ? this : right.object;
-				Object pv = right.object == null ? null : right.object.getProperty(right.property);
-				right.listener.propertyChange(new PropertyChangeEvent(source, right.property, null, pv));
+				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
+						.getProperty(right.property)));
 			}
 			catch(Exception e) {
 				throw new RuntimeException(e);
@@ -343,11 +357,10 @@ public final class Binding {
 	 * Sets the right object's property to the current value of the left.
 	 */
 	public void setRight() {
-		if((left != null) && (right != null)) {
+		if((left != null) && (right != null) && left.object != null) {
 			try {
-				Object source = left.object == null ? this : left.object;
-				Object pv = left.object == null ? null : left.object.getProperty(left.property);
-				left.listener.propertyChange(new PropertyChangeEvent(source, left.property, null, pv));
+				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
+						.getProperty(left.property)));
 			}
 			catch(Exception e) {
 				throw new RuntimeException(e);
@@ -363,6 +376,10 @@ public final class Binding {
 
 	/**
 	 * Establishes a two-way binding between the objects.
+	 * <p>
+	 * NOTE: Addition of property change listeners to the bindable is presumed to
+	 * have the smarts to discriminate on the property name and remove any
+	 * existing having the same name.
 	 */
 	public void bind() {
 		if((left != null) && (right != null)) {
@@ -656,13 +673,9 @@ public final class Binding {
 
 	private IBindable getBindableAtCollectionIndex(Iterable<IBindable> collection, int index) {
 		int i = 0;
-		IBindable result = null;
-
-		for(Iterator<IBindable> it = collection.iterator(); it.hasNext() && (i <= index); i++) {
-			result = it.next();
-			return result;
+		for(IBindable b : collection) {
+			if(i++ == index) return b;
 		}
-
 		throw new IndexOutOfBoundsException("Binding discriminator too high: " + index);
 	}
 

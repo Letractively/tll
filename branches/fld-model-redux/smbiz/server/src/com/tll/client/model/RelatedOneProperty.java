@@ -16,6 +16,11 @@ import com.tll.model.schema.PropertyType;
 public final class RelatedOneProperty extends ModelRefProperty {
 
 	/**
+	 * The related one model.
+	 */
+	private Model model;
+
+	/**
 	 * Constructor
 	 */
 	public RelatedOneProperty() {
@@ -30,7 +35,8 @@ public final class RelatedOneProperty extends ModelRefProperty {
 	 * @param model
 	 */
 	public RelatedOneProperty(EntityType relatedType, String propName, boolean reference, Model model) {
-		super(relatedType, propName, reference, model);
+		super(relatedType, propName, reference);
+		this.model = model;
 	}
 
 	public PropertyType getType() {
@@ -38,8 +44,13 @@ public final class RelatedOneProperty extends ModelRefProperty {
 	}
 
 	@Override
-	protected void fireModelChangeEvent(Model oldModel, Model newModel) {
-		assert changeSupport != null;
-		changeSupport.firePropertyChange(propertyName, oldModel, newModel);
+	public Model getModel() {
+		return model;
+	}
+
+	@Override
+	protected void doSetModel(Model oldModel, Model newModel) {
+		model = newModel;
+		if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldModel, newModel);
 	}
 }

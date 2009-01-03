@@ -115,74 +115,102 @@ public final class TestUtils {
 	 * copied model's properties.
 	 * @param source
 	 * @param copy
-	 * @param ignoreReferenceFlag Ignore the isReference property for related
-	 *        model properties?
+	 * @param compareReferences Ignore the isReference property for related model
+	 *        properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	public static void validateCopy(final Model source, final Model copy, final boolean ignoreReferenceFlag)
+	public static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
 			throws Exception {
-		validateCopy(source, copy, ignoreReferenceFlag, new ArrayList<Model>());
+		compare(source, copy, compareReferences, true, new ArrayList<Model>());
 	}
 
 	/**
-	 * Called by {@link #validateCopy(Model, Model)} and enables recursion.
+	 * Checks for {@link Model} instance equality.
+	 * @param source
+	 * @param target
+	 * @param compareReferences Ignore the isReference property for related model
+	 *        properties?
+	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	private static void validateCopy(Model source, Model copy, final boolean ignoreReferenceFlag, List<Model> visited)
-			throws Exception {
-		assert source != null && copy != null;
+	public static void equals(final Model source, final Model target, final boolean compareReferences) throws Exception {
+		compare(source, target, compareReferences, false, new ArrayList<Model>());
+	}
+
+	/**
+	 * Compares two {@link Model} instances.
+	 * <p>
+	 * <em><b>IMPT: </b>This method doesn't consider those properties in the target that do <b>not</b> exist on the source.</em>
+	 * @param source The source
+	 * @param target The target
+	 * @param compareReferences Compare nested relational properties marked as
+	 *        reference?
+	 * @param requireDistinctModelProperties Fail if any encountered
+	 *        {@link IModelProperty} on the source is equal by memory address on
+	 *        the copy?
+	 * @param visited
+	 * @throws Exception
+	 */
+	private static void compare(Model source, Model target, final boolean compareReferences,
+			boolean requireDistinctModelProperties, List<Model> visited) throws Exception {
+		assert source != null && target != null;
 
 		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
-			final IModelProperty srcPv = itr.next();
-			final String propName = srcPv.getPropertyName();
-			final IModelProperty cpyPv = copy.getModelProperty(propName);
+			final IModelProperty srcProp = itr.next();
+			final String propName = srcProp.getPropertyName();
+			final IModelProperty tgtProp = target.getModelProperty(propName);
 
 			// verify like types
-			TestUtils.validateEqualTypes(srcPv, cpyPv);
+			TestUtils.validateEqualTypes(srcProp, tgtProp);
 
-			// ensure the copy is not the source!
-			TestUtils.validateNotEqualByMemoryAddress(srcPv, cpyPv);
+			if(requireDistinctModelProperties) {
+				// ensure distinct memory address
+				TestUtils.validateNotEqualByMemoryAddress(srcProp, tgtProp);
+			}
 
-			final PropertyType pvType = srcPv.getType();
+			final PropertyType pvType = srcProp.getType();
 			if(pvType.isValue()) {
 				// require logical equals
-				final Object srcValue = srcPv.getValue();
-				final Object cpyValue = cpyPv.getValue();
-				TestUtils.validateEquals(srcValue, cpyValue);
+				final Object srcValue = srcProp.getValue();
+				final Object tgtValue = tgtProp.getValue();
+				TestUtils.validateEquals(srcValue, tgtValue);
 			}
 			else if(pvType == PropertyType.RELATED_ONE) {
 				// drill into if not already visited
-				final ModelRefProperty srcGpv = (ModelRefProperty) srcPv;
-				final ModelRefProperty cpyGpv = (ModelRefProperty) cpyPv;
-				final Model srcPvg = srcGpv.getModel();
-				final Model cpyPvg = cpyGpv.getModel();
-				if(srcPvg == null && cpyPvg != null) {
-					throw new Exception("Source prop val group found null but not the copy!");
+				final ModelRefProperty src = (ModelRefProperty) srcProp;
+				final ModelRefProperty tgt = (ModelRefProperty) tgtProp;
+				final Model srcModel = src.getModel();
+				final Model tgtModel = tgt.getModel();
+				if(srcModel == null && tgtModel != null) {
+					throw new Exception("Nested source model null but not on the target for prop: " + propName);
 				}
-				else if((ignoreReferenceFlag || !srcGpv.isReference()) && srcPvg != null && !visited.contains(srcPvg)) {
-					visited.add(srcPvg);
-					validateCopy(srcPvg, cpyPvg, ignoreReferenceFlag, visited);
+				else if(tgtModel == null && srcModel != null) {
+					throw new Exception("Nested source model non-null but not on the target for prop: " + propName);
+				}
+				else if((compareReferences || !src.isReference()) && srcModel != null && !visited.contains(srcModel)) {
+					visited.add(srcModel);
+					compare(srcModel, tgtModel, compareReferences, requireDistinctModelProperties, visited);
 				}
 			}
 			else if(pvType == PropertyType.RELATED_MANY) {
-				final RelatedManyProperty srcGlpv = (RelatedManyProperty) srcPv;
-				final RelatedManyProperty cpyGlpv = (RelatedManyProperty) cpyPv;
-				final List<Model> srcList = srcGlpv.getList();
-				final List<Model> cpyList = cpyGlpv.getList();
+				final RelatedManyProperty src = (RelatedManyProperty) srcProp;
+				final RelatedManyProperty tgt = (RelatedManyProperty) tgtProp;
+				final Collection<Model> srcSet = src.getList();
+				final Collection<Model> tgtSet = tgt.getList();
 
-				if((srcList == null && cpyList != null) || (srcList != null && cpyList == null)) {
-					throw new Exception("Source and copy group list property values differ by null");
+				if((srcSet == null && tgtSet != null) || (srcSet != null && tgtSet == null)) {
+					throw new Exception("Related many lists differ by null for prop:" + propName);
 				}
-				if(srcList != null) {
-					if(srcList.size() != cpyList.size()) {
-						throw new Exception("Source and copy group list property sizes differ");
+				if(srcSet != null) {
+					if(srcSet.size() != tgtSet.size()) {
+						throw new Exception("Source and copy related many list sizes differ for prop: " + propName);
 					}
-					if(ignoreReferenceFlag || !srcGlpv.isReference()) {
-						final Iterator<Model> citr = cpyList.iterator();
-						for(final Model srcPvg : srcList) {
+					if(compareReferences || !src.isReference()) {
+						final Iterator<Model> citr = tgtSet.iterator();
+						for(final Model srcPvg : srcSet) {
 							final Model cpyPvg = citr.next();
 							if(!visited.contains(srcPvg)) {
 								visited.add(srcPvg);
-								validateCopy(srcPvg, cpyPvg, ignoreReferenceFlag, visited);
+								compare(srcPvg, cpyPvg, compareReferences, requireDistinctModelProperties, visited);
 							}
 						}
 					}

@@ -46,8 +46,7 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 	}
 
 	public IPropertyValue copy() {
-		return new BooleanPropertyValue(getPropertyName(), metadata, value == null ? null : new Boolean(value
-				.booleanValue()));
+		return new BooleanPropertyValue(propertyName, metadata, value == null ? null : new Boolean(value.booleanValue()));
 	}
 
 	public final Object getValue() {
