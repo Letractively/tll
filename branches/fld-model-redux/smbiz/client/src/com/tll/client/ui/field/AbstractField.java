@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
+import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
@@ -54,10 +55,10 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	private final String domId;
 
 	/**
-	 * The designated property name for this field. This is used as the the form
-	 * input name.
+	 * The designated name for this field. This is used as the the form input
+	 * name.
 	 */
-	private String propName;
+	private String name;
 
 	private boolean required = false;
 	private boolean readOnly = false;
@@ -182,15 +183,23 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return domId;
 	}
 
+	public final String getName() {
+		return name;
+	}
+
+	public final void setName(String name) {
+		if(StringUtil.isEmpty(name)) {
+			throw new IllegalArgumentException("A field must have a name.");
+		}
+		this.name = name;
+	}
+
 	public final String getPropertyName() {
-		return propName;
+		return getName();
 	}
 
 	public final void setPropertyName(String propName) {
-		if(StringUtil.isEmpty(propName)) {
-			throw new IllegalArgumentException("A field propName can't be empty.");
-		}
-		this.propName = propName;
+		setName(propName);
 	}
 
 	public final boolean isReadOnly() {
@@ -491,17 +500,25 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!this.propName.equals(propPath)) {
+		if(!this.name.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		return getValue();
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
-		if(!this.propName.equals(propPath)) {
+	public final void setProperty(String propPath, Object value) throws PropertyPathException {
+		if(!this.name.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		setValue(value);
+	}
+
+	/*
+	 * Promote from protected to public to conform to IField interface
+	 */
+	@Override
+	public void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
+		super.setPropertyChangeSupport(changeSupport);
 	}
 
 	@Override
@@ -526,16 +543,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		AbstractField other = (AbstractField) obj;
-		return (!propName.equals(other.propName));
+		return (!name.equals(other.name));
 	}
 
 	@Override
 	public final int hashCode() {
-		return 31 + propName.hashCode();
+		return 31 + name.hashCode();
 	}
 
 	@Override
 	public final String toString() {
-		return propName;
+		return name;
 	}
 }

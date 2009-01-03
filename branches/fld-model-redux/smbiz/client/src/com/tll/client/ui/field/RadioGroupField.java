@@ -97,7 +97,7 @@ public final class RadioGroupField extends AbstractField<String> {
 		}
 		if(!valueBound && old != null) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, null);
-			fireWidgetChange();
+			fireChangeListeners();
 		}
 	}
 
@@ -145,6 +145,6 @@ public final class RadioGroupField extends AbstractField<String> {
 		String cv = getValue();
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
 		old = cv;
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 }

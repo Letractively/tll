@@ -25,8 +25,6 @@ import com.tll.client.validate.ValidationException;
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
-// TODO enable support for relational/index removal and addition (i.e.: support
-// null as a new property value).
 public final class Binding {
 
 	/**

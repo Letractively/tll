@@ -82,6 +82,6 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 		super.onChange(sender);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 }

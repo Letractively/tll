@@ -4,9 +4,13 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.IBindable;
+import com.tll.client.bind.ISourcesPropertyChangeEvents;
+import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.validate.IValidator;
@@ -17,7 +21,7 @@ import com.tll.client.validate.IValidator;
  * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider, IValidator, SourcesChangeEvents, HasText {
+public interface IField extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IBindable, IValidator {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
@@ -128,4 +132,14 @@ public interface IField extends IPropertyNameProvider, IValidator, SourcesChange
 	 * @param validator The validtor to remove
 	 */
 	void removeValidator(IValidator validator);
+
+	/**
+	 * Sets the <em>aggregated</em> {@link PropertyChangeSupport} instance
+	 * relative to a designated <em>root</em> {@link IField}.
+	 * <p>
+	 * <em><b>IMPT: </b>This method <em>must</em> be called prior to employing any
+	 * methods on {@link ISourcesPropertyChangeEvents}!</em>
+	 * @param changeSupport The change support ref
+	 */
+	void setPropertyChangeSupport(PropertyChangeSupport changeSupport);
 }

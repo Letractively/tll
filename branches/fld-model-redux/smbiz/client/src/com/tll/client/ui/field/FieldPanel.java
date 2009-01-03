@@ -7,7 +7,6 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
-import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
@@ -67,10 +66,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		else if(f instanceof IBindable == false) {
-			throw new MalformedPropPathException("The property points to a non-boundWidget field.", propPath);
-		}
-		return (IBindable) f;
+		return f;
 	}
 
 	public Object getProperty(String propPath) throws PropertyPathException {

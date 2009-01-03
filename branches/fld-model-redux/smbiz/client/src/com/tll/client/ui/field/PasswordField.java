@@ -99,6 +99,6 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 		super.onChange(sender);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 }

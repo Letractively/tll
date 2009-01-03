@@ -100,6 +100,6 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 		super.onChange(sender);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 }

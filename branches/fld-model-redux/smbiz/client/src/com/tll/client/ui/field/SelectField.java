@@ -100,7 +100,7 @@ public final class SelectField extends AbstractField<Object> {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 
 	@Override
@@ -222,7 +222,7 @@ public final class SelectField extends AbstractField<Object> {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 
 	public String getText() {
@@ -268,7 +268,7 @@ public final class SelectField extends AbstractField<Object> {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
 		}
 
-		fireWidgetChange();
+		fireChangeListeners();
 	}
 
 	@Override

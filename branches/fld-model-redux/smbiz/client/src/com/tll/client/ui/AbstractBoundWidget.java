@@ -50,7 +50,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
-	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	protected PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -59,52 +59,20 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		super();
 	}
 
-	public final void addChangeListener(ChangeListener listener) {
-		if(changeListeners == null) {
-			changeListeners = new ChangeListenerCollection();
-		}
-		changeListeners.add(listener);
-	}
-
-	public final void removeChangeListener(ChangeListener listener) {
-		if(changeListeners != null) {
-			changeListeners.remove(listener);
-		}
-	}
-
-	/**
-	 * Fires a change event for subscribed {@link ChangeListener}s.
-	 */
-	protected final void fireWidgetChange() {
-		changeListeners.fireChange(this);
-	}
-
-	public final IPropertyChangeListener[] getPropertyChangeListeners() {
-		return changeSupport.getPropertyChangeListeners();
-	}
-
-	public final void addPropertyChangeListener(IPropertyChangeListener l) {
-		changeSupport.addPropertyChangeListener(l);
-	}
-
-	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener l) {
-		changeSupport.addPropertyChangeListener(propertyName, l);
-	}
-
-	public final void removePropertyChangeListener(IPropertyChangeListener l) {
-		changeSupport.removePropertyChangeListener(l);
-	}
-
-	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
-		changeSupport.removePropertyChangeListener(propertyName, l);
-	}
-
 	public final IBindingAction<? extends IBoundWidget<B, V, M>> getAction() {
 		return action;
 	}
 
 	public final void setAction(IBindingAction<? extends IBoundWidget<B, V, M>> action) {
 		this.action = action;
+	}
+
+	public final IRenderer<V, B> getRenderer() {
+		return renderer;
+	}
+
+	public final void setRenderer(IRenderer<V, B> renderer) {
+		this.renderer = renderer;
 	}
 
 	public final Comparator<B> getComparator() {
@@ -142,12 +110,67 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
 	}
 
-	public final IRenderer<V, B> getRenderer() {
-		return renderer;
+	public final void addChangeListener(ChangeListener listener) {
+		if(changeListeners == null) {
+			changeListeners = new ChangeListenerCollection();
+		}
+		changeListeners.add(listener);
 	}
 
-	public final void setRenderer(IRenderer<V, B> renderer) {
-		this.renderer = renderer;
+	public final void removeChangeListener(ChangeListener listener) {
+		if(changeListeners != null) {
+			changeListeners.remove(listener);
+		}
+	}
+
+	/**
+	 * Fires a change event for subscribed {@link ChangeListener}s.
+	 */
+	protected final void fireChangeListeners() {
+		changeListeners.fireChange(this);
+	}
+
+	protected void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
+		if(changeSupport != null && (this.changeSupport != null && this.changeSupport.hasAnyListeners())) {
+			throw new IllegalStateException(toString() + " already references a property change support reference");
+		}
+		this.changeSupport = changeSupport;
+	}
+
+	private void ensureChangeSupportAggregated() throws IllegalStateException {
+		if(changeSupport == null) {
+			throw new IllegalStateException("No aggregated property change support set");
+		}
+	}
+
+	public final IPropertyChangeListener[] getPropertyChangeListeners() {
+		ensureChangeSupportAggregated();
+		return changeSupport.getPropertyChangeListeners();
+	}
+
+	public final void addPropertyChangeListener(IPropertyChangeListener l) {
+		ensureChangeSupportAggregated();
+		changeSupport.addPropertyChangeListener(l);
+	}
+
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener l) {
+		ensureChangeSupportAggregated();
+		changeSupport.addPropertyChangeListener(propertyName, l);
+	}
+
+	public final void removePropertyChangeListener(IPropertyChangeListener l) {
+		ensureChangeSupportAggregated();
+		changeSupport.removePropertyChangeListener(l);
+	}
+
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
+		ensureChangeSupportAggregated();
+		changeSupport.removePropertyChangeListener(propertyName, l);
+	}
+
+	@Override
+	public String toString() {
+		return "Bound Widget";
 	}
 
 	// This is driven in setModel()!!!!!
