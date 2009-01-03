@@ -4,7 +4,7 @@ Lists the necessary local environment and IDE settings for building and deployin
 =Required Software=
 The following software is required:
 || *Name* || *Version* ||
-|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_05+ ||
+|| [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_11+ ||
 || [http://www.eclipse.org/ eclipse] || 3.4.1+||
 || [http://groovy.codehaus.org/ groovy] || 1.5.7+ ||
 || [http://ant.apache.org/ ant] || 1.7.1+ ||
@@ -61,6 +61,7 @@ svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 
   * Build the tll libraries by invoking {{{gant dist}}} from a command line in the following in the listed order:
  {{{
+{TLL_ROOT}/core/
 {TLL_ROOT}/config/
 {TLL_ROOT}/util/
 {TLL_ROOT}/mail/
