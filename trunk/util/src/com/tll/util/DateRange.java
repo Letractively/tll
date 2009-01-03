@@ -2,14 +2,11 @@ package com.tll.util;
 
 import java.util.Date;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.tll.client.IMarshalable;
-
 /**
  * DateRange
  * @author jpk
  */
-public class DateRange implements IMarshalable, Cloneable {
+public class DateRange implements Cloneable {
 
 	public static final Date DATE_PAST = new Date(0L);
 
@@ -74,8 +71,7 @@ public class DateRange implements IMarshalable, Cloneable {
 
 	@Override
 	public String toString() {
-		return isEmpty() ? "Empty Date Range" : (DateTimeFormat.getShortDateFormat().format(start) + " - " + DateTimeFormat
-				.getShortDateFormat().format(end));
+		return isEmpty() ? "Empty Date Range" : (start.toString() + " - " + end.toString());
 	}
 
 	public boolean isEmpty() {
@@ -109,8 +105,8 @@ public class DateRange implements IMarshalable, Cloneable {
 		this.end = DATE_FUTURE;
 	}
 
-	/*
-	public Object clone() {
+	@Override
+	public DateRange clone() {
 		try {
 			DateRange cln = (DateRange) super.clone();
 
@@ -120,8 +116,7 @@ public class DateRange implements IMarshalable, Cloneable {
 			return cln;
 		}
 		catch(CloneNotSupportedException cnse) {
-			throw new IllegalStateException("Unable to a clone a DateRange! NOT SUPPORTED");
+			throw new Error("Unable to a clone a DateRange! NOT SUPPORTED");
 		}
 	}
-	*/
 }
