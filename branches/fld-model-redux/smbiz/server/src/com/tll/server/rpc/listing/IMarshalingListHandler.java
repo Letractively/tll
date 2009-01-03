@@ -6,8 +6,8 @@
 package com.tll.server.rpc.listing;
 
 import com.tll.client.model.Model;
+import com.tll.dao.SearchResult;
 import com.tll.listhandler.IDecoratedListHandler;
-import com.tll.listhandler.SearchResult;
 import com.tll.model.IEntity;
 
 /**

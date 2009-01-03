@@ -4,6 +4,8 @@
  */
 package com.tll.listhandler;
 
+import com.tll.dao.Sorting;
+
 /**
  * AbstractListHandler - Common base class to all {@link IListHandler}
  * implementations.

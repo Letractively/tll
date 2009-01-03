@@ -38,8 +38,8 @@ import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**

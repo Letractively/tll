@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingPayload.ListingStatus;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * ListingEvent - Fired when listing data is retrieved or updated for a targeted

@@ -20,7 +20,7 @@ import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.PagingUtil;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * ListingRequest - Issues listing commands to the server.

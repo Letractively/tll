@@ -22,9 +22,9 @@ import com.tll.client.ui.option.Option;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
+import com.tll.dao.SortColumn;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.SortColumn;
-import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**

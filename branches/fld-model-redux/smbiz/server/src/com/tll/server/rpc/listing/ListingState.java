@@ -9,7 +9,7 @@ package com.tll.server.rpc.listing;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * ListingState - Holds bare bones listing state for a single listing.

@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 7, 2008
  */
-package com.tll.listhandler;
+package com.tll.dao;
 
 import com.tll.client.model.PropertyPath;
 import com.tll.model.IEntity;

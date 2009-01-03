@@ -3,7 +3,7 @@
  * @author jpk
  * Jun 14, 2008
  */
-package com.tll.listhandler;
+package com.tll.dao;
 
 import java.util.List;
 

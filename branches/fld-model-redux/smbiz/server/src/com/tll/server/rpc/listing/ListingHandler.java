@@ -2,10 +2,10 @@ package com.tll.server.rpc.listing;
 
 import java.util.List;
 
+import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerException;
-import com.tll.listhandler.Sorting;
 
 /**
  * The {@link IListingHandler} implementation.

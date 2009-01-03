@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.tll.criteria.ICriteria;
+import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 
 /**

@@ -9,6 +9,9 @@ import java.util.Comparator;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+import com.tll.dao.SearchResult;
+import com.tll.dao.SortColumn;
+
 /**
  * {@link Comparator} that compares properties of beans via reflection employing
  * a {@link SortColumn} that dictates the order and Spring's {@link BeanWrapper}

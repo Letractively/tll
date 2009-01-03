@@ -27,9 +27,9 @@ import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.SimpleHyperLink;
-import com.tll.listhandler.SortColumn;
-import com.tll.listhandler.SortDir;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.SortColumn;
+import com.tll.dao.SortDir;
+import com.tll.dao.Sorting;
 
 /**
  * ListingTable - ListingWidget specific HTML table.

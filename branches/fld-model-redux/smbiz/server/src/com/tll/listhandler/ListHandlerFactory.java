@@ -5,6 +5,8 @@ import java.util.Collection;
 import com.tll.SystemError;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.util.CollectionUtil;
 

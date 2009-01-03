@@ -7,7 +7,7 @@ package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.ListingOp;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * DataListingOperator - {@link IListingOperator} based on an existing

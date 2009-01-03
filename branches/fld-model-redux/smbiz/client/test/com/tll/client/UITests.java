@@ -53,7 +53,7 @@ import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 import com.tll.model.EntityType;
 
 /**

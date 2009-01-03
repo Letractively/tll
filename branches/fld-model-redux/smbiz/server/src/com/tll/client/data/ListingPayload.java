@@ -6,7 +6,7 @@
 package com.tll.client.data;
 
 import com.tll.client.IMarshalable;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * ListingPayload - Response to a {@link ListingRequest}.

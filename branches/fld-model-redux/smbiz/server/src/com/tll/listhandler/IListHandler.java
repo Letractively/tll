@@ -2,6 +2,8 @@ package com.tll.listhandler;
 
 import java.util.List;
 
+import com.tll.dao.Sorting;
+
 /**
  * IListHandler - Definition for fetching chunks of an underlying, possibly very
  * large, list in a common manner.<br>

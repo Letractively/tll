@@ -33,7 +33,7 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringMapPropertyValue;
 import com.tll.client.model.StringPropertyValue;
-import com.tll.listhandler.SearchResult;
+import com.tll.dao.SearchResult;
 import com.tll.model.EntityAssembler;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;

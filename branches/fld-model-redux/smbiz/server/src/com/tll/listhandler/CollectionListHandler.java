@@ -3,6 +3,8 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
+import com.tll.dao.Sorting;
+
 /**
  * List handler implementation for a {@link java.util.Collection}.
  * @author jpk

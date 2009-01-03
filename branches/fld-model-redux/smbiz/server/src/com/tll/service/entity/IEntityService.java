@@ -10,8 +10,8 @@ import org.hibernate.validator.InvalidStateException;
 
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.IListHandlerDataProvider;
-import com.tll.listhandler.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.PrimaryKey;
