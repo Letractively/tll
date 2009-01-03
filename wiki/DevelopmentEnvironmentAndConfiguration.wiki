@@ -101,6 +101,9 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || subversive connectors 2 || [http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/ http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/] ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
 
+==Preferences==
+Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
+
 ----
 =smbiz project configuration=
   * In the {{{{TLL_ROOT}/smbiz/config}}} dir, create the necessary config override files with the following names:
