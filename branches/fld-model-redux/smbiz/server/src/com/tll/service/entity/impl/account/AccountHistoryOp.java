@@ -1,6 +1,6 @@
 package com.tll.service.entity.impl.account;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * AccountHistoryOp

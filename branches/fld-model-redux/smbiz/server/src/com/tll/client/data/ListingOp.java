@@ -5,7 +5,7 @@
 
 package com.tll.client.data;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * ListingOp - Defines the possible listing operations on a server-side listing.

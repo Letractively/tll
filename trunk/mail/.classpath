@@ -11,5 +11,5 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/log4j.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

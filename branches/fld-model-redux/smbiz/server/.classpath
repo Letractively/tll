@@ -47,5 +47,5 @@
 	<classpathentry kind="var" path="TLL_ROOT/util/dist/tll-util.jar" sourcepath="/TLL_ROOT/util/src"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

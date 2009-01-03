@@ -44,7 +44,6 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		this.metadata = metadata;
 	}
 
-	@Override
 	public final void clear() {
 		final Object oldValue = getValue();
 		if(oldValue != null) {
@@ -60,7 +59,6 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 	 */
 	protected abstract void doSetValue(Object value) throws IllegalArgumentException;
 
-	@Override
 	public final void setValue(Object value) throws IllegalArgumentException {
 		final Object oldValue = getValue();
 		if((value != oldValue) || (value != null && !value.equals(oldValue))

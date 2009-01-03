@@ -1,6 +1,6 @@
 package com.tll.model;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Enumeration used to identify entity types in the database. This way, changes

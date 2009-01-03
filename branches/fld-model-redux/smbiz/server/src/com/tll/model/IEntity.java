@@ -1,6 +1,6 @@
 package com.tll.model;
 
-import com.tll.util.IDescriptorProvider;
+import com.tll.IDescriptorProvider;
 
 /**
  * Base interface for all entities.

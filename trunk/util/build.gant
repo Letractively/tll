@@ -84,7 +84,7 @@ target (clean: 'clean directories') {
 	targetStart()
 	println()
 	println 'Cleaning directories...'
- 	ant.delete(dir: property.'project.dir.build')
+ 	ant.delete(dir: property.'project.dir' + '/build')
 	ant.delete(dir: property.'project.dir' + '/dist')
 	targetEnd()
 }

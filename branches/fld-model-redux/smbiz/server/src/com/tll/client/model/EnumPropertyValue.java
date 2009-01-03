@@ -3,9 +3,9 @@
  */
 package com.tll.client.model;
 
+import com.tll.INameValueProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
-import com.tll.util.INameValueProvider;
 
 /**
  * StringPropertyValue - Generic holder construct for entity properties.

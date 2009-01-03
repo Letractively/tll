@@ -2,7 +2,7 @@ package com.tll.service.acl;
 
 import org.acegisecurity.acl.basic.SimpleAclEntry;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 import com.tll.util.StringUtil;
 
 /**

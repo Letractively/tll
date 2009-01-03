@@ -7,5 +7,5 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-configuration.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-configuration-1.5-sources.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-lang.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

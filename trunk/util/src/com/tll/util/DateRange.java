@@ -105,7 +105,7 @@ public class DateRange implements Cloneable {
 		this.end = DATE_FUTURE;
 	}
 
-	@Override
+	/*
 	public DateRange clone() {
 		try {
 			DateRange cln = (DateRange) super.clone();
@@ -119,4 +119,5 @@ public class DateRange implements Cloneable {
 			throw new Error("Unable to a clone a DateRange! NOT SUPPORTED");
 		}
 	}
+	*/
 }
