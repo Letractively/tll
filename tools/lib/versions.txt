@@ -28,6 +28,7 @@ javassist.jar [from hibernate3]
 log4j.jar 1.2.15
 jakarta-oro.jar 2.0.8
 jta.jar 1.1
+junit.jar 4.5
 mail.jar 1.4.1
 mysql-connector-java-bin.jar 5.0.7
 servlet-api.jar 2.4
