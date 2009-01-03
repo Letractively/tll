@@ -3,6 +3,8 @@ package com.tll.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.tll.INameValueProvider;
+
 /**
  * Utility methods for enum classes.
  * @author jpk

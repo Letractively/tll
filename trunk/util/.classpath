@@ -13,5 +13,6 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jakarta-oro.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tll-core"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
