@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
-import com.tll.client.convert.DateConverter;
+import com.tll.client.bind.convert.DateConverter;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 

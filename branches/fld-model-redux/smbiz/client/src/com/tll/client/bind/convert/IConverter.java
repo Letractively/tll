@@ -3,7 +3,7 @@
  * @author jpk
  * Dec 22, 2008
  */
-package com.tll.client.convert;
+package com.tll.client.bind.convert;
 
 /**
  * IConverter - Indicates the ability to convert from one type to another type.

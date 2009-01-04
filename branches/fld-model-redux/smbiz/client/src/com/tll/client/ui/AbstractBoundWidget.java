@@ -9,7 +9,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
-import com.tll.client.convert.IConverter;
+import com.tll.client.bind.convert.IConverter;
 
 /**
  * AbstractBoundWidget

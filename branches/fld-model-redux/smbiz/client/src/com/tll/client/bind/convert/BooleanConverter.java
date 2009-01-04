@@ -3,7 +3,7 @@
  * @author jpk
  * Dec 27, 2008
  */
-package com.tll.client.convert;
+package com.tll.client.bind.convert;
 
 /**
  * BooleanConverter

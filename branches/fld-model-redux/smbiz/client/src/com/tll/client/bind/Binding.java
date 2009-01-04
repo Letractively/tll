@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.gwt.core.client.GWT;
-import com.tll.client.convert.IConverter;
+import com.tll.client.bind.convert.IConverter;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.validate.IValidationFeedback;
