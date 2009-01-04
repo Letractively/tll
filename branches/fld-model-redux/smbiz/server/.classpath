@@ -41,10 +41,10 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
 	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/core/dist/tll-core.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/mail/dist/tll-mail.jar" sourcepath="/TLL_ROOT/mail/src"/>
-	<classpathentry kind="var" path="TLL_ROOT/config/dist/tll-config.jar" sourcepath="/TLL_ROOT/config/src"/>
-	<classpathentry kind="var" path="TLL_ROOT/util/dist/tll-util.jar" sourcepath="/TLL_ROOT/util/src"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-core.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-core-src.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-mail.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-mail-src.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-config.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-config-src.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
 	<classpathentry kind="output" path="bin"/>

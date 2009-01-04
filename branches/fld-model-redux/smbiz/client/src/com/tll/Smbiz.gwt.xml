@@ -1,42 +1,61 @@
 <module>
-	<inherits name="com.google.gwt.user.User" />
-	<inherits name="com.google.gwt.i18n.I18N" />
+  <inherits name="com.google.gwt.user.User" />
+  <!-- <inherits name="com.google.gwt.i18n.I18N" /> un-comment to go international (commenting out means quicker compile) -->
 
-	<inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
-	<!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+  <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+  <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
 
-	<source>
-		<include name="util/DateRange.java" />
-		<include name="IDescriptorProvider.java" />
-		<include name="INameValueProvider.java" />
-		<include name="model/schema/PropertyType.java" />
-		<include name="model/schema/ISchemaProperty.java" />
-		<include name="model/schema/AbstractSchemaProperty.java" />
-		<include name="model/schema/PropertyMetadata.java" />
-		<include name="model/EntityType.java" />
-		<include name="model/impl/AccountStatus.java" />
-		<include name="model/impl/AddressType.java" />
-		<include name="model/impl/CreditCardType.java" />
+  <!-- non client package sources -->
+  <source>
+    <include name="IDescriptorProvider.java" />
+    <include name="INameValueProvider.java" />
+    <include name="util/DateRange.java" />
+    <include name="model/schema/PropertyType.java" />
+    <include name="model/schema/ISchemaProperty.java" />
+    <include name="model/schema/AbstractSchemaProperty.java" />
+    <include name="model/schema/PropertyMetadata.java" />
+    <include name="model/EntityType.java" />
+    <include name="model/impl/AccountStatus.java" />
+    <include name="model/impl/AddressType.java" />
+    <include name="model/impl/CreditCardType.java" />
     <include name="dao/SortDir.java" />
     <include name="dao/SortColumn.java" />
     <include name="dao/Sorting.java" />
-		<include name="criteria/CriteriaType.java" />
-		<include name="criteria/SelectNamedQuery.java" />
-		<include name="criteria/IQueryParam.java" />
-		<include name="listhandler/ListHandlerType.java" />
-		<include name="service/app/RefDataType.java" />
-	</source>
+    <include name="criteria/CriteriaType.java" />
+    <include name="criteria/SelectNamedQuery.java" />
+    <include name="criteria/IQueryParam.java" />
+    <include name="listhandler/ListHandlerType.java" />
+    <include name="service/app/RefDataType.java" />
+  </source>
+
+  <!-- client package sources -->
+  <source path="client" />
+
+  <public path="public" />
+  
+  <stylesheet src="css/reset.css" />
+  <stylesheet src="css/base.css" />
+  <stylesheet src="css/widget.css" />
+  <stylesheet src="css/hnav.css" />
+  <stylesheet src="css/msg.css" />
+  <stylesheet src="css/field.css" />
+  <stylesheet src="css/options.css" />
+  <stylesheet src="css/tableview.css" />
+  <stylesheet src="css/status.css" />
+  <stylesheet src="css/toolbar.css" />
+  <stylesheet src="css/viewpath.css" />
+  <stylesheet src="css/view.css" />
 
   <replace-with class="com.tll.client.cache.CookieStorage.CookieConstants">
     <when-type-is class="com.tll.client.cache.CookieStorage.CookieConstantsIE6" />
     <when-property-is name="user.agent" value="ie6" />
   </replace-with>
   
-	<replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
-		<when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
-		<any>
-			<when-property-is name="user.agent" value="ie6" />
-		</any>
-	</replace-with>
+  <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
+    <when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
+    <any>
+      <when-property-is name="user.agent" value="ie6" />
+    </any>
+  </replace-with>
 
 </module>

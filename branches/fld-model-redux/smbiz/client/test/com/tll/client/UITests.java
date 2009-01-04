@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressPanel;
 import com.tll.client.bind.IBindable;
@@ -169,7 +168,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 * Constructor
 		 */
 		public TestFieldPanel() {
-			super("Test Field Panel");
+			super();
 			ap = new AddressPanel<M>();
 			bf = FieldFactory.fcheckbox("bf", null, null);
 			bflabel = FieldFactory.fcheckbox("bflabel", "Boolean with Label", "Help Text");
@@ -210,7 +209,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 */
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
-		final TestFieldPanel fieldPanel = new TestFieldPanel();
+		final TestFieldPanel<Model> fieldPanel = new TestFieldPanel<Model>();
 		final EditPanel<Model> ep = new EditPanel<Model>(fieldPanel, true, true);
 		testPanel.add(ep);
 
