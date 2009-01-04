@@ -43,7 +43,7 @@ The following software is required:
 
   * Append these global ignores to the installed SVN config file:
  {{{
-global-ignores = build classes bin dist Desktop.ini *.log local.properties *.tmp .metadata .gwt-cache .gwt-tmp test-output tomcat Constants.properties local.config.properties
+global-ignores = build classes bin dist Desktop.ini *.log local.properties *.tmp .metadata www www-test .gwt-cache .gwt-tmp test-output tomcat Constants.properties local.config.properties
 }}}
 
   * Establish local working copies of the root tll project dir and tll tools dir:
