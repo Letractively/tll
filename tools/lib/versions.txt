@@ -38,4 +38,8 @@ spring.jar 2.5.1
 spring-aspects.jar 2.5.1
 spring-test.jar 2.5.1
 testng.jar 5.8-jdk15
+tll-config.jar 1.0
+tll-core.jar 1.0
+tll-mail.jar 1.0
+tll-util.jar 1.0
 velocity.jar 1.5
