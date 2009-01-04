@@ -38,6 +38,7 @@ The following software is required:
 {ANT_HOME}/bin
 {GANT_HOME}/bin
 {SUBVERSION_HOME}
+{GWT_HOME}
 }}}
 
   * Append these global ignores to the installed SVN config file:
@@ -121,4 +122,12 @@ debug true
 
 mail.host.primary mail.domain.com
 mail.dflt_user_email testemail@domain.com
+}}}
+
+----
+=misc=
+
+To create a GWT junit test case quickly, invoke the command:
+ {{{
+{TLL_ROOT}/smbiz/client>junitcreator -junit {TLL_ROOT}/tools/lib/junit.jar -module com.tll.Smbiz -eclipse smbiz-client com.tll.client.bind.{testclassname}
 }}}
