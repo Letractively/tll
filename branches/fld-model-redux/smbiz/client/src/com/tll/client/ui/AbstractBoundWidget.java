@@ -9,7 +9,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
-import com.tll.client.renderer.IRenderer;
+import com.tll.client.convert.IConverter;
 
 /**
  * AbstractBoundWidget
@@ -30,7 +30,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * Responsible for converting a <B> type to a <V> type.
 	 */
-	private IRenderer<V, B> renderer;
+	private IConverter<V, B> converter;
 
 	/**
 	 * The comparator.
@@ -67,12 +67,12 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		this.action = action;
 	}
 
-	public final IRenderer<V, B> getRenderer() {
-		return renderer;
+	public final IConverter<V, B> getConverter() {
+		return converter;
 	}
 
-	public final void setRenderer(IRenderer<V, B> renderer) {
-		this.renderer = renderer;
+	public final void setConverter(IConverter<V, B> converter) {
+		this.converter = converter;
 	}
 
 	public final Comparator<B> getComparator() {

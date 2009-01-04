@@ -35,7 +35,7 @@ import com.tll.client.validate.ValidationException;
  * AbstractField - Base class for non-group {@link IField}s.
  * @author jpk
  */
-public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField, HasFocus, ClickListener, ChangeListener {
+public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField<V>, HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -200,6 +200,10 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 	public final void setPropertyName(String propName) {
 		setName(propName);
+	}
+
+	public final void clear() {
+		setValue(null);
 	}
 
 	public final boolean isReadOnly() {
@@ -383,7 +387,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 			// final Object val = getValue();
 			// String sval = val == null ? null :
-			// ToStringRenderer.INSTANCE.render(val);
+			// ToStringConverter.INSTANCE.render(val);
 			String sval = getText();
 			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
 			rof.setText(sval);
@@ -506,11 +510,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return getValue();
 	}
 
-	public final void setProperty(String propPath, Object value) throws PropertyPathException {
+	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		if(!this.name.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
-		setValue(value);
+		try {
+			setValue(value);
+		}
+		catch(RuntimeException e) {
+			throw new Exception(e);
+		}
 	}
 
 	/*

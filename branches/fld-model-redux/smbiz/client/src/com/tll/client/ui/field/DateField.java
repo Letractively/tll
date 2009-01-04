@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
-import com.tll.client.renderer.DateRenderer;
+import com.tll.client.convert.DateConverter;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 
@@ -56,16 +56,10 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 	 */
 	public DateField(String propName, String labelText, String helpText, GlobalFormat dateFormat) {
 		super(propName, labelText, helpText);
-		setRenderer(DateRenderer.instance(dateFormat));
+		setConverter(DateConverter.instance(dateFormat));
 		db = new DateBox();
 		db.getDatePicker().addChangeHandler(this);
 		db.setDateFormat(Fmt.getDateTimeFormat(dateFormat));
-	}
-
-	public void onChange(ChangeEvent<Date> event) {
-		super.onChange(this);
-		fireChangeListeners();
-		changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), event.getNewValue());
 	}
 
 	@Override
@@ -87,9 +81,15 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 
 	public void setValue(Object value) {
 		final Date old = getValue();
-		final Date newval = value == null ? null : getRenderer().render(value);
+		final Date newval = value == null ? null : getConverter().convert(value);
 		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
 			db.getDatePicker().setSelectedDate(newval);
 		}
+	}
+
+	public void onChange(ChangeEvent<Date> event) {
+		super.onChange(this);
+		fireChangeListeners();
+		changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), event.getNewValue());
 	}
 }

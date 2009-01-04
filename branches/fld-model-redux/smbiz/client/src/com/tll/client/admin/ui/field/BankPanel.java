@@ -28,7 +28,7 @@ public final class BankPanel<M extends IBindable> extends FieldPanel<M> {
 	 * Constructor
 	 */
 	public BankPanel() {
-		super("Bank Info");
+		super();
 		initWidget(canvas);
 	}
 

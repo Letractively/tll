@@ -41,7 +41,7 @@ public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 	 * Constructor
 	 */
 	public UserPanel() {
-		super("User");
+		super();
 	}
 
 	@Override

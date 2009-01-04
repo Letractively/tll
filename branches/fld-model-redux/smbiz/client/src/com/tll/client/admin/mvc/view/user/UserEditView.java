@@ -7,6 +7,7 @@ package com.tll.client.admin.mvc.view.user;
 
 import com.tll.client.admin.ui.field.user.UserPanel;
 import com.tll.client.data.AuxDataRequest;
+import com.tll.client.model.Model;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
@@ -45,7 +46,7 @@ public class UserEditView extends EditView {
 	 * Constructor
 	 */
 	public UserEditView() {
-		super(new UserPanel(), null);
+		super(new UserPanel<Model>(), null);
 	}
 
 	@Override

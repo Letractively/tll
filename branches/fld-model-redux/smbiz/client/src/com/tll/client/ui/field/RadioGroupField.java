@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.IRenderer;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * RadioGroupField
@@ -56,7 +56,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	public RadioGroupField(String propName, String labelText, String helpText, Collection<? extends Object> options,
 			boolean renderHorizontal) {
 		super(propName, labelText, helpText);
-		setRenderer(ToStringRenderer.INSTANCE);
+		setConverter(ToStringConverter.INSTANCE);
 		setOptions(options);
 		if(renderHorizontal) {
 			rbPanel = new HorizontalPanel();
@@ -81,9 +81,9 @@ public final class RadioGroupField extends AbstractField<String> {
 		old = getValue();
 		rbPanel.clear();
 		radioButtons.clear();
-		IRenderer<String, Object> renderer = getRenderer();
+		IConverter<String, Object> renderer = getConverter();
 		for(Object n : options) {
-			Object ro = renderer.render(n);
+			Object ro = renderer.convert(n);
 			String sval = ro == null ? null : ro.toString();
 			RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
 			rb.setStyleName(IField.STYLE_FIELD_LABEL);
@@ -110,7 +110,7 @@ public final class RadioGroupField extends AbstractField<String> {
 		int i = 0;
 		for(RadioButton rb : radioButtons) {
 			if(rb.isChecked()) {
-				return getRenderer().render(options.get(i));
+				return getConverter().convert(options.get(i));
 			}
 			i++;
 		}
@@ -118,7 +118,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	}
 
 	public void setValue(Object value) {
-		setText(getRenderer().render(value));
+		setText(getConverter().convert(value));
 	}
 
 	public String getText() {

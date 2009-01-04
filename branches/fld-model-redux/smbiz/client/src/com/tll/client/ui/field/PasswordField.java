@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.StringUtil;
 
 /**
@@ -29,7 +29,7 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 	 */
 	public PasswordField(String propName, String lblText, String helpText) {
 		super(propName, lblText, helpText);
-		setRenderer(ToStringRenderer.INSTANCE);
+		setConverter(ToStringConverter.INSTANCE);
 		tb = new PasswordTextBox();
 		// tb.addFocusListener(this);
 		tb.addChangeListener(this);
@@ -87,7 +87,7 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 
 	public void setValue(Object value) {
 		String old = getValue();
-		setText(getRenderer().render(value));
+		setText(getConverter().convert(value));
 		String newval = getValue();
 		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());

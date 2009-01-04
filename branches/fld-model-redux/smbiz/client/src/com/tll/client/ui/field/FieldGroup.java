@@ -14,10 +14,10 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.IDescriptorProvider;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.PropertyChangeSupport;
+import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
@@ -43,7 +43,7 @@ import com.tll.client.validate.ValidationException;
  * iterable construct.
  * @author jpk
  */
-public final class FieldGroup implements IField, Iterable<IField>, IDescriptorProvider {
+public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 
 	/**
 	 * Recursively searches for a single field whose property name matches the
@@ -52,10 +52,10 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param group The group to search in
 	 * @return The found IField or <code>null</code> if no matching field found
 	 */
-	private static IField findField(final String propertyName, Iterable<IField> group) {
+	private static IField<?> findField(final String propertyName, Iterable<IField<?>> group) {
 
 		// first go through the non-group child fields
-		for(IField fld : group) {
+		for(IField<?> fld : group) {
 			if(fld instanceof Iterable == false) {
 				if(fld.getPropertyName().equals(propertyName)) {
 					return fld;
@@ -63,8 +63,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			}
 		}
 
-		IField rfld;
-		for(IField fld : group) {
+		IField<?> rfld;
+		for(IField<?> fld : group) {
 			if(fld instanceof Iterable) {
 				rfld = findField(propertyName, (FieldGroup) fld);
 				if(rfld != null) return rfld;
@@ -82,21 +82,21 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param itr The iterable collection of fields
 	 * @param set The set of found fields
 	 */
-	private static void findFields(final String propPath, Iterable<IField> itr, Set<IField> set) {
-		List<Iterable<IField>> glist = null;
-		for(IField fld : itr) {
+	private static void findFields(final String propPath, Iterable<IField<?>> itr, Set<IField<?>> set) {
+		List<Iterable<IField<?>>> glist = null;
+		for(IField<?> fld : itr) {
 			if(fld instanceof Iterable == false) {
 				if(fld.getPropertyName().startsWith(propPath)) {
 					set.add(fld);
 				}
 			}
 			else {
-				if(glist == null) glist = new ArrayList<Iterable<IField>>();
+				if(glist == null) glist = new ArrayList<Iterable<IField<?>>>();
 				glist.add((FieldGroup) fld);
 			}
 		}
 		if(glist != null) {
-			for(Iterable<IField> fg : glist) {
+			for(Iterable<IField<?>> fg : glist) {
 				findFields(propPath, fg, set);
 			}
 		}
@@ -107,9 +107,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * property names.
 	 * @param parentPropPath The parent property path to set
 	 */
-	private static void setParentPropertyPath(IField field, String parentPropPath) {
+	private static void setParentPropertyPath(IField<?> field, String parentPropPath) {
 		if(field instanceof Iterable) {
-			for(IField f : (FieldGroup) field) {
+			for(IField<?> f : (FieldGroup) field) {
 				setParentPropertyPath(f, parentPropPath);
 			}
 		}
@@ -123,23 +123,17 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	/**
 	 * The collection of child fields.
 	 */
-	private final Set<IField> fields;
-
-	/**
-	 * A presentation worthy display name. Mainly used in providing validation
-	 * feedback to the UI.
-	 */
-	private String displayName;
-
-	/**
-	 * The Widget that is used to convey validation feedback.
-	 */
-	private Widget feedbackWidget;
+	private final Set<IField<?>> fields = new HashSet<IField<?>>();
 
 	/**
 	 * The field group validator(s).
 	 */
 	private CompositeValidator validator;
+
+	/**
+	 * The Widget that is used to convey validation feedback.
+	 */
+	private Widget feedbackWidget;
 
 	/**
 	 * The {@link PropertyChangeSupport} aggregate which is shared by all child
@@ -148,40 +142,22 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	private PropertyChangeSupport changeSupport;
 
 	/**
-	 * Constructor - Simple field group w/ no display name.
-	 * @param fields The fields that will make up this group
-	 * @param displayName The UI display name used for presenting validation
-	 *        feedback to the UI.
-	 * @param feedbackWidget The feedback Widget
-	 */
-	public FieldGroup(Set<IField> fields, String displayName, Widget feedbackWidget) {
-		super();
-		if(fields == null) throw new IllegalArgumentException("A set of fields must be specified.");
-		this.fields = fields;
-		this.displayName = displayName;
-		this.feedbackWidget = feedbackWidget;
-	}
-
-	/**
 	 * Constructor
-	 * @param displayName The UI display name used for presenting validation
-	 *        feedback to the UI.
-	 * @param feedbackWidget The feedback Widget
 	 */
-	public FieldGroup(String displayName, Widget feedbackWidget) {
-		this(new HashSet<IField>(), displayName, feedbackWidget);
+	public FieldGroup() {
+		super();
 	}
 
 	public String getName() {
-		return displayName;
+		throw new UnsupportedOperationException();
 	}
 
 	public void setName(String name) {
-		this.displayName = name;
+		throw new UnsupportedOperationException();
 	}
 
 	public String descriptor() {
-		return displayName;
+		throw new UnsupportedOperationException();
 	}
 
 	public String getPropertyName() {
@@ -209,7 +185,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		this.feedbackWidget = feedbackWidget;
 	}
 
-	public Iterator<IField> iterator() {
+	public Iterator<IField<?>> iterator() {
 		return fields.iterator();
 	}
 
@@ -218,7 +194,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @param propertyName
 	 * @return The found field or <code>null</code> if it doesn't exist.
 	 */
-	public IField getField(String propertyName) {
+	public IField<?> getField(String propertyName) {
 		return propertyName == null ? null : findField(propertyName, this);
 	}
 
@@ -228,8 +204,8 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @return Set of matching fields never <code>null</code> but may be empty
 	 *         (when no matches found).
 	 */
-	public Set<IField> getFields(String propPath) {
-		Set<IField> set = new HashSet<IField>();
+	public Set<IField<?>> getFields(String propPath) {
+		Set<IField<?>> set = new HashSet<IField<?>>();
 		findFields(propPath, this, set);
 		return set;
 	}
@@ -240,7 +216,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @throws IllegalArgumentException When this field instance already exists or
 	 *         another field exists with the same property name.
 	 */
-	public void addField(IField field) throws IllegalArgumentException {
+	public void addField(IField<?> field) throws IllegalArgumentException {
 		if(!fields.add(field)) {
 			throw new IllegalArgumentException(
 					"This field instance was already added or a field having the same property name already exists.");
@@ -256,7 +232,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *        an parent property path is is <em>replaced</em>.
 	 * @param field The field to add
 	 */
-	public void addField(String parentPropPath, IField field) {
+	public void addField(String parentPropPath, IField<?> field) {
 		setParentPropertyPath(field, parentPropPath);
 		addField(field);
 	}
@@ -265,9 +241,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Adds multiple fields to this group.
 	 * @param fields The fields to add
 	 */
-	public void addFields(Iterable<IField> fields) {
+	public void addFields(Iterable<IField<?>> fields) {
 		if(fields != null) {
-			for(IField fld : fields) {
+			for(IField<?> fld : fields) {
 				addField(fld);
 			}
 		}
@@ -277,9 +253,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Adds an array of fields to this group.
 	 * @param fields The array of fields to add
 	 */
-	public void addFields(IField[] fields) {
+	public void addFields(IField<?>[] fields) {
 		if(fields != null) {
-			for(IField fld : fields) {
+			for(IField<?> fld : fields) {
 				addField(fld);
 			}
 		}
@@ -292,9 +268,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *        fields' property names remain un-altered.
 	 * @param fields The fields to add
 	 */
-	public void addFields(String parentPropPath, Iterable<IField> fields) {
+	public void addFields(String parentPropPath, Iterable<IField<?>> fields) {
 		if(fields != null) {
-			for(IField fld : fields) {
+			for(IField<?> fld : fields) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -307,9 +283,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 *        fields' property names remain un-altered.
 	 * @param fields The fields to add
 	 */
-	public void addFields(String parentPropPath, IField[] fields) {
+	public void addFields(String parentPropPath, IField<?>[] fields) {
 		if(fields != null) {
-			for(IField fld : fields) {
+			for(IField<?> fld : fields) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -323,9 +299,9 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * @return <code>true</code> if the field was removed, <code>false</code> if
 	 *         not.
 	 */
-	public boolean removeField(IField field) {
+	public boolean removeField(IField<?> field) {
 		if(field == null || field == this) return false;
-		for(IField fld : fields) {
+		for(IField<?> fld : fields) {
 			if(fld == field) {
 				return fields.remove(field);
 			}
@@ -340,29 +316,29 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Removes a collection of fields from this group.
 	 * @param clc The collection of fields to remove.
 	 */
-	public void removeFields(Iterable<IField> clc) {
+	public void removeFields(Iterable<IField<?>> clc) {
 		if(clc != null) {
-			for(IField fld : clc) {
+			for(IField<?> fld : clc) {
 				removeField(fld);
 			}
 		}
 	}
 
 	public boolean isRequired() {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			if(field.isRequired()) return true;
 		}
 		return false;
 	}
 
 	public void setRequired(boolean required) {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			field.setRequired(required);
 		}
 	}
 
 	public boolean isReadOnly() {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			if(!field.isReadOnly()) return false;
 		}
 		return true;
@@ -372,35 +348,49 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	 * Iterates over the child fields, setting their readOnly property.
 	 */
 	public void setReadOnly(boolean readOnly) {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			field.setReadOnly(readOnly);
 		}
 	}
 
 	public boolean isEnabled() {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			if(!field.isEnabled()) return false;
 		}
 		return true;
 	}
 
 	public void setEnabled(boolean enabled) {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			field.setEnabled(enabled);
 		}
 	}
 
 	public boolean isVisible() {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			if(field.isVisible()) return true;
 		}
 		return false;
 	}
 
 	public void setVisible(boolean visible) {
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			field.setVisible(visible);
 		}
+	}
+
+	public void clear() {
+		for(IField<?> f : fields) {
+			f.clear();
+		}
+	}
+
+	public Object getValue() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setValue(Object value) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -436,7 +426,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 	public Object validate(Object value) throws ValidationException {
 		if(value != this) throw new IllegalArgumentException();
 		Map<Widget, List<Msg>> errors = new HashMap<Widget, List<Msg>>();
-		for(IField field : fields) {
+		for(IField<?> field : fields) {
 			try {
 				field.validate(((IBindable) field).getProperty(field.getPropertyName()));
 			}
@@ -490,8 +480,12 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 		return getField(propPath).getProperty(propPath);
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
-		getField(propPath).setProperty(propPath, value);
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		IField<?> f = getField(propPath);
+		if(f == null) {
+			throw new MalformedPropPathException("Unable to find field with name: " + propPath);
+		}
+		f.setProperty(propPath, value);
 	}
 
 	public void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
@@ -499,7 +493,7 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 			throw new IllegalStateException("Field group already references a property change support reference");
 		}
 		this.changeSupport = changeSupport;
-		for(IField f : fields) {
+		for(IField<?> f : fields) {
 			f.setPropertyChangeSupport(changeSupport);
 		}
 	}
@@ -537,6 +531,6 @@ public final class FieldGroup implements IField, Iterable<IField>, IDescriptorPr
 
 	@Override
 	public String toString() {
-		return descriptor() + " (FieldGroup)";
+		return "FieldGroup";
 	}
 }

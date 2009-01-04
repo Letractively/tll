@@ -37,7 +37,7 @@ public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldP
 	 * Constructor
 	 */
 	public AbstractInterfacePanel() {
-		super("Interface");
+		super();
 	}
 
 	@Override

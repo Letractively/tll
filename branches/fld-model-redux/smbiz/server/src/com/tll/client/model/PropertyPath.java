@@ -358,11 +358,19 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * @return The sub-property path beginning from the first node to second to
-	 *         last node or <code>null</code> if this path is empty or has only
-	 *         one node.
+	 * Resolves the parent property path of this property path.
+	 * <p>
+	 * <em>NOTE: If this property path is indexed, the parent property path is considered as the property path with out indexing.</em>
+	 * <p>
+	 * E.g.: <br>
+	 * "node1.node2.node3" resolves to "node1.node2" <br>
+	 * "node1[1]" resolves to "node1"
+	 * @return The parent property path of this property path.
 	 */
 	public String getParentPropertyPath() {
+		if(isIndexed()) {
+			return deIndex();
+		}
 		final int d = depth();
 		if(d < 2) return null;
 		final int indx = bufIndex(d - 1);

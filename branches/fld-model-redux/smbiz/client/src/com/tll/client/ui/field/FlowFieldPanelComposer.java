@@ -97,7 +97,7 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(IField field) {
+	public void addField(IField<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 		field.setFieldContainer(last.getParent());
 		field.setFieldLabelContainer(last.getParent());

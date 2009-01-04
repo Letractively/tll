@@ -26,7 +26,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 	 * Constructor
 	 */
 	public PaymentInfoPanel() {
-		super("Payment Info");
+		super();
 		creditCardPanel = new CreditCardPanel<M>();
 		bankPanel = new BankPanel<M>();
 		initWidget(tabPanel);

@@ -44,7 +44,7 @@ public final class CreditCardPanel<M extends IBindable> extends FieldPanel<M> {
 	 * Constructor
 	 */
 	public CreditCardPanel() {
-		super("Credit Card");
+		super();
 		initWidget(canvas);
 	}
 

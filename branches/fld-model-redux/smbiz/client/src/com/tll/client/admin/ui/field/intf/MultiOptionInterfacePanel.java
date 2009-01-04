@@ -48,7 +48,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionPanel() {
-			super("Option");
+			super();
 			initWidget(canvas);
 		}
 

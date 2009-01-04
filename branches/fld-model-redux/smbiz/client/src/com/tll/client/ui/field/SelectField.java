@@ -13,7 +13,7 @@ import java.util.Iterator;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.SimpleComparator;
 
 /**
@@ -80,7 +80,7 @@ public final class SelectField extends AbstractField<Object> {
 		ArrayList<Object> newSelected = new ArrayList<Object>();
 
 		for(Object item : options) {
-			lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer() == null ? item : getRenderer().render(item)));
+			lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
 			if(contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
 				newSelected.add(item);
@@ -147,7 +147,7 @@ public final class SelectField extends AbstractField<Object> {
 
 	public void addItem(final Object o) {
 		options.add(o);
-		lb.addItem(ToStringRenderer.INSTANCE.render(getRenderer().render(o)));
+		lb.addItem(ToStringConverter.INSTANCE.convert(getConverter().convert(o)));
 	}
 
 	public void removeItem(final Object o) {

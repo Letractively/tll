@@ -7,7 +7,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.SimpleComparator;
 import com.tll.client.util.StringUtil;
 
@@ -31,7 +31,7 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 	 */
 	public TextAreaField(String propName, String labelText, String helpText, int numRows, int numCols) {
 		super(propName, labelText, helpText);
-		setRenderer(ToStringRenderer.INSTANCE);
+		setConverter(ToStringConverter.INSTANCE);
 		setComparator(SimpleComparator.INSTANCE);
 		ta = new TextArea();
 		ta.addChangeListener(this);
@@ -81,7 +81,7 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 
 	public void setValue(Object value) {
 		String old = getValue();
-		setText(getRenderer().render(value));
+		setText(getConverter().convert(value));
 		String newval = getValue();
 		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());

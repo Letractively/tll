@@ -5,7 +5,7 @@ import java.util.Comparator;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
-import com.tll.client.renderer.IRenderer;
+import com.tll.client.convert.IConverter;
 
 /**
  * IBoundWidget - Common base class for a UI widgets that are boundWidget.
@@ -76,15 +76,15 @@ public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, Sour
 
 	/**
 	 * Responsible for providing a render ready value for display in the UI.
-	 * @return The renderer.
+	 * @return The converter.
 	 */
-	IRenderer<V, B> getRenderer();
+	IConverter<V, B> getConverter();
 
 	/**
 	 * Sets the renderer.
-	 * @param renderer The renderer to set
+	 * @param converter The renderer to set
 	 */
-	void setRenderer(IRenderer<V, B> renderer);
+	void setConverter(IConverter<V, B> converter);
 
 	/**
 	 * Gets the value in the "native" widget type.

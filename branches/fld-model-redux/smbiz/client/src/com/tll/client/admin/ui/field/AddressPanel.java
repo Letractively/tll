@@ -40,7 +40,7 @@ public final class AddressPanel<M extends IBindable> extends FieldPanel<M> {
 	 * Constructor
 	 */
 	public AddressPanel() {
-		super("Address");
+		super();
 		initWidget(canvas);
 	}
 

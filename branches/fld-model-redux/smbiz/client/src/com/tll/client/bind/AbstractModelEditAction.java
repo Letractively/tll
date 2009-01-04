@@ -6,13 +6,14 @@
 package com.tll.client.bind;
 
 import com.tll.client.ui.IBoundWidget;
+import com.tll.client.ui.field.FieldGroup;
 
 /**
  * AbstractModelEditAction - Common base class for all concrete model edit
  * action classes in the client app.
  * @author jpk
  */
-public abstract class AbstractModelEditAction<M extends IBindable, B extends IBoundWidget<M, M, M>> implements IBindingAction<B> {
+public abstract class AbstractModelEditAction<M extends IBindable, B extends IBoundWidget<M, FieldGroup, M>> implements IBindingAction<B> {
 
 	/**
 	 * The binding.

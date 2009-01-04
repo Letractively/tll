@@ -19,9 +19,10 @@ import com.tll.client.validate.IValidator;
  * IField - Abstraction for managing the display and editing of data.
  * <p>
  * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
+ * @param <V> The native field value type (usu. a String but not limited to it)
  * @author jpk
  */
-public interface IField extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IBindable, IValidator {
+public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IBindable, IValidator {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
@@ -53,6 +54,22 @@ public interface IField extends IPropertyNameProvider, SourcesChangeEvents, HasN
 	 * @param propName The property name
 	 */
 	void setPropertyName(String propName);
+
+	/**
+	 * @return The field value.
+	 */
+	V getValue();
+
+	/**
+	 * Sets the field's value.
+	 * @param value
+	 */
+	void setValue(Object value);
+
+	/**
+	 * Clears the field's value.
+	 */
+	void clear();
 
 	/**
 	 * @return <code>true</code> if this field is required.

@@ -28,5 +28,5 @@ public interface IFieldPanelComposer {
 	 * Adds a field to the canvas.
 	 * @param field
 	 */
-	void addField(IField field);
+	void addField(IField<?> field);
 }

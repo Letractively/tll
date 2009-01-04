@@ -17,7 +17,7 @@ import com.tll.client.ui.AbstractBoundWidget;
  * @author jpk
  * @param <M> The model type
  */
-public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidget<M, M, M> {
+public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidget<M, FieldGroup, M> {
 
 	/**
 	 * The collective group of all fields in this panel.
@@ -26,10 +26,19 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 
 	/**
 	 * Constructor
-	 * @param displayName The display name
 	 */
-	public FieldPanel(String displayName) {
-		fields = new FieldGroup(displayName, this);
+	public FieldPanel() {
+		this(new FieldGroup());
+	}
+
+	/**
+	 * Constructor
+	 * @param fields The required field group
+	 */
+	public FieldPanel(FieldGroup fields) {
+		super();
+		this.fields = fields;
+		this.fields.setFeedbackWidget(this);
 	}
 
 	/**
@@ -53,16 +62,16 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 	 */
 	protected abstract void draw();
 
-	public final M getValue() {
-		return getModel();
+	public final FieldGroup getValue() {
+		return getFieldGroup();
 	}
 
 	public final void setValue(M value) {
 		setModel(value);
 	}
 
-	private IBindable getBindableField(String propPath) throws PropertyPathException {
-		IField f = getFieldGroup().getField(propPath);
+	protected final IBindable getBindableField(String propPath) throws PropertyPathException {
+		IField<?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
@@ -73,7 +82,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		return getBindableField(propPath).getProperty(propPath);
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		getBindableField(propPath).setProperty(propPath, value);
 	}
 

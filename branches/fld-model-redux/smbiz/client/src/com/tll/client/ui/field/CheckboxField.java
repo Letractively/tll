@@ -7,8 +7,8 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.ToBooleanRenderer;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.BooleanConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * CheckboxField
@@ -33,7 +33,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	public CheckboxField(String propName, String labelText, String helpText) {
 		super(propName, null, helpText);
 		this.cblabelText = labelText;
-		setRenderer(ToBooleanRenderer.INSTANCE);
+		setConverter(BooleanConverter.INSTANCE);
 		cb = new CheckBox(cblabelText);
 		cb.setStyleName(STYLE_FIELD_LABEL);
 		// cb.addFocusListener(this);
@@ -57,7 +57,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	}
 
 	public String getText() {
-		return ToStringRenderer.INSTANCE.render(getValue());
+		return ToStringConverter.INSTANCE.convert(getValue());
 	}
 
 	public void setText(String text) {
@@ -74,7 +74,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 
 	public void setValue(Object value) {
 		Boolean old = getValue();
-		setChecked(value == null ? false : getRenderer().render(value).booleanValue());
+		setChecked(value == null ? false : getConverter().convert(value).booleanValue());
 		Boolean newval = getValue();
 		if((old != newval) && !old.equals(newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);

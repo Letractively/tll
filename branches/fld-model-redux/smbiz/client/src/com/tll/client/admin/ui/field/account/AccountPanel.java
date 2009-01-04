@@ -24,6 +24,7 @@ import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.IConverter;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
@@ -34,6 +35,7 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanelComposer;
 import com.tll.client.ui.field.IField;
+import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.ui.field.SelectField;
 import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
@@ -91,13 +93,13 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		 * @param addressType
 		 */
 		public AccountAddressPanel(AddressType addressType) {
-			super(addressType.getName());
+			super();
 			this.addressType = addressType;
 			initWidget(panel);
 		}
 
 		@Override
-		public void populateFieldGroup(FieldGroup fields) {
+		protected void populateFieldGroup(FieldGroup fields) {
 			name = FieldFactory.entityNameField();
 			// TODO fix since we don't have data fields anymore
 			// fields.addField(fdata("type", addressType));
@@ -125,7 +127,33 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * @author jpk
 	 * @param <M>
 	 */
-	static final class AddressesPanel<M extends IBindable> extends FieldPanel<M> implements TabListener {
+	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<M> implements IConverter<FieldGroup, M>, TabListener {
+
+		private final IConverter<FieldGroup, M> accountAddressRenderer = new IConverter<FieldGroup, M>() {
+
+			/*
+			name = FieldFactory.entityNameField();
+			// TODO fix since we don't have data fields anymore
+			// fields.addField(fdata("type", addressType));
+			fields.addField(name);
+			fields.addField("address", addressPanel.getFieldGroup());
+			*/
+
+			public FieldGroup convert(M m) throws IllegalArgumentException {
+				// assume the model to be an account address
+				FieldGroup fg = new FieldGroup();
+
+				try {
+					m.getProperty(Model.NAME_PROPERTY);
+					m.getProperty("address.firstName");
+				}
+				catch(PropertyPathException e) {
+					throw new IllegalArgumentException(e);
+				}
+
+				return fg;
+			}
+		};
 
 		private final TabPanel tabAddresses = new TabPanel();
 
@@ -133,10 +161,20 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super("Addresses");
+			super(null);
+
+			// TODO fix
+			setConverter(this);
+
 			// listen to tab events
 			tabAddresses.addTabListener(this);
 			initWidget(tabAddresses);
+		}
+
+		public FieldGroup convert(M o) throws IllegalArgumentException {
+			FieldGroup fg = new FieldGroup();
+			populateFieldGroup(fg);
+			return fg;
 		}
 
 		@Override
@@ -164,6 +202,11 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
 			// no-op
 		}
+
+		@Override
+		protected FieldGroup getPrototypeIndexedFieldGroup() {
+			return null;
+		}
 	}
 
 	private final FlowPanel panel = new FlowPanel();
@@ -190,7 +233,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * Constructor
 	 */
 	public AccountPanel() {
-		super("Account");
+		super();
 		initWidget(panel);
 		setAction(new AccountEditAction());
 	}
@@ -207,7 +250,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	}
 
 	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		if("paymentInfo".equals(propPath)) {
 			// return paymentInfoPanel;
 		}
@@ -236,7 +279,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 				final FieldGroup fields = getFieldGroup();
 				String s = getFieldGroup().getField("status").getText().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				IField f = fields.getField("dateCancelled");
+				IField<?> f = fields.getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}

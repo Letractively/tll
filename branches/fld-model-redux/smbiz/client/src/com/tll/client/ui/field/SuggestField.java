@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.renderer.ToStringRenderer;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.StringUtil;
 
 /**
@@ -36,11 +36,11 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 		if(suggestions == null || suggestions.size() < 1) {
 			throw new IllegalArgumentException("No suggestions specified.");
 		}
-		setRenderer(ToStringRenderer.INSTANCE);
+		setConverter(ToStringConverter.INSTANCE);
 
 		MultiWordSuggestOracle o = new MultiWordSuggestOracle();
 		for(Object s : suggestions) {
-			o.add(ToStringRenderer.INSTANCE.render(s));
+			o.add(ToStringConverter.INSTANCE.convert(s));
 		}
 		sb = new SuggestBox(o);
 		// sb.addFocusListener(this);
@@ -71,7 +71,7 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 
 	public void setValue(Object value) {
 		String old = getValue();
-		setText(getRenderer().render(value));
+		setText(getConverter().convert(value));
 		if(getValue() != old && getValue() != null && getValue().equals(old)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
