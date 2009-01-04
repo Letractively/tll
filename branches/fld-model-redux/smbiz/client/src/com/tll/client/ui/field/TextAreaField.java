@@ -7,7 +7,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.convert.ToStringConverter;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.SimpleComparator;
 import com.tll.client.util.StringUtil;
 

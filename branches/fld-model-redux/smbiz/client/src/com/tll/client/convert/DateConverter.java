@@ -3,7 +3,7 @@
  * @author jpk
  * Dec 29, 2008
  */
-package com.tll.client.bind.convert;
+package com.tll.client.convert;
 
 import java.util.Date;
 

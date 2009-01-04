@@ -7,8 +7,8 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.convert.BooleanConverter;
-import com.tll.client.bind.convert.ToStringConverter;
+import com.tll.client.convert.BooleanConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * CheckboxField

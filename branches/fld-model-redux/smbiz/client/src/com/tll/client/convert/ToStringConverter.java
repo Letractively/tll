@@ -1,4 +1,4 @@
-package com.tll.client.bind.convert;
+package com.tll.client.convert;
 
 /**
  * ToStringConverter - Converts an arbitrary {@link Object} to a {@link String}.
