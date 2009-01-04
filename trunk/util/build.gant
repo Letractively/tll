@@ -115,16 +115,50 @@ target (test: 'perform testing') {
 		jvmarg(value: '-ea')
 		xmlfileset(file:"${property.'project.dir'}/test/testng-util.xml")
 	}
+	targetEnd()
 }
 
-target (dist: 'distribute the project') {
+target (pack: 'package the project making it dist ready') {
 	targetStart()
 	depends(test)
 	println()
- 	println 'distributing...'
+ 	println 'packaging...'
+ 	
+ 	// create bytecode jar
 	ant.jar(
 		destfile: property.'project.dir' + '/dist/' + property.'app.name' + '.jar', 
 		basedir: property.'project.dir' + '/build/classes',
 		excludes: '**/*Test.class **/*.properties')
+	
+	// create source jar (for GWT)..
+ 	ant.jar(
+		destfile: property.'project.dir' + '/dist/' + property.'app.name' + '-src.jar', 
+		basedir: property.'project.dir' + '/src',
+		excludes: '**/*Test.java **/*.properties')
+	
+	targetEnd()
+}
+
+target (dist: 'distribute the project') {
+	targetStart()
+	
+	depends(pack)
+	println()
+ 	println 'distributing...'
+ 	
+	// copy jar to tll libs dir
+	ant.copy(todir: property.'dir.tll.libs', preservelastmodified:true) {
+		fileset(dir:property.'project.dir' + '/dist') {
+			include(name: property.'app.name' + '.jar')
+		}
+	}
+	
+	// copy source jar to tll libs src dir
+	ant.copy(todir: property.'dir.tll.libs' + '/src', preservelastmodified:true) {
+		fileset(dir: property.'project.dir' + '/dist') {
+			include(name: property.'app.name' + '-src.jar')
+		}
+	}
+
 	targetEnd()
 }
