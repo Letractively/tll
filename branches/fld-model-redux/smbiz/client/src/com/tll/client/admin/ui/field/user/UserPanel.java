@@ -51,7 +51,7 @@ public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 
 	class UserFieldsRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
@@ -77,7 +77,7 @@ public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 			cmpsr.newRow();
 			FlowPanel fp = new FlowPanel();
 			AddressFieldsRenderer afr = new AddressFieldsRenderer();
-			afr.render(fp, null, (FieldGroup) fg.getField("address"));
+			afr.render(fp, (FieldGroup) fg.getField("address"));
 			cmpsr.addWidget(fp);
 		}
 

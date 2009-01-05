@@ -25,7 +25,6 @@ import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.convert.IConverter;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
@@ -75,7 +74,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 
 	class AccountFieldsRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(panel);
 
@@ -133,6 +132,18 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		}
 	}
 
+	static final class AccountAddressFieldProvider implements IFieldGroupProvider {
+
+		public FieldGroup getFieldGroup() {
+			FieldGroup fg = new FieldGroup();
+			fg.addField(FieldFactory.entityNameField());
+			// TODO fix since we don't have data fields anymore
+			// fields.addField(fdata("type", addressType));
+			fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
+			return fg;
+		}
+	}
+
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
@@ -153,7 +164,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			initWidget(panel);
 			setRenderer(new IFieldRenderer() {
 
-				public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+				public void render(Panel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
@@ -164,7 +175,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 					cmpsr.newRow();
 					FlowPanel fp = new FlowPanel();
 					AddressFieldsRenderer r = new AddressFieldsRenderer();
-					r.render(fp, "address", fg);
+					r.render(fp, (FieldGroup) fg.getField("address"));
 					cmpsr.addWidget(fp);
 				}
 			});
@@ -172,17 +183,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
-			return (new IFieldGroupProvider() {
-
-				public FieldGroup getFieldGroup() {
-					FieldGroup fg = new FieldGroup();
-					fg.addField(FieldFactory.entityNameField());
-					// TODO fix since we don't have data fields anymore
-					// fields.addField(fdata("type", addressType));
-					fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
-					return fg;
-				}
-			}).getFieldGroup();
+			return (new AccountAddressFieldProvider()).getFieldGroup();
 		}
 	} // AccountAddressPanel
 
@@ -191,33 +192,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * @author jpk
 	 * @param <M>
 	 */
-	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<M> implements IConverter<FieldGroup, M>, TabListener {
-
-		private final IConverter<FieldGroup, M> accountAddressRenderer = new IConverter<FieldGroup, M>() {
-
-			/*
-			name = FieldFactory.entityNameField();
-			// TODO fix since we don't have data fields anymore
-			// fields.addField(fdata("type", addressType));
-			fields.addField(name);
-			fields.addField("address", addressPanel.getFieldGroup());
-			*/
-
-			public FieldGroup convert(M m) throws IllegalArgumentException {
-				// assume the model to be an account address
-				FieldGroup fg = new FieldGroup();
-
-				try {
-					m.getProperty(Model.NAME_PROPERTY);
-					m.getProperty("address.firstName");
-				}
-				catch(PropertyPathException e) {
-					throw new IllegalArgumentException(e);
-				}
-
-				return fg;
-			}
-		};
+	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<M> implements TabListener {
 
 		private final TabPanel tabAddresses = new TabPanel();
 
@@ -225,20 +200,11 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super(null);
-
-			// TODO fix
-			setConverter(this);
+			super("addresses", new AccountAddressFieldProvider());
 
 			// listen to tab events
 			tabAddresses.addTabListener(this);
 			initWidget(tabAddresses);
-		}
-
-		public FieldGroup convert(M o) throws IllegalArgumentException {
-			FieldGroup fg = new FieldGroup();
-			populateFieldGroup(fg);
-			return fg;
 		}
 
 		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
@@ -262,7 +228,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		protected FieldGroup getPrototypeIndexedFieldGroup() {
 			return null;
 		}
-	}
+	} // AddressesPanel
 
 	private final FlowPanel panel = new FlowPanel();
 

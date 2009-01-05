@@ -22,7 +22,7 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 

@@ -184,7 +184,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			initWidget(canvas);
 			setRenderer(new IFieldRenderer() {
 
-				public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+				public void render(Panel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 

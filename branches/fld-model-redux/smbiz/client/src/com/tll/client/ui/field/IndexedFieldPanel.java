@@ -45,12 +45,18 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 	private Object lastValue;
 
 	/**
+	 * Generates a new field group for fields displayed at any given index.
+	 */
+	private final IFieldGroupProvider indexedFieldGroupProvider;
+
+	/**
 	 * Constructor
 	 * @param parentPropertyPath
 	 */
-	public IndexedFieldPanel(String parentPropertyPath) {
+	public IndexedFieldPanel(String parentPropertyPath, IFieldGroupProvider indexedFieldGroupProvider) {
 		super();
 		this.parentPropertyPath = parentPropertyPath == null ? "" : parentPropertyPath;
+		this.indexedFieldGroupProvider = indexedFieldGroupProvider;
 	}
 
 	/**
@@ -87,14 +93,19 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 	}
 
 	/**
-	 * Adds an indexed field group syncing with the underlying field group.
-	 * @param fg The field group to add
+	 * Adds an indexed field group syncing with the underlying field group given a
+	 * model instance which is first converted to a field group.
+	 * @param model The model to be converted to a field group
 	 * @throws IllegalArgumentException When the field to add already exists in
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	protected final void add(FieldGroup fg) throws IllegalArgumentException {
-		assert fg != null;
+	private void add(M model) throws IllegalArgumentException {
+		assert model != null;
+
+		FieldGroup fg = indexedFieldGroupProvider.getFieldGroup();
+		updateIndexedFieldGroup(fg, model);
+
 		// update underlying list first
 		getFieldGroup().addField(fg);
 		list.add(fg);
@@ -181,7 +192,7 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 				if(index == size) {
 					if(value != null) {
 						// add
-						add(getConverter().convert((M) value));
+						add((M) value);
 					}
 				}
 				else if(index < size) {
@@ -206,7 +217,7 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 				throw new Exception(e);
 			}
 		}
-		else if(value != list) {
+		else {
 			// we're expecting a collection of bindables
 			if(value != null && value instanceof Collection == false) {
 				throw new Exception("The given value is not a collection");
@@ -222,7 +233,8 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 				// translate the collection, add to list and sync
 				Collection<M> mc = (Collection<M>) value;
 				for(M m : mc) {
-					FieldGroup fg = getConverter().convert(m);
+					FieldGroup fg = indexedFieldGroupProvider.getFieldGroup();
+					updateIndexedFieldGroup(fg, m);
 					try {
 						getFieldGroup().addField(fg);
 						list.add(fg);
@@ -239,4 +251,10 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 			if(changeSupport != null) changeSupport.firePropertyChange(propPath, list, value);
 		}
 	}
+
+	@Override
+	protected FieldGroup generateFieldGroup() {
+		throw new UnsupportedOperationException();
+	}
+
 }

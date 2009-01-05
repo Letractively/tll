@@ -75,9 +75,9 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 		initWidget(tabPanel);
 		setRenderer(new IFieldRenderer() {
 
-			public void render(Panel panel, String parentPropPath, FieldGroup fg) {
-				(new CreditCardFieldsRenderer()).render(creditCardPanel.getPanel(), null, creditCardPanel.getFieldGroup());
-				(new BankFieldsRenderer()).render(bankPanel.getPanel(), null, bankPanel.getFieldGroup());
+			public void render(Panel panel, FieldGroup fg) {
+				(new CreditCardFieldsRenderer()).render(creditCardPanel.getPanel(), creditCardPanel.getFieldGroup());
+				(new BankFieldsRenderer()).render(bankPanel.getPanel(), bankPanel.getFieldGroup());
 			}
 		});
 	}

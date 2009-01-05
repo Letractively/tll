@@ -16,9 +16,7 @@ public interface IFieldRenderer {
 	/**
 	 * Renders fields onto the given panel.
 	 * @param panel The panel onto which the fields are rendered
-	 * @param parentPropPath The parent property path that resolves the fields in
-	 *        the field group. May be <code>null<code>
 	 * @param fg The field group from which fields are retrieved to render
 	 */
-	void render(Panel panel, String parentPropPath, FieldGroup fg);
+	void render(Panel panel, FieldGroup fg);
 }

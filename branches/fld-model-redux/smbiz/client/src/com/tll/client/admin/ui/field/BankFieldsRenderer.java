@@ -16,7 +16,7 @@ import com.tll.client.ui.field.IFieldRenderer;
  */
 public class BankFieldsRenderer implements IFieldRenderer {
 
-	public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+	public void render(Panel panel, FieldGroup fg) {
 		final GridFieldComposer cmpsr = new GridFieldComposer();
 		cmpsr.setCanvas(panel);
 
