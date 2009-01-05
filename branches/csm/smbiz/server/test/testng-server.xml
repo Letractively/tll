@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-server-tests" verbose="5">
+  
+  <test name="server-tests">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="server.*" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.server.GuiceBootstrapperTest" />
+      <class name="com.tll.server.rpc.MarshalerTest" />
+    </classes>
+  </test>
+
+</suite>

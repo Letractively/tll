@@ -1,0 +1,24 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-entity-service-tests" verbose="5">
+  
+  <test name="user.password">
+    <classes>
+    	<class name="com.tll.service.entity.PasswordTest" />
+    </classes>
+  </test>
+
+  <test name="entity.service">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="entity.service" />
+      </run>
+    </groups>
+    <packages>
+    	<package name="com.tll.service.entity" />
+    </packages>
+  </test>
+
+</suite>

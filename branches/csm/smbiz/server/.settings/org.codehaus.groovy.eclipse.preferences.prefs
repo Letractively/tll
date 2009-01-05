@@ -1,0 +1,4 @@
+#Sat May 31 06:49:47 PDT 2008
+eclipse.preferences.version=1
+groovy.dont.check.package.vs.src.path=true
+groovy.dont.generate.class.files=true

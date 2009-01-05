@@ -1,0 +1,48 @@
+@CHARSET "ISO-8859-1";
+
+.viewToolbar {
+	width: 100%;
+	background-color: silver;
+}
+
+.viewToolbar .viewTitle {
+	width: 100%;
+	margin: 2px 0 2px 2px;
+	white-space: nowrap;
+	font-size: 110%;
+	font-weight: bold;
+}
+
+.viewToolbar td.button {
+	padding: 2px !important;
+}
+
+.viewContainerPinned {
+	width: 100%;
+	overflow: auto;
+}
+
+.viewContainerPinned .view {
+	margin-top: 10px;
+	width: 100%;
+}
+
+.viewContainerPopped {
+	border:2px solid #DFDFDF;
+	overflow: hidden;
+	background-color: #fff;
+}
+
+.viewContainerPopped .viewTitle {
+	cursor: move;
+	/*-moz-user-select:none;*/ 
+}
+
+.viewContainerPopped .view {
+	overflow: visible;
+	height: auto;
+}
+
+.viewContainerPopped .portal {
+	height: inherit !important;
+}

@@ -1,0 +1,2 @@
+gwt-user.jar 1.5
+gwt-incubator.jar r1336

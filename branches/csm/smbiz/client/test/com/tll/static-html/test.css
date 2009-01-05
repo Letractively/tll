@@ -1,0 +1,8 @@
+@CHARSET "ISO-8859-1";
+/* These styling rules shall NOT AFFECT the app referenced CSS rules. */
+
+table.statictest{
+	border-collapse:separate;
+	border-spacing:2;
+	border:1px solid blue;
+}
