@@ -47,5 +47,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-dev-windows.jar"/>
+	<classpathentry kind="var" path="GWT_INCUBATOR_ROOT/build/dist/gwt-incubator.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
