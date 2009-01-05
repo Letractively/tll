@@ -8,9 +8,9 @@ package com.tll.client.admin.ui.field;
 import java.util.Arrays;
 
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.model.impl.CreditCardType;
 import com.tll.service.app.RefDataType;
 
@@ -18,10 +18,10 @@ import com.tll.service.app.RefDataType;
  * CreditCardFieldsProvider
  * @author jpk
  */
-public class CreditCardFieldsProvider implements IFieldGroupProvider {
+public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 
-	public FieldGroup getFieldGroup() {
-		FieldGroup fg = new FieldGroup();
+	@Override
+	public void populateFieldGroup(FieldGroup fg) {
 		fg
 				.addField(FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays
 						.asList(CreditCardType.values())));
@@ -38,8 +38,6 @@ public class CreditCardFieldsProvider implements IFieldGroupProvider {
 		fg.addField(FieldFactory.ftext("paymentData_ccZip", "Postal Code", "Postal Code", 15));
 		fg.addField(FieldFactory.fsuggest("paymentData_ccCountry", "Country", "Country", AuxDataCache.instance()
 				.getRefDataMap(RefDataType.ISO_COUNTRY_CODES).values()));
-
-		return fg;
 	}
 
 }

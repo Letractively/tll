@@ -58,8 +58,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 	 */
 	public final FieldGroup getFieldGroup() {
 		if(fields == null) {
-			fields = generateFieldGroup();
-			fields.setFeedbackWidget(this);
+			setFieldGroup(generateFieldGroup());
 		}
 		return fields;
 	}
@@ -69,8 +68,13 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 	 * @param fields The required field group
 	 */
 	public final void setFieldGroup(FieldGroup fields) {
-		this.fields = fields;
-		this.fields.setFeedbackWidget(this);
+		if(fields == null) {
+			throw new IllegalArgumentException("A field group must be specified");
+		}
+		if(this.fields != fields) {
+			this.fields = fields;
+			this.fields.setFeedbackWidget(this);
+		}
 	}
 
 	/**

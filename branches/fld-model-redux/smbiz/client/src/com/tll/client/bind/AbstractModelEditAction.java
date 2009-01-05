@@ -5,48 +5,27 @@
  */
 package com.tll.client.bind;
 
-import com.tll.client.ui.IBoundWidget;
-import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.validate.ValidationFeedbackManager;
 
 /**
  * AbstractModelEditAction - Common base class for all concrete model edit
  * action classes in the client app.
  * @author jpk
  */
-public abstract class AbstractModelEditAction<M extends IBindable, B extends IBoundWidget<M, FieldGroup, M>> implements IBindingAction<B> {
+public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<M>> implements IBindingAction<FP> {
 
 	/**
 	 * The binding.
 	 */
 	protected final Binding binding = new Binding();
 
-	/**
-	 * The target boundWidget.
-	 */
-	protected B boundWidget;
-
-	/**
-	 * Constructor
-	 */
-	public AbstractModelEditAction() {
-		super();
-	}
-
 	public void execute() {
-		M m = boundWidget.getModel();
-		if(binding.isValid()) {
-
-		}
+		// TODO figure out
 	}
 
-	/**
-	 * Responsible for filling the <code>binding</code> member property.
-	 */
-	protected abstract void populateBinding(B bindable);
-
-	public final void setBindable(B bindable) {
-		populateBinding(bindable);
-		this.boundWidget = bindable;
+	public final void setBindable(FP fieldPanel) {
+		populateBinding(fieldPanel);
 	}
 
 	public void bind() {
@@ -56,6 +35,23 @@ public abstract class AbstractModelEditAction<M extends IBindable, B extends IBo
 	public void unbind() {
 		binding.unbind();
 		binding.getChildren().clear();
+	}
+
+	/**
+	 * Responsible for filling the <code>binding</code> member property.
+	 */
+	protected abstract void populateBinding(FP bindable);
+
+	/**
+	 * Adds a binding.
+	 * @param fieldPanel The field panel
+	 * @param property The common property path that resolves the target property
+	 *        for both the model and the field panel's field group
+	 */
+	protected void addBinding(FP fieldPanel, String property) {
+		binding.getChildren().add(
+				new Binding(fieldPanel, fieldPanel.getFieldGroup().getField(property), ValidationFeedbackManager.instance(),
+						property));
 	}
 
 }

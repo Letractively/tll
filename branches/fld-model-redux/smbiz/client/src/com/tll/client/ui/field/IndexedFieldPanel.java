@@ -62,7 +62,7 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 	/**
 	 * @return The number of indexed field groups.
 	 */
-	private int size() {
+	protected final int size() {
 		return list.size();
 	}
 
@@ -100,7 +100,7 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private void add(M model) throws IllegalArgumentException {
+	protected final void add(M model) throws IllegalArgumentException {
 		assert model != null;
 
 		FieldGroup fg = indexedFieldGroupProvider.getFieldGroup();
@@ -159,12 +159,10 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 		}
 	}
 
-	/**
-	 * @return A new distinct field group instance that represents the fields at
-	 *         an arbitrary index. Called when a new indexable field group is
-	 *         requested (add new).
-	 */
-	protected abstract FieldGroup getPrototypeIndexedFieldGroup();
+	@Override
+	public Object getProperty(String propPath) throws PropertyPathException {
+		return super.getProperty(propPath);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

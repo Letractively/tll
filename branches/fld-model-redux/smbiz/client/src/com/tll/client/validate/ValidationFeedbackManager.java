@@ -31,13 +31,10 @@ public final class ValidationFeedbackManager implements IValidationFeedback {
 	}
 
 	public void handleException(Object source, ValidationException exception) {
-		if(source instanceof Widget == false) throw new IllegalArgumentException("The source must be a widget.");
-		MsgManager.instance().post(false, exception.getErrors(), Position.BOTTOM, (Widget) source, -1, true)
-				.show();
+		MsgManager.instance().post(false, exception.getErrors(), Position.BOTTOM, (Widget) source, -1, true).show();
 	}
 
 	public void resolve(Object source) {
-		if(source instanceof Widget == false) throw new IllegalArgumentException("The source must be a widget.");
 		MsgManager.instance().clear((Widget) source, false);
 	}
 }

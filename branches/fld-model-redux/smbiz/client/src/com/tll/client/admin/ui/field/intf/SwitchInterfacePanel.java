@@ -55,22 +55,11 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
-		return (new InterfaceFieldProvider()).getFieldGroup();
-	}
+		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
 
-	/*
-	private void applyModel(IFieldGroupModelBinding bindingDef) {
-		// TODO re-impl
-		final Model modelInterface = bindingDef.resolveModel(EntityType.INTERFACE);
-		RelatedManyProperty pvOptions = modelInterface.relatedMany("options");
-		if(pvOptions == null || pvOptions.size() != 1) {
-			throw new IllegalArgumentException();
-		}
-		IndexedProperty ip = pvOptions.getIndexedProperty(0);
-		assert ip != null;
-		pnlOption.getFields().setPropertyName(ip.getPropertyName());
-		getFieldGroup().addField(pnlOption.getFields());
-		pnlOption.onBeforeBind(ip.getModel());
+		// the switch option
+		fg.addField("options[0]", (new OptionFieldProvider()).getFieldGroup());
+
+		return fg;
 	}
-		*/
 }

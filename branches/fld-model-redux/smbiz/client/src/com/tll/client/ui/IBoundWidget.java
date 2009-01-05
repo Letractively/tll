@@ -81,8 +81,8 @@ public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, Sour
 	IConverter<V, B> getConverter();
 
 	/**
-	 * Sets the renderer.
-	 * @param converter The renderer to set
+	 * Sets the converter.
+	 * @param converter The converter to set
 	 */
 	void setConverter(IConverter<V, B> converter);
 

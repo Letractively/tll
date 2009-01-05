@@ -276,7 +276,8 @@ public final class Binding {
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
-	public Binding(IBoundWidget<?, ?, ?> widget, IValidator validator, IValidationFeedback feedback, String property) {
+	public Binding(IBoundWidget<?, ?, ? extends IBindable> widget, IValidator validator, IValidationFeedback feedback,
+			String property) {
 		this(widget, property, null, validator, feedback, widget.getModel(), property, null, null, null);
 	}
 
@@ -288,7 +289,7 @@ public final class Binding {
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
-	public Binding(IBoundWidget<?, ?, ?> widget, String property) {
+	public Binding(IBoundWidget<?, ?, ? extends IBindable> widget, String property) {
 		this(widget, property, null, null, null, widget.getModel(), property, null, null, null);
 	}
 

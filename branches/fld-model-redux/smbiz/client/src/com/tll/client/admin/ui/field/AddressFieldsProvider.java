@@ -6,20 +6,19 @@
 package com.tll.client.admin.ui.field;
 
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.service.app.RefDataType;
 
 /**
  * AddressFieldsProvider
  * @author jpk
  */
-public class AddressFieldsProvider implements IFieldGroupProvider {
+public class AddressFieldsProvider extends AbstractFieldGroupProvider {
 
-	public FieldGroup getFieldGroup() {
-		FieldGroup fg = new FieldGroup();
-
+	@Override
+	public void populateFieldGroup(FieldGroup fg) {
 		fg.addField(FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30));
 		fg.addField(FieldFactory.ftext("firstName", "First Name", "First Name", 20));
 		fg.addField(FieldFactory.ftext("lastName", "Last Name", "Last Name", 20));
@@ -34,8 +33,6 @@ public class AddressFieldsProvider implements IFieldGroupProvider {
 		fg.addField(FieldFactory.ftext("postalCode", "Zip", "Zip", 20));
 		fg.addField(FieldFactory.fsuggest("country", "Country", "Country", AuxDataCache.instance().getRefDataMap(
 				RefDataType.ISO_COUNTRY_CODES).values()));
-
-		return fg;
 	}
 
 }
