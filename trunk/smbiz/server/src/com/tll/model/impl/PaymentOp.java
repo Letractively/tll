@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Payment Op
  * @author jpk
  */
-public enum PaymentOp implements INameValueProvider {
+public enum PaymentOp implements INameValueProvider<String> {
 	A("Authorize"),
 	D("Delay Capture"),
 	S("Sale"),
@@ -23,7 +23,7 @@ public enum PaymentOp implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

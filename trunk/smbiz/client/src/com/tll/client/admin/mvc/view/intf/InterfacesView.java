@@ -18,29 +18,28 @@ import com.tll.client.admin.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.admin.ui.field.intf.SwitchInterfacePanel;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.event.IEditListener;
-import com.tll.client.event.IListingListener;
-import com.tll.client.event.type.EditEvent;
-import com.tll.client.event.type.ListingEvent;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.StaticViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.event.type.EditEvent.EditOp;
-import com.tll.client.field.AbstractFieldGroupModelBinding;
+import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.search.impl.InterfaceSearch;
-import com.tll.client.ui.field.EditPanel;
+import com.tll.client.ui.edit.EditEvent;
+import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQuery;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.Sorting;
 import com.tll.model.EntityType;
 
 /**
@@ -65,20 +64,6 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	}
 
 	/**
-	 * InterfaceEditBinding
-	 * @author jpk
-	 */
-	private static final class InterfaceEditBinding extends AbstractFieldGroupModelBinding {
-
-		@Override
-		protected Model doResolveModel(EntityType modelType) throws IllegalArgumentException {
-			if(modelType == EntityType.INTERFACE) return getModel(null);
-			return null;
-		}
-
-	}
-
-	/**
 	 * InterfacesStack - Extended {@link StackPanel} tailored for on demand
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
@@ -95,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
-			private final EditPanel editPanel;
+			private final EditPanel<Model> editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
@@ -107,7 +92,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(new InterfaceEditBinding(), resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel<Model>(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -118,13 +103,13 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel resolveInterfacePanel(EntityType intfType) {
+			private AbstractInterfacePanel<Model> resolveInterfacePanel(EntityType intfType) {
 				switch(intfType) {
 					case INTERFACE_MULTI:
 					case INTERFACE_SINGLE:
-						return new MultiOptionInterfacePanel();
+						return new MultiOptionInterfacePanel<Model>();
 					case INTERFACE_SWITCH:
-						return new SwitchInterfacePanel();
+						return new SwitchInterfacePanel<Model>();
 					default:
 						throw new IllegalArgumentException();
 				}
@@ -249,7 +234,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		}
 
 		void handleModelChangeSuccess(ModelChangeEvent event) {
-			final Widget ew = event.getWidget();
+			final Widget ew = (Widget) event.getSource();
 			for(InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeSuccess(event);
@@ -259,7 +244,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		}
 
 		void handleModelChangeError(ModelChangeEvent event) {
-			final Widget ew = event.getWidget();
+			final Widget ew = (Widget) event.getSource();
 			for(InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeError(event);

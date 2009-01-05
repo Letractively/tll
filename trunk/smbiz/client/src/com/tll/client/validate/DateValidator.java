@@ -7,6 +7,7 @@ import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.util.StringUtil;
 
 /**
  * DateValidator
@@ -14,12 +15,31 @@ import com.tll.client.util.GlobalFormat;
  */
 public class DateValidator implements IValidator {
 
-	public static final DateValidator TIMESTAMP_VALIDATOR =
-			new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.TIMESTAMP));
+	private static final DateValidator TIMESTAMP_VALIDATOR =
+			new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIMESTAMP));
 
-	public static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.DATE));
+	private static final DateValidator DATE_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.DATE));
 
-	public static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.dateFormatBindings.get(GlobalFormat.TIME));
+	private static final DateValidator TIME_VALIDATOR = new DateValidator(Fmt.getDateTimeFormat(GlobalFormat.TIME));
+
+	/**
+	 * Factory method for obtaining a pre-baked {@link DateValidator}.
+	 * @param dateFormat
+	 * @return The appropriate {@link DateValidator}
+	 * @throws IllegalArgumentException When the given date format is
+	 *         <code>null</code> or invalid.
+	 */
+	public static final DateValidator instance(GlobalFormat dateFormat) {
+		switch(dateFormat) {
+			case DATE:
+				return DATE_VALIDATOR;
+			case TIME:
+				return TIME_VALIDATOR;
+			case TIMESTAMP:
+				return TIMESTAMP_VALIDATOR;
+		}
+		throw new IllegalArgumentException("A valid date format must be specified.");
+	}
 
 	private final DateTimeFormat dateFormat;
 
@@ -48,9 +68,10 @@ public class DateValidator implements IValidator {
 
 	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Date) return value;
-
+		final String s = value.toString();
+		if(StringUtil.isEmpty(s)) return value;
 		try {
-			return dateFormat.parse(value.toString());
+			return dateFormat.parse(s);
 		}
 		catch(Throwable e) {
 			throw new ValidationException(new Msg("Must be a date of format: '" + dateFormat.getPattern() + "'.",

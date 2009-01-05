@@ -4,10 +4,12 @@
 package com.tll.client.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.tll.client.bind.PropertyChangeEvent;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
@@ -18,54 +20,10 @@ import com.tll.model.schema.PropertyType;
 public final class RelatedManyProperty extends AbstractRelationalProperty implements Iterable<IndexedProperty> {
 
 	/**
-	 * The list of related many {@link Model}s.
-	 */
-	protected List<Model> list;
-
-	/**
-	 * Constructor
-	 */
-	public RelatedManyProperty() {
-		super();
-	}
-
-	/**
-	 * Constructor
-	 * @param propName
-	 * @param reference
-	 * @param manyType The related many Model type.
-	 * @param list List of {@link Model}s.
-	 */
-	public RelatedManyProperty(final EntityType manyType, final String propName, final boolean reference,
-			final List<Model> list) {
-		super(manyType, propName, reference);
-		this.list = list;
-	}
-
-	public PropertyType getType() {
-		return PropertyType.RELATED_MANY;
-	}
-
-	public final Object getValue() {
-		return list;
-	}
-
-	/**
-	 * Provides the encased List of {@link Model}s.
-	 */
-	public List<Model> getList() {
-		return list;
-	}
-
-	void setList(final List<Model> list) {
-		this.list = list;
-	}
-
-	/**
 	 * IndexedIterator
 	 * @author jpk
 	 */
-	private class IndexedIterator implements Iterator<IndexedProperty> {
+	public final class IndexedIterator implements Iterator<IndexedProperty> {
 
 		private int index = -1;
 		private final int size;
@@ -94,8 +52,137 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		}
 	}
 
+	/**
+	 * The list of related many {@link Model}s.
+	 */
+	protected List<Model> list;
+
+	/**
+	 * Constructor
+	 */
+	public RelatedManyProperty() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param propName
+	 * @param reference
+	 * @param manyType The related many Model type.
+	 * @param clc Collection of {@link Model}s.
+	 */
+	public RelatedManyProperty(final EntityType manyType, final String propName, final boolean reference,
+			final Collection<Model> clc) {
+		super(manyType, propName, reference);
+		setValue(clc);
+	}
+
+	public PropertyType getType() {
+		return PropertyType.RELATED_MANY;
+	}
+
+	public final Object getValue() {
+		return getList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setValue(Object value) throws IllegalArgumentException {
+		if(this.list == value) return;
+
+		if(value != null && !(value instanceof Collection)) {
+			throw new IllegalArgumentException("The value must be a collection of Model instances");
+		}
+
+		Collection<?> set = (Collection<?>) value;
+		for(Object o : set) {
+			if(o.getClass() != Model.class) {
+				throw new IllegalArgumentException("Element in list is not a Model instance.");
+			}
+		}
+
+		final Object old = this.list;
+
+		if(value instanceof List) {
+			this.list = (List) value;
+		}
+		else {
+			getList().addAll((Collection) value);
+		}
+
+		if(changeSupport != null) changeSupport.firePropertyChange(propertyName, old, value);
+	}
+
+	/**
+	 * Provides the encased List of {@link Model}s.
+	 * <p>
+	 * <em><b>IMPT:</b>Mutations made to this list do <b>NOT</b> invoke {@link PropertyChangeEvent}s.</em>
+	 */
+	public List<Model> getList() {
+		if(list == null) {
+			list = new ArrayList<Model>();
+		}
+		return list;
+	}
+
+	/**
+	 * Get an indexed property at the given index.
+	 * @param index The index
+	 * @return The {@link IndexedProperty} at the given index.
+	 */
+	protected IndexedProperty getIndexedProperty(int index) {
+		IndexedProperty ip = new IndexedProperty(relatedType, propertyName, isReference(), list, index);
+		ip.changeSupport = changeSupport;
+		return ip;
+	}
+
 	public Iterator<IndexedProperty> iterator() {
 		return new IndexedIterator();
+	}
+
+	@Override
+	public void setProperty(String propPath, Object value) throws PropertyPathException {
+		PropertyPath pp = new PropertyPath(propPath);
+		String parent = pp.deIndex();
+
+		if(!propertyName.equals(parent)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		if(value != null && value instanceof Model == false) {
+			throw new IllegalArgumentException("The value must be a Model instance");
+		}
+
+		final Model m = (Model) value;
+		Model old = null;
+
+		if(pp.isIndexed()) {
+			final int index = pp.index();
+			final int size = size();
+
+			if(index == size) {
+				if(m != null) {
+					// add
+					list.add(m);
+				}
+			}
+			else if(index < size) {
+				if(m != null) {
+					// replace
+					old = list.set(index, m);
+				}
+				else {
+					// remove
+					old = list.remove(index);
+				}
+			}
+			else {
+				throw new IndexOutOfBoundsException("Index " + index + " is out of bounds.");
+			}
+			if(changeSupport != null && old != value)
+				changeSupport.fireIndexedPropertyChange(propertyName, index, old, value);
+		}
+		else {
+			setValue(value);
+		}
 	}
 
 	/**
@@ -105,75 +192,23 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		return list == null ? 0 : list.size();
 	}
 
-	/**
-	 * Get an indexed property at the given index.
-	 * @param index The index
-	 * @return The {@link IndexedProperty} at the given index.
-	 */
-	public IndexedProperty getIndexedProperty(int index) {
-		return new IndexedProperty(relatedType, propertyName, isReference(), list.get(index), index);
-	}
-
-	/**
-	 * Adds a model to the related many collection returning the property name
-	 * that identifies the added model.
-	 * @param indexable The model to add
-	 * @return The property name identifying the newly added model.
-	 */
-	public String add(Model indexable) {
-		if(indexable == null) return null;
-		if(list == null) {
-			list = new ArrayList<Model>();
-		}
-		if(relatedType != null
-				&& !(indexable.getEntityType() == relatedType || relatedType.isSubtype(indexable.getEntityType()))) {
-			throw new IllegalArgumentException("The indexable model must be a " + relatedType.getName());
-		}
-		list.add(indexable);
-		return PropertyPath.index(getPropertyName(), list.size() - 1);
-	}
-
-	/**
-	 * Removes an indexed model by reference.
-	 * @param indexable The indexable model to remove
-	 * @return <code>true</code> if the indexed model was actually removed.
-	 */
-	public boolean remove(Model indexable) {
-		if(indexable == null || list == null) return false;
-		return list.remove(indexable);
-	}
-
-	/**
-	 * Removes an indexed model by index.
-	 * @param index The index of the indexed model to remove
-	 * @return The removed Model.
-	 * @throws IndexOutOfBoundsException When the index is out of bounds
-	 */
-	public Model remove(int index) throws IndexOutOfBoundsException {
-		if(list == null) return null;
-		return list.remove(index);
-	}
-
 	@Override
 	public String toString() {
-		final StringBuffer sb = new StringBuffer();
-		sb.append(getPropertyName());
-		sb.append("|ref:");
-		sb.append(isReference());
-		sb.append('|');
-		sb.append(":[");
+		final StringBuilder sb = new StringBuilder();
+		sb.append(propertyName);
+		sb.append(isReference() ? "|REF|" : "");
+		sb.append(" [");
 		if(list != null) {
-			for(final Iterator<Model> itr = list.iterator(); itr.hasNext();) {
-				final Model model = itr.next();
-				sb.append("hash:");
-				sb.append(model.hashCode());
+			for(Iterator<Model> itr = list.iterator(); itr.hasNext();) {
+				Model m = itr.next();
+				sb.append(m.toString());
 				if(itr.hasNext()) {
 					sb.append(", ");
 				}
 			}
 		}
 		else {
-			sb.append("null");
+			sb.append("-empty-");
 		}
 		sb.append(']');
 

@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Payment Processor
  * @author jpk
  */
-public enum PaymentProcessor implements INameValueProvider {
+public enum PaymentProcessor implements INameValueProvider<String> {
 	PFP("PayFloPro - Vital"),
 	CC("Cybercash");
 
@@ -20,7 +20,7 @@ public enum PaymentProcessor implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

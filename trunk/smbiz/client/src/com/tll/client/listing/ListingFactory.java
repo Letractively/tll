@@ -6,14 +6,13 @@ package com.tll.client.listing;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.RemoteListingDefinition;
 import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.event.type.ListingEvent;
 import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.ui.listing.DataListingWidget;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
+import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.listhandler.Sorting;
 
 /**
  * ListingFactory - Assembles listing Widgets used for showing listing data.

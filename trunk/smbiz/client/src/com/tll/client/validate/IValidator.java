@@ -11,15 +11,16 @@ package com.tll.client.validate;
  * validator implementations thus enabling the ability to determine whether a
  * particular validator exists in a collection which is key for composite
  * validator implementations.
- * @author jkirton
+ * @author jpk
  */
 public interface IValidator {
 
 	/**
-	 * Validate the given value returning the "model ready" value.
+	 * Validate the given value returning the "validated" value.
 	 * <p>
 	 * E.g.: A numeric validator will return a number when validation passes.
 	 * @param value value to validate
+	 * @return The validated value possibly of a different type
 	 * @throws ValidationException When the value is found invalid.
 	 */
 	Object validate(Object value) throws ValidationException;

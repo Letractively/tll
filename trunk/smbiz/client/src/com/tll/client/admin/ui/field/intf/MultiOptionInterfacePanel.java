@@ -5,96 +5,72 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
-import com.tll.client.event.type.FieldBindingEvent;
-import com.tll.client.field.FieldGroup;
-import com.tll.client.field.IFieldGroupModelBinding;
-import com.tll.client.model.IndexedProperty;
+import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.RelatedManyProperty;
-import com.tll.client.ui.field.DeleteTabWidget;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanelComposer;
-import com.tll.client.ui.field.TextAreaField;
-import com.tll.client.ui.field.TextField;
-import com.tll.model.EntityType;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
+import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IndexedFieldPanel;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
  * one option is allowed.
  * @author jpk
  */
-public final class MultiOptionInterfacePanel extends AbstractInterfacePanel implements TabListener {
+public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
 
-	private final TabPanel tabOptions = new TabPanel();
+	/**
+	 * OptionPanel
+	 * @author jpk
+	 */
+	static final class OptionPanel<M extends IBindable> extends FieldPanel<M> {
 
-	private static final class OptionPanel extends FieldPanel {
-
-		TextField name, code;
-		TextAreaField description;
-		TextField[] cost, price;
-
-		// FieldListing paramListing;
+		FlowPanel canvas = new FlowPanel();
 
 		/**
 		 * Constructor
 		 */
 		public OptionPanel() {
-			super("Option");
+			super();
+			initWidget(canvas);
 		}
 
 		@Override
-		protected void populateFieldGroup(FieldGroup fields) {
-			name = entityNameField();
-			code = ftext("code", "Code", 20);
-			description = ftextarea("description", "Desc", 3, 8);
-
-			cost = new TextField[3];
-			cost[0] = fcurrency("setUpCost", "Set Up");
-			cost[1] = fcurrency("monthlyCost", "Monthly");
-			cost[2] = fcurrency("annualCost", "Annual");
-
-			price = new TextField[3];
-			price[0] = fcurrency("baseSetupPrice", "Set Up");
-			price[1] = fcurrency("baseMonthlyPrice", "Monthly");
-			price[2] = fcurrency("baseAnnualPrice", "Annual");
-
-			fields.addField(name);
-			fields.addField(code);
-			fields.addField(description);
-			fields.addFields(cost);
-			fields.addFields(price);
+		protected FieldGroup generateFieldGroup() {
+			return (new OptionFieldProvider()).getFieldGroup();
 		}
 
-		@Override
-		protected void drawInternal(Panel canvas) {
-			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-			cmpsr.setCanvas(canvas);
+	}
+
+	class OptionRenderer implements IFieldRenderer {
+
+		public void render(Panel panel, FieldGroup fg) {
+			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(name);
-			cmpsr.addField(code);
-			cmpsr.addField(description);
+			cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getField("code"));
+			cmpsr.addField(fg.getField("description"));
 
 			// pricing
 			cmpsr.newRow();
 			Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, cost[0]);
-			g.setWidget(0, 1, cost[1]);
-			g.setWidget(0, 2, cost[2]);
-			g.setWidget(1, 0, price[0]);
-			g.setWidget(1, 1, price[1]);
-			g.setWidget(1, 2, price[2]);
+			g.setWidget(0, 0, (Widget) fg.getField("setUpCost"));
+			g.setWidget(0, 1, (Widget) fg.getField("monthlyCost"));
+			g.setWidget(0, 2, (Widget) fg.getField("annualCost"));
+			g.setWidget(1, 0, (Widget) fg.getField("baseSetupPrice"));
+			g.setWidget(1, 1, (Widget) fg.getField("baseMonthlyPrice"));
+			g.setWidget(1, 2, (Widget) fg.getField("baseAnnualPrice"));
 			cmpsr.addWidget(g);
 
 			// cmpsr.newRow();
@@ -102,121 +78,71 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel impl
 		}
 	}
 
+	final class OptionsPanel extends IndexedFieldPanel<M> implements TabListener {
+
+		private final TabPanel tabOptions = new TabPanel();
+
+		/**
+		 * Constructor
+		 */
+		public OptionsPanel() {
+			super("options", new OptionFieldProvider());
+			tabOptions.addTabListener(this);
+			initWidget(tabOptions);
+			setRenderer(new IFieldRenderer() {
+
+				public void render(Panel panel, FieldGroup fg) {
+					FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+					cmpsr.setCanvas(panel);
+
+					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getField("code"));
+					cmpsr.addField(fg.getField("description"));
+					cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+					cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
+					cmpsr.stopFlow();
+					cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
+					cmpsr.resetAlignment();
+
+					// availability
+					cmpsr.newRow();
+					cmpsr.addWidget(createAvailabilityGrid(fg));
+
+					// options
+					cmpsr.newRow();
+					cmpsr.addWidget(optionsPanel);
+				}
+			});
+		}
+
+		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
+			// TODO re-impl
+			// OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
+			// op.paramListing.refresh();
+			return true;
+		}
+
+		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
+		}
+
+	} // OptionsPanel
+
+	private final FlowPanel canvas = new FlowPanel();
+
+	private final OptionsPanel optionsPanel = new OptionsPanel();
+
 	/**
 	 * Constructor
 	 */
 	public MultiOptionInterfacePanel() {
 		super();
-		tabOptions.addTabListener(this);
+		initWidget(canvas);
 	}
 
 	@Override
-	public void populateFieldGroup(FieldGroup fields) {
-		super.populateFieldGroup(fields);
+	protected FieldGroup generateFieldGroup() {
+		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
+		fg.addField("options", optionsPanel.getFieldGroup());
+		return fg;
 	}
-
-	@Override
-	protected void drawInternal(Panel canvas) {
-		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-		cmpsr.setCanvas(canvas);
-
-		// first row
-		cmpsr.addField(name);
-		cmpsr.addField(code);
-		cmpsr.addField(description);
-		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		cmpsr.addField(timestamps[0]);
-		cmpsr.stopFlow();
-		cmpsr.addField(timestamps[1]);
-		cmpsr.resetAlignment();
-
-		// availability
-		cmpsr.newRow();
-		cmpsr.addWidget(createAvailabilityGrid());
-
-		// options tab widget
-		cmpsr.newRow();
-		cmpsr.addWidget(tabOptions);
-	}
-
-	@Override
-	public void onFieldBindingEvent(FieldBindingEvent event) {
-		switch(event.getType()) {
-			case BEFORE_BIND:
-				rebuildOptions(event.getBinding());
-				break;
-		}
-	}
-
-	private void rebuildOptions(IFieldGroupModelBinding bindingDef) {
-		final FieldGroup fields = getFieldGroup();
-		final Model model = bindingDef.resolveModel(EntityType.ACCOUNT);
-		assert model != null && fields != null;
-
-		// clear existing options
-		for(Widget w : tabOptions) {
-			if(w instanceof OptionPanel) fields.removeField(((OptionPanel) w).getFieldGroup());
-		}
-		tabOptions.clear();
-
-		// bind options
-		RelatedManyProperty pvOptions;
-		try {
-			pvOptions = model.relatedMany("options");
-		}
-		catch(PropertyPathException e) {
-			throw new IllegalStateException();
-		}
-		if(pvOptions != null && pvOptions.size() > 0) {
-			for(IndexedProperty propOption : pvOptions) {
-				Model option = propOption.getModel();
-
-				// params
-				// TODO re-impl!
-				/*
-				RelatedManyProperty pvParams =
-						model.relatedMany(PropertyPath.getPropertyPath(propOption.getPropertyName(), "parameters"));
-				if(pvParams != null && pvParams.size() > 0) {
-					PropertyPath paramPath = new PropertyPath();
-					for(IndexedProperty propParam : pvParams) {
-						paramPath.parse(propOption.getPropertyName());
-						paramPath.append(propParam.getPropertyName());
-						// param specific fields:
-						addFields(paramPath.toString(), paramFieldProvider.getFields());
-					}
-
-				}
-				*/
-
-				OptionPanel pnlOption = new OptionPanel();
-				tabOptions.add(pnlOption, new DeleteTabWidget(option.getName(), pnlOption.getFieldGroup(), bindingDef,
-						propOption.getPropertyName()));
-			}
-		}
-
-		// add new option tab
-		Image img = App.imgs().add().createImage();
-		img.setTitle("Add...");
-		tabOptions.add(new Label("TODO"), img);
-	}
-
-	/*
-	@Override
-	public void onAfterBind() {
-		super.onAfterBind();
-		// default select the first tab if none are selected
-		if(tabOptions.getTabBar().getSelectedTab() < 0) tabOptions.selectTab(0);
-	}
-	*/
-
-	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		// TODO re-impl
-		// OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
-		// op.paramListing.refresh();
-		return true;
-	}
-
-	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-	}
-
 }

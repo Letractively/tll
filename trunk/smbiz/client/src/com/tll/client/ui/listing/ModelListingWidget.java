@@ -5,9 +5,9 @@
  */
 package com.tll.client.ui.listing;
 
-import com.tll.client.event.type.ModelChangeEvent;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.RefKey;
 
 /**

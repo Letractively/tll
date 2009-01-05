@@ -44,12 +44,8 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 		return PropertyType.INT;
 	}
 
-	public void clear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
-		return new IntPropertyValue(getPropertyName(), metadata, value == null ? null : new Integer(value.intValue()));
+		return new IntPropertyValue(propertyName, metadata, value == null ? null : new Integer(value.intValue()));
 	}
 
 	public final Object getValue() {
@@ -60,12 +56,16 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 		return value == null ? null : value.toString();
 	}
 
-	public void setValue(Object obj) {
-		if(obj instanceof Integer) {
-			setInteger((Integer) obj);
+	@Override
+	protected void doSetValue(Object obj) {
+		if(obj == null) {
+			this.value = null;
+		}
+		else if(obj instanceof Integer) {
+			this.value = (Integer) obj;
 		}
 		else if(obj instanceof Number) {
-			setInteger(((Number) obj).intValue());
+			this.value = ((Number) obj).intValue();
 		}
 		else {
 			throw new IllegalArgumentException("The value must be an Integer");
@@ -74,10 +74,6 @@ public class IntPropertyValue extends AbstractPropertyValue implements ISelfForm
 
 	public Integer getInteger() {
 		return value;
-	}
-
-	public void setInteger(Integer value) {
-		this.value = value;
 	}
 
 	@Override

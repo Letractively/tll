@@ -6,7 +6,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.App;
 import com.tll.client.admin.data.rpc.AdminContextCommand;
-import com.tll.client.admin.event.IAdminContextListener;
+import com.tll.client.admin.data.rpc.IAdminContextListener;
 import com.tll.client.admin.mvc.view.AspMain;
 import com.tll.client.admin.mvc.view.CustomerMain;
 import com.tll.client.admin.mvc.view.IspMain;
@@ -17,7 +17,7 @@ import com.tll.client.admin.mvc.view.account.MerchantListingView;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.mvc.view.user.UserEditView;
 import com.tll.client.admin.ui.MainPanel;
-import com.tll.client.event.IUserSessionListener;
+import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.LoginDialog;
 
@@ -56,7 +56,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 
 			// get the admin context from the server
 			assert acc != null;
-			acc.setChangeType(IAdminContextListener.USER_CHANGE);
+			acc.setChangeType(ChangeType.USER_CHANGE);
 			acc.execute();
 		}
 		catch(RuntimeException e) {
@@ -85,7 +85,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		// set the admin context instance
 		adminContext = ac;
 
-		final boolean shouldLogin = (changeType == IAdminContextListener.INVALIDATE);
+		final boolean shouldLogin = (changeType == ChangeType.INVALIDATE);
 		mainPanel.setVisible(!shouldLogin);
 		if(shouldLogin) {
 			buildLoginDialog();
@@ -128,7 +128,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		mainPanel.setVisible(true);
 
 		// get the admin context from the server
-		acc.setChangeType(IAdminContextListener.USER_CHANGE);
+		acc.setChangeType(ChangeType.USER_CHANGE);
 		acc.execute();
 	}
 

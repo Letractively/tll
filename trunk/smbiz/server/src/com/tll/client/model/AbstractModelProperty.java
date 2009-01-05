@@ -4,8 +4,14 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.bind.IPropertyChangeListener;
+import com.tll.client.bind.ISourcesPropertyChangeEvents;
+import com.tll.client.bind.PropertyChangeSupport;
+import com.tll.client.util.StringUtil;
+
 /**
- * AbstractModelProperty
+ * AbstractModelProperty - Base class for all implemented {@link IModelProperty}
+ * s.
  * @author jpk
  */
 public abstract class AbstractModelProperty implements IModelProperty {
@@ -13,7 +19,13 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	/**
 	 * The property name.
 	 */
-	protected String propertyName;
+	protected/*final*/String propertyName;
+
+	/**
+	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
+	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
+	 */
+	protected transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -28,6 +40,9 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	protected AbstractModelProperty(String propertyName) {
 		super();
+		if(StringUtil.isEmpty(propertyName)) {
+			throw new IllegalArgumentException("A property name must be specified");
+		}
 		this.propertyName = propertyName;
 	}
 
@@ -35,16 +50,53 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		return propertyName;
 	}
 
-	public final void setPropertyName(String name) {
-		this.propertyName = name;
+	// NOTE: we ignore the propPath
+	public Object getProperty(String propPath) {
+		return getValue();
+	}
+
+	// NOTE: we ignore the propPath
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		try {
+			setValue(value);
+		}
+		catch(IllegalArgumentException e) {
+			// bad value
+			throw new Exception(e);
+		}
+	}
+
+	public final void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
+		if(this.changeSupport != null && changeSupport != null && this.changeSupport != changeSupport) {
+			throw new IllegalStateException("Model property '" + propertyName
+					+ "' is already bound to a different property change support reference!");
+		}
+		this.changeSupport = changeSupport;
+	}
+
+	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public final IPropertyChangeListener[] getPropertyChangeListeners() {
+		return changeSupport.getPropertyChangeListeners();
+	}
+
+	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((propertyName == null) ? 0 : propertyName.hashCode());
-		return result;
+		return 31 + ((propertyName == null) ? 0 : propertyName.hashCode());
 	}
 
 	@Override

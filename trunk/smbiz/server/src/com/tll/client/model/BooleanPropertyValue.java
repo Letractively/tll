@@ -45,28 +45,20 @@ public class BooleanPropertyValue extends AbstractPropertyValue {
 		return PropertyType.BOOL;
 	}
 
-	public void clear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
-		return new BooleanPropertyValue(getPropertyName(), metadata, value == null ? null : new Boolean(value
-				.booleanValue()));
+		return new BooleanPropertyValue(propertyName, metadata, value == null ? null : new Boolean(value.booleanValue()));
 	}
 
 	public final Object getValue() {
 		return value;
 	}
 
-	public void setValue(Object obj) {
-		if(obj instanceof Boolean == false) {
+	@Override
+	protected void doSetValue(Object obj) {
+		if(obj != null && obj instanceof Boolean == false) {
 			throw new IllegalArgumentException("The value must be a Boolean");
 		}
-		setBoolean((Boolean) obj);
-	}
-
-	public void setBoolean(Boolean value) {
-		this.value = value;
+		this.value = (Boolean) obj;
 	}
 
 	public Boolean getBoolean() {

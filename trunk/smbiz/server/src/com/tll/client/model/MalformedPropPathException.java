@@ -21,4 +21,13 @@ public final class MalformedPropPathException extends PropertyPathException {
 		super("Unable to resolve property path: " + propPath, propPath);
 	}
 
+	/**
+	 * Constructor
+	 * @param message
+	 * @param propPath
+	 */
+	public MalformedPropPathException(final String message, final String propPath) {
+		super(message, propPath);
+	}
+
 }

@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * The address type.
  * @author jpk
  */
-public enum AddressType implements INameValueProvider {
+public enum AddressType implements INameValueProvider<String> {
 	HOME("Home"),
 	WORK("Work"),
 	CONTACT("Contact");
@@ -21,7 +21,7 @@ public enum AddressType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

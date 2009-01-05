@@ -5,9 +5,9 @@
 package com.tll.client.mvc;
 
 import com.google.gwt.user.client.History;
-import com.tll.client.event.type.PinPopViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.mvc.view.PinPopViewRequest;
 import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.view.ViewContainer;
 
 /**

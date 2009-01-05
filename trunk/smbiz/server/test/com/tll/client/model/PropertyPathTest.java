@@ -83,21 +83,6 @@ public class PropertyPathTest {
 		assert pp.indexAt(2) == -1;
 		assert pp.indexAt(3) == -1;
 
-		// test ancestor method
-		assert "pathA.pathB[3].pathC.pathD".equals(pp.ancestor(0).toString());
-		assert "pathA.pathB[3].pathC".equals(pp.ancestor(1).toString());
-		assert "pathA.pathB[3]".equals(pp.ancestor(2).toString());
-		assert "pathA".equals(pp.ancestor(3).toString());
-
-		// test indexedParent method
-		assert "pathA.pathB".equals(pp.ancestor(2).indexedParent().toString());
-
-		// test nested method
-		assert "pathA.pathB[3].pathC.pathD".equals(pp.nested(0).toString());
-		assert "pathB[3].pathC.pathD".equals(pp.nested(1).toString());
-		assert "pathC.pathD".equals(pp.nested(2).toString());
-		assert "pathD".equals(pp.nested(3).toString());
-
 		// test replace at
 		pp.replaceAt(0, "pathAU");
 		assert "pathAU.pathB[3].pathC.pathD".equals(pp.toString());
@@ -114,10 +99,25 @@ public class PropertyPathTest {
 		pp.replace("pathDU", "pathD");
 		assert "pathA.pathB[3].pathD".equals(pp.toString());
 
-		// test nested method against single prop name
-		path = "pathA";
-		pp.parse(path);
-		assert pp.nested(0) == null;
+		// set get parent property path
+		pp.parse(null);
+		assert pp.getParentPropertyPath() == null;
+		pp.parse("path");
+		assert pp.getParentPropertyPath() == null;
+		pp.parse("pathA.pathB");
+		assert "pathA".equals(pp.getParentPropertyPath());
+		pp.parse("pathA.pathB.pathC");
+		assert "pathA.pathB".equals(pp.getParentPropertyPath());
+
+		// test set parent property path
+		pp.parse(null);
+		assert pp.setParentPropertyPath("path") == false;
+		pp.parse("path");
+		assert pp.setParentPropertyPath("parent") == true;
+		assert "parent.path".equals(pp.toString());
+		pp.parse("pathA.pathB");
+		assert pp.setParentPropertyPath("parent1.parent2") == true;
+		assert "parent1.parent2.pathB".equals(pp.toString());
 
 	}
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.hibernate.transform.ResultTransformer;
 
-import com.tll.listhandler.SearchResult;
+import com.tll.dao.SearchResult;
 import com.tll.model.IEntity;
 
 /**

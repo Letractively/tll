@@ -6,19 +6,14 @@ package com.tll.client.mvc.view;
 
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
-import com.tll.client.event.IEditListener;
-import com.tll.client.event.type.EditEvent;
-import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.UnloadViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
-import com.tll.client.field.IFieldGroupModelBinding;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.RefKey;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.field.EditPanel;
+import com.tll.client.ui.edit.EditEvent;
+import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.field.FieldPanel;
 
 /**
@@ -47,19 +42,17 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	private final EditPanel editPanel;
+	private final EditPanel<Model> editPanel;
 
 	/**
 	 * Constructor
-	 * @param binding The required binding instance to employ for field/model data
-	 *        transfer
-	 * @param fldGrpPnl The required field group panel
+	 * @param fieldPanel The required field panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(IFieldGroupModelBinding binding, FieldPanel fldGrpPnl, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<Model> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(binding, fldGrpPnl, true, false);
+		editPanel = new EditPanel<Model>(fieldPanel, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;
@@ -124,7 +117,6 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		}
 		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
 			editPanel.setModel(model);
-			editPanel.draw();
 		}
 	}
 

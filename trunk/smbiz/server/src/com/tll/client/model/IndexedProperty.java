@@ -5,35 +5,44 @@
  */
 package com.tll.client.model;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
 
 /**
  * IndexedProperty - Represents a single indexed property referenced by a parent
  * {@link RelatedManyProperty}.
+ * <p>
+ * <em><b>IMPT:</b> This property type is a purely client-side construct and is <b>not</em>
+ * client/server marshaled.
  * @author jpk
  */
 public final class IndexedProperty extends ModelRefProperty {
 
-	private int index;
+	/**
+	 * The underlying list containing the indexed property.
+	 */
+	private transient final List<Model> list;
 
 	/**
-	 * Constructor
+	 * The index at which the target {@link Model} exists in the underlying list.
 	 */
-	public IndexedProperty() {
-		super();
-	}
+	private transient int index;
 
 	/**
 	 * Constructor
 	 * @param indexedType
 	 * @param propName
 	 * @param reference
-	 * @param model
-	 * @param index
+	 * @param list The model list this property references and points to the
+	 *        element at the given index.
+	 * @param index The index
 	 */
-	public IndexedProperty(EntityType indexedType, String propName, boolean reference, Model model, int index) {
-		super(indexedType, PropertyPath.index(propName, index), reference, model);
+	IndexedProperty(EntityType indexedType, String propName, boolean reference, List<Model> list, int index) {
+		super(indexedType, PropertyPath.index(propName, index), reference);
+		this.list = list;
 		this.index = index;
 	}
 
@@ -48,4 +57,19 @@ public final class IndexedProperty extends ModelRefProperty {
 		return index;
 	}
 
+	@Override
+	public Model getModel() {
+		int i = 0;
+		for(Iterator<Model> it = list.iterator(); it.hasNext() && (i <= index); i++) {
+			return it.next();
+		}
+		throw new IndexOutOfBoundsException("Indexed property index : " + index + " is out of bounds.");
+	}
+
+	@Override
+	protected void doSetModel(Model oldModel, Model newModel) {
+		list.set(index, newModel);
+		if(changeSupport != null)
+			changeSupport.fireIndexedPropertyChange(PropertyPath.deIndex(propertyName), index, oldModel, newModel);
+	}
 }

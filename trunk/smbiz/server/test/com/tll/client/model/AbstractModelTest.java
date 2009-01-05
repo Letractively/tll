@@ -15,7 +15,7 @@ import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
 
 /**
- * ModelCopyTest - Test the {@link Model#copy()} method.
+ * AbstractModelTest - Base class for testing client model stuff.
  * @author jpk
  */
 public abstract class AbstractModelTest extends DbTest {

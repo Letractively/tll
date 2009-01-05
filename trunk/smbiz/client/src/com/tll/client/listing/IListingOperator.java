@@ -5,8 +5,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.event.ISourcesListingEvents;
-import com.tll.listhandler.Sorting;
+import com.tll.dao.Sorting;
 
 /**
  * IListingOperator - Performs listing ops on a particular listing. This

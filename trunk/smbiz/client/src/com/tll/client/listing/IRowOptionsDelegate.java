@@ -3,7 +3,7 @@
  */
 package com.tll.client.listing;
 
-import com.tll.client.ui.Option;
+import com.tll.client.ui.option.Option;
 
 /**
  * IRowOptionsDelegate - Indicates the ability to provide {@link Option}s for a

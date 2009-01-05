@@ -6,9 +6,7 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.IModelChangeListener;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.model.IModelChangeListener;
 
 /**
  * IView - Runtime view definition defining a view's life-cycle.

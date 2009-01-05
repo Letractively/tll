@@ -11,6 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.tll.client.IMarshalable;
+import com.tll.client.bind.IBindable;
+import com.tll.client.bind.IPropertyChangeListener;
+import com.tll.client.bind.ISourcesPropertyChangeEvents;
+import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.util.StringUtil;
 import com.tll.model.EntityType;
 import com.tll.model.schema.PropertyType;
@@ -20,7 +25,7 @@ import com.tll.model.schema.PropertyType;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IData, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -72,6 +77,12 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * to be able to pass a {@link Model} ref as an {@link IModelProperty}.
 	 */
 	private RelatedOneProperty selfRef;
+
+	/**
+	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
+	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
+	 */
+	private transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -177,6 +188,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	/**
 	 * Finds a property value in this model's collection of property values given
 	 * a non-path property name. (No property path resolution is performed.)
+	 * <p>
 	 * @param name The non-path property name (i.e. no dots)
 	 * @return The found {@link IPropertyValue} or <code>null</code> if not
 	 *         present.
@@ -193,6 +205,8 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * Sets the given {@link IPropertyValue} as a child to this model with no
 	 * property path resolution preformed. If an existing prop val is currently
 	 * mapped to the ascribed property name, it is replaced by the one given.
+	 * <p>
+	 * <em><b>IMPT:</b> This method does not fire property change events.</em>
 	 * @param propValue The replacing {@link IPropertyValue}
 	 */
 	public void set(IModelProperty propValue) {
@@ -216,7 +230,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	public String asString(String propPath) throws IllegalArgumentException {
 		IModelProperty prop = null;
 		try {
-			prop = getProperty(propPath);
+			prop = getModelProperty(propPath);
 		}
 		catch(PropertyPathException e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -228,6 +242,20 @@ public final class Model implements IData, Iterable<IModelProperty> {
 		return ((ISelfFormattingPropertyValue) prop).asString();
 	}
 
+	public Object getProperty(String propPath) throws PropertyPathException {
+		return getModelProperty(propPath).getValue();
+	}
+
+	public void setProperty(String propPath, Object value) throws Exception, PropertyPathException {
+		PropertyPath pp = new PropertyPath(propPath);
+		if(pp.isIndexed()) {
+			relatedMany(pp.deIndex()).setProperty(propPath, value);
+		}
+		else {
+			getModelProperty(propPath).setProperty(propPath, value);
+		}
+	}
+
 	/**
 	 * Does a property exist?
 	 * @param propPath The property path to test
@@ -235,13 +263,11 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 */
 	public boolean propertyExists(String propPath) {
 		try {
-			Object o = getProperty(propPath);
-			return o != null;
+			return getModelProperty(propPath) != null;
 		}
 		catch(PropertyPathException e) {
-			// no-op
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -252,26 +278,27 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 * property is encoutered before reaching the end of the given property path
 	 * or when a given index is found out of range for an indexable property in
 	 * the given property path, <code>null</code> is returned.
-	 * @param propPath The property path. When <code>null</code>, a
+	 * @param propPath The property path. When <code>null</code> or empty, a
 	 *        {@link RelatedOneProperty} that references <em>this</em> model is
 	 *        returned.
 	 * @return The resolved non-<code>null</code> model property
 	 * @throws PropertyPathException When the model property can't be resolved.
 	 */
-	public IModelProperty getProperty(String propPath) throws PropertyPathException {
+	public IModelProperty getModelProperty(String propPath) throws PropertyPathException {
 		return StringUtil.isEmpty(propPath) ? getSelfRef() : resolvePropertyPath(propPath);
 	}
 
 	/**
 	 * Retrieves a non-relational property value from this {@link Model} given a
-	 * property path. This method is behaves like {@link #getProperty(String)}
-	 * with a filter that targets {@link IPropertyValue}s only.
+	 * property path. This method is behaves like
+	 * {@link #getModelProperty(String)} with a filter that targets
+	 * {@link IPropertyValue}s only.
 	 * @param propPath Points to the desired model property
 	 * @return The resolved non-<code>null</code> {@link IPropertyValue}
 	 * @throws PropertyPathException When the property value can't be resolved.
 	 */
 	public IPropertyValue getPropertyValue(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "value");
@@ -289,7 +316,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
 	public Model getNestedModel(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(!prop.getType().isModelRef()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -307,7 +334,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to related one property.
 	 */
 	public RelatedOneProperty relatedOne(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -325,7 +352,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -344,7 +371,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(String propPath) throws PropertyPathException {
-		IModelProperty prop = getProperty(propPath);
+		IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
@@ -402,9 +429,12 @@ public final class Model implements IData, Iterable<IModelProperty> {
 					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), PropertyType.RELATED_MANY
 							.toString());
 				}
-				ModelRefProperty mrp = (ModelRefProperty) prop;
+				IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {
-					return new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
+					// return new RelatedOneProperty(mrp.getRelatedType(),
+					// mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
+					// TODO figure out why we were creating a *new* instance !!!!
+					return mrp;
 				}
 				// get the nested group...
 				Model ng = mrp.getModel();
@@ -427,38 +457,22 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
-					List<Model> nlist = rmp.getList();
-					if(nlist == null) {
-						// ensure we have a list to attach indexed groups to later
-						nlist = new ArrayList<Model>(0);
-						rmp.setList(nlist);
-					}
+					List<Model> nset = rmp.getList();
 					if(atEnd) {
-						if(index >= nlist.size()) {
+						if(index >= nset.size()) {
 							throw new IndexOutOfRangeInPropPathException(pp.toString(), pname, index);
 						}
-						Model ng = nlist.get(index);
-						return new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), ng, index);
+						final IndexedProperty ip =
+								new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), nset, index);
+						ip.changeSupport = changeSupport;
+						return ip;
 					}
 					// reset for next path
-					model = nlist.get(index);
+					model = rmp.getIndexedProperty(index).getModel();
 				}
 			}
 		}
-		throw new MalformedPropPathException(pp.toString());
-	}
-
-	/**
-	 * Drills down through the model properties searching for nested models of the
-	 * given type.
-	 * @param type The type to search for
-	 * @param ignoreIndexed Ignore indexed model properties?
-	 * @return Set of matching model ref properties or <code>null</code> if none
-	 *         found
-	 */
-	Set<IModelRefProperty> getModelsOfType(EntityType type, boolean ignoreIndexed) {
-		// TODO impl
-		return null;
+		throw new MalformedPropPathException(propPath);
 	}
 
 	/**
@@ -513,7 +527,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	static final class BindingStack<B extends PropBinding> extends ArrayList<B> {
 
 		/**
-		 * Locates an {@link Binding} given a model ref.
+		 * Locates an {@link PropBinding} given a model ref.
 		 * @param model The sought model in this list of bindings
 		 * @return The containing binding or <code>null</code> if not present.
 		 */
@@ -527,19 +541,23 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 	/**
 	 * Deep copies this instance.
+	 * @param copyReferences Copy relational properties that are marked as
+	 *        reference?
 	 * @return Clone of this instance
 	 */
-	public Model copy() {
-		return copy(this, new BindingStack<CopyBinding>());
+	public Model copy(final boolean copyReferences) {
+		return copy(this, copyReferences, new BindingStack<CopyBinding>());
 	}
 
 	/**
 	 * Recursive copy routine to guard against re-copying entities
 	 * @param source The model to be copied
+	 * @param copyReferences Copy relational properties that are marked as
+	 *        reference?
 	 * @param visited
 	 * @return A deep copy of the model
 	 */
-	private static Model copy(Model source, BindingStack<CopyBinding> visited) {
+	private static Model copy(Model source, final boolean copyReferences, BindingStack<CopyBinding> visited) {
 
 		if(source == null) return null;
 
@@ -557,13 +575,14 @@ public final class Model implements IData, Iterable<IModelProperty> {
 			assert prop != null;
 
 			// related one or indexed prop...
-			if(prop instanceof ModelRefProperty) {
-				ModelRefProperty mrp = (ModelRefProperty) prop;
-				Model model = mrp.isReference() ? mrp.getModel() : copy(mrp.getModel(), visited);
+			if(prop instanceof IModelRefProperty) {
+				IModelRefProperty mrp = (IModelRefProperty) prop;
+				Model model =
+						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, visited) : mrp.getModel();
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
-			// model list relation...
+			// related many...
 			else if(prop instanceof RelatedManyProperty) {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				List<Model> list = rmp.getList();
@@ -571,7 +590,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
 					for(Model model : list) {
-						nlist.add(rmp.isReference() ? model : copy(model, visited));
+						nlist.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, visited) : model);
 					}
 				}
 				copy.props.add(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), nlist));
@@ -579,7 +598,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 			// prop val..
 			else {
-				copy.props.add(((AbstractPropertyValue) prop).copy());
+				copy.props.add(((IPropertyValue) prop).copy());
 			}
 		}
 
@@ -587,19 +606,32 @@ public final class Model implements IData, Iterable<IModelProperty> {
 	}
 
 	/**
-	 * Walks the held collection of {@link IPropertyValue}s clearing all values
-	 * recursing as necessary to ensure all have been visited.
+	 * Clears a single property value.
+	 * @param propPath Identifies the property value to clear
+	 * @throws PropertyPathException
 	 */
-	public void clearPropertyValues() {
-		clearProps(this, new BindingStack<PropBinding>());
+	public void clearPropertyValue(String propPath) throws PropertyPathException {
+		getPropertyValue(propPath).clear();
+	}
+
+	/**
+	 * Walks the held collection of {@link IPropertyValue}s clearing then
+	 * recursing as necessary to ensure all have been visited.
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
+	 */
+	public void clearPropertyValues(boolean clearReferences) {
+		clearProps(this, clearReferences, new BindingStack<PropBinding>());
 	}
 
 	/**
 	 * Clears all nested property values of the given model.
 	 * @param model The group to be cleared
+	 * @param clearReferences Clear valus held in related models marked as a
+	 *        reference?
 	 * @param visited
 	 */
-	private static void clearProps(Model model, BindingStack<PropBinding> visited) {
+	private static void clearProps(Model model, final boolean clearReferences, BindingStack<PropBinding> visited) {
 
 		if(model == null) return;
 
@@ -609,28 +641,27 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 		visited.add(new PropBinding(model));
 
-		// TODO do we want to reset markedDeleted?
 		model.markedDeleted = false;
 
 		for(IModelProperty prop : model.props) {
 			assert prop != null;
 
 			// model prop (relational) val...
-			if(prop instanceof ModelRefProperty) {
-				ModelRefProperty gpv = (ModelRefProperty) prop;
-				if(!gpv.isReference()) {
-					clearProps(gpv.getModel(), visited);
+			if(prop instanceof IModelRefProperty) {
+				IModelRefProperty gpv = (IModelRefProperty) prop;
+				if(clearReferences || !gpv.isReference()) {
+					clearProps(gpv.getModel(), clearReferences, visited);
 				}
 			}
 
 			// model list (relational) prop val...
 			else if(prop instanceof RelatedManyProperty) {
 				RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				if(!rmp.isReference()) {
+				if(clearReferences || !rmp.isReference()) {
 					List<Model> list = rmp.getList();
 					if(list != null) {
 						for(Model m : list) {
-							clearProps(m, visited);
+							clearProps(m, clearReferences, visited);
 						}
 					}
 				}
@@ -638,7 +669,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 			// property values...
 			else {
-				((AbstractPropertyValue) prop).clear();
+				((IPropertyValue) prop).clear();
 			}
 		}
 	}
@@ -666,6 +697,106 @@ public final class Model implements IData, Iterable<IModelProperty> {
 		this.markedDeleted = markedDeleted;
 	}
 
+	/**
+	 * Sets or clears the {@link PropertyChangeSupport} instance for all child
+	 * {@link IModelProperty}s in the given model reference.
+	 * @param model The subject model
+	 * @param changeSupport The {@link PropertyChangeSupport} to apply which may
+	 *        be <code>null</code> in which the references are cleared
+	 * @param visited
+	 */
+	private static void setPropertyChangeSupport(Model model, final PropertyChangeSupport changeSupport,
+			final BindingStack<PropBinding> visited) {
+
+		assert model != null;
+
+		// check visited
+		PropBinding binding = visited.find(model);
+		if(binding != null) return;
+
+		model.changeSupport = changeSupport;
+
+		visited.add(new PropBinding(model));
+
+		PropertyType ptype;
+
+		for(IModelProperty prop : model.props) {
+			assert prop != null;
+
+			ptype = prop.getType();
+
+			prop.setPropertyChangeSupport(changeSupport);
+
+			// model ref (indexed or related one)...
+			if(ptype.isModelRef()) {
+				IModelRefProperty gpv = (IModelRefProperty) prop;
+				if(gpv.getModel() != null) {
+					setPropertyChangeSupport(gpv.getModel(), changeSupport, visited);
+				}
+			}
+
+			// related many...
+			else if(prop.getType() == PropertyType.RELATED_MANY) {
+				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				List<Model> list = rmp.getList();
+				if(list != null) {
+					for(Model m : list) {
+						if(m != null) {
+							setPropertyChangeSupport(m, changeSupport, visited);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Propagates <em>this</em> model's {@link PropertyChangeSupport} reference to
+	 * all child model properies which is requird for <em>proper</em> handling of
+	 * property change events!
+	 * <p>
+	 * Used client-side only.
+	 */
+	public void setAsRoot() {
+		if(changeSupport == null) {
+			changeSupport = new PropertyChangeSupport(this);
+		}
+		else if(changeSupport.hasAnyListeners()) {
+			throw new IllegalStateException("Ineligable model for root");
+		}
+		setPropertyChangeSupport(this, changeSupport, new BindingStack<PropBinding>());
+	}
+
+	private void ensureChangeSupportAggregated() throws IllegalStateException {
+		if(changeSupport == null) {
+			throw new IllegalStateException("A root model must first be declared");
+		}
+	}
+
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		ensureChangeSupportAggregated();
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		ensureChangeSupportAggregated();
+		changeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public IPropertyChangeListener[] getPropertyChangeListeners() {
+		ensureChangeSupportAggregated();
+		return changeSupport.getPropertyChangeListeners();
+	}
+
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		ensureChangeSupportAggregated();
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(propertyName, listener);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
@@ -680,24 +811,7 @@ public final class Model implements IData, Iterable<IModelProperty> {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("hash:");
-		sb.append(hashCode());
-		if(markedDeleted) {
-			sb.append(" MRKD DELETED! ");
-		}
-
-		sb.append(" props[");
-		for(Iterator<IModelProperty> itr = props.iterator(); itr.hasNext();) {
-			IModelProperty val = itr.next();
-			sb.append(val.toString());
-			if(itr.hasNext()) {
-				sb.append(" ");
-			}
-		}
-		sb.append("]");
-
-		return sb.toString();
+		return getRefKey().toString()/* + " [" + ((Object) this).hashCode() + ']'*/;
 	}
 
 }

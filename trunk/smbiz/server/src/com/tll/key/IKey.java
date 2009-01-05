@@ -5,7 +5,7 @@ package com.tll.key;
 
 import java.io.Serializable;
 
-import com.tll.util.IDescriptorProvider;
+import com.tll.IDescriptorProvider;
 
 /**
  * IKey - Abstraction serving as an identifier to a particular instance of a

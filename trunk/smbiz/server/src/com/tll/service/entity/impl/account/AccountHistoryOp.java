@@ -1,12 +1,12 @@
 package com.tll.service.entity.impl.account;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * AccountHistoryOp
  * @author jpk
  */
-public enum AccountHistoryOp implements INameValueProvider {
+public enum AccountHistoryOp implements INameValueProvider<String> {
 	ACCOUNT_ADDED("Account added"),
 	ACCOUNT_UPDATED("Account update"),
 	ACCOUNT_DELETED("Account deleted"),
@@ -25,7 +25,7 @@ public enum AccountHistoryOp implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

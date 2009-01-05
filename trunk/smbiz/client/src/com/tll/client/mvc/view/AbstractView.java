@@ -7,9 +7,7 @@ package com.tll.client.mvc.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.event.type.ModelChangeEvent;
-import com.tll.client.event.type.ShowViewRequest;
-import com.tll.client.event.type.ViewRequestEvent;
+import com.tll.client.model.ModelChangeEvent;
 
 /**
  * AbstractView - Base view class for all defined views in the app.
@@ -142,7 +140,8 @@ public abstract class AbstractView extends Composite implements IView {
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		// is this our model change?
-		if(event.getWidget() != this || !event.getWidget().getElement().isOrHasChild(this.getElement())) return;
+		final Widget w = (event.getSource() instanceof Widget) ? (Widget) event.getSource() : null;
+		if(w != this || !w.getElement().isOrHasChild(this.getElement())) return;
 
 		// errors?
 		if(event.getStatus().hasErrors()) {

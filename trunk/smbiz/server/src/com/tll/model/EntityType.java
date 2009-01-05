@@ -1,13 +1,13 @@
 package com.tll.model;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Enumeration used to identify entity types in the database. This way, changes
  * in the name/package of an entity will not affect data in the database.
  * @author jpk
  */
-public enum EntityType implements INameValueProvider {
+public enum EntityType implements INameValueProvider<String> {
 	ACCOUNT("Account"),
 	ASP("Asp"),
 	ISP("Isp"),
@@ -55,7 +55,7 @@ public enum EntityType implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

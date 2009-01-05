@@ -5,6 +5,8 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.util.StringUtil;
+
 /**
  * PropertyPath - Encapsulates a property path String providing convenience
  * methods for accessing and modifying its attributes.
@@ -54,13 +56,12 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Creates the index token given the numeric index and whether or not is is to
-	 * be bound or un-bound.
-	 * @param index The numeric index
-	 * @return The index token.
+	 * Is the given property path indexed?
+	 * @param propPath
+	 * @return true/false
 	 */
-	private static String indexToken(int index) {
-		return LEFT_INDEX_CHAR + Integer.toString(index) + RIGHT_INDEX_CHAR;
+	public static boolean isIndexed(String propPath) {
+		return StringUtil.isEmpty(propPath) ? false : (propPath.charAt(propPath.length() - 1) == RIGHT_INDEX_CHAR);
 	}
 
 	/**
@@ -75,19 +76,28 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Removes all indexing symbols from a property node String returning the
-	 * property name.
-	 * @param prop The property path node String
-	 * @return The stripped property name or <code>null</code> if the given prop
+	 * Removes indexing tokens from the end of the given property path.
+	 * @param indexedPropName The indexed property path
+	 * @return The de-indexed property name or <code>null</code> if the given prop
 	 *         is <code>null</code>.
 	 */
-	private static String strip(String prop) {
-		if(prop == null) return null;
+	public static String deIndex(String indexedPropName) {
+		if(indexedPropName != null && indexedPropName.length() > 0
+				&& indexedPropName.charAt(indexedPropName.length() - 1) == RIGHT_INDEX_CHAR) {
+			int si = indexedPropName.indexOf(LEFT_INDEX_CHAR);
+			if(si > 0) return indexedPropName.substring(0, si);
+		}
+		return indexedPropName;
+	}
 
-		int si = prop.indexOf(LEFT_INDEX_CHAR);
-		if(si > 0) return prop.substring(0, si);
-
-		return prop;
+	/**
+	 * Creates the index token given the numeric index and whether or not is is to
+	 * be bound or un-bound.
+	 * @param index The numeric index
+	 * @return The index token.
+	 */
+	private static String indexToken(int index) {
+		return LEFT_INDEX_CHAR + Integer.toString(index) + RIGHT_INDEX_CHAR;
 	}
 
 	/**
@@ -229,6 +239,29 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * Returns the numeric index.
+	 * <p>
+	 * E.g.: "indexable[3]" returns 3.
+	 * @return The resolved numeric index or <code>-1</code> if this property path
+	 *         empty or is not indexed.
+	 * @throws MalformedPropPathException When the index is non-numeric or
+	 *         negative.
+	 */
+	public int index() throws MalformedPropPathException {
+		return buf == null ? -1 : indexAt(len - 1);
+	}
+
+	/**
+	 * Strips indexing from the tail of this property path.
+	 * <p>
+	 * E.g.: "indexable[3]" will return "indexable"
+	 * @return String with ending index tokens stripped.
+	 */
+	public String deIndex() {
+		return deIndex(buf.toString());
+	}
+
+	/**
 	 * Returns the node path of the given node index. <br>
 	 * @param nodeIndex The node index
 	 * @return The node path
@@ -263,7 +296,8 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * @return The last node path.
+	 * @return The last node path. This can be considered as the property name in
+	 *         a property path.
 	 */
 	public String last() {
 		return buf == null ? null : pathAt(depth() - 1);
@@ -293,7 +327,7 @@ public final class PropertyPath {
 	 * @return The property name w/o indexing symbols
 	 */
 	public String nameAt(int nodeIndex) {
-		return buf == null ? null : strip(pathAt(nodeIndex));
+		return buf == null ? null : deIndex(pathAt(nodeIndex));
 	}
 
 	/**
@@ -306,42 +340,6 @@ public final class PropertyPath {
 	 */
 	public int indexAt(int nodeIndex) throws MalformedPropPathException {
 		return buf == null ? -1 : resolveIndex(pathAt(nodeIndex));
-	}
-
-	/**
-	 * Strips the indexing from the end of this property path returninng the
-	 * resultant path which effectively is the parent to the indexed property.
-	 * @return New property path stripped of trailing indexing or
-	 *         <code>null</code> if this property path is not an indexed property.
-	 */
-	public PropertyPath indexedParent() {
-		if(buf.length() > 4 && isIndexed()) {
-			for(int i = buf.length() - 3; i >= 0; --i) {
-				final char c = buf.charAt(i);
-				if(c == LEFT_INDEX_CHAR) {
-					return new PropertyPath(buf.substring(0, i));
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the first found node index that is indexed starting at the given
-	 * index.
-	 * @param nodeIndex The node index where searching starts
-	 * @return The index of the nearest node that is indexed or <code>-1</code> if
-	 *         no indexed node is found.
-	 */
-	public int nextIndexedNode(int nodeIndex) {
-		int i = nodeIndex;
-		do {
-			final String prop = pathAt(i);
-			if(prop.charAt(prop.length() - 1) == RIGHT_INDEX_CHAR) {
-				return i;
-			}
-		} while(++i < len);
-		return -1;
 	}
 
 	/**
@@ -360,30 +358,46 @@ public final class PropertyPath {
 	}
 
 	/**
-	 * Returns the ancestor property path of this property path based on a desired
-	 * number of nodes to traverse up the property path starting at the last
-	 * (right-most) node.
-	 * @param delta The number of nodes to traverse upward
-	 * @return An ancestral property path of this property path or
-	 *         <code>null</code> if the delta exceeds the depth of this property
-	 *         path.
+	 * Resolves the parent property path of this property path.
+	 * <p>
+	 * <em>NOTE: If this property path is indexed, the parent property path is considered as the property path with out indexing.</em>
+	 * <p>
+	 * E.g.: <br>
+	 * "node1.node2.node3" resolves to "node1.node2" <br>
+	 * "node1[1]" resolves to "node1"
+	 * @return The parent property path of this property path.
 	 */
-	public PropertyPath ancestor(int delta) {
-		if(buf == null || delta > len - 1) return null;
-		assert buf != null && len > 0;
-		return delta == 0 ? this : new PropertyPath(buf.substring(0, bufIndex(len - delta) - 1));
+	public String getParentPropertyPath() {
+		if(isIndexed()) {
+			return deIndex();
+		}
+		final int d = depth();
+		if(d < 2) return null;
+		final int indx = bufIndex(d - 1);
+		return buf.substring(0, indx - 1);
 	}
 
 	/**
-	 * Extracts a child property path from this property path starting from the
-	 * top-most node traversing a desired number of child nodes.
-	 * @param depth The number of nested nodes to traverse
-	 * @return The nested (child) property path
+	 * Sets the parent property path or removes the existing one if the given
+	 * parent property path is <code>null</code>.
+	 * @param parentPropPath The parent property path. May be <code>null</code> in
+	 *        which case, the existing parent property path is removed.
+	 * @return <code>true</code> if the parent property path was successfully set
+	 *         or <code>false</code> when this property path is empty.
 	 */
-	public PropertyPath nested(int depth) {
-		if(buf == null || len < 2 || depth > len - 1) return null;
-		assert buf != null && len >= 0;
-		return depth == 0 ? this : new PropertyPath(buf.substring(bufIndex(depth)));
+	public boolean setParentPropertyPath(String parentPropPath) {
+		final int d = depth();
+		if(d == 0) {
+			return false;
+		}
+		else if(d == 1) {
+			parse(getPropertyPath(parentPropPath, buf.toString()));
+		}
+		else {
+			// d > 1
+			parse(getPropertyPath(parentPropPath, last()));
+		}
+		return true;
 	}
 
 	/**
@@ -437,7 +451,7 @@ public final class PropertyPath {
 	 * @param path The property path to append
 	 */
 	public void append(String path) {
-		parse(getPropertyPath(this.buf.toString(), path));
+		parse(getPropertyPath(buf == null ? null : buf.toString(), path));
 	}
 
 	/**

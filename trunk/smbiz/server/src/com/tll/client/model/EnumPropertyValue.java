@@ -3,9 +3,9 @@
  */
 package com.tll.client.model;
 
+import com.tll.INameValueProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
-import com.tll.util.INameValueProvider;
 
 /**
  * StringPropertyValue - Generic holder construct for entity properties.
@@ -14,9 +14,7 @@ import com.tll.util.INameValueProvider;
 @SuppressWarnings("unchecked")
 public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFormattingPropertyValue {
 
-	// TODO paramterize (Enum<?>)
-	// see http://code.google.com/p/google-web-toolkit/issues/detail?id=2281
-	private Enum value;
+	private Enum<?> value;
 
 	/**
 	 * Constructor
@@ -49,26 +47,19 @@ public class EnumPropertyValue extends AbstractPropertyValue implements ISelfFor
 	}
 
 	public IPropertyValue copy() {
-		return new EnumPropertyValue(getPropertyName(), metadata, value);
+		return new EnumPropertyValue(propertyName, metadata, value);
 	}
 
 	public Enum<?> getEnum() {
 		return value;
 	}
 
-	public void setEnum(Enum<?> value) {
-		this.value = value;
-	}
-
-	public void clear() {
-		this.value = null;
-	}
-
-	public void setValue(Object value) {
-		if(value instanceof Enum == false) {
+	@Override
+	protected void doSetValue(Object value) {
+		if(value != null && value instanceof Enum == false) {
 			throw new IllegalArgumentException("The value must be an Enum");
 		}
-		setEnum((Enum<?>) value);
+		this.value = (Enum<?>) value;
 	}
 
 	public Object getValue() {

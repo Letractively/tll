@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.data.rpc.ForgotPasswordCommand;
-import com.tll.client.event.ISourcesUserSessionEvents;
-import com.tll.client.event.IUserSessionListener;
+import com.tll.client.data.rpc.ISourcesUserSessionEvents;
+import com.tll.client.data.rpc.IUserSessionListener;
 
 /**
  * LoginDialog

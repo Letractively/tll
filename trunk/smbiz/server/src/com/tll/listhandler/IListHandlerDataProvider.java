@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.IPageResult;
+import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 
 /**

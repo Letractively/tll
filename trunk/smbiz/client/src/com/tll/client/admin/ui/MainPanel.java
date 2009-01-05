@@ -24,22 +24,22 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.admin.AdminContext;
-import com.tll.client.admin.event.IAdminContextListener;
+import com.tll.client.admin.data.rpc.IAdminContextListener;
 import com.tll.client.admin.mvc.view.MainView.MainViewClass;
 import com.tll.client.admin.mvc.view.user.UserEditView;
 import com.tll.client.data.Status;
-import com.tll.client.event.ISourcesUserSessionEvents;
-import com.tll.client.event.IStatusListener;
-import com.tll.client.event.IUserSessionListener;
-import com.tll.client.event.StatusEventDispatcher;
-import com.tll.client.event.type.EditViewRequest;
-import com.tll.client.event.type.StaticViewRequest;
-import com.tll.client.event.type.StatusEvent;
+import com.tll.client.data.rpc.ISourcesUserSessionEvents;
+import com.tll.client.data.rpc.IStatusListener;
+import com.tll.client.data.rpc.IUserSessionListener;
+import com.tll.client.data.rpc.StatusEvent;
+import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.view.EditViewRequest;
+import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.ui.StatusDisplay;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
@@ -100,7 +100,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	}
 
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
-		if(changeType == USER_CHANGE) {
+		if(changeType == ChangeType.USER_CHANGE) {
 			Model user = ac.getUser();
 			Model account = ac.getUserAccount();
 
@@ -112,14 +112,14 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			ViewManager.instance().dispatch(
 					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
 		}
-		else if(changeType == ACCOUNT_CHANGE) {
+		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
 			rightNav.setCurrentAccount(ac.getAccount());
 
 			// clear out the views
 			ViewManager.instance().clear();
 		}
-		else if(changeType == INVALIDATE) {
+		else if(changeType == ChangeType.INVALIDATE) {
 			// clear out state in right nav
 			rightNav.clearCurrentUser();
 			rightNav.clearCurrentAccount();

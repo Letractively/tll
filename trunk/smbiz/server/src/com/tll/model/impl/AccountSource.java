@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Account source enumeration.
  * @author jpk
  */
-public enum AccountSource implements INameValueProvider {
+public enum AccountSource implements INameValueProvider<String> {
 	ADMIN("Admin"),
 	STOREFRONT("Storefront");
 
@@ -20,7 +20,7 @@ public enum AccountSource implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 }

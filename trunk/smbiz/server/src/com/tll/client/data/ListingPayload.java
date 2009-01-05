@@ -5,14 +5,15 @@
  */
 package com.tll.client.data;
 
-import com.tll.client.model.IData;
-import com.tll.listhandler.Sorting;
+import com.tll.client.IMarshalable;
+import com.tll.dao.Sorting;
 
 /**
  * ListingPayload - Response to a {@link ListingRequest}.
+ * @param <R> The row data type
  * @author jpk
  */
-public class ListingPayload<R extends IData> extends Payload {
+public class ListingPayload<R extends IMarshalable> extends Payload {
 
 	public enum ListingStatus {
 		/**

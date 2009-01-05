@@ -4,10 +4,10 @@
  */
 package com.tll.client.data;
 
+import com.tll.IDescriptorProvider;
 import com.tll.client.IMarshalable;
 import com.tll.client.search.ISearch;
-import com.tll.listhandler.Sorting;
-import com.tll.util.IDescriptorProvider;
+import com.tll.dao.Sorting;
 
 /**
  * ListingRequest - Request data for performing server-side listing operations

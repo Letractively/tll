@@ -4,9 +4,9 @@
  */
 package com.tll.client.model;
 
+import com.tll.IDescriptorProvider;
 import com.tll.client.IMarshalable;
 import com.tll.model.EntityType;
-import com.tll.util.IDescriptorProvider;
 
 /**
  * RefKey - Generic model entity proxy encapsulating the uniqueness of the

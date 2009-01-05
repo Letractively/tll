@@ -4,113 +4,88 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.BooleanConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * CheckboxField
  * @author jpk
  */
-public class CheckboxField extends AbstractField {
+public final class CheckboxField extends AbstractField<Boolean> {
 
-	protected String checkedValue;
-	protected String uncheckedValue;
-
-	private CheckBox cb;
+	private final CheckBox cb;
 
 	/**
 	 * This text overrides the base field label text mechanism in order to have
 	 * the text appear to the right of the form control.
 	 */
-	protected String cbLblTxt;
-
-	/**
-	 * The change listeners.
-	 */
-	private ChangeListenerCollection changeListeners;
-
-	public void addChangeListener(ChangeListener listener) {
-		if(changeListeners == null) {
-			changeListeners = new ChangeListenerCollection();
-		}
-		changeListeners.add(listener);
-	}
-
-	public void removeChangeListener(ChangeListener listener) {
-		if(changeListeners != null) {
-			changeListeners.remove(listener);
-		}
-	}
+	protected String cblabelText;
 
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param lblTxt The checkbox [label] text
-	 * @param checkedValue
-	 * @param uncheckedValue
+	 * @param labelText
+	 * @param helpText
 	 */
-	public CheckboxField(String propName, String lblTxt, String checkedValue, String uncheckedValue) {
-		super(propName, null);
-		this.cbLblTxt = lblTxt;
-		this.checkedValue = checkedValue;
-		this.uncheckedValue = uncheckedValue;
+	public CheckboxField(String propName, String labelText, String helpText) {
+		super(propName, null, helpText);
+		this.cblabelText = labelText;
+		setConverter(BooleanConverter.INSTANCE);
+		cb = new CheckBox(cblabelText);
+		cb.setStyleName(STYLE_FIELD_LABEL);
+		// cb.addFocusListener(this);
+		cb.addClickListener(this);
+		addChangeListener(this);
 	}
 
-	public CheckBox getCheckBox() {
-		if(cb == null) {
-			cb = new CheckBox(cbLblTxt);
-			cb.setStyleName(FieldLabel.CSS_FIELD_LABEL);
-			cb.addFocusListener(this);
-			cb.addClickListener(this);
-			addChangeListener(this);
-		}
+	@Override
+	protected HasFocus getEditable() {
 		return cb;
 	}
 
-	public final void setChecked(boolean checked) {
-		setValue(checked ? checkedValue : uncheckedValue);
-		getCheckBox().setChecked(checked);
-	}
-
-	public final void setCheckedValue(String checkedValue) {
-		this.checkedValue = checkedValue;
-	}
-
-	public final void setUncheckedValue(String uncheckedValue) {
-		this.uncheckedValue = uncheckedValue;
-	}
-
-	private boolean isCheckedValue(String value) {
-		return value == null ? false : value.equals(checkedValue);
+	public boolean isChecked() {
+		return cb.isChecked();
 	}
 
 	@Override
-	protected final HasFocus getEditable(String value) {
-		getCheckBox();
-		if(value != null) {
-			cb.setChecked(isCheckedValue(value));
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		setLabelText(readOnly ? cblabelText : null);
+	}
+
+	public String getText() {
+		return ToStringConverter.INSTANCE.convert(getValue());
+	}
+
+	public void setText(String text) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setChecked(boolean checked) {
+		cb.setChecked(checked);
+	}
+
+	public Boolean getValue() {
+		return cb.isChecked() ? Boolean.TRUE : Boolean.FALSE;
+	}
+
+	public void setValue(Object value) {
+		Boolean old = getValue();
+		setChecked(value == null ? false : getConverter().convert(value).booleanValue());
+		Boolean newval = getValue();
+		if((old != newval) && !old.equals(newval)) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
-		return cb;
-	}
-
-	@Override
-	public final String getEditableValue() {
-		return cb == null ? null : cb.isChecked() ? checkedValue : uncheckedValue;
-	}
-
-	@Override
-	protected String getReadOnlyHtml() {
-		return (cbLblTxt == null ? "" : "<label>" + cbLblTxt + "</label><br/> ")
-				+ (isCheckedValue(getValue()) ? checkedValue : uncheckedValue);
 	}
 
 	@Override
 	public void onClick(Widget sender) {
-		super.onClick(sender);
 		assert sender == cb;
-		if(changeListeners != null) changeListeners.fireChange(this);
+		super.onClick(sender);
+		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 	}
 }

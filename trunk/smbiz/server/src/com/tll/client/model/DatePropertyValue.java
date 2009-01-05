@@ -47,27 +47,20 @@ public class DatePropertyValue extends AbstractPropertyValue {
 		return PropertyType.DATE;
 	}
 
-	public void clear() {
-		this.value = null;
-	}
-
 	public IPropertyValue copy() {
-		return new DatePropertyValue(getPropertyName(), metadata, value == null ? null : new Date(value.getTime()));
+		return new DatePropertyValue(propertyName, metadata, value == null ? null : new Date(value.getTime()));
 	}
 
 	public final Object getValue() {
 		return value;
 	}
 
-	public void setValue(Object obj) {
-		if(obj instanceof Date == false) {
+	@Override
+	protected void doSetValue(Object obj) {
+		if(obj != null && obj instanceof Date == false) {
 			throw new IllegalArgumentException("The value must be a Date");
 		}
-		setDate((Date) obj);
-	}
-
-	public void setDate(Date value) {
-		this.value = value;
+		this.value = (Date) obj;
 	}
 
 	public Date getDate() {

@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * Order Item Trans Op
  * @author jpk
  */
-public enum OrderItemTransOp implements INameValueProvider {
+public enum OrderItemTransOp implements INameValueProvider<String> {
 	A("Add Item"),
 	U("Update Item Quantity"),
 	C("Commit Item"),
@@ -25,7 +25,7 @@ public enum OrderItemTransOp implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return name();
 	}
 

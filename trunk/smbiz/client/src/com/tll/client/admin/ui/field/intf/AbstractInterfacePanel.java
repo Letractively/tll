@@ -5,87 +5,101 @@
  */
 package com.tll.client.admin.ui.field.intf;
 
-import com.google.gwt.widgetideas.table.client.overrides.Grid;
-import com.tll.client.field.FieldGroup;
-import com.tll.client.listing.Column;
-import com.tll.client.ui.field.CheckboxField;
-import com.tll.client.ui.field.DateField;
-import com.tll.client.ui.field.FieldLabel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.IBindable;
+import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.ui.field.FieldFactory;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.TextAreaField;
-import com.tll.client.ui.field.TextField;
 
 /**
  * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
  * interfaces (not Options).
  * @author jpk
  */
-public abstract class AbstractInterfacePanel extends FieldPanel {
+public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldPanel<M> {
 
+	protected static Grid createAvailabilityGrid(FieldGroup fg) {
+		Grid g = new Grid(3, 5);
+		g.setWidget(0, 1, new Label("Asp"));
+		g.setWidget(0, 2, new Label("Isp"));
+		g.setWidget(0, 3, new Label("Mrc"));
+		g.setWidget(0, 4, new Label("Cst"));
+		g.setWidget(1, 0, new Label("Available?"));
+		g.setWidget(1, 1, (Widget) fg.getField("isAvailableAsp"));
+		g.setWidget(1, 2, (Widget) fg.getField("isAvailableIsp"));
+		g.setWidget(1, 3, (Widget) fg.getField("isAvailableMerchant"));
+		g.setWidget(1, 4, (Widget) fg.getField("isAvailableCustomer"));
+		g.setWidget(2, 0, new Label("Required?"));
+		g.setWidget(2, 1, (Widget) fg.getField("isRequiredAsp"));
+		g.setWidget(2, 2, (Widget) fg.getField("isRequiredIsp"));
+		g.setWidget(2, 3, (Widget) fg.getField("isRequiredMerchant"));
+		g.setWidget(2, 4, (Widget) fg.getField("isRequiredCustomer"));
+		return g;
+	}
+
+	/*
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };
-
-	protected TextField name, code;
-	protected TextAreaField description;
-	protected DateField[] timestamps;
-	protected CheckboxField isAvailableAsp, isAvailableIsp, isAvailableMerchant, isAvailableCustomer;
-	protected CheckboxField isRequiredAsp, isRequiredIsp, isRequiredMerchant, isRequiredCustomer;
+	*/
 
 	/**
 	 * Constructor
 	 */
 	public AbstractInterfacePanel() {
-		super("Interface");
+		super();
 	}
 
-	@Override
-	public void populateFieldGroup(FieldGroup fields) {
-		name = entityNameField();
-		code = ftext("code", "Code", 20);
-		description = ftextarea("description", "Desc", 3, 8);
-		timestamps = entityTimestampFields();
+	static class InterfaceFieldProvider extends AbstractFieldGroupProvider {
 
-		isAvailableAsp = fbool("isAvailableAsp", null);
-		isAvailableIsp = fbool("isAvailableIsp", null);
-		isAvailableMerchant = fbool("isAvailableMerchant", null);
-		isAvailableCustomer = fbool("isAvailableCustomer", null);
+		@Override
+		public void populateFieldGroup(FieldGroup fg) {
+			addModelCommon(fg, true, true);
+			fg.addField(FieldFactory.ftext("code", "Code", "Code", 20));
+			fg.addField(FieldFactory.ftextarea("description", "Desc", "Description", 3, 8));
 
-		isRequiredAsp = fbool("isRequiredAsp", null);
-		isRequiredIsp = fbool("isRequiredIsp", null);
-		isRequiredMerchant = fbool("isRequiredMerchant", null);
-		isRequiredCustomer = fbool("isRequiredCustomer", null);
+			fg.addField(FieldFactory.fcheckbox("isAvailableAsp", null, null));
+			fg.addField(FieldFactory.fcheckbox("isAvailableIsp", null, null));
+			fg.addField(FieldFactory.fcheckbox("isAvailableMerchant", null, null));
+			fg.addField(FieldFactory.fcheckbox("isAvailableCustomer", null, null));
 
-		fields.addField(name);
-		fields.addField(code);
-		fields.addField(description);
-		fields.addFields(timestamps);
-
-		fields.addField(isAvailableAsp);
-		fields.addField(isAvailableIsp);
-		fields.addField(isAvailableMerchant);
-		fields.addField(isAvailableCustomer);
-		fields.addField(isRequiredAsp);
-		fields.addField(isRequiredIsp);
-		fields.addField(isRequiredMerchant);
-		fields.addField(isRequiredCustomer);
+			fg.addField(FieldFactory.fcheckbox("isRequiredAsp", null, null));
+			fg.addField(FieldFactory.fcheckbox("isRequiredIsp", null, null));
+			fg.addField(FieldFactory.fcheckbox("isRequiredMerchant", null, null));
+			fg.addField(FieldFactory.fcheckbox("isRequiredCustomer", null, null));
+		}
 	}
 
-	protected Grid createAvailabilityGrid() {
-		Grid g = new Grid(3, 5);
-		g.setWidget(0, 1, new FieldLabel("Asp"));
-		g.setWidget(0, 2, new FieldLabel("Isp"));
-		g.setWidget(0, 3, new FieldLabel("Mrc"));
-		g.setWidget(0, 4, new FieldLabel("Cst"));
-		g.setWidget(1, 0, new FieldLabel("Available?"));
-		g.setWidget(1, 1, isAvailableAsp);
-		g.setWidget(1, 2, isAvailableIsp);
-		g.setWidget(1, 3, isAvailableMerchant);
-		g.setWidget(1, 4, isAvailableCustomer);
-		g.setWidget(2, 0, new FieldLabel("Required?"));
-		g.setWidget(2, 1, isRequiredAsp);
-		g.setWidget(2, 2, isRequiredIsp);
-		g.setWidget(2, 3, isRequiredMerchant);
-		g.setWidget(2, 4, isRequiredCustomer);
-		return g;
+	static class OptionFieldProvider extends AbstractFieldGroupProvider {
+
+		@Override
+		public void populateFieldGroup(FieldGroup fg) {
+			addModelCommon(fg, true, false);
+			fg.addField(FieldFactory.ftext("code", "Code", "Code", 20));
+			fg.addField(FieldFactory.ftextarea("description", "Desc", "Description", 3, 8));
+
+			fg.addField(FieldFactory.ftext("setUpCost", "Set Up", "Set Up Cost", 8));
+			fg.addField(FieldFactory.ftext("monthlyCost", "Monthly", "Monthly Cost", 8));
+			fg.addField(FieldFactory.ftext("annualCost", "Annual", "Annual Cost", 8));
+
+			fg.addField(FieldFactory.ftext("baseSetupPrice", "Set Up", "Base Set Up Price", 8));
+			fg.addField(FieldFactory.ftext("baseMonthlyPrice", "Monthly", "Base Monthly Price", 8));
+			fg.addField(FieldFactory.ftext("baseAnnualPrice", "Annual", "Base Annual Price", 8));
+		}
+
 	}
+
+	static class ParamDefFieldProvider extends AbstractFieldGroupProvider {
+
+		@Override
+		public void populateFieldGroup(FieldGroup fg) {
+			addModelCommon(fg, true, false);
+			fg.addField(FieldFactory.ftext("code", "Code", "Code", 20));
+			fg.addField(FieldFactory.ftextarea("description", "Desc", "Description", 3, 8));
+		}
+
+	}
+
 }

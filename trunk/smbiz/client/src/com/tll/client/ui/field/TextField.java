@@ -4,103 +4,102 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.tll.client.field.HasFormat;
-import com.tll.client.field.HasMaxLength;
-import com.tll.client.util.GlobalFormat;
+import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.StringUtil;
 
 /**
  * TextField
  * @author jpk
  */
-public class TextField extends AbstractField implements HasMaxLength, HasFormat {
+public final class TextField extends AbstractField<String> implements HasMaxLength {
 
-	private int visibleLen = -1, maxLen = -1;
-	private TextBox tb;
-
-	/**
-	 * The display format directive. Its meaning is dependent on the
-	 * implementation.
-	 */
-	protected GlobalFormat format;
+	private final TextBox tb;
+	private String old;
 
 	/**
 	 * Constructor
 	 * @param propName
-	 * @param lblTxt
+	 * @param labelText
+	 * @param helpText
 	 * @param visibleLen
 	 */
-	public TextField(String propName, String lblTxt, int visibleLen) {
-		super(propName, lblTxt);
-		this.visibleLen = visibleLen;
+	public TextField(String propName, String labelText, String helpText, int visibleLen) {
+		super(propName, labelText, helpText);
+		setConverter(ToStringConverter.INSTANCE);
+		tb = new PasswordTextBox();
+		// tb.addFocusListener(this);
+		tb.addChangeListener(this);
+		addKeyboardListener(new KeyboardListener() {
+
+			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
+			}
+
+			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+				if(keyCode == KeyboardListener.KEY_ENTER) {
+					setFocus(false);
+					setFocus(true);
+				}
+			}
+
+			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
+			}
+
+		});
 	}
 
 	public int getVisibleLen() {
-		return visibleLen;
+		return tb.getVisibleLength();
 	}
 
 	public void setVisibleLen(int visibleLength) {
-		this.visibleLen = visibleLength;
+		tb.setVisibleLength(visibleLength < 0 ? 256 : visibleLength);
 	}
 
 	public int getMaxLen() {
-		return maxLen;
+		return tb.getMaxLength();
 	}
 
 	public void setMaxLen(int maxLen) {
-		this.maxLen = maxLen;
+		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
 	}
 
-	public final GlobalFormat getFormat() {
-		return format;
+	public String getText() {
+		return tb.getText();
 	}
 
-	public final void setFormat(GlobalFormat format) {
-		this.format = format;
+	public void setText(String text) {
+		setValue(text);
 	}
 
-	public TextBox getTextBox() {
-		if(tb == null) {
-			tb = new TextBox();
-			tb.addFocusListener(this);
-			tb.addChangeListener(this);
-		}
+	@Override
+	protected HasFocus getEditable() {
 		return tb;
 	}
 
-	public void addChangeListener(ChangeListener listener) {
-		getTextBox().addChangeListener(listener);
+	public String getValue() {
+		String t = tb.getText();
+		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void removeChangeListener(ChangeListener listener) {
-		getTextBox().removeChangeListener(listener);
+	public void setValue(Object value) {
+		String old = getValue();
+		setText(getConverter().convert(value));
+		String newval = getValue();
+		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		}
 	}
 
 	@Override
-	protected HasFocus getEditable(String value) {
-		getTextBox();
-		if(visibleLen > -1) {
-			tb.setVisibleLength(visibleLen);
-		}
-		if(maxLen > -1) {
-			tb.setMaxLength(maxLen);
-		}
-		if(value != null) {
-			tb.setText(value);
-		}
-		return tb;
-	}
-
-	@Override
-	protected String getEditableValue() {
-		return tb == null ? null : tb.getText();
-	}
-
-	@Override
-	protected String getReadOnlyHtml() {
-		return StringUtil.abbr(super.getReadOnlyHtml(), visibleLen);
+	public void onChange(Widget sender) {
+		super.onChange(sender);
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		old = getValue();
+		fireChangeListeners();
 	}
 }

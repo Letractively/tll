@@ -44,22 +44,33 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		this.metadata = metadata;
 	}
 
+	public final void clear() {
+		final Object oldValue = getValue();
+		if(oldValue != null) {
+			doSetValue(null);
+			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+		}
+	}
+
 	/**
-	 * NOTE: This method is used for debugging.
+	 * Sub-classes implment this method to perform the actual value setting.
+	 * @param value
+	 * @throws IllegalArgumentException
 	 */
+	protected abstract void doSetValue(Object value) throws IllegalArgumentException;
+
+	public final void setValue(Object value) throws IllegalArgumentException {
+		final Object oldValue = getValue();
+		if((value != oldValue) || (value != null && !value.equals(oldValue))
+				|| (oldValue != null && !oldValue.equals(value))) {
+			doSetValue(value);
+			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+		}
+	}
+
 	@Override
 	public final String toString() {
 		String pn = propertyName;
 		return pn + "=" + (getValue() == null ? "<UNSET>" : getValue().toString());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
 	}
 }

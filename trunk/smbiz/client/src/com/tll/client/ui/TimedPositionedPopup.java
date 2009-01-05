@@ -6,6 +6,7 @@ package com.tll.client.ui;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.tll.client.DOMExt;
 
 /**
  * TimedPositionedPopup - {@link PopupPanel} extension that has logic to

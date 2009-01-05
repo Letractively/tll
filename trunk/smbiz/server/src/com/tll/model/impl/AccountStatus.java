@@ -1,12 +1,12 @@
 package com.tll.model.impl;
 
-import com.tll.util.INameValueProvider;
+import com.tll.INameValueProvider;
 
 /**
  * AccountStatus
  * @author jpk
  */
-public enum AccountStatus implements INameValueProvider {
+public enum AccountStatus implements INameValueProvider<String> {
 	NEW("New"),
 	OPEN("Open"),
 	PROBATION("Probation"),
@@ -23,7 +23,7 @@ public enum AccountStatus implements INameValueProvider {
 		return name;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return toString();
 	}
 
