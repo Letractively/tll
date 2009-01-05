@@ -10,32 +10,42 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * VerticalFieldPanelComposer - Lays out fields in a vertical style having the
- * following attributes:
+ * GridFieldComposer - Lays out fields in a vertical style having the following
+ * attributes:
  * <ol>
  * <li>Only one field exists on a row
  * <li>Field labels are placed to the left of the fields
  * </ol>
  * @author jpk
  */
-public class VerticalFieldPanelComposer implements IFieldPanelComposer {
+public class GridFieldComposer implements IFieldComposer {
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
 	 */
-	private final Grid grid = new Grid(0, 2);
+	private Grid grid;
 
 	private int rowIndex = -1;
 
 	/**
 	 * Constructor
 	 */
-	public VerticalFieldPanelComposer() {
+	public GridFieldComposer() {
 		super();
-		grid.addStyleName(IField.STYLE_FIELD);
 	}
 
 	public void setCanvas(Panel canvas) {
+		// clear state
+		if(grid == null) {
+			grid = new Grid(0, 2);
+			grid.addStyleName(IField.STYLE_FIELD);
+		}
+		else {
+			grid.clear();
+		}
+		rowIndex = -1;
+
+		// bind
 		canvas.add(grid);
 	}
 

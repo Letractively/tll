@@ -15,7 +15,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanelComposer;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.TextAreaField;
 import com.tll.client.ui.field.TextField;
 
@@ -77,7 +77,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 		@Override
 		protected void draw() {
-			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
 			// first row
@@ -117,7 +117,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 	@Override
 	protected void draw() {
-		FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
+		FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(canvas);
 
 		// first row

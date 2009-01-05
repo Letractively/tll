@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.Br;
 
 /**
- * FlowFieldPanelComposer - Lays out fields in a flow style having the following
+ * FlowPanelFieldComposer - Lays out fields in a flow style having the following
  * attributes:
  * <ol>
  * <li>Field labels are placed on top of the field
@@ -23,12 +23,12 @@ import com.tll.client.ui.Br;
  * </ol>
  * @author jpk
  */
-public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment {
+public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
 	 */
-	private final VerticalPanel vp = new VerticalPanel();
+	private VerticalPanel vp;
 
 	private HorizontalPanel currentRow;
 
@@ -39,12 +39,24 @@ public class FlowFieldPanelComposer implements IFieldPanelComposer, HasAlignment
 	/**
 	 * Constructor
 	 */
-	public FlowFieldPanelComposer() {
+	public FlowPanelFieldComposer() {
 		super();
-		vp.setStyleName(IField.STYLE_FIELD);
 	}
 
 	public void setCanvas(Panel canvas) {
+		// reset state
+		if(vp == null) {
+			vp = new VerticalPanel();
+			vp.setStyleName(IField.STYLE_FIELD);
+		}
+		else {
+			vp.clear();
+		}
+		currentRow = null;
+		last = null;
+		atCurrent = false;
+
+		// bind the canvas
 		canvas.add(vp);
 	}
 

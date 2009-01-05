@@ -6,16 +6,13 @@
 package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
-import com.tll.client.listing.Column;
-import com.tll.client.ui.field.CheckboxField;
-import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldLabel;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.TextAreaField;
-import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.field.IFieldGroupProvider;
 
 /**
  * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
@@ -24,6 +21,26 @@ import com.tll.client.ui.field.TextField;
  */
 public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldPanel<M> {
 
+	protected static Grid createAvailabilityGrid(FieldGroup fg) {
+		Grid g = new Grid(3, 5);
+		g.setWidget(0, 1, new Label("Asp"));
+		g.setWidget(0, 2, new Label("Isp"));
+		g.setWidget(0, 3, new Label("Mrc"));
+		g.setWidget(0, 4, new Label("Cst"));
+		g.setWidget(1, 0, new Label("Available?"));
+		g.setWidget(1, 1, (Widget) fg.getField("isAvailableAsp"));
+		g.setWidget(1, 2, (Widget) fg.getField("isAvailableIsp"));
+		g.setWidget(1, 3, (Widget) fg.getField("isAvailableMerchant"));
+		g.setWidget(1, 4, (Widget) fg.getField("isAvailableCustomer"));
+		g.setWidget(2, 0, new Label("Required?"));
+		g.setWidget(2, 1, (Widget) fg.getField("isRequiredAsp"));
+		g.setWidget(2, 2, (Widget) fg.getField("isRequiredIsp"));
+		g.setWidget(2, 3, (Widget) fg.getField("isRequiredMerchant"));
+		g.setWidget(2, 4, (Widget) fg.getField("isRequiredCustomer"));
+		return g;
+	}
+
+	/*
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };
 
@@ -32,6 +49,7 @@ public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldP
 	protected DateField[] timestamps;
 	protected CheckboxField isAvailableAsp, isAvailableIsp, isAvailableMerchant, isAvailableCustomer;
 	protected CheckboxField isRequiredAsp, isRequiredIsp, isRequiredMerchant, isRequiredCustomer;
+	*/
 
 	/**
 	 * Constructor
@@ -40,54 +58,29 @@ public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldP
 		super();
 	}
 
-	@Override
-	public void populateFieldGroup(FieldGroup fields) {
-		name = FieldFactory.entityNameField();
-		code = FieldFactory.ftext("code", "Code", "Code", 20);
-		description = FieldFactory.ftextarea("description", "Desc", "Description", 3, 8);
-		timestamps = FieldFactory.entityTimestampFields();
+	class InterfaceFieldProvider implements IFieldGroupProvider {
 
-		isAvailableAsp = FieldFactory.fcheckbox("isAvailableAsp", null, null);
-		isAvailableIsp = FieldFactory.fcheckbox("isAvailableIsp", null, null);
-		isAvailableMerchant = FieldFactory.fcheckbox("isAvailableMerchant", null, null);
-		isAvailableCustomer = FieldFactory.fcheckbox("isAvailableCustomer", null, null);
+		protected void pouplateFieldGroup(FieldGroup fields) {
+			fields.addField(FieldFactory.entityNameField());
+			fields.addField(FieldFactory.ftext("code", "Code", "Code", 20));
+			fields.addField(FieldFactory.ftextarea("description", "Desc", "Description", 3, 8));
+			fields.addFields(FieldFactory.entityTimestampFields());
 
-		isRequiredAsp = FieldFactory.fcheckbox("isRequiredAsp", null, null);
-		isRequiredIsp = FieldFactory.fcheckbox("isRequiredIsp", null, null);
-		isRequiredMerchant = FieldFactory.fcheckbox("isRequiredMerchant", null, null);
-		isRequiredCustomer = FieldFactory.fcheckbox("isRequiredCustomer", null, null);
+			fields.addField(FieldFactory.fcheckbox("isAvailableAsp", null, null));
+			fields.addField(FieldFactory.fcheckbox("isAvailableIsp", null, null));
+			fields.addField(FieldFactory.fcheckbox("isAvailableMerchant", null, null));
+			fields.addField(FieldFactory.fcheckbox("isAvailableCustomer", null, null));
 
-		fields.addField(name);
-		fields.addField(code);
-		fields.addField(description);
-		fields.addFields(timestamps);
+			fields.addField(FieldFactory.fcheckbox("isRequiredAsp", null, null));
+			fields.addField(FieldFactory.fcheckbox("isRequiredIsp", null, null));
+			fields.addField(FieldFactory.fcheckbox("isRequiredMerchant", null, null));
+			fields.addField(FieldFactory.fcheckbox("isRequiredCustomer", null, null));
+		}
 
-		fields.addField(isAvailableAsp);
-		fields.addField(isAvailableIsp);
-		fields.addField(isAvailableMerchant);
-		fields.addField(isAvailableCustomer);
-		fields.addField(isRequiredAsp);
-		fields.addField(isRequiredIsp);
-		fields.addField(isRequiredMerchant);
-		fields.addField(isRequiredCustomer);
-	}
-
-	protected Grid createAvailabilityGrid() {
-		Grid g = new Grid(3, 5);
-		g.setWidget(0, 1, new FieldLabel("Asp"));
-		g.setWidget(0, 2, new FieldLabel("Isp"));
-		g.setWidget(0, 3, new FieldLabel("Mrc"));
-		g.setWidget(0, 4, new FieldLabel("Cst"));
-		g.setWidget(1, 0, new FieldLabel("Available?"));
-		g.setWidget(1, 1, isAvailableAsp);
-		g.setWidget(1, 2, isAvailableIsp);
-		g.setWidget(1, 3, isAvailableMerchant);
-		g.setWidget(1, 4, isAvailableCustomer);
-		g.setWidget(2, 0, new FieldLabel("Required?"));
-		g.setWidget(2, 1, isRequiredAsp);
-		g.setWidget(2, 2, isRequiredIsp);
-		g.setWidget(2, 3, isRequiredMerchant);
-		g.setWidget(2, 4, isRequiredCustomer);
-		return g;
+		public FieldGroup getFieldGroup() {
+			FieldGroup fields = new FieldGroup();
+			pouplateFieldGroup(fields);
+			return fields;
+		}
 	}
 }

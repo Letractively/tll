@@ -14,10 +14,11 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
-import com.tll.client.admin.ui.field.AddressPanel;
+import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.bind.IBindable;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -48,7 +49,9 @@ import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanelComposer;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
+import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
@@ -159,7 +162,14 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		private final FlowPanel canvas = new FlowPanel();
 
-		private final AddressPanel<M> ap;
+		private final FieldPanel<M> ap = new FieldPanel<M>() {
+
+			@Override
+			protected FieldGroup generateFieldGroup() {
+				return (new AddressFieldsProvider()).getFieldGroup();
+			}
+
+		};
 
 		private final CheckboxField bf;
 		private final CheckboxField bflabel;
@@ -169,34 +179,42 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 */
 		public TestFieldPanel() {
 			super();
-			ap = new AddressPanel<M>();
 			bf = FieldFactory.fcheckbox("bf", null, null);
 			bflabel = FieldFactory.fcheckbox("bflabel", "Boolean with Label", "Help Text");
 			initWidget(canvas);
+			setRenderer(new IFieldRenderer() {
+
+				public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+					cmpsr.setCanvas(panel);
+
+					cmpsr.addWidget(ap);
+					cmpsr.addField(bflabel);
+					cmpsr.addField(bf);
+				}
+			});
 		}
 
 		@Override
-		public void populateFieldGroup(FieldGroup fields) {
-			fields.addField("address", ap.getFieldGroup());
+		protected FieldGroup generateFieldGroup() {
+			return (new IFieldGroupProvider() {
 
-			// set address2 as read only
-			ap.getFieldGroup().getField("address.address2").setReadOnly(true);
+				public FieldGroup getFieldGroup() {
+					FieldGroup fg = new FieldGroup();
+					fg.addField("address", ap.getFieldGroup());
 
-			// set city as read only
-			ap.getFieldGroup().getField("address.city").setReadOnly(true);
+					// set address2 as read only
+					ap.getFieldGroup().getField("address.address2").setReadOnly(true);
 
-			fields.addField(bflabel);
-			fields.addField(bf);
-		}
+					// set city as read only
+					ap.getFieldGroup().getField("address.city").setReadOnly(true);
 
-		@Override
-		protected void draw() {
-			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-			cmpsr.setCanvas(canvas);
+					fg.addField(bflabel);
+					fg.addField(bf);
 
-			cmpsr.addWidget(ap);
-			cmpsr.addField(bflabel);
-			cmpsr.addField(bf);
+					return fg;
+				}
+			}).getFieldGroup();
 		}
 	}
 

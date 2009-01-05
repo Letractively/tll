@@ -14,12 +14,13 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.ui.field.AddressPanel;
-import com.tll.client.admin.ui.field.PaymentInfoPanel;
+import com.tll.client.admin.ui.field.AddressFieldsProvider;
+import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
@@ -28,19 +29,15 @@ import com.tll.client.convert.IConverter;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.field.CheckboxField;
-import com.tll.client.ui.field.DateField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanelComposer;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IField;
+import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IndexedFieldPanel;
-import com.tll.client.ui.field.SelectField;
-import com.tll.client.ui.field.TextField;
 import com.tll.client.util.GlobalFormat;
-import com.tll.client.validate.IValidationFeedback;
-import com.tll.client.validate.ValidationFeedbackManager;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
 
@@ -59,21 +56,80 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		@Override
 		protected void populateBinding(AccountPanel<M> ap) {
 			final List<Binding> children = binding.getChildren();
-			final IValidationFeedback vb = ValidationFeedbackManager.instance();
-			children.add(new Binding(ap, name, vb, Model.NAME_PROPERTY));
-			children.add(new Binding(ap, timestamps[0], vb, Model.DATE_CREATED_PROPERTY));
-			children.add(new Binding(ap, timestamps[1], vb, Model.DATE_MODIFIED_PROPERTY));
-			children.add(new Binding(ap, parent, vb, "parent.name"));
-			children.add(new Binding(ap, status, vb, "status"));
-			children.add(new Binding(ap, dateCancelled, vb, "dateCancelled"));
-			children.add(new Binding(ap, currency, vb, "currency.id"));
-			children.add(new Binding(ap, billingModel, vb, "billingModel"));
-			children.add(new Binding(ap, billingCycle, vb, "billingCycle"));
-			children.add(new Binding(ap, dateLastCharged, vb, "dateLastCharged"));
-			children.add(new Binding(ap, nextChargeDate, vb, "nextChargeDate"));
-			children.add(new Binding(ap, persistPymntInfo, vb, "persistPymntInfo"));
+			children.add(new Binding(ap, Model.NAME_PROPERTY));
+			children.add(new Binding(ap, Model.DATE_CREATED_PROPERTY));
+			children.add(new Binding(ap, Model.DATE_MODIFIED_PROPERTY));
+			children.add(new Binding(ap, "parent.name"));
+			children.add(new Binding(ap, "status"));
+			children.add(new Binding(ap, "dateCancelled"));
+			children.add(new Binding(ap, "currency.id"));
+			children.add(new Binding(ap, "billingModel"));
+			children.add(new Binding(ap, "billingCycle"));
+			children.add(new Binding(ap, "dateLastCharged"));
+			children.add(new Binding(ap, "nextChargeDate"));
+			children.add(new Binding(ap, "persistPymntInfo"));
 			children.add(new Binding(ap, "paymentInfo"));
 			children.add(new Binding(ap, "addresses"));
+		}
+	}
+
+	class AccountFieldsRenderer implements IFieldRenderer {
+
+		public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+			cmpsr.setCanvas(panel);
+
+			// first row
+			cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getField("status"));
+			cmpsr.addField(fg.getField("dateCancelled"));
+			cmpsr.addField(fg.getField("currency.id"));
+			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			cmpsr.addField(fg.getField("parent.name"));
+			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
+			cmpsr.stopFlow();
+			cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
+
+			// second row (billing)
+			cmpsr.newRow();
+			cmpsr.addField(fg.getField("billingModel"));
+			cmpsr.addField(fg.getField("billingCycle"));
+			cmpsr.addField(fg.getField("dateLastCharged"));
+			cmpsr.addField(fg.getField("nextChargeDate"));
+
+			// third row
+			cmpsr.newRow();
+			// account addresses block
+			dpAddresses.add(addressesPanel);
+			cmpsr.addWidget(dpAddresses);
+
+			// payment info block
+			FlowPanel fp = new FlowPanel();
+			fp.add((Widget) fg.getField("persistPymntInfo"));
+			fp.add(paymentInfoPanel);
+			dpPaymentInfo.add(fp);
+			cmpsr.addWidget(dpPaymentInfo);
+
+			dpPaymentInfo.addEventHandler(new DisclosureHandler() {
+
+				public void onOpen(DisclosureEvent event) {
+					// TODO default select first tab if none currently selected
+				}
+
+				public void onClose(DisclosureEvent event) {
+				}
+			});
+
+			dpAddresses.addEventHandler(new DisclosureHandler() {
+
+				public void onOpen(DisclosureEvent event) {
+					addressesPanel.tabAddresses.selectTab(0);
+				}
+
+				public void onClose(DisclosureEvent event) {
+				}
+			});
 		}
 	}
 
@@ -84,9 +140,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<M> {
 
 		final FlowPanel panel = new FlowPanel();
+
 		final AddressType addressType;
-		TextField name;
-		AddressPanel<M> addressPanel;
 
 		/**
 		 * Constructor
@@ -96,31 +151,40 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			super();
 			this.addressType = addressType;
 			initWidget(panel);
+			setRenderer(new IFieldRenderer() {
+
+				public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+					cmpsr.setCanvas(panel);
+
+					// account address name row
+					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+
+					// address row
+					cmpsr.newRow();
+					FlowPanel fp = new FlowPanel();
+					AddressFieldsRenderer r = new AddressFieldsRenderer();
+					r.render(fp, "address", fg);
+					cmpsr.addWidget(fp);
+				}
+			});
 		}
 
 		@Override
-		protected void populateFieldGroup(FieldGroup fields) {
-			name = FieldFactory.entityNameField();
-			// TODO fix since we don't have data fields anymore
-			// fields.addField(fdata("type", addressType));
-			fields.addField(name);
-			fields.addField("address", addressPanel.getFieldGroup());
+		protected FieldGroup generateFieldGroup() {
+			return (new IFieldGroupProvider() {
+
+				public FieldGroup getFieldGroup() {
+					FieldGroup fg = new FieldGroup();
+					fg.addField(FieldFactory.entityNameField());
+					// TODO fix since we don't have data fields anymore
+					// fields.addField(fdata("type", addressType));
+					fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
+					return fg;
+				}
+			}).getFieldGroup();
 		}
-
-		@Override
-		protected void draw() {
-			final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-			cmpsr.setCanvas(panel);
-
-			// account address name row
-			cmpsr.addField(name);
-
-			// address row
-			cmpsr.newRow();
-			addressPanel = new AddressPanel<M>();
-			cmpsr.addWidget(addressPanel);
-		}
-	}
+	} // AccountAddressPanel
 
 	/**
 	 * AddressesPanel
@@ -177,15 +241,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			return fg;
 		}
 
-		@Override
-		protected void draw() {
-		}
-
-		@Override
-		protected void populateFieldGroup(FieldGroup fields) {
-			// nothing
-		}
-
 		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 			if(sender == tabAddresses) {
 				// need to hide any field messages bound to fields on the tab that is
@@ -210,18 +265,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	}
 
 	private final FlowPanel panel = new FlowPanel();
-
-	protected TextField parent;
-	protected TextField name;
-	protected DateField[] timestamps;
-	protected SelectField status;
-	protected DateField dateCancelled;
-	protected SelectField currency;
-	protected TextField billingModel;
-	protected TextField billingCycle;
-	protected DateField dateLastCharged;
-	protected DateField nextChargeDate;
-	protected CheckboxField persistPymntInfo;
 
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
 	protected final PaymentInfoPanel<M> paymentInfoPanel = new PaymentInfoPanel<M>();
@@ -261,122 +304,62 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	}
 
 	@Override
-	public void populateFieldGroup(FieldGroup fields) {
-		name = FieldFactory.entityNameField();
-		fields.addField(name);
+	protected FieldGroup generateFieldGroup() {
+		return (new IFieldGroupProvider() {
 
-		timestamps = FieldFactory.entityTimestampFields();
-		fields.addFields(timestamps);
+			public FieldGroup getFieldGroup() {
+				FieldGroup fg = new FieldGroup();
 
-		parent = FieldFactory.ftext("parent.name", "Parent", "Parent Account", 15);
-		parent.setReadOnly(true);
-		fields.addField(parent);
+				fg.addField(FieldFactory.entityNameField());
 
-		status = FieldFactory.fselect("status", "Status", "Status", false, Arrays.asList(AccountStatus.values()));
-		status.addChangeListener(new ChangeListener() {
+				fg.addFields(FieldFactory.entityTimestampFields());
 
-			public void onChange(Widget sender) {
-				final FieldGroup fields = getFieldGroup();
-				String s = getFieldGroup().getField("status").getText().toLowerCase();
-				final boolean closed = "closed".equals(s);
-				IField<?> f = fields.getField("dateCancelled");
-				f.setVisible(closed);
-				f.setRequired(closed);
+				fg.addField(FieldFactory.ftext("parent.name", "Parent", "Parent Account", 15));
+				fg.getField("parent.name").setReadOnly(true);
+
+				fg.addField(FieldFactory.fselect("status", "Status", "Status", false, Arrays.asList(AccountStatus.values())));
+				fg.getField("status").addChangeListener(new ChangeListener() {
+
+					public void onChange(Widget sender) {
+						final FieldGroup fields = getFieldGroup();
+						String s = getFieldGroup().getField("status").getText().toLowerCase();
+						final boolean closed = "closed".equals(s);
+						IField<?> f = fields.getField("dateCancelled");
+						f.setVisible(closed);
+						f.setRequired(closed);
+					}
+				});
+
+				fg.addField(FieldFactory.fdate("dateCancelled", "Date Cancelled", "Date Cancelled", GlobalFormat.DATE));
+
+				fg.addField(FieldFactory.fselect("currency.id", "Currency", "Currency", false, AuxDataCache.instance()
+						.getCurrencyDataMap().values()));
+
+				fg.addField(FieldFactory.ftext("billingModel", "Billing Model", "Billing Model", 18));
+
+				fg.addField(FieldFactory.ftext("billingCycle", "Billing Cycle", "Billing Cycle", 18));
+
+				fg.addField(FieldFactory.fdate("dateLastCharged", "Last Charged", "Last Charged", GlobalFormat.DATE));
+
+				fg.addField(FieldFactory.fdate("nextChargeDate", "Next Charge", "Next Charge", GlobalFormat.DATE));
+
+				fg.addField(FieldFactory.fcheckbox("persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?"));
+				fg.getField("persistPymntInfo").addChangeListener(new ChangeListener() {
+
+					public void onChange(Widget sender) {
+						paymentInfoPanel.getFieldGroup().setEnabled(((CheckBox) sender).isChecked());
+					}
+				});
+
+				fg.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
+				paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
+
+				fg.addField("addresses", addressesPanel.getFieldGroup());
+				addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
+
+				return fg;
 			}
-		});
-		fields.addField(status);
-
-		dateCancelled = FieldFactory.fdate("dateCancelled", "Date Cancelled", "Date Cancelled", GlobalFormat.DATE);
-		fields.addField(dateCancelled);
-
-		currency =
-				FieldFactory.fselect("currency.id", "Currency", "Currency", false, AuxDataCache.instance().getCurrencyDataMap()
-						.values());
-		fields.addField(currency);
-
-		billingModel = FieldFactory.ftext("billingModel", "Billing Model", "Billing Model", 18);
-		fields.addField(billingModel);
-
-		billingCycle = FieldFactory.ftext("billingCycle", "Billing Cycle", "Billing Cycle", 18);
-		fields.addField(billingCycle);
-
-		dateLastCharged = FieldFactory.fdate("dateLastCharged", "Last Charged", "Last Charged", GlobalFormat.DATE);
-		fields.addField(dateLastCharged);
-
-		nextChargeDate = FieldFactory.fdate("nextChargeDate", "Next Charge", "Next Charge", GlobalFormat.DATE);
-		fields.addField(nextChargeDate);
-
-		persistPymntInfo = FieldFactory.fcheckbox("persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?");
-		persistPymntInfo.addChangeListener(new ChangeListener() {
-
-			public void onChange(Widget sender) {
-				paymentInfoPanel.getFieldGroup().setEnabled(((CheckBox) sender).isChecked());
-			}
-		});
-		fields.addField(persistPymntInfo);
-
-		fields.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
-		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
-
-		fields.addField("addresses", addressesPanel.getFieldGroup());
-		addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
-	}
-
-	@Override
-	protected void draw() {
-		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-		cmpsr.setCanvas(panel);
-
-		// first row
-		cmpsr.addField(name);
-		cmpsr.addField(status);
-		cmpsr.addField(dateCancelled);
-		cmpsr.addField(currency);
-		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		cmpsr.addField(parent);
-		cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		cmpsr.addField(timestamps[0]);
-		cmpsr.stopFlow();
-		cmpsr.addField(timestamps[1]);
-
-		// second row (billing)
-		cmpsr.newRow();
-		cmpsr.addField(billingModel);
-		cmpsr.addField(billingCycle);
-		cmpsr.addField(dateLastCharged);
-		cmpsr.addField(nextChargeDate);
-
-		// third row
-		cmpsr.newRow();
-		// account addresses block
-		dpAddresses.add(addressesPanel);
-		cmpsr.addWidget(dpAddresses);
-
-		// payment info block
-		FlowPanel fp = new FlowPanel();
-		fp.add(persistPymntInfo);
-		fp.add(paymentInfoPanel);
-		dpPaymentInfo.add(fp);
-		cmpsr.addWidget(dpPaymentInfo);
-
-		dpPaymentInfo.addEventHandler(new DisclosureHandler() {
-
-			public void onOpen(DisclosureEvent event) {
-				// TODO default select first tab if none currently selected
-			}
-
-			public void onClose(DisclosureEvent event) {
-			}
-		});
-		dpAddresses.addEventHandler(new DisclosureHandler() {
-
-			public void onOpen(DisclosureEvent event) {
-				addressesPanel.tabAddresses.selectTab(0);
-			}
-
-			public void onClose(DisclosureEvent event) {
-			}
-		});
+		}).getFieldGroup();
 	}
 
 	/*

@@ -6,15 +6,17 @@
 package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.tll.client.admin.ui.field.AddressPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.admin.ui.field.AddressFieldsProvider;
+import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
-import com.tll.client.ui.field.CheckboxField;
-import com.tll.client.ui.field.DateField;
+import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanelComposer;
-import com.tll.client.ui.field.TextField;
+import com.tll.client.ui.field.FlowPanelFieldComposer;
+import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 
@@ -24,45 +26,79 @@ import com.tll.client.util.GlobalFormat;
  */
 public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 
+	static class UserFieldsProvider implements IFieldGroupProvider {
+
+		public FieldGroup getFieldGroup() {
+			FieldGroup fg = new FieldGroup();
+
+			fg.addField(FieldFactory.entityNameField());
+			fg.addFields(FieldFactory.entityTimestampFields());
+			fg.addField(FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30));
+			fg.getField("emailAddress").setReadOnly(true);
+
+			fg.addField(FieldFactory.fcheckbox("locked", "Locked", "Locked"));
+			fg.addField(FieldFactory.fcheckbox("enabled", "Enabled", "Enabled"));
+			fg.addField(FieldFactory.fdate("expires", "Expires", "Expires", GlobalFormat.DATE));
+
+			// address
+			AddressFieldsProvider afp = new AddressFieldsProvider();
+			fg.addField("address", afp.getFieldGroup());
+
+			return fg;
+		}
+
+	}
+
+	class UserFieldsRenderer implements IFieldRenderer {
+
+		public void render(Panel panel, String parentPropPath, FieldGroup fg) {
+			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+			cmpsr.setCanvas(canvas);
+
+			// first row
+			cmpsr.addField(fg.getField("name"));
+			cmpsr.addField(fg.getField("emailAddress"));
+			cmpsr.addField(fg.getField("locked"));
+			cmpsr.stopFlow();
+			cmpsr.addField(fg.getField("enabled"));
+			cmpsr.resetFlow();
+			cmpsr.addField(fg.getField("expires"));
+
+			// parent account ref link
+			lnkAccount = new ViewRequestLink();
+			cmpsr.addWidget("Account", lnkAccount);
+
+			cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
+			cmpsr.stopFlow();
+			cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.resetFlow();
+
+			// third row
+			cmpsr.newRow();
+			FlowPanel fp = new FlowPanel();
+			AddressFieldsRenderer afr = new AddressFieldsRenderer();
+			afr.render(fp, null, (FieldGroup) fg.getField("address"));
+			cmpsr.addWidget(fp);
+		}
+
+	}
+
 	private final FlowPanel canvas = new FlowPanel();
 
-	private TextField name;
-	private DateField[] timestamps;
-	private TextField emailAddress;
-	private CheckboxField locked;
-	private CheckboxField enabled;
-	private DateField expires;
-
 	private ViewRequestLink lnkAccount;
-
-	private AddressPanel<M> addressPanel;
 
 	/**
 	 * Constructor
 	 */
 	public UserPanel() {
 		super();
+		initWidget(canvas);
+		setRenderer(new UserFieldsRenderer());
 	}
 
 	@Override
-	public void populateFieldGroup(FieldGroup fields) {
-		name = FieldFactory.entityNameField();
-		timestamps = FieldFactory.entityTimestampFields();
-		emailAddress = FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30);
-		emailAddress.setReadOnly(true);
-		locked = FieldFactory.fcheckbox("locked", "Locked", "Locked");
-		enabled = FieldFactory.fcheckbox("enabled", "Enabled", "Enabled");
-		expires = FieldFactory.fdate("expires", "Expires", "Expires", GlobalFormat.DATE);
-
-		addressPanel = new AddressPanel<M>();
-
-		fields.addField(name);
-		fields.addFields(timestamps);
-		fields.addField(emailAddress);
-		fields.addField(locked);
-		fields.addField(enabled);
-		fields.addField(expires);
-		fields.addField(addressPanel.getFieldGroup());
+	protected FieldGroup generateFieldGroup() {
+		return (new UserFieldsProvider()).getFieldGroup();
 	}
 
 	/*
@@ -82,31 +118,4 @@ public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 	}
 	*/
 
-	@Override
-	protected void draw() {
-		final FlowFieldPanelComposer cmpsr = new FlowFieldPanelComposer();
-		cmpsr.setCanvas(canvas);
-
-		// first row
-		cmpsr.addField(name);
-		cmpsr.addField(emailAddress);
-		cmpsr.addField(locked);
-		cmpsr.stopFlow();
-		cmpsr.addField(enabled);
-		cmpsr.resetFlow();
-		cmpsr.addField(expires);
-
-		// parent account ref link
-		lnkAccount = new ViewRequestLink();
-		cmpsr.addWidget("Account", lnkAccount);
-
-		cmpsr.addField(timestamps[0]);
-		cmpsr.stopFlow();
-		cmpsr.addField(timestamps[1]);
-		cmpsr.resetFlow();
-
-		// third row
-		cmpsr.newRow();
-		cmpsr.addWidget(addressPanel);
-	}
 }
