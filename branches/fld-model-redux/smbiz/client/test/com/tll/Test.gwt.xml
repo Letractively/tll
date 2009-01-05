@@ -1,9 +1,0 @@
-<module>
-  <!-- 
-  the gwt test module that identifies all gwt tests for gwt's junit testing framework. 
-  -->
-	<inherits name="com.tll.Smbiz" />
-  
-  <source path="client" />
-  
-</module>
