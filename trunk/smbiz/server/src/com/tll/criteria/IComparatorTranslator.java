@@ -3,10 +3,10 @@
  */
 package com.tll.criteria;
 
-
 /**
  * IComparatorTranslator
  * @author jpk
+ * @param <T>
  */
 public interface IComparatorTranslator<T> {
 

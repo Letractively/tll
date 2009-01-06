@@ -12,6 +12,7 @@ import com.tll.client.model.ModelChangeEvent;
  * DataListingWidget - Listing that lists arbitrary data. May be extended to
  * handle say model change events.
  * @author jpk
+ * @param <R>
  */
 public class DataListingWidget<R> extends ListingWidget<R> {
 

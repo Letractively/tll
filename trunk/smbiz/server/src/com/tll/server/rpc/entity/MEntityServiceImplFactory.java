@@ -33,6 +33,7 @@ public final class MEntityServiceImplFactory {
 	 * Returns the {@link IMEntityServiceImpl} instance for the given entity
 	 * {@link Class}.
 	 * @param entityClass The entity {@link Class}
+	 * @return the supporting entity service
 	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
 	 *         found or an service instantiation related exception occurrs.
 	 */
@@ -44,6 +45,7 @@ public final class MEntityServiceImplFactory {
 	 * Returns the {@link IMEntityServiceImpl} instance for the given
 	 * {@link EntityType}.
 	 * @param entityType The {@link EntityType}
+	 * @return the supporting entity service
 	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
 	 *         found or an service instantiation related exception occurrs.
 	 */

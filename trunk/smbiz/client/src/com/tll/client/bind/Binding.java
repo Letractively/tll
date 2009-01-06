@@ -257,6 +257,7 @@ public final class Binding {
 	 * @param left
 	 * @param leftConverter
 	 * @param right
+	 * @param rightProperty
 	 * @param rightConverter
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.

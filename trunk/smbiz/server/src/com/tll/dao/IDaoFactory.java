@@ -16,12 +16,14 @@ public interface IDaoFactory {
 	/**
 	 * @param <D>
 	 * @param type
+	 * @return the matching dao
 	 */
 	<D extends IDao> D instance(Class<D> type);
 
 	/**
 	 * @param <E>
 	 * @param entityType
+	 * @return the matching entity dao
 	 */
 	<E extends IEntity> IEntityDao<E> instanceByEntityType(Class<E> entityType);
 }

@@ -14,6 +14,7 @@ import com.tll.server.rpc.Marshaler;
 /**
  * MarshalingListHandler - {@link IMarshalingListHandler} implementation
  * @author jpk
+ * @param <E>
  */
 public class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> implements IMarshalingListHandler<E> {
 

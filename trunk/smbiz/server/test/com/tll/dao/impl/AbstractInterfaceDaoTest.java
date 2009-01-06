@@ -17,6 +17,7 @@ import com.tll.model.impl.InterfaceOptionParameterDefinition;
 
 /**
  * AbstractInterfaceDaoTest
+ * @param <I> interface type
  * @author jpk
  */
 public abstract class AbstractInterfaceDaoTest<I extends Interface> extends NamedEntityDaoTest<I> {
@@ -30,6 +31,7 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 	 * <strong>IMPT: </stong>we do NOT test paging related methods for interfaces
 	 * as a left outer join is involved and we currently aren't overriding the
 	 * stock dao paging methods for interfaces.
+	 * @param intfClass The interface class
 	 */
 	public AbstractInterfaceDaoTest(Class<I> intfClass) {
 		super(intfClass, IInterfaceDao.class, false);

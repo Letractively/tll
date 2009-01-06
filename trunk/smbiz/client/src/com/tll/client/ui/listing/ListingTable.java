@@ -34,12 +34,13 @@ import com.tll.dao.Sorting;
 /**
  * ListingTable - ListingWidget specific HTML table.
  * @author jpk
+ * @param <R>
  */
 public class ListingTable<R> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
-	 * The actual HTML table tag containing the listing data gets this style (Style
-	 * class).
+	 * The actual HTML table tag containing the listing data gets this style
+	 * (Style class).
 	 */
 	protected static final String STYLE_TABLE = "table";
 	protected static final String CSS_SORT = "sort";
@@ -104,7 +105,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 	/**
 	 * Constructor
-	 * @para config
+	 * @param config
 	 */
 	public ListingTable(IListingConfig<R> config) {
 		super();

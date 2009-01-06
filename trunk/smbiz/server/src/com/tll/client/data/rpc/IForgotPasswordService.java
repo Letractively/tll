@@ -12,9 +12,10 @@ import com.tll.client.data.Payload;
  */
 public interface IForgotPasswordService extends RemoteService {
 
-  /**
-   * @return the status contained w/in the dataSet transport
-   */
+	/**
+	 * @param emailAddress
+	 * @return the status contained w/in the dataSet transport
+	 */
 	Payload requestPassword(String emailAddress);
 
 }

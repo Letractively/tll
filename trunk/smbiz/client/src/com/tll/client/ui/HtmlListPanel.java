@@ -10,20 +10,24 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-
 /**
- * HtmlListPanel - Corresponds to either a <ul> or <ol> html tag.
+ * HtmlListPanel - Corresponds to either a
+ * <ul>
+ * or
+ * <ol>
+ * html tag.
  * @author jpk
  */
 public class HtmlListPanel extends ComplexPanel {
 
 	/**
 	 * Constructor
+	 * @param ordered
 	 */
-	public HtmlListPanel(boolean isOrdered) {
-		setElement(isOrdered ? DOM.createElement("ol") : DOM.createElement("ul"));
+	public HtmlListPanel(boolean ordered) {
+		setElement(ordered ? DOM.createElement("ol") : DOM.createElement("ul"));
 	}
-	
+
 	/**
 	 * Li - HTML list item tag in widget form.
 	 * @author jpk
@@ -34,7 +38,7 @@ public class HtmlListPanel extends ComplexPanel {
 			super(DOM.createElement("li"));
 			add(liContents);
 		}
-		
+
 	}
 
 	@Override

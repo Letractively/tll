@@ -41,8 +41,7 @@ public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 	}
 
 	/**
-	 * Is the given class compatible with this key type? Used in
-	 * {@link #compareTo(IKey)} for instance.
+	 * Is the given class compatible with this key type?
 	 * @param type The type to compare to this key's type.
 	 * @return <code>true</code> if compatible.
 	 */

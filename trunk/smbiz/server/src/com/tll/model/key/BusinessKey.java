@@ -7,6 +7,7 @@ import com.tll.model.IEntity;
 /**
  * Abstract base class for all business keys in the application.
  * @author jpk
+ * @param <E>
  */
 public final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implements IBusinessKeyDefinition<E> {
 

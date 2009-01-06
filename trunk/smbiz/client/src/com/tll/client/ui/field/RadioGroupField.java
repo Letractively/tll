@@ -72,6 +72,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	/**
 	 * Builds or re-builds the radio buttons firing change events if the current
 	 * value becomes orphaned.
+	 * @param options
 	 */
 	public void setOptions(Collection<? extends Object> options) {
 		if(options == null || options.size() < 1) {

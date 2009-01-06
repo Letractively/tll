@@ -17,6 +17,7 @@ public interface IEntityProvider {
 
 	/**
 	 * Get the entity of the given type.
+	 * @param <E>
 	 * @param key The primary key
 	 * @return The entity if present or <code>null</code> if not.
 	 */
@@ -24,6 +25,7 @@ public interface IEntityProvider {
 
 	/**
 	 * Does the entity exist in this provider?
+	 * @param <E>
 	 * @param key
 	 * @return true/false
 	 */

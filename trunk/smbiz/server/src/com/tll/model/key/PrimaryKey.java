@@ -5,6 +5,7 @@ import com.tll.model.IEntity;
 /**
  * Representation of primary keys within the application.
  * @author jpk
+ * @param <E>
  */
 public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 

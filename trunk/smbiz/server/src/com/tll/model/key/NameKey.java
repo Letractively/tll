@@ -5,6 +5,7 @@ import com.tll.model.INamedEntity;
 /**
  * INameKey impl
  * @author jpk
+ * @param <N>
  */
 public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 

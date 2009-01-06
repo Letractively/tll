@@ -12,6 +12,7 @@ import com.tll.model.IEntity;
  * Abstract search supporting list handler class. All search supporting list
  * handler implementations should derive from this class.
  * @author jpk
+ * @param <E>
  */
 public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult<E>> {
 
@@ -33,6 +34,8 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 *        the given criteria.
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
+	 * @throws IllegalArgumentException When one or more required args are not
+	 *         specifeid
 	 */
 	public SearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting)
 			throws IllegalArgumentException {

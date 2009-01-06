@@ -19,9 +19,9 @@ import com.tll.model.ITimeStampEntity;
 /**
  * Base class for EntityDao for {@link ITimeStampEntity} derived entities.
  * @author jpk
+ * @param <E>
  */
-public abstract class TimeStampEntityDao<E extends ITimeStampEntity> extends EntityDao<E> implements
-		ITimeStampEntityDao<E> {
+public abstract class TimeStampEntityDao<E extends ITimeStampEntity> extends EntityDao<E> implements ITimeStampEntityDao<E> {
 
 	/**
 	 * Constructor
@@ -37,14 +37,14 @@ public abstract class TimeStampEntityDao<E extends ITimeStampEntity> extends Ent
 
 	/**
 	 * @param <T>
-	 * @param e
-	 * @param isCreate
-	 * @param date
-	 * @return
+	 * @param e the entity
+	 * @param create create or date modified?
+	 * @param date the date to set
+	 * @return The old date
 	 */
-	protected static <T extends ITimeStampEntity> Date setTimestamping(T e, boolean isCreate, Date date) {
-		final Date old = isCreate ? e.getDateCreated() : e.getDateModified();
-		if(isCreate) {
+	protected static <T extends ITimeStampEntity> Date setTimestamping(T e, boolean create, Date date) {
+		final Date old = create ? e.getDateCreated() : e.getDateModified();
+		if(create) {
 			e.setDateCreated(date);
 		}
 		e.setDateModified(date);
@@ -96,8 +96,8 @@ public abstract class TimeStampEntityDao<E extends ITimeStampEntity> extends Ent
 	}
 
 	/**
-	 * Override this method when the entity has uni-directional related many associations and
-	 * transitive persistence is in play.
+	 * Override this method when the entity has uni-directional related many
+	 * associations and transitive persistence is in play.
 	 * @param entity
 	 * @param isCreate
 	 * @param date

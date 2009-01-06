@@ -20,6 +20,7 @@ import com.tll.model.IEntity;
  * order to facilitate bean level validation annotations that target a single
  * bean property.
  * @author jpk
+ * @param <E>
  */
 public class ClassValidatorDelegate<E extends IEntity> implements IEntityValidator<E> {
 

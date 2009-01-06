@@ -76,6 +76,7 @@ public enum EntityType implements INameValueProvider<String> {
 	/**
 	 * Mimics the java class hierarchy mechanism so we can check for
 	 * <em>compatible</em> types rather than exact equals.
+	 * @param type entity type
 	 * @return true/false
 	 */
 	public boolean isSubtype(EntityType type) {

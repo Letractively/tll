@@ -40,6 +40,7 @@ public final class EntityOptions implements IMarshalable {
 	 * Invoked server-side to determine whether or not the related entity type
 	 * should be provided for a CRUD load op.
 	 * @param entityType
+	 * @return true/false
 	 */
 	public boolean isRelatedRefRequested(EntityType entityType) {
 		return relatedRefRequests.contains(entityType);
@@ -57,6 +58,7 @@ public final class EntityOptions implements IMarshalable {
 	 * Invoked server-side to determine whether or not the related entity type
 	 * should be handled for CRUD ops.
 	 * @param entityType
+	 * @return true/false
 	 */
 	public boolean isRelatedRequested(String entityType) {
 		return relatedRequests.contains(entityType);

@@ -21,6 +21,7 @@ import com.tll.client.ui.field.IFieldRenderer;
 /**
  * PaymentInfoPanel
  * @author jpk
+ * @param <M>
  */
 public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> implements SourcesTabEvents {
 

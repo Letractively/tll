@@ -69,6 +69,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	/**
 	 * Adds a single criterion to this group.
 	 * @param ctn The criterion
+	 * @return this
 	 */
 	public CriterionGroup addCriterion(Criterion ctn) {
 		getGroupInternal().add(ctn);
@@ -78,6 +79,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	/**
 	 * Adds a collection of criterion to this group.
 	 * @param clc The criterion collection
+	 * @return this
 	 */
 	public CriterionGroup addCriterion(Collection<Criterion> clc) {
 		getGroupInternal().addAll(clc);
@@ -159,8 +161,8 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	/**
 	 * Adds a search token based criterion to this group account for possible
 	 * wildcards ("%") in the search token argument. If the given search token is
-	 * <code>null</code>, the field will be compared for <code>null</code>
-	 * (i.e.: "is null")
+	 * <code>null</code>, the field will be compared for <code>null</code> (i.e.:
+	 * "is null")
 	 * @param fieldName The field name
 	 * @param searchToken The search token
 	 * @param isCaseSensitive Is case sensitive?
@@ -186,6 +188,8 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 
 	/**
 	 * Removes a criterion from this group.
+	 * @param ctn
+	 * @return the removed group
 	 */
 	public CriterionGroup removeCriterion(Criterion ctn) {
 		group.remove(ctn);
@@ -208,6 +212,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	/**
 	 * Checks to see if at least on criterion exists and furthermore that
 	 * <em>all</em> held criterion are set as well.
+	 * @return true/false
 	 */
 	public boolean isSet() {
 		if(group == null || group.size() < 1) {

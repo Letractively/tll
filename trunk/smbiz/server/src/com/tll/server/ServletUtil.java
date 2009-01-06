@@ -71,10 +71,11 @@ public abstract class ServletUtil {
 	}
 
 	/**
-	 * Retrieves an HTTP request session attribute returning <code>null</code>
-	 * if either the http request session is null or there is no attribut
+	 * Retrieves an HTTP request session attribute returning <code>null</code> if
+	 * either the http request session is null or there is no attribut
 	 * @param request
 	 * @param attribName
+	 * @return the session attribute
 	 */
 	public static Object getSessionAttribute(final HttpServletRequest request, final String attribName) {
 		final HttpSession s = request.getSession(false);

@@ -11,6 +11,7 @@ import java.util.List;
  * IPageResult - Definition for providing search results based on a paged result
  * set.
  * @author jpk
+ * @param <T>
  */
 public interface IPageResult<T> {
 

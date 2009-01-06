@@ -9,6 +9,7 @@ import com.tll.model.key.NameKey;
  * Interface for services that manage named Entities (implement INamedEntity
  * interface)
  * @author jpk
+ * @param <N>
  * @see INamedEntity
  */
 public interface INamedEntityService<N extends INamedEntity> extends IEntityService<N> {
@@ -16,6 +17,7 @@ public interface INamedEntityService<N extends INamedEntity> extends IEntityServ
 	/**
 	 * Load by name key.
 	 * @param key
+	 * @return the loaded named entity
 	 * @throws EntityNotFoundException
 	 */
 	N load(NameKey<? extends N> key) throws EntityNotFoundException;

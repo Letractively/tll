@@ -19,6 +19,8 @@ import com.tll.service.entity.INamedEntityService;
 /**
  * MNamedEntityServiceImpl
  * @author jpk
+ * @param <N>
+ * @param <S>
  */
 public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends ISearch> extends MEntityServiceImpl<N, S> {
 

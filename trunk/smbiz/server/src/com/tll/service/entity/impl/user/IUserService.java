@@ -24,6 +24,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @param account
 	 * @param emailAddress
 	 * @param password
+	 * @return the created user
 	 * @throws InvalidStateException
 	 * @throws EntityExistsException
 	 */
@@ -50,6 +51,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 
 	/**
 	 * @param userId
+	 * @return the new reset password
 	 * @throws ChangeUserCredentialsFailedException
 	 */
 	String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException;
@@ -57,6 +59,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	/**
 	 * Loads a {@link User} by email address auto-deproxying the related account.
 	 * @param emailAddress
+	 * @return the matching user
 	 */
 	User findByUsername(String emailAddress);
 }

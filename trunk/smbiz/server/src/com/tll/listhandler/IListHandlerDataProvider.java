@@ -16,6 +16,7 @@ import com.tll.model.IEntity;
  * result set paging and id list based paging.
  * @see ListHandlerType
  * @author jpk
+ * @param <E>
  */
 public interface IListHandlerDataProvider<E extends IEntity> {
 
@@ -54,6 +55,7 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 * @param sorting
 	 * @param offset
 	 * @param pageSize
+	 * @return the page result
 	 * @throws InvalidCriteriaException
 	 */
 	IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)

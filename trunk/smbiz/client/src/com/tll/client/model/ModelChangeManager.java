@@ -58,6 +58,8 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * Handles the fetching of needed auxiliary data. A subsequent model change
 	 * event is anticipated if aux data is found needed (<code>true</code> is
 	 * returned).
+	 * @param sourcingWidget
+	 * @param adr
 	 * @return <code>true</code> only if aux data is actually needed and
 	 *         <code>false</code> when no aux data is needed. I.e.: it is already
 	 *         cached on the client.
@@ -77,6 +79,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * subsequent model change event is anticipated. Used preliminarily for adding
 	 * entities. A subsequent model change event is anticipated if aux data is
 	 * found needed (<code>true</code> is returned).
+	 * @param sourcingWidget
 	 * @param entityType The entity type of the model entity to fetch
 	 * @return <code>true</code> if the model prototype must be fetched from the
 	 *         server and <code>false</code> when the prototype is already cached
@@ -98,7 +101,10 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	/**
 	 * Handles the fetching of a model given a model ref. A subsequent model
 	 * change event is anticipated.
+	 * @param sourcingWidget
 	 * @param modelRef The reference of the model to fetch
+	 * @param entityOptions
+	 * @param adr
 	 */
 	public void loadModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions, AuxDataRequest adr) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);
@@ -111,7 +117,9 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	/**
 	 * Handles model persisting (adding and updating) firing an appropriate model
 	 * change event. A subsequent model change event is anticipated.
+	 * @param sourcingWidget
 	 * @param model The model to persist
+	 * @param entityOptions
 	 */
 	public void persistModel(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);
@@ -128,7 +136,9 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	/**
 	 * Commits a model delete firing a model change event to subscribed listeners
 	 * upon a successful delete.
+	 * @param sourcingWidget
 	 * @param modelRef The model to delete
+	 * @param entityOptions
 	 */
 	public void deleteModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions) {
 		CrudCommand cmd = createCrudCommand(sourcingWidget);

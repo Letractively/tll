@@ -7,11 +7,11 @@ package com.tll.client.listing;
 import java.util.ArrayList;
 import java.util.EventListener;
 
-
 /**
  * ISourcesListingEvents - Propagates listing related events.
  * @see IListingListener
  * @author jpk
+ * @param <R> row type
  */
 public interface ISourcesListingEvents<R> extends EventListener {
 
@@ -30,6 +30,7 @@ public interface ISourcesListingEvents<R> extends EventListener {
 	/**
 	 * ListingListenerCollection
 	 * @author jpk
+	 * @param <R> row type
 	 */
 	public static final class ListingListenerCollection<R> extends ArrayList<IListingListener<R>> {
 

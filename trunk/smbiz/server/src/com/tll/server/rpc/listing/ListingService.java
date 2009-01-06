@@ -41,6 +41,8 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
 /**
  * ListingService - Handles client listing requests.
  * @author jpk
+ * @param <E>
+ * @param <S>
  */
 public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S, Model> {
 

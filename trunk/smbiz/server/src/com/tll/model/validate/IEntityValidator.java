@@ -13,6 +13,7 @@ import com.tll.model.IEntity;
  * IEntityValidator - Generalized entity validation defintion. TODO sub-class
  * InvalidStateException to isolate from org.hibernate import refs.
  * @author jpk
+ * @param <E>
  */
 public interface IEntityValidator<E extends IEntity> {
 

@@ -31,6 +31,7 @@ public class Dialog extends DialogBox {
 	/**
 	 * Constructor
 	 * @param focusOnCloseWidget
+	 * @param showOverlay
 	 */
 	public Dialog(HasFocus focusOnCloseWidget, boolean showOverlay) {
 		super(false, true);

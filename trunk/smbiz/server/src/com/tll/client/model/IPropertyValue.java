@@ -27,6 +27,7 @@ public interface IPropertyValue extends IModelProperty {
 
 	/**
 	 * Copies this property value
+	 * @return copied property value
 	 */
 	IPropertyValue copy();
 

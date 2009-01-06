@@ -12,6 +12,8 @@ import com.tll.client.search.ISearch;
 /**
  * IListingServiceAsync
  * @author jpk
+ * @param <S> the search type
+ * @param <R> the row type
  */
 public interface IListingServiceAsync<S extends ISearch, R extends IMarshalable> {
 

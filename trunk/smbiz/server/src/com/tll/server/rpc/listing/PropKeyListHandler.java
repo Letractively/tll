@@ -14,6 +14,7 @@ import com.tll.server.rpc.Marshaler;
 /**
  * PropKeyListHandler
  * @author jpk
+ * @param <E>
  */
 public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler<E> {
 
@@ -33,8 +34,8 @@ public class PropKeyListHandler<E extends IEntity> extends MarshalingListHandler
 	/**
 	 * Transform the property value group based on the defined property keys.
 	 * @param model The model to transform
-	 * @return {@link Model} containing only those properties declared in the
-	 *         {@link PropKey} member array.
+	 * @return {@link Model} containing only those properties declared in the held
+	 *         property keys array.
 	 * @throws IllegalStateException When a transform related error occurrs.
 	 */
 	@Override

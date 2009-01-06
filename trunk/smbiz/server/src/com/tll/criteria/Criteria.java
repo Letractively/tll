@@ -11,6 +11,7 @@ import com.tll.model.IEntity;
  * Intitial implementation of default primaryGroup object. Currently, this class
  * is fairly simple and only supports AND criterions.
  * @author jpk
+ * @param <E>
  */
 public final class Criteria<E extends IEntity> implements ICriteria<E> {
 

@@ -38,6 +38,7 @@ public final class EntityUtil {
 
 	/**
 	 * Translates an {@link IEntity} {@link Class} to an {@link EntityType}.
+	 * @param <E> entity type
 	 * @param clazz The {@link IEntity} {@link Class}.
 	 * @return The {@link EntityType}
 	 * @throws SystemError upon error.
@@ -59,6 +60,7 @@ public final class EntityUtil {
 
 	/**
 	 * Translates an {@link EntityType} to an {@link IEntity} {@link Class}.
+	 * @param <E> entity type
 	 * @param entityType The {@link EntityType}
 	 * @return Class<E>
 	 */

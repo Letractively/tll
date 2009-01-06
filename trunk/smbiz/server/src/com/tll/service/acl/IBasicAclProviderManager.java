@@ -11,6 +11,7 @@ import com.tll.model.impl.User;
  * Provides and manages ACL permissions. Services wishing to alter ACLs in the
  * system, should call on this interface.
  * @author jpk
+ * @param <T>
  */
 public interface IBasicAclProviderManager<T> extends AclProvider {
 

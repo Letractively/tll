@@ -8,18 +8,19 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasFocus;
 
-
 /**
  * FocusCommand
  * @author jpk
  */
 public class FocusCommand implements Command {
+
 	protected final HasFocus w;
 	protected final boolean focus;
-	
+
 	/**
 	 * Constructor
 	 * @param w
+	 * @param focus
 	 */
 	public FocusCommand(HasFocus w, boolean focus) {
 		super();

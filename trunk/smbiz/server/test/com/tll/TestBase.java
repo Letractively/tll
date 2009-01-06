@@ -198,8 +198,6 @@ public abstract class TestBase {
 	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
 	 * type of the given entity.
 	 * @param e The entity to uniquify
-	 * @param n The integer value serving as a way to uniquify individual fields
-	 *        that comprise a target {@link BusinessKey}.
 	 */
 	protected final static <ET extends IEntity> void makeUnique(ET e) {
 		try {

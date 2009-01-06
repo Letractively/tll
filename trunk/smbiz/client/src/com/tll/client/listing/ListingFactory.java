@@ -22,6 +22,7 @@ public abstract class ListingFactory {
 
 	/**
 	 * Assembles a listing from data provided by an {@link IDataProvider}.
+	 * @param <R>
 	 * @param sourcingWidget The Widget that will be passed in dispatched
 	 *        {@link ListingEvent}s.
 	 * @param config The listing config

@@ -18,6 +18,8 @@ import com.tll.service.entity.IEntityService;
 /**
  * IMEntityService - Performs tasks specific to a single entity type.
  * @author jpk
+ * @param <E>
+ * @param <S>
  */
 public interface IMEntityService<E extends IEntity, S extends ISearch> extends ICrudService {
 
@@ -31,8 +33,7 @@ public interface IMEntityService<E extends IEntity, S extends ISearch> extends I
 	 * {@link ICriteria} instances.
 	 * @param search Client-side search instance.
 	 * @return Server-side criteria instance.
-	 * @throws IllegalArgumentException When <code>search</code> param is
-	 *         invalid.
+	 * @throws IllegalArgumentException When <code>search</code> param is invalid.
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */

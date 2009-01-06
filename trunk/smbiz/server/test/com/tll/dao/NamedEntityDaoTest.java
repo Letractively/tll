@@ -14,6 +14,7 @@ import com.tll.model.INamedEntity;
 /**
  * NamedEntityDaoTest
  * @author jpk
+ * @param <N>
  */
 public abstract class NamedEntityDaoTest<N extends INamedEntity> extends AbstractDaoTest<N> {
 

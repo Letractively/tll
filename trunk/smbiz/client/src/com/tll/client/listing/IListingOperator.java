@@ -11,6 +11,7 @@ import com.tll.dao.Sorting;
  * IListingOperator - Performs listing ops on a particular listing. This
  * interface enables a pluggable (generic) way to provide listing data.
  * @author jpk
+ * @param <R> the row type
  */
 public interface IListingOperator<R> extends ISourcesListingEvents<R> {
 

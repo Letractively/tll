@@ -8,6 +8,7 @@ import com.tll.model.IEntity;
 /**
  * A composite of {@link Criterion} objects.
  * @author jpk
+ * @param <E>
  */
 public interface ICriteria<E extends IEntity> extends Serializable {
 

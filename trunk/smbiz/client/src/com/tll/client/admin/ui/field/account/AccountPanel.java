@@ -34,6 +34,7 @@ import com.tll.model.impl.AddressType;
 
 /**
  * AccountPanel
+ * @param <M> the model type
  * @author jpk
  */
 public class AccountPanel<M extends IBindable> extends FieldPanel<M> {

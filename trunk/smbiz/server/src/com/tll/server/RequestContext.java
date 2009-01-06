@@ -32,6 +32,8 @@ public final class RequestContext {
 	/**
 	 * Constructor
 	 * @param request Can not be <code>null<code>.
+	 * @param servletContext
+	 * @param injector
 	 */
 	public RequestContext(HttpServletRequest request, ServletContext servletContext, Injector injector) {
 		super();

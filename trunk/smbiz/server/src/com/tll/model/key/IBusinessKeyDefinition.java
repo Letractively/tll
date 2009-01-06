@@ -5,6 +5,7 @@ import com.tll.model.IEntity;
 /**
  * IBusinessKeyDefinition - Defines a business key for given entity type.
  * @author jpk
+ * @param <E>
  */
 public interface IBusinessKeyDefinition<E extends IEntity> {
 

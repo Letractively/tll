@@ -8,6 +8,7 @@ import com.tll.dao.Sorting;
 /**
  * List handler implementation for a {@link java.util.Collection}.
  * @author jpk
+ * @param <T>
  */
 public class CollectionListHandler<T> extends AbstractListHandler<T> {
 

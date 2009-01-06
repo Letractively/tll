@@ -21,6 +21,7 @@ public class StatusEvent extends EventObject {
 	/**
 	 * Constructor
 	 * @param source
+	 * @param status
 	 */
 	public StatusEvent(Widget source, Status status) {
 		super(source);

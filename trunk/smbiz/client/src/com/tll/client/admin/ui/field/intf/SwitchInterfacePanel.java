@@ -17,6 +17,7 @@ import com.tll.client.ui.field.IFieldRenderer;
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
+ * @param <M>
  */
 public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
 

@@ -48,6 +48,8 @@ import com.tll.service.entity.IEntityService;
 /**
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
  * @author jpk
+ * @param <E>
+ * @param <S>
  */
 public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> implements IMEntityServiceImpl<E, S> {
 
@@ -55,8 +57,8 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Loads additional entity properties.
 	 * @param e
 	 * @param options
-	 * @param refs The map to place related {@link EntityRef}s if they are
-	 *        reuested in <code>options</code>.
+	 * @param refs The map to place related entity references ({@link RefKey}) if
+	 *        they are reuested in <code>options</code>.
 	 * @param requestContext The request context.
 	 * @throws SystemError When any error occurrs.
 	 */
@@ -227,9 +229,9 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	/**
-	 * Translates {@link ISearch} to {@link IBusinessKey}s.
+	 * Translates {@link ISearch} to {@link BusinessKey}s.
 	 * @param search The search to translate
-	 * @return Translated {@link IBusinessKey}
+	 * @return Translated {@link BusinessKey}
 	 */
 	protected abstract BusinessKey<E> handleBusinessKeyTranslation(S search);
 

@@ -13,6 +13,7 @@ import com.tll.dao.Sorting;
  * DataListingOperator - {@link IListingOperator} based on an existing
  * collection of data elements.
  * @author jpk
+ * @param <R>
  */
 // TODO implemenet sorting!!!
 public class DataListingOperator<R> implements IListingOperator<R> {

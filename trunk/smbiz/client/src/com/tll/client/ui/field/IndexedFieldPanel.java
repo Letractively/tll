@@ -22,6 +22,7 @@ import com.tll.client.model.UnsetPropertyException;
  * indexing operations sync with the {@link FieldPanel}'s member ("underlying")
  * field group.
  * @author jpk
+ * @param <M>
  */
 public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<M> {
 
@@ -52,6 +53,7 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends FieldPanel<
 	/**
 	 * Constructor
 	 * @param parentPropertyPath
+	 * @param indexedFieldGroupProvider
 	 */
 	public IndexedFieldPanel(String parentPropertyPath, IFieldGroupProvider indexedFieldGroupProvider) {
 		super();

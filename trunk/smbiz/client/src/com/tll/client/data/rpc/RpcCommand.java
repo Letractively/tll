@@ -19,6 +19,7 @@ import com.tll.client.msg.Msg.MsgLevel;
  * ALL app RPC calls should be made via an extended {@link RpcCommand} instance
  * to monitor the number of calls made.
  * @author jpk
+ * @param <P> payload type
  */
 public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, ISourcesRpcEvents {
 

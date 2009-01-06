@@ -13,6 +13,7 @@ import com.tll.dao.Sorting;
  * ListingRequest - Request data for performing server-side listing operations
  * against a particular listing.
  * @author jpk
+ * @param <S>
  */
 public final class ListingRequest<S extends ISearch> implements IMarshalable, IDescriptorProvider {
 

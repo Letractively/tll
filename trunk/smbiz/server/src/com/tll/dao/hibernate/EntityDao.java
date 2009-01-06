@@ -52,6 +52,7 @@ import com.tll.util.CollectionUtil;
 /**
  * Base dao class for hibernate dao impls.
  * @author jpk
+ * @param <E>
  */
 public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport implements IEntityDao<E> {
 
@@ -582,7 +583,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Invalid criteria: " + e.getMessage(), e); // shouldn
-																																								// 't
+			// 't
 			// happen
 		}
 		return (List<E>) findByDetatchedCriteria(dc);

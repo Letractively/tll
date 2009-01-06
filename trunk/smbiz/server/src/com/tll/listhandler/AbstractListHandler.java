@@ -9,6 +9,7 @@ import com.tll.dao.Sorting;
 /**
  * AbstractListHandler - Common base class to all {@link IListHandler}
  * implementations.
+ * @param <T> the list element type
  * @author jpk
  */
 public abstract class AbstractListHandler<T> implements IListHandler<T> {

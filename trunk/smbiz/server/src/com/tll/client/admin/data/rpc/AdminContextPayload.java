@@ -26,6 +26,7 @@ public class AdminContextPayload extends Payload {
 
 	/**
 	 * Constructor
+	 * @param status
 	 * @param adminContext
 	 */
 	public AdminContextPayload(Status status, AdminContext adminContext) {

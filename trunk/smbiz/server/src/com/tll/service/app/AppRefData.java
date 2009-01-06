@@ -49,6 +49,7 @@ public final class AppRefData {
 
 	/**
 	 * Provides a map of maps keyed by refdata name of all found ref data.
+	 * @return map of ref data maps
 	 */
 	public Map<String, Map<String, String>> getAllRefData() {
 		loadOrRefresh();
@@ -61,6 +62,7 @@ public final class AppRefData {
 	 * Provides a map of maps keyed by refdata name of all found ref data. Returns
 	 * <code>null</code> if not found.
 	 * @param type
+	 * @return ref data map
 	 */
 	public Map<String, String> getRefData(RefDataType type) {
 		loadOrRefresh();

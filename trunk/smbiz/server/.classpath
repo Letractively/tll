@@ -15,7 +15,7 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-configuration.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-configuration-1.5-sources.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-fileupload.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-io.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-lang.jar"/>
+	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-lang.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-lang-2.3-sources.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-logging.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-validator.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/connector.jar"/>
@@ -47,5 +47,6 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
+	<classpathentry kind="var" path="ASPECTJ_HOME/lib/aspectjrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

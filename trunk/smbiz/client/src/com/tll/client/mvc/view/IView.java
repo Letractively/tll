@@ -32,6 +32,7 @@ public interface IView extends IViewRef, IModelChangeListener {
 
 	/**
 	 * The view options that define how the view appears.
+	 * @return view options
 	 */
 	ViewOptions getOptions();
 

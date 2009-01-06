@@ -23,6 +23,7 @@ import com.tll.client.util.GlobalFormat;
 /**
  * UserPanel
  * @author jpk
+ * @param <M> the model type
  */
 public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 

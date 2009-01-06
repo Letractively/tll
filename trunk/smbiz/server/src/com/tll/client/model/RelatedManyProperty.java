@@ -116,6 +116,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * Provides the encased List of {@link Model}s.
 	 * <p>
 	 * <em><b>IMPT:</b>Mutations made to this list do <b>NOT</b> invoke {@link PropertyChangeEvent}s.</em>
+	 * @return the list of indexed models
 	 */
 	public List<Model> getList() {
 		if(list == null) {

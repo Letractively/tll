@@ -149,6 +149,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	/**
 	 * Convenience method checking for presence of a given role for this user.
+	 * @param role the role as a string
 	 * @return true if this user is "in" the given role, false otherwise.
 	 */
 	@Transient
@@ -259,6 +260,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	/**
 	 * Acegi implementation must not return null
+	 * @return array of granted authorities
 	 */
 	@Transient
 	public GrantedAuthority[] getAuthorities() {

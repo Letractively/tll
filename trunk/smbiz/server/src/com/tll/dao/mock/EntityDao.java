@@ -49,6 +49,7 @@ import com.tll.util.DateRange;
 /**
  * Base mock dao class.
  * @author jpk
+ * @param <E>
  */
 public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 
@@ -203,6 +204,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	/**
 	 * Constructor
 	 * @param entityClass
+	 * @param set
 	 */
 	public EntityDao(final Class<E> entityClass, final Set<E> set) {
 		super();

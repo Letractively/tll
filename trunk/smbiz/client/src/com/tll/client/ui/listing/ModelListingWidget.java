@@ -47,6 +47,7 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 	 * Handles successful model change events.
 	 * <p>
 	 * NOTE: This method is <em>not</em> automatically invoked.
+	 * @param event
 	 */
 	public void handleModelChange(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {

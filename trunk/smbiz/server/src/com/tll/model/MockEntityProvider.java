@@ -51,6 +51,7 @@ public final class MockEntityProvider {
 	/**
 	 * Constructor
 	 * @param beanFactory
+	 * @param entityAssembler
 	 */
 	@Inject
 	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, EntityAssembler entityAssembler) {
@@ -129,6 +130,7 @@ public final class MockEntityProvider {
 	 * Makes the provided entity [quasi] business key unique by altering one of
 	 * the business key field values for all available business keys of the given
 	 * entity.
+	 * @param <E>
 	 * @param e the entity to be altered
 	 * @throws BusinessKeyNotDefinedException
 	 */

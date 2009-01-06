@@ -27,6 +27,7 @@ public interface IAdminContextListener extends EventListener {
 
 	/**
 	 * @param ac the admin context
+	 * @param changeType
 	 */
 	void onAdminContextChange(AdminContext ac, ChangeType changeType);
 }

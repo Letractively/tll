@@ -7,6 +7,8 @@ package com.tll.listhandler;
 /**
  * IDecoratedListHandler
  * @author jpk
+ * @param <T> the wrapped list element type
+ * @param <V> the decorated list element type
  */
 public interface IDecoratedListHandler<T, V> extends IListHandler<V> {
 

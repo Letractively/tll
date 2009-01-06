@@ -9,6 +9,7 @@ import com.tll.dao.IDao;
 /**
  * IMockDao - Marker interface indicating a mock DAO impl
  * @author jpk
+ * @param <T>
  */
 public interface IMockDao<T> extends IDao {
 }

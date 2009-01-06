@@ -12,6 +12,7 @@ import com.tll.model.IEntity;
 /**
  * Search supporting list handler implementation based on an id list.
  * @author jpk
+ * @param <E>
  */
 public final class IdListHandler<E extends IEntity> extends SearchListHandler<E> {
 

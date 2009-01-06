@@ -129,6 +129,7 @@ public final class DbShell {
 
 		/**
 		 * Constructor
+		 * @param dataSource
 		 */
 		public ShellImpl(DataSource dataSource) {
 			super();

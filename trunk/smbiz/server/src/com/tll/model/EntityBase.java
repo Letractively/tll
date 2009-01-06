@@ -72,7 +72,6 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * adds an entity to a set. if the set or entity is null, nothing happens.
 	 * @param clc the collection to which the entity is being added
-	 * @param clcClass the collection class in case it needs to be
 	 * @param e the entity to be added
 	 */
 	@Transient
@@ -93,7 +92,6 @@ public abstract class EntityBase implements IEntity {
 	 * Adds a collection of entities to a target entity collection.
 	 * @param toAdd
 	 * @param clc the collection to which the entities are added
-	 * @param clcClass the collection class in case it needs to be
 	 */
 	@Transient
 	protected final <E extends IEntity> void addEntitiesToCollection(Collection<E> toAdd, Collection<E> clc) {

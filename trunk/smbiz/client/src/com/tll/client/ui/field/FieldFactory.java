@@ -24,6 +24,7 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param visibleLength
+	 * @return new field
 	 */
 	public static final TextField ftext(String propName, String labelText, String helpText, int visibleLength) {
 		return new TextField(propName, labelText, helpText, visibleLength);
@@ -35,6 +36,7 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param visibleLength
+	 * @return new field
 	 */
 	public static final TextField femail(String propName, String labelText, String helpText, int visibleLength) {
 		TextField f = new TextField(propName, labelText, helpText, visibleLength);
@@ -49,6 +51,7 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param visibleLength
+	 * @return new field
 	 */
 	public static final TextField fcreditcard(String propName, String labelText, String helpText, int visibleLength) {
 		TextField f = new TextField(propName, labelText, helpText, visibleLength);
@@ -62,6 +65,7 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param format
+	 * @return new field
 	 */
 	public static final DateField fdate(String propName, String labelText, String helpText, GlobalFormat format) {
 		return new DateField(propName, labelText, helpText, format);
@@ -74,6 +78,7 @@ public abstract class FieldFactory {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
+	 * @return new field
 	 */
 	public static final CheckboxField fcheckbox(String propName, String labelText, String helpText) {
 		return new CheckboxField(propName, labelText, helpText);
@@ -86,6 +91,7 @@ public abstract class FieldFactory {
 	 * @param helpText The on hover tool tip text
 	 * @param numRows
 	 * @param numCols
+	 * @return new field
 	 */
 	public static final TextAreaField ftextarea(String propName, String labelText, String helpText, int numRows,
 			int numCols) {
@@ -97,6 +103,7 @@ public abstract class FieldFactory {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
+	 * @return new field
 	 */
 	public static final PasswordField fpassword(String propName, String labelText, String helpText) {
 		return new PasswordField(propName, labelText, helpText);
@@ -109,6 +116,7 @@ public abstract class FieldFactory {
 	 * @param helpText
 	 * @param multipleSelect
 	 * @param options
+	 * @return new field
 	 */
 	public static final SelectField fselect(String propName, String labelText, String helpText, boolean multipleSelect,
 			Collection<? extends Object> options) {
@@ -121,6 +129,7 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param suggestions
+	 * @return new field
 	 */
 	public static final SuggestField fsuggest(String propName, String labelText, String helpText,
 			Collection<? extends Object> suggestions) {
@@ -134,6 +143,7 @@ public abstract class FieldFactory {
 	 * @param helpText The on hover tool tip text
 	 * @param options
 	 * @param renderHorizontal
+	 * @return new field
 	 */
 	public static final RadioGroupField fradiogroup(String propName, String labelText, String helpText,
 			Collection<? extends Object> options, boolean renderHorizontal) {

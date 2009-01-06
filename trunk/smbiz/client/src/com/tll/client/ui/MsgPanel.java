@@ -41,6 +41,7 @@ public final class MsgPanel extends TimedPositionedPopup {
 	 * @param position
 	 * @param refElement
 	 * @param duration
+	 * @param showImage
 	 */
 	public MsgPanel(boolean autoHide, Position position, Element refElement, int duration, boolean showImage) {
 		super(autoHide, false, duration, refElement, position);

@@ -8,6 +8,7 @@ package com.tll.client.convert;
 /**
  * BooleanConverter
  * @author jpk
+ * @param <I> the input type
  */
 public class BooleanConverter<I> implements IConverter<Boolean, I> {
 

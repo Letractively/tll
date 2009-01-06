@@ -168,6 +168,7 @@ public class MarshalerTest extends TestBase {
 	 * Test to ensure that a related many property is created in the the
 	 * client-bound marshaled construct when there are no actual related many
 	 * entities present.
+	 * @throws Exception
 	 */
 	@Test
 	public void testEmptyRelatedMany() throws Exception {

@@ -11,6 +11,8 @@ import com.tll.client.validate.ValidationFeedbackManager;
 /**
  * AbstractModelEditAction - Common base class for all concrete model edit
  * action classes in the client app.
+ * @param <M> the model type
+ * @param <FP> the field panel type
  * @author jpk
  */
 public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<M>> implements IBindingAction<FP> {

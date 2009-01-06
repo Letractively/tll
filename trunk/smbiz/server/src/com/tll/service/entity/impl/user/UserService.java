@@ -56,6 +56,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	/**
 	 * @param password
 	 * @param salt
+	 * @return the encoded password
 	 * @throws IllegalArgumentException
 	 */
 	public static String encodePassword(String password, Object salt) throws IllegalArgumentException {
@@ -67,6 +68,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	 * @param rawPasswordToCheck
 	 * @param encPassword
 	 * @param salt
+	 * @return true/false
 	 * @throws IllegalArgumentException
 	 */
 	public static boolean isPasswordValid(String rawPasswordToCheck, String encPassword, Object salt)
@@ -85,6 +87,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	/**
 	 * Constructor
 	 * @param dao
+	 * @param authorityDao
 	 * @param entityAssembler
 	 * @param aclProviderManager
 	 * @param userCache
@@ -142,6 +145,10 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 
 	/**
 	 * {@link UserDetailsService} implementation
+	 * @param username
+	 * @return the found user
+	 * @throws UsernameNotFoundException
+	 * @throws DataAccessException
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		try {

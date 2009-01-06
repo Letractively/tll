@@ -25,6 +25,7 @@ import com.tll.client.ui.field.IndexedFieldPanel;
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
  * one option is allowed.
  * @author jpk
+ * @param <M>
  */
 public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
 

@@ -19,6 +19,7 @@ import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractAccountDaoTest
+ * @param <A> the account type
  * @author jpk
  */
 public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEntityDaoTest<A> {
@@ -31,6 +32,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 	/**
 	 * Constructor
+	 * @param accountClass
 	 */
 	public AbstractAccountDaoTest(Class<A> accountClass) {
 		super(accountClass, IAccountDao.class);

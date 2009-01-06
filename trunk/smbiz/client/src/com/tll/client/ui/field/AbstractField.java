@@ -33,6 +33,7 @@ import com.tll.client.validate.ValidationException;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
+ * @param <V> native field type
  * @author jpk
  */
 public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField<V>, HasFocus, ClickListener, ChangeListener {

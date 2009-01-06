@@ -5,6 +5,7 @@ package com.tll.client.convert;
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
+ * @param <I>
  */
 public class ToStringConverter<I> implements IConverter<String, I> {
 
@@ -19,6 +20,7 @@ public class ToStringConverter<I> implements IConverter<String, I> {
 	/**
 	 * Translates an arbitrary {@link Object} instance to a non-<code>null</code>
 	 * {@link String} instance.
+	 * @param o the object to convert
 	 * @return A never <code>null</code> {@link String}.
 	 */
 	public String convert(Object o) {

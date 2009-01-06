@@ -6,6 +6,7 @@ package com.tll.model;
  * <P>
  * the parent entity
  * @author jpk
+ * @param <P>
  */
 public interface IChildEntity<P extends IEntity> extends IEntity {
 

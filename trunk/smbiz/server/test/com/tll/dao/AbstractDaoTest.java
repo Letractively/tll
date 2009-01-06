@@ -40,6 +40,7 @@ import com.tll.util.EnumUtil;
 
 /**
  * AbstractDaoTest
+ * @param <E> entity type
  * @author jpk
  */
 public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {

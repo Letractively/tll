@@ -346,6 +346,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 
 	/**
 	 * Iterates over the child fields, setting their readOnly property.
+	 * @param readOnly true/false
 	 */
 	public void setReadOnly(boolean readOnly) {
 		for(IField<?> field : fields) {

@@ -12,6 +12,7 @@ import com.tll.model.IEntity;
 /**
  * Search supporting list handler implementation for pageable result sets.
  * @author jpk
+ * @param <E>
  */
 public final class PagingSearchListHandler<E extends IEntity> extends SearchListHandler<E> {
 

@@ -154,6 +154,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 
 	/**
 	 * Provides the <em>unique</em> {@link RefKey} for this model/entity instance.
+	 * @return the ref key for this model
 	 */
 	public RefKey getRefKey() {
 		Integer id = null;

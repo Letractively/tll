@@ -11,6 +11,7 @@ import com.tll.IDescriptorProvider;
  * IKey - Abstraction serving as an identifier to a particular instance of a
  * particular type.
  * @author jpk
+ * @param <T>
  */
 public interface IKey<T> extends IDescriptorProvider, Serializable {
 

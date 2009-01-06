@@ -20,6 +20,7 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
  * implementation delegate.
  * @author jpk
  * @param <E>
+ * @param <S>
  */
 public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 

@@ -66,7 +66,8 @@ public final class CacheManager {
 	 * Responsible for generating path hash codes from a given http request. This
 	 * abstraction is necessary to commonize asynchronous request servlet paths
 	 * which may be different within the same page. In other words, we are
-	 * maintaining the integrity of {@link com.bazaar.web.CacheManager#SCOPE_PAGE}.
+	 * maintaining the integrity of {@link com.bazaar.web.CacheManager#SCOPE_PAGE}
+	 * .
 	 * @author jpk
 	 */
 	private static interface IPathCodeGenerator {
@@ -152,6 +153,9 @@ public final class CacheManager {
 	 * Generates a string key from the request's path and string key.
 	 * <p>
 	 * FORMAT { path hash code string }-{ key hash code string }
+	 * @param request
+	 * @param key
+	 * @return page cache key
 	 */
 	public String getPageCacheKey(HttpServletRequest request, String key) {
 		return getPathCode(request) + "-" + Integer.toString((key == null ? "NULL" : key).hashCode());
@@ -161,6 +165,9 @@ public final class CacheManager {
 	 * Generates a string key from the request's path and class argument.
 	 * <p>
 	 * FORMAT { path hash code string }-{ cache class hash code string }
+	 * @param request
+	 * @param cacheClass
+	 * @return page cache key
 	 */
 	public String getPageCacheKey(HttpServletRequest request, Class<?> cacheClass) {
 		return getPathCode(request) + "-" + getClassHashCodeString(cacheClass);
@@ -176,6 +183,10 @@ public final class CacheManager {
 	 * <p>
 	 * FORMAT { path hash code string }-{ key hash code string }-{ cache class
 	 * hash code string }
+	 * @param request
+	 * @param key
+	 * @param cacheClass
+	 * @return page cache key
 	 */
 	public String getPageCacheKey(HttpServletRequest request, String key, Class<?> cacheClass) {
 		return getPathCode(request) + "-" + getCacheKey(key, cacheClass);
@@ -185,6 +196,9 @@ public final class CacheManager {
 	 * Generates a string key the string key and class arguments.
 	 * <p>
 	 * FORMAT { key hash code string }-{ cache class hash code string }
+	 * @param key
+	 * @param cacheClass
+	 * @return page cache key
 	 */
 	public String getCacheKey(String key, Class<?> cacheClass) {
 		return Integer.toString((key == null ? "NULL" : key).hashCode()) + "-" + Integer.toString(cacheClass.hashCode());

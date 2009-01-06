@@ -20,6 +20,7 @@ import com.tll.service.IService;
 /**
  * Base entity interface.
  * @author jpk
+ * @param <E>
  */
 public interface IEntityService<E extends IEntity> extends IListHandlerDataProvider<E>, IService {
 
@@ -32,6 +33,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	/**
 	 * Load by primary key.
 	 * @param key
+	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
 	E load(PrimaryKey<? extends E> key) throws EntityNotFoundException;
@@ -39,6 +41,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	/**
 	 * Load by business key.
 	 * @param key
+	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
 	E load(BusinessKey<? extends E> key) throws EntityNotFoundException;
@@ -52,6 +55,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	/**
 	 * Returns a list of entities based on a list of ids.
 	 * @param ids the ids of the entities to retrieve
+	 * @param sorting
 	 * @return List of entities
 	 */
 	List<E> loadByIds(List<Integer> ids, Sorting sorting);

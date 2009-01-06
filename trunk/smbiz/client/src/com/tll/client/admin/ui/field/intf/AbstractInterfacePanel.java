@@ -17,6 +17,7 @@ import com.tll.client.ui.field.FieldPanel;
 /**
  * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
  * interfaces (not Options).
+ * @param <M> the model type
  * @author jpk
  */
 public abstract class AbstractInterfacePanel<M extends IBindable> extends FieldPanel<M> {

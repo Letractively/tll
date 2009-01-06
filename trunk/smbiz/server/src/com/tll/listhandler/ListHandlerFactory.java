@@ -18,6 +18,7 @@ public abstract class ListHandlerFactory {
 
 	/**
 	 * Creates a collection based list handler.
+	 * @param <T>
 	 * @param c a collection
 	 * @param sorting the sorting directive. May be <code>null</code>.
 	 * @return IListHandler instance

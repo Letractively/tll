@@ -10,8 +10,8 @@ package com.tll.client.bind;
 public interface IBindingAction<B extends IBindable> extends IAction {
 
 	/**
-	 * Sets the boundWidget.
-	 * @param boundWidget The boundWidget to set
+	 * Sets the bindable.
+	 * @param bindable The boundWidget to set
 	 */
 	void setBindable(B bindable);
 

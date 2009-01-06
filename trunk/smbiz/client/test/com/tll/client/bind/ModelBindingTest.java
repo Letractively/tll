@@ -10,10 +10,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import junit.framework.Assert;
 
-import com.tll.TestUtils;
+import com.google.gwt.junit.client.GWTTestCase;
+import com.tll.client.ClientTestUtils;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
 import com.tll.client.model.IModelProperty;
@@ -31,16 +31,18 @@ import com.tll.model.impl.AddressType;
  * {@link Model} {@link IBindable} implementation.
  * @author jpk
  */
-@Test(groups = {
-	"client-bind", "client-model" })
-public class ModelBindingTest {
+public class ModelBindingTest extends GWTTestCase {
+
+	@Override
+	public String getModuleName() {
+		return "com.tll.Test";
+	}
 
 	/**
 	 * Verifies the aggregation of a {@link Model}'s {@link PropertyChangeSupport}
 	 * instance among its {@link IModelProperty}s.
 	 * @throws Exception
 	 */
-	@Test(enabled = true)
 	public void testModelChangeSupportAggregation() throws Exception {
 
 		Model[] lr = stubLeftAndRight();
@@ -74,7 +76,6 @@ public class ModelBindingTest {
 	 * binding end point to the other (right <--> left).
 	 * @throws Exception
 	 */
-	@Test(enabled = true)
 	public void testPropertyChangeSyncing() throws Exception {
 
 		Model[] lr = stubLeftAndRight();
@@ -119,7 +120,6 @@ public class ModelBindingTest {
 	 * Test index property change handling.
 	 * @throws Exception
 	 */
-	@Test(enabled = true)
 	public void testIndexedPropertyMutation() throws Exception {
 
 		Model[] lr = stubLeftAndRight();
@@ -170,10 +170,10 @@ public class ModelBindingTest {
 	protected void verifyInSync(Model left, Model right) throws Exception {
 		// verify the properties changes are syncd
 		try {
-			TestUtils.equals(left, right, true);
+			ClientTestUtils.equals(left, right, true);
 		}
 		catch(Exception e) {
-			Assert.fail("Model " + left.toString() + " is out of sync with: " + right.toString(), e);
+			throw new Exception("Model " + left.toString() + " is out of sync with: " + right.toString(), e);
 		}
 	}
 
@@ -181,18 +181,13 @@ public class ModelBindingTest {
 	 * Stubs distinct left and right {@link Model} instances
 	 * @return 2 element array where the first element is the left model
 	 */
-	protected Model[] stubLeftAndRight() {
+	protected Model[] stubLeftAndRight() throws Exception {
 		Model left = stubRootModel();
 		Model right = left.copy(true);
 		right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
-		try {
-			TestUtils.validateCopy(left, right, true);
-		}
-		catch(Exception e) {
-			Assert.fail("Unable to stub left and right", e);
-		}
+		ClientTestUtils.validateCopy(left, right, true);
 
 		return new Model[] {
 			left, right };

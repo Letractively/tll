@@ -32,6 +32,8 @@ import com.tll.model.validate.IEntityValidator;
 /**
  * EntityService - Base class for all entity service implementations.
  * @author jpk
+ * @param <E>
+ * @param <D>
  */
 @Transactional
 public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> implements IEntityService<E> {
@@ -50,9 +52,9 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 
 	/**
 	 * Constructor
-	 * @param daoFactory
+	 * @param daoClass
+	 * @param dao
 	 * @param entityAssembler
-	 * @param validatorDelegate
 	 */
 	protected EntityService(Class<D> daoClass, D dao, EntityAssembler entityAssembler) {
 		super();

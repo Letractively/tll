@@ -12,15 +12,17 @@ import com.tll.model.IEntity;
  * For entities having some sort of state where the distinction between delete
  * and purge is relevant.
  * @author jpk
+ * @param <E>
+ * @param <D>
  */
 @Transactional
 public abstract class StatefulEntityService<E extends IEntity, D extends IEntityDao<E>> extends EntityService<E, D> implements IStatefulEntityService<E> {
 
 	/**
 	 * Constructor
+	 * @param daoClass
 	 * @param dao
 	 * @param entityAssembler
-	 * @param validatorDelegate
 	 */
 	protected StatefulEntityService(Class<D> daoClass, D dao, EntityAssembler entityAssembler) {
 		super(daoClass, dao, entityAssembler);
@@ -28,6 +30,7 @@ public abstract class StatefulEntityService<E extends IEntity, D extends IEntity
 
 	/**
 	 * Delete all entites
+	 * @param entities
 	 */
 	public void deleteAll(Collection<E> entities) {
 		if(entities != null && entities.size() > 0) {

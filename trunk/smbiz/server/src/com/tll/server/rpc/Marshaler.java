@@ -73,7 +73,7 @@ public final class Marshaler {
 	 * looping as the hierarchy may contain circular references.
 	 * @author jpk
 	 */
-	private static final class Binding {
+	protected static final class Binding {
 
 		final Object source;
 		final Model group;
@@ -207,6 +207,7 @@ public final class Marshaler {
 	 * containing all marshalable properties contained within the search result.
 	 * @param searchResult May NOT be <code>null</code>.
 	 * @param options May NOT be <code>null</code>.
+	 * @return client ready model
 	 * @throws IllegalArgumentException When neither an IEntity nor an IScalar is
 	 *         resolved from the given SearchResult.
 	 */

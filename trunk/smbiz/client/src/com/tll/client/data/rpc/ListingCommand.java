@@ -25,6 +25,7 @@ import com.tll.dao.Sorting;
 /**
  * ListingRequest - Issues listing commands to the server.
  * @author jpk
+ * @param <S>
  */
 @SuppressWarnings("unchecked")
 public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingPayload> implements IListingOperator<Model> {
@@ -83,6 +84,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 
 	/**
 	 * Constructor
+	 * @param sourcingWidget
 	 * @param listingName The unique listing name
 	 * @param listingDef The remote listing definition
 	 */

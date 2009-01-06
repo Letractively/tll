@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-
 /**
  * The <code>Map</code> filterer. Thin wrapper around the already established
- * collection filterer A {@link com.tll.service.acl.afterinvocation.IMapFiltererTransformer} converts a
- * serviceMap/collection to/from a collection/serviceMap so the wrapped
+ * collection filterer A
+ * {@link com.tll.service.acl.afterinvocation.IMapFiltererTransformer} converts
+ * a serviceMap/collection to/from a collection/serviceMap so the wrapped
  * collection based filterer can perform the actual filtering.
  * @author jpk
  */
@@ -28,6 +28,8 @@ public class MapFilterer implements IFilterer {
 
 	/**
 	 * Constructor
+	 * @param map
+	 * @param transformer
 	 */
 	public MapFilterer(Map<Object, Object> map, IMapFiltererTransformer transformer) {
 		super();

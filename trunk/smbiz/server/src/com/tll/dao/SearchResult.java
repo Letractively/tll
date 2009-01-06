@@ -13,6 +13,7 @@ import com.tll.model.IScalar;
  * SearchResult - Generic container for a single search result. Wraps either a
  * single entity or a single scalar element.
  * @author jpk
+ * @param <E>
  */
 public final class SearchResult<E extends IEntity> {
 
