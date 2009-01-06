@@ -7,13 +7,26 @@ package com.tll.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.tll.client.admin.ui.field.account.AccountFieldsProvider;
+import com.tll.client.model.DatePropertyValue;
+import com.tll.client.model.EnumPropertyValue;
 import com.tll.client.model.IModelProperty;
+import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelRefProperty;
 import com.tll.client.model.RelatedManyProperty;
+import com.tll.client.model.RelatedOneProperty;
+import com.tll.client.model.StringPropertyValue;
+import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.model.EntityType;
+import com.tll.model.impl.AddressType;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -232,6 +245,100 @@ public final class ClientTestUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Stubs a suitable {@link Model} instance for testing.
+	 * <p>
+	 * Of note, this model has a related one model ("parent") and two indexable
+	 * models ("addresses").
+	 * @return A stubbed root model for testing.
+	 */
+	public static Model getTestRootModel() {
+		Model account = stubAccount(stubAccount(null, EntityType.ASP, 1), EntityType.ISP, 2);
+
+		Model aa1 = stubAccountAddress(account, stubAddress(1), 1);
+		Model aa2 = stubAccountAddress(account, stubAddress(2), 2);
+
+		Set<Model> addresses = new LinkedHashSet<Model>();
+		addresses.add(aa1);
+		addresses.add(aa2);
+		account.set(new RelatedManyProperty(EntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
+
+		account.setAsRoot();
+
+		return account;
+	}
+
+	/**
+	 * Stubs an account instance
+	 * @param parentAccount
+	 * @param accountType
+	 * @param num
+	 * @return new instance
+	 */
+	public static Model stubAccount(Model parentAccount, EntityType accountType, int num) {
+		Model m = new Model(accountType);
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
+		m.set(new StringPropertyValue(Model.NAME_PROPERTY, "ISP " + num));
+		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new Date()));
+		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new Date()));
+		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
+		return m;
+	}
+
+	/**
+	 * Stubs an address
+	 * @param num
+	 * @return new instance
+	 */
+	public static Model stubAddress(int num) {
+		Model address = new Model(EntityType.ADDRESS);
+		address.set(new IntPropertyValue(Model.ID_PROPERTY, num));
+		address.set(new StringPropertyValue("firstName", "firstname " + num));
+		address.set(new StringPropertyValue("lastName", "lastname " + num));
+		return address;
+	}
+
+	/**
+	 * Stubs an account address.
+	 * @param account
+	 * @param address
+	 * @param num
+	 * @return new instance
+	 */
+	public static Model stubAccountAddress(Model account, Model address, int num) {
+		Model m = new Model(EntityType.ACCOUNT_ADDRESS);
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
+		m.set(new EnumPropertyValue("type", AddressType.values()[num - 1]));
+		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "account", true, account));
+		m.set(new RelatedOneProperty(EntityType.ADDRESS, "address", false, address));
+		return m;
+	}
+
+	/**
+	 * TestFieldGroupProvider
+	 * @author jpk
+	 */
+	private static final class TestFieldGroupProvider implements IFieldGroupProvider {
+
+		public FieldGroup getFieldGroup() {
+			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
+			FieldGroup fg = fpAccount.getFieldGroup();
+			fg.addField("parent", fpAccount.getFieldGroup());
+			fg.addField("addresses", new FieldGroup());
+			return fg;
+		}
+	}
+
+	private static final IFieldGroupProvider TEST_FIELD_GROUP_PROVIDER = new TestFieldGroupProvider();
+
+	/**
+	 * @return A test {@link IFieldGroupProvider} that compliments
+	 *         {@link #getTestRootModel()}.
+	 */
+	public static IFieldGroupProvider getRootFieldGroupProvider() {
+		return TEST_FIELD_GROUP_PROVIDER;
 	}
 
 	/**

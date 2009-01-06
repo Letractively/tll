@@ -257,12 +257,11 @@ public final class Binding {
 	 * @param left
 	 * @param leftConverter
 	 * @param right
-	 * @param rightProperty
 	 * @param rightConverter
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
-	public Binding(IBindable left, IConverter<Object, Object> leftConverter, IBindable right, String rightProperty,
+	public Binding(IBindable left, IConverter<Object, Object> leftConverter, IBindable right,
 			IConverter<Object, Object> rightConverter, String property) {
 		this(left, property, leftConverter, right, property, rightConverter);
 	}

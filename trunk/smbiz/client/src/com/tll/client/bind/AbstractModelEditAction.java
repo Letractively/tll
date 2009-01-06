@@ -6,7 +6,6 @@
 package com.tll.client.bind;
 
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.validate.ValidationFeedbackManager;
 
 /**
  * AbstractModelEditAction - Common base class for all concrete model edit
@@ -43,17 +42,4 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 * Responsible for filling the <code>binding</code> member property.
 	 */
 	protected abstract void populateBinding(FP bindable);
-
-	/**
-	 * Adds a binding.
-	 * @param fieldPanel The field panel
-	 * @param property The common property path that resolves the target property
-	 *        for both the model and the field panel's field group
-	 */
-	protected void addBinding(FP fieldPanel, String property) {
-		binding.getChildren().add(
-				new Binding(fieldPanel, fieldPanel.getFieldGroup().getField(property), ValidationFeedbackManager.instance(),
-						property));
-	}
-
 }

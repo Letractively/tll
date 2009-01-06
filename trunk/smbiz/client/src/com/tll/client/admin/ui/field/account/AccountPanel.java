@@ -16,13 +16,11 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
@@ -96,15 +94,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 				public void onClose(DisclosureEvent event) {
 				}
 			});
-		}
-	}
-
-	static final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
-
-		@Override
-		protected void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
-			fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
 		}
 	}
 
