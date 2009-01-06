@@ -29,35 +29,70 @@ ant.patternset(id:'ps_classpathResourceFiles') {
 	exclude(name:"**/context-s*.xml")
 }
 
-ant.patternset(id:'ps_libs') {
-	include(name:"**/*.jar")
-	include(name:"**/*.zip")
-	exclude(name:"**/src/*")
-}
-
-// NOTE: we copy test related jars too!
-// TODO: make this a whitelist since we may put other non needed libs in this generalized lib location!! 
-ant.patternset(id:'ps_libsDeploy') {
-	patternset(refid:"ps_libs")
-	exclude(name:"servlet-api.jar")
+ant.patternset(id:'ps_dependentLibs') {
+	include(name:'acegi-security.jar')
+	include(name:'activation.jar')
+	include(name:'antlr.jar')
+	include(name:'aopalliance.jar')
+	include(name:'backport-util-concurrent.jar')
+	include(name:'c3po.jar')
+	include(name:'cglib-nodep.jar')
+	include(name:'commons-beanutils.jar')
+	include(name:'commons-codec.jar')
+	include(name:'commons-collections.jar')
+	include(name:'commons-configuration.jar')
+	include(name:'commons-fileupload.jar')
+	include(name:'commons-io.jar')
+	include(name:'commons-lang.jar')
+	include(name:'commons-logging.jar')
+	include(name:'commons-validator.jar')
+	include(name:'connector.jar')
+	include(name:'dom4j.jar')
+	include(name:'ehcache.jar')
+	include(name:'ejb3-persistence.jar')
+	include(name:'guice.jar')
+	include(name:'hibernate3.jar')
+	include(name:'hibernate-annotations.jar')
+	include(name:'hibernate-commons-annotations.jar')
+	include(name:'hibernate-entitymanager.jar')
+	include(name:'hibernate-validator.jar')
+	include(name:'javassist.jar')
+	include(name:'log4j.jar')
+	include(name:'jakarta-oro.jar')
+	include(name:'jta.jar')
+	include(name:'mail.jar')
+	include(name:'mysql-connector-java-bin.jar')
+	include(name:'servlet-api.jar')
+	include(name:'slf4j-api.jar')
+	include(name:'slf4j-log4j12.jar')
+	include(name:'spring.jar')
+	include(name:'spring-aspects.jar')
+	include(name:'spring-test.jar')
+	include(name:'tll-config.jar')
+	include(name:'tll-core.jar')
+	include(name:'tll-mail.jar')
+	include(name:'tll-util.jar')
+	include(name:'velocity.jar')
+	
+	include(name:'junit.jar')
+	include(name:'testng.jar')
+	
+	include(name:'servlet-api.jar')
 }
 	
 def compile_server_classpath = ant.path {
 	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
-	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
-	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
-	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
-	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
 	fileset(dir: property.'project.dir.tll.libs') {
-		include(name: '*.jar')
+		patternset(refid:'ps_dependentLibs')
+		exclude(name: 'servlet-api.jar')
 	}
 }
 	
 def compile_client_classpath = ant.path {
 	pathelement(location: "${property.'project.dir.build'}/classes-server")
-	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
-	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/tll-core.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/tll-util.jar")
 	pathelement(location: property.'gwt.dir.install' + '/gwt-user.jar')
 	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
 	fileset(dir: property.'project.client.dir' + '/lib') {
@@ -69,12 +104,8 @@ def compile_test_classpath = ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-dev-windows.jar")
 	pathelement(location: property.'gwt.incubator.dir.install' + '/build/dist/gwt-incubator.jar')
-	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
-	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
-	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
-	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
 	fileset(dir: property.'project.dir.tll.libs') {
-		include(name: '*.jar')
+		patternset(refid:'ps_dependentLibs')
 	}
 	pathelement(location: "${property.'project.dir.build'}/classes-server")
 	pathelement(location: "${property.'project.dir.build'}/classes-client")
@@ -85,11 +116,8 @@ def test_classpath = ant.path {
 	pathelement(location: "${property.'project.dir.build.web'}/WEB-INF/classes")
 	pathelement(location: "${property.'project.dir.build'}/classes-client")
 	fileset(dir: "${property.'project.dir.build.web'}/WEB-INF/lib") {
-		include(name: '**/*.jar')
-		exclude(name: '**/**.zip')
-		exclude(name: '**/src/*')
+		patternset(refid:'ps_dependentLibs')
 	}
-	pathelement(location: "${property.'project.dir.tll.libs'}/servlet-api.jar")
 }
 	
 // compile classpath for the gwt compiler 
@@ -98,11 +126,11 @@ def gwt_compile_classpath = ant.path {
 	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 	pathelement(location: "${property.'gwt.incubator.dir.install'}/build/dist/gwt-incubator.jar")
 	
-	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
-	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/tll-core.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/tll-util.jar")
 	
-	pathelement(location: property.'project.dir.tll' + '/core/src')
-	pathelement(location: property.'project.dir.tll' + '/util/src')
+	pathelement(location: "${property.'project.dir.tll.libs'}/src/tll-core-src.jar")
+	pathelement(location: "${property.'project.dir.tll.libs'}/src/tll-util-src.jar")
 
 	pathelement(location: property.'project.server.dir' + '/src')
 	pathelement(location: property.'project.client.dir' + '/src')
@@ -110,16 +138,10 @@ def gwt_compile_classpath = ant.path {
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
 	}
-	
-	pathelement(location: property.'project.dir.tll.libs' + '/junit.jar')
 }
 	
 // classpath for javadoc 
 def javadoc_classpath = ant.path {
-	pathelement(location: "${property.'project.dir.tll'}/config/dist/tll-config.jar")
-	pathelement(location: "${property.'project.dir.tll'}/core/dist/tll-core.jar")
-	pathelement(location: "${property.'project.dir.tll'}/util/dist/tll-util.jar")
-	pathelement(location: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar")
 	pathelement(location: "${property.'project.dir.build'}/classes-server")
 	pathelement(location: "${property.'project.dir.build'}/classes-client")
 	pathelement(location: "${property.'project.dir.build'}/classes-test")
@@ -127,7 +149,7 @@ def javadoc_classpath = ant.path {
 	pathelement(location: "${property.'gwt.incubator.dir.install'}/build/dist/gwt-incubator.jar")
 	pathelement(location: "${property.'aspectj.dir.install'}/lib/aspectjrt.jar")
 	fileset(dir: property.'project.dir.tll.libs') {
-		include(name: '*.jar')
+		patternset(refid:'ps_dependentLibs')
 	}
 	fileset(dir: property.'project.client.dir' + '/lib') {
 		include(name: '*.jar')
@@ -213,7 +235,7 @@ def buildGwtConstantsFile = {
 	f.write(sbuf.toString())
 }
 	
-def gwtClean = { module ->
+def gwtClean = { String module ->
 	println()
 	println "Deleting GWT compiler output dir: " + module + "..."
 	ant.delete(quiet:'true', includeemptydirs:'true') {
@@ -230,11 +252,27 @@ def gwtClean = { module ->
 	}
 }
 	
-def gwtCompile = { module ->
+//removes old gwt generated files from the build web deploy dir
+//IMPT: we operate on the assumption that none of these files are nested in sub-directories
+def gwtDeleteOldDeploy = {
+	println()
+	println 'Removing old GWT deployed files...'
+	ant.delete() {
+		fileset(dir: property.'project.dir.build.web') {
+			include(name: '*.*')
+		}
+	}
+}
+
+// GWTCompiler [-logLevel level] [-gen dir] [-out dir] [-treeLogger] [-style style] module
+def gwtCompile = { String module ->
 	gwtClean(module)
 	println()
 	println "Compiling GWT module: ${module} (style: ${property.'gwt.compile.style'})..."
-	ant.java(classname: 'com.google.gwt.dev.GWTCompiler', classpath: gwt_compile_classpath, fork: true) {
+	ant.java(
+			classname: 'com.google.gwt.dev.GWTCompiler', 
+			classpath: gwt_compile_classpath, 
+			fork: true) {
 		jvmarg(value: property.'gwt.compile.memory')
 		arg (value: '-out')
 		arg (value: property.'project.dir.build') 
@@ -247,18 +285,6 @@ def gwtCompile = { module ->
 	ant.copy(todir: hostModeModuleDir) {
 		fileset(dir: "${property.'project.dir.build'}/${module}") {
 			include(name: '*.rpc')
-		}
-	}
-}
-	
-// removes old gwt generated files from the build web deploy dir
-// IMPT: we operate on the assumption that none of these files are nested in sub-directories
-def gwtDeleteOldDeploy = {
-	println()
-	println 'Removing old GWT deployed files...'
-	ant.delete() {
-		fileset(dir: property.'project.dir.build.web') {
-			include(name: '*.*')
 		}
 	}
 }
@@ -385,7 +411,7 @@ target (prepare: 'create directories') {
 	ant.mkdir(dir: property.'project.dir.build' + '/classes-server-woven')	// for aspectj compile time weaving
 	ant.mkdir(dir: property.'project.dir.build' + '/classes-client')
 	ant.mkdir(dir: property.'project.dir.build' + '/classes-test')
-	ant.mkdir(dir: property.'project.dir.build' + '/src')	// for javadocs
+	//ant.mkdir(dir: property.'project.dir.build' + '/src')	// for javadocs
 	ant.mkdir(dir: property.'project.dir.build' + '/META-INF')	// war file manifest
 	ant.mkdir(dir: property.'project.dir.build.web')
 	ant.mkdir(dir: property.'project.dir.build.web' + '/WEB-INF')
@@ -496,7 +522,7 @@ target (compile: 'Compiles server, client and test classes') {
 	targetEnd()
 }
  	
-target (javadocs: 'Generate documentation') {
+target (javadocs: 'Generate source file documentation') {
 	targetStart()
 	depends(compile)
 	
@@ -513,13 +539,11 @@ target (javadocs: 'Generate documentation') {
 		classpath: javadoc_classpath) {
 
 		// server source
-		/*
 		packageset(dir:"server/src", defaultexcludes: "yes") {
 			include(name: 'com/tll/**')
 			// TODO: figure out why the config package fails !!! ??? wtf ???
 			exclude(name: 'com/tll/config/**')
 		}
-		*/
 		
 		// client source
 		packageset(dir:"client/src", defaultexcludes: "yes") {
@@ -618,14 +642,9 @@ target (copyServerLib: 'Copies needed library files for the server') {
 	
 	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true) {
 		fileset(dir: property.'project.dir.tll.libs') {
-			patternset(refid:'ps_libsDeploy')
+			patternset(refid:'ps_dependentLibs')
 		}
 	}
-	
-	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/config/dist/tll-config.jar", preservelastmodified:true)
-	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/core/dist/tll-core.jar", preservelastmodified:true)
-	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/util/dist/tll-util.jar", preservelastmodified:true)
-	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", file: "${property.'project.dir.tll'}/mail/dist/tll-mail.jar", preservelastmodified:true)
 	
 	println 'gwt-servlet.jar...'
 	ant.copy(todir: "${property.'project.dir.build.web'}/WEB-INF/lib", preservelastmodified:true, file: "${property.'gwt.dir.install'}/gwt-servlet.jar")
@@ -695,21 +714,6 @@ target (copyServer: 'Copies server dependant files to build WEB-INF/classes dir'
 	targetEnd()
 }
 
-// NOTE: this must be run explicitly and is not a dependency in any declared target 
-target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
-	targetStart()
-	depends(compileClient)
-	gwtCompile(property.'gwt.module.uitests')
-	targetEnd()
-}
-
-target (gwtCompileAdmin: 'GWT client compilation') {
-	targetStart()
-	depends(compileClient)
-	gwtCompile(property.'gwt.module.smbiz.admin')
-	targetEnd()
-}
-	
 target (copy: 'Copies client, server and test files making the app build ready') {
 	targetStart()
 	depends(copyServer)
@@ -717,6 +721,28 @@ target (copy: 'Copies client, server and test files making the app build ready')
 	targetEnd()
 }
 
+target (gwtCompileSmbiz: 'GWT smbiz module compilation') {	
+	targetStart()
+	depends(compileClient)
+	gwtCompile(property.'gwt.module.smbiz')
+	targetEnd()
+}
+	
+//NOTE: this must be run explicitly and is not a dependency in any declared target 
+target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
+	targetStart()
+	depends(compileClient)
+	gwtCompile(property.'gwt.module.uitests')
+	targetEnd()
+}
+
+target (gwtCompileAdmin: 'GWT smbiz admin client compilation') {
+	targetStart()
+	depends(compileClient)
+	gwtCompile(property.'gwt.module.smbiz.admin')
+	targetEnd()
+}
+	
 target (buildServer: 'Build all server related stuff') {
 	targetStart()
 	depends(copyServer)
@@ -726,6 +752,7 @@ target (buildServer: 'Build all server related stuff') {
 
 target (buildClient: 'Build all client related stuff') {
 	targetStart()
+	depends(copyClasses)
 	depends(gwtCompileAdmin)
 	
 	println 'Copying GWT compiler output to build web dir...'
@@ -753,7 +780,10 @@ target (createWAR: 'Creates a WAR file from the current state of the app') {
 	targetStart()
 	println()
 	println 'Creating WAR file...'
-	ant.jar(destfile: "${property.'project.dir.dist'}/${property.'app.name'}.war", basedir: property.'project.dir.build.web', manifest: "${property.'project.dir.build'}/META-INF/MANIFEST.MF")
+	ant.jar(
+		destfile: "${property.'project.dir.dist'}/${property.'app.name'}.war", 
+		basedir: property.'project.dir.build.web', 
+		manifest: "${property.'project.dir.build'}/META-INF/MANIFEST.MF")
 	targetEnd()
 }
 
@@ -765,19 +795,6 @@ target (dist: 'Create the distribution file[s]') {
 		depends(createWAR)
 	}
 	isDeploy = false	// reset
-	targetEnd()
-}
-
-target (undeploy: 'Removes the app from the deployed server location') {
-	targetStart()
-	println()
-	if(property.'server.type' == 'tomcat') {
-	println('Removing old Tomcat deployment (if present)...')
-	// remove deployment dir (if present)
-	ant.delete(dir: "${property.'server.dir.deploy'}/${property.'app.name'}", quiet:'true')
-	}
-	// remove WAR file (if present)
-	ant.delete(file: "${property.'server.dir.deploy'}/${property.'app.name'}.war", quiet:'true')
 	targetEnd()
 }
 
@@ -805,6 +822,19 @@ target (deploy: 'deploy to target server') {
 	targetEnd()
 }
 	
+target (undeploy: 'Removes the app from the deployed server location') {
+	targetStart()
+	println()
+	if(property.'server.type' == 'tomcat') {
+	println('Removing old Tomcat deployment (if present)...')
+	// remove deployment dir (if present)
+	ant.delete(dir: "${property.'server.dir.deploy'}/${property.'app.name'}", quiet:'true')
+	}
+	// remove WAR file (if present)
+	ant.delete(file: "${property.'server.dir.deploy'}/${property.'app.name'}.war", quiet:'true')
+	targetEnd()
+}
+
 // DB TASKS
 
 target(dbCreate: 'Create the application database') {
@@ -871,95 +901,118 @@ target(dbTestClear: 'Delete data from the TEST database') {
 	targetEnd()
 }
 
-// Server side tests
+// TestNG (server side) test cases
 
-// TODO figure out how to use this closure (currently we get an error)
-/*
-def runTest = { String xmlFileName ->
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		xmlfileset(file:"${property.'project.server.dir'}/test/${xmlFileName}")
+def testngTest = { String xmlFileName, boolean weave ->
+	if(weave) {
+		ant.testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
+			jvmarg(value: '-ea')
+			jvmarg(value: "-javaagent:${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
+			xmlfileset(file:"${property.'project.server.dir'}/test/${xmlFileName}")
+		}
 	}
-}
-*/
-
-def testPrepare = {
-	//ant.delete(dir: "${property.'project.server.dir'}/test-output", quiet:'true')
+	else {
+		ant.testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
+			jvmarg(value: '-ea')
+			xmlfileset(file:"${property.'project.server.dir'}/test/${xmlFileName}")
+		}
+	}
 }
 
 target(testBootstrap: 'Runs the bootstrapping related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-bootstrap.xml")
-	}
+	testngTest('testng-bootstrap.xml', false)
+	targetEnd()
 }
 
 target(testModel: 'Runs the model related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-model.xml")
-	}
-	runTest "testng-model.xml"
+	testngTest('testng-model.xml', false)
+	targetEnd()
 }
 
 target(testDao: 'Runs the dao related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		jvmarg(value: '-Xmx256m')
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-dao.xml")
-	}
+	testngTest('testng-dao.xml', false)
+	targetEnd()
 }
 
 target(testEntityService: 'Runs the entity service related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		jvmarg(value: "-javaagent:${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-entity-service.xml")
-	}
+	testngTest('testng-entity-service.xml', true)
+	targetEnd()
 }
 
 target(testListHandler: 'Runs the IListHandler related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-listhandler.xml")
-	}
+	testngTest('testng-listhandler.xml', true)
+	targetEnd()
 }
 
 target(testClientModel: 'Runs the client model related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-client-model.xml")
-	}
+	testngTest('testng-client-model.xml', false)
+	targetEnd()
 }
 
 target(testServer: 'Runs the server related tests') {
+	targetStart()
 	depends(buildServer)
-	testng(outputdir: "${property.'project.server.dir'}/test-output", classpath: test_classpath, haltonfailure:'true') {
-		jvmarg(value: '-ea')
-		jvmarg(value: "-javaagent:${property.'aspectj.dir.install'}/lib/aspectjweaver.jar")
-		xmlfileset(file:"${property.'project.server.dir'}/test/testng-server.xml")
-	}
+	testngTest('testng-server.xml', true)
+	targetEnd()
 }
 
-// GWT JUnit test cases
-target(testClientModelBind: 'Tests client model bind') {
-	junit(
-		printsummary: 'withOutAndErr',
-		dir: property.'project.server.dir',
-		fork: true) {
+//GWT JUnit (client side) test cases
+
+def gwtTest = { String testClassName ->
+
+	// IMPT: kill the gwt host mode web.xml file as it may not be the stock version which the gwt junit runner requires
+	ant.delete(file: property.'gwt.dir.shell.server' + '/webapps/ROOT/WEB-INF/web.xml')
+
+	ant.java(
+		classname: 'junit.textui.TestRunner',
+		fork: true, 
+		dir: property.'project.client.dir') {
 		
 		classpath {
-			gwt_compile_classpath
+			pathelement(location: "${property.'project.dir.build'}/classes-server")
+			pathelement(location: "${property.'project.dir.build'}/classes-client")
+			pathelement(location: "${property.'project.dir.build'}/classes-test")
+			pathelement(path: gwt_compile_classpath)
+			pathelement(location: property.'project.client.dir' + '/test')
+			pathelement(location: property.'project.dir.tll.libs' + '/junit.jar')
 		}
 		
-		test(name: 'com.tll.client.bind.ModelBindingTest')
+		jvmarg(value: '-Dgwt.args=-out www-test')
+		jvmarg(value: '-ea')
+		jvmarg(value: '-Xmx256M')
+		
+		arg(value: testClassName)
 	}
 }
 
-//setDefaultTarget(build)
+target(testClientModelBind: 'Tests client model to model binding') {
+	targetStart()
+	depends(compile)
+	println()
+	println('testing..')
+	gwtTest('com.tll.client.bind.ModelBindingTest')
+	targetEnd()
+}
+
+target(testClientModelFieldGroupBind: 'Tests client model to field group binding') {
+	targetStart()
+	depends(compile)
+	println()
+	println('testing..')
+	gwtTest('com.tll.client.bind.ModelFieldGroupBindingTest')
+	targetEnd()
+}
+
+setDefaultTarget(dist)

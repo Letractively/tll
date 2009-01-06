@@ -1,9 +1,15 @@
+<!-- 
+  GWT test module that identifies all gwt tests for gwt's junit testing framework. 
+-->
 <module>
-  <!-- 
-  the gwt test module that identifies all gwt tests for gwt's junit testing framework. 
-  -->
   <inherits name="com.tll.Smbiz" />
 
+  <!-- for quick gwt compiles (limits the number of permutations) -->
+  <!-- 
+  <set-property name="user.agent" value="ff" />
+  <set-property name="locale" value="default" />
+  -->
+  
   <source path="client" />
 
 </module>
