@@ -6,10 +6,10 @@
 package com.tll.client.ui;
 
 /**
- * HasHelpText
+ * IHasHelpText
  * @author jpk
  */
-public interface HasHelpText {
+public interface IHasHelpText {
 
 	/**
 	 * @return The help text.

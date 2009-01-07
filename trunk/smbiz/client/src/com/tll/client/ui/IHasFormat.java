@@ -7,10 +7,10 @@ package com.tll.client.ui;
 import com.tll.client.util.GlobalFormat;
 
 /**
- * HasFormat - Indicates formatting support.
+ * IHasFormat - Indicates formatting support.
  * @author jpk
  */
-public interface HasFormat {
+public interface IHasFormat {
 
 	/**
 	 * @return The format.

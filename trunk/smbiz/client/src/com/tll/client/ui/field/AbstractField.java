@@ -23,7 +23,7 @@ import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.HasFormat;
+import com.tll.client.ui.IHasFormat;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.ObjectUtil;
@@ -340,8 +340,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 					addValidator(CharacterValidator.INSTANCE);
 					break;
 				case DATE:
-					if(this instanceof HasFormat) {
-						GlobalFormat format = ((HasFormat) this).getFormat();
+					if(this instanceof IHasFormat) {
+						GlobalFormat format = ((IHasFormat) this).getFormat();
 						if(format != null && format.isDateFormat()) {
 							addValidator(DateValidator.instance(format));
 						}
@@ -349,8 +349,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 					break;
 				case FLOAT:
 				case DOUBLE:
-					if(this instanceof HasFormat) {
-						GlobalFormat format = ((HasFormat) this).getFormat();
+					if(this instanceof IHasFormat) {
+						GlobalFormat format = ((IHasFormat) this).getFormat();
 						if(format != null && format.isNumericFormat()) {
 							addValidator(DecimalValidator.instance(format));
 						}

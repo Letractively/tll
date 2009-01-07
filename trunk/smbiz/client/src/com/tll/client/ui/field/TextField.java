@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.ToStringConverter;
-import com.tll.client.ui.HasFormat;
+import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
@@ -19,7 +19,7 @@ import com.tll.client.util.StringUtil;
  * TextField
  * @author jpk
  */
-public final class TextField extends AbstractField<String> implements HasMaxLength, HasFormat {
+public final class TextField extends AbstractField<String> implements HasMaxLength, IHasFormat {
 
 	private GlobalFormat format;
 	private final TextBox tb;

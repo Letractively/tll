@@ -13,7 +13,7 @@ import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg.MsgLevel;
-import com.tll.client.ui.HasHelpText;
+import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -25,7 +25,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @param <V> The native field value type (usu. a String but not limited to it)
  * @author jpk
  */
-public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, HasHelpText, IBindable, IValidator {
+public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IHasHelpText, IBindable, IValidator {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
