@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.BooleanConverter;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.util.ObjectUtil;
 
 /**
  * CheckboxField
@@ -76,7 +77,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		Boolean old = getValue();
 		setChecked(value == null ? false : getConverter().convert(value).booleanValue());
 		Boolean newval = getValue();
-		if((old != newval) && !old.equals(newval)) {
+		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
 	}
@@ -86,6 +87,6 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		assert sender == cb;
 		super.onClick(sender);
 		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 	}
 }

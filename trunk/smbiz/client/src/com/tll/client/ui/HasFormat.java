@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 22, 2008
  */
-package com.tll.client.ui.field;
+package com.tll.client.ui;
 
 import com.tll.client.util.GlobalFormat;
 

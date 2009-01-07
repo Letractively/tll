@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.util.ObjectUtil;
 
 /**
  * RadioGroupField
@@ -35,7 +36,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	/**
 	 * The options.
 	 */
-	private List<? extends Object> options;
+	private List<?> options;
 
 	/**
 	 * List of radio buttons contained in {@link #rbPanel}. There is one for each
@@ -53,7 +54,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	 * @param options
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String labelText, String helpText, Collection<? extends Object> options,
+	public RadioGroupField(String propName, String labelText, String helpText, Collection<?> options,
 			boolean renderHorizontal) {
 		super(propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
@@ -74,7 +75,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	 * value becomes orphaned.
 	 * @param options
 	 */
-	public void setOptions(Collection<? extends Object> options) {
+	public void setOptions(Collection<?> options) {
 		if(options == null || options.size() < 1) {
 			throw new IllegalArgumentException("No options specified.");
 		}
@@ -82,22 +83,22 @@ public final class RadioGroupField extends AbstractField<String> {
 		old = getValue();
 		rbPanel.clear();
 		radioButtons.clear();
-		IConverter<String, Object> renderer = getConverter();
+		IConverter<String, Object> converter = getConverter();
 		for(Object n : options) {
-			Object ro = renderer.convert(n);
-			String sval = ro == null ? null : ro.toString();
+			Object co = converter.convert(n);
+			String sval = co == null ? null : co.toString();
 			RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
 			rb.setStyleName(IField.STYLE_FIELD_LABEL);
 			rb.addClickListener(this);
 			rbPanel.add(rb);
 			radioButtons.add(rb);
-			assert ro != null;
-			if(ro == old || ro.equals(old)) {
+			assert co != null;
+			if(co == old || co.equals(old)) {
 				valueBound = true;
 			}
 		}
 		if(!valueBound && old != null) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, null);
+			if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, null);
 			fireChangeListeners();
 		}
 	}
@@ -135,7 +136,7 @@ public final class RadioGroupField extends AbstractField<String> {
 			}
 			i++;
 		}
-		if(text != old && text != null && !text.equals(old)) {
+		if(changeSupport != null && !ObjectUtil.equals(old, text)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, text);
 		}
 	}
@@ -144,7 +145,7 @@ public final class RadioGroupField extends AbstractField<String> {
 	public void onClick(Widget sender) {
 		super.onClick(sender);
 		String cv = getValue();
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
+		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
 		old = cv;
 		fireChangeListeners();
 	}

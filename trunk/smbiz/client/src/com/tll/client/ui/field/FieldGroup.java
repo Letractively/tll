@@ -24,6 +24,7 @@ import com.tll.client.msg.Msg;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * FieldGroup - A group of {@link IField}s which may in turn be nested
@@ -39,11 +40,10 @@ import com.tll.client.validate.ValidationException;
  * <p>
  * <b>IMPT: </b> {@link FieldGroup}s do <em>NOT</em> (as yet) support handling
  * of circular references! As such, do not add a field that is already added to
- * another iterable field construct that are both reachable under a commot field
- * iterable construct.
+ * another field iterable that are both reachable under from a common ancestor.
  * @author jpk
  */
-public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
+public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField<?>> {
 
 	/**
 	 * Recursively searches for a single field whose property name matches the
@@ -56,7 +56,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 
 		// first go through the non-group child fields
 		for(IField<?> fld : group) {
-			if(fld instanceof Iterable == false) {
+			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().equals(propertyName)) {
 					return fld;
 				}
@@ -65,7 +65,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 
 		IField<?> rfld;
 		for(IField<?> fld : group) {
-			if(fld instanceof Iterable) {
+			if(fld instanceof FieldGroup) {
 				rfld = findField(propertyName, (FieldGroup) fld);
 				if(rfld != null) return rfld;
 			}
@@ -85,7 +85,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 	private static void findFields(final String propPath, Iterable<IField<?>> itr, Set<IField<?>> set) {
 		List<Iterable<IField<?>>> glist = null;
 		for(IField<?> fld : itr) {
-			if(fld instanceof Iterable == false) {
+			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().startsWith(propPath)) {
 					set.add(fld);
 				}
@@ -108,7 +108,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 	 * @param parentPropPath The parent property path to set
 	 */
 	private static void setParentPropertyPath(IField<?> field, String parentPropPath) {
-		if(field instanceof Iterable) {
+		if(field instanceof FieldGroup) {
 			for(IField<?> f : (FieldGroup) field) {
 				setParentPropertyPath(f, parentPropPath);
 			}
@@ -166,6 +166,14 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 	}
 
 	public void setPropertyName(String propName) {
+		throw new UnsupportedOperationException();
+	}
+
+	public String getHelpText() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setHelpText(String helpText) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -324,6 +332,12 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 		}
 	}
 
+	public void applyPropertyMetadata(IPropertyMetadataProvider provider) {
+		for(IField<?> f : fields) {
+			f.applyPropertyMetadata(provider);
+		}
+	}
+
 	public boolean isRequired() {
 		for(IField<?> field : fields) {
 			if(field.isRequired()) return true;
@@ -386,7 +400,7 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 		}
 	}
 
-	public Object getValue() {
+	public Set<IField<?>> getValue() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -424,8 +438,11 @@ public final class FieldGroup implements IField<Object>, Iterable<IField<?>> {
 		}
 	}
 
+	public void validate() throws ValidationException {
+		validate(null);
+	}
+
 	public Object validate(Object value) throws ValidationException {
-		if(value != this) throw new IllegalArgumentException();
 		Map<Widget, List<Msg>> errors = new HashMap<Widget, List<Msg>>();
 		for(IField<?> field : fields) {
 			try {

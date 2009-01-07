@@ -10,6 +10,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -102,6 +103,15 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 			throw new IllegalStateException("No field renderer set");
 		}
 		renderer.render(getPanel(), getFieldGroup());
+	}
+
+	@Override
+	public void setModel(M model) {
+		super.setModel(model);
+		// apply property metadata
+		if(model instanceof IPropertyMetadataProvider) {
+			getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
+		}
 	}
 
 	public final FieldGroup getValue() {

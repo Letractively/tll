@@ -13,7 +13,10 @@ import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.client.ui.HasHelpText;
 import com.tll.client.validate.IValidator;
+import com.tll.client.validate.ValidationException;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
@@ -22,7 +25,7 @@ import com.tll.client.validate.IValidator;
  * @param <V> The native field value type (usu. a String but not limited to it)
  * @author jpk
  */
-public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IBindable, IValidator {
+public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, HasHelpText, IBindable, IValidator {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
@@ -139,6 +142,12 @@ public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, H
 	void setFieldLabelContainer(Widget fieldLabelContainer);
 
 	/**
+	 * Applies property metadata to this field.
+	 * @param provider The property metadata provider.
+	 */
+	void applyPropertyMetadata(IPropertyMetadataProvider provider);
+
+	/**
 	 * Adds a validator.
 	 * @param validator The validtor to add
 	 */
@@ -149,6 +158,12 @@ public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, H
 	 * @param validator The validtor to remove
 	 */
 	void removeValidator(IValidator validator);
+
+	/**
+	 * Validates the field's held value.
+	 * @throws ValidationException When invalid
+	 */
+	void validate() throws ValidationException;
 
 	/**
 	 * Sets the <em>aggregated</em> {@link PropertyChangeSupport} instance

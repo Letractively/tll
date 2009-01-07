@@ -18,6 +18,8 @@ import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.util.StringUtil;
 import com.tll.model.EntityType;
+import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -25,7 +27,7 @@ import com.tll.model.schema.PropertyType;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IBindable, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -296,9 +298,12 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 * {@link IPropertyValue}s only.
 	 * @param propPath Points to the desired model property
 	 * @return The resolved non-<code>null</code> {@link IPropertyValue}
-	 * @throws PropertyPathException When the property value can't be resolved.
+	 * @throws PropPathNodeMismatchException When the given property path does not
+	 *         resolve to a property value.
+	 * @throws PropertyPathException When the property path is mal-formed or
+	 *         doesn't point to an existing model property.
 	 */
-	public IPropertyValue getPropertyValue(String propPath) throws PropertyPathException {
+	public IPropertyValue getPropertyValue(String propPath) throws PropPathNodeMismatchException, PropertyPathException {
 		IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
@@ -380,6 +385,15 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 		return (IndexedProperty) prop;
 	}
 
+	public PropertyMetadata getPropertyMetadata(String propPath) {
+		try {
+			return getPropertyValue(propPath).getMetadata();
+		}
+		catch(PropertyPathException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * Resolves a given property path against the hierarchy of this model throwing
 	 * a specific {@link PropertyPathException} when an error occurs.
@@ -389,7 +403,7 @@ public final class Model implements IMarshalable, IBindable, Iterable<IModelProp
 	 *         property path or when the given property path does not resolve to
 	 *         an existant property
 	 */
-	public IModelProperty resolvePropertyPath(final String propPath) throws PropertyPathException {
+	private IModelProperty resolvePropertyPath(final String propPath) throws PropertyPathException {
 		if(StringUtil.isEmpty(propPath)) {
 			throw new MalformedPropPathException("No property path specified.");
 		}

@@ -50,9 +50,6 @@ public final class SelectField extends AbstractField<Object> {
 		lb = new ListBox(isMultipleSelect);
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
-		// lb.addFocusListener(this);
-		lb.addChangeListener(this);
-
 	}
 
 	/**
@@ -63,8 +60,7 @@ public final class SelectField extends AbstractField<Object> {
 	 * @param isMultipleSelect
 	 * @param options
 	 */
-	public SelectField(String propName, String labelText, String helpText, boolean isMultipleSelect,
-			Collection<? extends Object> options) {
+	public SelectField(String propName, String labelText, String helpText, boolean isMultipleSelect, Collection<?> options) {
 		this(propName, labelText, helpText, isMultipleSelect);
 		setOptions(options);
 	}
@@ -73,7 +69,7 @@ public final class SelectField extends AbstractField<Object> {
 	 * Sets the options.
 	 * @param options The options to set
 	 */
-	public void setOptions(Collection<? extends Object> options) {
+	public void setOptions(Collection<?> options) {
 		if(this.options == null) this.options = new ArrayList<Object>();
 		lb.clear();
 
@@ -81,7 +77,7 @@ public final class SelectField extends AbstractField<Object> {
 
 		for(Object item : options) {
 			lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
-			if(contains(selected, item)) {
+			if(selected != null && contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
 				newSelected.add(item);
 			}
@@ -89,18 +85,23 @@ public final class SelectField extends AbstractField<Object> {
 		}
 
 		ArrayList<Object> old = selected;
-		this.selected = newSelected;
+		selected = newSelected;
 
-		if(isMultipleSelect()) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
-		}
-		else {
-			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
-			Object curr = (selected.size() == 0) ? null : selected.get(0);
-			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
-		}
-
+		firePropertyChange(selected, old);
 		fireChangeListeners();
+	}
+
+	private void firePropertyChange(ArrayList<Object> selected, ArrayList<Object> old) {
+		if(changeSupport != null) {
+			if(isMultipleSelect()) {
+				changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
+			}
+			else {
+				Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
+				Object curr = (selected == null || selected.size() == 0) ? null : selected.get(0);
+				changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
+			}
+		}
 	}
 
 	@Override
@@ -130,7 +131,7 @@ public final class SelectField extends AbstractField<Object> {
 
 	public void setMultipleSelect(boolean multiple) {
 		lb.setMultipleSelect(multiple);
-		if(selected.size() > 1) {
+		if(selected != null && selected.size() > 1) {
 			Object o = selected.get(0);
 			selected.clear();
 			selected.add(o);
@@ -156,8 +157,7 @@ public final class SelectField extends AbstractField<Object> {
 			Object option = it.next();
 			if(getComparator().compare(option, o) == 0) {
 				options.remove(option);
-				lb.removeItem(i);
-				update();
+				removeItem(i);
 			}
 		}
 	}
@@ -210,28 +210,35 @@ public final class SelectField extends AbstractField<Object> {
 				}
 			}
 
-			this.selected.add(value);
+			selected.add(value);
 		}
 
-		if(this.isMultipleSelect()) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
-		}
-		else {
-			Object prev = ((old == null) || (old.size() == 0)) ? null : old.get(0);
-			Object curr = (this.selected.size() == 0) ? null : this.selected.get(0);
-			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
-		}
+		firePropertyChange(selected, old);
 
 		fireChangeListeners();
 	}
 
 	public String getText() {
+		if(isMultipleSelect()) {
+			// comma delimit
+			if(selected != null) {
+				StringBuilder sb = new StringBuilder();
+				for(int i = 0; i < selected.size(); i++) {
+					sb.append(ToStringConverter.INSTANCE.convert(selected.get(i)));
+					if(i < selected.size() - 1) {
+						sb.append(',');
+					}
+				}
+				return sb.toString();
+			}
+			return "";
+		}
 		final int si = getSelectedIndex();
 		return si < 0 ? "" : lb.getItemText(si);
 	}
 
 	public void setText(String text) {
-		throw new UnsupportedOperationException();
+		setValue(text);
 	}
 
 	private boolean contains(final Collection<Object> c, final Object o) {
@@ -254,19 +261,10 @@ public final class SelectField extends AbstractField<Object> {
 			}
 		}
 
-		ArrayList<Object> old = selected;
-		selected.clear();
-		selected.addAll(selected);
-		// this.selected = selected;
+		ArrayList<Object> old = this.selected;
+		this.selected = selected;
 
-		if(isMultipleSelect()) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
-		}
-		else {
-			Object prev = ((old.size() == 0)) ? null : old.get(0);
-			Object curr = (selected.size() == 0) ? null : selected.get(0);
-			changeSupport.firePropertyChange(PROPERTY_VALUE, prev, curr);
-		}
+		firePropertyChange(selected, old);
 
 		fireChangeListeners();
 	}

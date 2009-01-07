@@ -7,6 +7,7 @@ package com.tll.client.ui.edit;
 import java.util.List;
 
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -16,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
 import com.tll.client.msg.Msg;
-import com.tll.client.ui.BoundButton;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
@@ -62,7 +62,7 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
-	private final BoundButton<M> btnSave, btnDelete, btnReset, btnCancel;
+	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
@@ -84,14 +84,14 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
-		btnSave = new BoundButton<M>("", this);
+		btnSave = new Button("", this);
 		pnlButtonRow.add(btnSave);
 
-		btnReset = new BoundButton<M>("Reset", this);
+		btnReset = new Button("Reset", this);
 		pnlButtonRow.add(btnReset);
 
 		if(showDeleteBtn) {
-			btnDelete = new BoundButton<M>("Delete", this);
+			btnDelete = new Button("Delete", this);
 			pnlButtonRow.add(btnDelete);
 		}
 		else {
@@ -99,7 +99,7 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 		}
 
 		if(showCancelBtn) {
-			btnCancel = new BoundButton<M>("Cancel", this);
+			btnCancel = new Button("Cancel", this);
 			pnlButtonRow.add(btnCancel);
 		}
 		else {

@@ -7,18 +7,14 @@ package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
-import com.tll.client.ui.field.AbstractFieldGroupProvider;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
-import com.tll.client.util.GlobalFormat;
 
 /**
  * UserPanel
@@ -26,21 +22,6 @@ import com.tll.client.util.GlobalFormat;
  * @param <M> the model type
  */
 public class UserPanel<M extends IBindable> extends FieldPanel<M> {
-
-	static class UserFieldsProvider extends AbstractFieldGroupProvider {
-
-		@Override
-		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
-			fg.addField(FieldFactory.femail("emailAddress", "Email Address", "Email Address", 30));
-			fg.getField("emailAddress").setReadOnly(true);
-			fg.addField(FieldFactory.fcheckbox("locked", "Locked", "Locked"));
-			fg.addField(FieldFactory.fcheckbox("enabled", "Enabled", "Enabled"));
-			fg.addField(FieldFactory.fdate("expires", "Expires", "Expires", GlobalFormat.DATE));
-			fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
-		}
-
-	}
 
 	class UserFieldsRenderer implements IFieldRenderer {
 

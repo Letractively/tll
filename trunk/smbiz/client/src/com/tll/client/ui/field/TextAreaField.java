@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.SimpleComparator;
 import com.tll.client.util.StringUtil;
 
@@ -83,15 +84,15 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 		String old = getValue();
 		setText(getConverter().convert(value));
 		String newval = getValue();
-		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
 	}
 
 	@Override
 	public void onChange(Widget sender) {
 		super.onChange(sender);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();
 	}

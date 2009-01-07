@@ -25,6 +25,7 @@ import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.client.util.ObjectUtil;
 import com.tll.model.EntityType;
 import com.tll.model.impl.AddressType;
 import com.tll.model.schema.PropertyType;
@@ -78,7 +79,7 @@ public final class ClientTestUtils {
 	 * @throws Exception When the given objects are found unequal
 	 */
 	public static void validateEquals(Object src, Object tgt) throws Exception {
-		if(!equals(src, tgt))
+		if(!ObjectUtil.equals(src, tgt))
 			throw new Exception("Objects do not equal: src: " + (src == null ? "null" : src.toString()) + ", tgt: "
 					+ (tgt == null ? "null" : tgt.toString()));
 	}
@@ -120,36 +121,6 @@ public final class ClientTestUtils {
 	public static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
 			throws Exception {
 		compare(source, copy, compareReferences, true, new ArrayList<Model>());
-	}
-
-	/**
-	 * <p>
-	 * Compares two objects for equality, where either one or both objects may be
-	 * <code>null</code>.
-	 * </p>
-	 * 
-	 * <pre>
-	 * ObjectUtils.equals(null, null)                  = true
-	 * ObjectUtils.equals(null, &quot;&quot;)                    = false
-	 * ObjectUtils.equals(&quot;&quot;, null)                    = false
-	 * ObjectUtils.equals(&quot;&quot;, &quot;&quot;)                      = true
-	 * ObjectUtils.equals(Boolean.TRUE, null)          = false
-	 * ObjectUtils.equals(Boolean.TRUE, &quot;true&quot;)        = false
-	 * ObjectUtils.equals(Boolean.TRUE, Boolean.TRUE)  = true
-	 * ObjectUtils.equals(Boolean.TRUE, Boolean.FALSE) = false
-	 * </pre>
-	 * @param object1 the first object, may be <code>null</code>
-	 * @param object2 the second object, may be <code>null</code>
-	 * @return <code>true</code> if the values of both objects are the same
-	 */
-	public static boolean equals(Object object1, Object object2) {
-		if(object1 == object2) {
-			return true;
-		}
-		if((object1 == null) || (object2 == null)) {
-			return false;
-		}
-		return object1.equals(object2);
 	}
 
 	/**

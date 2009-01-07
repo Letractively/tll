@@ -88,7 +88,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void setModel(M model) {
+	public void setModel(M model) {
 		final Object old = getModel();
 
 		if(old == this.model) return; // TODO verify if this is ok to do

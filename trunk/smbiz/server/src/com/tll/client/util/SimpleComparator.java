@@ -12,6 +12,7 @@ import java.util.Comparator;
  * SimpleComparator
  * @author jpk
  */
+@SuppressWarnings("serial")
 public class SimpleComparator implements Comparator<Object>, Serializable {
 
 	public static final SimpleComparator INSTANCE = new SimpleComparator();
@@ -28,7 +29,7 @@ public class SimpleComparator implements Comparator<Object>, Serializable {
 		if(o1 instanceof Comparable && o2 instanceof Comparable) {
 			return ((Comparable) o1).compareTo(o2);
 		}
-		if((o1 == o2) || ((o1 != null) && (o2 != null) && o1.equals(o2))) {
+		if(ObjectUtil.equals(o1, o2)) {
 			return 0;
 		}
 		else if((o1 != null) && (o2 != null)) {

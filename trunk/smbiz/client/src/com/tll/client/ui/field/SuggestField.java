@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
 
 /**
@@ -31,7 +32,7 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 	 * @param helpText
 	 * @param suggestions The required collection of suggestions.
 	 */
-	public SuggestField(String propName, String labelText, String helpText, Collection<? extends Object> suggestions) {
+	public SuggestField(String propName, String labelText, String helpText, Collection<?> suggestions) {
 		super(propName, labelText, helpText);
 		if(suggestions == null || suggestions.size() < 1) {
 			throw new IllegalArgumentException("No suggestions specified.");
@@ -53,7 +54,7 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 	}
 
 	public void setText(String text) {
-
+		sb.setText(text);
 	}
 
 	@Override
@@ -62,6 +63,10 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 	}
 
 	public void onSuggestionSelected(SuggestionEvent event) {
+		String newval = getValue();
+		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
+		}
 	}
 
 	public String getValue() {
@@ -72,15 +77,16 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 	public void setValue(Object value) {
 		String old = getValue();
 		setText(getConverter().convert(value));
-		if(getValue() != old && getValue() != null && getValue().equals(old)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		Object newval = getValue();
+		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
 	}
 
 	@Override
 	public void onChange(Widget sender) {
 		super.onChange(sender);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();
 	}

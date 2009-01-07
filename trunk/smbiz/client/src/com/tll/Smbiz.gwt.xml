@@ -14,6 +14,7 @@
     <include name="model/schema/ISchemaProperty.java" />
     <include name="model/schema/AbstractSchemaProperty.java" />
     <include name="model/schema/PropertyMetadata.java" />
+    <include name="model/schema/IPropertyMetadataProvider.java" />
     <include name="model/EntityType.java" />
     <include name="model/impl/AccountStatus.java" />
     <include name="model/impl/AddressType.java" />

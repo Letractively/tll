@@ -10,14 +10,18 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.ui.HasFormat;
+import com.tll.client.util.GlobalFormat;
+import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
 
 /**
  * TextField
  * @author jpk
  */
-public final class TextField extends AbstractField<String> implements HasMaxLength {
+public final class TextField extends AbstractField<String> implements HasMaxLength, HasFormat {
 
+	private GlobalFormat format;
 	private final TextBox tb;
 	private String old;
 
@@ -50,6 +54,14 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 			}
 
 		});
+	}
+
+	public GlobalFormat getFormat() {
+		return format;
+	}
+
+	public void setFormat(GlobalFormat format) {
+		this.format = format;
 	}
 
 	public int getVisibleLen() {
@@ -90,7 +102,7 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 		String old = getValue();
 		setText(getConverter().convert(value));
 		String newval = getValue();
-		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
+		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
 	}
@@ -98,7 +110,7 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	@Override
 	public void onChange(Widget sender) {
 		super.onChange(sender);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();
 	}

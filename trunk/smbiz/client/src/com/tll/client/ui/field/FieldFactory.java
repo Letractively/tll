@@ -60,6 +60,18 @@ public abstract class FieldFactory {
 	}
 
 	/**
+	 * Creates a new {@link PasswordField} instance.
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param visibleLength
+	 * @return new field
+	 */
+	public static final PasswordField fpassword(String propName, String labelText, String helpText, int visibleLength) {
+		return new PasswordField(propName, labelText, helpText, visibleLength);
+	}
+
+	/**
 	 * Creates new {@link DateField} instance.
 	 * @param propName
 	 * @param labelText
@@ -96,17 +108,6 @@ public abstract class FieldFactory {
 	public static final TextAreaField ftextarea(String propName, String labelText, String helpText, int numRows,
 			int numCols) {
 		return new TextAreaField(propName, labelText, helpText, numRows, numCols);
-	}
-
-	/**
-	 * Creates a new {@link PasswordField} instance.
-	 * @param propName
-	 * @param labelText
-	 * @param helpText The on hover tool tip text
-	 * @return new field
-	 */
-	public static final PasswordField fpassword(String propName, String labelText, String helpText) {
-		return new PasswordField(propName, labelText, helpText);
 	}
 
 	/**

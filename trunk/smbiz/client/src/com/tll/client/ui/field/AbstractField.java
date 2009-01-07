@@ -23,13 +23,23 @@ import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.HasFormat;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.util.GlobalFormat;
+import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
+import com.tll.client.validate.BooleanValidator;
+import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.DateValidator;
+import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.IValidator;
+import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
@@ -270,9 +280,11 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	/**
 	 * @param helpText the helpText to set
 	 */
-	public void setHelpText(String helpText) {
-		this.helpText = helpText;
-		if(isAttached()) draw();
+	public final void setHelpText(String helpText) {
+		if(!ObjectUtil.equals(this.helpText, helpText)) {
+			this.helpText = helpText;
+			if(isAttached()) draw();
+		}
 	}
 
 	/**
@@ -304,10 +316,74 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 	}
 
+	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
+		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
+		if(metadata != null) {
+			setRequired(metadata.isRequired());
+
+			if(this instanceof HasMaxLength) {
+				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
+			}
+
+			// set property meta data related field properties
+			setRequired(metadata.isRequired() && !metadata.isManaged());
+			if(this instanceof HasMaxLength) {
+				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
+			}
+
+			// set the type coercion validator
+			switch(metadata.getPropertyType()) {
+				case BOOL:
+					addValidator(BooleanValidator.INSTANCE);
+					break;
+				case CHAR:
+					addValidator(CharacterValidator.INSTANCE);
+					break;
+				case DATE:
+					if(this instanceof HasFormat) {
+						GlobalFormat format = ((HasFormat) this).getFormat();
+						if(format != null && format.isDateFormat()) {
+							addValidator(DateValidator.instance(format));
+						}
+					}
+					break;
+				case FLOAT:
+				case DOUBLE:
+					if(this instanceof HasFormat) {
+						GlobalFormat format = ((HasFormat) this).getFormat();
+						if(format != null && format.isNumericFormat()) {
+							addValidator(DecimalValidator.instance(format));
+						}
+					}
+					break;
+				case INT:
+				case LONG:
+					addValidator(IntegerValidator.INSTANCE);
+					break;
+
+				case STRING_MAP:
+					// TODO handle string map type coercion ?
+					break;
+
+				case ENUM:
+				case STRING:
+					// no type coercion validator needed
+					break;
+
+				default:
+					throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
+			}
+		}
+	}
+
 	public final void removeValidator(IValidator validator) {
 		if(validator != null && this.validator != null) {
 			this.validator.remove(validator);
 		}
+	}
+
+	public final void validate() throws ValidationException {
+		validate(getValue());
 	}
 
 	public final Object validate(Object value) throws ValidationException {
@@ -495,7 +571,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 		// valid check
 		try {
-			validate(getValue());
+			validate();
 			markInvalid(false, null);
 		}
 		catch(ValidationException e) {
