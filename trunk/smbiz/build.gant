@@ -997,6 +997,24 @@ def gwtTest = { String testClassName ->
 	}
 }
 
+target(testClientField: 'Tests the basic functionality of the client field framework') {
+	targetStart()
+	depends(compile)
+	println()
+	println('testing..')
+	gwtTest('com.tll.client.ui.field.FieldTest')
+	targetEnd()
+}
+
+target(testClientFieldGroup: 'Tests the basic functionality of the client field group construct') {
+	targetStart()
+	depends(compile)
+	println()
+	println('testing..')
+	gwtTest('com.tll.client.ui.field.FieldGroupTest')
+	targetEnd()
+}
+
 target(testClientModelBind: 'Tests client model to model binding') {
 	targetStart()
 	depends(compile)
