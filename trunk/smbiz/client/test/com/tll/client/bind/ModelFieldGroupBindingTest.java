@@ -41,8 +41,8 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 			binding.getChildren().add(new Binding(model, fg, "dateLastCharged"));
 			binding.getChildren().add(new Binding(model, fg, "nextChargeDate"));
 			binding.getChildren().add(new Binding(model, fg, "persistPymntInfo"));
-			binding.getChildren().add(new Binding(model, fg, "parent"));
-			binding.getChildren().add(new Binding(model, fg, "addresses"));
+			binding.getChildren().add(new Binding(model, fg, "parent.id"));
+			// binding.getChildren().add(new Binding(model, fg, "addresses"));
 		}
 
 		public void bind() {

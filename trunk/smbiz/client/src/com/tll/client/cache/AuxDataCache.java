@@ -99,21 +99,21 @@ public final class AuxDataCache {
 		return sadr.size() > 0 ? sadr : null;
 	}
 
-	private void cacheRefDataMap(RefDataType refDataType, Map<String, String> map) {
+	public void cacheRefDataMap(RefDataType refDataType, Map<String, String> map) {
 		if(refDataMaps == null) {
 			refDataMaps = new HashMap<RefDataType, Map<String, String>>();
 		}
 		refDataMaps.put(refDataType, map);
 	}
 
-	private void cacheEntityList(EntityType entityType, List<Model> list) {
+	public void cacheEntityList(EntityType entityType, List<Model> list) {
 		if(entityMap == null) {
 			entityMap = new HashMap<EntityType, List<Model>>();
 		}
 		entityMap.put(entityType, list);
 	}
 
-	private void cacheEntityPrototype(Model prototype) {
+	public void cacheEntityPrototype(Model prototype) {
 		if(entityPrototypes == null) {
 			entityPrototypes = new HashSet<Model>();
 		}

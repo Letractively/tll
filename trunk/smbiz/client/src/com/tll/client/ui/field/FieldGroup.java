@@ -52,7 +52,7 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	 * @param group The group to search in
 	 * @return The found IField or <code>null</code> if no matching field found
 	 */
-	private static IField<?> findField(final String propertyName, Iterable<IField<?>> group) {
+	private static IField<?> findField(final String propertyName, FieldGroup group) {
 
 		// first go through the non-group child fields
 		for(IField<?> fld : group) {
@@ -82,8 +82,8 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	 * @param itr The iterable collection of fields
 	 * @param set The set of found fields
 	 */
-	private static void findFields(final String propPath, Iterable<IField<?>> itr, Set<IField<?>> set) {
-		List<Iterable<IField<?>>> glist = null;
+	private static void findFields(final String propPath, FieldGroup itr, Set<IField<?>> set) {
+		List<FieldGroup> glist = null;
 		for(IField<?> fld : itr) {
 			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().startsWith(propPath)) {
@@ -91,12 +91,12 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 				}
 			}
 			else {
-				if(glist == null) glist = new ArrayList<Iterable<IField<?>>>();
+				if(glist == null) glist = new ArrayList<FieldGroup>();
 				glist.add((FieldGroup) fld);
 			}
 		}
 		if(glist != null) {
-			for(Iterable<IField<?>> fg : glist) {
+			for(FieldGroup fg : glist) {
 				findFields(propPath, fg, set);
 			}
 		}

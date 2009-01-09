@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.client.admin.ui.field.account.AccountFieldsProvider;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
+import com.tll.client.model.FloatPropertyValue;
 import com.tll.client.model.IModelProperty;
 import com.tll.client.model.IntPropertyValue;
 import com.tll.client.model.Model;
@@ -242,19 +244,15 @@ public final class ClientTestUtils {
 	}
 
 	/**
-	 * Stubs an account instance
-	 * @param parentAccount
-	 * @param accountType
-	 * @param num
+	 * Stubs a currency model
 	 * @return new instance
 	 */
-	public static Model stubAccount(Model parentAccount, EntityType accountType, int num) {
-		Model m = new Model(accountType);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
-		m.set(new StringPropertyValue(Model.NAME_PROPERTY, "ISP " + num));
-		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new Date()));
-		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new Date()));
-		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
+	public static Model stubCurrency() {
+		Model m = new Model(EntityType.CURRENCY);
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, 1));
+		m.set(new StringPropertyValue("iso4217", "usd"));
+		m.set(new StringPropertyValue("symbol", "$"));
+		m.set(new FloatPropertyValue("usdExchangeRage", 1f));
 		return m;
 	}
 
@@ -269,6 +267,24 @@ public final class ClientTestUtils {
 		address.set(new StringPropertyValue("firstName", "firstname " + num));
 		address.set(new StringPropertyValue("lastName", "lastname " + num));
 		return address;
+	}
+
+	/**
+	 * Stubs an account instance
+	 * @param parentAccount
+	 * @param accountType
+	 * @param num
+	 * @return new instance
+	 */
+	public static Model stubAccount(Model parentAccount, EntityType accountType, int num) {
+		Model m = new Model(accountType);
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
+		m.set(new StringPropertyValue(Model.NAME_PROPERTY, "ISP " + num));
+		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new Date()));
+		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new Date()));
+		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
+		m.set(new RelatedOneProperty(EntityType.CURRENCY, "currency", true, stubCurrency()));
+		return m;
 	}
 
 	/**
@@ -293,6 +309,8 @@ public final class ClientTestUtils {
 	 */
 	private static final class TestFieldGroupProvider implements IFieldGroupProvider {
 
+		public static final IFieldGroupProvider INSTANCE = new TestFieldGroupProvider();
+
 		public FieldGroup getFieldGroup() {
 			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
 			FieldGroup fg = fpAccount.getFieldGroup();
@@ -300,16 +318,21 @@ public final class ClientTestUtils {
 			fg.addField("addresses", new FieldGroup());
 			return fg;
 		}
-	}
 
-	private static final IFieldGroupProvider TEST_FIELD_GROUP_PROVIDER = new TestFieldGroupProvider();
+		private TestFieldGroupProvider() {
+			// set needed aux data cache
+			List<Model> list = new ArrayList<Model>();
+			list.add(stubCurrency());
+			AuxDataCache.instance().cacheEntityList(EntityType.CURRENCY, list);
+		}
+	}
 
 	/**
 	 * @return A test {@link IFieldGroupProvider} that compliments
 	 *         {@link #getTestRootModel()}.
 	 */
 	public static IFieldGroupProvider getRootFieldGroupProvider() {
-		return TEST_FIELD_GROUP_PROVIDER;
+		return TestFieldGroupProvider.INSTANCE;
 	}
 
 	/**
