@@ -58,7 +58,6 @@ public final class RadioGroupField extends AbstractField<String> {
 			boolean renderHorizontal) {
 		super(propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
-		setOptions(options);
 		if(renderHorizontal) {
 			rbPanel = new HorizontalPanel();
 		}
@@ -66,6 +65,7 @@ public final class RadioGroupField extends AbstractField<String> {
 			rbPanel = new VerticalPanel();
 		}
 		fp.add(rbPanel);
+		setOptions(options);
 		// fp.addFocusListener(this);
 		addChangeListener(this);
 	}

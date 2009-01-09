@@ -30,12 +30,13 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param visibleLen
+	 * @param visibleLength
 	 */
-	public TextField(String propName, String labelText, String helpText, int visibleLen) {
+	public TextField(String propName, String labelText, String helpText, int visibleLength) {
 		super(propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
 		tb = new PasswordTextBox();
+		setVisibleLen(visibleLength);
 		// tb.addFocusListener(this);
 		tb.addChangeListener(this);
 		addKeyboardListener(new KeyboardListener() {
@@ -85,7 +86,7 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	}
 
 	public void setText(String text) {
-		setValue(text);
+		tb.setText(text);
 	}
 
 	@Override

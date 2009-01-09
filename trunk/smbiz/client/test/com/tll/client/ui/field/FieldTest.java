@@ -23,7 +23,7 @@ import com.tll.client.validate.ValidationException;
 public class FieldTest extends GWTTestCase {
 
 	static final String PROP_NAME = "propName";
-	static final String EMPTY_STRING_VALUE = "value";
+	static final String EMPTY_STRING_VALUE = "";
 	static final String STRING_VALUE = "value";
 	static final String LABEL_TEXT = "Label";
 	static final String HELP_TEXT = "Help Text";
@@ -41,21 +41,38 @@ public class FieldTest extends GWTTestCase {
 		// verify help text
 		assert HELP_TEXT.equals(f.getHelpText());
 
-		// test requiredness validation
-		boolean or = f.isRequired();
-		f.setRequired(true);
-		try {
-			f.validate();
-			Assert.fail("Requiredness validation failed");
+		// test requiredness validation (except for checkboxes)
+		if(f instanceof CheckboxField == false) {
+			boolean or = f.isRequired();
+			f.setRequired(true);
+			try {
+				f.validate();
+				Assert.fail("Requiredness validation failed");
+			}
+			catch(ValidationException e) {
+				// expected
+			}
+			f.setRequired(or);
 		}
-		catch(ValidationException e) {
-			// expected
-		}
-		f.setRequired(or);
+	}
+
+	protected void validateStringField(IField<String> f) throws Exception {
+		validateFieldCommon(f);
+
+		assert null == f.getValue();
+		assert null == f.getProperty(PROP_NAME);
+
+		f.setProperty(PROP_NAME, STRING_VALUE);
+		assert STRING_VALUE.equals(f.getValue());
+		assert STRING_VALUE.equals(f.getProperty(PROP_NAME));
+
+		assert STRING_VALUE.equals(f.getText());
 
 		// test max length validation
 		if(f instanceof HasMaxLength) {
 			int oml = ((HasMaxLength) f).getMaxLen();
+			String ov = f.getValue();
+			f.setValue(STRING_VALUE);
 			((HasMaxLength) f).setMaxLen(2);
 			try {
 				f.validate();
@@ -64,21 +81,10 @@ public class FieldTest extends GWTTestCase {
 			catch(ValidationException e) {
 				// expected
 			}
+			// restore state
 			((HasMaxLength) f).setMaxLen(oml);
+			f.setValue(ov);
 		}
-	}
-
-	protected void validateStringField(IField<String> f) throws Exception {
-		validateFieldCommon(f);
-
-		assert EMPTY_STRING_VALUE.equals(f.getValue());
-		assert EMPTY_STRING_VALUE.equals(f.getProperty(PROP_NAME));
-
-		f.setProperty(PROP_NAME, STRING_VALUE);
-		assert STRING_VALUE.equals(f.getValue());
-		assert STRING_VALUE.equals(f.getProperty(PROP_NAME));
-
-		assert STRING_VALUE.equals(f.getText());
 	}
 
 	/**
@@ -95,17 +101,22 @@ public class FieldTest extends GWTTestCase {
 	 * Tests {@link DateField}.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public void testDateField() throws Exception {
-		DateField f = FieldFactory.fdate(PROP_NAME, LABEL_TEXT, HELP_TEXT, GlobalFormat.DATE);
+		DateField f = FieldFactory.fdate(PROP_NAME, LABEL_TEXT, HELP_TEXT, GlobalFormat.TIMESTAMP);
 		validateFieldCommon(f);
 
 		Date now = new Date();
+		now.setSeconds(0); // GWT short date format doesn't do seconds (fine)
 
 		f.setValue(now);
 		assert now.equals(f.getValue());
 
-		f.setValue(Fmt.format(now, GlobalFormat.DATE));
-		assert now.equals(f.getValue());
+		f.setValue(Fmt.format(now, GlobalFormat.TIMESTAMP));
+		Date fdate = f.getValue();
+		// NOTE: we compare the dates as *Strings* to get around "micro-time"
+		// difference that Date.setSeconds() doesn't handle
+		assert now.toString().equals(fdate.toString());
 	}
 
 	/**

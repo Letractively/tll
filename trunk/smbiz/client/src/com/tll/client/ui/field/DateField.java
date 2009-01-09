@@ -88,7 +88,7 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 	}
 
 	public void onChange(ChangeEvent<Date> event) {
-		super.onChange(this);
+		super.onChange(db);
 		fireChangeListeners();
 		if(changeSupport != null)
 			changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), event.getNewValue());

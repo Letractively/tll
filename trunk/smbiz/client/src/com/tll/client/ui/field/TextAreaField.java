@@ -36,6 +36,8 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 		setComparator(SimpleComparator.INSTANCE);
 		ta = new TextArea();
 		ta.addChangeListener(this);
+		setNumRows(numRows);
+		setNumCols(numCols);
 	}
 
 	public int getNumRows() {
@@ -67,7 +69,7 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 	}
 
 	public void setText(String text) {
-		setValue(text);
+		ta.setText(text);
 	}
 
 	@Override

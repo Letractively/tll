@@ -128,7 +128,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	 * Fires a change event for subscribed {@link ChangeListener}s.
 	 */
 	protected final void fireChangeListeners() {
-		changeListeners.fireChange(this);
+		if(changeListeners != null) changeListeners.fireChange(this);
 	}
 
 	protected void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {

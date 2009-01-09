@@ -42,12 +42,12 @@ public final class SelectField extends AbstractField<Object> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param isMultipleSelect
+	 * @param multiSelect
 	 */
-	public SelectField(String propName, String labelText, String helpText, boolean isMultipleSelect) {
+	public SelectField(String propName, String labelText, String helpText, boolean multiSelect) {
 		super(propName, labelText, helpText);
 		setComparator(SimpleComparator.INSTANCE);
-		lb = new ListBox(isMultipleSelect);
+		lb = new ListBox(multiSelect);
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
 	}

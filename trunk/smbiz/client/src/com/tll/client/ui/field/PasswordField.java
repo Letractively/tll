@@ -31,9 +31,9 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 	 */
 	public PasswordField(String propName, String lblText, String helpText, int visibleLength) {
 		super(propName, lblText, helpText);
+		tb = new PasswordTextBox();
 		setVisibleLen(visibleLength);
 		setConverter(ToStringConverter.INSTANCE);
-		tb = new PasswordTextBox();
 		// tb.addFocusListener(this);
 		tb.addChangeListener(this);
 		addKeyboardListener(new KeyboardListener() {
@@ -75,7 +75,7 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 	}
 
 	public void setText(String text) {
-		setValue(text);
+		tb.setText(text);
 	}
 
 	@Override
