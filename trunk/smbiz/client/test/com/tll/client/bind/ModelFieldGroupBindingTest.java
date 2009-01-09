@@ -3,7 +3,6 @@ package com.tll.client.bind;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.client.ClientTestUtils;
 import com.tll.client.model.Model;
-import com.tll.client.ui.field.FieldBindingHelper;
 import com.tll.client.ui.field.FieldGroup;
 
 /**
@@ -30,20 +29,20 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 		FieldGroup fg = ClientTestUtils.getRootFieldGroupProvider().getFieldGroup();
 
 		public void setBindable(FieldGroup bindable) {
-			FieldBindingHelper.addBinding(binding, model, fg, Model.NAME_PROPERTY);
-			FieldBindingHelper.addBinding(binding, model, fg, Model.DATE_CREATED_PROPERTY);
-			FieldBindingHelper.addBinding(binding, model, fg, Model.DATE_MODIFIED_PROPERTY);
-			FieldBindingHelper.addBinding(binding, model, fg, "parent.name");
-			FieldBindingHelper.addBinding(binding, model, fg, "status");
-			FieldBindingHelper.addBinding(binding, model, fg, "dateCancelled");
-			FieldBindingHelper.addBinding(binding, model, fg, "currency.id");
-			FieldBindingHelper.addBinding(binding, model, fg, "billingModel");
-			FieldBindingHelper.addBinding(binding, model, fg, "billingCycle");
-			FieldBindingHelper.addBinding(binding, model, fg, "dateLastCharged");
-			FieldBindingHelper.addBinding(binding, model, fg, "nextChargeDate");
-			FieldBindingHelper.addBinding(binding, model, fg, "persistPymntInfo");
-			FieldBindingHelper.addBinding(binding, model, fg, "parent");
-			FieldBindingHelper.addBinding(binding, model, fg, "addresses");
+			binding.getChildren().add(new Binding(model, fg, Model.NAME_PROPERTY));
+			binding.getChildren().add(new Binding(model, fg, Model.DATE_CREATED_PROPERTY));
+			binding.getChildren().add(new Binding(model, fg, Model.DATE_MODIFIED_PROPERTY));
+			binding.getChildren().add(new Binding(model, fg, "parent.name"));
+			binding.getChildren().add(new Binding(model, fg, "status"));
+			binding.getChildren().add(new Binding(model, fg, "dateCancelled"));
+			binding.getChildren().add(new Binding(model, fg, "currency.id"));
+			binding.getChildren().add(new Binding(model, fg, "billingModel"));
+			binding.getChildren().add(new Binding(model, fg, "billingCycle"));
+			binding.getChildren().add(new Binding(model, fg, "dateLastCharged"));
+			binding.getChildren().add(new Binding(model, fg, "nextChargeDate"));
+			binding.getChildren().add(new Binding(model, fg, "persistPymntInfo"));
+			binding.getChildren().add(new Binding(model, fg, "parent"));
+			binding.getChildren().add(new Binding(model, fg, "addresses"));
 		}
 
 		public void bind() {

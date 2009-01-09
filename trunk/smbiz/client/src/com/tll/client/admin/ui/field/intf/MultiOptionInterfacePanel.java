@@ -87,7 +87,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super("options", new OptionFieldProvider());
+			super(new OptionFieldProvider());
 			tabOptions.addTabListener(this);
 			initWidget(tabOptions);
 			setRenderer(new IFieldRenderer() {
@@ -143,7 +143,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
-		fg.addField("options", optionsPanel.getFieldGroup());
+		// fg.addField("options", optionsPanel.getFieldGroup());
 		return fg;
 	}
 }

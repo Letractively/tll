@@ -21,8 +21,8 @@ import com.tll.client.convert.IConverter;
 public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, SourcesChangeEvents {
 
 	/**
-	 * Generic token indicating the "value property". Used when firing property
-	 * change events.
+	 * Generic token indicating the name of the value property. Used when firing
+	 * property change events.
 	 */
 	static final String PROPERTY_VALUE = "value";
 
@@ -32,21 +32,21 @@ public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, Sour
 	 */
 	// static final String PROPERTY_ATTACHED = "attached";
 	/**
-	 * Generic token indicating the "model property". Used when firing property
-	 * change events.
+	 * Generic token indicating the name of the model property. Used when firing
+	 * property change events.
 	 */
 	static final String PROPERTY_MODEL = "model";
 
 	/**
 	 * @return The action
 	 */
-	IBindingAction<? extends IBoundWidget<B, V, M>> getAction();
+	IBindingAction<IBoundWidget<B, V, M>> getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action The action to set
 	 */
-	void setAction(IBindingAction<? extends IBoundWidget<B, V, M>> action);
+	void setAction(IBindingAction<IBoundWidget<B, V, M>> action);
 
 	/**
 	 * @return The employed {@link Comparator} for this bound widget.

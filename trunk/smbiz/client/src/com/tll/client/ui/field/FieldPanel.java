@@ -10,6 +10,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.IBoundWidget;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -107,27 +108,41 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 
 	@Override
 	public void setModel(M model) {
-		super.setModel(model);
-		// apply property metadata
-		if(model instanceof IPropertyMetadataProvider) {
-			getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
+		if(getModel() == null || model != getModel()) {
+			super.setModel(model);
+
+			// apply property metadata
+			if(model instanceof IPropertyMetadataProvider) {
+				getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
+			}
 		}
 	}
 
-	public final FieldGroup getValue() {
+	public FieldGroup getValue() {
 		return getFieldGroup();
 	}
 
-	public final void setValue(M value) {
+	public void setValue(M value) {
 		setModel(value);
 	}
 
-	protected final IField<?> getField(String propPath) throws PropertyPathException {
+	/**
+	 * Searches the member field group for the field whose property name matches
+	 * that given. <br>
+	 * NOTE: The field, if found, is returned in the form of an
+	 * {@link AbstractField} so it may serve as an {@link IBoundWidget} when
+	 * necessary.
+	 * @param propPath The property path of the sought field.
+	 * @return The non-<code>null</code> field
+	 * @throws UnsetPropertyException When the field does not exist in the member
+	 *         field group
+	 */
+	public final AbstractField<?> getField(String propPath) throws UnsetPropertyException {
 		IField<?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		return f;
+		return (AbstractField<?>) f;
 	}
 
 	public Object getProperty(String propPath) throws PropertyPathException {

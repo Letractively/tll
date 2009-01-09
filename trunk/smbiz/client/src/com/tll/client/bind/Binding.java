@@ -29,6 +29,50 @@ import com.tll.client.validate.ValidationException;
 public final class Binding {
 
 	/**
+	 * A data class containing the relevant data for one half of a binding
+	 * relationship.
+	 */
+	private static final class BindingInstance {
+
+		/**
+		 * The Object being bound.
+		 */
+		public IBindable object;
+
+		/**
+		 * The full property path of the property being bound.
+		 */
+		public String property;
+
+		/**
+		 * A converter when needed.
+		 */
+		public IConverter<Object, Object> converter;
+
+		/**
+		 * A IValidator object when needed.
+		 */
+		public IValidator validator;
+
+		/**
+		 * A IValidationFeedback object when needed.
+		 */
+		public IValidationFeedback feedback;
+
+		private IPropertyChangeListener listener;
+
+		private NestedPropertyChangeListener nestedListener;
+
+		/**
+		 * Constructor
+		 */
+		private BindingInstance() {
+			super();
+		}
+
+	} // BindingInstance
+
+	/**
 	 * DefaultPropertyChangeListener - Listens for property changes for a property
 	 * in a given <em>instance</em> and propagates changes to this property to a
 	 * given <em>target<em> property.
@@ -267,30 +311,18 @@ public final class Binding {
 	}
 
 	/**
-	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding
-	 * and the bound widget's model property becomes the right-hand binding.
+	 * Shorthand for creating a new binding of a model prop to a bound widget. The
+	 * bound widget provided will become the right-hand binding and the bound
+	 * widget's model property becomes the left-hand binding.
 	 * @param widget IBoundWidget containing the model.
 	 * @param validator A validator for the BouldWidget's value property.
 	 * @param feedback A feedback implementation for validation errors.
-	 * @param property The common property name for <em>both</em> the left and
-	 *        right objects.
+	 * @param modelProperty The common property name for <em>both</em> the left
+	 *        and right objects.
 	 */
 	public Binding(IBoundWidget<?, ?, ? extends IBindable> widget, IValidator validator, IValidationFeedback feedback,
-			String property) {
-		this(widget, property, null, validator, feedback, widget.getModel(), property, null, null, null);
-	}
-
-	/**
-	 * Creates a new binding. This method is a shorthand for working with
-	 * BoundWidgets. The bound widget provided will become the left-hand binding
-	 * and the bound widget's model property becomes the right hand binding.
-	 * @param widget IBoundWidget containing the model.
-	 * @param property The common property name for <em>both</em> the left and
-	 *        right objects.
-	 */
-	public Binding(IBoundWidget<?, ?, ? extends IBindable> widget, String property) {
-		this(widget, property, null, null, null, widget.getModel(), property, null, null, null);
+			String modelProperty) {
+		this(widget.getModel(), modelProperty, null, null, widget, "value", validator, feedback);
 	}
 
 	/**
@@ -677,49 +709,6 @@ public final class Binding {
 			if(i++ == index) return b;
 		}
 		throw new IndexOutOfBoundsException("Binding discriminator too high: " + index);
-	}
-
-	/**
-	 * A data class containing the relevant data for one half of a binding
-	 * relationship.
-	 */
-	private static final class BindingInstance {
-
-		/**
-		 * The Object being bound.
-		 */
-		public IBindable object;
-
-		/**
-		 * The full property path of the property being bound.
-		 */
-		public String property;
-
-		/**
-		 * A converter when needed.
-		 */
-		public IConverter<Object, Object> converter;
-
-		/**
-		 * A IValidator object when needed.
-		 */
-		public IValidator validator;
-
-		/**
-		 * A IValidationFeedback object when needed.
-		 */
-		public IValidationFeedback feedback;
-
-		private IPropertyChangeListener listener;
-
-		private NestedPropertyChangeListener nestedListener;
-
-		/**
-		 * Constructor
-		 */
-		private BindingInstance() {
-			super();
-		}
 	}
 
 	@Override

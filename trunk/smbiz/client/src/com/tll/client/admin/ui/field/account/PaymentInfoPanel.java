@@ -25,7 +25,7 @@ import com.tll.client.ui.field.IFieldRenderer;
  */
 public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> implements SourcesTabEvents {
 
-	class CreditCardPanel extends FieldPanel<M> {
+	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<M> {
 
 		/**
 		 * Constructor
@@ -43,7 +43,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 
 	}
 
-	class BankPanel extends FieldPanel<M> {
+	private static class BankPanel<M extends IBindable> extends FieldPanel<M> {
 
 		/**
 		 * Constructor
@@ -63,16 +63,16 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 
 	private final TabPanel tabPanel = new TabPanel();
 
-	private final CreditCardPanel creditCardPanel;
-	private final BankPanel bankPanel;
+	private final CreditCardPanel<M> creditCardPanel;
+	private final BankPanel<M> bankPanel;
 
 	/**
 	 * Constructor
 	 */
 	public PaymentInfoPanel() {
 		super();
-		creditCardPanel = new CreditCardPanel();
-		bankPanel = new BankPanel();
+		creditCardPanel = new CreditCardPanel<M>();
+		bankPanel = new BankPanel<M>();
 		initWidget(tabPanel);
 		setRenderer(new IFieldRenderer() {
 

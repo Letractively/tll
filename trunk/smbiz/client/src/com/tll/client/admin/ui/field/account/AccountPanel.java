@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
+import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
@@ -36,6 +37,37 @@ import com.tll.model.impl.AddressType;
  * @author jpk
  */
 public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
+
+	/**
+	 * AccountEditAction
+	 * @author jpk
+	 */
+	class AccountEditAction extends AbstractModelEditAction<M, AccountPanel<M>> {
+
+		@Override
+		protected void populateBinding(AccountPanel<M> fp) throws PropertyPathException {
+			addFieldBinding(fp, Model.NAME_PROPERTY);
+			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
+			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
+			addFieldBinding(fp, "parent.name");
+			addFieldBinding(fp, "status");
+			addFieldBinding(fp, "dateCancelled");
+			addFieldBinding(fp, "currency.id");
+			addFieldBinding(fp, "billingModel");
+			addFieldBinding(fp, "billingCycle");
+			addFieldBinding(fp, "dateLastCharged");
+			addFieldBinding(fp, "nextChargeDate");
+			addFieldBinding(fp, "persistPymntInfo");
+
+			addNestedFieldBindings(fp, "paymentInfo");
+
+			addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
+		}
+
+		public void execute() {
+			// TODO anything?
+		}
+	}
 
 	class AccountFieldsRenderer implements IFieldRenderer {
 
@@ -153,7 +185,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super("addresses", new AccountAddressFieldProvider());
+			super(/*"addresses", */new AccountAddressFieldProvider());
 
 			// listen to tab events
 			tabAddresses.addTabListener(this);
@@ -196,6 +228,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		setRenderer(new AccountFieldsRenderer());
 	}
 
+	/*
 	@Override
 	public Object getProperty(String propPath) throws PropertyPathException {
 		if("paymentInfo".equals(propPath)) {
@@ -219,6 +252,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			super.setProperty(propPath, value);
 		}
 	}
+	*/
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
@@ -227,13 +261,13 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			public FieldGroup getFieldGroup() {
 				FieldGroup fg = (new AccountFieldsProvider()).getFieldGroup();
 				fg.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
-				fg.addField("addresses", addressesPanel.getFieldGroup());
+				// fg.addField("addresses", addressesPanel.getFieldGroup());
 				return fg;
 			}
 		}).getFieldGroup();
 
 		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
-		addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
+		// addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 
 		fg.getField("parent.name").setReadOnly(true);
 

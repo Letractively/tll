@@ -25,7 +25,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * The binding action.
 	 */
-	private IBindingAction<? extends IBoundWidget<B, V, M>> action;
+	private IBindingAction<IBoundWidget<B, V, M>> action;
 
 	/**
 	 * Responsible for converting a <B> type to a <V> type.
@@ -59,11 +59,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		super();
 	}
 
-	public final IBindingAction<? extends IBoundWidget<B, V, M>> getAction() {
+	public final IBindingAction<IBoundWidget<B, V, M>> getAction() {
 		return action;
 	}
 
-	public final void setAction(IBindingAction<? extends IBoundWidget<B, V, M>> action) {
+	public final void setAction(IBindingAction<IBoundWidget<B, V, M>> action) {
 		this.action = action;
 	}
 
@@ -87,13 +87,13 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		return model;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setModel(M model) {
-		final Object old = getModel();
+		// TODO verify if this is ok to do
+		if(this.model != null && model == this.model) return;
 
-		if(old == this.model) return; // TODO verify if this is ok to do
+		final Object old = this.model;
 
-		final IBindingAction action = getAction();
+		final IBindingAction<IBoundWidget<B, V, M>> action = getAction();
 
 		if(old != null && action != null) {
 			action.unbind();
@@ -101,10 +101,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 
 		this.model = model;
 
-		if(action != null) action.setBindable(this);
-
-		if(/*isAttached() && */model != null && action != null) {
-			action.bind();
+		if(action != null) {
+			// action.setBindable(this);
+			if(isAttached() && model != null) {
+				action.bind();
+			}
 		}
 
 		changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
@@ -173,13 +174,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		return "Bound Widget";
 	}
 
-	// This is driven in setModel()!!!!!
-	/*
 	@Override
 	protected void onAttach() {
 		if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
-		changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
+		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
 	}
 
 	@Override
@@ -192,7 +191,6 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	protected void onDetach() {
 		super.onDetach();
 		if(getAction() != null) getAction().unbind();
-		changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
+		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
 	}
-	*/
 }
