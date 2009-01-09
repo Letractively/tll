@@ -66,8 +66,7 @@ public final class CacheManager {
 	 * Responsible for generating path hash codes from a given http request. This
 	 * abstraction is necessary to commonize asynchronous request servlet paths
 	 * which may be different within the same page. In other words, we are
-	 * maintaining the integrity of {@link com.bazaar.web.CacheManager#SCOPE_PAGE}
-	 * .
+	 * maintaining the integrity of {@link #SCOPE_PAGE}
 	 * @author jpk
 	 */
 	private static interface IPathCodeGenerator {

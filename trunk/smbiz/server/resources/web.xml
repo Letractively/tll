@@ -165,7 +165,7 @@
   <!-- ====================================================================== -->
 
   <listener>
-    <listener-class>com.tll.server.GuiceBootstrapper</listener-class>
+    <listener-class>com.tll.server.Bootstrapper</listener-class>
   </listener>
   
   <!-- 

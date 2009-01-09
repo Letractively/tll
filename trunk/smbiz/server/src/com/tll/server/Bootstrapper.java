@@ -23,12 +23,12 @@ import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
 
 /**
- * GuiceBootstrapper
+ * Bootstrapper
  * @author jpk
  */
-public final class GuiceBootstrapper implements ServletContextListener {
+public final class Bootstrapper implements ServletContextListener {
 
-	private static final Log log = LogFactory.getLog(GuiceBootstrapper.class);
+	private static final Log log = LogFactory.getLog(Bootstrapper.class);
 	private Injector injector;
 
 	public void contextInitialized(ServletContextEvent event) {
@@ -47,7 +47,7 @@ public final class GuiceBootstrapper implements ServletContextListener {
 		context.setAttribute(Constants.ENVIRONMENT_CONTEXT_ATTRIBUTE, env);
 
 		// injector
-		injector = createGuiceInjector(context, isDebug ? Stage.DEVELOPMENT : Stage.PRODUCTION);
+		injector = createInjector(context, isDebug ? Stage.DEVELOPMENT : Stage.PRODUCTION);
 		context.setAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE, injector);
 	}
 
@@ -67,16 +67,16 @@ public final class GuiceBootstrapper implements ServletContextListener {
 				// visible so we have to resort to its superclass: RuntimeException)
 			}
 
-			log.debug("Nullifying Guice injector...");
+			log.debug("Nullifying bootstrap di injector...");
 			injector = null;
 		}
 	}
 
-	private Injector createGuiceInjector(ServletContext context, Stage stage) {
+	private Injector createInjector(ServletContext context, Stage stage) {
 
 		final String[] moduleClassNames = StringUtils.split(context.getInitParameter(Constants.GUICE_MODULE_CLASS_NAMES));
 		if(moduleClassNames == null || moduleClassNames.length < 1) {
-			throw new Error("No Guice module class names declared.");
+			throw new Error("No bootstrap module class names declared.");
 		}
 
 		final List<Module> modules = new ArrayList<Module>(moduleClassNames.length);
@@ -85,18 +85,18 @@ public final class GuiceBootstrapper implements ServletContextListener {
 				modules.add((Module) Class.forName(mcn, true, this.getClass().getClassLoader()).newInstance());
 			}
 			catch(final ClassNotFoundException e) {
-				throw new Error("Guice module class: " + mcn + " not found.");
+				throw new Error("Module class: " + mcn + " not found.");
 			}
 			catch(final InstantiationException e) {
-				throw new Error("Unable to instantiate Guice module class: " + mcn);
+				throw new Error("Unable to instantiate module class: " + mcn);
 			}
 			catch(final IllegalAccessException e) {
-				throw new Error("Unable to access Guice module class: " + mcn);
+				throw new Error("Unable to access module class: " + mcn);
 			}
 		}
 
 		if(log.isDebugEnabled()) {
-			log.debug("Creating " + stage.toString() + " Guice injector...");
+			log.debug("Creating " + stage.toString() + " bootstrap di injector...");
 		}
 		return Guice.createInjector(stage, modules);
 	}

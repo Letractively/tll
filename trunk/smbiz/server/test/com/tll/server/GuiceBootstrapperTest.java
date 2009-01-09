@@ -39,7 +39,7 @@ public class GuiceBootstrapperTest extends TestBase {
 	@Test
 	public void test() throws Exception {
 		ServletContext context = getMockServletContext();
-		GuiceBootstrapper gb = new GuiceBootstrapper();
+		Bootstrapper gb = new Bootstrapper();
 		ServletContextEvent event = new ServletContextEvent(context);
 		gb.contextInitialized(event);
 		Injector injector = (Injector) context.getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
