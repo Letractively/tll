@@ -5,7 +5,7 @@
 package com.tll.client.model;
 
 import com.tll.IDescriptorProvider;
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.model.EntityType;
 
 /**

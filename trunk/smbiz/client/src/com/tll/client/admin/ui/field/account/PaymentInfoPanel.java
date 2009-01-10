@@ -5,7 +5,6 @@
 package com.tll.client.admin.ui.field.account;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -23,9 +22,9 @@ import com.tll.client.ui.field.IFieldRenderer;
  * @author jpk
  * @param <M>
  */
-public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> implements SourcesTabEvents {
+public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel, M> implements SourcesTabEvents {
 
-	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<M> {
+	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		/**
 		 * Constructor
@@ -43,7 +42,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 
 	}
 
-	private static class BankPanel<M extends IBindable> extends FieldPanel<M> {
+	private static class BankPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		/**
 		 * Constructor
@@ -74,11 +73,13 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<M> i
 		creditCardPanel = new CreditCardPanel<M>();
 		bankPanel = new BankPanel<M>();
 		initWidget(tabPanel);
-		setRenderer(new IFieldRenderer() {
+		setRenderer(new IFieldRenderer<TabPanel>() {
 
-			public void render(Panel panel, FieldGroup fg, String parentPropPath) {
-				(new CreditCardFieldsRenderer()).render(creditCardPanel.getPanel(), creditCardPanel.getFieldGroup(), null);
-				(new BankFieldsRenderer()).render(bankPanel.getPanel(), bankPanel.getFieldGroup(), null);
+			public void render(TabPanel panel, FieldGroup fg) {
+				(new CreditCardFieldsRenderer()).render(creditCardPanel.getWidget(), fg);
+				(new BankFieldsRenderer()).render(bankPanel.getWidget(), fg);
+				panel.add(creditCardPanel, "Credit Card");
+				panel.add(bankPanel, "Bank");
 			}
 		});
 	}

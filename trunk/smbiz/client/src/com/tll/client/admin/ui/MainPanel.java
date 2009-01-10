@@ -3,6 +3,8 @@
  */
 package com.tll.client.admin.ui;
 
+import java.util.List;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
@@ -36,6 +38,7 @@ import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.model.PropertyPathException;
+import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewRequest;
@@ -333,7 +336,10 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public void onStatusEvent(StatusEvent event) {
 			Status status = event.getStatus();
 			if(status != null) {
-				MsgManager.instance().post(true, status.getGlobalDisplayMsgs(), Position.CENTER, this, -1, true).show();
+				List<Msg> gms = status.getGlobalDisplayMsgs();
+				if(gms != null && gms.size() > 0) {
+					MsgManager.instance().post(true, gms, Position.CENTER, this, -1, true).show();
+				}
 			}
 		}
 
@@ -344,7 +350,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public Footer() {
 			super();
 			setStylePrimaryName("sb-Footer");
-			add(new HTML("<p>&copy; 2008 The Logic Lab - smbiz v" + App.constants.appVersion() + "</p>"));
+			add(new HTML("<p>&copy; 2009 The Logic Lab - smbiz v" + App.constants.appVersion() + "</p>"));
 		}
 
 	}

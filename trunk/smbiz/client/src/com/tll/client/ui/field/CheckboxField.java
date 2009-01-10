@@ -27,12 +27,13 @@ public final class CheckboxField extends AbstractField<Boolean> {
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 */
-	public CheckboxField(String propName, String labelText, String helpText) {
-		super(propName, null, helpText);
+	public CheckboxField(String name, String propName, String labelText, String helpText) {
+		super(name, propName, null, helpText);
 		this.cblabelText = labelText;
 		setConverter(BooleanConverter.INSTANCE);
 		cb = new CheckBox(cblabelText);

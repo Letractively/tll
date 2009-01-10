@@ -1,6 +1,6 @@
 package com.tll.client.msg;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 
 /**
  * Represents a single status msg for use in the UI.

@@ -6,7 +6,6 @@
 package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
@@ -21,37 +20,37 @@ import com.tll.client.ui.view.ViewRequestLink;
  * @author jpk
  * @param <M> the model type
  */
-public class UserPanel<M extends IBindable> extends FieldPanel<M> {
+public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
-	class UserFieldsRenderer implements IFieldRenderer {
+	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getField(parentPropPath, "name"));
-			cmpsr.addField(fg.getField(parentPropPath, "emailAddress"));
-			cmpsr.addField(fg.getField(parentPropPath, "locked"));
+			cmpsr.addField(fg.getFieldByName("name"));
+			cmpsr.addField(fg.getFieldByName("emailAddress"));
+			cmpsr.addField(fg.getFieldByName("locked"));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(parentPropPath, "enabled"));
+			cmpsr.addField(fg.getFieldByName("enabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getField(parentPropPath, "expires"));
+			cmpsr.addField(fg.getFieldByName("expires"));
 
 			// parent account ref link
 			lnkAccount = new ViewRequestLink();
 			cmpsr.addWidget("Account", lnkAccount);
 
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// third row
 			cmpsr.newRow();
 			FlowPanel fp = new FlowPanel();
 			AddressFieldsRenderer afr = new AddressFieldsRenderer();
-			afr.render(fp, (FieldGroup) fg.getField(parentPropPath, "address"), null);
+			afr.render(fp, null);
 			cmpsr.addWidget(fp);
 		}
 

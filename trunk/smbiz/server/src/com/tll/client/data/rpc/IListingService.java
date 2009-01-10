@@ -6,7 +6,7 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.client.data.ListingPayload;
 import com.tll.client.data.ListingRequest;
 import com.tll.client.search.ISearch;

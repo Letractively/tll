@@ -55,7 +55,7 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel<M> fieldPanel;
+	private final FieldPanel<? extends Widget, M> fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -74,13 +74,14 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<M> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel<? extends Widget, M> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Style.PORTAL);
-		portal.setWidget(fieldPanel);
+		// we need to defer this until needed aux data is ready
+		// portal.setWidget(fieldPanel);
 
 		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
 
@@ -136,6 +137,11 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 
 	public void setModel(M model) {
 		fieldPanel.setModel(model);
+
+		// deferred attachment to guarantee needed aux data is available
+		if(!fieldPanel.isAttached()) {
+			portal.add(fieldPanel);
+		}
 	}
 
 	/**

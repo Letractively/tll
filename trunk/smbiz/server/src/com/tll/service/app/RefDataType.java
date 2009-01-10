@@ -1,6 +1,6 @@
 package com.tll.service.app;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 
 /**
  * RefDataType - Encapsulates all types of ref data usable in the app.

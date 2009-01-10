@@ -16,10 +16,14 @@ import com.tll.model.schema.IPropertyMetadataProvider;
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
  * s.
- * @author jpk
+ * <p>
+ * <em><b>IMPT: </b>The composite wrapped widget is used for field rendering.  Consequently, it must be ensured that types of the two match.</em>
+ * @param <W> The widget type employed for field rendering
  * @param <M> The model type
+ * @author jpk
  */
-public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidget<M, FieldGroup, M> {
+public abstract class FieldPanel<W extends Widget, M extends IBindable> extends AbstractBoundWidget<M, FieldGroup, M>
+		implements IFieldGroupProvider {
 
 	/**
 	 * The field group.
@@ -29,7 +33,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 	/**
 	 * The field renderer.
 	 */
-	private IFieldRenderer renderer;
+	private IFieldRenderer<W> renderer;
 
 	private boolean drawn;
 
@@ -40,19 +44,14 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		super();
 	}
 
-	@Override
-	protected void initWidget(Widget widget) {
-		if(widget instanceof Panel == false) {
-			throw new IllegalArgumentException("The composite widget must be a panel");
-		}
-		super.initWidget(widget);
-	}
-
 	/**
-	 * @return The composite wrapped {@link Panel}.
+	 * @return The composite wrapped {@link Widget} the type of which
+	 *         <em>must</em> be that of the render widget type.
 	 */
-	public final Panel getPanel() {
-		return (Panel) getWidget();
+	@SuppressWarnings("unchecked")
+	@Override
+	public final W getWidget() {
+		return (W) super.getWidget();
 	}
 
 	/**
@@ -83,7 +82,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 	 * Sets the field renderer.
 	 * @param renderer
 	 */
-	public final void setRenderer(IFieldRenderer renderer) {
+	public final void setRenderer(IFieldRenderer<W> renderer) {
 		this.renderer = renderer;
 	}
 
@@ -103,7 +102,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		if(renderer == null) {
 			throw new IllegalStateException("No field renderer set");
 		}
-		renderer.render(getPanel(), getFieldGroup(), null);
+		renderer.render(getWidget(), getFieldGroup());
 	}
 
 	@Override

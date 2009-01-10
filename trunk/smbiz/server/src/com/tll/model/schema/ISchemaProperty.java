@@ -5,7 +5,7 @@
  */
 package com.tll.model.schema;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 
 /**
  * ISchemaProperty

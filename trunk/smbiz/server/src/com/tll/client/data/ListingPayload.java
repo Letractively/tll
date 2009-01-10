@@ -5,7 +5,7 @@
  */
 package com.tll.client.data;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.dao.Sorting;
 
 /**

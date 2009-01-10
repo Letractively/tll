@@ -4,7 +4,7 @@
 package com.tll.client.data;
 
 import com.google.gwt.i18n.client.NumberFormat;
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 
 /**
  * Encapsulates a numerical value with a string-wise formatting directive used

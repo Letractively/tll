@@ -103,7 +103,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel<Model> resolveInterfacePanel(EntityType intfType) {
+			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(EntityType intfType) {
 				switch(intfType) {
 					case INTERFACE_MULTI:
 					case INTERFACE_SINGLE:

@@ -49,13 +49,14 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param dateFormat
 	 */
-	public DateField(String propName, String labelText, String helpText, GlobalFormat dateFormat) {
-		super(propName, labelText, helpText);
+	public DateField(String name, String propName, String labelText, String helpText, GlobalFormat dateFormat) {
+		super(name, propName, labelText, helpText);
 		setConverter(DateConverter.instance(dateFormat));
 		db = new DateBox();
 		db.getDatePicker().addChangeHandler(this);

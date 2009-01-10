@@ -401,6 +401,27 @@ public final class PropertyPath {
 	}
 
 	/**
+	 * @return The property name ignoring with no parent property path.
+	 */
+	public String getPropertyName() {
+		return last();
+	}
+
+	/**
+	 * Sets the property name retaining any existing parent property path. In
+	 * other words, this method replaces the <em>last</em> node in a nested
+	 * property path or replaces the entire property path when it isn't nested
+	 * (i.e. no dots).
+	 * @param propName The property <em>name</em> to set. If this name is empty,
+	 *        no modification is made to this property path.
+	 */
+	public void setPropertyName(String propName) {
+		if(!StringUtil.isEmpty(propName)) {
+			parse(getPropertyPath(getParentPropertyPath(), propName));
+		}
+	}
+
+	/**
 	 * Replaces a single node in the property path.
 	 * @param nodeIndex The index of the node to replace. If the given node index
 	 *        exceeds the depth of this property path, this property path is

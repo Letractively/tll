@@ -7,7 +7,6 @@ package com.tll.client.model;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.ISourcesPropertyChangeEvents;
 import com.tll.client.bind.PropertyChangeSupport;
-import com.tll.client.util.StringUtil;
 
 /**
  * AbstractModelProperty - Base class for all implemented {@link IModelProperty}
@@ -40,9 +39,11 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 */
 	protected AbstractModelProperty(String propertyName) {
 		super();
+		/* we can't check for this due to RPC constraints.
 		if(StringUtil.isEmpty(propertyName)) {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
+		*/
 		this.propertyName = propertyName;
 	}
 

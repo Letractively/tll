@@ -24,14 +24,15 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
 	 */
-	public TextAreaField(String propName, String labelText, String helpText, int numRows, int numCols) {
-		super(propName, labelText, helpText);
+	public TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols) {
+		super(name, propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
 		setComparator(SimpleComparator.INSTANCE);
 		ta = new TextArea();

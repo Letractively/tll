@@ -92,9 +92,9 @@ public class FieldTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	public void testStringFields() throws Exception {
-		validateStringField(FieldFactory.ftext(PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
-		validateStringField(FieldFactory.fpassword(PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
-		validateStringField(FieldFactory.ftextarea(PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN, VISIBLE_LEN));
+		validateStringField(FieldFactory.ftext(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
+		validateStringField(FieldFactory.fpassword(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
+		validateStringField(FieldFactory.ftextarea(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN, VISIBLE_LEN));
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class FieldTest extends GWTTestCase {
 	 */
 	@SuppressWarnings("deprecation")
 	public void testDateField() throws Exception {
-		DateField f = FieldFactory.fdate(PROP_NAME, LABEL_TEXT, HELP_TEXT, GlobalFormat.TIMESTAMP);
+		DateField f = FieldFactory.fdate(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, GlobalFormat.TIMESTAMP);
 		validateFieldCommon(f);
 
 		Date now = new Date();
@@ -124,7 +124,7 @@ public class FieldTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	public void testCheckboxField() throws Exception {
-		CheckboxField f = FieldFactory.fcheckbox(PROP_NAME, LABEL_TEXT, HELP_TEXT);
+		CheckboxField f = FieldFactory.fcheckbox(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT);
 		validateFieldCommon(f);
 
 		f.setValue(Boolean.TRUE);
@@ -137,7 +137,7 @@ public class FieldTest extends GWTTestCase {
 	public void testSuggestField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SuggestField f = FieldFactory.fsuggest(PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
+		SuggestField f = FieldFactory.fsuggest(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
 		validateFieldCommon(f);
 
 		f.setText(STRING_VALUE);
@@ -147,7 +147,7 @@ public class FieldTest extends GWTTestCase {
 	public void testRadioGroupField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		RadioGroupField f = FieldFactory.fradiogroup(PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as), true);
+		RadioGroupField f = FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as), true);
 		validateFieldCommon(f);
 
 		// TODO finish
@@ -156,7 +156,7 @@ public class FieldTest extends GWTTestCase {
 	public void testSelectField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SelectField f = FieldFactory.fselect(PROP_NAME, LABEL_TEXT, HELP_TEXT, true, Arrays.asList(as));
+		SelectField f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, true, Arrays.asList(as));
 		validateFieldCommon(f);
 
 		// TODO finish

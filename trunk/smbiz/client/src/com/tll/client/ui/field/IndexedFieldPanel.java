@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.NullNodeInPropPathException;
@@ -22,11 +23,28 @@ import com.tll.client.validate.ValidationFeedbackManager;
  * indexable by adapting the {@link FieldPanel} with index related routines. All
  * indexing operations sync with the {@link FieldPanel}'s member ("underlying")
  * field group.
+ * @param <W> the index widget type for rendering at a particular index
+ * @param <M> the model type
  * @author jpk
- * @param <M>
  */
-public abstract class IndexedFieldPanel<M extends IBindable> extends
-		AbstractBoundWidget<Collection<M>, Collection<M>, M> {
+public abstract class IndexedFieldPanel<W extends Widget, M extends IBindable> extends
+		AbstractBoundWidget<Collection<M>, Collection<M>, M> implements IFieldGroupProvider {
+
+	/**
+	 * The group that serving as a common parent to the index field groups.
+	 */
+	private final FieldGroup topGroup = new FieldGroup();
+
+	/**
+	 * The list that enables field groups to be resolved by an index.
+	 */
+	private final List<FieldGroup> list = new ArrayList<FieldGroup>();
+
+	/**
+	 * The list of index {@link Widget}s where each elements index corresponds to
+	 * the {@link FieldGroup} at the same index in the field group list.
+	 */
+	private final List<W> indexWidgets = new ArrayList<W>();
 
 	/**
 	 * Holds bindings that bind {@link #value} to {@link #list}. Each sub-binding
@@ -36,11 +54,6 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends
 	private final Binding indexedBinding = new Binding();
 
 	/**
-	 * The list that enables field groups to be resolved by an index.
-	 */
-	private final List<FieldGroup> list = new ArrayList<FieldGroup>();
-
-	/**
 	 * The model data collection.
 	 */
 	private Collection<M> value;
@@ -48,18 +61,30 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends
 	/**
 	 * Generates a new field group for fields displayed at any given index.
 	 */
-	private final IFieldGroupProvider indexedFieldGroupProvider;
+	private final IFieldGroupProvider indexFieldGroupProvider;
+
+	/**
+	 * The index field renderer that renders fields at any given index.
+	 */
+	private final IFieldRenderer<W> indexRenderer;
+
+	private boolean drawn;
 
 	/**
 	 * Constructor
-	 * @param indexedFieldGroupProvider
+	 * @param indexFieldGroupProvider
+	 * @param indexRenderer
 	 */
-	public IndexedFieldPanel(IFieldGroupProvider indexedFieldGroupProvider) {
+	public IndexedFieldPanel(IFieldGroupProvider indexFieldGroupProvider, IFieldRenderer<W> indexRenderer) {
 		super();
-		if(indexedFieldGroupProvider == null) {
-			throw new IllegalArgumentException("An indexed field group provider must be specified.");
+		if(indexFieldGroupProvider == null) {
+			throw new IllegalArgumentException("An index field group provider must be specified.");
 		}
-		this.indexedFieldGroupProvider = indexedFieldGroupProvider;
+		if(indexRenderer == null) {
+			throw new IllegalArgumentException("An index field renderer must be specified.");
+		}
+		this.indexFieldGroupProvider = indexFieldGroupProvider;
+		this.indexRenderer = indexRenderer;
 	}
 
 	/**
@@ -78,8 +103,9 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends
 	 *         field in the underlying group.
 	 */
 	public final void add(M model) throws IllegalArgumentException {
-		FieldGroup fg = indexedFieldGroupProvider.getFieldGroup();
+		FieldGroup fg = indexFieldGroupProvider.getFieldGroup();
 		if(list.add(fg)) {
+			topGroup.addField(fg);
 			Binding indexBinding = new Binding();
 			indexedBinding.getChildren().add(indexBinding);
 			updateIndexedFieldGroup(fg, model, indexBinding);
@@ -120,8 +146,26 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends
 	 */
 	protected final FieldGroup remove(int index) throws IndexOutOfBoundsException {
 		FieldGroup removed = list.remove(index);
+		topGroup.removeField(removed);
 		unbindAtIndex(index);
 		return removed;
+	}
+
+	public FieldGroup getFieldGroup() {
+		return topGroup;
+	}
+
+	/**
+	 * Draws the fields.
+	 */
+	protected void draw() {
+		if(indexRenderer == null) {
+			throw new IllegalStateException("No field index renderer set");
+		}
+		int i = 0;
+		for(FieldGroup fg : list) {
+			indexRenderer.render(indexWidgets.get(i++), fg);
+		}
 	}
 
 	/**
@@ -216,6 +260,9 @@ public abstract class IndexedFieldPanel<M extends IBindable> extends
 	protected void onAttach() {
 		super.onAttach();
 		regenerate();
+		if(!drawn) {
+			draw();
+		}
 	}
 
 	@Override

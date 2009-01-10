@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 

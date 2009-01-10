@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.model.EntityType;
 import com.tll.service.app.RefDataType;
 

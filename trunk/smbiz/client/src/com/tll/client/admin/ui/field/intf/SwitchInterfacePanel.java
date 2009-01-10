@@ -7,7 +7,6 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldGroup;
@@ -19,23 +18,23 @@ import com.tll.client.ui.field.IFieldRenderer;
  * @author jpk
  * @param <M>
  */
-public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
+public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<FlowPanel, M> {
 
-	class SwitchInterfaceFieldsRenderer implements IFieldRenderer {
+	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getField(parentPropPath, "name"));
-			cmpsr.addField(fg.getField(parentPropPath, "code"));
-			cmpsr.addField(fg.getField(parentPropPath, "description"));
+			cmpsr.addField(fg.getFieldByName("name"));
+			cmpsr.addField(fg.getFieldByName("code"));
+			cmpsr.addField(fg.getFieldByName("description"));
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetAlignment();
 
 			cmpsr.newRow();

@@ -39,29 +39,20 @@ public final class SelectField extends AbstractField<Object> {
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param multiSelect
+	 * @param options
 	 */
-	public SelectField(String propName, String labelText, String helpText, boolean multiSelect) {
-		super(propName, labelText, helpText);
+	public SelectField(String name, String propName, String labelText, String helpText, boolean multiSelect,
+			Collection<?> options) {
+		super(name, propName, labelText, helpText);
 		setComparator(SimpleComparator.INSTANCE);
 		lb = new ListBox(multiSelect);
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
-	}
-
-	/**
-	 * Constructor
-	 * @param propName
-	 * @param labelText
-	 * @param helpText
-	 * @param isMultipleSelect
-	 * @param options
-	 */
-	public SelectField(String propName, String labelText, String helpText, boolean isMultipleSelect, Collection<?> options) {
-		this(propName, labelText, helpText, isMultipleSelect);
 		setOptions(options);
 	}
 

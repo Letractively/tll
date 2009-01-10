@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -14,36 +14,36 @@ import com.tll.client.ui.field.IFieldRenderer;
  * AddressFieldsRenderer
  * @author jpk
  */
-public class AddressFieldsRenderer implements IFieldRenderer {
+public class AddressFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-	public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+	public void render(FlowPanel panel, FieldGroup fg) {
 		FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getField(parentPropPath, "emailAddress"));
+		cmpsr.addField(fg.getFieldByName("emailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "firstName"));
-		cmpsr.addField(fg.getField(parentPropPath, "mi"));
-		cmpsr.addField(fg.getField(parentPropPath, "lastName"));
+		cmpsr.addField(fg.getFieldByName("firstName"));
+		cmpsr.addField(fg.getFieldByName("mi"));
+		cmpsr.addField(fg.getFieldByName("lastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "attn"));
-		cmpsr.addField(fg.getField(parentPropPath, "company"));
+		cmpsr.addField(fg.getFieldByName("attn"));
+		cmpsr.addField(fg.getFieldByName("company"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "address1"));
+		cmpsr.addField(fg.getFieldByName("address1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "address2"));
+		cmpsr.addField(fg.getFieldByName("address2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "city"));
-		cmpsr.addField(fg.getField(parentPropPath, "province"));
+		cmpsr.addField(fg.getFieldByName("city"));
+		cmpsr.addField(fg.getFieldByName("province"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "postalCode"));
-		cmpsr.addField(fg.getField(parentPropPath, "country"));
+		cmpsr.addField(fg.getFieldByName("postalCode"));
+		cmpsr.addField(fg.getFieldByName("country"));
 	}
 
 }

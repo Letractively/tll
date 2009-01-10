@@ -7,6 +7,8 @@ package com.tll.client.bind;
 
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.IBoundWidget;
@@ -23,8 +25,8 @@ import com.tll.client.validate.ValidationFeedbackManager;
  * @param <FP> the field panel type
  * @author jpk
  */
-public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<M>> implements
-		IBindingAction<FP> {
+public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<? extends Panel, M>>
+		implements IBindingAction<FP> {
 
 	/**
 	 * The binding.
@@ -62,9 +64,10 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 * @param indexedProperty
 	 * @param indexedFieldPanel
 	 */
-	protected final void addIndexedFieldBinding(M model, String indexedProperty, IndexedFieldPanel<M> indexedFieldPanel) {
+	protected final void addIndexedFieldBinding(M model, String indexedProperty,
+			IndexedFieldPanel<? extends Widget, M> indexedFieldPanel) {
 		binding.getChildren().add(
-				new Binding(model, "addresses", null, null, indexedFieldPanel, IBoundWidget.PROPERTY_VALUE, null, null));
+				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBoundWidget.PROPERTY_VALUE, null, null));
 	}
 
 	/**

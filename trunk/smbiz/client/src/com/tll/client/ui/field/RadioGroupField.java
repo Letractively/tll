@@ -48,15 +48,16 @@ public final class RadioGroupField extends AbstractField<String> {
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param options
 	 * @param renderHorizontal
 	 */
-	public RadioGroupField(String propName, String labelText, String helpText, Collection<?> options,
+	public RadioGroupField(String name, String propName, String labelText, String helpText, Collection<?> options,
 			boolean renderHorizontal) {
-		super(propName, labelText, helpText);
+		super(name, propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
 		if(renderHorizontal) {
 			rbPanel = new HorizontalPanel();

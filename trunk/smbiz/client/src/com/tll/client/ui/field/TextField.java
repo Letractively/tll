@@ -26,13 +26,14 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param visibleLength
 	 */
-	public TextField(String propName, String labelText, String helpText, int visibleLength) {
-		super(propName, labelText, helpText);
+	public TextField(String name, String propName, String labelText, String helpText, int visibleLength) {
+		super(name, propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
 		tb = new TextBox();
 		setVisibleLen(visibleLength);

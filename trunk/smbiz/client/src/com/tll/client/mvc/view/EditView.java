@@ -4,6 +4,7 @@
  */
 package com.tll.client.mvc.view;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.EntityOptions;
 import com.tll.client.model.Model;
@@ -49,7 +50,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	 * @param fieldPanel The required field panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(FieldPanel<Model> fieldPanel, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<? extends Widget, Model> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
 		editPanel = new EditPanel<Model>(fieldPanel, true, false);

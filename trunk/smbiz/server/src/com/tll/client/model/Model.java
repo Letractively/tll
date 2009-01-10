@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IPropertyChangeListener;
 import com.tll.client.bind.ISourcesPropertyChangeEvents;

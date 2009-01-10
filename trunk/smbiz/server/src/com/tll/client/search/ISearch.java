@@ -6,7 +6,7 @@ package com.tll.client.search;
 
 import java.util.Set;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQuery;

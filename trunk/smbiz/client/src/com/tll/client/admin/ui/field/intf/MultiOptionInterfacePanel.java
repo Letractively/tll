@@ -8,7 +8,6 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -27,13 +26,13 @@ import com.tll.client.ui.field.IndexedFieldPanel;
  * @author jpk
  * @param <M>
  */
-public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<M> {
+public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<FlowPanel, M> {
 
 	/**
 	 * OptionPanel
 	 * @author jpk
 	 */
-	static final class OptionPanel<M extends IBindable> extends FieldPanel<M> {
+	static final class OptionPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		FlowPanel canvas = new FlowPanel();
 
@@ -52,26 +51,26 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 	}
 
-	class OptionRenderer implements IFieldRenderer {
+	class OptionRenderer implements IFieldRenderer<FlowPanel> {
 
-		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getField(parentPropPath, Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getField(parentPropPath, "code"));
-			cmpsr.addField(fg.getField(parentPropPath, "description"));
+			cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldByName("code"));
+			cmpsr.addField(fg.getFieldByName("description"));
 
 			// pricing
 			cmpsr.newRow();
 			Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, (Widget) fg.getField(parentPropPath, "setUpCost"));
-			g.setWidget(0, 1, (Widget) fg.getField(parentPropPath, "monthlyCost"));
-			g.setWidget(0, 2, (Widget) fg.getField(parentPropPath, "annualCost"));
-			g.setWidget(1, 0, (Widget) fg.getField(parentPropPath, "baseSetupPrice"));
-			g.setWidget(1, 1, (Widget) fg.getField(parentPropPath, "baseMonthlyPrice"));
-			g.setWidget(1, 2, (Widget) fg.getField(parentPropPath, "baseAnnualPrice"));
+			g.setWidget(0, 0, (Widget) fg.getFieldByName("setUpCost"));
+			g.setWidget(0, 1, (Widget) fg.getFieldByName("monthlyCost"));
+			g.setWidget(0, 2, (Widget) fg.getFieldByName("annualCost"));
+			g.setWidget(1, 0, (Widget) fg.getFieldByName("baseSetupPrice"));
+			g.setWidget(1, 1, (Widget) fg.getFieldByName("baseMonthlyPrice"));
+			g.setWidget(1, 2, (Widget) fg.getFieldByName("baseAnnualPrice"));
 			cmpsr.addWidget(g);
 
 			// cmpsr.newRow();
@@ -79,7 +78,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 	}
 
-	final class OptionsPanel extends IndexedFieldPanel<M> implements TabListener {
+	final class OptionsPanel extends IndexedFieldPanel<FlowPanel, M> implements TabListener {
 
 		private final TabPanel tabOptions = new TabPanel();
 
@@ -87,14 +86,11 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super(new OptionFieldProvider());
-			tabOptions.addTabListener(this);
-			initWidget(tabOptions);
-			setRenderer(new IFieldRenderer() {
+			super(new OptionFieldProvider(), new IFieldRenderer<FlowPanel>() {
 
-				public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+				public void render(FlowPanel widget, FieldGroup fg) {
 					FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(panel);
+					cmpsr.setCanvas(widget);
 
 					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
 					cmpsr.addField(fg.getField("code"));
@@ -114,6 +110,8 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 					cmpsr.addWidget(optionsPanel);
 				}
 			});
+			tabOptions.addTabListener(this);
+			initWidget(tabOptions);
 		}
 
 		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {

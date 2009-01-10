@@ -59,8 +59,10 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 
 		// first go through the non-group child fields
 		for(IField<?> fld : group) {
-			if(fld.getName().equals(name)) {
-				return fld;
+			if(fld instanceof FieldGroup == false) {
+				if(name.equals(fld.getName())) {
+					return fld;
+				}
 			}
 		}
 
@@ -606,6 +608,6 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 
 	@Override
 	public String toString() {
-		return "FieldGroup";
+		return "FieldGroup[" + (name == null ? "<noname>" : name) + ']';
 	}
 }

@@ -6,7 +6,7 @@ package com.tll.client.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tll.client.IMarshalable;
+import com.tll.IMarshalable;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgAttr;
 import com.tll.client.msg.Msg.MsgLevel;

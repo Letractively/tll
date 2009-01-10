@@ -27,13 +27,14 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 
 	/**
 	 * Constructor
+	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
 	 * @param suggestions The required collection of suggestions.
 	 */
-	public SuggestField(String propName, String labelText, String helpText, Collection<?> suggestions) {
-		super(propName, labelText, helpText);
+	public SuggestField(String name, String propName, String labelText, String helpText, Collection<?> suggestions) {
+		super(name, propName, labelText, helpText);
 		if(suggestions == null || suggestions.size() < 1) {
 			throw new IllegalArgumentException("No suggestions specified.");
 		}

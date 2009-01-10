@@ -35,7 +35,7 @@ ant.patternset(id:'ps_dependentLibs') {
 	include(name:'antlr.jar')
 	include(name:'aopalliance.jar')
 	include(name:'backport-util-concurrent.jar')
-	include(name:'c3po.jar')
+	include(name:'c3p0.jar')
 	include(name:'cglib-nodep.jar')
 	include(name:'commons-beanutils.jar')
 	include(name:'commons-codec.jar')
@@ -118,6 +118,7 @@ def test_classpath = ant.path {
 	fileset(dir: "${property.'project.dir.build.web'}/WEB-INF/lib") {
 		patternset(refid:'ps_dependentLibs')
 	}
+	pathelement(location: "${property.'gwt.dir.install'}/gwt-user.jar")
 }
 	
 // compile classpath for the gwt compiler 
@@ -264,6 +265,17 @@ def gwtDeleteOldDeploy = {
 	}
 }
 
+// all *.rpc files must be copied under GWT's hosted mode tomcat dir to ensure proper rpc operation
+def gwtCopyRpc = { String module ->
+	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
+	println "Copying " + module + " RPC serialization policy files to : " + hostModeModuleDir + "...";
+	ant.copy(todir: hostModeModuleDir) {
+		fileset(dir: "${property.'project.dir.build'}/${module}") {
+			include(name: '*.rpc')
+		}
+	}
+}
+
 // GWTCompiler [-logLevel level] [-gen dir] [-out dir] [-treeLogger] [-style style] module
 def gwtCompile = { String module ->
 	gwtClean(module)
@@ -279,13 +291,6 @@ def gwtCompile = { String module ->
 		arg (value: '-style')
 		arg (value: property.'gwt.compile.style') 
 		arg (value: module)
-	}
-	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
-	println "Copying " + module + " RPC serialization policy files to : " + hostModeModuleDir + "...";
-	ant.copy(todir: hostModeModuleDir) {
-		fileset(dir: "${property.'project.dir.build'}/${module}") {
-			include(name: '*.rpc')
-		}
 	}
 }
 	
@@ -739,7 +744,9 @@ target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
 target (gwtCompileAdmin: 'GWT smbiz admin client compilation') {
 	targetStart()
 	depends(compileClient)
-	gwtCompile(property.'gwt.module.smbiz.admin')
+	String module = property.'gwt.module.smbiz.admin'
+	gwtCompile(module)
+	gwtCopyRpc(module)
 	targetEnd()
 }
 	

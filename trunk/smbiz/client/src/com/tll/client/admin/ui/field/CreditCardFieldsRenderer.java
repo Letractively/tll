@@ -5,7 +5,7 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -14,35 +14,35 @@ import com.tll.client.ui.field.IFieldRenderer;
  * CreditCardFieldsRenderer
  * @author jpk
  */
-public class CreditCardFieldsRenderer implements IFieldRenderer {
+public class CreditCardFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-	public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+	public void render(FlowPanel panel, FieldGroup fg) {
 		final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccType"));
+		cmpsr.addField(fg.getFieldByName("type"));
 
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccNum"));
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccCvv2"));
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccExpMonth"));
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccExpYear"));
-
-		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccName"));
+		cmpsr.addField(fg.getFieldByName("num"));
+		cmpsr.addField(fg.getFieldByName("cvv2"));
+		cmpsr.addField(fg.getFieldByName("expMonth"));
+		cmpsr.addField(fg.getFieldByName("expYear"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccAddress1"));
+		cmpsr.addField(fg.getFieldByName("name"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccAddress2"));
+		cmpsr.addField(fg.getFieldByName("address1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccCity"));
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccState"));
+		cmpsr.addField(fg.getFieldByName("address2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccZip"));
-		cmpsr.addField(fg.getField(parentPropPath, "paymentData_ccCountry"));
+		cmpsr.addField(fg.getFieldByName("city"));
+		cmpsr.addField(fg.getFieldByName("state"));
+
+		cmpsr.newRow();
+		cmpsr.addField(fg.getFieldByName("zip"));
+		cmpsr.addField(fg.getFieldByName("country"));
 	}
 
 }

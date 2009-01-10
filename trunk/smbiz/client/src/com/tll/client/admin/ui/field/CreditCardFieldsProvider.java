@@ -22,21 +22,20 @@ public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fg) {
-		fg
-				.addField(FieldFactory.fselect("paymentData_ccType", "Type", null, false, Arrays
-						.asList(CreditCardType.values())));
-		fg.addField(FieldFactory.fcreditcard("paymentData_ccNum", "Num", null, 15));
-		fg.addField(FieldFactory.ftext("paymentData_ccCvv2", "CVV2", "CVV2", 4));
-		fg.addField(FieldFactory.ftext("paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));
-		fg.addField(FieldFactory.ftext("paymentData_ccExpYear", "Exp Year", "Expiration Year", 4));
-		fg.addField(FieldFactory.ftext("paymentData_ccName", "Name", "Name", 30));
-		fg.addField(FieldFactory.ftext("paymentData_ccAddress1", "Address 1", "Address 1", 40));
-		fg.addField(FieldFactory.ftext("paymentData_ccAddress2", "Address 2", "Address 2", 40));
-		fg.addField(FieldFactory.ftext("paymentData_ccCity", "City", "City", 30));
-		fg.addField(FieldFactory.fsuggest("paymentData_ccState", "State/Province", "State", AuxDataCache.instance()
-				.getRefDataMap(RefDataType.US_STATES).values()));
-		fg.addField(FieldFactory.ftext("paymentData_ccZip", "Postal Code", "Postal Code", 15));
-		fg.addField(FieldFactory.fsuggest("paymentData_ccCountry", "Country", "Country", AuxDataCache.instance()
+		fg.addField(FieldFactory.fselect("type", "paymentData_ccType", "Type", null, false, Arrays.asList(CreditCardType
+				.values())));
+		fg.addField(FieldFactory.fcreditcard("num", "paymentData_ccNum", "Num", null, 15));
+		fg.addField(FieldFactory.ftext("cvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
+		fg.addField(FieldFactory.ftext("expMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));
+		fg.addField(FieldFactory.ftext("expYear", "paymentData_ccExpYear", "Exp Year", "Expiration Year", 4));
+		fg.addField(FieldFactory.ftext("name", "paymentData_ccName", "Name", "Name", 30));
+		fg.addField(FieldFactory.ftext("address1", "paymentData_ccAddress1", "Address 1", "Address 1", 40));
+		fg.addField(FieldFactory.ftext("address2", "paymentData_ccAddress2", "Address 2", "Address 2", 40));
+		fg.addField(FieldFactory.ftext("city", "paymentData_ccCity", "City", "City", 30));
+		fg.addField(FieldFactory.fsuggest("state", "paymentData_ccState", "State/Province", "State", AuxDataCache
+				.instance().getRefDataMap(RefDataType.US_STATES).values()));
+		fg.addField(FieldFactory.ftext("zip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
+		fg.addField(FieldFactory.fsuggest("country", "paymentData_ccCountry", "Country", "Country", AuxDataCache.instance()
 				.getRefDataMap(RefDataType.ISO_COUNTRY_CODES).values()));
 	}
 

@@ -67,10 +67,17 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	private final String domId;
 
 	/**
-	 * The designated name for this field. This is used as the the form input
-	 * name.
+	 * The field name.
 	 */
 	private String name;
+
+	/**
+	 * The full property path intended to uniquely identify this field relative to
+	 * a common root construct.
+	 * <p>
+	 * <em>NOTE: This is distinct from the field's <code>name</code> property.
+	 */
+	private String property;
 
 	private boolean required = false;
 	private boolean readOnly = false;
@@ -117,14 +124,18 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 
 	/**
 	 * Constructor
-	 * @param propName The property name associated with this field
+	 * @param name The field name which should be unique relative to any sibling
+	 *        fields under a common parent (field group).
+	 * @param propName The property name associated with this field which should
+	 *        be unique relative to a common ancestor (field group).
 	 * @param labelText The optional field label text
 	 * @param helpText The options field help text that will appear when the mouse
 	 *        hovers.
 	 * @throws IllegalArgumentException When no property propName is given
 	 */
-	public AbstractField(String propName, String labelText, String helpText) {
+	public AbstractField(String name, String propName, String labelText, String helpText) {
 		domId = 'f' + Integer.toString(++fieldCounter);
+		setName(name);
 		setPropertyName(propName);
 
 		// set the label
@@ -207,11 +218,14 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public final String getPropertyName() {
-		return getName();
+		if(StringUtil.isEmpty(name)) {
+			throw new IllegalArgumentException("A field must have a property name.");
+		}
+		return property;
 	}
 
 	public final void setPropertyName(String propName) {
-		setName(propName);
+		this.property = propName;
 	}
 
 	public final void clear() {
@@ -582,14 +596,14 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!this.name.equals(propPath)) {
+		if(!property.toString().equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		return getValue();
 	}
 
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(!this.name.equals(propPath)) {
+		if(!property.toString().equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		try {
@@ -630,16 +644,16 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		AbstractField other = (AbstractField) obj;
-		return (!name.equals(other.name));
+		return (!property.equals(other.property));
 	}
 
 	@Override
 	public final int hashCode() {
-		return 31 + name.hashCode();
+		return 31 + property.hashCode();
 	}
 
 	@Override
 	public final String toString() {
-		return name;
+		return property.toString();
 	}
 }

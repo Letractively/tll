@@ -18,15 +18,21 @@ public class AccountFieldsProvider extends AbstractFieldGroupProvider {
 	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
-		fg.addField(FieldFactory.ftext("parent.name", "Parent", "Parent Account", 15));
-		fg.addField(FieldFactory.fselect("status", "Status", "Status", false, Arrays.asList(AccountStatus.values())));
-		fg.addField(FieldFactory.fdate("dateCancelled", "Date Cancelled", "Date Cancelled", GlobalFormat.DATE));
-		fg.addField(FieldFactory.fselect("currency.id", "Currency", "Currency", false, AuxDataCache.instance()
-				.getCurrencyDataMap().values()));
-		fg.addField(FieldFactory.ftext("billingModel", "Billing Model", "Billing Model", 18));
-		fg.addField(FieldFactory.ftext("billingCycle", "Billing Cycle", "Billing Cycle", 18));
-		fg.addField(FieldFactory.fdate("dateLastCharged", "Last Charged", "Last Charged", GlobalFormat.DATE));
-		fg.addField(FieldFactory.fdate("nextChargeDate", "Next Charge", "Next Charge", GlobalFormat.DATE));
-		fg.addField(FieldFactory.fcheckbox("persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?"));
+		fg.addField(FieldFactory.ftext("parentName", "parent.name", "Parent", "Parent Account", 15));
+		fg.addField(FieldFactory.fselect("status", "status", "Status", "Status", false, Arrays.asList(AccountStatus
+				.values())));
+		fg.addField(FieldFactory.fdate("dateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled",
+				GlobalFormat.DATE));
+		fg.addField(FieldFactory.fselect("currencyId", "currency.id", "Currency", "Currency", false, AuxDataCache
+				.instance().getCurrencyDataMap().values()));
+		fg.addField(FieldFactory.ftext("billingModel", "billingModel", "Billing Model", "Billing Model", 18));
+		fg.addField(FieldFactory.ftext("billingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
+		fg.addField(FieldFactory.fdate("dateLastCharged", "dateLastCharged", "Last Charged", "Last Charged",
+				GlobalFormat.DATE));
+		fg
+				.addField(FieldFactory.fdate("nextChargeDate", "nextChargeDate", "Next Charge", "Next Charge",
+						GlobalFormat.DATE));
+		fg.addField(FieldFactory.fcheckbox("persistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
+				"PersistPayment Info?"));
 	}
 }

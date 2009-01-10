@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -36,7 +35,7 @@ import com.tll.model.impl.AddressType;
  * @param <M> the model type
  * @author jpk
  */
-public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
+public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 	/**
 	 * AccountEditAction
@@ -69,30 +68,30 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		}
 	}
 
-	class AccountFieldsRenderer implements IFieldRenderer {
+	class AccountFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getField(parentPropPath, Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getField(parentPropPath, "status"));
-			cmpsr.addField(fg.getField(parentPropPath, "dateCancelled"));
-			cmpsr.addField(fg.getField(parentPropPath, "currency.id"));
+			cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldByName("status"));
+			cmpsr.addField(fg.getFieldByName("dateCancelled"));
+			cmpsr.addField(fg.getFieldByName("currencyId"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			cmpsr.addField(fg.getField(parentPropPath, "parent.name"));
+			cmpsr.addField(fg.getFieldByName("parentName"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
 
 			// second row (billing)
 			cmpsr.newRow();
-			cmpsr.addField(fg.getField(parentPropPath, "billingModel"));
-			cmpsr.addField(fg.getField(parentPropPath, "billingCycle"));
-			cmpsr.addField(fg.getField(parentPropPath, "dateLastCharged"));
-			cmpsr.addField(fg.getField(parentPropPath, "nextChargeDate"));
+			cmpsr.addField(fg.getFieldByName("billingModel"));
+			cmpsr.addField(fg.getFieldByName("billingCycle"));
+			cmpsr.addField(fg.getFieldByName("dateLastCharged"));
+			cmpsr.addField(fg.getFieldByName("nextChargeDate"));
 
 			// third row
 			cmpsr.newRow();
@@ -102,7 +101,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 
 			// payment info block
 			FlowPanel fp = new FlowPanel();
-			fp.add((Widget) fg.getField(parentPropPath, "persistPymntInfo"));
+			fp.add((Widget) fg.getFieldByName("persistPymntInfo"));
 			fp.add(paymentInfoPanel);
 			dpPaymentInfo.add(fp);
 			cmpsr.addWidget(dpPaymentInfo);
@@ -133,7 +132,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<M> {
+	private static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		final FlowPanel panel = new FlowPanel();
 
@@ -147,20 +146,20 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			super();
 			this.addressType = addressType;
 			initWidget(panel);
-			setRenderer(new IFieldRenderer() {
+			setRenderer(new IFieldRenderer<FlowPanel>() {
 
-				public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+				public void render(FlowPanel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
 					// account address name row
-					cmpsr.addField(fg.getField(parentPropPath, Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
 					FlowPanel fp = new FlowPanel();
 					AddressFieldsRenderer r = new AddressFieldsRenderer();
-					r.render(fp, (FieldGroup) fg.getField(parentPropPath, "address"), parentPropPath);
+					r.render(fp, null);
 					cmpsr.addWidget(fp);
 				}
 			});
@@ -177,7 +176,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 	 * @author jpk
 	 * @param <M>
 	 */
-	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<M> implements TabListener {
+	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<AccountAddressPanel<M>, M> implements
+			TabListener {
 
 		private final TabPanel tabAddresses = new TabPanel();
 
@@ -185,7 +185,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super(/*"addresses", */new AccountAddressFieldProvider());
+			super(new AccountAddressFieldProvider(), null);
 
 			// listen to tab events
 			tabAddresses.addTabListener(this);
@@ -228,32 +228,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 		setRenderer(new AccountFieldsRenderer());
 	}
 
-	/*
-	@Override
-	public Object getProperty(String propPath) throws PropertyPathException {
-		if("paymentInfo".equals(propPath)) {
-			return paymentInfoPanel;
-		}
-		else if("addresses".equals(propPath)) {
-			return addressesPanel;
-		}
-		return super.getProperty(propPath);
-	}
-
-	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if("paymentInfo".equals(propPath)) {
-			paymentInfoPanel.setProperty(propPath, value);
-		}
-		else if("addresses".equals(propPath)) {
-			addressesPanel.setProperty(propPath, value);
-		}
-		else {
-			super.setProperty(propPath, value);
-		}
-	}
-	*/
-
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		FieldGroup fg = (new IFieldGroupProvider() {
@@ -261,13 +235,13 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<M> {
 			public FieldGroup getFieldGroup() {
 				FieldGroup fg = (new AccountFieldsProvider()).getFieldGroup();
 				fg.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
-				// fg.addField("addresses", addressesPanel.getFieldGroup());
+				fg.addField("addresses", addressesPanel.getFieldGroup());
 				return fg;
 			}
 		}).getFieldGroup();
 
 		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
-		// addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
+		addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 
 		fg.getField("parent.name").setReadOnly(true);
 

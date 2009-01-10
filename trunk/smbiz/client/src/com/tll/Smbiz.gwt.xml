@@ -1,12 +1,15 @@
 <module>
   <inherits name="com.google.gwt.user.User" />
-  <!-- <inherits name="com.google.gwt.i18n.I18N" /> un-comment to go international (commenting out means quicker compile) -->
+  
+  <!--  un-comment to go international (commenting out means quicker compile) -->
+  <inherits name="com.google.gwt.i18n.I18N" />
 
   <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
   <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
 
   <!-- non client package sources -->
   <source>
+    <include name="IMarshalable.java" />
     <include name="IDescriptorProvider.java" />
     <include name="INameValueProvider.java" />
     <include name="util/DateRange.java" />

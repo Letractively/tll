@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
@@ -170,7 +169,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * TestFieldPanel - Used for the fields test.
 	 * @author jpk
 	 */
-	private static final class TestFieldPanel<M extends IBindable> extends FieldPanel<M> {
+	private static final class TestFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		private final FlowPanel canvas = new FlowPanel();
 
@@ -183,15 +182,15 @@ public final class UITests implements EntryPoint, HistoryListener {
 		 */
 		public TestFieldPanel() {
 			super();
-			bf = FieldFactory.fcheckbox("bf", null, null);
-			bflabel = FieldFactory.fcheckbox("bflabel", "Boolean with Label", "Help Text");
+			bf = FieldFactory.fcheckbox("bf", "bf", null, null);
+			bflabel = FieldFactory.fcheckbox("bflabel", "bflabel", "Boolean with Label", "Help Text");
 			initWidget(canvas);
-			setRenderer(new IFieldRenderer() {
+			setRenderer(new IFieldRenderer<FlowPanel>() {
 
-				public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+				public void render(FlowPanel panel, FieldGroup fg) {
 					FieldGroup afg = (FieldGroup) fg.getFieldByName("address");
 					afg.addFields(fg.getFields("address"));
-					(new AddressFieldsRenderer()).render(addressPanel, afg, "address");
+					(new AddressFieldsRenderer()).render(addressPanel, null);
 
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
