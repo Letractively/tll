@@ -7,7 +7,6 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -78,7 +77,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 	}
 
-	final class OptionsPanel extends IndexedFieldPanel<FlowPanel, M> implements TabListener {
+	final class OptionsPanel extends IndexedFieldPanel<OptionPanel<M>, M> implements TabListener {
 
 		private final TabPanel tabOptions = new TabPanel();
 
@@ -86,30 +85,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super(new OptionFieldProvider(), new IFieldRenderer<FlowPanel>() {
-
-				public void render(FlowPanel widget, FieldGroup fg) {
-					FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(widget);
-
-					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
-					cmpsr.addField(fg.getField("code"));
-					cmpsr.addField(fg.getField("description"));
-					cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-					cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
-					cmpsr.stopFlow();
-					cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
-					cmpsr.resetAlignment();
-
-					// availability
-					cmpsr.newRow();
-					cmpsr.addWidget(createAvailabilityGrid(fg));
-
-					// options
-					cmpsr.newRow();
-					cmpsr.addWidget(optionsPanel);
-				}
-			});
+			super();
 			tabOptions.addTabListener(this);
 			initWidget(tabOptions);
 		}
@@ -119,6 +95,21 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			// OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
 			// op.paramListing.refresh();
 			return true;
+		}
+
+		@Override
+		protected void draw() {
+			tabOptions.clear();
+
+			// add the index field panels to the tab panel
+			for(OptionPanel<M> p : indexPanels) {
+				tabOptions.add(p, p.getFieldGroup().getFieldByName(Model.NAME_PROPERTY).getText());
+			}
+		}
+
+		@Override
+		protected OptionPanel<M> generateIndexPanel() {
+			return new OptionPanel<M>();
 		}
 
 		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {

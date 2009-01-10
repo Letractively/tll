@@ -41,7 +41,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	 * AccountEditAction
 	 * @author jpk
 	 */
-	class AccountEditAction extends AbstractModelEditAction<M, AccountPanel<M>> {
+	private class AccountEditAction extends AbstractModelEditAction<M, AccountPanel<M>> {
 
 		@Override
 		protected void populateBinding(AccountPanel<M> fp) throws PropertyPathException {
@@ -109,7 +109,9 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 			dpPaymentInfo.addEventHandler(new DisclosureHandler() {
 
 				public void onOpen(DisclosureEvent event) {
-					// TODO default select first tab if none currently selected
+					if(paymentInfoPanel.tabPanel.getTabBar().getSelectedTab() == -1) {
+						paymentInfoPanel.tabPanel.selectTab(0);
+					}
 				}
 
 				public void onClose(DisclosureEvent event) {
@@ -119,7 +121,11 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 			dpAddresses.addEventHandler(new DisclosureHandler() {
 
 				public void onOpen(DisclosureEvent event) {
-					addressesPanel.tabAddresses.selectTab(0);
+					if(addressesPanel.tabAddresses.getWidgetCount() > 0) {
+						if(addressesPanel.tabAddresses.getTabBar().getSelectedTab() == -1) {
+							addressesPanel.tabAddresses.selectTab(0);
+						}
+					}
 				}
 
 				public void onClose(DisclosureEvent event) {
@@ -136,15 +142,13 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 		final FlowPanel panel = new FlowPanel();
 
-		final AddressType addressType;
+		AddressType addressType;
 
 		/**
 		 * Constructor
-		 * @param addressType
 		 */
-		public AccountAddressPanel(AddressType addressType) {
+		public AccountAddressPanel() {
 			super();
-			this.addressType = addressType;
 			initWidget(panel);
 			setRenderer(new IFieldRenderer<FlowPanel>() {
 
@@ -185,22 +189,36 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super(new AccountAddressFieldProvider(), null);
+			super();
 
 			// listen to tab events
 			tabAddresses.addTabListener(this);
 			initWidget(tabAddresses);
 		}
 
+		@Override
+		protected void draw() {
+			tabAddresses.clear();
+
+			// add the index field panels to the tab panel
+			for(AccountAddressPanel<M> ap : indexPanels) {
+				tabAddresses.add(ap, ap.addressType.getName());
+			}
+		}
+
+		@Override
+		protected AccountAddressPanel<M> generateIndexPanel() {
+			return new AccountAddressPanel<M>();
+		}
+
 		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-			if(sender == tabAddresses) {
-				// need to hide any field messages bound to fields on the tab that is
-				// going out of view
-				int csti = tabAddresses.getTabBar().getSelectedTab();
-				if(csti != -1) {
-					Widget w = tabAddresses.getWidget(csti);
-					if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
-				}
+			assert sender == tabAddresses;
+			// need to hide any field messages bound to fields on the tab that is
+			// going out of view
+			int csti = tabAddresses.getTabBar().getSelectedTab();
+			if(csti != -1) {
+				Widget w = tabAddresses.getWidget(csti);
+				if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
 			}
 			return true;
 		}
@@ -224,7 +242,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	public AccountPanel() {
 		super();
 		initWidget(panel);
-		// setAction(new AccountEditAction<M, AccountPanel<M>>());
+		// setAction(new AccountEditAction());
 		setRenderer(new AccountFieldsRenderer());
 	}
 

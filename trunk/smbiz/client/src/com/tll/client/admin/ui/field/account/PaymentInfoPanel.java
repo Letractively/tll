@@ -60,7 +60,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	}
 
-	private final TabPanel tabPanel = new TabPanel();
+	final TabPanel tabPanel = new TabPanel();
 
 	private final CreditCardPanel<M> creditCardPanel;
 	private final BankPanel<M> bankPanel;
@@ -76,8 +76,6 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 		setRenderer(new IFieldRenderer<TabPanel>() {
 
 			public void render(TabPanel panel, FieldGroup fg) {
-				(new CreditCardFieldsRenderer()).render(creditCardPanel.getWidget(), fg);
-				(new BankFieldsRenderer()).render(bankPanel.getWidget(), fg);
 				panel.add(creditCardPanel, "Credit Card");
 				panel.add(bankPanel, "Bank");
 			}

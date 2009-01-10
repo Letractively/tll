@@ -60,12 +60,13 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 
 	/**
 	 * Adds an indexed field binding.
+	 * @param <I> the index field panel type
 	 * @param model
 	 * @param indexedProperty
 	 * @param indexedFieldPanel
 	 */
-	protected final void addIndexedFieldBinding(M model, String indexedProperty,
-			IndexedFieldPanel<? extends Widget, M> indexedFieldPanel) {
+	protected final <I extends FieldPanel<? extends Widget, M>> void addIndexedFieldBinding(M model,
+			String indexedProperty, IndexedFieldPanel<I, M> indexedFieldPanel) {
 		binding.getChildren().add(
 				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBoundWidget.PROPERTY_VALUE, null, null));
 	}
