@@ -46,13 +46,43 @@ import com.tll.model.schema.IPropertyMetadataProvider;
 public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField<?>> {
 
 	/**
-	 * Recursively searches for a single field whose property name matches the
-	 * given property name
+	 * Recursively searches the given field group for a field whose name matches
+	 * that given. The first found field is returned.
+	 * @param name The name to search for. If <code>null</code> is specified,
+	 *        <code>null</code> is returned.
+	 * @param group The group to search in
+	 * @return The found IField or <code>null</code> if no matching field found
+	 */
+	private static IField<?> findFieldByName(final String name, FieldGroup group) {
+		if(name == null) return null;
+		if(name.equals(group.name)) return group;
+
+		// first go through the non-group child fields
+		for(IField<?> fld : group) {
+			if(fld.getName().equals(name)) {
+				return fld;
+			}
+		}
+
+		IField<?> rfld;
+		for(IField<?> fld : group) {
+			if(fld instanceof FieldGroup) {
+				rfld = findFieldByName(name, (FieldGroup) fld);
+				if(rfld != null) return rfld;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Recursively searches the given field group for a nested field whose
+	 * property name matches that given. The first found field is returned.
 	 * @param propertyName The property name to search for
 	 * @param group The group to search in
 	 * @return The found IField or <code>null</code> if no matching field found
 	 */
-	private static IField<?> findField(final String propertyName, FieldGroup group) {
+	private static IField<?> findFieldByPropertyName(final String propertyName, FieldGroup group) {
 
 		// first go through the non-group child fields
 		for(IField<?> fld : group) {
@@ -66,7 +96,7 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 		IField<?> rfld;
 		for(IField<?> fld : group) {
 			if(fld instanceof FieldGroup) {
-				rfld = findField(propertyName, (FieldGroup) fld);
+				rfld = findFieldByPropertyName(propertyName, (FieldGroup) fld);
 				if(rfld != null) return rfld;
 			}
 		}
@@ -121,6 +151,11 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	}
 
 	/**
+	 * The optional name.
+	 */
+	private String name;
+
+	/**
 	 * The collection of child fields.
 	 */
 	private final Set<IField<?>> fields = new HashSet<IField<?>>();
@@ -149,11 +184,11 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	}
 
 	public String getName() {
-		throw new UnsupportedOperationException();
+		return name;
 	}
 
 	public void setName(String name) {
-		throw new UnsupportedOperationException();
+		this.name = name;
 	}
 
 	public String descriptor() {
@@ -198,12 +233,34 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	}
 
 	/**
-	 * Recursively searches for a field having the given property name. <br>
+	 * Recursively searches for a field having the given property name.
 	 * @param propertyName
 	 * @return The found field or <code>null</code> if it doesn't exist.
 	 */
 	public IField<?> getField(String propertyName) {
-		return propertyName == null ? null : findField(propertyName, this);
+		return propertyName == null ? null : findFieldByPropertyName(propertyName, this);
+	}
+
+	/**
+	 * Recursively searches for a field having the given parent property path and
+	 * property name.
+	 * @param parentPropPath
+	 * @param propName
+	 * @return The found field or <code>null</code> if it doesn't exist.
+	 */
+	public IField<?> getField(String parentPropPath, String propName) {
+		return parentPropPath == null ? getField(propName) : getField(PropertyPath
+				.getPropertyPath(parentPropPath, propName));
+	}
+
+	/**
+	 * Recursively searches for a field having the given name.
+	 * @param name
+	 * @return The found field or <code>null</code> if no field exists with the
+	 *         given name.
+	 */
+	public IField<?> getFieldByName(String name) {
+		return name == null ? null : findFieldByName(name, this);
 	}
 
 	/**

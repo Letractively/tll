@@ -23,19 +23,19 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getField("name"));
-			cmpsr.addField(fg.getField("code"));
-			cmpsr.addField(fg.getField("description"));
+			cmpsr.addField(fg.getField(parentPropPath, "name"));
+			cmpsr.addField(fg.getField(parentPropPath, "code"));
+			cmpsr.addField(fg.getField(parentPropPath, "description"));
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetAlignment();
 
 			cmpsr.newRow();

@@ -1,7 +1,9 @@
 package com.tll.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -19,17 +21,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.admin.ui.field.AddressFieldsProvider;
+import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.model.BooleanPropertyValue;
-import com.tll.client.model.CharacterPropertyValue;
 import com.tll.client.model.Model;
-import com.tll.client.model.RelatedOneProperty;
-import com.tll.client.model.StringPropertyValue;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -56,7 +56,7 @@ import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.dao.Sorting;
-import com.tll.model.EntityType;
+import com.tll.service.app.RefDataType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -97,7 +97,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 		// will work not until onModuleLoad() has returned
 		try {
 			History.addHistoryListener(this);
-			stub();
+			stubTestLinks();
+			initAuxDataCache();
 		}
 		catch(RuntimeException e) {
 			GWT.log("Error in 'onModuleLoad()' method", e);
@@ -105,10 +106,21 @@ public final class UITests implements EntryPoint, HistoryListener {
 		}
 	}
 
+	private void initAuxDataCache() {
+		// stub aux data cache
+		Map<String, String> cc = new HashMap<String, String>();
+		cc.put("us", "United States");
+		AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+
+		Map<String, String> st = new HashMap<String, String>();
+		st.put("ca", "California");
+		AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+	}
+
 	/**
 	 * Setup links to invoke the desired tests.
 	 */
-	void stub() {
+	private void stubTestLinks() {
 		for(String element : tests) {
 			Hyperlink link = new Hyperlink(element, element);
 			testList.add(link);
@@ -162,15 +174,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 		private final FlowPanel canvas = new FlowPanel();
 
-		private final FieldPanel<M> ap = new FieldPanel<M>() {
-
-			@Override
-			protected FieldGroup generateFieldGroup() {
-				return (new AddressFieldsProvider()).getFieldGroup();
-			}
-
-		};
-
+		private final FlowPanel addressPanel = new FlowPanel();
 		private final CheckboxField bf;
 		private final CheckboxField bflabel;
 
@@ -184,11 +188,15 @@ public final class UITests implements EntryPoint, HistoryListener {
 			initWidget(canvas);
 			setRenderer(new IFieldRenderer() {
 
-				public void render(Panel panel, FieldGroup fg) {
+				public void render(Panel panel, FieldGroup fg, String parentPropPath) {
+					FieldGroup afg = (FieldGroup) fg.getFieldByName("address");
+					afg.addFields(fg.getFields("address"));
+					(new AddressFieldsRenderer()).render(addressPanel, afg, "address");
+
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
-					cmpsr.addWidget(ap);
+					cmpsr.addWidget(addressPanel);
 					cmpsr.addField(bflabel);
 					cmpsr.addField(bf);
 				}
@@ -201,13 +209,15 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 				public FieldGroup getFieldGroup() {
 					FieldGroup fg = new FieldGroup();
-					fg.addField("address", ap.getFieldGroup());
+					fg.setName("address");
+					FieldGroup afg = (new AddressFieldsProvider()).getFieldGroup();
+					fg.addField("address", afg);
 
 					// set address2 as read only
-					ap.getFieldGroup().getField("address.address2").setReadOnly(true);
+					afg.getField("address.address2").setReadOnly(true);
 
 					// set city as read only
-					ap.getFieldGroup().getField("address.city").setReadOnly(true);
+					afg.getField("address.city").setReadOnly(true);
 
 					fg.addField(bflabel);
 					fg.addField(bf);
@@ -230,30 +240,6 @@ public final class UITests implements EntryPoint, HistoryListener {
 		final TestFieldPanel<Model> fieldPanel = new TestFieldPanel<Model>();
 		final EditPanel<Model> ep = new EditPanel<Model>(fieldPanel, true, true);
 		testPanel.add(ep);
-
-		Model address = new Model(EntityType.ADDRESS);
-		address.set(new StringPropertyValue("firstName", "Raul"));
-		address.set(new StringPropertyValue("lastName", "Smith"));
-		address.set(new CharacterPropertyValue("mi", 'C'));
-		address.set(new StringPropertyValue("company", "My Company"));
-		address.set(new StringPropertyValue("attn", "Booking Dept."));
-		address.set(new StringPropertyValue("address1", "Address 1"));
-		address.set(new StringPropertyValue("address2", "Address 2"));
-		address.set(new StringPropertyValue("city", "Toledo"));
-		address.set(new StringPropertyValue("province", "OHIO"));
-		address.set(new StringPropertyValue("postalCode", "00998"));
-		address.set(new StringPropertyValue("country", "us"));
-		address.set(new StringPropertyValue("phone", "3345567778"));
-		address.set(new StringPropertyValue("fax", "3345567779"));
-		address.set(new StringPropertyValue("emailAddress", "email@domain.com"));
-
-		Model testModel = new Model();
-		testModel.set(new RelatedOneProperty(EntityType.ADDRESS, "address", true, address));
-		testModel.set(new BooleanPropertyValue("bflabel", true));
-		testModel.set(new BooleanPropertyValue("bf", false));
-
-		ep.setModel(testModel);
-		// ep.draw();
 
 		// add button toggle read only/editable
 		Button btnRO = new Button("Read Only", new ClickListener() {

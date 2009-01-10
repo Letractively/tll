@@ -475,7 +475,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		if(pendingViewRequest == null) {
 			// need to update history first
 			if(request.addHistory()) {
-				assert request.getViewKey() != null : "Unable to add history: No view name specified.";
+				assert request.getViewKey() != null : "Unable to add history: No view key specified.";
 				if(request.getViewKey().getViewKeyHistoryToken().equals(History.getToken())) {
 					doDispatch(request);
 				}

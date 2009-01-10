@@ -16,34 +16,34 @@ import com.tll.client.ui.field.IFieldRenderer;
  */
 public class AddressFieldsRenderer implements IFieldRenderer {
 
-	public void render(Panel panel, FieldGroup fg) {
+	public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 		FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getField("emailAddress"));
+		cmpsr.addField(fg.getField(parentPropPath, "emailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("firstName"));
-		cmpsr.addField(fg.getField("mi"));
-		cmpsr.addField(fg.getField("lastName"));
+		cmpsr.addField(fg.getField(parentPropPath, "firstName"));
+		cmpsr.addField(fg.getField(parentPropPath, "mi"));
+		cmpsr.addField(fg.getField(parentPropPath, "lastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("attn"));
-		cmpsr.addField(fg.getField("company"));
+		cmpsr.addField(fg.getField(parentPropPath, "attn"));
+		cmpsr.addField(fg.getField(parentPropPath, "company"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("address1"));
+		cmpsr.addField(fg.getField(parentPropPath, "address1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("address2"));
+		cmpsr.addField(fg.getField(parentPropPath, "address2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("city"));
-		cmpsr.addField(fg.getField("province"));
+		cmpsr.addField(fg.getField(parentPropPath, "city"));
+		cmpsr.addField(fg.getField(parentPropPath, "province"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getField("postalCode"));
-		cmpsr.addField(fg.getField("country"));
+		cmpsr.addField(fg.getField(parentPropPath, "postalCode"));
+		cmpsr.addField(fg.getField(parentPropPath, "country"));
 	}
 
 }

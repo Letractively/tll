@@ -6,7 +6,6 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.ToStringConverter;
@@ -35,7 +34,7 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	public TextField(String propName, String labelText, String helpText, int visibleLength) {
 		super(propName, labelText, helpText);
 		setConverter(ToStringConverter.INSTANCE);
-		tb = new PasswordTextBox();
+		tb = new TextBox();
 		setVisibleLen(visibleLength);
 		// tb.addFocusListener(this);
 		tb.addChangeListener(this);

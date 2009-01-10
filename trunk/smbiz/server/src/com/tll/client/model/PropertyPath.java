@@ -48,7 +48,7 @@ public final class PropertyPath {
 	 *        .
 	 * @param propName Assumed to NOT have prefixing/suffixing dots. May be
 	 *        <code>null</code>.
-	 * @return The calculated property path.
+	 * @return The non-<code>null</code> calculated property path.
 	 */
 	public static String getPropertyPath(String parentPropPath, String propName) {
 		return (parentPropPath == null || parentPropPath.length() < 1) ? (propName == null ? "" : propName)

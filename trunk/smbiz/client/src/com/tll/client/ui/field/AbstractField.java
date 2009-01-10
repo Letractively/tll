@@ -46,7 +46,8 @@ import com.tll.model.schema.PropertyMetadata;
  * @param <V> native field type
  * @author jpk
  */
-public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField<V>, HasFocus, ClickListener, ChangeListener {
+public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField<V>,
+		HasFocus, ClickListener, ChangeListener {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -143,7 +144,7 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	 */
 	@Override
 	public final Widget getWidget() {
-		return super.getWidget();
+		return this;
 	}
 
 	/**

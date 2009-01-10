@@ -103,7 +103,7 @@ public abstract class FieldPanel<M extends IBindable> extends AbstractBoundWidge
 		if(renderer == null) {
 			throw new IllegalStateException("No field renderer set");
 		}
-		renderer.render(getPanel(), getFieldGroup());
+		renderer.render(getPanel(), getFieldGroup(), null);
 	}
 
 	@Override

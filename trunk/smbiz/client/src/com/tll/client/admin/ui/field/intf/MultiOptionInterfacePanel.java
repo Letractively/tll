@@ -54,24 +54,24 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 	class OptionRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getField("code"));
-			cmpsr.addField(fg.getField("description"));
+			cmpsr.addField(fg.getField(parentPropPath, Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getField(parentPropPath, "code"));
+			cmpsr.addField(fg.getField(parentPropPath, "description"));
 
 			// pricing
 			cmpsr.newRow();
 			Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, (Widget) fg.getField("setUpCost"));
-			g.setWidget(0, 1, (Widget) fg.getField("monthlyCost"));
-			g.setWidget(0, 2, (Widget) fg.getField("annualCost"));
-			g.setWidget(1, 0, (Widget) fg.getField("baseSetupPrice"));
-			g.setWidget(1, 1, (Widget) fg.getField("baseMonthlyPrice"));
-			g.setWidget(1, 2, (Widget) fg.getField("baseAnnualPrice"));
+			g.setWidget(0, 0, (Widget) fg.getField(parentPropPath, "setUpCost"));
+			g.setWidget(0, 1, (Widget) fg.getField(parentPropPath, "monthlyCost"));
+			g.setWidget(0, 2, (Widget) fg.getField(parentPropPath, "annualCost"));
+			g.setWidget(1, 0, (Widget) fg.getField(parentPropPath, "baseSetupPrice"));
+			g.setWidget(1, 1, (Widget) fg.getField(parentPropPath, "baseMonthlyPrice"));
+			g.setWidget(1, 2, (Widget) fg.getField(parentPropPath, "baseAnnualPrice"));
 			cmpsr.addWidget(g);
 
 			// cmpsr.newRow();
@@ -92,7 +92,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			initWidget(tabOptions);
 			setRenderer(new IFieldRenderer() {
 
-				public void render(Panel panel, FieldGroup fg) {
+				public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 					FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 

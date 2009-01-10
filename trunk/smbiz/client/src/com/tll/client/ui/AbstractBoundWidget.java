@@ -108,7 +108,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 			}
 		}
 
-		changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
+		// changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
 	}
 
 	public final void addChangeListener(ChangeListener listener) {

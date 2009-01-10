@@ -16,13 +16,13 @@ import com.tll.client.ui.field.IFieldRenderer;
  */
 public class BankFieldsRenderer implements IFieldRenderer {
 
-	public void render(Panel panel, FieldGroup fg) {
+	public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 		final GridFieldComposer cmpsr = new GridFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getField("bankName"));
-		cmpsr.addField(fg.getField("bankAccountNo"));
-		cmpsr.addField(fg.getField("bankRoutingNo"));
+		cmpsr.addField(fg.getField(parentPropPath, "bankName"));
+		cmpsr.addField(fg.getField(parentPropPath, "bankAccountNo"));
+		cmpsr.addField(fg.getField(parentPropPath, "bankRoutingNo"));
 	}
 
 }

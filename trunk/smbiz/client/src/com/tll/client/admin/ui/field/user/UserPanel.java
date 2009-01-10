@@ -25,33 +25,33 @@ public class UserPanel<M extends IBindable> extends FieldPanel<M> {
 
 	class UserFieldsRenderer implements IFieldRenderer {
 
-		public void render(Panel panel, FieldGroup fg) {
+		public void render(Panel panel, FieldGroup fg, String parentPropPath) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getField("name"));
-			cmpsr.addField(fg.getField("emailAddress"));
-			cmpsr.addField(fg.getField("locked"));
+			cmpsr.addField(fg.getField(parentPropPath, "name"));
+			cmpsr.addField(fg.getField(parentPropPath, "emailAddress"));
+			cmpsr.addField(fg.getField(parentPropPath, "locked"));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField("enabled"));
+			cmpsr.addField(fg.getField(parentPropPath, "enabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getField("expires"));
+			cmpsr.addField(fg.getField(parentPropPath, "expires"));
 
 			// parent account ref link
 			lnkAccount = new ViewRequestLink();
 			cmpsr.addWidget("Account", lnkAccount);
 
-			cmpsr.addField(fg.getField(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getField(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getField(parentPropPath, Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// third row
 			cmpsr.newRow();
 			FlowPanel fp = new FlowPanel();
 			AddressFieldsRenderer afr = new AddressFieldsRenderer();
-			afr.render(fp, (FieldGroup) fg.getField("address"));
+			afr.render(fp, (FieldGroup) fg.getField(parentPropPath, "address"), null);
 			cmpsr.addWidget(fp);
 		}
 
