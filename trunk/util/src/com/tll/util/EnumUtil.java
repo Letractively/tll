@@ -30,6 +30,7 @@ public final class EnumUtil {
 	/**
 	 * Overrides the default bahavior of Enum.valueOf() to account for enums that
 	 * implement the {@link INameValueProvider} interface.
+	 * @param <E> enum type
 	 * @param enumType the enum class.
 	 * @param text the string value of the enum constant.
 	 * @return the found Enum constant of the given enum class.
@@ -81,6 +82,7 @@ public final class EnumUtil {
 	 * Converts an enum to a Map factorting in the possibility the given enum type
 	 * may be a {@link INameValueProvider} instance. <br>
 	 * NOTE: The enum "name" is the map key.
+	 * @param <E> enum type
 	 * @param enumType
 	 * @return a name/value Map
 	 */
@@ -103,6 +105,7 @@ public final class EnumUtil {
 	/**
 	 * Convenience method that returns the enum element corresponding to the given
 	 * ordinal and enum type.
+	 * @param <E> enum type
 	 * @param ordinal The enum ordinal.
 	 * @param enumType The enum class.
 	 * @return {@link Enum}

@@ -63,6 +63,7 @@ public abstract class CommonUtil {
 	 * @param obj The object to clone
 	 * @return A clone of the object or <code>null</code> if the given object is
 	 *         <code>null</code>.
+	 * @throws IllegalArgumentException When the given object is not clonable
 	 * @throws IllegalStateException When the cloning fails usu. due to the type
 	 *         of the given object.
 	 */
@@ -201,6 +202,7 @@ public abstract class CommonUtil {
 	 * on the classpath under a given path of a given name.
 	 * @param claz The class name from which the path is determined.
 	 * @param fileName The name of the file.
+	 * @return the file contents
 	 * @throws IOException
 	 * @see #getClasspathFileContents(String, String)
 	 */

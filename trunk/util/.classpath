@@ -14,5 +14,6 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jakarta-oro.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/tll-core"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

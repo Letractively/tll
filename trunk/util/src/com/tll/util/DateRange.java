@@ -2,11 +2,13 @@ package com.tll.util;
 
 import java.util.Date;
 
+import com.tll.IMarshalable;
+
 /**
  * DateRange
  * @author jpk
  */
-public class DateRange implements Cloneable {
+public class DateRange implements Cloneable, IMarshalable {
 
 	public static final Date DATE_PAST = new Date(0L);
 

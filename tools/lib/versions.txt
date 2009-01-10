@@ -3,7 +3,7 @@ activation.jar 1.1.1
 antlr.jar 2.7.6
 aopalliance.jar 1.0
 backport-util-concurrent.jar Java60-3.1
-c3po.jar 0.9.1.2
+c3p0.jar 0.9.1.2
 cglib-nodep.jar 2.1_3
 commons-beanutils.jar 1.7
 commons-codec.jar 1.3

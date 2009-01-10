@@ -55,6 +55,7 @@ public abstract class CryptoUtil {
 	/**
 	 * Encrypts an Object that is serializable.
 	 * @param s The serializable to encrypt
+	 * @return byte array
 	 * @throws GeneralSecurityException
 	 */
 	public static byte[] encryptSerializable(Serializable s) throws GeneralSecurityException {
@@ -84,6 +85,7 @@ public abstract class CryptoUtil {
 	/**
 	 * Decrypts an Object that is {@link Serializable}.
 	 * @param edata The encrypted data
+	 * @return decrypted serializable instance
 	 * @throws GeneralSecurityException
 	 * @throws ClassNotFoundException
 	 */
@@ -115,6 +117,7 @@ public abstract class CryptoUtil {
 	/**
 	 * Encrypts a String.
 	 * @param str The String to encrypt
+	 * @return encrypted string
 	 * @throws IllegalArgumentException
 	 * @throws IllegalStateException
 	 */
@@ -136,6 +139,7 @@ public abstract class CryptoUtil {
 	/**
 	 * Decrypts a String.
 	 * @param str The String to decrypt
+	 * @return decrypted string
 	 * @throws IllegalArgumentException When either an I/O or a security related
 	 *         error occurrs.
 	 * @throws IllegalStateException When there is an encoding related error.

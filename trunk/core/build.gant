@@ -28,6 +28,7 @@ def dependant_libs = ant.path {
 	pathelement(location: "${property.'lib.commons-io'}")
 	pathelement(location: "${property.'lib.commons-validator'}")
 	pathelement(location: "${property.'lib.jakarto-oro'}")
+	pathelement(location: "${property.'lib.gwt.user'}")
 	pathelement(location: "${property.'lib.testng'}")
 	pathelement(location: "${property.'lib.spring'}")
 }
