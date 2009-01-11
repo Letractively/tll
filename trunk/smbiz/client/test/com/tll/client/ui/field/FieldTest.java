@@ -23,7 +23,7 @@ import com.tll.client.validate.ValidationException;
  */
 public class FieldTest extends GWTTestCase {
 
-	static final String PROP_NAME = "propName";
+	static final String PROP_NAME = "value";
 	static final String EMPTY_STRING_VALUE = "";
 	static final String STRING_VALUE = "value";
 	static final String LABEL_TEXT = "Label";

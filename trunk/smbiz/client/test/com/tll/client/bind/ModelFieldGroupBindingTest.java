@@ -64,6 +64,8 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 			public void execute() {
 				// populate the fields
 				binding.setRight();
+				// sendback
+				binding.setLeft();
 			}
 
 			public <B extends IBindable> void setBindable(B bindable) {

@@ -22,12 +22,10 @@ public final class NoFormatStringConverter implements IFormattedConverter<String
 		super();
 	}
 
-	@Override
 	public GlobalFormat getFormat() {
 		return null;
 	}
 
-	@Override
 	public String convert(String o) throws IllegalArgumentException {
 		return o; // pass through
 	}

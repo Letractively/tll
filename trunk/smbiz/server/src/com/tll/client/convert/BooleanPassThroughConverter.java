@@ -5,7 +5,6 @@
  */
 package com.tll.client.convert;
 
-
 /**
  * DatePassThroughConverter
  * @author jpk
@@ -21,7 +20,6 @@ public class BooleanPassThroughConverter implements IConverter<Boolean, Boolean>
 		super();
 	}
 
-	@Override
 	public Boolean convert(Boolean o) throws IllegalArgumentException {
 		return o;
 	}

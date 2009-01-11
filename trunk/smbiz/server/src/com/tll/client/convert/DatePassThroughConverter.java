@@ -22,7 +22,6 @@ public class DatePassThroughConverter implements IConverter<Date, Date> {
 		super();
 	}
 
-	@Override
 	public Date convert(Date o) throws IllegalArgumentException {
 		return o;
 	}
