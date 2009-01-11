@@ -5,7 +5,7 @@ package com.tll.client.convert;
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
- * @param <I>
+ * @param <I> The input type
  */
 public class ToStringConverter<I> implements IConverter<String, I> {
 

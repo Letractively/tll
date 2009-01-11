@@ -22,8 +22,8 @@ public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fg) {
-		fg.addField(FieldFactory.fselect("type", "paymentData_ccType", "Type", null, false, Arrays.asList(CreditCardType
-				.values())));
+		fg.addField(FieldFactory
+				.fselect("type", "paymentData_ccType", "Type", null, Arrays.asList(CreditCardType.values())));
 		fg.addField(FieldFactory.fcreditcard("num", "paymentData_ccNum", "Num", null, 15));
 		fg.addField(FieldFactory.ftext("cvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
 		fg.addField(FieldFactory.ftext("expMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));

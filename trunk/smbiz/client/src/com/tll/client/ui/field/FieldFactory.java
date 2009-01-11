@@ -6,7 +6,10 @@
 package com.tll.client.ui.field;
 
 import java.util.Collection;
+import java.util.Map;
 
+import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.RefDataMapConverter;
 import com.tll.client.model.Model;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.CreditCardValidator;
@@ -123,17 +126,32 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link SelectField} instance.
+	 * @param <I> The option "item" (element) type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param multipleSelect
 	 * @param options
 	 * @return new field
 	 */
-	public static final SelectField fselect(String name, String propName, String labelText, String helpText,
-			boolean multipleSelect, Collection<? extends Object> options) {
-		return new SelectField(name, propName, labelText, helpText, multipleSelect, options);
+	public static final <I> SelectField<I> fselect(String name, String propName, String labelText, String helpText,
+			Collection<I> options) {
+		return new SelectField<I>(name, propName, labelText, helpText, options);
+	}
+
+	/**
+	 * Creates a new {@link MultiSelectField} instance.
+	 * @param <I> The option "item" (element) type
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText
+	 * @param options
+	 * @return new field
+	 */
+	public static final <I> MultiSelectField<I> fmultiselect(String name, String propName, String labelText,
+			String helpText, Collection<I> options) {
+		return new MultiSelectField<I>(name, propName, labelText, helpText, options);
 	}
 
 	/**
@@ -163,6 +181,21 @@ public abstract class FieldFactory {
 	public static final RadioGroupField fradiogroup(String name, String propName, String labelText, String helpText,
 			Collection<? extends Object> options, boolean renderHorizontal) {
 		return new RadioGroupField(name, propName, labelText, helpText, options, renderHorizontal);
+	}
+
+	/**
+	 * Creates a new {@link SelectField} of app recognized currencies.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText
+	 * @return select field containing the app currencies
+	 */
+	public static final SelectField<String> fcurrency(String name, String propName, String labelText, String helpText) {
+		Map<String, String> cm = AuxDataCache.instance().getCurrencyDataMap();
+		SelectField<String> sf = FieldFactory.fselect(name, propName, labelText, helpText, cm.keySet());
+		sf.setConverter(new RefDataMapConverter(cm));
+		return sf;
 	}
 
 	/**

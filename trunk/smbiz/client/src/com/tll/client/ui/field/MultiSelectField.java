@@ -7,6 +7,7 @@ package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.HasFocus;
@@ -16,11 +17,11 @@ import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.SimpleComparator;
 
 /**
- * SelectField - Single select list box.
+ * SelectField
  * @author jpk
  * @param <I> The option "item" (element) type
  */
-public final class SelectField<I> extends AbstractField<I> {
+public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 
 	/**
 	 * The list box widget.
@@ -33,9 +34,9 @@ public final class SelectField<I> extends AbstractField<I> {
 	private Collection<I> options;
 
 	/**
-	 * The selected option.
+	 * The selected list options.
 	 */
-	private I selected;
+	private ArrayList<I> selected;
 
 	/**
 	 * Constructor
@@ -45,10 +46,10 @@ public final class SelectField<I> extends AbstractField<I> {
 	 * @param helpText
 	 * @param options
 	 */
-	public SelectField(String name, String propName, String labelText, String helpText, Collection<I> options) {
+	public MultiSelectField(String name, String propName, String labelText, String helpText, Collection<I> options) {
 		super(name, propName, labelText, helpText);
 		setComparator(SimpleComparator.INSTANCE);
-		lb = new ListBox();
+		lb = new ListBox(true);
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
 		setOptions(options);
@@ -62,25 +63,25 @@ public final class SelectField<I> extends AbstractField<I> {
 		if(this.options == null) this.options = new ArrayList<I>();
 		lb.clear();
 
-		I newSelected = null;
+		ArrayList<I> newSelected = new ArrayList<I>();
 
 		for(I item : options) {
 			lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
-			if(selected != null && selected.equals(item)) {
-				lb.setItemSelected(lb.getItemCount() - 1, true);
-				newSelected = item;
+			if(selected != null && contains(selected, item)) {
+				lb.setItemSelected(this.lb.getItemCount() - 1, true);
+				newSelected.add(item);
 			}
 			this.options.add(item);
 		}
 
-		I old = selected;
+		ArrayList<I> old = selected;
 		selected = newSelected;
 
 		firePropertyChange(selected, old);
 		fireChangeListeners();
 	}
 
-	private void firePropertyChange(I selected, I old) {
+	private void firePropertyChange(ArrayList<I> selected, ArrayList<I> old) {
 		if(changeSupport != null) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
 		}
@@ -140,53 +141,96 @@ public final class SelectField<I> extends AbstractField<I> {
 		return lb.getSelectedIndex();
 	}
 
-	public I getValue() {
+	public Collection<I> getValue() {
 		return selected;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setValue(Object value) {
 		if(options == null) throw new IllegalStateException("No options specified.");
 		int i = 0;
-		I old = selected;
-		selected = null;
+		ArrayList<I> old = selected;
+		selected = new ArrayList<I>();
 
-		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-			I item = it.next();
-			if(this.getComparator().compare(value, item) == 0) {
-				lb.setItemSelected(i, true);
-				selected = item;
-				break;
+		if(value instanceof Collection) {
+			Collection<I> c = (Collection<I>) value;
+
+			for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
+				I item = it.next();
+
+				if(contains(c, item)) {
+					lb.setItemSelected(i, true);
+					selected.add(item);
+				}
+				else {
+					lb.setItemSelected(i, false);
+				}
 			}
+		}
+		else {
+			for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
+				Object item = it.next();
+
+				if(this.getComparator().compare(value, item) == 0) {
+					lb.setItemSelected(i, true);
+				}
+				else {
+					lb.setItemSelected(i, false);
+				}
+			}
+
+			selected.add((I) value);
 		}
 
 		firePropertyChange(selected, old);
+
 		fireChangeListeners();
 	}
 
 	public String getText() {
-		final int si = getSelectedIndex();
-		return si < 0 ? "" : lb.getItemText(si);
+		// comma delimit
+		if(selected != null) {
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < selected.size(); i++) {
+				sb.append(ToStringConverter.INSTANCE.convert(selected.get(i)));
+				if(i < selected.size() - 1) {
+					sb.append(',');
+				}
+			}
+			return sb.toString();
+		}
+		return "";
 	}
 
 	public void setText(String text) {
 		setValue(text);
 	}
 
+	private boolean contains(final Collection<I> c, final Object o) {
+		final Comparator<Object> cmp = getComparator();
+		for(I next : c) {
+			if(cmp.compare(o, next) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void update() {
-		I selected = null;
+		ArrayList<I> selected = new ArrayList<I>();
 		Iterator<I> it = options.iterator();
 		for(int i = 0; (i < lb.getItemCount()) && it.hasNext(); i++) {
 			I item = it.next();
 			if(lb.isItemSelected(i)) {
-				selected = item;
-				break;
+				selected.add(item);
 			}
 		}
 
-		I old = this.selected;
+		ArrayList<I> old = this.selected;
 		this.selected = selected;
 
 		firePropertyChange(selected, old);
+
 		fireChangeListeners();
 	}
 

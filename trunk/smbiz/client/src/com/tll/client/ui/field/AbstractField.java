@@ -22,6 +22,7 @@ import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.util.GlobalFormat;
@@ -595,14 +596,14 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!property.toString().equals(propPath)) {
+		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		return getValue();
 	}
 
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(!property.toString().equals(propPath)) {
+		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		try {

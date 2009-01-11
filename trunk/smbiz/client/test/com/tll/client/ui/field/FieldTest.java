@@ -156,7 +156,17 @@ public class FieldTest extends GWTTestCase {
 	public void testSelectField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SelectField f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, true, Arrays.asList(as));
+		SelectField<String> f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
+		validateFieldCommon(f);
+
+		// TODO finish
+	}
+
+	public void testMultiSelectField() throws Exception {
+		String[] as = new String[] {
+			"s1", "s2", "s3" };
+		MultiSelectField<String> f =
+				FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
 		validateFieldCommon(f);
 
 		// TODO finish

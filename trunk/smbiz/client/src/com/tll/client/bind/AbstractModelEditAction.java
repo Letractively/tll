@@ -47,6 +47,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 
 	public void bind() {
 		binding.bind();
+		binding.setRight(); // populate the fields
 	}
 
 	public void unbind() {

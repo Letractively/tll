@@ -188,13 +188,13 @@ public final class AuxDataCache {
 			List<Model> currencies = getEntityList(EntityType.CURRENCY);
 			if(currencies == null) return null;
 			currencyMap = new HashMap<String, String>();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for(Model e : currencies) {
 				sb.setLength(0);
 				sb.append(e.asString("symbol"));
 				sb.append(" - ");
 				sb.append(e.getName());
-				currencyMap.put(sb.toString(), e.getId().toString());
+				currencyMap.put(e.getId().toString(), sb.toString());
 			}
 			return currencyMap;
 		}
