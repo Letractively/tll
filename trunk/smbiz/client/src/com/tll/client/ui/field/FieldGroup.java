@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IPropertyChangeListener;
-import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.model.PropertyPathException;
@@ -176,8 +175,7 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	 * The {@link PropertyChangeSupport} aggregate which is shared by all child
 	 * {@link IField}s.
 	 */
-	private PropertyChangeSupport changeSupport;
-
+	// private PropertyChangeSupport changeSupport;
 	/**
 	 * Constructor
 	 */
@@ -565,45 +563,29 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 		f.setProperty(propPath, value);
 	}
 
-	public void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
-		if(changeSupport != null && (this.changeSupport != null && this.changeSupport.hasAnyListeners())) {
-			throw new IllegalStateException("Field group already references a property change support reference");
-		}
-		this.changeSupport = changeSupport;
-		for(IField<?> f : fields) {
-			f.setPropertyChangeSupport(changeSupport);
-		}
-	}
-
-	private void ensureChangeSupportAggregated() throws IllegalStateException {
-		if(changeSupport == null) {
-			throw new IllegalStateException("A root field group must first be declared");
-		}
-	}
-
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.addPropertyChangeListener(listener);
+		// changeSupport.addPropertyChangeListener(listener);
+		throw new UnsupportedOperationException();
 	}
 
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.addPropertyChangeListener(propertyName, listener);
+		// changeSupport.addPropertyChangeListener(propertyName, listener);
+		throw new UnsupportedOperationException();
 	}
 
 	public IPropertyChangeListener[] getPropertyChangeListeners() {
-		ensureChangeSupportAggregated();
-		return changeSupport.getPropertyChangeListeners();
+		// return changeSupport.getPropertyChangeListeners();
+		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.removePropertyChangeListener(listener);
+		// changeSupport.removePropertyChangeListener(listener);
+		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.removePropertyChangeListener(propertyName, listener);
+		// changeSupport.removePropertyChangeListener(propertyName, listener);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

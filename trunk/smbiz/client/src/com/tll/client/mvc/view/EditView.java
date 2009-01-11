@@ -117,6 +117,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
 		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
+			model.setAsRoot();
 			editPanel.setModel(model);
 		}
 	}

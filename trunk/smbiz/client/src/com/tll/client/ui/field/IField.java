@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
-import com.tll.client.bind.ISourcesPropertyChangeEvents;
-import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.IHasHelpText;
@@ -25,7 +23,8 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @param <V> The native field value type (usu. a String but not limited to it)
  * @author jpk
  */
-public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IHasHelpText, IBindable, IValidator {
+public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IHasHelpText,
+		IBindable, IValidator {
 
 	/**
 	 * Style indicating a UI artifact is a field or that its children are.
@@ -173,5 +172,5 @@ public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, H
 	 * methods on {@link ISourcesPropertyChangeEvents}!</em>
 	 * @param changeSupport The change support ref
 	 */
-	void setPropertyChangeSupport(PropertyChangeSupport changeSupport);
+	// void setPropertyChangeSupport(PropertyChangeSupport changeSupport);
 }

@@ -242,7 +242,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	public AccountPanel() {
 		super();
 		initWidget(panel);
-		// setAction(new AccountEditAction());
+		setAction(new AccountEditAction());
 		setRenderer(new AccountFieldsRenderer());
 	}
 

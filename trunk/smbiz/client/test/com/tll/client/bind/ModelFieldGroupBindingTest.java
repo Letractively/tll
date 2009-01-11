@@ -22,7 +22,7 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 	 * AbstractTestModelFieldGroupBindingAction
 	 * @author jpk
 	 */
-	static abstract class AbstractTestModelFieldGroupBindingAction implements IBindingAction<FieldGroup> {
+	static abstract class AbstractTestModelFieldGroupBindingAction implements IBindingAction {
 
 		Binding binding = new Binding();
 		Model model = ClientTestUtils.getTestRootModel();
@@ -59,16 +59,15 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 	 * Tests the setting of non-relational fields from a model.
 	 */
 	public void testNonRelationalModelToFieldGroupBinding() {
-		IBindingAction<FieldGroup> ba = new AbstractTestModelFieldGroupBindingAction() {
+		IBindingAction ba = new AbstractTestModelFieldGroupBindingAction() {
 
 			public void execute() {
 				// populate the fields
 				binding.setRight();
 			}
 
-			@Override
-			public void setBindable(FieldGroup bindable) {
-				super.setBindable(bindable);
+			public <B extends IBindable> void setBindable(B bindable) {
+				// TODO impl
 			}
 
 		};

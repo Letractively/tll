@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
-import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.Msg;
@@ -612,14 +611,6 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		catch(RuntimeException e) {
 			throw new Exception(e);
 		}
-	}
-
-	/*
-	 * Promote from protected to public to conform to IField interface
-	 */
-	@Override
-	public void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
-		super.setPropertyChangeSupport(changeSupport);
 	}
 
 	@Override

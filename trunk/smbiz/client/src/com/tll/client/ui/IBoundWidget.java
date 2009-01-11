@@ -40,13 +40,13 @@ public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, Sour
 	/**
 	 * @return The action
 	 */
-	IBindingAction<IBoundWidget<B, V, M>> getAction();
+	IBindingAction getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action The action to set
 	 */
-	void setAction(IBindingAction<IBoundWidget<B, V, M>> action);
+	void setAction(IBindingAction action);
 
 	/**
 	 * @return The employed {@link Comparator} for this bound widget.

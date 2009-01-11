@@ -7,7 +7,6 @@ package com.tll.client.bind;
 
 import java.util.Set;
 
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
@@ -25,17 +24,21 @@ import com.tll.client.validate.ValidationFeedbackManager;
  * @param <FP> the field panel type
  * @author jpk
  */
-public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<? extends Panel, M>>
-		implements IBindingAction<FP> {
+public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<?, M>> implements
+		IBindingAction {
 
 	/**
 	 * The binding.
 	 */
 	protected final Binding binding = new Binding();
 
-	public final void setBindable(FP fieldPanel) {
+	@SuppressWarnings("unchecked")
+	public <B extends IBindable> void setBindable(B bindable) {
 		try {
-			populateBinding(fieldPanel);
+			populateBinding((FP) bindable);
+		}
+		catch(ClassCastException e) {
+			throw new IllegalArgumentException("The bindable must be a field panel");
 		}
 		catch(PropertyPathException e) {
 			throw new IllegalStateException("Unable to set bindable", e);

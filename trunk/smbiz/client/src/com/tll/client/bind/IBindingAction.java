@@ -5,15 +5,15 @@ package com.tll.client.bind;
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
- * @param <B> The {@link IBindable} type.
  */
-public interface IBindingAction<B extends IBindable> extends IAction {
+public interface IBindingAction extends IAction {
 
 	/**
 	 * Sets the bindable.
+	 * @param <B> The {@link IBindable} type.
 	 * @param bindable The boundWidget to set
 	 */
-	void setBindable(B bindable);
+	<B extends IBindable> void setBindable(B bindable);
 
 	/**
 	 * Establishes the bindings. A prior call to {@link #setBindable(IBindable)}

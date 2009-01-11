@@ -25,7 +25,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * The binding action.
 	 */
-	private IBindingAction<IBoundWidget<B, V, M>> action;
+	private IBindingAction action;
 
 	/**
 	 * Responsible for converting a <B> type to a <V> type.
@@ -50,7 +50,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
-	protected PropertyChangeSupport changeSupport;
+	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	/**
 	 * Constructor
@@ -59,11 +59,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		super();
 	}
 
-	public final IBindingAction<IBoundWidget<B, V, M>> getAction() {
+	public final IBindingAction getAction() {
 		return action;
 	}
 
-	public final void setAction(IBindingAction<IBoundWidget<B, V, M>> action) {
+	public final void setAction(IBindingAction action) {
 		this.action = action;
 	}
 
@@ -93,7 +93,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 
 		final Object old = this.model;
 
-		final IBindingAction<IBoundWidget<B, V, M>> action = getAction();
+		final IBindingAction action = getAction();
 
 		if(old != null && action != null) {
 			action.unbind();
@@ -102,7 +102,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		this.model = model;
 
 		if(action != null) {
-			// action.setBindable(this);
+			action.setBindable(this);
 			if(isAttached() && model != null) {
 				action.bind();
 			}
@@ -131,41 +131,23 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		if(changeListeners != null) changeListeners.fireChange(this);
 	}
 
-	protected void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
-		if(changeSupport != null && (this.changeSupport != null && this.changeSupport.hasAnyListeners())) {
-			throw new IllegalStateException(toString() + " already references a property change support reference");
-		}
-		this.changeSupport = changeSupport;
-	}
-
-	private void ensureChangeSupportAggregated() throws IllegalStateException {
-		if(changeSupport == null) {
-			throw new IllegalStateException("No aggregated property change support set");
-		}
-	}
-
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
-		ensureChangeSupportAggregated();
 		return changeSupport.getPropertyChangeListeners();
 	}
 
 	public final void addPropertyChangeListener(IPropertyChangeListener l) {
-		ensureChangeSupportAggregated();
 		changeSupport.addPropertyChangeListener(l);
 	}
 
 	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener l) {
-		ensureChangeSupportAggregated();
 		changeSupport.addPropertyChangeListener(propertyName, l);
 	}
 
 	public final void removePropertyChangeListener(IPropertyChangeListener l) {
-		ensureChangeSupportAggregated();
 		changeSupport.removePropertyChangeListener(l);
 	}
 
 	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
-		ensureChangeSupportAggregated();
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
@@ -176,7 +158,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 
 	@Override
 	protected void onAttach() {
-		if(getAction() != null) getAction().setBindable(this);
+		// if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
 		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
 	}
