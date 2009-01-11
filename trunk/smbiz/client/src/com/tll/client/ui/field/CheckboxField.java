@@ -7,15 +7,16 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.BooleanConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.ObjectUtil;
 
 /**
  * CheckboxField
+ * @param <B> the bound type
  * @author jpk
  */
-public final class CheckboxField extends AbstractField<Boolean> {
+public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 
 	private final CheckBox cb;
 
@@ -31,11 +32,12 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
+	 * @param converter
 	 */
-	public CheckboxField(String name, String propName, String labelText, String helpText) {
+	CheckboxField(String name, String propName, String labelText, String helpText, IConverter<Boolean, B> converter) {
 		super(name, propName, null, helpText);
 		this.cblabelText = labelText;
-		setConverter(BooleanConverter.INSTANCE);
+		setConverter(converter);
 		cb = new CheckBox(cblabelText);
 		cb.setStyleName(STYLE_FIELD_LABEL);
 		// cb.addFocusListener(this);
@@ -74,7 +76,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		return cb.isChecked() ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		Boolean old = getValue();
 		setChecked(value == null ? false : getConverter().convert(value).booleanValue());
 		Boolean newval = getValue();

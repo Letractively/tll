@@ -7,16 +7,16 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.ToStringConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.client.util.ObjectUtil;
-import com.tll.client.util.SimpleComparator;
 import com.tll.client.util.StringUtil;
 
 /**
  * TextAreaField
+ * @param <B> The bound type
  * @author jpk
  */
-public class TextAreaField extends AbstractField<String> implements HasMaxLength {
+public class TextAreaField<B> extends AbstractField<B, String> implements IHasMaxLength {
 
 	int maxLen = -1;
 	private final TextArea ta;
@@ -30,11 +30,13 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 	 * @param helpText
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
+	 * @param converter
 	 */
-	public TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols) {
+	TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols,
+			IConverter<String, B> converter) {
 		super(name, propName, labelText, helpText);
-		setConverter(ToStringConverter.INSTANCE);
-		setComparator(SimpleComparator.INSTANCE);
+		setConverter(converter);
+		// setComparator(SimpleComparator.INSTANCE);
 		ta = new TextArea();
 		ta.addChangeListener(this);
 		setNumRows(numRows);
@@ -83,7 +85,7 @@ public class TextAreaField extends AbstractField<String> implements HasMaxLength
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		String old = getValue();
 		setText(getConverter().convert(value));
 		String newval = getValue();

@@ -5,11 +5,11 @@
 package com.tll.client.ui.field;
 
 /**
- * HasMaxLength - Incidates support for a max length property. Used in field
+ * IHasMaxLength - Incidates support for a max length property. Used in field
  * rendering and validation.
  * @author jpk
  */
-public interface HasMaxLength {
+public interface IHasMaxLength {
 
 	/**
 	 * @return The maximum allowed length. If <code>-1</code>, the max length

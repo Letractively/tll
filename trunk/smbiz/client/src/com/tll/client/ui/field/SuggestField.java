@@ -12,15 +12,17 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
 
 /**
  * SuggestField
+ * @param <B> The bound type
  * @author jpk
  */
-public final class SuggestField extends AbstractField<String> implements SuggestionHandler {
+public final class SuggestField<B> extends AbstractField<B, String> implements SuggestionHandler {
 
 	private final SuggestBox sb;
 	private String old;
@@ -32,13 +34,15 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 	 * @param labelText
 	 * @param helpText
 	 * @param suggestions The required collection of suggestions.
+	 * @param converter
 	 */
-	public SuggestField(String name, String propName, String labelText, String helpText, Collection<?> suggestions) {
+	SuggestField(String name, String propName, String labelText, String helpText, Collection<B> suggestions,
+			IConverter<String, B> converter) {
 		super(name, propName, labelText, helpText);
 		if(suggestions == null || suggestions.size() < 1) {
 			throw new IllegalArgumentException("No suggestions specified.");
 		}
-		setConverter(ToStringConverter.INSTANCE);
+		setConverter(converter);
 
 		MultiWordSuggestOracle o = new MultiWordSuggestOracle();
 		for(Object s : suggestions) {
@@ -75,7 +79,7 @@ public final class SuggestField extends AbstractField<String> implements Suggest
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		String old = getValue();
 		setText(getConverter().convert(value));
 		Object newval = getValue();

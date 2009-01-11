@@ -51,14 +51,14 @@ public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, Sour
 	/**
 	 * @return The employed {@link Comparator} for this bound widget.
 	 */
-	Comparator<B> getComparator();
+	Comparator<Object> getComparator();
 
 	/**
 	 * Optional tool used in determining whether a given bound value is the same
 	 * as that currently held in this widget.
 	 * @param comparator
 	 */
-	void setComparator(Comparator<B> comparator);
+	void setComparator(Comparator<Object> comparator);
 
 	/**
 	 * A placeholder for access to the object at the other end of the binding

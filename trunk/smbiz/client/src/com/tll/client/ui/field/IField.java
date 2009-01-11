@@ -20,10 +20,11 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * IField - Abstraction for managing the display and editing of data.
  * <p>
  * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
+ * @param <B> The "bound" type
  * @param <V> The native field value type (usu. a String but not limited to it)
  * @author jpk
  */
-public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IHasHelpText,
+public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents, HasName, HasText, IHasHelpText,
 		IBindable, IValidator {
 
 	/**
@@ -66,7 +67,7 @@ public interface IField<V> extends IPropertyNameProvider, SourcesChangeEvents, H
 	 * Sets the field's value.
 	 * @param value
 	 */
-	void setValue(Object value);
+	void setValue(B value);
 
 	/**
 	 * Clears the field's value.

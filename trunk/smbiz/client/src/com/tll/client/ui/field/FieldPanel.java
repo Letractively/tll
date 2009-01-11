@@ -137,12 +137,12 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	 *         field group
 	 */
 	// TODO see if we can make this private
-	public final AbstractField<?> getField(String propPath) throws UnsetPropertyException {
-		IField<?> f = getFieldGroup().getField(propPath);
+	public final AbstractField<?, ?> getField(String propPath) throws UnsetPropertyException {
+		IField<?, ?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		return (AbstractField<?>) f;
+		return (AbstractField<?, ?>) f;
 	}
 
 	public Object getProperty(String propPath) throws PropertyPathException {

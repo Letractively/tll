@@ -13,15 +13,15 @@ import java.util.Iterator;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
-import com.tll.client.util.SimpleComparator;
 
 /**
  * SelectField
  * @author jpk
  * @param <I> The option "item" (element) type
  */
-public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
+public final class MultiSelectField<I> extends AbstractField<Collection<I>, Collection<I>> {
 
 	/**
 	 * The list box widget.
@@ -38,6 +38,10 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 	 */
 	private ArrayList<I> selected;
 
+	private final Comparator<Object> itemComparator;
+
+	private final IConverter<String, I> itemConverter;
+
 	/**
 	 * Constructor
 	 * @param name
@@ -45,10 +49,15 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 	 * @param labelText
 	 * @param helpText
 	 * @param options
+	 * @param itemComparator
+	 * @param itemConverter
 	 */
-	public MultiSelectField(String name, String propName, String labelText, String helpText, Collection<I> options) {
+	MultiSelectField(String name, String propName, String labelText, String helpText, Collection<I> options,
+			Comparator<Object> itemComparator, IConverter<String, I> itemConverter) {
 		super(name, propName, labelText, helpText);
-		setComparator(SimpleComparator.INSTANCE);
+		// setComparator(SimpleComparator.INSTANCE);
+		this.itemComparator = itemComparator;
+		this.itemConverter = itemConverter;
 		lb = new ListBox(true);
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
@@ -66,12 +75,11 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 		ArrayList<I> newSelected = new ArrayList<I>();
 
 		for(I item : options) {
-			lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
+			addItem(item);
 			if(selected != null && contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
 				newSelected.add(item);
 			}
-			this.options.add(item);
 		}
 
 		ArrayList<I> old = selected;
@@ -118,14 +126,14 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 
 	public void addItem(final I item) {
 		options.add(item);
-		lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
+		lb.addItem(itemConverter.convert(item));
 	}
 
-	public void removeItem(final Object o) {
+	public void removeItem(final I item) {
 		int i = 0;
 		for(Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
 			I option = it.next();
-			if(getComparator().compare(option, o) == 0) {
+			if(itemComparator.compare(option, item) == 0) {
 				options.remove(option);
 				removeItem(i);
 			}
@@ -145,45 +153,25 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 		return selected;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setValue(Object value) {
+	public void setValue(Collection<I> value) {
 		if(options == null) throw new IllegalStateException("No options specified.");
+
 		int i = 0;
 		ArrayList<I> old = selected;
 		selected = new ArrayList<I>();
 
-		if(value instanceof Collection) {
-			Collection<I> c = (Collection<I>) value;
-
-			for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-				I item = it.next();
-
-				if(contains(c, item)) {
-					lb.setItemSelected(i, true);
-					selected.add(item);
-				}
-				else {
-					lb.setItemSelected(i, false);
-				}
+		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
+			I item = it.next();
+			if(value != null && contains(value, item)) {
+				lb.setItemSelected(i, true);
+				selected.add(item);
 			}
-		}
-		else {
-			for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-				Object item = it.next();
-
-				if(this.getComparator().compare(value, item) == 0) {
-					lb.setItemSelected(i, true);
-				}
-				else {
-					lb.setItemSelected(i, false);
-				}
+			else {
+				lb.setItemSelected(i, false);
 			}
-
-			selected.add((I) value);
 		}
 
 		firePropertyChange(selected, old);
-
 		fireChangeListeners();
 	}
 
@@ -203,13 +191,12 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>> {
 	}
 
 	public void setText(String text) {
-		setValue(text);
+		throw new UnsupportedOperationException();
 	}
 
-	private boolean contains(final Collection<I> c, final Object o) {
-		final Comparator<Object> cmp = getComparator();
+	private boolean contains(final Collection<I> c, final I item) {
 		for(I next : c) {
-			if(cmp.compare(o, next) == 0) {
+			if(itemComparator.compare(item, next) == 0) {
 				return true;
 			}
 		}

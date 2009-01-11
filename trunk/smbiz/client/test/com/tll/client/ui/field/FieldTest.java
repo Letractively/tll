@@ -11,8 +11,9 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.NoFormatStringConverter;
+import com.tll.client.util.SimpleComparator;
 import com.tll.client.validate.ValidationException;
 
 /**
@@ -34,7 +35,7 @@ public class FieldTest extends GWTTestCase {
 		return "com.tll.Test";
 	}
 
-	protected void validateFieldCommon(IField<?> f) throws Exception {
+	protected void validateFieldCommon(IField<?, ?> f) throws Exception {
 		assert PROP_NAME.equals(f.getName());
 		assert PROP_NAME.equals(f.getPropertyName());
 
@@ -56,7 +57,7 @@ public class FieldTest extends GWTTestCase {
 		}
 	}
 
-	protected void validateStringField(IField<String> f) throws Exception {
+	protected void validateStringField(IField<String, String> f) throws Exception {
 		validateFieldCommon(f);
 
 		assert null == f.getValue();
@@ -69,20 +70,20 @@ public class FieldTest extends GWTTestCase {
 		assert STRING_VALUE.equals(f.getText());
 
 		// test max length validation
-		if(f instanceof HasMaxLength) {
-			int oml = ((HasMaxLength) f).getMaxLen();
+		if(f instanceof IHasMaxLength) {
+			int oml = ((IHasMaxLength) f).getMaxLen();
 			String ov = f.getValue();
 			f.setValue(STRING_VALUE);
-			((HasMaxLength) f).setMaxLen(2);
+			((IHasMaxLength) f).setMaxLen(2);
 			try {
 				f.validate();
-				Assert.fail("HasMaxLength validation failed");
+				Assert.fail("IHasMaxLength validation failed");
 			}
 			catch(ValidationException e) {
 				// expected
 			}
 			// restore state
-			((HasMaxLength) f).setMaxLen(oml);
+			((IHasMaxLength) f).setMaxLen(oml);
 			f.setValue(ov);
 		}
 	}
@@ -92,10 +93,21 @@ public class FieldTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	public void testStringFields() throws Exception {
-		validateStringField(FieldFactory.ftext(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
+		validateStringField(FieldFactory.ftext(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN,
+				NoFormatStringConverter.INSTANCE));
 		validateStringField(FieldFactory.fpassword(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN));
 		validateStringField(FieldFactory.ftextarea(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, VISIBLE_LEN, VISIBLE_LEN));
 	}
+
+	/**
+	 * Date to Date pass through converter.
+	 */
+	private static final IConverter<Date, Date> datePassThroughConverter = new IConverter<Date, Date>() {
+
+		public Date convert(Date o) throws IllegalArgumentException {
+			return o;
+		}
+	};
 
 	/**
 	 * Tests {@link DateField}.
@@ -103,7 +115,7 @@ public class FieldTest extends GWTTestCase {
 	 */
 	@SuppressWarnings("deprecation")
 	public void testDateField() throws Exception {
-		DateField f = FieldFactory.fdate(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, GlobalFormat.TIMESTAMP);
+		DateField<Date> f = FieldFactory.fdate(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, datePassThroughConverter);
 		validateFieldCommon(f);
 
 		Date now = new Date();
@@ -112,7 +124,7 @@ public class FieldTest extends GWTTestCase {
 		f.setValue(now);
 		assert now.equals(f.getValue());
 
-		f.setValue(Fmt.format(now, GlobalFormat.TIMESTAMP));
+		f.setValue(now);
 		Date fdate = f.getValue();
 		// NOTE: we compare the dates as *Strings* to get around "micro-time"
 		// difference that Date.setSeconds() doesn't handle
@@ -124,7 +136,13 @@ public class FieldTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	public void testCheckboxField() throws Exception {
-		CheckboxField f = FieldFactory.fcheckbox(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT);
+		CheckboxField<Boolean> f =
+				FieldFactory.fcheckbox(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, new IConverter<Boolean, Boolean>() {
+
+					public Boolean convert(Boolean o) throws IllegalArgumentException {
+						return o;
+					}
+				});
 		validateFieldCommon(f);
 
 		f.setValue(Boolean.TRUE);
@@ -137,7 +155,9 @@ public class FieldTest extends GWTTestCase {
 	public void testSuggestField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SuggestField f = FieldFactory.fsuggest(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
+		SuggestField<String> f =
+				FieldFactory.fsuggest(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
+						NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);
 
 		f.setText(STRING_VALUE);
@@ -147,7 +167,9 @@ public class FieldTest extends GWTTestCase {
 	public void testRadioGroupField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		RadioGroupField f = FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as), true);
+		RadioGroupField<String> f =
+				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
+						NoFormatStringConverter.INSTANCE, true);
 		validateFieldCommon(f);
 
 		// TODO finish
@@ -156,7 +178,9 @@ public class FieldTest extends GWTTestCase {
 	public void testSelectField() throws Exception {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SelectField<String> f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
+		SelectField<String> f =
+				FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as), SimpleComparator.INSTANCE,
+						NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);
 
 		// TODO finish
@@ -166,7 +190,8 @@ public class FieldTest extends GWTTestCase {
 		String[] as = new String[] {
 			"s1", "s2", "s3" };
 		MultiSelectField<String> f =
-				FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as));
+				FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
+						SimpleComparator.INSTANCE, NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);
 
 		// TODO finish

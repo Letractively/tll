@@ -23,6 +23,7 @@ import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.BooleanPassThroughConverter;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -174,16 +175,18 @@ public final class UITests implements EntryPoint, HistoryListener {
 		private final FlowPanel canvas = new FlowPanel();
 
 		private final FlowPanel addressPanel = new FlowPanel();
-		private final CheckboxField bf;
-		private final CheckboxField bflabel;
+		private final CheckboxField<Boolean> bf;
+		private final CheckboxField<Boolean> bflabel;
 
 		/**
 		 * Constructor
 		 */
 		public TestFieldPanel() {
 			super();
-			bf = FieldFactory.fcheckbox("bf", "bf", null, null);
-			bflabel = FieldFactory.fcheckbox("bflabel", "bflabel", "Boolean with Label", "Help Text");
+			bf = FieldFactory.fcheckbox("bf", "bf", null, null, BooleanPassThroughConverter.INSTANCE);
+			bflabel =
+					FieldFactory.fcheckbox("bflabel", "bflabel", "Boolean with Label", "Help Text",
+							BooleanPassThroughConverter.INSTANCE);
 			initWidget(canvas);
 			setRenderer(new IFieldRenderer<FlowPanel>() {
 

@@ -15,7 +15,8 @@ public interface IPropertyMetadataProvider {
 	/**
 	 * @param propPath The property path identifying the property for which to
 	 *        provide metadata.
-	 * @return The {@link PropertyMetadata}.
+	 * @return The {@link PropertyMetadata} or <code>null</code> if none found at
+	 *         the given path.
 	 */
 	PropertyMetadata getPropertyMetadata(String propPath);
 }

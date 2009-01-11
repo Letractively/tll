@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.ToStringConverter;
+import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.ObjectUtil;
@@ -16,11 +16,11 @@ import com.tll.client.util.StringUtil;
 
 /**
  * TextField
+ * @param <B> The bound type
  * @author jpk
  */
-public final class TextField extends AbstractField<String> implements HasMaxLength, IHasFormat {
+public final class TextField<B> extends AbstractField<B, String> implements IHasMaxLength, IHasFormat {
 
-	private GlobalFormat format;
 	private final TextBox tb;
 	private String old;
 
@@ -31,10 +31,12 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	 * @param labelText
 	 * @param helpText
 	 * @param visibleLength
+	 * @param converter
 	 */
-	public TextField(String name, String propName, String labelText, String helpText, int visibleLength) {
+	TextField(String name, String propName, String labelText, String helpText, int visibleLength,
+			IFormattedConverter<String, B> converter) {
 		super(name, propName, labelText, helpText);
-		setConverter(ToStringConverter.INSTANCE);
+		setConverter(converter);
 		tb = new TextBox();
 		setVisibleLen(visibleLength);
 		// tb.addFocusListener(this);
@@ -58,11 +60,11 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 	}
 
 	public GlobalFormat getFormat() {
-		return format;
+		return ((IFormattedConverter<String, B>) getConverter()).getFormat();
 	}
 
 	public void setFormat(GlobalFormat format) {
-		this.format = format;
+		throw new UnsupportedOperationException();
 	}
 
 	public int getVisibleLen() {
@@ -99,7 +101,7 @@ public final class TextField extends AbstractField<String> implements HasMaxLeng
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		String old = getValue();
 		setText(getConverter().convert(value));
 		String newval = getValue();

@@ -43,10 +43,11 @@ import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
+ * @param <B> the bound type
  * @param <V> native field type
  * @author jpk
  */
-public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IBindable> implements IField<V>,
+public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBindable> implements IField<B, V>,
 		HasFocus, ClickListener, ChangeListener {
 
 	/**
@@ -334,16 +335,12 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
 		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata != null) {
-			setRequired(metadata.isRequired());
-
-			if(this instanceof HasMaxLength) {
-				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
-			}
-
-			// set property meta data related field properties
+			// requiredness
 			setRequired(metadata.isRequired() && !metadata.isManaged());
-			if(this instanceof HasMaxLength) {
-				((HasMaxLength) this).setMaxLen(metadata.getMaxLen());
+
+			// maxlength
+			if(this instanceof IHasMaxLength) {
+				((IHasMaxLength) this).setMaxLen(metadata.getMaxLen());
 			}
 
 			// set the type coercion validator
@@ -408,8 +405,8 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		}
 
 		// check max length
-		if(this instanceof HasMaxLength) {
-			final int maxlen = ((HasMaxLength) this).getMaxLen();
+		if(this instanceof IHasMaxLength) {
+			final int maxlen = ((IHasMaxLength) this).getMaxLen();
 			if(maxlen != -1) {
 				value = StringLengthValidator.validate(value, -1, maxlen);
 			}
@@ -602,12 +599,13 @@ public abstract class AbstractField<V> extends AbstractBoundWidget<Object, V, IB
 		return getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		try {
-			setValue(value);
+			setValue((B) value);
 		}
 		catch(RuntimeException e) {
 			throw new Exception(e);

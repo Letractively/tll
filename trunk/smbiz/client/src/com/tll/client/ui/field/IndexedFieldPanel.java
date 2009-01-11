@@ -163,7 +163,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *        binding.
 	 */
 	private void updateIndexedFieldGroup(FieldGroup fg, M model, Binding indexBinding) {
-		for(IField<?> f : fg) {
+		for(IField<?, ?> f : fg) {
 			String propName = f.getPropertyName();
 			try {
 				f.setProperty(propName, model.getProperty(propName));

@@ -86,13 +86,13 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		final M model = fieldPanel.getModel();
 		assert model != null;
 
-		Set<IField<?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
+		Set<IField<?, ?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
 		assert fset != null;
 		if(fset.size() < 1) {
 			throw new UnsetPropertyException(parentPropPath);
 		}
 
-		for(IField<?> f : fset) {
+		for(IField<?, ?> f : fset) {
 			binding.getChildren().add(
 					new Binding(model, f.getPropertyName(), null, null, f, IBoundWidget.PROPERTY_VALUE, f,
 							ValidationFeedbackManager.instance()));
@@ -107,7 +107,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 *         given {@link FieldPanel}.
 	 */
 	protected final void addFieldBinding(FP fieldPanel, String modelProperty) throws UnsetPropertyException {
-		final AbstractField<?> f = fieldPanel.getField(modelProperty);
+		final AbstractField<?, ?> f = fieldPanel.getField(modelProperty);
 		final M model = fieldPanel.getModel();
 		assert model != null;
 		binding.getChildren().add(

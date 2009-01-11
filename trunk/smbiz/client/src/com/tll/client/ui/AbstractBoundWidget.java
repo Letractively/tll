@@ -35,7 +35,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * The comparator.
 	 */
-	private Comparator<B> comparator;
+	private Comparator<Object> comparator;
 
 	/**
 	 * The subjugated model.
@@ -75,11 +75,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		this.converter = converter;
 	}
 
-	public final Comparator<B> getComparator() {
+	public final Comparator<Object> getComparator() {
 		return comparator;
 	}
 
-	public final void setComparator(Comparator<B> comparator) {
+	public final void setComparator(Comparator<Object> comparator) {
 		this.comparator = comparator;
 	}
 

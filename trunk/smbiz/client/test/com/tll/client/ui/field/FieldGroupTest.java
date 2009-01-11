@@ -23,9 +23,9 @@ public class FieldGroupTest extends GWTTestCase {
 		return "com.tll.Test";
 	}
 
-	private static void fillPropNames(IField<?> f, Collection<String> propNames) {
+	private static void fillPropNames(IField<?, ?> f, Collection<String> propNames) {
 		if(f instanceof FieldGroup) {
-			for(IField<?> c : (FieldGroup) f) {
+			for(IField<?, ?> c : (FieldGroup) f) {
 				fillPropNames(c, propNames);
 			}
 		}
@@ -48,7 +48,7 @@ public class FieldGroupTest extends GWTTestCase {
 		Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
 		for(String prop : propNames) {
-			IField<?> f = fg.getField(prop);
+			IField<?, ?> f = fg.getField(prop);
 			assert f != null;
 			assert f.getPropertyName() != null && f.getPropertyName().equals(prop);
 		}

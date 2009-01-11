@@ -9,15 +9,16 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.ToStringConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.client.util.ObjectUtil;
 import com.tll.client.util.StringUtil;
 
 /**
  * PasswordField
+ * @param <B> The bound type
  * @author jpk
  */
-public final class PasswordField extends AbstractField<String> implements HasMaxLength {
+public final class PasswordField<B> extends AbstractField<B, String> implements IHasMaxLength {
 
 	private final PasswordTextBox tb;
 	private String old;
@@ -29,12 +30,14 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 	 * @param lblText
 	 * @param helpText
 	 * @param visibleLength
+	 * @param converter
 	 */
-	public PasswordField(String name, String propName, String lblText, String helpText, int visibleLength) {
+	PasswordField(String name, String propName, String lblText, String helpText, int visibleLength,
+			IConverter<String, B> converter) {
 		super(name, propName, lblText, helpText);
 		tb = new PasswordTextBox();
 		setVisibleLen(visibleLength);
-		setConverter(ToStringConverter.INSTANCE);
+		setConverter(converter);
 		// tb.addFocusListener(this);
 		tb.addChangeListener(this);
 		addKeyboardListener(new KeyboardListener() {
@@ -89,7 +92,7 @@ public final class PasswordField extends AbstractField<String> implements HasMax
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		String old = getValue();
 		setText(getConverter().convert(value));
 		String newval = getValue();

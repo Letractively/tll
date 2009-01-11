@@ -7,20 +7,20 @@ package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.ToStringConverter;
-import com.tll.client.util.SimpleComparator;
+import com.tll.client.convert.IConverter;
 
 /**
  * SelectField - Single select list box.
  * @author jpk
  * @param <I> The option "item" (element) type
  */
-public final class SelectField<I> extends AbstractField<I> {
+public final class SelectField<I> extends AbstractField<I, I> {
 
 	/**
 	 * The list box widget.
@@ -37,6 +37,8 @@ public final class SelectField<I> extends AbstractField<I> {
 	 */
 	private I selected;
 
+	private final IConverter<String, I> itemConverter;
+
 	/**
 	 * Constructor
 	 * @param name
@@ -44,10 +46,14 @@ public final class SelectField<I> extends AbstractField<I> {
 	 * @param labelText
 	 * @param helpText
 	 * @param options
+	 * @param comparator
+	 * @param itemConverter
 	 */
-	public SelectField(String name, String propName, String labelText, String helpText, Collection<I> options) {
+	SelectField(String name, String propName, String labelText, String helpText, Collection<I> options,
+			Comparator<Object> comparator, IConverter<String, I> itemConverter) {
 		super(name, propName, labelText, helpText);
-		setComparator(SimpleComparator.INSTANCE);
+		setComparator(comparator);
+		this.itemConverter = itemConverter;
 		lb = new ListBox();
 		lb.addClickListener(this);
 		lb.addChangeListener(this);
@@ -65,12 +71,11 @@ public final class SelectField<I> extends AbstractField<I> {
 		I newSelected = null;
 
 		for(I item : options) {
-			lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
+			addItem(item);
 			if(selected != null && selected.equals(item)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
 				newSelected = item;
 			}
-			this.options.add(item);
 		}
 
 		I old = selected;
@@ -117,14 +122,14 @@ public final class SelectField<I> extends AbstractField<I> {
 
 	public void addItem(final I item) {
 		options.add(item);
-		lb.addItem(ToStringConverter.INSTANCE.convert(getConverter() == null ? item : getConverter().convert(item)));
+		lb.addItem(itemConverter.convert(item));
 	}
 
-	public void removeItem(final Object o) {
+	public void removeItem(final I item) {
 		int i = 0;
 		for(Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
 			I option = it.next();
-			if(getComparator().compare(option, o) == 0) {
+			if(getComparator().compare(option, item) == 0) {
 				options.remove(option);
 				removeItem(i);
 			}
@@ -144,7 +149,7 @@ public final class SelectField<I> extends AbstractField<I> {
 		return selected;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(I value) {
 		if(options == null) throw new IllegalStateException("No options specified.");
 		int i = 0;
 		I old = selected;
@@ -152,7 +157,7 @@ public final class SelectField<I> extends AbstractField<I> {
 
 		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
 			I item = it.next();
-			if(this.getComparator().compare(value, item) == 0) {
+			if(getComparator().compare(value, item) == 0) {
 				lb.setItemSelected(i, true);
 				selected = item;
 				break;
@@ -169,7 +174,7 @@ public final class SelectField<I> extends AbstractField<I> {
 	}
 
 	public void setText(String text) {
-		setValue(text);
+		throw new UnsupportedOperationException();
 	}
 
 	private void update() {

@@ -11,7 +11,7 @@ import java.util.Map;
  * RefDataMapConverter
  * @author jpk
  */
-public class RefDataMapConverter implements IConverter<String, Object> {
+public class RefDataMapConverter implements IConverter<String, String> {
 
 	/**
 	 * Constructor
@@ -24,7 +24,7 @@ public class RefDataMapConverter implements IConverter<String, Object> {
 
 	private final Map<String, String> refDataMap;
 
-	public String convert(Object in) throws IllegalArgumentException {
+	public String convert(String in) throws IllegalArgumentException {
 		return refDataMap.get(ToStringConverter.INSTANCE.convert(in));
 	}
 

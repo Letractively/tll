@@ -11,15 +11,17 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
-import com.tll.client.convert.DateConverter;
+import com.tll.client.convert.IConverter;
+import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 
 /**
  * DateField
  * @author jpk
+ * @param <B> the bound type
  */
-public class DateField extends AbstractField<Date> implements ChangeHandler<Date> {
+public class DateField<B> extends AbstractField<B, Date> implements ChangeHandler<Date>, IHasFormat {
 
 	/**
 	 * DateBox - Extended to support {@link HasFocus}.
@@ -53,14 +55,22 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param dateFormat
+	 * @param converter
 	 */
-	public DateField(String name, String propName, String labelText, String helpText, GlobalFormat dateFormat) {
+	DateField(String name, String propName, String labelText, String helpText, IConverter<Date, B> converter) {
 		super(name, propName, labelText, helpText);
-		setConverter(DateConverter.instance(dateFormat));
+		setConverter(converter);
 		db = new DateBox();
 		db.getDatePicker().addChangeHandler(this);
-		db.setDateFormat(Fmt.getDateTimeFormat(dateFormat));
+		db.setDateFormat(Fmt.getDateTimeFormat(GlobalFormat.DATE));
+	}
+
+	public GlobalFormat getFormat() {
+		return GlobalFormat.DATE;
+	}
+
+	public void setFormat(GlobalFormat format) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -80,7 +90,7 @@ public class DateField extends AbstractField<Date> implements ChangeHandler<Date
 		return db.getDatePicker().getSelectedDate();
 	}
 
-	public void setValue(Object value) {
+	public void setValue(B value) {
 		final Date old = getValue();
 		final Date newval = value == null ? null : getConverter().convert(value);
 		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
