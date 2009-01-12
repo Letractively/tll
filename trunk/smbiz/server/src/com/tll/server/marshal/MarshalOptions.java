@@ -1,4 +1,4 @@
-package com.tll.server.rpc;
+package com.tll.server.marshal;
 
 /**
  * MarshalOptions - Encapsulates marshaling options.

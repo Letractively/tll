@@ -12,8 +12,8 @@ import com.tll.model.impl.Address;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
 import com.tll.model.impl.Merchant;
-import com.tll.server.rpc.MarshalOptions;
-import com.tll.server.rpc.Marshaler;
+import com.tll.server.marshal.MarshalOptions;
+import com.tll.server.marshal.Marshaler;
 
 /**
  * ModelCopyTest - Test the {@link Model#copy(boolean)} method.

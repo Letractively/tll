@@ -18,7 +18,7 @@ import com.tll.model.impl.AccountStatus;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.impl.account.IAccountService;

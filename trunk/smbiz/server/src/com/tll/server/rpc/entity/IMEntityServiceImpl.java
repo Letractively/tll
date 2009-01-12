@@ -12,7 +12,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**

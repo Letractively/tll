@@ -15,7 +15,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.impl.User;
 import com.tll.model.key.BusinessKey;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**

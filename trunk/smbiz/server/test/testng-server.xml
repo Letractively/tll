@@ -12,7 +12,7 @@
     </groups>
     <classes>
       <class name="com.tll.server.GuiceBootstrapperTest" />
-      <class name="com.tll.server.rpc.MarshalerTest" />
+      <class name="com.tll.server.marshal.MarshalerTest" />
     </classes>
   </test>
 

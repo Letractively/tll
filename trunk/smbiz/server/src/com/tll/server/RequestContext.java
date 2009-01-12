@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import com.google.inject.Injector;
 import com.tll.mail.MailManager;
 import com.tll.model.EntityAssembler;
-import com.tll.server.rpc.Marshaler;
+import com.tll.server.marshal.Marshaler;
 import com.tll.service.app.AppRefData;
 import com.tll.service.entity.IEntityServiceFactory;
 

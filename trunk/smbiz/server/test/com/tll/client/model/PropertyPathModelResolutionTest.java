@@ -10,7 +10,7 @@ import com.tll.dao.impl.IAccountDao;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.key.NameKey;
-import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.marshal.MarshalOptions;
 
 /**
  * PropertyPathModelResolutionTest

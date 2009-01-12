@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.server.rpc;
+package com.tll.server.marshal;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -334,12 +334,13 @@ public final class Marshaler {
 				else if("paymentData".equals(pname)) {
 					final BeanWrapperImpl bw2 = new BeanWrapperImpl(obj);
 					for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
-						if(isMarshalableProperty(pd2)) {
+						if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
 							try {
 								final Object oval = bw2.getPropertyValue(pd2.getName());
 								if(oval != null) {
 									final String pn = "paymentData_" + pd2.getName();
-									model.set(new StringPropertyValue(pn, generatePropertyData(PaymentInfo.class, pn), oval.toString()));
+									model.set(createModelProperty(pd2.getPropertyType(), pn, oval, generatePropertyData(
+											PaymentInfo.class, pn)));
 								}
 							}
 							catch(final RuntimeException e) {

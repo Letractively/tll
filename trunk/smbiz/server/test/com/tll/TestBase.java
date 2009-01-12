@@ -29,7 +29,7 @@ import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
 import com.tll.model.key.BusinessKey;
-import com.tll.server.rpc.Marshaler;
+import com.tll.server.marshal.Marshaler;
 
 /**
  * Abstract base class for all test cases within the application.

@@ -17,7 +17,7 @@ import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.impl.Address;
 import com.tll.model.key.BusinessKey;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.MarshalOptions;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MEntityServiceImpl;
 
 /**
