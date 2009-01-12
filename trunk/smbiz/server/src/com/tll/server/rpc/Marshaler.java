@@ -6,6 +6,7 @@ package com.tll.server.rpc;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -307,7 +308,7 @@ public final class Marshaler {
 				}
 
 				// related many collection
-				else if(Set.class.isAssignableFrom(ptype)) {
+				else if(Collection.class.isAssignableFrom(ptype)) {
 					final RelationInfo ri = getRelationInfo(entityClass, pname);
 					boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
@@ -345,6 +346,9 @@ public final class Marshaler {
 							}
 						}
 					}
+				}
+				else {
+					throw new SystemError("Unhandled property type: " + ptype);
 				}
 			}
 
@@ -469,7 +473,18 @@ public final class Marshaler {
 
 				case RELATED_MANY: {
 					final List<Model> el = (List<Model>) pval;
-					final Set<IEntity> set = new LinkedHashSet<IEntity>(el == null ? 0 : el.size());
+					Collection<IEntity> clc;
+					final Class<?> c = bw.getPropertyType(propName);
+					final int size = el == null ? 0 : el.size();
+					if(Set.class.isAssignableFrom(c)) {
+						clc = new LinkedHashSet<IEntity>(size);
+					}
+					else if(List.class.isAssignableFrom(c)) {
+						clc = new ArrayList<IEntity>(size);
+					}
+					else {
+						throw new SystemError("Unhandled collection type: " + c.getSimpleName());
+					}
 					for(final Object obj : el) {
 						final Model model = (Model) obj;
 						final EntityType entityType = model.getEntityType();
@@ -480,10 +495,10 @@ public final class Marshaler {
 							((IChildEntity) clcEntity).setParent(e);
 						}
 						if(clcEntity != null) {
-							set.add(clcEntity);
+							clc.add(clcEntity);
 						}
 					}
-					val = set;
+					val = clc;
 				}
 					break;
 
@@ -505,13 +520,14 @@ public final class Marshaler {
 				bw.setPropertyValue(propName, val);
 			}
 			catch(final RuntimeException re) {
+				// ok
 			}
 
 		}// for loop
 
 		if(e.getId() == null) {
 			// assume new and set generated id
-			assert e.getVersion() == null : "Encountered an entity w/o an id having a non-null version!";
+			assert e.getVersion() == null : "Encountered an entity w/o an id having and non-null version!";
 			entityAssembler.setGenerated(e);
 		}
 
