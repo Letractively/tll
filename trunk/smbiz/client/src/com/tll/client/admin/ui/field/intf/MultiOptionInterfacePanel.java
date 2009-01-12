@@ -108,7 +108,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 
 		@Override
-		protected OptionPanel<M> generateIndexPanel() {
+		protected OptionPanel<M> createIndexPanel(M model) {
 			return new OptionPanel<M>();
 		}
 
@@ -119,7 +119,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 	private final FlowPanel canvas = new FlowPanel();
 
-	private final OptionsPanel optionsPanel = new OptionsPanel();
+	// private final OptionsPanel optionsPanel = new OptionsPanel();
 
 	/**
 	 * Constructor

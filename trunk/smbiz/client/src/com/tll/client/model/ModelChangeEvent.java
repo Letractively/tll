@@ -77,7 +77,7 @@ public final class ModelChangeEvent extends EventObject {
 	}
 
 	public RefKey getModelRef() {
-		return modelRef;
+		return modelRef == null ? (model == null ? null : model.getRefKey()) : modelRef;
 	}
 
 	public Status getStatus() {

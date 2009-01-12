@@ -106,16 +106,17 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	}
 
 	/**
-	 * Recursively extracts all {@link IField}s whose property name starts with
-	 * the given property path. The found fields are added to the given set.
+	 * Recursively extracts all non-group {@link IField}s whose property name
+	 * starts with the given property path. The found fields are added to the
+	 * given set.
 	 * @param propPath The property path that all matching fields' property name
 	 *        must start with.
-	 * @param itr The iterable collection of fields
+	 * @param group The field group to search
 	 * @param set The set of found fields
 	 */
-	private static void findFields(final String propPath, FieldGroup itr, Set<IField<?, ?>> set) {
+	private static void findFields(final String propPath, FieldGroup group, Set<IField<?, ?>> set) {
 		List<FieldGroup> glist = null;
-		for(IField<?, ?> fld : itr) {
+		for(IField<?, ?> fld : group) {
 			if(fld instanceof FieldGroup == false) {
 				if(fld.getPropertyName().startsWith(propPath)) {
 					set.add(fld);

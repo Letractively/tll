@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.DragEvent;
@@ -63,9 +62,8 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * @param msgs The messages to post
 	 * @param position How to center the message popup relative to the given
 	 *        Widget
-	 * @param refWidget The target Widget. If <code>null</code>, the
-	 *        {@link RootPanel} is used.
-	 * @param duration How long in seconds to show the message popup. If
+	 * @param refWidget The target Widget.
+	 * @param duration How long in mili-seconds to show the message popup. If
 	 *        <code>-1</code>, the duration is infinite.
 	 * @param clearExisting Clear out existing messages bound to the given target
 	 *        Widget first?
@@ -98,9 +96,8 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * @param msg The message to post
 	 * @param position How to center the message popup relative to the given
 	 *        Widget
-	 * @param refWidget The target Widget. If <code>null</code>, the
-	 *        {@link RootPanel} is used.
-	 * @param duration How long in seconds to show the message popup. If
+	 * @param refWidget The target Widget.
+	 * @param duration How long in mili-seconds to show the message popup. If
 	 *        <code>-1</code>, the duration is infinite.
 	 * @param clearExisting Clear out existing messages bound to the given target
 	 *        Widget first?
@@ -208,7 +205,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * @param autoHide
 	 * @param position
 	 * @param refElement
-	 * @param duration
+	 * @param duration mili-seconds
 	 * @param showImage
 	 * @return New MsgPanel instance
 	 */

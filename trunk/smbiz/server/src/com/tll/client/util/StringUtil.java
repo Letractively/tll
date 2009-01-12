@@ -48,7 +48,7 @@ public abstract class StringUtil {
 			return str;
 		}
 		replaceChars = replace.toCharArray();
-		StringBuffer sb = new StringBuffer(strlen);
+		StringBuilder sb = new StringBuilder(strlen);
 		int sCut = 0;
 		for(int eCut; (eCut = str.indexOf(find, sCut)) != -1; sCut = eCut + findlen) {
 			sb.append(chars, sCut, (eCut - sCut)).append(replaceChars);
@@ -94,7 +94,7 @@ public abstract class StringUtil {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasLower = false;
 		char[] chars = s.toCharArray();
-		StringBuffer sb = new StringBuffer(chars.length + 32);
+		StringBuilder sb = new StringBuilder(chars.length + 32);
 		for(int i = 0; i < chars.length; i++) {
 			if(Character.isUpperCase(chars[i])) {
 				if(priorWasLower && i > 0) {
@@ -116,7 +116,7 @@ public abstract class StringUtil {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasUnderscore = false;
 		char[] chars = s.toCharArray();
-		StringBuffer sb = new StringBuffer(chars.length + 32);
+		StringBuilder sb = new StringBuilder(chars.length + 32);
 		sb.append(Character.toUpperCase(chars[0]));
 		for(int i = 1; i < chars.length; i++) {
 			if(priorWasUnderscore) {

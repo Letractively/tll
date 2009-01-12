@@ -16,6 +16,7 @@ import com.tll.client.model.NullNodeInPropPathException;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
+import com.tll.client.ui.IBoundWidget;
 import com.tll.client.validate.ValidationFeedbackManager;
 
 /**
@@ -78,7 +79,13 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *         field in the underlying group.
 	 */
 	public final void add(M model) throws IllegalArgumentException {
-		I ip = generateIndexPanel();
+		I ip = createIndexPanel(model);
+		// apply property metadata
+		/*
+		if(model instanceof IPropertyMetadataProvider) {
+			ip.getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
+		}
+		*/
 		if(indexPanels.add(ip)) {
 			topGroup.addField(ip.getFieldGroup());
 			Binding indexBinding = new Binding();
@@ -88,10 +95,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	}
 
 	/**
-	 * Generates a new index field panel instance with the field group set.
-	 * @return new field panel for employ at a particular index.
+	 * Factory method to obtain a new index field panel instance.
+	 * @param indexModel Provided to set field panel specific properties and,
+	 *        consequently, may be ignored if there are no such properties.
+	 * @return new field panel instance for employ at a particular index.
 	 */
-	protected abstract I generateIndexPanel();
+	protected abstract I createIndexPanel(M indexModel);
 
 	/**
 	 * Updates an <em>existing</em> indexed field group with data provided by the
@@ -164,29 +173,34 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 */
 	private void updateIndexedFieldGroup(FieldGroup fg, M model, Binding indexBinding) {
 		for(IField<?, ?> f : fg) {
-			String propName = f.getPropertyName();
-			try {
-				f.setProperty(propName, model.getProperty(propName));
-				if(indexBinding != null) {
-					// TODO specify field validator
-					indexedBinding.getChildren().add(
-							new Binding(model, null, null, f, /*field validator*/null, ValidationFeedbackManager.instance(),
-									propName));
+			if(f instanceof FieldGroup == false) {
+				String propName = f.getPropertyName();
+				try {
+					f.setProperty(IBoundWidget.PROPERTY_VALUE, model.getProperty(propName));
+					if(indexBinding != null) {
+						indexedBinding.getChildren().add(
+								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f, ValidationFeedbackManager
+										.instance()));
+					}
+				}
+				catch(UnsetPropertyException e) {
+					// ok
+				}
+				catch(NullNodeInPropPathException e) {
+					// ok
+				}
+				catch(PropertyPathException e) {
+					// bad proeperty path/name
+					throw new IllegalStateException(e);
+				}
+				catch(Exception e) {
+					// bad value
+					throw new IllegalStateException(e);
 				}
 			}
-			catch(UnsetPropertyException e) {
-				// ok
-			}
-			catch(NullNodeInPropPathException e) {
-				// ok
-			}
-			catch(PropertyPathException e) {
-				// bad proeperty path/name
-				throw new IllegalStateException(e);
-			}
-			catch(Exception e) {
-				// bad value
-				throw new IllegalStateException(e);
+			else {
+				// drill down
+				updateIndexedFieldGroup((FieldGroup) f, model, indexBinding);
 			}
 		}
 	}
@@ -230,8 +244,8 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
+	protected void onLoad() {
+		super.onLoad();
 		regenerate();
 		if(!drawn) {
 			draw();

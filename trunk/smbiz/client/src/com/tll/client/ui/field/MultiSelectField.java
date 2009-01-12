@@ -223,7 +223,7 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		update();
 	}
 

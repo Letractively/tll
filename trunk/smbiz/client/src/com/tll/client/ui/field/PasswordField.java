@@ -103,7 +103,7 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

@@ -5,7 +5,9 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.tll.client.convert.CharacterToStringConverter;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.service.app.RefDataType;
 
@@ -20,7 +22,7 @@ public class AddressFieldsProvider extends AbstractFieldGroupProvider {
 		fg.addField(femail("emailAddress", "emailAddress", "Email Address", "Email Address", 30));
 		fg.addField(fstext("firstName", "firstName", "First Name", "First Name", 20));
 		fg.addField(fstext("lastName", "lastName", "Last Name", "Last Name", 20));
-		fg.addField(fstext("mi", "mi", "MI", "Middle Initial", 1));
+		fg.addField(FieldFactory.ftext("mi", "mi", "MI", "Middle Initial", 1, CharacterToStringConverter.INSTANCE));
 		fg.addField(fstext("company", "company", "Company", "Company", 20));
 		fg.addField(fstext("attn", "attn", "Attn", "Attention", 10));
 		fg.addField(fstext("address1", "address1", "Address 1", "Address 1", 40));

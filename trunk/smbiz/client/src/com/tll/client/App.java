@@ -121,7 +121,7 @@ public abstract class App {
 
 	public static String getStacktraceAsString(final Throwable tracepoint) {
 		final StackTraceElement[] trace = tracepoint.getStackTrace();
-		final StringBuffer sbuf = new StringBuffer(2048);
+		final StringBuilder sbuf = new StringBuilder(2048);
 		sbuf.append(tracepoint.toString());
 		sbuf.append(": at\n");
 		// I cut the stacktrace at depth 7

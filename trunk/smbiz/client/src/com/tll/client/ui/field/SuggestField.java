@@ -90,7 +90,7 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

@@ -5,6 +5,7 @@
  */
 package com.tll.client.admin.mvc.view;
 
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.StaticViewRequest;
@@ -67,5 +68,11 @@ public abstract class MainView extends AbstractView {
 	@Override
 	public final ShowViewRequest newViewRequest() {
 		return new StaticViewRequest(this, getViewClass());
+	}
+
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		// currently no model info displayed on main pages
+		return false;
 	}
 }

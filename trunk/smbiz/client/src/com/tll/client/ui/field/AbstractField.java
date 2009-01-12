@@ -576,7 +576,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public void onChange(Widget sender) {
-		assert sender == getEditable();
+		assert sender == this;
 
 		// dirty check
 		markDirty();
@@ -620,8 +620,8 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	@Override
 	protected void onUnload() {
-		super.onUnload();
 		clearMsgs();
+		super.onUnload();
 	}
 
 	/**

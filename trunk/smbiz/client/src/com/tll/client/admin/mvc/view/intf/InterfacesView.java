@@ -80,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
-			private final EditPanel<Model> editPanel;
+			private final EditPanel editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
@@ -92,7 +92,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel<Model>(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -306,6 +306,12 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		if(sender == btnAddIntf) {
 			// TODO add an interface
 		}
+	}
+
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		return event.getSource() == this
+				|| (event.getModelRef() != null && event.getModelRef().getType().isInterfaceType());
 	}
 
 	@Override

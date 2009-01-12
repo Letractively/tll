@@ -30,6 +30,7 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.Model;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.msg.Msg.MsgLevel;
@@ -240,7 +241,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	void testFields() {
 		// use an address panel inside an edit panel as the test bed
 		final TestFieldPanel<Model> fieldPanel = new TestFieldPanel<Model>();
-		final EditPanel<Model> ep = new EditPanel<Model>(fieldPanel, true, true);
+		final EditPanel ep = new EditPanel(fieldPanel, true, true);
 		testPanel.add(ep);
 
 		// add button toggle read only/editable
@@ -401,6 +402,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		@Override
 		public ShowViewRequest newViewRequest() {
 			return null;
+		}
+
+		@Override
+		protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+			return false;
 		}
 	}
 

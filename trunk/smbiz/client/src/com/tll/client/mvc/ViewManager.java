@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Panel;
@@ -522,6 +523,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 			else {
 				// TODO figure out what to do here
 				// currently a no-op
+				GWT.log("Can't fine view container", null);
 			}
 			return;
 		}

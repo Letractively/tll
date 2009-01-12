@@ -96,7 +96,7 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

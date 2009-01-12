@@ -73,7 +73,7 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(propertyName);
-		sb.append(isReference() ? "|REF|" : "");
+		sb.append(isReference() ? " [REF] " : " ");
 		Model m = getModel();
 		sb.append(m == null ? "-empty-" : m.toString());
 		return sb.toString();

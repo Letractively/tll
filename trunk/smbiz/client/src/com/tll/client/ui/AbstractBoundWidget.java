@@ -91,7 +91,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		// TODO verify if this is ok to do
 		if(this.model != null && model == this.model) return;
 
-		final Object old = this.model;
+		final M old = this.model;
 
 		final IBindingAction action = getAction();
 
@@ -103,7 +103,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 
 		if(action != null) {
 			action.setBindable(this);
-			if(isAttached() && model != null) {
+			if(/*isAttached() && */model != null) {
 				action.bind();
 			}
 		}
@@ -151,14 +151,10 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
-	@Override
-	public String toString() {
-		return "Bound Widget";
-	}
-
+	/*
 	@Override
 	protected void onAttach() {
-		// if(getAction() != null) getAction().setBindable(this);
+		if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
 		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
 	}
@@ -174,5 +170,11 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		super.onDetach();
 		if(getAction() != null) getAction().unbind();
 		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
+	}
+	*/
+
+	@Override
+	public String toString() {
+		return "Bound Widget";
 	}
 }

@@ -11,13 +11,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.bind.IBindable;
+import com.tll.client.model.Model;
+import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.msg.Msg;
+import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.FocusCommand;
+import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
 
@@ -28,9 +32,8 @@ import com.tll.client.ui.field.FieldPanel;
  * the the {@link FieldPanel} content to always be navigable and keeps the edit
  * and cancel buttons in constant position.
  * @author jpk
- * @param <M> The model type
  */
-public final class EditPanel<M extends IBindable> extends Composite implements ClickListener, ISourcesEditEvents {
+public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
 
 	/**
 	 * The style name for {@link EditPanel}s.
@@ -55,7 +58,7 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel<? extends Widget, M> fieldPanel;
+	private final FieldPanel<? extends Widget, Model> fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -74,7 +77,7 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget, M> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel<? extends Widget, Model> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
@@ -125,6 +128,12 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 		editListeners.remove(listener);
 	}
 
+	/*
+	public FieldPanel<? extends Widget, Model> getFieldPanel() {
+		return fieldPanel;
+	}
+	*/
+
 	private void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
 		// now show the button row
@@ -135,12 +144,21 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 		return "Add".equals(btnSave.getText());
 	}
 
-	public void setModel(M model) {
+	/**
+	 * Sets the model where if <code>null</code> all existing bindings are
+	 * cleared.
+	 * @param model The model to set
+	 */
+	public void setModel(Model model) {
 		fieldPanel.setModel(model);
 
-		// deferred attachment to guarantee needed aux data is available
-		if(!fieldPanel.isAttached()) {
-			portal.add(fieldPanel);
+		if(model != null) {
+			assert isAttached() == true;
+			setEditMode(model.isNew());
+			// deferred attachment to guarantee needed aux data is available
+			if(!fieldPanel.isAttached()) {
+				portal.add(fieldPanel);
+			}
 		}
 	}
 
@@ -150,7 +168,26 @@ public final class EditPanel<M extends IBindable> extends Composite implements C
 	 * @param msgs The error messages to apply
 	 */
 	public void applyErrorMsgs(final List<Msg> msgs) {
-		// TODO impl
+		// MsgManager.instance().clear(RootPanel.get(), false);
+		for(Msg msg : msgs) {
+			boolean msgBound = false;
+			if(msg.getRefToken() != null) {
+				try {
+					Widget fw = fieldPanel.getField(msg.getRefToken());
+					assert fw != null;
+					MsgManager.instance().post(false, msg, Position.BOTTOM, fw, -1, false).show();
+					msgBound = true;
+				}
+				catch(UnsetPropertyException e) {
+					// ok
+				}
+			}
+			if(!msgBound) {
+				// post as global
+				MsgManager.instance().post(true, msg, Position.CENTER, RootPanel.get(), -1, false);
+			}
+		}
+		MsgManager.instance().show(RootPanel.get(), true, false);
 	}
 
 	public void onClick(Widget sender) {

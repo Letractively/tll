@@ -154,8 +154,8 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
+	protected void onLoad() {
+		super.onLoad();
 		if(!drawn) {
 			draw();
 			drawn = true;

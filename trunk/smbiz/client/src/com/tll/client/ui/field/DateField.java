@@ -99,7 +99,7 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	}
 
 	public void onChange(ChangeEvent<Date> event) {
-		super.onChange(db);
+		super.onChange(this);
 		fireChangeListeners();
 		if(changeSupport != null)
 			changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), event.getNewValue());

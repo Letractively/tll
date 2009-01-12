@@ -28,31 +28,49 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		IBindingAction {
 
 	/**
+	 * The bound field panel this action acts on.
+	 */
+	private FP fieldPanel;
+
+	private boolean bound;
+
+	/**
 	 * The binding.
 	 */
 	protected final Binding binding = new Binding();
 
 	@SuppressWarnings("unchecked")
 	public <B extends IBindable> void setBindable(B bindable) {
-		try {
-			populateBinding((FP) bindable);
-		}
-		catch(ClassCastException e) {
-			throw new IllegalArgumentException("The bindable must be a field panel");
-		}
-		catch(PropertyPathException e) {
-			throw new IllegalStateException("Unable to set bindable", e);
+		assert bindable != null;
+		if(this.fieldPanel != bindable) {
+			unbind();
+			try {
+				populateBinding((FP) bindable);
+			}
+			catch(ClassCastException e) {
+				throw new IllegalArgumentException("The bindable must be a field panel");
+			}
+			catch(PropertyPathException e) {
+				throw new IllegalStateException("Unable to set bindable", e);
+			}
+			this.fieldPanel = (FP) bindable;
 		}
 	}
 
 	public void bind() {
-		binding.bind();
-		binding.setRight(); // populate the fields
+		if(!bound) {
+			binding.bind();
+			binding.setRight(); // populate the fields
+			bound = true;
+		}
 	}
 
 	public void unbind() {
-		binding.unbind();
-		binding.getChildren().clear();
+		if(bound) {
+			binding.unbind();
+			binding.getChildren().clear();
+			bound = false;
+		}
 	}
 
 	/**

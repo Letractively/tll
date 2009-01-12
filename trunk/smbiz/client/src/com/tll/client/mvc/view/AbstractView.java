@@ -123,6 +123,13 @@ public abstract class AbstractView extends Composite implements IView {
 	protected abstract void doDestroy();
 
 	/**
+	 * Must be implemented by concrete views.
+	 * @param event
+	 * @return true/false
+	 */
+	protected abstract boolean shouldHandleModelChangeEvent(ModelChangeEvent event);
+
+	/**
 	 * Handles model change errors. Sub-classes should override as necessary.
 	 * @param event The {@link ModelChangeEvent}
 	 */
@@ -139,18 +146,17 @@ public abstract class AbstractView extends Composite implements IView {
 	}
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
-		// is this our model change?
-		final Widget w = (event.getSource() instanceof Widget) ? (Widget) event.getSource() : null;
-		if(w != this || !w.getElement().isOrHasChild(this.getElement())) return;
+		if(shouldHandleModelChangeEvent(event)) {
 
-		// errors?
-		if(event.getStatus().hasErrors()) {
-			handleModelChangeError(event);
-			return;
+			// errors?
+			if(event.getStatus().hasErrors()) {
+				handleModelChangeError(event);
+				return;
+			}
+
+			// ahh success
+			handleModelChangeSuccess(event);
 		}
-
-		// ahh success
-		handleModelChangeSuccess(event);
 	}
 
 	@Override

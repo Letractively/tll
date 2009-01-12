@@ -43,7 +43,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
-	private final EditPanel<Model> editPanel;
+	private final EditPanel editPanel;
 
 	/**
 	 * Constructor
@@ -53,7 +53,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	public EditView(FieldPanel<? extends Widget, Model> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel<Model>(fieldPanel, true, false);
+		editPanel = new EditPanel(fieldPanel, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;
@@ -111,13 +111,17 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	}
 
 	public final void refresh() {
+		model = null;
+		doRefresh();
+	}
+
+	private void doRefresh() {
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
 			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
 		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
-			model.setAsRoot();
 			editPanel.setModel(model);
 		}
 	}
@@ -125,6 +129,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	@Override
 	protected void doDestroy() {
 		// no-op
+		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
 	public final void onEditEvent(EditEvent event) {
@@ -145,6 +150,14 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	}
 
 	@Override
+	protected final boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		if((event.getSource() == this) || (event.getModelRef() != null && event.getModelRef().equals(modelRef))) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
 		editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
 	}
@@ -155,18 +168,19 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 			case LOADED:
 				model = event.getModel();
+				model.setAsRoot();
 				// NOTE we fall through
 			case AUXDATA_READY:
-				refresh();
+				doRefresh();
 				// NOTE we bail as we don't need to dissemminate these model changes to
 				// the other views
 				return;
 
 			case ADDED:
 			case UPDATED:
-				model = event.getModel();
-				refresh();
+				doRefresh();
 				break;
+
 			case DELETED:
 				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), true));
 				break;

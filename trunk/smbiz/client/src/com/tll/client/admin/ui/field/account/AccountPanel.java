@@ -5,7 +5,6 @@
 package com.tll.client.admin.ui.field.account;
 
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosureEvent;
 import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -21,6 +20,7 @@ import com.tll.client.bind.IBindable;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
@@ -163,7 +163,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 					cmpsr.newRow();
 					FlowPanel fp = new FlowPanel();
 					AddressFieldsRenderer r = new AddressFieldsRenderer();
-					r.render(fp, null);
+					r.render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
 				}
 			});
@@ -207,8 +207,15 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		}
 
 		@Override
-		protected AccountAddressPanel<M> generateIndexPanel() {
-			return new AccountAddressPanel<M>();
+		protected AccountAddressPanel<M> createIndexPanel(M indexModel) {
+			AccountAddressPanel<M> aap = new AccountAddressPanel<M>();
+			try {
+				aap.addressType = (AddressType) indexModel.getProperty("type");
+			}
+			catch(PropertyPathException e) {
+				throw new IllegalStateException("Unable to obtain the account address type", e);
+			}
+			return aap;
 		}
 
 		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
@@ -278,7 +285,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		fg.getField("persistPymntInfo").addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
-				paymentInfoPanel.getFieldGroup().setEnabled(((CheckBox) sender).isChecked());
+				paymentInfoPanel.getFieldGroup().setEnabled(((CheckboxField<?>) sender).isChecked());
 			}
 		});
 

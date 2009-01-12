@@ -149,7 +149,7 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 	}
 
 	public void onSubmit(FormSubmitEvent event) {
-		StringBuffer msg = new StringBuffer(128);
+		StringBuilder msg = new StringBuilder(128);
 		if(tbEmail.getText().length() == 0) {
 			msg.append("Please specify your email address.");
 			event.setCancelled(true);

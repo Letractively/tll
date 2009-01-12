@@ -45,7 +45,7 @@ public abstract class TimedPositionedPopup extends TimedPopup {
 	 * Constructor
 	 * @param autoHide
 	 * @param modal
-	 * @param duration
+	 * @param duration mili-seconds
 	 * @param refElement
 	 * @param position
 	 */

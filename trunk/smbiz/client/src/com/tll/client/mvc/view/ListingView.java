@@ -86,6 +86,17 @@ public abstract class ListingView extends AbstractView {
 	}
 
 	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		// TODO fix this - this will fail when invoking edit commands from a listing
+		// and a subsequent edit view is rendered!!!
+		return event.getSource() == this;
+	}
+
+	public String getLongViewName() {
+		return null;
+	}
+
+	@Override
 	protected void handleModelChangeSuccess(ModelChangeEvent event) {
 		if(listingWidget != null) listingWidget.handleModelChange(event);
 	}

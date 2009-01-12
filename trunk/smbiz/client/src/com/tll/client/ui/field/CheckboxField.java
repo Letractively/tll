@@ -91,5 +91,6 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 		super.onClick(sender);
 		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		fireChangeListeners();
 	}
 }

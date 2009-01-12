@@ -197,7 +197,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		update();
 	}
 

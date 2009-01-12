@@ -14,6 +14,8 @@ final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
 	@Override
 	protected void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
-		fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
+		FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
+		fgAddress.setName("address");
+		fg.addField("address", fgAddress);
 	}
 }

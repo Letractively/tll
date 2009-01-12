@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 
 import com.tll.client.convert.IConverter;
-import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.convert.NoFormatStringConverter;
 
 /**
@@ -31,7 +30,7 @@ public abstract class FieldFactory {
 	 * @return new field
 	 */
 	public static final <B> TextField<B> ftext(String name, String propName, String labelText, String helpText,
-			int visibleLength, IFormattedConverter<String, B> converter) {
+			int visibleLength, IConverter<String, B> converter) {
 		return new TextField<B>(name, propName, labelText, helpText, visibleLength, converter);
 	}
 

@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.IConverter;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
@@ -34,7 +35,7 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	 * @param converter
 	 */
 	TextField(String name, String propName, String labelText, String helpText, int visibleLength,
-			IFormattedConverter<String, B> converter) {
+			IConverter<String, B> converter) {
 		super(name, propName, labelText, helpText);
 		setConverter(converter);
 		tb = new TextBox();
@@ -60,7 +61,11 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	}
 
 	public GlobalFormat getFormat() {
-		return ((IFormattedConverter<String, B>) getConverter()).getFormat();
+		IConverter<String, B> c = getConverter();
+		if(c instanceof IFormattedConverter) {
+			return ((IFormattedConverter<String, B>) c).getFormat();
+		}
+		return null;
 	}
 
 	public void setFormat(GlobalFormat format) {
@@ -112,7 +117,7 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 
 	@Override
 	public void onChange(Widget sender) {
-		super.onChange(sender);
+		super.onChange(this);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();
