@@ -5,7 +5,6 @@
  */
 package com.tll.client.model;
 
-import java.util.Iterator;
 import java.util.List;
 
 import com.tll.model.EntityType;
@@ -59,11 +58,7 @@ public final class IndexedProperty extends ModelRefProperty {
 
 	@Override
 	public Model getModel() {
-		int i = 0;
-		for(Iterator<Model> it = list.iterator(); it.hasNext() && (i <= index); i++) {
-			return it.next();
-		}
-		throw new IndexOutOfBoundsException("Indexed property index : " + index + " is out of bounds.");
+		return list.get(index);
 	}
 
 	@Override

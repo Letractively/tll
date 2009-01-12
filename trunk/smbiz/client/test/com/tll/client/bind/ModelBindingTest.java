@@ -134,10 +134,14 @@ public class ModelBindingTest extends GWTTestCase {
 			// expected
 		}
 		val = left.getProperty("addresses");
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
+		// NOTE: we are just setting the list element to null and not
+		// adding/removing elements!
+		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 2);
 
 		val = right.getProperty("addresses");
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
+		// NOTE: we are just setting the list element to null and not
+		// adding/removing elements!
+		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 2);
 
 		// add an indexed property on the right
 		Model aa = ClientTestUtils.stubAccountAddress(right, ClientTestUtils.stubAddress(2), 2);

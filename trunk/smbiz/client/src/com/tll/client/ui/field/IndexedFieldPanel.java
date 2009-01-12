@@ -235,6 +235,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		regenerate();
 		if(!drawn) {
 			draw();
+			drawn = true;
 		}
 	}
 

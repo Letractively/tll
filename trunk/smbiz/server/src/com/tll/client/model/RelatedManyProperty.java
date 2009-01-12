@@ -140,52 +140,6 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		return new IndexedIterator();
 	}
 
-	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException {
-		PropertyPath pp = new PropertyPath(propPath);
-		String parent = pp.deIndex();
-
-		if(!propertyName.equals(parent)) {
-			throw new MalformedPropPathException(propPath);
-		}
-		if(value != null && value instanceof Model == false) {
-			throw new IllegalArgumentException("The value must be a Model instance");
-		}
-
-		final Model m = (Model) value;
-		Model old = null;
-
-		if(pp.isIndexed()) {
-			final int index = pp.index();
-			final int size = size();
-
-			if(index == size) {
-				if(m != null) {
-					// add
-					list.add(m);
-				}
-			}
-			else if(index < size) {
-				if(m != null) {
-					// replace
-					old = list.set(index, m);
-				}
-				else {
-					// remove
-					old = list.remove(index);
-				}
-			}
-			else {
-				throw new IndexOutOfBoundsException("Index " + index + " is out of bounds.");
-			}
-			if(changeSupport != null && old != value)
-				changeSupport.fireIndexedPropertyChange(propertyName, index, old, value);
-		}
-		else {
-			setValue(value);
-		}
-	}
-
 	/**
 	 * @return The number of indexed models in this related many list.
 	 */
@@ -202,7 +156,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		if(list != null) {
 			for(Iterator<Model> itr = list.iterator(); itr.hasNext();) {
 				Model m = itr.next();
-				sb.append(m.toString());
+				sb.append(m == null ? "-empty-" : m.toString());
 				if(itr.hasNext()) {
 					sb.append(", ");
 				}

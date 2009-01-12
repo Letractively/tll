@@ -338,9 +338,8 @@ public final class Marshaler {
 							try {
 								final Object oval = bw2.getPropertyValue(pd2.getName());
 								if(oval != null) {
-									final String pn = "paymentData_" + pd2.getName();
-									model.set(createModelProperty(pd2.getPropertyType(), pn, oval, generatePropertyData(
-											PaymentInfo.class, pn)));
+									model.set(createModelProperty(pd2.getPropertyType(), "paymentData_" + pd2.getName(), oval,
+											generatePropertyData(PaymentInfo.class, "paymentData." + pd2.getName())));
 								}
 							}
 							catch(final RuntimeException e) {

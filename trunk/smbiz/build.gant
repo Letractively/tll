@@ -714,6 +714,7 @@ target (copyClasses: 'Copies server, client and test classes to the build WEB-IN
 target (copyServer: 'Copies server dependant files to build WEB-INF/classes dir') {
 	targetStart()
 	depends(copyServerClasses)
+	depends(copyTestClasses)
 	depends(copyServerLib)
 	depends(copyServerStatic)
 	targetEnd()
@@ -722,7 +723,6 @@ target (copyServer: 'Copies server dependant files to build WEB-INF/classes dir'
 target (copy: 'Copies client, server and test files making the app build ready') {
 	targetStart()
 	depends(copyServer)
-	depends(copyTestClasses)
 	targetEnd()
 }
 
@@ -759,7 +759,7 @@ target (buildServer: 'Build all server related stuff') {
 
 target (buildClient: 'Build all client related stuff') {
 	targetStart()
-	depends(copyClasses)
+	depends(buildServer)
 	depends(gwtCompileAdmin)
 	
 	println 'Copying GWT compiler output to build web dir...'

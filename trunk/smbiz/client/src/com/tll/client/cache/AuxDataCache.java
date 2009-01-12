@@ -36,6 +36,11 @@ public final class AuxDataCache {
 	}
 
 	/**
+	 * Map of app available currencies.
+	 */
+	private static Map<Integer, String> currencyMap;
+
+	/**
 	 * Map of app ref data name/value pairs keyed by the app ref data type.<br>
 	 */
 	private Map<RefDataType, Map<String, String>> refDataMaps;
@@ -177,24 +182,23 @@ public final class AuxDataCache {
 		return null;
 	}
 
-	private static Map<String, String> currencyMap;
-
 	/**
 	 * Provides a map of the available currencies.
-	 * @return Map of the the system currency ids keyed by descriptive Strings.
+	 * @return Map of the the system currency ids keyed by the data store currency
+	 *         id.
 	 */
-	public Map<String, String> getCurrencyDataMap() {
+	public Map<Integer, String> getCurrencyDataMap() {
 		if(currencyMap == null) {
 			List<Model> currencies = getEntityList(EntityType.CURRENCY);
 			if(currencies == null) return null;
-			currencyMap = new HashMap<String, String>();
+			currencyMap = new HashMap<Integer, String>();
 			StringBuilder sb = new StringBuilder();
 			for(Model e : currencies) {
 				sb.setLength(0);
 				sb.append(e.asString("symbol"));
 				sb.append(" - ");
 				sb.append(e.getName());
-				currencyMap.put(e.getId().toString(), sb.toString());
+				currencyMap.put(e.getId(), sb.toString());
 			}
 			return currencyMap;
 		}

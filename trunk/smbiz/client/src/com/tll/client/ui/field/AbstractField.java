@@ -608,7 +608,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 			setValue((B) value);
 		}
 		catch(RuntimeException e) {
-			throw new Exception(e);
+			throw new Exception("Unable  to set field " + this + " value", e);
 		}
 	}
 
@@ -644,6 +644,6 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	@Override
 	public final String toString() {
-		return property.toString();
+		return name + " [ " + property + " ]";
 	}
 }

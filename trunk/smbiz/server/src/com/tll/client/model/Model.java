@@ -250,13 +250,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	public void setProperty(String propPath, Object value) throws Exception, PropertyPathException {
-		PropertyPath pp = new PropertyPath(propPath);
-		if(pp.isIndexed()) {
-			relatedMany(pp.deIndex()).setProperty(propPath, value);
-		}
-		else {
-			getModelProperty(propPath).setProperty(propPath, value);
-		}
+		getModelProperty(propPath).setProperty(propPath, value);
 	}
 
 	/**

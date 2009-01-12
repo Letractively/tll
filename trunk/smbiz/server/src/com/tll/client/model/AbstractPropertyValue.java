@@ -5,6 +5,7 @@
  */
 package com.tll.client.model;
 
+import com.tll.client.util.ObjectUtil;
 import com.tll.criteria.IQueryParam;
 import com.tll.model.schema.PropertyMetadata;
 
@@ -61,8 +62,7 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 
 	public final void setValue(Object value) throws IllegalArgumentException {
 		final Object oldValue = getValue();
-		if((value != oldValue) || (value != null && !value.equals(oldValue))
-				|| (oldValue != null && !oldValue.equals(value))) {
+		if(!ObjectUtil.equals(oldValue, value)) {
 			doSetValue(value);
 			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
 		}
