@@ -12,5 +12,6 @@
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-core.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-core-src.jar"/>
 	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-log.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

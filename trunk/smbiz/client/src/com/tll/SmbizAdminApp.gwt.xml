@@ -1,6 +1,9 @@
 <module>
-	<inherits name="com.tll.Smbiz" />
-	
+  <inherits name="com.tll.Smbiz" />
+
+  <!-- Add gwt-log support, default level `DEBUG` -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+
   <entry-point class="com.tll.client.admin.SmbizAdmin" />
 
   <stylesheet src="css/admin.css" />

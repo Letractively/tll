@@ -236,23 +236,6 @@ def buildGwtConstantsFile = {
 	f.write(sbuf.toString())
 }
 	
-def gwtClean = { String module ->
-	println()
-	println "Deleting GWT compiler output dir: " + module + "..."
-	ant.delete(quiet:'true', includeemptydirs:'true') {
-		fileset(dir: "${property.'project.dir.build'}/${module}") {
-			include(name:'**/*')
-		}
-	}
-	println "Deleting GWT host mode module dir: " + module + " files..."
-	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
-	ant.delete(quiet:'true', includeemptydirs:'true') {
-		fileset(dir: hostModeModuleDir) {
-			include(name:'**/*')
-		}
-	}
-}
-	
 //removes old gwt generated files from the build web deploy dir
 //IMPT: we operate on the assumption that none of these files are nested in sub-directories
 def gwtDeleteOldDeploy = {
@@ -266,21 +249,38 @@ def gwtDeleteOldDeploy = {
 }
 
 // all *.rpc files must be copied under GWT's hosted mode tomcat dir to ensure proper rpc operation
-def gwtCopyRpc = { String module ->
-	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + module;
-	println "Copying " + module + " RPC serialization policy files to : " + hostModeModuleDir + "...";
+def gwtCopyRpc = { String sourceModule, String targetModule ->
+	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + targetModule;
+	println "Copying " + sourceModule + " RPC serialization policy files to : " + hostModeModuleDir + "...";
 	ant.copy(todir: hostModeModuleDir) {
-		fileset(dir: "${property.'project.dir.build'}/${module}") {
+		fileset(dir: "${property.'project.dir.build'}/${sourceModule}") {
 			include(name: '*.rpc')
 		}
 	}
 }
 
-// GWTCompiler [-logLevel level] [-gen dir] [-out dir] [-treeLogger] [-style style] module
-def gwtCompile = { String module ->
-	gwtClean(module)
+def gwtClean = { String sourceModule, String targetModule ->
 	println()
-	println "Compiling GWT module: ${module} (style: ${property.'gwt.compile.style'})..."
+	println "Deleting GWT compiler output dir: " + sourceModule + "..."
+	ant.delete(quiet:'true', includeemptydirs:'true') {
+		fileset(dir: "${property.'project.dir.build'}/${sourceModule}") {
+			include(name:'**/*')
+		}
+	}
+	println "Deleting GWT host mode module dir: " + targetModule + " files..."
+	String hostModeModuleDir = (property.'project.client.dir').replace('\\', '/') + "/tomcat/webapps/ROOT/" + targetModule;
+	ant.delete(quiet:'true', includeemptydirs:'true') {
+		fileset(dir: hostModeModuleDir) {
+			include(name:'**/*')
+		}
+	}
+}
+
+// GWTCompiler [-logLevel level] [-gen dir] [-out dir] [-treeLogger] [-style style] module
+def gwtCompile = { String sourceModule, String targetModule ->
+	gwtClean(sourceModule, targetModule)
+	println()
+	println "Compiling GWT sourceModule: ${sourceModule} (style: ${property.'gwt.compile.style'})..."
 	ant.java(
 			classname: 'com.google.gwt.dev.GWTCompiler', 
 			classpath: gwt_compile_classpath, 
@@ -290,7 +290,7 @@ def gwtCompile = { String module ->
 		arg (value: property.'project.dir.build') 
 		arg (value: '-style')
 		arg (value: property.'gwt.compile.style') 
-		arg (value: module)
+		arg (value: targetModule)
 	}
 }
 	
@@ -726,13 +726,6 @@ target (copy: 'Copies client, server and test files making the app build ready')
 	targetEnd()
 }
 
-target (gwtCompileSmbiz: 'GWT smbiz module compilation') {	
-	targetStart()
-	depends(compileClient)
-	gwtCompile(property.'gwt.module.smbiz')
-	targetEnd()
-}
-	
 //NOTE: this must be run explicitly and is not a dependency in any declared target 
 target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
 	targetStart()
@@ -744,9 +737,10 @@ target (gwtCompileTests: 'GWT compilation of the UI Tests module') {
 target (gwtCompileAdmin: 'GWT smbiz admin client compilation') {
 	targetStart()
 	depends(compileClient)
-	String module = property.'gwt.module.smbiz.admin'
-	gwtCompile(module)
-	gwtCopyRpc(module)
+	String sourceModule = property.'gwt.module.smbiz.admin'
+	String targetModule = (property.'debug' == 'true') ? property.'gwt.module.smbiz.admin.dev' : sourceModule;
+	gwtCompile(sourceModule, targetModule)
+	gwtCopyRpc(sourceModule, targetModule)
 	targetEnd()
 }
 	
@@ -761,7 +755,7 @@ target (buildClient: 'Build all client related stuff') {
 	targetStart()
 	depends(buildServer)
 	depends(gwtCompileAdmin)
-	
+
 	println 'Copying GWT compiler output to build web dir...'
 	ant.copy(todir: property.'project.dir.build.web', preservelastmodified:true) {
 		fileset(dir: "${property.'project.dir.build'}/${property.'gwt.module.smbiz.admin'}") {
@@ -771,7 +765,7 @@ target (buildClient: 'Build all client related stuff') {
 		}
 	}
 	gwtDeleteOldDeploy()
-	clearClientClasses()
+	//clearClientClasses()
 	
 	targetEnd()
 }

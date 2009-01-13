@@ -1,2 +1,1 @@
-gwt-user.jar 1.5
-gwt-incubator.jar r1336
+gwt-log.jar 2.5.3
