@@ -7,6 +7,9 @@
   <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
   <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
 
+  <!-- gwt-log support, default level `DEBUG` -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  
   <!-- non client package sources -->
   <source>
     <include name="IMarshalable.java" />

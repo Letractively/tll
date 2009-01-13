@@ -136,9 +136,9 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	}
 
 	/**
-	 * Recursively sets the given parent property path to all child fields'
+	 * Recursively pre-pends the given parent property path to all child fields'
 	 * property names.
-	 * @param parentPropPath The parent property path to set
+	 * @param parentPropPath The parent property path to pre-pend
 	 */
 	private static void setParentPropertyPath(IField<?, ?> field, String parentPropPath) {
 		if(field instanceof FieldGroup) {
@@ -147,9 +147,7 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 			}
 		}
 		else {
-			final PropertyPath p = new PropertyPath(field.getPropertyName());
-			p.setParentPropertyPath(parentPropPath);
-			field.setPropertyName(p.toString());
+			field.setPropertyName(PropertyPath.getPropertyPath(parentPropPath, field.getPropertyName()));
 		}
 	}
 
@@ -291,10 +289,9 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	/**
 	 * Adds a field to this field group pre-pending the given parent property path
 	 * to the field's <em>existing</em> property name.
-	 * @param parentPropPath Pre-pended to the field's "root" (non-path) property
-	 *        name before the field is added. May be <code>null</code> in which
-	 *        case the field's property name remains un-altered. If the field has
-	 *        an parent property path is is <em>replaced</em>.
+	 * @param parentPropPath Pre-pended to the field's existing property path
+	 *        before the field is added. May be <code>null</code> in which case
+	 *        the field's property name remains un-altered.
 	 * @param field The field to add
 	 */
 	public void addField(String parentPropPath, IField<?, ?> field) {
@@ -454,6 +451,12 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	public void clear() {
 		for(IField<?, ?> f : fields) {
 			f.clear();
+		}
+	}
+
+	public void reset() {
+		for(IField<?, ?> f : fields) {
+			f.reset();
 		}
 	}
 

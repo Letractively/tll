@@ -370,7 +370,7 @@ public final class Binding {
 	 * Sets the left hand property to the current value of the right.
 	 */
 	public void setLeft() {
-		Log.debug("Binding.unbinding..");
+		Log.debug("Binding.setLeft..");
 		if((left != null) && (right != null) && right.object != null) {
 			try {
 				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
@@ -392,7 +392,7 @@ public final class Binding {
 	 * Sets the right object's property to the current value of the left.
 	 */
 	public void setRight() {
-		Log.debug("Binding.unbinding..");
+		Log.debug("Binding.setRight..");
 		if((left != null) && (right != null) && left.object != null) {
 			try {
 				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object

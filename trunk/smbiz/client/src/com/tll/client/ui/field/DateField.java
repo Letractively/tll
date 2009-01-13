@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
+import com.google.gwt.widgetideas.client.event.KeyDownEvent;
+import com.google.gwt.widgetideas.client.event.KeyDownHandler;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
@@ -27,7 +29,8 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	 * DateBox - Extended to support {@link HasFocus}.
 	 * @author jpk
 	 */
-	private static final class DateBox extends com.google.gwt.widgetideas.datepicker.client.DateBox implements HasFocus {
+	private static final class DateBox extends com.google.gwt.widgetideas.datepicker.client.DateBox implements HasFocus,
+			KeyDownHandler {
 
 		public void addKeyboardListener(KeyboardListener listener) {
 			throw new UnsupportedOperationException();
@@ -45,9 +48,22 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 			throw new UnsupportedOperationException();
 		}
 
+		public void onKeyDown(KeyDownEvent event) {
+			if(event.isAlphaNumeric()) {
+				// disallow this!
+				event.getBrowserEvent().preventDefault();
+				// event.getBrowserEvent().cancelBubble(true);
+			}
+		}
+
 	}
 
 	private final DateBox db;
+
+	/**
+	 * The currently selected date
+	 */
+	private Date seldate;
 
 	/**
 	 * Constructor
@@ -87,21 +103,24 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	}
 
 	public Date getValue() {
-		return db.getDatePicker().getSelectedDate();
+		return seldate;
 	}
 
-	public void setValue(B value) {
-		final Date old = getValue();
-		final Date newval = value == null ? null : getConverter().convert(value);
-		if(old != newval && (old != null && !old.equals(newval)) || (newval != null && !newval.equals(old))) {
-			db.getDatePicker().setSelectedDate(newval);
-		}
+	@Override
+	protected void setNativeValue(Date nativeValue) {
+		// NOTE: this fires the onChange event
+		db.getDatePicker().setSelectedDate(nativeValue);
+	}
+
+	@Override
+	protected void doSetValue(B value) {
+		setNativeValue(getConverter().convert(value));
 	}
 
 	public void onChange(ChangeEvent<Date> event) {
+		seldate = event.getNewValue();
 		super.onChange(this);
+		changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), seldate);
 		fireChangeListeners();
-		if(changeSupport != null)
-			changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), event.getNewValue());
 	}
 }

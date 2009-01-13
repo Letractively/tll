@@ -5,8 +5,6 @@
 
   <stylesheet src="css/admin.css" />
 
-  <!-- gwt-log support, default level `DEBUG` -->
-  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
   <set-property name="log_DivLogger" value="DISABLED" />
 
 </module>

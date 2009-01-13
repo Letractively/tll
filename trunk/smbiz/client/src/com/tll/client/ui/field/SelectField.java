@@ -149,7 +149,8 @@ public final class SelectField<I> extends AbstractField<I, I> {
 		return selected;
 	}
 
-	public void setValue(I value) {
+	@Override
+	protected void setNativeValue(I nativeValue) {
 		if(options == null) throw new IllegalStateException("No options specified.");
 		int i = 0;
 		I old = selected;
@@ -157,7 +158,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
 			I item = it.next();
-			if(getComparator().compare(value, item) == 0) {
+			if(getComparator().compare(nativeValue, item) == 0) {
 				lb.setItemSelected(i, true);
 				selected = item;
 				break;
@@ -166,6 +167,11 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 		firePropertyChange(selected, old);
 		fireChangeListeners();
+	}
+
+	@Override
+	protected void doSetValue(I value) {
+		setNativeValue(value);
 	}
 
 	public String getText() {

@@ -119,8 +119,24 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 		return null;
 	}
 
-	public void setValue(B value) {
-		setText(getConverter().convert(value));
+	@Override
+	protected void setNativeValue(String nativeValue) {
+		final String old = getValue();
+		int i = 0;
+		for(Object o : options) {
+			if(o.equals(nativeValue)) {
+				radioButtons.get(i).setChecked(true);
+			}
+			i++;
+		}
+		if(!ObjectUtil.equals(old, nativeValue)) {
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, nativeValue);
+		}
+	}
+
+	@Override
+	protected void doSetValue(B value) {
+		setNativeValue(getConverter().convert(value));
 	}
 
 	public String getText() {
@@ -128,24 +144,14 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	}
 
 	public void setText(String text) {
-		final String old = getValue();
-		int i = 0;
-		for(Object o : options) {
-			if(o.equals(text)) {
-				radioButtons.get(i).setChecked(true);
-			}
-			i++;
-		}
-		if(changeSupport != null && !ObjectUtil.equals(old, text)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, text);
-		}
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void onClick(Widget sender) {
 		super.onClick(sender);
 		String cv = getValue();
-		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
 		old = cv;
 		fireChangeListeners();
 	}

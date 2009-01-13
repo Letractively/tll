@@ -79,19 +79,25 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(B value) {
+	@Override
+	protected void setNativeValue(String nativeValue) {
 		String old = getValue();
-		setText(getConverter().convert(value));
+		setText(nativeValue);
 		Object newval = getValue();
-		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
 	}
 
 	@Override
+	protected void doSetValue(B value) {
+		setNativeValue(getConverter().convert(value));
+	}
+
+	@Override
 	public void onChange(Widget sender) {
 		super.onChange(this);
-		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();
 	}

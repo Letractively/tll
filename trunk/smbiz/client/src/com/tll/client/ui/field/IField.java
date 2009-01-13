@@ -75,6 +75,11 @@ public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents
 	void clear();
 
 	/**
+	 * Resets the field's value to that which was when originally set.
+	 */
+	void reset();
+
+	/**
 	 * @return <code>true</code> if this field is required.
 	 */
 	boolean isRequired();
@@ -164,14 +169,4 @@ public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents
 	 * @throws ValidationException When invalid
 	 */
 	void validate() throws ValidationException;
-
-	/**
-	 * Sets the <em>aggregated</em> {@link PropertyChangeSupport} instance
-	 * relative to a designated <em>root</em> {@link IField}.
-	 * <p>
-	 * <em><b>IMPT: </b>This method <em>must</em> be called prior to employing any
-	 * methods on {@link ISourcesPropertyChangeEvents}!</em>
-	 * @param changeSupport The change support ref
-	 */
-	// void setPropertyChangeSupport(PropertyChangeSupport changeSupport);
 }

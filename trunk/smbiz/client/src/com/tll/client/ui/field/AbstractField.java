@@ -125,6 +125,11 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private V initialValue;
 
 	/**
+	 * Flag to indicate whether or not the initial value is set.
+	 */
+	private boolean initialValueSet;
+
+	/**
 	 * Constructor
 	 * @param name The field name which should be unique relative to any sibling
 	 *        fields under a common parent (field group).
@@ -315,11 +320,13 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	 * value and the set initial value.
 	 */
 	private void markDirty() {
-		if(initialValue == null ? false : initialValue.equals(getValue())) {
-			addStyleName(STYLE_DIRTY);
-		}
-		else {
-			removeStyleName(STYLE_DIRTY);
+		if(initialValueSet) {
+			if(!ObjectUtil.equals(initialValue, getValue())) {
+				addStyleName(STYLE_DIRTY);
+			}
+			else {
+				removeStyleName(STYLE_DIRTY);
+			}
 		}
 	}
 
@@ -336,7 +343,10 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
 		Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
-		if(metadata != null) {
+		if(metadata == null) {
+			Log.warn("No property metadata found for field: " + toString());
+		}
+		else {
 			// requiredness
 			setRequired(metadata.isRequired() && !metadata.isManaged());
 
@@ -610,8 +620,33 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 			setValue((B) value);
 		}
 		catch(RuntimeException e) {
-			throw new Exception("Unable  to set field " + this + " value", e);
+			throw new Exception("Unable to set field " + this + " value", e);
 		}
+	}
+
+	/**
+	 * Sub-class impl for setting field value.
+	 * @param value
+	 */
+	protected abstract void doSetValue(B value);
+
+	public final void setValue(B value) {
+		doSetValue(value);
+		if(!initialValueSet) {
+			initialValue = getValue();
+			initialValueSet = true;
+		}
+	}
+
+	/**
+	 * Responsible for setting the field's value given the value in native type as
+	 * well as triggering property change events if necessary.
+	 * @param nativeValue
+	 */
+	protected abstract void setNativeValue(V nativeValue);
+
+	public final void reset() {
+		if(initialValueSet) setNativeValue(initialValue);
 	}
 
 	@Override

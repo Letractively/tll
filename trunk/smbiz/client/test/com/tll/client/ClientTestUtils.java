@@ -8,13 +8,19 @@ package com.tll.client;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.tll.client.admin.ui.field.BankFieldsProvider;
+import com.tll.client.admin.ui.field.CreditCardFieldsProvider;
 import com.tll.client.admin.ui.field.account.AccountFieldsProvider;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.model.BooleanPropertyValue;
 import com.tll.client.model.DatePropertyValue;
 import com.tll.client.model.EnumPropertyValue;
 import com.tll.client.model.FloatPropertyValue;
@@ -26,17 +32,98 @@ import com.tll.client.model.RelatedManyProperty;
 import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldGroupProvider;
+import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.util.ObjectUtil;
 import com.tll.model.EntityType;
+import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.AddressType;
+import com.tll.model.impl.CreditCardType;
+import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.service.app.RefDataType;
 
 /**
  * ClientTestUtils
  * @author jpk
  */
 public final class ClientTestUtils {
+
+	/**
+	 * TestFieldGroupProvider
+	 * @author jpk
+	 */
+	private static final class TestFieldGroupProvider implements IFieldGroupProvider {
+
+		public static final TestFieldGroupProvider INSTANCE = new TestFieldGroupProvider();
+
+		/**
+		 * Constructor
+		 */
+		private TestFieldGroupProvider() {
+			// set needed aux data cache
+			List<Model> list = new ArrayList<Model>();
+			list.add(stubCurrency());
+			AuxDataCache.instance().cacheEntityList(EntityType.CURRENCY, list);
+
+			Map<String, String> cc = new HashMap<String, String>();
+			cc.put("us", "United States");
+			cc.put("br", "Brazil");
+			AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+
+			Map<String, String> st = new HashMap<String, String>();
+			st.put("MI", "Michigan");
+			st.put("CA", "California");
+			AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+		}
+
+		public FieldGroup getFieldGroup() {
+			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
+			FieldGroup fg = fpAccount.getFieldGroup();
+
+			fg.addField("parent", fpAccount.getFieldGroup());
+
+			FieldGroup fgPaymentInfo = new FieldGroup("paymentInfo");
+			fgPaymentInfo.addField((new CreditCardFieldsProvider()).getFieldGroup());
+			fgPaymentInfo.addField((new BankFieldsProvider()).getFieldGroup());
+
+			fg.addField("paymentInfo", fgPaymentInfo);
+
+			fg.addField("addresses", new FieldGroup("addresses"));
+
+			return fg;
+		}
+	}
+
+	/**
+	 * TestFieldPanel
+	 * @author jpk
+	 */
+	public static class TestFieldPanel extends FieldPanel<FlowPanel, Model> {
+
+		FlowPanel panel = new FlowPanel();
+
+		/**
+		 * Constructor
+		 */
+		public TestFieldPanel() {
+			super();
+			initWidget(panel);
+			setRenderer(new IFieldRenderer<FlowPanel>() {
+
+				public void render(FlowPanel widget, FieldGroup fg) {
+					// no-op
+				}
+			});
+		}
+
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return TestFieldGroupProvider.INSTANCE.getFieldGroup();
+		}
+
+	}
 
 	/**
 	 * Validate the given object is empty. Handles {@link Collection}s and arrays.
@@ -249,10 +336,10 @@ public final class ClientTestUtils {
 	 */
 	public static Model stubCurrency() {
 		Model m = new Model(EntityType.CURRENCY);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, 1));
-		m.set(new StringPropertyValue("iso4217", "usd"));
-		m.set(new StringPropertyValue("symbol", "$"));
-		m.set(new FloatPropertyValue("usdExchangeRage", 1f));
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
+		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
+		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
+		m.set(new FloatPropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.FLOAT, false, true, -1), 1f));
 		return m;
 	}
 
@@ -263,10 +350,68 @@ public final class ClientTestUtils {
 	 */
 	public static Model stubAddress(int num) {
 		Model address = new Model(EntityType.ADDRESS);
-		address.set(new IntPropertyValue(Model.ID_PROPERTY, num));
-		address.set(new StringPropertyValue("firstName", "firstname " + num));
-		address.set(new StringPropertyValue("lastName", "lastname " + num));
+		address.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
+		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
+				"email" + num + "@domain.com"));
+		address.set(new StringPropertyValue("firstName", new PropertyMetadata(PropertyType.STRING, false, false, 32),
+				"firstname " + num));
+		address.set(new StringPropertyValue("lastName", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"lastname " + num));
+		address.set(new StringPropertyValue("mi", new PropertyMetadata(PropertyType.CHAR, false, false, 1), "m"));
+		address.set(new StringPropertyValue("address1", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"address1 " + num));
+		address.set(new StringPropertyValue("address2", new PropertyMetadata(PropertyType.STRING, false, false, 32),
+				"address2 " + num));
+		address.set(new StringPropertyValue("city", new PropertyMetadata(PropertyType.STRING, false, true, 32), "city "
+				+ num));
+		address.set(new StringPropertyValue("province", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"province " + num));
+		address.set(new StringPropertyValue("postalCode", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"zip " + num));
+		address.set(new StringPropertyValue("country", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"country " + num));
 		return address;
+	}
+
+	/**
+	 * Stubs payment info
+	 * @return new Model representing payment info
+	 */
+	public static Model stubPaymentInfo() {
+		Model m = new Model(EntityType.PAYMENT_INFO);
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
+		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
+				16), "0005543"));
+		m.set(new StringPropertyValue("paymentData_bankName", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"bank name"));
+		m.set(new StringPropertyValue("paymentData_bankRoutingNo", new PropertyMetadata(PropertyType.STRING, false, false,
+				16), "77777"));
+		m.set(new EnumPropertyValue("paymentData_ccType", new PropertyMetadata(PropertyType.ENUM, false, false, 16),
+				CreditCardType.VISA));
+		m.set(new StringPropertyValue("paymentData_ccNum", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"4111111111111111"));
+		m.set(new StringPropertyValue("paymentData_ccCvv2", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"834"));
+		m.set(new IntPropertyValue("paymentData_ccExpMonth", new PropertyMetadata(PropertyType.INT, false, false, 16), 8));
+		m
+				.set(new IntPropertyValue("paymentData_ccExpYear", new PropertyMetadata(PropertyType.INT, false, false, 16),
+						2012));
+		m.set(new StringPropertyValue("paymentData_ccName", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"cc name"));
+		m.set(new StringPropertyValue("paymentData_ccAddress1",
+				new PropertyMetadata(PropertyType.STRING, false, false, 16), "88 Broadway"));
+		m.set(new StringPropertyValue("paymentData_ccAddress2",
+				new PropertyMetadata(PropertyType.STRING, false, false, 16), "#32"));
+		m.set(new StringPropertyValue("paymentData_ccCity", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"Sacramento"));
+		m.set(new StringPropertyValue("paymentData_ccState", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"CA"));
+		m.set(new StringPropertyValue("paymentData_ccZip", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"99885"));
+		m.set(new StringPropertyValue("paymentData_ccCountry", new PropertyMetadata(PropertyType.STRING, false, false, 16),
+				"us"));
+
+		return m;
 	}
 
 	/**
@@ -278,12 +423,32 @@ public final class ClientTestUtils {
 	 */
 	public static Model stubAccount(Model parentAccount, EntityType accountType, int num) {
 		Model m = new Model(accountType);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
-		m.set(new StringPropertyValue(Model.NAME_PROPERTY, "ISP " + num));
-		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new Date()));
-		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new Date()));
-		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
+		m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"ISP " + num));
+		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new PropertyMetadata(PropertyType.DATE, false, true, 32),
+				new Date()));
+		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new PropertyMetadata(PropertyType.DATE, false, true, 32),
+				new Date()));
+		m
+				.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
+						AccountStatus.OPEN));
+		m.set(new BooleanPropertyValue("persistPymntInfo", new PropertyMetadata(PropertyType.BOOL, false, true, -1),
+				Boolean.TRUE));
+		m.set(new StringPropertyValue("billingModel", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"a billing model"));
+		m.set(new StringPropertyValue("billingCycle", new PropertyMetadata(PropertyType.STRING, false, true, 32),
+				"a billing cycle"));
+		m
+				.set(new DatePropertyValue("dateLastCharged", new PropertyMetadata(PropertyType.DATE, false, true, 32),
+						new Date()));
+		m
+				.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
+						new Date()));
+		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
 		m.set(new RelatedOneProperty(EntityType.CURRENCY, "currency", true, stubCurrency()));
+		m.set(new RelatedOneProperty(EntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
+		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
 		return m;
 	}
 
@@ -297,34 +462,11 @@ public final class ClientTestUtils {
 	public static Model stubAccountAddress(Model account, Model address, int num) {
 		Model m = new Model(EntityType.ACCOUNT_ADDRESS);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
-		m.set(new EnumPropertyValue("type", AddressType.values()[num - 1]));
+		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
+				AddressType.values()[num - 1]));
 		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "account", true, account));
 		m.set(new RelatedOneProperty(EntityType.ADDRESS, "address", false, address));
 		return m;
-	}
-
-	/**
-	 * TestFieldGroupProvider
-	 * @author jpk
-	 */
-	private static final class TestFieldGroupProvider implements IFieldGroupProvider {
-
-		public static final IFieldGroupProvider INSTANCE = new TestFieldGroupProvider();
-
-		public FieldGroup getFieldGroup() {
-			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
-			FieldGroup fg = fpAccount.getFieldGroup();
-			fg.addField("parent", fpAccount.getFieldGroup());
-			fg.addField("addresses", new FieldGroup("addresses"));
-			return fg;
-		}
-
-		private TestFieldGroupProvider() {
-			// set needed aux data cache
-			List<Model> list = new ArrayList<Model>();
-			list.add(stubCurrency());
-			AuxDataCache.instance().cacheEntityList(EntityType.CURRENCY, list);
-		}
 	}
 
 	/**

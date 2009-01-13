@@ -1,9 +1,13 @@
 package com.tll.client.bind;
 
 import com.google.gwt.junit.client.GWTTestCase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.ClientTestUtils;
+import com.tll.client.ClientTestUtils.TestFieldPanel;
 import com.tll.client.model.Model;
-import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.model.PropertyPathException;
+import com.tll.client.ui.field.FieldPanel;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.
@@ -19,61 +23,44 @@ public class ModelFieldGroupBindingTest extends GWTTestCase {
 	}
 
 	/**
-	 * AbstractTestModelFieldGroupBindingAction
+	 * TestModelFieldGroupBindingAction
 	 * @author jpk
 	 */
-	static abstract class AbstractTestModelFieldGroupBindingAction implements IBindingAction {
+	static class TestModelFieldGroupBindingAction extends AbstractModelEditAction<Model, FieldPanel<FlowPanel, Model>> {
 
-		Binding binding = new Binding();
-		Model model = ClientTestUtils.getTestRootModel();
-		FieldGroup fg = ClientTestUtils.getRootFieldGroupProvider().getFieldGroup();
+		@Override
+		protected void populateBinding(FieldPanel<FlowPanel, Model> fp) throws PropertyPathException {
 
-		public void setBindable(FieldGroup bindable) {
-			binding.getChildren().add(new Binding(model, fg, Model.NAME_PROPERTY));
-			binding.getChildren().add(new Binding(model, fg, Model.DATE_CREATED_PROPERTY));
-			binding.getChildren().add(new Binding(model, fg, Model.DATE_MODIFIED_PROPERTY));
-			binding.getChildren().add(new Binding(model, fg, "parent.name"));
-			binding.getChildren().add(new Binding(model, fg, "status"));
-			binding.getChildren().add(new Binding(model, fg, "dateCancelled"));
-			binding.getChildren().add(new Binding(model, fg, "currency.id"));
-			binding.getChildren().add(new Binding(model, fg, "billingModel"));
-			binding.getChildren().add(new Binding(model, fg, "billingCycle"));
-			binding.getChildren().add(new Binding(model, fg, "dateLastCharged"));
-			binding.getChildren().add(new Binding(model, fg, "nextChargeDate"));
-			binding.getChildren().add(new Binding(model, fg, "persistPymntInfo"));
-			binding.getChildren().add(new Binding(model, fg, "parent.id"));
-			// binding.getChildren().add(new Binding(model, fg, "addresses"));
+			addFieldBinding(fp, Model.NAME_PROPERTY);
+			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
+			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
+			addFieldBinding(fp, "parent.name");
+			addFieldBinding(fp, "status");
+			addFieldBinding(fp, "dateCancelled");
+			addFieldBinding(fp, "currency.id");
+			addFieldBinding(fp, "billingModel");
+			addFieldBinding(fp, "billingCycle");
+			addFieldBinding(fp, "dateLastCharged");
+			addFieldBinding(fp, "nextChargeDate");
+			addFieldBinding(fp, "persistPymntInfo");
+
+			addNestedFieldBindings(fp, "paymentInfo");
+
+			// addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
 		}
 
-		public void bind() {
-			binding.bind();
+		public void execute() {
 		}
 
-		public void unbind() {
-			binding.unbind();
-			binding.getChildren().clear();
-		}
-	}
+	} // TestModelFieldGroupBindingAction
 
 	/**
-	 * Tests the setting of non-relational fields from a model.
+	 * Tests the initial binding of model properties to fields.
 	 */
-	public void testNonRelationalModelToFieldGroupBinding() {
-		IBindingAction ba = new AbstractTestModelFieldGroupBindingAction() {
-
-			public void execute() {
-				// populate the fields
-				binding.setRight();
-				// sendback
-				binding.setLeft();
-			}
-
-			public <B extends IBindable> void setBindable(B bindable) {
-				// TODO impl
-			}
-
-		};
-
-		ba.execute();
+	public void testBind() {
+		TestFieldPanel fieldPanel = new TestFieldPanel();
+		fieldPanel.setAction(new TestModelFieldGroupBindingAction());
+		fieldPanel.setModel(ClientTestUtils.getTestRootModel());
+		RootPanel.get().add(fieldPanel);
 	}
 }

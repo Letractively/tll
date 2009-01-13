@@ -76,13 +76,19 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 		return cb.isChecked() ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	public void setValue(B value) {
+	@Override
+	protected void setNativeValue(Boolean nativeValue) {
 		Boolean old = getValue();
-		setChecked(value == null ? false : getConverter().convert(value).booleanValue());
+		setChecked(nativeValue == null ? false : nativeValue);
 		Boolean newval = getValue();
-		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
+	}
+
+	@Override
+	protected void doSetValue(B value) {
+		setNativeValue(getConverter().convert(value).booleanValue());
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 		assert sender == cb;
 		super.onClick(sender);
 		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
-		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		fireChangeListeners();
 	}
 }

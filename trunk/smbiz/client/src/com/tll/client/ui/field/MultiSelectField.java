@@ -153,16 +153,15 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 		return selected;
 	}
 
-	public void setValue(Collection<I> value) {
-		if(options == null) throw new IllegalStateException("No options specified.");
-
+	@Override
+	protected void setNativeValue(Collection<I> nativeValue) {
 		int i = 0;
 		ArrayList<I> old = selected;
 		selected = new ArrayList<I>();
 
 		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
 			I item = it.next();
-			if(value != null && contains(value, item)) {
+			if(nativeValue != null && contains(nativeValue, item)) {
 				lb.setItemSelected(i, true);
 				selected.add(item);
 			}
@@ -173,6 +172,12 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 
 		firePropertyChange(selected, old);
 		fireChangeListeners();
+	}
+
+	@Override
+	protected void doSetValue(Collection<I> value) {
+		if(options == null) throw new IllegalStateException("No options specified.");
+		setNativeValue(value);
 	}
 
 	public String getText() {

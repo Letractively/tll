@@ -207,7 +207,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
+			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));

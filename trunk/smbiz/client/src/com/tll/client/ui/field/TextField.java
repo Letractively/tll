@@ -106,13 +106,19 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
-	public void setValue(B value) {
+	@Override
+	protected void setNativeValue(String nativeValue) {
 		String old = getValue();
-		setText(getConverter().convert(value));
+		setText(nativeValue);
 		String newval = getValue();
-		if(changeSupport != null && !ObjectUtil.equals(old, newval)) {
+		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
+	}
+
+	@Override
+	protected void doSetValue(B value) {
+		setNativeValue(getConverter().convert(value));
 	}
 
 	@Override

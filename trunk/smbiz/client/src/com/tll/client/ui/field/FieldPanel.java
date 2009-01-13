@@ -59,7 +59,7 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	 */
 	public final FieldGroup getFieldGroup() {
 		if(fields == null) {
-			Log.debug("FieldPanel[ " + toString() + " ].generateFieldGroup()..");
+			Log.debug(toString() + ".generateFieldGroup()..");
 			setFieldGroup(generateFieldGroup());
 		}
 		return fields;
@@ -103,23 +103,9 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 		if(renderer == null) {
 			throw new IllegalStateException("No field renderer set");
 		}
-		Log.debug("FieldPanel[ " + toString() + " ].draw()..");
+		Log.debug(toString() + ".draw()..");
 		renderer.render(getWidget(), getFieldGroup());
 	}
-
-	/*
-	@Override
-	public void setModel(M model) {
-		if(getModel() == null || model != getModel()) {
-			// apply property metadata
-			if(model instanceof IPropertyMetadataProvider) {
-				Log.debug("FieldPanel.setModel() - getFieldGroup().applyPropertyMetadata()..");
-				getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
-			}
-			super.setModel(model);
-		}
-	}
-	*/
 
 	public FieldGroup getValue() {
 		return getFieldGroup();
@@ -168,6 +154,6 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 
 	@Override
 	public String toString() {
-		return fields == null ? "FieldGroup" : fields.getName();
+		return "FieldPanel [ " + (fields == null ? "-nofields-" : fields.getName()) + " ]";
 	}
 }
