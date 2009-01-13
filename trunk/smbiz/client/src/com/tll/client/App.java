@@ -3,9 +3,9 @@
  */
 package com.tll.client;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.ImageBundle;
@@ -93,7 +93,10 @@ public abstract class App {
 	 */
 	public static void init() {
 
+		Log.setUncaughtExceptionHandler();
+
 		// set the uncaught exception handler
+		/*
 		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 
 			public void onUncaughtException(final Throwable tracepoint) {
@@ -101,13 +104,15 @@ public abstract class App {
 				performDefaultErrorHandling(tracepoint);
 			}
 		});
+		*/
 
 		// setup history tracking by establishing an initial token name in the
 		// history queue
 		History.newItem(INITIAL_HISTORY_TOKEN);
 	}
 
-	public static void performDefaultErrorHandling(final Throwable caught) {
+	/*
+	private void performDefaultErrorHandling(final Throwable caught) {
 		if(caught != null) {
 			final String stacktrace = getStacktraceAsString(caught);
 			Window.alert(stacktrace);
@@ -119,7 +124,7 @@ public abstract class App {
 		}
 	}
 
-	public static String getStacktraceAsString(final Throwable tracepoint) {
+	private static String getStacktraceAsString(final Throwable tracepoint) {
 		final StackTraceElement[] trace = tracepoint.getStackTrace();
 		final StringBuilder sbuf = new StringBuilder(2048);
 		sbuf.append(tracepoint.toString());
@@ -136,5 +141,6 @@ public abstract class App {
 		final String stacktrace = sbuf.toString();
 		return stacktrace;
 	}
+	*/
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.core.client.GWT;
+import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.model.PropertyPath;
 import com.tll.client.ui.IBoundWidget;
@@ -133,11 +133,12 @@ public final class Binding {
 						PropertyPath.index(targetProperty, ((IndexedPropertyChangeEvent) propertyChangeEvent).getIndex());
 			}
 
+			Log.debug("Issuing propertyChange on [ " + target.object + " ] for " + targetProperty + "..");
 			try {
 				target.object.setProperty(targetProperty, value);
 			}
 			catch(Exception e) {
-				throw new RuntimeException("Unable to set property: " + target.property, e);
+				throw new RuntimeException("Unable to set property: " + targetProperty, e);
 			}
 		}
 
@@ -166,6 +167,7 @@ public final class Binding {
 		}
 
 		public void propertyChange(PropertyChangeEvent evt) {
+			Log.debug("-> NestedPropertyChangeListener.propertyChange() for " + evt.getPropertyName() + "..");
 
 			if(bound) {
 				unbind();
@@ -368,6 +370,7 @@ public final class Binding {
 	 * Sets the left hand property to the current value of the right.
 	 */
 	public void setLeft() {
+		Log.debug("Binding.unbinding..");
 		if((left != null) && (right != null) && right.object != null) {
 			try {
 				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
@@ -389,6 +392,7 @@ public final class Binding {
 	 * Sets the right object's property to the current value of the left.
 	 */
 	public void setRight() {
+		Log.debug("Binding.unbinding..");
 		if((left != null) && (right != null) && left.object != null) {
 			try {
 				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
@@ -414,6 +418,7 @@ public final class Binding {
 	 * existing having the same name.
 	 */
 	public void bind() {
+		Log.debug("Binding.binding..");
 		if((left != null) && (right != null)) {
 			left.object.addPropertyChangeListener(left.property, left.listener);
 
@@ -439,6 +444,7 @@ public final class Binding {
 	 * Breaks the two way binding and removes all listeners.
 	 */
 	public void unbind() {
+		Log.debug("Binding.unbinding..");
 		if((left != null) && (right != null)) {
 			left.object.removePropertyChangeListener(left.property, left.listener);
 
@@ -485,8 +491,7 @@ public final class Binding {
 				}
 				catch(Exception e) {
 					valid = false;
-					// Binding.LOGGER.log(Level.WARN, null, e);
-					GWT.log("Binding warning", e);
+					Log.warn("Binding warning", e);
 				}
 			}
 
@@ -507,8 +512,7 @@ public final class Binding {
 				}
 				catch(Exception e) {
 					valid = false;
-					// Binding.LOGGER.log(Level.WARN, null, e);
-					GWT.log("Binding warning", e);
+					Log.warn("Binding warning", e);
 				}
 			}
 		}
@@ -546,8 +550,7 @@ public final class Binding {
 			return valid;
 		}
 		catch(ValidationException ve) {
-			// Binding.LOGGER.log(Level.INFO, "Invalid", ve);
-			GWT.log("Binding validation info", ve);
+			Log.warn("Binding validation info", ve);
 
 			return false;
 		}

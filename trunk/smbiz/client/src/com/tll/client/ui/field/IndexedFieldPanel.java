@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.bind.IBindable;
@@ -18,6 +19,7 @@ import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.validate.ValidationFeedbackManager;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * IndexedFieldPanel - Caters to the display of field collections that are
@@ -34,37 +36,39 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	/**
 	 * The group that serving as a common parent to the index field groups.
 	 */
-	private final FieldGroup topGroup = new FieldGroup();
+	private final FieldGroup topGroup;
 
 	/**
-	 * The list of index {@link Widget}s where each elements index corresponds to
-	 * the {@link FieldGroup} at the same index in the field group list.
+	 * The list of indexed {@link FieldPanel}s.
 	 */
 	protected final List<I> indexPanels = new ArrayList<I>();
-
-	/**
-	 * Holds bindings that bind {@link #value} to {@link #list}. Each sub-binding
-	 * under this binding corresponds to a the field group of the same index in
-	 * the {@link #list}.
-	 */
-	private final Binding indexedBinding = new Binding();
 
 	/**
 	 * The model data collection.
 	 */
 	private Collection<M> value;
 
+	/**
+	 * Holds bindings that bind {@link #value} to {@link #list}. Each sub-binding
+	 * under this binding corresponds to a the field group of the same index in
+	 * the {@link #list}.
+	 */
+	private final Binding binding = new Binding();
+
 	private boolean drawn;
 
 	/**
 	 * Constructor
+	 * @param name The name to ascribe to this field panel which serves the name
+	 *        of the underlying top field group as well
 	 */
-	public IndexedFieldPanel() {
+	public IndexedFieldPanel(String name) {
 		super();
+		this.topGroup = new FieldGroup(name);
 	}
 
 	/**
-	 * @return The number of indexed field groups.
+	 * @return The number of indexed {@link FieldPanel}s.
 	 */
 	protected final int size() {
 		return indexPanels.size();
@@ -79,17 +83,19 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *         field in the underlying group.
 	 */
 	public final void add(M model) throws IllegalArgumentException {
+		Log.debug("IndexedFieldPanel.add() - START");
 		I ip = createIndexPanel(model);
+
 		// apply property metadata
-		/*
 		if(model instanceof IPropertyMetadataProvider) {
 			ip.getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
 		}
-		*/
+
 		if(indexPanels.add(ip)) {
+			ip.getFieldGroup().setName(topGroup.getName() + '[' + (size() - 1) + ']');
 			topGroup.addField(ip.getFieldGroup());
 			Binding indexBinding = new Binding();
-			indexedBinding.getChildren().add(indexBinding);
+			binding.getChildren().add(indexBinding);
 			updateIndexedFieldGroup(ip.getFieldGroup(), model, indexBinding);
 		}
 	}
@@ -114,7 +120,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		assert model != null;
 		unbindAtIndex(index);
 		FieldGroup fg = indexPanels.get(index).getFieldGroup();
-		updateIndexedFieldGroup(fg, model, indexedBinding.getChildren().get(index));
+		updateIndexedFieldGroup(fg, model, binding.getChildren().get(index));
 	}
 
 	/**
@@ -122,7 +128,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @param index The index at which to unbind
 	 */
 	private void unbindAtIndex(int index) {
-		Binding indexBinding = indexedBinding.getChildren().get(index);
+		Binding indexBinding = binding.getChildren().get(index);
 		indexBinding.unbind();
 		indexBinding.getChildren().clear();
 	}
@@ -141,8 +147,19 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		return removed.getFieldGroup();
 	}
 
-	public FieldGroup getFieldGroup() {
+	/**
+	 * @return The top-most aggregate {@link FieldGroup} containing the index
+	 *         {@link FieldGroup}s.
+	 */
+	public final FieldGroup getFieldGroup() {
 		return topGroup;
+	}
+
+	/**
+	 * @return The indexed binding
+	 */
+	public final Binding getBinding() {
+		return binding;
 	}
 
 	/**
@@ -155,12 +172,14 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * collection.
 	 */
 	private void regenerate() {
+		Log.debug("IndexedFieldPanel.regenerate() - START");
 		clear();
 		if(value != null) {
 			for(M m : value) {
 				add(m);
 			}
 		}
+		Log.debug("IndexedFieldPanel.regenerate() - END");
 	}
 
 	/**
@@ -178,7 +197,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 				try {
 					f.setProperty(IBoundWidget.PROPERTY_VALUE, model.getProperty(propName));
 					if(indexBinding != null) {
-						indexedBinding.getChildren().add(
+						binding.getChildren().add(
 								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f, ValidationFeedbackManager
 										.instance()));
 					}
@@ -206,19 +225,20 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	}
 
 	/**
-	 * Clears the field group list cleaning up listeners.
+	 * Clears the field group list cleaning up bindings and listeners.
 	 */
-	public void clear() {
-		indexedBinding.unbind();
-		indexedBinding.getChildren().clear();
+	public final void clear() {
+		Log.debug("IndexedFieldPanel.clearing " + toString() + "..");
+		binding.unbind();
+		binding.getChildren().clear();
 		indexPanels.clear();
 	}
 
-	public Collection<M> getValue() {
+	public final Collection<M> getValue() {
 		return value;
 	}
 
-	public void setValue(Collection<M> value) {
+	public final void setValue(Collection<M> value) {
 		Collection<M> old = this.value;
 		this.value = value;
 		if(changeSupport != null) changeSupport.firePropertyChange("value", old, this.value);
@@ -228,7 +248,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		}
 	}
 
-	public Object getProperty(String propPath) {
+	public final Object getProperty(String propPath) {
 		return getValue();
 	}
 
@@ -246,17 +266,16 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		regenerate();
 		if(!drawn) {
+			regenerate();
+			Log.debug("IndexedFieldPanel.onLoad() drawing..");
 			draw();
 			drawn = true;
 		}
 	}
 
 	@Override
-	protected void onDetach() {
-		super.onDetach();
-		clear();
+	public String toString() {
+		return "IndexedFieldPanel [ " + (topGroup.getName() == null ? "<noname>" : topGroup.getName()) + " ]";
 	}
-
 }

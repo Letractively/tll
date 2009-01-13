@@ -4,6 +4,7 @@
  */
 package com.tll.client.mvc.view;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -147,7 +148,7 @@ public abstract class AbstractView extends Composite implements IView {
 
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		if(shouldHandleModelChangeEvent(event)) {
-
+			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
 			// errors?
 			if(event.getStatus().hasErrors()) {
 				handleModelChangeError(event);
@@ -161,6 +162,6 @@ public abstract class AbstractView extends Composite implements IView {
 
 	@Override
 	public final String toString() {
-		return "class[" + getViewClass().toString() + "] key[" + (viewKey == null ? "UNSET" : viewKey.toString()) + "]";
+		return getViewClass() + " [" + (viewKey == null ? "-nokey-" : Integer.toString(viewKey.getViewId())) + "]";
 	}
 }

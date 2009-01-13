@@ -18,6 +18,11 @@ import com.tll.service.app.RefDataType;
 public class AddressFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
+	protected String getFieldGroupName() {
+		return "Address";
+	}
+
+	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		fg.addField(femail("emailAddress", "emailAddress", "Email Address", "Email Address", 30));
 		fg.addField(fstext("firstName", "firstName", "First Name", "First Name", 20));

@@ -85,7 +85,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super();
+			super("Options");
 			tabOptions.addTabListener(this);
 			initWidget(tabOptions);
 		}

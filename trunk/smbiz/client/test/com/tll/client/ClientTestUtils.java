@@ -315,7 +315,7 @@ public final class ClientTestUtils {
 			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
 			FieldGroup fg = fpAccount.getFieldGroup();
 			fg.addField("parent", fpAccount.getFieldGroup());
-			fg.addField("addresses", new FieldGroup());
+			fg.addField("addresses", new FieldGroup("addresses"));
 			return fg;
 		}
 

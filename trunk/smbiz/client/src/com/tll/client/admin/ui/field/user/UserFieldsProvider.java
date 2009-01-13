@@ -17,6 +17,11 @@ import com.tll.client.ui.field.TextField;
 public class UserFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
+	protected String getFieldGroupName() {
+		return "User";
+	}
+
+	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
 		TextField<String> email = femail("userEmailAddress", "emailAddress", "Email Address", "Email Address", 30);

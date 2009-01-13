@@ -84,7 +84,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	@Override
 	public FieldGroup generateFieldGroup() {
-		FieldGroup fg = new FieldGroup();
+		FieldGroup fg = new FieldGroup("Payment Info");
 		fg.addField(creditCardPanel.getFieldGroup());
 		fg.addField(bankPanel.getFieldGroup());
 		return fg;

@@ -211,7 +211,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			return (new IFieldGroupProvider() {
 
 				public FieldGroup getFieldGroup() {
-					FieldGroup fg = new FieldGroup();
+					FieldGroup fg = new FieldGroup("test");
 					fg.setName("address");
 					FieldGroup afg = (new AddressFieldsProvider()).getFieldGroup();
 					fg.addField("address", afg);

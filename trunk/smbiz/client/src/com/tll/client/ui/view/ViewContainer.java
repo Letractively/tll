@@ -30,7 +30,8 @@ import com.tll.client.ui.ISourcesDragEvents;
  * ViewContainer - UI container for {@link IView} implementations.
  * @author jpk
  */
-public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener, EventPreview {
+public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener,
+		EventPreview {
 
 	public static final String CSS_VIEW_CONTAINER_POPPED = "viewContainerPopped";
 	public static final String CSS_VIEW_CONTAINER_PINNED = "viewContainerPinned";
@@ -365,7 +366,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			ViewManager.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), false));
+			ViewManager.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), true));
 		}
 
 		// minimize/mazimize the view

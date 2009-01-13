@@ -15,6 +15,11 @@ import com.tll.client.ui.field.FieldGroup;
 public class BankFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
+	protected String getFieldGroupName() {
+		return "Bank Info";
+	}
+
+	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		fg.addField(fstext("name", "paymentData_bankName", "Bank Name", "Bank Name", 40));
 		fg.addField(fstext("accountNo", "paymentData_bankAccountNo", "Account Num", "Account Num", 30));

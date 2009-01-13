@@ -12,6 +12,11 @@ import com.tll.client.ui.field.FieldGroup;
 final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
 
 	@Override
+	protected String getFieldGroupName() {
+		return "Account Address";
+	}
+
+	@Override
 	protected void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
 		FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();

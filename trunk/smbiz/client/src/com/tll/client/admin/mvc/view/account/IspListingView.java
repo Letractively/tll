@@ -159,6 +159,7 @@ public final class IspListingView extends ListingView {
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
+	@Override
 	public String getLongViewName() {
 		return "Isp Listing";
 	}

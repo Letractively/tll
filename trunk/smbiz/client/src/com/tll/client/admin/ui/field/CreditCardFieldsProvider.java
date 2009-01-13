@@ -32,6 +32,11 @@ public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 			};
 
 	@Override
+	protected String getFieldGroupName() {
+		return "Credit Card";
+	}
+
+	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		fg.addField(fenumselect("type", "paymentData_ccType", "Type", "Type", CreditCardType.class));
 		fg.addField(fcreditcard("num", "paymentData_ccNum", "Num", null, 15));
@@ -48,5 +53,4 @@ public class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 		fg.addField(fstext("zip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
 		fg.addField(frefdata("country", "paymentData_ccCountry", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
 	}
-
 }

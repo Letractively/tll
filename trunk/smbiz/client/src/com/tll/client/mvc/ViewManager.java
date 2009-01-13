@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Panel;
@@ -135,6 +135,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 */
 	void setCurrentView(IView view) {
 		assert view != null;
+		Log.debug("ViewManager.setCurrentView() - " + view);
 
 		final int cacheIndex = cache.searchCache(view.getViewKey());
 
@@ -181,6 +182,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		// add the view to the cache
 		ViewContainer oldViewContainer = cache.push(vc);
 		if(oldViewContainer != null) {
+			Log.debug("Destroying view - " + oldViewContainer.getView().toString() + "..");
 			// view life-cycle destroy
 			oldViewContainer.onDestroy();
 			oldViewContainer = null;
@@ -523,7 +525,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 			else {
 				// TODO figure out what to do here
 				// currently a no-op
-				GWT.log("Can't fine view container", null);
+				Log.trace("ViewManager.onHistoryChanged() - Can't find view container for " + historyToken);
 			}
 			return;
 		}

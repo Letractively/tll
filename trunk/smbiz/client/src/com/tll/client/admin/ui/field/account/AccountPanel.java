@@ -189,7 +189,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super();
+			super("Addresses");
 
 			// listen to tab events
 			tabAddresses.addTabListener(this);

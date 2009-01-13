@@ -212,10 +212,15 @@ public abstract class AbstractFieldGroupProvider implements IFieldGroupProvider 
 	}
 
 	public final FieldGroup getFieldGroup() {
-		FieldGroup fg = new FieldGroup();
+		FieldGroup fg = new FieldGroup(getFieldGroupName());
 		populateFieldGroup(fg);
 		return fg;
 	}
+
+	/**
+	 * @return The name to ascribe to the provided field group.
+	 */
+	protected abstract String getFieldGroupName();
 
 	/**
 	 * Populates the given field group.

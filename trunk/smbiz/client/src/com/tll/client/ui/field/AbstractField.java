@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import java.util.List;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -333,6 +334,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
+		Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata != null) {
 			// requiredness

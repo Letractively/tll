@@ -5,17 +5,19 @@
  */
 package com.tll.client.bind;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.IBoundWidget;
-import com.tll.client.ui.field.AbstractField;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.validate.ValidationFeedbackManager;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * AbstractModelEditAction - Common base class for all concrete model edit
@@ -28,24 +30,40 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		IBindingAction {
 
 	/**
-	 * The bound field panel this action acts on.
+	 * The bindable (field panel) this action acts on.
 	 */
-	private FP fieldPanel;
+	FP fieldPanel;
+
+	/**
+	 * The primary binding.
+	 */
+	private final Binding binding = new Binding();
+
+	/**
+	 * Aggregation of indexed field panels referenced here for life-cycle
+	 * requirements.
+	 * <p>
+	 * NOTE: We can't aggregate all bindings under one common parent due to the
+	 * way indexed properties are handled.
+	 */
+	private final Set<IndexedFieldPanel<?, ?>> indexed = new HashSet<IndexedFieldPanel<?, ?>>();
 
 	private boolean bound;
 
-	/**
-	 * The binding.
-	 */
-	protected final Binding binding = new Binding();
-
 	@SuppressWarnings("unchecked")
 	public <B extends IBindable> void setBindable(B bindable) {
-		assert bindable != null;
-		if(this.fieldPanel != bindable) {
-			unbind();
+		if(bound) {
+			throw new IllegalStateException("Model edit binding is already bound");
+		}
+		else if(bindable instanceof FieldPanel == false) {
+			throw new IllegalArgumentException("The bindable must be a field panel");
+		}
+		this.fieldPanel = (FP) bindable;
+
+		if(fieldPanel.getModel() != null) {
 			try {
-				populateBinding((FP) bindable);
+				Log.debug("AbstractModelEditAction.populateBinding()..");
+				populateBinding(fieldPanel);
 			}
 			catch(ClassCastException e) {
 				throw new IllegalArgumentException("The bindable must be a field panel");
@@ -53,20 +71,31 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 			catch(PropertyPathException e) {
 				throw new IllegalStateException("Unable to set bindable", e);
 			}
-			this.fieldPanel = (FP) bindable;
 		}
 	}
 
 	public void bind() {
 		if(!bound) {
+			Log.debug("AbstractModelEditAction.bind()..");
+
+			// bind primary..
 			binding.bind();
 			binding.setRight(); // populate the fields
+
 			bound = true;
 		}
 	}
 
 	public void unbind() {
 		if(bound) {
+			Log.debug("AbstractModelEditAction.unbind()..");
+
+			// clear the indexed..
+			for(IndexedFieldPanel<?, ?> ifp : indexed) {
+				ifp.clear();
+			}
+
+			// unbind primary
 			binding.unbind();
 			binding.getChildren().clear();
 			bound = false;
@@ -89,8 +118,13 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 */
 	protected final <I extends FieldPanel<? extends Widget, M>> void addIndexedFieldBinding(M model,
 			String indexedProperty, IndexedFieldPanel<I, M> indexedFieldPanel) {
+
+		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(
 				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBoundWidget.PROPERTY_VALUE, null, null));
+
+		// retain indexed binding ref
+		indexed.add(indexedFieldPanel);
 	}
 
 	/**
@@ -111,9 +145,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		}
 
 		for(IField<?, ?> f : fset) {
-			binding.getChildren().add(
-					new Binding(model, f.getPropertyName(), null, null, f, IBoundWidget.PROPERTY_VALUE, f,
-							ValidationFeedbackManager.instance()));
+			addFieldBinding(model, f.getPropertyName(), f);
 		}
 	}
 
@@ -125,11 +157,23 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 *         given {@link FieldPanel}.
 	 */
 	protected final void addFieldBinding(FP fieldPanel, String modelProperty) throws UnsetPropertyException {
-		final AbstractField<?, ?> f = fieldPanel.getField(modelProperty);
-		final M model = fieldPanel.getModel();
-		assert model != null;
+		addFieldBinding(fieldPanel.getModel(), modelProperty, fieldPanel.getField(modelProperty));
+	}
+
+	/**
+	 * Single internal method for actual binding creation.
+	 * @param model
+	 * @param modelProperty
+	 * @param field
+	 */
+	private void addFieldBinding(M model, String modelProperty, IField<?, ?> field) {
+		Log.debug("AbstractModelEditAction.addFieldBinding() - Binding field: " + field + "..");
+		// apply property metadata
+		if(model instanceof IPropertyMetadataProvider) {
+			field.applyPropertyMetadata((IPropertyMetadataProvider) model);
+		}
 		binding.getChildren().add(
-				new Binding(model, modelProperty, null, null, f, IBoundWidget.PROPERTY_VALUE, f, ValidationFeedbackManager
-						.instance()));
+				new Binding(model, modelProperty, null, null, field, IBoundWidget.PROPERTY_VALUE, field,
+						ValidationFeedbackManager.instance()));
 	}
 }

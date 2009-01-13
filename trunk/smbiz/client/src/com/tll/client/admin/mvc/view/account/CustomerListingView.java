@@ -134,14 +134,13 @@ public final class CustomerListingView extends ListingView {
 
 			private final String listingElementName = EntityType.CUSTOMER.getName();
 
-			private final Column[] columns = new Column[] {
-				new Column("#", Column.ROW_COUNT_COL_PROP, null),
-				new Column("Name", Model.NAME_PROPERTY, "c"),
-				new Column("Created", Model.DATE_CREATED_PROPERTY, "ca", GlobalFormat.DATE),
-				new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "ca", GlobalFormat.DATE),
-				new Column("Status", "status", "ca"),
-				new Column("Billing Model", "billingModel", "ca"),
-				new Column("Billing Cycle", "billingCycle", "ca") };
+			private final Column[] columns =
+					new Column[] {
+						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "c"),
+						new Column("Created", Model.DATE_CREATED_PROPERTY, "ca", GlobalFormat.DATE),
+						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "ca", GlobalFormat.DATE),
+						new Column("Status", "status", "ca"), new Column("Billing Model", "billingModel", "ca"),
+						new Column("Billing Cycle", "billingCycle", "ca") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -193,6 +192,7 @@ public final class CustomerListingView extends ListingView {
 		return "Customer Listing";
 	}
 
+	@Override
 	public String getLongViewName() {
 		assert mercRef != null;
 		return "Customer Listing for " + mercRef.descriptor();

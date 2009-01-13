@@ -4,6 +4,7 @@
  */
 package com.tll.client.ui.field;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
@@ -11,7 +12,6 @@ import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
-import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -59,6 +59,7 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	 */
 	public final FieldGroup getFieldGroup() {
 		if(fields == null) {
+			Log.debug("FieldPanel[ " + toString() + " ].generateFieldGroup()..");
 			setFieldGroup(generateFieldGroup());
 		}
 		return fields;
@@ -102,20 +103,23 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 		if(renderer == null) {
 			throw new IllegalStateException("No field renderer set");
 		}
+		Log.debug("FieldPanel[ " + toString() + " ].draw()..");
 		renderer.render(getWidget(), getFieldGroup());
 	}
 
+	/*
 	@Override
 	public void setModel(M model) {
 		if(getModel() == null || model != getModel()) {
-			super.setModel(model);
-
 			// apply property metadata
 			if(model instanceof IPropertyMetadataProvider) {
+				Log.debug("FieldPanel.setModel() - getFieldGroup().applyPropertyMetadata()..");
 				getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
 			}
+			super.setModel(model);
 		}
 	}
+	*/
 
 	public FieldGroup getValue() {
 		return getFieldGroup();
@@ -160,5 +164,10 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 			draw();
 			drawn = true;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return fields == null ? "FieldGroup" : fields.getName();
 	}
 }

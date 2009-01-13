@@ -57,6 +57,11 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 	static class InterfaceFieldProvider extends AbstractFieldGroupProvider {
 
 		@Override
+		protected String getFieldGroupName() {
+			return "Interface";
+		}
+
+		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, true);
 			fg.addField(fstext("code", "code", "Code", "Code", 20));
@@ -77,6 +82,11 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 	static class OptionFieldProvider extends AbstractFieldGroupProvider {
 
 		@Override
+		protected String getFieldGroupName() {
+			return "Option";
+		}
+
+		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, false);
 			fg.addField(fstext("code", "code", "Code", "Code", 20));
@@ -94,6 +104,11 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 	}
 
 	static class ParamDefFieldProvider extends AbstractFieldGroupProvider {
+
+		@Override
+		protected String getFieldGroupName() {
+			return "Parameter";
+		}
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {

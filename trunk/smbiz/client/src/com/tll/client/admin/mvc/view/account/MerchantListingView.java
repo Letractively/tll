@@ -210,6 +210,7 @@ public final class MerchantListingView extends ListingView {
 		return "Merchant Listing";
 	}
 
+	@Override
 	public String getLongViewName() {
 		assert ispRef != null;
 		return "Merchant Listing for " + ispRef.descriptor();

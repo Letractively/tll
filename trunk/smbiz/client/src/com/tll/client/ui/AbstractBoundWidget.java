@@ -2,6 +2,7 @@ package com.tll.client.ui;
 
 import java.util.Comparator;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
@@ -90,6 +91,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	public void setModel(M model) {
 		// TODO verify if this is ok to do
 		if(this.model != null && model == this.model) return;
+		Log.debug("AbstractBoundWidget.setModel() - START");
 
 		final M old = this.model;
 
@@ -102,13 +104,16 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		this.model = model;
 
 		if(action != null) {
+			Log.debug("AbstractBoundWidget.setModel() - setting bindable..");
 			action.setBindable(this);
 			if(/*isAttached() && */model != null) {
+				Log.debug("AbstractBoundWidget.setModel() - binding..");
 				action.bind();
 			}
 		}
 
 		// changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
+		Log.debug("AbstractBoundWidget.setModel() - END");
 	}
 
 	public final void addChangeListener(ChangeListener listener) {
@@ -151,10 +156,10 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		changeSupport.removePropertyChangeListener(propertyName, l);
 	}
 
-	/*
 	@Override
 	protected void onAttach() {
-		if(getAction() != null) getAction().setBindable(this);
+		Log.debug("Attaching " + toString() + "..");
+		// if(getAction() != null) getAction().setBindable(this);
 		super.onAttach();
 		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, false, true);
 	}
@@ -162,16 +167,16 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		if(getAction() != null) getAction().bind();
+		// if(getAction() != null) getAction().bind();
 	}
 
 	@Override
 	protected void onDetach() {
+		Log.debug("Detatching " + toString() + "..");
 		super.onDetach();
-		if(getAction() != null) getAction().unbind();
+		// if(getAction() != null) getAction().unbind();
 		// changeSupport.firePropertyChange(PROPERTY_ATTACHED, true, false);
 	}
-	*/
 
 	@Override
 	public String toString() {

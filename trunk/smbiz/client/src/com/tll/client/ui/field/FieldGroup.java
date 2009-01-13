@@ -38,8 +38,9 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * such <em>does not necessarily represent model hierarchy boundaries</em>
  * <p>
  * <b>IMPT: </b> {@link FieldGroup}s do <em>NOT</em> (as yet) support handling
- * of circular references! As such, do not add a field that is already added to
- * another field iterable that are both reachable under from a common ancestor.
+ * of circular references! As such, do not add a field to a field group that is
+ * a child of another field group where both are children of a common ancestor
+ * field group.
  * @author jpk
  */
 public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?, ?>>>, Iterable<IField<?, ?>> {
@@ -153,7 +154,8 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	}
 
 	/**
-	 * The optional name.
+	 * The optional name. This is only used for convenient identification
+	 * purposes.
 	 */
 	private String name;
 
@@ -173,15 +175,12 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	private Widget feedbackWidget;
 
 	/**
-	 * The {@link PropertyChangeSupport} aggregate which is shared by all child
-	 * {@link IField}s.
-	 */
-	// private PropertyChangeSupport changeSupport;
-	/**
 	 * Constructor
+	 * @param name An optional name for this field group.
 	 */
-	public FieldGroup() {
+	public FieldGroup(String name) {
 		super();
+		setName(name);
 	}
 
 	public String getName() {
@@ -197,7 +196,7 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	}
 
 	public String getPropertyName() {
-		// fields groups shall NOT serve as model hierarchy boundaries!!!
+		// field groups shall NOT serve as model hierarchy boundaries!!!
 		throw new UnsupportedOperationException();
 	}
 
@@ -565,27 +564,22 @@ public final class FieldGroup implements IField<Set<IField<?, ?>>, Set<IField<?,
 	}
 
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		// changeSupport.addPropertyChangeListener(listener);
 		throw new UnsupportedOperationException();
 	}
 
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		// changeSupport.addPropertyChangeListener(propertyName, listener);
 		throw new UnsupportedOperationException();
 	}
 
 	public IPropertyChangeListener[] getPropertyChangeListeners() {
-		// return changeSupport.getPropertyChangeListeners();
 		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		// changeSupport.removePropertyChangeListener(listener);
 		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		// changeSupport.removePropertyChangeListener(propertyName, listener);
 		throw new UnsupportedOperationException();
 	}
 

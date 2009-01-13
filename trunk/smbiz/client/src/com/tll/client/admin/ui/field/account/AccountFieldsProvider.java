@@ -11,6 +11,11 @@ import com.tll.model.impl.AccountStatus;
 public class AccountFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
+	protected String getFieldGroupName() {
+		return "Account";
+	}
+
+	@Override
 	public void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
 		fg.addField(fstext("parentName", "parent.name", "Parent", "Parent Account", 15));

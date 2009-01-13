@@ -1,7 +1,8 @@
 package com.tll.client.admin;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.App;
@@ -44,25 +45,22 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 
 		App.init();
 
-		// try/catch is necessary here because GWT.setUncaughtExceptionHandler()
-		// will work not until onModuleLoad() has returned
-		try {
-			// declare the available views
-			populateViewClasses();
+		DeferredCommand.addCommand(new Command() {
 
-			// pre-build the main panel
-			buildMainPanel();
-			mainPanel.setVisible(false);
+			public void execute() {
+				// declare the available views
+				populateViewClasses();
 
-			// get the admin context from the server
-			assert acc != null;
-			acc.setChangeType(ChangeType.USER_CHANGE);
-			acc.execute();
-		}
-		catch(RuntimeException e) {
-			GWT.log("Error in 'onModuleLoad()' method", e);
-			e.printStackTrace();
-		}
+				// pre-build the main panel
+				buildMainPanel();
+				mainPanel.setVisible(false);
+
+				// get the admin context from the server
+				assert acc != null;
+				acc.setChangeType(ChangeType.USER_CHANGE);
+				acc.execute();
+			}
+		});
 	}
 
 	/**

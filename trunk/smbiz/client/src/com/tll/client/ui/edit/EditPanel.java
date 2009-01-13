@@ -6,6 +6,7 @@ package com.tll.client.ui.edit;
 
 import java.util.List;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -150,6 +151,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 * @param model The model to set
 	 */
 	public void setModel(Model model) {
+		Log.debug("EditPanel.setModel() - START");
 		fieldPanel.setModel(model);
 
 		if(model != null) {
@@ -157,9 +159,17 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {
+				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
 			}
 		}
+		else {
+			// clean up
+			if(fieldPanel.getAction() != null) {
+				fieldPanel.getAction().unbind();
+			}
+		}
+		Log.debug("EditPanel.setModel() - END");
 	}
 
 	/**

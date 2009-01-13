@@ -83,4 +83,14 @@ public final class ModelChangeEvent extends EventObject {
 	public Status getStatus() {
 		return status;
 	}
+
+	@Override
+	public String toString() {
+		String s = change.toString();
+		RefKey rk = getModelRef();
+		if(rk != null) {
+			s += " [ " + rk.toString() + " ]";
+		}
+		return s;
+	}
 }

@@ -51,10 +51,10 @@
 
 	<bean name="Address" class="com.tll.model.impl.Address" parent="entityBase" scope="prototype">
 		<property name="address1">
-			<value>home address line 1</value>
+			<value>address line 1</value>
 		</property>
 		<property name="address2">
-			<value>home address line 2</value>
+			<value>address line 2</value>
 		</property>
 		<property name="city">
 			<value>city</value>
