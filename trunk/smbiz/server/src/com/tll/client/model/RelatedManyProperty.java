@@ -48,7 +48,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		}
 
 		public void remove() {
-			throw new UnsupportedOperationException("Indexed property value iterators don't support removal");
+			throw new UnsupportedOperationException();
 		}
 	}
 

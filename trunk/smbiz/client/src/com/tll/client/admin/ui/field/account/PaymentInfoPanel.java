@@ -97,4 +97,13 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 	public void removeTabListener(TabListener listener) {
 		tabPanel.removeTabListener(listener);
 	}
+
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		if(tabPanel.getTabBar().getSelectedTab() == -1) {
+			tabPanel.selectTab(0);
+		}
+	}
+
 }

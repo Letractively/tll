@@ -5,21 +5,16 @@
 package com.tll.client.admin.ui.field.account;
 
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.DisclosureEvent;
-import com.google.gwt.user.client.ui.DisclosureHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.bind.IBindable;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.Model;
 import com.tll.client.model.PropertyPathException;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -27,7 +22,8 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.IndexedFieldPanel;
+import com.tll.client.ui.field.TabbedIndexedFieldPanel;
+import com.tll.model.EntityType;
 import com.tll.model.impl.AddressType;
 
 /**
@@ -105,32 +101,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 			fp.add(paymentInfoPanel);
 			dpPaymentInfo.add(fp);
 			cmpsr.addWidget(dpPaymentInfo);
-
-			dpPaymentInfo.addEventHandler(new DisclosureHandler() {
-
-				public void onOpen(DisclosureEvent event) {
-					if(paymentInfoPanel.tabPanel.getTabBar().getSelectedTab() == -1) {
-						paymentInfoPanel.tabPanel.selectTab(0);
-					}
-				}
-
-				public void onClose(DisclosureEvent event) {
-				}
-			});
-
-			dpAddresses.addEventHandler(new DisclosureHandler() {
-
-				public void onOpen(DisclosureEvent event) {
-					if(addressesPanel.tabAddresses.getWidgetCount() > 0) {
-						if(addressesPanel.tabAddresses.getTabBar().getSelectedTab() == -1) {
-							addressesPanel.tabAddresses.selectTab(0);
-						}
-					}
-				}
-
-				public void onClose(DisclosureEvent event) {
-				}
-			});
 		}
 	}
 
@@ -141,8 +111,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	private static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		final FlowPanel panel = new FlowPanel();
-
-		AddressType addressType;
 
 		/**
 		 * Constructor
@@ -156,7 +124,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
-					// account address name row
+					// account address type/name row
+					cmpsr.addField(fg.getFieldByName("type"));
 					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
 
 					// address row
@@ -178,61 +147,49 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	/**
 	 * AddressesPanel
 	 * @author jpk
-	 * @param <M>
+	 * @param <M> The model type
 	 */
-	static final class AddressesPanel<M extends IBindable> extends IndexedFieldPanel<AccountAddressPanel<M>, M> implements
-			TabListener {
-
-		private final TabPanel tabAddresses = new TabPanel();
+	private static final class AddressesPanel<M extends IBindable> extends
+			TabbedIndexedFieldPanel<AccountAddressPanel<M>, M> {
 
 		/**
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super("Addresses");
-
-			// listen to tab events
-			tabAddresses.addTabListener(this);
-			initWidget(tabAddresses);
+			super("Addresses", true, true);
 		}
 
 		@Override
-		protected void draw() {
-			tabAddresses.clear();
+		protected String getIndexTypeName() {
+			return "Account Address";
+		}
 
-			// add the index field panels to the tab panel
-			for(AccountAddressPanel<M> ap : indexPanels) {
-				tabAddresses.add(ap, ap.addressType.getName());
+		@Override
+		protected String getTabLabelText(AccountAddressPanel<M> aap) {
+			AddressType type;
+			String aaName;
+			try {
+				type = (AddressType) aap.getModel().getProperty("type");
+				aaName = (String) aap.getModel().getProperty("name");
 			}
+			catch(PropertyPathException e) {
+				throw new IllegalStateException(e);
+			}
+
+			return aaName + " (" + type.getName() + ")";
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected M createPrototypeModel() {
+			return (M) AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override
 		protected AccountAddressPanel<M> createIndexPanel(M indexModel) {
-			AccountAddressPanel<M> aap = new AccountAddressPanel<M>();
-			try {
-				aap.addressType = (AddressType) indexModel.getProperty("type");
-			}
-			catch(PropertyPathException e) {
-				throw new IllegalStateException("Unable to obtain the account address type", e);
-			}
-			return aap;
+			return new AccountAddressPanel<M>();
 		}
 
-		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-			assert sender == tabAddresses;
-			// need to hide any field messages bound to fields on the tab that is
-			// going out of view
-			int csti = tabAddresses.getTabBar().getSelectedTab();
-			if(csti != -1) {
-				Widget w = tabAddresses.getWidget(csti);
-				if(w instanceof AccountAddressPanel) MsgManager.instance().show(w, false, true);
-			}
-			return true;
-		}
-
-		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-			// no-op
-		}
 	} // AddressesPanel
 
 	private final FlowPanel panel = new FlowPanel();

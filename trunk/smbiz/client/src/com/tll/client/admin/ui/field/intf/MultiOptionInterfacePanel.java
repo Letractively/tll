@@ -12,12 +12,14 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
+import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IndexedFieldPanel;
+import com.tll.model.EntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -102,9 +104,15 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			tabOptions.clear();
 
 			// add the index field panels to the tab panel
-			for(OptionPanel<M> p : indexPanels) {
+			for(OptionPanel<M> p : this) {
 				tabOptions.add(p, p.getFieldGroup().getFieldByName(Model.NAME_PROPERTY).getText());
 			}
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected M createPrototypeModel() {
+			return (M) AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION);
 		}
 
 		@Override
