@@ -57,7 +57,7 @@ import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.dao.Sorting;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of

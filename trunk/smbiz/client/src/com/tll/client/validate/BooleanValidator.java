@@ -31,6 +31,9 @@ public class BooleanValidator implements IValidator {
 	}
 
 	public Object validate(Object value) {
-		return (trueStr.equals(value)) ? Boolean.TRUE : Boolean.FALSE;
+		if(value == null || value instanceof Boolean) {
+			return value;
+		}
+		return (trueStr.equals(value.toString())) ? Boolean.TRUE : Boolean.FALSE;
 	}
 }

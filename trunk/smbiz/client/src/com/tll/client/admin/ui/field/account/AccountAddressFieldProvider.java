@@ -20,7 +20,7 @@ final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
 	protected void populateFieldGroup(FieldGroup fg) {
 		addModelCommon(fg, true, true);
 		FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
-		fgAddress.setName("aaAddress");
+		fgAddress.setName("address");
 		fg.addField("address", fgAddress);
 	}
 }

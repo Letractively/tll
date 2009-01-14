@@ -12,7 +12,7 @@ import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * AccountEditView - Base AbstractView for editing accounts.

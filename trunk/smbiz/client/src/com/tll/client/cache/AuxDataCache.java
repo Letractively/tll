@@ -16,7 +16,7 @@ import com.tll.client.data.AuxDataRequest;
 import com.tll.client.data.AuxDataRequest.AuxDataType;
 import com.tll.client.model.Model;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * AuxDataCache - Caches Aux data on the client.
@@ -42,6 +42,9 @@ public final class AuxDataCache {
 
 	/**
 	 * Map of app ref data name/value pairs keyed by the app ref data type.<br>
+	 * Each ref data map ascribes to the format where the map keys are the
+	 * datastore bound values and the map values are the presentation worthy
+	 * tokens.
 	 */
 	private Map<RefDataType, Map<String, String>> refDataMaps;
 

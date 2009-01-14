@@ -1,4 +1,4 @@
-package com.tll.service.app;
+package com.tll.refdata;
 
 import com.tll.IMarshalable;
 

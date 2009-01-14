@@ -1,4 +1,4 @@
-package com.tll.service.app;
+package com.tll.refdata;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -18,10 +18,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class for loading and handing off application "reference data" usu. for drop
- * downs in the view layer. <br>
- * IMPT: files are loaded from the classpath root.<br>
- * <br>
+ * AppRefData - Loads ref data from files on disk and monitors these files for
+ * change whereby loaded ref data is refreshed.
+ * <p>
+ * <b>IMPT: files are loaded from the classpath root.</b> <br>
  * App Ref Data File FORMAT:<br>
  * -------------------------<br>
  * {key}{TAB}{value}{NEWLINE}<br>
@@ -34,7 +34,7 @@ public final class AppRefData {
 
 	public static final String APPREFDATA_FILEPREFIX = "refdata-";
 
-	private final HashMap<String, Map<String, String>> resourceData = new HashMap<String, Map<String, String>>();
+	private final Map<RefDataType, Map<String, String>> resourceData = new HashMap<RefDataType, Map<String, String>>();
 
 	private final Map<String, Long> lastModifiedTimes = new HashMap<String, Long>();
 
@@ -51,36 +51,41 @@ public final class AppRefData {
 	 * Provides a map of maps keyed by refdata name of all found ref data.
 	 * @return map of ref data maps
 	 */
-	public Map<String, Map<String, String>> getAllRefData() {
+	public Map<RefDataType, Map<String, String>> getAllRefData() {
 		loadOrRefresh();
-		Map<String, Map<String, String>> singleMap = new HashMap<String, Map<String, String>>();
+		Map<RefDataType, Map<String, String>> singleMap = new HashMap<RefDataType, Map<String, String>>();
 		singleMap.putAll(resourceData);
 		return singleMap;
 	}
 
 	/**
-	 * Provides a map of maps keyed by refdata name of all found ref data. Returns
-	 * <code>null</code> if not found.
-	 * @param type
-	 * @return ref data map
+	 * Provides the refdata for the given type returning <code>null</code> if no
+	 * data exists for that type.
+	 * @param type the ref data type
+	 * @return ref data map whose keys are
 	 */
 	public Map<String, String> getRefData(RefDataType type) {
 		loadOrRefresh();
-		if(!resourceData.containsKey(type.getName())) {
+		if(!resourceData.containsKey(type)) {
 			return null;
 		}
 		Map<String, String> map = new HashMap<String, String>();
-		map.putAll(resourceData.get(type.getName()));
+		map.putAll(resourceData.get(type));
 		return map;
 	}
 
-	private String terseName(String resourceName) {
+	private RefDataType refDataTypeFromFilename(String resourceName) {
 		String terse = resourceName;
 		int i = terse.indexOf(APPREFDATA_FILEPREFIX);
 		if(i >= 0) terse = terse.substring(i + APPREFDATA_FILEPREFIX.length());
 		i = terse.indexOf(".");
 		if(i >= 0) terse = terse.substring(0, i);
-		return terse;
+		for(RefDataType rdt : RefDataType.values()) {
+			if(rdt.getName().equals(terse)) {
+				return rdt;
+			}
+		}
+		return null;
 	}
 
 	private void loadOrRefresh() {
@@ -113,7 +118,7 @@ public final class AppRefData {
 						Map<String, String> rmap = load(resource);
 						if(rmap == null) continue;
 						log.info("re-loading stale app ref data from file: " + resourceName);
-						resourceData.put(terseName(resourceName), rmap);
+						resourceData.put(refDataTypeFromFilename(resourceName), rmap);
 						lastModifiedTimes.put(resourceName, new Long(resource.lastModified()));
 					}
 				}
@@ -128,30 +133,39 @@ public final class AppRefData {
 		for(Object element : toRmv) {
 			String resourceName = (String) element;
 			log.info("removing app ref data '" + resourceName + "' (resource no longer exists)...");
-			resourceData.remove(terseName(resourceName));
+			resourceData.remove(refDataTypeFromFilename(resourceName));
 			lastModifiedTimes.remove(resourceName);
 		}
 
 		// check for new resources
 		File[] rFiles = getAppRefDataFiles();
 		for(File resource : rFiles) {
-			String terseName = terseName(resource.getName());
-			if(resourceData.containsKey(terseName)) continue;
-			try {
-				Map<String, String> rmap = load(resource);
-				if(rmap == null) continue;
-				log.info("adding newly found app ref data from file: " + resource.getName());
-				resourceData.put(terseName, rmap);
-				lastModifiedTimes.put(resource.getAbsolutePath(), new Long(resource.lastModified()));
-			}
-			catch(Exception e) {
-				log.warn("Unable to add new app ref data from file: " + e.getMessage(), e);
+			RefDataType rdt = refDataTypeFromFilename(resource.getName());
+			if(!resourceData.containsKey(rdt)) {
+				try {
+					Map<String, String> rmap = load(resource);
+					if(rmap == null) continue;
+					log.info("adding newly found app ref data from file: " + resource.getName());
+					resourceData.put(rdt, rmap);
+					lastModifiedTimes.put(resource.getAbsolutePath(), new Long(resource.lastModified()));
+				}
+				catch(Exception e) {
+					log.warn("Unable to add new app ref data from file: " + e.getMessage(), e);
+				}
 			}
 		}
 
 		this.resourcesLoaded = true;
 	}
 
+	/**
+	 * Loads ref data from a file returning a map of of this ref data where the
+	 * map keys are the first column in the ref data file and the values are the
+	 * second column.
+	 * @param resource the ref data file resource
+	 * @return map of the loaded ref data
+	 * @throws IOException
+	 */
 	private Map<String, String> load(File resource) throws IOException {
 		log.info("loading app ref data resource '" + resource.getName() + "'...");
 
@@ -182,7 +196,7 @@ public final class AppRefData {
 					continue;
 				}
 			}
-			rezMap.put(cols[1], cols[0]);
+			rezMap.put(cols[0], cols[1]);
 			num++;
 		}
 
@@ -226,7 +240,7 @@ public final class AppRefData {
 				log.error("Unable to load app ref data from file '" + element.getName() + "': " + e.getMessage());
 				continue;
 			}
-			resourceData.put(terseName(element.getName()), rmap);
+			resourceData.put(refDataTypeFromFilename(element.getName()), rmap);
 
 			lastModifiedTimes.put(element.getAbsolutePath(), new Long(element.lastModified()));
 		}

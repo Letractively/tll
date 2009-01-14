@@ -88,14 +88,15 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 
 	@Override
 	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value).booleanValue());
+		setNativeValue(getConverter().convert(value));
 	}
 
 	@Override
 	public void onClick(Widget sender) {
 		assert sender == cb;
 		super.onClick(sender);
-		Boolean old = isChecked() ? Boolean.FALSE : Boolean.TRUE;
+		// i.e. not is checked since this event fires before the click value sticks!
+		Boolean old = !(isChecked() ? Boolean.FALSE : Boolean.TRUE);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		fireChangeListeners();
 	}

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
+import com.tll.client.util.ObjectUtil;
 
 /**
  * SelectField - Single select list box.
@@ -55,7 +56,6 @@ public final class SelectField<I> extends AbstractField<I, I> {
 		setComparator(comparator);
 		this.itemConverter = itemConverter;
 		lb = new ListBox();
-		lb.addClickListener(this);
 		lb.addChangeListener(this);
 		setOptions(options);
 	}
@@ -165,8 +165,10 @@ public final class SelectField<I> extends AbstractField<I, I> {
 			}
 		}
 
-		firePropertyChange(selected, old);
-		fireChangeListeners();
+		if(!ObjectUtil.equals(old, selected)) {
+			firePropertyChange(selected, old);
+			fireChangeListeners();
+		}
 	}
 
 	@Override
@@ -194,22 +196,18 @@ public final class SelectField<I> extends AbstractField<I, I> {
 			}
 		}
 
-		I old = this.selected;
-		this.selected = selected;
+		if(this.selected != selected) {
+			I old = this.selected;
+			this.selected = selected;
 
-		firePropertyChange(selected, old);
-		fireChangeListeners();
+			firePropertyChange(selected, old);
+			fireChangeListeners();
+		}
 	}
 
 	@Override
 	public void onChange(Widget sender) {
+		update();
 		super.onChange(this);
-		update();
-	}
-
-	@Override
-	public void onClick(Widget sender) {
-		super.onClick(sender);
-		update();
 	}
 }

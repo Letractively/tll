@@ -20,9 +20,9 @@ import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.refdata.RefDataType;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.service.app.RefDataType;
 import com.tll.service.entity.IEntityService;
 
 /**

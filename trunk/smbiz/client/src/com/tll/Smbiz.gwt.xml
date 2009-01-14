@@ -32,7 +32,7 @@
     <include name="criteria/SelectNamedQuery.java" />
     <include name="criteria/IQueryParam.java" />
     <include name="listhandler/ListHandlerType.java" />
-    <include name="service/app/RefDataType.java" />
+    <include name="refdata/RefDataType.java" />
   </source>
 
   <!-- client package sources -->

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.tll.IMarshalable;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.

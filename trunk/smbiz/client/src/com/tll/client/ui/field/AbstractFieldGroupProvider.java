@@ -23,7 +23,8 @@ import com.tll.client.util.GlobalFormat;
 import com.tll.client.util.SimpleComparator;
 import com.tll.client.validate.CreditCardValidator;
 import com.tll.client.validate.EmailAddressValidator;
-import com.tll.service.app.RefDataType;
+import com.tll.client.validate.IValidator;
+import com.tll.refdata.RefDataType;
 
 /**
  * AbstractFieldGroupProvider - Common base class for all
@@ -182,8 +183,26 @@ public abstract class AbstractFieldGroupProvider implements IFieldGroupProvider 
 	 */
 	protected static final SuggestField<String> frefdata(String name, String propName, String labelText, String helpText,
 			RefDataType refDataType) {
-		Map<String, String> cm = AuxDataCache.instance().getRefDataMap(refDataType);
-		return FieldFactory.fsuggest(name, propName, labelText, helpText, cm.keySet(), new RefDataMapConverter(cm));
+		final Map<String, String> cm = AuxDataCache.instance().getRefDataMap(refDataType);
+		SuggestField<String> sf =
+				FieldFactory.fsuggest(name, propName, labelText, helpText, cm.keySet(), new RefDataMapConverter(cm));
+		sf.addValidator(new IValidator() {
+
+			public Object validate(Object value) {
+				if(value != null) {
+					// need to un-convert as the field's held value is the ref data map
+					// value and not the key which is what is needed
+					for(String val : cm.values()) {
+						if(value.equals(val)) {
+							value = val;
+							break;
+						}
+					}
+				}
+				return value;
+			}
+		});
+		return sf;
 	}
 
 	/**

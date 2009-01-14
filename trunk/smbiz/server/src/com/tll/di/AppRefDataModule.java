@@ -5,7 +5,7 @@
  */
 package com.tll.di;
 
-import com.tll.service.app.AppRefData;
+import com.tll.refdata.AppRefData;
 
 /**
  * AppRefDataModule

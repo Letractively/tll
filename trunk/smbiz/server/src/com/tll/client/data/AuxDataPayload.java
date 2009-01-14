@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.tll.client.model.Model;
 import com.tll.model.EntityType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * AuxDataPayload - Construct to hold aux (enum maps, ref data maps and related

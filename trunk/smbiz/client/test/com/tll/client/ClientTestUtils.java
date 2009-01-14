@@ -42,7 +42,7 @@ import com.tll.model.impl.AddressType;
 import com.tll.model.impl.CreditCardType;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * ClientTestUtils

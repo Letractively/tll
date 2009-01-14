@@ -11,7 +11,7 @@ import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.util.GlobalFormat;
 import com.tll.model.impl.CreditCardType;
-import com.tll.service.app.RefDataType;
+import com.tll.refdata.RefDataType;
 
 /**
  * CreditCardFieldsProvider

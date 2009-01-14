@@ -593,16 +593,6 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 		// dirty check
 		markDirty();
-
-		// valid check
-		try {
-			validate();
-			markInvalid(false, null);
-		}
-		catch(ValidationException e) {
-			// mark invalid
-			markInvalid(true, e.getErrors());
-		}
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {

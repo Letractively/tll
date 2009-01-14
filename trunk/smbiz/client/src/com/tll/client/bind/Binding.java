@@ -108,11 +108,10 @@ public final class Binding {
 						}
 						instance.feedback.handleException(propertyChangeEvent.getSource(), ve);
 						lastException = ve;
+						return;
 					}
-					else {
-						lastException = ve;
-						throw new RuntimeException(ve);
-					}
+					lastException = ve;
+					throw new RuntimeException(ve);
 				}
 			}
 

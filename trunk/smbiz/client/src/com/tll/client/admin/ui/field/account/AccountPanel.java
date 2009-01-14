@@ -157,7 +157,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 					cmpsr.setCanvas(panel);
 
 					// account address name row
-					cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();

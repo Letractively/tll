@@ -25,7 +25,7 @@ public class RefDataMapConverter implements IConverter<String, String> {
 	private final Map<String, String> refDataMap;
 
 	public String convert(String in) throws IllegalArgumentException {
-		return refDataMap.get(ToStringConverter.INSTANCE.convert(in));
+		return refDataMap.get(in);
 	}
 
 }
