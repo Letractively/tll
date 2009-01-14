@@ -21,7 +21,7 @@ import com.tll.model.schema.PropertyType;
 public final class IndexedProperty extends ModelRefProperty {
 
 	/**
-	 * The underlying list containing the indexed property.
+	 * The underlying related many collection property.
 	 */
 	private transient final List<Model> list;
 
@@ -35,12 +35,13 @@ public final class IndexedProperty extends ModelRefProperty {
 	 * @param indexedType
 	 * @param propName
 	 * @param reference
-	 * @param list The model list this property references and points to the
-	 *        element at the given index.
+	 * @param list The underlying related many list holding the model element
+	 *        targeted by the given index
 	 * @param index The index
 	 */
 	IndexedProperty(EntityType indexedType, String propName, boolean reference, List<Model> list, int index) {
 		super(indexedType, PropertyPath.index(propName, index), reference);
+		assert list != null;
 		this.list = list;
 		this.index = index;
 	}
@@ -63,8 +64,6 @@ public final class IndexedProperty extends ModelRefProperty {
 
 	@Override
 	protected void doSetModel(Model oldModel, Model newModel) {
-		list.set(index, newModel);
-		if(changeSupport != null)
-			changeSupport.fireIndexedPropertyChange(PropertyPath.deIndex(propertyName), index, oldModel, newModel);
+		throw new UnsupportedOperationException();
 	}
 }

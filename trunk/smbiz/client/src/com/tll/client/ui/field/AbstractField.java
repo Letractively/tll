@@ -341,7 +341,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
-		Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
+		// Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
 		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata == null) {
 			Log.warn("No property metadata found for field: " + toString());
@@ -441,6 +441,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		}
 		else {
 			removeStyleName(STYLE_INVALID);
+			clearMsgs();
 		}
 	}
 
@@ -646,7 +647,11 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	protected abstract void setNativeValue(V nativeValue);
 
 	public final void reset() {
-		if(initialValueSet) setNativeValue(initialValue);
+		if(initialValueSet) {
+			setNativeValue(initialValue);
+			markInvalid(false, null);
+			removeStyleName(STYLE_DIRTY);
+		}
 	}
 
 	@Override

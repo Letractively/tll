@@ -168,7 +168,6 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 			case LOADED:
 				model = event.getModel();
-				model.setAsRoot();
 				// NOTE we fall through
 			case AUXDATA_READY:
 				doRefresh();

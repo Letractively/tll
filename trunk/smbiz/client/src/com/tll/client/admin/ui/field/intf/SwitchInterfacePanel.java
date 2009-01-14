@@ -27,9 +27,9 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("name"));
-			cmpsr.addField(fg.getFieldByName("code"));
-			cmpsr.addField(fg.getFieldByName("description"));
+			cmpsr.addField(fg.getFieldByName("intfName"));
+			cmpsr.addField(fg.getFieldByName("intfCode"));
+			cmpsr.addField(fg.getFieldByName("intfDescription"));
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));

@@ -241,6 +241,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * Removes all view artifacts from the DOM and clears the cache.
 	 */
 	public void clear() {
+		Log.debug("Clearing view cache..");
 		if(cache.cacheSize() == 0) {
 			return;
 		}
@@ -250,6 +251,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 			vc.onDestroy();
 		}
 		cache.emptyCache();
+		Log.debug("View cache cleared");
 	}
 
 	/**

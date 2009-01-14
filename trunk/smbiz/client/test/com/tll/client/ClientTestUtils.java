@@ -325,8 +325,6 @@ public final class ClientTestUtils {
 		addresses.add(aa2);
 		account.set(new RelatedManyProperty(EntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
-		account.setAsRoot();
-
 		return account;
 	}
 

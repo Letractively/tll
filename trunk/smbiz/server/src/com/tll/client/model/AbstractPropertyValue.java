@@ -49,7 +49,7 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		final Object oldValue = getValue();
 		if(oldValue != null) {
 			doSetValue(null);
-			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+			getChangeSupport().firePropertyChange(propertyName, oldValue, getValue());
 		}
 	}
 
@@ -64,7 +64,7 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 		final Object oldValue = getValue();
 		if(!ObjectUtil.equals(oldValue, value)) {
 			doSetValue(value);
-			if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldValue, getValue());
+			getChangeSupport().firePropertyChange(propertyName, oldValue, getValue());
 		}
 	}
 

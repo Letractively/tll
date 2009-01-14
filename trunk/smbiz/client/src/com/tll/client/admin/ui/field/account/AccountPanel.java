@@ -76,11 +76,11 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 			// first row
 			cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldByName("status"));
-			cmpsr.addField(fg.getFieldByName("dateCancelled"));
-			cmpsr.addField(fg.getFieldByName("currencyId"));
+			cmpsr.addField(fg.getFieldByName("acntStatus"));
+			cmpsr.addField(fg.getFieldByName("acntDateCancelled"));
+			cmpsr.addField(fg.getFieldByName("acntCurrencyId"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			cmpsr.addField(fg.getFieldByName("parentName"));
+			cmpsr.addField(fg.getFieldByName("acntParentName"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
@@ -88,10 +88,10 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 			// second row (billing)
 			cmpsr.newRow();
-			cmpsr.addField(fg.getFieldByName("billingModel"));
-			cmpsr.addField(fg.getFieldByName("billingCycle"));
-			cmpsr.addField(fg.getFieldByName("dateLastCharged"));
-			cmpsr.addField(fg.getFieldByName("nextChargeDate"));
+			cmpsr.addField(fg.getFieldByName("acntBillingModel"));
+			cmpsr.addField(fg.getFieldByName("acntBillingCycle"));
+			cmpsr.addField(fg.getFieldByName("acntDateLastCharged"));
+			cmpsr.addField(fg.getFieldByName("acntNextChargeDate"));
 
 			// third row
 			cmpsr.newRow();
@@ -101,7 +101,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 			// payment info block
 			FlowPanel fp = new FlowPanel();
-			fp.add((Widget) fg.getFieldByName("persistPymntInfo"));
+			fp.add((Widget) fg.getFieldByName("acntPersistPymntInfo"));
 			fp.add(paymentInfoPanel);
 			dpPaymentInfo.add(fp);
 			cmpsr.addWidget(dpPaymentInfo);

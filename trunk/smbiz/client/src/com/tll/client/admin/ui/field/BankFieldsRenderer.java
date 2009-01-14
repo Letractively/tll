@@ -20,9 +20,9 @@ public class BankFieldsRenderer implements IFieldRenderer<FlowPanel> {
 		final GridFieldComposer cmpsr = new GridFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getFieldByName("name"));
-		cmpsr.addField(fg.getFieldByName("accountNo"));
-		cmpsr.addField(fg.getFieldByName("routingNo"));
+		cmpsr.addField(fg.getFieldByName("bankName"));
+		cmpsr.addField(fg.getFieldByName("bankAccountNo"));
+		cmpsr.addField(fg.getFieldByName("bankRoutingNo"));
 	}
 
 }

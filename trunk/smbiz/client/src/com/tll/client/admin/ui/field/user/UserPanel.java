@@ -29,13 +29,13 @@ public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("name"));
-			cmpsr.addField(fg.getFieldByName("emailAddress"));
-			cmpsr.addField(fg.getFieldByName("locked"));
+			cmpsr.addField(fg.getFieldByName("userName"));
+			cmpsr.addField(fg.getFieldByName("userEmailAddress"));
+			cmpsr.addField(fg.getFieldByName("userLocked"));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName("enabled"));
+			cmpsr.addField(fg.getFieldByName("userEnabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getFieldByName("expires"));
+			cmpsr.addField(fg.getFieldByName("userExpires"));
 
 			// parent account ref link
 			lnkAccount = new ViewRequestLink();

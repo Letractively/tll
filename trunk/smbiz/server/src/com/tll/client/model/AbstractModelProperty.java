@@ -24,7 +24,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
 	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
 	 */
-	protected transient PropertyChangeSupport changeSupport;
+	private transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -67,32 +67,31 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		}
 	}
 
-	public final void setPropertyChangeSupport(PropertyChangeSupport changeSupport) {
-		if(this.changeSupport != null && changeSupport != null && this.changeSupport != changeSupport) {
-			throw new IllegalStateException("Model property '" + propertyName
-					+ "' is already bound to a different property change support reference!");
+	protected PropertyChangeSupport getChangeSupport() {
+		if(changeSupport == null) {
+			changeSupport = new PropertyChangeSupport(this);
 		}
-		this.changeSupport = changeSupport;
+		return changeSupport;
 	}
 
 	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(listener);
+		getChangeSupport().addPropertyChangeListener(listener);
 	}
 
 	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(propertyName, listener);
+		getChangeSupport().addPropertyChangeListener(propertyName, listener);
 	}
 
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
-		return changeSupport.getPropertyChangeListeners();
+		return getChangeSupport().getPropertyChangeListeners();
 	}
 
 	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(listener);
+		getChangeSupport().removePropertyChangeListener(listener);
 	}
 
 	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(propertyName, listener);
+		getChangeSupport().removePropertyChangeListener(propertyName, listener);
 	}
 
 	@Override

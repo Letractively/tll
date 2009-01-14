@@ -167,7 +167,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 	 * @param field
 	 */
 	private void addFieldBinding(M model, String modelProperty, IField<?, ?> field) {
-		Log.debug("AbstractModelEditAction.addFieldBinding() - Binding field: " + field + "..");
+		Log.debug("Binding field: " + field + " to model [" + model + "]." + modelProperty);
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {
 			field.applyPropertyMetadata((IPropertyMetadataProvider) model);

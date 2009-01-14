@@ -109,7 +109,12 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	@Override
 	protected void setNativeValue(Date nativeValue) {
 		// NOTE: this fires the onChange event
-		db.getDatePicker().setSelectedDate(nativeValue);
+		if(nativeValue == null) {
+			db.clear();
+		}
+		else {
+			db.getDatePicker().setSelectedDate(nativeValue);
+		}
 	}
 
 	@Override

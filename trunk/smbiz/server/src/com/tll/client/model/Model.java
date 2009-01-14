@@ -14,8 +14,6 @@ import java.util.Set;
 import com.tll.IMarshalable;
 import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IPropertyChangeListener;
-import com.tll.client.bind.ISourcesPropertyChangeEvents;
-import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.client.util.StringUtil;
 import com.tll.model.EntityType;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -79,12 +77,6 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * to be able to pass a {@link Model} ref as an {@link IModelProperty}.
 	 */
 	private RelatedOneProperty selfRef;
-
-	/**
-	 * Needed for {@link ISourcesPropertyChangeEvents} implementation. <br>
-	 * <b>NOTE: </b>This member is <em>not</em> intended for RPC marshaling.
-	 */
-	private transient PropertyChangeSupport changeSupport;
 
 	/**
 	 * Constructor
@@ -250,7 +242,14 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	}
 
 	public void setProperty(String propPath, Object value) throws Exception, PropertyPathException {
-		getModelProperty(propPath).setProperty(propPath, value);
+		if(PropertyPath.isIndexed(propPath)) {
+			// divert to the "physical" related many property as indexed properties
+			// are "virtual"
+			relatedMany(PropertyPath.deIndex(propPath)).setProperty(propPath, value);
+		}
+		else {
+			getModelProperty(propPath).setProperty(propPath, value);
+		}
 	}
 
 	/**
@@ -466,15 +465,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 				}
 				else if(indexed) {
 					// get the nested group prop val list...
-					List<Model> nset = rmp.getList();
 					if(atEnd) {
-						if(index >= nset.size()) {
+						if(index >= rmp.size()) {
 							throw new IndexOutOfRangeInPropPathException(pp.toString(), pname, index);
 						}
-						final IndexedProperty ip =
-								new IndexedProperty(rmp.getRelatedType(), pp.nameAt(pp.depth() - 1), rmp.isReference(), nset, index);
-						ip.changeSupport = changeSupport;
-						return ip;
+						return rmp.getIndexedProperty(index);
 					}
 					// reset for next path
 					model = rmp.getIndexedProperty(index).getModel();
@@ -706,104 +701,34 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		this.markedDeleted = markedDeleted;
 	}
 
-	/**
-	 * Sets or clears the {@link PropertyChangeSupport} instance for all child
-	 * {@link IModelProperty}s in the given model reference.
-	 * @param model The subject model
-	 * @param changeSupport The {@link PropertyChangeSupport} to apply which may
-	 *        be <code>null</code> in which the references are cleared
-	 * @param visited
-	 */
-	private static void setPropertyChangeSupport(Model model, final PropertyChangeSupport changeSupport,
-			final BindingStack<PropBinding> visited) {
-
-		assert model != null;
-
-		// check visited
-		PropBinding binding = visited.find(model);
-		if(binding != null) return;
-
-		model.changeSupport = changeSupport;
-
-		visited.add(new PropBinding(model));
-
-		PropertyType ptype;
-
-		for(IModelProperty prop : model.props) {
-			assert prop != null;
-
-			ptype = prop.getType();
-
-			prop.setPropertyChangeSupport(changeSupport);
-
-			// model ref (indexed or related one)...
-			if(ptype.isModelRef()) {
-				IModelRefProperty gpv = (IModelRefProperty) prop;
-				if(gpv.getModel() != null) {
-					setPropertyChangeSupport(gpv.getModel(), changeSupport, visited);
-				}
-			}
-
-			// related many...
-			else if(prop.getType() == PropertyType.RELATED_MANY) {
-				RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				List<Model> list = rmp.getList();
-				if(list != null) {
-					for(Model m : list) {
-						if(m != null) {
-							setPropertyChangeSupport(m, changeSupport, visited);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Propagates <em>this</em> model's {@link PropertyChangeSupport} reference to
-	 * all child model properies which is requird for <em>proper</em> handling of
-	 * property change events!
-	 * <p>
-	 * Used client-side only.
-	 */
-	public void setAsRoot() {
-		if(changeSupport == null) {
-			changeSupport = new PropertyChangeSupport(this);
-		}
-		else if(changeSupport.hasAnyListeners()) {
-			throw new IllegalStateException("Ineligable model for root");
-		}
-		setPropertyChangeSupport(this, changeSupport, new BindingStack<PropBinding>());
-	}
-
-	private void ensureChangeSupportAggregated() throws IllegalStateException {
-		if(changeSupport == null) {
-			throw new IllegalStateException("A root model must first be declared");
-		}
-	}
-
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.addPropertyChangeListener(listener);
+		throw new UnsupportedOperationException();
 	}
 
 	public void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.addPropertyChangeListener(propertyName, listener);
+		try {
+			resolvePropertyPath(propertyName).addPropertyChangeListener(listener);
+		}
+		catch(PropertyPathException e) {
+			throw new IllegalArgumentException("Unable to add property change listener", e);
+		}
 	}
 
 	public IPropertyChangeListener[] getPropertyChangeListeners() {
-		ensureChangeSupportAggregated();
-		return changeSupport.getPropertyChangeListeners();
+		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		ensureChangeSupportAggregated();
-		changeSupport.removePropertyChangeListener(listener);
+		throw new UnsupportedOperationException();
 	}
 
 	public void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(propertyName, listener);
+		try {
+			resolvePropertyPath(propertyName).removePropertyChangeListener(listener);
+		}
+		catch(PropertyPathException e) {
+			throw new IllegalArgumentException("Unable to remove property change listener", e);
+		}
 	}
 
 	@Override

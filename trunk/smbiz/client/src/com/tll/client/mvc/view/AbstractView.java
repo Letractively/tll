@@ -114,6 +114,7 @@ public abstract class AbstractView extends Composite implements IView {
 	 * an RPC cache clean up type command.
 	 */
 	public final void onDestroy() {
+		Log.debug("Destroying view " + toString());
 		doDestroy();
 	}
 

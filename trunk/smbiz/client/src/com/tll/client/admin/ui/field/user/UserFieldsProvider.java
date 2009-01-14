@@ -27,10 +27,10 @@ public class UserFieldsProvider extends AbstractFieldGroupProvider {
 		TextField<String> email = femail("userEmailAddress", "emailAddress", "Email Address", "Email Address", 30);
 		email.setReadOnly(true);
 		fg.addField(email);
-		fg.getField("emailAddress").setReadOnly(true);
-		fg.addField(fbool("locked", "locked", "Locked", "Locked"));
-		fg.addField(fbool("enabled", "enabled", "Enabled", "Enabled"));
-		fg.addField(fddate("expires", "expires", "Expires", "Expires"));
+		fg.getField("userEmailAddress").setReadOnly(true);
+		fg.addField(fbool("userLocked", "locked", "Locked", "Locked"));
+		fg.addField(fbool("userEnabled", "enabled", "Enabled", "Enabled"));
+		fg.addField(fddate("userExpires", "expires", "Expires", "Expires"));
 		fg.addField("address", (new AddressFieldsProvider()).getFieldGroup());
 	}
 

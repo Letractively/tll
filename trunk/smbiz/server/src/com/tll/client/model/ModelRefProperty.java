@@ -41,14 +41,18 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 		setModel((Model) value);
 	}
 
+	/**
+	 * @return The model.
+	 */
 	public abstract Model getModel();
 
 	/**
 	 * Responsible for setting the model and firing a property change events if
 	 * necessary.
 	 * @param model The model to set
+	 * @throws IllegalArgumentException
 	 */
-	protected final void setModel(Model model) {
+	protected final void setModel(Model model) throws IllegalArgumentException {
 		final Model oldModel = getModel();
 		if(oldModel != model) {
 			// NOTE: we don't *require* the relatedType to be set but if it is, we
@@ -66,8 +70,9 @@ public abstract class ModelRefProperty extends AbstractRelationalProperty implem
 	 * to the given new model and firing an appropriate property change event.
 	 * @param oldModel
 	 * @param newModel
+	 * @throws IllegalArgumentException
 	 */
-	protected abstract void doSetModel(Model oldModel, Model newModel);
+	protected abstract void doSetModel(Model oldModel, Model newModel) throws IllegalArgumentException;
 
 	@Override
 	public String toString() {

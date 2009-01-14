@@ -75,7 +75,7 @@ public final class Binding {
 	/**
 	 * DefaultPropertyChangeListener - Listens for property changes for a property
 	 * in a given <em>instance</em> and propagates changes to this property to a
-	 * given <em>target<em> property.
+	 * given <em>target<em> object.
 	 * @author jpk
 	 */
 	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
@@ -420,6 +420,7 @@ public final class Binding {
 	public void bind() {
 		Log.debug("Binding.binding..");
 		if((left != null) && (right != null)) {
+
 			left.object.addPropertyChangeListener(left.property, left.listener);
 
 			if(left.nestedListener != null) {
@@ -551,7 +552,6 @@ public final class Binding {
 		}
 		catch(ValidationException ve) {
 			Log.warn("Binding validation info", ve);
-
 			return false;
 		}
 		catch(Exception e) {

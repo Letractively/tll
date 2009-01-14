@@ -48,16 +48,6 @@ public class ModelBindingTest extends GWTTestCase {
 		children.add(new Binding(left, right, "parent.name"));
 		children.add(new Binding(left, right, "addresses[0].address.firstName"));
 
-		Object[] pcls;
-
-		binding.bind();
-		pcls = left.getPropertyChangeListeners();
-		assert pcls != null && pcls.length > 0;
-
-		binding.unbind();
-		pcls = left.getPropertyChangeListeners();
-		assert pcls == null || pcls.length == 0;
-
 		binding.unbind();
 	}
 
@@ -134,14 +124,10 @@ public class ModelBindingTest extends GWTTestCase {
 			// expected
 		}
 		val = left.getProperty("addresses");
-		// NOTE: we are just setting the list element to null and not
-		// adding/removing elements!
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 2);
+		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
 
 		val = right.getProperty("addresses");
-		// NOTE: we are just setting the list element to null and not
-		// adding/removing elements!
-		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 2);
+		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
 
 		// add an indexed property on the right
 		Model aa = ClientTestUtils.stubAccountAddress(right, ClientTestUtils.stubAddress(2), 2);
@@ -178,7 +164,7 @@ public class ModelBindingTest extends GWTTestCase {
 	protected Model[] stubLeftAndRight() throws Exception {
 		Model left = ClientTestUtils.getTestRootModel();
 		Model right = left.copy(true);
-		right.setAsRoot();
+		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
 		ClientTestUtils.validateCopy(left, right, true);

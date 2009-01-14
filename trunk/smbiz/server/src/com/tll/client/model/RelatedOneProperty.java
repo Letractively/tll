@@ -51,6 +51,6 @@ public final class RelatedOneProperty extends ModelRefProperty {
 	@Override
 	protected void doSetModel(Model oldModel, Model newModel) {
 		model = newModel;
-		if(changeSupport != null) changeSupport.firePropertyChange(propertyName, oldModel, newModel);
+		getChangeSupport().firePropertyChange(propertyName, oldModel, newModel);
 	}
 }

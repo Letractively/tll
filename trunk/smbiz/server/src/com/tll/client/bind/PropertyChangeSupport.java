@@ -33,6 +33,17 @@ public class PropertyChangeSupport {
 		this.sourceBean = sourceBean;
 	}
 
+	public void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue) {
+		final PropertyChangeEvent event = createPropertyChangeEvent(propertyName, oldValue, newValue);
+		doFirePropertyChange(event);
+	}
+
+	public void fireIndexedPropertyChange(String propertyName, int index, Object oldValue, Object newValue) {
+
+		// nulls and equals check done in doFire...
+		doFirePropertyChange(new IndexedPropertyChangeEvent(sourceBean, propertyName, oldValue, newValue, index));
+	}
+
 	public synchronized void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		if((propertyName != null) && (listener != null)) {
 			List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
@@ -89,6 +100,7 @@ public class PropertyChangeSupport {
 	}
 
 	public void fireIndexedPropertyChange(String propertyName, int index, boolean oldValue, boolean newValue) {
+
 		if(oldValue != newValue) {
 			fireIndexedPropertyChange(propertyName, index, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
 		}
@@ -104,23 +116,6 @@ public class PropertyChangeSupport {
 		if(oldValue != newValue) {
 			fireIndexedPropertyChange(propertyName, index, new Integer(oldValue), new Integer(newValue));
 		}
-	}
-
-	public void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue) {
-		final PropertyChangeEvent event = createPropertyChangeEvent(propertyName, oldValue, newValue);
-		doFirePropertyChange(event);
-	}
-
-	public void fireIndexedPropertyChange(String propertyName, int index, Object oldValue, Object newValue) {
-		// nulls and equals check done in doFire...
-		doFirePropertyChange(new IndexedPropertyChangeEvent(sourceBean, propertyName, oldValue, newValue, index));
-	}
-
-	/**
-	 * @return <code>true</code> if there is at least one bound listener.
-	 */
-	public synchronized boolean hasAnyListeners() {
-		return (allPropertiesChangeListeners.size() > 0 || selectedPropertiesChangeListeners.size() > 0);
 	}
 
 	public synchronized boolean hasListeners(String propertyName) {

@@ -89,27 +89,24 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	public void setValue(Object value) throws IllegalArgumentException {
 		if(this.list == value) return;
 
-		if(value != null && !(value instanceof Collection)) {
+		if(value == null) {
+			if(list != null) {
+				final Object old = list;
+				list = null;
+				getChangeSupport().firePropertyChange(propertyName, old, list);
+			}
+		}
+		else if(value instanceof Collection) {
+			final Collection<Model> clc = (Collection) value;
+			final Object old = list;
+			list = new ArrayList<Model>(clc.size());
+			list.addAll(clc);
+			getChangeSupport().firePropertyChange(propertyName, old, list);
+		}
+		else {
 			throw new IllegalArgumentException("The value must be a collection of Model instances");
 		}
 
-		Collection<?> set = (Collection<?>) value;
-		for(Object o : set) {
-			if(o.getClass() != Model.class) {
-				throw new IllegalArgumentException("Element in list is not a Model instance.");
-			}
-		}
-
-		final Object old = this.list;
-
-		if(value instanceof List) {
-			this.list = (List) value;
-		}
-		else {
-			getList().addAll((Collection) value);
-		}
-
-		if(changeSupport != null) changeSupport.firePropertyChange(propertyName, old, value);
 	}
 
 	/**
@@ -131,13 +128,53 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	 * @return The {@link IndexedProperty} at the given index.
 	 */
 	protected IndexedProperty getIndexedProperty(int index) {
-		IndexedProperty ip = new IndexedProperty(relatedType, propertyName, isReference(), list, index);
-		ip.changeSupport = changeSupport;
-		return ip;
+		return new IndexedProperty(relatedType, propertyName, isReference(), list, index);
 	}
 
 	public Iterator<IndexedProperty> iterator() {
 		return new IndexedIterator();
+	}
+
+	@Override
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		PropertyPath pp = new PropertyPath(propPath);
+		if(pp.isIndexed()) {
+			if(value != null && value instanceof Model == false) {
+				throw new Exception("The value must be a Model instance");
+			}
+
+			final Model m = (Model) value;
+			Model old = null;
+
+			final int index = pp.index();
+			final int size = size();
+
+			if(index == size) {
+				if(m != null) {
+					// add
+					list.add(m);
+				}
+			}
+			else if(index < size) {
+				if(m != null) {
+					// replace
+					old = list.set(index, m);
+				}
+				else {
+					// remove
+					old = list.remove(index);
+				}
+			}
+			else {
+				throw new IndexOutOfRangeInPropPathException(propPath, pp.last(), pp.index());
+			}
+			if(old != value) {
+				getChangeSupport().fireIndexedPropertyChange(propertyName, index, old, value);
+			}
+		}
+		else {
+			setValue(value);
+		}
 	}
 
 	/**

@@ -20,29 +20,29 @@ public class CreditCardFieldsRenderer implements IFieldRenderer<FlowPanel> {
 		final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getFieldByName("type"));
+		cmpsr.addField(fg.getFieldByName("ccType"));
 
-		cmpsr.addField(fg.getFieldByName("num"));
-		cmpsr.addField(fg.getFieldByName("cvv2"));
-		cmpsr.addField(fg.getFieldByName("expMonth"));
-		cmpsr.addField(fg.getFieldByName("expYear"));
-
-		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("name"));
+		cmpsr.addField(fg.getFieldByName("ccNum"));
+		cmpsr.addField(fg.getFieldByName("ccCvv2"));
+		cmpsr.addField(fg.getFieldByName("ccExpMonth"));
+		cmpsr.addField(fg.getFieldByName("ccExpYear"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("address1"));
+		cmpsr.addField(fg.getFieldByName("ccName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("address2"));
+		cmpsr.addField(fg.getFieldByName("ccAddress1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("city"));
-		cmpsr.addField(fg.getFieldByName("state"));
+		cmpsr.addField(fg.getFieldByName("ccAddress2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("zip"));
-		cmpsr.addField(fg.getFieldByName("country"));
+		cmpsr.addField(fg.getFieldByName("ccCity"));
+		cmpsr.addField(fg.getFieldByName("ccState"));
+
+		cmpsr.newRow();
+		cmpsr.addField(fg.getFieldByName("ccZip"));
+		cmpsr.addField(fg.getFieldByName("ccCountry"));
 	}
 
 }

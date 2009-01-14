@@ -7,7 +7,6 @@ package com.tll.client.model;
 
 import com.tll.IMarshalable;
 import com.tll.client.bind.IBindable;
-import com.tll.client.bind.PropertyChangeSupport;
 import com.tll.model.schema.PropertyType;
 
 /**
@@ -34,11 +33,4 @@ public interface IModelProperty extends IPropertyNameProvider, IBindable, IMarsh
 	 * @throws IllegalArgumentException
 	 */
 	void setValue(Object value) throws IllegalArgumentException;
-
-	/**
-	 * Sets the <em>aggregated</em> {@link PropertyChangeSupport} instance
-	 * relative to a designated <em>root</em> {@link Model}.
-	 * @param changeSupport
-	 */
-	void setPropertyChangeSupport(PropertyChangeSupport changeSupport);
 }

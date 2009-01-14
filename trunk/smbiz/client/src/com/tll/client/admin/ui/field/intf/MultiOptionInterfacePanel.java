@@ -64,12 +64,12 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			// pricing
 			cmpsr.newRow();
 			Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, (Widget) fg.getFieldByName("setUpCost"));
-			g.setWidget(0, 1, (Widget) fg.getFieldByName("monthlyCost"));
-			g.setWidget(0, 2, (Widget) fg.getFieldByName("annualCost"));
-			g.setWidget(1, 0, (Widget) fg.getFieldByName("baseSetupPrice"));
-			g.setWidget(1, 1, (Widget) fg.getFieldByName("baseMonthlyPrice"));
-			g.setWidget(1, 2, (Widget) fg.getFieldByName("baseAnnualPrice"));
+			g.setWidget(0, 0, (Widget) fg.getFieldByName("optnSetUpCost"));
+			g.setWidget(0, 1, (Widget) fg.getFieldByName("optnMonthlyCost"));
+			g.setWidget(0, 2, (Widget) fg.getFieldByName("optnAnnualCost"));
+			g.setWidget(1, 0, (Widget) fg.getFieldByName("optnBaseSetupPrice"));
+			g.setWidget(1, 1, (Widget) fg.getFieldByName("optnBaseMonthlyPrice"));
+			g.setWidget(1, 2, (Widget) fg.getFieldByName("optnBaseAnnualPrice"));
 			cmpsr.addWidget(g);
 
 			// cmpsr.newRow();
