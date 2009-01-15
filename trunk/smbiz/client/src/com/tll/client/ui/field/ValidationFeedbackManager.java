@@ -3,12 +3,13 @@
  * @author jpk
  * Dec 30, 2008
  */
-package com.tll.client.validate;
+package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.ui.field.IField;
+import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.ValidationException;
 
 /**
  * ValidationFeedbackManager

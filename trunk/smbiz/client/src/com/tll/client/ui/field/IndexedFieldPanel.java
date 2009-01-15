@@ -18,7 +18,6 @@ import com.tll.client.model.PropertyPathException;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
-import com.tll.client.validate.ValidationFeedbackManager;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**

@@ -16,7 +16,7 @@ import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
-import com.tll.client.validate.ValidationFeedbackManager;
+import com.tll.client.ui.field.ValidationFeedbackManager;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
