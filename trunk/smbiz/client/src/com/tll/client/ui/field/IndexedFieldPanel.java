@@ -277,7 +277,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 					// bind
 					if(indexBinding != null) {
 						binding.getChildren().add(
-								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f, ValidationFeedbackManager
+								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f, FieldValidationFeedback
 										.instance()));
 					}
 

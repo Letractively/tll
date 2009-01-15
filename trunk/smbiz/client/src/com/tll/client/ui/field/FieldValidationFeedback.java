@@ -12,16 +12,16 @@ import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
 
 /**
- * ValidationFeedbackManager
+ * FieldValidationFeedback
  * @author jpk
  */
-public final class ValidationFeedbackManager implements IValidationFeedback {
+public final class FieldValidationFeedback implements IValidationFeedback {
 
-	private static ValidationFeedbackManager instance;
+	private static FieldValidationFeedback instance;
 
-	public static ValidationFeedbackManager instance() {
+	public static FieldValidationFeedback instance() {
 		if(instance == null) {
-			instance = new ValidationFeedbackManager();
+			instance = new FieldValidationFeedback();
 		}
 		return instance;
 	}
@@ -29,7 +29,7 @@ public final class ValidationFeedbackManager implements IValidationFeedback {
 	/**
 	 * Constructor
 	 */
-	private ValidationFeedbackManager() {
+	private FieldValidationFeedback() {
 	}
 
 	public void handleException(Object source, ValidationException exception) {

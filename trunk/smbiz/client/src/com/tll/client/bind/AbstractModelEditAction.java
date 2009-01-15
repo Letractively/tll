@@ -16,7 +16,7 @@ import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
-import com.tll.client.ui.field.ValidationFeedbackManager;
+import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -174,6 +174,6 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		}
 		binding.getChildren().add(
 				new Binding(model, modelProperty, null, null, field, IBoundWidget.PROPERTY_VALUE, field,
-						ValidationFeedbackManager.instance()));
+						FieldValidationFeedback.instance()));
 	}
 }
