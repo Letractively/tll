@@ -9,8 +9,10 @@ import org.springframework.mail.MailSendException;
 public interface IMailSender {
 
 	/**
+	 * @param <C> The mail context type
 	 * @param context The send mail context holding necessary parameters to send
 	 *        the email.
+	 * @throws MailSendException
 	 */
 	public <C extends IMailContext> void send(C context) throws MailSendException;
 }

@@ -30,8 +30,7 @@ public final class MailManager {
 	 * @param mailSender
 	 */
 	@Inject
-	public MailManager(@DefaultMailRouting
-	MailRouting defaultRouting, IMailSender mailSender) {
+	public MailManager(@DefaultMailRouting MailRouting defaultRouting, IMailSender mailSender) {
 		super();
 		this.defaultRouting = defaultRouting;
 		this.mailSender = mailSender;
@@ -91,6 +90,7 @@ public final class MailManager {
 
 	/**
 	 * Builds a mail routing instance adding the given sender and recipient.
+	 * @param sender
 	 * @param recipient
 	 * @return {@link MailRouting}
 	 */
@@ -190,6 +190,7 @@ public final class MailManager {
 	/**
 	 * This is it!: Sends an email message
 	 * @param context the mail context
+	 * @throws MailSendException
 	 */
 	public void sendEmail(IMailContext context) throws MailSendException {
 		if(context.wasSent()) {
