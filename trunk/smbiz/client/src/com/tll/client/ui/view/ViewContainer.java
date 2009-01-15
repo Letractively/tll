@@ -33,8 +33,26 @@ import com.tll.client.ui.ISourcesDragEvents;
 public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener,
 		EventPreview {
 
-	public static final String CSS_VIEW_CONTAINER_POPPED = "viewContainerPopped";
-	public static final String CSS_VIEW_CONTAINER_PINNED = "viewContainerPinned";
+	/**
+	 * Styles - (view.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		/**
+		 * Primary style applied to the widget that is the view container.
+		 */
+		public static final String VIEW_CONTAINER = "viewContainer";
+		/**
+		 * Secondary style for view container's in the popped state.
+		 */
+		public static final String POPPED = "popped";
+		/**
+		 * Secondary style for view container's in the pinned state.
+		 */
+		public static final String PINNED = "pinned";
+
+	} // Styles
 
 	/**
 	 * The wrapped IView
@@ -82,6 +100,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		toolbar = new ViewToolbar(view.getLongViewName(), view.getOptions(), this);
 		mainLayout.add(toolbar);
 		mainLayout.add(view.getViewWidget());
+		mainLayout.setStylePrimaryName(Styles.VIEW_CONTAINER);
 		setWidget(mainLayout);
 	}
 
@@ -134,20 +153,6 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	public IView getView() {
 		return view;
 	}
-
-	/*
-	public String getViewDisplayName() {
-		return view.getDisplayName();
-	}
-
-	public ViewKey getViewKey() {
-		return view.getKey();
-	}
-
-	public Hyperlink getHyperlink() {
-		return IViewRef.Tools.generateHyperlink(this);
-	}
-	*/
 
 	public IViewState getViewState() {
 		return new IViewState() {
@@ -261,10 +266,11 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		if(!isPopped()) {
 			assert top > 0 && left > 0;
 
-			// int width = getWidget().getOffsetWidth();
+			mainLayout.removeStyleDependentName(Styles.PINNED);
+			mainLayout.addStyleDependentName(Styles.POPPED);
 
-			mainLayout.setStyleName(CSS_VIEW_CONTAINER_POPPED);
 			int width = getWidget().getOffsetWidth();
+			// int width = getWidget().getOffsetWidth();
 			// int height = getWidget().getOffsetHeight();
 
 			Element elm = getElement();
@@ -312,7 +318,8 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 			elm.getStyle().setProperty("width", "");
 			elm.getStyle().setProperty("height", "");
 
-			mainLayout.setStyleName(CSS_VIEW_CONTAINER_PINNED);
+			mainLayout.removeStyleDependentName(Styles.POPPED);
+			mainLayout.addStyleDependentName(Styles.PINNED);
 
 			maximize();
 			if(toolbar.btnMinimize != null) {

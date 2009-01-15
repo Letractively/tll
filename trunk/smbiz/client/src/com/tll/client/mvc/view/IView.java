@@ -15,6 +15,18 @@ import com.tll.client.model.IModelChangeListener;
 public interface IView extends IViewRef, IModelChangeListener {
 
 	/**
+	 * Styles - (view.css)
+	 * @author jpk
+	 */
+	static final class Styles {
+
+		/**
+		 * Style applied to IView implementing widgets.
+		 */
+		static final String VIEW = "view";
+	}
+
+	/**
 	 * @return The Widget used in the UI that represents this view.
 	 */
 	Widget getViewWidget();

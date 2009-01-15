@@ -7,18 +7,16 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.Model;
+import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.IndexedFieldPanel;
+import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.model.EntityType;
 
 /**
@@ -79,33 +77,27 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 	}
 
-	final class OptionsPanel extends IndexedFieldPanel<OptionPanel<M>, M> implements TabListener {
-
-		private final TabPanel tabOptions = new TabPanel();
+	final class OptionsPanel extends TabbedIndexedFieldPanel<OptionPanel<M>, M> {
 
 		/**
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super("Options");
-			tabOptions.addTabListener(this);
-			initWidget(tabOptions);
-		}
-
-		public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-			// TODO re-impl
-			// OptionPanel op = (OptionPanel) tabOptions.getWidget(tabIndex);
-			// op.paramListing.refresh();
-			return true;
+			super("Options", true, true);
 		}
 
 		@Override
-		protected void draw() {
-			tabOptions.clear();
+		protected String getIndexTypeName() {
+			return "Option";
+		}
 
-			// add the index field panels to the tab panel
-			for(OptionPanel<M> p : this) {
-				tabOptions.add(p, p.getFieldGroup().getFieldByName(Model.NAME_PROPERTY).getText());
+		@Override
+		protected String getTabLabelText(OptionPanel<M> indexFieldPanel) {
+			try {
+				return indexFieldPanel.getField(Model.NAME_PROPERTY).getText();
+			}
+			catch(UnsetPropertyException e) {
+				throw new IllegalStateException(e);
 			}
 		}
 
@@ -118,9 +110,6 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		@Override
 		protected OptionPanel<M> createIndexPanel(M model) {
 			return new OptionPanel<M>();
-		}
-
-		public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
 		}
 
 	} // OptionsPanel

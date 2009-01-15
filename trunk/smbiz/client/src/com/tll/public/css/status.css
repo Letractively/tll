@@ -30,7 +30,8 @@
 }
 
 .statusDisplay .fatal {
-	color: maroon;
+	color: red;
+	font-weight: bold;
 }
 /*
 .statusDisplay .success {

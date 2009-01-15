@@ -33,12 +33,12 @@ public final class ValidationFeedbackManager implements IValidationFeedback {
 
 	public void handleException(Object source, ValidationException exception) {
 		MsgManager.instance().post(false, exception.getErrors(), Position.BOTTOM, (Widget) source, -1, true).show();
-		// ((Widget) source).removeStyleName(IField.STYLE_DIRTY);
-		((Widget) source).addStyleName(IField.STYLE_INVALID);
+		((Widget) source).removeStyleName(IField.Styles.DIRTY);
+		((Widget) source).addStyleName(IField.Styles.INVALID);
 	}
 
 	public void resolve(Object source) {
 		MsgManager.instance().clear((Widget) source, false);
-		((Widget) source).removeStyleName(IField.STYLE_INVALID);
+		((Widget) source).removeStyleName(IField.Styles.INVALID);
 	}
 }

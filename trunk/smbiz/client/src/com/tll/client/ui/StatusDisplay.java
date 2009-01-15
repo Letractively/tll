@@ -21,6 +21,15 @@ import com.tll.client.msg.Msg;
  */
 public class StatusDisplay extends Composite implements IStatusListener {
 
+	/**
+	 * Styles - (status.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		public static final String STATUS_DISPLAY = "statusDisplay";
+	}
+
 	private static StatusDisplay firstStatusDisplay = null;
 
 	/**
@@ -28,8 +37,9 @@ public class StatusDisplay extends Composite implements IStatusListener {
 	 * @param msg The msg to log to the {@link StatusDisplay}
 	 */
 	public static void log(Msg msg) {
-		if(firstStatusDisplay == null) return;
-		firstStatusDisplay.handleMsg(msg);
+		if(firstStatusDisplay != null) {
+			firstStatusDisplay.handleMsg(msg);
+		}
 	}
 
 	private final ScrollPanel sp = new ScrollPanel();
@@ -40,7 +50,7 @@ public class StatusDisplay extends Composite implements IStatusListener {
 	 */
 	public StatusDisplay() {
 		super();
-		sp.setStylePrimaryName("statusDisplay");
+		sp.setStylePrimaryName(Styles.STATUS_DISPLAY);
 		sp.setTitle("Status History");
 		sp.add(vp);
 		initWidget(sp);

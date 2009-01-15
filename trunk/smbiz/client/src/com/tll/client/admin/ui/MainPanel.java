@@ -57,6 +57,39 @@ import com.tll.client.util.GlobalFormat;
  */
 public final class MainPanel extends Composite implements IAdminContextListener, ISourcesUserSessionEvents {
 
+	/**
+	 * Styles - (admin.css)
+	 * @author jpk
+	 */
+	private static final class Styles {
+
+		/**
+		 * Style for the main panel panel.
+		 */
+		public static final String MAIN = "sb-mainPanel";
+
+		/**
+		 * Style for the header panel.
+		 */
+		public static final String HEADER = "sb-Header";
+
+		/**
+		 * Style for the right nav panel.
+		 */
+		public static final String RIGHT_NAV = "sb-RightNav";
+
+		/**
+		 * Style for the center panel.
+		 */
+		public static final String CENTER = "sb-Center";
+
+		/**
+		 * Style for the footer panel.
+		 */
+		public static final String FOOTER = "sb-Footer";
+
+	} // Styles
+
 	private final DockPanel dockPanel = new DockPanel();
 	private final Header header = new Header();
 	private final ViewPathPanel viewpath = new ViewPathPanel();
@@ -77,7 +110,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		dockPanel.add(footer, DockPanel.SOUTH);
 		dockPanel.add(rightNav, DockPanel.EAST);
 		dockPanel.add(center, DockPanel.CENTER);
-		dockPanel.setStylePrimaryName("sb-mainPanel");
+		dockPanel.setStylePrimaryName(Styles.MAIN);
 
 		Element headerTd = header.getElement().getParentElement();
 		Element viewpathTd = viewpath.getElement().getParentElement();
@@ -136,7 +169,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		public Header() {
 			super();
-			setStylePrimaryName("sb-Header");
+			setStylePrimaryName(Styles.HEADER);
 			add(new HTML("<h1>smbiz Admin</h1>"));
 		}
 	}
@@ -163,7 +196,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public RightNav() {
 			super();
 
-			setStylePrimaryName("sb-RightNav");
+			setStylePrimaryName(Styles.RIGHT_NAV);
 
 			Label lbl;
 
@@ -312,7 +345,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		public Center() {
 			super();
-			setStylePrimaryName("sb-Center");
+			setStylePrimaryName(Styles.CENTER);
 		}
 
 		@Override
@@ -349,7 +382,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		public Footer() {
 			super();
-			setStylePrimaryName("sb-Footer");
+			setStylePrimaryName(Styles.FOOTER);
 			add(new HTML("<p>&copy; 2009 The Logic Lab - smbiz v" + App.constants.appVersion() + "</p>"));
 		}
 

@@ -14,13 +14,23 @@ import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.ui.HtmlListPanel;
 
 /**
- * RecentViewsPanel - Displays view links vertically that are currently in the view cache that are
- * NOT in the popped state.
+ * RecentViewsPanel - Displays view links vertically that are currently in the
+ * view cache that are NOT in the popped state.
  * @author jpk
  */
 public final class RecentViewsPanel extends Composite implements IViewEventListener {
 
-	private static final String CSS_VIEWHISTORY = "viewHistory";
+	/**
+	 * Styles
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		/**
+		 * Style applied to the widget containing the recent views listing.
+		 */
+		public static final String RECENT_VIEWS = "recentviews";
+	}
 
 	/**
 	 * The topmost (parent) ulPanel of this {@link Widget}.
@@ -37,7 +47,7 @@ public final class RecentViewsPanel extends Composite implements IViewEventListe
 	 */
 	public RecentViewsPanel() {
 		super();
-		container.setStyleName(CSS_VIEWHISTORY);
+		container.setStyleName(Styles.RECENT_VIEWS);
 		container.add(ulPanel);
 		initWidget(container);
 	}

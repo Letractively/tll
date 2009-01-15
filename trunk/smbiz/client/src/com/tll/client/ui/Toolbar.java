@@ -21,8 +21,21 @@ import com.tll.client.Style;
  */
 public abstract class Toolbar extends Composite {
 
-	protected static final String CSS_SEPARATOR = "separator";
-	protected static final String CSS_TOOLBAR = "toolbar";
+	/**
+	 * Styles - (toolbar.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		/**
+		 * Style for a toolbar.
+		 */
+		public static final String TOOLBAR = "toolbar";
+		/**
+		 * Style for a toolbar separator widget.
+		 */
+		public static final String TOOLBAR_SEPARATOR = "separator";
+	}
 
 	// private final FlowPanel pnl = new FlowPanel();
 	private final HorizontalPanel pnl = new HorizontalPanel();
@@ -32,7 +45,7 @@ public abstract class Toolbar extends Composite {
 	 */
 	public Toolbar() {
 		super();
-		pnl.setStyleName(CSS_TOOLBAR);
+		pnl.setStyleName(Styles.TOOLBAR);
 		initWidget(pnl);
 	}
 

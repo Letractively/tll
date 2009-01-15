@@ -37,14 +37,21 @@ import com.tll.client.ui.field.FieldPanel;
 public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
 
 	/**
-	 * The style name for {@link EditPanel}s.
+	 * Styles - (admin.css)
+	 * @author jpk
 	 */
-	private static final String STYLE_ENTITY_EDIT = "entityEdit";
+	protected static class Styles {
 
-	/**
-	 * The button row style
-	 */
-	private static final String STYLE_BTN_ROW = "btnRow";
+		/**
+		 * The style name for {@link EditPanel}s.
+		 */
+		public static final String ENTITY_EDIT = "entityEdit";
+
+		/**
+		 * The button row style
+		 */
+		public static final String BTN_ROW = "btnRow";
+	}
 
 	/**
 	 * The composite's target widget
@@ -87,7 +94,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		// we need to defer this until needed aux data is ready
 		// portal.setWidget(fieldPanel);
 
-		pnlButtonRow.setStyleName(STYLE_BTN_ROW);
+		pnlButtonRow.setStyleName(Styles.BTN_ROW);
 
 		btnSave = new Button("", this);
 		pnlButtonRow.add(btnSave);
@@ -116,7 +123,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 
 		panel.add(portal);
 		panel.add(pnlButtonRow);
-		panel.setStyleName(STYLE_ENTITY_EDIT);
+		panel.setStyleName(Styles.ENTITY_EDIT);
 
 		initWidget(panel);
 	}

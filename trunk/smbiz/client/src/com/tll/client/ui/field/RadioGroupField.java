@@ -89,7 +89,7 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 		for(B n : options) {
 			String sval = converter.convert(n);
 			RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
-			rb.setStyleName(IField.STYLE_FIELD_LABEL);
+			rb.setStyleName(Styles.LABEL);
 			rb.addClickListener(this);
 			rbPanel.add(rb);
 			radioButtons.add(rb);

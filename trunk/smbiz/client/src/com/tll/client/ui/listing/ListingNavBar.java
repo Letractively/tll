@@ -32,13 +32,32 @@ import com.tll.client.util.StringUtil;
  * @param <R> The row data type.
  * @author jpk
  */
-// TODO make non-static inner class of ListingWidget
-public class ListingNavBar<R> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener, IListingListener<R> {
+public class ListingNavBar<R> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener,
+		IListingListener<R> {
 
-	private static final String STYLE_TABLE_VIEW_NAVBAR = "tvnav";
-	private static final String CSS_PAGE_CONTAINER = "page";
-	private static final String CSS_SUMMARY = "smry";
-	private static final String CSS_PAGE = "tbPage";
+	/**
+	 * Styles - (tableview.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		/**
+		 * Style for a listing's nav bar.
+		 */
+		public static final String TABLE_VIEW_NAVBAR = "tvnav";
+		/**
+		 * Style for a listing's page container.
+		 */
+		public static final String PAGE_CONTAINER = "page";
+		/**
+		 * 
+		 */
+		public static final String SUMMARY = "smry";
+		/**
+		 * 
+		 */
+		public static final String PAGE = "tbPage";
+	}
 
 	private String listingElementName;
 
@@ -101,7 +120,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 		this.listingElementName = config.getListingElementName();
 		assert listingElementName != null;
 
-		addStyleName(STYLE_TABLE_VIEW_NAVBAR);
+		addStyleName(Styles.TABLE_VIEW_NAVBAR);
 
 		Image split;
 
@@ -127,7 +146,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			tbPage.addKeyboardListener(this);
 			tbPage.addChangeListener(this);
 			tbPage.setMaxLength(4);
-			tbPage.setStyleName(CSS_PAGE);
+			tbPage.setStyleName(Styles.PAGE);
 
 			// prev buttons (divs)
 			add(btnPageFirst);
@@ -135,12 +154,12 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 
 			// separator
 			split = App.imgs().split().createImage();
-			split.setStylePrimaryName(CSS_SEPARATOR);
+			split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
 			add(split);
 
 			// Page x of y
 			FlowPanel pageXofY = new FlowPanel();
-			pageXofY.addStyleName(CSS_PAGE_CONTAINER);
+			pageXofY.addStyleName(Styles.PAGE_CONTAINER);
 			pageXofY.add(lblPagePre);
 			pageXofY.add(tbPage);
 			pageXofY.add(lblPagePost);
@@ -148,7 +167,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 
 			// separator
 			split = App.imgs().split().createImage();
-			split.setStylePrimaryName(CSS_SEPARATOR);
+			split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
 			add(split);
 
 			// next buttons (divs)
@@ -165,7 +184,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			if(pageSize > 0) {
 				// separator
 				split = App.imgs().split().createImage();
-				split.setStylePrimaryName(CSS_SEPARATOR);
+				split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
 				add(split);
 			}
 			add(btnRefresh);
@@ -180,7 +199,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			if(pageSize > 0 || config.isShowRefreshBtn()) {
 				// separator
 				split = App.imgs().split().createImage();
-				split.setStylePrimaryName(CSS_SEPARATOR);
+				split.setStylePrimaryName(Toolbar.Styles.TOOLBAR_SEPARATOR);
 				add(split);
 			}
 			add(btnAdd);
@@ -188,7 +207,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 
 		// Displaying {listing element name} x - y of TOTAL
 		lblSmry = new Label();
-		lblSmry.setStyleName(CSS_SUMMARY);
+		lblSmry.setStyleName(Styles.SUMMARY);
 		add(lblSmry);
 
 		// NOTE: we do this to squish the other table cells to their smallest

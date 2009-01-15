@@ -16,8 +16,6 @@ import com.tll.client.model.ModelChangeEvent;
  */
 public abstract class AbstractView extends Composite implements IView {
 
-	static final String CSS_VIEW = "view";
-
 	/**
 	 * The view key uniquely indentifying the view at runtime.
 	 */
@@ -33,7 +31,7 @@ public abstract class AbstractView extends Composite implements IView {
 	 */
 	public AbstractView() {
 		super();
-		pnl.setStylePrimaryName(CSS_VIEW);
+		pnl.setStylePrimaryName(Styles.VIEW);
 		initWidget(pnl);
 	}
 

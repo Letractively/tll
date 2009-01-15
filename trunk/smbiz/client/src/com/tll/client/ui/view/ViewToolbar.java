@@ -20,8 +20,15 @@ import com.tll.client.ui.Toolbar;
  */
 public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 
-	private static final String CSS_VIEW_TOOLBAR = "viewToolbar";
-	private static final String CSS_VIEW_TITLE = "viewTitle";
+	/**
+	 * Styles - (view.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		public static final String VIEW_TOOLBAR = "viewToolbar";
+		public static final String VIEW_TITLE = "viewTitle";
+	} // Styles
 
 	static final String TITLE_MINIMIZE = "Minimize";
 	static final String TITLE_MAXIMIZE = "Maximize";
@@ -39,22 +46,26 @@ public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 	/**
 	 * Constructor
 	 * @param viewDisplayName
-	 * @param viewOptions The view options that dictates the appearance/behavior of view toolbars.
-	 * @param clickListener The listener for click events occurring w/in this toolbar.
+	 * @param viewOptions The view options that dictates the appearance/behavior
+	 *        of view toolbars.
+	 * @param clickListener The listener for click events occurring w/in this
+	 *        toolbar.
 	 */
 	public ViewToolbar(String viewDisplayName, ViewOptions viewOptions, ClickListener clickListener) {
 		super();
 		assert viewDisplayName != null && viewOptions != null && clickListener != null;
 		viewTitle = new Label(viewDisplayName);
-		btnMinimize = viewOptions.isMinimizable() ? new ToggleButton(App.imgs().arrow_sm_down().createImage(), App.imgs()
-				.arrow_sm_right().createImage(), clickListener) : null;
-		btnPop = viewOptions.isPopable() ? new ToggleButton(App.imgs().external().createImage(), App.imgs().permalink()
-				.createImage(), clickListener) : null;
+		btnMinimize =
+				viewOptions.isMinimizable() ? new ToggleButton(App.imgs().arrow_sm_down().createImage(), App.imgs()
+						.arrow_sm_right().createImage(), clickListener) : null;
+		btnPop =
+				viewOptions.isPopable() ? new ToggleButton(App.imgs().external().createImage(), App.imgs().permalink()
+						.createImage(), clickListener) : null;
 		btnClose = viewOptions.isClosable() ? new PushButton(App.imgs().close().createImage(), clickListener) : null;
 		btnRefresh = viewOptions.isRefreshable() ? new PushButton(App.imgs().refresh().createImage(), clickListener) : null;
 
-		addStyleName(CSS_VIEW_TOOLBAR);
-		viewTitle.setStyleName(CSS_VIEW_TITLE);
+		addStyleName(Styles.VIEW_TOOLBAR);
+		viewTitle.setStyleName(Styles.VIEW_TITLE);
 
 		if(btnMinimize != null) addButton(btnMinimize, TITLE_MINIMIZE);
 		add(viewTitle);

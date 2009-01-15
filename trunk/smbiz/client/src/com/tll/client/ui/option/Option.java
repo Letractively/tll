@@ -12,7 +12,14 @@ import com.tll.client.ui.ImageContainer;
  */
 public final class Option extends Label {
 
-	private static final String STYLE_OPTION = "option";
+	/**
+	 * Styles - (option.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		public static final String OPTION = "option";
+	}
 
 	private final String text;
 
@@ -23,7 +30,7 @@ public final class Option extends Label {
 	 */
 	public Option(String text, Image img) {
 		super();
-		setStyleName(STYLE_OPTION);
+		setStyleName(Styles.OPTION);
 		this.text = text;
 		if(img != null) {
 			getElement().appendChild((new ImageContainer(img)).getElement());

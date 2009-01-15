@@ -21,10 +21,18 @@ import com.tll.client.msg.Msg.MsgLevel;
  */
 public final class MsgPanel extends TimedPositionedPopup {
 
-	/*
-	 * Reference: msg.css
+	/**
+	 * Styles - (msg.css)
+	 * @author jpk
 	 */
-	private static final String CSS_MSG = "msg";
+	private static class Styles {
+
+		/**
+		 * Style applied to to widgets containing messages.
+		 */
+		public static final String MSG = "msg";
+
+	}
 
 	/**
 	 * The DOM element property signifying the associated msg level. This property
@@ -46,7 +54,7 @@ public final class MsgPanel extends TimedPositionedPopup {
 	public MsgPanel(boolean autoHide, Position position, Element refElement, int duration, boolean showImage) {
 		super(autoHide, false, duration, refElement, position);
 		this.showImage = showImage;
-		container.setStyleName(CSS_MSG);
+		container.setStyleName(Styles.MSG);
 		setWidget(container);
 	}
 
@@ -64,7 +72,7 @@ public final class MsgPanel extends TimedPositionedPopup {
 		// stub the msg level panel
 		// (child widget FORMAT: [{msg level img}]{ul html list of msg texts})
 		FlowPanel msgLevelPanel = new FlowPanel();
-		msgLevelPanel.addStyleName(CSS_MSG);
+		msgLevelPanel.addStyleName(Styles.MSG);
 		msgLevelPanel.addStyleName(level.getName().toLowerCase());
 		msgLevelPanel.getElement().setPropertyInt(ELEM_PROP_MSG_LEVEL, level.ordinal());
 		if(showImage) {

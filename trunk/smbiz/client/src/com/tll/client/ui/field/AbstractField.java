@@ -152,7 +152,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		setHelpText(helpText);
 
 		// TODO is this style setting necessary?
-		pnl.setStyleName(STYLE_FIELD);
+		pnl.setStyleName(Styles.FIELD);
 
 		initWidget(pnl);
 	}
@@ -322,10 +322,10 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private void markDirty() {
 		if(initialValueSet) {
 			if(!ObjectUtil.equals(initialValue, getValue())) {
-				addStyleName(STYLE_DIRTY);
+				addStyleName(Styles.DIRTY);
 			}
 			else {
-				removeStyleName(STYLE_DIRTY);
+				removeStyleName(Styles.DIRTY);
 			}
 		}
 	}
@@ -433,14 +433,14 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	private void markInvalid(boolean invalid, List<Msg> msgs) {
 		if(invalid) {
-			removeStyleName(STYLE_DIRTY);
-			addStyleName(STYLE_INVALID);
+			removeStyleName(Styles.DIRTY);
+			addStyleName(Styles.INVALID);
 			if(msgs != null) {
 				addMsgs(msgs);
 			}
 		}
 		else {
-			removeStyleName(STYLE_INVALID);
+			removeStyleName(Styles.INVALID);
 			clearMsgs();
 		}
 	}
@@ -519,8 +519,8 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
 			clearMsgs();
-			removeStyleName(STYLE_INVALID);
-			removeStyleName(STYLE_DIRTY);
+			removeStyleName(Styles.INVALID);
+			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
 			// show/hide edit styling
@@ -640,7 +640,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(initialValueSet) {
 			setNativeValue(initialValue);
 			markInvalid(false, null);
-			removeStyleName(STYLE_DIRTY);
+			removeStyleName(Styles.DIRTY);
 		}
 	}
 

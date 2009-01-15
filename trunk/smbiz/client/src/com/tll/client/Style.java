@@ -5,9 +5,11 @@
 package com.tll.client;
 
 /**
- * Style - Consolidates general [app independent] Style related constants for use in the app.
+ * Style - Consolidates general [app independent] Style related constants for
+ * use in the app.
  * <p>
- * IMPT: These constants correspond to particular declarations declared in referenced Style files.
+ * IMPT: These constants correspond to particular declarations declared in
+ * referenced Style files.
  * <p>
  * Most of these constants should corres. to those found in base.css.
  * @author jpk
@@ -53,9 +55,4 @@ public abstract class Style {
 	 * Signifies button-like styling.
 	 */
 	public static final String BUTTON = "button";
-
-	/**
-	 * Signifies "popped" styling
-	 */
-	public static final String POPPED = "popped";
 }

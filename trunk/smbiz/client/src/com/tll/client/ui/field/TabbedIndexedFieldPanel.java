@@ -5,6 +5,11 @@
  */
 package com.tll.client.ui.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -33,6 +38,30 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		IndexedFieldPanel<I, M> implements TabListener {
 
 	/**
+	 * Styles - (widget-tll.css)
+	 * <p>
+	 * Styles used for a TabbedIndexedFieldPanel family of widgets.
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		/**
+		 * The root style applied to the composite widget.
+		 */
+		public static final String ROOT = "tifp";
+
+		/**
+		 * The style applied to the empty widget.
+		 */
+		public static final String EMPTY = "empty";
+
+		/**
+		 * The style applied to the delete button in the tab widget.
+		 */
+		public static final String DELETE_BUTTON = "delbtn";
+	}
+
+	/**
 	 * EmptyWidget - Displayed in place of the tab panel when no index field
 	 * panels exist.
 	 * @author jpk
@@ -46,14 +75,14 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		 */
 		public EmptyWidget() {
 			super();
+			pnl.setStylePrimaryName(Styles.EMPTY);
 			initWidget(pnl);
 			if(enableAdd) {
 				Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
 				button.addClickListener(new ClickListener() {
 
 					public void onClick(Widget sender) {
-						I newFp = add();
-						tabPanel.add(newFp, getTabWidget(newFp, true));
+						add();
 						tabPanel.setVisible(true);
 						emptyWidget.setVisible(false);
 					}
@@ -87,6 +116,10 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	 */
 	private final boolean enableAdd, enableDelete;
 
+	private int lastSelectedTabIndex = -1;
+
+	private final List<Widget> tabWidgets = new ArrayList<Widget>();
+
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -108,6 +141,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		emptyWidget.setVisible(false);
 		pnl.add(emptyWidget);
 
+		pnl.setStylePrimaryName(Styles.ROOT);
 		initWidget(pnl);
 	}
 
@@ -124,33 +158,33 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	protected abstract String getTabLabelText(I indexFieldPanel);
 
 	/**
-	 * Responsible for creating a single {@link Widget} that is places in the UI
+	 * Responsible for creating a single {@link Widget} that is placed in the UI
 	 * tab of the {@link TabPanel}.
 	 * @param indexFieldPanel
 	 * @param isNew Is this a newly added index field panel?
 	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
 	 *         at the index assoc. with the given index field panel.
 	 */
-	private Widget getTabWidget(final I indexFieldPanel, final boolean isNew) {
+	private Widget getTabWidget(I indexFieldPanel, boolean isNew) {
 
-		String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(indexFieldPanel);
+		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(indexFieldPanel);
 
 		if(enableDelete || isNew) {
 			final ToggleButton btnDeleteTgl =
 					new ToggleButton(App.imgs().delete().createImage(), App.imgs().undo().createImage());
+			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
+			btnDeleteTgl.setTitle("Delete " + labelText);
+			btnDeleteTgl.getElement().setPropertyBoolean("new", isNew);
 			btnDeleteTgl.addClickListener(new ClickListener() {
 
 				public void onClick(Widget sender) {
-					if(isNew) {
-						// remove the tab
-						tabPanel.remove(indexFieldPanel);
-						if(tabPanel.getWidgetCount() == 0) {
-							tabPanel.setVisible(false);
-							emptyWidget.setVisible(true);
-						}
+					if(sender.getElement().getPropertyBoolean("new")) {
+						remove(tabPanel.getTabBar().getSelectedTab());
 					}
 					else {
 						markDeleted(tabPanel.getTabBar().getSelectedTab(), btnDeleteTgl.isDown());
+						assert sender == btnDeleteTgl;
+						btnDeleteTgl.setTitle(btnDeleteTgl.isDown() ? "Un-delete " + labelText : "Delete " + labelText);
 					}
 				}
 			});
@@ -162,8 +196,60 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	}
 
 	@Override
-	protected void draw() {
+	protected I add() {
+		final I indexFieldPanel = super.add();
+		final int insertIndex = tabPanel.getWidgetCount() == 0 ? 0 : tabPanel.getWidgetCount() - 1;
+		final Widget tw = getTabWidget(indexFieldPanel, true);
+		tabPanel.insert(indexFieldPanel, tw, insertIndex);
+		tabWidgets.add(tw);
+		// auto-select the added tab
+		DeferredCommand.addCommand(new Command() {
+
+			public void execute() {
+				tabPanel.selectTab(insertIndex);
+			}
+		});
+		return indexFieldPanel;
+	}
+
+	@Override
+	protected I remove(int index) throws IndexOutOfBoundsException {
+		I removed = super.remove(index);
+		if(removed != null) {
+			// remove the tab
+			if(!tabPanel.remove(index)) {
+				// shouldn't happen
+				throw new IllegalStateException();
+			}
+			tabWidgets.remove(index);
+			if(tabPanel.getWidgetCount() == 0 || (enableAdd && tabPanel.getWidgetCount() == 1)) {
+				tabPanel.setVisible(false);
+				emptyWidget.setVisible(true);
+			}
+			else {
+				tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
+			}
+		}
+		return removed;
+	}
+
+	@Override
+	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
+		super.markDeleted(index, deleted);
+		((WidgetAndLabel) tabWidgets.get(index)).getTheWidget().setTitle(
+				(deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
 		tabPanel.clear();
+		tabWidgets.clear();
+	}
+
+	@Override
+	protected final void draw() {
+		assert tabPanel.getWidgetCount() == 0;
 
 		if(size() == 0) {
 			tabPanel.setVisible(false);
@@ -171,49 +257,46 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		else {
 			// add the *existing* index field panels to the tab panel
-			for(I ap : this) {
-				tabPanel.add(ap, getTabWidget(ap, false));
+			for(Index<I> i : indexPanels) {
+				Widget tw = getTabWidget(i.fp, false);
+				tabWidgets.add(tw);
+				if(enableDelete) {
+					((WidgetAndLabel) tw).getTheWidget().setTitle("Delete " + getIndexTypeName());
+				}
+				tabPanel.add(i.fp, getTabWidget(i.fp, false));
 			}
-			if(enableAdd) {
-				// add trailing *add* tab
-				PushButton pb = new PushButton(App.imgs().add().createImage());
-				pb.setTitle("Add " + getIndexTypeName() + "..");
-				tabPanel.add(new SimplePanel(), pb);
-			}
+		}
+		if(enableAdd) {
+			// add trailing *add* tab
+			PushButton pb = new PushButton(App.imgs().add().createImage());
+			pb.setTitle("Add " + getIndexTypeName());
+			pb.addClickListener(new ClickListener() {
+
+				public void onClick(Widget sender) {
+					add();
+				}
+			});
+			tabPanel.add(new SimplePanel(), pb);
 		}
 	}
 
 	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
 		assert sender == tabPanel;
 
-		// are we adding?
-		if(tabPanel.getWidgetCount() > 0 && tabIndex == tabPanel.getWidgetCount() - 1) {
-			I indexFieldPanel = add();
-			tabPanel.remove(tabIndex);
-			tabPanel.add(indexFieldPanel, getTabWidget(indexFieldPanel, true));
-		}
-
-		// need to hide any field messages bound to fields on the tab that is
-		// going out of view
-		else if(tabIndex != -1) {
-			MsgManager.instance().show(tabPanel.getWidget(tabIndex), false, true);
+		if(lastSelectedTabIndex != -1) {
+			// hide msgs on last tab
+			MsgManager.instance().show(tabPanel.getWidget(lastSelectedTabIndex), false, true);
 		}
 
 		return true;
 	}
 
 	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-		// no-op
-	}
 
-	@Override
-	protected I createIndexPanel(M indexModel) {
-		return null;
-	}
+		// show msgs on selected tab
+		MsgManager.instance().show(tabPanel.getWidget(tabIndex), false, true);
 
-	@Override
-	protected M createPrototypeModel() {
-		return null;
+		lastSelectedTabIndex = tabIndex;
 	}
 
 	@Override

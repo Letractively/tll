@@ -20,9 +20,20 @@ import com.tll.client.ui.P;
  */
 public class ViewPathPanel extends Composite implements IViewEventListener {
 
-	private static final String CSS_VIEWPATH = "viewpath";
-	private static final String CSS_SPACER = "spacer";
-	private static final String CSS_SPACER_HTML = "&raquo;";
+	/**
+	 * Styles - (viewpath.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		public static final String VIEWPATH = "viewpath";
+		public static final String SPACER = "spacer";
+	}
+
+	/**
+	 * Spacer HTML.
+	 */
+	private static final String SPACER_HTML = "&raquo;";
 
 	/**
 	 * The topmost (parent) ulPanel of this {@link Widget}.
@@ -40,7 +51,7 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 	public ViewPathPanel() {
 		super();
 		container.addStyleName(Style.HNAV);
-		container.addStyleName(CSS_VIEWPATH);
+		container.addStyleName(Styles.VIEWPATH);
 		container.add(ulPanel);
 		initWidget(container);
 	}
@@ -56,14 +67,14 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 
 				// add spacer
 				P p = new P();
-				p.setStyleName(CSS_SPACER);
-				p.getElement().setInnerHTML(CSS_SPACER_HTML);
+				p.setStyleName(Styles.SPACER);
+				p.getElement().setInnerHTML(SPACER_HTML);
 				ulPanel.add(p);
 			}
 		}
 		else {
 			P p = new P(" ");
-			p.setStyleName(CSS_SPACER);
+			p.setStyleName(Styles.SPACER);
 			ulPanel.add(p);
 		}
 	}

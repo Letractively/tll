@@ -39,19 +39,27 @@ import com.tll.dao.Sorting;
 public class ListingTable<R> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
 
 	/**
-	 * The actual HTML table tag containing the listing data gets this style
-	 * (Style class).
+	 * Styles - (tableview.css)
+	 * @author jpk
 	 */
-	protected static final String STYLE_TABLE = "table";
-	protected static final String CSS_SORT = "sort";
-	protected static final String CSS_COUNT_COL = "countCol";
-	protected static final String CSS_HEAD = "head";
-	protected static final String CSS_EVEN = "even";
-	protected static final String CSS_ODD = "odd";
+	protected static class Styles {
 
-	protected static final String CSS_ADDED = "added";
-	protected static final String CSS_UPDATED = "updated";
-	protected static final String CSS_DELETED = "deleted";
+		/**
+		 * The actual HTML table tag containing the listing data gets this style
+		 * (Style class).
+		 */
+		public static final String TABLE = "table";
+		public static final String SORT = "sort";
+		public static final String COUNT_COL = "countCol";
+		public static final String HEAD = "head";
+		public static final String EVEN = "even";
+		public static final String ODD = "odd";
+
+		public static final String ADDED = "added";
+		public static final String UPDATED = "updated";
+		public static final String DELETED = "deleted";
+
+	} // Styles
 
 	/**
 	 * The sort column arrow.
@@ -142,7 +150,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			sortlinks = new ListingTable.SortLink[columns.length];
 		}
 
-		setStyleName(STYLE_TABLE);
+		setStyleName(Styles.TABLE);
 
 		addHeaderRow(config);
 	}
@@ -226,7 +234,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			if(imgSortDir == null) {
 				imgSortDir = new Image();
 				imgSortDir.addClickListener(this);
-				imgSortDir.setStyleName(CSS_SORT);
+				imgSortDir.setStyleName(Styles.SORT);
 			}
 
 			// insert the sort dir arrow image
@@ -260,14 +268,14 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		final int numCols = columns.length;
 
 		resize(1, numCols);
-		getRowFormatter().addStyleName(0, CSS_HEAD);
+		getRowFormatter().addStyleName(0, Styles.HEAD);
 
 		for(int c = 0; c < columns.length; c++) {
 			Column col = columns[c];
 			boolean isRowCntCol = Column.ROW_COUNT_COL_PROP.equals(col.getPropertyName());
 			if(isRowCntCol) {
-				getCellFormatter().addStyleName(0, c, CSS_COUNT_COL);
-				getColumnFormatter().addStyleName(c, CSS_COUNT_COL);
+				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
+				getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
 			}
 			if(config.isSortable()) {
 				if(isRowCntCol) {
@@ -303,7 +311,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
 				if(rowNum > -1) {
-					getCellFormatter().addStyleName(rowIndex, c, CSS_COUNT_COL);
+					getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 					setText(rowIndex, c, Integer.toString(rowNum));
 				}
 			}
@@ -325,7 +333,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		boolean evn = false;
 		int rowIndex = offset;
 		for(int r = 0; r < numBodyRows; r++) {
-			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? CSS_EVEN : CSS_ODD));
+			getRowFormatter().addStyleName(r + 1, ((evn = !evn) ? Styles.EVEN : Styles.ODD));
 			setRowData(r + 1, ++rowIndex, page[r], true);
 		}
 	}
@@ -441,7 +449,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		// set the row data
 		setRowData(addRowIndex, -1, rowData, true);
 
-		getRowFormatter().addStyleName(addRowIndex, CSS_ADDED);
+		getRowFormatter().addStyleName(addRowIndex, Styles.ADDED);
 
 		return addRowIndex;
 	}
@@ -454,7 +462,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 	void updateRow(int rowIndex, R rowData) {
 		assert rowIndex >= 1 : "Can't update the header row";
 		setRowData(rowIndex, -1, rowData, true);
-		getRowFormatter().addStyleName(rowIndex, CSS_UPDATED);
+		getRowFormatter().addStyleName(rowIndex, Styles.UPDATED);
 	}
 
 	/**
@@ -484,9 +492,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 	void markRowDeleted(int rowIndex, boolean markDeleted) {
 		assert rowIndex >= 1 : "Can't delete the header row";
 		if(markDeleted)
-			getRowFormatter().addStyleName(rowIndex, CSS_DELETED);
+			getRowFormatter().addStyleName(rowIndex, Styles.DELETED);
 		else
-			getRowFormatter().removeStyleName(rowIndex, CSS_DELETED);
+			getRowFormatter().removeStyleName(rowIndex, Styles.DELETED);
 	}
 
 	private int getPageRowNum(int rowIndex) {
@@ -515,13 +523,13 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 				// toggle the odd/even styling
 				HTMLTable.RowFormatter rf = getRowFormatter();
-				if(rf.getStyleName(i).indexOf("even") >= 0) {
-					rf.removeStyleName(i, "even");
-					rf.addStyleName(i, "odd");
+				if(rf.getStyleName(i).indexOf(Styles.EVEN) >= 0) {
+					rf.removeStyleName(i, Styles.EVEN);
+					rf.addStyleName(i, Styles.ODD);
 				}
-				else if(rf.getStyleName(i).indexOf("odd") >= 0) {
-					rf.removeStyleName(i, "odd");
-					rf.addStyleName(i, "even");
+				else if(rf.getStyleName(i).indexOf(Styles.ODD) >= 0) {
+					rf.removeStyleName(i, Styles.ODD);
+					rf.addStyleName(i, Styles.EVEN);
 
 				}
 			}

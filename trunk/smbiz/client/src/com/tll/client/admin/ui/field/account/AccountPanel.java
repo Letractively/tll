@@ -230,10 +230,9 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		fg.getField("status").addChangeListener(new ChangeListener() {
 
 			public void onChange(Widget sender) {
-				final FieldGroup fields = getFieldGroup();
 				String s = getFieldGroup().getField("status").getText().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				IField<?, ?> f = fields.getField("dateCancelled");
+				IField<?, ?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}

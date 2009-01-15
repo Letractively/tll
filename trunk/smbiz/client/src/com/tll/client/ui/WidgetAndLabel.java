@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui;
 
-import com.google.gwt.gen2.table.override.client.Panel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -19,16 +18,25 @@ import com.google.gwt.user.client.ui.Widget;
 public class WidgetAndLabel extends Composite {
 
 	/**
-	 * Styles - The defined styles for a {@link WidgetAndLabel} widget.
+	 * Styles - (widget-tll.css)
 	 * @author jpk
 	 */
-	public interface Styles {
+	protected static class Styles {
 
 		/**
-		 * The general widget and label style that is ascribed to the {@link Panel}
-		 * containing the {@link Widget} and {@link Label}.
+		 * Style applied to the {@link WidgetAndLabel} widget.
 		 */
-		static final String STYLE_WAL = "wal";
+		static final String WAL = "wal";
+
+		/**
+		 * Style applied to the child widget.
+		 */
+		static final String WIDGET = "widget";
+
+		/**
+		 * Style applied to the child label.
+		 */
+		static final String LABEL = "label";
 
 	} // Styles
 
@@ -54,9 +62,25 @@ public class WidgetAndLabel extends Composite {
 	 */
 	public WidgetAndLabel(Widget widget, String labelText) {
 		super();
+		pnl.setStyleName(Styles.WAL);
+		label.setStyleName(Styles.LABEL);
 		initWidget(pnl);
 		setTheWidget(widget);
 		setLabelText(labelText);
+	}
+
+	/**
+	 * @return the theWidget
+	 */
+	public Widget getTheWidget() {
+		return theWidget;
+	}
+
+	/**
+	 * @return the label
+	 */
+	public Label getLabel() {
+		return label;
 	}
 
 	/**
@@ -64,6 +88,7 @@ public class WidgetAndLabel extends Composite {
 	 */
 	public void setTheWidget(Widget theWidget) {
 		this.theWidget = theWidget;
+		theWidget.addStyleName(Styles.WIDGET);
 	}
 
 	/**
@@ -80,5 +105,11 @@ public class WidgetAndLabel extends Composite {
 			pnl.add(theWidget);
 			pnl.add(label);
 		}
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		theWidget.removeStyleName(Styles.WIDGET);
 	}
 }

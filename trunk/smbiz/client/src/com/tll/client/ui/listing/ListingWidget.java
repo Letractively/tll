@@ -29,14 +29,22 @@ import com.tll.client.listing.ListingEvent;
 public abstract class ListingWidget<R> extends Composite implements HasFocus, IListingListener<R> {
 
 	/**
-	 * The css class the top-most containing div gets.
+	 * Styles - (tableview.css)
+	 * @author jpk
 	 */
-	private static final String STYLE_TABLE_VIEW = "tableView";
+	protected static class Styles {
 
-	/**
-	 * The css class for table view captions.
-	 */
-	private static final String STYLE_CAPTION = "caption";
+		/**
+		 * The css class the top-most containing div gets.
+		 */
+		public static final String TABLE_VIEW = "tableView";
+
+		/**
+		 * The css class for table view captions.
+		 */
+		public static final String CAPTION = "caption";
+
+	} // Styles
 
 	/**
 	 * The listing table.
@@ -76,12 +84,12 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 	protected ListingWidget(IListingConfig<R> config, ListingTable<R> table) {
 		super();
 		FlowPanel tableViewPanel = new FlowPanel();
-		tableViewPanel.setStylePrimaryName(STYLE_TABLE_VIEW);
+		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
 
 		// add a caption if specified
 		if(config.getCaption() != null) {
 			Label caption = new Label(config.getCaption());
-			caption.setStyleName(STYLE_CAPTION);
+			caption.setStyleName(Styles.CAPTION);
 			tableViewPanel.add(caption);
 		}
 

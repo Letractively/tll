@@ -17,32 +17,35 @@
 	padding: 2px !important;
 }
 
-.viewContainerPinned {
+.viewContainer {
+}
+
+.viewContainer-pinned {
 	width: 100%;
 	overflow: auto;
 }
 
-.viewContainerPinned .view {
+.viewContainer-pinned .view {
 	margin-top: 10px;
 	width: 100%;
 }
 
-.viewContainerPopped {
+.viewContainer-popped {
 	border:2px solid #DFDFDF;
 	overflow: hidden;
 	background-color: #fff;
 }
 
-.viewContainerPopped .viewTitle {
+.viewContainer-popped .viewTitle {
 	cursor: move;
 	/*-moz-user-select:none;*/ 
 }
 
-.viewContainerPopped .view {
+.viewContainer-popped .view {
 	overflow: visible;
 	height: auto;
 }
 
-.viewContainerPopped .portal {
+.viewContainer-popped .portal {
 	height: inherit !important;
 }

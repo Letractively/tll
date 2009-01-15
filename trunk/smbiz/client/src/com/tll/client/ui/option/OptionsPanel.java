@@ -21,7 +21,14 @@ import com.tll.client.Style;
  */
 public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseListener, ISourcesOptionEvents {
 
-	private static final String STYLE_OPTIONS = "options";
+	/**
+	 * Styles - (options.css)
+	 * @author jpk
+	 */
+	protected static class Styles {
+
+		public static final String OPTIONS = "options";
+	}
 
 	protected final List<Option> options = new ArrayList<Option>();
 	private final VerticalPanel vp = new VerticalPanel();
@@ -35,7 +42,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		super();
 		setWidget(vp);
 		addKeyboardListener(this);
-		setStyleName(STYLE_OPTIONS);
+		setStyleName(Styles.OPTIONS);
 	}
 
 	public void addOptionListener(IOptionListener listener) {

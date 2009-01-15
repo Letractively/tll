@@ -17,7 +17,7 @@ import com.tll.client.util.StringUtil;
  */
 public final class FieldLabel extends Widget implements HasText, SourcesClickEvents {
 
-	private static final String requiredToken = "<sup class=\"" + IField.STYLE_FIELD_REQUIRED_TOKEN + "\">*</sup>";
+	private static final String requiredToken = "<sup class=\"" + IField.Styles.REQUIRED + "\">*</sup>";
 
 	private static final FieldLabelImpl impl = (FieldLabelImpl) GWT.create(FieldLabelImpl.class);
 
@@ -35,7 +35,7 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 	public FieldLabel(String text, String fldId, boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
-		setStyleName(IField.STYLE_FIELD_LABEL);
+		setStyleName(IField.Styles.LABEL);
 		setText(text);
 		if(fldId != null) {
 			setFor(fldId);

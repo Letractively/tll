@@ -7,9 +7,7 @@ package com.tll.client.ui.field;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,14 +31,14 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @author jpk
  */
 public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
-		AbstractBoundWidget<Collection<M>, Collection<M>, M> implements IFieldGroupProvider, Iterable<I> {
+		AbstractBoundWidget<Collection<M>, Collection<M>, M> implements IFieldGroupProvider/*, Iterable<I>*/{
 
 	/**
 	 * Index
 	 * @author jpk
 	 * @param <I> The index type
 	 */
-	private static final class Index<I> {
+	protected static final class Index<I> {
 
 		I fp;
 		boolean markedDeleted;
@@ -55,15 +53,9 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		}
 	} // Index
 
-	/**
-	 * IndexIterator
-	 * @author jpk
-	 */
+	/*
 	private final class IndexIterator implements Iterator<I> {
 
-		/**
-		 * Constructor
-		 */
 		public IndexIterator() {
 			super();
 			this.size = indexPanels == null ? 0 : indexPanels.size();
@@ -86,7 +78,9 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-	}
+		
+	} // IndexIterator
+	*/
 
 	/**
 	 * The group that serving as a common parent to the index field groups.
@@ -122,9 +116,11 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		this.topGroup = new FieldGroup(name);
 	}
 
+	/*
 	public Iterator<I> iterator() {
 		return new IndexIterator();
 	}
+	*/
 
 	/**
 	 * @return The top-most aggregate {@link FieldGroup} containing the index
@@ -163,7 +159,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	/**
 	 * Adds a new indexed field group
 	 */
-	protected final I add() {
+	protected I add() {
 		return add(createPrototypeModel());
 	}
 
@@ -176,7 +172,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private final I add(M model) throws IllegalArgumentException {
+	private I add(M model) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
 		I ip = createIndexPanel(model);
 
@@ -206,7 +202,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *        group
 	 * @throws IndexOutOfBoundsException When the given index is out of bounds
 	 */
-	protected final void update(int index, M model) throws IndexOutOfBoundsException {
+	protected void update(int index, M model) throws IndexOutOfBoundsException {
 		assert model != null;
 		unbindAtIndex(index);
 		FieldGroup fg = indexPanels.get(index).fp.getFieldGroup();
@@ -220,7 +216,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @return The removed field group
 	 * @throws IndexOutOfBoundsException
 	 */
-	protected final I remove(int index) throws IndexOutOfBoundsException {
+	protected I remove(int index) throws IndexOutOfBoundsException {
 		Index<I> removed = indexPanels.remove(index);
 		topGroup.removeField(removed.fp.getFieldGroup());
 		unbindAtIndex(index);
@@ -233,8 +229,10 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @param deleted mark as deleted or un-deleted?
 	 * @throws IndexOutOfBoundsException
 	 */
-	protected final void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		indexPanels.get(index).markedDeleted = deleted;
+	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
+		Index<I> ip = indexPanels.get(index);
+		ip.markedDeleted = deleted;
+		ip.fp.getFieldGroup().setEnabled(!deleted);
 	}
 
 	/**
@@ -312,7 +310,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	/**
 	 * Clears the field group list cleaning up bindings and listeners.
 	 */
-	public final void clear() {
+	public void clear() {
 		Log.debug("IndexedFieldPanel.clearing " + toString() + "..");
 		binding.unbind();
 		binding.getChildren().clear();

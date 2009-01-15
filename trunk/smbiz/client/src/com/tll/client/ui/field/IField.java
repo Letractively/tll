@@ -28,29 +28,37 @@ public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents
 		IBindable, IValidator {
 
 	/**
-	 * Style indicating a UI artifact is a field or that its children are.
+	 * Styles - (field.css)
+	 * @author jpk
 	 */
-	static final String STYLE_FIELD = "fld";
+	static final class Styles {
 
-	/**
-	 * Style indicating a field label.
-	 */
-	public static final String STYLE_FIELD_LABEL = "lbl";
+		/**
+		 * Style indicating a UI artifact is a field or that its children are.
+		 */
+		public static final String FIELD = "fld";
 
-	/**
-	 * Style indicating a field's requiredness.
-	 */
-	public static final String STYLE_FIELD_REQUIRED_TOKEN = "rqd";
+		/**
+		 * Style indicating a field label.
+		 */
+		public static final String LABEL = "lbl";
 
-	/**
-	 * Style indicating the field's value is dirty (changed).
-	 */
-	static final String STYLE_DIRTY = "dirty";
+		/**
+		 * Style indicating a field's requiredness.
+		 */
+		public static final String REQUIRED = "rqd";
 
-	/**
-	 * Style indicating the field's value is invalid.
-	 */
-	static final String STYLE_INVALID = MsgLevel.ERROR.getName().toLowerCase();
+		/**
+		 * Style indicating the field's value is dirty (changed).
+		 */
+		public static final String DIRTY = "dirty";
+
+		/**
+		 * Style indicating the field's value is invalid.
+		 */
+		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
+
+	} // Styles
 
 	/**
 	 * Sets the property name for this field.

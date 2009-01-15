@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.Br;
+import com.tll.client.ui.field.IField.Styles;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following
@@ -47,7 +48,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		// reset state
 		if(vp == null) {
 			vp = new VerticalPanel();
-			vp.setStyleName(IField.STYLE_FIELD);
+			vp.setStyleName(Styles.FIELD);
 		}
 		else {
 			vp.clear();
