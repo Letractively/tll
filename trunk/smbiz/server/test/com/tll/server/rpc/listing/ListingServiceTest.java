@@ -32,7 +32,7 @@ import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.Sorting;
-import com.tll.di.AppRefDataModule;
+import com.tll.di.RefDataModule;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
@@ -91,7 +91,7 @@ public class ListingServiceTest extends DbTest {
 		assert jpaMode != null && daoMode != null;
 		modules.add(new VelocityModule());
 		modules.add(new MailModule());
-		modules.add(new AppRefDataModule());
+		modules.add(new RefDataModule());
 		// modules.add(new MockEntitiesModule());
 		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(daoMode));

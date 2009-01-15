@@ -27,7 +27,7 @@ public class GuiceBootstrapperTest extends TestBase {
 		context.addInitParameter(Constants.GUICE_MODULE_CLASS_NAMES, 
 				"com.tll.di.VelocityModule \r\n"
 				+ "com.tll.di.MailModule \r\n" 
-				+ "com.tll.di.AppRefDataModule \r\n"
+				+ "com.tll.di.RefDataModule \r\n"
 				+ "com.tll.di.MockEntitiesModule \r\n" 
 				+ "com.tll.di.JpaModule \r\n" 
 				+ "com.tll.di.DaoModule \r\n"

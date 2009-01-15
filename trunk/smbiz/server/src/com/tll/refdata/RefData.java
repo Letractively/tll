@@ -18,7 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * AppRefData - Loads ref data from files on disk and monitors these files for
+ * RefData - Loads ref data from files on disk and monitors these files for
  * change whereby loaded ref data is refreshed.
  * <p>
  * <b>IMPT: files are loaded from the classpath root.</b> <br>
@@ -28,9 +28,9 @@ import org.apache.commons.logging.LogFactory;
  * ...<br>
  * @author jpk
  */
-public final class AppRefData {
+public final class RefData {
 
-	private static final Log log = LogFactory.getLog(AppRefData.class);
+	private static final Log log = LogFactory.getLog(RefData.class);
 
 	public static final String APPREFDATA_FILEPREFIX = "refdata-";
 

@@ -13,7 +13,7 @@
     <param-value>
       com.tll.di.VelocityModule
       com.tll.di.MailModule
-      com.tll.di.AppRefDataModule
+      com.tll.di.RefDataModule
       com.tll.di.MockEntitiesModule
       com.tll.di.JpaModule
       com.tll.di.DaoModule

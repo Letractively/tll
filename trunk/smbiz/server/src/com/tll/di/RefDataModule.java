@@ -5,18 +5,18 @@
  */
 package com.tll.di;
 
-import com.tll.refdata.AppRefData;
+import com.tll.refdata.RefData;
 
 /**
- * AppRefDataModule
+ * RefDataModule
  * @author jpk
  */
-public class AppRefDataModule extends GModule {
+public class RefDataModule extends GModule {
 
 	/**
 	 * Constructor
 	 */
-	public AppRefDataModule() {
+	public RefDataModule() {
 		super();
 		log.info("Employing App ref data module");
 	}
@@ -24,8 +24,8 @@ public class AppRefDataModule extends GModule {
 	@Override
 	protected void configure() {
 
-		// AppRefData
-		bind(AppRefData.class).toInstance(new AppRefData());
+		// RefData
+		bind(RefData.class).toInstance(new RefData());
 	}
 
 }
