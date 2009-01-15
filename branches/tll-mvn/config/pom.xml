@@ -9,7 +9,7 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Config</name>
-  <url>http://tll.googlecode.com</url>
+  <description>Yet another attempt to house configuration properties under one roof.</description>
   
   <dependencies>
     <dependency>
