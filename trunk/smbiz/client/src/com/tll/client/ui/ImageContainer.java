@@ -14,6 +14,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
  */
 public final class ImageContainer extends Composite {
 
+	/**
+	 * Styles - (widget-tll.css)
+	 * @author jpk
+	 */
+	protected static final class Styles {
+
+		public static final String IMAGE_CONTAINER = "ic";
+	}
+
 	private final SimplePanel sp = new SimplePanel();
 
 	/**
@@ -24,6 +33,7 @@ public final class ImageContainer extends Composite {
 	public ImageContainer(Image img) {
 		setClippedImage(img);
 		initWidget(sp);
+		setStyleName(Styles.IMAGE_CONTAINER);
 	}
 
 	/**

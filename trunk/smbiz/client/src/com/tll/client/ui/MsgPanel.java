@@ -10,7 +10,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.tll.client.App;
-import com.tll.client.Style;
 import com.tll.client.msg.Msg;
 import com.tll.client.msg.Msg.MsgLevel;
 
@@ -79,7 +78,7 @@ public final class MsgPanel extends TimedPositionedPopup {
 			Image img = getMsgLevelImage(level);
 			// NOTE: since this is a clipped image, the width/height should be known
 			ImageContainer ic = new ImageContainer(img, img.getWidth(), img.getHeight());
-			ic.addStyleName(Style.IMAGE_CONTAINER);
+			ic.addStyleName(ImageContainer.Styles.IMAGE_CONTAINER);
 			msgLevelPanel.add(ic);
 		}
 		msgLevelPanel.add(new HtmlListPanel(false));

@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.Style;
 import com.tll.client.model.Model;
 import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.msg.Msg;
@@ -46,11 +45,14 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		 * The style name for {@link EditPanel}s.
 		 */
 		public static final String ENTITY_EDIT = "entityEdit";
-
 		/**
-		 * The button row style
+		 * The button row style.
 		 */
 		public static final String BTN_ROW = "btnRow";
+		/**
+		 * The edit portal style.
+		 */
+		public static final String PORTAL = "portal";
 	}
 
 	/**
@@ -90,7 +92,7 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 
-		portal.setStyleName(Style.PORTAL);
+		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
 		// portal.setWidget(fieldPanel);
 

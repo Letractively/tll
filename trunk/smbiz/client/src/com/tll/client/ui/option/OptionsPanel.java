@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.Style;
 
 /**
  * OptionsPanel - Panel containing a vertical list of options that are
@@ -28,6 +27,8 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	protected static class Styles {
 
 		public static final String OPTIONS = "options";
+
+		public static final String ACTIVE = "active";
 	}
 
 	protected final List<Option> options = new ArrayList<Option>();
@@ -125,7 +126,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		}
 
 		// set new current
-		options.get(index).getElement().getParentElement().setClassName(Style.ACTIVE);
+		options.get(index).getElement().getParentElement().setClassName(Styles.ACTIVE);
 		this.crntIndx = index;
 
 		if(fireCurrentOptionChanged && optionListeners != null) {

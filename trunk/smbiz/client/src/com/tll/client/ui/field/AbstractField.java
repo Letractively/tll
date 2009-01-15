@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.Style;
 import com.tll.client.bind.IBindable;
 import com.tll.client.model.MalformedPropPathException;
 import com.tll.client.model.PropertyPathException;
@@ -500,7 +499,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		formWidget.setVisible(!readOnly);
 
 		// apply disabled property
-		formWidget.getElement().setPropertyBoolean(Style.DISABLED, !enabled);
+		formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
 
 		// resolve the containers
 		final Widget fldContainer = container == null ? this : container;
@@ -508,12 +507,12 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 		// apply enabled property to "containing" widget
 		if(enabled) {
-			fldContainer.removeStyleName(Style.DISABLED);
-			if(lblContainer != null) lblContainer.removeStyleName(Style.DISABLED);
+			fldContainer.removeStyleName(Styles.DISABLED);
+			if(lblContainer != null) lblContainer.removeStyleName(Styles.DISABLED);
 		}
 		else {
-			fldContainer.addStyleName(Style.DISABLED);
-			if(lblContainer != null) lblContainer.addStyleName(Style.DISABLED);
+			fldContainer.addStyleName(Styles.DISABLED);
+			if(lblContainer != null) lblContainer.addStyleName(Styles.DISABLED);
 		}
 
 		if(!enabled || readOnly) {

@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.SourcesTableEvents;
 import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.Style;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingListener;
@@ -58,6 +57,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		public static final String ADDED = "added";
 		public static final String UPDATED = "updated";
 		public static final String DELETED = "deleted";
+
+		public static final String CURRENT = "crnt";
+		public static final String ACTIVE = "actv";
 
 	} // Styles
 
@@ -371,7 +373,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 			case Event.ONMOUSEOUT:
 				if(actvRowIndex >= 0) {
-					getRowFormatter().removeStyleName(actvRowIndex, Style.ACTIVE);
+					getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
 					actvRowIndex = -1;
 				}
 				break;
@@ -418,9 +420,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			return;
 		}
 		if(actvRowIndex >= 0) {
-			getRowFormatter().removeStyleName(actvRowIndex, Style.ACTIVE);
+			getRowFormatter().removeStyleName(actvRowIndex, Styles.ACTIVE);
 		}
-		getRowFormatter().addStyleName(rowIndex, Style.ACTIVE);
+		getRowFormatter().addStyleName(rowIndex, Styles.ACTIVE);
 		actvRowIndex = rowIndex;
 	}
 
@@ -429,9 +431,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			return;
 		}
 		if(crntRowIndex >= 0) {
-			getRowFormatter().removeStyleName(crntRowIndex, Style.CURRENT);
+			getRowFormatter().removeStyleName(crntRowIndex, Styles.CURRENT);
 		}
-		getRowFormatter().addStyleName(rowIndex, Style.CURRENT);
+		getRowFormatter().addStyleName(rowIndex, Styles.CURRENT);
 		crntRowIndex = rowIndex;
 		// DOM.scrollIntoView(targetTd);
 	}

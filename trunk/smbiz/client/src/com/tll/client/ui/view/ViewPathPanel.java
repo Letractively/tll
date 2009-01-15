@@ -6,7 +6,6 @@ package com.tll.client.ui.view;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.Style;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewEventListener;
 import com.tll.client.mvc.view.IViewRef;
@@ -21,11 +20,12 @@ import com.tll.client.ui.P;
 public class ViewPathPanel extends Composite implements IViewEventListener {
 
 	/**
-	 * Styles - (viewpath.css)
+	 * Styles - (viewpath.css, hnav.css)
 	 * @author jpk
 	 */
 	protected static class Styles {
 
+		public static final String HNAV = "hnav";
 		public static final String VIEWPATH = "viewpath";
 		public static final String SPACER = "spacer";
 	}
@@ -50,7 +50,7 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 	 */
 	public ViewPathPanel() {
 		super();
-		container.addStyleName(Style.HNAV);
+		container.addStyleName(Styles.HNAV);
 		container.addStyleName(Styles.VIEWPATH);
 		container.add(ulPanel);
 		initWidget(container);

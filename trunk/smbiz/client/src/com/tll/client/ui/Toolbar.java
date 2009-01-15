@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.Style;
 
 /**
  * Toolbar - Simple extension of {@link FlowPanel} that sets common
@@ -35,6 +34,10 @@ public abstract class Toolbar extends Composite {
 		 * Style for a toolbar separator widget.
 		 */
 		public static final String TOOLBAR_SEPARATOR = "separator";
+		/**
+		 * Style for a toolbar separator widget.
+		 */
+		public static final String BUTTON = "button";
 	}
 
 	// private final FlowPanel pnl = new FlowPanel();
@@ -55,7 +58,7 @@ public abstract class Toolbar extends Composite {
 
 	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
-		td.setClassName(Style.BUTTON);
+		td.setClassName(Styles.BUTTON);
 		if(title != null) {
 			b.setTitle(title);
 		}

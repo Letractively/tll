@@ -5,8 +5,7 @@
 package com.tll.client;
 
 /**
- * Style - Consolidates general [app independent] Style related constants for
- * use in the app.
+ * Style - Consolidates general widget agnostic styling.
  * <p>
  * IMPT: These constants correspond to particular declarations declared in
  * referenced Style files.
@@ -36,23 +35,4 @@ public abstract class Style {
 	public static final String GAP_LEFT = "gapLeft";
 	public static final String GAP_TOP = "gapTop";
 	public static final String GAP_BTM = "gapBtm";
-
-	public static final String IMAGE_CONTAINER = "ic";
-
-	public static final String HNAV = "hnav";
-
-	public static final String CURRENT = "crnt";
-	public static final String ACTIVE = "actv";
-
-	public static final String DISABLED = "disabled";
-
-	/**
-	 * Signifies a scrollable viewing area.
-	 */
-	public static final String PORTAL = "portal";
-
-	/**
-	 * Signifies button-like styling.
-	 */
-	public static final String BUTTON = "button";
 }

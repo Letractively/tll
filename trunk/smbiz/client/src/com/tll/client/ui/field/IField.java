@@ -34,12 +34,12 @@ public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents
 	static final class Styles {
 
 		/**
-		 * Style indicating a UI artifact is a field or that its children are.
+		 * Style indicating a UI artifact is a field.
 		 */
 		public static final String FIELD = "fld";
 
 		/**
-		 * Style indicating a field label.
+		 * Style for field labels.
 		 */
 		public static final String LABEL = "lbl";
 
@@ -57,6 +57,11 @@ public interface IField<B, V> extends IPropertyNameProvider, SourcesChangeEvents
 		 * Style indicating the field's value is invalid.
 		 */
 		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
+
+		/**
+		 * Style for disabling a field.
+		 */
+		public static final String DISABLED = "disabled";
 
 	} // Styles
 
