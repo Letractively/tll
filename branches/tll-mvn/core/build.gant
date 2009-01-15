@@ -1,0 +1,167 @@
+/**
+ * GANT build script
+ * @author jpk, The Logic Lab
+ *
+ * CLASSPATH REQUIREMENTS:
+ * ----------------------------------
+ * - JAVA_HOME env var is set to a desired JDK installation 
+ * - ant.jar (v1.7.0+) 
+ * - commons-lang.jar (v2.3+)
+ * - commons-collections.jar (v3.2+)
+ * - commons-configuration.jar (v1.5+)
+ * - config.properties and optionally {machine name}.{user name}.config.properties or local.config.properties
+ */
+ 
+def config = com.tll.config.Config.instance();
+def property = config.asMap(null, null);
+
+def NL = System.getProperty("line.separator")
+
+//ant.taskdef ( resource : 'testngtasks' , classpath: property.'lib.testng' )
+
+def dependant_libs = ant.path {
+	pathelement(location: "${property.'lib.commons-logging'}")
+	pathelement(location: "${property.'lib.commons-lang'}")
+	pathelement(location: "${property.'lib.commons-logging'}")
+	pathelement(location: "${property.'lib.commons-collections'}")
+	pathelement(location: "${property.'lib.commons-configuration'}")
+	pathelement(location: "${property.'lib.commons-io'}")
+	pathelement(location: "${property.'lib.commons-validator'}")
+	pathelement(location: "${property.'lib.jakarto-oro'}")
+	pathelement(location: "${property.'lib.gwt.user'}")
+	pathelement(location: "${property.'lib.testng'}")
+	pathelement(location: "${property.'lib.spring'}")
+}
+
+// compile classpath 
+def java_compile_classpath = ant.path {
+	pathelement(path: dependant_libs)
+}
+	
+// test run classpath
+def java_run_test_classpath = ant.path {
+	pathelement(location: "${property.'project.dir'}/build/classes")
+	pathelement(location: "${property.'project.dir'}/test")
+	pathelement(path: dependant_libs)
+}
+
+boolean isDeploy = false;
+long startTime = System.currentTimeMillis()
+int targetCount = 0;
+
+def targetStart = { targetCount++; }
+	
+def targetEnd = {
+	if(--targetCount == 0) {
+		long endTime = System.currentTimeMillis()
+			def duration = ((endTime - startTime) / 1000) / 60 // in minutes
+			println("GANT BUILD SUCCESSFULL: $duration minutes")
+	}
+}
+	
+////// TARGETS
+
+target(info: 'Echos the config properties') {
+	println()
+	println('CONFIG PROPERTIES:')
+	String s = ''
+	property.each( { String key, String val -> s += key + ' = ' + val + NL } )
+	ant.echo(s)
+}
+
+target (prepare: 'create directories') {
+	targetStart()
+	println()
+	println 'prepare'
+	ant.mkdir(dir: property.'project.dir' + '/test')
+	ant.mkdir(dir: property.'project.dir' + '/build')
+	ant.mkdir(dir: property.'project.dir' + '/build/classes')
+	ant.mkdir(dir: property.'project.dir' + '/dist')
+	targetEnd()
+}
+
+target (clean: 'clean directories') {
+	targetStart()
+	println()
+	println 'Cleaning directories...'
+	ant.delete(dir: property.'project.dir' + '/dist')
+ 	ant.delete(dir: property.'project.dir.build')
+ 	ant.delete(dir: property.'project.dir' + '/test')
+	targetEnd()
+}
+
+target (compile: 'compile the project') {
+	targetStart()
+	depends(prepare)
+	println()
+ 	println 'compiling...'
+	ant.javac(
+		destdir: "${property.'project.dir'}/build/classes", 
+		classpath: java_compile_classpath,
+		optimize: 'true',
+		source: property.'project.source', 
+		target: property.'project.target') {
+			src(path: "${property.'project.dir'}/src")			
+			src(path: "${property.'project.dir'}/test")			
+	}
+	targetEnd()
+}
+
+target (test: 'perform testing') {
+	targetStart()
+	depends(compile)
+	println()
+ 	println 'testing...'
+ 	/*
+	testng(outputdir: "${property.'project.dir'}/test-output", classpath: java_run_test_classpath, haltonfailure:'true') {
+		jvmarg(value: '-ea')
+		xmlfileset(file:"${property.'project.dir'}/test/testng-util.xml")
+	}
+	*/
+	targetEnd()
+}
+
+target (pack: 'package the project making it dist ready') {
+	targetStart()
+	
+	depends(test)
+	println()
+ 	println 'packaging...'
+ 	
+ 	// create bytecode jar
+	ant.jar(
+		destfile: property.'project.dir' + '/dist/' + property.'app.name' + '.jar', 
+		basedir: property.'project.dir' + '/build/classes',
+		excludes: '**/*Test.class **/*.properties')
+	
+	// create source jar (for GWT)..
+ 	ant.jar(
+		destfile: property.'project.dir' + '/dist/' + property.'app.name' + '-src.jar', 
+		basedir: property.'project.dir' + '/src',
+		excludes: '**/*Test.java **/*.properties')
+	
+	targetEnd()
+}
+
+target (dist: 'distribute the project') {
+	targetStart()
+	depends(pack)
+	println()
+ 	println 'distributing...'
+	
+	// copy jar to tll libs dir
+	ant.copy(todir: property.'dir.tll.libs', preservelastmodified:true) {
+		fileset(dir:property.'project.dir' + '/dist') {
+			include(name: property.'app.name' + '.jar')
+		}
+	}
+	
+	// copy source jar to tll libs src dir
+	ant.copy(todir: property.'dir.tll.libs' + '/src', preservelastmodified:true) {
+		fileset(dir: property.'project.dir' + '/dist') {
+			include(name: property.'app.name' + '-src.jar')
+		}
+	}
+
+	targetEnd()
+}

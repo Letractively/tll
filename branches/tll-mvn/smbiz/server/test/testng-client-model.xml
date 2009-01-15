@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="smbiz-client-model-tests" verbose="5">
+  
+  <test name="client-model">
+    <groups>
+      <run>
+        <include name="client-model" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.client.model" />
+    </packages>
+  </test>
+
+</suite>
