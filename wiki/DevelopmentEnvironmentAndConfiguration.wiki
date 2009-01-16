@@ -6,6 +6,7 @@ The following software is required:
 || *Name* || *Version* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_11+ ||
 || [http://www.eclipse.org/ eclipse] || 3.4.1+||
+|| [http://maven.apache.org/ maven] || 2.0.9+||
 || [http://groovy.codehaus.org/ groovy] || 1.5.7+ ||
 || [http://ant.apache.org/ ant] || 1.7.1+ ||
 || [http://gant.codehaus.org/ gant] || 1.5.0+ ||
@@ -18,6 +19,8 @@ The following software is required:
   * Ensure the following environment variables exist:
 || *Name* || *Description* ||
 || JAVA_HOME || Points to the root Java install dir. ||
+|| M2_HOME || Points to the maven install dir. ||
+|| M2_REPO || Points to your local maven repository dir. ||
 || ASPECTJ_HOME || Points to the root AspectJ install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
@@ -33,6 +36,7 @@ The following software is required:
   * Add the following paths to the system path:
  {{{
 {JAVA_HOME}/bin
+{M2_HOME}/bin
 {ASPECTJ_HOME/bin
 {GROOVY_HOME}/bin
 {ANT_HOME}/bin
@@ -129,5 +133,5 @@ mail.dflt_user_email testemail@domain.com
 
 To create a GWT junit test case quickly, invoke the command:
  {{{
-{TLL_ROOT}/smbiz/client>junitcreator -junit {TLL_ROOT}/tools/lib/junit.jar -module com.tll.Smbiz -eclipse smbiz-client com.tll.client.bind.{testclassname}
+{TLL_ROOT}/smbiz/client>junitcreator -junit {TLL_ROOT}/tools/lib/junit.jar -module com.tll.Smbiz -eclipse smbiz-client {full.path.testclassname}
 }}}
