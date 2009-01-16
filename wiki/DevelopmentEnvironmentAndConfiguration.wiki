@@ -88,6 +88,12 @@ svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 =eclipse=
 The following steps cover the necessary [http://www.eclipse.org/ eclipse] IDE workspace settings.
 
+==bootstrap==
+Specify the -vm option in the eclipse.ini:
+ {{{
+-vm {JAVA_HOME}/bin/javaw.exe
+}}}
+
 ==Classpath Variables==
 The following _Preferences -> Java -> Build Path -> *Classpath Variables*_ are required:
 || TLL_TOOLS || Replica of the environment variable defined above. ||
