@@ -88,7 +88,6 @@ public final class DbShell {
 
 	/**
 	 * Constructor
-	 * @param driverClassName
 	 * @param rootDbName
 	 * @param dbName
 	 * @param urlPrefix
@@ -100,15 +99,15 @@ public final class DbShell {
 	 * @param exceptionTranslator
 	 */
 	@Inject
-	public DbShell(String driverClassName, String rootDbName, String dbName, String urlPrefix, String username,
-			String password, String dbSchemaFileName, String dbDataDeleteFileName, String dbDataStubFileName,
+	public DbShell(String rootDbName, String dbName, String urlPrefix, String username, String password,
+			String dbSchemaFileName, String dbDataDeleteFileName, String dbDataStubFileName,
 			IDbDialectHandler exceptionTranslator) {
 		super();
 
 		String rootUrl = urlPrefix + '/' + rootDbName;
 		String url = urlPrefix + '/' + dbName;
 
-		this.rootDataSource = new SingleConnectionDataSource(driverClassName, rootUrl, username, password, false);
+		this.rootDataSource = new SingleConnectionDataSource(rootUrl, username, password, false);
 		this.dataSource = new SingleConnectionDataSource(url, username, password, false);
 		this.dbName = dbName;
 		this.dbSchemaFileName = dbSchemaFileName;

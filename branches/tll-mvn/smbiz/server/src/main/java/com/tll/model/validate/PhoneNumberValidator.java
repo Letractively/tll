@@ -19,7 +19,6 @@ public class PhoneNumberValidator implements Validator<PhoneNumber>, IPropertyRe
 
 	private String phonePropertyName;
 	private String countryPropertyName;
-	private final BeanWrapper bw = new BeanWrapperImpl();
 
 	public String getPropertyReference() {
 		return phonePropertyName;
@@ -31,13 +30,11 @@ public class PhoneNumberValidator implements Validator<PhoneNumber>, IPropertyRe
 	}
 
 	public boolean isValid(Object value) {
-		if(value == null)
-			return true;
-		bw.setWrappedInstance(value);
+		if(value == null) return true;
+		BeanWrapper bw = new BeanWrapperImpl(value);
 		Object pvPhone = bw.getPropertyValue(phonePropertyName);
 		Object pvCountry = bw.getPropertyValue(countryPropertyName);
-		if(pvPhone == null)
-			return true;
+		if(pvPhone == null) return true;
 
 		final String phoneNumber = ((String) pvPhone).trim().toLowerCase();
 		final String country = pvCountry == null ? "us" : ((String) pvCountry).trim().toLowerCase();

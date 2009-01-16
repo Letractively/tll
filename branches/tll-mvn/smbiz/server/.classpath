@@ -1,52 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/acegi-security.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/activation.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/antlr.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/backport-util-concurrent.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/c3p0.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/cglib-nodep.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-beanutils.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-codec.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-collections.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-configuration.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-configuration-1.5-sources.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-fileupload.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-io.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-lang.jar" sourcepath="/TLL_ROOT/tools/lib/src/commons-lang-2.3-sources.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-logging.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/commons-validator.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/connector.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/dom4j.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ehcache.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/ejb3-persistence.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/guice.jar" sourcepath="/TLL_ROOT/guice/src/"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate3.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-core-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-annotations.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-commons-annotations.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-entitymanager.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-entitymanager-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/hibernate-validator.jar" sourcepath="/TLL_ROOT/tools/lib/src/hibernate-validator-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jakarta-oro.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/javassist.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/jta.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/log4j.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/mail.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/mysql-connector-java-bin.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/servlet-api.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring.jar" sourcepath="/TLL_ROOT/tools/lib/src/spring-sources.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-aspects.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/spring-test.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/testng.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/velocity.jar"/>
-	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-core.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-core-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-mail.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-mail-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-config.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-config-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-api.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/slf4j-log4j12.jar"/>
-	<classpathentry kind="var" path="ASPECTJ_HOME/lib/aspectjrt.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

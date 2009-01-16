@@ -19,7 +19,6 @@ public class PostalCodeValidator implements Validator<PostalCode>, IPropertyRefe
 
 	private String postalCodePropertyName;
 	private String countryPropertyName;
-	private final BeanWrapper bw = new BeanWrapperImpl();
 
 	public String getPropertyReference() {
 		return postalCodePropertyName;
@@ -32,7 +31,7 @@ public class PostalCodeValidator implements Validator<PostalCode>, IPropertyRefe
 
 	public boolean isValid(Object value) {
 		if(value == null) return true;
-		bw.setWrappedInstance(value);
+		BeanWrapper bw = new BeanWrapperImpl(value);
 		Object pvPostalCode = bw.getPropertyValue(postalCodePropertyName);
 		Object pvCountry = bw.getPropertyValue(countryPropertyName);
 		if(pvPostalCode == null) return true;

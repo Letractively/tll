@@ -257,7 +257,6 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 			}
 			else {
 				list = new ArrayList<E>();
-				final BeanWrapper bw = new BeanWrapperImpl();
 				final CriterionGroup pg = criteria.getPrimaryGroup();
 				if(pg.size() > 0) {
 					for(final ICriterion ctn : pg) {
@@ -269,7 +268,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 							for(final E e : set) {
 								final String pn = ctn.getPropertyName();
 								Object pv = null;
-								bw.setWrappedInstance(e);
+								BeanWrapper bw = new BeanWrapperImpl(e);
 
 								try {
 									pv = bw.getPropertyValue(pn);
@@ -503,10 +502,9 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	public final E load(final NameKey key) {
 		if(key == null || key.getName() == null) return null;
 		if(set != null) {
-			final BeanWrapper bw = new BeanWrapperImpl();
 			for(final E e : set) {
 				String name;
-				bw.setWrappedInstance(e);
+				BeanWrapper bw = new BeanWrapperImpl(e);
 				try {
 					final Object o = bw.getPropertyValue(INamedEntity.NAME);
 					name = (String) o;

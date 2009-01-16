@@ -24,8 +24,7 @@ public class DbShellModule extends CompositeModule {
 	@Override
 	protected Module[] getModulesToBind() {
 		return new Module[] {
-			new ProductionDbShellModule(),
-			new TestDbShellModule() };
+			new ProductionDbShellModule(), new TestDbShellModule() };
 	}
 
 	/**
@@ -33,8 +32,7 @@ public class DbShellModule extends CompositeModule {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface ProductionDb {
 	}
@@ -44,8 +42,7 @@ public class DbShellModule extends CompositeModule {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface TestDb {
 	}
@@ -56,8 +53,8 @@ public class DbShellModule extends CompositeModule {
 	 */
 	private static abstract class AbstractDbShellModule extends GModule {
 
-		private final String driverClassName, rootDbName, dbName, urlPrefix, username, password, dbSchemaFileName,
-				dbDataDeleteFileName, dbDataStubFileName;
+		private final String rootDbName, dbName, urlPrefix, username, password, dbSchemaFileName, dbDataDeleteFileName,
+				dbDataStubFileName;
 
 		/**
 		 * Constructor
@@ -66,7 +63,7 @@ public class DbShellModule extends CompositeModule {
 		public AbstractDbShellModule(String dbName) {
 			super();
 			final Config config = Config.instance();
-			this.driverClassName = config.getString(ConfigKeys.DB_DRIVER.getKey());
+			// this.driverClassName = config.getString(ConfigKeys.DB_DRIVER.getKey());
 			this.rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT.getKey());
 			this.dbName = dbName;
 			this.urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX.getKey());
@@ -78,8 +75,8 @@ public class DbShellModule extends CompositeModule {
 		}
 
 		protected DbShell createDbShell(IDbDialectHandler exceptionTranslator) {
-			return new DbShell(driverClassName, rootDbName, dbName, urlPrefix, username, password, dbSchemaFileName,
-					dbDataDeleteFileName, dbDataStubFileName, exceptionTranslator);
+			return new DbShell(rootDbName, dbName, urlPrefix, username, password, dbSchemaFileName, dbDataDeleteFileName,
+					dbDataStubFileName, exceptionTranslator);
 		}
 	}
 
