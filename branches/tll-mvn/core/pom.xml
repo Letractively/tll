@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>tll-core</groupId>
+  <groupId>com.tll</groupId>
   <artifactId>tll-core</artifactId>
-  <name>Core</name>
+  <name>tll-core</name>
   <version>1.0-SNAPSHOT</version>
-  <description>Core tll types</description>
+  <description>Core types used by tll projects</description>
   <dependencies>
   	<dependency>
   		<groupId>com.google.gwt</groupId>
