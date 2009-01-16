@@ -110,6 +110,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || subversive || [http://download.eclipse.org/technology/subversive/0.7/update-site/ http://download.eclipse.org/technology/subversive/0.7/update-site/] ||
 || subversive connectors || [http://www.polarion.org/projects/subversive/download/integrations/update-site/ http://www.polarion.org/projects/subversive/download/integrations/update-site/] ||
 || subversive connectors 2 || [http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/ http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/] ||
+|| m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
 
 ==Preferences==
