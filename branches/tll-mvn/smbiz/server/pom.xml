@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>com.tll</groupId>
   <artifactId>smbiz-server</artifactId>
   <name>smbiz-server</name>
@@ -12,7 +13,7 @@
     <artifactId>smbiz</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
@@ -85,4 +86,31 @@
       <version>2.5.6</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <!-- TODO figure out how to add config dir to classpath
+              <classpath>
+                <element>
+                </element>
+              </classpath>
+              -->
+              <source>${pom.basedir}/src/main/script/ResourceProcessor.groovy</source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

@@ -56,7 +56,7 @@
         <artifactId>velocity</artifactId>
         <version>1.6.1</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
@@ -80,6 +80,21 @@
         <artifactId>gwt-user</artifactId>
         <version>1.5.3</version>
       </dependency>
+
+      <!-- GMaven -->
+      <!-- 
+      <dependency>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-mojo</artifactId>
+        <version>1.0-rc-3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy.maven.runtime</groupId>
+        <artifactId>gmaven-runtime-default</artifactId>
+        <version>1.0-rc-3</version>
+      </dependency>
+      -->
+      
     </dependencies>
   </dependencyManagement>
 
@@ -93,6 +108,11 @@
             <source>1.6</source>
             <target>1.6</target>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.groovy.maven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.0-rc-3</version>
         </plugin>
       </plugins>
     </pluginManagement>
