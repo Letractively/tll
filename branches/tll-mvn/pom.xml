@@ -10,7 +10,11 @@
   <description>The tll super pom.</description>
 
   <modules>
+    <module>core</module>
     <module>util</module>
+    <module>mail</module>
+    <module>refdata</module>
+    <module>smbiz</module>
   </modules>
 
   <dependencyManagement>
@@ -86,12 +90,12 @@
       <dependency>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-mojo</artifactId>
-        <version>1.0-rc-3</version>
+        <version>1.0-rc-4</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy.maven.runtime</groupId>
         <artifactId>gmaven-runtime-default</artifactId>
-        <version>1.0-rc-3</version>
+        <version>1.0-rc-4</version>
       </dependency>
       -->
       
@@ -112,7 +116,7 @@
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0-rc-3</version>
+          <version>1.0-rc-4</version>
         </plugin>
       </plugins>
     </pluginManagement>
