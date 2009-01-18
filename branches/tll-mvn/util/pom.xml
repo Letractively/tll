@@ -31,6 +31,10 @@
   		<groupId>oro</groupId>
   		<artifactId>oro</artifactId>
   	</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
   	<dependency>
   		<groupId>org.testng</groupId>
   		<artifactId>testng</artifactId>
@@ -38,14 +42,5 @@
         <classifier>jdk15</classifier>
         <scope>test</scope>
   	</dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
   </dependencies>
 </project>
