@@ -21,12 +21,10 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
