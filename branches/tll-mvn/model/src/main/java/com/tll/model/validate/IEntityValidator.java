@@ -10,11 +10,12 @@ import org.hibernate.validator.InvalidStateException;
 import com.tll.model.IEntity;
 
 /**
- * IEntityValidator - Generalized entity validation defintion. TODO sub-class
- * InvalidStateException to isolate from org.hibernate import refs.
+ * IEntityValidator - Generalized entity validation defintion.
  * @author jpk
  * @param <E>
  */
+// TODO sub-class InvalidStateException to isolate from org.hibernate import
+// refs.
 public interface IEntityValidator<E extends IEntity> {
 
 	/**

@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.ICustomerAccountDao;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
-import com.tll.model.EntityType;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.CustomerAccount;
@@ -23,7 +22,8 @@ import com.tll.service.entity.StatefulEntityService;
  * @author jpk
  */
 @Transactional
-public class CustomerAccountService extends StatefulEntityService<CustomerAccount, ICustomerAccountDao> implements ICustomerAccountService {
+public class CustomerAccountService extends StatefulEntityService<CustomerAccount, ICustomerAccountDao> implements
+		ICustomerAccountService {
 
 	private final IAccountHistoryDao accountHistoryDao;
 
@@ -35,7 +35,7 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 	 */
 	@Inject
 	public CustomerAccountService(ICustomerAccountDao dao, IAccountHistoryDao accountHistoryDao,
-			EntityAssembler entityAssembler) {
+			IEntityAssembler entityAssembler) {
 		super(ICustomerAccountDao.class, dao, entityAssembler);
 		this.accountHistoryDao = accountHistoryDao;
 	}
@@ -112,14 +112,14 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 			// add customer account
 			case CUSTOMER_ACCOUNT_ADDED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getCustomerAccount()
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
 				accountHistoryDao.persist(ah);
 
 				ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getCustomerAccount()
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
@@ -130,14 +130,14 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 				// purge customer account
 			case CUSTOMER_ACCOUNT_PURGED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getCustomerAccount()
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
 				accountHistoryDao.persist(ah);
 
 				ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getCustomerAccount()
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());

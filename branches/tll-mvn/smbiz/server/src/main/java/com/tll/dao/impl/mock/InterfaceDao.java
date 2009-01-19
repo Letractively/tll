@@ -12,11 +12,12 @@ import com.tll.dao.impl.IInterfaceDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Interface;
+import com.tll.model.key.IBusinessKeyFactory;
 
 public class InterfaceDao extends EntityDao<Interface> implements IInterfaceDao, IMockDao<Interface> {
 
 	@Inject
-	public InterfaceDao(Set<Interface> set) {
-		super(Interface.class, set);
+	public InterfaceDao(Set<Interface> set, IBusinessKeyFactory bkf) {
+		super(Interface.class, set, bkf);
 	}
 }

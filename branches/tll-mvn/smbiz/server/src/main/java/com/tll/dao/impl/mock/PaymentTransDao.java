@@ -12,6 +12,7 @@ import com.tll.dao.impl.IPaymentTransDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.PaymentTrans;
+import com.tll.model.key.IBusinessKeyFactory;
 
 /**
  * PaymentTransDao
@@ -20,8 +21,8 @@ import com.tll.model.impl.PaymentTrans;
 public class PaymentTransDao extends EntityDao<PaymentTrans> implements IPaymentTransDao, IMockDao<PaymentTrans> {
 
 	@Inject
-	public PaymentTransDao(Set<PaymentTrans> set) {
-		super(PaymentTrans.class, set);
+	public PaymentTransDao(Set<PaymentTrans> set, IBusinessKeyFactory bkf) {
+		super(PaymentTrans.class, set, bkf);
 	}
 
 }

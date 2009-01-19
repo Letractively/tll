@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tll.dao.IEntityDao;
-import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 
 /**
  * For entities having some sort of state where the distinction between delete
@@ -24,7 +24,7 @@ public abstract class StatefulEntityService<E extends IEntity, D extends IEntity
 	 * @param dao
 	 * @param entityAssembler
 	 */
-	protected StatefulEntityService(Class<D> daoClass, D dao, EntityAssembler entityAssembler) {
+	protected StatefulEntityService(Class<D> daoClass, D dao, IEntityAssembler entityAssembler) {
 		super(daoClass, dao, entityAssembler);
 	}
 

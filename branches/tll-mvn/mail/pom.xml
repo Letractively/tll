@@ -7,7 +7,7 @@
   <name>tll-mail</name>
   <version>1.0-SNAPSHOT</version>
   <description>Programmatic email assembly and distribution using Spring and javax.mail via a simplified api.</description>
-  
+
   <parent>
     <groupId>com.tll</groupId>
     <artifactId>tll</artifactId>
@@ -42,13 +42,13 @@
       <artifactId>mail</artifactId>
       <version>1.4.1</version>
     </dependency>
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>5.8</version>
-        <classifier>jdk15</classifier>
-        <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.8</version>
+      <classifier>jdk15</classifier>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

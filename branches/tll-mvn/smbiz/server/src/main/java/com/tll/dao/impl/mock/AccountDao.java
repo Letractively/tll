@@ -19,12 +19,13 @@ import com.tll.model.impl.Account;
 import com.tll.model.impl.Customer;
 import com.tll.model.impl.Isp;
 import com.tll.model.impl.Merchant;
+import com.tll.model.key.IBusinessKeyFactory;
 
 public class AccountDao extends EntityDao<Account> implements IAccountDao, IMockDao<Account> {
 
 	@Inject
-	public AccountDao(Set<Account> set) {
-		super(Account.class, set);
+	public AccountDao(Set<Account> set, IBusinessKeyFactory bkf) {
+		super(Account.class, set, bkf);
 	}
 
 	@Override

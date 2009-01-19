@@ -9,7 +9,7 @@ import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.ICurrencyDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Currency;
 import com.tll.service.entity.EntityService;
 
@@ -26,7 +26,7 @@ public class CurrencyService extends EntityService<Currency, ICurrencyDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public CurrencyService(ICurrencyDao dao, EntityAssembler entityAssembler) {
+	public CurrencyService(ICurrencyDao dao, IEntityAssembler entityAssembler) {
 		super(ICurrencyDao.class, dao, entityAssembler);
 	}
 

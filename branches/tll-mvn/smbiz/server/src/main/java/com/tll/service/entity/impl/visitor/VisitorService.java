@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IVisitorDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Visitor;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class VisitorService extends EntityService<Visitor, IVisitorDao> implemen
 	 * @param entityAssembler
 	 */
 	@Inject
-	public VisitorService(IVisitorDao dao, EntityAssembler entityAssembler) {
+	public VisitorService(IVisitorDao dao, IEntityAssembler entityAssembler) {
 		super(IVisitorDao.class, dao, entityAssembler);
 	}
 

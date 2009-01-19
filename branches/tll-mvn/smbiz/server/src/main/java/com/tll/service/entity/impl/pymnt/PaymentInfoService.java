@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IPaymentInfoDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.PaymentInfo;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class PaymentInfoService extends EntityService<PaymentInfo, IPaymentInfoD
 	 * @param entityAssembler
 	 */
 	@Inject
-	public PaymentInfoService(IPaymentInfoDao dao, EntityAssembler entityAssembler) {
+	public PaymentInfoService(IPaymentInfoDao dao, IEntityAssembler entityAssembler) {
 		super(IPaymentInfoDao.class, dao, entityAssembler);
 	}
 

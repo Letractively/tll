@@ -36,6 +36,7 @@ import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
@@ -78,7 +79,9 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	public final void getEmptyEntity(final RequestContext requestContext, final EntityFetchPrototypeRequest request,
 			final EntityType entityType, final EntityPayload payload) {
 		try {
-			final IEntity e = requestContext.getEntityAssembler().assembleEntity(entityType, null, request.isGenerate());
+			final IEntity e =
+					requestContext.getEntityAssembler().assembleEntity(EntityUtil.entityClassFromType(entityType), null,
+							request.isGenerate());
 			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);
 		}
@@ -113,7 +116,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
 				return null;
 			}
-			BusinessKey key = handleBusinessKeyTranslation(search);
+
+			IBusinessKeyFactory bkf = requestContext.getBusinessKeyFactory();
+
+			BusinessKey key = handleBusinessKeyTranslation(search, bkf);
+
 			return svc.load(key);
 		}
 
@@ -231,9 +238,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	/**
 	 * Translates {@link ISearch} to {@link BusinessKey}s.
 	 * @param search The search to translate
+	 * @param bkf The business key factory
 	 * @return Translated {@link BusinessKey}
 	 */
-	protected abstract BusinessKey<E> handleBusinessKeyTranslation(S search);
+	protected abstract BusinessKey<E> handleBusinessKeyTranslation(S search, IBusinessKeyFactory bkf);
 
 	/**
 	 * Handles the entity specific search to criteria translation.

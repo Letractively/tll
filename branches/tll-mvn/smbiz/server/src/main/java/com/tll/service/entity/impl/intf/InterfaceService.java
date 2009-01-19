@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IInterfaceDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Interface;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class InterfaceService extends EntityService<Interface, IInterfaceDao> im
 	 * @param entityAssembler
 	 */
 	@Inject
-	public InterfaceService(IInterfaceDao dao, EntityAssembler entityAssembler) {
+	public InterfaceService(IInterfaceDao dao, IEntityAssembler entityAssembler) {
 		super(IInterfaceDao.class, dao, entityAssembler);
 	}
 

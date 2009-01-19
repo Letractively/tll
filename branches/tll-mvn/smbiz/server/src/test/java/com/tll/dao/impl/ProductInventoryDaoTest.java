@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 
 import com.tll.dao.AbstractDaoTest;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Asp;
 import com.tll.model.impl.Currency;
@@ -62,7 +61,7 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 	protected void uniquify(ProductInventory e) {
 		super.uniquify(e);
 		try {
-			MockEntityProvider.makeBusinessKeyUnique(e.getProductGeneral());
+			getMockEntityProvider().makeBusinessKeyUnique(e.getProductGeneral());
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			Assert.fail(e1.getMessage());

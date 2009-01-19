@@ -12,11 +12,13 @@ import com.tll.dao.impl.IInterfaceOptionAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.InterfaceOptionAccount;
+import com.tll.model.key.IBusinessKeyFactory;
 
-public class InterfaceOptionAccountDao extends EntityDao<InterfaceOptionAccount> implements IInterfaceOptionAccountDao, IMockDao<InterfaceOptionAccount> {
+public class InterfaceOptionAccountDao extends EntityDao<InterfaceOptionAccount> implements IInterfaceOptionAccountDao,
+		IMockDao<InterfaceOptionAccount> {
 
 	@Inject
-	public InterfaceOptionAccountDao(Set<InterfaceOptionAccount> set) {
-		super(InterfaceOptionAccount.class, set);
+	public InterfaceOptionAccountDao(Set<InterfaceOptionAccount> set, IBusinessKeyFactory bkf) {
+		super(InterfaceOptionAccount.class, set, bkf);
 	}
 }

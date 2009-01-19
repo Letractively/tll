@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IShipModeDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.ShipMode;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class ShipModeService extends EntityService<ShipMode, IShipModeDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ShipModeService(IShipModeDao dao, EntityAssembler entityAssembler) {
+	public ShipModeService(IShipModeDao dao, IEntityAssembler entityAssembler) {
 		super(IShipModeDao.class, dao, entityAssembler);
 	}
 

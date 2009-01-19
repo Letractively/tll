@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IOrderDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Order;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class OrderService extends EntityService<Order, IOrderDao> implements IOr
 	 * @param entityAssembler
 	 */
 	@Inject
-	public OrderService(IOrderDao dao, EntityAssembler entityAssembler) {
+	public OrderService(IOrderDao dao, IEntityAssembler entityAssembler) {
 		super(IOrderDao.class, dao, entityAssembler);
 	}
 

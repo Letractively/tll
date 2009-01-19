@@ -17,6 +17,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKeyFactory;
 
 /**
  * MockEntityProvider - Provides prototype entity instances via a Spring bean
@@ -38,28 +39,33 @@ public final class MockEntityProvider {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target( {
-		ElementType.FIELD,
-		ElementType.PARAMETER })
+		ElementType.FIELD, ElementType.PARAMETER })
 	@BindingAnnotation
 	public @interface MockEntityBeanFactory {
 	}
 
 	private final ListableBeanFactory beanFactory;
 
-	private final EntityAssembler entityAssembler;
+	private final IEntityAssembler entityAssembler;
+
+	private final IBusinessKeyFactory businessKeyFactory;
 
 	/**
 	 * Constructor
 	 * @param beanFactory
 	 * @param entityAssembler
+	 * @param businessKeyFactory
 	 */
 	@Inject
-	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, EntityAssembler entityAssembler) {
+	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, IEntityAssembler entityAssembler,
+			IBusinessKeyFactory businessKeyFactory) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
 		assert entityAssembler != null : "The entityAssembler is null";
+		assert businessKeyFactory != null : "The businessKeyFactory is null";
 		this.beanFactory = beanFactory;
 		this.entityAssembler = entityAssembler;
+		this.businessKeyFactory = businessKeyFactory;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -135,8 +141,8 @@ public final class MockEntityProvider {
 	 * @throws BusinessKeyNotDefinedException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E extends IEntity> void makeBusinessKeyUnique(E e) throws BusinessKeyNotDefinedException {
-		BusinessKey[] keys = BusinessKeyFactory.create(e);
+	public <E extends IEntity> void makeBusinessKeyUnique(E e) throws BusinessKeyNotDefinedException {
+		BusinessKey[] keys = businessKeyFactory.create(e);
 		final int uniqueNum = ++uniqueTokenCounter;
 		String ut = Integer.toString(uniqueNum);
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);

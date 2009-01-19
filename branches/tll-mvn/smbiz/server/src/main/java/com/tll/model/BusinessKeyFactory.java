@@ -6,6 +6,7 @@
 package com.tll.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,7 @@ import com.tll.model.impl.User;
 import com.tll.model.impl.Visitor;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.IBusinessKeyDefinition;
+import com.tll.model.key.IBusinessKeyFactory;
 
 /**
  * BusinessKeyFactory - Defines all entity business keys in the application and
@@ -50,7 +52,7 @@ import com.tll.model.key.IBusinessKeyDefinition;
  * @author jpk
  */
 @SuppressWarnings("unchecked")
-public abstract class BusinessKeyFactory {
+public abstract class BusinessKeyFactory implements IBusinessKeyFactory {
 
 	/**
 	 * BusinessKeyDefinition - Local impl of {@link IBusinessKeyDefinition}.
@@ -85,26 +87,21 @@ public abstract class BusinessKeyFactory {
 		}
 	}
 
-	private static final Set<IBusinessKeyDefinition> set = new HashSet<IBusinessKeyDefinition>();
+	static final Set<IBusinessKeyDefinition> set = new HashSet<IBusinessKeyDefinition>();
 
 	static {
 		set.add(new BusinessKeyDefinition(Account.class, "Name", new String[] { "name" }));
 
 		set.add(new BusinessKeyDefinition(AccountAddress.class, "Binder", new String[] {
-			"account.id",
-			"address.id" }));
+			"account.id", "address.id" }));
 		set.add(new BusinessKeyDefinition(AccountAddress.class, "Account Id and Name", new String[] {
-			"account.id",
-			"name" }));
+			"account.id", "name" }));
 
 		set.add(new BusinessKeyDefinition(AccountHistory.class, "Trans Date and Status", new String[] {
-			"account.id",
-			"transDate",
-			"status" }));
+			"account.id", "transDate", "status" }));
 
 		set.add(new BusinessKeyDefinition(Address.class, "Address and Postal Code", new String[] {
-			"address1",
-			"postalCode" }));
+			"address1", "postalCode" }));
 
 		set.add(new BusinessKeyDefinition(AppProperty.class, "Name", new String[] { "name" }));
 
@@ -115,84 +112,62 @@ public abstract class BusinessKeyFactory {
 		set.add(new BusinessKeyDefinition(Currency.class, "iso4217", new String[] { "iso4217" }));
 
 		set.add(new BusinessKeyDefinition(CustomerAccount.class, "Binder", new String[] {
-			"customer.id",
-			"account.id" }));
+			"customer.id", "account.id" }));
 
 		set.add(new BusinessKeyDefinition(Interface.class, "Code", new String[] { "code" }));
 
 		set.add(new BusinessKeyDefinition(InterfaceOption.class, "Code", new String[] { "code" }));
 
 		set.add(new BusinessKeyDefinition(InterfaceOptionAccount.class, "Binder", new String[] {
-			"option.id",
-			"account.id" }));
+			"option.id", "account.id" }));
 
 		set.add(new BusinessKeyDefinition(InterfaceOptionParameterDefinition.class, "Code", new String[] { "code" }));
 
 		set.add(new BusinessKeyDefinition(Order.class, "Order Key", new String[] {
-			"dateCreated",
-			"account.id",
-			"customer.id" }));
+			"dateCreated", "account.id", "customer.id" }));
 
 		set.add(new BusinessKeyDefinition(OrderItem.class, "Order Id and Product SKU", new String[] {
-			"order.id",
-			"sku" }));
+			"order.id", "sku" }));
 
 		set.add(new BusinessKeyDefinition(OrderItemTrans.class, "Order Item Trans Binder", new String[] {
-			"orderItem.id",
-			"orderTrans.id" }));
+			"orderItem.id", "orderTrans.id" }));
 
 		set.add(new BusinessKeyDefinition(OrderTrans.class, "Order Trans Key", new String[] {
-			"order.id",
-			"dateCreated",
-			"username" }));
+			"order.id", "dateCreated", "username" }));
 
 		set.add(new BusinessKeyDefinition(PaymentInfo.class, "Name", new String[] { INamedEntity.NAME }));
 
 		set.add(new BusinessKeyDefinition(PaymentTrans.class, "Date and Op", new String[] {
-			"payTransDate",
-			"payOp",
-			"payType" }));
+			"payTransDate", "payOp", "payType" }));
 		set.add(new BusinessKeyDefinition(PaymentTrans.class, "Ref Num", new String[] { "refNum" }));
 
 		set.add(new BusinessKeyDefinition(ProdCat.class, "Binder", new String[] {
-			"product.id",
-			"category.id" }));
+			"product.id", "category.id" }));
 
 		set.add(new BusinessKeyDefinition(ProductCategory.class, "Account Id and Name", new String[] {
-			"account.id",
-			"name" }));
+			"account.id", "name" }));
 
 		set.add(new BusinessKeyDefinition(ProductInventory.class, "Account Id and SKU", new String[] {
-			"account.id",
-			"sku" }));
+			"account.id", "sku" }));
 
 		set.add(new BusinessKeyDefinition(ProductGeneral.class, "Title", new String[] {
-			"d1",
-			"d2" }));
+			"d1", "d2" }));
 
 		set.add(new BusinessKeyDefinition(SalesTax.class, "Province, County and Postal Code", new String[] {
-			"account.id",
-			"province",
-			"county",
-			"postalCode" }));
+			"account.id", "province", "county", "postalCode" }));
 
 		set.add(new BusinessKeyDefinition(ShipBoundCost.class, "Bounds", new String[] {
-			"shipMode.id",
-			"lbound",
-			"ubound" }));
+			"shipMode.id", "lbound", "ubound" }));
 
 		set.add(new BusinessKeyDefinition(ShipMode.class, "Name", new String[] {
-			"account.id",
-			"name" }));
+			"account.id", "name" }));
 
 		set.add(new BusinessKeyDefinition(SiteCode.class, "Code", new String[] { "code" }));
 
 		set.add(new BusinessKeyDefinition(User.class, "Email Address", new String[] { "emailAddress" }));
 
 		set.add(new BusinessKeyDefinition(Visitor.class, "Visitor", new String[] {
-			"account.id",
-			"dateCreated",
-			"remoteHost" }));
+			"account.id", "dateCreated", "remoteHost" }));
 
 	}
 
@@ -204,7 +179,7 @@ public abstract class BusinessKeyFactory {
 	 * @throws BusinessKeyNotDefinedException Whe no business keys are defined for
 	 *         the given entity type.
 	 */
-	public static <E extends IEntity> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
+	public <E extends IEntity> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
 			throws BusinessKeyNotDefinedException {
 		List<IBusinessKeyDefinition<? extends E>> list = new ArrayList<IBusinessKeyDefinition<? extends E>>();
 		for(IBusinessKeyDefinition<IEntity> def : set) {
@@ -226,7 +201,7 @@ public abstract class BusinessKeyFactory {
 	 * @throws BusinessKeyNotDefinedException When no business keys are defined
 	 *         for the given entity type.
 	 */
-	public static <E extends IEntity> BusinessKey<E>[] create(Class<E> entityClass) throws BusinessKeyNotDefinedException {
+	public <E extends IEntity> BusinessKey<E>[] create(Class<E> entityClass) throws BusinessKeyNotDefinedException {
 		IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
 		BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
@@ -246,7 +221,7 @@ public abstract class BusinessKeyFactory {
 	 *         given entity type or no business key is found having the specified
 	 *         name.
 	 */
-	public static <E extends IEntity> BusinessKey<E> create(Class<E> entityClass, String businessKeyName)
+	public <E extends IEntity> BusinessKey<E> create(Class<E> entityClass, String businessKeyName)
 			throws BusinessKeyNotDefinedException {
 		IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
 		IBusinessKeyDefinition<E> theDef = null;
@@ -271,7 +246,7 @@ public abstract class BusinessKeyFactory {
 	 * @throws BusinessKeyNotDefinedException When no business keys are defined
 	 *         for the given entity type.
 	 */
-	public static <E extends IEntity> BusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException {
+	public <E extends IEntity> BusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException {
 		IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entity.entityClass());
 		BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
@@ -292,7 +267,7 @@ public abstract class BusinessKeyFactory {
 	 *         given entity type or no business key is found having the specified
 	 *         name.
 	 */
-	public static <E extends IEntity> BusinessKey<E> create(E entity, String businessKeyName)
+	public <E extends IEntity> BusinessKey<E> create(E entity, String businessKeyName)
 			throws BusinessKeyNotDefinedException {
 		IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entity.entityClass());
 		IBusinessKeyDefinition<E> theDef = null;
@@ -317,7 +292,7 @@ public abstract class BusinessKeyFactory {
 	 * @param entity The entity instance
 	 * @param bks The business keys whose state is applied to the given entity.
 	 */
-	public static <E extends IEntity> void apply(E entity, BusinessKey<E>[] bks) {
+	public <E extends IEntity> void apply(E entity, BusinessKey<E>[] bks) {
 		BeanWrapperImpl bw = new BeanWrapperImpl(entity);
 		for(BusinessKey<E> bk : bks) {
 			for(String pname : bk.getPropertyNames()) {
@@ -339,7 +314,7 @@ public abstract class BusinessKeyFactory {
 	 * @param bks The business keys for the entity type that are to be filled by
 	 *        the values held in the given entity.
 	 */
-	private static <E extends IEntity> void fill(E entity, BusinessKey<E>[] bks) {
+	static <E extends IEntity> void fill(E entity, BusinessKey<E>[] bks) {
 		BeanWrapperImpl bw = new BeanWrapperImpl(entity);
 		for(BusinessKey<E> bk : bks) {
 			for(String pname : bk.getPropertyNames()) {
@@ -350,6 +325,43 @@ public abstract class BusinessKeyFactory {
 					// ignore
 				}
 			}
+		}
+	}
+
+	/**
+	 * Ensures all entities w/in the collection are unique against oneanother
+	 * based on the defined business keys for corresponding the entity type.
+	 * @param <E> The entity type
+	 * @param clctn The entity collection. May not be <code>null</code>.
+	 * @return <code>true</code> if the entity collection elements are unique
+	 *         against oneanother.
+	 */
+	public <E extends IEntity> boolean isBusinessKeyUnique(Collection<E> clctn) {
+		assert clctn != null;
+		if(clctn.size() < 2) {
+			return true;
+		}
+		try {
+			for(E e : clctn) {
+				BusinessKey[] bks = create(e);
+				for(BusinessKey bk : bks) {
+					for(E e2 : clctn) {
+						if(e != e2) {
+							BusinessKey[] otherBks = create(e2);
+							for(BusinessKey bk2 : otherBks) {
+								if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}
+		catch(BusinessKeyNotDefinedException bknde) {
+			// ok
+			return true;
 		}
 	}
 }

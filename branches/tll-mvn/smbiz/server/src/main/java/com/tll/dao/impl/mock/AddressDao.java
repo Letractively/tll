@@ -12,11 +12,12 @@ import com.tll.dao.impl.IAddressDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Address;
+import com.tll.model.key.IBusinessKeyFactory;
 
 public class AddressDao extends EntityDao<Address> implements IAddressDao, IMockDao<Address> {
 
 	@Inject
-	public AddressDao(Set<Address> set) {
-		super(Address.class, set);
+	public AddressDao(Set<Address> set, IBusinessKeyFactory bkf) {
+		super(Address.class, set, bkf);
 	}
 }

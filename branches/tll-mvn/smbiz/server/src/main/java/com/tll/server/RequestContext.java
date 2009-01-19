@@ -10,7 +10,8 @@ import javax.servlet.http.HttpSession;
 
 import com.google.inject.Injector;
 import com.tll.mail.MailManager;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
+import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -71,8 +72,12 @@ public final class RequestContext {
 		return (String) getServletContext().getAttribute(Constants.ENVIRONMENT_CONTEXT_ATTRIBUTE);
 	}
 
-	public EntityAssembler getEntityAssembler() {
-		return getInstance(EntityAssembler.class);
+	public IEntityAssembler getEntityAssembler() {
+		return getInstance(IEntityAssembler.class);
+	}
+
+	public IBusinessKeyFactory getBusinessKeyFactory() {
+		return getInstance(IBusinessKeyFactory.class);
 	}
 
 	public Marshaler getMarshaler() {

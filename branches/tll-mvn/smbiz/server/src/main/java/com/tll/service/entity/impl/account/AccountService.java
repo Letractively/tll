@@ -11,9 +11,8 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountDao;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.IPaymentInfoDao;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
-import com.tll.model.EntityType;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
@@ -39,7 +38,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 	 */
 	@Inject
 	public AccountService(IAccountDao dao, IPaymentInfoDao paymentInfoDao, IAccountHistoryDao accountHistoryDao,
-			EntityAssembler entityAssembler) {
+			IEntityAssembler entityAssembler) {
 		super(IAccountDao.class, dao, entityAssembler);
 		this.paymentInfoDao = paymentInfoDao;
 		this.accountHistoryDao = accountHistoryDao;
@@ -120,7 +119,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 			// add account
 			case ACCOUNT_ADDED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getAccount()), true);
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setNotes(context.getAccount().typeName() + " created");
 				ah.setStatus(AccountStatus.NEW);
 				accountHistoryDao.persist(ah);
@@ -129,7 +128,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 				// delete account
 			case ACCOUNT_DELETED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(context.getAccount()), true);
+						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setStatus(AccountStatus.DELETED);
 				ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
 				accountHistoryDao.persist(ah);
@@ -140,7 +139,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 				// add history record to parentAccount
 				Account parent = context.getAccount().getParent();
 				if(parent != null) {
-					AccountHistory ah = entityAssembler.assembleEntity(EntityType.ACCOUNT_HISTORY, new EntityCache(parent), true);
+					AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
 					ah.setStatus(AccountStatus.DELETED);
 					ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
 							+ "' DELETED");

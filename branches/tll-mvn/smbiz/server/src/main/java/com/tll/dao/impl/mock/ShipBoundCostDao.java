@@ -12,11 +12,12 @@ import com.tll.dao.impl.IShipBoundCostDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.ShipBoundCost;
+import com.tll.model.key.IBusinessKeyFactory;
 
 public class ShipBoundCostDao extends EntityDao<ShipBoundCost> implements IShipBoundCostDao, IMockDao<ShipBoundCost> {
 
 	@Inject
-	public ShipBoundCostDao(Set<ShipBoundCost> set) {
-		super(ShipBoundCost.class, set);
+	public ShipBoundCostDao(Set<ShipBoundCost> set, IBusinessKeyFactory bkf) {
+		super(ShipBoundCost.class, set, bkf);
 	}
 }

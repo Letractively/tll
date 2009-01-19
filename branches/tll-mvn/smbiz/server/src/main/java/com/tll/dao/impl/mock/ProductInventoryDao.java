@@ -12,11 +12,13 @@ import com.tll.dao.impl.IProductInventoryDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.ProductInventory;
+import com.tll.model.key.IBusinessKeyFactory;
 
-public class ProductInventoryDao extends EntityDao<ProductInventory> implements IProductInventoryDao, IMockDao<ProductInventory> {
+public class ProductInventoryDao extends EntityDao<ProductInventory> implements IProductInventoryDao,
+		IMockDao<ProductInventory> {
 
 	@Inject
-	public ProductInventoryDao(Set<ProductInventory> set) {
-		super(ProductInventory.class, set);
+	public ProductInventoryDao(Set<ProductInventory> set, IBusinessKeyFactory bkf) {
+		super(ProductInventory.class, set, bkf);
 	}
 }

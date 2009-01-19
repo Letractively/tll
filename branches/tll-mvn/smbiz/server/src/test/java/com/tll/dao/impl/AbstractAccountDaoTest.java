@@ -9,7 +9,6 @@ import org.testng.Assert;
 
 import com.tll.dao.NamedEntityDaoTest;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountAddress;
 import com.tll.model.impl.Address;
@@ -186,8 +185,8 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		try {
 			if(e.getAddresses() != null) {
 				for(final AccountAddress aa : e.getAddresses()) {
-					MockEntityProvider.makeBusinessKeyUnique(aa);
-					MockEntityProvider.makeBusinessKeyUnique(aa.getAddress());
+					getMockEntityProvider().makeBusinessKeyUnique(aa);
+					getMockEntityProvider().makeBusinessKeyUnique(aa.getAddress());
 				}
 			}
 		}

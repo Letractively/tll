@@ -25,10 +25,12 @@ import com.tll.di.DbShellModule.TestDb;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
 import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.server.marshal.Marshaler;
 
 /**
@@ -129,8 +131,19 @@ public abstract class TestBase {
 	}
 
 	/**
+	 * <strong>NOTE: </strong>The {@link IBusinessKeyFactory} is not available by
+	 * default. It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
+	 * @return The injected {@link IBusinessKeyFactory}
+	 */
+	protected final IBusinessKeyFactory getBusinessKeyFactory() {
+		return injector.getInstance(IBusinessKeyFactory.class);
+	}
+
+	/**
 	 * <strong>NOTE: </strong>The {@link MockEntityProvider} is not available by
-	 * default. It must be added via {@link #addModules(List)}.
+	 * default. It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
 	 * @return The injected {@link MockEntityProvider}
 	 */
 	protected final MockEntityProvider getMockEntityProvider() {
@@ -139,16 +152,18 @@ public abstract class TestBase {
 
 	/**
 	 * <strong>NOTE: </strong>The {@link EntityAssembler} is not available by
-	 * default. It must be added via {@link #addModules(List)}.
+	 * default. It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
 	 * @return The injected {@link EntityAssembler}
 	 */
-	protected final EntityAssembler getEntityAssembler() {
+	protected final IEntityAssembler getEntityAssembler() {
 		return injector.getInstance(EntityAssembler.class);
 	}
 
 	/**
 	 * <strong>NOTE: </strong>The {@link Marshaler} is not available by default.
-	 * It must be added via {@link #addModules(List)}.
+	 * It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
 	 * @return The injected {@link Marshaler}
 	 */
 	protected final Marshaler getMarshaler() {
@@ -157,7 +172,8 @@ public abstract class TestBase {
 
 	/**
 	 * <strong>NOTE: </strong>The {@link DbShell} is not available by default. It
-	 * must be added via {@link #addModules(List)}.
+	 * must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
 	 * @return The injected {@link DbShell}
 	 */
 	protected final DbShell getDbShell() {
@@ -199,9 +215,9 @@ public abstract class TestBase {
 	 * type of the given entity.
 	 * @param e The entity to uniquify
 	 */
-	protected final static <ET extends IEntity> void makeUnique(ET e) {
+	protected final <ET extends IEntity> void makeUnique(ET e) {
 		try {
-			MockEntityProvider.makeBusinessKeyUnique(e);
+			getMockEntityProvider().makeBusinessKeyUnique(e);
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			// ok

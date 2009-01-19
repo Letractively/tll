@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountAddressDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.AccountAddress;
 import com.tll.service.entity.EntityService;
 
@@ -24,7 +24,7 @@ public class AccountAddressService extends EntityService<AccountAddress, IAccoun
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AccountAddressService(IAccountAddressDao dao, EntityAssembler entityAssembler) {
+	public AccountAddressService(IAccountAddressDao dao, IEntityAssembler entityAssembler) {
 		super(IAccountAddressDao.class, dao, entityAssembler);
 	}
 

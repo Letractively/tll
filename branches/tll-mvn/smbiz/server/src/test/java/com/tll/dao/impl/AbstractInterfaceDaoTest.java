@@ -10,7 +10,6 @@ import org.testng.Assert;
 
 import com.tll.dao.NamedEntityDaoTest;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Interface;
 import com.tll.model.impl.InterfaceOption;
 import com.tll.model.impl.InterfaceOptionParameterDefinition;
@@ -58,9 +57,9 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 
 		try {
 			for(final InterfaceOption o : e.getOptions()) {
-				MockEntityProvider.makeBusinessKeyUnique(o);
+				getMockEntityProvider().makeBusinessKeyUnique(o);
 				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-					MockEntityProvider.makeBusinessKeyUnique(param);
+					getMockEntityProvider().makeBusinessKeyUnique(param);
 				}
 			}
 		}

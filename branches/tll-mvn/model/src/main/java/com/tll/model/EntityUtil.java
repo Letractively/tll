@@ -3,10 +3,7 @@
  */
 package com.tll.model;
 
-import java.util.Collection;
-
 import com.tll.SystemError;
-import com.tll.model.key.BusinessKey;
 import com.tll.util.CommonUtil;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
@@ -30,7 +27,7 @@ public final class EntityUtil {
 				entityClasses = CommonUtil.getClasses(packageName, IEntity.class, true, null);
 			}
 			catch(ClassNotFoundException e) {
-				throw new SystemError("Unable to provide entity classes: " + e.getMessage());
+				throw new SystemError("Unable to provide entity classes: " + e.getMessage(), e);
 			}
 		}
 		return entityClasses;
@@ -95,44 +92,6 @@ public final class EntityUtil {
 	 */
 	public static <E extends IEntity> String typeName(Class<E> clazz) {
 		return EnumUtil.name(entityTypeFromClass(clazz));
-	}
-
-	/**
-	 * Ensures all entities w/in the collection are unique against oneanother
-	 * based on the defined business keys for corresponding the entity type.
-	 * @param <E> The entity type
-	 * @param clctn The entity collection. May not be <code>null</code>.
-	 * @return <code>true</code> if the entity collection elements are unique
-	 *         against oneanother.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E extends IEntity> boolean isBusinessKeyUnique(Collection<E> clctn) {
-		assert clctn != null;
-		if(clctn.size() < 2) {
-			return true;
-		}
-		try {
-			for(E e : clctn) {
-				BusinessKey[] bks = BusinessKeyFactory.create(e);
-				for(BusinessKey bk : bks) {
-					for(E e2 : clctn) {
-						if(e != e2) {
-							BusinessKey[] otherBks = BusinessKeyFactory.create(e2);
-							for(BusinessKey bk2 : otherBks) {
-								if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
-									return false;
-								}
-							}
-						}
-					}
-				}
-			}
-			return true;
-		}
-		catch(BusinessKeyNotDefinedException bknde) {
-			// ok
-			return true;
-		}
 	}
 
 	private EntityUtil() {

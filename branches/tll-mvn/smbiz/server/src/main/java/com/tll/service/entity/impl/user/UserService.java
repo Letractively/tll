@@ -33,9 +33,8 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.IAuthorityDao;
 import com.tll.dao.impl.IUserDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
-import com.tll.model.EntityType;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
@@ -93,7 +92,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IUserDao dao, IAuthorityDao authorityDao, EntityAssembler entityAssembler,
+	public UserService(IUserDao dao, IAuthorityDao authorityDao, IEntityAssembler entityAssembler,
 			AclProviderManager aclProviderManager, UserCache userCache) {
 		super(IUserDao.class, dao, entityAssembler);
 		this.authorityDao = authorityDao;
@@ -109,7 +108,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
 			EntityExistsException {
-		final User user = entityAssembler.assembleEntity(EntityType.USER, new EntityCache(account), true);
+		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account), true);
 
 		String encPassword = null;
 		try {
@@ -208,8 +207,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	@Transactional(rollbackFor = {
-		ChangeUserCredentialsFailedException.class,
-		RuntimeException.class })
+		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
 			throws ChangeUserCredentialsFailedException {
 
@@ -232,8 +230,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	@Transactional(rollbackFor = {
-		ChangeUserCredentialsFailedException.class,
-		RuntimeException.class })
+		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
 			throws ChangeUserCredentialsFailedException {
 
@@ -262,8 +259,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	}
 
 	@Transactional(rollbackFor = {
-		ChangeUserCredentialsFailedException.class,
-		RuntimeException.class })
+		ChangeUserCredentialsFailedException.class, RuntimeException.class })
 	public String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException {
 
 		try {
