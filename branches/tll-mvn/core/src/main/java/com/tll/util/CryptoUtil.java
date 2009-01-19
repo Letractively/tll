@@ -21,8 +21,7 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /**
- * Utility class for cryptologic-related methods. TODO fix dependencies for
- * CryptoUtil (Spring legacy)
+ * CryptoUtil - Utility class for cryptologic-related methods.
  * @author jpk
  */
 public abstract class CryptoUtil {

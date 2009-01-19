@@ -70,9 +70,11 @@ public final class StringUtil {
 	 * @return the updated string
 	 */
 	public static String replaceVariables(String str, final Object[] vars) {
-		final int length = vars == null ? 0 : vars.length;
-		for(int i = 0; i < length; i++) {
-			str = replace(str, "%" + (i + 1), vars[i] == null ? "" : vars[i].toString());
+		if(vars != null) {
+			final int length = vars.length;
+			for(int i = 0; i < length; i++) {
+				str = replace(str, "%" + (i + 1), vars[i] == null ? "" : vars[i].toString());
+			}
 		}
 		return str;
 	}
