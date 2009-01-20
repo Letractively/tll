@@ -27,7 +27,7 @@ import com.tll.model.NamedTimeStampEntity;
  * @author jpk
  */
 @Test(groups = "model.validate")
-public class ValidatorsTest /*extends TestBase*/{
+public class ValidatorsTest {
 
 	private static final Log logger = LogFactory.getLog(ValidatorsTest.class);
 
