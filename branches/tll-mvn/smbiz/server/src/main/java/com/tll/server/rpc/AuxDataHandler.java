@@ -88,8 +88,7 @@ public abstract class AuxDataHandler {
 		etitr = auxDataRequest.getEntityPrototypeRequests();
 		while(etitr != null && etitr.hasNext()) {
 			EntityType et = etitr.next();
-			final IEntity e =
-					requestContext.getEntityAssembler().assembleEntity(EntityUtil.entityClassFromType(et), null, false);
+			final IEntity e = requestContext.getEntityFactory().createEntity(EntityUtil.entityClassFromType(et), false);
 			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();

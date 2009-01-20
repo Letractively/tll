@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IShipBoundCostDao;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.ShipBoundCost;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class ShipBoundCostService extends EntityService<ShipBoundCost, IShipBoun
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ShipBoundCostService(IShipBoundCostDao dao, IEntityAssembler entityAssembler) {
+	public ShipBoundCostService(IShipBoundCostDao dao, EntityAssembler entityAssembler) {
 		super(IShipBoundCostDao.class, dao, entityAssembler);
 	}
 

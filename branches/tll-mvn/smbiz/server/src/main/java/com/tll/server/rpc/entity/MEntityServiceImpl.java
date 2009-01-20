@@ -79,7 +79,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			final IEntity e =
-					requestContext.getEntityAssembler().assembleEntity(EntityUtil.entityClassFromType(entityType), null,
+					requestContext.getEntityFactory().createEntity(EntityUtil.entityClassFromType(entityType),
 							request.isGenerate());
 			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);

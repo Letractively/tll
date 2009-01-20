@@ -103,7 +103,7 @@ public class EntityServiceTest extends DbTest {
 			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
 			final Address a = getMockEntityProvider().getEntityCopy(Address.class, false);
 			aa.setAddress(a);
-			getEntityAssembler().setGenerated(a);
+			getEntityFactory().setGenerated(a);
 			account.addAccountAddress(aa);
 
 			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));

@@ -22,8 +22,6 @@ import org.hibernate.validator.NotNull;
 
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
-//import com.tll.model.impl.PaymentData;
-//import com.tll.model.impl.PaymentInfo;
 
 public final class SchemaInfo implements ISchemaInfo {
 
@@ -42,56 +40,98 @@ public final class SchemaInfo implements ISchemaInfo {
 	private final Map<Class<? extends IEntity>, Map<String, ISchemaProperty>> schemaMap =
 			new HashMap<Class<? extends IEntity>, Map<String, ISchemaProperty>>();
 
-	/**
-	 * Constructor
-	 * @throws SchemaInfoException
-	 */
-	public SchemaInfo() throws SchemaInfoException {
-		super();
-		load();
+	public Map<String, ISchemaProperty> getAllSchemaProperties(final Class<? extends IEntity> entityClass)
+			throws SchemaInfoException {
+		if(!schemaMap.containsKey(entityClass)) {
+			// load it
+			load(entityClass);
+		}
+		return schemaMap.get(entityClass);
 	}
 
-	private void load() {
-		Map<String, ISchemaProperty> classMap;
-		final Class<? extends IEntity>[] entityClasses = EntityUtil.getEntityClasses();
-		for(final Class<? extends IEntity> entityClass : entityClasses) {
-			log.debug("Loading schema info for '" + entityClass.getSimpleName() + "'...");
+	public String[] getSchemaPropertyNames(final Class<? extends IEntity> entityClass) throws SchemaInfoException {
+		final Set<String> set = schemaMap.get(entityClass).keySet();
+		return set.toArray(new String[set.size()]);
+	}
 
-			classMap = new HashMap<String, ISchemaProperty>();
-
-			for(final Method method : entityClass.getMethods()) {
-				if(isSchemaRelated(method)) {
-					final String propName = getPropertyNameFromAccessorMethodName(method.getName());
-					final ISchemaProperty sp = toSchemaProperty(propName, method);
-					if(sp != null) {
-						classMap.put(propName, sp);
-					}
-				}
-			}
-
-			this.schemaMap.put(entityClass, classMap);
-			log.info("Schema information loaded for entity: '" + entityClass.getSimpleName() + "'");
-
+	public PropertyMetadata getPropertyMetadata(final Class<? extends IEntity> entityClass, final String propertyName)
+			throws SchemaInfoException {
+		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
+		if(sp.getPropertyType().isRelational()) {
+			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
+					+ " is not non-relational.");
 		}
+		return (PropertyMetadata) sp;
+	}
 
-		// TODO handle outside of tll-model module
-		// special case: PaymentInfo (PaymentData)
-		/*
-		classMap = schemaMap.get(PaymentInfo.class);
-		assert classMap != null;
-		final Class<PaymentData> pdc = PaymentData.class;
-		for(final Method method : pdc.getMethods()) {
+	public RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propertyName)
+			throws SchemaInfoException {
+		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
+		if(!sp.getPropertyType().isRelational()) {
+			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not relational.");
+		}
+		return (RelationInfo) sp;
+	}
+
+	/**
+	 * @param entityClass
+	 * @param propertyName
+	 * @return
+	 * @throws SchemaInfoException
+	 */
+	private ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
+			throws SchemaInfoException {
+		if(propertyName == null || propertyName.length() < 1)
+			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
+
+		final Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
+
+		if(!classMap.containsKey(propertyName))
+			throw new SchemaInfoException("No field descriptor not found for field: '" + propertyName + "' of class '"
+					+ entityClass.getName() + "'");
+
+		return classMap.get(propertyName);
+	}
+
+	/**
+	 * Loads schema data for a particular entity type.
+	 * @param entityClass The entity type
+	 */
+	private void load(Class<? extends IEntity> entityClass) {
+		Map<String, ISchemaProperty> classMap;
+		log.debug("Loading schema info for entity: '" + entityClass.getSimpleName() + "'...");
+		classMap = new HashMap<String, ISchemaProperty>();
+		iterateMethods(null, entityClass, classMap);
+		schemaMap.put(entityClass, classMap);
+		log.info("Schema information loaded for entity: '" + entityClass.getSimpleName() + "'");
+	}
+
+	/**
+	 * Iterates the methods for the given type populating the given schema map
+	 * along the way.
+	 * @param parentPropName
+	 * @param type The type to iterate
+	 * @param map The schema map
+	 */
+	private void iterateMethods(String parentPropName, Class<?> type, Map<String, ISchemaProperty> map) {
+		String propName, fullPropName;
+		for(final Method method : type.getMethods()) {
 			if(isSchemaRelated(method)) {
-				final String propName = getPropertyNameFromAccessorMethodName(method.getName());
+
+				propName = getPropertyNameFromAccessorMethodName(method.getName());
+				fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
+
+				if(method.getAnnotation(Nested.class) != null) {
+					// nested value object
+					iterateMethods(propName, method.getReturnType(), map);
+				}
+
 				final ISchemaProperty sp = toSchemaProperty(propName, method);
 				if(sp != null) {
-					classMap.put("paymentData." + propName, sp);
+					map.put(fullPropName, sp);
 				}
 			}
 		}
-		*/
-		
-		log.info("Schema information loading complete");
 	}
 
 	/**
@@ -227,7 +267,6 @@ public final class SchemaInfo implements ISchemaInfo {
 					(cascades == null || cascades.length == 0));
 		}
 
-		// TODO make this more generic!
 		if("parent".equals(propName)) {
 			// NOTE: we can't determine the return type at runtime since, in the
 			// IChildEntity.getParent() case, the return type is generic
@@ -238,67 +277,4 @@ public final class SchemaInfo implements ISchemaInfo {
 
 		return null;
 	}
-
-	private Class<? extends IEntity> verify(final Class<? extends IEntity> entityClass) {
-
-		// resolve a possibly sub-classed entity class to its root (usu. due to
-		// hibernate chaching mechanism: CGLIB)
-		for(final Class<? extends IEntity> clz : schemaMap.keySet()) {
-			if(clz.isAssignableFrom(entityClass) && entityClass.getName().startsWith(clz.getName())) {
-				return clz;
-			}
-		}
-
-		throw new IllegalArgumentException("Un-mapped IEntity class '" + entityClass.getName() + "'");
-	}
-
-	public Map<String, ISchemaProperty> getAllSchemaProperties(final Class<? extends IEntity> entityClass)
-			throws SchemaInfoException {
-		return schemaMap.get(verify(entityClass));
-	}
-
-	public String[] getSchemaPropertyNames(final Class<? extends IEntity> entityClass) throws SchemaInfoException {
-		final Set<String> set = schemaMap.get(verify(entityClass)).keySet();
-		return set.toArray(new String[set.size()]);
-	}
-
-	/**
-	 * @param entityClass
-	 * @param propertyName
-	 * @return
-	 * @throws SchemaInfoException
-	 */
-	private ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
-		if(propertyName == null || propertyName.length() < 1)
-			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
-
-		final Map<String, ISchemaProperty> classMap = schemaMap.get(verify(entityClass));
-
-		if(!classMap.containsKey(propertyName))
-			throw new SchemaInfoException("No field descriptor not found for field: '" + propertyName + "' of class '"
-					+ entityClass.getName() + "'");
-
-		return classMap.get(propertyName);
-	}
-
-	public PropertyMetadata getPropertyMetadata(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
-		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(sp.getPropertyType().isRelational()) {
-			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
-					+ " is not non-relational.");
-		}
-		return (PropertyMetadata) sp;
-	}
-
-	public RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
-		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(!sp.getPropertyType().isRelational()) {
-			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not relational.");
-		}
-		return (RelationInfo) sp;
-	}
-
 }

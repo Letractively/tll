@@ -58,7 +58,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 			product = getMockEntityProvider().getEntityCopy(ProductInventory.class, true);
 			final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
 			product.setProductGeneral(gp);
-			getEntityAssembler().setGenerated(product.getProductGeneral());
+			getEntityFactory().setGenerated(product.getProductGeneral());
 			product.setParent(account);
 			product = getDao(IProductInventoryDao.class).persist(product);
 			pKey = new PrimaryKey<ProductInventory>(product);

@@ -34,7 +34,7 @@ import com.tll.dao.impl.IAuthorityDao;
 import com.tll.dao.impl.IUserDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.EntityCache;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
@@ -92,7 +92,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IUserDao dao, IAuthorityDao authorityDao, IEntityAssembler entityAssembler,
+	public UserService(IUserDao dao, IAuthorityDao authorityDao, EntityAssembler entityAssembler,
 			AclProviderManager aclProviderManager, UserCache userCache) {
 		super(IUserDao.class, dao, entityAssembler);
 		this.authorityDao = authorityDao;

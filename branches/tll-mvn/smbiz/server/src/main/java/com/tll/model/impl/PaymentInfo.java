@@ -16,6 +16,7 @@ import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.model.schema.Nested;
 
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
@@ -49,6 +50,7 @@ public class PaymentInfo extends NamedEntity {
 	@Type(type = "encobj")
 	@NotNull
 	@Valid
+	@Nested
 	public PaymentData getPaymentData() {
 		return paymentData;
 	}

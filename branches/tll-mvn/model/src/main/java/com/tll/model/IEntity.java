@@ -37,7 +37,7 @@ public interface IEntity extends IPersistable, IVersionSupport, IDescriptorProvi
 	boolean isGenerated();
 
 	/**
-	 * @return A state independent UI presentable name of the entity
+	 * @return A state independent UI presentable name of the entity type.
 	 */
 	String typeName();
 }

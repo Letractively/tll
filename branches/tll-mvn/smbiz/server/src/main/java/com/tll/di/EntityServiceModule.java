@@ -15,6 +15,7 @@ import org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
 import com.tll.service.entity.EntityServiceFactory;
 import com.tll.service.entity.IEntityService;
@@ -82,6 +83,9 @@ public class EntityServiceModule extends GModule {
 
 	@Override
 	protected void configure() {
+
+		// EntityAssembler
+		bind(EntityAssembler.class).in(Scopes.SINGLETON);
 
 		bind(IAuthorityService.class).to(AuthorityService.class).in(Scopes.SINGLETON);
 		bind(IAccountAddressService.class).to(AccountAddressService.class).in(Scopes.SINGLETON);

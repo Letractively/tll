@@ -11,14 +11,15 @@ import com.tll.model.IEntity;
 public interface ISchemaInfo {
 
 	/**
-	 * @param entityClass
+	 * Provides schema info for a particular entity type.
+	 * @param entityClass The entity type
 	 * @return serviceMap of field descriptor keyed by field names
 	 * @throws SchemaInfoException if invalid entity class specified
 	 */
 	Map<String, ISchemaProperty> getAllSchemaProperties(Class<? extends IEntity> entityClass) throws SchemaInfoException;
 
 	/**
-	 * @param entityClass
+	 * @param entityClass The entity type
 	 * @return array of field names for the given entity class
 	 * @throws SchemaInfoException
 	 */

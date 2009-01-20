@@ -77,7 +77,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 			Account parent = e.getParent();
 			if(parent.isNew()) {
 				if(parentKey == null) {
-					getEntityAssembler().setGenerated(parent);
+					getEntityFactory().setGenerated(parent);
 					parent.setParent(null); // eliminate pointer chasing
 					parent.setCurrency(currency);
 					parent.setPaymentInfo(paymentInfo);

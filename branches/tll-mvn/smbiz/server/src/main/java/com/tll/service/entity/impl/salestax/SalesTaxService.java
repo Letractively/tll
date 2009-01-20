@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.ISalesTaxDao;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.SalesTax;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class SalesTaxService extends EntityService<SalesTax, ISalesTaxDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public SalesTaxService(ISalesTaxDao dao, IEntityAssembler entityAssembler) {
+	public SalesTaxService(ISalesTaxDao dao, EntityAssembler entityAssembler) {
 		super(ISalesTaxDao.class, dao, entityAssembler);
 	}
 

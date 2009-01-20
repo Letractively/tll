@@ -37,7 +37,7 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 	protected void assembleTestEntity(ProductInventory e) throws Exception {
 		final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
 		e.setProductGeneral(gp);
-		getEntityAssembler().setGenerated(e.getProductGeneral());
+		getEntityFactory().setGenerated(e.getProductGeneral());
 
 		Account account;
 		if(aKey == null) {

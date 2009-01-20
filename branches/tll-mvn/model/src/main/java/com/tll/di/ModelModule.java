@@ -5,10 +5,9 @@
  */
 package com.tll.di;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityFactory;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.SchemaInfo;
@@ -17,15 +16,12 @@ import com.tll.model.schema.SchemaInfo;
  * ModelModule
  * @author jpk
  */
-public class ModelModule extends GModule {
+public class ModelModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
 		// IEntityFactory
 		bind(IEntityFactory.class).to(EntityFactory.class).in(Scopes.SINGLETON);
-
-		// IEntityAssembler
-		bind(IEntityAssembler.class).to(EntityAssembler.class).in(Scopes.SINGLETON);
 
 		// ISchemaInfo
 		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);

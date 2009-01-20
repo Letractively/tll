@@ -12,7 +12,7 @@ import com.tll.dao.impl.IAccountDao;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.model.EntityCache;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
@@ -38,7 +38,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 	 */
 	@Inject
 	public AccountService(IAccountDao dao, IPaymentInfoDao paymentInfoDao, IAccountHistoryDao accountHistoryDao,
-			IEntityAssembler entityAssembler) {
+			EntityAssembler entityAssembler) {
 		super(IAccountDao.class, dao, entityAssembler);
 		this.paymentInfoDao = paymentInfoDao;
 		this.accountHistoryDao = accountHistoryDao;

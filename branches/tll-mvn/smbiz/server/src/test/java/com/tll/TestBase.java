@@ -23,9 +23,8 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.MockEntitiesModule;
 import com.tll.di.DbShellModule.TestDb;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.IEntityFactory;
 import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
@@ -140,13 +139,13 @@ public abstract class TestBase {
 	}
 
 	/**
-	 * <strong>NOTE: </strong>The {@link EntityAssembler} is not available by
+	 * <strong>NOTE: </strong>The {@link IEntityFactory} is not available by
 	 * default. It must be bound in a given module which is added via
 	 * {@link #addModules(List)}.
-	 * @return The injected {@link EntityAssembler}
+	 * @return The injected {@link IEntityFactory}
 	 */
-	protected final IEntityAssembler getEntityAssembler() {
-		return injector.getInstance(EntityAssembler.class);
+	protected final IEntityFactory getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
 	}
 
 	/**

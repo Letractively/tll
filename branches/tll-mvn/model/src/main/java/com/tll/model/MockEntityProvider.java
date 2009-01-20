@@ -45,20 +45,20 @@ public final class MockEntityProvider {
 
 	private final ListableBeanFactory beanFactory;
 
-	private final IEntityAssembler entityAssembler;
+	private final IEntityFactory entityFactory;
 
 	/**
 	 * Constructor
 	 * @param beanFactory
-	 * @param entityAssembler
+	 * @param entityFactory
 	 */
 	@Inject
-	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, IEntityAssembler entityAssembler) {
+	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
-		assert entityAssembler != null : "The entityAssembler is null";
+		assert entityFactory != null : "The entityFactory is null";
 		this.beanFactory = beanFactory;
-		this.entityAssembler = entityAssembler;
+		this.entityFactory = entityFactory;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,7 +84,7 @@ public final class MockEntityProvider {
 		E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
 			for(E e : arr) {
-				entityAssembler.setGenerated(e);
+				entityFactory.setGenerated(e);
 				set.add(e);
 			}
 		}
@@ -101,7 +101,7 @@ public final class MockEntityProvider {
 	 */
 	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean uniquify) throws Exception {
 		E e = getBean(entityClass);
-		entityAssembler.setGenerated(e);
+		entityFactory.setGenerated(e);
 		if(uniquify) makeBusinessKeyUnique(e);
 		return e;
 	}

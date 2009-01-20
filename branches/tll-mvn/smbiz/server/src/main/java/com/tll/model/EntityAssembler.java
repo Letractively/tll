@@ -38,12 +38,15 @@ import com.tll.model.impl.User;
 import com.tll.model.impl.Visitor;
 
 /**
- * The entity assembler. Decorates {@link IEntityFactory} so client contexts
- * only need have a ref to the {@link EntityAssembler}.
+ * EntityAssembler - Decorator around the {@link IEntityFactory} with additional
+ * build functionality specific to the entity type.
  * @author jpk
  */
-public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
+public final class EntityAssembler implements IEntityFactory {
 
+	/**
+	 * The decorated entity factory.
+	 */
 	private final IEntityFactory entityFactory;
 
 	/**

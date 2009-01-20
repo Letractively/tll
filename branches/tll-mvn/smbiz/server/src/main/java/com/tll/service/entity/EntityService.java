@@ -21,8 +21,8 @@ import com.tll.dao.INamedEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
+import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -48,7 +48,7 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	/**
 	 * The entity assembler.
 	 */
-	protected final IEntityAssembler entityAssembler;
+	protected final EntityAssembler entityAssembler;
 
 	/**
 	 * Constructor
@@ -56,7 +56,7 @@ public abstract class EntityService<E extends IEntity, D extends IEntityDao<E>> 
 	 * @param dao
 	 * @param entityAssembler
 	 */
-	protected EntityService(Class<D> daoClass, D dao, IEntityAssembler entityAssembler) {
+	protected EntityService(Class<D> daoClass, D dao, EntityAssembler entityAssembler) {
 		super();
 		this.log = LogFactory.getLog(this.getClass());
 		this.dao = dao;

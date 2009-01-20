@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.hibernate.validator.Validator;
 
+import com.tll.model.BusinessKeyFactory;
 import com.tll.model.IEntity;
 
 /**

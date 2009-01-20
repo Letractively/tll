@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAppPropertyDao;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.AppProperty;
 import com.tll.service.entity.EntityService;
 
@@ -24,7 +24,7 @@ public class AppPropertyService extends EntityService<AppProperty, IAppPropertyD
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AppPropertyService(IAppPropertyDao dao, IEntityAssembler entityAssembler) {
+	public AppPropertyService(IAppPropertyDao dao, EntityAssembler entityAssembler) {
 		super(IAppPropertyDao.class, dao, entityAssembler);
 	}
 

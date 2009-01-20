@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.ICustomerAccountDao;
 import com.tll.model.EntityCache;
-import com.tll.model.IEntityAssembler;
+import com.tll.model.EntityAssembler;
 import com.tll.model.impl.AccountHistory;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.impl.CustomerAccount;
@@ -35,7 +35,7 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 	 */
 	@Inject
 	public CustomerAccountService(ICustomerAccountDao dao, IAccountHistoryDao accountHistoryDao,
-			IEntityAssembler entityAssembler) {
+			EntityAssembler entityAssembler) {
 		super(ICustomerAccountDao.class, dao, entityAssembler);
 		this.accountHistoryDao = accountHistoryDao;
 	}

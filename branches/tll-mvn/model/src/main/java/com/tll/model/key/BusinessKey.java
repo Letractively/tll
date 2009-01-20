@@ -133,6 +133,6 @@ public final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> i
 
 	@Override
 	public String toString() {
-		return getEntityType() + " " + getBusinessKeyName();
+		return getTypeName() + " " + getBusinessKeyName();
 	}
 }
