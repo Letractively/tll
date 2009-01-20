@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IInterfaceOptionAccountDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.InterfaceOptionAccount;
+import com.tll.model.InterfaceOptionAccount;
 import com.tll.service.entity.EntityService;
 
 /**

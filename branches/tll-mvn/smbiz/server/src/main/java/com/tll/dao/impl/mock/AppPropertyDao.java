@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IAppPropertyDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.AppProperty;
+import com.tll.model.AppProperty;
 
 public class AppPropertyDao extends EntityDao<AppProperty> implements IAppPropertyDao, IMockDao<AppProperty> {
 

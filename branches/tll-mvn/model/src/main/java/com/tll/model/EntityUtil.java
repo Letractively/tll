@@ -4,7 +4,6 @@
 package com.tll.model;
 
 import com.tll.SystemError;
-import com.tll.util.CommonUtil;
 import com.tll.util.EnumUtil;
 import com.tll.util.StringUtil;
 
@@ -14,24 +13,10 @@ import com.tll.util.StringUtil;
  */
 public final class EntityUtil {
 
-	private static String packageName = "com.tll.model.impl";
-
-	private static Class<? extends IEntity>[] entityClasses = null;
-
 	/**
-	 * @return All non-abstract IEntity implementation classes.
+	 * The package name containing model and entity related classes.
 	 */
-	public static Class<? extends IEntity>[] getEntityClasses() {
-		if(entityClasses == null) {
-			try {
-				entityClasses = CommonUtil.getClasses(packageName, IEntity.class, true, null);
-			}
-			catch(ClassNotFoundException e) {
-				throw new SystemError("Unable to provide entity classes: " + e.getMessage(), e);
-			}
-		}
-		return entityClasses;
-	}
+	public static String MODEL_PACKAGE_NAME = "com.tll.model";
 
 	/**
 	 * Translates an {@link IEntity} {@link Class} to an {@link EntityType}.
@@ -76,7 +61,7 @@ public final class EntityUtil {
 	@SuppressWarnings("unchecked")
 	public static <E extends IEntity> Class<E> entityClassFromType(String entityTypeName) {
 		try {
-			final String fqcn = packageName + "." + StringUtil.enumStyleToJavaClassNotation(entityTypeName);
+			final String fqcn = MODEL_PACKAGE_NAME + "." + StringUtil.enumStyleToJavaClassNotation(entityTypeName);
 			return (Class<E>) Class.forName(fqcn);
 		}
 		catch(ClassNotFoundException e) {

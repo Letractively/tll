@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.ISiteCodeDao;
-import com.tll.model.impl.SiteCode;
+import com.tll.model.SiteCode;
 import com.tll.model.key.NameKey;
 
 /**

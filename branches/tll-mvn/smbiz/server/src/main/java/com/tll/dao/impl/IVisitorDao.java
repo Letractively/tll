@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.IEntityDao;
-import com.tll.model.impl.Visitor;
+import com.tll.model.Visitor;
 
 /**
  * @author jpk

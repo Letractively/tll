@@ -12,7 +12,7 @@ import com.tll.dao.impl.IUserDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
 
 public class UserDao extends EntityDao<User> implements IUserDao, IMockDao<User> {

@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IOrderItemTransDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.OrderItemTrans;
+import com.tll.model.OrderItemTrans;
 
 public class OrderItemTransDao extends EntityDao<OrderItemTrans> implements IOrderItemTransDao,
 		IMockDao<OrderItemTrans> {

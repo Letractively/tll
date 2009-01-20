@@ -3,7 +3,7 @@ package com.tll.dao.impl;
 import com.tll.dao.INamedEntityDao;
 import com.tll.dao.ITimeStampEntityDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 
 /**
  * DAO interface for the persistent methods for {@link User} entities

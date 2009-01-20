@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IOrderItemDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.OrderItem;
+import com.tll.model.OrderItem;
 
 public class OrderItemDao extends EntityDao<OrderItem> implements IOrderItemDao, IMockDao<OrderItem> {
 

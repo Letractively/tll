@@ -7,7 +7,7 @@ import org.acegisecurity.GrantedAuthority;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.model.impl.Authority;
+import com.tll.model.Authority;
 
 /**
  * Extension of

@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IOrderTransDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.OrderTrans;
+import com.tll.model.OrderTrans;
 
 /**
  * OrderTransDao

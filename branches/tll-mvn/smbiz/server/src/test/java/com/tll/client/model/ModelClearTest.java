@@ -11,11 +11,11 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.tll.TestUtils;
-import com.tll.model.impl.AccountAddress;
-import com.tll.model.impl.Address;
-import com.tll.model.impl.Asp;
-import com.tll.model.impl.Currency;
-import com.tll.model.impl.Merchant;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
+import com.tll.model.Asp;
+import com.tll.model.Currency;
+import com.tll.model.Merchant;
 import com.tll.model.schema.PropertyType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;

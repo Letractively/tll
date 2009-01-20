@@ -21,8 +21,8 @@ import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
+import com.tll.model.Account;
 import com.tll.model.INamedEntity;
-import com.tll.model.impl.Account;
 import com.tll.service.entity.impl.account.IAccountService;
 
 /**

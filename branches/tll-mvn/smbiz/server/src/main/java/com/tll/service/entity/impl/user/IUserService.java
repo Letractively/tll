@@ -8,9 +8,9 @@ import javax.persistence.EntityExistsException;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.hibernate.validator.InvalidStateException;
 
+import com.tll.model.Account;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.impl.Account;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.service.entity.INamedEntityService;
 
 /**

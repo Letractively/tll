@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IProductInventoryDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.ProductInventory;
+import com.tll.model.ProductInventory;
 
 public class ProductInventoryDao extends EntityDao<ProductInventory> implements IProductInventoryDao,
 		IMockDao<ProductInventory> {

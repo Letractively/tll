@@ -8,12 +8,12 @@ import javax.persistence.EntityNotFoundException;
 import org.testng.Assert;
 
 import com.tll.dao.NamedEntityDaoTest;
+import com.tll.model.Account;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.impl.Account;
-import com.tll.model.impl.AccountAddress;
-import com.tll.model.impl.Address;
-import com.tll.model.impl.Currency;
-import com.tll.model.impl.PaymentInfo;
+import com.tll.model.Currency;
+import com.tll.model.PaymentInfo;
 import com.tll.model.key.PrimaryKey;
 
 /**

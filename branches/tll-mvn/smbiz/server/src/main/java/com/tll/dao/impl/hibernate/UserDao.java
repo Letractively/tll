@@ -16,7 +16,7 @@ import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IUserDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.IEntity;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.model.key.NameKey;
 
 /**

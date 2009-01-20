@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.impl.ICustomerAccountDao;
+import com.tll.model.AccountHistory;
+import com.tll.model.AccountStatus;
+import com.tll.model.CustomerAccount;
 import com.tll.model.EntityCache;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.AccountHistory;
-import com.tll.model.impl.AccountStatus;
-import com.tll.model.impl.CustomerAccount;
 import com.tll.service.entity.StatefulEntityService;
 
 /**

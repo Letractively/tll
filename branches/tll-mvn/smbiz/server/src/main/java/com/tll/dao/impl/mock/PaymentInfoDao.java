@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IPaymentInfoDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.PaymentInfo;
+import com.tll.model.PaymentInfo;
 
 public class PaymentInfoDao extends EntityDao<PaymentInfo> implements IPaymentInfoDao, IMockDao<PaymentInfo> {
 

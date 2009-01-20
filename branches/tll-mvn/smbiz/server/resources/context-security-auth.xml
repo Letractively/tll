@@ -77,7 +77,7 @@
 	<!-- 
 		<bean id="aclAccountAdminVoter" class="org.acegisecurity.vote.BasicAclEntryVoter">
 		<property name="processConfigAttribute"><value>ACL_ACCOUNT_ADMIN</value></property>
-		<property name="processDomainObjectClass"><value>com.tll.model.impl.Account</value></property>
+		<property name="processDomainObjectClass"><value>com.tll.model.Account</value></property>
 		<property name="aclManager"><ref local="aclManager"/></property>
 		<property name="requirePermission">
 		<list>

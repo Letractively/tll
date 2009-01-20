@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.ITimeStampEntityDao;
-import com.tll.model.impl.CustomerAccount;
+import com.tll.model.CustomerAccount;
 
 /**
  * @author jpk

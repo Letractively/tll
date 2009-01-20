@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.IEntityDao;
-import com.tll.model.impl.OrderItemTrans;
+import com.tll.model.OrderItemTrans;
 
 
 /**

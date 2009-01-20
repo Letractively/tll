@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IProdCatDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.ProdCat;
+import com.tll.model.ProdCat;
 import com.tll.service.entity.EntityService;
 
 /**

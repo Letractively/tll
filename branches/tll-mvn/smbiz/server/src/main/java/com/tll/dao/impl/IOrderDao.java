@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.ITimeStampEntityDao;
-import com.tll.model.impl.Order;
+import com.tll.model.Order;
 
 /**
  * IOrderDao

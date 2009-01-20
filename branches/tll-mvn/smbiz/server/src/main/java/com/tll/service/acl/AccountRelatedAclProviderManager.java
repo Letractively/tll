@@ -3,7 +3,7 @@ package com.tll.service.acl;
 import org.acegisecurity.acl.basic.AclObjectIdentity;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 
-import com.tll.model.impl.IAccountRelatedEntity;
+import com.tll.model.IAccountRelatedEntity;
 
 /**
  * ACL provider for {@link IAccountRelatedEntity}

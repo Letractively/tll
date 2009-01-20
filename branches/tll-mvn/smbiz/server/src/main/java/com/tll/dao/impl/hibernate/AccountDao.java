@@ -10,7 +10,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IAccountDao;
-import com.tll.model.impl.Account;
+import com.tll.model.Account;
 import com.tll.model.key.NameKey;
 
 /**

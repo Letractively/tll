@@ -5,8 +5,8 @@
  */
 package com.tll.server.admin;
 
-import com.tll.model.impl.Account;
-import com.tll.model.impl.User;
+import com.tll.model.Account;
+import com.tll.model.User;
 
 /**
  * AdminContext

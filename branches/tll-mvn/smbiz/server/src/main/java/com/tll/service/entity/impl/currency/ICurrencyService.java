@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.currency;
 
-import com.tll.model.impl.Currency;
+import com.tll.model.Currency;
 import com.tll.service.entity.INamedEntityService;
 
 /**

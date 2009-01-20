@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.product;
 
-import com.tll.model.impl.ProductCategory;
+import com.tll.model.ProductCategory;
 import com.tll.service.entity.INamedEntityService;
 
 /**

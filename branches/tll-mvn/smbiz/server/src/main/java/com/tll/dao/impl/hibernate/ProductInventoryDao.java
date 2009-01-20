@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IProductInventoryDao;
-import com.tll.model.impl.ProductInventory;
+import com.tll.model.ProductInventory;
 
 /**
  * ProductInventoryDao

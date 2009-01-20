@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.acegisecurity.acl.AclProvider;
 
-import com.tll.model.impl.User;
+import com.tll.model.User;
 
 /**
  * Provides and manages ACL permissions. Services wishing to alter ACLs in the

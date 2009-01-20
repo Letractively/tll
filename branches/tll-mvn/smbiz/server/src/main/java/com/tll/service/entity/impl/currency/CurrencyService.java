@@ -9,8 +9,8 @@ import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.impl.ICurrencyDao;
+import com.tll.model.Currency;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.Currency;
 import com.tll.service.entity.EntityService;
 
 /**

@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.ISalesTaxDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.SalesTax;
+import com.tll.model.SalesTax;
 
 public class SalesTaxDao extends EntityDao<SalesTax> implements ISalesTaxDao, IMockDao<SalesTax> {
 

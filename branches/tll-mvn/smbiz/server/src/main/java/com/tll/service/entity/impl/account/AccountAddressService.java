@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountAddressDao;
+import com.tll.model.AccountAddress;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.AccountAddress;
 import com.tll.service.entity.EntityService;
 
 /**

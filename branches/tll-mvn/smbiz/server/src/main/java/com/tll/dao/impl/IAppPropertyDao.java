@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.INamedEntityDao;
-import com.tll.model.impl.AppProperty;
+import com.tll.model.AppProperty;
 
 
 /**

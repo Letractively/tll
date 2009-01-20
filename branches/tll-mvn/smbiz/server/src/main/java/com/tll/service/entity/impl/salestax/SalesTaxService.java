@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.ISalesTaxDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.SalesTax;
+import com.tll.model.SalesTax;
 import com.tll.service.entity.EntityService;
 
 /**

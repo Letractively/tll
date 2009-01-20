@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IAuthorityDao;
-import com.tll.model.impl.Authority;
+import com.tll.model.Authority;
 import com.tll.model.key.NameKey;
 
 /**

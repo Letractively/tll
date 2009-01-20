@@ -22,12 +22,12 @@ import com.tll.dao.Sorting;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.MockEntitiesModule;
 import com.tll.di.DbShellModule.TestDb;
+import com.tll.model.Authority;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.MockEntityProvider;
-import com.tll.model.impl.Authority;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.model.key.BusinessKey;
 import com.tll.server.marshal.Marshaler;
 

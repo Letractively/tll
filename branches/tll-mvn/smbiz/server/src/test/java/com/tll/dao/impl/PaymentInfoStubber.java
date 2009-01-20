@@ -14,7 +14,7 @@ import com.tll.DbTest;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
-import com.tll.model.impl.PaymentInfo;
+import com.tll.model.PaymentInfo;
 
 /**
  * PaymentInfoStubber

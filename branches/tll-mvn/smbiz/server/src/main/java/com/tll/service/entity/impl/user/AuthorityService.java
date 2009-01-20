@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAuthorityDao;
+import com.tll.model.Authority;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.Authority;
 import com.tll.service.entity.EntityService;
 
 /**

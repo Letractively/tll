@@ -1,7 +1,7 @@
 package com.tll.dao.impl;
 
 import com.tll.dao.INamedEntityDao;
-import com.tll.model.impl.Currency;
+import com.tll.model.Currency;
 
 
 /**

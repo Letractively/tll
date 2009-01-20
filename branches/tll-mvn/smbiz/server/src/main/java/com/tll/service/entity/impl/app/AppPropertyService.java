@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAppPropertyDao;
+import com.tll.model.AppProperty;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.AppProperty;
 import com.tll.service.entity.EntityService;
 
 /**

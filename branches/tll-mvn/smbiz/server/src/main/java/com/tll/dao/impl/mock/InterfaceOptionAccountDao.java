@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IInterfaceOptionAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.InterfaceOptionAccount;
+import com.tll.model.InterfaceOptionAccount;
 
 public class InterfaceOptionAccountDao extends EntityDao<InterfaceOptionAccount> implements IInterfaceOptionAccountDao,
 		IMockDao<InterfaceOptionAccount> {

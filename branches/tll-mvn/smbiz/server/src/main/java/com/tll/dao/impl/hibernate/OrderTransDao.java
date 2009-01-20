@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IOrderTransDao;
-import com.tll.model.impl.OrderTrans;
+import com.tll.model.OrderTrans;
 
 /**
  * OrderTransDao

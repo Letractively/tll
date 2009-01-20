@@ -4,8 +4,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.impl.IAddressDao;
+import com.tll.model.Address;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.Address;
 import com.tll.service.entity.EntityService;
 
 /**

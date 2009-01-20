@@ -5,7 +5,7 @@ package com.tll.dao.impl;
 
 import org.testng.annotations.Test;
 
-import com.tll.model.impl.Isp;
+import com.tll.model.Isp;
 
 /**
  * AccountDaoTest_Isp

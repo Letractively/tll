@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IInterfaceDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.Interface;
+import com.tll.model.Interface;
 import com.tll.service.entity.EntityService;
 
 /**

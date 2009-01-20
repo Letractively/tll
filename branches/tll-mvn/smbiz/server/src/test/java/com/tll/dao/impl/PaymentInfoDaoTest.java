@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.dao.NamedEntityDaoTest;
-import com.tll.model.impl.PaymentInfo;
+import com.tll.model.PaymentInfo;
 
 /**
  * PaymentInfoDaoTest

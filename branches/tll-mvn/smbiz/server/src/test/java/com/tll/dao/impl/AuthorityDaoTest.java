@@ -6,7 +6,7 @@ package com.tll.dao.impl;
 import org.testng.annotations.Test;
 
 import com.tll.dao.NamedEntityDaoTest;
-import com.tll.model.impl.Authority;
+import com.tll.model.Authority;
 
 /**
  * AuthorityDaoTest

@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IPaymentTransDao;
-import com.tll.model.impl.PaymentTrans;
+import com.tll.model.PaymentTrans;
 
 /**
  * PaymentTransDao

@@ -16,9 +16,9 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IInterfaceDao;
-import com.tll.model.impl.Interface;
-import com.tll.model.impl.InterfaceOption;
-import com.tll.model.impl.InterfaceOptionParameterDefinition;
+import com.tll.model.Interface;
+import com.tll.model.InterfaceOption;
+import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.key.NameKey;
 
 /**

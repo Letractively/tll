@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.intf;
 
-import com.tll.model.impl.Interface;
+import com.tll.model.Interface;
 import com.tll.service.entity.INamedEntityService;
 
 /**

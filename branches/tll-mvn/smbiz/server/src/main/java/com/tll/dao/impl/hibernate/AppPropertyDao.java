@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IAppPropertyDao;
-import com.tll.model.impl.AppProperty;
+import com.tll.model.AppProperty;
 import com.tll.model.key.NameKey;
 
 /**

@@ -13,6 +13,7 @@ import com.tll.di.JpaModule;
 import com.tll.di.MockEntitiesModule;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.util.CommonUtil;
 
 /**
  * DaoFactoryTest
@@ -48,7 +49,8 @@ public class DaoFactoryTest extends TestBase {
 		}
 		final IDaoFactory df = injector.getInstance(IDaoFactory.class);
 		assert df != null;
-		Class<? extends IEntity>[] entityClasses = EntityUtil.getEntityClasses();
+		Class<? extends IEntity>[] entityClasses =
+				CommonUtil.getClasses(EntityUtil.MODEL_PACKAGE_NAME, IEntity.class, true, null);
 		for(Class<? extends IEntity> entityClass : entityClasses) {
 			IEntityDao<? extends IEntity> ed = null;
 			try {

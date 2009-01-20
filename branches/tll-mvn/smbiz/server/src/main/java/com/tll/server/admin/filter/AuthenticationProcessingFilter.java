@@ -17,7 +17,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 
 import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.server.Constants;
 import com.tll.server.admin.AdminContext;
 

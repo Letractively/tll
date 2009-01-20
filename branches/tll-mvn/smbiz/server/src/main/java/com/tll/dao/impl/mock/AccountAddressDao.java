@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountAddressDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.AccountAddress;
+import com.tll.model.AccountAddress;
 
 public class AccountAddressDao extends EntityDao<AccountAddress> implements IAccountAddressDao,
 		IMockDao<AccountAddress> {

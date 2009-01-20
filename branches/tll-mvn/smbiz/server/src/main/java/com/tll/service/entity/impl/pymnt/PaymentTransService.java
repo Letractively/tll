@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IPaymentTransDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.PaymentTrans;
+import com.tll.model.PaymentTrans;
 import com.tll.service.entity.EntityService;
 
 /**

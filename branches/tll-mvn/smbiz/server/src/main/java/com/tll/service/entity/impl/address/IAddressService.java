@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.address;
 
-import com.tll.model.impl.Address;
+import com.tll.model.Address;
 import com.tll.service.entity.IEntityService;
 
 /**

@@ -20,7 +20,7 @@ import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.impl.User;
+import com.tll.model.User;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.service.entity.IEntityServiceFactory;

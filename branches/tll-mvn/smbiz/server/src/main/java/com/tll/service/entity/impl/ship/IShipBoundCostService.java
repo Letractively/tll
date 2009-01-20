@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.ship;
 
-import com.tll.model.impl.ShipBoundCost;
+import com.tll.model.ShipBoundCost;
 import com.tll.service.entity.IEntityService;
 
 /**

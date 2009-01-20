@@ -12,7 +12,7 @@ import com.tll.client.data.EntityOptions;
 import com.tll.client.model.RefKey;
 import com.tll.client.search.ISearch;
 import com.tll.criteria.ICriteria;
-import com.tll.model.impl.Interface;
+import com.tll.model.Interface;
 import com.tll.model.key.BusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;

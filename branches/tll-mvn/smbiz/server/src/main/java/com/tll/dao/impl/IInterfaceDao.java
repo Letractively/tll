@@ -2,7 +2,7 @@ package com.tll.dao.impl;
 
 import com.tll.dao.INamedEntityDao;
 import com.tll.dao.ITimeStampEntityDao;
-import com.tll.model.impl.Interface;
+import com.tll.model.Interface;
 
 /**
  * Handles the persistence of {@link Interface} and child entities.

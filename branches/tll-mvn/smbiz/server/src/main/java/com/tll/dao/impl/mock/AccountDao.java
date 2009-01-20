@@ -15,10 +15,10 @@ import com.tll.criteria.SelectNamedQuery;
 import com.tll.dao.impl.IAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.Account;
-import com.tll.model.impl.Customer;
-import com.tll.model.impl.Isp;
-import com.tll.model.impl.Merchant;
+import com.tll.model.Account;
+import com.tll.model.Customer;
+import com.tll.model.Isp;
+import com.tll.model.Merchant;
 
 public class AccountDao extends EntityDao<Account> implements IAccountDao, IMockDao<Account> {
 

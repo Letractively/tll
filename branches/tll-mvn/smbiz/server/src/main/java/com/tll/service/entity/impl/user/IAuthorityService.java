@@ -5,7 +5,7 @@
  */
 package com.tll.service.entity.impl.user;
 
-import com.tll.model.impl.Authority;
+import com.tll.model.Authority;
 import com.tll.service.entity.INamedEntityService;
 
 /**

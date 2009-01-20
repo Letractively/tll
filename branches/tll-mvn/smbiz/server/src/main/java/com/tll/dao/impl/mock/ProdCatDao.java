@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IProdCatDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.ProdCat;
+import com.tll.model.ProdCat;
 
 public class ProdCatDao extends EntityDao<ProdCat> implements IProdCatDao, IMockDao<ProdCat> {
 

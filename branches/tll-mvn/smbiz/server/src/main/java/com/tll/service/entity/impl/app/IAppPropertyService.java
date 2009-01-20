@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.app;
 
-import com.tll.model.impl.AppProperty;
+import com.tll.model.AppProperty;
 import com.tll.service.entity.INamedEntityService;
 
 /**

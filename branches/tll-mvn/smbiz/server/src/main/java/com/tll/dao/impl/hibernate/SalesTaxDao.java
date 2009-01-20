@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.ISalesTaxDao;
-import com.tll.model.impl.SalesTax;
+import com.tll.model.SalesTax;
 
 /**
  * SalesTaxDao

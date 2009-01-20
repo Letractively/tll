@@ -1,6 +1,6 @@
 package com.tll.service.entity.impl.account;
 
-import com.tll.model.impl.AccountAddress;
+import com.tll.model.AccountAddress;
 import com.tll.service.entity.INamedEntityService;
 
 /**

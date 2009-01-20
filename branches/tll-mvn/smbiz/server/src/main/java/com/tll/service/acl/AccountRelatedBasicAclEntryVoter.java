@@ -10,8 +10,8 @@ import org.acegisecurity.vote.AccessDecisionVoter;
 import org.acegisecurity.vote.BasicAclEntryVoter;
 import org.aopalliance.intercept.MethodInvocation;
 
-import com.tll.model.impl.Authority;
-import com.tll.model.impl.IAccountRelatedEntity;
+import com.tll.model.Authority;
+import com.tll.model.IAccountRelatedEntity;
 import com.tll.service.acl.afterinvocation.AfterInvocationProviderManager;
 
 /**

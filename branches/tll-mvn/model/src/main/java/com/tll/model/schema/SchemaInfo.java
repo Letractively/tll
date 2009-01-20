@@ -84,6 +84,10 @@ public final class SchemaInfo implements ISchemaInfo {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
 
+		if(!schemaMap.containsKey(entityClass)) {
+			load(entityClass);
+		}
+		
 		final Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
 
 		if(!classMap.containsKey(propertyName))

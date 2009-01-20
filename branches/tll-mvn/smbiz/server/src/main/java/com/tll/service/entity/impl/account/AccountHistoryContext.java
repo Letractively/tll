@@ -1,7 +1,7 @@
 package com.tll.service.entity.impl.account;
 
-import com.tll.model.impl.Account;
-import com.tll.model.impl.CustomerAccount;
+import com.tll.model.Account;
+import com.tll.model.CustomerAccount;
 
 public class AccountHistoryContext {
 	AccountHistoryOp op;

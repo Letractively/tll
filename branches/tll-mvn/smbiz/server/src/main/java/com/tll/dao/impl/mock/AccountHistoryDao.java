@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
-import com.tll.model.impl.AccountHistory;
+import com.tll.model.AccountHistory;
 
 public class AccountHistoryDao extends EntityDao<AccountHistory> implements IAccountHistoryDao,
 		IMockDao<AccountHistory> {

@@ -9,13 +9,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.dao.AbstractDaoTest;
-import com.tll.model.impl.Account;
-import com.tll.model.impl.Asp;
-import com.tll.model.impl.Currency;
-import com.tll.model.impl.ProdCat;
-import com.tll.model.impl.ProductCategory;
-import com.tll.model.impl.ProductGeneral;
-import com.tll.model.impl.ProductInventory;
+import com.tll.model.Account;
+import com.tll.model.Asp;
+import com.tll.model.Currency;
+import com.tll.model.ProdCat;
+import com.tll.model.ProductCategory;
+import com.tll.model.ProductGeneral;
+import com.tll.model.ProductInventory;
 import com.tll.model.key.PrimaryKey;
 
 /**

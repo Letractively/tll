@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.dao.NamedEntityDaoTest;
-import com.tll.model.impl.AppProperty;
+import com.tll.model.AppProperty;
 
 /**
  * AppPropertyDaoTest

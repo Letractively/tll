@@ -10,9 +10,9 @@ import org.testng.Assert;
 
 import com.tll.dao.NamedEntityDaoTest;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.impl.Interface;
-import com.tll.model.impl.InterfaceOption;
-import com.tll.model.impl.InterfaceOptionParameterDefinition;
+import com.tll.model.Interface;
+import com.tll.model.InterfaceOption;
+import com.tll.model.InterfaceOptionParameterDefinition;
 
 /**
  * AbstractInterfaceDaoTest

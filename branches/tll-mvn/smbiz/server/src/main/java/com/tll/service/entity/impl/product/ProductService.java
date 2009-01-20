@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IProductInventoryDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.ProductInventory;
+import com.tll.model.ProductInventory;
 import com.tll.service.entity.EntityService;
 
 /**

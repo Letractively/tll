@@ -18,8 +18,8 @@ import org.springframework.dao.DataAccessException;
 
 import com.tll.SystemError;
 import com.tll.dao.impl.IAclDao;
-import com.tll.model.impl.Authority;
-import com.tll.model.impl.User;
+import com.tll.model.Authority;
+import com.tll.model.User;
 
 /**
  * Abstract class implementing the {@link IBasicAclProviderManager} interface.

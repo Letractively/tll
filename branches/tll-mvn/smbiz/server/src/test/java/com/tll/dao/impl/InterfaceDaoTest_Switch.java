@@ -5,7 +5,7 @@ package com.tll.dao.impl;
 
 import org.testng.annotations.Test;
 
-import com.tll.model.impl.InterfaceSwitch;
+import com.tll.model.InterfaceSwitch;
 
 /**
  * InterfaceDaoTest_Single

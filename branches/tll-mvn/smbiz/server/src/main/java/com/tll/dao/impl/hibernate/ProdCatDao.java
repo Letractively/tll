@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.IProdCatDao;
-import com.tll.model.impl.ProdCat;
+import com.tll.model.ProdCat;
 
 /**
  * ProdCatDao

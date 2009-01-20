@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.EntityDao;
 import com.tll.dao.impl.ICurrencyDao;
-import com.tll.model.impl.Currency;
+import com.tll.model.Currency;
 import com.tll.model.key.NameKey;
 
 /**

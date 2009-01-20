@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.dao.NamedEntityDaoTest;
-import com.tll.model.impl.Currency;
+import com.tll.model.Currency;
 
 /**
  * CurrencyDaoTest

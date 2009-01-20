@@ -6,7 +6,7 @@ package com.tll.dao.impl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.impl.Merchant;
+import com.tll.model.Merchant;
 
 /**
  * AccountDaoTest_Merchant

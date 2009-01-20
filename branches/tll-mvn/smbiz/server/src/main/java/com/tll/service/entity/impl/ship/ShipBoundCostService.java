@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IShipBoundCostDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.ShipBoundCost;
+import com.tll.model.ShipBoundCost;
 import com.tll.service.entity.EntityService;
 
 /**

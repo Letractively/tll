@@ -13,7 +13,7 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.hibernate.TimeStampEntityDao;
 import com.tll.dao.impl.IProductCategoryDao;
-import com.tll.model.impl.ProductCategory;
+import com.tll.model.ProductCategory;
 import com.tll.model.key.NameKey;
 
 /**

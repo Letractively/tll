@@ -9,10 +9,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.dao.NamedEntityDaoTest;
-import com.tll.model.impl.Account;
-import com.tll.model.impl.Asp;
-import com.tll.model.impl.Currency;
-import com.tll.model.impl.ShipMode;
+import com.tll.model.Account;
+import com.tll.model.Asp;
+import com.tll.model.Currency;
+import com.tll.model.ShipMode;
 import com.tll.model.key.PrimaryKey;
 
 /**

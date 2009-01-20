@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.salestax;
 
-import com.tll.model.impl.SalesTax;
+import com.tll.model.SalesTax;
 import com.tll.service.entity.IEntityService;
 
 /**

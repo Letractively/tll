@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.tll.model.impl.Authority;
+import com.tll.model.Authority;
 import com.tll.util.StringUtil;
 
 /**

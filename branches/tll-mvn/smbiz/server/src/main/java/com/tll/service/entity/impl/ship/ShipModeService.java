@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.impl.IShipModeDao;
 import com.tll.model.EntityAssembler;
-import com.tll.model.impl.ShipMode;
+import com.tll.model.ShipMode;
 import com.tll.service.entity.EntityService;
 
 /**

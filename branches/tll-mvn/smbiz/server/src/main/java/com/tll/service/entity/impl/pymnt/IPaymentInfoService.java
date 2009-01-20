@@ -3,7 +3,7 @@
  */
 package com.tll.service.entity.impl.pymnt;
 
-import com.tll.model.impl.PaymentInfo;
+import com.tll.model.PaymentInfo;
 import com.tll.service.entity.INamedEntityService;
 
 /**
