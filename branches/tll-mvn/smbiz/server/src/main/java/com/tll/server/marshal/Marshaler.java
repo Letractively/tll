@@ -35,11 +35,11 @@ import com.tll.client.model.RelatedOneProperty;
 import com.tll.client.model.StringMapPropertyValue;
 import com.tll.client.model.StringPropertyValue;
 import com.tll.dao.SearchResult;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.impl.PaymentData;
 import com.tll.model.impl.PaymentInfo;
@@ -49,23 +49,23 @@ import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
 
 /**
- * Marshaler
+ * Marshaler - Converts server-side entities to client-bound Data transfer
+ * objects and vice-versa.
  * @author jpk
  */
-// TODO remove dependence on IEntity!
 public final class Marshaler {
 
-	private final EntityAssembler entityAssembler;
+	private final IEntityFactory entityFactory;
 	private final ISchemaInfo schemaInfo;
 
 	/**
 	 * Constructor
-	 * @param entityAssembler
+	 * @param entityFactory
 	 * @param schemaInfo
 	 */
 	@Inject
-	public Marshaler(final EntityAssembler entityAssembler, final ISchemaInfo schemaInfo) {
-		this.entityAssembler = entityAssembler;
+	public Marshaler(final IEntityFactory entityFactory, final ISchemaInfo schemaInfo) {
+		this.entityFactory = entityFactory;
 		this.schemaInfo = schemaInfo;
 	}
 
@@ -528,7 +528,7 @@ public final class Marshaler {
 		if(e.getId() == null) {
 			// assume new and set generated id
 			assert e.getVersion() == null : "Encountered an entity w/o an id having and non-null version!";
-			entityAssembler.setGenerated(e);
+			entityFactory.setGenerated(e);
 		}
 
 		return e;
