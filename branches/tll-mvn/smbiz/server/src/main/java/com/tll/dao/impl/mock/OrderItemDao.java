@@ -12,12 +12,11 @@ import com.tll.dao.impl.IOrderItemDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.OrderItem;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class OrderItemDao extends EntityDao<OrderItem> implements IOrderItemDao, IMockDao<OrderItem> {
 
 	@Inject
-	public OrderItemDao(Set<OrderItem> set, IBusinessKeyFactory bkf) {
-		super(OrderItem.class, set, bkf);
+	public OrderItemDao(Set<OrderItem> set) {
+		super(OrderItem.class, set);
 	}
 }

@@ -17,6 +17,8 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The account history entity
@@ -27,6 +29,8 @@ import com.tll.model.TimeStampEntity;
 // TODO re-instate immutable (hibernate 3.3.1 seems to break this!)
 // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3662
 // @Immutable
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Account Id, Transaction Date and Status", properties = {
+	"account.id", "transDate", "status" }))
 public class AccountHistory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5543822993709686604L;

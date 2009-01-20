@@ -21,6 +21,8 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Order trans entity
@@ -28,6 +30,9 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "order_trans")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Order Id, Date Created and Username", 
+			properties = { "order.id", "dateCreated", "username" }))
 public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 8026809773722347843L;

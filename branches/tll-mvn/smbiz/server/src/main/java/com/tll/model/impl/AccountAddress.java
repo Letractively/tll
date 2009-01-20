@@ -16,7 +16,10 @@ import org.hibernate.validator.Valid;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The account address entity holding a refs to a single account and single
@@ -25,6 +28,10 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "account_address")
+@BusinessObject(businessKeys = {
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }), 
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
+})
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7356724207827323290L;
@@ -69,8 +76,7 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	 * @return Returns the address.
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE,
-		CascadeType.PERSIST })
+		CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "address_id")
 	@NotNull
 	@Valid

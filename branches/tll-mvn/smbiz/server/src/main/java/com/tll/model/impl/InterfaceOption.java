@@ -19,6 +19,8 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.IEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The interface option entity
@@ -26,6 +28,7 @@ import com.tll.model.IEntity;
  */
 @Entity
 @DiscriminatorValue("option")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class InterfaceOption extends InterfaceOptionBase {
 
 	private static final long serialVersionUID = -3858516767622503827L;

@@ -12,7 +12,6 @@ import com.tll.dao.impl.IOrderTransDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.OrderTrans;
-import com.tll.model.key.IBusinessKeyFactory;
 
 /**
  * OrderTransDao
@@ -21,8 +20,8 @@ import com.tll.model.key.IBusinessKeyFactory;
 public class OrderTransDao extends EntityDao<OrderTrans> implements IOrderTransDao, IMockDao<OrderTrans> {
 
 	@Inject
-	public OrderTransDao(Set<OrderTrans> set, IBusinessKeyFactory bkf) {
-		super(OrderTrans.class, set, bkf);
+	public OrderTransDao(Set<OrderTrans> set) {
+		super(OrderTrans.class, set);
 	}
 
 }

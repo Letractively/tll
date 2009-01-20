@@ -12,12 +12,11 @@ import com.tll.dao.impl.ISiteCodeDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.SiteCode;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class SiteCodeDao extends EntityDao<SiteCode> implements ISiteCodeDao, IMockDao<SiteCode> {
 
 	@Inject
-	public SiteCodeDao(Set<SiteCode> set, IBusinessKeyFactory bkf) {
-		super(SiteCode.class, set, bkf);
+	public SiteCodeDao(Set<SiteCode> set) {
+		super(SiteCode.class, set);
 	}
 }

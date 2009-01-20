@@ -108,7 +108,6 @@ import com.tll.model.impl.ShipMode;
 import com.tll.model.impl.SiteCode;
 import com.tll.model.impl.User;
 import com.tll.model.impl.Visitor;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.EnumUtil;
 
@@ -168,9 +167,6 @@ public class DaoModule extends CompositeModule {
 
 			@Inject
 			EntityGraph entityGraph;
-
-			@Inject
-			IBusinessKeyFactory bkf;
 		}
 
 		@Override
@@ -185,7 +181,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAccountAddressDao get() {
-					return new com.tll.dao.impl.mock.AccountAddressDao(entityGraph.getEntitySet(AccountAddress.class), bkf);
+					return new com.tll.dao.impl.mock.AccountAddressDao(entityGraph.getEntitySet(AccountAddress.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -193,7 +189,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAccountDao get() {
-					return new com.tll.dao.impl.mock.AccountDao(entityGraph.getEntitySet(Account.class), bkf);
+					return new com.tll.dao.impl.mock.AccountDao(entityGraph.getEntitySet(Account.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -201,7 +197,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAccountHistoryDao get() {
-					return new com.tll.dao.impl.mock.AccountHistoryDao(entityGraph.getEntitySet(AccountHistory.class), bkf);
+					return new com.tll.dao.impl.mock.AccountHistoryDao(entityGraph.getEntitySet(AccountHistory.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -217,7 +213,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAddressDao get() {
-					return new com.tll.dao.impl.mock.AddressDao(entityGraph.getEntitySet(Address.class), bkf);
+					return new com.tll.dao.impl.mock.AddressDao(entityGraph.getEntitySet(Address.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -225,7 +221,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAppPropertyDao get() {
-					return new com.tll.dao.impl.mock.AppPropertyDao(entityGraph.getEntitySet(AppProperty.class), bkf);
+					return new com.tll.dao.impl.mock.AppPropertyDao(entityGraph.getEntitySet(AppProperty.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -233,7 +229,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IAuthorityDao get() {
-					return new com.tll.dao.impl.mock.AuthorityDao(entityGraph.getEntitySet(Authority.class), bkf);
+					return new com.tll.dao.impl.mock.AuthorityDao(entityGraph.getEntitySet(Authority.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -241,7 +237,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public ICurrencyDao get() {
-					return new com.tll.dao.impl.mock.CurrencyDao(entityGraph.getEntitySet(Currency.class), bkf);
+					return new com.tll.dao.impl.mock.CurrencyDao(entityGraph.getEntitySet(Currency.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -249,7 +245,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public ICustomerAccountDao get() {
-					return new com.tll.dao.impl.mock.CustomerAccountDao(entityGraph.getEntitySet(CustomerAccount.class), bkf);
+					return new com.tll.dao.impl.mock.CustomerAccountDao(entityGraph.getEntitySet(CustomerAccount.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -257,7 +253,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IInterfaceDao get() {
-					return new com.tll.dao.impl.mock.InterfaceDao(entityGraph.getEntitySet(Interface.class), bkf);
+					return new com.tll.dao.impl.mock.InterfaceDao(entityGraph.getEntitySet(Interface.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -266,7 +262,7 @@ public class DaoModule extends CompositeModule {
 				@Override
 				public IInterfaceOptionAccountDao get() {
 					return new com.tll.dao.impl.mock.InterfaceOptionAccountDao(entityGraph
-							.getEntitySet(InterfaceOptionAccount.class), bkf);
+							.getEntitySet(InterfaceOptionAccount.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -274,7 +270,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IOrderDao get() {
-					return new com.tll.dao.impl.mock.OrderDao(entityGraph.getEntitySet(Order.class), bkf);
+					return new com.tll.dao.impl.mock.OrderDao(entityGraph.getEntitySet(Order.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -282,7 +278,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IOrderItemDao get() {
-					return new com.tll.dao.impl.mock.OrderItemDao(entityGraph.getEntitySet(OrderItem.class), bkf);
+					return new com.tll.dao.impl.mock.OrderItemDao(entityGraph.getEntitySet(OrderItem.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -290,7 +286,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IOrderTransDao get() {
-					return new com.tll.dao.impl.mock.OrderTransDao(entityGraph.getEntitySet(OrderTrans.class), bkf);
+					return new com.tll.dao.impl.mock.OrderTransDao(entityGraph.getEntitySet(OrderTrans.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -298,7 +294,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IOrderItemTransDao get() {
-					return new com.tll.dao.impl.mock.OrderItemTransDao(entityGraph.getEntitySet(OrderItemTrans.class), bkf);
+					return new com.tll.dao.impl.mock.OrderItemTransDao(entityGraph.getEntitySet(OrderItemTrans.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -306,7 +302,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IPaymentInfoDao get() {
-					return new com.tll.dao.impl.mock.PaymentInfoDao(entityGraph.getEntitySet(PaymentInfo.class), bkf);
+					return new com.tll.dao.impl.mock.PaymentInfoDao(entityGraph.getEntitySet(PaymentInfo.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -314,7 +310,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IPaymentTransDao get() {
-					return new com.tll.dao.impl.mock.PaymentTransDao(entityGraph.getEntitySet(PaymentTrans.class), bkf);
+					return new com.tll.dao.impl.mock.PaymentTransDao(entityGraph.getEntitySet(PaymentTrans.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -330,7 +326,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IProdCatDao get() {
-					return new com.tll.dao.impl.mock.ProdCatDao(entityGraph.getEntitySet(ProdCat.class), bkf);
+					return new com.tll.dao.impl.mock.ProdCatDao(entityGraph.getEntitySet(ProdCat.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -338,7 +334,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IProductCategoryDao get() {
-					return new com.tll.dao.impl.mock.ProductCategoryDao(entityGraph.getEntitySet(ProductCategory.class), bkf);
+					return new com.tll.dao.impl.mock.ProductCategoryDao(entityGraph.getEntitySet(ProductCategory.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -346,7 +342,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IProductInventoryDao get() {
-					return new com.tll.dao.impl.mock.ProductInventoryDao(entityGraph.getEntitySet(ProductInventory.class), bkf);
+					return new com.tll.dao.impl.mock.ProductInventoryDao(entityGraph.getEntitySet(ProductInventory.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -354,7 +350,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public ISalesTaxDao get() {
-					return new com.tll.dao.impl.mock.SalesTaxDao(entityGraph.getEntitySet(SalesTax.class), bkf);
+					return new com.tll.dao.impl.mock.SalesTaxDao(entityGraph.getEntitySet(SalesTax.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -362,7 +358,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IShipBoundCostDao get() {
-					return new com.tll.dao.impl.mock.ShipBoundCostDao(entityGraph.getEntitySet(ShipBoundCost.class), bkf);
+					return new com.tll.dao.impl.mock.ShipBoundCostDao(entityGraph.getEntitySet(ShipBoundCost.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -370,7 +366,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IShipModeDao get() {
-					return new com.tll.dao.impl.mock.ShipModeDao(entityGraph.getEntitySet(ShipMode.class), bkf);
+					return new com.tll.dao.impl.mock.ShipModeDao(entityGraph.getEntitySet(ShipMode.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -378,7 +374,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public ISiteCodeDao get() {
-					return new com.tll.dao.impl.mock.SiteCodeDao(entityGraph.getEntitySet(SiteCode.class), bkf);
+					return new com.tll.dao.impl.mock.SiteCodeDao(entityGraph.getEntitySet(SiteCode.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -394,7 +390,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IUserDao get() {
-					return new com.tll.dao.impl.mock.UserDao(entityGraph.getEntitySet(User.class), bkf);
+					return new com.tll.dao.impl.mock.UserDao(entityGraph.getEntitySet(User.class));
 				}
 
 			}).in(Scopes.SINGLETON);
@@ -402,7 +398,7 @@ public class DaoModule extends CompositeModule {
 
 				@Override
 				public IVisitorDao get() {
-					return new com.tll.dao.impl.mock.VisitorDao(entityGraph.getEntitySet(Visitor.class), bkf);
+					return new com.tll.dao.impl.mock.VisitorDao(entityGraph.getEntitySet(Visitor.class));
 				}
 
 			}).in(Scopes.SINGLETON);

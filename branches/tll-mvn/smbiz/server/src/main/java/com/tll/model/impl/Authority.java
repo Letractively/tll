@@ -14,6 +14,8 @@ import org.hibernate.validator.NotEmpty;
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Implementation of Acegi's {@link org.acegisecurity.GrantedAuthority}
@@ -26,6 +28,7 @@ import com.tll.model.INamedEntity;
 // TODO fix this to allow for testing yet have read only caching
 // @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Authority", properties = { Authority.FIELDNAME_AUTHORITY }))
 public class Authority extends EntityBase implements INamedEntity, GrantedAuthority {
 
 	static final long serialVersionUID = -4601781277584062384L;

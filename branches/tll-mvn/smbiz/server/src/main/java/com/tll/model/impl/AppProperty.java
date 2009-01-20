@@ -9,6 +9,8 @@ import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.IEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * AppProperty
@@ -17,6 +19,7 @@ import com.tll.model.NamedEntity;
  */
 @Entity
 @Table(name = "app_property")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { "name" }))
 public class AppProperty extends NamedEntity {
 
 	private static final long serialVersionUID = 601145261743504878L;

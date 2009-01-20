@@ -14,7 +14,10 @@ import org.hibernate.validator.NotNull;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Product category entity
@@ -22,6 +25,8 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "product_category")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
 public class ProductCategory extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5218888162655443332L;

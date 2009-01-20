@@ -12,12 +12,11 @@ import com.tll.dao.impl.IVisitorDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.Visitor;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class VisitorDao extends EntityDao<Visitor> implements IVisitorDao, IMockDao<Visitor> {
 
 	@Inject
-	public VisitorDao(Set<Visitor> set, IBusinessKeyFactory bkf) {
-		super(Visitor.class, set, bkf);
+	public VisitorDao(Set<Visitor> set) {
+		super(Visitor.class, set);
 	}
 }

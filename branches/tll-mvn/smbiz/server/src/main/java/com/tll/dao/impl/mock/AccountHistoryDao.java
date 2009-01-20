@@ -12,13 +12,12 @@ import com.tll.dao.impl.IAccountHistoryDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.AccountHistory;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class AccountHistoryDao extends EntityDao<AccountHistory> implements IAccountHistoryDao,
 		IMockDao<AccountHistory> {
 
 	@Inject
-	public AccountHistoryDao(Set<AccountHistory> set, IBusinessKeyFactory bkf) {
-		super(AccountHistory.class, set, bkf);
+	public AccountHistoryDao(Set<AccountHistory> set) {
+		super(AccountHistory.class, set);
 	}
 }

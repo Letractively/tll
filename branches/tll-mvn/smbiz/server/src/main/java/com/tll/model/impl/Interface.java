@@ -23,6 +23,8 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.BusinessKeyUniqueness;
 
 /**
@@ -33,6 +35,7 @@ import com.tll.model.validate.BusinessKeyUniqueness;
 @Table(name = "interface")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public abstract class Interface extends NamedTimeStampEntity {
 
 	private static final long serialVersionUID = 5959712644331302508L;

@@ -12,12 +12,11 @@ import com.tll.dao.impl.IProdCatDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.ProdCat;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class ProdCatDao extends EntityDao<ProdCat> implements IProdCatDao, IMockDao<ProdCat> {
 
 	@Inject
-	public ProdCatDao(Set<ProdCat> set, IBusinessKeyFactory bkf) {
-		super(ProdCat.class, set, bkf);
+	public ProdCatDao(Set<ProdCat> set) {
+		super(ProdCat.class, set);
 	}
 }

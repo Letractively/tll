@@ -18,6 +18,8 @@ import org.hibernate.validator.NotEmpty;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Defines site codes (online "coupons")
@@ -25,6 +27,7 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "site_code")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Code", properties = { "code" }))
 public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 9132511822830985704L;

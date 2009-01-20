@@ -14,6 +14,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The customer account entity
@@ -21,6 +23,8 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "customer_account")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
+	"customer.id", "account.id" }))
 public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;

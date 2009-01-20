@@ -13,14 +13,13 @@ import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.impl.User;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.PrimaryKey;
 
 public class UserDao extends EntityDao<User> implements IUserDao, IMockDao<User> {
 
 	@Inject
-	public UserDao(Set<User> set, IBusinessKeyFactory bkf) {
-		super(User.class, set, bkf);
+	public UserDao(Set<User> set) {
+		super(User.class, set);
 	}
 
 	public void setCredentials(Integer userId, String newUsername, String newEncPassword)

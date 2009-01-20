@@ -12,7 +12,10 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * PaymentInfo - Wraps {@link PaymentData} (for security). A simple flat-file
@@ -23,6 +26,7 @@ import com.tll.model.NamedEntity;
  */
 @Entity
 @Table(name = "payment_info")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }))
 public class PaymentInfo extends NamedEntity {
 
 	private static final long serialVersionUID = -8237732782824087760L;

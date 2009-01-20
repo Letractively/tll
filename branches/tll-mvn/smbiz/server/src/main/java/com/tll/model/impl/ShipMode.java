@@ -15,7 +15,10 @@ import org.hibernate.validator.Range;
 
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The ship mode entity
@@ -23,6 +26,8 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "ship_mode")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
 public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8602635055012335230L;

@@ -15,6 +15,8 @@ import org.hibernate.validator.NotNull;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The visitor entity (those people who visit a storefront site).
@@ -22,6 +24,9 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "visitor")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host", 
+			properties = { "account.id", "dateCreated", "remoteHost" }))
 public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 3466539674112418212L;

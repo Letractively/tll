@@ -9,6 +9,8 @@ import org.hibernate.validator.NotEmpty;
 
 import com.tll.model.EntityBase;
 import com.tll.model.IEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * General product entity
@@ -16,6 +18,7 @@ import com.tll.model.IEntity;
  */
 @Entity
 @Table(name = "product_general")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Titles", properties = { "d1", "d2" }))
 public class ProductGeneral extends EntityBase {
 
 	private static final long serialVersionUID = 459067490839802092L;

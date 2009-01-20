@@ -16,7 +16,6 @@ import com.tll.model.EntityType;
 import com.tll.model.impl.Account;
 import com.tll.model.impl.AccountStatus;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
@@ -24,11 +23,6 @@ import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.impl.account.IAccountService;
 import com.tll.util.EnumUtil;
-
-/**
- * AccountService
- * @author jpk
- */
 public class AccountService extends MNamedEntityServiceImpl<Account, AccountSearch> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
@@ -89,7 +83,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected BusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search, IBusinessKeyFactory bkf) {
+	protected BusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

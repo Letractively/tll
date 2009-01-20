@@ -30,7 +30,6 @@ import com.tll.model.MockEntityProvider;
 import com.tll.model.impl.Authority;
 import com.tll.model.impl.User;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.server.marshal.Marshaler;
 
 /**
@@ -128,16 +127,6 @@ public abstract class TestBase {
 	 */
 	protected final IDaoFactory getDaoFactory() {
 		return injector.getInstance(IDaoFactory.class);
-	}
-
-	/**
-	 * <strong>NOTE: </strong>The {@link IBusinessKeyFactory} is not available by
-	 * default. It must be bound in a given module which is added via
-	 * {@link #addModules(List)}.
-	 * @return The injected {@link IBusinessKeyFactory}
-	 */
-	protected final IBusinessKeyFactory getBusinessKeyFactory() {
-		return injector.getInstance(IBusinessKeyFactory.class);
 	}
 
 	/**

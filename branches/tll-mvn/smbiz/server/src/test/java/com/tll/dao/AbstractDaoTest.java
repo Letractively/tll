@@ -30,11 +30,11 @@ import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.di.DaoModule;
 import com.tll.di.JpaModule;
+import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.EnumUtil;
 
@@ -352,8 +352,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
 		}
 		try {
-			IBusinessKeyFactory bkf = getBusinessKeyFactory();
-			bkf.apply(e2, bkf.create(e1));
+			BusinessKeyFactory.apply(e2, BusinessKeyFactory.create(e1));
 		}
 		catch(BusinessKeyNotDefinedException e) {
 			// assume ok

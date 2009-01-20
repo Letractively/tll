@@ -20,6 +20,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Binder entity between interface options and an account
@@ -27,6 +29,8 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "ioa")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" }))
 public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 1185305612828685906L;

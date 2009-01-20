@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import org.hibernate.validator.Validator;
 
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 /**
@@ -23,6 +22,6 @@ public class BusinessKeyUniquenessValidator implements Validator<BusinessKeyUniq
 
 	@SuppressWarnings("unchecked")
 	public boolean isValid(Object value) {
-		return value == null ? true : EntityUtil.isBusinessKeyUnique((Collection<? extends IEntity>) value);
+		return value == null ? true : BusinessKeyFactory.isBusinessKeyUnique((Collection<? extends IEntity>) value);
 	}
 }

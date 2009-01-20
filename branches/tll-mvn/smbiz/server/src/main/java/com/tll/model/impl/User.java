@@ -32,6 +32,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The account user entity
@@ -39,6 +41,7 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "user")
+@BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
 public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -6126885590318834318L;
@@ -225,8 +228,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 * @return Returns the address.
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
-		CascadeType.MERGE,
-		CascadeType.PERSIST })
+		CascadeType.MERGE, CascadeType.PERSIST })
 	@JoinColumn(name = "adr_id")
 	public Address getAddress() {
 		return address;

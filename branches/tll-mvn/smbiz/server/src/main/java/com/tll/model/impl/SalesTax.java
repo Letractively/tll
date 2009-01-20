@@ -16,6 +16,8 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Sales tax entity
@@ -23,6 +25,9 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "sales_tax")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code", 
+			properties = { "account.id", "province", "county", "postalCode" }))
 public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8285702989304183918L;

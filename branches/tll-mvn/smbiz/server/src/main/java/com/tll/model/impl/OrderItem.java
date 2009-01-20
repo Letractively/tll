@@ -22,6 +22,8 @@ import org.hibernate.validator.Range;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.NamedTimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Order item entity
@@ -29,6 +31,8 @@ import com.tll.model.NamedTimeStampEntity;
  */
 @Entity
 @Table(name = "order_item")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" }))
 public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5728694308136658158L;

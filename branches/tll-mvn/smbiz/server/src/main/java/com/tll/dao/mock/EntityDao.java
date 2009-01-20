@@ -33,6 +33,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.SortColumnBeanComparator;
+import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -40,7 +41,6 @@ import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
 import com.tll.model.Scalar;
 import com.tll.model.key.BusinessKey;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.CommonUtil;
@@ -201,25 +201,18 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	 */
 	protected final Set<E> set;
 
-	private final IBusinessKeyFactory businessKeyFactory;
-
 	/**
 	 * Constructor
 	 * @param entityClass
 	 * @param set
-	 * @param businessKeyFactory
 	 */
-	public EntityDao(final Class<E> entityClass, final Set<E> set, IBusinessKeyFactory businessKeyFactory) {
+	public EntityDao(final Class<E> entityClass, final Set<E> set) {
 		super();
 		if(entityClass == null) {
 			throw new IllegalArgumentException("An entity type must be specified.");
 		}
-		if(businessKeyFactory == null) {
-			throw new IllegalArgumentException("A business key factory must be specified.");
-		}
 		this.entityClass = entityClass;
 		this.set = set == null ? new LinkedHashSet<E>() : set;
-		this.businessKeyFactory = businessKeyFactory;
 	}
 
 	public final Class<E> getEntityClass() {
@@ -369,7 +362,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	public final E load(final BusinessKey<? extends E> key) {
 		for(final E e : set) {
 			try {
-				final BusinessKey<E>[] bks = businessKeyFactory.create(e);
+				final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
 				for(final BusinessKey<E> bk : bks) {
 					if(bk.equals(key)) {
 						return e;
@@ -404,7 +397,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 			assert entity.getVersion() == null;
 			// ensure business key unique
 			set.add(entity);
-			if(!businessKeyFactory.isBusinessKeyUnique(set)) {
+			if(!BusinessKeyFactory.isBusinessKeyUnique(set)) {
 				set.remove(entity);
 				throw new EntityExistsException("Unable to persist entity: It is non-unique");
 			}

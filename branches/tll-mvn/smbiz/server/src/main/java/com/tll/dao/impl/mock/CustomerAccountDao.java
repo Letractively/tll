@@ -12,13 +12,12 @@ import com.tll.dao.impl.ICustomerAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
 import com.tll.model.impl.CustomerAccount;
-import com.tll.model.key.IBusinessKeyFactory;
 
 public class CustomerAccountDao extends EntityDao<CustomerAccount> implements ICustomerAccountDao,
 		IMockDao<CustomerAccount> {
 
 	@Inject
-	public CustomerAccountDao(Set<CustomerAccount> set, IBusinessKeyFactory bkf) {
-		super(CustomerAccount.class, set, bkf);
+	public CustomerAccountDao(Set<CustomerAccount> set) {
+		super(CustomerAccount.class, set);
 	}
 }

@@ -6,12 +6,10 @@
 package com.tll.di;
 
 import com.google.inject.Scopes;
-import com.tll.model.BusinessKeyFactory;
 import com.tll.model.EntityAssembler;
 import com.tll.model.EntityFactory;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.SchemaInfo;
 
@@ -31,9 +29,6 @@ public class ModelModule extends GModule {
 
 		// ISchemaInfo
 		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);
-
-		// IBusinessKeyFactory
-		bind(IBusinessKeyFactory.class).to(BusinessKeyFactory.class).in(Scopes.SINGLETON);
 	}
 
 }

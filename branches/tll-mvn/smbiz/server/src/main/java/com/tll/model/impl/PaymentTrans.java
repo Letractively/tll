@@ -15,6 +15,8 @@ import org.hibernate.validator.Range;
 
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * payment transaction entity
@@ -22,6 +24,11 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "payment_trans")
+@BusinessObject(businessKeys = { 
+	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type", 
+			properties = { "payTransDate", "payOp", "payType" }),
+	@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
+})
 public class PaymentTrans extends TimeStampEntity {
 
 	private static final long serialVersionUID = -7701606626029329438L;

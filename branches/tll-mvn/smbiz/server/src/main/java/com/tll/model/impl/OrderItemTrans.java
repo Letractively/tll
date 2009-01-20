@@ -14,6 +14,8 @@ import org.hibernate.validator.Range;
 import com.tll.model.EntityBase;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Order item transaction entity
@@ -21,6 +23,8 @@ import com.tll.model.IEntity;
  */
 @Entity
 @Table(name = "order_item_trans")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = { "orderItem.id", "orderTrans.id" }))
 public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;

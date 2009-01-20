@@ -12,7 +12,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import com.tll.util.ValidationUtil;
 
 /**
- * PostalCodeValidator - Validates artifacts annotated with {@link PhoneNumber}.
+ * PostalCodeValidator - Validates artifacts annotated with {@link PostalCode}.
  * @author jpk
  */
 public class PostalCodeValidator implements Validator<PostalCode>, IPropertyReference {

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 import com.google.inject.Injector;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
-import com.tll.model.key.IBusinessKeyFactory;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -74,10 +73,6 @@ public final class RequestContext {
 
 	public IEntityAssembler getEntityAssembler() {
 		return getInstance(IEntityAssembler.class);
-	}
-
-	public IBusinessKeyFactory getBusinessKeyFactory() {
-		return getInstance(IBusinessKeyFactory.class);
 	}
 
 	public Marshaler getMarshaler() {

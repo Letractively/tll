@@ -12,7 +12,10 @@ import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Range;
 
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.NamedEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * The currency entity
@@ -21,6 +24,10 @@ import com.tll.model.NamedEntity;
 @Entity
 @Table(name = "currency")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@BusinessObject(businessKeys = {
+	@BusinessKeyDef(name = "Name", properties = { INamedEntity.NAME }),
+	@BusinessKeyDef(name = "Symbol", properties = { "symbol" }),
+	@BusinessKeyDef(name = "ISO4217", properties = { "iso4217" }) })
 public class Currency extends NamedEntity {
 
 	private static final long serialVersionUID = -1627972414433764825L;

@@ -17,6 +17,8 @@ import org.hibernate.validator.Valid;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.TimeStampEntity;
+import com.tll.model.schema.BusinessKeyDef;
+import com.tll.model.schema.BusinessObject;
 
 /**
  * Product inventory entity
@@ -24,6 +26,8 @@ import com.tll.model.TimeStampEntity;
  */
 @Entity
 @Table(name = "product_inventory")
+@BusinessObject(businessKeys = 
+	@BusinessKeyDef(name = "Account Id and SKU", properties = { "account.id", "sku" }))
 public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 6472483051056869008L;
