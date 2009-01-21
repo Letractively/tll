@@ -1,12 +1,10 @@
 package com.tll.refdata;
 
-import com.tll.IMarshalable;
-
 /**
  * RefDataType - Encapsulates all types of ref data usable in the app.
  * @author jpk
  */
-public enum RefDataType implements IMarshalable {
+public enum RefDataType {
 	US_STATES("usps-state-abbrs"),
 	ISO_COUNTRY_CODES("iso-country-codes");
 

@@ -3,6 +3,7 @@ package com.tll.listhandler;
 import java.util.Collections;
 import java.util.List;
 
+import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
 
 /**

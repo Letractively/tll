@@ -28,6 +28,7 @@
     <include name="dao/SortDir.java" />
     <include name="dao/SortColumn.java" />
     <include name="dao/Sorting.java" />
+    <include name="criteria/IPropertyNameProvider.java" />
     <include name="criteria/CriteriaType.java" />
     <include name="criteria/SelectNamedQuery.java" />
     <include name="criteria/IQueryParam.java" />
