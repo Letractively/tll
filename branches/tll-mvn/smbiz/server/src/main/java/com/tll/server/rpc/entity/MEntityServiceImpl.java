@@ -31,7 +31,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -257,7 +257,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
-			SelectNamedQuery nq = search.getNamedQuery().toSelectNamedQuery();
+			ISelectNamedQueryDef nq = search.getNamedQuery();
 			if(nq == null) {
 				throw new IllegalArgumentException("No named query specified");
 			}

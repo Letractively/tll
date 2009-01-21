@@ -34,7 +34,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -365,7 +365,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 */
 	protected final List<?> findByNamedQuery(ICriteria<? extends E> criteria, Sorting sorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
-		SelectNamedQuery nq = criteria.getNamedQueryDefinition();
+		ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
 		return assembleQuery(nq.getQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
 				.getResultList();
 	}
@@ -625,7 +625,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case ENTITY_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final SelectNamedQuery snq = criteria.getNamedQueryDefinition();
+				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
 				String queryName = snq.getQueryName();
 				String countQueryName = snq.getQueryName() + ".count";
 				final Query cq = assembleQuery(countQueryName, null, null, null, false);
@@ -640,7 +640,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case SCALAR_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final SelectNamedQuery snq = criteria.getNamedQueryDefinition();
+				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
 				String queryName = snq.getQueryName();
 				String countQueryName = snq.getQueryName() + ".count";
 				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);

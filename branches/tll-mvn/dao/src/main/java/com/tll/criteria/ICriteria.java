@@ -30,7 +30,7 @@ public interface ICriteria<E extends IEntity> extends Serializable {
 	/**
 	 * @return The named query definition.
 	 */
-	SelectNamedQuery getNamedQueryDefinition();
+	ISelectNamedQueryDef getNamedQueryDefinition();
 
 	/**
 	 * Retrieves any query parameters if a named query is specified.

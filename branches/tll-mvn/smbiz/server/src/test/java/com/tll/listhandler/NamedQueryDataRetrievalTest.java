@@ -171,7 +171,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 		// iterator through all defined select named queries
 		for(SelectNamedQueries nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
-			criteria = new Criteria<IEntity>(nq.toSelectNamedQuery(), queryParamsBindings.get(nq));
+			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types

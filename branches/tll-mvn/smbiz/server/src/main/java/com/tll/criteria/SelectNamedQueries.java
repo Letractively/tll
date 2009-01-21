@@ -6,14 +6,13 @@
 package com.tll.criteria;
 
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
 
 /**
  * SelectNamedQueries - Enumeration of the system defined data retrieval based
  * named queries.
  * @author jpk
  */
-public enum SelectNamedQueries {
+public enum SelectNamedQueries implements ISelectNamedQueryDef {
 	ISP_LISTING("account.ispList", EntityType.ISP, true),
 	MERCHANT_LISTING("account.merchantList", EntityType.MERCHANT, true),
 	CUSTOMER_LISTING("account.customerList", EntityType.CUSTOMER, true),
@@ -53,14 +52,6 @@ public enum SelectNamedQueries {
 	@Override
 	public String toString() {
 		return queryName;
-	}
-
-	/**
-	 * Converts to a {@link SelectNamedQuery} data object.
-	 * @return A new {@link SelectNamedQuery}
-	 */
-	public SelectNamedQuery toSelectNamedQuery() {
-		return new SelectNamedQuery(getQueryName(), EntityUtil.entityClassFromType(getEntityType()), isScalar());
 	}
 
 	/**

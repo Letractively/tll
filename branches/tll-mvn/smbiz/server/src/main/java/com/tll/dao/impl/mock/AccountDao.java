@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.tll.criteria.ICriteria;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.dao.impl.IAccountDao;
 import com.tll.dao.mock.EntityDao;
 import com.tll.dao.mock.IMockDao;
@@ -30,7 +30,7 @@ public class AccountDao extends EntityDao<Account> implements IAccountDao, IMock
 	@Override
 	protected List<Account> processQuery(ICriteria<? extends Account> criteria) {
 		List<Account> list = new ArrayList<Account>();
-		SelectNamedQuery nq = criteria.getNamedQueryDefinition();
+		ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
 		if(nq != null) {
 			if("account.ispList".equals(nq.getQueryName())) {
 				for(Account a : set) {
