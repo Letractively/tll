@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 
 /**
  * SearchBase
@@ -20,7 +20,7 @@ public abstract class SearchBase implements ISearch {
 	private CriteriaType criteriaType;
 	// private boolean retrieveAll = false;
 
-	private SelectNamedQuery namedQuery;
+	private SelectNamedQueries namedQuery;
 	private Set<IQueryParam> queryParams;
 
 	/**
@@ -54,11 +54,11 @@ public abstract class SearchBase implements ISearch {
 		this.criteriaType = criteriaType;
 	}
 
-	public SelectNamedQuery getNamedQuery() {
+	public SelectNamedQueries getNamedQuery() {
 		return namedQuery;
 	}
 
-	public void setNamedQuery(SelectNamedQuery namedQuery) {
+	public void setNamedQuery(SelectNamedQueries namedQuery) {
 		this.namedQuery = namedQuery;
 	}
 

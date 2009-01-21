@@ -1,70 +1,69 @@
 /**
  * The Logic Lab
  * @author jpk
- * Apr 30, 2008
+ * Jan 21, 2009
  */
 package com.tll.criteria;
 
-import com.tll.model.EntityType;
+import com.tll.model.IEntity;
 
 /**
- * SelectNamedQuery - Enumeration of the system defined data retrieval based
- * named queries.
+ * SelectNamedQuery
  * @author jpk
  */
-public enum SelectNamedQuery {
-	ISP_LISTING("account.ispList", EntityType.ISP, true),
-	MERCHANT_LISTING("account.merchantList", EntityType.MERCHANT, true),
-	CUSTOMER_LISTING("account.customerList", EntityType.CUSTOMER, true),
-	INTERFACE_SUMMARY_LISTING("interface.summaryList", EntityType.INTERFACE, true),
-	INTERFACES("interface.select", EntityType.INTERFACE, false);
+public class SelectNamedQuery {
 
 	private final String queryName;
-	private final EntityType entityType;
-	private final boolean scalar;
 
-	private SelectNamedQuery(String queryName, EntityType entityType, boolean scalar) {
+	private Class<? extends IEntity> entityType;
+
+	private boolean scalar;
+
+	/**
+	 * Constructor
+	 * @param queryName
+	 * @param entityType
+	 * @param scalar
+	 */
+	public SelectNamedQuery(String queryName, Class<? extends IEntity> entityType, boolean scalar) {
+		super();
 		this.queryName = queryName;
 		this.entityType = entityType;
 		this.scalar = scalar;
 	}
 
-	public String getQueryName() {
-		return queryName;
-	}
-
 	/**
-	 * @return The counterpart named query that retrieves the count of this named
-	 *         query.
+	 * @return the entityType
 	 */
-	public String getCountCounterpartQueryName() {
-		return queryName + ".count";
-	}
-
-	public EntityType getEntityType() {
+	public Class<? extends IEntity> getEntityType() {
 		return entityType;
 	}
 
+	/**
+	 * @param entityType the entityType to set
+	 */
+	public void setEntityType(Class<? extends IEntity> entityType) {
+		this.entityType = entityType;
+	}
+
+	/**
+	 * @return the scalar
+	 */
 	public boolean isScalar() {
 		return scalar;
 	}
 
-	@Override
-	public String toString() {
-		return queryName;
+	/**
+	 * @param scalar the scalar to set
+	 */
+	public void setScalar(boolean scalar) {
+		this.scalar = scalar;
 	}
 
 	/**
-	 * Finds the {@link SelectNamedQuery} given the query name.
-	 * @param queryName The query name
-	 * @return The associated query definition
-	 * @throws IllegalArgumentException When no matching {@link SelectNamedQuery}
-	 *         is found.
+	 * @return the queryName
 	 */
-	public static SelectNamedQuery fromQueryName(String queryName) {
-		for(SelectNamedQuery nq : SelectNamedQuery.values()) {
-			if(nq.getQueryName().equals(queryName)) return nq;
-		}
-		throw new IllegalArgumentException("Undefined named query: " + queryName);
+	public String getQueryName() {
+		return queryName;
 	}
 }

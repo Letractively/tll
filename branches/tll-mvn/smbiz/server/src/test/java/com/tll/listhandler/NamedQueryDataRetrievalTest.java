@@ -22,7 +22,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
@@ -44,11 +44,11 @@ import com.tll.util.EnumUtil;
 @Test(groups = "listhandler")
 public class NamedQueryDataRetrievalTest extends DbTest {
 
-	private static final Map<SelectNamedQuery, SortColumn> querySortBindings =
-			new HashMap<SelectNamedQuery, SortColumn>();
+	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
+			new HashMap<SelectNamedQueries, SortColumn>();
 
-	private static final Map<SelectNamedQuery, Set<IQueryParam>> queryParamsBindings =
-			new HashMap<SelectNamedQuery, Set<IQueryParam>>();
+	private static final Map<SelectNamedQueries, Set<IQueryParam>> queryParamsBindings =
+			new HashMap<SelectNamedQueries, Set<IQueryParam>>();
 
 	private static class QueryParam implements IQueryParam {
 
@@ -87,7 +87,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	}
 
 	static {
-		for(SelectNamedQuery nq : SelectNamedQuery.values()) {
+		for(SelectNamedQueries nq : SelectNamedQueries.values()) {
 			switch(nq) {
 				case ISP_LISTING:
 					querySortBindings.put(nq, new SortColumn("dateCreated", "i"));
@@ -120,8 +120,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = {
-		"jpaMode",
-		"daoMode" })
+		"jpaMode", "daoMode" })
 	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
 		this.jpaMode = EnumUtil.fromString(JpaMode.class, jpaModeStr);
 		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
@@ -170,9 +169,9 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 		ICriteria<? extends IEntity> criteria;
 
 		// iterator through all defined select named queries
-		for(SelectNamedQuery nq : querySortBindings.keySet()) {
+		for(SelectNamedQueries nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
-			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
+			criteria = new Criteria<IEntity>(nq.toSelectNamedQuery(), queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types

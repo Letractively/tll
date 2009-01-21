@@ -257,7 +257,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
-			SelectNamedQuery nq = search.getNamedQuery();
+			SelectNamedQuery nq = search.getNamedQuery().toSelectNamedQuery();
 			if(nq == null) {
 				throw new IllegalArgumentException("No named query specified");
 			}

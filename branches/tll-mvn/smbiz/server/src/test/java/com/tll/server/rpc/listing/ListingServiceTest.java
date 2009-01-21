@@ -28,15 +28,15 @@ import com.tll.client.model.Model;
 import com.tll.client.search.ISearch;
 import com.tll.client.search.impl.AccountSearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.Sorting;
-import com.tll.di.RefDataModule;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
 import com.tll.di.MailModule;
+import com.tll.di.RefDataModule;
 import com.tll.di.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.EntityType;
@@ -100,8 +100,7 @@ public class ListingServiceTest extends DbTest {
 
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = {
-		"jpaMode",
-		"daoMode" })
+		"jpaMode", "daoMode" })
 	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
 		this.jpaMode = EnumUtil.fromString(JpaMode.class, jpaModeStr);
 		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
@@ -118,7 +117,7 @@ public class ListingServiceTest extends DbTest {
 	public void test() throws Exception {
 
 		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
-		search.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
+		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING);
 		search.setQueryParam(new IntPropertyValue("ispId", 1));
 
 		// proxy the listing service

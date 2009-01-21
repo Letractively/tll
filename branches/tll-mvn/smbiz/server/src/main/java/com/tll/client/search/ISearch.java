@@ -9,7 +9,7 @@ import java.util.Set;
 import com.tll.IMarshalable;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityType;
 
 /**
@@ -43,7 +43,7 @@ public interface ISearch extends IMarshalable {
 	/**
 	 * @return The named query definition. May be <code>null</code>.
 	 */
-	SelectNamedQuery getNamedQuery();
+	SelectNamedQueries getNamedQuery();
 
 	/**
 	 * @return Possible query parameters when a named query is specified.

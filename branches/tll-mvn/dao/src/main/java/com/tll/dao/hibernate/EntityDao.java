@@ -625,9 +625,9 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case ENTITY_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final SelectNamedQuery namedQueryDef = criteria.getNamedQueryDefinition();
-				String queryName = namedQueryDef.getQueryName();
-				String countQueryName = namedQueryDef.getCountCounterpartQueryName();
+				final SelectNamedQuery snq = criteria.getNamedQueryDefinition();
+				String queryName = snq.getQueryName();
+				String countQueryName = snq.getQueryName() + ".count";
 				final Query cq = assembleQuery(countQueryName, null, null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;
@@ -640,9 +640,9 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			case SCALAR_NAMED_QUERY: {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
-				final SelectNamedQuery namedQueryDef = criteria.getNamedQueryDefinition();
-				String queryName = namedQueryDef.getQueryName();
-				String countQueryName = namedQueryDef.getCountCounterpartQueryName();
+				final SelectNamedQuery snq = criteria.getNamedQueryDefinition();
+				String queryName = snq.getQueryName();
+				String countQueryName = snq.getQueryName() + ".count";
 				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.getSingleResult();
 				assert count != null;

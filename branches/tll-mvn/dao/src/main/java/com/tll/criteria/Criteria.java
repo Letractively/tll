@@ -23,7 +23,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private SelectNamedQuery namedQueryDefinition;
 
-	private CriterionGroup primaryGroup = new CriterionGroup();
+	private final CriterionGroup primaryGroup = new CriterionGroup();
 
 	private Set<IQueryParam> queryParams;
 
@@ -51,11 +51,12 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * @param namedQueryDefinition The named query definition
 	 * @param queryParams The possible query parameters
 	 */
+	@SuppressWarnings("unchecked")
 	public Criteria(SelectNamedQuery namedQueryDefinition, Set<IQueryParam> queryParams) {
 		super();
 		this.criteriaType =
 				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
-		this.entityClass = EntityUtil.entityClassFromType(namedQueryDefinition.getEntityType());
+		this.entityClass = (Class<? extends E>) namedQueryDefinition.getEntityType();
 		this.namedQueryDefinition = namedQueryDefinition;
 		this.queryParams = queryParams;
 	}
