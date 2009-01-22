@@ -44,7 +44,7 @@ public class ValidatorsTest {
 	 */
 	@PhoneNumbers(value = @PhoneNumber(phonePropertyName = "phoneNumber"))
 	@PostalCode()
-	static final class TestEntity extends NamedTimeStampEntity {
+	public static final class TestEntity extends NamedTimeStampEntity {
 
 		private static final long serialVersionUID = 1L;
 
@@ -109,6 +109,10 @@ public class ValidatorsTest {
 			this.relatedMany = relatedMany;
 		}
 
+		@Override
+		public String typeName() {
+			return "Test Entity";
+		}
 	}
 	
 	TestEntity getTestEntity() {

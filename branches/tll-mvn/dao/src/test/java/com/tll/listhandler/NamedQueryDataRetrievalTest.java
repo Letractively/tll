@@ -31,7 +31,6 @@ import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -159,6 +158,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 		assert listHandler.size() > 0 : "No list handler elements exist";
 	}
 
+	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
 
 		IListHandlerDataProvider<IEntity> dataProvider;
@@ -166,7 +166,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 
 		// iterator through all defined select named queries
 		for(SelectNamedQueries nq : querySortBindings.keySet()) {
-			dataProvider = getListHandlerDataProvider(EntityUtil.entityClassFromType(nq.getEntityType()));
+			dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
 			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
 			Sorting sorting = new Sorting(querySortBindings.get(nq));
 

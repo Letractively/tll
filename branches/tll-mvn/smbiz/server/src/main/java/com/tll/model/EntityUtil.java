@@ -69,16 +69,6 @@ public final class EntityUtil {
 		}
 	}
 
-	/**
-	 * Get a readable type name.
-	 * @param <E>
-	 * @param clazz
-	 * @return type name
-	 */
-	public static <E extends IEntity> String typeName(Class<E> clazz) {
-		return EnumUtil.name(entityTypeFromClass(clazz));
-	}
-
 	private EntityUtil() {
 	}
 }

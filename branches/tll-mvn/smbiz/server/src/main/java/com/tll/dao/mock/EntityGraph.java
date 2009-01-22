@@ -27,7 +27,6 @@ import com.tll.model.Authority;
 import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityProvider;
 import com.tll.model.Interface;
@@ -73,14 +72,12 @@ public final class EntityGraph implements IEntityProvider {
 		return (Collection<E>) map.get(type);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
 		if(key == null || !key.isSet()) {
 			throw new IllegalArgumentException("The key is not specified or is not set");
 		}
-		Collection<? extends E> clc =
-				(Collection<? extends E>) getEntitiesByType(EntityUtil.entityClassFromType(key.getEntityType()));
+		Collection<? extends E> clc = getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(E e : clc) {
 				if(key.getId().equals(e.getId())) {

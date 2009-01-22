@@ -33,7 +33,6 @@ import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
@@ -273,8 +272,7 @@ public final class EntityDao implements IEntityDao {
 										pv = bw.getPropertyValue(pn);
 									}
 									catch(final RuntimeException re) {
-										throw new InvalidCriteriaException("Invalid " + EntityUtil.typeName(criteria.getEntityClass())
-												+ " property: " + pn);
+										throw new InvalidCriteriaException("Invalid " + criteria.getEntityClass() + " property: " + pn);
 									}
 									if(compare(ctn.getValue(), pv, ctn.getComparator(), ctn.isCaseSensitive())) {
 										list.add(e);

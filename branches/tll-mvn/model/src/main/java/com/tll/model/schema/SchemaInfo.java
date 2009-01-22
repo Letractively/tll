@@ -20,7 +20,6 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 public final class SchemaInfo implements ISchemaInfo {
@@ -257,7 +256,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		final ManyToOne mto = m.getAnnotation(ManyToOne.class);
 		if(mto != null) {
 			cascades = mto.cascade();
-			return new RelationInfo(EntityUtil.entityTypeFromClass((Class<? extends IEntity>) rt), PropertyType.RELATED_ONE,
+			return new RelationInfo((Class<? extends IEntity>) rt, PropertyType.RELATED_ONE,
 					(cascades == null || cascades.length == 0));
 		}
 
@@ -267,8 +266,7 @@ public final class SchemaInfo implements ISchemaInfo {
 			Class<? extends IEntity> rmec =
 					(Class<? extends IEntity>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
 			cascades = otm.cascade();
-			return new RelationInfo(EntityUtil.entityTypeFromClass(rmec), PropertyType.RELATED_MANY,
-					(cascades == null || cascades.length == 0));
+			return new RelationInfo(rmec, PropertyType.RELATED_MANY, (cascades == null || cascades.length == 0));
 		}
 
 		if("parent".equals(propName)) {

@@ -209,6 +209,10 @@ public class SchemaInfoTest {
 			this.related = related;
 		}
 
+		@Override
+		public String typeName() {
+			return "Test Entity";
+		}
 	}
 
 	/**

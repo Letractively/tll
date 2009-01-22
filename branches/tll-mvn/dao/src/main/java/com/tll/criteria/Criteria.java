@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 /**
@@ -51,11 +50,12 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * @param namedQueryDefinition The named query definition
 	 * @param queryParams The possible query parameters
 	 */
+	@SuppressWarnings("unchecked")
 	public Criteria(ISelectNamedQueryDef namedQueryDefinition, Set<IQueryParam> queryParams) {
 		super();
 		this.criteriaType =
 				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
-		this.entityClass = EntityUtil.entityClassFromType(namedQueryDefinition.getEntityType());
+		this.entityClass = (Class<E>) namedQueryDefinition.getEntityType();
 		this.namedQueryDefinition = namedQueryDefinition;
 		this.queryParams = queryParams;
 	}
@@ -107,7 +107,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		sb.append(criteriaType);
 		if(entityClass != null) {
 			sb.append(" (");
-			sb.append(EntityUtil.typeName(entityClass));
+			sb.append(entityClass);
 			if(criteriaType.isQuery()) {
 				sb.append(", query name: ");
 				sb.append(namedQueryDefinition.getQueryName());

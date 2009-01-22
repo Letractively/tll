@@ -8,6 +8,7 @@ import org.apache.oro.text.perl.Perl5Util;
 import org.hibernate.validator.Validator;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.NotReadablePropertyException;
 
 import com.tll.util.ValidationUtil;
 
@@ -33,7 +34,13 @@ public class PostalCodeValidator implements Validator<PostalCode>, IPropertyRefe
 		if(value == null) return true;
 		BeanWrapper bw = new BeanWrapperImpl(value);
 		Object pvPostalCode = bw.getPropertyValue(postalCodePropertyName);
-		Object pvCountry = bw.getPropertyValue(countryPropertyName);
+		Object pvCountry = null;
+		try {
+			pvCountry = bw.getPropertyValue(countryPropertyName);
+		}
+		catch(NotReadablePropertyException e) {
+			// ok
+		}
 		if(pvPostalCode == null) return true;
 
 		final String postalCode = ((String) pvPostalCode).trim().toLowerCase();

@@ -16,7 +16,7 @@ public class BusinessKeyNotDefinedException extends ApplicationException {
 	 * @param entityClass The entity type
 	 */
 	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass) {
-		super("No business keys exist for  " + EntityUtil.typeName(entityClass));
+		super("No business keys exist for  " + entityClass.getName());
 	}
 
 	/**
@@ -26,6 +26,6 @@ public class BusinessKeyNotDefinedException extends ApplicationException {
 	 * @param businessKeyName The business key name
 	 */
 	public BusinessKeyNotDefinedException(Class<? extends IEntity> entityClass, String businessKeyName) {
-		super("No business key of name '" + businessKeyName + "' is defined for " + EntityUtil.typeName(entityClass));
+		super("No business key of name '" + businessKeyName + "' is defined for " + entityClass.getName());
 	}
 }

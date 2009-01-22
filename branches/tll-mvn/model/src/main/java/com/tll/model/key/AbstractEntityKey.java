@@ -1,8 +1,6 @@
 package com.tll.model.key;
 
 import com.tll.key.IKey;
-import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 
 /**
@@ -32,10 +30,6 @@ public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 		return entityClass;
 	}
 
-	public final EntityType getEntityType() {
-		return EntityUtil.entityTypeFromClass(getType());
-	}
-
 	public final void setType(Class<E> type) {
 		if(type == null) throw new IllegalArgumentException("An entity type must be specified.");
 		this.entityClass = type;
@@ -54,7 +48,7 @@ public abstract class AbstractEntityKey<E extends IEntity> implements IKey<E> {
 
 	@Override
 	public final String descriptor() {
-		return getEntityType().getName() + " " + keyDescriptor();
+		return entityClass.getName() + " " + keyDescriptor();
 	}
 
 	/**

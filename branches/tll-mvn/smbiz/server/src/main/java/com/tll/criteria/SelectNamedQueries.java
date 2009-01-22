@@ -5,7 +5,10 @@
  */
 package com.tll.criteria;
 
-import com.tll.model.EntityType;
+import com.tll.model.Customer;
+import com.tll.model.Interface;
+import com.tll.model.Isp;
+import com.tll.model.Merchant;
 
 /**
  * SelectNamedQueries - Enumeration of the system defined data retrieval based
@@ -13,17 +16,17 @@ import com.tll.model.EntityType;
  * @author jpk
  */
 public enum SelectNamedQueries implements ISelectNamedQueryDef {
-	ISP_LISTING("account.ispList", EntityType.ISP, true),
-	MERCHANT_LISTING("account.merchantList", EntityType.MERCHANT, true),
-	CUSTOMER_LISTING("account.customerList", EntityType.CUSTOMER, true),
-	INTERFACE_SUMMARY_LISTING("interface.summaryList", EntityType.INTERFACE, true),
-	INTERFACES("interface.select", EntityType.INTERFACE, false);
+	ISP_LISTING("account.ispList", Isp.class, true),
+	MERCHANT_LISTING("account.merchantList", Merchant.class, true),
+	CUSTOMER_LISTING("account.customerList", Customer.class, true),
+	INTERFACE_SUMMARY_LISTING("interface.summaryList", Interface.class, true),
+	INTERFACES("interface.select", Interface.class, false);
 
 	private final String queryName;
-	private final EntityType entityType;
+	private final Class<?> entityType;
 	private final boolean scalar;
 
-	private SelectNamedQueries(String queryName, EntityType entityType, boolean scalar) {
+	private SelectNamedQueries(String queryName, Class<?> entityType, boolean scalar) {
 		this.queryName = queryName;
 		this.entityType = entityType;
 		this.scalar = scalar;
@@ -41,7 +44,7 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 		return queryName + ".count";
 	}
 
-	public EntityType getEntityType() {
+	public Class<?> getEntityType() {
 		return entityType;
 	}
 

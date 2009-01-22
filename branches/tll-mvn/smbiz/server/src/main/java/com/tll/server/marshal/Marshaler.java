@@ -315,7 +315,7 @@ public final class Marshaler {
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						prop = new RelatedOneProperty(ri.getRelatedType(), pname, reference, ngrp);
+						prop = new RelatedOneProperty(EntityUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, ngrp);
 					}
 				}
 
@@ -333,7 +333,7 @@ public final class Marshaler {
 								list.add(nested);
 							}
 						}
-						prop = new RelatedManyProperty(ri.getRelatedType(), pname, reference, list);
+						prop = new RelatedManyProperty(EntityUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, list);
 					}
 				}
 

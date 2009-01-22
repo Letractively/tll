@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.NotNull;
 
 import com.tll.model.schema.Managed;
+import com.tll.util.StringUtil;
 
 /**
  * Base class for all entities.
@@ -162,6 +163,11 @@ public abstract class EntityBase implements IEntity {
 		setId(id);
 	}
 
+	@Override
+	public String typeName() {
+		return StringUtil.formatCamelCase(entityClass().getSimpleName());
+	}
+
 	@Id
 	@NotNull
 	@Column(name = IEntity.PK_FIELDNAME)
@@ -232,11 +238,6 @@ public abstract class EntityBase implements IEntity {
 	@Transient
 	public final boolean isNew() {
 		return (getVersion() == null);
-	}
-
-	@Transient
-	public final String typeName() {
-		return EntityUtil.typeName(entityClass());
 	}
 
 	/*

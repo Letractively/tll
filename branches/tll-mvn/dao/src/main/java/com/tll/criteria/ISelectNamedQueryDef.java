@@ -5,8 +5,6 @@
  */
 package com.tll.criteria;
 
-import com.tll.model.EntityType;
-
 /**
  * ISelectNamedQueryDef
  * @author jpk
@@ -16,7 +14,7 @@ public interface ISelectNamedQueryDef {
 	/**
 	 * @return the entityType
 	 */
-	EntityType getEntityType();
+	Class<?> getEntityType();
 
 	/**
 	 * @return the scalar
