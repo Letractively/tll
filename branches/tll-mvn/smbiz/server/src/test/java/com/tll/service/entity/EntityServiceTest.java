@@ -81,7 +81,7 @@ public class EntityServiceTest extends DbTest {
 		super.beforeMethod();
 		getDbShell().clear(); // reset
 	}
-
+	
 	private IEntityDao getEntityDao() {
 		return injector.getInstance(IEntityDao.class);
 	}

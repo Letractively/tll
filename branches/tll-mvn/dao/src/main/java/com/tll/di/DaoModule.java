@@ -106,7 +106,6 @@ public class DaoModule extends CompositeModule {
 			bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 			bind(MockEntityProvider.class).in(Scopes.SINGLETON);
-			// bind(EntityGraph.class).in(Scopes.SINGLETON);
 
 			// IEntityDao
 			bind(IEntityDao.class).to(com.tll.dao.mock.EntityDao.class).in(Scopes.SINGLETON);

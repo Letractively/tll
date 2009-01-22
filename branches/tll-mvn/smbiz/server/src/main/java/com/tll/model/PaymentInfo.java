@@ -11,9 +11,6 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
-import com.tll.model.NamedEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 import com.tll.model.schema.Nested;
@@ -37,6 +34,14 @@ public class PaymentInfo extends NamedEntity {
 
 	public Class<? extends IEntity> entityClass() {
 		return PaymentInfo.class;
+	}
+
+	/**
+	 * Constructor
+	 */
+	public PaymentInfo() {
+		super();
+		paymentData = new PaymentData();
 	}
 
 	@Column

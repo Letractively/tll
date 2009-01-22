@@ -41,9 +41,8 @@ import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
-import com.tll.model.PaymentData;
-import com.tll.model.PaymentInfo;
 import com.tll.model.schema.ISchemaInfo;
+import com.tll.model.schema.Nested;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
@@ -138,10 +137,23 @@ public final class Marshaler {
 		// check bound method annotations and honor @Transient
 		final Method m = pd.getReadMethod();
 		if(m != null) {
-			final Transient t = m.getAnnotation(Transient.class);
-			return (t == null);
+			return m.getAnnotation(Transient.class) == null;
 		}
 		return true;
+	}
+
+	/**
+	 * Does the given {@link PropertyDescriptor} have the {@link Nested}
+	 * annotation?
+	 * @param pd the property descriptor
+	 * @return true/false
+	 */
+	private boolean isNestedProperty(final PropertyDescriptor pd) {
+		final Method m = pd.getReadMethod();
+		if(m != null) {
+			return m.getAnnotation(Nested.class) == null;
+		}
+		return false;
 	}
 
 	/**
@@ -330,16 +342,16 @@ public final class Marshaler {
 					prop = new StringMapPropertyValue(pname, generatePropertyData(entityClass, pname), (Map) obj);
 				}
 
-				// special case: PaymentData object
-				else if("paymentData".equals(pname)) {
+				// nested property?
+				else if(isNestedProperty(pd)) {
 					final BeanWrapperImpl bw2 = new BeanWrapperImpl(obj);
 					for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
 						if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
 							try {
 								final Object oval = bw2.getPropertyValue(pd2.getName());
 								if(oval != null) {
-									model.set(createModelProperty(pd2.getPropertyType(), "paymentData_" + pd2.getName(), oval,
-											generatePropertyData(PaymentInfo.class, "paymentData." + pd2.getName())));
+									model.set(createModelProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
+											generatePropertyData(source.entityClass(), (pname + "." + pd2.getName()))));
 								}
 							}
 							catch(final RuntimeException e) {
@@ -347,6 +359,7 @@ public final class Marshaler {
 						}
 					}
 				}
+
 				else {
 					throw new SystemError("Unhandled property type: " + ptype);
 				}
@@ -430,11 +443,6 @@ public final class Marshaler {
 		}
 		catch(final IllegalAccessException iae) {
 			throw new SystemError("Unable to instantiate entity of class: " + entityClass.getSimpleName());
-		}
-
-		// special case: payment info
-		if(PaymentInfo.class.equals(entityClass)) {
-			((PaymentInfo) e).setPaymentData(new PaymentData());
 		}
 
 		b = new Binding(e, entityGroup);
@@ -527,7 +535,9 @@ public final class Marshaler {
 
 		if(e.getId() == null) {
 			// assume new and set generated id
-			assert e.getVersion() == null : "Encountered an entity w/o an id having and non-null version!";
+			if(e.getVersion() != null) {
+				throw new SystemError("Encountered an entity (" + e.descriptor() + ") w/o an id having a non-null version.");
+			}
 			entityFactory.setGenerated(e);
 		}
 
