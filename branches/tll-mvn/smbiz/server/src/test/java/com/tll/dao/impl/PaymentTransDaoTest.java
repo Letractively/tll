@@ -20,7 +20,7 @@ public class PaymentTransDaoTest extends AbstractDaoTest<PaymentTrans> {
 	 * Constructor
 	 */
 	public PaymentTransDaoTest() {
-		super(PaymentTrans.class, IPaymentTransDao.class);
+		super(PaymentTrans.class);
 	}
 
 	@Override

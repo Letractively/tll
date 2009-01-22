@@ -34,8 +34,10 @@ import com.tll.di.JpaModule;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.BusinessKey;
+import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.EnumUtil;
 
@@ -48,11 +50,9 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 
 	protected final Class<E> entityClass;
 
-	protected final Class<? extends IEntityDao<? super E>> daoClass;
-
 	protected DaoMode daoMode;
 
-	protected IEntityDao<E> rawDao;
+	protected IEntityDao rawDao;
 
 	protected final EntityDao dao = new EntityDao();
 
@@ -67,23 +67,19 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	/**
 	 * Constructor
 	 * @param entityClass
-	 * @param daoClass
 	 */
-	protected AbstractDaoTest(Class<E> entityClass, Class<? extends IEntityDao<? super E>> daoClass) {
-		this(entityClass, daoClass, true);
+	protected AbstractDaoTest(Class<E> entityClass) {
+		this(entityClass, true);
 	}
 
 	/**
 	 * Constructor
 	 * @param entityClass
-	 * @param daoClass
 	 * @param testPagingRelated
 	 */
-	protected AbstractDaoTest(Class<E> entityClass, Class<? extends IEntityDao<? super E>> daoClass,
-			boolean testPagingRelated) {
+	protected AbstractDaoTest(Class<E> entityClass, boolean testPagingRelated) {
 		super();
 		this.entityClass = entityClass;
-		this.daoClass = daoClass;
 		this.testPagingRelated = testPagingRelated;
 	}
 
@@ -102,7 +98,6 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void beforeClass() {
 
 		// for dao impl tests, the jpa mode is soley dependent on the dao
@@ -122,7 +117,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		// build the injector
 		buildInjector();
 
-		this.rawDao = (IEntityDao<E>) getDao(daoClass);
+		this.rawDao = new EntityDao();
 		logger.debug("Starting DAO Test: " + this.getClass().getSimpleName() + ", dao mode: " + daoMode.toString());
 
 		if(daoMode == DaoMode.ORM) {
@@ -171,6 +166,10 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			endTransaction();
 		}
 		afterMethodHook();
+	}
+
+	protected final IEntityDao getEntityDao() {
+		return rawDao;
 	}
 
 	/**
@@ -251,10 +250,6 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		return list;
 	}
 
-	protected final <D extends IEntityDao<? extends IEntity>> D getDao(Class<D> type) {
-		return injector.getInstance(type);
-	}
-
 	/**
 	 * Disables caching for the current data store session.
 	 */
@@ -269,80 +264,79 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * code base naturally changes over time
 	 * @author jpk
 	 */
-	protected final class EntityDao implements IEntityDao<E> {
+	protected final class EntityDao implements IEntityDao {
 
 		@Override
-		public Class<E> getEntityClass() {
-			return rawDao.getEntityClass();
-		}
-
-		@Override
-		public E persist(E entity) {
+		public <R extends IEntity> R persist(R entity) {
 			return rawDao.persist(entity);
 		}
 
 		@Override
-		public E load(PrimaryKey<? extends E> key) {
+		public <R extends IEntity> R load(PrimaryKey<R> key) {
 			return rawDao.load(key);
 		}
 
 		@Override
-		public E load(BusinessKey<? extends E> key) {
+		public <R extends IEntity> R load(BusinessKey<R> key) {
 			return rawDao.load(key);
 		}
 
 		@Override
-		public void purge(E entity) {
+		public <R extends IEntity> void purge(R entity) {
 			rawDao.purge(entity);
 		}
 
 		@Override
-		public List<E> loadAll() {
-			return rawDao.loadAll();
+		public <R extends IEntity> List<R> loadAll(Class<R> entityType) {
+			return rawDao.loadAll(entityType);
 		}
 
 		@Override
-		public void purgeAll(Collection<E> entities) {
+		public <R extends IEntity> void purgeAll(Collection<R> entities) {
 			rawDao.purgeAll(entities);
 		}
 
 		@Override
-		public Collection<E> persistAll(Collection<E> entities) {
+		public <R extends IEntity> Collection<R> persistAll(Collection<R> entities) {
 			return rawDao.persistAll(entities);
 		}
 
 		@Override
-		public List<E> findEntities(ICriteria<E> Sorting sorting) throws InvalidCriteriaException {
+		public <R extends IEntity> List<R> findEntities(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
 			return rawDao.findEntities(criteria, sorting);
 		}
 
 		@Override
-		public E findEntity(ICriteria<ICriteria<E>validCriteriaException {
+		public <R extends IEntity> R findEntity(ICriteria<R> criteria) throws InvalidCriteriaException {
 			return rawDao.findEntity(criteria);
 		}
 
 		@Override
-		public List<E> findByIds(List<Integer> ids, Sorting sorting) {
-			return rawDao.findByIds(ids, sorting);
+		public <R extends IEntity> List<R> findByIds(Class<R> entityType, List<Integer> ids, Sorting sorting) {
+			return rawDao.findByIds(entityType, ids, sorting);
 		}
 
 		@Override
-		public List<Integer> getIds(ICriteria<E> criteriICriteria<E>rows InvalidCriteriaException {
+		public <R extends IEntity> List<Integer> getIds(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
 			return rawDao.getIds(criteria, sorting);
 		}
 
 		@Override
-		public List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting) {
+		public <R extends IEntity> List<R> getEntitiesFromIds(Class<R> entityClass, Collection<Integer> ids, Sorting sorting) {
 			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
 		@Override
-		public List<SearchResult<E>> find(ICriteria<E> criteria, SortingICriteria<E>idCriteriaException {
+		public <R extends IEntity> List<SearchResult<R>> find(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
 		@Override
-		public IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, ICriteria<E>ageSize) throws InvalidCriteriaException {
+		public <R extends IEntity> IPageResult<SearchResult<R>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
+				int pageSize) throws InvalidCriteriaException {
 			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
 
@@ -361,6 +355,10 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 			rawDao.flush();
 		}
 
+		@Override
+		public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+			return rawDao.load(nameKey);
+		}
 	}
 
 	/**
@@ -482,7 +480,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	@Test(groups = "dao")
 	public final void testLoadAll() throws Exception {
-		final List<E> list = dao.loadAll();
+		final List<E> list = dao.loadAll(entityClass);
 		endTransaction();
 		Assert.assertNotNull(list, "loadAll returned null");
 	}
@@ -501,7 +499,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		dbRemove.add(e);
 
 		startNewTransaction();
-		final Criteria<? extends E> criteria = new Criteria(e.entityClass());
+		final Criteria<E> criteria = new Criteria(e.entityClass());
 		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<E>(e));
 		final List<E> list = dao.findEntities(criteria, null);
 		endTransaction();
@@ -525,7 +523,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		Assert.assertNotNull(e, "Null generated test entity");
 		final List<Integer> ids = new ArrayList<Integer>(1);
 		ids.add(e.getId());
-		final List<E> list = dao.findByIds(ids, null);
+		final List<E> list = dao.findByIds(entityClass, ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");
 	}
@@ -588,7 +586,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
-		final Criteria<? extends E> crit = new Criteria<E>(entityClass);
+		final Criteria<E> crit = new Criteria<E>(entityClass);
 		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();

@@ -28,7 +28,7 @@ public class ProductCategoryDaoTest extends NamedEntityDaoTest<ProductCategory> 
 	 * Constructor
 	 */
 	public ProductCategoryDaoTest() {
-		super(ProductCategory.class, IProductCategoryDao.class);
+		super(ProductCategory.class);
 	}
 
 	@Override
@@ -36,15 +36,14 @@ public class ProductCategoryDaoTest extends NamedEntityDaoTest<ProductCategory> 
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -56,11 +55,11 @@ public class ProductCategoryDaoTest extends NamedEntityDaoTest<ProductCategory> 
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
+				final Account account = getEntityDao().load(aKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {

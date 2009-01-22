@@ -31,7 +31,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 	 * Constructor
 	 */
 	public AccountAddressDaoTest() {
-		super(AccountAddress.class, IAccountAddressDao.class, false);
+		super(AccountAddress.class, false);
 	}
 
 	@Override
@@ -40,26 +40,25 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
 
 		Address address;
 		if(adrKey == null) {
-			address = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			address = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			adrKey = new PrimaryKey<Address>(address);
 		}
 		else {
-			address = getDao(IAddressDao.class).load(adrKey);
+			address = getEntityDao().load(adrKey);
 		}
 		Assert.assertNotNull(address);
 		e.setAddress(address);
@@ -72,9 +71,9 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				final Account account = getEntityDao().load(aKey);
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -84,7 +83,7 @@ public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
 
 		if(adrKey != null) {
 			try {
-				getDao(IAddressDao.class).purge(getDao(IAddressDao.class).load(adrKey));
+				getEntityDao().purge(getEntityDao().load(adrKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

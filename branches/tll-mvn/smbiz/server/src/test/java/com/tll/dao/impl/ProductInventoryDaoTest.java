@@ -30,7 +30,7 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 	 * Constructor
 	 */
 	public ProductInventoryDaoTest() {
-		super(ProductInventory.class, IProductInventoryDao.class);
+		super(ProductInventory.class);
 	}
 
 	@Override
@@ -42,15 +42,14 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -72,11 +71,11 @@ public class ProductInventoryDaoTest extends AbstractDaoTest<ProductInventory> {
 	protected void afterMethodHook() {
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
+				final Account account = getEntityDao().load(aKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {

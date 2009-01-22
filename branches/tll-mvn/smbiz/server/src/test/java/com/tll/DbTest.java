@@ -33,6 +33,44 @@ import com.tll.model.key.PrimaryKey;
 public abstract class DbTest extends TestBase {
 
 	/**
+	 * Retrieves the entity from the db given a {@link IPrimaryKey}.
+	 * <p>
+	 * <Strong>IMPT NOTE: </strong> we use the dao find methodology as this
+	 * ensures a db hit.
+	 * @param key the primary key
+	 * @return the entity from the db or <code>null</code> if not found.
+	 */
+	protected static final <E extends IEntity> E getEntityFromDb(IEntityDao dao, PrimaryKey<E> key) {
+		Criteria<E> criteria = new Criteria<E>(key.getType());
+		criteria.getPrimaryGroup().addCriterion(key);
+		try {
+			return dao.findEntity(criteria);
+		}
+		catch(InvalidCriteriaException e) {
+			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Generic find method intended to validate db ops.
+	 * @param <E>
+	 * @param dao
+	 * @param criteria
+	 * @return List of search results
+	 */
+	protected static final <E extends IEntity> List<SearchResult<E>> getEntitiesFromDb(IEntityDao dao,
+			ICriteria<E> criteria) {
+		try {
+			return dao.find(criteria, null);
+		}
+		catch(InvalidCriteriaException e) {
+			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * The JPA mode.
 	 */
 	protected JpaMode jpaMode;
@@ -102,46 +140,6 @@ public abstract class DbTest extends TestBase {
 
 	protected PlatformTransactionManager getTransactionManager() {
 		return injector.getInstance(PlatformTransactionManager.class);
-	}
-
-	/**
-	 * Retrieves the entity from the db given a {@link IPrimaryKey}.
-	 * <p>
-	 * <Strong>IMPT NOTE: </strong> we use the dao find methodology as this
-	 * ensures a db hit.
-	 * @param key the primary key
-	 * @return the entity from the db or <code>null</code> if not found.
-	 */
-	@SuppressWarnings("unchecked")
-	protected static final <E extends IEntity, D extends IEntityDao<E>> E getEntityFromDb(D dao, PrimaryKey key) {
-		Criteria<? extends E> criteria = new Criteria<E>(key.getType());
-		criteria.getPrimaryGroup().addCriterion(key);
-		try {
-			return dao.findEntity(criteria);
-		}
-		catch(InvalidCriteriaException e) {
-			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
-			return null;
-		}
-	}
-
-	/**
-	 * Generic find method intended to validate db ops.
-	 * @param <E>
-	 * @param <D>
-	 * @param dao
-	 * @param criteria
-	 * @return List of search results
-	 */
-	protected static final <E extends IEntity, D extends IEntityDao<E>> List<SearchResult<E>> getEntitiesFromDb(D dao,
-			ICriteria<E> {
-		try {
-			return dao.find(criteria, null);
-		}
-		catch(InvalidCriteriaException e) {
-			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
-			return null;
-		}
 	}
 
 	/**

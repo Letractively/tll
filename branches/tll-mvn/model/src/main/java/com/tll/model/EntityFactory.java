@@ -1,7 +1,5 @@
 package com.tll.model;
 
-import java.util.Date;
-
 import com.google.inject.Inject;
 import com.tll.SystemError;
 import com.tll.model.key.IPrimaryKeyGenerator;
@@ -13,7 +11,7 @@ import com.tll.model.key.IPrimaryKeyGenerator;
  */
 public class EntityFactory implements IEntityFactory {
 
-	private IPrimaryKeyGenerator keyGenerator;
+	private final IPrimaryKeyGenerator keyGenerator;
 
 	/**
 	 * Constructor
@@ -42,11 +40,13 @@ public class EntityFactory implements IEntityFactory {
 
 	public <E extends IEntity> void setGenerated(E entity) {
 		((EntityBase) entity).setGenerated(keyGenerator.generateIdentifier(entity.entityClass()));
+		/*
 		if(entity instanceof ITimeStampEntity) {
 			final Date now = new Date();
 			ITimeStampEntity tse = (ITimeStampEntity) entity;
 			tse.setDateCreated(now);
 			tse.setDateModified(now);
 		}
+		*/
 	}
 }

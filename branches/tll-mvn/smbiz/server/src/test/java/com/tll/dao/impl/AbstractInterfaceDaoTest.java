@@ -33,7 +33,7 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Name
 	 * @param intfClass The interface class
 	 */
 	public AbstractInterfaceDaoTest(Class<I> intfClass) {
-		super(intfClass, IInterfaceDao.class, false);
+		super(intfClass, false);
 	}
 
 	@Override

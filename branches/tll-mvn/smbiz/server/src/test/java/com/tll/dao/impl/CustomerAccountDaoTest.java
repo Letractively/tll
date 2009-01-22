@@ -34,7 +34,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 	 * Constructor
 	 */
 	public CustomerAccountDaoTest() {
-		super(CustomerAccount.class, ICustomerAccountDao.class, false);
+		super(CustomerAccount.class, false);
 	}
 
 	@Override
@@ -42,11 +42,11 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 		Currency c;
 		if(rKey == null) {
 			c = getMockEntityProvider().getEntityCopy(Currency.class, true);
-			c = getDao(ICurrencyDao.class).persist(c);
+			c = getEntityDao().persist(c);
 			rKey = new PrimaryKey<Currency>(c);
 		}
 		else {
-			c = getDao(ICurrencyDao.class).load(rKey);
+			c = getEntityDao().load(rKey);
 		}
 		Assert.assertNotNull(c);
 
@@ -55,11 +55,11 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 			customer = getMockEntityProvider().getEntityCopy(Customer.class, true);
 			customer.setParent(null);
 			customer.setCurrency(c);
-			customer = (Customer) getDao(IAccountDao.class).persist(customer);
+			customer = getEntityDao().persist(customer);
 			cKey = new PrimaryKey<Customer>(customer);
 		}
 		else {
-			customer = (Customer) getDao(IAccountDao.class).load(cKey);
+			customer = getEntityDao().load(cKey);
 		}
 		Assert.assertNotNull(customer);
 		e.setCustomer(customer);
@@ -70,11 +70,11 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account.setCurrency(c);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -83,11 +83,11 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 		if(vKey == null) {
 			visitor = getMockEntityProvider().getEntityCopy(Visitor.class, true);
 			visitor.setAccount(account);
-			visitor = getDao(IVisitorDao.class).persist(visitor);
+			visitor = getEntityDao().persist(visitor);
 			vKey = new PrimaryKey<Visitor>(visitor);
 		}
 		else {
-			visitor = getDao(IVisitorDao.class).load(vKey);
+			visitor = getEntityDao().load(vKey);
 		}
 		Assert.assertNotNull(visitor);
 		e.setInitialVisitorRecord(visitor);
@@ -100,7 +100,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 
 		if(vKey != null) {
 			try {
-				getDao(IVisitorDao.class).purge(getDao(IVisitorDao.class).load(vKey));
+				getEntityDao().purge(getEntityDao().load(vKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -110,8 +110,8 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
-				getDao(IAccountDao.class).purge(account);
+				final Account account = getEntityDao().load(aKey);
+				getEntityDao().purge(account);
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -121,7 +121,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 
 		if(cKey != null) {
 			try {
-				getDao(IAccountDao.class).purge(getDao(IAccountDao.class).load(cKey));
+				getEntityDao().purge(getEntityDao().load(cKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -131,7 +131,7 @@ public class CustomerAccountDaoTest extends AbstractDaoTest<CustomerAccount> {
 
 		if(rKey != null) {
 			try {
-				getDao(ICurrencyDao.class).purge(getDao(ICurrencyDao.class).load(rKey));
+				getEntityDao().purge(getEntityDao().load(rKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

@@ -38,6 +38,46 @@ public abstract class TestBase {
 
 	protected static final Log staticLogger = LogFactory.getLog(TestBase.class);
 
+	/**
+	 * Builds a Guice Injector from one or more {@link Module}s.
+	 * @param modules The {@link Module}s to bind
+	 * @return A new {@link Injector}
+	 */
+	protected static final Injector buildStaticInjector(Module... modules) {
+		assert modules != null && modules.length > 0;
+		return Guice.createInjector(Stage.DEVELOPMENT, modules);
+	}
+
+	/**
+	 * Compare a clc of entity ids and entites ensuring the id list is referenced
+	 * w/in the entity list
+	 * @param ids
+	 * @param entities
+	 * @return
+	 */
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Integer> ids,
+			Collection<E> entities) {
+		if(ids == null || entities == null) {
+			return false;
+		}
+		if(ids.size() != entities.size()) {
+			return false;
+		}
+		for(final E e : entities) {
+			boolean found = false;
+			for(final Integer id : ids) {
+				if(id.equals(e.getId())) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
 	protected Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
@@ -60,16 +100,6 @@ public abstract class TestBase {
 		if(modules != null && modules.size() > 0) {
 			this.injector = buildStaticInjector(modules.toArray(new Module[modules.size()]));
 		}
-	}
-
-	/**
-	 * Builds a Guice Injector from one or more {@link Module}s.
-	 * @param modules The {@link Module}s to bind
-	 * @return A new {@link Injector}
-	 */
-	protected static final Injector buildStaticInjector(Module... modules) {
-		assert modules != null && modules.length > 0;
-		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
 	/**
@@ -167,36 +197,6 @@ public abstract class TestBase {
 	 */
 	protected final DbShell getDbShell() {
 		return injector.getInstance(Key.get(DbShell.class, TestDb.class));
-	}
-
-	/**
-	 * Compare a clc of entity ids and entites ensuring the id list is referenced
-	 * w/in the entity list
-	 * @param ids
-	 * @param entities
-	 * @return
-	 */
-	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Integer> ids,
-			Collection<E> entities) {
-		if(ids == null || entities == null) {
-			return false;
-		}
-		if(ids.size() != entities.size()) {
-			return false;
-		}
-		for(final E e : entities) {
-			boolean found = false;
-			for(final Integer id : ids) {
-				if(id.equals(e.getId())) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

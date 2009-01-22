@@ -34,7 +34,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 	 * @param accountClass
 	 */
 	public AbstractAccountDaoTest(Class<A> accountClass) {
-		super(accountClass, IAccountDao.class);
+		super(accountClass);
 	}
 
 	@Override
@@ -44,11 +44,11 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 		if(cKey == null) {
 			// load stubbed currency
 			currency = getMockEntityProvider().getEntityCopy(Currency.class, true);
-			currency = getDao(ICurrencyDao.class).persist(currency);
+			currency = getEntityDao().persist(currency);
 			cKey = new PrimaryKey<Currency>(currency);
 		}
 		else {
-			currency = getDao(ICurrencyDao.class).load(cKey);
+			currency = getEntityDao().load(cKey);
 		}
 		Assert.assertNotNull(currency);
 		e.setCurrency(currency);
@@ -63,11 +63,11 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 				Assert.fail("Unable to acquire test payment info entity");
 				return;
 			}
-			paymentInfo = getDao(IPaymentInfoDao.class).persist(paymentInfo);
+			paymentInfo = getEntityDao().persist(paymentInfo);
 			piKey = new PrimaryKey<PaymentInfo>(paymentInfo);
 		}
 		else {
-			paymentInfo = getDao(IPaymentInfoDao.class).load(piKey);
+			paymentInfo = getEntityDao().load(piKey);
 		}
 		Assert.assertNotNull(paymentInfo);
 		e.setPaymentInfo(paymentInfo);
@@ -81,11 +81,11 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 					parent.setParent(null); // eliminate pointer chasing
 					parent.setCurrency(currency);
 					parent.setPaymentInfo(paymentInfo);
-					parent = getDao(IAccountDao.class).persist(parent);
+					parent = getEntityDao().persist(parent);
 					parentKey = new PrimaryKey<Account>(parent);
 				}
 				else {
-					parent = getDao(IAccountDao.class).load(parentKey);
+					parent = getEntityDao().load(parentKey);
 				}
 				Assert.assertNotNull(parent);
 				e.setParent(parent);
@@ -94,21 +94,21 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		Address a1;
 		if(a1Key == null) {
-			a1 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			a1 = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
-			a1 = getDao(IAddressDao.class).load(a1Key);
+			a1 = getEntityDao().load(a1Key);
 		}
 		Assert.assertNotNull(a1);
 
 		Address a2;
 		if(a2Key == null) {
-			a2 = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			a2 = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			a2Key = new PrimaryKey<Address>(a2);
 		}
 		else {
-			a2 = getDao(IAddressDao.class).load(a2Key);
+			a2 = getEntityDao().load(a2Key);
 		}
 		Assert.assertNotNull(a2);
 
@@ -126,7 +126,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		if(piKey != null) {
 			try {
-				getDao(IPaymentInfoDao.class).purge(getDao(IPaymentInfoDao.class).load(piKey));
+				getEntityDao().purge(getEntityDao().load(piKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -136,7 +136,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		if(cKey != null) {
 			try {
-				getDao(ICurrencyDao.class).purge(getDao(ICurrencyDao.class).load(cKey));
+				getEntityDao().purge(getEntityDao().load(cKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -146,7 +146,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		if(a1Key != null) {
 			try {
-				getDao(IAddressDao.class).purge(getDao(IAddressDao.class).load(a1Key));
+				getEntityDao().purge(getEntityDao().load(a1Key));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -156,7 +156,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		if(a2Key != null) {
 			try {
-				getDao(IAddressDao.class).purge(getDao(IAddressDao.class).load(a2Key));
+				getEntityDao().purge(getEntityDao().load(a2Key));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -166,7 +166,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEnt
 
 		if(parentKey != null) {
 			try {
-				getDao(IAccountDao.class).purge(getDao(IAccountDao.class).load(parentKey));
+				getEntityDao().purge(getEntityDao().load(parentKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

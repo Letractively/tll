@@ -19,7 +19,7 @@ public class AuthorityDaoTest extends NamedEntityDaoTest<Authority> {
 	 * Constructor
 	 */
 	public AuthorityDaoTest() {
-		super(Authority.class, IAuthorityDao.class);
+		super(Authority.class);
 	}
 
 	@Override

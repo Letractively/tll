@@ -162,7 +162,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	public void test() throws Exception {
 
 		IListHandlerDataProvider<IEntity> dataProvider;
-		ICriteria<? extends IEntity> criteria;
+		ICriteria<IEntity> criteria;
 
 		// iterator through all defined select named queries
 		for(SelectNamedQueries nq : querySortBindings.keySet()) {

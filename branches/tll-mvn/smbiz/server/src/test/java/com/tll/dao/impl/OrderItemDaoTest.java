@@ -30,7 +30,7 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 	 * Constructor
 	 */
 	public OrderItemDaoTest() {
-		super(OrderItem.class, IOrderItemDao.class);
+		super(OrderItem.class);
 	}
 
 	@Override
@@ -38,15 +38,14 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 
@@ -56,11 +55,11 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 			order.setCurrency(account.getCurrency());
 			order.setPaymentInfo(null);
 			order.setAccount(account);
-			order = getDao(IOrderDao.class).persist(order);
+			order = getEntityDao().persist(order);
 			oKey = new PrimaryKey<Order>(order);
 		}
 		else {
-			order = getDao(IOrderDao.class).load(oKey);
+			order = getEntityDao().load(oKey);
 		}
 		Assert.assertNotNull(order);
 		e.setOrder(order);
@@ -73,8 +72,8 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
 		if(oKey != null) {
 			try {
-				final Order order = getDao(IOrderDao.class).load(oKey);
-				getDao(IOrderDao.class).purge(order);
+				final Order order = getEntityDao().load(oKey);
+				getEntityDao().purge(order);
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -84,9 +83,9 @@ public class OrderItemDaoTest extends NamedEntityDaoTest<OrderItem> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				final Account account = getEntityDao().load(aKey);
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

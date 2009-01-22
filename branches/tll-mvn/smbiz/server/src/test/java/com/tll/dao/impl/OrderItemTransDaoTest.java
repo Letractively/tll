@@ -34,7 +34,7 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 	 * Constructor
 	 */
 	public OrderItemTransDaoTest() {
-		super(OrderItemTrans.class, IOrderItemTransDao.class, false);
+		super(OrderItemTrans.class, false);
 	}
 
 	@Override
@@ -42,15 +42,14 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 
@@ -66,12 +65,12 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 			oi = getMockEntityProvider().getEntityCopy(OrderItem.class, true);
 			oi.setOrder(order);
 			order.addOrderItem(oi);
-			order = getDao(IOrderDao.class).persist(order);
+			order = getEntityDao().persist(order);
 			oKey = new PrimaryKey<Order>(order);
 			oi = order.getOrderItem(oi.getId()); // get non-transient version
 		}
 		else {
-			order = getDao(IOrderDao.class).load(oKey);
+			order = getEntityDao().load(oKey);
 			oi = order.getOrderItems().iterator().next();
 		}
 		Assert.assertNotNull(order);
@@ -83,11 +82,11 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 			ot = getMockEntityProvider().getEntityCopy(OrderTrans.class, true);
 			ot.setOrder(order);
 			ot.setPymntTrans(null);
-			ot = getDao(IOrderTransDao.class).persist(ot);
+			ot = getEntityDao().persist(ot);
 			otKey = new PrimaryKey<OrderTrans>(ot);
 		}
 		else {
-			ot = getDao(IOrderTransDao.class).load(otKey);
+			ot = getEntityDao().load(otKey);
 		}
 		Assert.assertNotNull(ot);
 		e.setOrderTrans(ot);
@@ -100,8 +99,8 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
 		if(oKey != null) {
 			try {
-				final Order order = getDao(IOrderDao.class).load(oKey);
-				getDao(IOrderDao.class).purge(order);
+				final Order order = getEntityDao().load(oKey);
+				getEntityDao().purge(order);
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -112,9 +111,9 @@ public class OrderItemTransDaoTest extends AbstractDaoTest<OrderItemTrans> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				final Account account = getEntityDao().load(aKey);
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

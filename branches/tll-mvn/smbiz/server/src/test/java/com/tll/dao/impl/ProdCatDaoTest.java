@@ -33,7 +33,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 	 * Constructor
 	 */
 	public ProdCatDaoTest() {
-		super(ProdCat.class, IProdCatDao.class, false);
+		super(ProdCat.class, false);
 	}
 
 	@Override
@@ -41,15 +41,14 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 
@@ -60,11 +59,11 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 			product.setProductGeneral(gp);
 			getEntityFactory().setGenerated(product.getProductGeneral());
 			product.setParent(account);
-			product = getDao(IProductInventoryDao.class).persist(product);
+			product = getEntityDao().persist(product);
 			pKey = new PrimaryKey<ProductInventory>(product);
 		}
 		else {
-			product = getDao(IProductInventoryDao.class).load(pKey);
+			product = getEntityDao().load(pKey);
 		}
 		Assert.assertNotNull(product);
 		e.setProduct(product);
@@ -73,11 +72,11 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 		if(cKey == null) {
 			category = getMockEntityProvider().getEntityCopy(ProductCategory.class, true);
 			category.setParent(account);
-			category = getDao(IProductCategoryDao.class).persist(category);
+			category = getEntityDao().persist(category);
 			cKey = new PrimaryKey<ProductCategory>(category);
 		}
 		else {
-			category = getDao(IProductCategoryDao.class).load(cKey);
+			category = getEntityDao().load(cKey);
 		}
 		Assert.assertNotNull(category);
 		e.setCategory(category);
@@ -90,7 +89,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
 		if(pKey != null) {
 			try {
-				getDao(IProductInventoryDao.class).purge(getDao(IProductInventoryDao.class).load(pKey));
+				getEntityDao().purge(getEntityDao().load(pKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -100,7 +99,7 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
 		if(cKey != null) {
 			try {
-				getDao(IProductCategoryDao.class).purge(getDao(IProductCategoryDao.class).load(cKey));
+				getEntityDao().purge(getEntityDao().load(cKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -110,9 +109,9 @@ public class ProdCatDaoTest extends AbstractDaoTest<ProdCat> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				final Account account = getEntityDao().load(aKey);
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

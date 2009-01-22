@@ -38,51 +38,51 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 	 * Constructor
 	 */
 	public OrderDaoTest() {
-		super(Order.class, IOrderDao.class);
+		super(Order.class);
 	}
 
 	@Override
 	protected void assembleTestEntity(Order e) throws Exception {
 		Currency currency;
 		if(cKey == null) {
-			currency = getDao(ICurrencyDao.class).persist(getMockEntityProvider().getEntityCopy(Currency.class, true));
+			currency = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true));
 			cKey = new PrimaryKey<Currency>(currency);
 		}
 		else {
-			currency = getDao(ICurrencyDao.class).load(cKey);
+			currency = getEntityDao().load(cKey);
 		}
 		Assert.assertNotNull(currency);
 		e.setCurrency(currency);
 
 		Address bta;
 		if(btKey == null) {
-			bta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			bta = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			btKey = new PrimaryKey<Address>(bta);
 		}
 		else {
-			bta = getDao(IAddressDao.class).load(btKey);
+			bta = getEntityDao().load(btKey);
 		}
 		Assert.assertNotNull(bta);
 		e.setBillToAddress(bta);
 
 		Address sta;
 		if(stKey == null) {
-			sta = getDao(IAddressDao.class).persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			sta = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
 			stKey = new PrimaryKey<Address>(sta);
 		}
 		else {
-			sta = getDao(IAddressDao.class).load(stKey);
+			sta = getEntityDao().load(stKey);
 		}
 		Assert.assertNotNull(sta);
 		e.setShipToAddress(sta);
 
 		PaymentInfo pi;
 		if(piKey == null) {
-			pi = getDao(IPaymentInfoDao.class).persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, true));
+			pi = getEntityDao().persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, true));
 			piKey = new PrimaryKey<PaymentInfo>(pi);
 		}
 		else {
-			pi = getDao(IPaymentInfoDao.class).load(piKey);
+			pi = getEntityDao().load(piKey);
 		}
 		Assert.assertNotNull(pi);
 		e.setPaymentInfo(pi);
@@ -93,11 +93,11 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			account.setCurrency(currency);
 			account.setPaymentInfo(pi);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -106,11 +106,11 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 		if(vKey == null) {
 			v = getMockEntityProvider().getEntityCopy(Visitor.class, true);
 			v.setAccount(account);
-			v = getDao(IVisitorDao.class).persist(v);
+			v = getEntityDao().persist(v);
 			vKey = new PrimaryKey<Visitor>(v);
 		}
 		else {
-			v = getDao(IVisitorDao.class).load(vKey);
+			v = getEntityDao().load(vKey);
 		}
 		Assert.assertNotNull(v);
 		e.setVisitor(v);
@@ -121,11 +121,11 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 			customer.setCurrency(currency);
 			customer.setPaymentInfo(pi);
 			customer.setParent(account);
-			customer = (Customer) getDao(IAccountDao.class).persist(customer);
+			customer = getEntityDao().persist(customer);
 			cstKey = new PrimaryKey<Customer>(customer);
 		}
 		else {
-			customer = (Customer) getDao(IAccountDao.class).load(cstKey);
+			customer = getEntityDao().load(cstKey);
 		}
 		Assert.assertNotNull(customer);
 		e.setCustomer(customer);
@@ -138,7 +138,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(vKey != null) {
 			try {
-				getDao(IVisitorDao.class).purge(getDao(IVisitorDao.class).load(vKey));
+				getEntityDao().purge(getEntityDao().load(vKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -148,7 +148,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(cstKey != null) {
 			try {
-				getDao(IAccountDao.class).purge(getDao(IAccountDao.class).load(cstKey));
+				getEntityDao().purge(getEntityDao().load(cstKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -158,7 +158,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(aKey != null) {
 			try {
-				getDao(IAccountDao.class).purge(getDao(IAccountDao.class).load(aKey));
+				getEntityDao().purge(getEntityDao().load(aKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -168,7 +168,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(cKey != null) {
 			try {
-				getDao(ICurrencyDao.class).purge(getDao(ICurrencyDao.class).load(cKey));
+				getEntityDao().purge(getEntityDao().load(cKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -178,7 +178,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(btKey != null) {
 			try {
-				getDao(IAddressDao.class).purge(getDao(IAddressDao.class).load(btKey));
+				getEntityDao().purge(getEntityDao().load(btKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -188,7 +188,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(stKey != null) {
 			try {
-				getDao(IAddressDao.class).purge(getDao(IAddressDao.class).load(stKey));
+				getEntityDao().purge(getEntityDao().load(stKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
@@ -198,7 +198,7 @@ public class OrderDaoTest extends AbstractDaoTest<Order> {
 
 		if(piKey != null) {
 			try {
-				getDao(IPaymentInfoDao.class).purge(getDao(IPaymentInfoDao.class).load(piKey));
+				getEntityDao().purge(getEntityDao().load(piKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok

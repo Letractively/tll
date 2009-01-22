@@ -35,7 +35,7 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 	 * Constructor
 	 */
 	public InterfaceOptionAccountDaoTest() {
-		super(InterfaceOptionAccount.class, IInterfaceOptionAccountDao.class, false);
+		super(InterfaceOptionAccount.class, false);
 	}
 
 	@Override
@@ -43,15 +43,14 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -65,11 +64,11 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 					getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, true);
 			option.addParameter(param);
 			intf.addOption(option);
-			intf = getDao(IInterfaceDao.class).persist(intf);
+			intf = getEntityDao().persist(intf);
 			iKey = new PrimaryKey<Interface>(intf);
 		}
 		else {
-			intf = getDao(IInterfaceDao.class).load(iKey);
+			intf = getEntityDao().load(iKey);
 		}
 		Assert.assertNotNull(intf);
 
@@ -84,11 +83,11 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 	protected void afterMethodHook() {
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
+				final Account account = getEntityDao().load(aKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {
@@ -99,10 +98,10 @@ public class InterfaceOptionAccountDaoTest extends AbstractDaoTest<InterfaceOpti
 
 		if(iKey != null) {
 			try {
-				final Interface intf = getDao(IInterfaceDao.class).load(iKey);
+				final Interface intf = getEntityDao().load(iKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IInterfaceDao.class).purge(intf);
+				getEntityDao().purge(intf);
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {

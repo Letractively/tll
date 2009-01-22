@@ -9,6 +9,7 @@ import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IDbDialectHandler;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.dialect.MySqlDialectHandler;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
 import com.tll.model.MockEntityProvider;
@@ -48,10 +49,41 @@ public class DaoModule extends CompositeModule {
 
 	@Override
 	protected Module[] getModulesToBind() {
-		if(DaoMode.MOCK.equals(daoMode)) {
+		if(DaoMode.MOCK == daoMode) {
 			return new Module[] { new MockDaoModule() };
 		}
-		return new Module[] { new HibernateDaoModule() };
+		else if(DaoMode.ORM == daoMode) {
+			return new Module[] { new HibernateDaoModule() };
+		}
+		throw new IllegalStateException("Unhandled dao mode: " + daoMode); 
+	}
+
+	/**
+	 * HibernateDaoModule
+	 * @author jpk
+	 */
+	private static class HibernateDaoModule extends GModule {
+	
+		/**
+		 * Constructor
+		 */
+		public HibernateDaoModule() {
+			super();
+			log.info("Employing Hibernate ORM Dao");
+		}
+	
+		@Override
+		protected void configure() {
+			// IPrimaryKeyGenerator
+			bind(IPrimaryKeyGenerator.class).to(PrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+	
+			// IDbDialectHandler
+			bind(IDbDialectHandler.class).to(MySqlDialectHandler.class).in(Scopes.SINGLETON);
+			
+			// IEntityDao
+			bind(IEntityDao.class).to(com.tll.dao.hibernate.EntityDao.class).in(Scopes.SINGLETON);
+		}
+	
 	}
 
 	/**
@@ -74,38 +106,10 @@ public class DaoModule extends CompositeModule {
 			bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 			bind(MockEntityProvider.class).in(Scopes.SINGLETON);
-
 			// bind(EntityGraph.class).in(Scopes.SINGLETON);
 
-		}
-
-	}
-
-	/**
-	 * HibernateDaoModule
-	 * @author jpk
-	 */
-	private static class HibernateDaoModule extends GModule {
-
-		/**
-		 * Constructor
-		 */
-		public HibernateDaoModule() {
-			super();
-			log.info("Employing ORM Dao");
-		}
-
-		@Override
-		protected void configure() {
-			// IPrimaryKeyGenerator
-			// TODO move to model module?
-			bind(IPrimaryKeyGenerator.class).to(PrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-
-			// IDbDialectHandler
-			bind(IDbDialectHandler.class).to(MySqlDialectHandler.class).in(Scopes.SINGLETON);
-
-			// bind(IPCHDao.class).to(PCHDao.class).in(Scopes.SINGLETON);
-			// bind(ISiteStatisticsDao.class).to(SiteStatisticsDao.class).in(Scopes.SINGLETON);
+			// IEntityDao
+			bind(IEntityDao.class).to(com.tll.dao.mock.EntityDao.class).in(Scopes.SINGLETON);
 		}
 
 	}

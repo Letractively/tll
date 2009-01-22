@@ -14,13 +14,9 @@ import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
+import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
-import com.tll.dao.impl.IAccountDao;
-import com.tll.dao.impl.IAccountHistoryDao;
-import com.tll.dao.impl.ICurrencyDao;
-import com.tll.dao.impl.IPaymentInfoDao;
-import com.tll.dao.impl.IUserDao;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
@@ -86,6 +82,10 @@ public class EntityServiceTest extends DbTest {
 		getDbShell().clear(); // reset
 	}
 
+	private IEntityDao getEntityDao() {
+		return injector.getInstance(IEntityDao.class);
+	}
+
 	private Account stubValidAccount(boolean persistAccount) throws Exception {
 		Account account = null;
 
@@ -95,10 +95,6 @@ public class EntityServiceTest extends DbTest {
 		try {
 			Currency c = null;
 
-			final IAccountDao accountDao = injector.getInstance(IAccountDao.class);
-			final ICurrencyDao currencyDao = injector.getInstance(ICurrencyDao.class);
-			final IPaymentInfoDao piDao = injector.getInstance(IPaymentInfoDao.class);
-
 			account = getMockEntityProvider().getEntityCopy(Asp.class, false);
 			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
 			final Address a = getMockEntityProvider().getEntityCopy(Address.class, false);
@@ -106,14 +102,16 @@ public class EntityServiceTest extends DbTest {
 			getEntityFactory().setGenerated(a);
 			account.addAccountAddress(aa);
 
-			c = currencyDao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));
+			final IEntityDao dao = getEntityDao();
+
+			c = dao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));
 			account.setCurrency(c);
 
-			pi = piDao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, false));
+			pi = dao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, false));
 			account.setPaymentInfo(pi);
 
 			if(persistAccount) {
-				account = accountDao.persist(account);
+				account = dao.persist(account);
 			}
 		}
 		catch(final RuntimeException re) {
@@ -140,7 +138,7 @@ public class EntityServiceTest extends DbTest {
 			Assert.assertNotNull(user);
 
 			startNewTransaction();
-			final User dbUser = getEntityFromDb(injector.getInstance(IUserDao.class), new PrimaryKey<User>(user));
+			final User dbUser = getEntityFromDb(getEntityDao(), new PrimaryKey<User>(user));
 			endTransaction();
 			Assert.assertEquals(dbUser, user);
 		}
@@ -159,10 +157,9 @@ public class EntityServiceTest extends DbTest {
 			account = as.persist(account);
 
 			startNewTransaction();
-			final Criteria<? extends AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
+			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
-			final List<SearchResult<AccountHistory>> list =
-					getEntitiesFromDb(injector.getInstance(IAccountHistoryDao.class), criteria);
+			final List<SearchResult<AccountHistory>> list = getEntitiesFromDb(getEntityDao(), criteria);
 			endTransaction();
 			assert list != null && list.size() == 1;
 		}

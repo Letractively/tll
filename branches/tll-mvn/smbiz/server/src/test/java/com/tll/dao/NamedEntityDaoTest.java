@@ -21,21 +21,18 @@ public abstract class NamedEntityDaoTest<N extends INamedEntity> extends Abstrac
 	/**
 	 * Constructor
 	 * @param entityClass
-	 * @param daoClass
 	 */
-	public NamedEntityDaoTest(Class<N> entityClass, Class<? extends IEntityDao<? super N>> daoClass) {
-		super(entityClass, daoClass);
+	public NamedEntityDaoTest(Class<N> entityClass) {
+		super(entityClass);
 	}
 
 	/**
 	 * Constructor
 	 * @param entityClass
-	 * @param daoClass
 	 * @param testPagingRelated
 	 */
-	public NamedEntityDaoTest(Class<N> entityClass, Class<? extends IEntityDao<? super N>> daoClass,
-			boolean testPagingRelated) {
-		super(entityClass, daoClass, testPagingRelated);
+	public NamedEntityDaoTest(Class<N> entityClass, boolean testPagingRelated) {
+		super(entityClass, testPagingRelated);
 	}
 
 	/**

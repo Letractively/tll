@@ -5,16 +5,21 @@ package com.tll.dao.impl;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
+import org.acegisecurity.providers.encoding.PasswordEncoder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.criteria.QueryParam;
 import com.tll.dao.NamedEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Authority;
 import com.tll.model.Currency;
+import com.tll.model.IEntity;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.schema.PropertyType;
 
 /**
  * NamedEntityDaoTest
@@ -30,7 +35,7 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 	 * Constructor
 	 */
 	public UserDaoTest() {
-		super(User.class, IUserDao.class);
+		super(User.class);
 	}
 
 	@Override
@@ -38,15 +43,14 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 		e.setAccount(account);
@@ -54,11 +58,11 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 		Authority auth;
 		if(tKey == null) {
 			auth = getMockEntityProvider().getEntityCopy(Authority.class, true);
-			auth = getDao(IAuthorityDao.class).persist(auth);
+			auth = getEntityDao().persist(auth);
 			tKey = new PrimaryKey<Authority>(auth);
 		}
 		else {
-			auth = getDao(IAuthorityDao.class).load(tKey);
+			auth = getEntityDao().load(tKey);
 		}
 		Assert.assertNotNull(auth);
 		e.addAuthority(auth);
@@ -68,11 +72,11 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 	protected void afterMethodHook() {
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
+				final Account account = getEntityDao().load(aKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {
@@ -83,10 +87,10 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 
 		if(tKey != null) {
 			try {
-				final Authority auth = getDao(IAuthorityDao.class).load(tKey);
+				final Authority auth = getEntityDao().load(tKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAuthorityDao.class).purge(auth);
+				getEntityDao().purge(auth);
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {
@@ -124,8 +128,13 @@ public class UserDaoTest extends NamedEntityDaoTest<User> {
 		endTransaction();
 		dbRemove.add(e);
 
+		final PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
+
 		startNewTransaction();
-		getDao(IUserDao.class).setCredentials(e.getId(), "newbie@booble.com", "pswd");
+		dao.executeQuery("user.setCredentials", new QueryParam[] {
+			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.INT, e.getId()),
+			new QueryParam("username", PropertyType.STRING, "newbie@booble.com"),
+			new QueryParam("password", PropertyType.STRING, passwordEncoder.encodePassword("pswd", "newbie@booble.com")) });
 		setComplete();
 		endTransaction();
 		dbRemove.remove(e);

@@ -30,7 +30,7 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 	 * Constructor
 	 */
 	public ShipBoundCostDaoTest() {
-		super(ShipBoundCost.class, IShipBoundCostDao.class);
+		super(ShipBoundCost.class);
 	}
 
 	@Override
@@ -38,15 +38,14 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 		Account account;
 		if(aKey == null) {
 			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getDao(ICurrencyDao.class).persist(
-					getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
-			account = getDao(IAccountDao.class).persist(account);
+			account = getEntityDao().persist(account);
 			aKey = new PrimaryKey<Account>(account);
 		}
 		else {
-			account = getDao(IAccountDao.class).load(aKey);
+			account = getEntityDao().load(aKey);
 		}
 		Assert.assertNotNull(account);
 
@@ -54,11 +53,11 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 		if(smKey == null) {
 			sm = getMockEntityProvider().getEntityCopy(ShipMode.class, true);
 			sm.setParent(account);
-			sm = getDao(IShipModeDao.class).persist(sm);
+			sm = getEntityDao().persist(sm);
 			smKey = new PrimaryKey<ShipMode>(sm);
 		}
 		else {
-			sm = getDao(IShipModeDao.class).load(smKey);
+			sm = getEntityDao().load(smKey);
 		}
 		Assert.assertNotNull(sm);
 		e.setShipMode(sm);
@@ -69,10 +68,10 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 
 		if(smKey != null) {
 			try {
-				final ShipMode sm = getDao(IShipModeDao.class).load(smKey);
+				final ShipMode sm = getEntityDao().load(smKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IShipModeDao.class).purge(sm);
+				getEntityDao().purge(sm);
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {
@@ -83,11 +82,11 @@ public class ShipBoundCostDaoTest extends AbstractDaoTest<ShipBoundCost> {
 
 		if(aKey != null) {
 			try {
-				final Account account = getDao(IAccountDao.class).load(aKey);
+				final Account account = getEntityDao().load(aKey);
 				startNewTransaction();
 				setComplete();
-				getDao(IAccountDao.class).purge(account);
-				getDao(ICurrencyDao.class).purge(account.getCurrency());
+				getEntityDao().purge(account);
+				getEntityDao().purge(account.getCurrency());
 				endTransaction();
 			}
 			catch(final EntityNotFoundException enfe) {

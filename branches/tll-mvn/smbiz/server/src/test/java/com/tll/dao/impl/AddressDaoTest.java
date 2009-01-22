@@ -20,7 +20,7 @@ public class AddressDaoTest extends AbstractDaoTest<Address> {
 	 * Constructor
 	 */
 	public AddressDaoTest() {
-		super(Address.class, IAddressDao.class);
+		super(Address.class);
 	}
 
 	@Override
