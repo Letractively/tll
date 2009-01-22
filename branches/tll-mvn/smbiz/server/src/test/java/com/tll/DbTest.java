@@ -134,7 +134,7 @@ public abstract class DbTest extends TestBase {
 	 * @return List of search results
 	 */
 	protected static final <E extends IEntity, D extends IEntityDao<E>> List<SearchResult<E>> getEntitiesFromDb(D dao,
-			ICriteria<? extends E> criteria) {
+			ICriteria<E> {
 		try {
 			return dao.find(criteria, null);
 		}

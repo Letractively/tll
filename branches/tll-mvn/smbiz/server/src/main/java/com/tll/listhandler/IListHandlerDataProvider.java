@@ -27,7 +27,7 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 * @return list of result elements or an empty list if no matches are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves the ids of the entities that match the given criteria.
@@ -37,7 +37,7 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 *         results are found.
 	 * @throws InvalidCriteriaException
 	 */
-	List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<Integer> getIds(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids.
@@ -47,7 +47,7 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 *        of the results is "undefined".
 	 * @return list of matching entities.
 	 */
-	List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting);
+	List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids, Sorting sorting);
 
 	/**
 	 * Returns a page of matching results for the given criteria.
@@ -58,6 +58,6 @@ public interface IListHandlerDataProvider<E extends IEntity> {
 	 * @return the page result
 	 * @throws InvalidCriteriaException
 	 */
-	IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
+	IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, int offset, int pageSize)
 			throws InvalidCriteriaException;
 }

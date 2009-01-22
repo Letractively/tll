@@ -3,17 +3,17 @@ package com.tll.service.entity.impl.intf;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IInterfaceDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.Interface;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * InterfaceService - {@link IInterfaceService} impl
  * @author jpk
  */
 @Transactional
-public class InterfaceService extends EntityService<Interface, IInterfaceDao> implements IInterfaceService {
+public class InterfaceService extends NamedEntityService<Interface> implements IInterfaceService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class InterfaceService extends EntityService<Interface, IInterfaceDao> im
 	 * @param entityAssembler
 	 */
 	@Inject
-	public InterfaceService(IInterfaceDao dao, EntityAssembler entityAssembler) {
-		super(IInterfaceDao.class, dao, entityAssembler);
+	public InterfaceService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

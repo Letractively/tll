@@ -3,17 +3,17 @@ package com.tll.service.entity.impl.product;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IProductCategoryDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.ProductCategory;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * ProductCategoryService - {@link IProductCategoryService} impl
  * @author jpk
  */
 @Transactional
-public class ProductCategoryService extends EntityService<ProductCategory, IProductCategoryDao> implements IProductCategoryService {
+public class ProductCategoryService extends NamedEntityService<ProductCategory> implements IProductCategoryService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class ProductCategoryService extends EntityService<ProductCategory, IProd
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ProductCategoryService(IProductCategoryDao dao, EntityAssembler entityAssembler) {
-		super(IProductCategoryDao.class, dao, entityAssembler);
+	public ProductCategoryService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

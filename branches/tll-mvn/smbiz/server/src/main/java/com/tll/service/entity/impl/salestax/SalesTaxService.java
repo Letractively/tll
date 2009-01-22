@@ -3,7 +3,7 @@ package com.tll.service.entity.impl.salestax;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.ISalesTaxDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.SalesTax;
 import com.tll.service.entity.EntityService;
@@ -13,7 +13,7 @@ import com.tll.service.entity.EntityService;
  * @author jpk
  */
 @Transactional
-public class SalesTaxService extends EntityService<SalesTax, ISalesTaxDao> implements ISalesTaxService {
+public class SalesTaxService extends EntityService<SalesTax> implements ISalesTaxService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class SalesTaxService extends EntityService<SalesTax, ISalesTaxDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public SalesTaxService(ISalesTaxDao dao, EntityAssembler entityAssembler) {
-		super(ISalesTaxDao.class, dao, entityAssembler);
+	public SalesTaxService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

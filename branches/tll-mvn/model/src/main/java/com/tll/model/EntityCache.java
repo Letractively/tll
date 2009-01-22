@@ -19,7 +19,7 @@ import com.tll.model.key.PrimaryKey;
  */
 public class EntityCache implements IEntityProvider {
 
-	private final Map<PrimaryKey<? extends IEntity>, IEntity> map = new HashMap<PrimaryKey<? extends IEntity>, IEntity>();
+	private final Map<PrimaryKey<IEntity>, IEntity> map = new HashMap<PrimaryKey<IEntity>, IEntity>();
 
 	/**
 	 * Constructor
@@ -47,7 +47,7 @@ public class EntityCache implements IEntityProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<? extends E> getEntitiesByType(Class<E> type) {
+	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
 		if(type == null) return null;
 		List<IEntity> list = new ArrayList<IEntity>();
 		for(PrimaryKey key : map.keySet()) {
@@ -56,17 +56,17 @@ public class EntityCache implements IEntityProvider {
 				list.add(map.get(key));
 			}
 		}
-		return (List<? extends E>) list;
+		return (List<E>) list;
 	}
 
 	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
 		if(type == null) return null;
-		List<? extends E> list = getEntitiesByType(type);
-		if(list.size() > 1) {
+		Collection<? extends E> clc = getEntitiesByType(type);
+		if(clc.size() > 1) {
 			throw new IllegalStateException("More than one entity of the type: " + type.getSimpleName() + " exists.");
 		}
-		else if(list.size() == 1) {
-			return list.get(0);
+		else if(clc.size() == 1) {
+			return clc.iterator().next();
 		}
 		return null;
 	}

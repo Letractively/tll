@@ -8,17 +8,17 @@ import com.google.inject.Inject;
 import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.impl.ICurrencyDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.Currency;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * CurrencyService - {@link ICurrencyService} impl
  * @author jpk
  */
 @Transactional
-public class CurrencyService extends EntityService<Currency, ICurrencyDao> implements ICurrencyService {
+public class CurrencyService extends NamedEntityService<Currency> implements ICurrencyService {
 
 	/**
 	 * Constructor
@@ -26,8 +26,8 @@ public class CurrencyService extends EntityService<Currency, ICurrencyDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public CurrencyService(ICurrencyDao dao, EntityAssembler entityAssembler) {
-		super(ICurrencyDao.class, dao, entityAssembler);
+	public CurrencyService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

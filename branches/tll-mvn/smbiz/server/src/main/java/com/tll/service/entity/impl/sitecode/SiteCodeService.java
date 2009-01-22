@@ -3,17 +3,17 @@ package com.tll.service.entity.impl.sitecode;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.ISiteCodeDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.SiteCode;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * SiteCodeService - {@link ISiteCodeService} impl
  * @author jpk
  */
 @Transactional
-public class SiteCodeService extends EntityService<SiteCode, ISiteCodeDao> implements ISiteCodeService {
+public class SiteCodeService extends NamedEntityService<SiteCode> implements ISiteCodeService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class SiteCodeService extends EntityService<SiteCode, ISiteCodeDao> imple
 	 * @param entityAssembler
 	 */
 	@Inject
-	public SiteCodeService(ISiteCodeDao dao, EntityAssembler entityAssembler) {
-		super(ISiteCodeDao.class, dao, entityAssembler);
+	public SiteCodeService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
-	E load(PrimaryKey<? extends E> key) throws EntityNotFoundException;
+	E load(PrimaryKey<E> key) throws EntityNotFoundException;
 
 	/**
 	 * Load by business key.
@@ -44,7 +44,7 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @return the loaded entity
 	 * @throws EntityNotFoundException
 	 */
-	E load(BusinessKey<? extends E> key) throws EntityNotFoundException;
+	E load(BusinessKey<E> key) throws EntityNotFoundException;
 
 	/**
 	 * Returns all of the entities in the system managed by this service.
@@ -102,5 +102,5 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 *         (Never <code>null</code>).
 	 * @throws InvalidCriteriaException Upon malformed or invlaid criteria.
 	 */
-	List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException;
+	List<E> findEntities(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException;
 }

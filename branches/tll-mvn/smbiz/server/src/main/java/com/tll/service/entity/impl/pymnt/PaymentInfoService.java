@@ -3,17 +3,17 @@ package com.tll.service.entity.impl.pymnt;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IPaymentInfoDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.PaymentInfo;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * PaymentInfoService - {@link IPaymentInfoService} impl
  * @author jpk
  */
 @Transactional
-public class PaymentInfoService extends EntityService<PaymentInfo, IPaymentInfoDao> implements IPaymentInfoService {
+public class PaymentInfoService extends NamedEntityService<PaymentInfo> implements IPaymentInfoService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class PaymentInfoService extends EntityService<PaymentInfo, IPaymentInfoD
 	 * @param entityAssembler
 	 */
 	@Inject
-	public PaymentInfoService(IPaymentInfoDao dao, EntityAssembler entityAssembler) {
-		super(IPaymentInfoDao.class, dao, entityAssembler);
+	public PaymentInfoService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

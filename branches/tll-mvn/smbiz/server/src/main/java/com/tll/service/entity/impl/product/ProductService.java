@@ -3,7 +3,7 @@ package com.tll.service.entity.impl.product;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IProductInventoryDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.ProductInventory;
 import com.tll.service.entity.EntityService;
@@ -13,7 +13,7 @@ import com.tll.service.entity.EntityService;
  * @author jpk
  */
 @Transactional
-public class ProductService extends EntityService<ProductInventory, IProductInventoryDao> implements IProductService {
+public class ProductService extends EntityService<ProductInventory> implements IProductService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class ProductService extends EntityService<ProductInventory, IProductInve
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ProductService(IProductInventoryDao dao, EntityAssembler entityAssembler) {
-		super(IProductInventoryDao.class, dao, entityAssembler);
+	public ProductService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

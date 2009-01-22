@@ -3,7 +3,7 @@ package com.tll.service.entity.impl.visitor;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IVisitorDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.Visitor;
 import com.tll.service.entity.EntityService;
@@ -13,7 +13,7 @@ import com.tll.service.entity.EntityService;
  * @author jpk
  */
 @Transactional
-public class VisitorService extends EntityService<Visitor, IVisitorDao> implements IVisitorService {
+public class VisitorService extends EntityService<Visitor> implements IVisitorService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class VisitorService extends EntityService<Visitor, IVisitorDao> implemen
 	 * @param entityAssembler
 	 */
 	@Inject
-	public VisitorService(IVisitorDao dao, EntityAssembler entityAssembler) {
-		super(IVisitorDao.class, dao, entityAssembler);
+	public VisitorService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

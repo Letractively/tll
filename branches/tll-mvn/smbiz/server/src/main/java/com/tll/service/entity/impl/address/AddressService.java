@@ -3,7 +3,7 @@ package com.tll.service.entity.impl.address;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAddressDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.Address;
 import com.tll.model.EntityAssembler;
 import com.tll.service.entity.EntityService;
@@ -13,7 +13,7 @@ import com.tll.service.entity.EntityService;
  * @author jpk
  */
 @Transactional
-public class AddressService extends EntityService<Address, IAddressDao> implements IAddressService {
+public class AddressService extends EntityService<Address> implements IAddressService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class AddressService extends EntityService<Address, IAddressDao> implemen
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AddressService(IAddressDao dao, EntityAssembler entityAssembler) {
-		super(IAddressDao.class, dao, entityAssembler);
+	public AddressService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

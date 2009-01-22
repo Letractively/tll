@@ -249,11 +249,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	protected abstract void handleSearchTranslation(RequestContext requestContext, S search,
 			ICriteria<? extends E> criteria) throws IllegalArgumentException;
 
-	public final ICriteria<? extends E> translate(final RequestContext requestContext, final EntityType entityType,
-			final S search) throws IllegalArgumentException {
+	public final ICriteria<E> translate(final RequestContext requestContext, final EntityType entityType, final S search)
+			throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
-		Criteria<? extends E> criteria;
+		Criteria<E> criteria;
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {

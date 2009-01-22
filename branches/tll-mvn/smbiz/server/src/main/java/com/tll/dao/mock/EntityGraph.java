@@ -5,6 +5,7 @@
 package com.tll.dao.mock;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -26,7 +27,9 @@ import com.tll.model.Authority;
 import com.tll.model.Currency;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
+import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityProvider;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceMulti;
 import com.tll.model.InterfaceOption;
@@ -38,12 +41,13 @@ import com.tll.model.Merchant;
 import com.tll.model.MockEntityProvider;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
+import com.tll.model.key.PrimaryKey;
 
 /**
  * EntityGraph
  * @author jpk
  */
-public final class EntityGraph {
+public final class EntityGraph implements IEntityProvider {
 
 	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map =
 			new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
@@ -64,11 +68,44 @@ public final class EntityGraph {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> Set<E> getEntitySet(Class<E> type) {
+	@Override
+	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
+		return (Collection<E>) map.get(type);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
+		if(key == null || !key.isSet()) {
+			throw new IllegalArgumentException("The key is not specified or is not set");
+		}
+		Collection<? extends E> clc =
+				(Collection<? extends E>) getEntitiesByType(EntityUtil.entityClassFromType(key.getEntityType()));
+		if(clc != null) {
+			for(E e : clc) {
+				if(key.getId().equals(e.getId())) {
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
+		Collection<? extends E> clc = getEntitiesByType(type);
+		if(clc != null && clc.size() != 1) {
+			throw new IllegalStateException("More than one entity exists of type: " + type.getName());
+		}
+		return clc.iterator().next();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <E extends IEntity> Set<E> getEntitySet(Class<E> type) {
 		return (Set<E>) map.get(type);
 	}
 
-	public <E extends IEntity> E getFirstEntity(Class<E> type) {
+	private <E extends IEntity> E getFirstEntity(Class<E> type) {
 		return getEntitySet(type).iterator().next();
 	}
 
@@ -77,11 +114,11 @@ public final class EntityGraph {
 	 * @param <E>
 	 * @param type
 	 * @param n 1-based
-	 * @return the Nth entity or <code>null</code> if n is greater than the
-	 *         number of entities of the given type.
+	 * @return the Nth entity or <code>null</code> if n is greater than the number
+	 *         of entities of the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> E getNthEntity(Class<E> type, int n) {
+	private <E extends IEntity> E getNthEntity(Class<E> type, int n) {
 		Set<E> set = (Set<E>) map.get(type);
 		if(set != null && set.size() >= n) {
 			int i = 0;

@@ -44,7 +44,8 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * @param <E>
  * @param <S>
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements IListingService<S, Model> {
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
+		IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -124,7 +125,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
 
 						// translate client side criteria to server side criteria
-						final ICriteria<? extends E> criteria;
+						final ICriteria<E> criteria;
 						try {
 							criteria = mEntitySvc.translate(requestContext, EntityUtil.entityTypeFromClass(entityClass), search);
 						}

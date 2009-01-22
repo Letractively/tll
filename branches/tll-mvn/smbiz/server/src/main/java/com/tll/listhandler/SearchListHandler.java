@@ -26,7 +26,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	/**
 	 * The search criteria.
 	 */
-	protected ICriteria<? extends E> criteria;
+	protected ICriteria<E> criteria;
 
 	/**
 	 * Constructor
@@ -37,7 +37,7 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 * @throws IllegalArgumentException When one or more required args are not
 	 *         specifeid
 	 */
-	public SearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting)
+	public SearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<E> criteria, Sorting sorting)
 			throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {

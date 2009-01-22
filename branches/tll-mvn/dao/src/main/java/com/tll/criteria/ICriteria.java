@@ -20,7 +20,7 @@ public interface ICriteria<E extends IEntity> extends Serializable {
 	/**
 	 * @return entity class
 	 */
-	Class<? extends E> getEntityClass();
+	Class<E> getEntityClass();
 
 	/**
 	 * @return the primary entityGroup.

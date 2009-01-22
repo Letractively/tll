@@ -79,7 +79,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<? extends E> translate(RequestContext requestContext, EntityType entityType, S search)
+	ICriteria<E> translate(RequestContext requestContext, EntityType entityType, S search)
 			throws IllegalArgumentException;
 
 	/**

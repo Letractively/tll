@@ -27,7 +27,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	 *        the given criteria.
 	 * @param criteria The criteria used to generate the underlying list
 	 */
-	IdListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<? extends E> criteria, Sorting sorting) {
+	IdListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 

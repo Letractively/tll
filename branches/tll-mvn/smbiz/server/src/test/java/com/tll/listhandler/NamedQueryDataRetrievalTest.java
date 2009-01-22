@@ -69,10 +69,6 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 			this.value = value;
 		}
 
-		public String descriptor() {
-			return "Query Param";
-		}
-
 		public String getPropertyName() {
 			return propertyName;
 		}

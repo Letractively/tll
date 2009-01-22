@@ -19,7 +19,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private CriteriaType criteriaType;
 
-	private Class<? extends E> entityClass;
+	private Class<E> entityClass;
 
 	private ISelectNamedQueryDef namedQueryDefinition;
 
@@ -39,7 +39,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * criteria.
 	 * @param entityClass May NOT be <code>null</code>.
 	 */
-	public Criteria(Class<? extends E> entityClass) {
+	public Criteria(Class<E> entityClass) {
 		super();
 		this.criteriaType = CriteriaType.ENTITY;
 		assert entityClass != null;
@@ -64,7 +64,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		return criteriaType;
 	}
 
-	public Class<? extends E> getEntityClass() {
+	public Class<E> getEntityClass() {
 		return entityClass;
 	}
 

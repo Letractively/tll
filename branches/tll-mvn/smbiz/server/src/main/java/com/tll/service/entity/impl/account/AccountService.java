@@ -8,40 +8,29 @@ import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAccountDao;
-import com.tll.dao.impl.IAccountHistoryDao;
-import com.tll.dao.impl.IPaymentInfoDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
-import com.tll.model.EntityCache;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.StatefulEntityService;
+import com.tll.model.EntityCache;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * AccountService - {@link IAccountService} impl
  * @author jpk
  */
 @Transactional
-public class AccountService extends StatefulEntityService<Account, IAccountDao> implements IAccountService {
-
-	private final IPaymentInfoDao paymentInfoDao;
-
-	private final IAccountHistoryDao accountHistoryDao;
+public class AccountService extends NamedEntityService<Account> implements IAccountService {
 
 	/**
 	 * Constructor
 	 * @param dao
-	 * @param paymentInfoDao
-	 * @param accountHistoryDao
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AccountService(IAccountDao dao, IPaymentInfoDao paymentInfoDao, IAccountHistoryDao accountHistoryDao,
-			EntityAssembler entityAssembler) {
-		super(IAccountDao.class, dao, entityAssembler);
-		this.paymentInfoDao = paymentInfoDao;
-		this.accountHistoryDao = accountHistoryDao;
+	public AccountService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override
@@ -51,7 +40,11 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 
 	@Override
 	public void deleteAll(Collection<Account> entities) {
-		super.deleteAll(entities);
+		if(entities != null && entities.size() > 0) {
+			for(Account e : entities) {
+				delete(e);
+			}
+		}
 		if(entities != null && entities.size() > 0) {
 			for(Account a : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_DELETED, a));
@@ -77,7 +70,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 
 		// persist payment info?
 		if(entity.getPersistPymntInfo() && entity.getPaymentInfo() != null) {
-			paymentInfoDao.persist(entity.getPaymentInfo());
+			dao.persist(entity.getPaymentInfo());
 		}
 
 		if(pe != null) {
@@ -122,7 +115,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setNotes(context.getAccount().typeName() + " created");
 				ah.setStatus(AccountStatus.NEW);
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 				break;
 			}
 				// delete account
@@ -131,7 +124,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setStatus(AccountStatus.DELETED);
 				ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 				break;
 			}
 				// purge account
@@ -143,7 +136,7 @@ public class AccountService extends StatefulEntityService<Account, IAccountDao> 
 					ah.setStatus(AccountStatus.DELETED);
 					ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
 							+ "' DELETED");
-					accountHistoryDao.persist(ah);
+					dao.persist(ah);
 				}
 				break;
 			}

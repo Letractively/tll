@@ -6,10 +6,7 @@ package com.tll.client.model;
 
 import org.testng.annotations.Test;
 
-import com.tll.dao.impl.IAccountDao;
-import com.tll.model.Account;
 import com.tll.model.Asp;
-import com.tll.model.key.NameKey;
 import com.tll.server.marshal.MarshalOptions;
 
 /**
@@ -20,9 +17,8 @@ import com.tll.server.marshal.MarshalOptions;
 public class PropertyPathModelResolutionTest extends AbstractModelTest {
 
 	private Model getTestModel() {
-		final IAccountDao dao = getDaoFactory().instance(IAccountDao.class);
-		final Asp asp = (Asp) dao.load(new NameKey<Account>(Account.class, Asp.ASP_NAME));
-		assert asp != null;
+		final Asp asp = new Asp();
+		// TODO fill in asp
 		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
 	}
 

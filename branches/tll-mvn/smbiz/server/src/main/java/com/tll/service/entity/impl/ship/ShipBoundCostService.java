@@ -3,7 +3,7 @@ package com.tll.service.entity.impl.ship;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IShipBoundCostDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.ShipBoundCost;
 import com.tll.service.entity.EntityService;
@@ -13,7 +13,7 @@ import com.tll.service.entity.EntityService;
  * @author jpk
  */
 @Transactional
-public class ShipBoundCostService extends EntityService<ShipBoundCost, IShipBoundCostDao> implements IShipBoundCostService {
+public class ShipBoundCostService extends EntityService<ShipBoundCost> implements IShipBoundCostService {
 
 	/**
 	 * Constructor
@@ -21,8 +21,8 @@ public class ShipBoundCostService extends EntityService<ShipBoundCost, IShipBoun
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ShipBoundCostService(IShipBoundCostDao dao, EntityAssembler entityAssembler) {
-		super(IShipBoundCostDao.class, dao, entityAssembler);
+	public ShipBoundCostService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

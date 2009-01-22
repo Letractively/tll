@@ -6,27 +6,25 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang.math.NumberRange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import com.google.inject.Inject;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.CriterionGroup;
 import com.tll.criteria.DBType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -37,6 +35,7 @@ import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
 import com.tll.model.Scalar;
@@ -49,11 +48,10 @@ import com.tll.util.DateRange;
 /**
  * Base mock dao class.
  * @author jpk
- * @param <E>
  */
-public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
+public final class EntityDao implements IEntityDao {
 
-	protected static final Log log = LogFactory.getLog(EntityDao.class);
+	// private static final Log log = LogFactory.getLog(EntityDao.class);
 
 	private static enum CompareResult {
 		GT,
@@ -109,7 +107,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	 * @throws IllegalArgumentException When the <code>cmp</code> argument is
 	 *         <code>null</code>.
 	 */
-	public static boolean compare(final Object criterionValue, final Object checkValue, final Comparator cmp,
+	private static boolean compare(final Object criterionValue, final Object checkValue, final Comparator cmp,
 			final boolean caseSensitive) throws IllegalArgumentException {
 		if(cmp == null) {
 			throw new IllegalArgumentException("The comparator argument may not be null");
@@ -194,29 +192,28 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		}
 	}
 
-	protected final Class<E> entityClass;
-
 	/**
-	 * The set of mock entities managed by this dao.
+	 * The sole entity provider.
 	 */
-	protected final Set<E> set;
+	private final IEntityProvider entityProvider;
 
 	/**
 	 * Constructor
-	 * @param entityClass
-	 * @param set
+	 * @param entityProvider The entity provider
 	 */
-	public EntityDao(final Class<E> entityClass, final Set<E> set) {
+	@Inject
+	public EntityDao(IEntityProvider entityProvider) {
 		super();
-		if(entityClass == null) {
-			throw new IllegalArgumentException("An entity type must be specified.");
+		if(entityProvider == null) {
+			throw new IllegalArgumentException("An entity provider must be specified.");
 		}
-		this.entityClass = entityClass;
-		this.set = set == null ? new LinkedHashSet<E>() : set;
+		this.entityProvider = entityProvider;
 	}
 
-	public final Class<E> getEntityClass() {
-		return entityClass;
+	@Override
+	public int executeQuery(String queryName, IQueryParam[] params) {
+		// TODO impl ?
+		return 0;
 	}
 
 	public final void clear() {
@@ -230,12 +227,12 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 	 * @return List of entities that best satisfies the query ref
 	 * @throws InvalidCriteriaException
 	 */
-	protected List<E> processQuery(final ICriteria<? extends E> criteria) {
+	private <E extends IEntity> List<E> processQuery(final ICriteria<E> criteria) {
 		// base impl: return all
-		return loadAll();
+		return loadAll(criteria.getEntityClass());
 	}
 
-	public final List<E> findEntities(final ICriteria<? extends E> criteria, Sorting sorting)
+	public <E extends IEntity> List<E> findEntities(final ICriteria<E> criteria, Sorting sorting)
 			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -253,7 +250,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		else {
 
 			if(!criteria.isSet()) {
-				list = loadAll();
+				list = loadAll(criteria.getEntityClass());
 			}
 			else {
 				list = new ArrayList<E>();
@@ -265,19 +262,23 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 									"Mock dao implementations are only able to handle a single criterion entityGroup.");
 						}
 						if(ctn.isSet()) {
-							for(final E e : set) {
-								final String pn = ctn.getPropertyName();
-								Object pv = null;
-								BeanWrapper bw = new BeanWrapperImpl(e);
+							Collection<E> clc = entityProvider.getEntitiesByType(criteria.getEntityClass());
+							if(clc != null) {
+								for(final E e : clc) {
+									final String pn = ctn.getPropertyName();
+									Object pv = null;
+									BeanWrapper bw = new BeanWrapperImpl(e);
 
-								try {
-									pv = bw.getPropertyValue(pn);
-								}
-								catch(final RuntimeException re) {
-									throw new InvalidCriteriaException("Invalid " + EntityUtil.typeName(entityClass) + " property: " + pn);
-								}
-								if(compare(ctn.getValue(), pv, ctn.getComparator(), ctn.isCaseSensitive())) {
-									list.add(e);
+									try {
+										pv = bw.getPropertyValue(pn);
+									}
+									catch(final RuntimeException re) {
+										throw new InvalidCriteriaException("Invalid " + EntityUtil.typeName(criteria.getEntityClass())
+												+ " property: " + pn);
+									}
+									if(compare(ctn.getValue(), pv, ctn.getComparator(), ctn.isCaseSensitive())) {
+										list.add(e);
+									}
 								}
 							}
 						}
@@ -293,7 +294,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return list;
 	}
 
-	public final List<SearchResult<E>> find(final ICriteria<? extends E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult<E>> find(final ICriteria<E> criteria, Sorting sorting)
 			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -307,7 +308,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return transformEntityList(list, criteria.getCriteriaType().isScalar());
 	}
 
-	protected final IScalar scalarize(final E entity) {
+	private <E extends IEntity> IScalar scalarize(final E entity) {
 		final BeanWrapper bw = new BeanWrapperImpl(entity);
 		final Map<String, Object> map = new LinkedHashMap<String, Object>();
 		for(final PropertyDescriptor pd : bw.getPropertyDescriptors()) {
@@ -319,7 +320,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return new Scalar(entity.entityClass(), map);
 	}
 
-	protected final List<SearchResult<E>> transformEntityList(final List<E> entityList, final boolean isScalar) {
+	private <E extends IEntity> List<SearchResult<E>> transformEntityList(final List<E> entityList, final boolean isScalar) {
 		final List<SearchResult<E>> slist = new ArrayList<SearchResult<E>>(entityList.size());
 		for(final E e : entityList) {
 			if(isScalar) {
@@ -332,22 +333,25 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return slist;
 	}
 
-	public final List<E> findByIds(final List<Integer> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final List<Integer> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
-		for(final E e : set) {
-			for(final Integer id : ids) {
-				if(id.equals(e.getId())) {
-					list.add(e);
+		Collection<E> clc = entityProvider.getEntitiesByType(entityType);
+		if(clc != null) {
+			for(final E e : clc) {
+				for(final Integer id : ids) {
+					if(id.equals(e.getId())) {
+						list.add(e);
+					}
 				}
 			}
-		}
-		if(sorting != null && list.size() > 1) {
-			Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
+			if(sorting != null && list.size() > 1) {
+				Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
+			}
 		}
 		return list;
 	}
 
-	public final E findEntity(final ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public <E extends IEntity> E findEntity(final ICriteria<E> criteria) throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, null);
 		if(list != null && list.size() == 1) {
 			return list.get(0).getEntity();
@@ -359,51 +363,81 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		// no-op
 	}
 
-	public final E load(final BusinessKey<? extends E> key) {
-		for(final E e : set) {
-			try {
-				final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
-				for(final BusinessKey<E> bk : bks) {
-					if(bk.equals(key)) {
-						return e;
+	public <E extends IEntity> E load(final BusinessKey<E> key) {
+		Collection<E> clc = entityProvider.getEntitiesByType(key.getType());
+		if(clc != null) {
+			for(final E e : clc) {
+				try {
+					final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
+					for(final BusinessKey<E> bk : bks) {
+						if(bk.equals(key)) {
+							return e;
+						}
 					}
 				}
-			}
-			catch(final BusinessKeyNotDefinedException e1) {
-			}
-		}
-		throw new EntityNotFoundException(key.descriptor() + " not found.");
-	}
-
-	public final E load(final PrimaryKey<? extends E> key) {
-		final PrimaryKey<E> pk = new PrimaryKey<E>(entityClass);
-		for(final E e : set) {
-			pk.setId(e.getId());
-			if(pk.equals(key)) {
-				return e;
+				catch(final BusinessKeyNotDefinedException e1) {
+				}
 			}
 		}
 		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
-	public final List<E> loadAll() {
+	public <E extends IEntity> E load(final PrimaryKey<E> key) {
+		Collection<E> clc = entityProvider.getEntitiesByType(key.getType());
+		if(clc != null) {
+			for(final E e : clc) {
+				if(key.getId().equals(e.getId())) {
+					return e;
+				}
+			}
+		}
+		throw new EntityNotFoundException(key.descriptor() + " not found.");
+	}
+
+	public <N extends INamedEntity> N load(final NameKey<N> key) {
+		if(key == null || key.getName() == null) return null;
+		Collection<N> clc = entityProvider.getEntitiesByType(key.getType());
+		if(clc != null) {
+			for(final N e : clc) {
+				String name;
+				BeanWrapper bw = new BeanWrapperImpl(e);
+				try {
+					final Object o = bw.getPropertyValue(INamedEntity.NAME);
+					name = (String) o;
+				}
+				catch(final RuntimeException re) {
+					return null;
+				}
+				if(key.getName().equals(name)) {
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
+	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
 		final List<E> list = new ArrayList<E>();
-		list.addAll(set);
+		Collection<E> clc = entityProvider.getEntitiesByType(entityType);
+		if(clc != null) list.addAll(clc);
 		return list;
 	}
 
-	public final E persist(final E entity) {
-		if(!set.remove(entity)) {
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> E persist(final E entity) {
+		Collection<E> clc = (Collection<E>) entityProvider.getEntitiesByType(entity.entityClass());
+		if(clc == null) return null;
+		if(!clc.remove(entity)) {
 			assert entity.getVersion() == null;
 			// ensure business key unique
-			set.add(entity);
-			if(!BusinessKeyFactory.isBusinessKeyUnique(set)) {
-				set.remove(entity);
+			clc.add(entity);
+			if(!BusinessKeyFactory.isBusinessKeyUnique(clc)) {
+				clc.remove(entity);
 				throw new EntityExistsException("Unable to persist entity: It is non-unique");
 			}
 		}
 		else {
-			set.add(entity);
+			clc.add(entity);
 		}
 		Integer version = entity.getVersion();
 		if(version == null) {
@@ -416,43 +450,56 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return entity;
 	}
 
-	public final Collection<E> persistAll(final Collection<E> entities) {
+	public <E extends IEntity> Collection<E> persistAll(final Collection<E> entities) {
 		for(final E e : entities) {
 			persist(e);
 		}
 		return entities;
 	}
 
-	public final void purge(final E entity) {
-		for(final E e : set) {
-			if(e.equals(entity)) {
-				set.remove(e);
-				return;
-			}
-		}
-	}
-
-	public final void purgeAll(final Collection<E> entities) {
-		set.clear();
-	}
-
-	public final List<E> getEntitiesFromIds(final Class<? extends E> entityClass, final Collection<Integer> ids,
-			final Sorting sorting) {
-		final List<E> list = new ArrayList<E>();
-		for(final E e : set) {
-			for(final Integer id : ids) {
-				if(e.getId().equals(id)) {
-					list.add(e);
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> void purge(final E entity) {
+		Collection<E> clc = (Collection<E>) entityProvider.getEntitiesByType(entity.entityClass());
+		if(clc != null) {
+			for(final E e : clc) {
+				if(e.equals(entity)) {
+					clc.remove(e);
+					return;
 				}
 			}
 		}
-		if(sorting != null) {
-			Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E extends IEntity> void purgeAll(final Collection<E> entities) {
+		if(entities == null || entities.size() < 1) return;
+		Class<E> et = (Class<E>) entities.iterator().next().entityClass();
+		Collection<E> clc = entityProvider.getEntitiesByType(et);
+		if(clc != null) {
+			clc.removeAll(entities);
+		}
+	}
+
+	public <E extends IEntity> List<E> getEntitiesFromIds(final Class<E> entityClass, final Collection<Integer> ids,
+			final Sorting sorting) {
+		final List<E> list = new ArrayList<E>();
+		Collection<E> clc = entityProvider.getEntitiesByType(entityClass);
+		if(clc != null) {
+			for(final E e : clc) {
+				for(final Integer id : ids) {
+					if(e.getId().equals(id)) {
+						list.add(e);
+					}
+				}
+			}
+			if(sorting != null) {
+				Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
+			}
 		}
 		return list;
 	}
 
-	public final List<Integer> getIds(final ICriteria<? extends E> criteria, Sorting sorting)
+	public <E extends IEntity> List<Integer> getIds(final ICriteria<E> criteria, Sorting sorting)
 			throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, sorting);
 		if(list == null) {
@@ -465,7 +512,7 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		return idlist;
 	}
 
-	public final IPageResult<SearchResult<E>> getPage(final ICriteria<? extends E> criteria, Sorting sorting,
+	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(final ICriteria<E> criteria, Sorting sorting,
 			final int offset, final int pageSize) throws InvalidCriteriaException {
 		List<SearchResult<E>> elist = find(criteria, sorting);
 		if(elist == null) {
@@ -498,25 +545,4 @@ public abstract class EntityDao<E extends IEntity> implements IEntityDao<E> {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
-	public final E load(final NameKey key) {
-		if(key == null || key.getName() == null) return null;
-		if(set != null) {
-			for(final E e : set) {
-				String name;
-				BeanWrapper bw = new BeanWrapperImpl(e);
-				try {
-					final Object o = bw.getPropertyValue(INamedEntity.NAME);
-					name = (String) o;
-				}
-				catch(final RuntimeException re) {
-					return null;
-				}
-				if(key.getName().equals(name)) {
-					return e;
-				}
-			}
-		}
-		return null;
-	}
 }

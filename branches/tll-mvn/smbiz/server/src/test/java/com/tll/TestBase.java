@@ -16,7 +16,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.tll.dao.IDaoFactory;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.dao.jdbc.DbShell;
@@ -124,9 +123,11 @@ public abstract class TestBase {
 	 * testing purposes. It must be added via {@link #addModules(List)}.
 	 * @return The injected {@link IDaoFactory}
 	 */
+	/*
 	protected final IDaoFactory getDaoFactory() {
 		return injector.getInstance(IDaoFactory.class);
 	}
+	*/
 
 	/**
 	 * <strong>NOTE: </strong>The {@link MockEntityProvider} is not available by

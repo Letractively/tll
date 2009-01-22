@@ -25,6 +25,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.util.StringUtils;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.CriteriaType;
@@ -33,8 +34,8 @@ import com.tll.criteria.IComparatorTranslator;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.ICriterion;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
@@ -50,23 +51,89 @@ import com.tll.model.key.PrimaryKey;
 import com.tll.util.CollectionUtil;
 
 /**
- * Base dao class for hibernate dao impls.
+ * EntityDao - Hibernate dao implementation.
  * @author jpk
- * @param <E>
  */
-public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport implements IEntityDao<E> {
+public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	/**
 	 * Used for transforming entity results into a native friendly handle.
 	 */
-	protected static final ResultTransformer ENTITY_RESULT_TRANSFORMER = new EntitySearchResultTransformer();
+	private static final ResultTransformer ENTITY_RESULT_TRANSFORMER = new EntitySearchResultTransformer();
 
 	/**
 	 * String representing the beginning of an order by clause in an SQL string.
 	 * Used internally to manually modify sql query strings in order to support
 	 * dynamic sorting.
 	 */
-	private final String ORDER_BY_TOKEN = "order by ";
+	private static final String ORDER_BY_TOKEN = "order by ";
+
+	/**
+	 * @param <T>
+	 * @param maybeProxy
+	 * @param baseClass
+	 * @return
+	 * @throws ClassCastException
+	 */
+	private static <T> T deproxy(Object maybeProxy, Class<T> baseClass) throws ClassCastException {
+		if(maybeProxy instanceof HibernateProxy) {
+			return baseClass.cast(((HibernateProxy) maybeProxy).getHibernateLazyInitializer().getImplementation());
+		}
+		return baseClass.cast(maybeProxy);
+	}
+
+	/**
+	 * Applies sorting objects to the hibernate criteria object. This method takes
+	 * a <code>DetachedCriteria</code> implementation simply because there is no
+	 * common interface for <code>DetachedCriteria</code> and
+	 * <code>Criteria</code>.
+	 * @param dc the hibernate criteria object
+	 * @param sorting sorting object
+	 */
+	private static void applySorting(DetachedCriteria dc, Sorting sorting) throws InvalidCriteriaException {
+		if(sorting == null) {
+			return;
+		}
+		final SortColumn[] columns = sorting.getColumns();
+		for(final SortColumn element : columns) {
+			// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
+			// element.getDirection();
+			final String column = element.getPropertyName();
+			final Boolean ignoreCase = element.getIgnoreCase();
+			applyAliasIfNecessary(dc, column);
+			final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
+			if(Boolean.TRUE.equals(ignoreCase)) {
+				order.ignoreCase();
+			}
+			dc.addOrder(order);
+		}
+	}
+
+	/**
+	 * Applies aliases if necessary.
+	 * @param dc
+	 * @param propPath
+	 * @throws InvalidCriteriaException
+	 */
+	private static final void applyAliasIfNecessary(DetachedCriteria dc, String propPath) throws InvalidCriteriaException {
+		// if this is a foreign key property, final join to entity table is not
+		// necessary
+		if(propPath.endsWith("." + IEntity.PK_FIELDNAME)) {
+			propPath = propPath.substring(0, propPath.length() - 3);
+		}
+		// add alias if criterion refers to a nested property
+		final int index = propPath.indexOf('.');
+		if(index > 0) {
+			final String suffix = propPath.substring(index + 1);
+
+			// NOTE: currently don't know how to handle nested aliases
+			if(suffix.indexOf('.') >= 0) {
+				throw new InvalidCriteriaException("Unable to handle 3+ deep criterion property paths");
+			}
+			final String alias = propPath.substring(0, index);
+			dc.createAlias(alias, alias);
+		}
+	}
 
 	/**
 	 * The db dialect handler.
@@ -88,38 +155,20 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * Constructor
 	 * @param emPrvdr
 	 * @param dbDialectHandler
-	 * @param comparatorTranslator
 	 */
-	// @Inject
-	public EntityDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler,
-			IComparatorTranslator<Criterion> comparatorTranslator) {
+	@Inject
+	public EntityDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler) {
 		super(emPrvdr);
 		this.dbDialectHandler = dbDialectHandler;
-		this.comparatorTranslator = comparatorTranslator;
+		this.comparatorTranslator = new ComparatorTranslator();
 	}
 
-	public abstract Class<E> getEntityClass();
-
-	/**
-	 * @param <T>
-	 * @param maybeProxy
-	 * @param baseClass
-	 * @return
-	 * @throws ClassCastException
-	 */
-	private static <T> T deproxy(Object maybeProxy, Class<T> baseClass) throws ClassCastException {
-		if(maybeProxy instanceof HibernateProxy) {
-			return baseClass.cast(((HibernateProxy) maybeProxy).getHibernateLazyInitializer().getImplementation());
-		}
-		return baseClass.cast(maybeProxy);
+	public <E extends IEntity> E load(PrimaryKey<E> key) {
+		final E e = getEntityManager().getReference(key.getType(), key.getId());
+		return deproxy(e, key.getType());
 	}
 
-	public final E load(PrimaryKey<? extends E> key) {
-		final E e = getEntityManager().getReference(getEntityClass(), key.getId());
-		return deproxy(e, getEntityClass());
-	}
-
-	public final E load(BusinessKey<? extends E> key) {
+	public <E extends IEntity> E load(BusinessKey<E> key) {
 		try {
 			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}
@@ -128,11 +177,11 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 	}
 
-	protected final INamedEntity loadByName(NameKey<? extends INamedEntity> nameKey) {
+	public <N extends INamedEntity> N load(NameKey<N> nameKey) {
 		try {
-			final com.tll.criteria.Criteria<E> nc = new com.tll.criteria.Criteria<E>(getEntityClass());
+			final com.tll.criteria.Criteria<N> nc = new com.tll.criteria.Criteria<N>(nameKey.getType());
 			nc.getPrimaryGroup().addCriterion(nameKey, false);
-			return (INamedEntity) findEntity(nc);
+			return findEntity(nc);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException("Unable to load entity from name key: " + e.getMessage(), e);
@@ -140,18 +189,18 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> loadAll() {
-		final DetachedCriteria dc = DetachedCriteria.forClass(getEntityClass());
+	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
+		final DetachedCriteria dc = DetachedCriteria.forClass(entityType);
 		final Session session = (Session) getEntityManager().getDelegate();
 		final Criteria c = dc.getExecutableCriteria(session);
 		return c.list();
 	}
 
-	public E persist(E entity) {
+	public <E extends IEntity> E persist(E entity) {
 		return persistInternal(entity, true);
 	}
 
-	protected E persistInternal(E entity, boolean flush) {
+	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
 		E merged;
 		try {
 			final EntityManager em = getEntityManager();
@@ -166,7 +215,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return merged;
 	}
 
-	public Collection<E> persistAll(Collection<E> entities) {
+	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		if(entities == null) return null;
 		final Collection<E> merged = new HashSet<E>(entities.size());
 		for(final E e : entities) {
@@ -176,7 +225,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		return merged;
 	}
 
-	public void purge(E entity) {
+	public <E extends IEntity> void purge(E entity) {
 		try {
 			if(entity.isNew()) {
 				getEntityManager().remove(entity);
@@ -190,7 +239,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 	}
 
-	public void purgeAll(Collection<E> entities) {
+	public <E extends IEntity> void purgeAll(Collection<E> entities) {
 		if(CollectionUtil.isEmpty(entities)) {
 			return;
 		}
@@ -200,7 +249,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public <E extends IEntity> List<E> findEntities(ICriteria<E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -211,7 +261,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 				CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 	}
 
-	public E findEntity(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+	public <E extends IEntity> E findEntity(ICriteria<E> criteria) throws InvalidCriteriaException {
 		final List<E> list = findEntities(criteria, null);
 		if(list == null || list.size() != 1) {
 			return null;
@@ -220,7 +270,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public <E extends IEntity> List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -253,7 +304,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException When the criteria type is invalid or
 	 *         otherwise.
 	 */
-	protected final List<?> processCriteria(ICriteria<? extends E> criteria, Sorting sorting, boolean applySorting,
+	private <E extends IEntity> List<?> processCriteria(ICriteria<E> criteria, Sorting sorting,
+			boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
 		if(criteria.getCriteriaType().isQuery()) {
@@ -261,9 +313,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 			return findByNamedQuery(criteria, sorting, resultTransformer);
 		}
 		// translate to hbm criteria
-		final Class<? extends E> entityClass =
-				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
-		final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
+		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
 		dc.setResultTransformer(resultTransformer);
 		applyCriteria(dc, criteria, sorting, applySorting);
 		return findByDetatchedCriteria(dc);
@@ -274,7 +324,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @param dc The detached criteria
 	 * @return List of results of unknown type.
 	 */
-	protected final List<?> findByDetatchedCriteria(DetachedCriteria dc) {
+	private List<?> findByDetatchedCriteria(DetachedCriteria dc) {
 		final Session session = (Session) getEntityManager().getDelegate();
 		final Criteria executableCriteria = dc.getExecutableCriteria(session);
 		return executableCriteria.list();
@@ -291,7 +341,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private final Query assembleQuery(String queryName, Collection<IQueryParam> queryParams, Sorting sorting,
+	private Query assembleQuery(String queryName, Collection<IQueryParam> queryParams, Sorting sorting,
 			ResultTransformer resultTransformer, boolean cacheable) throws InvalidCriteriaException {
 		if(queryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");
@@ -351,7 +401,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @param q The jpa query instance
 	 * @return The hibernate query instance.
 	 */
-	protected final org.hibernate.Query jpa2hbmQuery(Query q) {
+	private org.hibernate.Query jpa2hbmQuery(Query q) {
 		assert q instanceof QueryImpl;
 		return ((QueryImpl) q).getHibernateQuery();
 	}
@@ -363,7 +413,7 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @return List of either entities or scalars.
 	 * @throws InvalidCriteriaException
 	 */
-	protected final List<?> findByNamedQuery(ICriteria<? extends E> criteria, Sorting sorting,
+	private <E extends IEntity> List<?> findByNamedQuery(ICriteria<E> criteria, Sorting sorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
 		return assembleQuery(nq.getQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
@@ -382,7 +432,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @param applySorting Apply the sorting?
 	 * @throws InvalidCriteriaException
 	 */
-	protected void applyCriteria(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
+	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, ICriteria<E> criteria,
+			Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		applyCriteriaStrict(dc, criteria, sorting, applySorting);
 	}
@@ -397,7 +448,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	 * @throws InvalidCriteriaException
 	 * @see #applyCriteria(DetachedCriteria, ICriteria)
 	 */
-	private void applyCriteriaStrict(DetachedCriteria dc, ICriteria<? extends E> criteria, Sorting sorting,
+	private <E extends IEntity> void applyCriteriaStrict(DetachedCriteria dc, ICriteria<E> criteria,
+			Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -415,7 +467,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 	}
 
-	private void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<? extends E> criteria, Sorting sorting,
+	private <E extends IEntity> void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<E> criteria,
+			Sorting sorting,
 			Junction junction) throws InvalidCriteriaException {
 		if(!ctn.isSet()) {
 			return;
@@ -488,62 +541,9 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 		}
 	}
 
-	/**
-	 * Applies sorting objects to the hibernate criteria object. This method takes
-	 * a <code>DetachedCriteria</code> implementation simply because there is no
-	 * common interface for <code>DetachedCriteria</code> and
-	 * <code>Criteria</code>.
-	 * @param dc the hibernate criteria object
-	 * @param sorting sorting object
-	 */
-	protected static void applySorting(DetachedCriteria dc, Sorting sorting) throws InvalidCriteriaException {
-		if(sorting == null) {
-			return;
-		}
-		final SortColumn[] columns = sorting.getColumns();
-		for(final SortColumn element : columns) {
-			// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
-			// element.getDirection();
-			final String column = element.getPropertyName();
-			final Boolean ignoreCase = element.getIgnoreCase();
-			applyAliasIfNecessary(dc, column);
-			final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
-			if(Boolean.TRUE.equals(ignoreCase)) {
-				order.ignoreCase();
-			}
-			dc.addOrder(order);
-		}
-	}
-
-	/**
-	 * Applies aliases if necessary.
-	 * @param dc
-	 * @param propPath
-	 * @throws InvalidCriteriaException
-	 */
-	private static final void applyAliasIfNecessary(DetachedCriteria dc, String propPath) throws InvalidCriteriaException {
-		// if this is a foreign key property, final join to entity table is not
-		// necessary
-		if(propPath.endsWith("." + IEntity.PK_FIELDNAME)) {
-			propPath = propPath.substring(0, propPath.length() - 3);
-		}
-		// add alias if criterion refers to a nested property
-		final int index = propPath.indexOf('.');
-		if(index > 0) {
-			final String suffix = propPath.substring(index + 1);
-
-			// NOTE: currently don't know how to handle nested aliases
-			if(suffix.indexOf('.') >= 0) {
-				throw new InvalidCriteriaException("Unable to handle 3+ deep criterion property paths");
-			}
-			final String alias = propPath.substring(0, index);
-			dc.createAlias(alias, alias);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<E> findByIds(List<Integer> ids, Sorting sorting) {
-		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(getEntityClass());
+	public <E extends IEntity> List<E> findByIds(Class<E> entityType, List<Integer> ids, Sorting sorting) {
+		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(entityType);
 		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
 		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -557,13 +557,12 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public <E extends IEntity> List<Integer> getIds(ICriteria<E> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		if(criteria.getCriteriaType().isQuery()) {
 			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
 		}
-		final Class<? extends E> entityClass =
-				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
-		final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
+		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
 		dc.setProjection(Projections.property(IEntity.PK_FIELDNAME));
 		applyCriteria(dc, criteria, sorting, true);
 		return (List<Integer>) findByDetatchedCriteria(dc);
@@ -571,7 +570,8 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting) {
+	public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids,
+			Sorting sorting) {
 		if(CollectionUtil.isEmpty(ids)) {
 			return new ArrayList<E>();
 		}
@@ -590,17 +590,16 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 	}
 
 	@SuppressWarnings("unchecked")
-	public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset, int pageSize)
+	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting,
+			int offset, int pageSize)
 			throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
-		final Class<? extends E> entityClass =
-				criteria.getEntityClass() == null ? getEntityClass() : criteria.getEntityClass();
 		List<SearchResult<E>> rlist = null;
 		int totalCount = -1;
 		switch(criteria.getCriteriaType()) {
 
 			case ENTITY: {
-				final DetachedCriteria dc = DetachedCriteria.forClass(entityClass);
+				final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
 
 				if(sorting == null) {
 					// sorting is necessary in the case of IPage results due to necessary
@@ -676,4 +675,15 @@ public abstract class EntityDao<E extends IEntity> extends HibernateJpaSupport i
 
 		};
 	}
+
+	public int executeQuery(String queryName, IQueryParam[] params) {
+		Query q = getEntityManager().createNamedQuery(queryName);
+		if(params != null) {
+			for(IQueryParam param : params) {
+				q.setParameter(param.getPropertyName(), param.getValue());
+			}
+		}
+		return q.executeUpdate();
+	}
+
 }

@@ -30,25 +30,27 @@ import com.google.inject.Inject;
 import com.tll.SystemError;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.impl.IAuthorityDao;
-import com.tll.dao.impl.IUserDao;
+import com.tll.criteria.QueryParam;
+import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.EntityCache;
 import com.tll.model.EntityAssembler;
+import com.tll.model.EntityCache;
+import com.tll.model.IEntity;
 import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.schema.PropertyType;
 import com.tll.service.acl.IBasicAclProviderManager;
-import com.tll.service.entity.StatefulEntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * UserService - {@link IUserService} impl
  * @author jpk
  */
 @Transactional
-public class UserService extends StatefulEntityService<User, IUserDao> implements IUserService {
+public class UserService extends NamedEntityService<User> implements IUserService {
 
 	private static PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 
@@ -77,8 +79,6 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		return passwordEncoder.isPasswordValid(encPassword, rawPasswordToCheck, salt);
 	}
 
-	private final IAuthorityDao authorityDao;
-
 	private final AclProviderManager aclProviderManager;
 
 	private final UserCache userCache;
@@ -86,16 +86,14 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 	/**
 	 * Constructor
 	 * @param dao
-	 * @param authorityDao
 	 * @param entityAssembler
 	 * @param aclProviderManager
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IUserDao dao, IAuthorityDao authorityDao, EntityAssembler entityAssembler,
-			AclProviderManager aclProviderManager, UserCache userCache) {
-		super(IUserDao.class, dao, entityAssembler);
-		this.authorityDao = authorityDao;
+	public UserService(IEntityDao dao, EntityAssembler entityAssembler, AclProviderManager aclProviderManager,
+			UserCache userCache) {
+		super(dao, entityAssembler);
 		this.aclProviderManager = aclProviderManager;
 		this.userCache = userCache;
 	}
@@ -134,7 +132,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(authorityDao.load(new NameKey<Authority>(Authority.class, Authority.ROLE_USER,
+		user.addAuthority(dao.load(new NameKey<Authority>(Authority.class, Authority.ROLE_USER,
 				Authority.FIELDNAME_AUTHORITY)));
 
 		persist(user);
@@ -219,7 +217,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			dao.setCredentials(userId, newUsername, encNewPassword);
+			setCredentials(userId, newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(oldUsername, newUsername, newRawPassword, false);
 		}
@@ -227,6 +225,13 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 			throw new ChangeUserCredentialsFailedException("Unable to set user credentials: User of id: " + userId
 					+ " not found");
 		}
+	}
+
+	private void setCredentials(Integer userId, String newUsername, String encNewPassword) {
+		dao.executeQuery("user.setCredentials", new QueryParam[] {
+			new QueryParam(IEntity.PK_FIELDNAME, PropertyType.INT, userId.intValue()),
+			new QueryParam("username", PropertyType.STRING, newUsername),
+			new QueryParam("password", PropertyType.STRING, encNewPassword) });
 	}
 
 	@Transactional(rollbackFor = {
@@ -244,7 +249,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 			final String encNewPassword = encodePassword(newRawPassword, newUsername);
 
 			// set the credentials
-			dao.setCredentials(user.getId(), newUsername, encNewPassword);
+			setCredentials(user.getId(), newUsername, encNewPassword);
 
 			updateSecurityContextIfNecessary(user.getUsername(), newUsername, newRawPassword, false);
 		}
@@ -272,7 +277,7 @@ public class UserService extends StatefulEntityService<User, IUserDao> implement
 			final String encNewPassword = encodePassword(random, username);
 
 			// set the credentials
-			dao.setCredentials(userId, username, encNewPassword);
+			setCredentials(userId, username, encNewPassword);
 
 			updateSecurityContextIfNecessary(username, username, random, false);
 

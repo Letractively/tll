@@ -27,6 +27,7 @@ import com.tll.DbTest;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
+import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.di.DaoModule;
 import com.tll.di.JpaModule;
@@ -270,71 +271,92 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected final class EntityDao implements IEntityDao<E> {
 
+		@Override
 		public Class<E> getEntityClass() {
 			return rawDao.getEntityClass();
 		}
 
+		@Override
 		public E persist(E entity) {
 			return rawDao.persist(entity);
 		}
 
+		@Override
 		public E load(PrimaryKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
+		@Override
 		public E load(BusinessKey<? extends E> key) {
 			return rawDao.load(key);
 		}
 
+		@Override
 		public void purge(E entity) {
 			rawDao.purge(entity);
 		}
 
+		@Override
 		public List<E> loadAll() {
 			return rawDao.loadAll();
 		}
 
+		@Override
 		public void purgeAll(Collection<E> entities) {
 			rawDao.purgeAll(entities);
 		}
 
+		@Override
 		public Collection<E> persistAll(Collection<E> entities) {
 			return rawDao.persistAll(entities);
 		}
 
-		public List<E> findEntities(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		@Override
+		public List<E> findEntities(ICriteria<E> Sorting sorting) throws InvalidCriteriaException {
 			return rawDao.findEntities(criteria, sorting);
 		}
 
-		public E findEntity(ICriteria<? extends E> criteria) throws InvalidCriteriaException {
+		@Override
+		public E findEntity(ICriteria<ICriteria<E>validCriteriaException {
 			return rawDao.findEntity(criteria);
 		}
 
+		@Override
 		public List<E> findByIds(List<Integer> ids, Sorting sorting) {
 			return rawDao.findByIds(ids, sorting);
 		}
 
-		public List<Integer> getIds(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		@Override
+		public List<Integer> getIds(ICriteria<E> criteriICriteria<E>rows InvalidCriteriaException {
 			return rawDao.getIds(criteria, sorting);
 		}
 
+		@Override
 		public List<E> getEntitiesFromIds(Class<? extends E> entityClass, Collection<Integer> ids, Sorting sorting) {
 			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
-		public List<SearchResult<E>> find(ICriteria<? extends E> criteria, Sorting sorting) throws InvalidCriteriaException {
+		@Override
+		public List<SearchResult<E>> find(ICriteria<E> criteria, SortingICriteria<E>idCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
-		public IPageResult<SearchResult<E>> getPage(ICriteria<? extends E> criteria, Sorting sorting, int offset,
-				int pageSize) throws InvalidCriteriaException {
+		@Override
+		public IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, ICriteria<E>ageSize) throws InvalidCriteriaException {
 			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
 
+		@Override
+		public int executeQuery(String queryName, IQueryParam[] params) {
+			return rawDao.executeQuery(queryName, params);
+		}
+
+		@Override
 		public void clear() {
 			rawDao.clear();
 		}
 
+		@Override
 		public void flush() {
 			rawDao.flush();
 		}

@@ -8,17 +8,17 @@ package com.tll.service.entity.impl.user;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAuthorityDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.Authority;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * AuthorityService - {@link IAuthorityService} impl
  * @author jpk
  */
 @Transactional
-public class AuthorityService extends EntityService<Authority, IAuthorityDao> implements IAuthorityService {
+public class AuthorityService extends NamedEntityService<Authority> implements IAuthorityService {
 
 	/**
 	 * Constructor
@@ -26,8 +26,8 @@ public class AuthorityService extends EntityService<Authority, IAuthorityDao> im
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AuthorityService(IAuthorityDao dao, EntityAssembler entityAssembler) {
-		super(IAuthorityDao.class, dao, entityAssembler);
+	public AuthorityService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

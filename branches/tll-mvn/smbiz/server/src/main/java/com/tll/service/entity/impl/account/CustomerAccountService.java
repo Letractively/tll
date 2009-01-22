@@ -8,36 +8,29 @@ import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAccountHistoryDao;
-import com.tll.dao.impl.ICustomerAccountDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.CustomerAccount;
-import com.tll.model.EntityCache;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.StatefulEntityService;
+import com.tll.model.EntityCache;
+import com.tll.service.entity.EntityService;
 
 /**
  * CustomerAccountService - {@link ICustomerAccountService} impl
  * @author jpk
  */
 @Transactional
-public class CustomerAccountService extends StatefulEntityService<CustomerAccount, ICustomerAccountDao> implements
-		ICustomerAccountService {
-
-	private final IAccountHistoryDao accountHistoryDao;
+public class CustomerAccountService extends EntityService<CustomerAccount> implements ICustomerAccountService {
 
 	/**
 	 * Constructor
 	 * @param dao
-	 * @param accountHistoryDao
 	 * @param entityAssembler
 	 */
 	@Inject
-	public CustomerAccountService(ICustomerAccountDao dao, IAccountHistoryDao accountHistoryDao,
-			EntityAssembler entityAssembler) {
-		super(ICustomerAccountDao.class, dao, entityAssembler);
-		this.accountHistoryDao = accountHistoryDao;
+	public CustomerAccountService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override
@@ -47,7 +40,11 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 
 	@Override
 	public void deleteAll(Collection<CustomerAccount> entities) {
-		super.deleteAll(entities);
+		if(entities != null && entities.size() > 0) {
+			for(CustomerAccount e : entities) {
+				delete(e);
+			}
+		}
 		if(entities != null && entities.size() > 0) {
 			for(CustomerAccount e : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_DELETED, e));
@@ -116,14 +113,14 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 
 				ah =
 						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 				break;
 			}
 
@@ -134,14 +131,14 @@ public class CustomerAccountService extends StatefulEntityService<CustomerAccoun
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 
 				ah =
 						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
 								.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());
-				accountHistoryDao.persist(ah);
+				dao.persist(ah);
 				break;
 			}
 

@@ -55,8 +55,8 @@ public abstract class ListHandlerFactory {
 	 *         {@link ListHandlerType#COLLECTION} and the sorting directive is
 	 *         specified but mal-formed.
 	 */
-	public static <E extends IEntity> IListHandler<SearchResult<E>> create(ICriteria<? extends E> criteria,
-			Sorting sorting, ListHandlerType type, IListHandlerDataProvider<E> dataProvider) throws InvalidCriteriaException,
+	public static <E extends IEntity> IListHandler<SearchResult<E>> create(ICriteria<E> criteria, Sorting sorting,
+			ListHandlerType type, IListHandlerDataProvider<E> dataProvider) throws InvalidCriteriaException,
 			EmptyListException, ListHandlerException {
 
 		SearchListHandler<E> slh = null;

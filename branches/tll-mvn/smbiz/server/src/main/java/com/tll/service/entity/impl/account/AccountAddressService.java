@@ -6,17 +6,17 @@ package com.tll.service.entity.impl.account;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAccountAddressDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.AccountAddress;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * AccountAddressService - {@link IAccountAddressService} impl
  * @author jpk
  */
 @Transactional
-public class AccountAddressService extends EntityService<AccountAddress, IAccountAddressDao> implements IAccountAddressService {
+public class AccountAddressService extends NamedEntityService<AccountAddress> implements IAccountAddressService {
 
 	/**
 	 * Constructor
@@ -24,13 +24,12 @@ public class AccountAddressService extends EntityService<AccountAddress, IAccoun
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AccountAddressService(IAccountAddressDao dao, EntityAssembler entityAssembler) {
-		super(IAccountAddressDao.class, dao, entityAssembler);
+	public AccountAddressService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override
 	public Class<AccountAddress> getEntityClass() {
 		return AccountAddress.class;
 	}
-
 }

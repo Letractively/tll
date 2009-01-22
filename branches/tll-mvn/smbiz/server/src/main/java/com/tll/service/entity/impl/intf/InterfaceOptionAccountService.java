@@ -3,17 +3,18 @@ package com.tll.service.entity.impl.intf;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IInterfaceOptionAccountDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.EntityAssembler;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.service.entity.EntityService;
 
 /**
- * InterfaceOptionAccountService - {@link IInterfaceOptionAccountDao} impl
+ * InterfaceOptionAccountService - {@link IInterfaceOptionAccountService} impl
  * @author jpk
  */
 @Transactional
-public class InterfaceOptionAccountService extends EntityService<InterfaceOptionAccount, IInterfaceOptionAccountDao> implements IInterfaceOptionAccountService {
+public class InterfaceOptionAccountService extends EntityService<InterfaceOptionAccount> implements
+		IInterfaceOptionAccountService {
 
 	/**
 	 * Constructor
@@ -21,8 +22,8 @@ public class InterfaceOptionAccountService extends EntityService<InterfaceOption
 	 * @param entityAssembler
 	 */
 	@Inject
-	public InterfaceOptionAccountService(IInterfaceOptionAccountDao dao, EntityAssembler entityAssembler) {
-		super(IInterfaceOptionAccountDao.class, dao, entityAssembler);
+	public InterfaceOptionAccountService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

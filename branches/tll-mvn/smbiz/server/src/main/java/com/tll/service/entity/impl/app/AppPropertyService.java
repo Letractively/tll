@@ -6,17 +6,17 @@ package com.tll.service.entity.impl.app;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.dao.impl.IAppPropertyDao;
+import com.tll.dao.IEntityDao;
 import com.tll.model.AppProperty;
 import com.tll.model.EntityAssembler;
-import com.tll.service.entity.EntityService;
+import com.tll.service.entity.NamedEntityService;
 
 /**
  * AppPropertyService - {@link IAppPropertyService} impl
  * @author jpk
  */
 @Transactional
-public class AppPropertyService extends EntityService<AppProperty, IAppPropertyDao> implements IAppPropertyService {
+public class AppPropertyService extends NamedEntityService<AppProperty> implements IAppPropertyService {
 
 	/**
 	 * Constructor
@@ -24,8 +24,8 @@ public class AppPropertyService extends EntityService<AppProperty, IAppPropertyD
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AppPropertyService(IAppPropertyDao dao, EntityAssembler entityAssembler) {
-		super(IAppPropertyDao.class, dao, entityAssembler);
+	public AppPropertyService(IEntityDao dao, EntityAssembler entityAssembler) {
+		super(dao, entityAssembler);
 	}
 
 	@Override

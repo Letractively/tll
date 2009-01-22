@@ -28,8 +28,6 @@ import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.PaymentInfo;
-import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.marshal.Marshaler;
 import com.tll.util.CommonUtil;
 
 /**
@@ -92,7 +90,7 @@ public class MarshalerTest extends TestBase {
 	@Test
 	public void testCircularEntity() throws Exception {
 		final EntityGraph entityGraph = new EntityGraph(getMockEntityProvider());
-		final Asp asp = entityGraph.getFirstEntity(Asp.class);
+		final Asp asp = entityGraph.getEntityByType(Asp.class);
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
 		final Model model = marshaler.marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);

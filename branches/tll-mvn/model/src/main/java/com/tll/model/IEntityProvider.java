@@ -4,13 +4,13 @@
  */
 package com.tll.model;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.tll.model.key.PrimaryKey;
 
 /**
  * IEntityProvider - Definition for an object to provide entities of particular
- * type.
+ * type or key.
  * @author jpk
  */
 public interface IEntityProvider {
@@ -24,21 +24,13 @@ public interface IEntityProvider {
 	<E extends IEntity> E getEntity(PrimaryKey<E> key);
 
 	/**
-	 * Does the entity exist in this provider?
-	 * @param <E>
-	 * @param key
-	 * @return true/false
-	 */
-	<E extends IEntity> boolean hasEntity(PrimaryKey<E> key);
-
-	/**
 	 * Get all entities of the given type and all entities whose type derives from
 	 * the given type.
 	 * @param <E>
 	 * @param type
-	 * @return The entity if present or <code>null</code> if not.
+	 * @return All entities matching the given type
 	 */
-	<E extends IEntity> List<? extends E> getEntitiesByType(Class<E> type);
+	<E extends IEntity> Collection<E> getEntitiesByType(Class<E> type);
 
 	/**
 	 * Gets the single entity of the given type or the single entity whose type
