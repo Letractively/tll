@@ -7,19 +7,14 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.tll.TestBase;
-import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
-import com.tll.di.SecurityModule;
 
 /**
  * SecurityModuleTest
  * @author jpk
  */
 @Test(groups = {
-	"bootstrap",
-	"security" })
-public class SecurityModuleTest extends TestBase {
+	"bootstrap", "security" })
+public class SecurityModuleTest {
 
 	@Test
 	public void testLoad() throws Exception {

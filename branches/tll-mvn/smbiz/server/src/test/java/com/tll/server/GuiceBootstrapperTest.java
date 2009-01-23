@@ -11,7 +11,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.tll.TestBase;
 
 /**
  * GuiceBootstrapperTest
@@ -20,7 +19,7 @@ import com.tll.TestBase;
 @Test(groups = {
 	"server",
 	"bootstrap" })
-public class GuiceBootstrapperTest extends TestBase {
+public class GuiceBootstrapperTest {
 
 	private ServletContext getMockServletContext() {
 		MockServletContext context = new MockServletContext();

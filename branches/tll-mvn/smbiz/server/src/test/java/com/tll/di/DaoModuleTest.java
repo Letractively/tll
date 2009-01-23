@@ -7,21 +7,16 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
-import com.tll.di.DaoModule;
-import com.tll.di.JpaModule;
-import com.tll.di.MockEntitiesModule;
 
 /**
  * DaoModuleTest - Verifies loading of the DAO module
  * @author jpk
  */
 @Test(groups = {
-	"bootstrap",
-	"dao" })
-public class DaoModuleTest extends TestBase {
+	"bootstrap", "dao" })
+public class DaoModuleTest {
 
 	public void testLoadHibernate() throws Exception {
 		final JpaModule jm = new JpaModule(JpaMode.MOCK);

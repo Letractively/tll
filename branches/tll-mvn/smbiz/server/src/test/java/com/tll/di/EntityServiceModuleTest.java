@@ -9,22 +9,16 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
-import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
-import com.tll.di.JpaModule;
-import com.tll.di.MockEntitiesModule;
 
 /**
  * EntityServiceModuleTest
  * @author jpk
  */
 @Test(groups = {
-	"bootstrap",
-	"entity.service" })
-public class EntityServiceModuleTest extends TestBase {
+	"bootstrap", "entity.service" })
+public class EntityServiceModuleTest {
 
 	public void testLoadHibernate() throws Exception {
 		final JpaModule jm = new JpaModule(JpaMode.MOCK);

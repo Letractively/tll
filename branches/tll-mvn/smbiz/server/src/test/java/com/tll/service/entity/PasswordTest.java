@@ -7,7 +7,6 @@ package com.tll.service.entity;
 
 import org.testng.annotations.Test;
 
-import com.tll.TestBase;
 import com.tll.service.entity.impl.user.UserService;
 
 /**
@@ -15,17 +14,14 @@ import com.tll.service.entity.impl.user.UserService;
  * @author jpk
  */
 @Test(groups = "entity.service")
-public class PasswordTest extends TestBase {
+public class PasswordTest {
 
 	@Test
 	public void testEncodePassword() {
 		final String[][] args = new String[][] {
 			{
-				"superuser",
-				"abc123" },
-			{
-				"jopaki@gmail.com",
-				"bleamin" } };
+				"superuser", "abc123" }, {
+				"jopaki@gmail.com", "bleamin" } };
 		for(final String[] arg : args) {
 			System.out.println(arg[0] + ": " + UserService.encodePassword(arg[1], arg[0]));
 		}
