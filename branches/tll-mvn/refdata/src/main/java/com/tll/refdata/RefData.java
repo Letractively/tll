@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -210,20 +212,31 @@ public final class RefData {
 		if(cld == null) {
 			throw new IllegalStateException("Can't get class loader.");
 		}
-		String path = ""; // i.e. the root
-		URL resource = cld.getResource(path);
-		if(resource == null) {
-			throw new IllegalStateException("Unable to obtain the classpath root dir");
+		Enumeration<URL> resources;
+		try {
+			if((resources = cld.getResources("")) == null) {
+				throw new IllegalStateException("Unable to obtain root classpath resources.");
+			}
+		}
+		catch(IOException e) {
+			throw new IllegalStateException("Unable to obtain root classpath resource: " + e.getMessage(), e);
 		}
 
-		try {
-			URI uri = resource.toURI();
-			File classPathRoot = new File(uri.getPath());
-			return classPathRoot.listFiles(filter);
+		List<File> files = new ArrayList<File>();
+
+		while(resources.hasMoreElements()) {
+			URL resource = resources.nextElement();
+			try {
+				URI uri = resource.toURI();
+				File classPathRoot = new File(uri.getPath());
+				files.addAll(Arrays.asList(classPathRoot.listFiles(filter)));
+			}
+			catch(URISyntaxException se) {
+				throw new IllegalArgumentException("Unable to obtain app ref data files under the root classpath dir");
+			}
 		}
-		catch(URISyntaxException se) {
-			throw new IllegalArgumentException("Unable to obtain app ref data files under the root classpath dir");
-		}
+		
+		return files.toArray(new File[files.size()]);
 	}
 
 	private void setResourceData() {
