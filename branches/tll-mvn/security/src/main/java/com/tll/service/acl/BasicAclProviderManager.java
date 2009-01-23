@@ -129,6 +129,7 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 		getAclDao().delete(recipient);
 	}
 
+	/*
 	public void applyAdministrativePermissions(Integer entityId) {
 		AclObjectIdentity aclObjectIdentity = obtainIdentity(entityId);
 		if(log.isDebugEnabled())
@@ -138,5 +139,5 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 		BasicAclEntry aclEntry = new SimpleAclEntry(recipient, aclObjectIdentity, null, mask);
 		getAclDao().create(aclEntry);
 	}
-
+	*/
 }

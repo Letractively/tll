@@ -20,6 +20,7 @@
       com.tll.di.DaoModule
       com.tll.di.EntityServiceModule
       com.tll.di.SecurityModule
+      com.tll.di.SecurityModuleImpl
     </param-value>
   </context-param>
 

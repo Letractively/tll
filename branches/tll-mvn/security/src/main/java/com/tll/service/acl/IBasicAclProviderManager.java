@@ -65,5 +65,5 @@ public interface IBasicAclProviderManager<T> extends AclProvider {
 	 * by the given id.
 	 * @param entityId id of the entity.
 	 */
-	void applyAdministrativePermissions(Integer entityId);
+	// void applyAdministrativePermissions(Integer entityId);
 }

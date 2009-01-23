@@ -15,6 +15,10 @@ import com.tll.util.EnumUtil;
  */
 public class SecurityModule extends CompositeModule {
 	
+	/**
+	 * ConfigKeys - Config keys for the security module.
+	 * @author jpk
+	 */
 	public static enum ConfigKeys implements IConfigKey {
 		SECURITY_MODE_PARAM("app.security.mode");
 
