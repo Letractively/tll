@@ -33,7 +33,7 @@ import com.tll.model.key.PrimaryKey;
  * <code>jpaMode</code> member property.
  * @author jpk
  */
-public abstract class DbTest extends TestBase {
+public abstract class DbTest extends AbstractInjectedTest {
 
 	/**
 	 * Retrieves the entity from the db given a {@link IPrimaryKey}.

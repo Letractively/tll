@@ -15,9 +15,9 @@ import com.google.inject.Stage;
  * Abstract base class for all test cases within the application.
  * @author jpk
  */
-public abstract class TestBase {
+public abstract class AbstractInjectedTest {
 
-	protected static final Log staticLogger = LogFactory.getLog(TestBase.class);
+	protected static final Log staticLogger = LogFactory.getLog(AbstractInjectedTest.class);
 
 	/**
 	 * Builds a Guice Injector from one or more {@link Module}s.
@@ -36,7 +36,7 @@ public abstract class TestBase {
 	/**
 	 * Constructor
 	 */
-	public TestBase() {
+	public AbstractInjectedTest() {
 		super();
 	}
 

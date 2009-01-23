@@ -14,7 +14,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.TestBase;
+import com.tll.AbstractInjectedTest;
 import com.tll.client.model.IModelProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -36,7 +36,7 @@ import com.tll.util.CommonUtil;
  * @author jpk
  */
 @Test(groups = "server.rpc")
-public class MarshalerTest extends TestBase {
+public class MarshalerTest extends AbstractInjectedTest {
 
 	/**
 	 * Constructor
