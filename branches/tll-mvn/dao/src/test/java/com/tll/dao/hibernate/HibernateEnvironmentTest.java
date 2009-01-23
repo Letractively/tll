@@ -5,15 +5,11 @@
  */
 package com.tll.dao.hibernate;
 
-import java.util.List;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
-import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.tll.TestBase;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
@@ -24,13 +20,7 @@ import com.tll.di.JpaModule;
  * @author jpk
  */
 @Test(groups = "dao.hibernate")
-public class HibernateEnvironmentTest extends TestBase {
-
-	@Override
-	protected void addModules(List<Module> modules) {
-		super.addModules(modules);
-
-	}
+public class HibernateEnvironmentTest {
 
 	/**
 	 * Verifies the loading of the Hibernate environment.

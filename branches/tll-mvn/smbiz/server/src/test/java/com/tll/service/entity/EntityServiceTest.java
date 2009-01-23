@@ -26,6 +26,8 @@ import com.tll.model.AccountHistory;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.IEntityFactory;
+import com.tll.model.MockEntityProvider;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
@@ -81,9 +83,17 @@ public class EntityServiceTest extends DbTest {
 		super.beforeMethod();
 		getDbShell().clear(); // reset
 	}
-	
+
 	private IEntityDao getEntityDao() {
 		return injector.getInstance(IEntityDao.class);
+	}
+
+	private MockEntityProvider getMockEntityProvider() {
+		return injector.getInstance(MockEntityProvider.class);
+	}
+
+	private IEntityFactory getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
 	}
 
 	private Account stubValidAccount(boolean persistAccount) throws Exception {

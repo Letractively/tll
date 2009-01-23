@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testng.Assert;
 
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
@@ -21,7 +22,9 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
+import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbShellModule;
+import com.tll.di.DbShellModule.TestDb;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
@@ -128,6 +131,16 @@ public abstract class DbTest extends TestBase {
 			getEntityManager().close();
 			getEntityManagerFactory().close();
 		}
+	}
+
+	/**
+	 * <strong>NOTE: </strong>The {@link DbShell} is not available by default. It
+	 * must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
+	 * @return The injected {@link DbShell}
+	 */
+	protected final DbShell getDbShell() {
+		return injector.getInstance(Key.get(DbShell.class, TestDb.class));
 	}
 
 	protected EntityManagerFactory getEntityManagerFactory() {

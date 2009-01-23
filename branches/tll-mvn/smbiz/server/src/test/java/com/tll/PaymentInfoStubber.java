@@ -3,18 +3,18 @@
  * @author jpk
  * Nov 6, 2007
  */
-package com.tll.dao.impl;
+package com.tll;
 
 import java.util.List;
 
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.DbTest;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
+import com.tll.model.MockEntityProvider;
 import com.tll.model.PaymentInfo;
 
 /**
@@ -40,7 +40,8 @@ public class PaymentInfoStubber extends DbTest {
 	@Test
 	public void stub() throws Exception {
 		startNewTransaction();
-		final PaymentInfo e = getMockEntityProvider().getEntityCopy(PaymentInfo.class, false);
+		final MockEntityProvider mep = injector.getInstance(MockEntityProvider.class);
+		final PaymentInfo e = mep.getEntityCopy(PaymentInfo.class, false);
 		final IEntityDao dao = injector.getInstance(IEntityDao.class);
 		dao.persist(e);
 		setComplete();

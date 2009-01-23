@@ -34,8 +34,10 @@ import com.tll.di.JpaModule;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
+import com.tll.model.MockEntityProvider;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -47,6 +49,38 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
+
+	/**
+	 * Compare a clc of entity ids and entites ensuring the id list is referenced
+	 * w/in the entity list
+	 * @param ids
+	 * @param entities
+	 * @return
+	 */
+	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Integer> ids,
+			Collection<E> entities) {
+		if(ids == null || entities == null) {
+			return false;
+		}
+		if(ids.size() != entities.size()) {
+			return false;
+		}
+		for(final E e : entities) {
+			boolean found = false;
+			for(final Integer id : ids) {
+				if(id.equals(e.getId())) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	protected Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	protected final Class<E> entityClass;
 
@@ -173,6 +207,16 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	/**
+	 * <strong>NOTE: </strong>The {@link IEntityFactory} is not available by
+	 * default. It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
+	 * @return The injected {@link IEntityFactory}
+	 */
+	protected final IEntityFactory getEntityFactory() {
+		return injector.getInstance(IEntityFactory.class);
+	}
+
+	/**
 	 * Concrete sub-classes should override this method to properly wire up the
 	 * entity.
 	 * <p>
@@ -217,6 +261,16 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected void uniquify(E e) {
 		makeUnique(e);
+	}
+
+	/**
+	 * <strong>NOTE: </strong>The {@link MockEntityProvider} is not available by
+	 * default. It must be bound in a given module which is added via
+	 * {@link #addModules(List)}.
+	 * @return The injected {@link MockEntityProvider}
+	 */
+	protected final MockEntityProvider getMockEntityProvider() {
+		return injector.getInstance(MockEntityProvider.class);
 	}
 
 	/**
@@ -639,5 +693,19 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	public final void testPurgeNewEntity() throws Exception {
 		final E e = getTestEntity();
 		dao.purge(e);
+	}
+
+	/**
+	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
+	 * type of the given entity.
+	 * @param e The entity to uniquify
+	 */
+	protected final <ET extends IEntity> void makeUnique(ET e) {
+		try {
+			getMockEntityProvider().makeBusinessKeyUnique(e);
+		}
+		catch(final BusinessKeyNotDefinedException e1) {
+			// ok
+		}
 	}
 }

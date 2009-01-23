@@ -22,18 +22,16 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.criteria.SelectNamedQueries;
+import com.tll.criteria.QueryParam;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
 import com.tll.di.JpaModule;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
-import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.util.EnumUtil;
 
 /**
@@ -51,9 +49,9 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 
 	private static class QueryParam implements IQueryParam {
 
-		private String propertyName;
-		private PropertyType type;
-		private Object value;
+		private final String propertyName;
+		private final PropertyType type;
+		private final Object value;
 
 		/**
 		 * Constructor

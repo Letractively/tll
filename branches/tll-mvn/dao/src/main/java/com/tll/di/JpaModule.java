@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
+import com.tll.config.IConfigKey;
 import com.tll.dao.JpaMode;
 import com.tll.util.EnumUtil;
 
@@ -31,6 +31,31 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 public class JpaModule extends GModule {
+
+	/**
+	 * ConfigKeys - Configuration property keys for the jpa module.
+	 * @author jpk
+	 */
+	public static enum ConfigKeys implements IConfigKey {
+
+		JPA_MODE_PARAM("db.jpa.mode"),
+		DB_NAME("db.name"),
+		DB_JPA_PERSISTENCE_UNIT_NAME("db.jpa.persistenceUnitName");
+
+		private final String key;
+
+		/**
+		 * Constructor
+		 * @param key
+		 */
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
 
 	/**
 	 * Use Spring transaction management or local JPA transactions.

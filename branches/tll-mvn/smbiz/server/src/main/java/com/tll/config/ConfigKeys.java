@@ -12,7 +12,7 @@ package com.tll.config;
  * Only the ones accessed from a Java context.
  * @author jpk
  */
-public enum ConfigKeys implements IConfigKeyProvider {
+public enum ConfigKeys implements IConfigKey {
 
 	ENVIRONMENT_PARAM("environment"),
 	DEBUG_PARAM("debug"),
@@ -53,14 +53,4 @@ public enum ConfigKeys implements IConfigKeyProvider {
 	public String getKey() {
 		return key;
 	}
-
-	public String[] getConfigKeys() {
-		final ConfigKeys[] cks = values();
-		String[] keys = new String[cks.length];
-		for(int i = 0; i < cks.length; ++i) {
-			keys[i] = cks[i].getKey();
-		}
-		return keys;
-	}
-
 }

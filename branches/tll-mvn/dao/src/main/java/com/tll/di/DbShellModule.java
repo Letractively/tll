@@ -11,7 +11,7 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
+import com.tll.config.IConfigKey;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.jdbc.DbShell;
 
@@ -21,6 +21,39 @@ import com.tll.dao.jdbc.DbShell;
  */
 public class DbShellModule extends CompositeModule {
 
+	/**
+	 * ConfigKeys - Configuration property keys.
+	 * @author jpk
+	 */
+	public static enum ConfigKeys implements IConfigKey {
+
+		DB_NAME("db.name"),
+		DB_TEST_NAME("db.test.name"),
+		DB_NAME_ROOT("db.name.root"),
+
+		DB_URL_PREFIX("db.urlprefix"),
+		DB_USERNAME("db.username"),
+		DB_PASSWORD("db.password"),
+
+		DB_SCHEMA_FILE_NAME("db.file.schema"),
+		DB_STUB_FILE_NAME("db.file.stub"),
+		DB_DELETE_FILE_NAME("db.file.delete");
+
+		private final String key;
+
+		/**
+		 * Constructor
+		 * @param key
+		 */
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
+	
 	@Override
 	protected Module[] getModulesToBind() {
 		return new Module[] {

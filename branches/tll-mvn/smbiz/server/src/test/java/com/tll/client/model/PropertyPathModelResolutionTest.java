@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import com.tll.model.Asp;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.server.marshal.Marshaler;
 
 /**
  * PropertyPathModelResolutionTest
@@ -18,8 +19,9 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 
 	private Model getTestModel() {
 		final Asp asp = new Asp();
+		Marshaler m = injector.getInstance(Marshaler.class);
 		// TODO fill in asp
-		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		return m.marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
 	}
 
 	/**

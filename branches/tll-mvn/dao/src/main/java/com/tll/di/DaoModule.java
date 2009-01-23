@@ -6,7 +6,7 @@ package com.tll.di;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
+import com.tll.config.IConfigKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
@@ -22,6 +22,29 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 public class DaoModule extends CompositeModule {
+
+	/**
+	 * ConfigKeys - Configuration property keys for the dao module.
+	 * @author jpk
+	 */
+	public static enum ConfigKeys implements IConfigKey {
+
+		DAO_MODE_PARAM("db.dao.mode");
+
+		private final String key;
+
+		/**
+		 * Constructor
+		 * @param key
+		 */
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
 
 	/**
 	 * DAO mode override. <code>null</code> indicates the property will be gotten

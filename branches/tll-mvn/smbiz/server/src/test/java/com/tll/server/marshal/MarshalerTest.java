@@ -27,6 +27,7 @@ import com.tll.model.CreditCardType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
+import com.tll.model.MockEntityProvider;
 import com.tll.model.PaymentInfo;
 import com.tll.util.CommonUtil;
 
@@ -54,6 +55,14 @@ public class MarshalerTest extends TestBase {
 		super.addModules(modules);
 		final DaoModule daoModule = new DaoModule(DaoMode.MOCK);
 		modules.add(daoModule);
+	}
+
+	private Marshaler getMarshaler() {
+		return injector.getInstance(Marshaler.class);
+	}
+
+	private MockEntityProvider getMockEntityProvider() {
+		return injector.getInstance(MockEntityProvider.class);
 	}
 
 	/**
