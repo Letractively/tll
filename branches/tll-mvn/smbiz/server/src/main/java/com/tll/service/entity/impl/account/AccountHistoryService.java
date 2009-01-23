@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.AccountHistory;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.EntityService;
 
 /**
@@ -21,7 +21,7 @@ public class AccountHistoryService extends EntityService<AccountHistory> impleme
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AccountHistoryService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public AccountHistoryService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.SiteCode;
 import com.tll.service.entity.NamedEntityService;
 
@@ -21,7 +21,7 @@ public class SiteCodeService extends NamedEntityService<SiteCode> implements ISi
 	 * @param entityAssembler
 	 */
 	@Inject
-	public SiteCodeService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public SiteCodeService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

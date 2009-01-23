@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.acegisecurity.acl.AclProvider;
-
-import com.tll.model.User;
+import org.acegisecurity.userdetails.UserDetails;
 
 /**
  * Provides and manages ACL permissions. Services wishing to alter ACLs in the
@@ -30,10 +29,11 @@ public interface IBasicAclProviderManager<T> extends AclProvider {
 	 *        acl object identity for which the given user permission masks are
 	 *        retrieved.
 	 * @param users List of users for which to retrieve permissions.
-	 * @return serviceMap of integer permission masks keyed by {@link User}.
+	 * @return serviceMap of integer permission masks keyed by {@link UserDetails}
+	 *         .
 	 * @see org.acegisecurity.acl.basic.BasicAclEntry for mask info.
 	 */
-	Map<User, Integer> getUserPermissions(Integer entityId, List<User> users);
+	Map<UserDetails, Integer> getUserPermissions(Integer entityId, List<UserDetails> users);
 
 	/**
 	 * Sets the given user permission masks for a given acl object identity class
@@ -45,7 +45,7 @@ public interface IBasicAclProviderManager<T> extends AclProvider {
 	 *        given category id.
 	 * @see org.acegisecurity.acl.basic.BasicAclEntry for mask info.
 	 */
-	void setUserPermissions(Integer entityId, Map<User, Integer> userPermissionsMap);
+	void setUserPermissions(Integer entityId, Map<UserDetails, Integer> userPermissionsMap);
 
 	/**
 	 * Deletes all user permissions relating to the entity specified by the given
@@ -58,7 +58,7 @@ public interface IBasicAclProviderManager<T> extends AclProvider {
 	 * Deletes all ACL permissions that exist for the given user.
 	 * @param user The user for which all related ACLs are DELETED.
 	 */
-	void deleteAllUserPermissions(User user);
+	void deleteAllUserPermissions(UserDetails user);
 
 	/**
 	 * Sets user permissions for all administrative users for the entity specified

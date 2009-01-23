@@ -15,6 +15,7 @@
     <module>refdata</module>
     <module>model</module>
     <module>dao</module>
+    <module>service</module>
     <module>smbiz</module>
   </modules>
 

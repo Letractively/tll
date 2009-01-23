@@ -118,7 +118,7 @@
 	<bean id="com.tll.service.acl.AccountRelatedAclProviderManager"
 		class="com.tll.service.acl.AccountRelatedAclProviderManager">
 		<property name="basicAclDao">
-			<ref bean="com.tll.dao.impl.IAclDao" />
+			<ref bean="com.tll.dao.IAclDao" />
 		</property>
 	</bean>
 

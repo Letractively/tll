@@ -17,6 +17,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.EntityServiceFactory;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -84,8 +85,8 @@ public class EntityServiceModule extends GModule {
 	@Override
 	protected void configure() {
 
-		// EntityAssembler
-		bind(EntityAssembler.class).in(Scopes.SINGLETON);
+		// IEntityAssembler
+		bind(IEntityAssembler.class).to(EntityAssembler.class).in(Scopes.SINGLETON);
 
 		bind(IAuthorityService.class).to(AuthorityService.class).in(Scopes.SINGLETON);
 		bind(IAccountAddressService.class).to(AccountAddressService.class).in(Scopes.SINGLETON);

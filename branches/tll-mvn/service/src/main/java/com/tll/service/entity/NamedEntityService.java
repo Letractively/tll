@@ -8,7 +8,7 @@ package com.tll.service.entity;
 import javax.persistence.EntityNotFoundException;
 
 import com.tll.dao.IEntityDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
 
@@ -25,7 +25,7 @@ public abstract class NamedEntityService<N extends INamedEntity> extends EntityS
 	 * @param dao
 	 * @param entityAssembler
 	 */
-	public NamedEntityService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public NamedEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

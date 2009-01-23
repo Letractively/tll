@@ -1,4 +1,4 @@
-package com.tll.dao.impl;
+package com.tll.dao;
 
 import org.acegisecurity.acl.basic.BasicAclExtendedDao;
 import org.springframework.dao.DataAccessException;

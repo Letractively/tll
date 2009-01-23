@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Authority;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**
@@ -26,7 +26,7 @@ public class AuthorityService extends NamedEntityService<Authority> implements I
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AuthorityService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public AuthorityService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

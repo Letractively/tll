@@ -19,8 +19,8 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.model.EntityAssembler;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.validate.EntityValidatorFactory;
@@ -44,7 +44,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	/**
 	 * The entity assembler.
 	 */
-	protected final EntityAssembler entityAssembler;
+	protected final IEntityAssembler entityAssembler;
 
 	/**
 	 * Constructor
@@ -52,7 +52,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	 * @param dao
 	 * @param entityAssembler
 	 */
-	protected EntityService(IEntityDao dao, EntityAssembler entityAssembler) {
+	protected EntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super();
 		this.log = LogFactory.getLog(this.getClass());
 		this.dao = dao;

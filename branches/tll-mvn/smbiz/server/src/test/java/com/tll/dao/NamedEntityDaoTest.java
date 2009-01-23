@@ -13,8 +13,8 @@ import com.tll.model.INamedEntity;
 
 /**
  * NamedEntityDaoTest
+ * @param <N> The named entity type
  * @author jpk
- * @param <N>
  */
 public abstract class NamedEntityDaoTest<N extends INamedEntity> extends AbstractDaoTest<N> {
 

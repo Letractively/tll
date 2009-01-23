@@ -10,7 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.SqlUpdate;
 
-import com.tll.dao.impl.IAclDao;
+import com.tll.dao.IAclDao;
 
 /**
  * The JDBC ACL DAO implementation.

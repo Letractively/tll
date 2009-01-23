@@ -11,7 +11,7 @@ public enum AdminRole implements INameValueProvider<String> {
 	ROLE_ISP("The Isp role"),
 	ROLE_MERCHANT("The Merchant role"),
 	ROLE_CUSTOMER("The Customer role"),
-	ROLE_SHOPPER("The Visitor role");
+	ROLE_VISITOR("The Visitor role");
 
 	private final String name;
 

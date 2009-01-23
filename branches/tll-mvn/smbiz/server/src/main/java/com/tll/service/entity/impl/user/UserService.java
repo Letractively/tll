@@ -35,9 +35,9 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -91,7 +91,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IEntityDao dao, EntityAssembler entityAssembler, AclProviderManager aclProviderManager,
+	public UserService(IEntityDao dao, IEntityAssembler entityAssembler, AclProviderManager aclProviderManager,
 			UserCache userCache) {
 		super(dao, entityAssembler);
 		this.aclProviderManager = aclProviderManager;

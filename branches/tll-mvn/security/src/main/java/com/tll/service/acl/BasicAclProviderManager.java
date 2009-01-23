@@ -12,14 +12,14 @@ import org.acegisecurity.acl.basic.BasicAclProvider;
 import org.acegisecurity.acl.basic.NamedEntityObjectIdentity;
 import org.acegisecurity.acl.basic.SimpleAclEntry;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.userdetails.User;
+import org.acegisecurity.userdetails.UserDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
 
 import com.tll.SystemError;
-import com.tll.dao.impl.IAclDao;
-import com.tll.model.Authority;
-import com.tll.model.User;
+import com.tll.dao.IAclDao;
 
 /**
  * Abstract class implementing the {@link IBasicAclProviderManager} interface.
@@ -53,7 +53,7 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 	 * @param user The user.
 	 * @return newly generated authentication.
 	 */
-	protected Authentication authFromUser(User user) {
+	protected Authentication authFromUser(UserDetails user) {
 		return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
 	}
 
@@ -64,7 +64,7 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 	 * @param user The user for which the permission mask is retrieved.
 	 * @return the permission mask <code>Integer</code>.
 	 */
-	protected Integer getMask(Integer aclObjectId, User user) {
+	protected Integer getMask(Integer aclObjectId, UserDetails user) {
 		try {
 			AclEntry[] acls = getAcls(aclObjectId, authFromUser(user));
 			if(acls == null || acls.length < 1) {
@@ -85,19 +85,19 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 		}
 	}
 
-	public Map<User, Integer> getUserPermissions(Integer entityId, List<User> users) {
-		Map<User, Integer> map = new HashMap<User, Integer>();
-		for(User user : users) {
+	public Map<UserDetails, Integer> getUserPermissions(Integer entityId, List<UserDetails> users) {
+		Map<UserDetails, Integer> map = new HashMap<UserDetails, Integer>();
+		for(UserDetails user : users) {
 			map.put(user, getMask(entityId, user));
 		}
 		return map;
 	}
 
-	public void setUserPermissions(Integer entityId, Map<User, Integer> userPermissionsMap) {
+	public void setUserPermissions(Integer entityId, Map<UserDetails, Integer> userPermissionsMap) {
 		AclObjectIdentity aclObjectIdentity = obtainIdentity(entityId);
 		if(log.isDebugEnabled()) log.debug("Setting user permissions for: " + aclObjectIdentity.toString() + "...");
 		try {
-			for(User user : userPermissionsMap.keySet()) {
+			for(UserDetails user : userPermissionsMap.keySet()) {
 
 				// the recipient is the username
 				String recipient = user.getUsername();
@@ -123,7 +123,7 @@ public abstract class BasicAclProviderManager<T> extends BasicAclProvider implem
 		getAclDao().delete(aclObjectIdentity);
 	}
 
-	public void deleteAllUserPermissions(User user) {
+	public void deleteAllUserPermissions(UserDetails user) {
 		String recipient = user.getUsername();
 		if(log.isDebugEnabled()) log.debug("Deleting all user permissions for: " + recipient + "...");
 		getAclDao().delete(recipient);

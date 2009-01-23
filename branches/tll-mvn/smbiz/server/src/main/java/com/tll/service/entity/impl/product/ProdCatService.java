@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.ProdCat;
 import com.tll.service.entity.EntityService;
 
@@ -21,7 +21,7 @@ public class ProdCatService extends EntityService<ProdCat> implements IProdCatSe
 	 * @param entityAssembler
 	 */
 	@Inject
-	public ProdCatService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public ProdCatService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

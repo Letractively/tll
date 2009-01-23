@@ -12,8 +12,8 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
-import com.tll.model.EntityAssembler;
 import com.tll.model.EntityCache;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**
@@ -29,7 +29,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 * @param entityAssembler
 	 */
 	@Inject
-	public AccountService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public AccountService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

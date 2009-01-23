@@ -10,7 +10,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Currency;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**
@@ -26,7 +26,7 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 	 * @param entityAssembler
 	 */
 	@Inject
-	public CurrencyService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public CurrencyService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

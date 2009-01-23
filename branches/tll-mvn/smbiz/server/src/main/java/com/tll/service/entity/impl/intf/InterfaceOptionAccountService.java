@@ -4,7 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
-import com.tll.model.EntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.service.entity.EntityService;
 
@@ -22,7 +22,7 @@ public class InterfaceOptionAccountService extends EntityService<InterfaceOption
 	 * @param entityAssembler
 	 */
 	@Inject
-	public InterfaceOptionAccountService(IEntityDao dao, EntityAssembler entityAssembler) {
+	public InterfaceOptionAccountService(IEntityDao dao, IEntityAssembler entityAssembler) {
 		super(dao, entityAssembler);
 	}
 

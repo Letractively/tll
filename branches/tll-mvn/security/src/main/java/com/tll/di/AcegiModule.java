@@ -11,6 +11,7 @@ import org.acegisecurity.acl.AclManager;
 import org.acegisecurity.acl.AclProviderManager;
 import org.acegisecurity.acl.basic.BasicAclProvider;
 import org.acegisecurity.acl.basic.SimpleAclEntry;
+import org.acegisecurity.afterinvocation.AfterInvocationProviderManager;
 import org.acegisecurity.intercept.method.aopalliance.MethodSecurityInterceptor;
 import org.acegisecurity.providers.ProviderManager;
 import org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider;
@@ -31,14 +32,6 @@ import com.google.inject.Scopes;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
-import com.tll.dao.IAclDao;
-import com.tll.service.acl.AccountRelatedAclProviderManager;
-import com.tll.service.acl.AccountRelatedBasicAclEntryVoter;
-import com.tll.service.acl.afterinvocation.AfterInvocationProviderManager;
-import com.tll.service.acl.afterinvocation.BasicAclEntryAfterInvocationFilteringProvider;
-import com.tll.service.acl.afterinvocation.FiltererFactory;
-import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.impl.user.IUserService;
 
 /**
  * AcegiModule - Acegi flavored security implementation wiring.

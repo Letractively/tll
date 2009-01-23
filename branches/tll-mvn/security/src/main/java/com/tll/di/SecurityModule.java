@@ -5,7 +5,7 @@ package com.tll.di;
 
 import com.google.inject.Module;
 import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
+import com.tll.config.IConfigKey;
 import com.tll.server.SecurityMode;
 import com.tll.util.EnumUtil;
 
@@ -14,6 +14,24 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 public class SecurityModule extends CompositeModule {
+	
+	public static enum ConfigKeys implements IConfigKey {
+		SECURITY_MODE_PARAM("app.security.mode");
+
+		private final String key;
+
+		/**
+		 * Constructor
+		 * @param key
+		 */
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
 
 	/**
 	 * Security mode override.
