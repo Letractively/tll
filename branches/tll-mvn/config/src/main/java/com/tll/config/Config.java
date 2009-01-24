@@ -150,6 +150,13 @@ public final class Config implements Configuration {
 	}
 
 	/**
+	 * Unloads the configuration.
+	 */
+	public void unload() {
+		root = null;
+	}
+
+	/**
 	 * Determines the machine/user config file name based on the corresponding
 	 * system property values for {@link #MACHINE_NAME_KEY} and
 	 * {@link #USER_NAME_KEY}. FORMAT:
@@ -179,169 +186,176 @@ public final class Config implements Configuration {
 		return machinename + '.' + username + ".config.properties";
 	}
 
+	private CombinedConfiguration safeGetRoot() {
+		if(root == null) {
+			load();
+		}
+		return root;
+	}
+
 	public void addProperty(String key, Object value) {
-		root.addProperty(key, value);
+		safeGetRoot().addProperty(key, value);
 	}
 
 	public void clear() {
-		root.clear();
+		safeGetRoot().clear();
 	}
 
 	public void clearProperty(String key) {
-		root.clearProperty(key);
+		safeGetRoot().clearProperty(key);
 	}
 
 	public boolean containsKey(String key) {
-		return root.containsKey(key);
+		return safeGetRoot().containsKey(key);
 	}
 
 	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
-		return root.getBigDecimal(key, defaultValue);
+		return safeGetRoot().getBigDecimal(key, defaultValue);
 	}
 
 	public BigDecimal getBigDecimal(String key) {
-		return root.getBigDecimal(key);
+		return safeGetRoot().getBigDecimal(key);
 	}
 
 	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
-		return root.getBigInteger(key, defaultValue);
+		return safeGetRoot().getBigInteger(key, defaultValue);
 	}
 
 	public BigInteger getBigInteger(String key) {
-		return root.getBigInteger(key);
+		return safeGetRoot().getBigInteger(key);
 	}
 
 	public boolean getBoolean(String key, boolean defaultValue) {
-		return root.getBoolean(key, defaultValue);
+		return safeGetRoot().getBoolean(key, defaultValue);
 	}
 
 	public Boolean getBoolean(String key, Boolean defaultValue) {
-		return root.getBoolean(key, defaultValue);
+		return safeGetRoot().getBoolean(key, defaultValue);
 	}
 
 	public boolean getBoolean(String key) {
-		return root.getBoolean(key);
+		return safeGetRoot().getBoolean(key);
 	}
 
 	public byte getByte(String key, byte defaultValue) {
-		return root.getByte(key, defaultValue);
+		return safeGetRoot().getByte(key, defaultValue);
 	}
 
 	public Byte getByte(String key, Byte defaultValue) {
-		return root.getByte(key, defaultValue);
+		return safeGetRoot().getByte(key, defaultValue);
 	}
 
 	public byte getByte(String key) {
-		return root.getByte(key);
+		return safeGetRoot().getByte(key);
 	}
 
 	public double getDouble(String key, double defaultValue) {
-		return root.getDouble(key, defaultValue);
+		return safeGetRoot().getDouble(key, defaultValue);
 	}
 
 	public Double getDouble(String key, Double defaultValue) {
-		return root.getDouble(key, defaultValue);
+		return safeGetRoot().getDouble(key, defaultValue);
 	}
 
 	public double getDouble(String key) {
-		return root.getDouble(key);
+		return safeGetRoot().getDouble(key);
 	}
 
 	public float getFloat(String key, float defaultValue) {
-		return root.getFloat(key, defaultValue);
+		return safeGetRoot().getFloat(key, defaultValue);
 	}
 
 	public Float getFloat(String key, Float defaultValue) {
-		return root.getFloat(key, defaultValue);
+		return safeGetRoot().getFloat(key, defaultValue);
 	}
 
 	public float getFloat(String key) {
-		return root.getFloat(key);
+		return safeGetRoot().getFloat(key);
 	}
 
 	public int getInt(String key, int defaultValue) {
-		return root.getInt(key, defaultValue);
+		return safeGetRoot().getInt(key, defaultValue);
 	}
 
 	public int getInt(String key) {
-		return root.getInt(key);
+		return safeGetRoot().getInt(key);
 	}
 
 	public Integer getInteger(String key, Integer defaultValue) {
-		return root.getInteger(key, defaultValue);
+		return safeGetRoot().getInteger(key, defaultValue);
 	}
 
 	public Iterator<?> getKeys() {
-		return root.getKeys();
+		return safeGetRoot().getKeys();
 	}
 
 	public Iterator<?> getKeys(String prefix) {
-		return root.getKeys(prefix);
+		return safeGetRoot().getKeys(prefix);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<?> getList(String key, List defaultValue) {
-		return root.getList(key, defaultValue);
+		return safeGetRoot().getList(key, defaultValue);
 	}
 
 	public List<?> getList(String key) {
-		return root.getList(key);
+		return safeGetRoot().getList(key);
 	}
 
 	public long getLong(String key, long defaultValue) {
-		return root.getLong(key, defaultValue);
+		return safeGetRoot().getLong(key, defaultValue);
 	}
 
 	public Long getLong(String key, Long defaultValue) {
-		return root.getLong(key, defaultValue);
+		return safeGetRoot().getLong(key, defaultValue);
 	}
 
 	public long getLong(String key) {
-		return root.getLong(key);
+		return safeGetRoot().getLong(key);
 	}
 
 	public Properties getProperties(String key) {
-		return root.getProperties(key);
+		return safeGetRoot().getProperties(key);
 	}
 
 	public Object getProperty(String key) {
-		return root.getProperty(key);
+		return safeGetRoot().getProperty(key);
 	}
 
 	public short getShort(String key, short defaultValue) {
-		return root.getShort(key, defaultValue);
+		return safeGetRoot().getShort(key, defaultValue);
 	}
 
 	public Short getShort(String key, Short defaultValue) {
-		return root.getShort(key, defaultValue);
+		return safeGetRoot().getShort(key, defaultValue);
 	}
 
 	public short getShort(String key) {
-		return root.getShort(key);
+		return safeGetRoot().getShort(key);
 	}
 
 	public String getString(String key, String defaultValue) {
-		return root.getString(key, defaultValue);
+		return safeGetRoot().getString(key, defaultValue);
 	}
 
 	public String getString(String key) {
-		return root.getString(key);
+		return safeGetRoot().getString(key);
 	}
 
 	public String[] getStringArray(String key) {
-		return root.getStringArray(key);
+		return safeGetRoot().getStringArray(key);
 	}
 
 	public boolean isEmpty() {
-		return root.isEmpty();
+		return safeGetRoot().isEmpty();
 	}
 
 	public void setProperty(String key, Object value) {
-		root.setProperty(key, value);
+		safeGetRoot().setProperty(key, value);
 	}
 
 	public Configuration subset(String prefix) {
-		return root.subset(prefix);
+		return safeGetRoot().subset(prefix);
 	}
 
 	/**

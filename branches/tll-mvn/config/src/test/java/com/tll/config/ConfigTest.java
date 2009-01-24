@@ -66,7 +66,6 @@ public class ConfigTest {
 	public void testBasicLoading() throws Exception {
 		try {
 			Config config = Config.instance();
-			config.load();
 			assert !config.isEmpty() : "Config instance is empty";
 		}
 		catch(Throwable t) {
@@ -80,7 +79,7 @@ public class ConfigTest {
 	 */
 	public void testInterpolation() throws Exception {
 		Config config = Config.instance();
-		config.load();
+
 		Iterator<?> itr = config.getKeys();
 		while(itr.hasNext()) {
 			Object obj = itr.next();
@@ -98,7 +97,6 @@ public class ConfigTest {
 	 */
 	public void testAllAsMap() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		Map<String, String> map = config.asMap(null, null);
 		assert map != null;
@@ -116,7 +114,6 @@ public class ConfigTest {
 	 */
 	public void testNestedAsMap() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
 		assert map != null;
@@ -140,7 +137,6 @@ public class ConfigTest {
 	 */
 	public void testSaveAllToFile() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, null, null);
@@ -171,7 +167,6 @@ public class ConfigTest {
 	 */
 	public void testSaveSubsetToFile() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
@@ -195,7 +190,7 @@ public class ConfigTest {
 	public void testUserDomainFileLoading() throws Exception {
 		System.setProperty(Config.MACHINE_NAME_KEY, "domain");
 		System.setProperty(Config.USER_NAME_KEY, "user");
-		Config.instance().load(null);
+		Config.instance().unload();
 		Config config = Config.instance();
 		String pval1 = config.getString("props.simple.propA");
 		String pval2 = config.getString("props.simple.propB");
