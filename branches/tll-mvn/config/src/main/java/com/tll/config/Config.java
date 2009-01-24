@@ -52,7 +52,94 @@ public final class Config implements Configuration {
 	 */
 	public static final String USER_NAME_KEY = "tll.config.user.name";
 
+	/**
+	 * The config instance
+	 */
 	private static final Config instance = new Config();
+
+	/**
+	 * @return The {@link Config} instance.
+	 */
+	public static final Config instance() {
+		return instance;
+	}
+
+	/**
+	 * Implementation decoratee
+	 */
+	private CombinedConfiguration root;
+
+	/**
+	 * Constructor
+	 * @throws RuntimeException When the configuration is not successfully loaded.
+	 */
+	private Config() {
+		super();
+	}
+
+	/**
+	 * Loads the configuration from disk re-loading if already loaded.
+	 * <p>
+	 * The config property files are expected to be at the root of the classpath.
+	 * @see #load(String)
+	 */
+	public void load() {
+		load(null);
+	}
+
+	/**
+	 * Loads the configuration from disk re-loading if already loaded.
+	 * @param basePath The base path that points to the dir containing the config
+	 *        property files. May be <code>null</code> in which case, the config
+	 *        files are expected to be at the root of the classpath.
+	 */
+	public void load(String basePath) {
+		PropertiesConfiguration baseProps, machineUserProps = null, localProps;
+
+		// load the required base props
+		try {
+			baseProps = new PropertiesConfiguration();
+			baseProps.setBasePath(basePath);
+			baseProps.setDelimiterParsingDisabled(true);
+			baseProps.load(CONFIG_PROPERTIES_FILE_NAME);
+		}
+		catch(ConfigurationException ce) {
+			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
+		}
+
+		// load the optional machine user props
+		String machineUserPropFileName = getMachineUserConfigPropFileName();
+		if(machineUserPropFileName != null) {
+			try {
+				machineUserProps = new PropertiesConfiguration();
+				machineUserProps.setBasePath(basePath);
+				machineUserProps.setDelimiterParsingDisabled(true);
+				machineUserProps.load(machineUserPropFileName);
+			}
+			catch(ConfigurationException ce) {
+				// ok, this file is optional
+			}
+		}
+
+		// load the optional local props overrides
+		try {
+			localProps = new PropertiesConfiguration();
+			localProps.setBasePath(basePath);
+			localProps.setDelimiterParsingDisabled(true);
+			localProps.load(LOCAL_CONFIG_PROPERTIES_FILE_NAME);
+		}
+		catch(ConfigurationException ce) {
+			localProps = null; // ok, this file is optional
+		}
+
+		CompositeConfiguration cc = new CompositeConfiguration();
+		if(localProps != null) cc.addConfiguration(localProps);
+		if(machineUserProps != null) cc.addConfiguration(machineUserProps);
+		cc.addConfiguration(baseProps);
+
+		root = new CombinedConfiguration();
+		root.append(ConfigurationUtils.convertToHierarchical(cc));
+	}
 
 	/**
 	 * Determines the machine/user config file name based on the corresponding
@@ -82,72 +169,6 @@ public final class Config implements Configuration {
 			return null;
 		}
 		return machinename + '.' + username + ".config.properties";
-	}
-
-	public static final Config instance() {
-		return instance;
-	}
-
-	/**
-	 * Implementation decoratee
-	 */
-	private CombinedConfiguration root;
-
-	/**
-	 * Constructor
-	 * @throws RuntimeException When the configuration is not successfully loaded.
-	 */
-	private Config() {
-		super();
-		reload();
-	}
-
-	/**
-	 * [Re-]loads the configuration from disk.
-	 */
-	public void reload() {
-		PropertiesConfiguration baseProps, machineUserProps = null, localProps;
-
-		// load the required base props
-		try {
-			baseProps = new PropertiesConfiguration();
-			baseProps.setDelimiterParsingDisabled(true);
-			baseProps.load(CONFIG_PROPERTIES_FILE_NAME);
-		}
-		catch(ConfigurationException ce) {
-			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
-		}
-
-		// load the optional machine user props
-		String machineUserPropFileName = getMachineUserConfigPropFileName();
-		if(machineUserPropFileName != null) {
-			try {
-				machineUserProps = new PropertiesConfiguration();
-				machineUserProps.setDelimiterParsingDisabled(true);
-				machineUserProps.load(machineUserPropFileName);
-			}
-			catch(ConfigurationException ce) {
-				// ok, this file is optional
-			}
-		}
-
-		// load the optional local props overrides
-		try {
-			localProps = new PropertiesConfiguration();
-			localProps.setDelimiterParsingDisabled(true);
-			localProps.load(LOCAL_CONFIG_PROPERTIES_FILE_NAME);
-		}
-		catch(ConfigurationException ce) {
-			localProps = null; // ok, this file is optional
-		}
-
-		CompositeConfiguration cc = new CompositeConfiguration();
-		if(localProps != null) cc.addConfiguration(localProps);
-		if(machineUserProps != null) cc.addConfiguration(machineUserProps);
-		cc.addConfiguration(baseProps);
-
-		root = new CombinedConfiguration();
-		root.append(ConfigurationUtils.convertToHierarchical(cc));
 	}
 
 	public void addProperty(String key, Object value) {
