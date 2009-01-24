@@ -90,9 +90,6 @@
                   <artifactId>commons-configuration</artifactId>
                 </element>
               </classpath>
-              <scriptpath>
-                <element>${pom.basedir}/../config</element>
-              </scriptpath>
               <source>${pom.basedir}/src/main/script/ResourceProcessor.groovy</source>
             </configuration>
           </execution>

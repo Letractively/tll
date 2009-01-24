@@ -71,8 +71,6 @@ create table account_address (
 alter table account 
 	add index fk_prnt_acnt (parent_aid), 
 	add constraint fk_prnt_acnt foreign key (parent_aid) references account (id) on delete set null,	
-	add index fk_a_pi (pi_id), 
-	add constraint fk_a_pi foreign key (pi_id) references payment_info (id) on delete set null,
 	add index fk_a_c (cur_id), 
 	add constraint fk_a_c foreign key (cur_id) references currency (id) on delete set null;
 

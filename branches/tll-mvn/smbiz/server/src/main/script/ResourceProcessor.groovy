@@ -6,7 +6,12 @@
  * Processes server side resources for packaging.
  */
 
+ String srcResourceDir = project.basedir.toString() + "/src/main/resources/"
+ String tgtResourceDir = project.basedir.toString() + "/target/classes/" 
+ 
  def config = com.tll.config.Config.instance();
+ config.load(srcResourceDir);
+ 
  def property = config.asMap(null, null);
  
  def createDeployConfigPropsFile = {

@@ -12,10 +12,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.testng.Assert;
 
-import com.google.inject.Key;
 import com.google.inject.Module;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -24,7 +23,6 @@ import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbShellModule;
-import com.tll.di.DbShellModule.TestDb;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
@@ -50,8 +48,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 			return dao.findEntity(criteria);
 		}
 		catch(InvalidCriteriaException e) {
-			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
-			return null;
+			throw new IllegalStateException("Unexpected invalid criteria exception occurred: " + e.getMessage());
 		}
 	}
 
@@ -68,8 +65,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 			return dao.find(criteria, null);
 		}
 		catch(InvalidCriteriaException e) {
-			Assert.fail("Unexpected invalid criteria exception occurred: " + e.getMessage());
-			return null;
+			throw new IllegalStateException("Unexpected invalid criteria exception occurred: " + e.getMessage());
 		}
 	}
 
@@ -119,7 +115,8 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(jpaMode != JpaMode.NONE) {
 			// IMPT: use the TEST db!
 			if(jpaMode != JpaMode.MOCK) {
-				modules.add(new DbShellModule());
+				String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_TEST_NAME.getKey());
+				modules.add(new DbShellModule(dbName));
 			}
 		}
 	}
@@ -140,7 +137,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * @return The injected {@link DbShell}
 	 */
 	protected final DbShell getDbShell() {
-		return injector.getInstance(Key.get(DbShell.class, TestDb.class));
+		return injector.getInstance(DbShell.class);
 	}
 
 	protected EntityManagerFactory getEntityManagerFactory() {
