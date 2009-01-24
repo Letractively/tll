@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll;
+package com.tll.test;
 
 import java.util.List;
 
@@ -25,6 +25,7 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
+import com.tll.test.AbstractInjectedTest;
 
 /**
  * DbTest - Test that supports raw transactions having an accessible
@@ -115,7 +116,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(jpaMode != JpaMode.NONE) {
 			// IMPT: use the TEST db!
 			if(jpaMode != JpaMode.MOCK) {
-				String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_TEST_NAME.getKey());
+				String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
 				modules.add(new DbShellModule(dbName));
 			}
 		}

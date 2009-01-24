@@ -4,7 +4,7 @@
  * Copywright - 2005 - All rights reserved.
  * 
  */
-package com.tll.dao;
+package com.tll.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,12 +23,18 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.DbTest;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.DaoMode;
+import com.tll.dao.IEntityDao;
+import com.tll.dao.IPageResult;
+import com.tll.dao.JpaMode;
+import com.tll.dao.SearchResult;
+import com.tll.dao.SortColumn;
+import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.JpaModule;
 import com.tll.model.BusinessKeyFactory;

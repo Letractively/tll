@@ -1,44 +1,44 @@
-/*
+/**
  * The Logic Lab
+ * @author jpk
+ * Jan 24, 2009
  */
-package com.tll.dao.impl;
+package com.tll.test;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.testng.Assert;
 
-import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
-import com.tll.model.PaymentInfo;
+import com.tll.model.NestedEntity;
 import com.tll.model.key.PrimaryKey;
 
+
 /**
- * AbstractAccountDaoTest
- * @param <A> the account type
+ * GenericEntityDaoTest
  * @author jpk
  */
-public abstract class AbstractAccountDaoTest<A extends Account> extends AbstractEntityDaoTest<A> {
+public class GenericEntityDaoTest extends AbstractEntityDaoTest<Account> {
 
-	PrimaryKey<PaymentInfo> piKey;
+	PrimaryKey<NestedEntity> neKey;
 	PrimaryKey<Currency> cKey;
 	PrimaryKey<Address> a1Key;
 	PrimaryKey<Address> a2Key;
 	PrimaryKey<Account> parentKey;
-
+	
 	/**
 	 * Constructor
-	 * @param accountClass
 	 */
-	public AbstractAccountDaoTest(Class<A> accountClass) {
-		super(accountClass);
+	public GenericEntityDaoTest() {
+		super(Account.class, true);
 	}
 
 	@Override
-	protected void assembleTestEntity(A e) throws Exception {
+	protected void assembleTestEntity(Account e) throws Exception {
 
 		Currency currency;
 		if(cKey == null) {
@@ -53,24 +53,24 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 		Assert.assertNotNull(currency);
 		e.setCurrency(currency);
 
-		PaymentInfo paymentInfo;
-		if(piKey == null) {
-			// stub payment info
+		NestedEntity nestedEntity;
+		if(neKey == null) {
+			// stub nested entity
 			try {
-				paymentInfo = getMockEntityProvider().getEntityCopy(PaymentInfo.class, true);
+				nestedEntity = getMockEntityProvider().getEntityCopy(NestedEntity.class, true);
 			}
 			catch(final Exception ex) {
-				Assert.fail("Unable to acquire test payment info entity");
+				Assert.fail("Unable to acquire test nested entity");
 				return;
 			}
-			paymentInfo = getEntityDao().persist(paymentInfo);
-			piKey = new PrimaryKey<PaymentInfo>(paymentInfo);
+			nestedEntity = getEntityDao().persist(nestedEntity);
+			neKey = new PrimaryKey<NestedEntity>(nestedEntity);
 		}
 		else {
-			paymentInfo = getEntityDao().load(piKey);
+			nestedEntity = getEntityDao().load(neKey);
 		}
-		Assert.assertNotNull(paymentInfo);
-		e.setPaymentInfo(paymentInfo);
+		Assert.assertNotNull(nestedEntity);
+		e.setNestedEntity(nestedEntity);
 
 		// stub account parent (if specified)
 		if(e.getParent() != null) {
@@ -80,7 +80,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 					getEntityFactory().setGenerated(parent);
 					parent.setParent(null); // eliminate pointer chasing
 					parent.setCurrency(currency);
-					parent.setPaymentInfo(paymentInfo);
+					parent.setNestedEntity(nestedEntity);
 					parent = getEntityDao().persist(parent);
 					parentKey = new PrimaryKey<Account>(parent);
 				}
@@ -124,14 +124,14 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 	protected void afterMethodHook() {
 		startNewTransaction();
 
-		if(piKey != null) {
+		if(neKey != null) {
 			try {
-				getEntityDao().purge(getEntityDao().load(piKey));
+				getEntityDao().purge(getEntityDao().load(neKey));
 			}
 			catch(final EntityNotFoundException enfe) {
 				// ok
 			}
-			piKey = null;
+			neKey = null;
 		}
 
 		if(cKey != null) {
@@ -179,7 +179,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 	}
 
 	@Override
-	protected void uniquify(A e) {
+	protected void uniquify(Account e) {
 		super.uniquify(e);
 
 		try {
@@ -196,11 +196,11 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 	}
 
 	@Override
-	protected void verifyLoadedEntityState(A e) throws Exception {
+	protected void verifyLoadedEntityState(Account e) throws Exception {
 		super.verifyLoadedEntityState(e);
 
 		Assert.assertNotNull(e.getCurrency(), "No account currency loaded");
-		Assert.assertNotNull(e.getPaymentInfo(), "No account payment info loaded");
+		Assert.assertNotNull(e.getNestedEntity(), "No account nested entity loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
 				"No account address collection loaded or invalid number of them");
 	}

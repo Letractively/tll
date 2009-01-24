@@ -29,6 +29,11 @@
  	return rval;
  }
   
+ def init = {
+  	File f = new File(tgtResourceDir);
+  	f.mkdir();
+ }
+  
  // Adds persistence related properties to the built persistence.xml file
  def createBuildPersistenceXmlFile = {
  	println()
@@ -73,13 +78,13 @@
 
  def copyClasspathResourceFiles = {
 	println()
-	println('Copying remaining classpath resource files...')
+	println('Copying classpath resource files...')
 	ant.copy(todir: tgtResourceDir, preservelastmodified:true, flatten:true) {
 		fileset(dir: srcResourceDir) {
 			include(name: 'config.properties')
 			include(name: 'log4j.properties')
 			include(name: 'ehcache.xml')
-			//include(name:'mock-entitiess.xml')
+			include(name:'mock-entitiess.xml')
 			//include(name:'ValidatorMessages.properties')
 			include(name: '**/*.sql')
 			include(name: '**/*.ddl')
@@ -87,6 +92,7 @@
 	}
  }
  
+ init()
  copyMetaInfFiles()
  copyClasspathResourceFiles()
  

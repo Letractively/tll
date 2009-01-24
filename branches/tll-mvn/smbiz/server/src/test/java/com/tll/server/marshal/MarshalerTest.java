@@ -14,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.AbstractInjectedTest;
 import com.tll.client.model.IModelProperty;
 import com.tll.client.model.Model;
 import com.tll.client.model.RefKey;
@@ -29,6 +28,7 @@ import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.MockEntityProvider;
 import com.tll.model.PaymentInfo;
+import com.tll.test.AbstractInjectedTest;
 import com.tll.util.CommonUtil;
 
 /**

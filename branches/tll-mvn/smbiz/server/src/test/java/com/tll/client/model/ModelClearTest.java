@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.tll.TestUtils;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
@@ -20,6 +19,7 @@ import com.tll.model.MockEntityProvider;
 import com.tll.model.schema.PropertyType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
+import com.tll.test.TestUtils;
 
 /**
  * ModelCopyTest - Test the {@link Model#copy(boolean)} method.

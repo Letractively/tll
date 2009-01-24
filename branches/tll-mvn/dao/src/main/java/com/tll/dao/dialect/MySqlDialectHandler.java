@@ -19,6 +19,7 @@ import com.tll.dao.IDbDialectHandler;
  * MySql implementation of {@link IDbDialectHandler}
  * @author jpk
  */
+// TODO eliminate hibernate dependencies!
 public class MySqlDialectHandler implements IDbDialectHandler {
 
 	/**

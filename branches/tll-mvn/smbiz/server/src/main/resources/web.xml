@@ -16,6 +16,7 @@
       com.tll.di.RefDataModule
       com.tll.di.ModelModule
       com.tll.di.MockEntitiesModule
+      com.tll.di.DbDialectModule
       com.tll.di.JpaModule
       com.tll.di.DaoModule
       com.tll.di.EntityServiceModule

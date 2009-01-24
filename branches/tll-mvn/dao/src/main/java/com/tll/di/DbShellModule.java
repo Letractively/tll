@@ -21,7 +21,6 @@ public class DbShellModule extends GModule {
 	public static enum ConfigKeys implements IConfigKey {
 
 		DB_NAME("db.name"),
-		DB_TEST_NAME("db.test.name"),
 		DB_NAME_ROOT("db.name.root"),
 
 		DB_URL_PREFIX("db.urlprefix"),

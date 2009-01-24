@@ -31,11 +31,19 @@ create table currency (
    primary key (id)
 );
 
+create table nested_entity (
+   id int not null,
+   version int not null default 0,
+   name varchar(64) not null,
+   data blob not null,
+   unique(name),
+   primary key (id)
+);
+
 -- account related
 create table account (
    id int not null,
    version int not null default 0,
-   account_type tinyint not null,
    date_created datetime not null,
    date_last_modified datetime not null,
    parent_aid int,
@@ -43,13 +51,9 @@ create table account (
    name varchar(64) not null,
    persist_pymnt_info boolean,
    billing_model varchar(32),
-   billing_cycle varchar(32),
    date_last_charged datetime,
-   next_charge_date datetime,
-   date_cancelled datetime,
-   pi_id int,
+   ne_id int,
    cur_id int,
-   store_name varchar(128),
    unique(name),
    primary key (id)
 );
@@ -71,6 +75,8 @@ create table account_address (
 alter table account 
 	add index fk_prnt_acnt (parent_aid), 
 	add constraint fk_prnt_acnt foreign key (parent_aid) references account (id) on delete set null,	
+	add index fk_a_ne (ne_id), 
+	add constraint fk_a_ne foreign key (ne_id) references nested_entity (id) on delete set null,
 	add index fk_a_c (cur_id), 
 	add constraint fk_a_c foreign key (cur_id) references currency (id) on delete set null;
 

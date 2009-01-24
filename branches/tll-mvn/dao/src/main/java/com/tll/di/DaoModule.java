@@ -8,9 +8,7 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.dao.DaoMode;
-import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.dialect.MySqlDialectHandler;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
 import com.tll.model.MockEntityProvider;
 import com.tll.model.MockPrimaryKeyGenerator;
@@ -100,9 +98,6 @@ public class DaoModule extends CompositeModule {
 			// IPrimaryKeyGenerator
 			bind(IPrimaryKeyGenerator.class).to(PrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 	
-			// IDbDialectHandler
-			bind(IDbDialectHandler.class).to(MySqlDialectHandler.class).in(Scopes.SINGLETON);
-			
 			// IEntityDao
 			bind(IEntityDao.class).to(com.tll.dao.hibernate.EntityDao.class).in(Scopes.SINGLETON);
 		}

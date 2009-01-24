@@ -10,19 +10,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
-import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.JpaMode;
-import com.tll.dao.dialect.MySqlDialectHandler;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
+import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.JpaModule;
 
@@ -37,15 +33,9 @@ public class HibernateEnvironmentTest {
 	
 	@BeforeClass
 	public void init() {
-		Module m = new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(IDbDialectHandler.class).to(MySqlDialectHandler.class).in(Scopes.SINGLETON);
-			}
-		};
-		String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
-		Injector i = Guice.createInjector(Stage.DEVELOPMENT, m, new DbShellModule(dbName));
+		Injector i =
+				Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(Config.instance().getString(
+						DbShellModule.ConfigKeys.DB_NAME.getKey())));
 		db = i.getInstance(DbShell.class);
 		db.create();
 	}

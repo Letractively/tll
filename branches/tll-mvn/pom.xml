@@ -95,7 +95,7 @@
         <artifactId>mysql-connector-java</artifactId>
         <version>5.1.6</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
@@ -203,6 +203,32 @@
             <target>1.6</target>
           </configuration>
         </plugin>
+
+        <!--
+          directive to generate a separate jar containing 
+          any test assets found in: /src/test/java/com/tll/test/
+          
+          This is for propagating unit test base classes among sibling projects.
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>test-assets</id>
+              <phase>package</phase>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+              <configuration>
+                <includes>
+                  <include>**/test/*</include>
+                </includes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>

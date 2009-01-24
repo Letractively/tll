@@ -3,7 +3,7 @@
  * @author jpk
  * Dec 31, 2008
  */
-package com.tll;
+package com.tll.test;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
