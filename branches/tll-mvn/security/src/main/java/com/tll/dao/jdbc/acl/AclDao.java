@@ -1,4 +1,4 @@
-package com.tll.dao.impl.jdbc.acl;
+package com.tll.dao.jdbc.acl;
 
 import java.sql.Types;
 
