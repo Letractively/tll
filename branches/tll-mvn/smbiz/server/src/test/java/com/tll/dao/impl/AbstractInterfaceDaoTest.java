@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
@@ -19,7 +19,7 @@ import com.tll.model.InterfaceOptionParameterDefinition;
  * @param <I> interface type
  * @author jpk
  */
-public abstract class AbstractInterfaceDaoTest<I extends Interface> extends NamedEntityDaoTest<I> {
+public abstract class AbstractInterfaceDaoTest<I extends Interface> extends AbstractEntityDaoTest<I> {
 
 	protected InterfaceOption removedOption;
 	protected InterfaceOptionParameterDefinition removedParam;

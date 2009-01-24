@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.AbstractDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
@@ -21,7 +21,7 @@ import com.tll.model.key.PrimaryKey;
  * @author jpk
  */
 @Test(groups = "dao", testName = "AccountHistoryDaoTest")
-public class AccountHistoryDaoTest extends AbstractDaoTest<AccountHistory> {
+public class AccountHistoryDaoTest extends AbstractEntityDaoTest<AccountHistory> {
 
 	PrimaryKey<Account> aKey;
 

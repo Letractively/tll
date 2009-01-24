@@ -6,7 +6,7 @@ package com.tll.dao.impl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Currency;
 
 /**
@@ -14,7 +14,7 @@ import com.tll.model.Currency;
  * @author jpk
  */
 @Test(groups = "dao", testName = "CurrencyDaoTest")
-public class CurrencyDaoTest extends NamedEntityDaoTest<Currency> {
+public class CurrencyDaoTest extends AbstractEntityDaoTest<Currency> {
 
 	/**
 	 * Constructor

@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
@@ -22,7 +22,7 @@ import com.tll.model.key.PrimaryKey;
  * @author jpk
  */
 @Test(groups = "dao")
-public class AccountAddressDaoTest extends NamedEntityDaoTest<AccountAddress> {
+public class AccountAddressDaoTest extends AbstractEntityDaoTest<AccountAddress> {
 
 	PrimaryKey<Account> aKey;
 	PrimaryKey<Address> adrKey;

@@ -44,11 +44,11 @@ import com.tll.model.key.PrimaryKey;
 import com.tll.util.EnumUtil;
 
 /**
- * AbstractDaoTest
+ * AbstractEntityDaoTest
  * @param <E> entity type
  * @author jpk
  */
-public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
+public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced
@@ -102,7 +102,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * Constructor
 	 * @param entityClass
 	 */
-	protected AbstractDaoTest(Class<E> entityClass) {
+	protected AbstractEntityDaoTest(Class<E> entityClass) {
 		this(entityClass, true);
 	}
 
@@ -111,7 +111,7 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @param entityClass
 	 * @param testPagingRelated
 	 */
-	protected AbstractDaoTest(Class<E> entityClass, boolean testPagingRelated) {
+	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated) {
 		super();
 		this.entityClass = entityClass;
 		this.testPagingRelated = testPagingRelated;
@@ -437,14 +437,22 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * Alters the entity as prep for update via the dao.
 	 * @param e the entity
 	 */
-	protected abstract void alterEntity(E e);
+	protected void alterEntity(E e) {
+		if(e instanceof INamedEntity) {
+			((INamedEntity) e).setName("altered");
+		}
+	}
 
 	/**
 	 * Verifies the alteration(s) made to the entity after dao update
 	 * @param e the entity
 	 * @throws Exception if alteration(s) don't remain
 	 */
-	protected abstract void verifyEntityAlteration(E e) throws Exception;
+	protected void verifyEntityAlteration(E e) throws Exception {
+		if(e instanceof INamedEntity) {
+			Assert.assertTrue("altered".equals(((INamedEntity) e).getName()), "Named entity alteration does not match");
+		}
+	}
 
 	/**
 	 * Verifies the state of the entity is ok based Entity property and
@@ -452,7 +460,11 @@ public abstract class AbstractDaoTest<E extends IEntity> extends DbTest {
 	 * @param e the entity
 	 * @throws Exception if entity can't be retrieved
 	 */
-	protected abstract void verifyLoadedEntityState(E e) throws Exception;
+	protected void verifyLoadedEntityState(E e) throws Exception {
+		if(e instanceof INamedEntity) {
+			Assert.assertNotNull(((INamedEntity) e).getName(), "The name property is null");
+		}
+	}
 
 	protected final E getEntityFromDb(PrimaryKey<? extends E> key) {
 		return DbTest.getEntityFromDb(dao, key);

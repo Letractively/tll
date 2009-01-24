@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.testng.Assert;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
@@ -21,7 +21,7 @@ import com.tll.model.key.PrimaryKey;
  * @param <A> the account type
  * @author jpk
  */
-public abstract class AbstractAccountDaoTest<A extends Account> extends NamedEntityDaoTest<A> {
+public abstract class AbstractAccountDaoTest<A extends Account> extends AbstractEntityDaoTest<A> {
 
 	PrimaryKey<PaymentInfo> piKey;
 	PrimaryKey<Currency> cKey;

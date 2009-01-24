@@ -8,7 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.AbstractDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
@@ -20,7 +20,7 @@ import com.tll.model.key.PrimaryKey;
  * @author jpk
  */
 @Test(groups = "dao", testName = "VisitorDaoTest")
-public class VisitorDaoTest extends AbstractDaoTest<Visitor> {
+public class VisitorDaoTest extends AbstractEntityDaoTest<Visitor> {
 
 	PrimaryKey<Account> aKey;
 

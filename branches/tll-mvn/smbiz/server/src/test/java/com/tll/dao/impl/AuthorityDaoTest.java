@@ -5,7 +5,7 @@ package com.tll.dao.impl;
 
 import org.testng.annotations.Test;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Authority;
 
 /**
@@ -13,7 +13,7 @@ import com.tll.model.Authority;
  * @author jpk
  */
 @Test(groups = "dao", testName = "AuthorityDaoTest")
-public class AuthorityDaoTest extends NamedEntityDaoTest<Authority> {
+public class AuthorityDaoTest extends AbstractEntityDaoTest<Authority> {
 
 	/**
 	 * Constructor

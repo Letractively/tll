@@ -6,7 +6,7 @@ package com.tll.dao.impl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.AppProperty;
 
 /**
@@ -14,7 +14,7 @@ import com.tll.model.AppProperty;
  * @author jpk
  */
 @Test(groups = "dao", testName = "AppPropertyDaoTest")
-public class AppPropertyDaoTest extends NamedEntityDaoTest<AppProperty> {
+public class AppPropertyDaoTest extends AbstractEntityDaoTest<AppProperty> {
 
 	/**
 	 * Constructor

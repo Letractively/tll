@@ -11,7 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.tll.criteria.QueryParam;
-import com.tll.dao.NamedEntityDaoTest;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Authority;
@@ -22,11 +22,11 @@ import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.PropertyType;
 
 /**
- * NamedEntityDaoTest
+ * AbstractEntityDaoTest
  * @author jpk
  */
 @Test(groups = "dao")
-public class UserDaoTest extends NamedEntityDaoTest<User> {
+public class UserDaoTest extends AbstractEntityDaoTest<User> {
 
 	PrimaryKey<Account> aKey;
 	PrimaryKey<Authority> tKey;
