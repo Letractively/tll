@@ -16,6 +16,8 @@ import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Config - Configuration store that loads properties from a properties file
@@ -30,6 +32,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  * @author jpk
  */
 public final class Config implements Configuration {
+
+	private static final Log log = LogFactory.getLog(Config.class);
 
 	/**
 	 * The base config file name.
@@ -102,6 +106,7 @@ public final class Config implements Configuration {
 			baseProps.setBasePath(basePath);
 			baseProps.setDelimiterParsingDisabled(true);
 			baseProps.load(CONFIG_PROPERTIES_FILE_NAME);
+			log.info(CONFIG_PROPERTIES_FILE_NAME + " loaded.");
 		}
 		catch(ConfigurationException ce) {
 			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
@@ -115,6 +120,7 @@ public final class Config implements Configuration {
 				machineUserProps.setBasePath(basePath);
 				machineUserProps.setDelimiterParsingDisabled(true);
 				machineUserProps.load(machineUserPropFileName);
+				log.info(machineUserPropFileName + " loaded.");
 			}
 			catch(ConfigurationException ce) {
 				// ok, this file is optional
@@ -127,6 +133,7 @@ public final class Config implements Configuration {
 			localProps.setBasePath(basePath);
 			localProps.setDelimiterParsingDisabled(true);
 			localProps.load(LOCAL_CONFIG_PROPERTIES_FILE_NAME);
+			log.info(LOCAL_CONFIG_PROPERTIES_FILE_NAME + " loaded.");
 		}
 		catch(ConfigurationException ce) {
 			localProps = null; // ok, this file is optional
@@ -139,6 +146,7 @@ public final class Config implements Configuration {
 
 		root = new CombinedConfiguration();
 		root.append(ConfigurationUtils.convertToHierarchical(cc));
+		log.info("Config property files loaded.");
 	}
 
 	/**
