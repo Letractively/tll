@@ -22,6 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -50,9 +51,10 @@ import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
@@ -205,6 +207,11 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	private DaoMode daoMode;
 
 	private IEntityDao rawDao;
+	
+	/**
+	 * Employed only when {@link #daoMode} is {@link DaoMode#MOCK}.
+	 */
+	private final IEntityProvider mockEntityProvider;
 
 	private final EntityDao dao = new EntityDao();
 
@@ -219,20 +226,15 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	/**
 	 * Constructor
 	 * @param entityClass
-	 */
-	protected AbstractEntityDaoTest(Class<E> entityClass) {
-		this(entityClass, true);
-	}
-
-	/**
-	 * Constructor
-	 * @param entityClass
 	 * @param testPagingRelated
+	 * @param mockEntityProvider Used only when the dao mode is
+	 *        {@link DaoMode#MOCK}.
 	 */
-	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated) {
+	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated, IEntityProvider mockEntityProvider) {
 		super();
 		this.entityClass = entityClass;
 		this.testPagingRelated = testPagingRelated;
+		this.mockEntityProvider = mockEntityProvider;
 	}
 
 	@Override
@@ -242,6 +244,19 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		super.addModules(modules);
 		if(daoMode == DaoMode.ORM) {
 			modules.add(new DbDialectModule());
+		}
+		else if(daoMode == DaoMode.MOCK) {
+			if(mockEntityProvider == null) {
+				throw new IllegalStateException("A mock entity provider must be specified when performing mock dao testing.");
+			}
+			modules.add(new MockEntitiesModule());
+			modules.add(new Module() {
+
+				@Override
+				public void configure(Binder binder) {
+					binder.bind(IEntityProvider.class).toInstance(mockEntityProvider);
+				}
+			});
 		}
 		modules.add(new JpaModule(getJpaMode()));
 		modules.add(new DaoModule(daoMode));
@@ -399,7 +414,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 */
 	protected final <ET extends IEntity> void makeUnique(ET e) {
 		try {
-			getMockEntityProvider().makeBusinessKeyUnique(e);
+			getMockEntityFactory().makeBusinessKeyUnique(e);
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			// ok
@@ -407,13 +422,13 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	/**
-	 * <strong>NOTE: </strong>The {@link MockEntityProvider} is not available by
+	 * <strong>NOTE: </strong>The {@link MockEntityFactory} is not available by
 	 * default. It must be bound in a given module which is added via
 	 * {@link #addModules(List)}.
-	 * @return The injected {@link MockEntityProvider}
+	 * @return The injected {@link MockEntityFactory}
 	 */
-	protected final MockEntityProvider getMockEntityProvider() {
-		return injector.getInstance(MockEntityProvider.class);
+	protected final MockEntityFactory getMockEntityFactory() {
+		return injector.getInstance(MockEntityFactory.class);
 	}
 
 	/**
@@ -423,7 +438,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	protected final E getTestEntity() throws Exception {
-		final E e = getMockEntityProvider().getEntityCopy(entityClass, false);
+		final E e = getMockEntityFactory().getEntityCopy(entityClass, false);
 		assembleTestEntity(e);
 		uniquify(e);
 		return e;

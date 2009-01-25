@@ -9,8 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.model.MockEntityProvider;
-import com.tll.model.MockEntityProvider.MockEntityBeanFactory;
+import com.tll.model.MockEntityFactory;
+import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
 
 /**
  * MockEntitiesModule
@@ -46,7 +46,7 @@ public class MockEntitiesModule extends GModule {
 		final String mef = Config.instance().getString(ConfigKeys.MOCK_ENTITIES_FILENAME.getKey());
 		final ClassPathXmlApplicationContext sac = new ClassPathXmlApplicationContext(mef/*"mock-entities.xml"*/);
 		bind(ListableBeanFactory.class).annotatedWith(MockEntityBeanFactory.class).toInstance(sac);
-		bind(MockEntityProvider.class).in(Scopes.SINGLETON);
+		bind(MockEntityFactory.class).in(Scopes.SINGLETON);
 	}
 
 }

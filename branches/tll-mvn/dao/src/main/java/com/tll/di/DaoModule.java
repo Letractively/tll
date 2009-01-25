@@ -10,7 +10,6 @@ import com.tll.config.IConfigKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
-import com.tll.model.MockEntityProvider;
 import com.tll.model.MockPrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.EnumUtil;
@@ -122,9 +121,6 @@ public class DaoModule extends CompositeModule {
 		protected void configure() {
 			// IPrimaryKeyGenerator
 			bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-
-			// TODO should this be here?
-			bind(MockEntityProvider.class).in(Scopes.SINGLETON);
 
 			// IEntityDao
 			bind(IEntityDao.class).to(com.tll.dao.mock.EntityDao.class).in(Scopes.SINGLETON);

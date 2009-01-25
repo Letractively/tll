@@ -19,13 +19,13 @@ import com.google.inject.Inject;
 import com.tll.model.key.BusinessKey;
 
 /**
- * MockEntityProvider - Provides prototype entity instances via a Spring bean
+ * MockEntityFactory - Provides prototype entity instances via a Spring bean
  * context.
  * @author jpk
  */
-public final class MockEntityProvider {
+public final class MockEntityFactory {
 
-	private static final Log log = LogFactory.getLog(MockEntityProvider.class);
+	private static final Log log = LogFactory.getLog(MockEntityFactory.class);
 
 	/**
 	 * Use a static counter for created business key wise unique entity copies to
@@ -53,7 +53,7 @@ public final class MockEntityProvider {
 	 * @param entityFactory
 	 */
 	@Inject
-	public MockEntityProvider(@MockEntityBeanFactory ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
+	public MockEntityFactory(@MockEntityBeanFactory ListableBeanFactory beanFactory, IEntityFactory entityFactory) {
 		super();
 		assert beanFactory != null : "The beanFactory is null";
 		assert entityFactory != null : "The entityFactory is null";

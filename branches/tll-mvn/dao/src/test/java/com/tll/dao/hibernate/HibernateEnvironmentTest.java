@@ -33,9 +33,9 @@ public class HibernateEnvironmentTest {
 	
 	@BeforeClass
 	public void init() {
+		String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
 		Injector i =
-				Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(Config.instance().getString(
-						DbShellModule.ConfigKeys.DB_NAME.getKey())));
+				Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(dbName));
 		db = i.getInstance(DbShell.class);
 		db.create();
 	}
@@ -51,9 +51,8 @@ public class HibernateEnvironmentTest {
 	 */
 	public void test() {
 		try {
-			JpaModule jpaModule = new JpaModule(JpaMode.LOCAL);
-			DaoModule daoModule = new DaoModule(DaoMode.ORM);
-			Guice.createInjector(Stage.DEVELOPMENT, jpaModule, daoModule);
+			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new JpaModule(JpaMode.LOCAL), new DaoModule(
+					DaoMode.ORM));
 		}
 		catch(Throwable t) {
 			Assert.fail(t.getMessage(), t);
