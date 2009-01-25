@@ -13,10 +13,11 @@ import com.tll.model.MockEntityFactory;
 import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
 
 /**
- * MockEntitiesModule
+ * MockEntityFactoryModule - Use for providing a {@link MockEntityFactory}
+ * instance based on Spring compatable bean xml definition file.
  * @author jpk
  */
-public class MockEntitiesModule extends GModule {
+public class MockEntityFactoryModule extends GModule {
 
 	/**
 	 * ConfigKeys - Defines the necessary config keys for this module.

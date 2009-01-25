@@ -438,14 +438,6 @@ public final class EntityDao implements IEntityDao {
 		else {
 			clc.add(entity);
 		}
-		Integer version = entity.getVersion();
-		if(version == null) {
-			version = new Integer(0);
-		}
-		else {
-			version++;
-		}
-		entity.setVersion(version);
 		
 		// set date created/modified
 		if(entity instanceof ITimeStampEntity) {
@@ -455,6 +447,16 @@ public final class EntityDao implements IEntityDao {
 			}
 			((ITimeStampEntity) entity).setDateModified(now);
 		}
+		
+		// incremenet version
+		Integer version = entity.getVersion();
+		if(version == null) {
+			version = new Integer(0);
+		}
+		else {
+			version++;
+		}
+		entity.setVersion(version);
 		
 		return entity;
 	}

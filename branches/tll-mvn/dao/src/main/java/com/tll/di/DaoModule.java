@@ -3,6 +3,7 @@
  */
 package com.tll.di;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
@@ -10,6 +11,7 @@ import com.tll.config.IConfigKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
+import com.tll.model.IEntityProvider;
 import com.tll.model.MockPrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 import com.tll.util.EnumUtil;
@@ -26,7 +28,8 @@ public class DaoModule extends CompositeModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		DAO_MODE_PARAM("db.dao.mode");
+		DAO_MODE_PARAM("db.dao.mode"),
+		MOCK_ENTITYPROVIDER_CLASSNAME("mock.entityProvider.classname");
 
 		private final String key;
 
@@ -67,15 +70,34 @@ public class DaoModule extends CompositeModule {
 						ConfigKeys.DAO_MODE_PARAM.getKey())) : daoMode;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Module[] getModulesToBind() {
 		if(DaoMode.MOCK == daoMode) {
-			return new Module[] { new MockDaoModule() };
+			// ad hoc mock entity provider module
+			return new Module[] {
+				new Module() {
+
+					@Override
+					public void configure(Binder binder) {
+						final String mepcn = Config.instance().getString(ConfigKeys.MOCK_ENTITYPROVIDER_CLASSNAME.getKey());
+						if(mepcn == null) {
+							throw new IllegalStateException("No mock entity provider class name specified in the configuration");
+						}
+						try {
+							binder.bind(IEntityProvider.class).to((Class<IEntityProvider>) Class.forName(mepcn)).in(Scopes.SINGLETON);
+						}
+						catch(ClassNotFoundException e) {
+							throw new IllegalStateException("No entity provider implementation found for name: " + mepcn);
+						}
+					}
+				}, new MockDaoModule() };
 		}
 		else if(DaoMode.ORM == daoMode) {
-			return new Module[] { new HibernateDaoModule() };
+			return new Module[] {
+				new DbDialectModule(), new HibernateDaoModule() };
 		}
-		throw new IllegalStateException("Unhandled dao mode: " + daoMode); 
+		throw new IllegalStateException("Unhandled dao mode: " + daoMode);
 	}
 
 	/**
@@ -83,7 +105,7 @@ public class DaoModule extends CompositeModule {
 	 * @author jpk
 	 */
 	private static class HibernateDaoModule extends GModule {
-	
+
 		/**
 		 * Constructor
 		 */
@@ -91,16 +113,16 @@ public class DaoModule extends CompositeModule {
 			super();
 			log.info("Employing Hibernate ORM Dao");
 		}
-	
+
 		@Override
 		protected void configure() {
 			// IPrimaryKeyGenerator
 			bind(IPrimaryKeyGenerator.class).to(PrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-	
+
 			// IEntityDao
 			bind(IEntityDao.class).to(com.tll.dao.hibernate.EntityDao.class).in(Scopes.SINGLETON);
 		}
-	
+
 	}
 
 	/**

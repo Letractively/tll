@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 24, 2009
  */
-package com.tll.test;
+package com.tll.dao;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -16,6 +16,7 @@ import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
 import com.tll.model.NestedEntity;
 import com.tll.model.key.PrimaryKey;
+import com.tll.test.AbstractEntityDaoTest;
 
 
 /**
@@ -34,7 +35,7 @@ public class GenericEntityDaoTest extends AbstractEntityDaoTest<Account> {
 	 * Constructor
 	 */
 	public GenericEntityDaoTest() {
-		super(Account.class, false, null);
+		super(Account.class, false);
 	}
 
 	@Override

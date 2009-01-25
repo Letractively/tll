@@ -51,7 +51,7 @@ public class HibernateEnvironmentTest {
 	 */
 	public void test() {
 		try {
-			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new JpaModule(JpaMode.LOCAL), new DaoModule(
+			Guice.createInjector(Stage.DEVELOPMENT, new JpaModule(JpaMode.LOCAL), new DaoModule(
 					DaoMode.ORM));
 		}
 		catch(Throwable t) {

@@ -22,7 +22,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -45,13 +44,12 @@ import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.JpaModule;
-import com.tll.di.MockEntitiesModule;
+import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
-import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.MockEntityFactory;
@@ -65,6 +63,7 @@ import com.tll.util.EnumUtil;
  * @param <E> entity type
  * @author jpk
  */
+@Test(groups = { "dao" })
 @SuppressWarnings("synthetic-access")
 public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
@@ -208,12 +207,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 	private IEntityDao rawDao;
 	
-	/**
-	 * Employed only when {@link #daoMode} is {@link DaoMode#MOCK}.
-	 */
-	private final IEntityProvider mockEntityProvider;
-
-	private final EntityDao dao = new EntityDao();
+	private final IEntityDao dao = new EntityDao();
 
 	private final List<E> dbRemove = new ArrayList<E>();
 
@@ -227,37 +221,18 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Constructor
 	 * @param entityClass
 	 * @param testPagingRelated
-	 * @param mockEntityProvider Used only when the dao mode is
-	 *        {@link DaoMode#MOCK}.
 	 */
-	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated, IEntityProvider mockEntityProvider) {
+	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated) {
 		super();
 		this.entityClass = entityClass;
 		this.testPagingRelated = testPagingRelated;
-		this.mockEntityProvider = mockEntityProvider;
 	}
 
 	@Override
 	protected final void addModules(List<Module> modules) {
 		modules.add(new ModelModule());
-		modules.add(new MockEntitiesModule());
+		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		if(daoMode == DaoMode.ORM) {
-			modules.add(new DbDialectModule());
-		}
-		else if(daoMode == DaoMode.MOCK) {
-			if(mockEntityProvider == null) {
-				throw new IllegalStateException("A mock entity provider must be specified when performing mock dao testing.");
-			}
-			modules.add(new MockEntitiesModule());
-			modules.add(new Module() {
-
-				@Override
-				public void configure(Binder binder) {
-					binder.bind(IEntityProvider.class).toInstance(mockEntityProvider);
-				}
-			});
-		}
 		modules.add(new JpaModule(getJpaMode()));
 		modules.add(new DaoModule(daoMode));
 	}
@@ -302,7 +277,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		buildInjector();
 
 		this.rawDao = injector.getInstance(IEntityDao.class);
-		logger.debug("Starting DAO Test: " + this.getClass().getSimpleName() + ", dao mode: " + daoMode.toString());
+		logger.debug("Starting DAO Test for: " + entityClass.getSimpleName() + ", dao mode: " + daoMode.toString());
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -601,7 +576,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * tests the load all method
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	public final void testLoadAll() throws Exception {
 		final List<E> list = dao.loadAll(entityClass);
 		endTransaction();
@@ -612,7 +586,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests the findEntities() method
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	@SuppressWarnings("unchecked")
 	public final void testFindEntities() throws Exception {
 		E e = getTestEntity();
@@ -634,7 +607,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	public final void testFindByIds() throws Exception {
 		E e = getTestEntity();
 		e = dao.persist(e);
@@ -655,7 +627,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests id-based list handler related methods
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	public final void testGetIdsAndEntities() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing Id List Handler support test method.");
@@ -692,7 +663,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests page-based list handler related methods
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	public final void testPage() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing DetachedCriteriaPage List Handler support test method.");
@@ -735,7 +705,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
 	public final void testDuplicationException() throws Exception {
 		E e = getTestEntity();
 		e = dao.persist(e);
@@ -758,7 +727,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		}
 	}
 
-	@Test(groups = "dao")
 	public final void testPurgeNewEntity() throws Exception {
 		final E e = getTestEntity();
 		dao.purge(e);
