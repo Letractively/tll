@@ -17,14 +17,18 @@ import com.tll.model.IEntity;
 import com.tll.model.key.IPrimaryKeyGenerator;
 
 /**
- * Hibernate-specific mplementation of <CODE>IPrimaryKeyGenerator</CODE>.
+ * PrimaryKeyGenerator - Hibernate-specific impl of {@link IPrimaryKeyGenerator}
+ * .
+ * <p>
  * This class generates the identifier based on the identifier generation scheme
  * defined for a specific entity class. The strategy must be able to generate an
  * id without first inserting a row into the persistence store. This id
  * generation methodology should be used for generating ids when an entity is
- * first created. This scheme allows us to use the primary key as the unique
- * identifier throughout the lifecycle of an entity bean. Therefore, hashCode
- * and equals can be based on the primary key identifier.
+ * first created.
+ * <p>
+ * This scheme allows us to use the primary key as the unique identifier
+ * throughout the lifecycle of an entity bean. Therefore, hashCode and equals
+ * can be based on the primary key identifier.
  * @author jpk
  */
 public class PrimaryKeyGenerator extends HibernateJpaSupport implements IPrimaryKeyGenerator {

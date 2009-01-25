@@ -393,6 +393,20 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	/**
+	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
+	 * type of the given entity.
+	 * @param e The entity to uniquify
+	 */
+	protected final <ET extends IEntity> void makeUnique(ET e) {
+		try {
+			getMockEntityProvider().makeBusinessKeyUnique(e);
+		}
+		catch(final BusinessKeyNotDefinedException e1) {
+			// ok
+		}
+	}
+
+	/**
 	 * <strong>NOTE: </strong>The {@link MockEntityProvider} is not available by
 	 * default. It must be bound in a given module which is added via
 	 * {@link #addModules(List)}.
@@ -493,7 +507,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		}
 	}
 
-	protected final E getEntityFromDb(PrimaryKey<? extends E> key) {
+	protected final E getEntityFromDb(PrimaryKey<E> key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
@@ -733,19 +747,5 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	public final void testPurgeNewEntity() throws Exception {
 		final E e = getTestEntity();
 		dao.purge(e);
-	}
-
-	/**
-	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
-	 * type of the given entity.
-	 * @param e The entity to uniquify
-	 */
-	protected final <ET extends IEntity> void makeUnique(ET e) {
-		try {
-			getMockEntityProvider().makeBusinessKeyUnique(e);
-		}
-		catch(final BusinessKeyNotDefinedException e1) {
-			// ok
-		}
 	}
 }

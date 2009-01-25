@@ -252,31 +252,28 @@ public final class BusinessKeyFactory {
 	 *         against oneanother.
 	 */
 	public static <E extends IEntity> boolean isBusinessKeyUnique(Collection<E> clctn) {
-		assert clctn != null;
-		if(clctn.size() < 2) {
-			return true;
-		}
-		try {
-			for(E e : clctn) {
-				BusinessKey[] bks = create(e);
-				for(BusinessKey bk : bks) {
-					for(E e2 : clctn) {
-						if(e != e2) {
-							BusinessKey[] otherBks = create(e2);
-							for(BusinessKey bk2 : otherBks) {
-								if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
-									return false;
+		if(clctn != null && clctn.size() > 1) {
+			try {
+				for(E e : clctn) {
+					BusinessKey[] bks = create(e);
+					for(BusinessKey bk : bks) {
+						for(E e2 : clctn) {
+							if(e != e2) {
+								BusinessKey[] otherBks = create(e2);
+								for(BusinessKey bk2 : otherBks) {
+									if(bk2.getBusinessKeyName().equals(bk.getBusinessKeyName()) && bk2.equals(bk)) {
+										return false;
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			return true;
+			catch(BusinessKeyNotDefinedException bknde) {
+				// ok
+			}
 		}
-		catch(BusinessKeyNotDefinedException bknde) {
-			// ok
-			return true;
-		}
+		return true;
 	}
 }

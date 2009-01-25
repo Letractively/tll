@@ -95,7 +95,7 @@
     </property>
 	</bean>
 	
-	<bean name="account" class="com.tll.model.Account" parent="entityBase">
+	<bean name="Account" class="com.tll.model.Account" parent="entityBase" scope="prototype">
     <property name="name">
       <value>asp</value>
     </property>

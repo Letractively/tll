@@ -3,11 +3,11 @@ package com.tll.model;
 import java.util.Date;
 
 /**
- * Base interface for entities that require date created/modified properties.
+ * ITimeStampEntity - Entity with timestamping support definition.
  * @author jpk
  */
 public interface ITimeStampEntity extends IEntity {
-
+	
 	/**
 	 * @return The date created
 	 */

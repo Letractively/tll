@@ -92,13 +92,4 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	public void setParent(Account e) {
 		setAccount(e);
 	}
-
-	public Integer addressId() {
-		try {
-			return getAddress().getId();
-		}
-		catch(NullPointerException npe) {
-			return null;
-		}
-	}
 }

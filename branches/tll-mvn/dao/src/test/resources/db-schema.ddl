@@ -49,7 +49,6 @@ create table account (
    parent_aid int,
    status tinyint not null,
    name varchar(64) not null,
-   persist_pymnt_info boolean,
    billing_model varchar(32),
    date_last_charged datetime,
    ne_id int,

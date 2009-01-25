@@ -94,7 +94,8 @@ public class GenericEntityDaoTest extends AbstractEntityDaoTest<Account> {
 
 		Address a1;
 		if(a1Key == null) {
-			a1 = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			a1 = getMockEntityProvider().getEntityCopy(Address.class, true);
+			a1 = getEntityDao().persist(a1);
 			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
