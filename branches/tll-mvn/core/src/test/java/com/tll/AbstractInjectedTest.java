@@ -54,7 +54,7 @@ public abstract class AbstractInjectedTest {
 	/**
 	 * @return List of {@link Module}s for available for the derived tests.
 	 */
-	protected final List<Module> getModules() {
+	private List<Module> getModules() {
 		final List<Module> list = new ArrayList<Module>();
 		addModules(list);
 		return list;

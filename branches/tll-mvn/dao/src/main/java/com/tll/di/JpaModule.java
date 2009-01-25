@@ -115,7 +115,9 @@ public class JpaModule extends GModule {
 					persistenceUnitName = Config.instance().getString(ConfigKeys.DB_NAME.getKey());
 				}
 			}
-			assert persistenceUnitName != null : "Can't resolve the jpa persistence unit name";
+			if(persistenceUnitName == null) {
+				throw new IllegalStateException("Can't resolve the jpa persistence unit name");
+			}
 			this.persistenceUnitName = persistenceUnitName;
 			if(log.isInfoEnabled()) log.info("Employing JPA Persistence Unit: " + this.persistenceUnitName);
 		}

@@ -27,24 +27,15 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.tll.DbTest;
-import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.DaoMode;
-import com.tll.dao.IEntityDao;
-import com.tll.dao.IPageResult;
-import com.tll.dao.JpaMode;
-import com.tll.dao.SearchResult;
-import com.tll.dao.SortColumn;
-import com.tll.dao.Sorting;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
-import com.tll.di.JpaModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.BusinessKeyFactory;
@@ -234,7 +225,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		modules.add(new JpaModule(getJpaMode()));
 		modules.add(new DaoModule(daoMode));
 	}
 
@@ -266,9 +256,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 		if(daoMode == DaoMode.ORM) {
 			// create a db shell to ensure db exists and stubbed
-			String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
-			assert dbName != null : "No db name specified in config";
-			Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(dbName));
+			Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
 			DbShell dbShell = i.getInstance(DbShell.class);
 			dbShell.create();
 			dbShell.clear();

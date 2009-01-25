@@ -37,7 +37,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	protected final Log log;
 
 	/**
-	 * The type-wise "primary" dao
+	 * The entity dao.
 	 */
 	protected final IEntityDao dao;
 

@@ -14,8 +14,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.inject.Module;
-import com.tll.AbstractInjectedTest;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -24,6 +22,7 @@ import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbShellModule;
+import com.tll.di.JpaModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
@@ -118,8 +117,9 @@ public abstract class DbTest extends AbstractInjectedTest {
 		super.addModules(modules);
 		assert jpaMode != null : "The JpaMode must be specified for db supporting tests";
 		if(createDbShell && (jpaMode != JpaMode.NONE && jpaMode != JpaMode.MOCK)) {
-			modules.add(new DbShellModule(Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey())));
+			modules.add(new DbShellModule());
 		}
+		modules.add(new JpaModule(jpaMode));
 	}
 
 	@Override

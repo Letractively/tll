@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
-import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.jdbc.DbShell;
@@ -33,9 +32,7 @@ public class HibernateEnvironmentTest {
 	
 	@BeforeClass
 	public void init() {
-		String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
-		Injector i =
-				Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(dbName));
+		Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
 		db = i.getInstance(DbShell.class);
 		db.create();
 	}

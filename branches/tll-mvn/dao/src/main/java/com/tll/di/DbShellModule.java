@@ -51,14 +51,13 @@ public class DbShellModule extends GModule {
 
 	/**
 	 * Constructor
-	 * @param dbName The name of the db for which to provide a shell.
 	 */
-	public DbShellModule(String dbName) {
+	public DbShellModule() {
 		super();
 		final Config config = Config.instance();
 		// this.driverClassName = config.getString(ConfigKeys.DB_DRIVER.getKey());
 		this.rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT.getKey());
-		this.dbName = dbName;
+		this.dbName = config.getString(ConfigKeys.DB_NAME.getKey());
 		this.urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX.getKey());
 		this.username = config.getString(ConfigKeys.DB_USERNAME.getKey());
 		this.password = config.getString(ConfigKeys.DB_PASSWORD.getKey());

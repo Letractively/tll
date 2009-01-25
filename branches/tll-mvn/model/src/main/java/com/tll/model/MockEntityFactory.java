@@ -77,9 +77,8 @@ public final class MockEntityFactory {
 	 * @param <E>
 	 * @param entityClass
 	 * @return Set of entity copies
-	 * @throws Exception
 	 */
-	public <E extends IEntity> Set<E> getAllEntityCopies(Class<E> entityClass) throws Exception {
+	public <E extends IEntity> Set<E> getAllEntityCopies(Class<E> entityClass) {
 		Set<E> set = new LinkedHashSet<E>();
 		E[] arr = getBeansOfType(entityClass);
 		if(arr != null && arr.length > 0) {
@@ -97,12 +96,18 @@ public final class MockEntityFactory {
 	 * @param entityClass
 	 * @param uniquify Make the copied entity business key unique?
 	 * @return A fresh entity copy
-	 * @throws Exception
 	 */
-	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean uniquify) throws Exception {
+	public <E extends IEntity> E getEntityCopy(Class<E> entityClass, boolean uniquify) {
 		E e = getBean(entityClass);
 		entityFactory.setGenerated(e);
-		if(uniquify) makeBusinessKeyUnique(e);
+		if(uniquify) {
+			try {
+				makeBusinessKeyUnique(e);
+			}
+			catch(BusinessKeyNotDefinedException e1) {
+				// ok
+			}
+		}
 		return e;
 	}
 
@@ -115,9 +120,8 @@ public final class MockEntityFactory {
 	 * @param n The number of copies to provide
 	 * @param uniquify Make the copied entities business key unique?
 	 * @return n entity copies
-	 * @throws Exception
 	 */
-	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean uniquify) throws Exception {
+	public <E extends IEntity> Set<E> getNEntityCopies(Class<E> entityClass, int n, boolean uniquify) {
 		Set<E> set = new LinkedHashSet<E>(n);
 		for(int i = 0; i < n; i++) {
 			set.add(getEntityCopy(entityClass, uniquify));

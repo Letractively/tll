@@ -25,11 +25,10 @@ import com.tll.SystemError;
 import com.tll.dao.IDbDialectHandler;
 
 /**
- * DbShell - Simple JDBC based way to communicate with the a data store.
+ * DbShell - Simple JDBC based way to communicate with a data store.
  * <p>
- * Intended to create, delete, stub and otherwise generally affect the app
- * database. Aids in testing and serves as a basis for a RESTful way to interact
- * with the db from a web context by way of issuing sql/ddl commmands.
+ * Intended to create, delete, stub and otherwise generally affect a targeted
+ * database. Helpful for testing.
  * @author jpk
  */
 public final class DbShell {
