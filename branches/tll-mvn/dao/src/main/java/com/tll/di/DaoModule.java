@@ -123,6 +123,7 @@ public class DaoModule extends CompositeModule {
 			// IPrimaryKeyGenerator
 			bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
+			// TODO should this be here?
 			bind(MockEntityProvider.class).in(Scopes.SINGLETON);
 
 			// IEntityDao

@@ -64,7 +64,6 @@ create table account_address (
    date_created datetime not null,
    date_last_modified datetime not null,
    name varchar(32) not null,
-   type tinyint not null,
    aid int not null,
    address_id int not null,
    unique(aid,address_id),

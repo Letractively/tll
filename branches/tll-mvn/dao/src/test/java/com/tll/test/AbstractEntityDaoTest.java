@@ -22,7 +22,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Stage;
+import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
@@ -35,8 +39,13 @@ import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
+import com.tll.di.DbDialectModule;
+import com.tll.di.DbShellModule;
 import com.tll.di.JpaModule;
+import com.tll.di.MockEntitiesModule;
+import com.tll.di.ModelModule;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
@@ -54,7 +63,110 @@ import com.tll.util.EnumUtil;
  * @param <E> entity type
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
+
+	/**
+	 * Decorates {@link IEntityDao} to keep the dao tests from degrading as the
+	 * code base naturally changes over time
+	 * @author jpk
+	 */
+	private final class EntityDao implements IEntityDao {
+
+		@Override
+		public <R extends IEntity> R persist(R entity) {
+			return rawDao.persist(entity);
+		}
+
+		@Override
+		public <R extends IEntity> R load(PrimaryKey<R> key) {
+			return rawDao.load(key);
+		}
+
+		@Override
+		public <R extends IEntity> R load(BusinessKey<R> key) {
+			return rawDao.load(key);
+		}
+
+		@Override
+		public <R extends IEntity> void purge(R entity) {
+			rawDao.purge(entity);
+		}
+
+		@Override
+		public <R extends IEntity> List<R> loadAll(Class<R> entityType) {
+			return rawDao.loadAll(entityType);
+		}
+
+		@Override
+		public <R extends IEntity> void purgeAll(Collection<R> entities) {
+			rawDao.purgeAll(entities);
+		}
+
+		@Override
+		public <R extends IEntity> Collection<R> persistAll(Collection<R> entities) {
+			return rawDao.persistAll(entities);
+		}
+
+		@Override
+		public <R extends IEntity> List<R> findEntities(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
+			return rawDao.findEntities(criteria, sorting);
+		}
+
+		@Override
+		public <R extends IEntity> R findEntity(ICriteria<R> criteria) throws InvalidCriteriaException {
+			return rawDao.findEntity(criteria);
+		}
+
+		@Override
+		public <R extends IEntity> List<R> findByIds(Class<R> entityType, List<Integer> ids, Sorting sorting) {
+			return rawDao.findByIds(entityType, ids, sorting);
+		}
+
+		@Override
+		public <R extends IEntity> List<Integer> getIds(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
+			return rawDao.getIds(criteria, sorting);
+		}
+
+		@Override
+		public <R extends IEntity> List<R> getEntitiesFromIds(Class<R> entityClass, Collection<Integer> ids, Sorting sorting) {
+			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
+		}
+
+		@Override
+		public <R extends IEntity> List<SearchResult<R>> find(ICriteria<R> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
+			return rawDao.find(criteria, sorting);
+		}
+
+		@Override
+		public <R extends IEntity> IPageResult<SearchResult<R>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
+				int pageSize) throws InvalidCriteriaException {
+			return rawDao.getPage(criteria, sorting, offset, pageSize);
+		}
+
+		@Override
+		public int executeQuery(String queryName, IQueryParam[] params) {
+			return rawDao.executeQuery(queryName, params);
+		}
+
+		@Override
+		public void clear() {
+			rawDao.clear();
+		}
+
+		@Override
+		public void flush() {
+			rawDao.flush();
+		}
+
+		@Override
+		public <N extends INamedEntity> N load(NameKey<N> nameKey) {
+			return rawDao.load(nameKey);
+		}
+	}
 
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced
@@ -86,17 +198,17 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		return true;
 	}
 
-	protected Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
+	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	protected final Class<E> entityClass;
 
-	protected DaoMode daoMode;
+	private DaoMode daoMode;
 
-	protected IEntityDao rawDao;
+	private IEntityDao rawDao;
 
-	protected final EntityDao dao = new EntityDao();
+	private final EntityDao dao = new EntityDao();
 
-	protected List<E> dbRemove = new ArrayList<E>();
+	private final List<E> dbRemove = new ArrayList<E>();
 
 	/**
 	 * Flag used to test {@link IIdListSupport} and {@link IPageSupport} related
@@ -125,8 +237,13 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 	@Override
 	protected final void addModules(List<Module> modules) {
+		modules.add(new ModelModule());
+		modules.add(new MockEntitiesModule());
 		super.addModules(modules);
-		modules.add(new JpaModule(jpaMode));
+		if(daoMode == DaoMode.ORM) {
+			modules.add(new DbDialectModule());
+		}
+		modules.add(new JpaModule(getJpaMode()));
 		modules.add(new DaoModule(daoMode));
 	}
 
@@ -140,8 +257,9 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	@Override
 	protected void beforeClass() {
 
-		// for dao impl tests, the jpa mode is soley dependent on the dao
-		// mode
+		JpaMode jpaMode = null;
+
+		// for dao impl tests, the jpa mode is soley dependent on the dao mode
 		switch(daoMode) {
 			case ORM:
 				jpaMode = JpaMode.LOCAL;
@@ -152,19 +270,24 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 			default:
 				throw new IllegalStateException("Unhandled dao mode: " + daoMode.name());
 		}
-		assert jpaMode != null : "The JPA mode is un-resolvable";
+
+		setJpaMode(jpaMode);
+
+		if(daoMode == DaoMode.ORM) {
+			// create a db shell to ensure db exists and stubbed
+			String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
+			assert dbName != null : "No db name specified in config";
+			Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule(dbName));
+			DbShell dbShell = i.getInstance(DbShell.class);
+			dbShell.create();
+			dbShell.clear();
+		}
 
 		// build the injector
 		buildInjector();
 
-		this.rawDao = new EntityDao();
+		this.rawDao = injector.getInstance(IEntityDao.class);
 		logger.debug("Starting DAO Test: " + this.getClass().getSimpleName() + ", dao mode: " + daoMode.toString());
-
-		if(daoMode == DaoMode.ORM) {
-			// ensure test db is created and cleared
-			getDbShell().create();
-			getDbShell().clear();
-		}
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -208,14 +331,14 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		afterMethodHook();
 	}
 
+	/**
+	 * @return The injected {@link IEntityDao}
+	 */
 	protected final IEntityDao getEntityDao() {
-		return rawDao;
+		return dao;
 	}
 
 	/**
-	 * <strong>NOTE: </strong>The {@link IEntityFactory} is not available by
-	 * default. It must be bound in a given module which is added via
-	 * {@link #addModules(List)}.
 	 * @return The injected {@link IEntityFactory}
 	 */
 	protected final IEntityFactory getEntityFactory() {
@@ -320,108 +443,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	/**
-	 * Decorates {@link IEntityDao} to keep the dao tests from degrading as the
-	 * code base naturally changes over time
-	 * @author jpk
-	 */
-	protected final class EntityDao implements IEntityDao {
-
-		@Override
-		public <R extends IEntity> R persist(R entity) {
-			return rawDao.persist(entity);
-		}
-
-		@Override
-		public <R extends IEntity> R load(PrimaryKey<R> key) {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <R extends IEntity> R load(BusinessKey<R> key) {
-			return rawDao.load(key);
-		}
-
-		@Override
-		public <R extends IEntity> void purge(R entity) {
-			rawDao.purge(entity);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> loadAll(Class<R> entityType) {
-			return rawDao.loadAll(entityType);
-		}
-
-		@Override
-		public <R extends IEntity> void purgeAll(Collection<R> entities) {
-			rawDao.purgeAll(entities);
-		}
-
-		@Override
-		public <R extends IEntity> Collection<R> persistAll(Collection<R> entities) {
-			return rawDao.persistAll(entities);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> findEntities(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
-			return rawDao.findEntities(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> R findEntity(ICriteria<R> criteria) throws InvalidCriteriaException {
-			return rawDao.findEntity(criteria);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> findByIds(Class<R> entityType, List<Integer> ids, Sorting sorting) {
-			return rawDao.findByIds(entityType, ids, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<Integer> getIds(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
-			return rawDao.getIds(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<R> getEntitiesFromIds(Class<R> entityClass, Collection<Integer> ids, Sorting sorting) {
-			return rawDao.getEntitiesFromIds(entityClass, ids, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> List<SearchResult<R>> find(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
-			return rawDao.find(criteria, sorting);
-		}
-
-		@Override
-		public <R extends IEntity> IPageResult<SearchResult<R>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
-				int pageSize) throws InvalidCriteriaException {
-			return rawDao.getPage(criteria, sorting, offset, pageSize);
-		}
-
-		@Override
-		public int executeQuery(String queryName, IQueryParam[] params) {
-			return rawDao.executeQuery(queryName, params);
-		}
-
-		@Override
-		public void clear() {
-			rawDao.clear();
-		}
-
-		@Override
-		public void flush() {
-			rawDao.flush();
-		}
-
-		@Override
-		public <N extends INamedEntity> N load(NameKey<N> nameKey) {
-			return rawDao.load(nameKey);
-		}
-	}
-
-	/**
 	 * Ensures two entities are non-unique by business key.
 	 * @param e1
 	 * @param e2
@@ -482,7 +503,8 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Test CRUD and find ops
 	 * @throws Exception
 	 */
-	@Test(groups = "dao")
+	@Test(groups = {
+		"dao", "crud" })
 	public final void testCRUDAndFind() throws Exception {
 
 		E e = getTestEntity();

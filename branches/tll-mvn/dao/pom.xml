@@ -96,6 +96,7 @@
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <executions>
+          <!-- TODO figure out how to *replace* the default goals for this phase rather than supplement it -->
           <execution>
             <id>process-test-resources</id>
             <phase>generate-test-resources</phase>

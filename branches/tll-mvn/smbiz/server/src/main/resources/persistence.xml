@@ -38,8 +38,6 @@
       <property name="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}" />
       <property name="hibernate.generate_statistics" value="${hibernate.generate_statistics}" />
       <property name="hibernate.ejb.event.merge" value="${hibernate.ejb.event.merge}" />
-      <property name="hibernate.ejb.event.create" value="${hibernate.ejb.event.create}" />
-      <property name="hibernate.ejb.event.update" value="${hibernate.ejb.event.update}" />
       <property name="hibernate.validator.autoregister_listeners" value="${hibernate.validator.autoregister_listeners}" />
     </properties>
     
@@ -78,8 +76,6 @@
       <property name="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}" />
       <property name="hibernate.generate_statistics" value="${hibernate.generate_statistics}" />
       <property name="hibernate.ejb.event.merge" value="${hibernate.ejb.event.merge}" />
-      <property name="hibernate.ejb.event.create" value="${hibernate.ejb.event.create}" />
-      <property name="hibernate.ejb.event.update" value="${hibernate.ejb.event.update}" />
       <property name="hibernate.validator.autoregister_listeners" value="${hibernate.validator.autoregister_listeners}" />
     </properties>
     

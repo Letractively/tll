@@ -114,9 +114,6 @@
 		<property name="name">
 			<value>home</value>
 		</property>
-		<property name="type">
-			<value>HOME</value>
-		</property>
 	</bean>
 
 </beans>

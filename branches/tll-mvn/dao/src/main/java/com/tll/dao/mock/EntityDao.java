@@ -37,6 +37,7 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
+import com.tll.model.ITimeStampEntity;
 import com.tll.model.Scalar;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
@@ -445,6 +446,16 @@ public final class EntityDao implements IEntityDao {
 			version++;
 		}
 		entity.setVersion(version);
+		
+		// set date created/modified
+		if(entity instanceof ITimeStampEntity) {
+			final Date now = new Date();
+			if(entity.isNew()) {
+				((ITimeStampEntity) entity).setDateCreated(now);
+			}
+			((ITimeStampEntity) entity).setDateModified(now);
+		}
+		
 		return entity;
 	}
 

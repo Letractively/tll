@@ -139,8 +139,8 @@ public final class MockEntityProvider {
 		final int uniqueNum = ++uniqueTokenCounter;
 		String ut = Integer.toString(uniqueNum);
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
+		boolean entityAlteredByBk = false;
 		for(BusinessKey key : keys) {
-			boolean entityAlteredByBk = false;
 			for(String fname : key.getPropertyNames()) {
 				if(fname.endsWith(".id")) continue;
 				Object fval = key.getPropertyValue(fname);
@@ -168,9 +168,9 @@ public final class MockEntityProvider {
 					break;
 				}
 			}
-			if(!entityAlteredByBk) {
-				log.warn(e.descriptor() + " was not altered by BK: " + key.descriptor());
-			}
+		}
+		if(!entityAlteredByBk) {
+			log.warn(e.descriptor() + " was not made business key unique");
 		}
 	}
 

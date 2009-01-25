@@ -192,12 +192,10 @@ public final class DbShell {
 	 */
 	public boolean create() {
 
-		if(log.isInfoEnabled()) {
-			log.info("Creating db: " + dbName + "...");
-		}
 		// create the db
 		try {
 			executeSql(rootDataSource, "create database " + dbName);
+			if(log.isInfoEnabled()) log.info(dbName + " database created.");
 		}
 		catch(DataAccessException dae) {
 			if(!exceptionTranslator.isCreateAlreadyExist(dae)) {
@@ -210,6 +208,7 @@ public final class DbShell {
 		// create db schema
 		try {
 			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbSchemaFileName)).getFile());
+			if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
 		}
 		catch(IOException e) {
 			throw new SystemError("Unable to create db schema: " + e.getMessage(), e);
@@ -224,11 +223,9 @@ public final class DbShell {
 	 *         <code>false<code> if the db is found not to exist.
 	 */
 	public boolean delete() {
-		if(log.isInfoEnabled()) {
-			log.info("Dropping db: " + dbName + "...");
-		}
 		try {
 			executeSql(rootDataSource, "drop database " + dbName);
+			if(log.isInfoEnabled()) log.info(dbName + " database dropped.");
 			return true;
 		}
 		catch(DataAccessException dae) {
@@ -247,12 +244,10 @@ public final class DbShell {
 	 *         this method.
 	 */
 	public boolean clear() {
-		if(log.isInfoEnabled()) {
-			log.info("Clearing db: " + dbName + "...");
-		}
 		try {
 			ClassPathResource resource = new ClassPathResource(dbDataDeleteFileName);
 			executeSqlCommandsFromFile(dataSource, resource.getFile());
+			if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
 			return true;
 		}
 		catch(DataAccessException dae) {
@@ -274,12 +269,9 @@ public final class DbShell {
 	 */
 	public boolean stub() {
 
-		if(log.isInfoEnabled()) {
-			log.info("Stubbing db: " + dbName + "...");
-		}
-
 		try {
 			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbDataStubFileName)).getFile());
+			if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
 			return true;
 		}
 		catch(IOException e) {
@@ -298,10 +290,6 @@ public final class DbShell {
 	 * and/or clearing the the db if it contains existing data.
 	 */
 	public void restub() {
-		if(log.isInfoEnabled()) {
-			log.info("RE-stubbing db: " + dbName + "...");
-		}
-
 		// fist try to clear
 		if(!clear()) {
 			create();

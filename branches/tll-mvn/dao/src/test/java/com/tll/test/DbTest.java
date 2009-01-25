@@ -25,7 +25,6 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
-import com.tll.test.AbstractInjectedTest;
 
 /**
  * DbTest - Test that supports raw transactions having an accessible
@@ -73,7 +72,9 @@ public abstract class DbTest extends AbstractInjectedTest {
 	/**
 	 * The JPA mode.
 	 */
-	protected JpaMode jpaMode;
+	private JpaMode jpaMode;
+
+	private final boolean createDbShell;
 
 	/**
 	 * Used to check if a transaction is in progress only when using Spring
@@ -97,28 +98,26 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * Constructor
 	 */
 	public DbTest() {
-		this(null);
+		this(null, false);
 	}
 
 	/**
 	 * Constructor
 	 * @param jpaMode The JpaMode to employ for this test.
+	 * @param createDbShell Make a {@link DbShell} available?
 	 */
-	protected DbTest(JpaMode jpaMode) {
+	protected DbTest(JpaMode jpaMode, boolean createDbShell) {
 		super();
 		this.jpaMode = jpaMode;
+		this.createDbShell = createDbShell;
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		assert jpaMode != null : "The JpaMode must be specified for db supporting tests";
-		if(jpaMode != JpaMode.NONE) {
-			// IMPT: use the TEST db!
-			if(jpaMode != JpaMode.MOCK) {
-				String dbName = Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey());
-				modules.add(new DbShellModule(dbName));
-			}
+		if(createDbShell && (jpaMode != JpaMode.NONE && jpaMode != JpaMode.MOCK)) {
+			modules.add(new DbShellModule(Config.instance().getString(DbShellModule.ConfigKeys.DB_NAME.getKey())));
 		}
 	}
 
@@ -129,6 +128,17 @@ public abstract class DbTest extends AbstractInjectedTest {
 			getEntityManager().close();
 			getEntityManagerFactory().close();
 		}
+	}
+	
+	protected final JpaMode getJpaMode() {
+		return jpaMode;
+	}
+
+	protected final void setJpaMode(JpaMode jpaMode) {
+		if(this.jpaMode != null) {
+			throw new IllegalStateException("The JPA mode has already been set.");
+		}
+		this.jpaMode = jpaMode;
 	}
 
 	/**

@@ -34,7 +34,7 @@ public class GenericEntityDaoTest extends AbstractEntityDaoTest<Account> {
 	 * Constructor
 	 */
 	public GenericEntityDaoTest() {
-		super(Account.class, true);
+		super(Account.class, false);
 	}
 
 	@Override
