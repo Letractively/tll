@@ -16,7 +16,6 @@ import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
 import com.tll.model.NestedEntity;
 import com.tll.model.key.PrimaryKey;
-import com.tll.test.AbstractEntityDaoTest;
 
 
 /**

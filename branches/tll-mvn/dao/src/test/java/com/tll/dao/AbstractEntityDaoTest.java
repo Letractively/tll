@@ -4,7 +4,7 @@
  * Copywright - 2005 - All rights reserved.
  * 
  */
-package com.tll.test;
+package com.tll.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +26,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
+import com.tll.DbTest;
 import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;

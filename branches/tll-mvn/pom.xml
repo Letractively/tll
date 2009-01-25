@@ -21,6 +21,55 @@
     <module>smbiz</module>
   </modules>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+
+        <!--
+          directive to generate a separate jar containing 
+          any test assets found in: /src/test/java/com/tll/test/
+          
+          This is for propagating unit test base classes among sibling projects 
+          as well as for building upon test environments.
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>test-assets</id>
+              <phase>package</phase>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+              <!-- INCLUDE ALL TEST ASSETS so we can build upon test "environments" and not just unit test classes.
+              <configuration>
+                <includes>
+                  <include>**/test/*</include>
+                </includes>
+              </configuration>
+              -->
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.groovy.maven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.0-rc-4</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -182,60 +231,7 @@
         <version>1.5.3</version>
       </dependency>
 
-      <!-- GMaven -->
-      <!--
-        <dependency> <groupId>org.codehaus.groovy.maven</groupId> <artifactId>gmaven-mojo</artifactId>
-        <version>1.0-rc-4</version> </dependency> <dependency> <groupId>org.codehaus.groovy.maven.runtime</groupId>
-        <artifactId>gmaven-runtime-default</artifactId> <version>1.0-rc-4</version> </dependency>
-      -->
-
     </dependencies>
   </dependencyManagement>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-
-        <!--
-          directive to generate a separate jar containing 
-          any test assets found in: /src/test/java/com/tll/test/
-          
-          This is for propagating unit test base classes among sibling projects.
-        -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>test-assets</id>
-              <phase>package</phase>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-              <configuration>
-                <includes>
-                  <include>**/test/*</include>
-                </includes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
-          <artifactId>gmaven-plugin</artifactId>
-          <version>1.0-rc-4</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 
 </project>

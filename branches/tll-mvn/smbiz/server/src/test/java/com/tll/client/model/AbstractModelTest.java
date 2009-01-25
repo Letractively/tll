@@ -13,11 +13,11 @@ import org.testng.annotations.BeforeClass;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
+import com.tll.TestUtils;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
 import com.tll.model.schema.PropertyType;
-import com.tll.test.TestUtils;
 
 /**
  * AbstractModelTest - Base class for testing client model stuff.

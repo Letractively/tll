@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.test;
+package com.tll;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.inject.Module;
+import com.tll.AbstractInjectedTest;
 import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
