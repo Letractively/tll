@@ -23,6 +23,7 @@ import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.tll.DbTest;
 import com.tll.criteria.Criteria;
+import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
@@ -125,7 +126,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		modules.add(new DaoModule());
+		modules.add(new DaoModule(DaoMode.ORM));
 		modules.add(new Module() {
 
 			@Override

@@ -5,12 +5,12 @@
  */
 package com.tll.dao.jdbc;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -154,10 +154,10 @@ public final class DbShell {
 	 * @param dataSource
 	 * @param f
 	 */
-	private void executeSqlCommandsFromFile(DataSource dataSource, File f) {
+	private void executeSqlCommandsFromFile(DataSource dataSource, URL url) {
 		String s;
 		try {
-			s = FileUtils.readFileToString(f);
+			s = IOUtils.toString(url.openStream());
 		}
 		catch(IOException e) {
 			throw new SystemError("Unable to read sql/ddl file contents: " + e.getMessage(), e);
@@ -175,7 +175,7 @@ public final class DbShell {
 		}
 
 		if(log.isDebugEnabled()) {
-			log.debug("Executing SQL command file: " + f.getName() + "...");
+			log.debug("Executing SQL command file: " + url.getFile() + "...");
 		}
 		String[] sqls = StringUtils.split(sb.toString(), SQL_COMMAND_DELIM_CHAR);
 		for(String sql : sqls) {
@@ -206,7 +206,7 @@ public final class DbShell {
 
 		// create db schema
 		try {
-			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbSchemaFileName)).getFile());
+			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbSchemaFileName)).getURL());
 			if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
 		}
 		catch(IOException e) {
@@ -245,7 +245,7 @@ public final class DbShell {
 	public boolean clear() {
 		try {
 			ClassPathResource resource = new ClassPathResource(dbDataDeleteFileName);
-			executeSqlCommandsFromFile(dataSource, resource.getFile());
+			executeSqlCommandsFromFile(dataSource, resource.getURL());
 			if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
 			return true;
 		}
@@ -269,7 +269,7 @@ public final class DbShell {
 	public boolean stub() {
 
 		try {
-			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbDataStubFileName)).getFile());
+			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbDataStubFileName)).getURL());
 			if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
 			return true;
 		}

@@ -128,6 +128,16 @@
       </dependency>
 
       <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.4.1</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
         <groupId>javax.persistence</groupId>
         <artifactId>persistence-api</artifactId>
         <version>1.0</version>
@@ -152,6 +162,11 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
+        <artifactId>ejb3-persistence</artifactId>
+        <version>1.0.2.GA</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
         <artifactId>hibernate-c3p0</artifactId>
         <version>3.3.1.GA</version>
       </dependency>
@@ -171,6 +186,11 @@
         <version>3.1.0.GA</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>2.5.6</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context-support</artifactId>
@@ -199,6 +219,11 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
+        <version>2.5.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
         <version>2.5.6</version>
       </dependency>
       <dependency>

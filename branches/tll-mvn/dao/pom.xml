@@ -61,6 +61,26 @@
   </build>
 
   <dependencies>
+    
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    
+    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -83,13 +103,29 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
+      <artifactId>ejb3-persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
@@ -97,6 +133,10 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

@@ -16,6 +16,14 @@
 
   <dependencies>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>oro</groupId>
+      <artifactId>oro</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
@@ -32,10 +40,17 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+
+    <!-- 
+    <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
     </dependency>
-
+    -->
+    
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
@@ -43,11 +58,19 @@
 
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
+      <artifactId>hibernate-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>ejb3-persistence</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
     </dependency>
 
     <dependency>
@@ -56,9 +79,15 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
     </dependency>
-
+    -->
+    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
