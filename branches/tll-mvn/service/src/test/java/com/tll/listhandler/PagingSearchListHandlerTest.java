@@ -14,8 +14,6 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -35,12 +33,10 @@ import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
-import com.tll.model.Account;
-import com.tll.model.IEntityAssembler;
-import com.tll.model.INamedEntity;
+import com.tll.model.Address;
 import com.tll.model.MockEntityFactory;
-import com.tll.service.entity.INamedEntityService;
-import com.tll.service.entity.NamedEntityService;
+import com.tll.service.entity.IEntityService;
+import com.tll.service.entity.TestEntityService;
 
 /**
  * PagingSearchListHandlerTest
@@ -53,28 +49,6 @@ public class PagingSearchListHandlerTest extends DbTest {
 	 * The number of listing elements for which to test.
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
-
-	/**
-	 * ListHandlerDataProvider - The test list handler data provider.
-	 * @author jpk
-	 */
-	private static final class TestEntityService extends NamedEntityService<Account> {
-
-		/**
-		 * Constructor
-		 * @param dao
-		 * @param entityAssembler
-		 */
-		@Inject
-		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
-			super(dao, entityAssembler);
-		}
-
-		@Override
-		public Class<Account> getEntityClass() {
-			return Account.class;
-		}
-	}
 
 	private DbShell db;
 	
@@ -98,18 +72,11 @@ public class PagingSearchListHandlerTest extends DbTest {
 	@Override
 	protected void beforeClass() {
 		// create the db
-		Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
-		db = i.getInstance(DbShell.class);
+		db = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule()).getInstance(DbShell.class);
 		db.create();
+		db.clear();
 
 		super.beforeClass();
-		
-		// stub the list elements
-		Set<Account> accounts = getMockEntityFactory().getNEntityCopies(Account.class, NUM_LIST_ELEMENTS, true);
-		startNewTransaction();
-		getEntityDao().persistAll(accounts);
-		setComplete();
-		endTransaction();
 	}
 
 	@Override
@@ -131,9 +98,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(new TypeLiteral<INamedEntityService<Account>>() {}).to(TestEntityService.class)
-						.in(
-						Scopes.SINGLETON);
+				binder.bind(new TypeLiteral<IEntityService<Address>>() {}).to(TestEntityService.class).in(Scopes.SINGLETON);
 			}
 		});
 	}
@@ -142,30 +107,40 @@ public class PagingSearchListHandlerTest extends DbTest {
 		return injector.getInstance(IEntityDao.class);
 	}
 
-	protected final INamedEntityService<Account> getTestEntityService() {
-		return injector.getInstance(Key.get(new TypeLiteral<INamedEntityService<Account>>() {}));
+	protected final IEntityService<Address> getTestEntityService() {
+		return injector.getInstance(Key.get(new TypeLiteral<IEntityService<Address>>() {}));
 	}
 	
 	protected final MockEntityFactory getMockEntityFactory() {
 		return injector.getInstance(MockEntityFactory.class);
 	}
+	
+	protected final void stubListElements() {
+		// stub the list elements
+		startNewTransaction();
+		Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
+		getEntityDao().persistAll(elements);
+		setComplete();
+		endTransaction();
+	}
 
 	@Test
 	public void test() throws Exception {
+		stubListElements();
 
-		final INamedEntityService<Account> dataProvider = getTestEntityService();
+		final IEntityService<Address> dataProvider = getTestEntityService();
 
-		List<Account> allAccounts = dataProvider.loadAll();
-		assert allAccounts != null && allAccounts.size() > 0 : "No accounts exist - test can't run";
-		assert allAccounts.size() >= 10 : "At least 10 list elements must be present for this test";
+		List<Address> elements = dataProvider.loadAll();
+		assert elements != null && elements.size() > 0 : "No elements exist - test can't run";
+		assert elements.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
 
-		Criteria<Account> criteria = new Criteria<Account>(Account.class);
-		Sorting sorting = new Sorting(new SortColumn(INamedEntity.NAME));
-		IListHandler<SearchResult<Account>> listHandler =
+		Criteria<Address> criteria = new Criteria<Address>(Address.class);
+		Sorting sorting = new Sorting(new SortColumn("emailAddress"));
+		IListHandler<SearchResult<Address>> listHandler =
 				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
 
-		List<SearchResult<Account>> list;
+		List<SearchResult<Address>> list;
 
 		list = listHandler.getElements(0, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
@@ -176,12 +151,12 @@ public class PagingSearchListHandlerTest extends DbTest {
 		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		List<SearchResult<Account>> alist = listHandler.getElements(0, allAccounts.size(), sorting);
-		assert alist.size() == allAccounts.size();
+		List<SearchResult<Address>> alist = listHandler.getElements(0, elements.size(), sorting);
+		assert alist.size() == elements.size();
 
-		for(int i = 0; i < allAccounts.size(); i++) {
-			Account account = alist.get(i).getEntity();
-			assert account != null : "Empty account in list";
+		for(int i = 0; i < elements.size(); i++) {
+			Address element = alist.get(i).getEntity();
+			assert element != null : "Empty element in list";
 		}
 	}
 

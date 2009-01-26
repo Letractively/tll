@@ -50,12 +50,9 @@
               <goals>
                 <goal>test-jar</goal>
               </goals>
-              <!-- INCLUDE ALL TEST ASSETS so we can build upon test "environments" and not just unit test classes.
-              <configuration>
-                <includes>
-                  <include>**/test/*</include>
-                </includes>
-              </configuration>
+              <!--
+                INCLUDE ALL TEST ASSETS so we can build upon test "environments" and not just unit test classes.
+                <configuration> <includes> <include>**/test/*</include> </includes> </configuration>
               -->
             </execution>
           </executions>
@@ -118,13 +115,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.5.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>5.8</version>
-        <classifier>jdk15</classifier>
       </dependency>
 
       <dependency>
@@ -243,7 +233,6 @@
         <version>1.0.7</version>
       </dependency>
 
-
       <dependency>
         <groupId>com.google.code.guice</groupId>
         <artifactId>guice</artifactId>
@@ -254,6 +243,24 @@
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt-user</artifactId>
         <version>1.5.3</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>5.8</version>
+        <classifier>jdk15</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.6.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.6.3</version>
       </dependency>
 
     </dependencies>

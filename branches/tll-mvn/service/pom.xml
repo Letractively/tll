@@ -1,17 +1,58 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>com.tll</groupId>
-  <artifactId>tll-service</artifactId>
-  <name>tll-service</name>
-  <version>1.0-SNAPSHOT</version>
-  <description>Service layer definition.</description>
-  
+
   <parent>
     <artifactId>tll</artifactId>
     <groupId>com.tll</groupId>
     <version>1</version>
   </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>tll-service</artifactId>
+  <name>tll-service</name>
+  <version>1.0-SNAPSHOT</version>
+  <description>Service layer definition.</description>
+
+  <build>
+    <plugins>
+      
+      <!-- We weave Spring's @Transactional aspect into the code at compile time. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <!-- 
+          <includes>
+            <include>**/TransationAspect.java</include>
+            <include>**/SecurityAspect.aj</include>
+          </includes>
+          <excludes>
+            <exclude>**/logging/*.aj</exclude>
+          </excludes>
+          -->
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-aspects</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+        </configuration>
+        <executions>
+          <execution>
+            <id>aj compile</id>
+            <goals>
+              <goal>compile</goal>
+              <!-- <goal>test-compile</goal> -->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -22,12 +63,12 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>ejb3-persistence</artifactId>
@@ -36,18 +77,21 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
     </dependency>
-    <!-- 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aspects</artifactId>
-      <scope>runtime</scope>
     </dependency>
-    -->
-    
+
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -63,6 +107,22 @@
       <artifactId>tll-dao</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-c3p0</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>test</scope>
+    </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
@@ -78,7 +138,7 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -86,6 +146,6 @@
       <classifier>jdk15</classifier>
       <scope>test</scope>
     </dependency>
-   </dependencies>
-   
+  </dependencies>
+
 </project>

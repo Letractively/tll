@@ -6,7 +6,6 @@
 package com.tll.di;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
@@ -28,7 +27,7 @@ public class ModelModule extends AbstractModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		ENTITY_ASSEMBLER_CLASSNAME("entityAssembler.classname");
+		MODEL_ENTITY_ASSEMBLER_CLASSNAME("model.entityAssembler.classname");
 
 		private final String key;
 
@@ -45,6 +44,7 @@ public class ModelModule extends AbstractModule {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void configure() {
 		// IEntityFactory
@@ -54,30 +54,18 @@ public class ModelModule extends AbstractModule {
 		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);
 
 		// IEntityAssembler
-		bind(IEntityAssembler.class).toProvider(new Provider<IEntityAssembler>() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public IEntityAssembler get() {
-				final String cn = Config.instance().getString(ConfigKeys.ENTITY_ASSEMBLER_CLASSNAME.getKey());
-				if(cn == null) {
-					throw new IllegalStateException("No entity assembler class name specified in the configuration");
-				}
-				try {
-					Class<IEntityAssembler> clz = (Class<IEntityAssembler>) Class.forName(cn);
-					return clz.newInstance();
-				}
-				catch(ClassNotFoundException e) {
-					throw new IllegalStateException("No entity assembler found for name: " + cn);
-				}
-				catch(InstantiationException e) {
-					throw new IllegalStateException("Unable to instantiate entity assembler: " + e.getMessage(), e);
-				}
-				catch(IllegalAccessException e) {
-					throw new IllegalStateException("Unable to access entity assembler: " + e.getMessage(), e);
-				}
-			}
-		}).in(Scopes.SINGLETON);
+		Class<IEntityAssembler> clz;
+		final String cn = Config.instance().getString(ConfigKeys.MODEL_ENTITY_ASSEMBLER_CLASSNAME.getKey());
+		if(cn == null) {
+			throw new IllegalStateException("No entity assembler class name specified in the configuration");
+		}
+		try {
+			clz = (Class<IEntityAssembler>) Class.forName(cn);
+		}
+		catch(ClassNotFoundException e) {
+			throw new IllegalStateException("No entity assembler found for name: " + cn);
+		}
+		bind(IEntityAssembler.class).to(clz).in(Scopes.SINGLETON);
 	}
 
 }
