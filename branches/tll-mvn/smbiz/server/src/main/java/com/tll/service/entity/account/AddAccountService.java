@@ -1,4 +1,4 @@
-package com.tll.service.impl;
+package com.tll.service.entity.account;
 
 import java.util.Collection;
 
@@ -17,8 +17,6 @@ import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.account.IAccountService;
-import com.tll.service.entity.account.ICustomerAccountService;
 import com.tll.service.entity.intf.IInterfaceOptionAccountService;
 import com.tll.service.entity.pymnt.IPaymentInfoService;
 import com.tll.service.entity.user.IUserService;
