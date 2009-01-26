@@ -21,7 +21,7 @@ import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.impl.account.IAccountService;
+import com.tll.service.entity.account.IAccountService;
 import com.tll.util.EnumUtil;
 public class AccountService extends MNamedEntityServiceImpl<Account, AccountSearch> {
 

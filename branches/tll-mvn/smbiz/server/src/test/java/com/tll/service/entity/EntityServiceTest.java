@@ -30,8 +30,8 @@ import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
-import com.tll.service.entity.impl.account.IAccountService;
-import com.tll.service.entity.impl.user.IUserService;
+import com.tll.service.entity.account.IAccountService;
+import com.tll.service.entity.user.IUserService;
 
 /**
  * EntityServiceTest

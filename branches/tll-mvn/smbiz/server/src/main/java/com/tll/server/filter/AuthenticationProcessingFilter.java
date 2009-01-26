@@ -19,7 +19,7 @@ import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
 import com.tll.server.Constants;
 import com.tll.server.SecurityMode;
-import com.tll.service.entity.impl.user.IUserService;
+import com.tll.service.entity.user.IUserService;
 
 /**
  * AuthenticationProcessingFilter

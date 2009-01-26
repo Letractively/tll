@@ -26,7 +26,7 @@ import com.tll.dao.IAclDao;
 import com.tll.service.acl.AccountRelatedAclProviderManager;
 import com.tll.service.acl.AccountRelatedBasicAclEntryVoter;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.impl.user.IUserService;
+import com.tll.service.entity.user.IUserService;
 
 /**
  * SecurityModuleImpl - Acegi flavored security implementation wiring.

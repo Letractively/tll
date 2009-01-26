@@ -24,7 +24,7 @@ import com.tll.model.User;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.impl.user.IUserService;
+import com.tll.service.entity.user.IUserService;
 import com.tll.util.StringUtil;
 
 /**

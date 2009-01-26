@@ -17,11 +17,11 @@ import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.impl.account.IAccountService;
-import com.tll.service.entity.impl.account.ICustomerAccountService;
-import com.tll.service.entity.impl.intf.IInterfaceOptionAccountService;
-import com.tll.service.entity.impl.pymnt.IPaymentInfoService;
-import com.tll.service.entity.impl.user.IUserService;
+import com.tll.service.entity.account.IAccountService;
+import com.tll.service.entity.account.ICustomerAccountService;
+import com.tll.service.entity.intf.IInterfaceOptionAccountService;
+import com.tll.service.entity.pymnt.IPaymentInfoService;
+import com.tll.service.entity.user.IUserService;
 
 /**
  * The add account service implementation.

@@ -7,7 +7,7 @@ package com.tll.service.entity;
 
 import org.testng.annotations.Test;
 
-import com.tll.service.entity.impl.user.UserService;
+import com.tll.service.entity.user.UserService;
 
 /**
  * PasswordTest
