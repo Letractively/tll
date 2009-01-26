@@ -3,9 +3,9 @@
  * @author jpk
  * Nov 19, 2007
  */
-package com.tll.dao.impl.mock;
+package com.tll.dao.mock;
 
-import com.tll.dao.impl.ISiteStatisticsDao;
+import com.tll.dao.ISiteStatisticsDao;
 
 
 /**

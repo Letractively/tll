@@ -14,7 +14,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 
 /**
@@ -28,7 +28,7 @@ public class PaymentInfoStubber extends DbTest {
 	 * Constructor
 	 */
 	public PaymentInfoStubber() {
-		super(JpaMode.LOCAL);
+		super(JpaMode.LOCAL, false);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class PaymentInfoStubber extends DbTest {
 	@Test
 	public void stub() throws Exception {
 		startNewTransaction();
-		final MockEntityProvider mep = injector.getInstance(MockEntityProvider.class);
+		final MockEntityFactory mep = injector.getInstance(MockEntityFactory.class);
 		final PaymentInfo e = mep.getEntityCopy(PaymentInfo.class, false);
 		final IEntityDao dao = injector.getInstance(IEntityDao.class);
 		dao.persist(e);

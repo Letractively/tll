@@ -30,7 +30,6 @@ import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
-import com.tll.di.JpaModule;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -117,7 +116,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	@Parameters(value = {
 		"jpaMode", "daoMode" })
 	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
-		this.jpaMode = EnumUtil.fromString(JpaMode.class, jpaModeStr);
+		setJpaMode(EnumUtil.fromString(JpaMode.class, jpaModeStr));
 		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
 		beforeClass();
 	}
@@ -133,7 +132,6 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(daoMode));
 		modules.add(new EntityServiceModule());
 	}

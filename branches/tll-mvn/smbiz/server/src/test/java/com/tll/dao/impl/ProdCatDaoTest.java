@@ -40,8 +40,8 @@ public class ProdCatDaoTest extends AbstractEntityDaoTest<ProdCat> {
 	protected void assembleTestEntity(ProdCat e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -54,8 +54,8 @@ public class ProdCatDaoTest extends AbstractEntityDaoTest<ProdCat> {
 
 		ProductInventory product;
 		if(pKey == null) {
-			product = getMockEntityProvider().getEntityCopy(ProductInventory.class, true);
-			final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
+			product = getMockEntityFactory().getEntityCopy(ProductInventory.class, true);
+			final ProductGeneral gp = getMockEntityFactory().getEntityCopy(ProductGeneral.class, true);
 			product.setProductGeneral(gp);
 			getEntityFactory().setGenerated(product.getProductGeneral());
 			product.setParent(account);
@@ -70,7 +70,7 @@ public class ProdCatDaoTest extends AbstractEntityDaoTest<ProdCat> {
 
 		ProductCategory category;
 		if(cKey == null) {
-			category = getMockEntityProvider().getEntityCopy(ProductCategory.class, true);
+			category = getMockEntityFactory().getEntityCopy(ProductCategory.class, true);
 			category.setParent(account);
 			category = getEntityDao().persist(category);
 			cKey = new PrimaryKey<ProductCategory>(category);

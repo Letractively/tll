@@ -34,8 +34,8 @@ import com.tll.dao.JpaMode;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
-import com.tll.di.JpaModule;
 import com.tll.di.MailModule;
+import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.RefDataModule;
 import com.tll.di.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
@@ -88,12 +88,11 @@ public class ListingServiceTest extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		assert jpaMode != null && daoMode != null;
+		assert getJpaMode() != null && daoMode != null;
 		modules.add(new VelocityModule());
 		modules.add(new MailModule());
 		modules.add(new RefDataModule());
-		// modules.add(new MockEntitiesModule());
-		modules.add(new JpaModule(jpaMode));
+		modules.add(new MockEntityFactoryModule());
 		modules.add(new DaoModule(daoMode));
 		modules.add(new EntityServiceModule());
 	}
@@ -102,7 +101,7 @@ public class ListingServiceTest extends DbTest {
 	@Parameters(value = {
 		"jpaMode", "daoMode" })
 	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
-		this.jpaMode = EnumUtil.fromString(JpaMode.class, jpaModeStr);
+		setJpaMode(EnumUtil.fromString(JpaMode.class, jpaModeStr));
 		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
 		beforeClass();
 	}

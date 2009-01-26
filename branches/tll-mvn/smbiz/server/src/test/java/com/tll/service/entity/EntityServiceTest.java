@@ -19,7 +19,6 @@ import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceModule;
-import com.tll.di.JpaModule;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.AccountHistory;
@@ -27,7 +26,7 @@ import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.IEntityFactory;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
@@ -50,13 +49,12 @@ public class EntityServiceTest extends DbTest {
 	 * Constructor
 	 */
 	public EntityServiceTest() {
-		super(JpaMode.SPRING);
+		super(JpaMode.SPRING, true);
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new JpaModule(jpaMode));
 		modules.add(new DaoModule(DaoMode.ORM));
 		modules.add(new EntityServiceModule());
 	}
@@ -88,8 +86,8 @@ public class EntityServiceTest extends DbTest {
 		return injector.getInstance(IEntityDao.class);
 	}
 
-	private MockEntityProvider getMockEntityProvider() {
-		return injector.getInstance(MockEntityProvider.class);
+	private MockEntityFactory getMockEntityFactory() {
+		return injector.getInstance(MockEntityFactory.class);
 	}
 
 	private IEntityFactory getEntityFactory() {
@@ -105,19 +103,19 @@ public class EntityServiceTest extends DbTest {
 		try {
 			Currency c = null;
 
-			account = getMockEntityProvider().getEntityCopy(Asp.class, false);
-			final AccountAddress aa = getMockEntityProvider().getEntityCopy(AccountAddress.class, false);
-			final Address a = getMockEntityProvider().getEntityCopy(Address.class, false);
+			account = getMockEntityFactory().getEntityCopy(Asp.class, false);
+			final AccountAddress aa = getMockEntityFactory().getEntityCopy(AccountAddress.class, false);
+			final Address a = getMockEntityFactory().getEntityCopy(Address.class, false);
 			aa.setAddress(a);
 			getEntityFactory().setGenerated(a);
 			account.addAccountAddress(aa);
 
 			final IEntityDao dao = getEntityDao();
 
-			c = dao.persist(getMockEntityProvider().getEntityCopy(Currency.class, false));
+			c = dao.persist(getMockEntityFactory().getEntityCopy(Currency.class, false));
 			account.setCurrency(c);
 
-			pi = dao.persist(getMockEntityProvider().getEntityCopy(PaymentInfo.class, false));
+			pi = dao.persist(getMockEntityFactory().getEntityCopy(PaymentInfo.class, false));
 			account.setPaymentInfo(pi);
 
 			if(persistAccount) {

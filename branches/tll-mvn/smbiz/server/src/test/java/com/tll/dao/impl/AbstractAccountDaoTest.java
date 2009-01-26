@@ -34,7 +34,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 	 * @param accountClass
 	 */
 	public AbstractAccountDaoTest(Class<A> accountClass) {
-		super(accountClass);
+		super(accountClass, true);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 		Currency currency;
 		if(cKey == null) {
 			// load stubbed currency
-			currency = getMockEntityProvider().getEntityCopy(Currency.class, true);
+			currency = getMockEntityFactory().getEntityCopy(Currency.class, true);
 			currency = getEntityDao().persist(currency);
 			cKey = new PrimaryKey<Currency>(currency);
 		}
@@ -57,7 +57,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 		if(piKey == null) {
 			// stub payment info
 			try {
-				paymentInfo = getMockEntityProvider().getEntityCopy(PaymentInfo.class, true);
+				paymentInfo = getMockEntityFactory().getEntityCopy(PaymentInfo.class, true);
 			}
 			catch(final Exception ex) {
 				Assert.fail("Unable to acquire test payment info entity");
@@ -94,7 +94,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 
 		Address a1;
 		if(a1Key == null) {
-			a1 = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			a1 = getEntityDao().persist(getMockEntityFactory().getEntityCopy(Address.class, true));
 			a1Key = new PrimaryKey<Address>(a1);
 		}
 		else {
@@ -104,7 +104,7 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 
 		Address a2;
 		if(a2Key == null) {
-			a2 = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			a2 = getEntityDao().persist(getMockEntityFactory().getEntityCopy(Address.class, true));
 			a2Key = new PrimaryKey<Address>(a2);
 		}
 		else {
@@ -112,8 +112,8 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 		}
 		Assert.assertNotNull(a2);
 
-		final AccountAddress aa1 = getMockEntityProvider().getEntityCopy(AccountAddress.class, true);
-		final AccountAddress aa2 = getMockEntityProvider().getEntityCopy(AccountAddress.class, true);
+		final AccountAddress aa1 = getMockEntityFactory().getEntityCopy(AccountAddress.class, true);
+		final AccountAddress aa2 = getMockEntityFactory().getEntityCopy(AccountAddress.class, true);
 		aa1.setAddress(a1);
 		aa2.setAddress(a2);
 		e.addAccountAddress(aa1);
@@ -185,8 +185,8 @@ public abstract class AbstractAccountDaoTest<A extends Account> extends Abstract
 		try {
 			if(e.getAddresses() != null) {
 				for(final AccountAddress aa : e.getAddresses()) {
-					getMockEntityProvider().makeBusinessKeyUnique(aa);
-					getMockEntityProvider().makeBusinessKeyUnique(aa.getAddress());
+					getMockEntityFactory().makeBusinessKeyUnique(aa);
+					getMockEntityFactory().makeBusinessKeyUnique(aa.getAddress());
 				}
 			}
 		}

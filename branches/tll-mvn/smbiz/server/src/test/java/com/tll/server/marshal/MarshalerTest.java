@@ -27,7 +27,7 @@ import com.tll.model.CreditCardType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.util.CommonUtil;
 
@@ -61,8 +61,8 @@ public class MarshalerTest extends AbstractInjectedTest {
 		return injector.getInstance(Marshaler.class);
 	}
 
-	private MockEntityProvider getMockEntityProvider() {
-		return injector.getInstance(MockEntityProvider.class);
+	private MockEntityFactory getMockEntityFactory() {
+		return injector.getInstance(MockEntityFactory.class);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 		assert marshaler != null;
 		final Class<? extends IEntity>[] entityClasses = CommonUtil.getClasses("com.tll.model", IEntity.class, true, null);
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
-			final IEntity e = getMockEntityProvider().getEntityCopy(entityClass, false);
+			final IEntity e = getMockEntityFactory().getEntityCopy(entityClass, false);
 			Assert.assertNotNull(e);
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
@@ -98,7 +98,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final EntityGraph entityGraph = new EntityGraph(getMockEntityProvider());
+		final EntityGraph entityGraph = new EntityGraph(getMockEntityFactory());
 		final Asp asp = entityGraph.getEntityByType(Asp.class);
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -117,7 +117,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	public void testPaymentInfo() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final IEntity e = getMockEntityProvider().getEntityCopy(PaymentInfo.class, false);
+		final IEntity e = getMockEntityFactory().getEntityCopy(PaymentInfo.class, false);
 		Assert.assertNotNull(e);
 
 		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -183,7 +183,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	public void testEmptyRelatedMany() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final Account e = getMockEntityProvider().getEntityCopy(Account.class, false);
+		final Account e = getMockEntityFactory().getEntityCopy(Account.class, false);
 		assert e != null;
 		e.setAddresses(null);
 		Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);

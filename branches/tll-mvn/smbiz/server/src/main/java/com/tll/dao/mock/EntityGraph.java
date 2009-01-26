@@ -37,7 +37,7 @@ import com.tll.model.InterfaceSingle;
 import com.tll.model.InterfaceSwitch;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
@@ -51,7 +51,7 @@ public final class EntityGraph implements IEntityProvider {
 	private static final Map<Class<? extends IEntity>, Set<? extends IEntity>> map =
 			new HashMap<Class<? extends IEntity>, Set<? extends IEntity>>();
 
-	private MockEntityProvider mep;
+	private MockEntityFactory mep;
 
 	private Asp asp;
 
@@ -60,7 +60,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * @param mep
 	 */
 	@Inject
-	public EntityGraph(MockEntityProvider mep) {
+	public EntityGraph(MockEntityFactory mep) {
 		super();
 		this.mep = mep;
 		stub();

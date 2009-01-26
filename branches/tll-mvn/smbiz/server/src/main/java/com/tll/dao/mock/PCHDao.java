@@ -3,12 +3,12 @@
  * @author jpk
  * Nov 19, 2007
  */
-package com.tll.dao.impl.mock;
+package com.tll.dao.mock;
 
 import java.util.Collection;
 import java.util.List;
 
-import com.tll.dao.impl.IPCHDao;
+import com.tll.dao.IPCHDao;
 
 
 /**

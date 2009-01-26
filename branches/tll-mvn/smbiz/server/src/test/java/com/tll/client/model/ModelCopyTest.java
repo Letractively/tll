@@ -11,7 +11,7 @@ import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Merchant;
-import com.tll.model.MockEntityProvider;
+import com.tll.model.MockEntityFactory;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 
@@ -23,7 +23,7 @@ import com.tll.server.marshal.Marshaler;
 public class ModelCopyTest extends AbstractModelTest {
 
 	AccountAddress getCopyTestEntity() throws Exception {
-		MockEntityProvider mep = injector.getInstance(MockEntityProvider.class);
+		MockEntityFactory mep = injector.getInstance(MockEntityFactory.class);
 
 		final AccountAddress aa = mep.getEntityCopy(AccountAddress.class, false);
 		final Currency currency = mep.getEntityCopy(Currency.class, false);

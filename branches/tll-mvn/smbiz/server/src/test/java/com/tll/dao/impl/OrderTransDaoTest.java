@@ -31,7 +31,7 @@ public class OrderTransDaoTest extends AbstractEntityDaoTest<OrderTrans> {
 	 * Constructor
 	 */
 	public OrderTransDaoTest() {
-		super(OrderTrans.class);
+		super(OrderTrans.class, true);
 	}
 
 	@Override
@@ -40,8 +40,8 @@ public class OrderTransDaoTest extends AbstractEntityDaoTest<OrderTrans> {
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -54,7 +54,7 @@ public class OrderTransDaoTest extends AbstractEntityDaoTest<OrderTrans> {
 
 		Order order;
 		if(oKey == null) {
-			order = getMockEntityProvider().getEntityCopy(Order.class, true);
+			order = getMockEntityFactory().getEntityCopy(Order.class, true);
 			order.setCurrency(account.getCurrency());
 			order.setPaymentInfo(null);
 			order.setAccount(account);

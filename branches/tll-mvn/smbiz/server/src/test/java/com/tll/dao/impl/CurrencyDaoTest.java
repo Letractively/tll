@@ -20,7 +20,7 @@ public class CurrencyDaoTest extends AbstractEntityDaoTest<Currency> {
 	 * Constructor
 	 */
 	public CurrencyDaoTest() {
-		super(Currency.class);
+		super(Currency.class, true);
 	}
 
 	@Override

@@ -28,15 +28,15 @@ public class ProductCategoryDaoTest extends AbstractEntityDaoTest<ProductCategor
 	 * Constructor
 	 */
 	public ProductCategoryDaoTest() {
-		super(ProductCategory.class);
+		super(ProductCategory.class, true);
 	}
 
 	@Override
 	protected void assembleTestEntity(ProductCategory e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);

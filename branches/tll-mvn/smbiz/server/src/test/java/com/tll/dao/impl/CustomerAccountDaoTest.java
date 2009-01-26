@@ -41,7 +41,7 @@ public class CustomerAccountDaoTest extends AbstractEntityDaoTest<CustomerAccoun
 	protected void assembleTestEntity(CustomerAccount e) throws Exception {
 		Currency c;
 		if(rKey == null) {
-			c = getMockEntityProvider().getEntityCopy(Currency.class, true);
+			c = getMockEntityFactory().getEntityCopy(Currency.class, true);
 			c = getEntityDao().persist(c);
 			rKey = new PrimaryKey<Currency>(c);
 		}
@@ -52,7 +52,7 @@ public class CustomerAccountDaoTest extends AbstractEntityDaoTest<CustomerAccoun
 
 		Customer customer;
 		if(cKey == null) {
-			customer = getMockEntityProvider().getEntityCopy(Customer.class, true);
+			customer = getMockEntityFactory().getEntityCopy(Customer.class, true);
 			customer.setParent(null);
 			customer.setCurrency(c);
 			customer = getEntityDao().persist(customer);
@@ -66,7 +66,7 @@ public class CustomerAccountDaoTest extends AbstractEntityDaoTest<CustomerAccoun
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account.setCurrency(c);
@@ -81,7 +81,7 @@ public class CustomerAccountDaoTest extends AbstractEntityDaoTest<CustomerAccoun
 
 		Visitor visitor;
 		if(vKey == null) {
-			visitor = getMockEntityProvider().getEntityCopy(Visitor.class, true);
+			visitor = getMockEntityFactory().getEntityCopy(Visitor.class, true);
 			visitor.setAccount(account);
 			visitor = getEntityDao().persist(visitor);
 			vKey = new PrimaryKey<Visitor>(visitor);

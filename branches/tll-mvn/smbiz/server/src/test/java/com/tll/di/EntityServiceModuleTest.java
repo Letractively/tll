@@ -29,7 +29,7 @@ public class EntityServiceModuleTest {
 	}
 
 	public void testLoadMock() throws Exception {
-		final MockEntitiesModule mem = new MockEntitiesModule();
+		final MockEntityFactoryModule mem = new MockEntityFactoryModule();
 		final DaoModule dm = new DaoModule(DaoMode.MOCK);
 		final EntityServiceModule esm = new EntityServiceModule();
 		final Injector injector = Guice.createInjector(mem, dm, esm);

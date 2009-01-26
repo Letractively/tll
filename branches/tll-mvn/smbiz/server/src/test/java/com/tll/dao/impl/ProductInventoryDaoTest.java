@@ -30,19 +30,19 @@ public class ProductInventoryDaoTest extends AbstractEntityDaoTest<ProductInvent
 	 * Constructor
 	 */
 	public ProductInventoryDaoTest() {
-		super(ProductInventory.class);
+		super(ProductInventory.class, true);
 	}
 
 	@Override
 	protected void assembleTestEntity(ProductInventory e) throws Exception {
-		final ProductGeneral gp = getMockEntityProvider().getEntityCopy(ProductGeneral.class, true);
+		final ProductGeneral gp = getMockEntityFactory().getEntityCopy(ProductGeneral.class, true);
 		e.setProductGeneral(gp);
 		getEntityFactory().setGenerated(e.getProductGeneral());
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -60,7 +60,7 @@ public class ProductInventoryDaoTest extends AbstractEntityDaoTest<ProductInvent
 	protected void uniquify(ProductInventory e) {
 		super.uniquify(e);
 		try {
-			getMockEntityProvider().makeBusinessKeyUnique(e.getProductGeneral());
+			getMockEntityFactory().makeBusinessKeyUnique(e.getProductGeneral());
 		}
 		catch(final BusinessKeyNotDefinedException e1) {
 			Assert.fail(e1.getMessage());

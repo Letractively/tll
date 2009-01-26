@@ -20,7 +20,7 @@ public class PaymentInfoDaoTest extends AbstractEntityDaoTest<PaymentInfo> {
 	 * Constructor
 	 */
 	public PaymentInfoDaoTest() {
-		super(PaymentInfo.class);
+		super(PaymentInfo.class, true);
 	}
 
 	@Override

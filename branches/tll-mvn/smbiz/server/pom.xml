@@ -2,18 +2,52 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>com.tll</groupId>
-  <artifactId>smbiz-server</artifactId>
-  <name>smbiz-server</name>
-  <version>${tll-smbiz.version}</version>
-  <description>The smbiz server app</description>
-
   <parent>
     <groupId>com.tll</groupId>
     <artifactId>smbiz</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
 
+  <groupId>com.tll</groupId>
+  <artifactId>smbiz-server</artifactId>
+  <name>smbiz-server</name>
+  <version>${tll-smbiz.version}</version>
+  <description>The smbiz server app</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <classpath>
+                <element>
+                  <groupId>commons-lang</groupId>
+                  <artifactId>commons-lang</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-collections</groupId>
+                  <artifactId>commons-collections</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-configuration</groupId>
+                  <artifactId>commons-configuration</artifactId>
+                </element>
+              </classpath>
+              <source>${pom.basedir}/src/main/script/ResourceProcessor.groovy</source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
@@ -50,9 +84,39 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
     
     <dependency>
@@ -63,39 +127,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.groovy.maven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <classpath>
-                <element>
-                  <groupId>commons-lang</groupId>
-                  <artifactId>commons-lang</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-collections</groupId>
-                  <artifactId>commons-collections</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-configuration</groupId>
-                  <artifactId>commons-configuration</artifactId>
-                </element>
-              </classpath>
-              <source>${pom.basedir}/src/main/script/ResourceProcessor.groovy</source>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

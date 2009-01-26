@@ -20,7 +20,7 @@ public class AppPropertyDaoTest extends AbstractEntityDaoTest<AppProperty> {
 	 * Constructor
 	 */
 	public AppPropertyDaoTest() {
-		super(AppProperty.class);
+		super(AppProperty.class, true);
 	}
 
 	@Override

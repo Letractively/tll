@@ -39,8 +39,8 @@ public class AccountAddressDaoTest extends AbstractEntityDaoTest<AccountAddress>
 
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -54,7 +54,7 @@ public class AccountAddressDaoTest extends AbstractEntityDaoTest<AccountAddress>
 
 		Address address;
 		if(adrKey == null) {
-			address = getEntityDao().persist(getMockEntityProvider().getEntityCopy(Address.class, true));
+			address = getEntityDao().persist(getMockEntityFactory().getEntityCopy(Address.class, true));
 			adrKey = new PrimaryKey<Address>(address);
 		}
 		else {

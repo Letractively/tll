@@ -26,7 +26,7 @@ public class DaoModuleTest {
 	}
 
 	public void testLoadMock() throws Exception {
-		final MockEntitiesModule mem = new MockEntitiesModule();
+		final MockEntityFactoryModule mem = new MockEntityFactoryModule();
 		final DaoModule dm = new DaoModule(DaoMode.MOCK);
 		final Injector injector = Guice.createInjector(mem, dm);
 		assert injector != null;

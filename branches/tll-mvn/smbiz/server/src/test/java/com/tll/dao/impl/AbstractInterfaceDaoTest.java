@@ -39,14 +39,14 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Abst
 	@Override
 	protected void assembleTestEntity(I e) throws Exception {
 
-		final InterfaceOption o1 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
+		final InterfaceOption o1 = getMockEntityFactory().getEntityCopy(InterfaceOption.class, false);
 		Set<InterfaceOptionParameterDefinition> params =
-				getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+				getMockEntityFactory().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
 		o1.addParameters(params);
 		e.addOption(o1);
 
-		final InterfaceOption o2 = getMockEntityProvider().getEntityCopy(InterfaceOption.class, false);
-		params = getMockEntityProvider().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+		final InterfaceOption o2 = getMockEntityFactory().getEntityCopy(InterfaceOption.class, false);
+		params = getMockEntityFactory().getAllEntityCopies(InterfaceOptionParameterDefinition.class);
 		o2.addParameters(params);
 		e.addOption(o2);
 	}
@@ -57,9 +57,9 @@ public abstract class AbstractInterfaceDaoTest<I extends Interface> extends Abst
 
 		try {
 			for(final InterfaceOption o : e.getOptions()) {
-				getMockEntityProvider().makeBusinessKeyUnique(o);
+				getMockEntityFactory().makeBusinessKeyUnique(o);
 				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-					getMockEntityProvider().makeBusinessKeyUnique(param);
+					getMockEntityFactory().makeBusinessKeyUnique(param);
 				}
 			}
 		}

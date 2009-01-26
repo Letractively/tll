@@ -20,7 +20,7 @@ public class AddressDaoTest extends AbstractEntityDaoTest<Address> {
 	 * Constructor
 	 */
 	public AddressDaoTest() {
-		super(Address.class);
+		super(Address.class, true);
 	}
 
 	@Override

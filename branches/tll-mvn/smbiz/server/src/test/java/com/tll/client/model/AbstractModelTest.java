@@ -138,7 +138,7 @@ public abstract class AbstractModelTest extends DbTest {
 	 * Constructor
 	 */
 	public AbstractModelTest() {
-		super(JpaMode.NONE);
+		super(JpaMode.NONE, false);
 	}
 
 	@Override

@@ -30,15 +30,15 @@ public class ShipBoundCostDaoTest extends AbstractEntityDaoTest<ShipBoundCost> {
 	 * Constructor
 	 */
 	public ShipBoundCostDaoTest() {
-		super(ShipBoundCost.class);
+		super(ShipBoundCost.class, true);
 	}
 
 	@Override
 	protected void assembleTestEntity(ShipBoundCost e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -51,7 +51,7 @@ public class ShipBoundCostDaoTest extends AbstractEntityDaoTest<ShipBoundCost> {
 
 		ShipMode sm;
 		if(smKey == null) {
-			sm = getMockEntityProvider().getEntityCopy(ShipMode.class, true);
+			sm = getMockEntityFactory().getEntityCopy(ShipMode.class, true);
 			sm.setParent(account);
 			sm = getEntityDao().persist(sm);
 			smKey = new PrimaryKey<ShipMode>(sm);

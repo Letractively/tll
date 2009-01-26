@@ -1,4 +1,4 @@
-package com.tll.dao.impl;
+package com.tll.dao;
 
 import com.tll.dao.IDao;
 

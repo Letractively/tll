@@ -42,8 +42,8 @@ public class InterfaceOptionAccountDaoTest extends AbstractEntityDaoTest<Interfa
 	protected void assembleTestEntity(InterfaceOptionAccount e) throws Exception {
 		Account account;
 		if(aKey == null) {
-			account = getMockEntityProvider().getEntityCopy(Asp.class, true);
-			account.setCurrency(getEntityDao().persist(getMockEntityProvider().getEntityCopy(Currency.class, true)));
+			account = getMockEntityFactory().getEntityCopy(Asp.class, true);
+			account.setCurrency(getEntityDao().persist(getMockEntityFactory().getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = getEntityDao().persist(account);
@@ -58,10 +58,10 @@ public class InterfaceOptionAccountDaoTest extends AbstractEntityDaoTest<Interfa
 		// stub interface
 		Interface intf;
 		if(iKey == null) {
-			intf = getMockEntityProvider().getEntityCopy(InterfaceSwitch.class, true);
-			final InterfaceOption option = getMockEntityProvider().getEntityCopy(InterfaceOption.class, true);
+			intf = getMockEntityFactory().getEntityCopy(InterfaceSwitch.class, true);
+			final InterfaceOption option = getMockEntityFactory().getEntityCopy(InterfaceOption.class, true);
 			final InterfaceOptionParameterDefinition param =
-					getMockEntityProvider().getEntityCopy(InterfaceOptionParameterDefinition.class, true);
+					getMockEntityFactory().getEntityCopy(InterfaceOptionParameterDefinition.class, true);
 			option.addParameter(param);
 			intf.addOption(option);
 			intf = getEntityDao().persist(intf);
