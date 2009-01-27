@@ -28,6 +28,7 @@ public interface ISourcesUserSessionEvents {
 	 * UserSessionListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class UserSessionListenerCollection extends ArrayList<IUserSessionListener> {
 
 		public void fireLogin() {

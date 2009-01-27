@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
  * EditEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class EditEvent extends EventObject {
 
 	public enum EditOp {

@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
  * PinPopViewRequest - Request to either pin or pop a view.
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class PinPopViewRequest extends ViewOpRequest {
 
 	private final boolean pop;

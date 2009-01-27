@@ -203,6 +203,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	/**
 	 * Constructor
 	 */
+	@SuppressWarnings("synthetic-access")
 	public AccountPanel() {
 		super();
 		initWidget(panel);

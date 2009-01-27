@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * ShowViewRequest
  * @author jpk
  */
+@SuppressWarnings("serial")
 public abstract class ShowViewRequest extends ViewRequestEvent implements IViewRef {
 
 	/**

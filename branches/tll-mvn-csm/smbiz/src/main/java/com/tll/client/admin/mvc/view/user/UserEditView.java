@@ -18,6 +18,7 @@ import com.tll.model.EntityType;
  * UserEditView
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public class UserEditView extends EditView {
 
 	public static final Class klas = new Class();

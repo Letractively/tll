@@ -29,6 +29,7 @@ public interface ISourcesOptionEvents {
 	 * OptionListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class OptionListenerCollection extends ArrayList<IOptionListener> {
 
 		public void fireOnSelected(OptionEvent event) {

@@ -73,6 +73,7 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	 * @param helpText
 	 * @param converter
 	 */
+	@SuppressWarnings("synthetic-access")
 	DateField(String name, String propName, String labelText, String helpText, IConverter<Date, B> converter) {
 		super(name, propName, labelText, helpText);
 		setConverter(converter);

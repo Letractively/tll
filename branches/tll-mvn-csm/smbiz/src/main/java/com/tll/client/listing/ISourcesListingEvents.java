@@ -32,6 +32,7 @@ public interface ISourcesListingEvents<R> extends EventListener {
 	 * @author jpk
 	 * @param <R> row type
 	 */
+	@SuppressWarnings("serial")
 	public static final class ListingListenerCollection<R> extends ArrayList<IListingListener<R>> {
 
 		public void fireListingEvent(ListingEvent<R> event) {

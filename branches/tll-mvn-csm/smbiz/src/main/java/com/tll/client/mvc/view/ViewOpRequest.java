@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * ViewOpRequest
  * @author jpk
  */
+@SuppressWarnings("serial")
 public abstract class ViewOpRequest extends ViewRequestEvent {
 
 	private final ViewKey viewKey;

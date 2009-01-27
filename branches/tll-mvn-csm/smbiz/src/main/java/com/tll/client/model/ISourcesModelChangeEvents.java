@@ -6,7 +6,6 @@ package com.tll.client.model;
 
 import java.util.ArrayList;
 
-
 /**
  * ISourcesModelChangeEvents
  * @author jpk
@@ -29,6 +28,7 @@ public interface ISourcesModelChangeEvents {
 	 * ModelChangeListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static class ModelChangeListenerCollection extends ArrayList<IModelChangeListener> {
 
 		public void fireOnModelChange(ModelChangeEvent event) {

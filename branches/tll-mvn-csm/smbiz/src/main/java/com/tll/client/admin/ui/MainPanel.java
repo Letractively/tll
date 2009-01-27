@@ -135,6 +135,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		userSessionListeners.remove(listener);
 	}
 
+	@SuppressWarnings("synthetic-access")
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
 		if(changeType == ChangeType.USER_CHANGE) {
 			Model user = ac.getUser();
@@ -290,6 +291,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			}
 		}
 
+		@SuppressWarnings("synthetic-access")
 		public void onSubmitComplete(FormSubmitCompleteEvent event) {
 			String results = event.getResults();
 			if(results == null || results.length() == 0) {

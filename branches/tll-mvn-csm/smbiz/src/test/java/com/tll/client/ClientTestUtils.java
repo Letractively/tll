@@ -288,7 +288,7 @@ public final class ClientTestUtils {
 				if((srcSet == null && tgtSet != null) || (srcSet != null && tgtSet == null)) {
 					throw new Exception("Related many lists differ by null for prop:" + propName);
 				}
-				if(srcSet != null) {
+				if(srcSet != null && tgtSet != null) {
 					if(srcSet.size() != tgtSet.size()) {
 						throw new Exception("Source and copy related many list sizes differ for prop: " + propName);
 					}

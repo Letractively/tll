@@ -30,6 +30,7 @@ public interface ISourcesEditEvents {
 	 * EditListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	final class EditListenerCollection extends ArrayList<IEditListener> {
 
 		public void fireEditEvent(EditEvent event) {

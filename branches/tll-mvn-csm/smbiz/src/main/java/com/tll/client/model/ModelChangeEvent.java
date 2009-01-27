@@ -12,6 +12,7 @@ import com.tll.client.data.Status;
  * ModelChangeEvent - Used to dissemminate model changes.
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class ModelChangeEvent extends EventObject {
 
 	public static enum ModelChangeOp {

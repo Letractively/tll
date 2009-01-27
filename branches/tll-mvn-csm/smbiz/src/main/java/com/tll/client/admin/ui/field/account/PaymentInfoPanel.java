@@ -75,6 +75,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 		initWidget(tabPanel);
 		setRenderer(new IFieldRenderer<TabPanel>() {
 
+			@SuppressWarnings("synthetic-access")
 			public void render(TabPanel panel, FieldGroup fg) {
 				panel.add(creditCardPanel, "Credit Card");
 				panel.add(bankPanel, "Bank");

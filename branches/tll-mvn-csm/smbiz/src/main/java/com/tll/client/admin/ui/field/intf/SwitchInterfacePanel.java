@@ -22,6 +22,7 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
+		@SuppressWarnings("synthetic-access")
 		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);

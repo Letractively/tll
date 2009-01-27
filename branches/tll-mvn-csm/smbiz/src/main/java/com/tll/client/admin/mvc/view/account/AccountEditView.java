@@ -18,6 +18,7 @@ import com.tll.refdata.RefDataType;
  * AccountEditView - Base AbstractView for editing accounts.
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public class AccountEditView extends EditView {
 
 	/**

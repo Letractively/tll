@@ -21,6 +21,7 @@ import com.tll.client.data.rpc.RpcCommand;
  * server.
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class AdminContextCommand extends RpcCommand<AdminContextPayload> implements IUserSessionListener {
 
 	private static final IAdminContextServiceAsync svc;
@@ -59,6 +60,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 		adminContextListeners.remove(listener);
 	}
 
+	@SuppressWarnings("serial")
 	private static class ListenerCollection extends ArrayList<IAdminContextListener> {
 
 		public void fire(AdminContext adminContext, ChangeType changeType) {

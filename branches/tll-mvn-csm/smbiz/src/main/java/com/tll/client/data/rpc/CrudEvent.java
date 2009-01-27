@@ -15,6 +15,7 @@ import com.tll.client.data.rpc.CrudCommand.CrudOp;
  * CrudEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class CrudEvent extends EventObject {
 
 	private final CrudOp crudOp;

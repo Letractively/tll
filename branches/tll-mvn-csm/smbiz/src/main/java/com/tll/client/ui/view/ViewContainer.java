@@ -30,6 +30,7 @@ import com.tll.client.ui.ISourcesDragEvents;
  * ViewContainer - UI container for {@link IView} implementations.
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener,
 		EventPreview {
 

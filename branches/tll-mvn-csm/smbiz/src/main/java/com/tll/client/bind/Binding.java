@@ -26,6 +26,7 @@ import com.tll.client.validate.ValidationException;
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class Binding {
 
 	/**

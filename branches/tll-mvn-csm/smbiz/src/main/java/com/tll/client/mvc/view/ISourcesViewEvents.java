@@ -30,6 +30,7 @@ public interface ISourcesViewEvents {
 	 * ViewEventListenerCollection definition.
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class ViewEventListenerCollection extends ArrayList<IViewEventListener> {
 
 		public void fireOnViewChanged(ViewChangedEvent event) {

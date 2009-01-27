@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
  * DragEvent - Event object containing information about UI artifact dragging.
  * @author jpk
  */
+@SuppressWarnings("serial")
 public class DragEvent extends EventObject {
 
 	public final int deltaX, deltaY;

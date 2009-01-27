@@ -9,6 +9,7 @@ package com.tll.client.cache;
  * StorageException
  * @author jpk
  */
+@SuppressWarnings("serial")
 public class StorageException extends Exception {
 
 	/**

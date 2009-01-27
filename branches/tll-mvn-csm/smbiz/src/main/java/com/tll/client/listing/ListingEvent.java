@@ -18,6 +18,7 @@ import com.tll.dao.Sorting;
  * @param <R> The row data type
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class ListingEvent<R> extends EventObject {
 
 	private final boolean success;

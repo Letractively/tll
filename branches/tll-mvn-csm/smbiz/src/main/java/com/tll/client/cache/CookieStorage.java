@@ -35,7 +35,8 @@ public class CookieStorage extends Storage {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( {
+		"unused", "synthetic-access" })
 	private static class CookieConstantsIE6 extends CookieConstants {
 
 		@Override
@@ -83,7 +84,7 @@ public class CookieStorage extends Storage {
 		// get the values as a string and check their length
 		// String valueString = getValuesAsString();
 		// TODO implement
-		String valueString = null; // temp
+		String valueString = ""; // temp
 		if(valueString.length() > constants.maxTotalStorage()) {
 			throw new StorageException("Out of cookie storage space");
 		}

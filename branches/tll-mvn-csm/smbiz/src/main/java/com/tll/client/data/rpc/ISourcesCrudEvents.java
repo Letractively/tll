@@ -30,6 +30,7 @@ public interface ISourcesCrudEvents {
 	 * CrudListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	final class CrudListenerCollection extends ArrayList<ICrudListener> {
 
 		public void fireCrudEvent(CrudEvent event) {
