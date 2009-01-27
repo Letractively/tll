@@ -11,7 +11,7 @@
       </run>
     </groups>
     <classes>
-      <class name="com.tll.server.GuiceBootstrapperTest" />
+      <class name="com.tll.server.BootstrapperTest" />
       <class name="com.tll.server.marshal.MarshalerTest" />
     </classes>
   </test>
