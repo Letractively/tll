@@ -4,19 +4,19 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>smbiz</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <artifactId>tll</artifactId>
+    <version>1</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>smbiz-server</artifactId>
-  <name>smbiz-server</name>
-  <version>${tll-smbiz.version}</version>
+  <artifactId>smbiz</artifactId>
+  <name>smbiz</name>
+  <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <description>The smbiz server app</description>
+  <description>The smbiz app</description>
 
   <build>
-    <finalName>smbiz-server</finalName>
+    <finalName>smbiz</finalName>
     <filters>
       <filter>src/main/resources/config.properties</filter>
     </filters>
