@@ -8,7 +8,7 @@ package com.tll.client.admin.ui.field.account;
 import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.model.impl.AddressType;
+import com.tll.model.AddressType;
 
 final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
 

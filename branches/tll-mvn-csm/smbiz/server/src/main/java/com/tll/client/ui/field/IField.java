@@ -9,11 +9,11 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindable;
-import com.tll.client.model.IPropertyNameProvider;
 import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.criteria.IPropertyNameProvider;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**

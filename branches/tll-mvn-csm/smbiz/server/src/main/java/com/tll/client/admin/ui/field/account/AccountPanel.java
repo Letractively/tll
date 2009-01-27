@@ -23,8 +23,8 @@ import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
+import com.tll.model.AddressType;
 import com.tll.model.EntityType;
-import com.tll.model.impl.AddressType;
 
 /**
  * AccountPanel

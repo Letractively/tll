@@ -21,7 +21,7 @@ import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -127,7 +127,7 @@ public final class CustomerListingView extends ListingView {
 		mercListingLink.setText(mercRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
-		criteria.setNamedQuery(SelectNamedQuery.CUSTOMER_LISTING);
+		criteria.setNamedQuery(SelectNamedQueries.CUSTOMER_LISTING);
 		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {

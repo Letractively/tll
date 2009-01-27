@@ -37,7 +37,7 @@ import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.EntityType;
@@ -171,7 +171,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			super();
 			String listingName = EntityType.INTERFACE.name();
 			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
-			criteria.setNamedQuery(SelectNamedQuery.INTERFACE_SUMMARY_LISTING);
+			criteria.setNamedQuery(SelectNamedQueries.INTERFACE_SUMMARY_LISTING);
 			Sorting defaultSorting = new Sorting("name", "intf");
 			listingCommand =
 					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,

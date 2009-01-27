@@ -15,7 +15,7 @@ import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityType;
 
 /**
@@ -50,7 +50,7 @@ public class AspMain extends MainView {
 		super();
 
 		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
-		as.setNamedQuery(SelectNamedQuery.ISP_LISTING);
+		as.setNamedQuery(SelectNamedQueries.ISP_LISTING);
 
 		links.add(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
 		links.add(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));

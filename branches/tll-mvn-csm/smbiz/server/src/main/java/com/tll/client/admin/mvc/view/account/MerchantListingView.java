@@ -24,7 +24,7 @@ import com.tll.client.ui.option.Option;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQuery;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -121,7 +121,7 @@ public final class MerchantListingView extends ListingView {
 		ispListingLink.setText(ispRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
-		criteria.setNamedQuery(SelectNamedQuery.MERCHANT_LISTING);
+		criteria.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING);
 		criteria.setQueryParam(new IntPropertyValue("ispId", ispRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {

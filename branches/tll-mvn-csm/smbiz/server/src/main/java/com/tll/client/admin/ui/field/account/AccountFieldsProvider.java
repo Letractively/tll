@@ -2,7 +2,7 @@ package com.tll.client.admin.ui.field.account;
 
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.model.impl.AccountStatus;
+import com.tll.model.AccountStatus;
 
 /**
  * AccountFieldsProvider

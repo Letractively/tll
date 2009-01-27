@@ -10,7 +10,7 @@ import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.util.GlobalFormat;
-import com.tll.model.impl.CreditCardType;
+import com.tll.model.CreditCardType;
 import com.tll.refdata.RefDataType;
 
 /**
