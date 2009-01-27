@@ -1,0 +1,14 @@
+<!-- 
+  GWT test module that identifies all gwt tests for gwt's junit testing framework. 
+-->
+<module>
+  <inherits name="com.tll.Smbiz" />
+
+  <set-property name="log_DivLogger" value="DISABLED" />
+
+  <set-property name="user.agent" value="ie6" />
+  <set-property name="locale" value="default" />
+  
+  <source path="client" />
+
+</module>

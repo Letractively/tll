@@ -1,0 +1,38 @@
+@CHARSET "ISO-8859-1";
+
+/* TK related */
+.tk-SimpleHyperLink {
+	
+}
+
+/* ImageContainer */
+.ic {
+}
+
+/* WidgetAndLabel */
+.wal {
+  
+}
+
+.wal .widget {
+}
+
+.wal .label {
+}
+
+/* TabbedIndexedFieldPanel */
+.tifp {
+}
+
+.tifp .empty {
+  padding: 2em;
+}
+
+.tifp .gwt-TabBar .gwt-TabBarItem .delbtn {
+	display: none;
+}
+
+.tifp .gwt-TabBar .gwt-TabBarItem-selected .delbtn {
+	display: inline;
+	margin-right: 5px;
+}

@@ -1,0 +1,16 @@
+<module>
+  <!--
+  UI tests module that invokes the gwt host browser.
+  This module is intended for visualizing widget rendering and verifying css styling. 
+  -->
+  
+  <!-- tells the gwt compiler to only permute for this target browser and locale: (quick compie) 
+  <set-property name="user.agent" value="ie6" />
+  <set-property name="locale" value="default" />
+  -->
+  
+  <inherits name='com.tll.Smbiz' />
+
+  <entry-point class='com.tll.client.UITests' />
+
+</module>
