@@ -94,7 +94,7 @@ public final class EntityGraph implements IEntityProvider {
 		if(clc != null && clc.size() != 1) {
 			throw new IllegalStateException("More than one entity exists of type: " + type.getName());
 		}
-		return clc.iterator().next();
+		return clc == null ? null : clc.iterator().next();
 	}
 
 	@SuppressWarnings("unchecked")

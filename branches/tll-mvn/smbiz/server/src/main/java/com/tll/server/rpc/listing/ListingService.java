@@ -76,7 +76,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 		ListingStatus listingStatus = null;
 
-		if(!status.hasErrors()) {
+		if(!status.hasErrors() && listingRequest != null) {
 
 			final RequestContext requestContext = getRequestContext();
 			final HttpServletRequest request = requestContext.getRequest();
@@ -175,7 +175,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				}
 
 				// do the query related listing op
-				if(handler != null && listingOp.isQuery()) {
+				if(handler != null && listingOp != null && listingOp.isQuery()) {
 					if(log.isDebugEnabled())
 						log.debug("Performing : '" + listingOp.getName() + "' for '" + listingName + "'...");
 					try {
@@ -233,7 +233,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 		final ListingPayload<Model> p = new ListingPayload<Model>(listingName, listingStatus);
 
 		// only generate the table page when it is needed at the client
-		if(handler != null && !listingOp.isClear()) {
+		if(handler != null && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingName + "'...");
 			final List<Model> list = handler.getElements();
 			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());

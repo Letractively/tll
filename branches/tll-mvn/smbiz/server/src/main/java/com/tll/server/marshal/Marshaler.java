@@ -493,17 +493,19 @@ public final class Marshaler {
 					else {
 						throw new SystemError("Unhandled collection type: " + c.getSimpleName());
 					}
-					for(final Object obj : el) {
-						final Model model = (Model) obj;
-						final EntityType entityType = model.getEntityType();
-						final IEntity clcEntity =
-								model.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil.entityClassFromType(entityType), model,
-										visited);
-						if(clcEntity instanceof IChildEntity) {
-							((IChildEntity) clcEntity).setParent(e);
-						}
-						if(clcEntity != null) {
-							clc.add(clcEntity);
+					if(el != null) {
+						for(final Object obj : el) {
+							final Model model = (Model) obj;
+							final EntityType entityType = model.getEntityType();
+							final IEntity clcEntity =
+									model.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil.entityClassFromType(entityType), model,
+											visited);
+							if(clcEntity instanceof IChildEntity) {
+								((IChildEntity) clcEntity).setParent(e);
+							}
+							if(clcEntity != null) {
+								clc.add(clcEntity);
+							}
 						}
 					}
 					val = clc;
