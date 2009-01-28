@@ -4,9 +4,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.PaymentTrans;
 import com.tll.service.entity.EntityService;
+import com.tll.service.entity.IEntityAssembler;
 
 /**
  * PaymentTransService - {@link IPaymentTransService} impl

@@ -3,7 +3,6 @@ package com.tll.service.entity;
 import com.google.inject.Inject;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Address;
-import com.tll.model.IEntityAssembler;
 
 /**
  * ListHandlerDataProvider - The test list handler data provider.

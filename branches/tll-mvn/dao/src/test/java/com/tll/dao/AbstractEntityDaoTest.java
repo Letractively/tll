@@ -6,19 +6,16 @@
  */
 package com.tll.dao;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
 
-import org.hibernate.CacheMode;
-import org.hibernate.Session;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -52,12 +49,11 @@ import com.tll.util.EnumUtil;
 
 /**
  * AbstractEntityDaoTest
- * @param <E> entity type
  * @author jpk
  */
 @Test(groups = { "dao" })
 @SuppressWarnings("synthetic-access")
-public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
+public abstract class AbstractEntityDaoTest extends DbTest {
 
 	/**
 	 * Decorates {@link IEntityDao} to keep the dao tests from degrading as the
@@ -191,9 +187,35 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		return true;
 	}
 
+	/**
+	 * Ensures two entities are non-unique by business key.
+	 * @param e1
+	 * @param e2
+	 */
+	protected static final <E extends IEntity> void ensureNonUnique(E e1, E e2) {
+		if(e2 instanceof ITimeStampEntity) {
+			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
+			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
+		}
+		try {
+			BusinessKeyFactory.apply(e2, BusinessKeyFactory.create(e1));
+		}
+		catch(BusinessKeyNotDefinedException e) {
+			// assume ok
+		}
+	}
+
 	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
-	protected final Class<E> entityClass;
+	/**
+	 * The entity handler subject to testing.
+	 */
+	private Collection<IEntityDaoTestHandler<IEntity>> entityHandlers;
+
+	/**
+	 * The current entity handler under testing.
+	 */
+	private IEntityDaoTestHandler<IEntity> entityHandler;
 
 	private DaoMode daoMode;
 
@@ -201,22 +223,30 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	
 	private final IEntityDao dao = new EntityDao();
 
-	private final List<E> dbRemove = new ArrayList<E>();
+	private final List<IEntity> dbRemove = new ArrayList<IEntity>();
 
 	/**
 	 * Flag used to test {@link IIdListSupport} and {@link IPageSupport} related
 	 * test methods.
 	 */
-	private final boolean testPagingRelated;
+	private boolean testPagingRelated;
 
 	/**
 	 * Constructor
-	 * @param entityClass
-	 * @param testPagingRelated
 	 */
-	protected AbstractEntityDaoTest(Class<E> entityClass, boolean testPagingRelated) {
+	public AbstractEntityDaoTest() {
 		super();
-		this.entityClass = entityClass;
+	}
+	
+	/**
+	 * @return The dao test handlers subject to testing.
+	 */
+	protected abstract Collection<IEntityDaoTestHandler<IEntity>> getDaoTestHandlers();
+
+	/**
+	 * @param testPagingRelated the testPagingRelated to set
+	 */
+	protected void setTestPagingRelated(boolean testPagingRelated) {
 		this.testPagingRelated = testPagingRelated;
 	}
 
@@ -237,6 +267,12 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 	@Override
 	protected void beforeClass() {
+		
+		// get the dao test handlers
+		entityHandlers = getDaoTestHandlers();
+		if(entityHandlers == null || entityHandlers.size() < 1) {
+			throw new IllegalStateException("No entity dao handlers specified");
+		}
 
 		JpaMode jpaMode = null;
 
@@ -266,7 +302,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		buildInjector();
 
 		this.rawDao = injector.getInstance(IEntityDao.class);
-		logger.debug("Starting DAO Test for: " + entityClass.getSimpleName() + ", dao mode: " + daoMode.toString());
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -274,21 +309,11 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		afterClass();
 	}
 
-	@BeforeMethod(alwaysRun = true)
-	public final void onBeforeMethod() {
-		beforeMethod();
-	}
-
 	@Override
 	protected final void beforeMethod() {
 		super.beforeMethod();
-		beforeMethodHook();
+		// ensure entity class is set
 		startNewTransaction();
-	}
-
-	@AfterMethod(alwaysRun = true)
-	public final void onAfterMethod() {
-		afterMethod();
 	}
 
 	@Override
@@ -300,14 +325,13 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		if(dbRemove.size() > 0) {
 			startNewTransaction();
 			setComplete();
-			for(final E e : dbRemove) {
+			for(final IEntity e : dbRemove) {
 				dao.purge(e);
-				teardownTestEntity(e);
+				entityHandler.teardownTestEntity(e);
 			}
 			dbRemove.clear();
 			endTransaction();
 		}
-		afterMethodHook();
 	}
 
 	/**
@@ -325,67 +349,6 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	}
 
 	/**
-	 * Concrete sub-classes should override this method to properly wire up the
-	 * entity.
-	 * <p>
-	 * NOTE: this method is called within a transaction.
-	 * @param e the generated test entity gotten from the app context.
-	 */
-	protected abstract void assembleTestEntity(E e) throws Exception;
-
-	/**
-	 * Concrete sub-classes should override this method to clean up entity
-	 * dependencies in the db.
-	 * <p>
-	 * NOTE: this method is called within a transaction.
-	 * @param e the assembled test entity gotten from
-	 *        {@link #assembleTestEntity(IEntity)}
-	 */
-	protected void teardownTestEntity(E e) {
-		// default impl is nothing
-	}
-
-	/**
-	 * Hook for concrete classes to do set up work before test methods.
-	 * <p>
-	 * No transaction started.
-	 */
-	protected void beforeMethodHook() {
-		// default impl - do nothing
-	}
-
-	/**
-	 * Hook for concrete classes to clean up after test methods.
-	 * <p>
-	 * No transaction started.
-	 */
-	protected void afterMethodHook() {
-		// default impl - do nothing
-	}
-
-	/**
-	 * Uniquify the entity - may be overridden by sub-classes.
-	 * @param e
-	 */
-	protected void uniquify(E e) {
-		makeUnique(e);
-	}
-
-	/**
-	 * Makes the given entity unique based on the defined {@link BusinessKey}s for
-	 * type of the given entity.
-	 * @param e The entity to uniquify
-	 */
-	protected final <ET extends IEntity> void makeUnique(ET e) {
-		try {
-			getMockEntityFactory().makeBusinessKeyUnique(e);
-		}
-		catch(final BusinessKeyNotDefinedException e1) {
-			// ok
-		}
-	}
-
-	/**
 	 * <strong>NOTE: </strong>The {@link MockEntityFactory} is not available by
 	 * default. It must be bound in a given module which is added via
 	 * {@link #addModules(List)}.
@@ -394,17 +357,17 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	protected final MockEntityFactory getMockEntityFactory() {
 		return injector.getInstance(MockEntityFactory.class);
 	}
-
+	
 	/**
 	 * Provide a fresh entity instance of the ascribed type.
-	 * @param entityClass
 	 * @return New entity instance
 	 * @throws Exception
 	 */
-	protected final E getTestEntity() throws Exception {
-		final E e = getMockEntityFactory().getEntityCopy(entityClass, false);
-		assembleTestEntity(e);
-		uniquify(e);
+	@SuppressWarnings("unchecked")
+	protected final <E extends IEntity> E getTestEntity() throws Exception {
+		final E e = (E) getMockEntityFactory().getEntityCopy(entityHandler.entityClass(), false);
+		entityHandler.assembleTestEntity(e);
+		entityHandler.makeUnique(e);
 		return e;
 	}
 
@@ -414,93 +377,54 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * @param n
 	 * @return a list of unique and generated test entities
 	 */
-	protected final List<E> getNUniqueTestEntities(Class<E> entityClass, int n) throws Exception {
+	protected final List<IEntity> getNUniqueTestEntities(Class<IEntity> entityClass, int n) throws Exception {
 		Assert.assertTrue(n > 0 && n <= 50, "Invalid number for unique entity generation: " + n
 				+ ".  Specify a number between 1 and 50.");
-		final List<E> list = new ArrayList<E>(n);
+		final List<IEntity> list = new ArrayList<IEntity>(n);
 		for(int i = 1; i <= n; i++) {
-			final E e = getTestEntity();
-			uniquify(e);
+			final IEntity e = getTestEntity();
+			entityHandler.makeUnique(e);
 			list.add(e);
 		}
 		return list;
 	}
 
-	/**
-	 * Disables caching for the current data store session.
-	 */
-	protected final void disableDataStoreCaching() {
-		if(this.daoMode == DaoMode.ORM) {
-			((Session) getEntityManager().getDelegate()).setCacheMode(CacheMode.IGNORE);
-		}
-	}
-
-	/**
-	 * Ensures two entities are non-unique by business key.
-	 * @param e1
-	 * @param e2
-	 */
-	protected final void ensureNonUnique(E e1, E e2) {
-		if(e2 instanceof ITimeStampEntity) {
-			((ITimeStampEntity) e2).setDateCreated(((ITimeStampEntity) e2).getDateCreated());
-			((ITimeStampEntity) e2).setDateModified(((ITimeStampEntity) e2).getDateModified());
-		}
-		try {
-			BusinessKeyFactory.apply(e2, BusinessKeyFactory.create(e1));
-		}
-		catch(BusinessKeyNotDefinedException e) {
-			// assume ok
-		}
-	}
-
-	/**
-	 * Alters the entity as prep for update via the dao.
-	 * @param e the entity
-	 */
-	protected void alterEntity(E e) {
-		if(e instanceof INamedEntity) {
-			((INamedEntity) e).setName("altered");
-		}
-	}
-
-	/**
-	 * Verifies the alteration(s) made to the entity after dao update
-	 * @param e the entity
-	 * @throws Exception if alteration(s) don't remain
-	 */
-	protected void verifyEntityAlteration(E e) throws Exception {
-		if(e instanceof INamedEntity) {
-			Assert.assertTrue("altered".equals(((INamedEntity) e).getName()), "Named entity alteration does not match");
-		}
-	}
-
-	/**
-	 * Verifies the state of the entity is ok based Entity property and
-	 * collections should be verified here.
-	 * @param e the entity
-	 * @throws Exception if entity can't be retrieved
-	 */
-	protected void verifyLoadedEntityState(E e) throws Exception {
-		if(e instanceof INamedEntity) {
-			Assert.assertNotNull(((INamedEntity) e).getName(), "The name property is null");
-		}
-	}
-
-	protected final E getEntityFromDb(PrimaryKey<E> key) {
+	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
 		return DbTest.getEntityFromDb(dao, key);
 	}
 
-	// /////////////// TESTS
+	/**
+	 * Run the dao test for all given entity types.
+	 * @throws Exception
+	 */
+	@Test
+	public final void test() throws Exception {
+
+		for(IEntityDaoTestHandler<IEntity> handler : entityHandlers) {
+			handler.init(getEntityDao(), getEntityFactory(), getMockEntityFactory());
+			this.entityHandler = handler;
+			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
+			// run all tests
+			for(Method method : AbstractEntityDaoTest.class.getDeclaredMethods()) {
+				if(method.getName().startsWith("dao")) {
+					beforeMethod();
+					logger.debug("Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
+					method.invoke(this, (Object[]) null);
+					afterMethod();
+				}
+			}
+		}
+	}
+
+	// ***TESTS***
 
 	/**
 	 * Test CRUD and find ops
 	 * @throws Exception
 	 */
-	@Test(groups = {
-		"dao", "crud" })
-	public final void testCRUDAndFind() throws Exception {
+	void daoCRUDAndFind() throws Exception {
 
-		E e = getTestEntity();
+		IEntity e = getTestEntity();
 		Integer persistentId = null;
 
 		// create
@@ -522,24 +446,24 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 		// retrieve
 		startNewTransaction();
-		e = dao.load(new PrimaryKey<E>(entityClass, persistentId));
+		e = dao.load(new PrimaryKey<IEntity>(entityHandler.entityClass(), persistentId));
 		Assert.assertNotNull(e, "The loaded entity is null");
-		verifyLoadedEntityState(e);
+		entityHandler.verifyLoadedEntityState(e);
 		endTransaction();
 
 		// update
 		startNewTransaction();
-		alterEntity(e);
+		entityHandler.alterTestEntity(e);
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
 
 		// find (update verify)
 		startNewTransaction();
-		e = getEntityFromDb(new PrimaryKey<E>(e));
+		e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 		Assert.assertNotNull(e, "The retrieved entity for update check is null");
 		endTransaction();
-		verifyEntityAlteration(e);
+		entityHandler.verifyEntityAlteration(e);
 
 		if(e instanceof ITimeStampEntity) {
 			// verify modify date
@@ -556,7 +480,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		endTransaction();
 		dbRemove.clear();
 		startNewTransaction();
-		e = getEntityFromDb(new PrimaryKey<E>(e));
+		e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 		endTransaction();
 		Assert.assertNull(e, "The entity was not purged");
 	}
@@ -565,8 +489,8 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * tests the load all method
 	 * @throws Exception
 	 */
-	public final void testLoadAll() throws Exception {
-		final List<E> list = dao.loadAll(entityClass);
+	void daoLoadAll() throws Exception {
+		final List<IEntity> list = dao.loadAll(entityHandler.entityClass());
 		endTransaction();
 		Assert.assertNotNull(list, "loadAll returned null");
 	}
@@ -576,17 +500,17 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public final void testFindEntities() throws Exception {
-		E e = getTestEntity();
+	void daoFindEntities() throws Exception {
+		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
 		dbRemove.add(e);
 
 		startNewTransaction();
-		final Criteria<E> criteria = new Criteria(e.entityClass());
-		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<E>(e));
-		final List<E> list = dao.findEntities(criteria, null);
+		final Criteria<IEntity> criteria = new Criteria(e.entityClass());
+		criteria.getPrimaryGroup().addCriterion(new PrimaryKey<IEntity>(e));
+		final List<IEntity> list = dao.findEntities(criteria, null);
 		endTransaction();
 		Assert.assertNotNull(list, "findEntities returned null");
 		Assert.assertTrue(list.size() == 1, "findEntities returned empty list");
@@ -596,8 +520,8 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	public final void testFindByIds() throws Exception {
-		E e = getTestEntity();
+	void daoFindByIds() throws Exception {
+		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
@@ -607,7 +531,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		Assert.assertNotNull(e, "Null generated test entity");
 		final List<Integer> ids = new ArrayList<Integer>(1);
 		ids.add(e.getId());
-		final List<E> list = dao.findByIds(entityClass, ids, null);
+		final List<IEntity> list = dao.findByIds(entityHandler.entityClass(), ids, null);
 		endTransaction();
 		Assert.assertTrue(list != null && list.size() == 1, "find by ids returned null list");
 	}
@@ -616,22 +540,22 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests id-based list handler related methods
 	 * @throws Exception
 	 */
-	public final void testGetIdsAndEntities() throws Exception {
+	void daoGetIdsAndEntities() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing Id List Handler support test method.");
 			return;
 		}
 
-		final List<E> entityList = getNUniqueTestEntities(entityClass, 5);
+		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
 		final List<Integer> idList = new ArrayList<Integer>(5);
-		for(E e : entityList) {
+		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
 			dbRemove.add(e);
 		}
 		setComplete();
 		endTransaction();
-		Criteria<? extends E> criteria = new Criteria<E>(entityClass);
+		Criteria<IEntity> criteria = new Criteria<IEntity>(entityHandler.entityClass());
 		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
@@ -642,7 +566,7 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 
 		// get entities
 		startNewTransaction();
-		final List<E> dbEntityList = dao.getEntitiesFromIds(entityClass, idList, null);
+		final List<IEntity> dbEntityList = dao.getEntitiesFromIds(entityHandler.entityClass(), idList, null);
 		Assert.assertNotNull(idList, "getEntities list is null");
 		Assert.assertTrue(entitiesAndIdsEquals(idList, dbEntityList), "getEntities list is empty or has incorrect ids");
 		endTransaction();
@@ -652,15 +576,15 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests page-based list handler related methods
 	 * @throws Exception
 	 */
-	public final void testPage() throws Exception {
+	void daoPage() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing DetachedCriteriaPage List Handler support test method.");
 			return;
 		}
 
-		final List<E> entityList = getNUniqueTestEntities(entityClass, 5);
+		final List<IEntity> entityList = getNUniqueTestEntities(entityHandler.entityClass(), 5);
 		final List<Integer> idList = new ArrayList<Integer>(5);
-		for(E e : entityList) {
+		for(IEntity e : entityList) {
 			e = dao.persist(e);
 			idList.add(e.getId());
 			dbRemove.add(e);
@@ -668,11 +592,11 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		setComplete();
 		endTransaction();
 
-		final Criteria<E> crit = new Criteria<E>(entityClass);
+		final Criteria<IEntity> crit = new Criteria<IEntity>(entityHandler.entityClass());
 		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();
-		IPageResult<SearchResult<E>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
+		IPageResult<SearchResult<IEntity>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 				"Empty or invalid number of initial page elements");
 		endTransaction();
@@ -694,15 +618,15 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
 	 * @throws Exception
 	 */
-	public final void testDuplicationException() throws Exception {
-		E e = getTestEntity();
+	void daoDuplicationException() throws Exception {
+		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
 		dbRemove.add(e);
 
 		startNewTransaction();
-		E e2 = getTestEntity();
+		IEntity e2 = getTestEntity();
 		ensureNonUnique(e, e2);
 		try {
 			e2 = dao.persist(e2);
@@ -716,8 +640,8 @@ public abstract class AbstractEntityDaoTest<E extends IEntity> extends DbTest {
 		}
 	}
 
-	public final void testPurgeNewEntity() throws Exception {
-		final E e = getTestEntity();
+	void daoPurgeNewEntity() throws Exception {
+		final IEntity e = getTestEntity();
 		dao.purge(e);
 	}
 }

@@ -37,12 +37,12 @@ import com.tll.model.Authority;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.acl.IBasicAclProviderManager;
+import com.tll.service.entity.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**

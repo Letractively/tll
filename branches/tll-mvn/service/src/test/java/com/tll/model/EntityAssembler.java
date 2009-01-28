@@ -2,6 +2,7 @@ package com.tll.model;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
+import com.tll.service.entity.IEntityAssembler;
 
 /**
  * EntityAssembler - Decorator around the {@link IEntityFactory} with additional

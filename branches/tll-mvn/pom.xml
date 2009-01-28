@@ -8,6 +8,26 @@
   <name>tll</name>
   <version>1</version>
   <description>The tll super pom.</description>
+  <url>http://tll.googlecode.com</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <developers>
+    <developer>
+      <id>jpk</id>
+      <email>jopaki@gmail.com</email>
+      <organization>The Logic Lab</organization>
+      <timezone>8</timezone>
+      <url>http://tll.googlecode.com</url>
+      <roles>
+        <role>Principal</role>
+      </roles>
+    </developer>
+  </developers>
+  
+  <scm>
+    <connection>http://tll.googlecode.com/svn</connection>
+    <developerConnection>https:/tll.googlecode.com/svn/</developerConnection>
+  </scm>
 
   <modules>
     <module>core</module>
@@ -40,6 +60,14 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <mode>dev</mode>
+                <url>${pom.url}</url>
+              </manifestEntries>
+            </archive>
+          </configuration>
           <executions>
             <execution>
               <id>test-assets</id>
@@ -53,21 +81,6 @@
               -->
             </execution>
           </executions>
-        </plugin>
-
-        <!-- custom MANIFEST.MF for generated jars -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <!-- <version>2.2</version> -->
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <mode>dev</mode>
-                <url>${pom.url}</url>
-              </manifestEntries>
-            </archive>
-          </configuration>
         </plugin>
 
         <plugin>

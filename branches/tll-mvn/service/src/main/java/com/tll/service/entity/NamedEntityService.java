@@ -8,7 +8,6 @@ package com.tll.service.entity;
 import javax.persistence.EntityNotFoundException;
 
 import com.tll.dao.IEntityDao;
-import com.tll.model.IEntityAssembler;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
 

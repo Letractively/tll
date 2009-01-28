@@ -13,7 +13,7 @@ import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.EntityCache;
-import com.tll.model.IEntityAssembler;
+import com.tll.service.entity.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**
