@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>smbiz-server</artifactId>
   <name>smbiz-server</name>
-  <version>${tll-smbiz.version}</version>
+  <version>0.9.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <description>The smbiz server app</description>
 

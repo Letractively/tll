@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/smbiz-server"/>
-	<classpathentry kind="var" path="GWT_HOME/gwt-user.jar"/>
-	<classpathentry kind="var" path="GWT_INCUBATOR_ROOT/build/dist/gwt-incubator.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/junit.jar"/>
-	<classpathentry kind="var" path="GWT_HOME/gwt-dev-windows.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/src/tll-core-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-core.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-core-src.jar"/>
-	<classpathentry kind="var" path="TLL_ROOT/tools/lib/tll-util.jar" sourcepath="/TLL_ROOT/tools/lib/src/tll-util-src.jar"/>
-	<classpathentry kind="lib" path="lib/gwt-log.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
