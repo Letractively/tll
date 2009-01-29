@@ -25,23 +25,6 @@ public class ModelModule extends AbstractModule {
 
 		// ISchemaInfo
 		bind(ISchemaInfo.class).to(SchemaInfo.class).in(Scopes.SINGLETON);
-
-		// NO. This is an entity service specific construct!
-		// IEntityAssembler
-		/*
-		Class<IEntityAssembler> clz;
-		final String cn = Config.instance().getString(ConfigKeys.MODEL_ENTITY_ASSEMBLER_CLASSNAME.getKey());
-		if(cn == null) {
-			throw new IllegalStateException("No entity assembler class name specified in the configuration");
-		}
-		try {
-			clz = (Class<IEntityAssembler>) Class.forName(cn);
-		}
-		catch(ClassNotFoundException e) {
-			throw new IllegalStateException("No entity assembler found for name: " + cn);
-		}
-		bind(IEntityAssembler.class).to(clz).in(Scopes.SINGLETON);
-		*/
 	}
 
 }
