@@ -389,6 +389,15 @@ public final class Config implements Configuration {
 	}
 
 	/**
+	 * Saves the cofiguration properties to file.
+	 * @param f The file to save to
+	 * @throws ConfigurationException
+	 */
+	public void saveAsPropFile(File f) throws ConfigurationException {
+		subsetAsProps(null, null).save(f);
+	}
+
+	/**
 	 * Saves the cofiguration properties to file given a key provider which serves
 	 * as a filter.
 	 * @param f The file to save to
@@ -402,10 +411,10 @@ public final class Config implements Configuration {
 	/**
 	 * Saves the cofiguration properties to file given a prefix and prepend token.
 	 * @param f The file to save to
-	 * @param prefix the prefix of the keys for the subset. May be
-	 *        <code>null</code> in which case all properties are considered.
-	 * @param prependToken String to prepend to all resultant subset properties.
-	 *        May be <code>null</code>.
+	 * @param prefix Optional prefix of the keys for the subset. If
+	 *        <code>null</code>, all properties are considered.
+	 * @param prependToken Optional token that is prepended to all resultant
+	 *        subset properties. May be <code>null</code>.
 	 * @throws ConfigurationException
 	 */
 	public void saveAsPropFile(File f, String prefix, String prependToken) throws ConfigurationException {
