@@ -33,7 +33,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
+import com.tll.di.EntityServiceImplModule;
 import com.tll.di.MailModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.RefDataModule;
@@ -94,7 +94,7 @@ public class ListingServiceTest extends DbTest {
 		modules.add(new RefDataModule());
 		modules.add(new MockEntityFactoryModule());
 		modules.add(new DaoModule(daoMode));
-		modules.add(new EntityServiceModule());
+		modules.add(new EntityServiceImplModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

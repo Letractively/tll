@@ -13,7 +13,6 @@
     </packages>
   </test>
 	
-  <!-- 
   <test name="mock-dao-tests" annotations="JDK">
     <parameter name="daoMode" value="MOCK" />
     <groups>
@@ -25,5 +24,4 @@
       <package name="com.tll.dao" />
     </packages>
   </test>
-  -->
 </suite>

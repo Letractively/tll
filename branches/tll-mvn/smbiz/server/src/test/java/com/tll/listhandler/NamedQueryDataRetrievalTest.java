@@ -29,7 +29,7 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
+import com.tll.di.EntityServiceImplModule;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
@@ -133,7 +133,7 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new DaoModule(daoMode));
-		modules.add(new EntityServiceModule());
+		modules.add(new EntityServiceImplModule());
 	}
 
 	/**

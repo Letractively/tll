@@ -23,7 +23,7 @@ public class EntityServiceModuleTest {
 	public void testLoadHibernate() throws Exception {
 		final JpaModule jm = new JpaModule(JpaMode.MOCK);
 		final DaoModule dm = new DaoModule(DaoMode.ORM);
-		final EntityServiceModule esm = new EntityServiceModule();
+		final EntityServiceImplModule esm = new EntityServiceImplModule();
 		final Injector injector = Guice.createInjector(jm, dm, esm);
 		assert injector != null;
 	}
@@ -31,7 +31,7 @@ public class EntityServiceModuleTest {
 	public void testLoadMock() throws Exception {
 		final MockEntityFactoryModule mem = new MockEntityFactoryModule();
 		final DaoModule dm = new DaoModule(DaoMode.MOCK);
-		final EntityServiceModule esm = new EntityServiceModule();
+		final EntityServiceImplModule esm = new EntityServiceImplModule();
 		final Injector injector = Guice.createInjector(mem, dm, esm);
 		assert injector != null;
 	}

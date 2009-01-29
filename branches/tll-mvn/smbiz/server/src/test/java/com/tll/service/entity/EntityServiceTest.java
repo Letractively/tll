@@ -18,7 +18,7 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceModule;
+import com.tll.di.EntityServiceImplModule;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.AccountHistory;
@@ -56,7 +56,7 @@ public class EntityServiceTest extends DbTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new DaoModule(DaoMode.ORM));
-		modules.add(new EntityServiceModule());
+		modules.add(new EntityServiceImplModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

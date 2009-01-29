@@ -67,17 +67,17 @@ import com.tll.service.entity.visitor.IVisitorService;
 import com.tll.service.entity.visitor.VisitorService;
 
 /**
- * EntityServiceModule
+ * EntityServiceImplModule
  * @author jpk
  */
-public class EntityServiceModule extends GModule {
+public class EntityServiceImplModule extends GModule {
 
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
 	/**
 	 * Constructor
 	 */
-	public EntityServiceModule() {
+	public EntityServiceImplModule() {
 		super();
 		log.info("Employing Entity service module");
 	}

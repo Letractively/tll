@@ -19,7 +19,7 @@ public class SecurityModuleTest {
 	@Test
 	public void testLoad() throws Exception {
 		final DaoModule dm = new DaoModule();
-		final EntityServiceModule esm = new EntityServiceModule();
+		final EntityServiceImplModule esm = new EntityServiceImplModule();
 		final SecurityModule sm = new SecurityModule();
 		final Injector injector = Guice.createInjector(dm, esm, sm);
 		assert injector != null;
