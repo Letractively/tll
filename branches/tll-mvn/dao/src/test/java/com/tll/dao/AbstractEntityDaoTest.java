@@ -52,7 +52,8 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 @Test(groups = { "dao" })
-@SuppressWarnings("synthetic-access")
+@SuppressWarnings( {
+	"synthetic-access", "unused" })
 public abstract class AbstractEntityDaoTest extends DbTest {
 
 	/**
@@ -422,7 +423,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Test CRUD and find ops
 	 * @throws Exception
 	 */
-	void daoCRUDAndFind() throws Exception {
+	private void daoCRUDAndFind() throws Exception {
 
 		IEntity e = getTestEntity();
 		Integer persistentId = null;
@@ -489,7 +490,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * tests the load all method
 	 * @throws Exception
 	 */
-	void daoLoadAll() throws Exception {
+	private void daoLoadAll() throws Exception {
 		final List<IEntity> list = dao.loadAll(entityHandler.entityClass());
 		endTransaction();
 		Assert.assertNotNull(list, "loadAll returned null");
@@ -500,7 +501,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	void daoFindEntities() throws Exception {
+	private void daoFindEntities() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
@@ -520,7 +521,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	void daoFindByIds() throws Exception {
+	private void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
@@ -540,7 +541,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Tests id-based list handler related methods
 	 * @throws Exception
 	 */
-	void daoGetIdsAndEntities() throws Exception {
+	private void daoGetIdsAndEntities() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing Id List Handler support test method.");
 			return;
@@ -576,7 +577,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Tests page-based list handler related methods
 	 * @throws Exception
 	 */
-	void daoPage() throws Exception {
+	private void daoPage() throws Exception {
 		if(!testPagingRelated) {
 			logger.info("Not testing DetachedCriteriaPage List Handler support test method.");
 			return;
@@ -618,7 +619,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
 	 * @throws Exception
 	 */
-	void daoDuplicationException() throws Exception {
+	private void daoDuplicationException() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
@@ -640,7 +641,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		}
 	}
 
-	void daoPurgeNewEntity() throws Exception {
+	private void daoPurgeNewEntity() throws Exception {
 		final IEntity e = getTestEntity();
 		dao.purge(e);
 	}

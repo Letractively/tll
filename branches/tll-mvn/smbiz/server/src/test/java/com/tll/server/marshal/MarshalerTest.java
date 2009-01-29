@@ -3,6 +3,8 @@
  */
 package com.tll.server.marshal;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,7 +75,14 @@ public class MarshalerTest extends AbstractInjectedTest {
 	public void testAllEntitiesWithNoHierarchy() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final Class<? extends IEntity>[] entityClasses = CommonUtil.getClasses("com.tll.model", IEntity.class, true, null);
+		final Class<? extends IEntity>[] entityClasses =
+				CommonUtil.getClasses("com.tll.model", IEntity.class, true, null, new FilenameFilter() {
+
+					@Override
+					public boolean accept(File dir, String name) {
+						return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("classes") > 0;
+					}
+				});
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
 			final IEntity e = getMockEntityFactory().getEntityCopy(entityClass, false);
 			Assert.assertNotNull(e);

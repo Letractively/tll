@@ -6,7 +6,6 @@ package com.tll.dao;
 import javax.persistence.EntityNotFoundException;
 
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import com.tll.model.Account;
 import com.tll.model.Asp;
@@ -18,7 +17,6 @@ import com.tll.model.key.PrimaryKey;
  * SalesTaxDaoTestHandler
  * @author jpk
  */
-@Test(groups = "dao", testName = "SalesTaxDaoTestHandler")
 public class SalesTaxDaoTestHandler extends AbstractEntityDaoTestHandler<SalesTax> {
 
 	PrimaryKey<Account> aKey;

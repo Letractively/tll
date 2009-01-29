@@ -4,7 +4,6 @@
 package com.tll.dao;
 
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import com.tll.model.Address;
 
@@ -12,7 +11,6 @@ import com.tll.model.Address;
  * AddressDaoTestHandler
  * @author jpk
  */
-@Test(groups = "dao", testName = "AddressDaoTestHandler")
 public class AddressDaoTestHandler extends AbstractEntityDaoTestHandler<Address> {
 
 	@Override

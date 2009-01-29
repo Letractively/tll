@@ -15,7 +15,7 @@ public class CurrencyDaoTestHandler extends AbstractEntityDaoTestHandler<Currenc
 
 	@Override
 	public Class<Currency> entityClass() {
-		return null;
+		return Currency.class;
 	}
 
 	@Override

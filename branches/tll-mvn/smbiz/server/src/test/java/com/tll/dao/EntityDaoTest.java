@@ -5,6 +5,8 @@
  */
 package com.tll.dao;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Collection;
 
 import org.testng.annotations.Test;
@@ -25,7 +27,14 @@ public class EntityDaoTest extends AbstractEntityDaoTest {
 	@Override
 	protected Collection<IEntityDaoTestHandler<IEntity>> getDaoTestHandlers() {
 		try {
-			Class<?>[] handlerTypes = CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null);
+			Class<?>[] handlerTypes =
+					CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, new FilenameFilter() {
+
+						@Override
+						public boolean accept(File dir, String name) {
+							return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("test-classes") > 0;
+						}
+					});
 
 			IEntityDaoTestHandler<IEntity>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
 			int i = 0;
