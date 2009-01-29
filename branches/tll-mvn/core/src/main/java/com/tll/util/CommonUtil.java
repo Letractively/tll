@@ -1,6 +1,7 @@
 package com.tll.util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URI;
@@ -104,60 +105,74 @@ public abstract class CommonUtil {
 	 * @throws ClassNotFoundException
 	 */
 	public static Class<?>[] getClasses(final String pckgname) throws ClassNotFoundException {
-		return getClasses(pckgname, null, false, null);
+		return getClasses(pckgname, null, false, null, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	/**
-	 * Retrieves classes in a given package name
-	 * @param pckgname
+	 * Retrieves classes in a given package name with various filtering options.
+	 * @param <T> The class type
+	 * @param pckgname The package name for which to retrieve contained classes.
 	 * @param baseClass filter where only classes deriving from this class are
-	 *        considered. May be null.
+	 *        considered. May be <code>null</code>.
 	 * @param concreteOnly bool flag when if true, only concrete classes are
 	 *        considered.
 	 * @param nameExclusor exlclude classes containing <code>nameExclusor</code>
 	 *        within its name. May be null.
+	 * @param filter Optional filename filter. This is helpful when we have
+	 *        multiple filesystem dirs bound to the given package name and we want
+	 *        to target a particular subset. May be <code>null</code>.
 	 * @return array of found Class objects
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException When the package name is not resolvable or
+	 *         is not bound to at least one filesystem directory.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> Class<T>[] getClasses(final String pckgname, final Class<T> baseClass, final boolean concreteOnly,
-			final String nameExclusor) throws ClassNotFoundException {
+			final String nameExclusor, FilenameFilter filter) throws ClassNotFoundException {
 
 		final ArrayList<Class<T>> classes = new ArrayList<Class<T>>();
 
 		// Get a File object for the package
-		final List<File> directories = new ArrayList<File>(3);
+		final List<File> directories = new ArrayList<File>();
+		final ClassLoader cld = Thread.currentThread().getContextClassLoader();
+		if(cld == null) {
+			throw new ClassNotFoundException("Can't get class loader.");
+		}
+		final String path = pckgname.replace('.', '/');
+		Enumeration<URL> resources;
 		try {
-			final ClassLoader cld = Thread.currentThread().getContextClassLoader();
-			if(cld == null) {
-				throw new ClassNotFoundException("Can't get class loader.");
-			}
-			final String path = pckgname.replace('.', '/');
-			Enumeration<URL> resources;
-			try {
-				resources = cld.getResources(path);
-			}
-			catch(final IOException e) {
-				resources = null;
-			}
-			if(resources == null) {
-				throw new ClassNotFoundException("No resources found for " + path);
-			}
+			resources = cld.getResources(path);
+		}
+		catch(final IOException e) {
+			resources = null;
+		}
+		if(resources == null) {
+			throw new ClassNotFoundException("No resources found for " + path);
+		}
 
-			while(resources.hasMoreElements()) {
-				final URL resource = resources.nextElement();
-				try {
-					final URI uri = resource.toURI();
-					directories.add(new File(uri.getPath()));
+		while(resources.hasMoreElements()) {
+			final URL resource = resources.nextElement();
+			try {
+				final URI uri = resource.toURI();
+				File dir = new File(uri.getPath());
+				if(filter != null) {
+					if(!filter.accept(dir, null)) {
+						continue;
+					}
 				}
-				catch(final URISyntaxException se) {
-					throw new ClassNotFoundException(pckgname + " (" + resource.getPath()
-							+ ") does not appear to be a valid package");
-				}
+				directories.add(dir);
+			}
+			catch(final URISyntaxException se) {
+				throw new ClassNotFoundException(pckgname + " (" + resource.getPath()
+						+ ") does not appear to be a valid package");
+			}
+			catch(NullPointerException e) {
+				// ok - continue
 			}
 		}
-		catch(final NullPointerException x) {
-			throw new ClassNotFoundException(pckgname + " does not appear to be a valid package");
+
+		if(directories.size() < 1) {
+			throw new ClassNotFoundException("Unable to resolve package: " + pckgname
+					+ " to any filesystem/classpath resource.");
 		}
 
 		for(final File directory : directories) {
