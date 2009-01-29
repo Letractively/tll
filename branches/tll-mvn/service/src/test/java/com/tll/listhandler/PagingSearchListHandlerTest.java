@@ -31,6 +31,7 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
+import com.tll.di.EntityServiceModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Address;
@@ -94,6 +95,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
 		modules.add(new DaoModule(DaoMode.ORM));
+		modules.add(new EntityServiceModule());
 		modules.add(new Module() {
 
 			@Override

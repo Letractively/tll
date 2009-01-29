@@ -25,15 +25,6 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
-          <!-- 
-          <includes>
-            <include>**/TransationAspect.java</include>
-            <include>**/SecurityAspect.aj</include>
-          </includes>
-          <excludes>
-            <exclude>**/logging/*.aj</exclude>
-          </excludes>
-          -->
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.springframework</groupId>
@@ -136,6 +127,13 @@
       <artifactId>tll-dao</artifactId>
       <version>1.0-SNAPSHOT</version>
       <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>test-persistence-unit</classifier>
       <scope>test</scope>
     </dependency>
 

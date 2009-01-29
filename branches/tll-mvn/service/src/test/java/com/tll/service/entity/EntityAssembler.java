@@ -1,7 +1,14 @@
-package com.tll.model;
+package com.tll.service.entity;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
+import com.tll.model.Account;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
+import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityProvider;
+import com.tll.model.NestedEntity;
 import com.tll.service.entity.IEntityAssembler;
 
 /**
