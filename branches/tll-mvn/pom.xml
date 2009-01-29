@@ -75,10 +75,15 @@
               <goals>
                 <goal>test-jar</goal>
               </goals>
-              <!--
-                INCLUDE ALL TEST ASSETS so we can build upon test "environments" and not just unit test classes.
-                <configuration> <includes> <include>**/test/*</include> </includes> </configuration>
+              <!-- 
+              Retain the test classes only and not the test resources 
+              so we don't pollute the test classpath for dependent modules. 
               -->
+              <configuration>
+                <includes>
+                  <include>**/*Test*.class</include>
+                </includes>
+              </configuration>
             </execution>
           </executions>
         </plugin>
