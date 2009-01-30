@@ -31,7 +31,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -44,6 +44,7 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.MarshalingListHandler;
 import com.tll.server.rpc.listing.PropKeyListHandler;
 import com.tll.service.entity.IEntityService;
+import com.tll.util.EnumUtil;
 
 /**
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
@@ -257,7 +258,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
-			ISelectNamedQueryDef nq = search.getNamedQuery();
+			SelectNamedQueries nq = EnumUtil.fromString(SelectNamedQueries.class, search.getNamedQuery());
 			if(nq == null) {
 				throw new IllegalArgumentException("No named query specified");
 			}

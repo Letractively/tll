@@ -21,7 +21,6 @@ import com.tll.common.model.Model;
 import com.tll.common.search.impl.AccountSearch;
 import com.tll.common.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -90,7 +89,7 @@ public final class IspListingView extends ListingView {
 	protected void doInitialization(ViewRequestEvent viewRequest) {
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
-		criteria.setNamedQuery(SelectNamedQueries.ISP_LISTING);
+		criteria.setNamedQuery("account.ispList");
 
 		final AccountListingConfig config = new AccountListingConfig() {
 

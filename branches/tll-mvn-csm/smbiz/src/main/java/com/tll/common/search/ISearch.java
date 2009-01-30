@@ -9,7 +9,6 @@ import java.util.Set;
 import com.tll.IMarshalable;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityType;
 
 /**
@@ -17,7 +16,7 @@ import com.tll.model.EntityType;
  * @author jpk
  */
 public interface ISearch extends IMarshalable {
-
+	
 	/**
 	 * @return The type of search desired. This should correspond to a supported
 	 *         server side criteria type.
@@ -31,19 +30,15 @@ public interface ISearch extends IMarshalable {
 	EntityType getEntityType();
 
 	/**
-	 * Return all elements of the ordained type?
-	 * @return boolean
-	 */
-	// boolean isRetrieveAll();
-	/**
 	 * Resets the state of the object.
 	 */
 	void clear();
 
 	/**
-	 * @return The named query definition. May be <code>null</code>.
+	 * @return The name of the server-side named query definition. May be
+	 *         <code>null</code>.
 	 */
-	SelectNamedQueries getNamedQuery();
+	String getNamedQuery();
 
 	/**
 	 * @return Possible query parameters when a named query is specified.

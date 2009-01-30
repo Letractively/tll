@@ -1,24 +1,35 @@
 package com.tll.client;
 
 /**
- * Constants - app wide constants that are subject to being set by the build
- * process. Put "static" constants in the {@link App} class.
- * @author jpk
+ * Interface to represent the constants contained in resource bundle:
+ * 	'C:/development/tll/smbiz/target/classes/com/tll/client/Constants.properties'.
  */
 public interface Constants extends com.google.gwt.i18n.client.Constants {
+  
+  /**
+   * Translated "0.9.0-SNAPSHOT".
+   * 
+   * @return translated "0.9.0-SNAPSHOT"
+   */
+  @DefaultStringValue("0.9.0-SNAPSHOT")
+  @Key("appVersion")
+  String appVersion();
 
-	/**
-	 * @return the "app.version" app property.
-	 */
-	String appVersion();
+  /**
+   * Translated "dev".
+   * 
+   * @return translated "dev"
+   */
+  @DefaultStringValue("dev")
+  @Key("debug")
+  String debug();
 
-	/**
-	 * @return the "environment" app property.
-	 */
-	String environment();
-
-	/**
-	 * @return the "debug" app property.
-	 */
-	boolean debug();
+  /**
+   * Translated "dev".
+   * 
+   * @return translated "dev"
+   */
+  @DefaultStringValue("dev")
+  @Key("environment")
+  String environment();
 }

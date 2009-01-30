@@ -10,6 +10,12 @@
   <!-- gwt-log support, default level `DEBUG` -->
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
   
+  <!-- client package sources -->
+  <source path="client" />
+  
+  <!--  shared (client/server) -->
+  <source path="common" />
+  
   <!-- non client package sources -->
   <source>
     <include name="IMarshalable.java" />
@@ -22,22 +28,18 @@
     <include name="model/schema/PropertyMetadata.java" />
     <include name="model/schema/IPropertyMetadataProvider.java" />
     <include name="model/EntityType.java" />
-    <include name="model/impl/AccountStatus.java" />
-    <include name="model/impl/AddressType.java" />
-    <include name="model/impl/CreditCardType.java" />
+    <include name="model/AccountStatus.java" />
+    <include name="model/AddressType.java" />
+    <include name="model/CreditCardType.java" />
     <include name="dao/SortDir.java" />
     <include name="dao/SortColumn.java" />
     <include name="dao/Sorting.java" />
     <include name="criteria/IPropertyNameProvider.java" />
     <include name="criteria/CriteriaType.java" />
-    <include name="criteria/SelectNamedQuery.java" />
     <include name="criteria/IQueryParam.java" />
     <include name="listhandler/ListHandlerType.java" />
     <include name="refdata/RefDataType.java" />
   </source>
-
-  <!-- client package sources -->
-  <source path="client" />
 
   <public path="public" />
   

@@ -24,7 +24,6 @@ import com.tll.common.model.RefKey;
 import com.tll.common.search.impl.AccountSearch;
 import com.tll.common.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
-import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -123,7 +122,7 @@ public final class MerchantListingView extends ListingView {
 		ispListingLink.setText(ispRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
-		criteria.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING);
+		criteria.setNamedQuery("account.merchantList");
 		criteria.setQueryParam(new IntPropertyValue("ispId", ispRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {
