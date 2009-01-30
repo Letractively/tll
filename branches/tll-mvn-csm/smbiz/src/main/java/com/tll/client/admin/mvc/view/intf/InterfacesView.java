@@ -46,6 +46,7 @@ import com.tll.model.EntityType;
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public class InterfacesView extends AbstractView implements ClickListener {
 
 	public static final Class klas = new Class();

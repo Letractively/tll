@@ -14,6 +14,7 @@ import com.tll.common.data.Payload;
  * RpcEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class RpcEvent extends EventObject {
 
 	/**

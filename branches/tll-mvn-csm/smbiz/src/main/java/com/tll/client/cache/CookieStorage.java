@@ -35,7 +35,8 @@ public class CookieStorage extends Storage {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( {
+		"unused", "synthetic-access" })
 	private static class CookieConstantsIE6 extends CookieConstants {
 
 		@Override

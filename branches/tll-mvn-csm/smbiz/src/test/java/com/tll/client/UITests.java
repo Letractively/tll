@@ -63,6 +63,7 @@ import com.tll.refdata.RefDataType;
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
  * compiled GWT code.
  */
+@SuppressWarnings("synthetic-access")
 public final class UITests implements EntryPoint, HistoryListener {
 
 	/**

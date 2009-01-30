@@ -190,18 +190,6 @@
   <!--                             Servlets                                   -->
   <!-- ====================================================================== -->
 
-	<!-- START Hosted Mode Add-ons -->
-	<servlet>
-		<servlet-name>shell</servlet-name>
-		<servlet-class>com.google.gwt.dev.shell.GWTShellServlet</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>shell</servlet-name>
-		<url-pattern>/*</url-pattern>
-	</servlet-mapping>
-	<!-- END Hosted Mode Add-ons -->
-	
 	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
 		<servlet-class>com.tll.server.servlet.LoginServlet</servlet-class>

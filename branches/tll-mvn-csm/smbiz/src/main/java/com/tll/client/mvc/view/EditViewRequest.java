@@ -8,6 +8,7 @@ import com.tll.common.model.RefKey;
  * EditViewRequest
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class EditViewRequest extends ShowViewRequest {
 
 	/**

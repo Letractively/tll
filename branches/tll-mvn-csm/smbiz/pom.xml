@@ -4,19 +4,34 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>smbiz</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <artifactId>tll</artifactId>
+    <version>1</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>smbiz-server</artifactId>
-  <name>smbiz-server</name>
+  <artifactId>smbiz</artifactId>
+  <name>smbiz</name>
   <version>0.9.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <description>The smbiz server app</description>
+  <description>The smbiz app</description>
+
+  <!-- include the GWT-Maven repo as plugin, and as standard -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>gwt-maven</id>
+      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <repositories>
+    <repository>
+      <id>gwt-maven</id>
+      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+    </repository>
+  </repositories>
 
   <build>
-    <finalName>smbiz-server</finalName>
+    <finalName>smbiz</finalName>
     <filters>
       <filter>src/main/resources/config.properties</filter>
     </filters>
@@ -53,6 +68,37 @@
       </resource>
     </resources>
     
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.totsp.gwt</groupId>
+          <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+          <version>2.0-beta26</version>
+          <configuration>
+            <logLevel>INFO</logLevel>
+            <compileTargets>
+              <value>com.tll.WorkingModule</value>
+            </compileTargets>
+            <runTarget>com.tll.WorkingModule/SmbizAdmin.html</runTarget>
+            <style>OBF</style>
+            <noServer>false</noServer>
+            <extraJvmArgs>-Xmx512m</extraJvmArgs>
+            <!-- 
+            <i18nConstantsNames>
+              <value>com.totsp.sample.client.AppConstants</value>
+            </i18nConstantsNames>
+            <i18nMessagesNames>
+              <value>com.totsp.sample.client.AppMessages</value>
+            </i18nMessagesNames>
+            -->
+            <!--  this parameter is VERY important with automatic mode - has to match the version in your declared deps -->
+            <!--  if this does not match (default if left out is 1.5.3) you will have mysterious errors -->
+            <gwtVersion>${gwtVersion}</gwtVersion>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
     <plugins>
     
       <!-- direct unit test invocations to the testng.xml file -->
@@ -70,39 +116,18 @@
       <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-        <version>2.0-beta26</version>
-        <configuration>
-          <logLevel>INFO</logLevel>
-          <compileTargets>
-            <value>com.tll.SmbizAdminApp</value>
-          </compileTargets>
-          <runTarget>com.tll.WorkingModule/SmbizAdmin.html</runTarget>
-          <style>OBF</style>
-          <noServer>false</noServer>
-          <extraJvmArgs>-Xmx512m</extraJvmArgs>
-          <!-- 
-          <i18nConstantsNames>
-            <value>com.totsp.sample.client.AppConstants</value>
-          </i18nConstantsNames>
-          <i18nMessagesNames>
-            <value>com.totsp.sample.client.AppMessages</value>
-          </i18nMessagesNames>
-          -->
-          <!--  this parameter is VERY important with automatic mode - has to match the version in your declared deps -->
-          <!--  if this does not match (default if left out is 1.5.3) you will have mysterious errors -->
-          <gwtVersion>${gwtVersion}</gwtVersion>
-        </configuration>
         <executions>
           <execution>
             <goals>
               <!-- <goal>mergewebxml</goal> -->
               <!-- <goal>i18n</goal> -->
               <goal>compile</goal>
-              <goal>test</goal>
+              <!-- <goal>test</goal> -->
             </goals>
           </execution>
         </executions>
       </plugin>
+      
       <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
       <!--
         (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
@@ -134,6 +159,7 @@
           </execution>
         </executions>
       </plugin>
+      
       <!--
         If you want to use the target/web.xml file mergewebxml produces, tell the war plugin to use it. Also, exclude
         what you want from the final artifact here.
@@ -146,7 +172,9 @@
           <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
         </configuration>
       </plugin>
+      
       <!--  tell the compiler we can use 1.5 -->
+      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -155,6 +183,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      -->
     </plugins>
   </build>
 
@@ -162,7 +191,6 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
       <scope>provided</scope>
     </dependency>
 
@@ -205,13 +233,11 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
-      <version>${gwtVersion}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwtVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -274,21 +300,23 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
+    -->
     
     <dependency>
       <groupId>junit</groupId>

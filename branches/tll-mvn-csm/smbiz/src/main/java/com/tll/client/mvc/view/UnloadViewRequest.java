@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
  * UnloadViewRequest
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class UnloadViewRequest extends ViewOpRequest {
 
 	private final boolean removeFromCache;

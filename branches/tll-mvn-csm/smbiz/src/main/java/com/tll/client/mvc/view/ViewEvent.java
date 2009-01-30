@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
  * ViewEvent - Base class for all view related events in the system
  * @author jpk
  */
+@SuppressWarnings("serial")
 public abstract class ViewEvent extends EventObject {
 
 	/**

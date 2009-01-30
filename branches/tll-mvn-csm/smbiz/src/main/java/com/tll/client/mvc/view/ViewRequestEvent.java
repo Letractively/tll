@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * <em>particular</em> view at runtime.
  * @author jpk
  */
+@SuppressWarnings("serial")
 public abstract class ViewRequestEvent extends ViewEvent {
 
 	/**

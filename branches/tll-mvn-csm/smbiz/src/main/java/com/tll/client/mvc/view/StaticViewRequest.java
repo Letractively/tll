@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
  * resolvable at compile time.
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class StaticViewRequest extends ShowViewRequest {
 
 	/**

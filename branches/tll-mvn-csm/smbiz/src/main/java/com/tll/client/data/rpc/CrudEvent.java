@@ -15,6 +15,7 @@ import com.tll.common.data.EntityRequest;
  * CrudEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class CrudEvent extends EventObject {
 
 	private final CrudOp crudOp;

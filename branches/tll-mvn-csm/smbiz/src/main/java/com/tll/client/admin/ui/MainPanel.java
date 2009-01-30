@@ -55,6 +55,7 @@ import com.tll.common.util.GlobalFormat;
  * MainPanel
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class MainPanel extends Composite implements IAdminContextListener, ISourcesUserSessionEvents {
 
 	/**

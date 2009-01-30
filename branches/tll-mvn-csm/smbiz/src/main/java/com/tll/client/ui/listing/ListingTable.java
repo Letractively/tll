@@ -222,6 +222,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			this.column = column;
 		}
 
+		@SuppressWarnings("synthetic-access")
 		public void setSortDirection(SortDir direction) {
 			assert direction != null && pnl.getWidgetCount() == 1;
 

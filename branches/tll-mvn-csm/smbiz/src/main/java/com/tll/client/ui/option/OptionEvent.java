@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
  * OptionEvent - Event type for {@link ISourcesOptionEvents}
  * @author jpk
  */
+@SuppressWarnings("serial")
 public class OptionEvent extends EventObject {
 
 	/**

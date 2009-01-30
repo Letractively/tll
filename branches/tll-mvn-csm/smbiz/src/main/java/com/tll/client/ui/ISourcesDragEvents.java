@@ -30,6 +30,7 @@ public interface ISourcesDragEvents {
 	 * DragListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class DragListenerCollection extends ArrayList<IDragListener> {
 
 		/**

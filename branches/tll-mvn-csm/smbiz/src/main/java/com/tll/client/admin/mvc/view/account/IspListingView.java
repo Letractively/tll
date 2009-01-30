@@ -31,6 +31,7 @@ import com.tll.model.EntityType;
  * IspListingView
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class IspListingView extends ListingView {
 
 	public static final Class klas = new Class();
@@ -55,6 +56,7 @@ public final class IspListingView extends ListingView {
 	 * IspListingViewRequest
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class IspListingViewRequest extends ShowViewRequest {
 
 		/**

@@ -30,6 +30,7 @@ public interface ISourcesStatusEvents {
 	 * StatusListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static class StatusListenerCollection extends ArrayList<IStatusListener> {
 
 		public void fireStatusEvent(StatusEvent event) {

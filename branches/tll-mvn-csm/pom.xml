@@ -16,7 +16,7 @@
       <id>jpk</id>
       <email>jopaki@gmail.com</email>
       <organization>The Logic Lab</organization>
-      <timezone>8</timezone>
+      <timezone>-8</timezone>
       <url>http://tll.googlecode.com</url>
       <roles>
         <role>Principal</role>
@@ -29,21 +29,6 @@
     <developerConnection>https:/tll.googlecode.com/svn/</developerConnection>
   </scm>
 
-  <!-- include the GWT-Maven repo as plugin, and as standard -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>gwt-maven</id>
-      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <repositories>
-    <repository>
-      <id>gwt-maven</id>
-      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
-    </repository>
-  </repositories>
-  
   <properties>
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
@@ -65,6 +50,26 @@
   <build>
     <pluginManagement>
       <plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          
+          <!-- fail the build if we have used but undeclared compile time dependencies -->
+          <executions>
+            <execution>
+              <id>analyze-compile-deps</id>
+              <goals>
+                <goal>analyze-only</goal>
+              </goals>
+              <configuration>
+                <failOnWarning>true</failOnWarning>
+                <ignoreNonCompile>true</ignoreNonCompile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -85,10 +90,10 @@
               </manifestEntries>
             </archive>
           </configuration>
-          
+
           <!--
-            Retain the test classes only and not the test resources so 
-            we don't pollute the test classpath for dependent modules.
+            Retain the test classes only and not the test resources so we don't pollute the test classpath for dependent
+            modules.
           -->
           <executions>
             <execution>
@@ -112,7 +117,7 @@
           <version>1.0-rc-4</version>
         </plugin>
       </plugins>
-      
+
     </pluginManagement>
 
     <plugins>
@@ -333,48 +338,6 @@
         <artifactId>backport-util-concurrent</artifactId>
         <version>3.1</version>
       </dependency>
-  
-      <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>5.8</version>
-        <classifier>jdk15</classifier>
-      </dependency>
-
-      <!-- GWT -->
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-servlet</artifactId>
-        <version>${gwtVersion}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-user</artifactId>
-        <version>${gwtVersion}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-dev</artifactId>
-        <version>${gwtVersion}</version>
-        <classifier>${platform}-libs</classifier>
-        <type>zip</type>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-dev</artifactId>
-        <version>${gwtVersion}</version>
-        <classifier>${platform}</classifier>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.5</version>
-      </dependency>
 
       <dependency>
         <groupId>org.aspectj</groupId>
@@ -385,6 +348,37 @@
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjweaver</artifactId>
         <version>${aspectjVersion}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+      </dependency>
+      
+      <!-- GWT -->
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-user</artifactId>
+        <version>${gwtVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-servlet</artifactId>
+        <version>${gwtVersion}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>5.8</version>
+        <classifier>jdk15</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.5</version>
       </dependency>
 
     </dependencies>

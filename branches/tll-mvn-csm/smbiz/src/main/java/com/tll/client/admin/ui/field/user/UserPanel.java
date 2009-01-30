@@ -24,6 +24,7 @@ public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
+		@SuppressWarnings("synthetic-access")
 		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(canvas);

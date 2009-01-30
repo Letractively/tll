@@ -34,6 +34,7 @@ import com.tll.model.EntityType;
  * MerchantListingView
  * @author jpk
  */
+@SuppressWarnings("synthetic-access")
 public final class MerchantListingView extends ListingView {
 
 	public static final Class klas = new Class();
@@ -66,6 +67,7 @@ public final class MerchantListingView extends ListingView {
 	 * MerchantListingViewRequest - MerchantListingView specific view request.
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static final class MerchantListingViewRequest extends ShowViewRequest {
 
 		/**

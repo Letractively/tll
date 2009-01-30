@@ -14,6 +14,7 @@ import com.tll.common.data.Status;
  * StatusEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public class StatusEvent extends EventObject {
 
 	private final Status status;

@@ -68,15 +68,16 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	 */
 	private final class EmptyWidget extends Composite {
 
-		private final SimplePanel pnl = new SimplePanel();
+		private final SimplePanel spnl = new SimplePanel();
 
 		/**
 		 * Constructor
 		 */
+		@SuppressWarnings("synthetic-access")
 		public EmptyWidget() {
 			super();
-			pnl.setStylePrimaryName(Styles.EMPTY);
-			initWidget(pnl);
+			spnl.setStylePrimaryName(Styles.EMPTY);
+			initWidget(spnl);
 			if(enableAdd) {
 				Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
 				button.addClickListener(new ClickListener() {
@@ -87,10 +88,10 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 						emptyWidget.setVisible(false);
 					}
 				});
-				pnl.add(button);
+				spnl.add(button);
 			}
 			else {
-				pnl.add(new Label("No " + getIndexTypeName() + "(s) currently exist."));
+				spnl.add(new Label("No " + getIndexTypeName() + "(s) currently exist."));
 			}
 		}
 

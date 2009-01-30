@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
  * ViewChangedEvent
  * @author jpk
  */
+@SuppressWarnings("serial")
 public final class ViewChangedEvent extends ViewEvent {
 
 	/**

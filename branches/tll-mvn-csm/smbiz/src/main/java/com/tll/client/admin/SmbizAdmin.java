@@ -48,6 +48,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 
 		DeferredCommand.addCommand(new Command() {
 
+			@SuppressWarnings("synthetic-access")
 			public void execute() {
 				// declare the available views
 				populateViewClasses();

@@ -29,6 +29,7 @@ public interface ISourcesRpcEvents {
 	 * RpcListenerCollection
 	 * @author jpk
 	 */
+	@SuppressWarnings("serial")
 	public static class RpcListenerCollection extends ArrayList<IRpcListener> {
 
 		public void fireRpcEvent(RpcEvent event) {
