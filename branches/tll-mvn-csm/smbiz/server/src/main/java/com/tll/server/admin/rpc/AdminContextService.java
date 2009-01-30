@@ -4,13 +4,13 @@
  */
 package com.tll.server.admin.rpc;
 
-import com.tll.client.admin.AdminContext;
-import com.tll.client.admin.data.rpc.AdminContextPayload;
-import com.tll.client.admin.data.rpc.IAdminContextService;
-import com.tll.client.data.Status;
-import com.tll.client.model.Model;
-import com.tll.client.msg.Msg.MsgAttr;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.admin.AdminContext;
+import com.tll.common.admin.data.rpc.AdminContextPayload;
+import com.tll.common.admin.data.rpc.IAdminContextService;
+import com.tll.common.data.Status;
+import com.tll.common.model.Model;
+import com.tll.common.msg.Msg.MsgAttr;
+import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.server.Constants;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;

@@ -12,9 +12,11 @@ import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.client.ClientTestUtils;
-import com.tll.client.model.IModelProperty;
-import com.tll.client.model.IndexOutOfRangeInPropPathException;
-import com.tll.client.model.Model;
+import com.tll.common.bind.IBindable;
+import com.tll.common.bind.PropertyChangeSupport;
+import com.tll.common.model.IModelProperty;
+import com.tll.common.model.IndexOutOfRangeInPropPathException;
+import com.tll.common.model.Model;
 
 /**
  * ModelBindingTest - Test that verifies client side data binding using

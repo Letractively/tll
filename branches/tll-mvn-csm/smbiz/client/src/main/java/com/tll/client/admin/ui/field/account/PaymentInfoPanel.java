@@ -12,10 +12,10 @@ import com.tll.client.admin.ui.field.BankFieldsProvider;
 import com.tll.client.admin.ui.field.BankFieldsRenderer;
 import com.tll.client.admin.ui.field.CreditCardFieldsProvider;
 import com.tll.client.admin.ui.field.CreditCardFieldsRenderer;
-import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.common.bind.IBindable;
 
 /**
  * PaymentInfoPanel

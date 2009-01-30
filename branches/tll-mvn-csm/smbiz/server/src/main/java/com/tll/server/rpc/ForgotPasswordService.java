@@ -12,10 +12,10 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.mail.MailSendException;
 
-import com.tll.client.data.Payload;
-import com.tll.client.data.Status;
-import com.tll.client.data.rpc.IForgotPasswordService;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.data.Payload;
+import com.tll.common.data.Status;
+import com.tll.common.data.rpc.IForgotPasswordService;
+import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;

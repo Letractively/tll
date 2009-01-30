@@ -7,13 +7,13 @@ package com.tll.client.admin.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.admin.ui.field.AddressFieldsRenderer;
-import com.tll.client.bind.IBindable;
-import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.Model;
 
 /**
  * UserPanel

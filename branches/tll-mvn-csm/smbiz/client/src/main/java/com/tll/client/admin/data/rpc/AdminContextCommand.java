@@ -11,10 +11,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.admin.AdminContext;
 import com.tll.client.admin.data.rpc.IAdminContextListener.ChangeType;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
+import com.tll.common.admin.AdminContext;
+import com.tll.common.admin.data.rpc.AdminContextPayload;
+import com.tll.common.admin.data.rpc.IAdminContextService;
+import com.tll.common.admin.data.rpc.IAdminContextServiceAsync;
 
 /**
  * AdminContextCommand - RPC command to retrieve the admin context from the

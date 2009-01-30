@@ -9,17 +9,19 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.ListingOp;
-import com.tll.client.data.ListingPayload;
-import com.tll.client.data.ListingRequest;
-import com.tll.client.data.RemoteListingDefinition;
-import com.tll.client.data.ListingPayload.ListingStatus;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.PagingUtil;
-import com.tll.client.model.Model;
-import com.tll.client.search.ISearch;
+import com.tll.common.data.ListingOp;
+import com.tll.common.data.ListingPayload;
+import com.tll.common.data.ListingRequest;
+import com.tll.common.data.RemoteListingDefinition;
+import com.tll.common.data.ListingPayload.ListingStatus;
+import com.tll.common.data.rpc.IListingService;
+import com.tll.common.data.rpc.IListingServiceAsync;
+import com.tll.common.model.Model;
+import com.tll.common.search.ISearch;
 import com.tll.dao.Sorting;
 
 /**

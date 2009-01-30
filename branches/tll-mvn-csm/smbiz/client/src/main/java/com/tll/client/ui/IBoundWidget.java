@@ -3,9 +3,9 @@ package com.tll.client.ui;
 import java.util.Comparator;
 
 import com.google.gwt.user.client.ui.SourcesChangeEvents;
-import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
-import com.tll.client.convert.IConverter;
+import com.tll.common.bind.IBindable;
+import com.tll.common.convert.IConverter;
 
 /**
  * IBoundWidget - Common base class for a UI widgets that are boundWidget.

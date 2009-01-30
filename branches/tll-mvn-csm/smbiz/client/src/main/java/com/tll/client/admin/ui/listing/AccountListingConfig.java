@@ -7,7 +7,7 @@ package com.tll.client.admin.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellRenderer;
-import com.tll.client.model.Model;
+import com.tll.common.model.Model;
 
 /**
  * AccountListingConfig

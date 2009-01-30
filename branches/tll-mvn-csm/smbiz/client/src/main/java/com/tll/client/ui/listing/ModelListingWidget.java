@@ -6,9 +6,9 @@
 package com.tll.client.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.RefKey;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 
 /**
  * ModelListingWidget - Listing Widget dedicated to handling Model type data.

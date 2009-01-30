@@ -12,12 +12,12 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
-import com.tll.client.bind.IBindable;
-import com.tll.client.model.NullNodeInPropPathException;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.NullNodeInPropPathException;
+import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**

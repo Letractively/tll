@@ -11,6 +11,10 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.tll.TestUtils;
+import com.tll.common.model.IModelProperty;
+import com.tll.common.model.Model;
+import com.tll.common.model.ModelRefProperty;
+import com.tll.common.model.RelatedManyProperty;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;

@@ -6,7 +6,7 @@
 package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.ListingOp;
+import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
 
 /**

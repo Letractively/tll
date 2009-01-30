@@ -6,12 +6,12 @@
 package com.tll.client.admin.mvc.view.user;
 
 import com.tll.client.admin.ui.field.user.UserPanel;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.model.Model;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.model.Model;
 import com.tll.model.EntityType;
 
 /**

@@ -8,11 +8,11 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindable;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.common.bind.IBindable;
 
 /**
  * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app

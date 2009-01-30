@@ -14,15 +14,15 @@ import java.util.Set;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindable;
-import com.tll.client.bind.IPropertyChangeListener;
-import com.tll.client.model.MalformedPropPathException;
-import com.tll.client.model.PropertyPath;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.msg.Msg;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.MalformedPropPathException;
+import com.tll.common.model.PropertyPath;
+import com.tll.common.model.PropertyPathException;
+import com.tll.common.msg.Msg;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**

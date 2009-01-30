@@ -6,10 +6,10 @@
 package com.tll.server.rpc;
 
 import com.tll.SystemError;
-import com.tll.client.data.AuxDataPayload;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.Status;
-import com.tll.client.data.rpc.IAuxDataService;
+import com.tll.common.data.AuxDataPayload;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.Status;
+import com.tll.common.data.rpc.IAuxDataService;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
 

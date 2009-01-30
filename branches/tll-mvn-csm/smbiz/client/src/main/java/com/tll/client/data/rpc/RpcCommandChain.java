@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.tll.client.data.Payload;
+import com.tll.common.data.Payload;
 
 /**
  * RpcCommandChain - Enables {@link IRpcCommand}s to be chained together for

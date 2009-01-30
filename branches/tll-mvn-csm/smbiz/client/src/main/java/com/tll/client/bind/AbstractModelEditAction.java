@@ -10,13 +10,14 @@ import java.util.Set;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.ui.field.FieldValidationFeedback;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**

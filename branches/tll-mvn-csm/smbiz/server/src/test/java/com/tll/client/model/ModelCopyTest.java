@@ -6,6 +6,7 @@ package com.tll.client.model;
 
 import org.testng.annotations.Test;
 
+import com.tll.common.model.Model;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;

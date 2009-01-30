@@ -10,20 +10,20 @@ import java.util.Date;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.convert.BooleanPassThroughConverter;
-import com.tll.client.convert.DatePassThroughConverter;
-import com.tll.client.convert.EnumToStringConverter;
-import com.tll.client.convert.IFormattedConverter;
-import com.tll.client.convert.IdConverter;
-import com.tll.client.convert.NoFormatStringConverter;
-import com.tll.client.convert.RefDataMapConverter;
-import com.tll.client.model.Model;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
-import com.tll.client.util.SimpleComparator;
 import com.tll.client.validate.CreditCardValidator;
 import com.tll.client.validate.EmailAddressValidator;
 import com.tll.client.validate.IValidator;
+import com.tll.common.convert.BooleanPassThroughConverter;
+import com.tll.common.convert.DatePassThroughConverter;
+import com.tll.common.convert.EnumToStringConverter;
+import com.tll.common.convert.IFormattedConverter;
+import com.tll.common.convert.IdConverter;
+import com.tll.common.convert.NoFormatStringConverter;
+import com.tll.common.convert.RefDataMapConverter;
+import com.tll.common.model.Model;
+import com.tll.common.util.Fmt;
+import com.tll.common.util.GlobalFormat;
+import com.tll.common.util.SimpleComparator;
 import com.tll.refdata.RefDataType;
 
 /**

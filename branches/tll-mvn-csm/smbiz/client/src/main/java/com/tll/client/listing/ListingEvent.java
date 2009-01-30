@@ -7,9 +7,9 @@ package com.tll.client.listing;
 import java.util.EventObject;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.ListingOp;
-import com.tll.client.data.ListingPayload;
-import com.tll.client.data.ListingPayload.ListingStatus;
+import com.tll.common.data.ListingOp;
+import com.tll.common.data.ListingPayload;
+import com.tll.common.data.ListingPayload.ListingStatus;
 import com.tll.dao.Sorting;
 
 /**

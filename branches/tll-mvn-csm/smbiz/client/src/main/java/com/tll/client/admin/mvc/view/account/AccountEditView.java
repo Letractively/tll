@@ -5,12 +5,12 @@
 package com.tll.client.admin.mvc.view.account;
 
 import com.tll.client.admin.ui.field.account.AccountPanel;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
-import com.tll.client.model.Model;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.EntityOptions;
+import com.tll.common.model.Model;
 import com.tll.model.EntityType;
 import com.tll.refdata.RefDataType;
 

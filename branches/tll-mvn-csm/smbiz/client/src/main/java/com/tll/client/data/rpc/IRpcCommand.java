@@ -6,7 +6,7 @@ package com.tll.client.data.rpc;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.tll.client.data.Payload;
+import com.tll.common.data.Payload;
 
 /**
  * IRpcCommand - Definition for an RPC command callback.

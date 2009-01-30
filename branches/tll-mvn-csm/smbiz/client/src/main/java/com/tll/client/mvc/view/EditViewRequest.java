@@ -1,8 +1,8 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 
 /**
  * EditViewRequest

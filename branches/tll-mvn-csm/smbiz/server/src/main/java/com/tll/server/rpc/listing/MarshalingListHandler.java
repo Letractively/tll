@@ -4,7 +4,7 @@
  */
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.Model;
+import com.tll.common.model.Model;
 import com.tll.dao.SearchResult;
 import com.tll.listhandler.DecoratedListHandler;
 import com.tll.model.IEntity;

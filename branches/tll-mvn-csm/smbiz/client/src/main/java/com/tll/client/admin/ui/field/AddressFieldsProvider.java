@@ -5,10 +5,10 @@
  */
 package com.tll.client.admin.ui.field;
 
-import com.tll.client.convert.CharacterToStringConverter;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.common.convert.CharacterToStringConverter;
 import com.tll.refdata.RefDataType;
 
 /**

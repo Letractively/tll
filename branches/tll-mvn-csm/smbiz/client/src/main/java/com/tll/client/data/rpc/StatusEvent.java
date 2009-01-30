@@ -8,7 +8,7 @@ package com.tll.client.data.rpc;
 import java.util.EventObject;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.Status;
+import com.tll.common.data.Status;
 
 /**
  * StatusEvent

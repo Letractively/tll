@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.IConverter;
-import com.tll.client.util.ObjectUtil;
+import com.tll.common.convert.IConverter;
+import com.tll.common.util.ObjectUtil;
 
 /**
  * RadioGroupField

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 
 /**
  * ModelListingTable

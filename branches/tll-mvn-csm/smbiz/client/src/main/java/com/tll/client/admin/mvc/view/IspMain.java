@@ -5,13 +5,13 @@
 package com.tll.client.admin.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.AdminContext;
 import com.tll.client.admin.SmbizAdmin;
-import com.tll.client.model.RefKey;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.search.impl.AccountSearch;
 import com.tll.client.ui.HtmlListPanel;
+import com.tll.common.admin.AdminContext;
+import com.tll.common.model.RefKey;
+import com.tll.common.search.impl.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.EntityType;
 

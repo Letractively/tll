@@ -16,14 +16,14 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.Model;
-import com.tll.client.model.UnsetPropertyException;
-import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.common.model.Model;
+import com.tll.common.model.UnsetPropertyException;
+import com.tll.common.msg.Msg;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children

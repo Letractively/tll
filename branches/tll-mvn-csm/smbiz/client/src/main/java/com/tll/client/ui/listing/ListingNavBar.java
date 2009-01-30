@@ -20,12 +20,12 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
-import com.tll.client.msg.Msg.MsgLevel;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.TimedPositionedPopup.Position;
-import com.tll.client.util.StringUtil;
+import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
+import com.tll.common.util.StringUtil;
 
 /**
  * ListingNavBar - Toolbar impl for listing navigation.

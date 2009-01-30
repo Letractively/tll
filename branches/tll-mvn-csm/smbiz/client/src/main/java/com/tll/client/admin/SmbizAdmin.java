@@ -21,6 +21,7 @@ import com.tll.client.admin.ui.MainPanel;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.LoginDialog;
+import com.tll.common.admin.AdminContext;
 
 /**
  * Smbiz Admin module.

@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
-import com.tll.client.convert.IConverter;
-import com.tll.client.convert.NoFormatStringConverter;
+import com.tll.common.convert.IConverter;
+import com.tll.common.convert.NoFormatStringConverter;
 
 /**
  * FieldFactory

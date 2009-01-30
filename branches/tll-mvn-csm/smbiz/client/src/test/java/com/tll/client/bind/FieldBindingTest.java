@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.ClientTestUtils;
 import com.tll.client.ClientTestUtils.TestFieldPanel;
-import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.

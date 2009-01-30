@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.client.data.AuxDataPayload;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.model.Model;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.data.AuxDataPayload;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.model.Model;
+import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;

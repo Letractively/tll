@@ -5,8 +5,8 @@
  */
 package com.tll.server.rpc.listing;
 
-import com.tll.client.model.Model;
-import com.tll.client.model.PropertyPathException;
+import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;

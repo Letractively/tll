@@ -7,11 +7,11 @@ package com.tll.client.admin.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.IBindable;
-import com.tll.client.model.Model;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.Model;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.

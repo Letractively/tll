@@ -14,6 +14,7 @@ import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragListener;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.common.msg.Msg;
 
 /**
  * MsgManager - This construct is aware of all {@link MsgPanel}s present in the

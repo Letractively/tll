@@ -8,7 +8,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.Payload;
+import com.tll.common.data.Payload;
+import com.tll.common.data.rpc.IForgotPasswordService;
+import com.tll.common.data.rpc.IForgotPasswordServiceAsync;
 
 /**
  * ForgotPasswordCommand

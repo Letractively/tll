@@ -5,17 +5,17 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.AuxDataRequest;
-import com.tll.client.data.EntityOptions;
-import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
-import com.tll.client.model.RefKey;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.EntityOptions;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 
 /**
  * EditView - Dedicated base class for AbstractView impls whose sole purpose is

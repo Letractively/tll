@@ -8,12 +8,12 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.IConverter;
-import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.util.GlobalFormat;
-import com.tll.client.util.ObjectUtil;
-import com.tll.client.util.StringUtil;
+import com.tll.common.convert.IConverter;
+import com.tll.common.convert.IFormattedConverter;
+import com.tll.common.util.GlobalFormat;
+import com.tll.common.util.ObjectUtil;
+import com.tll.common.util.StringUtil;
 
 /**
  * TextField

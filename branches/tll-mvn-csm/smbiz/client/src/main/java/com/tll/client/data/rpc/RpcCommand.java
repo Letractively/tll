@@ -8,9 +8,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.data.Payload;
-import com.tll.client.data.Status;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.data.Payload;
+import com.tll.common.data.Status;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * RpcCommand - Impl of {@link IRpcCommand} serving as a way to chain rpc calls

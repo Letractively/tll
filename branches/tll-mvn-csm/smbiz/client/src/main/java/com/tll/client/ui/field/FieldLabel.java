@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
-import com.tll.client.util.StringUtil;
+import com.tll.common.util.StringUtil;
 
 /**
  * FieldLabel - the field label of an {@link AbstractField} impl.

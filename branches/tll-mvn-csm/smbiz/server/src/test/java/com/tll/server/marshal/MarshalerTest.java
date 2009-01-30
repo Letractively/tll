@@ -17,9 +17,9 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
-import com.tll.client.model.IModelProperty;
-import com.tll.client.model.Model;
-import com.tll.client.model.RefKey;
+import com.tll.common.model.IModelProperty;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.mock.EntityGraph;
 import com.tll.di.DaoModule;

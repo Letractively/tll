@@ -10,8 +10,10 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.data.AuxDataPayload;
-import com.tll.client.data.AuxDataRequest;
+import com.tll.common.data.AuxDataPayload;
+import com.tll.common.data.AuxDataRequest;
+import com.tll.common.data.rpc.IAuxDataService;
+import com.tll.common.data.rpc.IAuxDataServiceAsync;
 
 /**
  * AuxDataCommand

@@ -13,10 +13,10 @@ import com.google.gwt.widgetideas.client.event.ChangeEvent;
 import com.google.gwt.widgetideas.client.event.ChangeHandler;
 import com.google.gwt.widgetideas.client.event.KeyDownEvent;
 import com.google.gwt.widgetideas.client.event.KeyDownHandler;
-import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
+import com.tll.common.convert.IConverter;
+import com.tll.common.util.Fmt;
+import com.tll.common.util.GlobalFormat;
 
 /**
  * DateField

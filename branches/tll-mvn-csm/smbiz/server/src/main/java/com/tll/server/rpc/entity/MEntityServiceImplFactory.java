@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tll.SystemError;
-import com.tll.client.search.ISearch;
+import com.tll.common.search.ISearch;
 import com.tll.model.EntityType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;

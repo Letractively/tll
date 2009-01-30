@@ -7,9 +7,9 @@ package com.tll.client.data.rpc;
 import java.util.EventObject;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.data.EntityPayload;
-import com.tll.client.data.EntityRequest;
 import com.tll.client.data.rpc.CrudCommand.CrudOp;
+import com.tll.common.data.EntityPayload;
+import com.tll.common.data.EntityRequest;
 
 /**
  * CrudEvent

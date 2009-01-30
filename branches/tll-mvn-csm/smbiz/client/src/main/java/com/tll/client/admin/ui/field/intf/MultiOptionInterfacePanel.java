@@ -8,15 +8,15 @@ package com.tll.client.admin.ui.field.intf;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindable;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.model.Model;
-import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.Model;
+import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.EntityType;
 
 /**

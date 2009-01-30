@@ -1,5 +1,7 @@
 package com.tll.client.bind;
 
+import com.tll.common.bind.IBindable;
+
 /**
  * IBindingAction - "Controls" a given component participating in a binding.
  * <p>

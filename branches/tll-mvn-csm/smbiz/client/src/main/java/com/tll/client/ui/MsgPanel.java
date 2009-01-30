@@ -10,8 +10,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.tll.client.App;
-import com.tll.client.msg.Msg;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * MsgPanel - UI widget designed to display one or more {@link Msg}s.

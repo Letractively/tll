@@ -1,13 +1,13 @@
 package com.tll.server.rpc.entity;
 
-import com.tll.client.data.EntityFetchPrototypeRequest;
-import com.tll.client.data.EntityLoadRequest;
-import com.tll.client.data.EntityPayload;
-import com.tll.client.data.EntityPersistRequest;
-import com.tll.client.data.EntityPurgeRequest;
-import com.tll.client.data.EntityRequest;
-import com.tll.client.data.RemoteListingDefinition;
-import com.tll.client.search.ISearch;
+import com.tll.common.data.EntityFetchPrototypeRequest;
+import com.tll.common.data.EntityLoadRequest;
+import com.tll.common.data.EntityPayload;
+import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPurgeRequest;
+import com.tll.common.data.EntityRequest;
+import com.tll.common.data.RemoteListingDefinition;
+import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;

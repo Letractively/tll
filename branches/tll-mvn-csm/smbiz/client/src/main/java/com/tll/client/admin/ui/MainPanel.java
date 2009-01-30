@@ -25,20 +25,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.admin.AdminContext;
 import com.tll.client.admin.data.rpc.IAdminContextListener;
 import com.tll.client.admin.mvc.view.MainView.MainViewClass;
 import com.tll.client.admin.mvc.view.user.UserEditView;
-import com.tll.client.data.Status;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusListener;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
-import com.tll.client.model.Model;
 import com.tll.client.model.ModelChangeManager;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.msg.Msg;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewRequest;
@@ -48,8 +43,13 @@ import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewRequestLink;
-import com.tll.client.util.Fmt;
-import com.tll.client.util.GlobalFormat;
+import com.tll.common.admin.AdminContext;
+import com.tll.common.data.Status;
+import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
+import com.tll.common.msg.Msg;
+import com.tll.common.util.Fmt;
+import com.tll.common.util.GlobalFormat;
 
 /**
  * MainPanel

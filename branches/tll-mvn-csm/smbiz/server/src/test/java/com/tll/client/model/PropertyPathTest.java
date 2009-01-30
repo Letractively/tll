@@ -8,6 +8,9 @@ package com.tll.client.model;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.tll.common.model.MalformedPropPathException;
+import com.tll.common.model.PropertyPath;
+
 /**
  * PropertyPathTest - Test the public methods for {@link PropertyPath}.
  * @author jpk

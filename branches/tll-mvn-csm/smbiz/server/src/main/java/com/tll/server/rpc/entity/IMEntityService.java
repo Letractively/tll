@@ -6,10 +6,10 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.SystemError;
-import com.tll.client.data.RemoteListingDefinition;
-import com.tll.client.data.rpc.ICrudService;
-import com.tll.client.data.rpc.IListingService;
-import com.tll.client.search.ISearch;
+import com.tll.common.data.RemoteListingDefinition;
+import com.tll.common.data.rpc.ICrudService;
+import com.tll.common.data.rpc.IListingService;
+import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.listing.IMarshalingListHandler;

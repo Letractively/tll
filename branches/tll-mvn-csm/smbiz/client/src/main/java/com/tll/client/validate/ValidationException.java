@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.Msg;
-import com.tll.client.msg.Msg.MsgLevel;
+import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * ValidationException

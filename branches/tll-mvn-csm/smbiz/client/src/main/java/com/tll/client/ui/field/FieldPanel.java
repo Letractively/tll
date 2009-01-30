@@ -7,11 +7,11 @@ package com.tll.client.ui.field;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindable;
-import com.tll.client.model.PropertyPathException;
-import com.tll.client.model.UnsetPropertyException;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
+import com.tll.common.bind.IBindable;
+import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.UnsetPropertyException;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}

@@ -6,11 +6,11 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ChangeListenerCollection;
 import com.google.gwt.user.client.ui.Composite;
-import com.tll.client.bind.IBindable;
 import com.tll.client.bind.IBindingAction;
-import com.tll.client.bind.IPropertyChangeListener;
-import com.tll.client.bind.PropertyChangeSupport;
-import com.tll.client.convert.IConverter;
+import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.bind.PropertyChangeSupport;
+import com.tll.common.convert.IConverter;
 
 /**
  * AbstractBoundWidget

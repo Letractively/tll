@@ -6,7 +6,9 @@ package com.tll.client.model;
 
 import java.util.EventObject;
 
-import com.tll.client.data.Status;
+import com.tll.common.data.Status;
+import com.tll.common.model.Model;
+import com.tll.common.model.RefKey;
 
 /**
  * ModelChangeEvent - Used to dissemminate model changes.

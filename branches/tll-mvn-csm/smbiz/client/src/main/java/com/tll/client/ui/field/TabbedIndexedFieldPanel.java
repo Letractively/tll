@@ -23,9 +23,9 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.bind.IBindable;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.WidgetAndLabel;
+import com.tll.common.bind.IBindable;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
