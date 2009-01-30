@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-test-shell">
+  
+  <test verbose="6" name="shell-test" annotations="JDK">
+    <parameter name="jpaMode" value="NONE" />
+    <parameter name="daoMode" value="MOCK" />
+    <groups>
+      <run>
+        <include name="" />
+      </run>
+    </groups>
+    <packages>
+      <package name="" />
+    </packages>
+    <classes>
+      <class name="" />
+    </classes>
+  </test>
+	
+</suite>
