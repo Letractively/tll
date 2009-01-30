@@ -3,7 +3,7 @@
  * @author jpk
  * Jun 4, 2008
  */
-package com.tll.client.model;
+package com.tll.common.model;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

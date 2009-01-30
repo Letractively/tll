@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Dec 18, 2007
  */
-package com.tll.client.model;
+package com.tll.common.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
