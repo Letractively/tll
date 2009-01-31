@@ -1,60 +1,39 @@
 package com.tll.config;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConfigurationUtils;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.configuration.reloading.ReloadingStrategy;
 
 /**
- * Config - Configuration store that loads properties from a properties file
- * that must be present on the runtime classpath:
- * {@value #CONFIG_PROPERTIES_FILE_NAME}
- * <p>
- * {@value #LOCAL_CONFIG_PROPERTIES_FILE_NAME} is optional but if present, these
- * held properties OVERRIDE those declared in
- * {@link #CONFIG_PROPERTIES_FILE_NAME}.
- * <p>
- * <strong>NOTE: </strong>Delimeter parsing is disabled.
+ * Config - Configuration store that loads properties from one or more property
+ * files.
  * @author jpk
  */
-public final class Config implements Configuration {
+public final class Config implements FileConfiguration {
 
-	private static final Log log = LogFactory.getLog(Config.class);
-
-	/**
-	 * The base config file name.
-	 */
-	public static final String CONFIG_PROPERTIES_FILE_NAME = "config.properties";
+	// private static final Log log = LogFactory.getLog(Config.class);
 
 	/**
-	 * The local config file name. Properties declared within this file override
-	 * all other declared properties.
+	 * The default config properties file name.
 	 */
-	public static final String LOCAL_CONFIG_PROPERTIES_FILE_NAME = "local.config.properties";
-
-	/**
-	 * The machine name system property key
-	 */
-	public static final String MACHINE_NAME_KEY = "tll.config.machine.name";
-
-	/**
-	 * The user name system property key
-	 */
-	public static final String USER_NAME_KEY = "tll.config.user.name";
+	public static final String DEFAULT_CONFIG_PROPERTIES_FILE_NAME = "config.properties";
 
 	/**
 	 * The config instance
@@ -71,7 +50,7 @@ public final class Config implements Configuration {
 	/**
 	 * Implementation decoratee
 	 */
-	private CombinedConfiguration root;
+	private final PropertiesConfiguration root;
 
 	/**
 	 * Constructor
@@ -79,283 +58,373 @@ public final class Config implements Configuration {
 	 */
 	private Config() {
 		super();
+		root = new PropertiesConfiguration();
+		root.setDelimiterParsingDisabled(true);
 	}
 
-	/**
-	 * Loads the configuration from disk re-loading if already loaded.
-	 * <p>
-	 * The config property files are expected to be at the root of the classpath.
-	 * @see #load(String)
-	 */
-	public void load() {
-		load(null);
-	}
-
-	/**
-	 * Loads the configuration from disk re-loading if already loaded.
-	 * @param basePath The base path that points to the dir containing the config
-	 *        property files. May be <code>null</code> in which case, the config
-	 *        files are expected to be at the root of the classpath.
-	 */
-	public void load(String basePath) {
-		PropertiesConfiguration baseProps, machineUserProps = null, localProps;
-
-		// load the required base props
-		try {
-			baseProps = new PropertiesConfiguration();
-			baseProps.setBasePath(basePath);
-			baseProps.setDelimiterParsingDisabled(true);
-			baseProps.load(CONFIG_PROPERTIES_FILE_NAME);
-			log.info(CONFIG_PROPERTIES_FILE_NAME + " loaded.");
-		}
-		catch(ConfigurationException ce) {
-			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
-		}
-
-		// load the optional machine user props
-		String machineUserPropFileName = getMachineUserConfigPropFileName();
-		if(machineUserPropFileName != null) {
-			try {
-				machineUserProps = new PropertiesConfiguration();
-				machineUserProps.setBasePath(basePath);
-				machineUserProps.setDelimiterParsingDisabled(true);
-				machineUserProps.load(machineUserPropFileName);
-				log.info(machineUserPropFileName + " loaded.");
-			}
-			catch(ConfigurationException ce) {
-				// ok, this file is optional
-			}
-		}
-
-		// load the optional local props overrides
-		try {
-			localProps = new PropertiesConfiguration();
-			localProps.setBasePath(basePath);
-			localProps.setDelimiterParsingDisabled(true);
-			localProps.load(LOCAL_CONFIG_PROPERTIES_FILE_NAME);
-			log.info(LOCAL_CONFIG_PROPERTIES_FILE_NAME + " loaded.");
-		}
-		catch(ConfigurationException ce) {
-			localProps = null; // ok, this file is optional
-		}
-
-		CompositeConfiguration cc = new CompositeConfiguration();
-		if(localProps != null) cc.addConfiguration(localProps);
-		if(machineUserProps != null) cc.addConfiguration(machineUserProps);
-		cc.addConfiguration(baseProps);
-
-		root = new CombinedConfiguration();
-		root.append(ConfigurationUtils.convertToHierarchical(cc));
-		log.info("Config property files loaded.");
-	}
-
-	/**
-	 * Unloads the configuration.
-	 */
-	public void unload() {
-		root = null;
-	}
-
-	/**
-	 * Determines the machine/user config file name based on the corresponding
-	 * system property values for {@link #MACHINE_NAME_KEY} and
-	 * {@link #USER_NAME_KEY}. FORMAT:
-	 * <code>"{machine name}.{user name}.config.properties"</code>
-	 * @return The user environment config file overriding the base config prop
-	 *         file but overridable by the local confif file or <code>null</code>
-	 *         if either the machine name or user name properties could not be
-	 *         resolved.
-	 */
-	private final String getMachineUserConfigPropFileName() {
-		String machinename = System.getProperty(MACHINE_NAME_KEY);
-		if(machinename == null) {
-			// try env property
-			machinename = System.getenv(MACHINE_NAME_KEY);
-		}
-		if(machinename == null || machinename.isEmpty()) {
-			return null;
-		}
-		String username = System.getProperty(USER_NAME_KEY);
-		if(username == null) {
-			// try env property
-			username = System.getenv(USER_NAME_KEY);
-		}
-		if(username == null || username.isEmpty()) {
-			return null;
-		}
-		return machinename + '.' + username + ".config.properties";
-	}
-
-	private CombinedConfiguration safeGetRoot() {
-		if(root == null) {
-			load();
-		}
-		return root;
-	}
-
+	@Override
 	public void addProperty(String key, Object value) {
-		safeGetRoot().addProperty(key, value);
+		root.addProperty(key, value);
 	}
 
+	@Override
 	public void clear() {
-		safeGetRoot().clear();
+		root.clear();
 	}
 
+	@Override
 	public void clearProperty(String key) {
-		safeGetRoot().clearProperty(key);
+		root.clearProperty(key);
 	}
 
+	@Override
 	public boolean containsKey(String key) {
-		return safeGetRoot().containsKey(key);
+		return root.containsKey(key);
 	}
 
+	@Override
 	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
-		return safeGetRoot().getBigDecimal(key, defaultValue);
+		return root.getBigDecimal(key, defaultValue);
 	}
 
+	@Override
 	public BigDecimal getBigDecimal(String key) {
-		return safeGetRoot().getBigDecimal(key);
+		return root.getBigDecimal(key);
 	}
 
+	@Override
 	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
-		return safeGetRoot().getBigInteger(key, defaultValue);
+		return root.getBigInteger(key, defaultValue);
 	}
 
+	@Override
 	public BigInteger getBigInteger(String key) {
-		return safeGetRoot().getBigInteger(key);
+		return root.getBigInteger(key);
 	}
 
+	@Override
 	public boolean getBoolean(String key, boolean defaultValue) {
-		return safeGetRoot().getBoolean(key, defaultValue);
+		return root.getBoolean(key, defaultValue);
 	}
 
+	@Override
 	public Boolean getBoolean(String key, Boolean defaultValue) {
-		return safeGetRoot().getBoolean(key, defaultValue);
+		return root.getBoolean(key, defaultValue);
 	}
 
+	@Override
 	public boolean getBoolean(String key) {
-		return safeGetRoot().getBoolean(key);
+		return root.getBoolean(key);
 	}
 
+	@Override
 	public byte getByte(String key, byte defaultValue) {
-		return safeGetRoot().getByte(key, defaultValue);
+		return root.getByte(key, defaultValue);
 	}
 
+	@Override
 	public Byte getByte(String key, Byte defaultValue) {
-		return safeGetRoot().getByte(key, defaultValue);
+		return root.getByte(key, defaultValue);
 	}
 
+	@Override
 	public byte getByte(String key) {
-		return safeGetRoot().getByte(key);
+		return root.getByte(key);
 	}
 
+	@Override
 	public double getDouble(String key, double defaultValue) {
-		return safeGetRoot().getDouble(key, defaultValue);
+		return root.getDouble(key, defaultValue);
 	}
 
+	@Override
 	public Double getDouble(String key, Double defaultValue) {
-		return safeGetRoot().getDouble(key, defaultValue);
+		return root.getDouble(key, defaultValue);
 	}
 
+	@Override
 	public double getDouble(String key) {
-		return safeGetRoot().getDouble(key);
+		return root.getDouble(key);
 	}
 
+	@Override
 	public float getFloat(String key, float defaultValue) {
-		return safeGetRoot().getFloat(key, defaultValue);
+		return root.getFloat(key, defaultValue);
 	}
 
+	@Override
 	public Float getFloat(String key, Float defaultValue) {
-		return safeGetRoot().getFloat(key, defaultValue);
+		return root.getFloat(key, defaultValue);
 	}
 
+	@Override
 	public float getFloat(String key) {
-		return safeGetRoot().getFloat(key);
+		return root.getFloat(key);
 	}
 
+	@Override
 	public int getInt(String key, int defaultValue) {
-		return safeGetRoot().getInt(key, defaultValue);
+		return root.getInt(key, defaultValue);
 	}
 
+	@Override
 	public int getInt(String key) {
-		return safeGetRoot().getInt(key);
+		return root.getInt(key);
 	}
 
+	@Override
 	public Integer getInteger(String key, Integer defaultValue) {
-		return safeGetRoot().getInteger(key, defaultValue);
+		return root.getInteger(key, defaultValue);
 	}
 
+	@Override
 	public Iterator<?> getKeys() {
-		return safeGetRoot().getKeys();
+		return root.getKeys();
 	}
 
+	@Override
 	public Iterator<?> getKeys(String prefix) {
-		return safeGetRoot().getKeys(prefix);
+		return root.getKeys(prefix);
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<?> getList(String key, List defaultValue) {
-		return safeGetRoot().getList(key, defaultValue);
+		return root.getList(key, defaultValue);
 	}
 
+	@Override
 	public List<?> getList(String key) {
-		return safeGetRoot().getList(key);
+		return root.getList(key);
 	}
 
+	@Override
 	public long getLong(String key, long defaultValue) {
-		return safeGetRoot().getLong(key, defaultValue);
+		return root.getLong(key, defaultValue);
 	}
 
+	@Override
 	public Long getLong(String key, Long defaultValue) {
-		return safeGetRoot().getLong(key, defaultValue);
+		return root.getLong(key, defaultValue);
 	}
 
+	@Override
 	public long getLong(String key) {
-		return safeGetRoot().getLong(key);
+		return root.getLong(key);
 	}
 
+	@Override
 	public Properties getProperties(String key) {
-		return safeGetRoot().getProperties(key);
+		return root.getProperties(key);
 	}
 
+	@Override
 	public Object getProperty(String key) {
-		return safeGetRoot().getProperty(key);
+		return root.getProperty(key);
 	}
 
+	@Override
 	public short getShort(String key, short defaultValue) {
-		return safeGetRoot().getShort(key, defaultValue);
+		return root.getShort(key, defaultValue);
 	}
 
+	@Override
 	public Short getShort(String key, Short defaultValue) {
-		return safeGetRoot().getShort(key, defaultValue);
+		return root.getShort(key, defaultValue);
 	}
 
+	@Override
 	public short getShort(String key) {
-		return safeGetRoot().getShort(key);
+		return root.getShort(key);
 	}
 
+	@Override
 	public String getString(String key, String defaultValue) {
-		return safeGetRoot().getString(key, defaultValue);
+		return root.getString(key, defaultValue);
 	}
 
+	@Override
 	public String getString(String key) {
-		return safeGetRoot().getString(key);
+		return root.getString(key);
 	}
 
+	@Override
 	public String[] getStringArray(String key) {
-		return safeGetRoot().getStringArray(key);
+		return root.getStringArray(key);
 	}
 
+	@Override
 	public boolean isEmpty() {
-		return safeGetRoot().isEmpty();
+		return root.isEmpty();
 	}
 
+	@Override
 	public void setProperty(String key, Object value) {
-		safeGetRoot().setProperty(key, value);
+		root.setProperty(key, value);
 	}
 
+	@Override
 	public Configuration subset(String prefix) {
-		return safeGetRoot().subset(prefix);
+		return root.subset(prefix);
+	}
+
+	@Override
+	public String getBasePath() {
+		return null;
+	}
+
+	@Override
+	public String getEncoding() {
+		return null;
+	}
+
+	@Override
+	public File getFile() {
+		return null;
+	}
+
+	@Override
+	public String getFileName() {
+		return null;
+	}
+
+	@Override
+	public ReloadingStrategy getReloadingStrategy() {
+		return null;
+	}
+
+	@Override
+	public URL getURL() {
+		return null;
+	}
+
+	@Override
+	public boolean isAutoSave() {
+		return false;
+	}
+
+	/**
+	 * Attempts to loads config properties from a properties file at the root of
+	 * the classpath named {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME}.
+	 * @throws ConfigurationException
+	 */
+	public void loadDefault() throws ConfigurationException {
+		root.load(DEFAULT_CONFIG_PROPERTIES_FILE_NAME);
+	}
+
+	@Override
+	public void load() throws ConfigurationException {
+		try {
+			root.load();
+		}
+		catch(ConfigurationException e) {
+			loadDefault();
+		}
+	}
+
+	@Override
+	public void load(File file) throws ConfigurationException {
+		root.load(file);
+	}
+
+	@Override
+	public void load(InputStream in, String encoding) throws ConfigurationException {
+		load(in, encoding);
+	}
+
+	@Override
+	public void load(InputStream in) throws ConfigurationException {
+		load(in);
+	}
+
+	@Override
+	public void load(Reader in) throws ConfigurationException {
+		load(in);
+	}
+
+	@Override
+	public void load(String fileName) throws ConfigurationException {
+		load(fileName);
+	}
+
+	@Override
+	public void load(URL url) throws ConfigurationException {
+		load(url);
+	}
+
+	@Override
+	public void reload() {
+		root.reload();
+	}
+
+	@Override
+	public void save() throws ConfigurationException {
+		root.save();
+	}
+
+	@Override
+	public void save(File file) throws ConfigurationException {
+		root.save();
+	}
+
+	@Override
+	public void save(OutputStream out, String encoding) throws ConfigurationException {
+		root.save(out, encoding);
+	}
+
+	@Override
+	public void save(OutputStream out) throws ConfigurationException {
+		root.save(out);
+	}
+
+	@Override
+	public void save(String fileName) throws ConfigurationException {
+		root.save(fileName);
+	}
+
+	@Override
+	public void save(URL url) throws ConfigurationException {
+		root.save(url);
+	}
+
+	@Override
+	public void save(Writer out) throws ConfigurationException {
+		root.save(out);
+	}
+
+	@Override
+	public void setAutoSave(boolean autoSave) {
+		root.setAutoSave(autoSave);
+	}
+
+	@Override
+	public void setBasePath(String basePath) {
+		root.setBasePath(basePath);
+	}
+
+	@Override
+	public void setEncoding(String encoding) {
+		root.setEncoding(encoding);
+	}
+
+	@Override
+	public void setFile(File file) {
+		root.setFile(file);
+	}
+
+	@Override
+	public void setFileName(String fileName) {
+		root.setFileName(fileName);
+	}
+
+	@Override
+	public void setReloadingStrategy(ReloadingStrategy strategy) {
+		root.setReloadingStrategy(strategy);
+	}
+
+	@Override
+	public void setURL(URL url) {
+		root.setURL(url);
 	}
 
 	/**
@@ -369,7 +438,7 @@ public final class Config implements Configuration {
 	 */
 	@SuppressWarnings("unchecked")
 	private PropertiesConfiguration subsetAsProps(String prefix, String prependToken) {
-		Configuration sub = subset(prefix);
+		Configuration sub = prefix == null ? root : subset(prefix);
 		PropertiesConfiguration pc = new PropertiesConfiguration();
 		for(Iterator<String> itr = sub.getKeys(); itr.hasNext();) {
 			String key = itr.next();
@@ -378,6 +447,11 @@ public final class Config implements Configuration {
 		return pc;
 	}
 
+	/**
+	 * Filters this configuration based on a set of config keys.
+	 * @param keyProvider
+	 * @return The filtered configuration as a {@link PropertiesConfiguration}.
+	 */
 	private PropertiesConfiguration filter(IConfigKeyProvider keyProvider) {
 		String[] keys = keyProvider == null ? null : keyProvider.getConfigKeys();
 		if(keys == null) return null;

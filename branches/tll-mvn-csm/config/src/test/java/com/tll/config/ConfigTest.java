@@ -66,6 +66,7 @@ public class ConfigTest {
 	public void testBasicLoading() throws Exception {
 		try {
 			Config config = Config.instance();
+			config.load();
 			assert !config.isEmpty() : "Config instance is empty";
 		}
 		catch(Throwable t) {
@@ -79,6 +80,7 @@ public class ConfigTest {
 	 */
 	public void testInterpolation() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Iterator<?> itr = config.getKeys();
 		while(itr.hasNext()) {
@@ -97,6 +99,7 @@ public class ConfigTest {
 	 */
 	public void testAllAsMap() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Map<String, String> map = config.asMap(null, null);
 		assert map != null;
@@ -114,6 +117,7 @@ public class ConfigTest {
 	 */
 	public void testNestedAsMap() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
 		assert map != null;
@@ -137,6 +141,7 @@ public class ConfigTest {
 	 */
 	public void testSaveAllToFile() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, null, null);
@@ -167,6 +172,7 @@ public class ConfigTest {
 	 */
 	public void testSaveSubsetToFile() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
@@ -181,36 +187,6 @@ public class ConfigTest {
 			assert key.startsWith("props.commas.") : "Key doesn't start with commas.";
 			assert keys.contains(key) : "The props keys list does not contain key: " + key;
 		}
-	}
-
-	/**
-	 * Verifies the user domain config props file is picked up and loaded
-	 * @throws Exception
-	 */
-	public void testUserDomainFileLoading() throws Exception {
-		System.setProperty(Config.MACHINE_NAME_KEY, "domain");
-		System.setProperty(Config.USER_NAME_KEY, "user");
-		Config.instance().unload();
-		Config config = Config.instance();
-		String pval1 = config.getString("props.simple.propA");
-		String pval2 = config.getString("props.simple.propB");
-		assert pval1 != null && pval1.equals("val1UD");
-		assert pval2 != null && pval2.equals("val2UD");
-	}
-
-	/**
-	 * Tests variable interpolation across a config file boundary. We want to be
-	 * able to put a variable encountered in a previously loaded config file into
-	 * a config file loaded subsequently!
-	 * @throws Exception
-	 */
-	public void testIntraConfigFileVariableInterpolation() throws Exception {
-		Config config = Config.instance();
-		config.load();
-
-		String pval = config.getString("props.interpolated.propA");
-		assert pval != null && pval.equals("basepropval");
-
 	}
 
 	/**
