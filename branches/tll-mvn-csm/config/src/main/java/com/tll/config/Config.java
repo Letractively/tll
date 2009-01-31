@@ -270,37 +270,37 @@ public final class Config implements FileConfiguration {
 
 	@Override
 	public String getBasePath() {
-		return null;
+		return root.getBasePath();
 	}
 
 	@Override
 	public String getEncoding() {
-		return null;
+		return root.getEncoding();
 	}
 
 	@Override
 	public File getFile() {
-		return null;
+		return root.getFile();
 	}
 
 	@Override
 	public String getFileName() {
-		return null;
+		return root.getFileName();
 	}
 
 	@Override
 	public ReloadingStrategy getReloadingStrategy() {
-		return null;
+		return root.getReloadingStrategy();
 	}
 
 	@Override
 	public URL getURL() {
-		return null;
+		return root.getURL();
 	}
 
 	@Override
 	public boolean isAutoSave() {
-		return false;
+		return root.isAutoSave();
 	}
 
 	/**
@@ -314,11 +314,11 @@ public final class Config implements FileConfiguration {
 
 	@Override
 	public void load() throws ConfigurationException {
-		try {
-			root.load();
-		}
-		catch(ConfigurationException e) {
+		if(getFileName() == null) {
 			loadDefault();
+		}
+		else {
+			root.load();
 		}
 	}
 
@@ -329,27 +329,27 @@ public final class Config implements FileConfiguration {
 
 	@Override
 	public void load(InputStream in, String encoding) throws ConfigurationException {
-		load(in, encoding);
+		root.load(in, encoding);
 	}
 
 	@Override
 	public void load(InputStream in) throws ConfigurationException {
-		load(in);
+		root.load(in);
 	}
 
 	@Override
 	public void load(Reader in) throws ConfigurationException {
-		load(in);
+		root.load(in);
 	}
 
 	@Override
 	public void load(String fileName) throws ConfigurationException {
-		load(fileName);
+		root.load(fileName);
 	}
 
 	@Override
 	public void load(URL url) throws ConfigurationException {
-		load(url);
+		root.load(url);
 	}
 
 	@Override
@@ -364,7 +364,7 @@ public final class Config implements FileConfiguration {
 
 	@Override
 	public void save(File file) throws ConfigurationException {
-		root.save();
+		root.save(file);
 	}
 
 	@Override
