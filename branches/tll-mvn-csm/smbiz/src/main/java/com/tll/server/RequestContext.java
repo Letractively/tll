@@ -4,11 +4,14 @@
  */
 package com.tll.server;
 
-import javax.servlet.ServletContext;
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.google.inject.Injector;
+import org.acegisecurity.AccessDecisionManager;
+import org.acegisecurity.AuthenticationManager;
+
+import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
@@ -23,40 +26,30 @@ import com.tll.service.entity.IEntityServiceFactory;
  * to a class that does NOT have access to the http request.
  * @author jpk
  */
-public final class RequestContext {
+public final class RequestContext implements IAppContext {
 
+	private final IAppContext appContext;
 	private final HttpServletRequest request;
-	private final ServletContext servletContext;
-	private final Injector injector;
 
 	/**
 	 * Constructor
-	 * @param request Can not be <code>null<code>.
-	 * @param servletContext
-	 * @param injector
+	 * @param appContext The app context.
+	 * @param request The http servlet request.
 	 */
-	public RequestContext(HttpServletRequest request, ServletContext servletContext, Injector injector) {
+	public RequestContext(IAppContext appContext, HttpServletRequest request) {
 		super();
+		if(appContext == null) {
+			throw new IllegalArgumentException("No app context specified.");
+		}
 		if(request == null) {
-			throw new IllegalArgumentException("The http servlet request can not be null");
-		}
-		if(servletContext == null) {
-			throw new IllegalArgumentException("The servlet context can not be null");
-		}
-		if(injector == null) {
-			throw new IllegalArgumentException("The injector can not be null");
+			throw new IllegalArgumentException("No http servlet request specified.");
 		}
 		this.request = request;
-		this.servletContext = servletContext;
-		this.injector = injector;
+		this.appContext = appContext;
 	}
 
 	public HttpServletRequest getRequest() {
 		return request;
-	}
-
-	public ServletContext getServletContext() {
-		return servletContext;
 	}
 
 	public HttpSession getSession() {
@@ -64,34 +57,55 @@ public final class RequestContext {
 	}
 
 	public boolean isDebug() {
-		return ((Boolean) getServletContext().getAttribute(Constants.IS_DEBUG_CONTEXT_ATTRIBUTE)).booleanValue();
+		return appContext.isDebug();
 	}
 
 	public String getEnvironment() {
-		return (String) getServletContext().getAttribute(Constants.ENVIRONMENT_CONTEXT_ATTRIBUTE);
+		return appContext.getEnvironment();
 	}
 
 	public IEntityFactory getEntityFactory() {
-		return getInstance(IEntityFactory.class);
+		return appContext.getEntityFactory();
 	}
 
 	public Marshaler getMarshaler() {
-		return getInstance(Marshaler.class);
+		return appContext.getMarshaler();
 	}
 
 	public IEntityServiceFactory getEntityServiceFactory() {
-		return getInstance(IEntityServiceFactory.class);
+		return appContext.getEntityServiceFactory();
 	}
 
 	public RefData getAppRefData() {
-		return getInstance(RefData.class);
+		return appContext.getAppRefData();
 	}
 
 	public MailManager getMailManager() {
-		return getInstance(MailManager.class);
+		return appContext.getMailManager();
 	}
 
-	private <T> T getInstance(Class<T> type) {
-		return injector.getInstance(type);
+	@Override
+	public SecurityMode getSecurityMode() {
+		return appContext.getSecurityMode();
+	}
+
+	@Override
+	public AuthenticationManager getAuthenticationManager() {
+		return appContext.getAuthenticationManager();
+	}
+
+	@Override
+	public DaoMode getDaoMode() {
+		return appContext.getDaoMode();
+	}
+
+	@Override
+	public EntityManagerFactory getEntityManagerFactory() {
+		return appContext.getEntityManagerFactory();
+	}
+
+	@Override
+	public AccessDecisionManager getHttpRequestAccessDecisionManager() {
+		return appContext.getHttpRequestAccessDecisionManager();
 	}
 }

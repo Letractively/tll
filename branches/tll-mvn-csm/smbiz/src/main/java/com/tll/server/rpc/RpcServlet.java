@@ -7,8 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.google.inject.Injector;
-import com.tll.server.Constants;
+import com.tll.server.IAppContext;
 import com.tll.server.RequestContext;
 
 /**
@@ -27,7 +26,7 @@ public abstract class RpcServlet extends RemoteServiceServlet {
 	 * @return The {@link RequestContext} for the current server request.
 	 */
 	protected final RequestContext getRequestContext() {
-		return new RequestContext(getThreadLocalRequest(), getServletContext(), (Injector) getServletContext()
-				.getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE));
+		return new RequestContext((IAppContext) getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY),
+				getThreadLocalRequest());
 	}
 }

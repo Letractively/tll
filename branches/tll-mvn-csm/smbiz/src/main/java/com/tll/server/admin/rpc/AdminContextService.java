@@ -11,8 +11,8 @@ import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.server.Constants;
 import com.tll.server.RequestContext;
+import com.tll.server.admin.filter.AuthenticationProcessingFilter;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.RpcServlet;
@@ -28,7 +28,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 	public AdminContextPayload getAdminContext() {
 		final RequestContext rc = getRequestContext();
 		final com.tll.server.admin.AdminContext sac =
-				(com.tll.server.admin.AdminContext) rc.getSession().getAttribute(Constants.SA_ADMIN_CONTEXT);
+				(com.tll.server.admin.AdminContext) rc.getSession().getAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT);
 		assert sac != null;
 
 		final Marshaler entityMarshaller = rc.getMarshaler();

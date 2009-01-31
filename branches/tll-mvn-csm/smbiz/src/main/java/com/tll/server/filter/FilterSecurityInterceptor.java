@@ -11,17 +11,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.acegisecurity.AccessDecisionManager;
-import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.intercept.web.FilterInvocationDefinitionSource;
 import org.acegisecurity.intercept.web.FilterInvocationDefinitionSourceEditor;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.name.Named;
-import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
-import com.tll.server.Constants;
+import com.tll.server.IAppContext;
 import com.tll.server.SecurityMode;
 
 /**
@@ -30,8 +23,9 @@ import com.tll.server.SecurityMode;
  */
 public final class FilterSecurityInterceptor extends org.acegisecurity.intercept.web.FilterSecurityInterceptor {
 
-	private boolean isAcegi;
+	private SecurityMode securityMode;
 
+	/*
 	@Override
 	@Inject
 	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -44,19 +38,18 @@ public final class FilterSecurityInterceptor extends org.acegisecurity.intercept
 	AccessDecisionManager accessDecisionManager) {
 		super.setAccessDecisionManager(accessDecisionManager);
 	}
-
+	*/
+	
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		super.init(config);
 
-		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
-		if(isAcegi) {
-			Injector injector =
-					(Injector) config.getServletContext().getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
-			// setAuthenticationManager(injector.getInstance(AuthenticationManager.class));
+		IAppContext appContext = (IAppContext) config.getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+		if(appContext.getSecurityMode() == SecurityMode.ACEGI) {
+			setAuthenticationManager(appContext.getAuthenticationManager());
 			// setAccessDecisionManager(injector.getInstance(Key.get(AccessDecisionManager.class,
 			// Named.class)));
-			injector.injectMembers(this);
+			setAccessDecisionManager(appContext.getHttpRequestAccessDecisionManager());
 
 			String ods = config.getInitParameter("objectDefinitionSource");
 			if(ods == null) {
@@ -72,7 +65,7 @@ public final class FilterSecurityInterceptor extends org.acegisecurity.intercept
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		if(isAcegi) {
+		if(securityMode == SecurityMode.ACEGI) {
 			super.doFilter(request, response, chain);
 		}
 		else {

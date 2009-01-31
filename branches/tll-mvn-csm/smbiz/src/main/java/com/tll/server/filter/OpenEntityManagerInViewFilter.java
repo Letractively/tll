@@ -13,11 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.inject.Injector;
-import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
 import com.tll.dao.DaoMode;
-import com.tll.server.Constants;
+import com.tll.server.IAppContext;
 
 /**
  * OpenEntityManagerInViewFilter
@@ -32,12 +29,11 @@ public class OpenEntityManagerInViewFilter extends org.springframework.orm.jpa.s
 		super.initFilterBean();
 
 		FilterConfig config = this.getFilterConfig();
-		String daoMode = Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey());
-		if(!DaoMode.MOCK.name().equals(daoMode)) {
-			Injector injector =
-					(Injector) config.getServletContext().getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
-			emf = injector.getInstance(EntityManagerFactory.class);
-			assert emf != null;
+		IAppContext ac = (IAppContext) config.getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+		if(ac.getDaoMode() != DaoMode.MOCK) {
+			if((emf = ac.getEntityManagerFactory()) == null) {
+				throw new Error("Can't obtain entity manager factory reference.");
+			}
 		}
 	}
 

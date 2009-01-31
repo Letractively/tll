@@ -10,8 +10,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
-
 /**
  * BootstrapperTest
  * @author jpk
@@ -23,7 +21,7 @@ public class BootstrapperTest {
 
 	private ServletContext getMockServletContext() {
 		MockServletContext context = new MockServletContext();
-		context.addInitParameter(Constants.GUICE_MODULE_CLASS_NAMES, 
+		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, 
 				"com.tll.di.VelocityModule \r\n"
 				+ "com.tll.di.MailModule \r\n" 
 				+ "com.tll.di.RefDataModule \r\n"
@@ -41,7 +39,7 @@ public class BootstrapperTest {
 		Bootstrapper gb = new Bootstrapper();
 		ServletContextEvent event = new ServletContextEvent(context);
 		gb.contextInitialized(event);
-		Injector injector = (Injector) context.getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
-		Assert.assertNotNull(injector);
+		IAppContext ac = (IAppContext) context.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+		Assert.assertNotNull(ac);
 	}
 }

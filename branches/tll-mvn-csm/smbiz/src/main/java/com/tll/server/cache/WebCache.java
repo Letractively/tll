@@ -7,8 +7,8 @@ package com.tll.server.cache;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tll.server.Constants;
 import com.tll.server.ServletUtil;
+import com.tll.server.filter.CacheManagerFilter;
 
 /**
  * Enables clients to utilize the {@link CacheManager}.
@@ -17,7 +17,7 @@ import com.tll.server.ServletUtil;
 public final class WebCache {
 
 	private static CacheManager get(HttpServletRequest request) {
-		return (CacheManager) ServletUtil.getSessionAttribute(request, Constants.SA_CACHE_MANAGER);
+		return (CacheManager) ServletUtil.getSessionAttribute(request, CacheManagerFilter.SA_CACHE_MANAGER);
 	}
 
 	public static String getLastSynchronousPath(HttpServletRequest request) {

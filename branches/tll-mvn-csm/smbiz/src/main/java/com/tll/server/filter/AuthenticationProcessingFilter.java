@@ -11,13 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.acegisecurity.AuthenticationManager;
-
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
-import com.tll.server.Constants;
+import com.tll.server.IAppContext;
 import com.tll.server.SecurityMode;
 import com.tll.service.entity.user.IUserService;
 
@@ -35,12 +30,14 @@ public abstract class AuthenticationProcessingFilter extends org.acegisecurity.u
 	@Override
 	public final void init(FilterConfig config) throws ServletException {
 		super.init(config);
+		
+		IAppContext ac = (IAppContext) config.getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+		if(ac == null) {
+			throw new Error("No app context found.");
+		}
 
-		isAcegi = SecurityMode.ACEGI.name().equals(Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
-		Injector injector = (Injector) config.getServletContext().getAttribute(Constants.GUICE_INJECTOR_CONTEXT_ATTRIBUTE);
-
-		if(isAcegi) {
-			setAuthenticationManager(injector.getInstance(AuthenticationManager.class));
+		if(ac.getSecurityMode() == SecurityMode.ACEGI) {
+			setAuthenticationManager(ac.getAuthenticationManager());
 			assert getAuthenticationManager() != null;
 			String afu = config.getInitParameter("authenticationFailureUrl");
 			if(afu == null) {
@@ -57,8 +54,10 @@ public abstract class AuthenticationProcessingFilter extends org.acegisecurity.u
 			// mechanism
 		}
 		else {
-			userService = injector.getInstance(IUserService.class);
-			assert userService != null;
+			userService = ac.getEntityServiceFactory().instance(IUserService.class);
+			if(userService == null) {
+				throw new Error("Unable to obtain reference to the user service.");
+			}
 		}
 	}
 

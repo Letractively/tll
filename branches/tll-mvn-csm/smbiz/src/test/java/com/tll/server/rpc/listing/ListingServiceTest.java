@@ -41,6 +41,7 @@ import com.tll.di.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
+import com.tll.server.Bootstrapper;
 import com.tll.server.RequestContext;
 import com.tll.util.EnumUtil;
 
@@ -77,7 +78,7 @@ public class ListingServiceTest extends DbTest {
 				MockServletContext servletContext = new MockServletContext();
 				MockHttpServletRequest request = new MockHttpServletRequest();
 				// MockHttpServletResponse response = new MockHttpServletResponse();
-				return new RequestContext(request, servletContext, injector);
+				return new RequestContext(Bootstrapper.generateAppContext(servletContext), request);
 			}
 			return method.invoke(theListingService, args);
 		}

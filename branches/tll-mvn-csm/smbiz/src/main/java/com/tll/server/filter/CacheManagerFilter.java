@@ -16,11 +16,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.server.Constants;
 import com.tll.server.ServletUtil;
 import com.tll.server.cache.CacheManager;
 
@@ -31,6 +31,13 @@ import com.tll.server.cache.CacheManager;
  * @author jpk
  */
 public class CacheManagerFilter implements Filter {
+	
+	/**
+	 * The key token identifying the {@link CacheManager} in the
+	 * {@link HttpSession}.
+	 */
+	public static final String SA_CACHE_MANAGER = "cm";
+	
 	private static final Log LOG = LogFactory.getLog(CacheManagerFilter.class);
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
@@ -52,11 +59,11 @@ public class CacheManagerFilter implements Filter {
 	private CacheManager getCacheManager(HttpServletRequest request) {
 		CacheManager cm = null;
 		if(request.getSession(false) != null) {
-			cm = (CacheManager) ServletUtil.getSessionAttribute(request, Constants.SA_CACHE_MANAGER);
+			cm = (CacheManager) ServletUtil.getSessionAttribute(request, SA_CACHE_MANAGER);
 			if(cm == null) {
 				cm = new CacheManager();
-				ServletUtil.setSessionAttribute(request, Constants.SA_CACHE_MANAGER, cm);
-				LOG.debug("Http request CacheManager created.");
+				ServletUtil.setSessionAttribute(request, SA_CACHE_MANAGER, cm);
+				LOG.info("Http request CacheManager created.");
 			}
 		}
 		return cm;

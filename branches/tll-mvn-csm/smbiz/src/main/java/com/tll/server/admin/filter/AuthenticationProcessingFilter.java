@@ -18,7 +18,6 @@ import org.acegisecurity.context.SecurityContextHolder;
 import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
 import com.tll.model.User;
-import com.tll.server.Constants;
 import com.tll.server.admin.AdminContext;
 
 /**
@@ -27,6 +26,11 @@ import com.tll.server.admin.AdminContext;
  */
 public final class AuthenticationProcessingFilter extends com.tll.server.filter.AuthenticationProcessingFilter {
 
+	/**
+	 * The servlet session attribute key identifying the {@link AdminContext}.
+	 */
+	public static final String SA_ADMIN_CONTEXT = "ac";
+
 	@Override
 	protected void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -34,7 +38,7 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 			if(request instanceof HttpServletRequest) {
 				HttpServletRequest hsr = (HttpServletRequest) request;
 				assert hsr.getSession(false) != null;
-				AdminContext ac = (AdminContext) hsr.getSession(false).getAttribute(Constants.SA_ADMIN_CONTEXT);
+				AdminContext ac = (AdminContext) hsr.getSession(false).getAttribute(SA_ADMIN_CONTEXT);
 				if(ac == null) {
 					String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
 					assert defaultUserEmail != null : "No default user email defined in the app configuration!";
@@ -42,7 +46,7 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 					ac = new AdminContext();
 					ac.setUser(user);
 					ac.setAccount(user.getAccount());
-					hsr.getSession(false).setAttribute(Constants.SA_ADMIN_CONTEXT, ac);
+					hsr.getSession(false).setAttribute(SA_ADMIN_CONTEXT, ac);
 				}
 			}
 		}
@@ -64,7 +68,7 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 		ac.setAccount(user.getAccount()); // default set the current account to the
 		// user's owning account
 
-		request.getSession(false).setAttribute(Constants.SA_ADMIN_CONTEXT, ac);
+		request.getSession(false).setAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT, ac);
 	}
 
 }
