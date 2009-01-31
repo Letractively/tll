@@ -1,10 +1,6 @@
 package com.tll.config;
 
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -14,24 +10,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.ReloadingStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Config - Configuration store that loads properties from one or more property
- * files.
+ * Config - Configuration store able to load multiple property files and hold
+ * xml-like data structures.
+ * <p>
+ * <strong>NOTE: </strong>Delimeter parsing is disabled.
  * @author jpk
  */
-public final class Config implements FileConfiguration {
+public final class Config implements Configuration {
 
-	// private static final Log log = LogFactory.getLog(Config.class);
+	private static final Log log = LogFactory.getLog(Config.class);
 
 	/**
-	 * The default config properties file name.
+	 * The base config file name.
 	 */
 	public static final String DEFAULT_CONFIG_PROPERTIES_FILE_NAME = "config.properties";
 
@@ -50,7 +49,7 @@ public final class Config implements FileConfiguration {
 	/**
 	 * Implementation decoratee
 	 */
-	private final PropertiesConfiguration root;
+	private final CombinedConfiguration root;
 
 	/**
 	 * Constructor
@@ -58,373 +57,240 @@ public final class Config implements FileConfiguration {
 	 */
 	private Config() {
 		super();
-		root = new PropertiesConfiguration();
-		root.setDelimiterParsingDisabled(true);
-	}
-
-	@Override
-	public void addProperty(String key, Object value) {
-		root.addProperty(key, value);
-	}
-
-	@Override
-	public void clear() {
-		root.clear();
-	}
-
-	@Override
-	public void clearProperty(String key) {
-		root.clearProperty(key);
-	}
-
-	@Override
-	public boolean containsKey(String key) {
-		return root.containsKey(key);
-	}
-
-	@Override
-	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
-		return root.getBigDecimal(key, defaultValue);
-	}
-
-	@Override
-	public BigDecimal getBigDecimal(String key) {
-		return root.getBigDecimal(key);
-	}
-
-	@Override
-	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
-		return root.getBigInteger(key, defaultValue);
-	}
-
-	@Override
-	public BigInteger getBigInteger(String key) {
-		return root.getBigInteger(key);
-	}
-
-	@Override
-	public boolean getBoolean(String key, boolean defaultValue) {
-		return root.getBoolean(key, defaultValue);
-	}
-
-	@Override
-	public Boolean getBoolean(String key, Boolean defaultValue) {
-		return root.getBoolean(key, defaultValue);
-	}
-
-	@Override
-	public boolean getBoolean(String key) {
-		return root.getBoolean(key);
-	}
-
-	@Override
-	public byte getByte(String key, byte defaultValue) {
-		return root.getByte(key, defaultValue);
-	}
-
-	@Override
-	public Byte getByte(String key, Byte defaultValue) {
-		return root.getByte(key, defaultValue);
-	}
-
-	@Override
-	public byte getByte(String key) {
-		return root.getByte(key);
-	}
-
-	@Override
-	public double getDouble(String key, double defaultValue) {
-		return root.getDouble(key, defaultValue);
-	}
-
-	@Override
-	public Double getDouble(String key, Double defaultValue) {
-		return root.getDouble(key, defaultValue);
-	}
-
-	@Override
-	public double getDouble(String key) {
-		return root.getDouble(key);
-	}
-
-	@Override
-	public float getFloat(String key, float defaultValue) {
-		return root.getFloat(key, defaultValue);
-	}
-
-	@Override
-	public Float getFloat(String key, Float defaultValue) {
-		return root.getFloat(key, defaultValue);
-	}
-
-	@Override
-	public float getFloat(String key) {
-		return root.getFloat(key);
-	}
-
-	@Override
-	public int getInt(String key, int defaultValue) {
-		return root.getInt(key, defaultValue);
-	}
-
-	@Override
-	public int getInt(String key) {
-		return root.getInt(key);
-	}
-
-	@Override
-	public Integer getInteger(String key, Integer defaultValue) {
-		return root.getInteger(key, defaultValue);
-	}
-
-	@Override
-	public Iterator<?> getKeys() {
-		return root.getKeys();
-	}
-
-	@Override
-	public Iterator<?> getKeys(String prefix) {
-		return root.getKeys(prefix);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<?> getList(String key, List defaultValue) {
-		return root.getList(key, defaultValue);
-	}
-
-	@Override
-	public List<?> getList(String key) {
-		return root.getList(key);
-	}
-
-	@Override
-	public long getLong(String key, long defaultValue) {
-		return root.getLong(key, defaultValue);
-	}
-
-	@Override
-	public Long getLong(String key, Long defaultValue) {
-		return root.getLong(key, defaultValue);
-	}
-
-	@Override
-	public long getLong(String key) {
-		return root.getLong(key);
-	}
-
-	@Override
-	public Properties getProperties(String key) {
-		return root.getProperties(key);
-	}
-
-	@Override
-	public Object getProperty(String key) {
-		return root.getProperty(key);
-	}
-
-	@Override
-	public short getShort(String key, short defaultValue) {
-		return root.getShort(key, defaultValue);
-	}
-
-	@Override
-	public Short getShort(String key, Short defaultValue) {
-		return root.getShort(key, defaultValue);
-	}
-
-	@Override
-	public short getShort(String key) {
-		return root.getShort(key);
-	}
-
-	@Override
-	public String getString(String key, String defaultValue) {
-		return root.getString(key, defaultValue);
-	}
-
-	@Override
-	public String getString(String key) {
-		return root.getString(key);
-	}
-
-	@Override
-	public String[] getStringArray(String key) {
-		return root.getStringArray(key);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return root.isEmpty();
-	}
-
-	@Override
-	public void setProperty(String key, Object value) {
-		root.setProperty(key, value);
-	}
-
-	@Override
-	public Configuration subset(String prefix) {
-		return root.subset(prefix);
-	}
-
-	@Override
-	public String getBasePath() {
-		return root.getBasePath();
-	}
-
-	@Override
-	public String getEncoding() {
-		return root.getEncoding();
-	}
-
-	@Override
-	public File getFile() {
-		return root.getFile();
-	}
-
-	@Override
-	public String getFileName() {
-		return root.getFileName();
-	}
-
-	@Override
-	public ReloadingStrategy getReloadingStrategy() {
-		return root.getReloadingStrategy();
-	}
-
-	@Override
-	public URL getURL() {
-		return root.getURL();
-	}
-
-	@Override
-	public boolean isAutoSave() {
-		return root.isAutoSave();
+		root = new CombinedConfiguration();
 	}
 
 	/**
-	 * Attempts to loads config properties from a properties file at the root of
-	 * the classpath named {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME}.
-	 * @throws ConfigurationException
+	 * Attempts to load properties from
+	 * {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME} at the root of the classpath
+	 * with <em>NO</em> delimeter parsing.
+	 * @see #load(boolean, boolean)
 	 */
-	public void loadDefault() throws ConfigurationException {
-		root.load(DEFAULT_CONFIG_PROPERTIES_FILE_NAME);
+	public void load() {
+		load(true, false);
 	}
 
-	@Override
-	public void load() throws ConfigurationException {
-		if(getFileName() == null) {
-			loadDefault();
+	/**
+	 * Attempts to load properties from
+	 * {@link #DEFAULT_CONFIG_PROPERTIES_FILE_NAME} at the root of the classpath.
+	 * @param disableDelimeterParsing
+	 * @param merge Replace existing properties with those of the same name at the
+	 *        given url?
+	 * @see #loadProperties(URL, boolean, boolean)
+	 */
+	public void load(boolean disableDelimeterParsing, boolean merge) {
+		loadProperties((Thread.currentThread().getContextClassLoader()).getResource(DEFAULT_CONFIG_PROPERTIES_FILE_NAME),
+				disableDelimeterParsing, merge);
+	}
+
+	/**
+	 * Loads properties from the given resource url.
+	 * @param url Points to the properties file to be loaded.
+	 * @param disableDelimeterParsing Disable delimeter parsing?
+	 * @param merge Replace existing properties with those of the same name at the
+	 *        given url? If <code>false</code>, the proerties are "appended".
+	 * @see PropertiesConfiguration#setDelimiterParsingDisabled(boolean)
+	 * @see CombinedConfiguration#append(Configuration)
+	 */
+	@SuppressWarnings("unchecked")
+	public void loadProperties(URL url, boolean disableDelimeterParsing, boolean merge) {
+		PropertiesConfiguration props;
+
+		// load the required base props
+		try {
+			props = new PropertiesConfiguration();
+			props.setDelimiterParsingDisabled(disableDelimeterParsing);
+			props.load(url);
+		}
+		catch(ConfigurationException ce) {
+			throw new RuntimeException("Unable to load base configuration: " + ce.getMessage(), ce);
+		}
+
+		if(merge) {
+			for(Iterator<String> itr = props.getKeys(); itr.hasNext();) {
+				String key = itr.next();
+				root.setProperty(key, props.getProperty(key));
+			}
 		}
 		else {
-			root.load();
+			root.append(props);
 		}
+
+		log.info("Properties loaded for: " + url.getPath());
 	}
 
-	@Override
-	public void load(File file) throws ConfigurationException {
-		root.load(file);
+	private CombinedConfiguration safeGetRoot() {
+		assert root != null;
+		if(root.isEmpty()) {
+			// attempt to load default config props..
+			load();
+		}
+		return root;
 	}
 
-	@Override
-	public void load(InputStream in, String encoding) throws ConfigurationException {
-		root.load(in, encoding);
+	public void addProperty(String key, Object value) {
+		safeGetRoot().addProperty(key, value);
 	}
 
-	@Override
-	public void load(InputStream in) throws ConfigurationException {
-		root.load(in);
+	public void clear() {
+		safeGetRoot().clear();
 	}
 
-	@Override
-	public void load(Reader in) throws ConfigurationException {
-		root.load(in);
+	public void clearProperty(String key) {
+		safeGetRoot().clearProperty(key);
 	}
 
-	@Override
-	public void load(String fileName) throws ConfigurationException {
-		root.load(fileName);
+	public boolean containsKey(String key) {
+		return safeGetRoot().containsKey(key);
 	}
 
-	@Override
-	public void load(URL url) throws ConfigurationException {
-		root.load(url);
+	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
+		return safeGetRoot().getBigDecimal(key, defaultValue);
 	}
 
-	@Override
-	public void reload() {
-		root.reload();
+	public BigDecimal getBigDecimal(String key) {
+		return safeGetRoot().getBigDecimal(key);
 	}
 
-	@Override
-	public void save() throws ConfigurationException {
-		root.save();
+	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
+		return safeGetRoot().getBigInteger(key, defaultValue);
 	}
 
-	@Override
-	public void save(File file) throws ConfigurationException {
-		root.save(file);
+	public BigInteger getBigInteger(String key) {
+		return safeGetRoot().getBigInteger(key);
 	}
 
-	@Override
-	public void save(OutputStream out, String encoding) throws ConfigurationException {
-		root.save(out, encoding);
+	public boolean getBoolean(String key, boolean defaultValue) {
+		return safeGetRoot().getBoolean(key, defaultValue);
 	}
 
-	@Override
-	public void save(OutputStream out) throws ConfigurationException {
-		root.save(out);
+	public Boolean getBoolean(String key, Boolean defaultValue) {
+		return safeGetRoot().getBoolean(key, defaultValue);
 	}
 
-	@Override
-	public void save(String fileName) throws ConfigurationException {
-		root.save(fileName);
+	public boolean getBoolean(String key) {
+		return safeGetRoot().getBoolean(key);
 	}
 
-	@Override
-	public void save(URL url) throws ConfigurationException {
-		root.save(url);
+	public byte getByte(String key, byte defaultValue) {
+		return safeGetRoot().getByte(key, defaultValue);
 	}
 
-	@Override
-	public void save(Writer out) throws ConfigurationException {
-		root.save(out);
+	public Byte getByte(String key, Byte defaultValue) {
+		return safeGetRoot().getByte(key, defaultValue);
 	}
 
-	@Override
-	public void setAutoSave(boolean autoSave) {
-		root.setAutoSave(autoSave);
+	public byte getByte(String key) {
+		return safeGetRoot().getByte(key);
 	}
 
-	@Override
-	public void setBasePath(String basePath) {
-		root.setBasePath(basePath);
+	public double getDouble(String key, double defaultValue) {
+		return safeGetRoot().getDouble(key, defaultValue);
 	}
 
-	@Override
-	public void setEncoding(String encoding) {
-		root.setEncoding(encoding);
+	public Double getDouble(String key, Double defaultValue) {
+		return safeGetRoot().getDouble(key, defaultValue);
 	}
 
-	@Override
-	public void setFile(File file) {
-		root.setFile(file);
+	public double getDouble(String key) {
+		return safeGetRoot().getDouble(key);
 	}
 
-	@Override
-	public void setFileName(String fileName) {
-		root.setFileName(fileName);
+	public float getFloat(String key, float defaultValue) {
+		return safeGetRoot().getFloat(key, defaultValue);
 	}
 
-	@Override
-	public void setReloadingStrategy(ReloadingStrategy strategy) {
-		root.setReloadingStrategy(strategy);
+	public Float getFloat(String key, Float defaultValue) {
+		return safeGetRoot().getFloat(key, defaultValue);
 	}
 
-	@Override
-	public void setURL(URL url) {
-		root.setURL(url);
+	public float getFloat(String key) {
+		return safeGetRoot().getFloat(key);
+	}
+
+	public int getInt(String key, int defaultValue) {
+		return safeGetRoot().getInt(key, defaultValue);
+	}
+
+	public int getInt(String key) {
+		return safeGetRoot().getInt(key);
+	}
+
+	public Integer getInteger(String key, Integer defaultValue) {
+		return safeGetRoot().getInteger(key, defaultValue);
+	}
+
+	public Iterator<?> getKeys() {
+		return safeGetRoot().getKeys();
+	}
+
+	public Iterator<?> getKeys(String prefix) {
+		return safeGetRoot().getKeys(prefix);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<?> getList(String key, List defaultValue) {
+		return safeGetRoot().getList(key, defaultValue);
+	}
+
+	public List<?> getList(String key) {
+		return safeGetRoot().getList(key);
+	}
+
+	public long getLong(String key, long defaultValue) {
+		return safeGetRoot().getLong(key, defaultValue);
+	}
+
+	public Long getLong(String key, Long defaultValue) {
+		return safeGetRoot().getLong(key, defaultValue);
+	}
+
+	public long getLong(String key) {
+		return safeGetRoot().getLong(key);
+	}
+
+	public Properties getProperties(String key) {
+		return safeGetRoot().getProperties(key);
+	}
+
+	public Object getProperty(String key) {
+		return safeGetRoot().getProperty(key);
+	}
+
+	public short getShort(String key, short defaultValue) {
+		return safeGetRoot().getShort(key, defaultValue);
+	}
+
+	public Short getShort(String key, Short defaultValue) {
+		return safeGetRoot().getShort(key, defaultValue);
+	}
+
+	public short getShort(String key) {
+		return safeGetRoot().getShort(key);
+	}
+
+	public String getString(String key, String defaultValue) {
+		return safeGetRoot().getString(key, defaultValue);
+	}
+
+	public String getString(String key) {
+		return safeGetRoot().getString(key);
+	}
+
+	public String[] getStringArray(String key) {
+		return safeGetRoot().getStringArray(key);
+	}
+
+	public boolean isEmpty() {
+		return safeGetRoot().isEmpty();
+	}
+
+	public void setProperty(String key, Object value) {
+		safeGetRoot().setProperty(key, value);
+	}
+
+	public Configuration subset(String prefix) {
+		return safeGetRoot().subset(prefix);
 	}
 
 	/**
@@ -438,7 +304,7 @@ public final class Config implements FileConfiguration {
 	 */
 	@SuppressWarnings("unchecked")
 	private PropertiesConfiguration subsetAsProps(String prefix, String prependToken) {
-		Configuration sub = prefix == null ? root : subset(prefix);
+		Configuration sub = subset(prefix);
 		PropertiesConfiguration pc = new PropertiesConfiguration();
 		for(Iterator<String> itr = sub.getKeys(); itr.hasNext();) {
 			String key = itr.next();
@@ -447,11 +313,6 @@ public final class Config implements FileConfiguration {
 		return pc;
 	}
 
-	/**
-	 * Filters this configuration based on a set of config keys.
-	 * @param keyProvider
-	 * @return The filtered configuration as a {@link PropertiesConfiguration}.
-	 */
 	private PropertiesConfiguration filter(IConfigKeyProvider keyProvider) {
 		String[] keys = keyProvider == null ? null : keyProvider.getConfigKeys();
 		if(keys == null) return null;

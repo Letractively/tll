@@ -2,6 +2,7 @@ package com.tll.config;
 
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -66,7 +67,6 @@ public class ConfigTest {
 	public void testBasicLoading() throws Exception {
 		try {
 			Config config = Config.instance();
-			config.load();
 			assert !config.isEmpty() : "Config instance is empty";
 		}
 		catch(Throwable t) {
@@ -80,7 +80,6 @@ public class ConfigTest {
 	 */
 	public void testInterpolation() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		Iterator<?> itr = config.getKeys();
 		while(itr.hasNext()) {
@@ -99,7 +98,6 @@ public class ConfigTest {
 	 */
 	public void testAllAsMap() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		Map<String, String> map = config.asMap(null, null);
 		assert map != null;
@@ -117,7 +115,6 @@ public class ConfigTest {
 	 */
 	public void testNestedAsMap() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
 		assert map != null;
@@ -141,7 +138,6 @@ public class ConfigTest {
 	 */
 	public void testSaveAllToFile() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, null, null);
@@ -172,7 +168,6 @@ public class ConfigTest {
 	 */
 	public void testSaveSubsetToFile() throws Exception {
 		Config config = Config.instance();
-		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
@@ -187,6 +182,23 @@ public class ConfigTest {
 			assert key.startsWith("props.commas.") : "Key doesn't start with commas.";
 			assert keys.contains(key) : "The props keys list does not contain key: " + key;
 		}
+	}
+
+	/**
+	 * Tests variable interpolation across a config file boundary. We want to be
+	 * able to put a variable encountered in a previously loaded config file into
+	 * a config file loaded subsequently!
+	 * @throws Exception
+	 */
+	public void testIntraConfigFileVariableInterpolation() throws Exception {
+		Config config = Config.instance();
+		config.load();
+		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
+		config.loadProperties(config2, true, false);
+
+		String pv = config.getString("props.simple.propA");
+		String iipv = config.getString("props.intrainterpolated.propA");
+		assert iipv != null && iipv.equals(pv);
 	}
 
 	/**
@@ -209,5 +221,20 @@ public class ConfigTest {
 		assert map != null && map.size() == 2 : "Unable to obtain properly sized prop mak from an IConfigKeyProvider instance";
 		assert map.get("props.simple.propA") != null;
 		assert map.get("props.simple.propB") != null;
+	}
+
+	/**
+	 * Verifies that properties are overridden when multiple property files are
+	 * loaded.
+	 * @throws Exception
+	 */
+	public void testConfigFileOverriding() throws Exception {
+		Config config = Config.instance();
+		config.load();
+		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
+		config.loadProperties(config2, true, true);
+
+		String pv = config.getString("props.simple.propB");
+		assert "val2-overridden".equals(pv);
 	}
 }
