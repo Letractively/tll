@@ -8,14 +8,13 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 
+import com.google.inject.Inject;
 import com.tll.SystemError;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Currency;
 import com.tll.model.NestedEntity;
-import com.tll.model.mock.AbstractEntityGraphBuilder;
-import com.tll.model.mock.MockEntityFactory;
 
 /**
  * EntityGraph
@@ -29,6 +28,7 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	 * Constructor
 	 * @param mep
 	 */
+	@Inject
 	public EntityGraphBuilder(MockEntityFactory mep) {
 		super(mep);
 	}

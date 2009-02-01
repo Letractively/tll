@@ -1,7 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="tll-dao-tests">
   
-  <!-- 
   <test name="hibernate-tests" annotations="JDK">
     <groups>
       <run>
@@ -24,7 +23,6 @@
       <package name="com.tll.dao" />
     </packages>
   </test>
-  -->
 	
   <test name="mock-dao-tests" annotations="JDK">
     <parameter name="daoMode" value="MOCK" />

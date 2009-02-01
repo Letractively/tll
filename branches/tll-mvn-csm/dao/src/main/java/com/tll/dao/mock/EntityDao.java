@@ -34,7 +34,6 @@ import com.tll.dao.Sorting;
 import com.tll.model.BusinessKeyFactory;
 import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityProvider;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
@@ -42,6 +41,7 @@ import com.tll.model.Scalar;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.mock.EntityGraph;
 import com.tll.util.CommonUtil;
 import com.tll.util.DateRange;
 
@@ -195,19 +195,19 @@ public final class EntityDao implements IEntityDao {
 	/**
 	 * The sole entity provider.
 	 */
-	private final IEntityProvider entityProvider;
+	private final EntityGraph entityGraph;
 
 	/**
 	 * Constructor
-	 * @param entityProvider The entity provider
+	 * @param entityGraph The entity provider
 	 */
 	@Inject
-	public EntityDao(IEntityProvider entityProvider) {
+	public EntityDao(EntityGraph entityGraph) {
 		super();
-		if(entityProvider == null) {
+		if(entityGraph == null) {
 			throw new IllegalArgumentException("An entity provider must be specified.");
 		}
-		this.entityProvider = entityProvider;
+		this.entityGraph = entityGraph;
 	}
 
 	@Override
@@ -262,7 +262,7 @@ public final class EntityDao implements IEntityDao {
 									"Mock dao implementations are only able to handle a single criterion entityGroup.");
 						}
 						if(ctn.isSet()) {
-							Collection<E> clc = entityProvider.getEntitiesByType(criteria.getEntityClass());
+							Collection<E> clc = entityGraph.getEntitiesByType(criteria.getEntityClass());
 							if(clc != null) {
 								for(final E e : clc) {
 									final String pn = ctn.getPropertyName();
@@ -334,7 +334,7 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final List<Integer> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityProvider.getEntitiesByType(entityType);
+		Collection<E> clc = entityGraph.getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
 				for(final Integer id : ids) {
@@ -363,7 +363,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E load(final BusinessKey<E> key) {
-		Collection<E> clc = entityProvider.getEntitiesByType(key.getType());
+		Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final E e : clc) {
 				try {
@@ -382,7 +382,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E load(final PrimaryKey<E> key) {
-		Collection<E> clc = entityProvider.getEntitiesByType(key.getType());
+		Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final E e : clc) {
 				if(key.getId().equals(e.getId())) {
@@ -395,7 +395,7 @@ public final class EntityDao implements IEntityDao {
 
 	public <N extends INamedEntity> N load(final NameKey<N> key) {
 		if(key == null || key.getName() == null) return null;
-		Collection<N> clc = entityProvider.getEntitiesByType(key.getType());
+		Collection<N> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final N e : clc) {
 				String name;
@@ -417,28 +417,35 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityProvider.getEntitiesByType(entityType);
+		Collection<E> clc = entityGraph.getEntitiesByType(entityType);
 		if(clc != null) list.addAll(clc);
 		return list;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E persist(final E entity) {
-		Collection<E> clc = (Collection<E>) entityProvider.getEntitiesByType(entity.entityClass());
-		if(clc == null) {
-			throw new IllegalStateException("Entity provider returned a null entity type collection.");
-		}
-		if(!clc.remove(entity)) {
-			assert entity.getVersion() == null;
-			// ensure business key unique
-			clc.add(entity);
-			if(!BusinessKeyFactory.isBusinessKeyUnique(clc)) {
-				clc.remove(entity);
-				throw new EntityExistsException("Unable to persist entity: It is non-unique");
+		Collection<E> clc = (Collection<E>) entityGraph.getEntitiesByType(entity.entityClass());
+		if(clc != null) {
+			if(!clc.remove(entity)) {
+				if(entity.getVersion() != null) {
+					throw new IllegalStateException("Encountered entity with a version but hasn't been persisted yet.");
+				}
+				// ensure business key unique
+				clc.add(entity);
+				if(!BusinessKeyFactory.isBusinessKeyUnique(clc)) {
+					clc.remove(entity);
+					throw new EntityExistsException("Unable to persist entity: It is non-unique");
+				}
+			}
+			else {
+				clc.add(entity);
 			}
 		}
 		else {
-			clc.add(entity);
+			if(entity.getVersion() != null) {
+				throw new IllegalStateException("Encountered entity with a version but hasn't been persisted yet.");
+			}
+			entityGraph.setEntity(entity);
 		}
 		
 		// set date created/modified
@@ -472,7 +479,7 @@ public final class EntityDao implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> void purge(final E entity) {
-		Collection<E> clc = (Collection<E>) entityProvider.getEntitiesByType(entity.entityClass());
+		Collection<E> clc = (Collection<E>) entityGraph.getEntitiesByType(entity.entityClass());
 		if(clc != null) {
 			for(final E e : clc) {
 				if(e.equals(entity)) {
@@ -487,7 +494,7 @@ public final class EntityDao implements IEntityDao {
 	public <E extends IEntity> void purgeAll(final Collection<E> entities) {
 		if(entities == null || entities.size() < 1) return;
 		Class<E> et = (Class<E>) entities.iterator().next().entityClass();
-		Collection<E> clc = entityProvider.getEntitiesByType(et);
+		Collection<E> clc = entityGraph.getEntitiesByType(et);
 		if(clc != null) {
 			clc.removeAll(entities);
 		}
@@ -496,7 +503,7 @@ public final class EntityDao implements IEntityDao {
 	public <E extends IEntity> List<E> getEntitiesFromIds(final Class<E> entityClass, final Collection<Integer> ids,
 			final Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityProvider.getEntitiesByType(entityClass);
+		Collection<E> clc = entityGraph.getEntitiesByType(entityClass);
 		if(clc != null) {
 			for(final E e : clc) {
 				for(final Integer id : ids) {

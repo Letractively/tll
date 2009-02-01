@@ -198,12 +198,12 @@
       <artifactId>mysql-connector-java</artifactId>
       <scope>runtime</scope>
     </dependency>
+    <dependency>    
+      <groupId>net.sf.ehcache</groupId>   
+      <artifactId>ehcache</artifactId>
+      <scope>runtime</scope>    
+    </dependency>    
     
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
