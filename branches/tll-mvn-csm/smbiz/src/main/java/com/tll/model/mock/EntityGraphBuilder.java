@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Nov 15, 2007
  */
-package com.tll.dao.mock;
+package com.tll.model.mock;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
