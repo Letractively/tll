@@ -1,8 +1,9 @@
 /*
  * The Logic Lab 
  */
-package com.tll.model;
+package com.tll.model.mock;
 
+import com.tll.model.IEntity;
 import com.tll.model.key.IPrimaryKeyGenerator;
 
 /**

@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.model.mock;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,6 +16,10 @@ import org.springframework.beans.factory.ListableBeanFactory;
 
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
+import com.tll.model.BusinessKeyFactory;
+import com.tll.model.BusinessKeyNotDefinedException;
+import com.tll.model.IEntity;
+import com.tll.model.IEntityFactory;
 import com.tll.model.key.BusinessKey;
 
 /**

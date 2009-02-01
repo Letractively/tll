@@ -9,8 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.model.MockEntityFactory;
-import com.tll.model.MockEntityFactory.MockEntityBeanFactory;
+import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.mock.MockEntityFactory.MockEntityBeanFactory;
 
 /**
  * MockEntityFactoryModule - Use for providing a {@link MockEntityFactory}
