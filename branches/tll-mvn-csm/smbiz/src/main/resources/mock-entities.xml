@@ -264,6 +264,7 @@
 		<property name="status">
 			<value>OPEN</value>
 		</property>
+    <property name="notes" value="some notes" />
 	</bean>
 
 	<bean name="ROLE_ADMINISTRATOR" class="com.tll.model.Authority" parent="entityBase" scope="prototype">

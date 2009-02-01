@@ -12,7 +12,7 @@ import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Merchant;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.mock.MockEntityFactory;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 

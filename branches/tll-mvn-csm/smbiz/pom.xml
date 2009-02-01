@@ -32,8 +32,10 @@
   
   <build>
     <finalName>smbiz</finalName>
+    
     <filters>
       <filter>src/main/resources/config.properties</filter>
+      <filter>src/main/resources/config-${env}.properties</filter>
     </filters>
     <resources>
       <resource>
@@ -42,6 +44,10 @@
         <includes>
           <include>*.*</include>
         </includes>
+        <!-- don't copy config.properties - it is dependent on the active profile and therefore is handled explicitly -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>src/main/resources/db</directory>
@@ -119,14 +125,13 @@
     
     <plugins>
     
-      <!-- 
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <executions>
           
           <execution>
-            <id>create-client-constants-file</id>
+            <id>config-props</id>
             <phase>generate-resources</phase>
             <goals><goal>execute</goal></goals>
             <configuration>
@@ -150,22 +155,31 @@
                 </element>
               </classpath>
               <source><![CDATA[
-                import com.tll.Config
+                import com.tll.config.Config
                 
                 def NL = System.getProperty("line.separator")
+                
                 def dir = new File(project.basedir, 'target/classes/com/tll/client')
                 ant.mkdir(dir: dir)
                 
-                def config = Config.instance()
+                File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config.properties')
+                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.env}.properties')
                 
+                def config = Config.instance()
+                config.loadProperties(fBaseConfig.toURI().toURL(), true, false)
+                config.loadProperties(fProfileConfig.toURI().toURL(), true, true)
+                
+                // create aggregated config.properties file..
+                config.saveAsPropFile(new File(project.basedir.toString() + '/target/classes/config.properties'))
+                
+                // create GWT Constants.properties file..
                 def gwtProps = new HashMap();
                 gwtProps.put("appVersion", project.version)
                 gwtProps.put("environment", config.getString('environment'))
                 gwtProps.put("debug", config.getString('debug'))
-                
                 def f = new File(project.basedir, 'target/classes/com/tll/client/Constants.properties')
                 f.createNewFile()
-                StringBuilder sbuf = new StringBuilder(1000)
+                StringBuilder sbuf = new StringBuilder(1024)
                 gwtProps.each() {key, value -> 
                   sbuf.append(key)
                   sbuf.append(' ')
@@ -173,12 +187,12 @@
                   sbuf.append(NL)
                 }
                 f.write(sbuf.toString())
+                
               ]]></source>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      -->
         
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>
@@ -258,20 +272,73 @@
           </warSourceExcludes>
         </configuration>
       </plugin>
-      
-      <!--  tell the compiler we can use 1.5 -->
-      <!-- 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      -->
     </plugins>
   </build>
+
+  <profiles>
+    
+    <!-- smbiz dev profile -->
+    <profile>
+      <id>dev</id>
+      <properties>
+        <env>dev</env>
+      </properties>
+      <activation>
+        <property>
+          <name>smbiz.mode</name>
+          <value>dev</value>
+        </property>
+      </activation>
+    </profile>
+    
+    <!-- smbiz production profile -->
+    <profile>
+      <id>production</id>
+      <properties>
+        <env>production</env>
+      </properties>
+      <activation>
+        <property>
+          <name>smbiz.mode</name>
+          <value>prod</value>
+        </property>
+      </activation>
+    </profile>
+    
+    <profile>
+      <id>gwt-dev-windows</id>
+      <properties>
+        <platform>windows</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-mac</id>
+      <properties>
+        <platform>mac</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-linux</id>
+      <properties>
+        <platform>linux</platform>
+      </properties>
+      <activation>
+        <os>
+          <name>linux</name>
+        </os>
+      </activation>
+    </profile>
+  </profiles>
 
   <dependencies>
     
@@ -541,44 +608,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>gwt-dev-windows</id>
-      <properties>
-        <platform>windows</platform>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-mac</id>
-      <properties>
-        <platform>mac</platform>
-      </properties>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-linux</id>
-      <properties>
-        <platform>linux</platform>
-      </properties>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <os>
-          <name>linux</name>
-        </os>
-      </activation>
-    </profile>
-  </profiles>
 
 </project>

@@ -14,8 +14,8 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
+import com.tll.model.mock.MockEntityFactory;
 
 /**
  * PaymentInfoStubber

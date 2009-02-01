@@ -16,11 +16,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
   String appVersion();
 
   /**
-   * Translated "dev".
+   * Translated "true".
    * 
-   * @return translated "dev"
+   * @return translated "true"
    */
-  @DefaultStringValue("dev")
+  @DefaultStringValue("true")
   @Key("debug")
   String debug();
 

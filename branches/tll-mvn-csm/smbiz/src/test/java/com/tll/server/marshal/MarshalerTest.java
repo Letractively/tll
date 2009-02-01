@@ -21,7 +21,7 @@ import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.dao.DaoMode;
-import com.tll.dao.mock.EntityGraph;
+import com.tll.dao.mock.EntityGraphBuilder;
 import com.tll.di.DaoModule;
 import com.tll.model.Account;
 import com.tll.model.Asp;
@@ -29,8 +29,9 @@ import com.tll.model.CreditCardType;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
+import com.tll.model.mock.EntityGraph;
+import com.tll.model.mock.MockEntityFactory;
 import com.tll.util.CommonUtil;
 
 /**
@@ -107,7 +108,8 @@ public class MarshalerTest extends AbstractInjectedTest {
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final EntityGraph entityGraph = new EntityGraph(getMockEntityFactory());
+		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
+		EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Asp asp = entityGraph.getEntityByType(Asp.class);
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;

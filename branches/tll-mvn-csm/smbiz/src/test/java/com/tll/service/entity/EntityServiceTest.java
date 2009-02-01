@@ -26,10 +26,10 @@ import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.IEntityFactory;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.User;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.mock.MockEntityFactory;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.service.entity.user.IUserService;
 
