@@ -5,15 +5,17 @@ package com.tll.di;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
-import com.tll.model.IEntityProvider;
-import com.tll.model.MockPrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.mock.EntityGraph;
+import com.tll.model.mock.IEntityGraphBuilder;
+import com.tll.model.mock.MockPrimaryKeyGenerator;
 import com.tll.util.EnumUtil;
 
 /**
@@ -29,7 +31,7 @@ public class DaoModule extends CompositeModule {
 	public static enum ConfigKeys implements IConfigKey {
 
 		DAO_MODE_PARAM("db.dao.mode"),
-		MOCK_ENTITYPROVIDER_CLASSNAME("mock.entityProvider.classname");
+		ENTITY_GRAPH_BUILDER_CLASSNAME("entityGraphBuilder.classname");
 
 		private final String key;
 
@@ -80,16 +82,31 @@ public class DaoModule extends CompositeModule {
 
 					@Override
 					public void configure(Binder binder) {
-						final String mepcn = Config.instance().getString(ConfigKeys.MOCK_ENTITYPROVIDER_CLASSNAME.getKey());
-						if(mepcn == null) {
-							throw new IllegalStateException("No mock entity provider class name specified in the configuration");
-						}
-						try {
-							binder.bind(IEntityProvider.class).to((Class<IEntityProvider>) Class.forName(mepcn)).in(Scopes.SINGLETON);
-						}
-						catch(ClassNotFoundException e) {
-							throw new IllegalStateException("No entity provider implementation found for name: " + mepcn);
-						}
+						binder.bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {
+
+							@Override
+							public EntityGraph get() {
+								final String egbcn = Config.instance().getString(ConfigKeys.ENTITY_GRAPH_BUILDER_CLASSNAME.getKey());
+								if(egbcn == null) {
+									throw new IllegalStateException("No entity graph builder class name specified in the configuration");
+								}
+								try {
+									Class<? extends IEntityGraphBuilder> clz =
+											(Class<? extends IEntityGraphBuilder>) Class.forName(egbcn);
+									IEntityGraphBuilder builder = clz.newInstance();
+									return builder.buildEntityGraph();
+								}
+								catch(ClassNotFoundException e) {
+									throw new IllegalStateException("No entity provider implementation found for name: " + egbcn);
+								}
+								catch(InstantiationException e) {
+									throw new IllegalStateException("Unable to instantiate the entity graph builder", e);
+								}
+								catch(IllegalAccessException e) {
+									throw new IllegalStateException("Unable to access the entity graph builder", e);
+								}
+							}
+						}).in(Scopes.SINGLETON);
 					}
 				}, new MockDaoModule() };
 		}

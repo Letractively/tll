@@ -425,7 +425,9 @@ public final class EntityDao implements IEntityDao {
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E persist(final E entity) {
 		Collection<E> clc = (Collection<E>) entityProvider.getEntitiesByType(entity.entityClass());
-		if(clc == null) return null;
+		if(clc == null) {
+			throw new IllegalStateException("Entity provider returned a null entity type collection.");
+		}
 		if(!clc.remove(entity)) {
 			assert entity.getVersion() == null;
 			// ensure business key unique

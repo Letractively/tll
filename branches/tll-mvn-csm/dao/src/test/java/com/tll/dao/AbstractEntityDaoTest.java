@@ -41,10 +41,10 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
 import com.tll.model.ITimeStampEntity;
-import com.tll.model.MockEntityFactory;
 import com.tll.model.key.BusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.mock.MockEntityFactory;
 import com.tll.util.EnumUtil;
 
 /**

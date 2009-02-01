@@ -7,7 +7,7 @@ package com.tll.dao;
 
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.mock.MockEntityFactory;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing

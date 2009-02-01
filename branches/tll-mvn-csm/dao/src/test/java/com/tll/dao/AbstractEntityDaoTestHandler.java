@@ -10,7 +10,7 @@ import org.testng.Assert;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
-import com.tll.model.MockEntityFactory;
+import com.tll.model.mock.MockEntityFactory;
 
 /**
  * AbstractEntityDaoTestHandler
