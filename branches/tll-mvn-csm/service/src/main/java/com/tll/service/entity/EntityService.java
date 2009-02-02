@@ -20,7 +20,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.validate.EntityValidatorFactory;
 import com.tll.model.validate.IEntityValidator;
@@ -109,7 +109,7 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public E load(BusinessKey<E> key) throws EntityNotFoundException {
+	public E load(IBusinessKey<E> key) throws EntityNotFoundException {
 		return dao.load(key);
 	}
 
