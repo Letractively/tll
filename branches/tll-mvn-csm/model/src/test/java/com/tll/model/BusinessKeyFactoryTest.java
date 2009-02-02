@@ -11,7 +11,10 @@ import java.util.List;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyFactory;
+import com.tll.model.key.BusinessKeyUtil;
+import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -90,15 +93,15 @@ public class BusinessKeyFactoryTest {
 	}
 
 	public void testBusinessKeyFactoryCreateFromClass() throws Exception {
-		BusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(TestEntity.class);
+		IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(TestEntity.class);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
 	}
 
 	public void testBusinessKeyFactoryCreateFromInstance() throws Exception {
 		TestEntity e = stubTestEntity();
-		BusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(e);
+		IBusinessKey<TestEntity>[] bks = BusinessKeyFactory.create(e);
 		assert bks != null && bks.length == 3 : "Incorrect number of created business keys.";
-		for(BusinessKey<TestEntity> bk : bks) {
+		for(IBusinessKey<TestEntity> bk : bks) {
 			if(TestEntity.BK_NAME.equals(bk.getBusinessKeyName())) {
 				assert bk.getPropertyNames() != null && bk.getPropertyNames().length == 1;
 			}
@@ -122,6 +125,12 @@ public class BusinessKeyFactoryTest {
 			stubTestEntity(), stubTestEntity()
 		};
 		List<TestEntity> list = Arrays.asList(arr);
-		assert BusinessKeyFactory.isBusinessKeyUnique(list) == false : "Is business key unique check failed.";
+		try {
+			BusinessKeyUtil.isBusinessKeyUnique(list);
+			Assert.fail("Business key unique check failed.");
+		}
+		catch(NonUniqueBusinessKeyException e) {
+			// expected
+		}
 	}
 }

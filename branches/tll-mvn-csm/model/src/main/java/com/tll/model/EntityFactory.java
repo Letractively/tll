@@ -9,8 +9,11 @@ import com.tll.model.key.IPrimaryKeyGenerator;
  * created for insert into the persistence store.
  * @author jpk
  */
-public class EntityFactory implements IEntityFactory {
+public final class EntityFactory implements IEntityFactory {
 
+	/**
+	 * The primary key generator.
+	 */
 	private final IPrimaryKeyGenerator keyGenerator;
 
 	/**
@@ -40,13 +43,5 @@ public class EntityFactory implements IEntityFactory {
 
 	public <E extends IEntity> void setGenerated(E entity) {
 		((EntityBase) entity).setGenerated(keyGenerator.generateIdentifier(entity.entityClass()));
-		/*
-		if(entity instanceof ITimeStampEntity) {
-			final Date now = new Date();
-			ITimeStampEntity tse = (ITimeStampEntity) entity;
-			tse.setDateCreated(now);
-			tse.setDateModified(now);
-		}
-		*/
 	}
 }

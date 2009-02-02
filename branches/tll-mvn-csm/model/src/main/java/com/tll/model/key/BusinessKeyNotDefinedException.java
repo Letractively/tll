@@ -1,6 +1,7 @@
-package com.tll.model;
+package com.tll.model.key;
 
 import com.tll.ApplicationException;
+import com.tll.model.IEntity;
 
 /**
  * BusinessKeyNotDefinedException

@@ -3,9 +3,10 @@ package com.tll.model.key;
 import com.tll.model.INamedEntity;
 
 /**
- * INameKey impl
+ * NameKey - Simple entity key that holds an entity name and also identifies the
+ * field by which that name is retrieved from the entity.
+ * @param <N> The named entity type
  * @author jpk
- * @param <N>
  */
 public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 
@@ -16,7 +17,7 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	/**
 	 * The name used to identify the field that holds the name.
 	 */
-	private String propertyName;
+	private String nameProperty;
 
 	/**
 	 * The actual name value.
@@ -49,7 +50,7 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 	public NameKey(Class<N> entityClass, String name, String propertyName) {
 		super(entityClass);
 		setName(name);
-		setPropertyName(propertyName);
+		setNameProperty(propertyName);
 	}
 
 	@Override
@@ -65,13 +66,20 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 		this.name = name;
 	}
 
-	public final String getPropertyName() {
-		return propertyName;
+	/**
+	 * @return The name of the property that identifies the name.
+	 */
+	public final String getNameProperty() {
+		return nameProperty;
 	}
 
-	public final void setPropertyName(String fieldName) {
-		if(fieldName == null) throw new IllegalArgumentException("A field name must be specified");
-		this.propertyName = fieldName;
+	/**
+	 * Sets the name of the property that identifies the name.
+	 * @param nameProperty
+	 */
+	public final void setNameProperty(String nameProperty) {
+		if(nameProperty == null) throw new IllegalArgumentException("A field name must be specified");
+		this.nameProperty = nameProperty;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ public interface IEntityGraphBuilder {
 
 	/**
 	 * @return A new {@link EntityGraph} instance.
+	 * @throws IllegalStateException When the build operation fails
 	 */
-	EntityGraph buildEntityGraph();
+	EntityGraph buildEntityGraph() throws IllegalStateException;
 }

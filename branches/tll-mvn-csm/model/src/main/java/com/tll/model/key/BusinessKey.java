@@ -9,7 +9,7 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-public final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implements IBusinessKeyDefinition<E> {
+final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implements IBusinessKey<E> {
 
 	private static final long serialVersionUID = 2415120120614040086L;
 
