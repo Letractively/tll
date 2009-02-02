@@ -30,7 +30,7 @@ import com.tll.listhandler.IListHandlerDataProvider;
 import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
@@ -120,14 +120,14 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// resolve the entity class and corres. marshaling entity service
-						final Class<E> entityClass = EntityUtil.entityClassFromType(search.getEntityType());
+						final Class<E> entityClass = EntityTypeUtil.entityClassFromType(search.getEntityType());
 						final IMEntityServiceImpl<E, S> mEntitySvc =
 								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
 
 						// translate client side criteria to server side criteria
 						final ICriteria<E> criteria;
 						try {
-							criteria = mEntitySvc.translate(requestContext, EntityUtil.entityTypeFromClass(entityClass), search);
+							criteria = mEntitySvc.translate(requestContext, EntityTypeUtil.entityTypeFromClass(entityClass), search);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "

@@ -36,7 +36,7 @@ import com.tll.common.model.StringMapPropertyValue;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.dao.SearchResult;
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
@@ -279,7 +279,7 @@ public final class Marshaler {
 		}
 
 		final Class<? extends IEntity> entityClass = source.entityClass();
-		final Model model = new Model(EntityUtil.entityTypeFromClass(entityClass));
+		final Model model = new Model(EntityTypeUtil.entityTypeFromClass(entityClass));
 
 		b = new Binding(source, model);
 		visited.push(b);
@@ -315,7 +315,7 @@ public final class Marshaler {
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						prop = new RelatedOneProperty(EntityUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, ngrp);
+						prop = new RelatedOneProperty(EntityTypeUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, ngrp);
 					}
 				}
 
@@ -333,7 +333,7 @@ public final class Marshaler {
 								list.add(nested);
 							}
 						}
-						prop = new RelatedManyProperty(EntityUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, list);
+						prop = new RelatedManyProperty(EntityTypeUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, list);
 					}
 				}
 
@@ -384,7 +384,7 @@ public final class Marshaler {
 	 */
 	public <S extends IScalar> Model marshalScalar(final S source, final MarshalOptions options) {
 
-		final Model model = new Model(EntityUtil.entityTypeFromClass(source.getRefType()));
+		final Model model = new Model(EntityTypeUtil.entityTypeFromClass(source.getRefType()));
 
 		final Map<String, Object> tupleMap = source.getTupleMap();
 		for(final String pname : tupleMap.keySet()) {
@@ -473,7 +473,7 @@ public final class Marshaler {
 					final Model rltdOne = (Model) pval;
 					final EntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();
 					final IEntity toOne =
-							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil
+							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil
 									.entityClassFromType(entityType), rltdOne, visited));
 					val = toOne;
 				}
@@ -498,7 +498,7 @@ public final class Marshaler {
 							final Model model = (Model) obj;
 							final EntityType entityType = model.getEntityType();
 							final IEntity clcEntity =
-									model.isMarkedDeleted() ? null : unmarshalEntity(EntityUtil.entityClassFromType(entityType), model,
+									model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.entityClassFromType(entityType), model,
 											visited);
 							if(clcEntity instanceof IChildEntity) {
 								((IChildEntity) clcEntity).setParent(e);

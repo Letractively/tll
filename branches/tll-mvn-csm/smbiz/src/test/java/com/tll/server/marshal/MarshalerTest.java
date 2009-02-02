@@ -25,7 +25,7 @@ import com.tll.di.DaoModule;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.CreditCardType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.PaymentInfo;
@@ -90,7 +90,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
-			assert model.getEntityType().equals(EntityUtil.entityTypeFromClass(e.entityClass()).name()) : "The marshaled entity model's ref type did not match the sourcing entities' entity type";
+			assert model.getEntityType().equals(EntityTypeUtil.entityTypeFromClass(e.entityClass()).name()) : "The marshaled entity model's ref type did not match the sourcing entities' entity type";
 			final RefKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";

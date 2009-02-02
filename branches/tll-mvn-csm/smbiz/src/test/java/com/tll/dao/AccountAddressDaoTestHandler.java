@@ -21,7 +21,7 @@ import com.tll.model.key.PrimaryKey;
  */
 public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<AccountAddress> {
 
-	PrimaryKey<Account> aKey;
+	PrimaryKey<Asp> aKey;
 	PrimaryKey<Address> adrKey;
 
 	@Override
@@ -37,14 +37,14 @@ public class AccountAddressDaoTestHandler extends AbstractEntityDaoTestHandler<A
 	@Override
 	public void assembleTestEntity(AccountAddress e) throws Exception {
 
-		Account account;
+		Asp account;
 		if(aKey == null) {
 			account = mockEntityFactory.getEntityCopy(Asp.class, true);
 			account.setCurrency(entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true)));
 			account.setPaymentInfo(null);
 			account.setParent(null);
 			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
+			aKey = new PrimaryKey<Asp>(account);
 		}
 		else {
 			account = entityDao.load(aKey);

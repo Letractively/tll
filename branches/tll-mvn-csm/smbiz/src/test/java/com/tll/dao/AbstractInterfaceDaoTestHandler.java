@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.testng.Assert;
 
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
@@ -49,17 +48,11 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	@Override
 	public void makeUnique(I e) {
 		super.makeUnique(e);
-
-		try {
-			for(final InterfaceOption o : e.getOptions()) {
-				mockEntityFactory.makeBusinessKeyUnique(o);
-				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-					mockEntityFactory.makeBusinessKeyUnique(param);
-				}
+		for(final InterfaceOption o : e.getOptions()) {
+			mockEntityFactory.makeBusinessKeyUnique(o);
+			for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
+				mockEntityFactory.makeBusinessKeyUnique(param);
 			}
-		}
-		catch(final BusinessKeyNotDefinedException ex) {
-			Assert.fail(ex.getMessage());
 		}
 	}
 

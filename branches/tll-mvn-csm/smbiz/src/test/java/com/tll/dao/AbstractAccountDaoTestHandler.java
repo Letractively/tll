@@ -10,7 +10,6 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
 import com.tll.model.PaymentInfo;
 import com.tll.model.key.PrimaryKey;
@@ -167,17 +166,11 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 	@Override
 	public void makeUnique(A e) {
 		super.makeUnique(e);
-
-		try {
-			if(e.getAddresses() != null) {
-				for(final AccountAddress aa : e.getAddresses()) {
-					mockEntityFactory.makeBusinessKeyUnique(aa);
-					mockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
-				}
+		if(e.getAddresses() != null) {
+			for(final AccountAddress aa : e.getAddresses()) {
+				mockEntityFactory.makeBusinessKeyUnique(aa);
+				mockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
-		}
-		catch(final BusinessKeyNotDefinedException ex) {
-			Assert.fail(ex.getMessage());
 		}
 	}
 

@@ -4,11 +4,9 @@
  */
 package com.tll.model.mock;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.math.RandomUtils;
-
+import com.google.inject.Inject;
 import com.tll.SystemError;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
@@ -35,8 +33,7 @@ import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
 import com.tll.model.SalesTax;
 import com.tll.model.User;
-import com.tll.model.mock.AbstractEntityGraphBuilder;
-import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.Visitor;
 import com.tll.util.EnumUtil;
 
 /**
@@ -53,6 +50,7 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	 * Constructor
 	 * @param mep
 	 */
+	@Inject
 	public EntityGraphBuilder(MockEntityFactory mep) {
 		super(mep);
 	}
@@ -74,89 +72,94 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private void stubRudimentaryEntities() throws Exception {
-		generateAndAdd(Currency.class, 1, false);
+		add(Currency.class, false);
 
 		// app properties
 		AppProperty ap;
-		ap = generateAndAdd(AppProperty.class, 1, false);
+		ap = add(AppProperty.class, false);
 		ap.setName("locale");
 		ap.setValue("US");
-		ap = generateAndAdd(AppProperty.class, 1, false);
+		ap = add(AppProperty.class, false);
 		ap.setName("default.iso4217");
 		ap.setValue("usd");
-		ap = generateAndAdd(AppProperty.class, 1, false);
+		ap = add(AppProperty.class, false);
 		ap.setName("default.country");
 		ap.setValue("usa");
 
 		// addresses
-		generateAndAddN(Address.class, 1, 10);
+		addN(Address.class, true, 10);
 
 		// payment infos
-		generateAndAdd(PaymentInfo.class, 1, false);
+		add(PaymentInfo.class, false);
 
 		// user authorities
-		generateAndAddAll(Authority.class, 1);
+		addAll(Authority.class);
 	}
 
 	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = generateAndAdd(type, 1, false);
+		A a = add(type, false);
 
 		if(num > 0) {
 			a.setName(a.getName() + " " + Integer.toString(num));
 		}
 
-		a.setCurrency(getNthEntity(Currency.class, 1));
+		a.setCurrency(getRandomEntity(Currency.class));
 
-		a.setPaymentInfo(getNthEntity(PaymentInfo.class, 1));
+		a.setPaymentInfo(getRandomEntity(PaymentInfo.class));
 
 		// account addresses upto 5
-		int numAddresses = RandomUtils.nextInt(5);
+		int numAddresses = randomInt(6);
 		if(numAddresses > 0) {
-			Set<AccountAddress> set = generateAndAddN(AccountAddress.class, 1, numAddresses);
+			int ai = 0;
+			Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
 			for(AccountAddress aa : set) {
 				aa.setAccount(a);
-				aa.setAddress(getRandomExisting(Address.class));
-				aa.setType(EnumUtil.fromOrdinal(AddressType.class, RandomUtils.nextInt(AddressType.values().length)));
+				aa.setAddress(getNthEntity(Address.class, ++ai));
+				aa.setType(EnumUtil.fromOrdinal(AddressType.class, randomInt(AddressType.values().length)));
 			}
 		}
 		
 		// create a random number of histories for this account upto 5
-		int numHistories = RandomUtils.nextInt(5);
+		int numHistories = randomInt(6);
 		if(numHistories > 0) {
 			for(int i = 0; i < numHistories; i++) {
-				AccountHistory ah = generateAndAdd(AccountHistory.class, 1, true);
+				AccountHistory ah = add(AccountHistory.class, true);
 				ah.setAccount(a);
+				makeUnique(ah);
 			}
 		}
 
-		// create a product set for this account
-		int numProducts = RandomUtils.nextInt(5);
+		// create a product set for this account upto 5
+		int numProducts = randomInt(6);
 		if(numProducts > 0) {
 			for(int i = 0; i < numProducts; i++) {
-				ProductInventory pi = generateAndAdd(ProductInventory.class, 1, true);
-				ProductGeneral pg = generateEntity(ProductGeneral.class, 1, true);
+				ProductInventory pi = add(ProductInventory.class, true);
+				ProductGeneral pg = generateEntity(ProductGeneral.class, true);
 				pi.setProductGeneral(pg);
 				pi.setAccount(a);
+				makeUnique(pi);
 			}
 		}
 
-		// create product categories for these account products
-		int numCategories = RandomUtils.nextInt(5);
+		// create product categories for these account products upto 5
+		int numCategories = randomInt(6);
 		if(numCategories > 0) {
 			for(int i = 0; i < numCategories; i++) {
-				ProductCategory pc = generateAndAdd(ProductCategory.class, 1, true);
+				ProductCategory pc = add(ProductCategory.class, true);
 				pc.setAccount(a);
+				makeUnique(pc);
 			}
 		}
 
 		// TODO bind products to categories
 
-		// create some sales taxes
-		int numSalesTaxes = RandomUtils.nextInt(5);
+		// create some sales taxes upto 5
+		int numSalesTaxes = randomInt(6);
 		if(numSalesTaxes > 0) {
 			for(int i = 0; i < numSalesTaxes; i++) {
-				SalesTax st = generateAndAdd(SalesTax.class, 1, true);
+				SalesTax st = add(SalesTax.class, true);
 				st.setAccount(a);
+				makeUnique(st);
 			}
 		}
 
@@ -169,54 +172,54 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 		asp.setName(Asp.ASP_NAME);
 
 		// isps
-		Set<Isp> isps = new LinkedHashSet<Isp>();
+		Isp[] isps = new Isp[numIsps];
 		for(int i = 0; i < numIsps; i++) {
 			Isp isp = stubAccount(Isp.class, i + 1);
 			isp.setParent(asp);
+			isps[i] = isp;
 		}
-		Isp[] arrIsp = isps.toArray(new Isp[isps.size()]);
 
 		// merchants
+		Merchant[] merchants = new Merchant[numMerchants];
 		for(int i = 0; i < numMerchants; i++) {
 			Merchant m = stubAccount(Merchant.class, i + 1);
 			int ispIndex = i / numIsps;
-			m.setParent(arrIsp[ispIndex]);
+			m.setParent(isps[ispIndex]);
+			merchants[i] = m;
 		}
-		Set<Merchant> merchants = getNonNullEntitySet(Merchant.class);
-		assert merchants != null;
-		Merchant[] arrMerchant = merchants.toArray(new Merchant[merchants.size()]);
 
 		// customers
-		Set<Customer> customers = getNonNullEntitySet(Customer.class);
+		Customer[] customers = new Customer[numCustomers];
 		for(int i = 0; i < numCustomers; i++) {
 			Customer c = stubAccount(Customer.class, i + 1);
 
-			// customer account
-			CustomerAccount ca = generateAndAdd(CustomerAccount.class, 1, false);
+			// create customer account binder entity
+			CustomerAccount ca = add(CustomerAccount.class, false);
+			Account parent;
 			ca.setCustomer(c);
-
 			if(i < 2) {
 				ca.setAccount(asp);
+				parent = asp;
 			}
-			else if(i < 2 + 2 * numIsps) {
+			else if(i < (2 + 2 * numIsps)) {
 				int ispIndex = i / (2 * numIsps); // TODO verify the math
-				ca.setAccount(arrIsp[ispIndex]);
+				Isp isp = isps[ispIndex];
+				parent = isp;
+				ca.setAccount(isp);
+				customers[i] = c;
 			}
 			else {
 				int merchantIndex = i / (2 * numMerchants); // TODO verify the math
-				ca.setAccount(arrMerchant[merchantIndex]);
+				Merchant merchant = merchants[merchantIndex];
+				parent = merchant;
+				ca.setAccount(merchant);
 			}
-
-			getNonNullEntitySet(CustomerAccount.class).add(ca);
+			
+			// create initial visitor record
+			Visitor v = add(Visitor.class, true);
+			v.setAccount(parent);
+			ca.setInitialVisitorRecord(v);
 		}
-
-		// merge the accounts under the common base type in the map (required for
-		// proper dao operation)
-		Set<Account> accounts = getNonNullEntitySet(Account.class);
-		accounts.add(asp);
-		accounts.addAll(isps);
-		accounts.addAll(merchants);
-		accounts.addAll(customers);
 	}
 
 	private static InterfaceOption findInterfaceOption(String ioCode, Set<InterfaceOption> options) {
@@ -238,15 +241,16 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void stubInterfaces() throws Exception {
-		Set<Interface> intfs = getNonNullEntitySet(Interface.class);
-		intfs.addAll(generateAndAddAll(InterfaceSingle.class, 1));
-		intfs.addAll(generateAndAddAll(InterfaceSwitch.class, 1));
-		intfs.addAll(generateAndAddAll(InterfaceMulti.class, 1));
+		Set<Interface> intfs = (Set<Interface>) getNonNullEntitySet(Interface.class);
+		intfs.addAll(addAll(InterfaceSingle.class));
+		intfs.addAll(addAll(InterfaceSwitch.class));
+		intfs.addAll(addAll(InterfaceMulti.class));
 
-		Set<InterfaceOption> ios = generateAndAddAll(InterfaceOption.class, 1);
+		Set<InterfaceOption> ios = addAll(InterfaceOption.class);
 
-		Set<InterfaceOptionParameterDefinition> pds = generateAndAddAll(InterfaceOptionParameterDefinition.class, 1);
+		Set<InterfaceOptionParameterDefinition> pds = addAll(InterfaceOptionParameterDefinition.class);
 
 		for(Interface intf : intfs) {
 			if(Interface.CODE_CROSS_SELL.equals(intf.getCode())) {
@@ -299,10 +303,10 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = generateAndAdd(User.class, 1, true);
-		u.addAuthority(getRandomExisting(Authority.class));
+		User u = add(User.class, true);
+		u.addAuthority(getRandomEntity(Authority.class));
 		u.setAccount(getNthEntity(Asp.class, 1));
-		u.setAddress(getRandomExisting(Address.class));
+		u.setAddress(getRandomEntity(Address.class));
 	}
 
 }

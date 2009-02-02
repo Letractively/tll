@@ -13,7 +13,7 @@ import com.tll.common.model.RefKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.AccountAddress;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -43,7 +43,7 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 	}
 
 	@Override
-	protected BusinessKey<AccountAddress> handleBusinessKeyTranslation(ISearch search) {
+	protected IBusinessKey<AccountAddress> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 

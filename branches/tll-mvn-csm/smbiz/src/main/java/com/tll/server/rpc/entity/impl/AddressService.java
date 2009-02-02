@@ -13,9 +13,9 @@ import com.tll.common.model.RefKey;
 import com.tll.common.search.impl.AddressSearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Address;
-import com.tll.model.BusinessKeyFactory;
-import com.tll.model.BusinessKeyNotDefinedException;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyFactory;
+import com.tll.model.key.BusinessKeyNotDefinedException;
+import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MEntityServiceImpl;
@@ -44,16 +44,16 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 	}
 
 	@Override
-	protected BusinessKey<Address> handleBusinessKeyTranslation(AddressSearch search) {
-		BusinessKey<Address> bk;
+	protected IBusinessKey<Address> handleBusinessKeyTranslation(AddressSearch search) {
+		IBusinessKey<Address> bk;
 		try {
 			bk = BusinessKeyFactory.create(Address.class, search.getBusinessKeyName());
 		}
 		catch(BusinessKeyNotDefinedException e) {
 			throw new SystemError("No business keys defined for Address entity");
 		}
-		bk.setPropertyValue(0, search.getAddress1());
-		bk.setPropertyValue(1, search.getPostalCode());
+		bk.setPropertyValue("address1", search.getAddress1());
+		bk.setPropertyValue("postalCode", search.getPostalCode());
 		return bk;
 	}
 

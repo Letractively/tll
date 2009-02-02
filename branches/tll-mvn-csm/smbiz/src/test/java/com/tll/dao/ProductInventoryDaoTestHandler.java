@@ -9,7 +9,6 @@ import org.testng.Assert;
 
 import com.tll.model.Account;
 import com.tll.model.Asp;
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
@@ -54,12 +53,7 @@ public class ProductInventoryDaoTestHandler extends AbstractEntityDaoTestHandler
 	@Override
 	public void makeUnique(ProductInventory e) {
 		super.makeUnique(e);
-		try {
-			mockEntityFactory.makeBusinessKeyUnique(e.getProductGeneral());
-		}
-		catch(final BusinessKeyNotDefinedException e1) {
-			Assert.fail(e1.getMessage());
-		}
+		mockEntityFactory.makeBusinessKeyUnique(e.getProductGeneral());
 	}
 
 	@Override

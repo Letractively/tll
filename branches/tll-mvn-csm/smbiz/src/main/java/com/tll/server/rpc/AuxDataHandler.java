@@ -18,7 +18,7 @@ import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.refdata.RefDataType;
 import com.tll.server.RequestContext;
@@ -64,7 +64,7 @@ public abstract class AuxDataHandler {
 		Iterator<EntityType> etitr = auxDataRequest.getEntityRequests();
 		while(etitr != null && etitr.hasNext()) {
 			EntityType et = etitr.next();
-			final Class<? extends IEntity> entityClass = EntityUtil.entityClassFromType(et);
+			final Class<? extends IEntity> entityClass = EntityTypeUtil.entityClassFromType(et);
 			final IEntityService<? extends IEntity> svc =
 					requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final List<? extends IEntity> list = svc.loadAll();
@@ -88,7 +88,7 @@ public abstract class AuxDataHandler {
 		etitr = auxDataRequest.getEntityPrototypeRequests();
 		while(etitr != null && etitr.hasNext()) {
 			EntityType et = etitr.next();
-			final IEntity e = requestContext.getEntityFactory().createEntity(EntityUtil.entityClassFromType(et), false);
+			final IEntity e = requestContext.getEntityFactory().createEntity(EntityTypeUtil.entityClassFromType(et), false);
 			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();

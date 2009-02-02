@@ -13,7 +13,7 @@ import com.tll.common.model.RefKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Authority;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
@@ -42,7 +42,7 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 	}
 
 	@Override
-	protected BusinessKey<Authority> handleBusinessKeyTranslation(ISearch search) {
+	protected IBusinessKey<Authority> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException();
 	}
 

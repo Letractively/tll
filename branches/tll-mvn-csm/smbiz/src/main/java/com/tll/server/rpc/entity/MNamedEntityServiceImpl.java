@@ -10,7 +10,7 @@ import com.tll.common.data.EntityPayload;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
 import com.tll.server.RequestContext;
@@ -35,7 +35,7 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 				payload.getStatus().addMsg("A name must be specified.", MsgLevel.ERROR);
 				return null;
 			}
-			final Class<N> entityClass = EntityUtil.entityClassFromType(entityType);
+			final Class<N> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final INamedEntityService<N> namedEntityService =
 					(INamedEntityService<N>) requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 			return namedEntityService.load(new NameKey<N>(entityClass, name));

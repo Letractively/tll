@@ -11,12 +11,12 @@ import com.tll.util.StringUtil;
  * {@link IEntity} related utility methods.
  * @author jpk
  */
-public final class EntityUtil {
+public final class EntityTypeUtil {
 
 	/**
 	 * The package name containing model and entity related classes.
 	 */
-	public static String MODEL_PACKAGE_NAME = "com.tll.model";
+	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
 
 	/**
 	 * Translates an {@link IEntity} {@link Class} to an {@link EntityType}.
@@ -69,6 +69,6 @@ public final class EntityUtil {
 		}
 	}
 
-	private EntityUtil() {
+	private EntityTypeUtil() {
 	}
 }

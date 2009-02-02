@@ -10,7 +10,7 @@ import java.util.Map;
 import com.tll.SystemError;
 import com.tll.common.search.ISearch;
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.entity.impl.AccountAddressService;
 import com.tll.server.rpc.entity.impl.AccountService;
@@ -38,7 +38,7 @@ public final class MEntityServiceImplFactory {
 	 *         found or an service instantiation related exception occurrs.
 	 */
 	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass) {
-		return instance(EntityUtil.entityTypeFromClass(entityClass));
+		return instance(EntityTypeUtil.entityTypeFromClass(entityClass));
 	}
 
 	/**

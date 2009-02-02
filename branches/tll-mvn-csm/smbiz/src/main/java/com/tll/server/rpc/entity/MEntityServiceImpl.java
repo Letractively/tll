@@ -33,9 +33,9 @@ import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.EntityType;
-import com.tll.model.EntityUtil;
+import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.ServletUtil;
@@ -80,7 +80,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			final IEntity e =
-					requestContext.getEntityFactory().createEntity(EntityUtil.entityClassFromType(entityType),
+					requestContext.getEntityFactory().createEntity(EntityTypeUtil.entityClassFromType(entityType),
 							request.isGenerate());
 			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);
@@ -106,7 +106,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	protected E coreLoad(final RequestContext requestContext, final EntityLoadRequest request,
 			final EntityType entityType, final EntityPayload payload) {
 		// core entity loading
-		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
+		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 		final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 		if(request.isLoadByBusinessKey()) {
@@ -117,7 +117,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 				return null;
 			}
 
-			BusinessKey key = handleBusinessKeyTranslation(search);
+			IBusinessKey key = handleBusinessKeyTranslation(search);
 
 			return svc.load(key);
 		}
@@ -171,7 +171,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			// core persist
-			final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
+			final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final Model entity = request.getEntity();
 			E e = requestContext.getMarshaler().unmarshalEntity(entityClass, entity);
 			final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
@@ -208,7 +208,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	public final void purge(final RequestContext requestContext, final EntityPurgeRequest entityRequest,
 			final EntityType entityType, final EntityPayload p) {
 		try {
-			final Class<IEntity> entityClass = EntityUtil.entityClassFromType(entityType);
+			final Class<IEntity> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final IEntityService<IEntity> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final RefKey entityRef = entityRequest.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
@@ -234,11 +234,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	/**
-	 * Translates {@link ISearch} to {@link BusinessKey}s.
+	 * Translates {@link ISearch} to {@link IBusinessKey}s.
 	 * @param search The search to translate
-	 * @return Translated {@link BusinessKey}
+	 * @return Translated {@link IBusinessKey}
 	 */
-	protected abstract BusinessKey<E> handleBusinessKeyTranslation(S search);
+	protected abstract IBusinessKey<E> handleBusinessKeyTranslation(S search);
 
 	/**
 	 * Handles the entity specific search to criteria translation.
@@ -253,7 +253,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	public final ICriteria<E> translate(final RequestContext requestContext, final EntityType entityType, final S search)
 			throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
-		final Class<E> entityClass = EntityUtil.entityClassFromType(entityType);
+		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 		Criteria<E> criteria;
 		final Set<IQueryParam> queryParams = search.getQueryParams();
 

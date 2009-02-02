@@ -15,7 +15,7 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.Account;
 import com.tll.model.AccountStatus;
 import com.tll.model.EntityType;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
@@ -83,7 +83,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected BusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search) {
+	protected IBusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
