@@ -8,7 +8,7 @@ import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 
@@ -32,7 +32,7 @@ public interface IEntityDao extends IDao {
 	 * @param key the primary key
 	 * @return the entity
 	 */
-	<E extends IEntity> E load(BusinessKey<E> key);
+	<E extends IEntity> E load(IBusinessKey<E> key);
 
 	/**
 	 * Loads the named entity by a given name.

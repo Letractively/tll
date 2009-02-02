@@ -40,7 +40,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	@Override
 	public void makeUnique(E e) {
-		// base impl no-op
+		mockEntityFactory.makeBusinessKeyUnique(e);
 	}
 
 	@Override

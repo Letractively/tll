@@ -40,23 +40,23 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 			stubAccounts();
 		}
 		catch(Exception e) {
-			throw new SystemError("Unable to stub entity graph: " + e.getMessage());
+			throw new SystemError("Unable to stub entity graph: " + e.getMessage(), e);
 		}
 	}
 
 	private void stubRudimentaryEntities() throws Exception {
 		// currency
-		generateAndAdd(Currency.class, 1, false);
+		add(Currency.class, false);
 
 		// addresses
-		generateAndAddN(Address.class, 1, 10);
+		addN(Address.class, true, 10);
 
 		// nested entities
-		generateAndAdd(NestedEntity.class, 1, false);
+		add(NestedEntity.class, false);
 	}
 
 	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = generateAndAdd(type, 1, false);
+		A a = add(type, false);
 
 		if(num > 0) {
 			a.setName(a.getName() + " " + Integer.toString(num));
@@ -69,10 +69,11 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 		// account addresses upto 5
 		int numAddresses = RandomUtils.nextInt(5);
 		if(numAddresses > 0) {
-			Set<AccountAddress> set = generateAndAddN(AccountAddress.class, 1, numAddresses);
+			int ai = 0;
+			Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
 			for(AccountAddress aa : set) {
 				aa.setAccount(a);
-				aa.setAddress(getRandomExisting(Address.class));
+				aa.setAddress(getNthEntity(Address.class, ++ai));
 			}
 		}
 
@@ -80,9 +81,8 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private void stubAccounts() throws Exception {
-		Set<Account> accounts = getNonNullEntitySet(Account.class);
 		for(int i = 0; i < numAccounts; i++) {
-			accounts.add(stubAccount(Account.class, i + 1));
+			stubAccount(Account.class, i + 1);
 		}
 	}
 }

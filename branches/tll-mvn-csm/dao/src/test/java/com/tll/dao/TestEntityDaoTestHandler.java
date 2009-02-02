@@ -12,7 +12,6 @@ import org.testng.Assert;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.Currency;
 import com.tll.model.NestedEntity;
 import com.tll.model.key.PrimaryKey;
@@ -179,16 +178,11 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 	@Override
 	public void makeUnique(Account e) {
-		try {
-			if(e.getAddresses() != null) {
-				for(final AccountAddress aa : e.getAddresses()) {
-					mockEntityFactory.makeBusinessKeyUnique(aa);
-					mockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
-				}
+		if(e.getAddresses() != null) {
+			for(final AccountAddress aa : e.getAddresses()) {
+				mockEntityFactory.makeBusinessKeyUnique(aa);
+				mockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
-		}
-		catch(final BusinessKeyNotDefinedException ex) {
-			Assert.fail(ex.getMessage());
 		}
 	}
 

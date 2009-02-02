@@ -4,7 +4,9 @@
 package com.tll.di;
 
 import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
@@ -12,6 +14,7 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.hibernate.PrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.mock.EntityGraph;
 import com.tll.model.mock.IEntityGraphBuilder;
 import com.tll.model.mock.MockPrimaryKeyGenerator;
 import com.tll.util.EnumUtil;
@@ -74,12 +77,14 @@ public class DaoModule extends CompositeModule {
 	@Override
 	protected Module[] getModulesToBind() {
 		if(DaoMode.MOCK == daoMode) {
-			// ad hoc mock entity provider module
+			// ad hoc mock entity graph builder module
 			return new Module[] {
 				new Module() {
 
 					@Override
 					public void configure(Binder binder) {
+						
+						// IEntityGraphBuilder
 						final String egbcn = Config.instance().getString(ConfigKeys.ENTITY_GRAPH_BUILDER_CLASSNAME.getKey());
 						if(egbcn == null) {
 							throw new IllegalStateException("No entity graph builder class name specified in the configuration");
@@ -91,6 +96,19 @@ public class DaoModule extends CompositeModule {
 						catch(ClassNotFoundException e) {
 							throw new IllegalStateException("No entity graph builder found for name: " + egbcn);
 						}
+						
+						// EntityGraph
+						binder.bind(EntityGraph.class).toProvider(new Provider<EntityGraph>() {
+
+							@Inject
+							IEntityGraphBuilder builder;
+
+							@Override
+							public EntityGraph get() {
+								return builder.buildEntityGraph();
+							}
+						}).in(Scopes.SINGLETON);
+						
 					}
 				}, new MockDaoModule() };
 		}

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.math.NumberRange;
 import org.springframework.beans.BeanWrapper;
@@ -31,15 +32,15 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
-import com.tll.model.BusinessKeyFactory;
-import com.tll.model.BusinessKeyNotDefinedException;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.Scalar;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.BusinessKeyUtil;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
+import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.mock.EntityGraph;
 import com.tll.util.CommonUtil;
@@ -193,7 +194,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	/**
-	 * The sole entity provider.
+	 * The entity graph.
 	 */
 	private final EntityGraph entityGraph;
 
@@ -218,6 +219,10 @@ public final class EntityDao implements IEntityDao {
 
 	public final void clear() {
 		// no op
+	}
+
+	public void flush() {
+		// no-op
 	}
 
 	/**
@@ -248,7 +253,6 @@ public final class EntityDao implements IEntityDao {
 			list = processQuery(criteria);
 		}
 		else {
-
 			if(!criteria.isSet()) {
 				list = loadAll(criteria.getEntityClass());
 			}
@@ -358,23 +362,20 @@ public final class EntityDao implements IEntityDao {
 		return null;
 	}
 
-	public void flush() {
-		// no-op
-	}
-
-	public <E extends IEntity> E load(final BusinessKey<E> key) {
+	public <E extends IEntity> E load(final IBusinessKey<E> key) {
+		if(key == null || !key.isSet()) {
+			throw new IllegalArgumentException("Empty or unset business key");
+		}
 		Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final E e : clc) {
 				try {
-					final BusinessKey<E>[] bks = BusinessKeyFactory.create(e);
-					for(final BusinessKey<E> bk : bks) {
-						if(bk.equals(key)) {
-							return e;
-						}
+					if(BusinessKeyUtil.equals(e, key)) {
+						return e;
 					}
 				}
-				catch(final BusinessKeyNotDefinedException e1) {
+				catch(RuntimeException e1) {
+					throw new PersistenceException(e1.getMessage(), e1);
 				}
 			}
 		}
@@ -382,37 +383,35 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E load(final PrimaryKey<E> key) {
-		Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
-		if(clc != null) {
-			for(final E e : clc) {
-				if(key.getId().equals(e.getId())) {
-					return e;
-				}
-			}
+		E e = entityGraph.getEntity(key);
+		if(e == null) {
+			throw new EntityNotFoundException(key.descriptor() + " not found.");
 		}
-		throw new EntityNotFoundException(key.descriptor() + " not found.");
+		return e;
 	}
 
 	public <N extends INamedEntity> N load(final NameKey<N> key) {
-		if(key == null || key.getName() == null) return null;
+		if(key == null || !key.isSet()) {
+			throw new IllegalArgumentException("Empty or unset name key");
+		}
 		Collection<N> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final N e : clc) {
 				String name;
 				BeanWrapper bw = new BeanWrapperImpl(e);
 				try {
-					final Object o = bw.getPropertyValue(INamedEntity.NAME);
+					final Object o = bw.getPropertyValue(key.getNameProperty());
 					name = (String) o;
 				}
 				catch(final RuntimeException re) {
-					return null;
+					break;
 				}
 				if(key.getName().equals(name)) {
 					return e;
 				}
 			}
 		}
-		return null;
+		throw new EntityNotFoundException(key.descriptor() + " not found.");
 	}
 
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
@@ -422,30 +421,28 @@ public final class EntityDao implements IEntityDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E persist(final E entity) {
-		Collection<E> clc = (Collection<E>) entityGraph.getEntitiesByType(entity.entityClass());
-		if(clc != null) {
-			if(!clc.remove(entity)) {
-				if(entity.getVersion() != null) {
-					throw new IllegalStateException("Encountered entity with a version but hasn't been persisted yet.");
-				}
-				// ensure business key unique
-				clc.add(entity);
-				if(!BusinessKeyFactory.isBusinessKeyUnique(clc)) {
-					clc.remove(entity);
-					throw new EntityExistsException("Unable to persist entity: It is non-unique");
-				}
-			}
-			else {
-				clc.add(entity);
+		
+		// validate the version
+		if(!entityGraph.contains(new PrimaryKey<E>(entity))) {
+			if(entity.getVersion() != null) {
+				throw new PersistenceException("Attempt to add non-existant yet versioned entity");
 			}
 		}
 		else {
-			if(entity.getVersion() != null) {
-				throw new IllegalStateException("Encountered entity with a version but hasn't been persisted yet.");
-			}
+			// remove old
+			entityGraph.removeEntity(entity);
+		}
+		
+		// attempt to persist
+		try {
 			entityGraph.setEntity(entity);
+		}
+		catch(IllegalStateException e) {
+			throw new EntityExistsException(entity.descriptor() + " already exists.");
+		}
+		catch(NonUniqueBusinessKeyException e) {
+			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage(), e);
 		}
 		
 		// set date created/modified
@@ -457,7 +454,7 @@ public final class EntityDao implements IEntityDao {
 			((ITimeStampEntity) entity).setDateModified(now);
 		}
 		
-		// incremenet version
+		// increment version
 		Integer version = entity.getVersion();
 		if(version == null) {
 			version = new Integer(0);
@@ -477,26 +474,14 @@ public final class EntityDao implements IEntityDao {
 		return entities;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> void purge(final E entity) {
-		Collection<E> clc = (Collection<E>) entityGraph.getEntitiesByType(entity.entityClass());
-		if(clc != null) {
-			for(final E e : clc) {
-				if(e.equals(entity)) {
-					clc.remove(e);
-					return;
-				}
-			}
-		}
+		entityGraph.removeEntity(entity);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> void purgeAll(final Collection<E> entities) {
 		if(entities == null || entities.size() < 1) return;
-		Class<E> et = (Class<E>) entities.iterator().next().entityClass();
-		Collection<E> clc = entityGraph.getEntitiesByType(et);
-		if(clc != null) {
-			clc.removeAll(entities);
+		for(E e : entities) {
+			purge(e);
 		}
 	}
 
@@ -564,5 +549,4 @@ public final class EntityDao implements IEntityDao {
 			}
 		};
 	}
-
 }

@@ -45,7 +45,7 @@ import com.tll.dao.SortDir;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.CollectionUtil;
@@ -168,7 +168,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		return deproxy(e, key.getType());
 	}
 
-	public <E extends IEntity> E load(BusinessKey<E> key) {
+	public <E extends IEntity> E load(IBusinessKey<E> key) {
 		try {
 			return findEntity(new com.tll.criteria.Criteria<E>(key.getType()));
 		}

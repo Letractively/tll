@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.key.BusinessKey;
+import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.util.DateRange;
@@ -127,7 +127,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @param isCaseSensitive
 	 * @return this for method chaining
 	 */
-	public CriterionGroup addCriterion(BusinessKey<? extends IEntity> key, boolean isCaseSensitive) {
+	public CriterionGroup addCriterion(IBusinessKey<? extends IEntity> key, boolean isCaseSensitive) {
 		for(final String fname : key.getPropertyNames()) {
 			addCriterion(fname, key.getPropertyValue(fname), Comparator.EQUALS, isCaseSensitive);
 		}
@@ -141,7 +141,7 @@ public class CriterionGroup implements ICriterion, Iterable<ICriterion> {
 	 * @return this for method chaining
 	 */
 	public CriterionGroup addCriterion(NameKey<? extends INamedEntity> nameKey, boolean isCaseSensitive) {
-		return addCriterion(nameKey.getPropertyName(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
+		return addCriterion(nameKey.getNameProperty(), nameKey.getName(), Comparator.EQUALS, isCaseSensitive);
 	}
 
 	/**

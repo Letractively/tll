@@ -168,7 +168,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * Starts a new db transaction.
 	 * @throws IllegalStateException When a transaction is already started.
 	 */
-	protected final void startNewTransaction() throws IllegalStateException {
+	protected void startNewTransaction() throws IllegalStateException {
 		if(isTransStarted()) {
 			throw new IllegalStateException("Transaction already started.");
 		}
@@ -202,7 +202,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * depending on the state of the {@link #transCompleteFlag}.
 	 * @throws IllegalStateException When a transaction is NOT currently underway.
 	 */
-	protected final void endTransaction() throws IllegalStateException {
+	protected void endTransaction() throws IllegalStateException {
 		if(!isTransStarted()) {
 			throw new IllegalStateException("No transaction in progress");
 		}
