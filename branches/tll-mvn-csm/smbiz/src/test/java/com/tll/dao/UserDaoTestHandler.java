@@ -3,8 +3,6 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
@@ -12,7 +10,6 @@ import com.tll.model.Asp;
 import com.tll.model.Authority;
 import com.tll.model.Currency;
 import com.tll.model.User;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * AbstractEntityDaoTest
@@ -20,8 +17,9 @@ import com.tll.model.key.PrimaryKey;
  */
 public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 
-	PrimaryKey<Account> aKey;
-	PrimaryKey<Authority> tKey;
+	Currency currency;
+	Account account;
+	Authority auth;
 
 	@Override
 	public Class<User> entityClass() {
@@ -29,59 +27,27 @@ public class UserDaoTestHandler extends AbstractEntityDaoTestHandler<User> {
 	}
 
 	@Override
-	public void assembleTestEntity(User e) throws Exception {
-		Account account;
-		if(aKey == null) {
-			account = mockEntityFactory.getEntityCopy(Asp.class, true);
-			account.setCurrency(entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true)));
-			account.setPaymentInfo(null);
-			account.setParent(null);
-			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
-		}
-		else {
-			account = entityDao.load(aKey);
-		}
-		Assert.assertNotNull(account);
-		e.setAccount(account);
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
 
-		Authority auth;
-		if(tKey == null) {
-			auth = mockEntityFactory.getEntityCopy(Authority.class, true);
-			auth = entityDao.persist(auth);
-			tKey = new PrimaryKey<Authority>(auth);
-		}
-		else {
-			auth = entityDao.load(tKey);
-		}
-		Assert.assertNotNull(auth);
-		e.addAuthority(auth);
+		account = create(Asp.class, true);
+		account.setCurrency(currency);
+		account = persist(account);
+
+		auth = createAndPersist(Authority.class, true);
 	}
 
 	@Override
-	public void teardownTestEntity(User e) {
-		if(aKey != null) {
-			try {
-				final Account account = entityDao.load(aKey);
-				entityDao.purge(account);
-				entityDao.purge(account.getCurrency());
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			aKey = null;
-		}
+	public void purgeDependentEntities() {
+		purge(auth);
+		purge(account);
+		purge(currency);
+	}
 
-		if(tKey != null) {
-			try {
-				final Authority auth = entityDao.load(tKey);
-				entityDao.purge(auth);
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			tKey = null;
-		}
+	@Override
+	public void assembleTestEntity(User e) throws Exception {
+		e.setAccount(account);
+		e.addAuthority(auth);
 	}
 
 	@Override

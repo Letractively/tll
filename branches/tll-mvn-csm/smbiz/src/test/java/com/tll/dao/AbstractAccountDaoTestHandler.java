@@ -3,16 +3,15 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
+import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.PaymentInfo;
-import com.tll.model.key.PrimaryKey;
+import com.tll.model.mock.MockEntityFactory;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -21,146 +20,48 @@ import com.tll.model.key.PrimaryKey;
  */
 public abstract class AbstractAccountDaoTestHandler<A extends Account> extends AbstractEntityDaoTestHandler<A> {
 
-	PrimaryKey<PaymentInfo> piKey;
-	PrimaryKey<Currency> cKey;
-	PrimaryKey<Address> a1Key;
-	PrimaryKey<Address> a2Key;
-	PrimaryKey<Account> parentKey;
+	PaymentInfo paymentInfo;
+	Currency currency;
+	Account parent;
 
 	@Override
-	public void assembleTestEntity(A e) throws Exception {
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
+		paymentInfo = createAndPersist(PaymentInfo.class, true);
 
-		Currency currency;
-		if(cKey == null) {
-			// load stubbed currency
-			currency = mockEntityFactory.getEntityCopy(Currency.class, true);
-			currency = entityDao.persist(currency);
-			cKey = new PrimaryKey<Currency>(currency);
-		}
-		else {
-			currency = entityDao.load(cKey);
-		}
-		Assert.assertNotNull(currency);
-		e.setCurrency(currency);
-
-		PaymentInfo paymentInfo;
-		if(piKey == null) {
-			// stub payment info
-			try {
-				paymentInfo = mockEntityFactory.getEntityCopy(PaymentInfo.class, true);
-			}
-			catch(final Exception ex) {
-				Assert.fail("Unable to acquire test payment info entity");
-				return;
-			}
-			paymentInfo = entityDao.persist(paymentInfo);
-			piKey = new PrimaryKey<PaymentInfo>(paymentInfo);
-		}
-		else {
-			paymentInfo = entityDao.load(piKey);
-		}
-		Assert.assertNotNull(paymentInfo);
-		e.setPaymentInfo(paymentInfo);
-
-		// stub account parent (if specified)
-		if(e.getParent() != null) {
-			Account parent = e.getParent();
-			if(parent.isNew()) {
-				if(parentKey == null) {
-					entityFactory.setGenerated(parent);
-					parent.setParent(null); // eliminate pointer chasing
-					parent.setCurrency(currency);
-					parent.setPaymentInfo(paymentInfo);
-					parent = entityDao.persist(parent);
-					parentKey = new PrimaryKey<Account>(parent);
-				}
-				else {
-					parent = entityDao.load(parentKey);
-				}
-				Assert.assertNotNull(parent);
-				e.setParent(parent);
-			}
-		}
-
-		Address a1;
-		if(a1Key == null) {
-			a1 = entityDao.persist(mockEntityFactory.getEntityCopy(Address.class, true));
-			a1Key = new PrimaryKey<Address>(a1);
-		}
-		else {
-			a1 = entityDao.load(a1Key);
-		}
-		Assert.assertNotNull(a1);
-
-		Address a2;
-		if(a2Key == null) {
-			a2 = entityDao.persist(mockEntityFactory.getEntityCopy(Address.class, true));
-			a2Key = new PrimaryKey<Address>(a2);
-		}
-		else {
-			a2 = entityDao.load(a2Key);
-		}
-		Assert.assertNotNull(a2);
-
-		final AccountAddress aa1 = mockEntityFactory.getEntityCopy(AccountAddress.class, true);
-		final AccountAddress aa2 = mockEntityFactory.getEntityCopy(AccountAddress.class, true);
-		aa1.setAddress(a1);
-		aa2.setAddress(a2);
-		e.addAccountAddress(aa1);
-		e.addAccountAddress(aa2);
+		parent = create(Asp.class, true);
+		parent.setParent(null); // eliminate pointer chasing
+		parent.setCurrency(currency);
+		parent.setPaymentInfo(paymentInfo);
+		parent = persist(parent);
 	}
 
 	@Override
-	public void teardownTestEntity(A e) {
-		if(piKey != null) {
-			try {
-				entityDao.purge(entityDao.load(piKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			piKey = null;
-		}
+	public void purgeDependentEntities() {
+		purge(parent);
+		purge(paymentInfo);
+		purge(currency);
+	}
 
-		if(cKey != null) {
-			try {
-				entityDao.purge(entityDao.load(cKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			cKey = null;
-		}
+	@Override
+	public void assembleTestEntity(Account e) throws Exception {
 
-		if(a1Key != null) {
-			try {
-				entityDao.purge(entityDao.load(a1Key));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			a1Key = null;
-		}
+		e.setCurrency(currency);
+		e.setPaymentInfo(paymentInfo);
+		e.setParent(parent);
 
-		if(a2Key != null) {
-			try {
-				entityDao.purge(entityDao.load(a2Key));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			a2Key = null;
-		}
+		Address address1 = create(Address.class, true);
+		address1 = persist(address1);
 
-		if(parentKey != null) {
-			try {
-				entityDao.purge(entityDao.load(parentKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			parentKey = null;
-		}
+		Address address2 = create(Address.class, true);
+		address2 = persist(address2);
+		
+		final AccountAddress aa1 = create(AccountAddress.class, true);
+		final AccountAddress aa2 = create(AccountAddress.class, true);
+		aa1.setAddress(address1);
+		aa2.setAddress(address2);
+		e.addAccountAddress(aa1);
+		e.addAccountAddress(aa2);
 	}
 
 	@Override
@@ -168,8 +69,8 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		super.makeUnique(e);
 		if(e.getAddresses() != null) {
 			for(final AccountAddress aa : e.getAddresses()) {
-				mockEntityFactory.makeBusinessKeyUnique(aa);
-				mockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
+				MockEntityFactory.makeBusinessKeyUnique(aa);
+				MockEntityFactory.makeBusinessKeyUnique(aa.getAddress());
 			}
 		}
 	}

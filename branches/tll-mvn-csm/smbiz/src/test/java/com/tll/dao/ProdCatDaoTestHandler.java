@@ -3,8 +3,6 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
@@ -14,7 +12,6 @@ import com.tll.model.ProdCat;
 import com.tll.model.ProductCategory;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * ProdCatDaoTestHandler
@@ -22,9 +19,10 @@ import com.tll.model.key.PrimaryKey;
  */
 public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat> {
 
-	PrimaryKey<Account> aKey;
-	PrimaryKey<ProductInventory> pKey;
-	PrimaryKey<ProductCategory> cKey;
+	Currency currency;
+	Account account;
+	ProductInventory product;
+	ProductCategory category;
 
 	@Override
 	public Class<ProdCat> entityClass() {
@@ -32,84 +30,43 @@ public class ProdCatDaoTestHandler extends AbstractEntityDaoTestHandler<ProdCat>
 	}
 
 	@Override
-	public void assembleTestEntity(ProdCat e) throws Exception {
-		Account account;
-		if(aKey == null) {
-			account = mockEntityFactory.getEntityCopy(Asp.class, true);
-			account.setCurrency(entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true)));
-			account.setPaymentInfo(null);
-			account.setParent(null);
-			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
-		}
-		else {
-			account = entityDao.load(aKey);
-		}
-		Assert.assertNotNull(account);
-
-		ProductInventory product;
-		if(pKey == null) {
-			product = mockEntityFactory.getEntityCopy(ProductInventory.class, true);
-			final ProductGeneral gp = mockEntityFactory.getEntityCopy(ProductGeneral.class, true);
-			product.setProductGeneral(gp);
-			entityFactory.setGenerated(product.getProductGeneral());
-			product.setParent(account);
-			product = entityDao.persist(product);
-			pKey = new PrimaryKey<ProductInventory>(product);
-		}
-		else {
-			product = entityDao.load(pKey);
-		}
-		Assert.assertNotNull(product);
-		e.setProduct(product);
-
-		ProductCategory category;
-		if(cKey == null) {
-			category = mockEntityFactory.getEntityCopy(ProductCategory.class, true);
-			category.setParent(account);
-			category = entityDao.persist(category);
-			cKey = new PrimaryKey<ProductCategory>(category);
-		}
-		else {
-			category = entityDao.load(cKey);
-		}
-		Assert.assertNotNull(category);
-		e.setCategory(category);
+	public boolean supportsPaging() {
+		// since we can't (currently) create unique multiple instances since the
+		// only bk
+		// is the binding between product/category only
+		return false;
 	}
 
 	@Override
-	public void teardownTestEntity(ProdCat e) {
-		if(pKey != null) {
-			try {
-				entityDao.purge(entityDao.load(pKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			pKey = null;
-		}
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
 
-		if(cKey != null) {
-			try {
-				entityDao.purge(entityDao.load(cKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			cKey = null;
-		}
+		account = create(Asp.class, true);
+		account.setCurrency(currency);
+		account = persist(account);
 
-		if(aKey != null) {
-			try {
-				final Account account = entityDao.load(aKey);
-				entityDao.purge(account);
-				entityDao.purge(account.getCurrency());
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			aKey = null;
-		}
+		product = create(ProductInventory.class, true);
+		product.setProductGeneral(create(ProductGeneral.class, true));
+		product.setParent(account);
+		product = persist(product);
+
+		category = create(ProductCategory.class, true);
+		category.setParent(account);
+		category = persist(category);
+	}
+
+	@Override
+	public void purgeDependentEntities() {
+		purge(category);
+		purge(product);
+		purge(account);
+		purge(currency);
+	}
+
+	@Override
+	public void assembleTestEntity(ProdCat e) throws Exception {
+		e.setProduct(product);
+		e.setCategory(category);
 	}
 
 	@Override

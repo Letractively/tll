@@ -432,8 +432,9 @@ create table orders (
    pymntinfo_id int,
    billto_adr_id int,
    shipto_adr_id int,
-   primary key (id),
-   unique (date_created, aid, cust_id)
+   primary key (id)
+   -- we can't guarantee this w/ enough certainty!!!
+   --unique (date_created, aid, cust_id)
 );
 
 create table order_item (

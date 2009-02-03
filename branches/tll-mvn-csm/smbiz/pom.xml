@@ -427,7 +427,6 @@
       <artifactId>hibernate-annotations</artifactId>
     </dependency>
   
-    <!-- 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -443,7 +442,6 @@
       <artifactId>mysql-connector-java</artifactId>
       <scope>runtime</scope>
     </dependency>
-    -->
     
     <dependency>
       <groupId>org.springframework</groupId>

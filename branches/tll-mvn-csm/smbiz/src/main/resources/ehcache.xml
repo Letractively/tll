@@ -361,10 +361,10 @@
   <cache name="hbm.org.hibernate.cache.UpdateTimestampsCache" maxElementsInMemory="2000" eternal="true" timeToIdleSeconds="0"
     timeToLiveSeconds="0" overflowToDisk="false" />
   
-  <cache name="hbm.com.tll.model.impl.Currency" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
+  <cache name="hbm.com.tll.model.Currency" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
     timeToLiveSeconds="0" overflowToDisk="false" />
 
-  <cache name="hbm.com.tll.model.impl.Authority" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
+  <cache name="hbm.com.tll.model.Authority" maxElementsInMemory="5" eternal="true" timeToIdleSeconds="0"
     timeToLiveSeconds="0" overflowToDisk="false" />
 
 

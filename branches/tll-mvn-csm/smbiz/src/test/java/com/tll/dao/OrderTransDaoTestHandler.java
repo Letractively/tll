@@ -3,8 +3,6 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
@@ -13,7 +11,6 @@ import com.tll.model.Currency;
 import com.tll.model.Order;
 import com.tll.model.OrderTrans;
 import com.tll.model.OrderTransOp;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderTransDaoTestHandler
@@ -21,8 +18,9 @@ import com.tll.model.key.PrimaryKey;
  */
 public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<OrderTrans> {
 
-	PrimaryKey<Account> aKey;
-	PrimaryKey<Order> oKey;
+	Currency currency;
+	Account account;
+	Order order;
 
 	@Override
 	public Class<OrderTrans> entityClass() {
@@ -30,63 +28,29 @@ public class OrderTransDaoTestHandler extends AbstractEntityDaoTestHandler<Order
 	}
 
 	@Override
-	public void assembleTestEntity(OrderTrans e) throws Exception {
-		e.setPymntTrans(null);
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
 
-		Account account;
-		if(aKey == null) {
-			account = mockEntityFactory.getEntityCopy(Asp.class, true);
-			account.setCurrency(entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true)));
-			account.setPaymentInfo(null);
-			account.setParent(null);
-			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
-		}
-		else {
-			account = entityDao.load(aKey);
-		}
-		Assert.assertNotNull(account);
+		account = create(Asp.class, true);
+		account.setCurrency(currency);
+		account = persist(account);
 
-		Order order;
-		if(oKey == null) {
-			order = mockEntityFactory.getEntityCopy(Order.class, true);
-			order.setCurrency(account.getCurrency());
-			order.setPaymentInfo(null);
-			order.setAccount(account);
-			order = entityDao.persist(order);
-			oKey = new PrimaryKey<Order>(order);
-		}
-		else {
-			order = entityDao.load(oKey);
-		}
-		Assert.assertNotNull(order);
-		e.setOrder(order);
+		order = create(Order.class, false);
+		order.setCurrency(currency);
+		order.setAccount(account);
+		order = persist(order);
 	}
 
 	@Override
-	public void teardownTestEntity(OrderTrans e) {
-		if(oKey != null) {
-			try {
-				final Order order = entityDao.load(oKey);
-				entityDao.purge(order);
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			oKey = null;
-		}
+	public void purgeDependentEntities() {
+		purge(order);
+		purge(account);
+		purge(currency);
+	}
 
-		if(aKey != null) {
-			try {
-				final Account account = entityDao.load(aKey);
-				entityDao.purge(account);
-				entityDao.purge(account.getCurrency());
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			aKey = null;
-		}
+	@Override
+	public void assembleTestEntity(OrderTrans e) throws Exception {
+		e.setOrder(order);
 	}
 
 	@Override

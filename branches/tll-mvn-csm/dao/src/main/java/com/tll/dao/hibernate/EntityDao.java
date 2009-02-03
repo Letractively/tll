@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
@@ -227,12 +229,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	public <E extends IEntity> void purge(E entity) {
 		try {
-			if(entity.isNew()) {
-				getEntityManager().remove(entity);
-			}
-			else {
-				getEntityManager().remove(getEntityManager().merge(entity));
-			}
+			getEntityManager().remove(getEntityManager().merge(entity));
 		}
 		catch(final RuntimeException re) {
 			throw dbDialectHandler.translate(re);
@@ -263,9 +260,13 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	public <E extends IEntity> E findEntity(ICriteria<E> criteria) throws InvalidCriteriaException {
 		final List<E> list = findEntities(criteria, null);
-		if(list == null || list.size() != 1) {
-			return null;
+		if(list == null || list.size() < 1) {
+			throw new EntityNotFoundException("No matching entity found.");
 		}
+		else if(list.size() > 1) {
+			throw new NonUniqueResultException("More than one matching entity found.");
+		}
+		assert list.size() == 1;
 		return list.get(0);
 	}
 

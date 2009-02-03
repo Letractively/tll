@@ -3,19 +3,15 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
-import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.InterfaceOptionParameterDefinition;
 import com.tll.model.InterfaceSwitch;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * InterfaceOptionAccountDaoTestHandler
@@ -23,8 +19,9 @@ import com.tll.model.key.PrimaryKey;
  */
 public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestHandler<InterfaceOptionAccount> {
 
-	PrimaryKey<Account> aKey;
-	PrimaryKey<Interface> iKey;
+	Currency currency;
+	Account account;
+	Interface intf;
 	int numParameters = 0;
 	String removedParamName;
 
@@ -34,70 +31,43 @@ public class InterfaceOptionAccountDaoTestHandler extends AbstractEntityDaoTestH
 	}
 
 	@Override
-	public void assembleTestEntity(InterfaceOptionAccount e) throws Exception {
-		Account account;
-		if(aKey == null) {
-			account = mockEntityFactory.getEntityCopy(Asp.class, true);
-			account.setCurrency(entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true)));
-			account.setPaymentInfo(null);
-			account.setParent(null);
-			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
-		}
-		else {
-			account = entityDao.load(aKey);
-		}
-		Assert.assertNotNull(account);
-		e.setAccount(account);
-
-		// stub interface
-		Interface intf;
-		if(iKey == null) {
-			intf = mockEntityFactory.getEntityCopy(InterfaceSwitch.class, true);
-			final InterfaceOption option = mockEntityFactory.getEntityCopy(InterfaceOption.class, true);
-			final InterfaceOptionParameterDefinition param =
-					mockEntityFactory.getEntityCopy(InterfaceOptionParameterDefinition.class, true);
-			option.addParameter(param);
-			intf.addOption(option);
-			intf = entityDao.persist(intf);
-			iKey = new PrimaryKey<Interface>(intf);
-		}
-		else {
-			intf = entityDao.load(iKey);
-		}
-		Assert.assertNotNull(intf);
-
-		final InterfaceOption option = intf.getOptions().iterator().next();
-		final InterfaceOptionParameterDefinition param = option.getParameters().iterator().next();
-		e.setOption(option);
-		e.setParameter(param.getName(), "ioa_pvalue");
-		numParameters = e.getNumParameters();
+	public boolean supportsPaging() {
+		// since we can't (currently) create unique multiple instances since the bk
+		// is the binding between account/interface option only
+		return false;
 	}
 
 	@Override
-	public void teardownTestEntity(InterfaceOptionAccount e) {
-		if(aKey != null) {
-			try {
-				final Account account = entityDao.load(aKey);
-				entityDao.purge(account);
-				entityDao.purge(account.getCurrency());
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			aKey = null;
-		}
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
 
-		if(iKey != null) {
-			try {
-				final Interface intf = entityDao.load(iKey);
-				entityDao.purge(intf);
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			iKey = null;
-		}
+		account = create(Account.class, true);
+		account.setCurrency(currency);
+		account = persist(account);
+
+		intf = create(InterfaceSwitch.class, true);
+		InterfaceOption option = create(InterfaceOption.class, true);
+		InterfaceOptionParameterDefinition param = create(InterfaceOptionParameterDefinition.class, true);
+		option.addParameter(param);
+		intf.addOption(option);
+		intf = persist(intf);
+	}
+
+	@Override
+	public void purgeDependentEntities() {
+		purge(intf);
+		purge(account);
+		purge(currency);
+	}
+
+	@Override
+	public void assembleTestEntity(InterfaceOptionAccount e) throws Exception {
+		e.setAccount(account);
+		InterfaceOption option = intf.getOptions().iterator().next();
+		InterfaceOptionParameterDefinition param = option.getParameters().iterator().next();
+		e.setOption(option);
+		e.setParameter(param.getName(), "ioa_pvalue");
+		numParameters = e.getNumParameters();
 	}
 
 	@Override

@@ -187,7 +187,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @param e
 	 */
 	protected final <E extends IEntity> void makeUnique(E e) {
-		mockEntityFactory.makeBusinessKeyUnique(e);
+		MockEntityFactory.makeBusinessKeyUnique(e);
 	}
 
 	/**

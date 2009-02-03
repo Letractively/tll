@@ -70,21 +70,40 @@ public final class BusinessKeyFactory {
 	 * {@link BusinessKeyDefinition}s.
 	 * @param <E>
 	 * @param entityClass
-	 * @return Set of bk definitions or empty set if no business keys defined.
+	 * @return Set of bk definitions or <code>null</code> if no business keys are
+	 *         defined for the given entity class.
 	 */
 	private static <E extends IEntity> Set<IBusinessKeyDefinition<E>> discoverBusinessKeys(Class<E> entityClass) {
-		Set<IBusinessKeyDefinition<E>> set = new HashSet<IBusinessKeyDefinition<E>>();
 		BusinessObject bo = entityClass.getAnnotation(BusinessObject.class);
 		if(bo == null) {
 			// try the root entity
 			bo = EntityUtil.getRootEntityClass(entityClass).getAnnotation(BusinessObject.class);
 		}
-		if(bo != null) {
-			for(BusinessKeyDef def : bo.businessKeys()) {
-				set.add(new BusinessKeyDefinition<E>(entityClass, def.name(), def.properties()));
-			}
+		if(bo == null) {
+			// no bks defined
+			return null;
+		}
+		Set<IBusinessKeyDefinition<E>> set = new HashSet<IBusinessKeyDefinition<E>>();
+		for(BusinessKeyDef def : bo.businessKeys()) {
+			set.add(new BusinessKeyDefinition<E>(entityClass, def.name(), def.properties()));
 		}
 		return set;
+	}
+	
+	/**
+	 * Does the given entity type have any defined business keys?
+	 * @param <E>
+	 * @param entityClass
+	 * @return true/false
+	 */
+	public static <E extends IEntity> boolean hasBusinessKeys(Class<E> entityClass) {
+		try {
+			definitions(entityClass);
+			return true;
+		}
+		catch(BusinessKeyNotDefinedException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -98,16 +117,15 @@ public final class BusinessKeyFactory {
 	public static <E extends IEntity> IBusinessKeyDefinition<E>[] definitions(Class<E> entityClass)
 			throws BusinessKeyNotDefinedException {
 
-		Set set = map.get(entityClass);
-
-		if(set == null) {
-			// generate business key defs for this entity type
-			if((set = discoverBusinessKeys(entityClass)) == null) {
-				throw new BusinessKeyNotDefinedException(entityClass);
-			}
-			map.put(entityClass, set);
+		if(!map.containsKey(entityClass)) {
+			map.put(entityClass, (Set) discoverBusinessKeys(entityClass));
 		}
 
+		Set set = map.get(entityClass);
+		if(set == null) {
+			throw new BusinessKeyNotDefinedException(entityClass);
+		}
+		
 		return (IBusinessKeyDefinition<E>[]) set.toArray(new IBusinessKeyDefinition[set.size()]);
 	}
 

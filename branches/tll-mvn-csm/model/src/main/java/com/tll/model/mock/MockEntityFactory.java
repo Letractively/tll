@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapperImpl;
@@ -30,13 +31,81 @@ import com.tll.model.key.IBusinessKeyDefinition;
 public final class MockEntityFactory {
 
 	private static final Log log = LogFactory.getLog(MockEntityFactory.class);
-	
+
 	/**
 	 * Use a static counter for created business key wise unique entity copies to
 	 * ensure no collisions!
 	 */
 	private static int uniqueTokenCounter = 0;
 
+	/**
+	 * Makes the provided entity [quasi] business key unique by altering one of
+	 * the business key field values for all available business keys of the given
+	 * entity.
+	 * @param <E>
+	 * @param e the entity to be altered
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E extends IEntity> void makeBusinessKeyUnique(E e) {
+		IBusinessKeyDefinition<E>[] bkdefs;
+		try {
+			bkdefs = BusinessKeyFactory.definitions((Class<E>) e.entityClass());
+		}
+		catch(BusinessKeyNotDefinedException ex) {
+			// ok
+			return;
+		}
+		final String pktoken = '.' + IEntity.PK_FIELDNAME;
+		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
+		boolean entityAltered = false;
+		for(IBusinessKeyDefinition bkdef : bkdefs) {
+			for(String fname : bkdef.getPropertyNames()) {
+				// don't interrogate pk related key properties
+				if(!fname.endsWith(pktoken)) {
+					Object fval = bw.getPropertyValue(fname);
+					if(fval instanceof String) {
+						String sval = fval.toString();
+						String ut = nextUniqueToken();
+						if(sval.length() > ut.length()) {
+							sval = sval.substring(0, sval.length() - ut.length()) + ut;
+						}
+						else {
+							sval += ut;
+						}
+						bw.setPropertyValue(fname, sval);
+						entityAltered = true;
+						break;
+					}
+					else if(fval instanceof Date) {
+						Date altered =
+								new Date(((Date) fval).getTime() + (nextUniqueInt() * 10000) + RandomUtils.nextInt(10000)
+										+ nextUniqueInt() + 1);
+						bw.setPropertyValue(fname, altered);
+						entityAltered = true;
+						break;
+					}
+					else if(fval instanceof Float) {
+						Float n = (Float) fval;
+						bw.setPropertyValue(fname, n + nextUniqueInt());
+						entityAltered = true;
+						break;
+					}
+				}
+			}
+		}
+		if(!entityAltered) {
+			log.warn(e.descriptor() + " was not made business key unique");
+		}
+	}
+
+	private static int nextUniqueInt() {
+		return ++uniqueTokenCounter;
+	}
+
+	private static String nextUniqueToken() {
+		return Integer.toString(nextUniqueInt());
+	}
+	
 	/**
 	 * MockEntityBeanFactory annotation
 	 */
@@ -78,6 +147,9 @@ public final class MockEntityFactory {
 	}
 
 	/**
+	 * Gets all entity copies held in the factory of the given type.
+	 * <p>
+	 * NOTE: the copies are un-altered in terms of business key uniqueness.
 	 * @param <E>
 	 * @param entityClass
 	 * @return Set of entity copies
@@ -127,70 +199,4 @@ public final class MockEntityFactory {
 		}
 		return set;
 	}
-	
-	private int nextUniqueInt() {
-		return ++uniqueTokenCounter;
-	}
-
-	private String nextUniqueToken() {
-		return Integer.toString(nextUniqueInt());
-	}
-
-	/**
-	 * Makes the provided entity [quasi] business key unique by altering one of
-	 * the business key field values for all available business keys of the given
-	 * entity.
-	 * @param <E>
-	 * @param e the entity to be altered
-	 */
-	@SuppressWarnings("unchecked")
-	public <E extends IEntity> void makeBusinessKeyUnique(E e) {
-		IBusinessKeyDefinition<E>[] bkdefs;
-		try {
-			bkdefs = BusinessKeyFactory.definitions((Class<E>) e.entityClass());
-		}
-		catch(BusinessKeyNotDefinedException ex) {
-			// ok
-			return;
-		}
-		final String pktoken = '.' + IEntity.PK_FIELDNAME;
-		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
-		boolean entityAltered = false;
-		for(IBusinessKeyDefinition bkdef : bkdefs) {
-			for(String fname : bkdef.getPropertyNames()) {
-				// don't interrogate pk related key properties
-				if(!fname.endsWith(pktoken)) {
-					Object fval = bw.getPropertyValue(fname);
-					if(fval instanceof String) {
-						String sval = fval.toString();
-						String ut = nextUniqueToken();
-						if(sval.length() > ut.length()) {
-							sval = sval.substring(0, sval.length() - ut.length()) + ut;
-						}
-						else {
-							sval += ut;
-						}
-						bw.setPropertyValue(fname, sval);
-						entityAltered = true;
-						break;
-					}
-					else if(fval instanceof Date) {
-						bw.setPropertyValue(fname, new Date((new Date()).getTime() - (nextUniqueInt() * 1000)));
-						entityAltered = true;
-						break;
-					}
-					else if(fval instanceof Float) {
-						Float n = (Float) fval;
-						bw.setPropertyValue(fname, n + nextUniqueInt());
-						entityAltered = true;
-						break;
-					}
-				}
-			}
-		}
-		if(!entityAltered) {
-			log.warn(e.descriptor() + " was not made business key unique");
-		}
-	}
-
 }

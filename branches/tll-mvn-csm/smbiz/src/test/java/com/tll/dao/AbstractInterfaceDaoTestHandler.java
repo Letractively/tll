@@ -11,6 +11,7 @@ import org.testng.Assert;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
+import com.tll.model.mock.MockEntityFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler
@@ -33,14 +34,14 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	@Override
 	public void assembleTestEntity(I e) throws Exception {
 
-		final InterfaceOption o1 = mockEntityFactory.getEntityCopy(InterfaceOption.class, false);
+		final InterfaceOption o1 = create(InterfaceOption.class, false);
 		Set<InterfaceOptionParameterDefinition> params =
-				mockEntityFactory.getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+				getAll(InterfaceOptionParameterDefinition.class);
 		o1.addParameters(params);
 		e.addOption(o1);
 
-		final InterfaceOption o2 = mockEntityFactory.getEntityCopy(InterfaceOption.class, false);
-		params = mockEntityFactory.getAllEntityCopies(InterfaceOptionParameterDefinition.class);
+		final InterfaceOption o2 = create(InterfaceOption.class, false);
+		params = getAll(InterfaceOptionParameterDefinition.class);
 		o2.addParameters(params);
 		e.addOption(o2);
 	}
@@ -49,9 +50,9 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 	public void makeUnique(I e) {
 		super.makeUnique(e);
 		for(final InterfaceOption o : e.getOptions()) {
-			mockEntityFactory.makeBusinessKeyUnique(o);
+			MockEntityFactory.makeBusinessKeyUnique(o);
 			for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-				mockEntityFactory.makeBusinessKeyUnique(param);
+				MockEntityFactory.makeBusinessKeyUnique(param);
 			}
 		}
 	}
@@ -64,10 +65,10 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 		Assert.assertNotNull(e.getOptions(), "Interface options is null");
 		Assert.assertTrue(e.getOptions().size() > 0, "Interface options is empty");
 		for(final InterfaceOption o : e.getOptions()) {
-			Assert
-					.assertTrue(o.getParameters() != null && o.getParameters().size() > 0, "Interface option has no parameters");
-			for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
-				Assert.assertNotNull("param name is empty", param.getName());
+			if(o.getParameters() != null && o.getParameters().size() > 0) {
+				for(final InterfaceOptionParameterDefinition param : o.getParameters()) {
+					Assert.assertNotNull("param name is empty", param.getName());
+				}
 			}
 		}
 	}

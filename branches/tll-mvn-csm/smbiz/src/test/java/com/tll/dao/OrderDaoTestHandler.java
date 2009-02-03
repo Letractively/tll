@@ -3,8 +3,6 @@
  */
 package com.tll.dao;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.testng.Assert;
 
 import com.tll.model.Account;
@@ -15,7 +13,6 @@ import com.tll.model.Customer;
 import com.tll.model.Order;
 import com.tll.model.PaymentInfo;
 import com.tll.model.Visitor;
-import com.tll.model.key.PrimaryKey;
 
 /**
  * OrderDaoTestHandler
@@ -23,13 +20,13 @@ import com.tll.model.key.PrimaryKey;
  */
 public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 
-	PrimaryKey<Currency> cKey;
-	PrimaryKey<Address> btKey;
-	PrimaryKey<Address> stKey;
-	PrimaryKey<PaymentInfo> piKey;
-	PrimaryKey<Visitor> vKey;
-	PrimaryKey<Customer> cstKey;
-	PrimaryKey<Account> aKey;
+	Currency currency;
+	Address address1;
+	Address address2;
+	PaymentInfo paymentInfo;
+	Account account;
+	Visitor visitor;
+	Customer customer;
 
 	@Override
 	public Class<Order> entityClass() {
@@ -37,166 +34,50 @@ public class OrderDaoTestHandler extends AbstractEntityDaoTestHandler<Order> {
 	}
 
 	@Override
-	public void assembleTestEntity(Order e) throws Exception {
-		Currency currency;
-		if(cKey == null) {
-			currency = entityDao.persist(mockEntityFactory.getEntityCopy(Currency.class, true));
-			cKey = new PrimaryKey<Currency>(currency);
-		}
-		else {
-			currency = entityDao.load(cKey);
-		}
-		Assert.assertNotNull(currency);
-		e.setCurrency(currency);
+	public void persistDependentEntities() {
+		currency = createAndPersist(Currency.class, true);
 
-		Address bta;
-		if(btKey == null) {
-			bta = entityDao.persist(mockEntityFactory.getEntityCopy(Address.class, true));
-			btKey = new PrimaryKey<Address>(bta);
-		}
-		else {
-			bta = entityDao.load(btKey);
-		}
-		Assert.assertNotNull(bta);
-		e.setBillToAddress(bta);
+		address1 = createAndPersist(Address.class, true);
+		address2 = createAndPersist(Address.class, true);
 
-		Address sta;
-		if(stKey == null) {
-			sta = entityDao.persist(mockEntityFactory.getEntityCopy(Address.class, true));
-			stKey = new PrimaryKey<Address>(sta);
-		}
-		else {
-			sta = entityDao.load(stKey);
-		}
-		Assert.assertNotNull(sta);
-		e.setShipToAddress(sta);
+		paymentInfo = createAndPersist(PaymentInfo.class, true);
 
-		PaymentInfo pi;
-		if(piKey == null) {
-			pi = entityDao.persist(mockEntityFactory.getEntityCopy(PaymentInfo.class, true));
-			piKey = new PrimaryKey<PaymentInfo>(pi);
-		}
-		else {
-			pi = entityDao.load(piKey);
-		}
-		Assert.assertNotNull(pi);
-		e.setPaymentInfo(pi);
+		account = create(Asp.class, true);
+		account.setCurrency(currency);
+		account.setPaymentInfo(paymentInfo);
+		account = persist(account);
 
-		Account account;
-		if(aKey == null) {
-			account = mockEntityFactory.getEntityCopy(Asp.class, true);
-			account.setCurrency(currency);
-			account.setPaymentInfo(pi);
-			account.setParent(null);
-			account = entityDao.persist(account);
-			aKey = new PrimaryKey<Account>(account);
-		}
-		else {
-			account = entityDao.load(aKey);
-		}
-		Assert.assertNotNull(account);
-		e.setAccount(account);
+		visitor = create(Visitor.class, true);
+		visitor.setAccount(account);
+		visitor = persist(visitor);
 
-		Visitor v;
-		if(vKey == null) {
-			v = mockEntityFactory.getEntityCopy(Visitor.class, true);
-			v.setAccount(account);
-			v = entityDao.persist(v);
-			vKey = new PrimaryKey<Visitor>(v);
-		}
-		else {
-			v = entityDao.load(vKey);
-		}
-		Assert.assertNotNull(v);
-		e.setVisitor(v);
-
-		Customer customer;
-		if(cstKey == null) {
-			customer = mockEntityFactory.getEntityCopy(Customer.class, true);
-			customer.setCurrency(currency);
-			customer.setPaymentInfo(pi);
-			customer.setParent(account);
-			customer = entityDao.persist(customer);
-			cstKey = new PrimaryKey<Customer>(customer);
-		}
-		else {
-			customer = entityDao.load(cstKey);
-		}
-		Assert.assertNotNull(customer);
-		e.setCustomer(customer);
+		customer = create(Customer.class, true);
+		customer.setCurrency(currency);
+		customer.setPaymentInfo(paymentInfo);
+		customer.setParent(account);
+		customer = persist(customer);
 	}
 
 	@Override
-	public void teardownTestEntity(Order e) {
-		if(vKey != null) {
-			try {
-				entityDao.purge(entityDao.load(vKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			vKey = null;
-		}
+	public void purgeDependentEntities() {
+		purge(customer);
+		purge(visitor);
+		purge(account);
+		purge(paymentInfo);
+		purge(address2);
+		purge(address1);
+		purge(currency);
+	}
 
-		if(cstKey != null) {
-			try {
-				entityDao.purge(entityDao.load(cstKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			cstKey = null;
-		}
-
-		if(aKey != null) {
-			try {
-				entityDao.purge(entityDao.load(aKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			aKey = null;
-		}
-
-		if(cKey != null) {
-			try {
-				entityDao.purge(entityDao.load(cKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			cKey = null;
-		}
-
-		if(btKey != null) {
-			try {
-				entityDao.purge(entityDao.load(btKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			btKey = null;
-		}
-
-		if(stKey != null) {
-			try {
-				entityDao.purge(entityDao.load(stKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			stKey = null;
-		}
-
-		if(piKey != null) {
-			try {
-				entityDao.purge(entityDao.load(piKey));
-			}
-			catch(final EntityNotFoundException enfe) {
-				// ok
-			}
-			piKey = null;
-		}
+	@Override
+	public void assembleTestEntity(Order e) throws Exception {
+		e.setCurrency(currency);
+		e.setBillToAddress(address1);
+		e.setShipToAddress(address2);
+		e.setPaymentInfo(paymentInfo);
+		e.setAccount(account);
+		e.setVisitor(visitor);
+		e.setCustomer(customer);
 	}
 
 	@Override

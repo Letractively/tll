@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
 import org.apache.commons.lang.math.NumberRange;
@@ -210,6 +211,14 @@ public final class EntityDao implements IEntityDao {
 		}
 		this.entityGraph = entityGraph;
 	}
+	
+	/**
+	 * Used for testing purposes.
+	 * @return The entity graph.
+	 */
+	public EntityGraph getEntityGraph() {
+		return entityGraph;
+	}
 
 	@Override
 	public int executeQuery(String queryName, IQueryParam[] params) {
@@ -289,8 +298,8 @@ public final class EntityDao implements IEntityDao {
 				}
 			}
 		}
-
-		if(list != null && sorting != null) {
+		assert list != null;
+		if(sorting != null) {
 			Collections.sort(list, new SortColumnBeanComparator<E>(sorting.getPrimarySortColumn()));
 		}
 
@@ -356,10 +365,14 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> E findEntity(final ICriteria<E> criteria) throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, null);
-		if(list != null && list.size() == 1) {
-			return list.get(0).getEntity();
+		if(list == null || list.size() < 1) {
+			throw new EntityNotFoundException("No matching entity found.");
 		}
-		return null;
+		else if(list.size() > 1) {
+			throw new NonUniqueResultException("More than one matching entity found.");
+		}
+		assert list.size() == 1;
+		return list.get(0).getEntity();
 	}
 
 	public <E extends IEntity> E load(final IBusinessKey<E> key) {
@@ -395,6 +408,7 @@ public final class EntityDao implements IEntityDao {
 			throw new IllegalArgumentException("Empty or unset name key");
 		}
 		Collection<N> clc = entityGraph.getEntitiesByType(key.getType());
+		N rslt = null;
 		if(clc != null) {
 			for(final N e : clc) {
 				String name;
@@ -407,11 +421,19 @@ public final class EntityDao implements IEntityDao {
 					break;
 				}
 				if(key.getName().equals(name)) {
-					return e;
+					if(rslt == null) {
+						rslt = e;
+					}
+					else {
+						throw new NonUniqueResultException("More than one matching entity found.");
+					}
 				}
 			}
 		}
-		throw new EntityNotFoundException(key.descriptor() + " not found.");
+		if(rslt == null) {
+			throw new EntityNotFoundException(key.descriptor() + " not found.");
+		}
+		return rslt;
 	}
 
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {

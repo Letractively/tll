@@ -6,7 +6,6 @@
 package com.tll.dao;
 
 import com.tll.model.IEntity;
-import com.tll.model.IEntityFactory;
 import com.tll.model.mock.MockEntityFactory;
 
 /**
@@ -20,10 +19,9 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	/**
 	 * Manual injection of dependencies.
 	 * @param entityDao
-	 * @param entityFactory
 	 * @param mockEntityFactory
 	 */
-	void init(IEntityDao entityDao, IEntityFactory entityFactory, MockEntityFactory mockEntityFactory);
+	void init(IEntityDao entityDao, MockEntityFactory mockEntityFactory);
 
 	/**
 	 * @return The entity type this handler supports.
@@ -35,6 +33,17 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @return true/false
 	 */
 	boolean supportsPaging();
+
+	/**
+	 * Hook to optionally persist related dependent entities.
+	 */
+	void persistDependentEntities();
+
+	/**
+	 * Corollary to {@link #persistDependentEntities()}
+	 * @param entityDao
+	 */
+	void purgeDependentEntities();
 
 	/**
 	 * Assembles the test entity persisting any necessary related entities.
