@@ -140,6 +140,7 @@ public final class Bootstrapper implements ServletContextListener {
 				// for the class specified in Injector.getInstance()
 				// so we keep it silent (NOTE: ConfigurationException is only package
 				// visible so we have to resort to its superclass: RuntimeException)
+				log.error(e.getMessage(), e);
 			}
 		}
 	}

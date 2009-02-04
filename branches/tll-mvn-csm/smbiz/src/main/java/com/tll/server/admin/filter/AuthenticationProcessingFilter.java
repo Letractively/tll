@@ -6,40 +6,64 @@ package com.tll.server.admin.filter;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.springframework.security.AuthenticationManager;
 
 import com.tll.config.Config;
 import com.tll.config.ConfigKeys;
 import com.tll.model.User;
+import com.tll.server.IAppContext;
+import com.tll.server.SecurityMode;
 import com.tll.server.admin.AdminContext;
+import com.tll.service.entity.user.IUserService;
 
 /**
  * AuthenticationProcessingFilter
  * @author jpk
  */
 public final class AuthenticationProcessingFilter extends com.tll.server.filter.AuthenticationProcessingFilter {
+	
+	private SecurityMode securityMode;
+
+	@Override
+	protected AuthenticationManager getAuthenticationManager() {
+		return null;
+	}
+
+	@Override
+	protected SecurityMode getSecurityMode() {
+		return securityMode;
+	}
 
 	/**
 	 * The servlet session attribute key identifying the {@link AdminContext}.
 	 */
 	public static final String SA_ADMIN_CONTEXT = "ac";
 
-	@Override
-	protected void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
+	private void doFilterCommon(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		try {
 			if(request instanceof HttpServletRequest) {
 				HttpServletRequest hsr = (HttpServletRequest) request;
-				assert hsr.getSession(false) != null;
-				AdminContext ac = (AdminContext) hsr.getSession(false).getAttribute(SA_ADMIN_CONTEXT);
+				HttpSession session = hsr.getSession(false);
+				assert session != null;
+				ServletContext sc = session.getServletContext();
+				AdminContext ac = (AdminContext) session.getAttribute(SA_ADMIN_CONTEXT);
 				if(ac == null) {
+					IAppContext appContext = (IAppContext) sc.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+					if(appContext == null) {
+						throw new Error("Unable to obtain the app context");
+					}
+					IUserService userService = appContext.getEntityServiceFactory().instance(IUserService.class);
 					String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
 					assert defaultUserEmail != null : "No default user email defined in the app configuration!";
 					User user = userService.findByUsername(defaultUserEmail);
@@ -55,10 +79,11 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 		}
 	}
 
-	@Override
+	// TODO fix
+	// @Override
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			Authentication authResult) throws IOException {
-		super.onSuccessfulAuthentication(request, response, authResult);
+		// super.onSuccessfulAuthentication(request, response, authResult);
 
 		// create an AdminContext for this servlet session
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -70,5 +95,4 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 
 		request.getSession(false).setAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT, ac);
 	}
-
 }

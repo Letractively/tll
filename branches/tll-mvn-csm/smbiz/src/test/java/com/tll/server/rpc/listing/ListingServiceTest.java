@@ -49,7 +49,7 @@ import com.tll.util.EnumUtil;
  * ListingServiceTest - Tests the {@link ListingService}.
  * @author jpk
  */
-@Test(groups = "server.rpc")
+@Test(groups = "server")
 public class ListingServiceTest extends DbTest {
 
 	static final IListingService<ISearch, Model> theListingService = new IListingService<ISearch, Model>() {
@@ -99,11 +99,17 @@ public class ListingServiceTest extends DbTest {
 	}
 
 	@BeforeClass(alwaysRun = true)
-	@Parameters(value = {
-		"jpaMode", "daoMode" })
-	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
-		setJpaMode(EnumUtil.fromString(JpaMode.class, jpaModeStr));
-		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
+	@Parameters(value = "daoMode")
+	public final void onBeforeClass(String daoModeStr) {
+		daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
+		JpaMode jpaMode;
+		if(daoMode == DaoMode.MOCK) {
+			jpaMode = JpaMode.NONE;
+		}
+		else {
+			jpaMode = JpaMode.SPRING;
+		}
+		setJpaMode(jpaMode);
 		beforeClass();
 	}
 
@@ -115,7 +121,6 @@ public class ListingServiceTest extends DbTest {
 
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
-
 		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
 		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getQueryName());
 		search.setQueryParam(new IntPropertyValue("ispId", 1));

@@ -5,33 +5,27 @@ package com.tll.di;
 
 import java.util.Arrays;
 
-import org.acegisecurity.AccessDecisionManager;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.acl.AclManager;
-import org.acegisecurity.acl.basic.SimpleAclEntry;
-import org.acegisecurity.afterinvocation.AfterInvocationProviderManager;
-import org.acegisecurity.intercept.method.aopalliance.MethodSecurityInterceptor;
-import org.acegisecurity.providers.ProviderManager;
-import org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider;
-import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
-import org.acegisecurity.providers.dao.SaltSource;
-import org.acegisecurity.providers.dao.UserCache;
-import org.acegisecurity.providers.encoding.Md5PasswordEncoder;
-import org.acegisecurity.providers.encoding.PasswordEncoder;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.vote.AccessDecisionVoter;
-import org.acegisecurity.vote.AffirmativeBased;
-import org.acegisecurity.vote.RoleVoter;
+import org.springframework.security.AccessDecisionManager;
+import org.springframework.security.AuthenticationManager;
+import org.springframework.security.providers.ProviderManager;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider;
+import org.springframework.security.providers.dao.DaoAuthenticationProvider;
+import org.springframework.security.providers.dao.SaltSource;
+import org.springframework.security.providers.dao.UserCache;
+import org.springframework.security.providers.dao.salt.ReflectionSaltSource;
+import org.springframework.security.providers.encoding.Md5PasswordEncoder;
+import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.vote.AccessDecisionVoter;
+import org.springframework.security.vote.AffirmativeBased;
+import org.springframework.security.vote.RoleVoter;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.service.acl.afterinvocation.BasicAclEntryAfterInvocationFilteringProvider;
-import com.tll.service.acl.afterinvocation.FiltererFactory;
 
 /**
  * AcegiModule - Acegi flavored security implementation wiring.
@@ -45,7 +39,8 @@ public class AcegiModule extends GModule {
 	 */
 	private static enum ConfigKeys implements IConfigKey {
 
-		APP_NAME("app.name");
+		APP_NAME("app.name"),
+		USER_DETAILS_SERVICE_CLASSNAME("security.acegi.userDetailsService.classname");
 
 		private final String key;
 
@@ -67,9 +62,34 @@ public class AcegiModule extends GModule {
 		log.info("Employing Acegi Security");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void configure() {
 
+		// UserDetailsService
+		final String cn = Config.instance().getString(ConfigKeys.USER_DETAILS_SERVICE_CLASSNAME.getKey());
+		if(cn == null) {
+			throw new IllegalStateException("No user details service class name specified in the configuration");
+		}
+		try {
+			Class<? extends UserDetailsService> clz = (Class<? extends UserDetailsService>) Class.forName(cn);
+			bind(UserDetailsService.class).to(clz).in(Scopes.SINGLETON);
+		}
+		catch(ClassNotFoundException e) {
+			throw new IllegalStateException("No user details service found for name: " + cn);
+		}
+
+		// SaltSource
+		bind(SaltSource.class).toProvider(new Provider<SaltSource>() {
+
+			public SaltSource get() {
+				final ReflectionSaltSource rss = new ReflectionSaltSource();
+				rss.setUserPropertyToUse("getUsername");
+				return rss;
+			}
+
+		}).in(Scopes.SINGLETON);
+		
 		// PasswordEncoder
 		bind(PasswordEncoder.class).to(Md5PasswordEncoder.class).in(Scopes.SINGLETON);
 
@@ -149,69 +169,6 @@ public class AcegiModule extends GModule {
 					}
 
 				}).in(Scopes.SINGLETON);
-
-		// AfterInvocationProviderManager
-		/*
-		 * bind(AfterInvocationProviderManager.class).toProvider(new Provider<AfterInvocationProviderManager>() {
-		 * @Inject AfterInvocationProvider afterAclRead; @Inject
-		 * AfterInvocationProvider afterAclFilterer; public
-		 * AfterInvocationProviderManager get() { AfterInvocationProviderManager p =
-		 * new AfterInvocationProviderManager(); p.setProviders(Arrays.asList(new
-		 * AfterInvocationProvider[] { afterAclRead, afterAclFilterer } ) ); return
-		 * p; } }).in(Scopes.SINGLETON);
-		 */
-
-		// FiltererFactory
-		bind(FiltererFactory.class);
-
-		// BasicAclEntryAfterInvocationFilteringProvider
-		bind(BasicAclEntryAfterInvocationFilteringProvider.class).toProvider(
-				new Provider<BasicAclEntryAfterInvocationFilteringProvider>() {
-
-					@Inject
-					AclManager aclManager;
-					@Inject
-					FiltererFactory filtererFactory;
-
-					public BasicAclEntryAfterInvocationFilteringProvider get() {
-						final BasicAclEntryAfterInvocationFilteringProvider p = new BasicAclEntryAfterInvocationFilteringProvider();
-						p.setProcessConfigAttribute("AFTER_ACL_FILTERER");
-						p.setAclManager(aclManager);
-						p.setRequirePermission(new int[] {
-							SimpleAclEntry.ADMINISTRATION, SimpleAclEntry.READ });
-						p.setFiltererFactory(filtererFactory);
-						return p;
-					}
-
-				}).in(Scopes.SINGLETON);
-
-		// TODO finish SecurityModule - use custom annotations for security method
-		// interception?
-
-		// MethodSecurityInterceptor (accountSecurity)
-		bind(MethodSecurityInterceptor.class).toProvider(new Provider<MethodSecurityInterceptor>() {
-
-			@Inject
-			AuthenticationManager authenticationManager;
-			@Inject
-			@Named("accountAccessDecisionManager")
-			AccessDecisionManager accountAccessDecisionManager;
-			@Inject
-			AfterInvocationProviderManager afterInvocationManager;
-
-			public MethodSecurityInterceptor get() {
-				final MethodSecurityInterceptor i = new MethodSecurityInterceptor();
-				i.setAuthenticationManager(authenticationManager);
-				i.setAccessDecisionManager(accountAccessDecisionManager);
-				i.setAfterInvocationManager(afterInvocationManager);
-
-				return i;
-			}
-
-		}).in(Scopes.SINGLETON);
-
-		// bindInterceptor(Matchers.any(), methodMatcher, interceptors)
-
 	}
 
 }

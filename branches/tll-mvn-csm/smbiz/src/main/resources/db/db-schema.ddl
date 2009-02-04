@@ -148,7 +148,7 @@ create table visitor (
 );
 
 -- user related
-CREATE TABLE user (
+create table user (
 	id int not null,
 	version int not null default 0,
 	date_created datetime not null,
@@ -171,44 +171,16 @@ create table authority (
 	authority varchar(50) not null,
 	primary key(id)
 );
-ALTER TABLE authority add unique index un_authority_authority (authority);
+alter table authority add unique index un_authority_authority (authority);
 
-CREATE TABLE user_authority (
+create table user_authority (
 	uid int not null,
 	aid int not null,
 	primary key(uid,aid)
 );
 alter table user_authority 
-	add CONSTRAINT fk_ua FOREIGN KEY (uid) REFERENCES user(id) ON DELETE CASCADE,
-	add CONSTRAINT fk_aa FOREIGN KEY (aid) REFERENCES authority(id) ON DELETE CASCADE;
-
--- acl related
-CREATE TABLE acl_object_identity (
-	id int not null,
-	object_identity varchar(250) not null,
-	parent_object int,
-	acl_class varchar(250) DEFAULT 'net.sf.acegisecurity.acl.basic.SimpleAclEntry' not null,
-	UNIQUE(object_identity),
-	primary key (id)
-);
-
-ALTER TABLE acl_object_identity 
-	add index fk_acl_parent (parent_object), 
-	ADD CONSTRAINT fk_acl_parent foreign key (parent_object) REFERENCES acl_object_identity(id);
-
-CREATE TABLE acl_permission (
-	id int not null,
-	acl_object_identity int not null,
-	recipient varchar(100) not null,
-	mask smallint not null,
-	UNIQUE(acl_object_identity, recipient),
-	primary key (id)
-);
-
-ALTER TABLE acl_permission
-	add index fk_acl_permission (acl_object_identity), 
-	ADD CONSTRAINT fk_acl_permission foreign key (acl_object_identity) REFERENCES acl_object_identity(id);
-
+	add constraint fk_ua foreign key (uid) references user(id) on delete cascade,
+	add constraint fk_aa foreign key (aid) references authority(id) on delete cascade;
 
 -- interface related
 create table interface (
@@ -292,7 +264,7 @@ create table ioap (
 );
 
 alter table ioap 
-	add constraint fk_ioa_param foreign key (ioaid) REFERENCES ioa(id) on delete cascade;
+	add constraint fk_ioa_param foreign key (ioaid) references ioa(id) on delete cascade;
 
 
 -- product related

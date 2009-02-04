@@ -2,14 +2,11 @@ package com.tll.service.entity.user;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.acegisecurity.Authentication;
-import org.acegisecurity.acl.AclProvider;
-import org.acegisecurity.acl.AclProviderManager;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
@@ -42,7 +39,6 @@ import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.PropertyType;
-import com.tll.service.acl.IBasicAclProviderManager;
 import com.tll.service.entity.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
@@ -80,7 +76,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return passwordEncoder.isPasswordValid(encPassword, rawPasswordToCheck, salt);
 	}
 
-	private final AclProviderManager aclProviderManager;
+	// private final AclProviderManager aclProviderManager;
 
 	private final UserCache userCache;
 
@@ -88,14 +84,12 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
-	 * @param aclProviderManager
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IEntityDao dao, IEntityAssembler entityAssembler, AclProviderManager aclProviderManager,
-			UserCache userCache) {
+	public UserService(IEntityDao dao, IEntityAssembler entityAssembler, UserCache userCache) {
 		super(dao, entityAssembler);
-		this.aclProviderManager = aclProviderManager;
+		// this.aclProviderManager = aclProviderManager;
 		this.userCache = userCache;
 	}
 
@@ -182,20 +176,9 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		updateSecurityContextIfNecessary(user.getUsername(), null, null, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void purge(User user) throws EntityNotFoundException {
-
-		// remove any ACL entries for this user
-		final List<AclProvider> providers = aclProviderManager.getProviders();
-		for(final AclProvider provider : providers) {
-			if(provider instanceof IBasicAclProviderManager) {
-				((IBasicAclProviderManager) provider).deleteAllUserPermissions(user);
-			}
-		}
-
 		super.purge(user);
-
 		updateSecurityContextIfNecessary(user.getUsername(), null, null, true);
 	}
 

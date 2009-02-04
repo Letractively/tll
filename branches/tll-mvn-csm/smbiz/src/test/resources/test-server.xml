@@ -1,7 +1,76 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-server-tests">
   
-  <test name="server-tests" annotations="JDK">
+  <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <parameter name="securityMode" value="NONE" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+
+  <test name="server-bootstrap-test-orm-security" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <parameter name="securityMode" value="ACEGI" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+
+  <test name="server-bootstrap-test-mock-nosecurity" annotations="JDK">
+    <parameter name="daoMode" value="MOCK" />
+    <parameter name="securityMode" value="NONE" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+
+  <!-- TODO: will this permutation work ? 
+  <test name="server-bootstrap-test-mock-security" annotations="JDK">
+    <parameter name="daoMode" value="MOCK" />
+    <parameter name="securityMode" value="ACEGI" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  -->
+  
+  <!--
+  <test name="server-tests-orm" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="server.*" />
+        <exclude name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+
+  <test name="server-tests-mock" annotations="JDK">
+    <parameter name="daoMode" value="MOCK" />
     <groups>
       <run>
         <include name="server.*" />
@@ -11,5 +80,6 @@
       <package name="com.tll.server.*" />
     </packages>
   </test>
+  -->
   
 </suite>

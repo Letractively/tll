@@ -38,7 +38,7 @@ import com.tll.util.CommonUtil;
  * EntityMarshallerTest
  * @author jpk
  */
-@Test(groups = "server.rpc")
+@Test(groups = "server")
 public class MarshalerTest extends AbstractInjectedTest {
 
 	/**

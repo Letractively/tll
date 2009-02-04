@@ -156,7 +156,6 @@
         </executions>
       </plugin>
       
-      <!-- temp comment
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -225,7 +224,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
         
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>
@@ -235,8 +233,8 @@
           <suiteXmlFiles>
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile> -->
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile> -->
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile> -->
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>

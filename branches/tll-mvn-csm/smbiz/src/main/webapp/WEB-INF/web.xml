@@ -9,20 +9,18 @@
   <description>smbiz Administration UI</description>
 
   <context-param>
-    <param-name>guice.module.classnames</param-name>
+    <param-name>di.module.classnames</param-name>
     <param-value>
       com.tll.di.VelocityModule
       com.tll.di.MailModule
       com.tll.di.RefDataModule
       com.tll.di.ModelModule
-      com.tll.di.MockEntitiesModule
-      com.tll.di.DbDialectModule
+      com.tll.di.MockEntityFactoryModule
       com.tll.di.JpaModule
       com.tll.di.DaoModule
       com.tll.di.EntityServiceModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.SecurityModule
-      com.tll.di.SecurityModuleImpl
     </param-value>
   </context-param>
 
