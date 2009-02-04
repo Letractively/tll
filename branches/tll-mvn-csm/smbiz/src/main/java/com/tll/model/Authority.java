@@ -11,9 +11,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotEmpty;
 
-import com.tll.model.EntityBase;
-import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -36,12 +33,6 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	public static final String FIELDNAME_AUTHORITY = "authority";
 
 	public static final int MAXLEN_AUTHORITY = 50;
-
-	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-
-	public static final String ROLE_USER = "ROLE_USER";
-
-	public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
 	private String authority;
 

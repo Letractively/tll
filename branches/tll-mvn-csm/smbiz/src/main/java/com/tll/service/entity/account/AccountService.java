@@ -1,6 +1,7 @@
 package com.tll.service.entity.account;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.EntityExistsException;
 
@@ -8,13 +9,20 @@ import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
+import com.tll.criteria.ICriteria;
+import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
+import com.tll.dao.IPageResult;
+import com.tll.dao.SearchResult;
+import com.tll.dao.Sorting;
+import com.tll.listhandler.IListHandlerDataProvider;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.EntityCache;
 import com.tll.service.entity.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
+import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
 
 /**
  * AccountService - {@link IAccountService} impl
@@ -22,6 +30,48 @@ import com.tll.service.entity.NamedEntityService;
  */
 @Transactional
 public class AccountService extends NamedEntityService<Account> implements IAccountService {
+
+	/**
+	 * AccountHistoryDataProvider
+	 * @author jpk
+	 */
+	@Transactional(readOnly = true)
+	private static final class AccountHistoryDataProvider implements IListHandlerDataProvider<AccountHistory> {
+
+		private final IEntityDao dao;
+
+		/**
+		 * Constructor
+		 * @param dao
+		 */
+		public AccountHistoryDataProvider(IEntityDao dao) {
+			super();
+			this.dao = dao;
+		}
+
+		public List<AccountHistory> loadByIds(List<Integer> ids, Sorting sorting) {
+			return dao.findByIds(AccountHistory.class, ids, sorting);
+		}
+
+		public List<SearchResult<AccountHistory>> find(ICriteria<AccountHistory> criteria, Sorting sorting)
+				throws InvalidCriteriaException {
+			return dao.find(criteria, sorting);
+		}
+
+		public List<AccountHistory> getEntitiesFromIds(Class<AccountHistory> entityClass, Collection<Integer> ids,
+				Sorting sorting) {
+			return dao.getEntitiesFromIds(entityClass, ids, sorting);
+		}
+
+		public List<Integer> getIds(ICriteria<AccountHistory> criteria, Sorting sorting) throws InvalidCriteriaException {
+			return dao.getIds(criteria, sorting);
+		}
+
+		public IPageResult<SearchResult<AccountHistory>> getPage(ICriteria<AccountHistory> criteria, Sorting sorting,
+				int offset, int pageSize) throws InvalidCriteriaException {
+			return dao.getPage(criteria, sorting, offset, pageSize);
+		}
+	}
 
 	/**
 	 * Constructor
@@ -66,17 +116,27 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	public Account persist(Account entity) throws EntityExistsException, InvalidStateException {
-		Account pe = super.persist(entity);
 
-		// persist payment info?
-		if(entity.getPersistPymntInfo() && entity.getPaymentInfo() != null) {
-			dao.persist(entity.getPaymentInfo());
+		// handle payment info
+		if(entity.getPaymentInfo() != null) {
+			if(entity.getPersistPymntInfo()) {
+				// persist it
+				dao.persist(entity.getPaymentInfo());
+			}
+			else {
+				// kill it
+				dao.purge(entity.getPaymentInfo());
+			}
 		}
 
+		Account pe = super.persist(entity);
+
+		// handle account history
 		if(pe != null) {
 			AccountHistoryOp op = entity.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
 			addHistoryRecord(new AccountHistoryContext(op, pe));
 		}
+		
 		return pe;
 	}
 
@@ -144,4 +204,10 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		}// switch
 
 	}
+	
+	@Override
+	public IListHandlerDataProvider<AccountHistory> getAccountHistoryDataProvider() {
+		return new AccountHistoryDataProvider(dao);
+	}
+
 }

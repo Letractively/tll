@@ -77,8 +77,10 @@ public interface IEntityService<E extends IEntity> extends IListHandlerDataProvi
 	 * @param entities Collection of entities to update
 	 * @return separate collection of the persisted entities or <code>null</code>
 	 *         if the entities argument is <code>null</code>.
+	 * @throws InvalidStateException When one or more entites are found to be
+	 *         invalid.
 	 */
-	Collection<E> persistAll(Collection<E> entities);
+	Collection<E> persistAll(Collection<E> entities) throws InvalidStateException;
 
 	/**
 	 * Removes the specified entity from the system. The input entity should have

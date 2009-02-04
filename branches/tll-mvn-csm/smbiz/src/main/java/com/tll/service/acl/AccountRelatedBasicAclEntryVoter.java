@@ -10,7 +10,7 @@ import org.acegisecurity.vote.AccessDecisionVoter;
 import org.acegisecurity.vote.BasicAclEntryVoter;
 import org.aopalliance.intercept.MethodInvocation;
 
-import com.tll.model.Authority;
+import com.tll.model.AuthorityRoles;
 import com.tll.model.IAccountRelatedEntity;
 import com.tll.service.acl.afterinvocation.AfterInvocationProviderManager;
 
@@ -72,7 +72,7 @@ public class AccountRelatedBasicAclEntryVoter extends org.acegisecurity.vote.Bas
     @Override
     @SuppressWarnings("unchecked")
     public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
-        if( AfterInvocationProviderManager.authenticationHasRole(authentication, Authority.ROLE_ADMINISTRATOR) ) {
+        if(AfterInvocationProviderManager.authenticationHasRole(authentication, AuthorityRoles.ADMINISTRATOR.toString())) {
             Iterator<ConfigAttribute> iter = config.getConfigAttributes();
             while (iter.hasNext()) {
                 ConfigAttribute attr = iter.next();

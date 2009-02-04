@@ -16,17 +16,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.model.IEntity;
-import com.tll.service.entity.EntityAssembler;
 import com.tll.service.entity.EntityServiceFactory;
-import com.tll.service.entity.IEntityAssembler;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.account.AccountAddressService;
-import com.tll.service.entity.account.AccountHistoryService;
 import com.tll.service.entity.account.AccountService;
 import com.tll.service.entity.account.CustomerAccountService;
-import com.tll.service.entity.account.IAccountAddressService;
-import com.tll.service.entity.account.IAccountHistoryService;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.service.entity.account.ICustomerAccountService;
 import com.tll.service.entity.address.AddressService;
@@ -67,30 +61,24 @@ import com.tll.service.entity.visitor.IVisitorService;
 import com.tll.service.entity.visitor.VisitorService;
 
 /**
- * EntityServiceImplModule
+ * EntityServiceFactoryModule
  * @author jpk
  */
-public class EntityServiceImplModule extends GModule {
+public class EntityServiceFactoryModule extends GModule {
 
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
 	/**
 	 * Constructor
 	 */
-	public EntityServiceImplModule() {
+	public EntityServiceFactoryModule() {
 		super();
 		log.info("Employing Entity service module");
 	}
 
 	@Override
 	protected void configure() {
-
-		// IEntityAssembler
-		bind(IEntityAssembler.class).to(EntityAssembler.class).in(Scopes.SINGLETON);
-
 		bind(IAuthorityService.class).to(AuthorityService.class).in(Scopes.SINGLETON);
-		bind(IAccountAddressService.class).to(AccountAddressService.class).in(Scopes.SINGLETON);
-		bind(IAccountHistoryService.class).to(AccountHistoryService.class).in(Scopes.SINGLETON);
 		bind(IAccountService.class).to(AccountService.class).in(Scopes.SINGLETON);
 		bind(ICustomerAccountService.class).to(CustomerAccountService.class).in(Scopes.SINGLETON);
 		bind(IAddressService.class).to(AddressService.class).in(Scopes.SINGLETON);
@@ -128,10 +116,6 @@ public class EntityServiceImplModule extends GModule {
 
 			@Inject
 			IAuthorityService auths;
-			@Inject
-			IAccountAddressService aas;
-			@Inject
-			IAccountHistoryService ahs;
 			@Inject
 			IAccountService accs;
 			@Inject
@@ -176,8 +160,6 @@ public class EntityServiceImplModule extends GModule {
 						new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
 
 				map.put(IAuthorityService.class, auths);
-				map.put(IAccountAddressService.class, aas);
-				map.put(IAccountHistoryService.class, ahs);
 				map.put(IAccountService.class, accs);
 				map.put(ICustomerAccountService.class, cas);
 				map.put(IAppPropertyService.class, aps);

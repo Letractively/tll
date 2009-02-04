@@ -60,18 +60,39 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	public abstract Class<E> getEntityClass();
 
-	protected <SE extends E> IEntityValidator<SE> getEntityValidator(Class<SE> specificEntityType) {
+	/**
+	 * Gets the entity validator.
+	 * @param <SE> the specific entity type
+	 * @param specificEntityType
+	 * @return the entity validator
+	 */
+	protected final <SE extends E> IEntityValidator<SE> getEntityValidator(Class<SE> specificEntityType) {
 		return EntityValidatorFactory.instance(specificEntityType);
 	}
-
+	
+	/**
+	 * Validates an entity instance.
+	 * @param e the entity to validate
+	 * @throws InvalidStateException When the entity is found to be invalid
+	 */
 	@SuppressWarnings("unchecked")
-	private void validateAll(Collection<E> entities) throws InvalidStateException {
+	protected final void validate(E e) throws InvalidStateException {
+		getEntityValidator((Class<E>) e.entityClass()).validate(e);
+	}
+
+	/**
+	 * Validates <em>all</em> entities in a collection.
+	 * @param entities The entity collection to validate
+	 * @throws InvalidStateException When one or more entities are found to be
+	 *         invalid in the collection.
+	 */
+	protected final void validateAll(Collection<E> entities) throws InvalidStateException {
 		if(entities != null && entities.size() > 0) {
 			InvalidValue[] arr = new InvalidValue[] {};
 			for(E e : entities) {
 				if(e != null) {
 					try {
-						getEntityValidator((Class<E>) e.entityClass()).validate(e);
+						validate(e);
 					}
 					catch(InvalidStateException ise) {
 						arr = (InvalidValue[]) ArrayUtils.add(arr, ise.getInvalidValues());
@@ -84,13 +105,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public E persist(E entity) throws EntityExistsException, InvalidStateException {
-		getEntityValidator((Class<E>) entity.entityClass()).validate(entity);
+		validate(entity);
 		return dao.persist(entity);
 	}
 
-	public Collection<E> persistAll(Collection<E> entities) {
+	public Collection<E> persistAll(Collection<E> entities) throws InvalidStateException {
 		validateAll(entities);
 		return dao.persistAll(entities);
 	}

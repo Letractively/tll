@@ -17,8 +17,8 @@ import com.tll.model.IEntity;
 
 /**
  * ClassValidatorDelegate - Necessary wrapper around {@link ClassValidator} in
- * order to facilitate bean level validation annotations that target a single
- * bean property.
+ * order to facilitate class level validation annotations that target one (or
+ * more) entity properties.
  * @author jpk
  * @param <E>
  */

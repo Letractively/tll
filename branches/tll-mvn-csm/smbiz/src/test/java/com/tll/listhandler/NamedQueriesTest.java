@@ -22,6 +22,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
@@ -29,56 +30,28 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
-import com.tll.di.EntityServiceImplModule;
+import com.tll.di.EntityServiceFactoryModule;
+import com.tll.di.EntityServiceModule;
+import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.schema.PropertyType;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.util.EnumUtil;
 
 /**
- * NamedQueryDataRetrievalTest
+ * NamedQueriesTest
  * @author jpk
  */
-@Test(groups = "listhandler")
-public class NamedQueryDataRetrievalTest extends DbTest {
+@Test(groups = {
+	"listhandler", "namedqueries" })
+public class NamedQueriesTest extends DbTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 			new HashMap<SelectNamedQueries, SortColumn>();
 
 	private static final Map<SelectNamedQueries, Set<IQueryParam>> queryParamsBindings =
 			new HashMap<SelectNamedQueries, Set<IQueryParam>>();
-
-	private static class QueryParam implements IQueryParam {
-
-		private final String propertyName;
-		private final PropertyType type;
-		private final Object value;
-
-		/**
-		 * Constructor
-		 * @param propertyName
-		 * @param type
-		 * @param value
-		 */
-		public QueryParam(String propertyName, PropertyType type, Object value) {
-			super();
-			this.propertyName = propertyName;
-			this.type = type;
-			this.value = value;
-		}
-
-		public String getPropertyName() {
-			return propertyName;
-		}
-
-		public PropertyType getType() {
-			return type;
-		}
-
-		public Object getValue() {
-			return value;
-		}
-	}
 
 	static {
 		for(SelectNamedQueries nq : SelectNamedQueries.values()) {
@@ -106,11 +79,22 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 					querySortBindings.put(nq, new SortColumn("code", "intf"));
 					queryParamsBindings.put(nq, null);
 					break;
+				
+				// warn of unhandled defined named queries!
+				default:
+					throw new IllegalStateException("Unhandled named query: " + nq);
 			}
 		}
 	}
 
 	protected DaoMode daoMode;
+
+	/**
+	 * Constructor
+	 */
+	public NamedQueriesTest() {
+		super(true);
+	}
 
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = {
@@ -132,8 +116,13 @@ public class NamedQueryDataRetrievalTest extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new ModelModule());
+		if(daoMode == DaoMode.MOCK) {
+			modules.add(new MockEntityFactoryModule());
+		}
 		modules.add(new DaoModule(daoMode));
-		modules.add(new EntityServiceImplModule());
+		modules.add(new EntityServiceModule());
+		modules.add(new EntityServiceFactoryModule());
 	}
 
 	/**

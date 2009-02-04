@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-server-tests">
+  
+  <test name="server-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="server.*" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
+</suite>

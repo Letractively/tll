@@ -10,8 +10,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.validator.NotNull;
-
 import com.tll.model.schema.Managed;
 
 /**
@@ -34,7 +32,7 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 
 		@PrePersist
 		@PreUpdate
-		public void onCreate(ITimeStampEntity e) {
+		public void timestamp(ITimeStampEntity e) {
 			final Date now = new Date();
 			if(e.isNew()) e.setDateCreated(now);
 			e.setDateModified(now);
@@ -45,9 +43,15 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 	private Date dateCreated;
 	private Date dateModified;
 
+	/**
+	 * NOTE: we don't enforce a <code>null</code> check since the
+	 * {@link EntityTimeStamper} handles it automatically. I.e.: this is a managed
+	 * property.
+	 * @return The automatically set date of creation.
+	 */
 	@Column(name = "date_created", updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
+	// @NotNull
 	@Managed
 	public Date getDateCreated() {
 		return dateCreated;
@@ -57,9 +61,15 @@ public abstract class TimeStampEntity extends EntityBase implements ITimeStampEn
 		this.dateCreated = date;
 	}
 
+	/**
+	 * NOTE: we don't enforce a <code>null</code> check since the
+	 * {@link EntityTimeStamper} handles it automatically. I.e.: this is a managed
+	 * property.
+	 * @return The automatically set date of modification.
+	 */
 	@Column(name = "date_last_modified")
 	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
+	// @NotNull
 	@Managed
 	public Date getDateModified() {
 		return dateModified;

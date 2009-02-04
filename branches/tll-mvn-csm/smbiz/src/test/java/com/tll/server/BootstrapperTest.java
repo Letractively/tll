@@ -28,7 +28,7 @@ public class BootstrapperTest {
 				+ "com.tll.di.MockEntitiesModule \r\n" 
 				+ "com.tll.di.JpaModule \r\n" 
 				+ "com.tll.di.DaoModule \r\n"
-				+ "com.tll.di.EntityServiceImplModule \r\n" 
+				+ "com.tll.di.EntityServiceFactoryModule \r\n" 
 				+ "com.tll.di.SecurityModule \r\n");
 		return context;
 	}

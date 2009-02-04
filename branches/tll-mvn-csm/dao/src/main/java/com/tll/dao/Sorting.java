@@ -33,10 +33,28 @@ public class Sorting implements IMarshalable {
 	/**
 	 * Constructor
 	 * @param primaryPropertyName
+	 * @param direction
+	 * @param ignoreCase
+	 */
+	public Sorting(String primaryPropertyName, SortDir direction, Boolean ignoreCase) {
+		this(new SortColumn(primaryPropertyName, null, direction, ignoreCase));
+	}
+
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
 	 * @param primaryParentAlias
 	 */
 	public Sorting(String primaryPropertyName, String primaryParentAlias) {
 		this(new SortColumn(primaryPropertyName, primaryParentAlias));
+	}
+
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
+	 */
+	public Sorting(String primaryPropertyName) {
+		this(new SortColumn(primaryPropertyName, null));
 	}
 
 	/**

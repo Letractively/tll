@@ -15,6 +15,7 @@ import com.tll.model.CustomerAccount;
 import com.tll.model.EntityCache;
 import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityAssembler;
+import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
 
 /**
  * CustomerAccountService - {@link ICustomerAccountService} impl

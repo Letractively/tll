@@ -103,6 +103,13 @@ public abstract class DbTest extends AbstractInjectedTest {
 
 	/**
 	 * Constructor
+	 */
+	protected DbTest(boolean createDbShell) {
+		this(null, createDbShell);
+	}
+
+	/**
+	 * Constructor
 	 * @param jpaMode The JpaMode to employ for this test.
 	 * @param createDbShell Make a {@link DbShell} available?
 	 */

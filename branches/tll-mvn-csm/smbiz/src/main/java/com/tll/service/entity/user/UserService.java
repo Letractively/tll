@@ -34,6 +34,7 @@ import com.tll.criteria.QueryParam;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
+import com.tll.model.AuthorityRoles;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
@@ -132,7 +133,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		user.setLocked(false);
 
 		// set the role as user by default
-		user.addAuthority(dao.load(new NameKey<Authority>(Authority.class, Authority.ROLE_USER,
+		user.addAuthority(dao.load(new NameKey<Authority>(Authority.class, AuthorityRoles.USER.toString(),
 				Authority.FIELDNAME_AUTHORITY)));
 
 		persist(user);
