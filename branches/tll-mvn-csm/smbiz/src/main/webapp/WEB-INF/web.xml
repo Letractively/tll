@@ -9,6 +9,10 @@
   <description>smbiz Administration UI</description>
 
   <context-param>
+    <description>
+      Dependency Injection modules (class names) that collectively bootstrap the application.
+      This context param is processed by com.tll.server.Bootstrapper.
+    </description>
     <param-name>di.module.classnames</param-name>
     <param-value>
       com.tll.di.VelocityModule
@@ -22,6 +26,16 @@
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.SecurityModule
     </param-value>
+  </context-param>
+  
+  <context-param>
+    <description>
+      Declaration of the application dependency injection handlers (class names).
+      These handlers are passed the constructed "dependency injector" providing 
+      an hook to alter the servlet context.
+    </description>
+    <param-name>di.handlers</param-name>
+    <param-value>TODO</param-value>
   </context-param>
 
   <session-config>

@@ -1,10 +1,8 @@
-/*
- * Created on - Nov 15, 2005
- * Coded by   - 'The Logic Lab' - jpk
- * Copywright - 2005 - All rights reserved.
- *
+/**
+ * The Logic Lab
+ * @author jpk
+ * Feb 4, 2009
  */
-
 package com.tll.server;
 
 import java.text.SimpleDateFormat;
@@ -12,11 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailSendException;
 
 import com.tll.common.data.Status;
@@ -26,61 +19,17 @@ import com.tll.config.Config;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
 
+
 /**
- * Servlet utility methods.
+ * AppServletUtil
  * @author jpk
  */
-public abstract class ServletUtil {
-
-	private static final Log log = LogFactory.getLog(ServletUtil.class);
+public class AppServletUtil {
 
 	/**
 	 * Used for doling out exception notification emails.
 	 */
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-
-	/**
-	 * @param request
-	 * @return the full path: /{servlet name}[/{servlet path}]
-	 */
-	public static String getPath(final HttpServletRequest request) {
-
-		String s = request.getServletPath();
-
-		if(request.getPathInfo() != null) s += request.getPathInfo();
-
-		if(s.endsWith("/")) {
-			s = s.substring(0, s.length() - 1);
-		}
-
-		if(log.isDebugEnabled()) log.debug(">>servlet path: " + s);
-
-		return s;
-	}
-
-	/**
-	 * Sets an HTTP request session attribute NOT creating a session if one
-	 * doesn't already exist.
-	 * @param request
-	 * @param attribName
-	 * @param attrib
-	 */
-	public static void setSessionAttribute(final HttpServletRequest request, final String attribName, final Object attrib) {
-		final HttpSession s = request.getSession(false);
-		if(s != null) s.setAttribute(attribName, attrib);
-	}
-
-	/**
-	 * Retrieves an HTTP request session attribute returning <code>null</code> if
-	 * either the http request session is null or there is no attribut
-	 * @param request
-	 * @param attribName
-	 * @return the session attribute
-	 */
-	public static Object getSessionAttribute(final HttpServletRequest request, final String attribName) {
-		final HttpSession s = request.getSession(false);
-		return s == null ? null : s.getAttribute(attribName);
-	}
 
 	/**
 	 * Unified way to handle exceptions for an RPC call.

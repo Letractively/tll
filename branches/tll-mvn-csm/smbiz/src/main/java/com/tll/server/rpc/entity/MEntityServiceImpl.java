@@ -37,8 +37,8 @@ import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.server.AppServletUtil;
 import com.tll.server.RequestContext;
-import com.tll.server.ServletUtil;
 import com.tll.server.rpc.AuxDataHandler;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.MarshalingListHandler;
@@ -86,10 +86,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			payload.setEntity(group);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -156,13 +156,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 		}
 		catch(final EntityNotFoundException enfe) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), enfe, enfe.getMessage(), false);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), enfe, enfe.getMessage(), false);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -187,7 +187,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
 		}
 		catch(final EntityExistsException e1) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), e1, e1.getMessage(), false);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), e1, e1.getMessage(), false);
 		}
 		catch(final InvalidStateException ise) {
 			for(final InvalidValue iv : ise.getInvalidValues()) {
@@ -196,10 +196,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), se, null, true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), se, null, true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, payload.getStatus(), re, null, true);
+			AppServletUtil.handleException(requestContext, payload.getStatus(), re, null, true);
 			throw re;
 		}
 	}
@@ -222,13 +222,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			p.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
 		}
 		catch(final EntityNotFoundException e) {
-			ServletUtil.handleException(requestContext, p.getStatus(), e, e.getMessage(), false);
+			AppServletUtil.handleException(requestContext, p.getStatus(), e, e.getMessage(), false);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(requestContext, p.getStatus(), se, se.getMessage(), true);
+			AppServletUtil.handleException(requestContext, p.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			ServletUtil.handleException(requestContext, p.getStatus(), re, re.getMessage(), true);
+			AppServletUtil.handleException(requestContext, p.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}

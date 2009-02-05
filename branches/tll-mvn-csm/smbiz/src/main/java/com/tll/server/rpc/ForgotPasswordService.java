@@ -21,8 +21,8 @@ import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.User;
+import com.tll.server.AppServletUtil;
 import com.tll.server.RequestContext;
-import com.tll.server.ServletUtil;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.user.IUserService;
 import com.tll.util.StringUtil;
@@ -59,13 +59,13 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 				status.addMsg("Password reminder email was sent.", MsgLevel.INFO);
 			}
 			catch(final EntityNotFoundException nfe) {
-				ServletUtil.handleException(rc, p.getStatus(), nfe, nfe.getMessage(), false);
+				AppServletUtil.handleException(rc, p.getStatus(), nfe, nfe.getMessage(), false);
 			}
 			catch(final ChangeUserCredentialsFailedException e) {
-				ServletUtil.handleException(rc, p.getStatus(), e, e.getMessage(), false);
+				AppServletUtil.handleException(rc, p.getStatus(), e, e.getMessage(), false);
 			}
 			catch(final MailSendException mse) {
-				ServletUtil.handleException(rc, p.getStatus(), mse, mse.getMessage(), true);
+				AppServletUtil.handleException(rc, p.getStatus(), mse, mse.getMessage(), true);
 			}
 		}
 

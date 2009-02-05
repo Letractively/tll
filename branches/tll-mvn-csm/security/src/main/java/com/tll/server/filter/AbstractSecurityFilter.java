@@ -26,7 +26,16 @@ public abstract class AbstractSecurityFilter implements Filter {
 	 * @return The operating {@link SecurityMode}.
 	 */
 	protected abstract SecurityMode getSecurityMode();
-	
+
+	/**
+	 * Called before any other filter initialization routines are performed.
+	 * @param config
+	 * @throws ServletException
+	 */
+	protected void doPreInit(FilterConfig config) throws ServletException {
+		// base impl no-op
+	}
+
 	/**
 	 * Performs filter init when there the security mode is acegi.
 	 * @param config
@@ -86,9 +95,10 @@ public abstract class AbstractSecurityFilter implements Filter {
 				throw new Error("Unhandled security mode: " + getSecurityMode());
 		}
 	}
-
+	
 	@Override
 	public final void init(FilterConfig config) throws ServletException {
+		doPreInit(config);
 		switch(getSecurityMode()) {
 			case ACEGI:
 				doInitAcegi(config);

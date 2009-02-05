@@ -8,9 +8,6 @@ package com.tll.server;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
-import org.acegisecurity.AccessDecisionManager;
-import org.acegisecurity.AuthenticationManager;
-
 import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
@@ -25,10 +22,10 @@ import com.tll.service.entity.IEntityServiceFactory;
 public interface IAppContext {
 
 	/**
-	 * The key identifying the sole {@link AppContext} in the
+	 * The key identifying the sole {@link IAppContext} in the
 	 * {@link ServletContext}.
 	 */
-	static final String SERVLET_CONTEXT_KEY = AppContext.class.getName();
+	static final String SERVLET_CONTEXT_KEY = IAppContext.class.getName();
 
 	/**
 	 * @return true/false
@@ -71,22 +68,7 @@ public interface IAppContext {
 	Marshaler getMarshaler();
 
 	/**
-	 * @return the security mode of the app.
-	 */
-	SecurityMode getSecurityMode();
-	
-	/**
 	 * @return The dao mode of the app.
 	 */
 	DaoMode getDaoMode();
-
-	/**
-	 * @return The security related authentication manager.
-	 */
-	AuthenticationManager getAuthenticationManager();
-	
-	/**
-	 * @return The http request access decision manager.
-	 */
-	AccessDecisionManager getHttpRequestAccessDecisionManager();
 }

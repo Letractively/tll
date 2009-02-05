@@ -32,8 +32,8 @@ import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
+import com.tll.server.AppServletUtil;
 import com.tll.server.RequestContext;
-import com.tll.server.ServletUtil;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
@@ -193,10 +193,10 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				}
 			}
 			catch(final ListingException e) {
-				ServletUtil.handleException(requestContext, status, e, null, false);
+				AppServletUtil.handleException(requestContext, status, e, null, false);
 			}
 			catch(final RuntimeException re) {
-				ServletUtil.handleException(requestContext, status, re, null, true);
+				AppServletUtil.handleException(requestContext, status, re, null, true);
 				throw re;
 			}
 

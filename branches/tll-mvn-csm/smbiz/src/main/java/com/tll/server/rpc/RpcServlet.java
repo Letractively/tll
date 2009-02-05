@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.tll.server.IAppContext;
+import com.tll.server.ISecurityContext;
 import com.tll.server.RequestContext;
 
 /**
@@ -27,6 +28,7 @@ public abstract class RpcServlet extends RemoteServiceServlet {
 	 */
 	protected final RequestContext getRequestContext() {
 		return new RequestContext((IAppContext) getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY),
+				(ISecurityContext) getServletContext().getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY),
 				getThreadLocalRequest());
 	}
 }

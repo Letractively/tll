@@ -8,9 +8,6 @@ package com.tll.server;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
-import org.acegisecurity.AccessDecisionManager;
-import org.acegisecurity.AuthenticationManager;
-
 import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
@@ -28,9 +25,6 @@ public class AppContext implements IAppContext {
 	
 	private final boolean debug;
 	private final String environment;
-	private final SecurityMode securityMode;
-	private final AuthenticationManager authenticationManager;
-	private final AccessDecisionManager httpRequesetAccessDecisionManager;
 	private final RefData refData;
 	private final MailManager mailManager;
 	private final Marshaler marshaler;
@@ -43,9 +37,6 @@ public class AppContext implements IAppContext {
 	 * Constructor
 	 * @param debug
 	 * @param environment
-	 * @param securityMode
-	 * @param authenticationManager
-	 * @param httpRequesetAccessDecisionManager
 	 * @param refData
 	 * @param mailManager
 	 * @param marshaler
@@ -54,17 +45,13 @@ public class AppContext implements IAppContext {
 	 * @param entityFactory
 	 * @param entityServiceFactory
 	 */
-	public AppContext(boolean debug, String environment, SecurityMode securityMode,
-			AuthenticationManager authenticationManager, AccessDecisionManager httpRequesetAccessDecisionManager,
-			RefData refData, MailManager mailManager, Marshaler marshaler, DaoMode daoMode,
+	public AppContext(boolean debug, String environment, RefData refData, MailManager mailManager, Marshaler marshaler,
+			DaoMode daoMode,
 			EntityManagerFactory entityManagerFactory, IEntityFactory entityFactory,
 			IEntityServiceFactory entityServiceFactory) {
 		super();
 		this.debug = debug;
 		this.environment = environment;
-		this.securityMode = securityMode;
-		this.authenticationManager = authenticationManager;
-		this.httpRequesetAccessDecisionManager = httpRequesetAccessDecisionManager;
 		this.refData = refData;
 		this.mailManager = mailManager;
 		this.marshaler = marshaler;
@@ -77,16 +64,6 @@ public class AppContext implements IAppContext {
 	@Override
 	public IEntityServiceFactory getEntityServiceFactory() {
 		return entityServiceFactory;
-	}
-
-	@Override
-	public SecurityMode getSecurityMode() {
-		return securityMode;
-	}
-
-	@Override
-	public AuthenticationManager getAuthenticationManager() {
-		return authenticationManager;
 	}
 
 	@Override
@@ -117,11 +94,6 @@ public class AppContext implements IAppContext {
 	@Override
 	public boolean isDebug() {
 		return debug;
-	}
-
-	@Override
-	public AccessDecisionManager getHttpRequestAccessDecisionManager() {
-		return httpRequesetAccessDecisionManager;
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
-import com.tll.server.ServletUtil;
+import com.tll.server.AppServletUtil;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.service.entity.IEntityService;
@@ -62,7 +62,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 			return MEntityServiceImplFactory.instance(entityType);
 		}
 		catch(final SystemError se) {
-			ServletUtil.handleException(getRequestContext(), payload.getStatus(), se, se.getMessage(), true);
+			AppServletUtil.handleException(getRequestContext(), payload.getStatus(), se, se.getMessage(), true);
 			return null;
 		}
 	}

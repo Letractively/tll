@@ -10,7 +10,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationException;
 import org.springframework.security.AuthenticationManager;
 
 /**
@@ -20,17 +24,45 @@ import org.springframework.security.AuthenticationManager;
 public abstract class AuthenticationProcessingFilter extends AbstractSecurityFilter {
 
 	/**
-	 * The Acegi
+	 * Wrapped - Thin wrapper around Acegi's
 	 * {@link org.springframework.security.ui.webapp.AuthenticationProcessingFilter}
 	 * .
+	 * @author jpk
 	 */
-	private org.springframework.security.ui.webapp.AuthenticationProcessingFilter wrapped;
+	final class Wrapped extends org.springframework.security.ui.webapp.AuthenticationProcessingFilter {
+
+		@Override
+		protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+				Authentication authResult) throws IOException {
+			super.onSuccessfulAuthentication(request, response, authResult);
+			AuthenticationProcessingFilter.this.onSuccessfulAuthentication(request, response, authResult);
+		}
+
+		@Override
+		protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+				AuthenticationException failed) throws IOException {
+			super.onUnsuccessfulAuthentication(request, response, failed);
+			AuthenticationProcessingFilter.this.onUnsuccessfulAuthentication(request, response, failed);
+		}
+	}
+
+	private final Wrapped wrapped = new Wrapped();
 
 	/**
 	 * Called only when the security mode is acegi.
 	 * @return The {@link AuthenticationManager}.
 	 */
 	protected abstract AuthenticationManager getAuthenticationManager();
+	
+	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			Authentication authResult) throws IOException {
+		// base impl no-op
+	}
+
+	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException {
+		// base impl no-op
+	}
 	
 	@Override
 	protected void doInitAcegi(FilterConfig config) /*throws ServletException*/{

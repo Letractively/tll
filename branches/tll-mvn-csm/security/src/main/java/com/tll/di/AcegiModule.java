@@ -32,7 +32,7 @@ import com.tll.config.IConfigKey;
  * @author jpk
  */
 public class AcegiModule extends GModule {
-	
+
 	/**
 	 * ConfigKeys - Config keys for the Acegi module.
 	 * @author jpk
@@ -89,7 +89,7 @@ public class AcegiModule extends GModule {
 			}
 
 		}).in(Scopes.SINGLETON);
-		
+
 		// PasswordEncoder
 		bind(PasswordEncoder.class).to(Md5PasswordEncoder.class).in(Scopes.SINGLETON);
 

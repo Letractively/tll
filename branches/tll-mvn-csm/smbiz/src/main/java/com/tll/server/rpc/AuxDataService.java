@@ -10,8 +10,8 @@ import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IAuxDataService;
+import com.tll.server.AppServletUtil;
 import com.tll.server.RequestContext;
-import com.tll.server.ServletUtil;
 
 /**
  * AuxDataService - Implementation of IAuxDataService
@@ -28,10 +28,10 @@ public class AuxDataService extends RpcServlet implements IAuxDataService {
 			AuxDataHandler.getAuxData(rc, request, payload);
 		}
 		catch(SystemError se) {
-			ServletUtil.handleException(rc, payload.getStatus(), se, null, true);
+			AppServletUtil.handleException(rc, payload.getStatus(), se, null, true);
 		}
 		catch(RuntimeException re) {
-			ServletUtil.handleException(rc, payload.getStatus(), re, null, true);
+			AppServletUtil.handleException(rc, payload.getStatus(), re, null, true);
 			throw re;
 		}
 		return payload;
