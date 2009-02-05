@@ -147,8 +147,10 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(this.jpaMode != null || injector != null) {
 			throw new IllegalStateException("The JPA mode has already been set.");
 		}
-		// update the config
-		Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), jpaMode.toString());
+		if(jpaMode != null) {
+			// update the config
+			Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), jpaMode.toString());
+		}
 		this.jpaMode = jpaMode;
 	}
 
