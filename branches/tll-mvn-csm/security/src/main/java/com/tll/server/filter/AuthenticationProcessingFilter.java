@@ -15,13 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
-import org.springframework.security.AuthenticationManager;
+
+import com.tll.server.ISecurityContext;
 
 /**
  * AuthenticationProcessingFilter
  * @author jpk
  */
-public abstract class AuthenticationProcessingFilter extends AbstractSecurityFilter {
+public class AuthenticationProcessingFilter extends AbstractSecurityFilter {
 
 	/**
 	 * Wrapped - Thin wrapper around Acegi's
@@ -49,12 +50,6 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	private final Wrapped wrapped = new Wrapped();
 
 	/**
-	 * Called only when the security mode is acegi.
-	 * @return The {@link AuthenticationManager}.
-	 */
-	protected abstract AuthenticationManager getAuthenticationManager();
-
-	/**
 	 * Invoked upon successful authentication.
 	 * @throws IOException
 	 */
@@ -73,8 +68,8 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	}
 
 	@Override
-	protected void doInitAcegi(FilterConfig config) /*throws ServletException*/{
-		wrapped.setAuthenticationManager(getAuthenticationManager());
+	protected void doInitAcegi(FilterConfig config, ISecurityContext securityContext) /*throws ServletException*/{
+		wrapped.setAuthenticationManager(securityContext.getAuthenticationManager());
 
 		String afu = config.getInitParameter("authenticationFailureUrl");
 		if(afu == null) {
@@ -93,7 +88,8 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	}
 
 	@Override
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
+			ISecurityContext securityContext) throws IOException,
 			ServletException {
 		wrapped.doFilter(request, response, chain);
 	}

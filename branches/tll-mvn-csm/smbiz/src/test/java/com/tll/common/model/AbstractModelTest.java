@@ -14,10 +14,7 @@ import org.testng.annotations.BeforeClass;
 import com.google.inject.Module;
 import com.tll.DbTest;
 import com.tll.TestUtils;
-import com.tll.common.model.IModelProperty;
-import com.tll.common.model.Model;
-import com.tll.common.model.ModelRefProperty;
-import com.tll.common.model.RelatedManyProperty;
+import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
@@ -148,7 +145,8 @@ public abstract class AbstractModelTest extends DbTest {
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new DaoModule(DaoMode.MOCK));
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
+		modules.add(new DaoModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

@@ -5,7 +5,6 @@
  */
 package com.tll.dao.hibernate;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -13,6 +12,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.JpaMode;
 import com.tll.dao.jdbc.DbShell;
@@ -47,13 +47,8 @@ public class HibernateEnvironmentTest {
 	 * Verifies the loading of the Hibernate environment.
 	 */
 	public void test() {
-		try {
-			Guice.createInjector(Stage.DEVELOPMENT, new JpaModule(JpaMode.LOCAL), new DaoModule(
-					DaoMode.ORM));
-		}
-		catch(Throwable t) {
-			Assert.fail(t.getMessage(), t);
-		}
-
+		Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), JpaMode.LOCAL.toString());
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
+		Guice.createInjector(Stage.DEVELOPMENT, new JpaModule(), new DaoModule());
 	}
 }

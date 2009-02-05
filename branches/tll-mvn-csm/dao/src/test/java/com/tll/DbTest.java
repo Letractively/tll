@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.inject.Module;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -115,7 +116,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 */
 	protected DbTest(JpaMode jpaMode, boolean createDbShell) {
 		super();
-		this.jpaMode = jpaMode;
+		setJpaMode(jpaMode);
 		this.createDbShell = createDbShell;
 	}
 
@@ -126,7 +127,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(createDbShell && (jpaMode != JpaMode.NONE && jpaMode != JpaMode.MOCK)) {
 			modules.add(new DbShellModule());
 		}
-		modules.add(new JpaModule(jpaMode));
+		modules.add(new JpaModule());
 	}
 
 	@Override
@@ -143,9 +144,11 @@ public abstract class DbTest extends AbstractInjectedTest {
 	}
 
 	protected final void setJpaMode(JpaMode jpaMode) {
-		if(this.jpaMode != null) {
+		if(this.jpaMode != null || injector != null) {
 			throw new IllegalStateException("The JPA mode has already been set.");
 		}
+		// update the config
+		Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), jpaMode.toString());
 		this.jpaMode = jpaMode;
 	}
 

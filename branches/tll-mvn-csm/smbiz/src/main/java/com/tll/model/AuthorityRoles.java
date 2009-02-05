@@ -11,7 +11,7 @@ package com.tll.model;
  * @author jpk
  */
 public enum AuthorityRoles {
-	ADMINISTRATOR,
-	USER,
-	ANONYMOUS;
+	ROLE_ADMINISTRATOR,
+	ROLE_USER,
+	ROLE_ANONYMOUS;
 }

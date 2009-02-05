@@ -20,6 +20,7 @@ import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
+import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
 import com.tll.model.Account;
@@ -56,7 +57,8 @@ public class MarshalerTest extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		final DaoModule daoModule = new DaoModule(DaoMode.MOCK);
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
+		final DaoModule daoModule = new DaoModule();
 		modules.add(daoModule);
 	}
 

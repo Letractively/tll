@@ -25,7 +25,7 @@ public class MockEntityFactoryModule extends GModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		MOCK_ENTITIES_FILENAME("mock.entities.filename");
+		MOCK_ENTITIES_FILENAME("model.mock.entities.filename");
 
 		private final String key;
 

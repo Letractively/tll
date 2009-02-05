@@ -10,6 +10,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
@@ -34,7 +35,8 @@ public class PaymentInfoStubber extends DbTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new DaoModule(DaoMode.ORM));
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
+		modules.add(new DaoModule());
 	}
 
 	@Test

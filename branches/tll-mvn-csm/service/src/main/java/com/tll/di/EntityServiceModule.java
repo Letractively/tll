@@ -23,7 +23,7 @@ public class EntityServiceModule extends GModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		ENTITY_ASSEMBLER_CLASSNAME("entityAssembler.classname");
+		ENTITY_ASSEMBLER_CLASSNAME("service.entityAssembler.classname");
 
 		private final String key;
 

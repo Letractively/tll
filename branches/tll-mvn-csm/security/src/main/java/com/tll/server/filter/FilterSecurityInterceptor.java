@@ -5,34 +5,25 @@ package com.tll.server.filter;
 
 import javax.servlet.FilterConfig;
 
-import org.springframework.security.AccessDecisionManager;
-import org.springframework.security.AuthenticationManager;
 import org.springframework.security.intercept.web.FilterInvocationDefinitionSource;
 import org.springframework.security.intercept.web.FilterInvocationDefinitionSourceEditor;
+
+import com.tll.server.ISecurityContext;
 
 /**
  * FilterSecurityInterceptor
  * @author jpk
  */
+// TODO fix deprecation warning
 @SuppressWarnings("deprecation")
-public abstract class FilterSecurityInterceptor extends AbstractSecurityFilter {
+public class FilterSecurityInterceptor extends AbstractSecurityFilter {
 
 	private org.springframework.security.intercept.web.FilterSecurityInterceptor wrapped;
 
-	/**
-	 * @return the {@link AuthenticationManager}.
-	 */
-	public abstract AuthenticationManager getAuthenticationManager();
-
-	/**
-	 * @return the http request related {@link AccessDecisionManager}.
-	 */
-	public abstract AccessDecisionManager getHttpRequestAccessDecisionManager();
-	
 	@Override
-	public void doInitAcegi(FilterConfig config) /*throws ServletException*/{
-		wrapped.setAuthenticationManager(getAuthenticationManager());
-		wrapped.setAccessDecisionManager(getHttpRequestAccessDecisionManager());
+	public void doInitAcegi(FilterConfig config, ISecurityContext securityContext) /*throws ServletException*/{
+		wrapped.setAuthenticationManager(securityContext.getAuthenticationManager());
+		wrapped.setAccessDecisionManager(securityContext.getHttpRequestAccessDecisionManager());
 
 		String ods = config.getInitParameter("objectDefinitionSource");
 		if(ods == null) {

@@ -15,11 +15,13 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationP
 import org.springframework.security.userdetails.memory.UserAttribute;
 import org.springframework.security.userdetails.memory.UserAttributeEditor;
 
+import com.tll.server.ISecurityContext;
+
 /**
  * AnonymousProcessingFilter
  * @author jpk
  */
-public abstract class AnonymousProcessingFilter extends AbstractSecurityFilter {
+public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 
 	/**
 	 * The wrapped {@link AnonymousAuthenticationProvider}.
@@ -27,7 +29,7 @@ public abstract class AnonymousProcessingFilter extends AbstractSecurityFilter {
 	private org.springframework.security.providers.anonymous.AnonymousProcessingFilter wrapped;
 
 	@Override
-	public void doInitAcegi(FilterConfig config) /*throws ServletException*/{
+	public void doInitAcegi(FilterConfig config, ISecurityContext securityContext) /*throws ServletException*/{
 		String k = config.getInitParameter("key");
 		if(k == null) {
 			throw new Error("The init parameter 'key' must be declared");
@@ -45,7 +47,8 @@ public abstract class AnonymousProcessingFilter extends AbstractSecurityFilter {
 	}
 
 	@Override
-	public void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	public void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
+			ISecurityContext securityContext) throws IOException,
 			ServletException {
 		wrapped.doFilter(request, response, chain);
 	}

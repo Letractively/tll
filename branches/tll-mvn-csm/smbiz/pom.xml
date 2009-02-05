@@ -126,7 +126,6 @@
     <plugins>
     
       <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
-      <!-- temp
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
@@ -225,7 +224,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
       
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>

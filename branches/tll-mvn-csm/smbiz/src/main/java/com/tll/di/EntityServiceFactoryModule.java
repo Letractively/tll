@@ -9,8 +9,8 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
-import org.acegisecurity.providers.dao.UserCache;
-import org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache;
+import org.springframework.security.providers.dao.UserCache;
+import org.springframework.security.providers.dao.cache.EhCacheBasedUserCache;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

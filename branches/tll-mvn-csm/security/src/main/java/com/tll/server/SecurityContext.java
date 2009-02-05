@@ -12,7 +12,7 @@ import org.springframework.security.AuthenticationManager;
  * SecurityContext - {@link ISecurityContext} impl.
  * @author jpk
  */
-class SecurityContext implements ISecurityContext {
+public class SecurityContext implements ISecurityContext {
 
 	private final SecurityMode securityMode;
 	private final AuthenticationManager authenticationManager;

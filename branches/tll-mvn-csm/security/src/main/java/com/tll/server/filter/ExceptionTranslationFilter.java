@@ -14,11 +14,13 @@ import javax.servlet.ServletResponse;
 import org.springframework.security.ui.AccessDeniedHandlerImpl;
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 
+import com.tll.server.ISecurityContext;
+
 /**
  * ExceptionTranslationFilter
  * @author jpk
  */
-public abstract class ExceptionTranslationFilter extends AbstractSecurityFilter {
+public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 
 	/**
 	 * The wrapped
@@ -27,7 +29,7 @@ public abstract class ExceptionTranslationFilter extends AbstractSecurityFilter 
 	private org.springframework.security.ui.ExceptionTranslationFilter wrapped;
 
 	@Override
-	public void doInitAcegi(FilterConfig config) {
+	public void doInitAcegi(FilterConfig config, ISecurityContext securityContext) {
 		// access denied handler
 		String ep = config.getInitParameter("errorPage");
 		if(ep == null) {
@@ -48,7 +50,8 @@ public abstract class ExceptionTranslationFilter extends AbstractSecurityFilter 
 	}
 
 	@Override
-	public void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	public void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
+			ISecurityContext securityContext) throws IOException,
 			ServletException {
 		wrapped.doFilter(request, response, chain);
 	}

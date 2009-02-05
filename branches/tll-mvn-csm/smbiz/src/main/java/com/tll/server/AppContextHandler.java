@@ -27,9 +27,9 @@ import com.tll.util.EnumUtil;
  * @author jpk
  */
 public class AppContextHandler implements IBootstrapHandler {
-	
+
 	/**
-	 * ConfigKeys - Configuration property keys for the dao module.
+	 * ConfigKeys - Configuration property keys for the app context.
 	 * @author jpk
 	 */
 	public static enum ConfigKeys implements IConfigKey {

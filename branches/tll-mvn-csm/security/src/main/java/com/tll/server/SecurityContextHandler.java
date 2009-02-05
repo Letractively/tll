@@ -36,10 +36,9 @@ public class SecurityContextHandler implements IBootstrapHandler {
 		// TODO figure out how to extract this from the injector
 		final AccessDecisionManager httpRequesetAccessDecisionManager = null;
 
-		ISecurityContext c = new SecurityContext(securityMode, authenticationManager, httpRequesetAccessDecisionManager);
-
-		log.info("Setting security context");
-		servletContext.setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY, c);
+		log.info("Setting security context..");
+		servletContext.setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,
+				authenticationManager, httpRequesetAccessDecisionManager));
 	}
 
 	@Override

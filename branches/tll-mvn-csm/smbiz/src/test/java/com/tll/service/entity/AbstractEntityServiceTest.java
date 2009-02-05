@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
+import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.JpaMode;
@@ -40,7 +41,8 @@ public abstract class AbstractEntityServiceTest extends DbTest {
 		super.addModules(modules);
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		modules.add(new DaoModule(DaoMode.ORM));
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
+		modules.add(new DaoModule());
 		modules.add(new EntityServiceModule());
 		modules.add(new EntityServiceFactoryModule());
 	}

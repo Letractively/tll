@@ -72,18 +72,24 @@ public class BootstrapperTest {
 				+ "com.tll.di.DaoModule \r\n"
 				+ "com.tll.di.EntityServiceModule \r\n" 
 				+ "com.tll.di.EntityServiceFactoryModule \r\n" 
-				+ "com.tll.di.SecurityModule \r\n"
-				+ "com.tll.di.SecurityModuleImpl \r\n");
+				+ "com.tll.di.SecurityModule \r\n");
+		
+		context.addInitParameter(Bootstrapper.DEPENDENCY_HANDLER_CLASS_NAMES, 
+				"com.tll.server.AppContextHandler \r\n"
+				+ "com.tll.server.SecurityContextHandler \r\n");
+
 		return context;
 	}
 
 	@Test
 	public void test() throws Exception {
 		ServletContext context = getMockServletContext();
-		Bootstrapper gb = new Bootstrapper();
 		ServletContextEvent event = new ServletContextEvent(context);
-		gb.contextInitialized(event);
+		Bootstrapper bootstraper = new Bootstrapper();
+		bootstraper.contextInitialized(event);
 		IAppContext ac = (IAppContext) context.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+		ISecurityContext sc = (ISecurityContext) context.getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY);
 		Assert.assertNotNull(ac);
+		Assert.assertNotNull(sc);
 	}
 }

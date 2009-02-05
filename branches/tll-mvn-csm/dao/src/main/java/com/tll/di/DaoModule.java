@@ -32,7 +32,7 @@ public class DaoModule extends CompositeModule {
 	public static enum ConfigKeys implements IConfigKey {
 
 		DAO_MODE_PARAM("db.dao.mode"),
-		ENTITY_GRAPH_BUILDER_CLASSNAME("entityGraphBuilder.classname");
+		ENTITY_GRAPH_BUILDER_CLASSNAME("db.dao.entityGraphBuilder.classname");
 
 		private final String key;
 
@@ -59,18 +59,9 @@ public class DaoModule extends CompositeModule {
 	 * Constructor
 	 */
 	public DaoModule() {
-		this(null);
-	}
-
-	/**
-	 * Constructor
-	 * @param daoMode
-	 */
-	public DaoModule(DaoMode daoMode) {
 		super();
 		this.daoMode =
-				daoMode == null ? EnumUtil.fromString(DaoMode.class, Config.instance().getString(
-						ConfigKeys.DAO_MODE_PARAM.getKey())) : daoMode;
+				EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
 	}
 
 	@SuppressWarnings("unchecked")

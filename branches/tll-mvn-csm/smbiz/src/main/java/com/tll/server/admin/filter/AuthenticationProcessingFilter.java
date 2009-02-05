@@ -6,7 +6,6 @@ package com.tll.server.admin.filter;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationManager;
 import org.springframework.security.context.SecurityContextHolder;
 
 import com.tll.config.Config;
@@ -24,7 +22,6 @@ import com.tll.config.IConfigKey;
 import com.tll.model.User;
 import com.tll.server.IAppContext;
 import com.tll.server.ISecurityContext;
-import com.tll.server.SecurityMode;
 import com.tll.server.admin.AdminContext;
 import com.tll.service.entity.user.IUserService;
 
@@ -62,38 +59,12 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 	 */
 	public static final String SA_ADMIN_CONTEXT = "ac";
 	
-	private SecurityMode securityMode;
-
-	// TODO fix
 	@Override
-	protected AuthenticationManager getAuthenticationManager() {
-		return null;
-	}
-
-	@Override
-	protected SecurityMode getSecurityMode() {
-		return securityMode;
-	}
-
-	@Override
-	protected void doPreInit(FilterConfig config) throws ServletException {
-		super.doPreInit(config);
-		ISecurityContext securityContext =
-				(ISecurityContext) config.getServletContext().getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY);
-		if(securityContext == null) {
-			throw new Error("Unable to obtain the security context");
-		}
-		securityMode = securityContext.getSecurityMode();
-		if(securityMode == null) {
-			throw new Error("Unable to obtain the security mode");
-		}
-	}
-
-	@Override
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
+			ISecurityContext securityContext) throws IOException,
 			ServletException {
 		doFilterCommon(request, response, chain);
-		super.doFilterAcegi(request, response, chain);
+		super.doFilterAcegi(request, response, chain, securityContext);
 	}
 
 	@Override

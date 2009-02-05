@@ -5,8 +5,8 @@ package com.tll.service.entity.user;
 
 import javax.persistence.EntityExistsException;
 
-import org.acegisecurity.userdetails.UserDetailsService;
 import org.hibernate.validator.InvalidStateException;
+import org.springframework.security.userdetails.UserDetailsService;
 
 import com.tll.model.Account;
 import com.tll.model.ChangeUserCredentialsFailedException;

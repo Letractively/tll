@@ -13,19 +13,15 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
-import com.tll.server.SecurityMode;
+import com.tll.server.ISecurityContext;
 
 /**
  * AbstractSecurityFilter - Base class for all security related {@link Filter}s.
  * @author jpk
  */
 public abstract class AbstractSecurityFilter implements Filter {
-	
-	/**
-	 * @return The operating {@link SecurityMode}.
-	 */
-	protected abstract SecurityMode getSecurityMode();
 
 	/**
 	 * Called before any other filter initialization routines are performed.
@@ -39,9 +35,10 @@ public abstract class AbstractSecurityFilter implements Filter {
 	/**
 	 * Performs filter init when there the security mode is acegi.
 	 * @param config
+	 * @param securityContext
 	 * @throws ServletException
 	 */
-	protected void doInitAcegi(FilterConfig config) throws ServletException {
+	protected void doInitAcegi(FilterConfig config, ISecurityContext securityContext) throws ServletException {
 		// base impl no-op
 	}
 
@@ -59,10 +56,12 @@ public abstract class AbstractSecurityFilter implements Filter {
 	 * @param request
 	 * @param response
 	 * @param chain
+	 * @param securityContext
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
+			ISecurityContext securityContext) throws IOException,
 			ServletException {
 		// base impl no-op
 	}
@@ -84,30 +83,44 @@ public abstract class AbstractSecurityFilter implements Filter {
 	@Override
 	public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		switch(getSecurityMode()) {
-			case ACEGI:
-				doFilterAcegi(request, response, chain);
-				break;
-			case NONE:
-				doFilterNoSecurity(request, response, chain);
-				break;
-			default:
-				throw new Error("Unhandled security mode: " + getSecurityMode());
+		if(request instanceof HttpServletRequest) {
+			final ISecurityContext sc =
+					(ISecurityContext) ((HttpServletRequest) request).getSession(false).getServletContext().getAttribute(
+							ISecurityContext.SERVLET_CONTEXT_KEY);
+			switch(sc.getSecurityMode()) {
+				case ACEGI:
+					doFilterAcegi(request, response, chain, sc);
+					break;
+				case NONE:
+					doFilterNoSecurity(request, response, chain);
+					break;
+				default:
+					throw new Error("Unhandled security mode: " + sc.getSecurityMode());
+			}
+		}
+		else {
+			chain.doFilter(request, response);
 		}
 	}
 	
 	@Override
 	public final void init(FilterConfig config) throws ServletException {
+		// set the security mode
 		doPreInit(config);
-		switch(getSecurityMode()) {
+		final ISecurityContext sc =
+				(ISecurityContext) config.getServletContext().getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY);
+		if(sc == null) {
+			throw new Error("No security context found in the servlet context.");
+		}
+		switch(sc.getSecurityMode()) {
 			case ACEGI:
-				doInitAcegi(config);
+				doInitAcegi(config, sc);
 				break;
 			case NONE:
 				doInitNoSecurity(config);
 				break;
 			default:
-				throw new Error("Unhandled security mode: " + getSecurityMode());
+				throw new Error("Unhandled security mode: " + sc.getSecurityMode());
 		}
 	}
 

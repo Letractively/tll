@@ -10,7 +10,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -27,6 +30,7 @@ import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.search.ISearch;
 import com.tll.common.search.impl.AccountSearch;
+import com.tll.config.Config;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
@@ -36,13 +40,24 @@ import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.MailModule;
 import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.ModelModule;
 import com.tll.di.RefDataModule;
+import com.tll.di.SecurityModule;
 import com.tll.di.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
+import com.tll.mail.MailManager;
 import com.tll.model.EntityType;
 import com.tll.model.IEntity;
-import com.tll.server.Bootstrapper;
+import com.tll.model.IEntityFactory;
+import com.tll.refdata.RefData;
+import com.tll.server.AppContext;
+import com.tll.server.IAppContext;
+import com.tll.server.ISecurityContext;
 import com.tll.server.RequestContext;
+import com.tll.server.SecurityContext;
+import com.tll.server.SecurityMode;
+import com.tll.server.marshal.Marshaler;
+import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.util.EnumUtil;
 
 /**
@@ -75,10 +90,25 @@ public class ListingServiceTest extends DbTest {
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if(method.getName().equals("getRequestContext")) {
 				assert injector != null;
+				
 				MockServletContext servletContext = new MockServletContext();
 				MockHttpServletRequest request = new MockHttpServletRequest();
 				// MockHttpServletResponse response = new MockHttpServletResponse();
-				return new RequestContext(Bootstrapper.generateAppContext(servletContext), request);
+				MockHttpSession session = new MockHttpSession(servletContext);
+				session.setNew(false);
+				request.setSession(session);
+				
+				request.getSession(false).setAttribute(
+						IAppContext.SERVLET_CONTEXT_KEY,
+						new AppContext(true, "dev", injector.getInstance(RefData.class), injector.getInstance(MailManager.class),
+								injector.getInstance(Marshaler.class), daoMode, injector.getInstance(EntityManagerFactory.class),
+								injector.getInstance(IEntityFactory.class), injector.getInstance(IEntityServiceFactory.class)));
+				
+				request.getSession(false).setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY,
+						new SecurityContext(SecurityMode.NONE, null, null));
+				
+				RequestContext rc = new RequestContext(request);
+				return rc;
 			}
 			return method.invoke(theListingService, args);
 		}
@@ -93,9 +123,12 @@ public class ListingServiceTest extends DbTest {
 		modules.add(new VelocityModule());
 		modules.add(new MailModule());
 		modules.add(new RefDataModule());
+		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		modules.add(new DaoModule(daoMode));
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		modules.add(new DaoModule());
 		modules.add(new EntityServiceFactoryModule());
+		modules.add(new SecurityModule());
 	}
 
 	@BeforeClass(alwaysRun = true)

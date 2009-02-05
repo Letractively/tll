@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTest;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
@@ -120,7 +121,8 @@ public class NamedQueriesTest extends DbTest {
 		if(daoMode == DaoMode.MOCK) {
 			modules.add(new MockEntityFactoryModule());
 		}
-		modules.add(new DaoModule(daoMode));
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		modules.add(new DaoModule());
 		modules.add(new EntityServiceModule());
 		modules.add(new EntityServiceFactoryModule());
 	}

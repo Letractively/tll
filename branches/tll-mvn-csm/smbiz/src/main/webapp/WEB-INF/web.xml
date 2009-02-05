@@ -35,7 +35,10 @@
       an hook to alter the servlet context.
     </description>
     <param-name>di.handlers</param-name>
-    <param-value>TODO</param-value>
+    <param-value> 
+      com.tll.server.AppContextHandler
+      com.tll.server.SecurityContextHandler
+    </param-value>
   </context-param>
 
   <session-config>

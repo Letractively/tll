@@ -1,9 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-server-tests">
   
-  <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
+  <test name="server-bootstrap-test-orm-security" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
-    <parameter name="securityMode" value="NONE" />
+    <parameter name="securityMode" value="ACEGI" />
     <groups>
       <run>
         <include name="bootstrap" />
@@ -14,9 +14,10 @@
     </packages>
   </test>
 
-  <test name="server-bootstrap-test-orm-security" annotations="JDK">
+  <!--
+  <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
-    <parameter name="securityMode" value="ACEGI" />
+    <parameter name="securityMode" value="NONE" />
     <groups>
       <run>
         <include name="bootstrap" />
@@ -39,7 +40,8 @@
       <package name="com.tll.server.*" />
     </packages>
   </test>
-
+  -->
+  
   <!-- TODO: will this permutation work ? 
   <test name="server-bootstrap-test-mock-security" annotations="JDK">
     <parameter name="daoMode" value="MOCK" />

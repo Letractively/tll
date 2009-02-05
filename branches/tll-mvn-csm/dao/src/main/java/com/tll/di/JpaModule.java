@@ -39,8 +39,7 @@ public class JpaModule extends GModule {
 	public static enum ConfigKeys implements IConfigKey {
 
 		JPA_MODE_PARAM("db.jpa.mode"),
-		DB_NAME("db.name"),
-		DB_JPA_PERSISTENCE_UNIT_NAME("db.jpa.persistenceUnitName");
+		DB_NAME("db.name");
 
 		private final String key;
 
@@ -69,61 +68,19 @@ public class JpaModule extends GModule {
 	private final String persistenceUnitName;
 
 	/**
-	 * Constructor Default to Spring transaction management
+	 * Constructor
 	 */
 	public JpaModule() {
-		this(null, null);
-	}
-
-	/**
-	 * Constructor
-	 * @param mode
-	 */
-	public JpaModule(JpaMode mode) {
-		this(mode, null);
-	}
-
-	/**
-	 * Constructor
-	 * @param mode
-	 * @param persistenceUnitName If <code>null</code>, the app database name
-	 *        is used.
-	 */
-	public JpaModule(JpaMode mode, String persistenceUnitName) {
 		super();
 
 		// resolve the jpa mode
-		JpaMode jpaMode;
-		try {
-			jpaMode =
-					(mode == null ? EnumUtil.fromString(JpaMode.class, Config.instance().getString(
-							ConfigKeys.JPA_MODE_PARAM.getKey())) : mode);
+		this.mode = EnumUtil.fromString(JpaMode.class, Config.instance().getString(ConfigKeys.JPA_MODE_PARAM.getKey()));
+		this.persistenceUnitName = Config.instance().getString(ConfigKeys.DB_NAME.getKey());
+		if(persistenceUnitName == null) {
+			throw new IllegalStateException("Can't resolve the jpa persistence unit name");
 		}
-		catch(final IllegalArgumentException e) {
-			jpaMode = JpaMode.NONE;
-		}
-		this.mode = jpaMode;
-		if(log.isInfoEnabled()) log.info("Employing JPA mode: " + this.mode.name());
-
-		if(this.mode != JpaMode.NONE) {
-			// resolve the persistence unit name
-			if(persistenceUnitName == null) {
-				// grab the persistence unit defined in Configuration (if declared)
-				persistenceUnitName = Config.instance().getString(ConfigKeys.DB_JPA_PERSISTENCE_UNIT_NAME.getKey());
-				if(persistenceUnitName == null) {
-					// fallback to the db name property
-					persistenceUnitName = Config.instance().getString(ConfigKeys.DB_NAME.getKey());
-				}
-			}
-			if(persistenceUnitName == null) {
-				throw new IllegalStateException("Can't resolve the jpa persistence unit name");
-			}
-			this.persistenceUnitName = persistenceUnitName;
-			if(log.isInfoEnabled()) log.info("Employing JPA Persistence Unit: " + this.persistenceUnitName);
-		}
-		else {
-			this.persistenceUnitName = null;
-		}
+		if(log.isInfoEnabled())
+			log.info("Employing JPA mode: " + this.mode.name() + " for persistence unit: " + persistenceUnitName);
 	}
 
 	@Override

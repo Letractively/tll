@@ -46,18 +46,9 @@ public class SecurityModule extends CompositeModule {
 	 * Constructor
 	 */
 	public SecurityModule() {
-		this(null);
-	}
-
-	/**
-	 * Constructor
-	 * @param mode
-	 */
-	public SecurityModule(SecurityMode mode) {
 		super();
 		this.mode =
-				mode == null ? EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
-						ConfigKeys.SECURITY_MODE_PARAM.getKey())) : mode;
+				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 	}
 
 	@Override
