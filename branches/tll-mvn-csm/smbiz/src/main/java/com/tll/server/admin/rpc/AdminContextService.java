@@ -31,7 +31,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 				(com.tll.server.admin.AdminContext) rc.getSession().getAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT);
 		assert sac != null;
 
-		final Marshaler entityMarshaller = rc.getMarshaler();
+		final Marshaler entityMarshaller = rc.getAppContext().getMarshaler();
 		assert entityMarshaller != null : "No marshaler present";
 
 		final Model user = entityMarshaller.marshalEntity(sac.getUser(), new MarshalOptions(true, 1));
@@ -40,7 +40,8 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 		// just marshaled user
 		final Model account = entityMarshaller.marshalEntity(sac.getAccount(), MarshalOptions.NON_RELATIONAL);
 
-		final AdminContext ac = new AdminContext(rc.isDebug(), rc.getEnvironment(), user, account);
+		final AdminContext ac =
+				new AdminContext(rc.getAppContext().isDebug(), rc.getAppContext().getEnvironment(), user, account);
 
 		final Status status = new Status();
 		status.addMsg("Admin Context retrieved.", MsgLevel.INFO, MsgAttr.NODISPLAY.flag);

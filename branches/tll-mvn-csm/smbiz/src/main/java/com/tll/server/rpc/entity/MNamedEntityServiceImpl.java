@@ -37,7 +37,8 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 			}
 			final Class<N> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final INamedEntityService<N> namedEntityService =
-					(INamedEntityService<N>) requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+					(INamedEntityService<N>) requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(
+							entityClass);
 			return namedEntityService.load(new NameKey<N>(entityClass, name));
 		}
 

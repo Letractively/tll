@@ -13,7 +13,7 @@
       Dependency Injection modules (class names) that collectively bootstrap the application.
       This context param is processed by com.tll.server.Bootstrapper.
     </description>
-    <param-name>di.module.classnames</param-name>
+    <param-name>di.modules</param-name>
     <param-value>
       com.tll.di.VelocityModule
       com.tll.di.MailModule

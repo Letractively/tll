@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.ui.AccessDeniedHandlerImpl;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.ui.AccessDeniedHandlerImpl;
 
 /**
  * LoginServlet - Handles login submissions.
@@ -26,7 +26,8 @@ public class ErrorHandlerServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws /* ServletException, */IOException {
-		AccessDeniedException ade = (AccessDeniedException) req.getAttribute(AccessDeniedHandlerImpl.ACEGI_SECURITY_ACCESS_DENIED_EXCEPTION_KEY);
+		AccessDeniedException ade =
+				(AccessDeniedException) req.getAttribute(AccessDeniedHandlerImpl.SPRING_SECURITY_ACCESS_DENIED_EXCEPTION_KEY);
 		assert ade != null;
 		resp.setContentType("text/html");
 		resp.getWriter().write(ade.getMessage());

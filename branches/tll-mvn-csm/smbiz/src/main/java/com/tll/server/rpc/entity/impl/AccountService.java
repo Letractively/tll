@@ -35,7 +35,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	protected void handleLoadOptions(RequestContext requestContext, Account e, EntityOptions entityOptions,
 			Map<String, RefKey> refs) throws SystemError {
 
-		IEntityServiceFactory entityServiceFactory = requestContext.getEntityServiceFactory();
+		IEntityServiceFactory entityServiceFactory = requestContext.getAppContext().getEntityServiceFactory();
 
 		// THIS is taken care of via open session in view filter and auto-proxy
 		// loading in hibernate

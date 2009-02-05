@@ -20,7 +20,7 @@ import org.springframework.security.AuthenticationManager;
 import org.springframework.security.context.SecurityContextHolder;
 
 import com.tll.config.Config;
-import com.tll.config.ConfigKeys;
+import com.tll.config.IConfigKey;
 import com.tll.model.User;
 import com.tll.server.IAppContext;
 import com.tll.server.ISecurityContext;
@@ -33,7 +33,30 @@ import com.tll.service.entity.user.IUserService;
  * @author jpk
  */
 public final class AuthenticationProcessingFilter extends com.tll.server.filter.AuthenticationProcessingFilter {
-	
+
+	/**
+	 * ConfigKeys - Configuration property key names used by the app.
+	 * @author jpk
+	 */
+	public enum ConfigKeys implements IConfigKey {
+
+		USER_DEFAULT_EMAIL_PARAM("mail.dflt_user_email");
+
+		private final String key;
+
+		/**
+		 * Constructor
+		 * @param key
+		 */
+		private ConfigKeys(String key) {
+			this.key = key;
+		}
+
+		public String getKey() {
+			return key;
+		}
+	}
+
 	/**
 	 * The servlet session attribute key identifying the {@link AdminContext}.
 	 */

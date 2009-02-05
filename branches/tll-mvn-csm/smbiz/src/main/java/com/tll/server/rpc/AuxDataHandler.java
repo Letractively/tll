@@ -43,12 +43,12 @@ public abstract class AuxDataHandler {
 		Map<RefDataType, Map<String, String>> appRefDataMap = null;
 		Map<EntityType, List<Model>> entityMap = null;
 		Set<Model> entityPrototypes = null;
-
+		
 		// app ref data
 		Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
 		while(adritr != null && adritr.hasNext()) {
 			RefDataType rdt = adritr.next();
-			final Map<String, String> map = requestContext.getAppRefData().getRefData(rdt);
+			final Map<String, String> map = requestContext.getAppContext().getAppRefData().getRefData(rdt);
 			if(map == null) {
 				payload.getStatus().addMsg("Unable to find app ref data: " + rdt.getName(), MsgLevel.ERROR);
 			}
@@ -66,7 +66,7 @@ public abstract class AuxDataHandler {
 			EntityType et = etitr.next();
 			final Class<? extends IEntity> entityClass = EntityTypeUtil.entityClassFromType(et);
 			final IEntityService<? extends IEntity> svc =
-					requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+					requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
 			final List<? extends IEntity> list = svc.loadAll();
 			if(list == null || list.size() < 1) {
 				payload.getStatus().addMsg("Unable to obtain " + et.getName() + " entities for aux data.", MsgLevel.ERROR);
@@ -74,7 +74,8 @@ public abstract class AuxDataHandler {
 			else {
 				final List<Model> elist = new ArrayList<Model>(list.size());
 				for(final IEntity e : list) {
-					final Model group = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NON_RELATIONAL);
+					final Model group =
+							requestContext.getAppContext().getMarshaler().marshalEntity(e, MarshalOptions.NON_RELATIONAL);
 					elist.add(group);
 				}
 				if(entityMap == null) {
@@ -88,8 +89,9 @@ public abstract class AuxDataHandler {
 		etitr = auxDataRequest.getEntityPrototypeRequests();
 		while(etitr != null && etitr.hasNext()) {
 			EntityType et = etitr.next();
-			final IEntity e = requestContext.getEntityFactory().createEntity(EntityTypeUtil.entityClassFromType(et), false);
-			final Model model = requestContext.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
+			final IEntity e =
+					requestContext.getAppContext().getEntityFactory().createEntity(EntityTypeUtil.entityClassFromType(et), false);
+			final Model model = requestContext.getAppContext().getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();
 			}

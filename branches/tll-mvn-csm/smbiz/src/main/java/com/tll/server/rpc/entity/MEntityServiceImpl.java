@@ -80,9 +80,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload payload) {
 		try {
 			final IEntity e =
-					requestContext.getEntityFactory().createEntity(EntityTypeUtil.entityClassFromType(entityType),
+					requestContext.getAppContext().getEntityFactory().createEntity(
+							EntityTypeUtil.entityClassFromType(entityType),
 							request.isGenerate());
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group =
+					requestContext.getAppContext().getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);
 		}
 		catch(final SystemError se) {
@@ -107,7 +109,8 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload payload) {
 		// core entity loading
 		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
-		final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+		final IEntityService<E> svc =
+				requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
 
 		if(request.isLoadByBusinessKey()) {
 			// load by business key
@@ -142,7 +145,8 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 
 			// marshal the loaded entity
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group =
+					requestContext.getAppContext().getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);
 
 			// set any entity refs
@@ -173,15 +177,17 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			// core persist
 			final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final Model entity = request.getEntity();
-			E e = requestContext.getMarshaler().unmarshalEntity(entityClass, entity);
-			final IEntityService<E> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+			E e = requestContext.getAppContext().getMarshaler().unmarshalEntity(entityClass, entity);
+			final IEntityService<E> svc =
+					requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
 			e = svc.persist(e);
 
 			// handle persist options
 			handlePersistOptions(requestContext, e, request.entityOptions);
 
 			// marshall
-			final Model group = requestContext.getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
+			final Model group =
+					requestContext.getAppContext().getMarshaler().marshalEntity(e, getMarshalOptions(requestContext));
 			payload.setEntity(group);
 
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
@@ -209,7 +215,8 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final EntityType entityType, final EntityPayload p) {
 		try {
 			final Class<IEntity> entityClass = EntityTypeUtil.entityClassFromType(entityType);
-			final IEntityService<IEntity> svc = requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+			final IEntityService<IEntity> svc =
+					requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
 			final RefKey entityRef = entityRequest.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
@@ -280,9 +287,11 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	public IMarshalingListHandler<E> getMarshalingListHandler(final RequestContext requestContext,
 			final RemoteListingDefinition<S> listingDefinition) {
 		if(listingDefinition.getPropKeys() != null) {
-			return new PropKeyListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext),
+			return new PropKeyListHandler<E>(requestContext.getAppContext().getMarshaler(),
+					getMarshalOptions(requestContext),
 					listingDefinition.getPropKeys());
 		}
-		return new MarshalingListHandler<E>(requestContext.getMarshaler(), getMarshalOptions(requestContext));
+		return new MarshalingListHandler<E>(requestContext.getAppContext().getMarshaler(),
+				getMarshalOptions(requestContext));
 	}
 }

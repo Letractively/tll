@@ -53,17 +53,25 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	 * @return The {@link AuthenticationManager}.
 	 */
 	protected abstract AuthenticationManager getAuthenticationManager();
-	
+
+	/**
+	 * Invoked upon successful authentication.
+	 * @throws IOException
+	 */
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			Authentication authResult) throws IOException {
 		// base impl no-op
 	}
 
+	/**
+	 * Invoked upon failed authentication.
+	 * @throws IOException
+	 */
 	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) throws IOException {
 		// base impl no-op
 	}
-	
+
 	@Override
 	protected void doInitAcegi(FilterConfig config) /*throws ServletException*/{
 		wrapped.setAuthenticationManager(getAuthenticationManager());
@@ -85,8 +93,7 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	}
 
 	@Override
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException,
+	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		wrapped.doFilter(request, response, chain);
 	}

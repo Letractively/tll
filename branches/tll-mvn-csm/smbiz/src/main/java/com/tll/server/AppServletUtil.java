@@ -71,7 +71,7 @@ public class AppServletUtil {
 					(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
 			data.put("trace", ste == null ? "[NO STACK TRACE]" : ste.toString());
 			try {
-				final MailManager mailManager = requestContext.getMailManager();
+				final MailManager mailManager = requestContext.getAppContext().getMailManager();
 				final String onErrorEmail = Config.instance().getString("mail.onerror.ToAddress");
 				final String onErrorName = Config.instance().getString("mail.onerror.ToName");
 				final NameEmail ne = new NameEmail(onErrorName, onErrorEmail);

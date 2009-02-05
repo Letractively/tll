@@ -136,7 +136,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 						// resolve the listing handler data provider
 						final IListHandlerDataProvider<E> dataProvider =
-								requestContext.getEntityServiceFactory().instanceByEntityType(entityClass);
+								requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();

@@ -22,6 +22,7 @@ import com.tll.mail.MailRouting;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.User;
 import com.tll.server.AppServletUtil;
+import com.tll.server.IAppContext;
 import com.tll.server.RequestContext;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.user.IUserService;
@@ -47,12 +48,13 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 		else {
 			final RequestContext rc = getRequestContext();
 			try {
-				final IEntityServiceFactory esf = rc.getEntityServiceFactory();
+				final IAppContext ac = rc.getAppContext();
+				final IEntityServiceFactory esf = ac.getEntityServiceFactory();
 				final IUserService userService = esf.instance(IUserService.class);
 				final User user = (User) userService.loadUserByUsername(emailAddress);
 				data.put("emailAddress", user.getUsername());
 				data.put("password", userService.resetPassword(user.getId()));
-				final MailManager mailManager = rc.getMailManager();
+				final MailManager mailManager = ac.getMailManager();
 				final MailRouting mr = mailManager.buildAppSenderMailRouting(user.getEmailAddress());
 				final IMailContext mailContext = mailManager.buildTextTemplateContext(mr, EMAIL_TEMPLATE_NAME, data);
 				mailManager.sendEmail(mailContext);

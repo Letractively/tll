@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.ui.AbstractProcessingFilter;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.ui.AbstractProcessingFilter;
 
 /**
  * LoginServlet - Handles login submissions.
@@ -33,7 +33,7 @@ public class LoginServlet extends HttpServlet {
 		boolean loginError = (req.getParameter("login_error") != null);
 		if(loginError) {
 			AuthenticationException ae = (AuthenticationException) session
-					.getAttribute(AbstractProcessingFilter.ACEGI_SECURITY_LAST_EXCEPTION_KEY);
+					.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY);
 			if(ae != null) {
 				// failed login (get error message)
 				msg = ae.getMessage();
