@@ -19,12 +19,7 @@ public abstract class RpcServlet extends RemoteServiceServlet {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	/**
-	 * Provides the current http request context for all rpc servlet
-	 * implementations.
-	 * @return The {@link RequestContext} for the current server request.
-	 */
-	protected final RequestContext getRequestContext() {
+	public RequestContext getRequestContext() {
 		return new RequestContext(getThreadLocalRequest());
 	}
 }

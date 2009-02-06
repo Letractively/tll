@@ -23,6 +23,8 @@ import com.tll.common.model.RefKey;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
+import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.ModelModule;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.CreditCardType;
@@ -57,6 +59,8 @@ public class MarshalerTest extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
+		modules.add(new ModelModule());
+		modules.add(new MockEntityFactoryModule());
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
 		final DaoModule daoModule = new DaoModule();
 		modules.add(daoModule);
@@ -83,7 +87,9 @@ public class MarshalerTest extends AbstractInjectedTest {
 
 					@Override
 					public boolean accept(File dir, String name) {
-						return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("classes") > 0;
+						// we only want the actual smbiz model classes!
+						return (dir.getPath().indexOf("smbiz") > 0) && (dir.getPath().indexOf("classes") > 0)
+								&& (dir.getPath().indexOf("test") < 0);
 					}
 				});
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
@@ -92,7 +98,8 @@ public class MarshalerTest extends AbstractInjectedTest {
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
-			assert model.getEntityType().equals(EntityTypeUtil.entityTypeFromClass(e.entityClass()).name()) : "The marshaled entity model's ref type did not match the sourcing entities' entity type";
+			Assert.assertEquals(model.getEntityType(), EntityTypeUtil.entityTypeFromClass(e.entityClass()),
+					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
 			final RefKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";

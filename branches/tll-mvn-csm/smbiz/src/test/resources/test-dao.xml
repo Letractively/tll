@@ -1,17 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-dao-tests">
   
-  <test name="dao-bootstrap-tests" annotations="JDK">
-    <groups>
-      <run>
-        <include name="bootstrap" />
-      </run>
-    </groups>
-    <classes>
-      <class name="com.tll.di.DaoModuleTest" />
-    </classes>
-  </test>
-  
   <test name="orm-dao-tests" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
     <groups>

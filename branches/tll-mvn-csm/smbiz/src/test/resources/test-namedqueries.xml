@@ -2,7 +2,8 @@
 <suite name="smbiz-dao-tests">
   
   <test name="listhandler-namedqueries-orm" annotations="JDK">
-    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="jpaMode" value="LOCAL" />
+    <!-- <parameter name="jpaMode" value="SPRING" /> -->
     <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
@@ -14,6 +15,7 @@
     </packages>
   </test>
 
+  <!--
   <test name="listhandler-namedqueries-mock" annotations="JDK">
     <parameter name="jpaMode" value="NONE" />
     <parameter name="daoMode" value="MOCK" />
@@ -26,5 +28,6 @@
       <package name="com.tll.listhandler" />
     </packages>
   </test>
-
+  -->
+  
 </suite>

@@ -150,10 +150,7 @@ public final class Marshaler {
 	 */
 	private boolean isNestedProperty(final PropertyDescriptor pd) {
 		final Method m = pd.getReadMethod();
-		if(m != null) {
-			return m.getAnnotation(Nested.class) == null;
-		}
-		return false;
+		return m == null ? false : m.getAnnotation(Nested.class) != null;
 	}
 
 	/**
@@ -315,7 +312,9 @@ public final class Marshaler {
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						prop = new RelatedOneProperty(EntityTypeUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, ngrp);
+						final EntityType etype =
+								ri.getRelatedType() == null ? null : EntityTypeUtil.entityTypeFromClass(ri.getRelatedType());
+						prop = new RelatedOneProperty(etype, pname, reference, ngrp);
 					}
 				}
 
@@ -521,10 +520,8 @@ public final class Marshaler {
 
 			}// switch
 
-			// special case: paymentData_
-			if(propName.startsWith("paymentData_")) {
-				propName = "paymentData." + propName.substring(12);
-			}
+			// translate nested property names
+			propName = propName.replace('_', '.');
 
 			try {
 				bw.setPropertyValue(propName, val);

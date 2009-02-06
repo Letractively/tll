@@ -13,6 +13,8 @@ import org.springframework.security.AccessDecisionManager;
 import org.springframework.security.AuthenticationManager;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import com.tll.config.Config;
 import com.tll.di.SecurityModule.ConfigKeys;
 import com.tll.util.EnumUtil;
@@ -30,11 +32,14 @@ public class SecurityContextHandler implements IBootstrapHandler {
 		final SecurityMode securityMode =
 				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 
-		final AuthenticationManager authenticationManager = injector.getInstance(AuthenticationManager.class);
+		AuthenticationManager authenticationManager = null;
+		AccessDecisionManager httpRequesetAccessDecisionManager = null;
 
-		// @Named("httpRequestAccessDecisionManager")
-		// TODO figure out how to extract this from the injector
-		final AccessDecisionManager httpRequesetAccessDecisionManager = null;
+		if(securityMode == SecurityMode.ACEGI) {
+			authenticationManager = injector.getInstance(AuthenticationManager.class);
+			httpRequesetAccessDecisionManager =
+					injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
+		}
 
 		log.info("Setting security context..");
 		servletContext.setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,

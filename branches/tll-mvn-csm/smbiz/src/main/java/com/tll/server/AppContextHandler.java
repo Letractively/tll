@@ -65,8 +65,10 @@ public class AppContextHandler implements IBootstrapHandler {
 
 		final RefData refdata = injector.getInstance(RefData.class);
 		final MailManager mailManager = injector.getInstance(MailManager.class);
+		
 		final Marshaler marshaler = injector.getInstance(Marshaler.class);
-		final EntityManagerFactory entityManagerFactory = injector.getInstance(EntityManagerFactory.class);
+		final EntityManagerFactory entityManagerFactory =
+				daoMode == DaoMode.ORM ? injector.getInstance(EntityManagerFactory.class) : null;
 		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
 

@@ -54,7 +54,7 @@ public final class EntityGraph implements IEntityProvider {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> Set<? extends E> getEntitySet(Class<E> entityType) {
+	private <E extends IEntity> Set<? extends E> getRootEntitySet(Class<E> entityType) {
 		return (Set<? extends E>) graph.get(EntityUtil.getRootEntityClass(entityType));
 
 	}
@@ -76,9 +76,25 @@ public final class EntityGraph implements IEntityProvider {
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <E extends IEntity> Collection<E> getEntitiesByType(Class<E> type) {
-		return (Collection<E>) getEntitySet(type);
+		Set<? extends E> rootset = getRootEntitySet(type);
+		if(rootset == null) return null;
+		Set<E> set = new LinkedHashSet<E>();
+		for(E e : rootset) {
+			if(type == e.entityClass() || type.isAssignableFrom(e.entityClass())) {
+				set.add(e);
+			}
+		}
+		return set;
+	}
+
+	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
+		Collection<E> clc = getEntitiesByType(type);
+		if(clc == null || clc.size() == 0) return null;
+		if(clc.size() == 1) {
+			return clc.iterator().next();
+		}
+		throw new IllegalStateException("More than one entity exists of type: " + type.getName());
 	}
 
 	public <E extends IEntity> E getEntity(PrimaryKey<E> key) {
@@ -96,14 +112,6 @@ public final class EntityGraph implements IEntityProvider {
 		return null;
 	}
 
-	public <E extends IEntity> E getEntityByType(Class<E> type) throws IllegalStateException {
-		Collection<E> clc = getEntitiesByType(type);
-		if(clc != null && clc.size() != 1) {
-			throw new IllegalStateException("More than one entity exists of type: " + type.getName());
-		}
-		return clc == null ? null : clc.iterator().next();
-	}
-
 	/**
 	 * Checks to see if the graph contains the given entity by primary key.
 	 * @param <E>
@@ -112,7 +120,7 @@ public final class EntityGraph implements IEntityProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> boolean contains(PrimaryKey<E> pk) {
-		final Set<E> set = (Set<E>) getEntitySet(pk.getType());
+		final Set<E> set = (Set<E>) getRootEntitySet(pk.getType());
 		if(set != null) {
 			for(E e : set) {
 				if(e.getId().equals(pk.getId())) return true;
@@ -204,7 +212,7 @@ public final class EntityGraph implements IEntityProvider {
 	 *         business key non-unique.
 	 */
 	private <E extends IEntity> void validateEntitySet(Class<E> entityType) throws NonUniqueBusinessKeyException {
-		Set<? extends IEntity> set = getEntitySet(entityType);
+		Set<? extends IEntity> set = getRootEntitySet(entityType);
 		try {
 			BusinessKeyUtil.isBusinessKeyUnique(set);
 		}

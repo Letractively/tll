@@ -30,7 +30,7 @@ public class OpenEntityManagerInViewFilter extends org.springframework.orm.jpa.s
 
 		FilterConfig config = this.getFilterConfig();
 		IAppContext ac = (IAppContext) config.getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
-		if(ac.getDaoMode() != DaoMode.MOCK) {
+		if(ac.getDaoMode() == DaoMode.ORM) {
 			if((emf = ac.getEntityManagerFactory()) == null) {
 				throw new Error("Can't obtain entity manager factory reference.");
 			}

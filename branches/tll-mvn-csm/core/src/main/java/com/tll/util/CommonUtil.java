@@ -153,13 +153,16 @@ public abstract class CommonUtil {
 			final URL resource = resources.nextElement();
 			try {
 				final URI uri = resource.toURI();
-				File dir = new File(uri.getPath());
-				if(filter != null) {
-					if(!filter.accept(dir, null)) {
-						continue;
+				String rpath = uri.getPath();
+				if(rpath != null) {
+					File dir = new File(rpath);
+					if(filter != null) {
+						if(!filter.accept(dir, null)) {
+							continue;
+						}
 					}
+					directories.add(dir);
 				}
-				directories.add(dir);
 			}
 			catch(final URISyntaxException se) {
 				throw new ClassNotFoundException(pckgname + " (" + resource.getPath()
