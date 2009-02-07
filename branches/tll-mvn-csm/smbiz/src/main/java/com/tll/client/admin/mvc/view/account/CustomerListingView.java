@@ -167,7 +167,7 @@ public final class CustomerListingView extends ListingView {
 			}
 
 			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "c"));
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY));
 			}
 
 			public Column[] getColumns() {

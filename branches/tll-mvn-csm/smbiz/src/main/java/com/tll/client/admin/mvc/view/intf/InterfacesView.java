@@ -172,7 +172,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			String listingName = EntityType.INTERFACE.name();
 			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery("interface.summaryList");
-			Sorting defaultSorting = new Sorting("name", "intf");
+			Sorting defaultSorting = new Sorting("name");
 			listingCommand =
 					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);

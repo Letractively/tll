@@ -5,12 +5,23 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm 
   http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
   version="1.0">
+  
+  <!--
+  named-query name CONVENTION:
+ 
+  {base query name}:{sorting directive}
+  
+  Where:
+ 
+  "base query name"  - the name of the "root" query (i.e. w/o regard to sorting)
+  "sort property"    - the property alias by which the declared query is sorted
+  -->
 
   <!-- ===================== -->
   <!-- SCALAR SELECT QUERIES -->
   <!-- ===================== -->
 
-  <named-query name="account.ispList">
+  <named-query name="account.ispList:name">
     <query>
     <![CDATA[
     select
@@ -29,7 +40,7 @@
   </named-query>
   <named-query name="account.ispList.count"><query><![CDATA[select count(id) from Isp]]></query></named-query>
   
-  <named-query name="account.merchantList">
+  <named-query name="account.merchantList:name">
     <query>
     <![CDATA[
     select
@@ -51,7 +62,7 @@
   </named-query>
   <named-query name="account.merchantList.count"><query><![CDATA[select count(id) from Merchant m where m.parent.id = :ispId]]></query></named-query>
   
-  <named-query name="account.customerList">
+  <named-query name="account.customerList:name">
     <query>
     <![CDATA[
     select
@@ -71,7 +82,7 @@
   </named-query>
   <named-query name="account.customerList.count"><query><![CDATA[select count(c.id) from CustomerAccount ca join ca.customer as c where ca.account.id = :merchantId order by name]]></query></named-query>
   
-  <named-query name="interface.summaryList">
+  <named-query name="interface.summaryList:intf.name">
     <query>
     <![CDATA[
     select
@@ -120,7 +131,7 @@
   <!-- ENTITY SELECT QUERIES -->
   <!-- ===================== -->
 
-  <named-query name="interface.select">
+  <named-query name="interface.select:name">
     <query><![CDATA[from Interface intf order by name]]></query>
   </named-query>
 

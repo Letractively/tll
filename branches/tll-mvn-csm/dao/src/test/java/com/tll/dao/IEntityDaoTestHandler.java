@@ -5,6 +5,8 @@
  */
 package com.tll.dao;
 
+import com.tll.criteria.IQueryParam;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.mock.MockEntityFactory;
 
@@ -87,4 +89,27 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 	 * @throws Exception if alteration(s) don't remain
 	 */
 	void verifyEntityAlteration(E e) throws Exception;
+	
+	/**
+	 * @return An array of select named query definitions to test.
+	 */
+	ISelectNamedQueryDef[] getQueriesToTest();
+
+	/**
+	 * Provides query params for a particular named select query to test.
+	 * @param qdef the particular named query under testing
+	 * @return the needed query params to pass to the
+	 *         {@link javax.persistence.Query} instance or <code>null</code> which
+	 *         indicates the given query requires no parameters.
+	 */
+	IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef);
+
+	/**
+	 * @param qdef the particular named query under testing
+	 * @return The desired sorting directive that may or may not be required to
+	 *         resolve the fully qualified query name in the persistence context.
+	 * @see ISelectNamedQueryDef for an explanation of the query naming
+	 *      convention.
+	 */
+	Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef);
 }

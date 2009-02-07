@@ -232,9 +232,9 @@
         <configuration>
           <suiteXmlFiles>
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile> -->
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile> -->
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile> -->
           </suiteXmlFiles>
         </configuration>
       </plugin>

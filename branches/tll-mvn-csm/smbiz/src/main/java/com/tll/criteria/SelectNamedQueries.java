@@ -16,32 +16,26 @@ import com.tll.model.Merchant;
  * @author jpk
  */
 public enum SelectNamedQueries implements ISelectNamedQueryDef {
-	ISP_LISTING("account.ispList", Isp.class, true),
-	MERCHANT_LISTING("account.merchantList", Merchant.class, true),
-	CUSTOMER_LISTING("account.customerList", Customer.class, true),
-	INTERFACE_SUMMARY_LISTING("interface.summaryList", Interface.class, true),
-	INTERFACES("interface.select", Interface.class, false);
+	ISP_LISTING("account.ispList", Isp.class, true, true),
+	MERCHANT_LISTING("account.merchantList", Merchant.class, true, true),
+	CUSTOMER_LISTING("account.customerList", Customer.class, true, true),
+	INTERFACE_SUMMARY_LISTING("interface.summaryList", Interface.class, true, false),
+	INTERFACES("interface.select", Interface.class, false, false);
 
-	private final String queryName;
+	private final String baseQueryName;
 	private final Class<?> entityType;
 	private final boolean scalar;
+	private final boolean supportsPaging;
 
-	private SelectNamedQueries(String queryName, Class<?> entityType, boolean scalar) {
-		this.queryName = queryName;
+	private SelectNamedQueries(String baseQueryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
+		this.baseQueryName = baseQueryName;
 		this.entityType = entityType;
 		this.scalar = scalar;
+		this.supportsPaging = supportsPaging;
 	}
 
-	public String getQueryName() {
-		return queryName;
-	}
-
-	/**
-	 * @return The counterpart named query that retrieves the count of this named
-	 *         query.
-	 */
-	public String getCountCounterpartQueryName() {
-		return queryName + ".count";
+	public String getBaseQueryName() {
+		return baseQueryName;
 	}
 
 	public Class<?> getEntityType() {
@@ -52,22 +46,12 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 		return scalar;
 	}
 
-	@Override
-	public String toString() {
-		return queryName;
+	public boolean isSupportsPaging() {
+		return supportsPaging;
 	}
 
-	/**
-	 * Finds the {@link SelectNamedQueries} given the query name.
-	 * @param queryName The query name
-	 * @return The associated query definition
-	 * @throws IllegalArgumentException When no matching
-	 *         {@link SelectNamedQueries} is found.
-	 */
-	public static SelectNamedQueries fromQueryName(String queryName) {
-		for(SelectNamedQueries nq : SelectNamedQueries.values()) {
-			if(nq.getQueryName().equals(queryName)) return nq;
-		}
-		throw new IllegalArgumentException("Undefined named query: " + queryName);
+	@Override
+	public String toString() {
+		return baseQueryName;
 	}
 }

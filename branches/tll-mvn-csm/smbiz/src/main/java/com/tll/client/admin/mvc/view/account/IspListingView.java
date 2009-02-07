@@ -139,7 +139,7 @@ public final class IspListingView extends ListingView {
 			}
 
 			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "i"));
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY));
 			}
 
 			public Column[] getColumns() {

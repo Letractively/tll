@@ -4,8 +4,8 @@
  */
 package com.tll.common.search;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
@@ -19,7 +19,7 @@ public abstract class SearchBase implements ISearch {
 	private CriteriaType criteriaType;
 
 	private String namedQuery;
-	private Set<IQueryParam> queryParams;
+	private List<IQueryParam> queryParams;
 
 	/**
 	 * Constructor
@@ -60,13 +60,13 @@ public abstract class SearchBase implements ISearch {
 		this.namedQuery = namedQuery;
 	}
 
-	public final Set<IQueryParam> getQueryParams() {
+	public final List<IQueryParam> getQueryParams() {
 		return queryParams;
 	}
 
 	public final void setQueryParam(IQueryParam queryParam) {
 		if(queryParams == null) {
-			queryParams = new HashSet<IQueryParam>();
+			queryParams = new ArrayList<IQueryParam>();
 		}
 		queryParams.add(queryParam);
 	}

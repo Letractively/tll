@@ -2,8 +2,7 @@
 <suite name="smbiz-dao-tests">
   
   <test name="listhandler-namedqueries-orm" annotations="JDK">
-    <parameter name="jpaMode" value="LOCAL" />
-    <!-- <parameter name="jpaMode" value="SPRING" /> -->
+    <parameter name="jpaMode" value="SPRING" />
     <parameter name="daoMode" value="ORM" />
     <groups>
       <run>

@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.testng.Assert;
 
+import com.tll.criteria.IQueryParam;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.mock.MockEntityFactory;
@@ -105,14 +107,6 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 		MockEntityFactory.makeBusinessKeyUnique(e);
 	}
 
-	/*
-	@Override
-	public void assembleTestEntity(E e, IEntityDao entityDao, IEntityFactory entityFactory,
-			MockEntityFactory mockEntityFactory) throws Exception {
-		// base impl no-op
-	}
-	*/
-
 	@Override
 	public final void teardownTestEntity(E e) {
 		entityDao.purge(e);
@@ -142,5 +136,23 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	@Override
 	public String toString() {
 		return entityClass().toString();
+	}
+
+	@Override
+	public ISelectNamedQueryDef[] getQueriesToTest() {
+		// default is no named queries
+		return null;
+	}
+
+	@Override
+	public IQueryParam[] getParamsForTestQuery(ISelectNamedQueryDef qdef) {
+		// default in no params
+		return null;
+	}
+
+	@Override
+	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
+		// default no sorting
+		return null;
 	}
 }

@@ -5,11 +5,10 @@
  */
 package com.tll.listhandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -51,33 +50,33 @@ public class NamedQueriesTest extends DbTest {
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 			new HashMap<SelectNamedQueries, SortColumn>();
 
-	private static final Map<SelectNamedQueries, Set<IQueryParam>> queryParamsBindings =
-			new HashMap<SelectNamedQueries, Set<IQueryParam>>();
+	private static final Map<SelectNamedQueries, List<IQueryParam>> queryParamsBindings =
+			new HashMap<SelectNamedQueries, List<IQueryParam>>();
 
 	static {
 		for(SelectNamedQueries nq : SelectNamedQueries.values()) {
 			switch(nq) {
 				case ISP_LISTING:
-					querySortBindings.put(nq, new SortColumn("dateCreated", "i"));
+					querySortBindings.put(nq, new SortColumn("dateCreated"));
 					queryParamsBindings.put(nq, null);
 					break;
 				case MERCHANT_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated", "m"));
-					Set<IQueryParam> set = new HashSet<IQueryParam>();
-					set.add(new QueryParam("ispId", PropertyType.INT, new Integer(2)));
-					queryParamsBindings.put(nq, set);
+					querySortBindings.put(nq, new SortColumn("dateCreated"));
+					List<IQueryParam> list = new ArrayList<IQueryParam>();
+					list.add(new QueryParam("ispId", PropertyType.INT, new Integer(2)));
+					queryParamsBindings.put(nq, list);
 					break;
 				}
 				case CUSTOMER_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated", "ca"));
-					Set<IQueryParam> set = new HashSet<IQueryParam>();
-					set.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
-					queryParamsBindings.put(nq, set);
+					querySortBindings.put(nq, new SortColumn("dateCreated"));
+					List<IQueryParam> list = new ArrayList<IQueryParam>();
+					list.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
+					queryParamsBindings.put(nq, list);
 					break;
 				}
 				case INTERFACE_SUMMARY_LISTING:
 				case INTERFACES:
-					querySortBindings.put(nq, new SortColumn("code", "intf"));
+					querySortBindings.put(nq, new SortColumn("code"));
 					queryParamsBindings.put(nq, null);
 					break;
 				

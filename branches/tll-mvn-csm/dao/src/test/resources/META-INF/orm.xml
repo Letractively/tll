@@ -6,6 +6,23 @@
   http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
   version="1.0">
 
+  <named-query name="account.testScalarQuery:name">
+    <query>
+    <![CDATA[
+    select
+      a.id as id,
+      a.name as name,
+      a.status as status,
+      a.dateCreated as dateCreated,
+      a.dateModified as dateModified
+    from
+      Account a
+    order by name
+    ]]>
+    </query>
+  </named-query>
+  <named-query name="account.testScalarQuery.count"><query><![CDATA[select count(id) from Account]]></query></named-query>
+  
   <named-query name="account.testExecuteQuery">
     <query><![CDATA[update Account set status = :status, billingModel = :billingModel where id = :id]]></query>
   </named-query>

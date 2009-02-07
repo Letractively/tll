@@ -1,8 +1,7 @@
 package com.tll.criteria;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.tll.model.IEntity;
 
@@ -24,7 +23,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 
 	private final CriterionGroup primaryGroup = new CriterionGroup();
 
-	private Set<IQueryParam> queryParams;
+	private List<IQueryParam> queryParams;
 
 	/**
 	 * Constructor
@@ -51,7 +50,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 	 * @param queryParams The possible query parameters
 	 */
 	@SuppressWarnings("unchecked")
-	public Criteria(ISelectNamedQueryDef namedQueryDefinition, Set<IQueryParam> queryParams) {
+	public Criteria(ISelectNamedQueryDef namedQueryDefinition, List<IQueryParam> queryParams) {
 		super();
 		this.criteriaType =
 				namedQueryDefinition.isScalar() ? CriteriaType.SCALAR_NAMED_QUERY : CriteriaType.ENTITY_NAMED_QUERY;
@@ -72,13 +71,13 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 		return namedQueryDefinition;
 	}
 
-	public Collection<IQueryParam> getQueryParams() {
+	public List<IQueryParam> getQueryParams() {
 		return queryParams;
 	}
 
 	public void setQueryParam(IQueryParam param) {
 		if(queryParams == null) {
-			queryParams = new HashSet<IQueryParam>();
+			queryParams = new ArrayList<IQueryParam>();
 		}
 		queryParams.add(param);
 	}
@@ -109,8 +108,8 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 			sb.append(" (");
 			sb.append(entityClass);
 			if(criteriaType.isQuery()) {
-				sb.append(", query name: ");
-				sb.append(namedQueryDefinition.getQueryName());
+				sb.append(", base query name: ");
+				sb.append(namedQueryDefinition.getBaseQueryName());
 			}
 			sb.append(")");
 		}

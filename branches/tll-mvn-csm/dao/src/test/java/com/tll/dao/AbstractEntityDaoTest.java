@@ -8,6 +8,7 @@ package com.tll.dao;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
@@ -33,6 +34,7 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
@@ -799,6 +801,28 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		}
 		catch(EntityNotFoundException ex) {
 			// expected
+		}
+	}
+	
+	private void daoTestSelectNamedQueries() throws Exception {
+		ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
+		if(queryDefs == null) return;
+		for(ISelectNamedQueryDef qdef : queryDefs) {
+			IQueryParam[] params = entityHandler.getParamsForTestQuery(qdef);
+			List<IQueryParam> list = params == null ? null : Arrays.asList(params);
+			Criteria<IEntity> c = new Criteria<IEntity>(qdef, list);
+			List<SearchResult<IEntity>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
+			Assert.assertTrue(result != null && result.size() > 0, "No named query results");
+			if(result != null) {
+				for(SearchResult<IEntity> sr : result) {
+					if(qdef.isScalar()) {
+						Assert.assertTrue(sr.getScalar() != null, "No scalar in scalar search result");
+					}
+					else {
+						Assert.assertTrue(sr.getEntity() != null, "No entity in entity search result");
+					}
+				}
+			}
 		}
 	}
 }

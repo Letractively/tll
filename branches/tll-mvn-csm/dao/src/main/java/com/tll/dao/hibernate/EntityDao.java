@@ -22,7 +22,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.ejb.QueryImpl;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.util.StringUtils;
@@ -59,16 +58,46 @@ import com.tll.util.CollectionUtil;
 public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	/**
+	 * NamedQueryDef - Encapsulates the query name logic to handle sorting
+	 * suffixes.
+	 * @see orm.xml
+	 * @author jpk
+	 */
+	private static final class NamedQueryDef {
+
+		final String rootName;
+		final Sorting sorting;
+
+		/**
+		 * Constructor
+		 * @param rootName
+		 * @param sorting
+		 */
+		public NamedQueryDef(String rootName, Sorting sorting) {
+			super();
+			this.rootName = rootName;
+			this.sorting = sorting;
+		}
+
+		/**
+		 * Calculates the fully qualified query name.
+		 * @return The fully qualified query name that is expected to be declared in
+		 *         orm.xml.
+		 */
+		public String getQueryName() {
+			// assemble the fully qualified query name
+			String fqn = rootName;
+			if(sorting != null) {
+				fqn += ':' + sorting.getPrimarySortColumn().getPropertyName();
+			}
+			return fqn;
+		}
+	}
+
+	/**
 	 * Used for transforming entity results into a native friendly handle.
 	 */
 	private static final ResultTransformer ENTITY_RESULT_TRANSFORMER = new EntitySearchResultTransformer();
-
-	/**
-	 * String representing the beginning of an order by clause in an SQL string.
-	 * Used internally to manually modify sql query strings in order to support
-	 * dynamic sorting.
-	 */
-	private static final String ORDER_BY_TOKEN = "order by ";
 
 	/**
 	 * @param <T>
@@ -333,7 +362,12 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	/**
 	 * Translates native criteria to a new Query instance.
-	 * @param queryName
+	 * <p>
+	 * IMPT: in order work w/ spring local transaction management at runtime, we
+	 * *must* soley adhere to the EntityManager interface because Spring proxies
+	 * the EntityManager as well as any retrieved Query instance from this proxied
+	 * EntityManager.
+	 * @param baseQueryName
 	 * @param queryParams
 	 * @param sorting
 	 * @param resultTransformer May be <code>null</code>.
@@ -342,59 +376,36 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private Query assembleQuery(String queryName, Collection<IQueryParam> queryParams, Sorting sorting,
-			ResultTransformer resultTransformer, boolean cacheable) throws InvalidCriteriaException {
-		if(queryName == null) {
+	private org.hibernate.Query assembleNamedQuery(String baseQueryName, Collection<IQueryParam> queryParams,
+			Sorting sorting,
+			ResultTransformer resultTransformer, boolean cacheable)
+			throws InvalidCriteriaException {
+		if(baseQueryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");
 		}
-		final EntityManager em = getEntityManager();
-		Query q = em.createNamedQuery(queryName);
-		org.hibernate.Query hbmQuery = jpa2hbmQuery(q);
+		
+		final Session session = getSession();
+		session.beginTransaction();
+		
+		final NamedQueryDef nqd = new NamedQueryDef(baseQueryName, sorting);
 
-		// apply sorting (if specified)
-		if(sorting != null) {
-			final StringBuffer sb = new StringBuffer(hbmQuery.getQueryString());
-			int indx = sb.indexOf(ORDER_BY_TOKEN);
-			if(indx >= 0) {
-				indx += ORDER_BY_TOKEN.length();
-				assert sb.length() - 1 > indx;
-				sb.setLength(indx);
-			}
-			sb.append(sorting.toString());
-			q = em.createQuery(sb.toString());
-			hbmQuery = jpa2hbmQuery(q);
-		}
-
+		org.hibernate.Query hbmQ = session.getNamedQuery(nqd.getQueryName());
+		
 		// fill the named params (if any)
-		final String[] namedParams = hbmQuery.getNamedParameters();
-		if(namedParams != null && namedParams.length > 0) {
-			// create param map
-			if(queryParams == null || queryParams.size() != namedParams.length) {
-				throw new InvalidCriteriaException("Empty or invalid number of query parameters for named query: " + queryName);
-			}
-			for(final String np : namedParams) {
-				IQueryParam queryParam = null;
-				for(IQueryParam qp : queryParams) {
-					if(np.equals(qp.getPropertyName())) {
-						queryParam = qp;
-						break;
-					}
-				}
-				if(queryParam == null) {
-					throw new InvalidCriteriaException("Named parameter: " + np + " is not specified for named query: "
-							+ queryName);
-				}
-				hbmQuery.setParameter(np, queryParam.getValue());
+		if(queryParams != null && queryParams.size() > 0) {
+			for(IQueryParam queryParam : queryParams) {
+				hbmQ.setParameter(queryParam.getPropertyName(), queryParam.getValue());
 			}
 		}
 
+		// NOTE: we now have to transform manually
 		if(resultTransformer != null) {
-			hbmQuery.setResultTransformer(resultTransformer);
+			hbmQ.setResultTransformer(resultTransformer);
 		}
-
-		hbmQuery.setCacheable(cacheable);
-
-		return q;
+		
+		hbmQ.setCacheable(cacheable);
+		
+		return hbmQ;
 	}
 
 	/**
@@ -402,11 +413,13 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param q The jpa query instance
 	 * @return The hibernate query instance.
 	 */
+	/*
 	private org.hibernate.Query jpa2hbmQuery(Query q) {
 		assert q instanceof QueryImpl;
 		return ((QueryImpl) q).getHibernateQuery();
 	}
-
+	*/
+	
 	/**
 	 * Invokes a named query.
 	 * @param criteria
@@ -417,8 +430,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	private <E extends IEntity> List<?> findByNamedQuery(ICriteria<E> criteria, Sorting sorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
-		return assembleQuery(nq.getQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
-				.getResultList();
+		return assembleNamedQuery(nq.getBaseQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
+				.list();
 	}
 
 	/**
@@ -626,14 +639,18 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
 				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
-				String queryName = snq.getQueryName();
-				String countQueryName = snq.getQueryName() + ".count";
-				final Query cq = assembleQuery(countQueryName, null, null, null, false);
-				final Long count = (Long) cq.getSingleResult();
+				if(!snq.isSupportsPaging()) {
+					throw new InvalidCriteriaException(snq.getBaseQueryName() + " query does not support paging.");
+				}
+				String queryName = snq.getBaseQueryName();
+				String countQueryName = snq.getBaseQueryName() + ".count";
+				final org.hibernate.Query cq = assembleNamedQuery(countQueryName, null, null, null, false);
+				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
 				totalCount = count.intValue();
-				final Query q = assembleQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
-				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				final org.hibernate.Query q =
+						assembleNamedQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
+				rlist = q.setFirstResult(offset).setMaxResults(pageSize).list();
 				break;
 			}
 
@@ -641,17 +658,15 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
 				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
-				String queryName = snq.getQueryName();
-				String countQueryName = snq.getQueryName() + ".count";
-				final Query cq = assembleQuery(countQueryName, criteria.getQueryParams(), null, null, false);
-				final Long count = (Long) cq.getSingleResult();
+				String queryName = snq.getBaseQueryName();
+				String countQueryName = snq.getBaseQueryName() + ".count";
+				final org.hibernate.Query cq = assembleNamedQuery(countQueryName, criteria.getQueryParams(), null, null, false);
+				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
 				totalCount = count.intValue();
-
-				final Query q =
-						assembleQuery(queryName, criteria.getQueryParams(), sorting, new ScalarSearchResultTransformer(criteria
-								.getEntityClass()), true);
-				rlist = q.setFirstResult(offset).setMaxResults(pageSize).getResultList();
+				final ResultTransformer rt = new ScalarSearchResultTransformer(criteria.getEntityClass());
+				final org.hibernate.Query q = assembleNamedQuery(queryName, criteria.getQueryParams(), sorting, rt, true);
+				rlist = q.setFirstResult(offset).setMaxResults(pageSize).list();
 				break;
 			}
 		}

@@ -7,6 +7,7 @@ package com.tll.dao;
 
 import org.testng.Assert;
 
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
@@ -20,13 +21,48 @@ import com.tll.model.mock.MockEntityFactory;
  * @author jpk
  */
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
+	
+	private static enum SelectNamedQueries implements ISelectNamedQueryDef {
+		ACCOUNT_LISTING("account.testScalarQuery", Account.class, true, true);
 
+		private final String baseQueryName;
+		private final Class<?> entityType;
+		private final boolean scalar;
+		private final boolean supportsPaging;
+
+		private SelectNamedQueries(String baseQueryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
+			this.baseQueryName = baseQueryName;
+			this.entityType = entityType;
+			this.scalar = scalar;
+			this.supportsPaging = supportsPaging;
+		}
+
+		public String getBaseQueryName() {
+			return baseQueryName;
+		}
+
+		public Class<?> getEntityType() {
+			return entityType;
+		}
+
+		public boolean isScalar() {
+			return scalar;
+		}
+
+		public boolean isSupportsPaging() {
+			return supportsPaging;
+		}
+
+		@Override
+		public String toString() {
+			return baseQueryName;
+		}
+	}
 	// dependent entities
 	NestedEntity nestedEntity;
 	Currency currency;
-	// Address address1;
-	// Address address2;
 	Account parent;
+	
 
 	@Override
 	public Class<Account> entityClass() {
@@ -100,5 +136,15 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		Assert.assertNotNull(e.getNestedEntity(), "No account nested entity loaded");
 		Assert.assertTrue(e.getAddresses() != null && e.getAddresses().size() == 2,
 				"No account address collection loaded or invalid number of them");
+	}
+
+	@Override
+	public ISelectNamedQueryDef[] getQueriesToTest() {
+		return SelectNamedQueries.values();
+	}
+
+	@Override
+	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
+		return new Sorting("name");
 	}
 }

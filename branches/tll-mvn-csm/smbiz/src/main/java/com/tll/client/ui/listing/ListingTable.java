@@ -260,8 +260,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 		public void onClick(Widget sender) {
 			if(sender == lnk) {
-				SortColumn sc = new SortColumn(column.getPropertyName(), column.getParentAlias(), ignoreCaseWhenSorting);
-				sc.setDirection(direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC);
+				SortColumn sc =
+						new SortColumn(column.getPropertyName(), direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC,
+								ignoreCaseWhenSorting);
 				listingOperator.sort(new Sorting(sc));
 			}
 		}

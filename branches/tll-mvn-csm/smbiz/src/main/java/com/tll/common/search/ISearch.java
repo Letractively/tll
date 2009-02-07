@@ -4,7 +4,7 @@
  */
 package com.tll.common.search;
 
-import java.util.Set;
+import java.util.List;
 
 import com.tll.IMarshalable;
 import com.tll.criteria.CriteriaType;
@@ -43,5 +43,5 @@ public interface ISearch extends IMarshalable {
 	/**
 	 * @return Possible query parameters when a named query is specified.
 	 */
-	Set<IQueryParam> getQueryParams();
+	List<IQueryParam> getQueryParams();
 }

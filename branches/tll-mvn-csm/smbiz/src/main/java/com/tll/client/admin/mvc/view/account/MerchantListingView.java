@@ -174,7 +174,7 @@ public final class MerchantListingView extends ListingView {
 			}
 
 			public Sorting getDefaultSorting() {
-				return new Sorting(new SortColumn(Model.NAME_PROPERTY, "m"));
+				return new Sorting(new SortColumn(Model.NAME_PROPERTY));
 			}
 
 			public Column[] getColumns() {

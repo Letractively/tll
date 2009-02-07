@@ -5,8 +5,8 @@
 package com.tll.server.rpc.entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -262,7 +262,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 		Criteria<E> criteria;
-		final Set<IQueryParam> queryParams = search.getQueryParams();
+		final List<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
 			SelectNamedQueries nq = EnumUtil.fromString(SelectNamedQueries.class, search.getNamedQuery());

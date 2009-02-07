@@ -1,7 +1,7 @@
 package com.tll.criteria;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import com.tll.model.IEntity;
 
@@ -37,7 +37,7 @@ public interface ICriteria<E extends IEntity> extends Serializable {
 	 * @return Collection of query params and their associated String wise values.
 	 *         May be <code>null</code> or empty.
 	 */
-	Collection<IQueryParam> getQueryParams();
+	List<IQueryParam> getQueryParams();
 
 	/**
 	 * @return true if at least one valid {@link Criterion} exists.

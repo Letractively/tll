@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.testng.Assert;
 
+import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
@@ -102,4 +104,20 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 		}
 	}
 
+	@Override
+	public ISelectNamedQueryDef[] getQueriesToTest() {
+		return new ISelectNamedQueryDef[] {
+			SelectNamedQueries.INTERFACES, SelectNamedQueries.INTERFACE_SUMMARY_LISTING };
+	}
+
+	@Override
+	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
+		if(qdef.getBaseQueryName().equals(SelectNamedQueries.INTERFACE_SUMMARY_LISTING.getBaseQueryName())) {
+			return new Sorting("intf.name");
+		}
+		else if(qdef.getBaseQueryName().equals(SelectNamedQueries.INTERFACES.getBaseQueryName())) {
+			return new Sorting("name");
+		}
+		return null;
+	}
 }
