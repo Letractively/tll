@@ -1,0 +1,77 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-server-tests">
+  
+  <!--
+  <test name="server-bootstrap-test-orm-security" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <parameter name="securityMode" value="ACEGI" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
+  <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <parameter name="securityMode" value="NONE" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
+  <test name="server-bootstrap-test-mock-nosecurity" annotations="JDK">
+    <parameter name="daoMode" value="MOCK" />
+    <parameter name="securityMode" value="NONE" />
+    <groups>
+      <run>
+        <include name="bootstrap" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.server.*" />
+    </packages>
+  </test>
+  
+  <test name="marshal-tests" annotations="JDK">
+    <packages>
+      <package name="com.tll.server.marshal.*" />
+    </packages>
+  </test>
+  -->
+
+  <test name="listing-service-test-orm" annotations="JDK">
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="listing" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.server.rpc.listing.ListingServiceTest" />
+    </classes>
+  </test>
+  
+  <!-- 
+  <test name="listing-tests-mock" annotations="JDK">
+    <parameter name="daoMode" value="MOCK" />
+    <groups>
+      <run>
+        <include name="listing" />
+      </run>
+    </groups>
+    <classes>
+      <class name="com.tll.server.*" />
+    </classes>
+  </test>
+  -->
+
+</suite>
