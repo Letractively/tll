@@ -1,0 +1,186 @@
+/* specific smbiz CSS overrides for the admin app. */
+
+body {
+	margin: 20px;
+	background-color: #EAEAEA;
+}
+
+a {
+	color: #0000de;
+}
+
+a:visited {
+	color: #639;
+}
+
+a:active {
+	color: #f00;
+}
+
+#headerTd {
+	border-bottom: 1px solid silver;
+}
+
+#viewpathTd {
+	border-left: 1px solid silver;
+	border-right: 1px solid silver;
+}
+
+#centerTd {
+	width: 800px;
+	border-left: 1px solid silver;
+	border-bottom: 1px solid silver;
+	padding: 0 0 1em 1em;
+	vertical-align: top;
+}
+
+#rightNavTd {
+	border: 1px solid silver;
+	border-top: 0;
+	border-left: 0;
+	padding: 0 1em 1em 1em;
+	background-color: white;
+	text-align: right;
+}
+
+#footerTd {
+	height: 1.5em;
+}
+
+.sb-mainPanel {
+	background-color: white;
+}
+
+.sb-Header {
+	width: 100%;
+	background-color: #EAEAEA;
+	color: silver;
+	overflow: hidden;
+}
+
+.sb-Header h1 {
+	font-size: 22px;
+	margin-bottom: -6px;
+}
+
+.sb-Footer {
+	background-color: #EAEAEA;
+	width: 100%;
+	height: 100%;
+	color: #8F8F8F;
+	font-size: 9px;
+}
+
+.sb-Footer p {
+	padding: 2px 2px;
+	text-align: center;
+}
+
+.sb-RightNav {
+	width: 13em;
+	background-color: white;
+}
+
+.sb-RightNav .lbl {
+	color: silver;
+}
+
+.sb-RightNav .recentviews .gwt-Hyperlink * {
+	white-space: nowrap;
+}
+
+#currentUser {
+	border: 2px solid silver;
+	padding: 2px;
+	margin-bottom: 1em;
+}
+
+.sb-RightNav .gwt-DisclosurePanel {
+	margin-bottom: 1em;
+	width: 100%;
+}
+.sb-RightNav .gwt-DisclosurePanel .content {
+	border:2px solid silver;
+	border-top-width: 0;
+	width: 100%;
+}
+
+.sb-RightNav .gwt-DisclosurePanel .content table {
+	width: 100%;
+}
+
+#dpStatusDisplay {
+	margin-bottom: 0;
+}
+
+#dpStatusDisplay .statusDisplay {
+	height: 150px;
+}
+
+#dpStatusDisplay .content {
+	padding: 0;
+}
+
+.sb-Center {
+	width: 100%;
+}
+
+/* view css theme */
+.view {
+	min-height: 300px;
+	/*border: 1px solid brown;*/ /*debug*/
+}
+.viewToolbar {
+	background-color: #C0C0C0;
+}
+
+/* tableview.css theme */
+.tableView .portal {
+	height: 271px; /* i.e. .view:height - (25 [nav panel height] + (2 + 2 [view border/padding/margin]) ) */
+}
+
+/* entity edit view theme */
+.entityEdit .portal {
+	/*height: 271px;*/
+	overflow: visible !important;
+}
+
+.entityEdit .btnRow {
+	text-align: center;
+}
+.entityEdit .btnRow .gwt-Button {
+	margin: .5em;
+}
+
+/* viewpath.css theme */
+.viewpath {
+	background-color: #fff;
+	color: #000;
+	margin: 0 0 0 1em;
+	height: 1.3em;
+}
+
+.viewpath a {
+	border: none;
+}
+
+.viewpath a:link,.viewpath a:visited,.viewpath .spacer {
+	background-color: #fff;
+}
+
+.viewpath .spacer {
+	color: #C0C0C0;
+}
+
+.viewpath a:hover {
+	background-color: #EAEAEA;
+}
+
+/* interfaces view styling */
+.interfaces .gwt-StackPanel {
+	width: 100%;
+}
+
+.interfaces .tableView .portal {
+	height: inherit !important;
+}

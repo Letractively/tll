@@ -1,0 +1,62 @@
+@CHARSET "ISO-8859-1";
+
+/* MsgPanel */
+
+.msg {
+  
+}
+
+.msg .msg {
+  float: left;
+  margin-right: 5px;
+}
+
+.msg ul {
+  float: left;
+}
+
+.msg .ic {
+  float: left;
+  margin: 2px;
+}
+
+.msg ul,.msg ul li {
+  
+}
+
+.msg p {
+  font-size: 12px;
+  line-height: 120%;
+  white-space: nowrap;
+  margin: 2px 2px 0 2px;
+}
+
+.msg .info {
+  color: #2C6688;
+  background-color: #DBEAF3;
+  border: solid 1px #AFD1E5;
+}
+
+.msg .success {
+  color: #006600;
+  background-color: #CCFFCC;
+  border: solid 1px #66CC66;
+}
+
+.msg .warn {
+  color: #666600;
+  background-color: #FFFFCC;
+  border: solid 1px #EFEF07;
+}
+
+.msg .error {
+  color: #CC0000;
+  background-color: #FEE2E2;
+  border: solid 1px #CC6666;
+}
+
+.msg .fatal {
+  color: maroon;
+  background-color: #FEE2E2;
+  border: solid 1px maroon;
+}

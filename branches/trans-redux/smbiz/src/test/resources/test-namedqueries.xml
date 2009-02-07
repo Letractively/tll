@@ -1,0 +1,32 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-dao-tests">
+  
+  <test name="listhandler-namedqueries-orm" annotations="JDK">
+    <parameter name="jpaMode" value="SPRING" />
+    <parameter name="daoMode" value="ORM" />
+    <groups>
+      <run>
+        <include name="namedqueries" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.listhandler" />
+    </packages>
+  </test>
+
+  <!--
+  <test name="listhandler-namedqueries-mock" annotations="JDK">
+    <parameter name="jpaMode" value="NONE" />
+    <parameter name="daoMode" value="MOCK" />
+    <groups>
+      <run>
+        <include name="namedqueries" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.listhandler" />
+    </packages>
+  </test>
+  -->
+  
+</suite>
