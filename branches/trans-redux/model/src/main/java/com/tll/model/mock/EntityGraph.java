@@ -19,9 +19,8 @@ import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.key.PrimaryKey;
 
-
 /**
- * EntityGraph
+ * EntityGraph - A really poor man's managed set of in memory entities.
  * @author jpk
  */
 public final class EntityGraph implements IEntityProvider {
@@ -45,7 +44,18 @@ public final class EntityGraph implements IEntityProvider {
 	public void clear() {
 		graph.clear();
 	}
-	
+
+	/**
+	 * @return The total number of entities in the graph.
+	 */
+	public int size() {
+		int size = 0;
+		for(Set<? extends IEntity> set : graph.values()) {
+			size += set.size();
+		}
+		return size;
+	}
+
 	/**
 	 * Grabs the entity set from the calculated root entity type of the given
 	 * entity type.

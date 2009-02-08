@@ -166,16 +166,6 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		}
 
 		@Override
-		public void clear() {
-			rawDao.clear();
-		}
-
-		@Override
-		public void flush() {
-			rawDao.flush();
-		}
-
-		@Override
 		public <N extends INamedEntity> N load(NameKey<N> nameKey) {
 			return rawDao.load(nameKey);
 		}
@@ -250,6 +240,9 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 */
 	private final Stack<PrimaryKey<IEntity>> testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
 
+	/**
+	 * Used to validate the entity graph when testing under MOCK dao mode.
+	 */
 	private int numEntities;
 
 	/**
@@ -326,10 +319,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		// mock dao mode only - retain the number of entities before any testing
 		// happens for this entity type
 		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
-			Collection<?> eclc =
-					((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph()
-							.getEntitiesByType(entityHandler.entityClass());
-			numEntities = eclc == null ? 0 : eclc.size();
+			numEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 		}
 		
 		// stub dependent entities for test entities of the current entity type
@@ -362,10 +352,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		// object graph matches the retained number prior to testing for the current
 		// entity type
 		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
-			Collection<?> eclc =
-					((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph()
-							.getEntitiesByType(entityHandler.entityClass());
-			int afterNumEntities = eclc == null ? 0 : eclc.size();
+			int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 			Assert.assertEquals(afterNumEntities, numEntities, entityHandler + " dao test handler didn't clean up properly!");
 		}
 	}

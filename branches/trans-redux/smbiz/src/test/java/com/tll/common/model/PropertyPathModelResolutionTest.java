@@ -6,18 +6,13 @@ package com.tll.common.model;
 
 import org.testng.annotations.Test;
 
-import com.tll.common.model.IModelProperty;
-import com.tll.common.model.IndexOutOfRangeInPropPathException;
-import com.tll.common.model.Model;
-import com.tll.common.model.ModelRefProperty;
-import com.tll.common.model.NullNodeInPropPathException;
-import com.tll.common.model.PropPathNodeMismatchException;
-import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.RelatedManyProperty;
-import com.tll.common.model.StringPropertyValue;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
 import com.tll.model.Asp;
+import com.tll.model.Currency;
+import com.tll.model.PaymentInfo;
+import com.tll.model.mock.MockEntityFactory;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.marshal.Marshaler;
 
 /**
  * PropertyPathModelResolutionTest
@@ -25,12 +20,18 @@ import com.tll.server.marshal.Marshaler;
  */
 @Test(groups = "client-model")
 public class PropertyPathModelResolutionTest extends AbstractModelTest {
-
+	
 	private Model getTestModel() {
-		final Asp asp = new Asp();
-		Marshaler m = injector.getInstance(Marshaler.class);
-		// TODO fill in asp
-		return m.marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		MockEntityFactory mef = getMockEntityFactory();
+
+		Asp asp = mef.getEntityCopy(Asp.class, true);
+		asp.setCurrency(mef.getEntityCopy(Currency.class, true));
+		asp.setPaymentInfo(mef.getEntityCopy(PaymentInfo.class, true));
+		AccountAddress aa = mef.getEntityCopy(AccountAddress.class, true);
+		aa.setAddress(mef.getEntityCopy(Address.class, true));
+		asp.addAccountAddress(aa);
+
+		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
 	}
 
 	/**

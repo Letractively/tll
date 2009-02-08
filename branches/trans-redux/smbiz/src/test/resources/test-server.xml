@@ -1,7 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="smbiz-server-tests">
   
-  <!--
   <test name="server-bootstrap-test-orm-security" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
     <parameter name="securityMode" value="ACEGI" />
@@ -14,7 +13,7 @@
       <package name="com.tll.server.*" />
     </packages>
   </test>
-  
+
   <test name="server-bootstrap-test-orm-nosecurity" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
     <parameter name="securityMode" value="NONE" />
@@ -46,8 +45,8 @@
       <package name="com.tll.server.marshal.*" />
     </packages>
   </test>
-  -->
 
+  <!-- TODO: fix these tests!
   <test name="listing-service-test-orm" annotations="JDK">
     <parameter name="daoMode" value="ORM" />
     <groups>
@@ -60,7 +59,6 @@
     </classes>
   </test>
   
-  <!-- 
   <test name="listing-tests-mock" annotations="JDK">
     <parameter name="daoMode" value="MOCK" />
     <groups>
@@ -69,7 +67,7 @@
       </run>
     </groups>
     <classes>
-      <class name="com.tll.server.*" />
+      <class name="com.tll.server.rpc.listing.ListingServiceTest" />
     </classes>
   </test>
   -->

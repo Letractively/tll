@@ -208,15 +208,4 @@ public interface IEntityDao extends IDao {
 	 * @return The number of affected entities.
 	 */
 	int executeQuery(String queryName, IQueryParam[] params);
-
-	/**
-	 * Flush the persistence context
-	 */
-	void flush();
-
-	/**
-	 * Clear the persistence context
-	 */
-	void clear();
-
 }

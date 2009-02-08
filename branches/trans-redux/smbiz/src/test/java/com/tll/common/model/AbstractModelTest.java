@@ -11,19 +11,24 @@ import java.util.List;
 
 import org.testng.annotations.BeforeClass;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.tll.DbTest;
+import com.google.inject.Scopes;
+import com.tll.AbstractInjectedTest;
 import com.tll.TestUtils;
-import com.tll.config.Config;
-import com.tll.dao.DaoMode;
-import com.tll.di.DaoModule;
+import com.tll.di.MockEntityFactoryModule;
+import com.tll.di.ModelModule;
+import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.mock.MockPrimaryKeyGenerator;
 import com.tll.model.schema.PropertyType;
+import com.tll.server.marshal.Marshaler;
 
 /**
  * AbstractModelTest - Base class for testing client model stuff.
  * @author jpk
  */
-public abstract class AbstractModelTest extends DbTest {
+public abstract class AbstractModelTest extends AbstractInjectedTest {
 
 	/**
 	 * Validates a source {@link Model} to a copied {@link Model} verifying the
@@ -34,7 +39,7 @@ public abstract class AbstractModelTest extends DbTest {
 	 *        properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	public static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
+	static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
 			throws Exception {
 		compare(source, copy, compareReferences, true, new ArrayList<Model>());
 	}
@@ -47,7 +52,7 @@ public abstract class AbstractModelTest extends DbTest {
 	 *        properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	public static void equals(final Model source, final Model target, final boolean compareReferences) throws Exception {
+	static void equals(final Model source, final Model target, final boolean compareReferences) throws Exception {
 		compare(source, target, compareReferences, false, new ArrayList<Model>());
 	}
 
@@ -65,7 +70,7 @@ public abstract class AbstractModelTest extends DbTest {
 	 * @param visited
 	 * @throws Exception
 	 */
-	private static void compare(Model source, Model target, final boolean compareReferences,
+	static void compare(Model source, Model target, final boolean compareReferences,
 			boolean requireDistinctModelProperties, List<Model> visited) throws Exception {
 		assert source != null && target != null;
 
@@ -134,22 +139,31 @@ public abstract class AbstractModelTest extends DbTest {
 		}
 	}
 
-	/**
-	 * Constructor
-	 */
-	public AbstractModelTest() {
-		super(DaoMode.MOCK, false, false);
-	}
-
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
-		modules.add(new DaoModule());
+		modules.add(new ModelModule());
+		modules.add(new MockEntityFactoryModule());
+		modules.add(new Module() {
+
+			@Override
+			public void configure(Binder binder) {
+				// IPrimaryKeyGenerator
+				binder.bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
+			}
+		});
 	}
 
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
+	}
+
+	protected final MockEntityFactory getMockEntityFactory() {
+		return injector.getInstance(MockEntityFactory.class);
+	}
+
+	protected final Marshaler getMarshaler() {
+		return injector.getInstance(Marshaler.class);
 	}
 }

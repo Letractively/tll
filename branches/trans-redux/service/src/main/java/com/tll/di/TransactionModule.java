@@ -28,7 +28,6 @@ public final class TransactionModule extends GModule {
 
 		// required for AspectJ weaving of Spring's @Transactional annotation
 		// (must be invoked PRIOR to an @Transactional method call
-		// TODO try and declare this elsewhere as this is service layer specific
 		AnnotationTransactionAspect.aspectOf().setTransactionManager(ptm);
 
 		// PlatformTransactionManager

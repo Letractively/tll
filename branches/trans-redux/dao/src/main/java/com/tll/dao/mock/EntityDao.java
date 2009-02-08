@@ -226,14 +226,6 @@ public final class EntityDao implements IEntityDao {
 		return 0;
 	}
 
-	public final void clear() {
-		// no op
-	}
-
-	public void flush() {
-		// no-op
-	}
-
 	/**
 	 * Mock dao impls should override as necessary to best provide the satisfying
 	 * entities.

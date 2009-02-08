@@ -92,21 +92,20 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param sorting sorting object
 	 */
 	private static void applySorting(DetachedCriteria dc, Sorting sorting) throws InvalidCriteriaException {
-		if(sorting == null) {
-			return;
-		}
-		final SortColumn[] columns = sorting.getColumns();
-		for(final SortColumn element : columns) {
-			// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
-			// element.getDirection();
-			final String column = element.getPropertyName();
-			final Boolean ignoreCase = element.getIgnoreCase();
-			applyAliasIfNecessary(dc, column);
-			final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
-			if(Boolean.TRUE.equals(ignoreCase)) {
-				order.ignoreCase();
+		if(sorting != null) {
+			final SortColumn[] columns = sorting.getColumns();
+			for(final SortColumn element : columns) {
+				// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
+				// element.getDirection();
+				final String column = element.getPropertyName();
+				final Boolean ignoreCase = element.getIgnoreCase();
+				applyAliasIfNecessary(dc, column);
+				final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
+				if(Boolean.TRUE.equals(ignoreCase)) {
+					order.ignoreCase();
+				}
+				dc.addOrder(order);
 			}
-			dc.addOrder(order);
 		}
 	}
 
@@ -191,10 +190,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
-		final DetachedCriteria dc = DetachedCriteria.forClass(entityType);
-		final Session session = (Session) getEntityManager().getDelegate();
-		final Criteria c = dc.getExecutableCriteria(session);
-		return c.list();
+		return DetachedCriteria.forClass(entityType).getExecutableCriteria(getSession(getEntityManager())).list();
 	}
 
 	public <E extends IEntity> E persist(E entity) {
@@ -203,8 +199,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		if(entities == null) return null;
-		final Collection<E> merged = new HashSet<E>(entities.size());
 		final EntityManager em = getEntityManager();
+		final Collection<E> merged = new HashSet<E>(entities.size());
 		for(final E e : entities) {
 			merged.add(persistInternal(e, false, em));
 		}
@@ -287,14 +283,6 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				: ENTITY_RESULT_TRANSFORMER);
 	}
 
-	public void clear() {
-		getEntityManager().clear();
-	}
-
-	public void flush() {
-		getEntityManager().flush();
-	}
-
 	/**
 	 * Process criteria instances providing a distinct list of matching results
 	 * whose elements are either {@link SearchResult} or {@link IEntity} instances
@@ -313,7 +301,10 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		assert criteria != null && resultTransformer != null;
 		if(criteria.getCriteriaType().isQuery()) {
 			// presume named query ref
-			ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
+			final ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
+			if(nq == null || nq.getQueryName() == null) {
+				throw new InvalidCriteriaException("No named query specified.");
+			}
 			return assembleQuery(getEntityManager(), nq.getQueryName(), criteria.getQueryParams(), sorting,
 					resultTransformer, true).list();
 		}
@@ -330,9 +321,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @return List of results of unknown type.
 	 */
 	private List<?> findByDetatchedCriteria(DetachedCriteria dc) {
-		final Session session = (Session) getEntityManager().getDelegate();
-		final Criteria executableCriteria = dc.getExecutableCriteria(session);
-		return executableCriteria.list();
+		return dc.getExecutableCriteria(getSession(getEntityManager())).list();
 	}
 
 	/**
@@ -400,21 +389,6 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @throws InvalidCriteriaException
 	 */
 	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, ICriteria<E> criteria, Sorting sorting,
-			boolean applySorting) throws InvalidCriteriaException {
-		applyCriteriaStrict(dc, criteria, sorting, applySorting);
-	}
-
-	/**
-	 * This method is called by processCriteria(ICriteria) such that the behavior
-	 * may not be overridden.
-	 * @param dc the hibernate criteria object
-	 * @param criteria criteria object
-	 * @param sorting The optional sorting directive
-	 * @param applySorting Apply the sorting?
-	 * @throws InvalidCriteriaException
-	 * @see #applyCriteria(DetachedCriteria, ICriteria)
-	 */
-	private <E extends IEntity> void applyCriteriaStrict(DetachedCriteria dc, ICriteria<E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -498,8 +472,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 			return;
 		}
 		final Comparator c = ctn.getComparator();
-		if(Comparator.CONTAINS.equals(c) || Comparator.ENDS_WITH.equals(c) || Comparator.EQUALS.equals(c)
-				|| Comparator.LIKE.equals(c) || Comparator.STARTS_WITH.equals(c)) {
+		if(Comparator.CONTAINS == c || Comparator.ENDS_WITH == c || Comparator.EQUALS == c || Comparator.LIKE == c
+				|| Comparator.STARTS_WITH == c) {
 
 			((SimpleExpression) expression).ignoreCase();
 		}
@@ -512,7 +486,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, nativeCriteria, sorting, true);
+			applyCriteria(dc, nativeCriteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);

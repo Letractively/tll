@@ -67,7 +67,7 @@ public class NamedQueriesTest extends DbTest {
 					break;
 				}
 				case CUSTOMER_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated"));
+					querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
 					List<IQueryParam> list = new ArrayList<IQueryParam>();
 					list.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
 					queryParamsBindings.put(nq, list);
@@ -75,7 +75,7 @@ public class NamedQueriesTest extends DbTest {
 				}
 				case INTERFACE_SUMMARY_LISTING:
 				case INTERFACES:
-					querySortBindings.put(nq, new SortColumn("code"));
+					querySortBindings.put(nq, new SortColumn("code", "intf"));
 					queryParamsBindings.put(nq, null);
 					break;
 				
@@ -95,7 +95,7 @@ public class NamedQueriesTest extends DbTest {
 
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = "daoMode")
-	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
+	public final void onBeforeClass(String daoModeStr) {
 		setDaoMode(EnumUtil.fromString(DaoMode.class, daoModeStr));
 		beforeClass();
 	}

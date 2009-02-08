@@ -20,7 +20,7 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 	MERCHANT_LISTING("account.merchantList", Merchant.class, true, true),
 	CUSTOMER_LISTING("account.customerList", Customer.class, true, true),
 	INTERFACE_SUMMARY_LISTING("interface.summaryList", Interface.class, true, false),
-	INTERFACES("interface.select", Interface.class, false, false);
+	INTERFACES("interface.select", Interface.class, false, true);
 
 	private final String queryName;
 	private final Class<?> entityType;
