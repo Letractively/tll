@@ -1,0 +1,10 @@
+<module>
+  <inherits name="com.tll.Smbiz" />
+
+  <entry-point class="com.tll.client.admin.SmbizAdmin" />
+
+  <stylesheet src="css/admin.css" />
+
+  <set-property name="log_DivLogger" value="DISABLED" />
+
+</module>

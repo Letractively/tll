@@ -1,0 +1,193 @@
+<html>
+<head>
+<title>MsgPanel static HTML</title>
+
+<link href="./../../public/css/reset.css" rel="stylesheet" />
+<link href="./../../public/css/base.css" rel="stylesheet" />
+<link href="./../../public/css/widget-gwt.css" rel="stylesheet" />
+<link href="./../../public/css/widget-tll.css" rel="stylesheet" />
+<link href="./../../public/css/hnav.css" rel="stylesheet" />
+<link href="./../../public/css/msg.css" rel="stylesheet" />
+<link href="./../../public/css/field.css" rel="stylesheet" />
+<link href="./../../public/css/options.css" rel="stylesheet" />
+<link href="./../../public/css/tableview.css" rel="stylesheet" />
+<link href="./../../public/css/status.css" rel="stylesheet" />
+<link href="./../../public/css/toolbar.css" rel="stylesheet" />
+<link href="./../../public/css/viewlinks.css" rel="stylesheet" />
+<link href="./../../public/css/view.css" rel="stylesheet" />
+<link href="./../../public/css/admin.css" rel="stylesheet" />
+<link href="./../../public/css/IE-override.css" rel="stylesheet" />
+
+<link href="test.css" rel="stylesheet" />
+
+<style type="text/css">
+ #overflowContainer {
+    height:150px;
+ }
+</style>
+
+</head>
+
+<body>
+
+<div style="margin-bottom: 20px;"><a href="index.html">Back</a></div>
+
+<!-- test description -->
+<div>
+<table class="statictest">
+  <tr>
+    <td><b>Name</b></td>
+    <td><code>StatusDisplay</code> layout test</td>
+  </tr>
+  <tr>
+    <td><b>Subject</b></td>
+    <td><code>StatusDisplay</code></td>
+  </tr>
+  <tr>
+    <td><b>Purpose</b></td>
+    <td>Verify consistent cross-browser layout of the <code>StatusDisplay</code> widget.</td>
+  </tr>
+  <tr>
+    <td><b>Notes</b></td>
+    <td>This test content is a snapshot of what is rendered by the browser based on the compiled client GWT related code.</td>
+  </tr>
+</table>
+</div>
+
+<!-- general layout/positioning test -->
+<div style="position: absolute; left: 100px; top: 200px; width: 13em; height: 200px; border: 1px solid navy;">
+  <div style="overflow: auto;" class="statusDisplay" title="Status Display">
+  <table cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">Display for 'accountListing' successful.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="warn">This is a warning.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="error">This is an error.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">This is a really long msg for display testing purposes and stuff.</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- overflow (scrolling) test -->
+<div style="position: absolute; left: 300px; top: 200px; width: 13em; height: 200px; border: 1px solid navy;">
+  <div id="overflowContainer" style="overflow: auto;" class="statusDisplay" title="Status Display">
+  <table cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">Display for 'accountListing' successful.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="warn">This is a warning.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="error">This is an error.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">This is a really long msg for display testing purposes and stuff.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">Display for 'accountListing' successful.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="warn">This is a warning.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="error">This is an error.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">This is a really long msg for display testing purposes and stuff.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">Display for 'accountListing' successful.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="warn">This is a warning.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="error">This is an error.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">This is a really long msg for display testing purposes and stuff.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">Display for 'accountListing' successful.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="warn">This is a warning.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="error">This is an error.</div>
+        </td>
+      </tr>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">This is a really long msg for display testing purposes and stuff.</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- less than width test -->
+<div style="position: absolute; left: 500px; top: 200px; width: 13em; height: 200px; border: 1px solid navy;">
+  <div style="overflow: auto;" class="statusDisplay" title="Status Display">
+  <table cellspacing="0" cellpadding="0">
+    <tbody>
+      <tr>
+        <td align="left" style="vertical-align: top;">
+        <div class="info">little</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+</body>
+</html>
