@@ -6,7 +6,6 @@ package com.tll.common.model;
 
 import org.testng.annotations.Test;
 
-import com.tll.common.model.Model;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
@@ -14,7 +13,6 @@ import com.tll.model.Currency;
 import com.tll.model.Merchant;
 import com.tll.model.mock.MockEntityFactory;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.marshal.Marshaler;
 
 /**
  * ModelCopyTest - Test the {@link Model#copy(boolean)} method.
@@ -24,7 +22,7 @@ import com.tll.server.marshal.Marshaler;
 public class ModelCopyTest extends AbstractModelTest {
 
 	AccountAddress getCopyTestEntity() throws Exception {
-		MockEntityFactory mep = injector.getInstance(MockEntityFactory.class);
+		MockEntityFactory mep = getMockEntityFactory();
 
 		final AccountAddress aa = mep.getEntityCopy(AccountAddress.class, false);
 		final Currency currency = mep.getEntityCopy(Currency.class, false);
@@ -51,9 +49,8 @@ public class ModelCopyTest extends AbstractModelTest {
 	 */
 	@Test
 	public void test() throws Exception {
-		final Marshaler em = injector.getInstance(Marshaler.class);
 		final AccountAddress aa = getCopyTestEntity();
-		final Model model = em.marshalEntity(aa, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		final Model model = getMarshaler().marshalEntity(aa, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		final Model copy = model.copy(true);
 		validateCopy(model, copy, true);
 	}

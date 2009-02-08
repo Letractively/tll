@@ -16,9 +16,7 @@ import org.testng.annotations.Test;
 
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
-import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
-import com.tll.di.JpaModule;
 import com.tll.di.SecurityModule;
 import com.tll.util.EnumUtil;
 
@@ -40,19 +38,8 @@ public class BootstrapperTest {
 
 		// handle the dao mode
 		DaoMode daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
-		JpaMode jpaMode;
-		if(daoMode == DaoMode.MOCK) {
-			jpaMode = JpaMode.NONE;
-		}
-		else if(daoMode == DaoMode.ORM) {
-			jpaMode = JpaMode.SPRING;
-		}
-		else {
-			throw new IllegalStateException("Unhandled dao mode: " + daoModeStr);
-		}
-		Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), jpaMode.toString());
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
-		log.debug("DaoMode: " + daoMode + " (JpaMode: " + jpaMode + ")");
+		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
 		SecurityMode securityMode = EnumUtil.fromString(SecurityMode.class, securityModeStr);
@@ -68,8 +55,8 @@ public class BootstrapperTest {
 				+ "com.tll.di.RefDataModule \r\n"
 				+ "com.tll.di.ModelModule \r\n"
 				+ "com.tll.di.MockEntityFactoryModule \r\n" 
-				+ "com.tll.di.JpaModule \r\n" 
 				+ "com.tll.di.DaoModule \r\n"
+				+ "com.tll.di.TransactionModule \r\n"
 				+ "com.tll.di.EntityServiceModule \r\n" 
 				+ "com.tll.di.EntityServiceFactoryModule \r\n" 
 				+ "com.tll.di.SecurityModule \r\n");

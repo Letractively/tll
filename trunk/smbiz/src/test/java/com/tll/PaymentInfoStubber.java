@@ -13,7 +13,6 @@ import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
 import com.tll.model.PaymentInfo;
 import com.tll.model.mock.MockEntityFactory;
@@ -29,7 +28,7 @@ public class PaymentInfoStubber extends DbTest {
 	 * Constructor
 	 */
 	public PaymentInfoStubber() {
-		super(JpaMode.LOCAL, false);
+		super(DaoMode.ORM, false, true);
 	}
 
 	@Override

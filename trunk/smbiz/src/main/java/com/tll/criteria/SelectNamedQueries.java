@@ -20,22 +20,22 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 	MERCHANT_LISTING("account.merchantList", Merchant.class, true, true),
 	CUSTOMER_LISTING("account.customerList", Customer.class, true, true),
 	INTERFACE_SUMMARY_LISTING("interface.summaryList", Interface.class, true, false),
-	INTERFACES("interface.select", Interface.class, false, false);
+	INTERFACES("interface.select", Interface.class, false, true);
 
-	private final String baseQueryName;
+	private final String queryName;
 	private final Class<?> entityType;
 	private final boolean scalar;
 	private final boolean supportsPaging;
 
-	private SelectNamedQueries(String baseQueryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
-		this.baseQueryName = baseQueryName;
+	private SelectNamedQueries(String queryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
+		this.queryName = queryName;
 		this.entityType = entityType;
 		this.scalar = scalar;
 		this.supportsPaging = supportsPaging;
 	}
 
-	public String getBaseQueryName() {
-		return baseQueryName;
+	public String getQueryName() {
+		return queryName;
 	}
 
 	public Class<?> getEntityType() {
@@ -52,6 +52,6 @@ public enum SelectNamedQueries implements ISelectNamedQueryDef {
 
 	@Override
 	public String toString() {
-		return baseQueryName;
+		return queryName;
 	}
 }

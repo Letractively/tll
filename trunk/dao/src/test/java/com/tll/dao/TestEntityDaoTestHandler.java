@@ -25,20 +25,20 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 	private static enum SelectNamedQueries implements ISelectNamedQueryDef {
 		ACCOUNT_LISTING("account.testScalarQuery", Account.class, true, true);
 
-		private final String baseQueryName;
+		private final String queryName;
 		private final Class<?> entityType;
 		private final boolean scalar;
 		private final boolean supportsPaging;
 
-		private SelectNamedQueries(String baseQueryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
-			this.baseQueryName = baseQueryName;
+		private SelectNamedQueries(String queryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
+			this.queryName = queryName;
 			this.entityType = entityType;
 			this.scalar = scalar;
 			this.supportsPaging = supportsPaging;
 		}
 
-		public String getBaseQueryName() {
-			return baseQueryName;
+		public String getQueryName() {
+			return queryName;
 		}
 
 		public Class<?> getEntityType() {
@@ -55,7 +55,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 		@Override
 		public String toString() {
-			return baseQueryName;
+			return queryName;
 		}
 	}
 	// dependent entities
@@ -104,10 +104,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		e.setParent(parent);
 
 		Address address1 = create(Address.class, true);
-		address1 = persist(address1);
-
 		Address address2 = create(Address.class, true);
-		address2 = persist(address2);
 		
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);

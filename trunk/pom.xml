@@ -43,6 +43,7 @@
     <module>model</module>
     <module>dao</module>
     <module>service</module>
+    <module>servlet</module>
     <module>security</module>
     <module>smbiz</module>
   </modules>
@@ -61,6 +62,7 @@
               <goals>
                 <goal>analyze-only</goal>
               </goals>
+              <phase>install</phase>
               <configuration>
                 <failOnWarning>true</failOnWarning>
                 <ignoreNonCompile>true</ignoreNonCompile>
@@ -330,15 +332,19 @@
         <version>${springVersion}</version>
       </dependency>
       <dependency>
+      <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
+      <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-acl</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
         <version>${springVersion}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.acegisecurity</groupId>
-        <artifactId>acegi-security</artifactId>
-        <version>1.0.7</version>
       </dependency>
 
       <dependency>

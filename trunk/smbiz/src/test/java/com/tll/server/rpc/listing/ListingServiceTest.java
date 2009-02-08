@@ -32,7 +32,6 @@ import com.tll.config.Config;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
-import com.tll.dao.JpaMode;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceFactoryModule;
@@ -99,7 +98,7 @@ public class ListingServiceTest extends DbTest {
 				request.getSession(false).setAttribute(
 						IAppContext.SERVLET_CONTEXT_KEY,
 						new AppContext(true, "dev", injector.getInstance(RefData.class), injector.getInstance(MailManager.class),
-								injector.getInstance(Marshaler.class), daoMode, injector.getInstance(EntityManagerFactory.class),
+								injector.getInstance(Marshaler.class), getDaoMode(), injector.getInstance(EntityManagerFactory.class),
 								injector.getInstance(IEntityFactory.class), injector.getInstance(IEntityServiceFactory.class)));
 
 				request.getSession(false).setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY,
@@ -112,12 +111,9 @@ public class ListingServiceTest extends DbTest {
 		}
 	}
 
-	protected DaoMode daoMode;
-
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		assert getJpaMode() != null && daoMode != null;
 		modules.add(new VelocityModule());
 		modules.add(new MailModule());
 		modules.add(new RefDataModule());
@@ -132,28 +128,20 @@ public class ListingServiceTest extends DbTest {
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = "daoMode")
 	public final void onBeforeClass(String daoModeStr) {
-		daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
+		setDaoMode(EnumUtil.fromString(DaoMode.class, daoModeStr));
 		beforeClass();
 	}
 
 	@Override
 	protected void beforeClass() {
-		JpaMode jpaMode;
-		if(daoMode == DaoMode.MOCK) {
-			jpaMode = JpaMode.NONE;
-		}
-		else {
-			jpaMode = JpaMode.SPRING;
-		}
-		setJpaMode(jpaMode);
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), getDaoMode().toString());
 		super.beforeClass();
 	}
 
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
 		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
-		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getBaseQueryName());
+		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getQueryName());
 		search.setQueryParam(new IntPropertyValue("ispId", 1));
 		
 		Sorting initialSorting = new Sorting("name");

@@ -12,25 +12,29 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 
 /**
- * Abstract base class for all test cases within the application.
+ * AbstractInjectedTest - Abstract base class for tests wishing to leverge
+ * dependency injection via Guice.
  * @author jpk
  */
 public abstract class AbstractInjectedTest {
-
-	protected static final Log staticLogger = LogFactory.getLog(AbstractInjectedTest.class);
 
 	/**
 	 * Builds a Guice Injector from one or more {@link Module}s.
 	 * @param modules The {@link Module}s to bind
 	 * @return A new {@link Injector}
 	 */
-	protected static final Injector buildStaticInjector(Module... modules) {
+	protected static final Injector buildInjector(Module... modules) {
 		assert modules != null && modules.length > 0;
 		return Guice.createInjector(Stage.DEVELOPMENT, modules);
 	}
 
+	protected static final Log staticLogger = LogFactory.getLog(AbstractInjectedTest.class);
+
 	protected final Log logger = LogFactory.getLog(this.getClass());
 
+	/**
+	 * The dependency injector.
+	 */
 	protected Injector injector;
 
 	/**
@@ -47,7 +51,7 @@ public abstract class AbstractInjectedTest {
 		assert injector == null : "The injector was already built";
 		final List<Module> modules = getModules();
 		if(modules != null && modules.size() > 0) {
-			this.injector = buildStaticInjector(modules.toArray(new Module[modules.size()]));
+			this.injector = buildInjector(modules.toArray(new Module[modules.size()]));
 		}
 	}
 
@@ -97,19 +101,4 @@ public abstract class AbstractInjectedTest {
 	protected void afterMethod() {
 		// no-op
 	}
-
-	/**
-	 * Establishes a valid {@link SecurityContext} within the app context.
-	 * Necessary for tests that are related to or dependant on Acegi.
-	 */
-	/*
-	protected final void setSecurityContext() {
-		final SecurityContext securityContext = SecurityContextHolder.getContext();
-		final Authority auth = new Authority();
-		auth.setAuthority(Authority.ROLE_ADMINISTRATOR);
-		final AnonymousAuthenticationToken token =
-				new AnonymousAuthenticationToken("bfgsdf", User.SUPERUSER, new GrantedAuthority[] { auth });
-		securityContext.setAuthentication(token);
-	}
-	*/
 }

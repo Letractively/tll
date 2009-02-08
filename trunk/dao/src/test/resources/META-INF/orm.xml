@@ -6,7 +6,7 @@
   http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
   version="1.0">
 
-  <named-query name="account.testScalarQuery:name">
+  <named-query name="account.testScalarQuery">
     <query>
     <![CDATA[
     select

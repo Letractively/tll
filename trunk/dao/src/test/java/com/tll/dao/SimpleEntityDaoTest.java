@@ -5,11 +5,6 @@
  */
 package com.tll.dao;
 
-import java.util.Collection;
-
-import com.tll.model.IEntity;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * SimpleEntityDaoTest
@@ -17,9 +12,8 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  */
 public class SimpleEntityDaoTest extends AbstractEntityDaoTest {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected Collection<IEntityDaoTestHandler<IEntity>> getDaoTestHandlers() {
-		return Arrays.asList(new IEntityDaoTestHandler[] { new TestEntityDaoTestHandler() });
+	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
+		return new IEntityDaoTestHandler[] { new TestEntityDaoTestHandler() };
 	}
 }

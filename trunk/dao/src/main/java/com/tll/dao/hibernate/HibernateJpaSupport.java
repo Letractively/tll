@@ -22,10 +22,13 @@ public abstract class HibernateJpaSupport extends JpaSupport {
 	}
 
 	/**
-	 * @return the current hibernate session of the active scoped unit of work
+	 * Obtains the underlying hibernate {@link Session} from a given
+	 * {@link EntityManager}.
+	 * @param em The entity manager
+	 * @return The hibernate session instance bound to the given entity manager.
 	 */
-	protected final Session getSession() {
-		return (Session) getEntityManager().getDelegate();
+	protected final Session getSession(EntityManager em) {
+		return (Session) em.getDelegate();
 	}
 
 }

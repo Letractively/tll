@@ -109,7 +109,7 @@ public final class Criteria<E extends IEntity> implements ICriteria<E> {
 			sb.append(entityClass);
 			if(criteriaType.isQuery()) {
 				sb.append(", base query name: ");
-				sb.append(namedQueryDefinition.getBaseQueryName());
+				sb.append(namedQueryDefinition.getQueryName());
 			}
 			sb.append(")");
 		}

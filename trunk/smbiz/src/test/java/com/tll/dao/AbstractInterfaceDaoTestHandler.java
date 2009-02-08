@@ -112,10 +112,10 @@ public abstract class AbstractInterfaceDaoTestHandler<I extends Interface> exten
 
 	@Override
 	public Sorting getSortingForTestQuery(ISelectNamedQueryDef qdef) {
-		if(qdef.getBaseQueryName().equals(SelectNamedQueries.INTERFACE_SUMMARY_LISTING.getBaseQueryName())) {
-			return new Sorting("intf.name");
+		if(qdef.getQueryName().equals(SelectNamedQueries.INTERFACE_SUMMARY_LISTING.getQueryName())) {
+			return new Sorting("name", "intf");
 		}
-		else if(qdef.getBaseQueryName().equals(SelectNamedQueries.INTERFACES.getBaseQueryName())) {
+		else if(qdef.getQueryName().equals(SelectNamedQueries.INTERFACES.getQueryName())) {
 			return new Sorting("name");
 		}
 		return null;

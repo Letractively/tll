@@ -24,7 +24,6 @@ import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
@@ -35,6 +34,7 @@ import com.tll.di.DbShellModule;
 import com.tll.di.EntityServiceModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
+import com.tll.di.TransactionModule;
 import com.tll.model.Address;
 import com.tll.model.mock.MockEntityFactory;
 import com.tll.service.entity.IEntityService;
@@ -58,7 +58,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 	 * Constructor
 	 */
 	public PagingSearchListHandlerTest() {
-		super(JpaMode.SPRING, true);
+		super(DaoMode.ORM, true, false);
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -97,6 +97,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 		super.addModules(modules);
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
 		modules.add(new DaoModule());
+		modules.add(new TransactionModule());
 		modules.add(new EntityServiceModule());
 		modules.add(new Module() {
 

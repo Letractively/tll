@@ -25,7 +25,6 @@ import com.tll.criteria.InvalidCriteriaException;
 import com.tll.criteria.QueryParam;
 import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.DaoMode;
-import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
@@ -68,7 +67,7 @@ public class NamedQueriesTest extends DbTest {
 					break;
 				}
 				case CUSTOMER_LISTING: {
-					querySortBindings.put(nq, new SortColumn("dateCreated"));
+					querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
 					List<IQueryParam> list = new ArrayList<IQueryParam>();
 					list.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
 					queryParamsBindings.put(nq, list);
@@ -76,7 +75,7 @@ public class NamedQueriesTest extends DbTest {
 				}
 				case INTERFACE_SUMMARY_LISTING:
 				case INTERFACES:
-					querySortBindings.put(nq, new SortColumn("code"));
+					querySortBindings.put(nq, new SortColumn("code", "intf"));
 					queryParamsBindings.put(nq, null);
 					break;
 				
@@ -87,28 +86,24 @@ public class NamedQueriesTest extends DbTest {
 		}
 	}
 
-	protected DaoMode daoMode;
-
 	/**
 	 * Constructor
 	 */
 	public NamedQueriesTest() {
-		super(true);
+		super(true, true);
 	}
 
 	@BeforeClass(alwaysRun = true)
-	@Parameters(value = {
-		"jpaMode", "daoMode" })
-	public final void onBeforeClass(String jpaModeStr, String daoModeStr) {
-		setJpaMode(EnumUtil.fromString(JpaMode.class, jpaModeStr));
-		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
+	@Parameters(value = "daoMode")
+	public final void onBeforeClass(String daoModeStr) {
+		setDaoMode(EnumUtil.fromString(DaoMode.class, daoModeStr));
 		beforeClass();
 	}
 
 	@Override
 	protected void beforeClass() {
 		super.beforeClass();
-		if(daoMode == DaoMode.ORM) {
+		if(getDaoMode() == DaoMode.ORM) {
 			getDbShell().restub();
 		}
 	}
@@ -117,10 +112,10 @@ public class NamedQueriesTest extends DbTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		if(daoMode == DaoMode.MOCK) {
+		if(getDaoMode() == DaoMode.MOCK) {
 			modules.add(new MockEntityFactoryModule());
 		}
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), getDaoMode().toString());
 		modules.add(new DaoModule());
 		modules.add(new EntityServiceModule());
 		modules.add(new EntityServiceFactoryModule());

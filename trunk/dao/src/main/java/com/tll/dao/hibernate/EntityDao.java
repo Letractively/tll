@@ -58,47 +58,17 @@ import com.tll.util.CollectionUtil;
 public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	/**
-	 * NamedQueryDef - Encapsulates the query name logic to handle sorting
-	 * suffixes.
-	 * @see orm.xml
-	 * @author jpk
-	 */
-	private static final class NamedQueryDef {
-
-		final String rootName;
-		final Sorting sorting;
-
-		/**
-		 * Constructor
-		 * @param rootName
-		 * @param sorting
-		 */
-		public NamedQueryDef(String rootName, Sorting sorting) {
-			super();
-			this.rootName = rootName;
-			this.sorting = sorting;
-		}
-
-		/**
-		 * Calculates the fully qualified query name.
-		 * @return The fully qualified query name that is expected to be declared in
-		 *         orm.xml.
-		 */
-		public String getQueryName() {
-			// assemble the fully qualified query name
-			String fqn = rootName;
-			if(sorting != null) {
-				fqn += ':' + sorting.getPrimarySortColumn().getPropertyName();
-			}
-			return fqn;
-		}
-	}
-
-	/**
 	 * Used for transforming entity results into a native friendly handle.
 	 */
 	private static final ResultTransformer ENTITY_RESULT_TRANSFORMER = new EntitySearchResultTransformer();
 
+	/**
+	 * String representing the beginning of an order by clause in an SQL string.
+	 * Used internally to manually modify sql query strings in order to support
+	 * dynamic sorting.
+	 */
+	private static final String ORDER_BY_TOKEN = "order by ";
+	
 	/**
 	 * @param <T>
 	 * @param maybeProxy
@@ -122,21 +92,20 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param sorting sorting object
 	 */
 	private static void applySorting(DetachedCriteria dc, Sorting sorting) throws InvalidCriteriaException {
-		if(sorting == null) {
-			return;
-		}
-		final SortColumn[] columns = sorting.getColumns();
-		for(final SortColumn element : columns) {
-			// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
-			// element.getDirection();
-			final String column = element.getPropertyName();
-			final Boolean ignoreCase = element.getIgnoreCase();
-			applyAliasIfNecessary(dc, column);
-			final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
-			if(Boolean.TRUE.equals(ignoreCase)) {
-				order.ignoreCase();
+		if(sorting != null) {
+			final SortColumn[] columns = sorting.getColumns();
+			for(final SortColumn element : columns) {
+				// final SortDir dir = element.getDirection() == null ? SortDir.ASC :
+				// element.getDirection();
+				final String column = element.getPropertyName();
+				final Boolean ignoreCase = element.getIgnoreCase();
+				applyAliasIfNecessary(dc, column);
+				final Order order = (element.getDirection() == SortDir.ASC) ? Order.asc(column) : Order.desc(column);
+				if(Boolean.TRUE.equals(ignoreCase)) {
+					order.ignoreCase();
+				}
+				dc.addOrder(order);
 			}
-			dc.addOrder(order);
 		}
 	}
 
@@ -221,56 +190,57 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
-		final DetachedCriteria dc = DetachedCriteria.forClass(entityType);
-		final Session session = (Session) getEntityManager().getDelegate();
-		final Criteria c = dc.getExecutableCriteria(session);
-		return c.list();
+		return DetachedCriteria.forClass(entityType).getExecutableCriteria(getSession(getEntityManager())).list();
 	}
 
 	public <E extends IEntity> E persist(E entity) {
-		return persistInternal(entity, true);
-	}
-
-	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
-		E merged;
-		try {
-			final EntityManager em = getEntityManager();
-			// TODO figure out how to get away with NOT merging!
-			merged = em.merge(entity);
-			em.persist(merged);
-			em.flush();
-		}
-		catch(final RuntimeException re) {
-			throw dbDialectHandler.translate(re);
-		}
-		return merged;
+		return persistInternal(entity, true, getEntityManager());
 	}
 
 	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		if(entities == null) return null;
+		final EntityManager em = getEntityManager();
 		final Collection<E> merged = new HashSet<E>(entities.size());
 		for(final E e : entities) {
-			merged.add(persistInternal(e, false));
+			merged.add(persistInternal(e, false, em));
 		}
-		getEntityManager().flush();
+		em.flush();
 		return merged;
 	}
-
-	public <E extends IEntity> void purge(E entity) {
+	
+	private <E extends IEntity> E persistInternal(E entity, boolean flush, EntityManager em) {
 		try {
-			getEntityManager().remove(getEntityManager().merge(entity));
+			E merged = em.merge(entity);
+			em.persist(merged);
+			if(flush) em.flush();
+			return merged;
 		}
 		catch(final RuntimeException re) {
 			throw dbDialectHandler.translate(re);
 		}
 	}
 
+	public <E extends IEntity> void purge(E entity) {
+		purgeInternal(entity, true, getEntityManager());
+	}
+
 	public <E extends IEntity> void purgeAll(Collection<E> entities) {
-		if(CollectionUtil.isEmpty(entities)) {
-			return;
+		if(!CollectionUtil.isEmpty(entities)) {
+			final EntityManager em = getEntityManager();
+			for(final E e : entities) {
+				purgeInternal(e, false, em);
+			}
+			em.flush();
 		}
-		for(final E e : entities) {
-			purge(e);
+	}
+
+	private <E extends IEntity> void purgeInternal(E entity, boolean flush, EntityManager em) {
+		try {
+			em.remove(em.merge(entity));
+			if(flush) em.flush();
+		}
+		catch(final RuntimeException re) {
+			throw dbDialectHandler.translate(re);
 		}
 	}
 
@@ -313,14 +283,6 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				: ENTITY_RESULT_TRANSFORMER);
 	}
 
-	public void clear() {
-		getEntityManager().clear();
-	}
-
-	public void flush() {
-		getEntityManager().flush();
-	}
-
 	/**
 	 * Process criteria instances providing a distinct list of matching results
 	 * whose elements are either {@link SearchResult} or {@link IEntity} instances
@@ -334,13 +296,17 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @throws InvalidCriteriaException When the criteria type is invalid or
 	 *         otherwise.
 	 */
-	private <E extends IEntity> List<?> processCriteria(ICriteria<E> criteria, Sorting sorting,
-			boolean applySorting,
+	private <E extends IEntity> List<?> processCriteria(ICriteria<E> criteria, Sorting sorting, boolean applySorting,
 			ResultTransformer resultTransformer) throws InvalidCriteriaException {
 		assert criteria != null && resultTransformer != null;
 		if(criteria.getCriteriaType().isQuery()) {
 			// presume named query ref
-			return findByNamedQuery(criteria, sorting, resultTransformer);
+			final ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
+			if(nq == null || nq.getQueryName() == null) {
+				throw new InvalidCriteriaException("No named query specified.");
+			}
+			return assembleQuery(getEntityManager(), nq.getQueryName(), criteria.getQueryParams(), sorting,
+					resultTransformer, true).list();
 		}
 		// translate to hbm criteria
 		final DetachedCriteria dc = DetachedCriteria.forClass(criteria.getEntityClass());
@@ -355,19 +321,13 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @return List of results of unknown type.
 	 */
 	private List<?> findByDetatchedCriteria(DetachedCriteria dc) {
-		final Session session = (Session) getEntityManager().getDelegate();
-		final Criteria executableCriteria = dc.getExecutableCriteria(session);
-		return executableCriteria.list();
+		return dc.getExecutableCriteria(getSession(getEntityManager())).list();
 	}
 
 	/**
-	 * Translates native criteria to a new Query instance.
-	 * <p>
-	 * IMPT: in order work w/ spring local transaction management at runtime, we
-	 * *must* soley adhere to the EntityManager interface because Spring proxies
-	 * the EntityManager as well as any retrieved Query instance from this proxied
-	 * EntityManager.
-	 * @param baseQueryName
+	 * Translates native criteria to a new {@link org.hibernate.Query} instance.
+	 * @param em The active entity manager
+	 * @param queryName
 	 * @param queryParams
 	 * @param sorting
 	 * @param resultTransformer May be <code>null</code>.
@@ -376,29 +336,37 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @throws InvalidCriteriaException When no query name is specified in the
 	 *         given criteria.
 	 */
-	private org.hibernate.Query assembleNamedQuery(String baseQueryName, Collection<IQueryParam> queryParams,
-			Sorting sorting,
-			ResultTransformer resultTransformer, boolean cacheable)
+	private org.hibernate.Query assembleQuery(EntityManager em, String queryName,
+			Collection<IQueryParam> queryParams, Sorting sorting, ResultTransformer resultTransformer, boolean cacheable)
 			throws InvalidCriteriaException {
-		if(baseQueryName == null) {
+		if(queryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");
 		}
 		
-		final Session session = getSession();
-		session.beginTransaction();
+		final Session session = getSession(em);
 		
-		final NamedQueryDef nqd = new NamedQueryDef(baseQueryName, sorting);
+		org.hibernate.Query hbmQ = session.getNamedQuery(queryName);
+		
+		// apply sorting (if specified)
+		if(sorting != null) {
+			final StringBuilder sb = new StringBuilder(hbmQ.getQueryString());
+			int indx = sb.indexOf(ORDER_BY_TOKEN);
+			if(indx >= 0) {
+				indx += ORDER_BY_TOKEN.length();
+				assert sb.length() - 1 > indx;
+				sb.setLength(indx);
+			}
+			sb.append(sorting.toString());
+			hbmQ = session.createQuery(sb.toString());
+		}
 
-		org.hibernate.Query hbmQ = session.getNamedQuery(nqd.getQueryName());
-		
 		// fill the named params (if any)
 		if(queryParams != null && queryParams.size() > 0) {
 			for(IQueryParam queryParam : queryParams) {
 				hbmQ.setParameter(queryParam.getPropertyName(), queryParam.getValue());
 			}
 		}
-
-		// NOTE: we now have to transform manually
+		
 		if(resultTransformer != null) {
 			hbmQ.setResultTransformer(resultTransformer);
 		}
@@ -406,32 +374,6 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		hbmQ.setCacheable(cacheable);
 		
 		return hbmQ;
-	}
-
-	/**
-	 * Obtains the Hibernate query from a JPA query.
-	 * @param q The jpa query instance
-	 * @return The hibernate query instance.
-	 */
-	/*
-	private org.hibernate.Query jpa2hbmQuery(Query q) {
-		assert q instanceof QueryImpl;
-		return ((QueryImpl) q).getHibernateQuery();
-	}
-	*/
-	
-	/**
-	 * Invokes a named query.
-	 * @param criteria
-	 * @param resultTransformer May be <code>null</code>.
-	 * @return List of either entities or scalars.
-	 * @throws InvalidCriteriaException
-	 */
-	private <E extends IEntity> List<?> findByNamedQuery(ICriteria<E> criteria, Sorting sorting,
-			ResultTransformer resultTransformer) throws InvalidCriteriaException {
-		ISelectNamedQueryDef nq = criteria.getNamedQueryDefinition();
-		return assembleNamedQuery(nq.getBaseQueryName(), criteria.getQueryParams(), sorting, resultTransformer, true)
-				.list();
 	}
 
 	/**
@@ -446,24 +388,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param applySorting Apply the sorting?
 	 * @throws InvalidCriteriaException
 	 */
-	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, ICriteria<E> criteria,
-			Sorting sorting,
-			boolean applySorting) throws InvalidCriteriaException {
-		applyCriteriaStrict(dc, criteria, sorting, applySorting);
-	}
-
-	/**
-	 * This method is called by processCriteria(ICriteria) such that the behavior
-	 * may not be overridden.
-	 * @param dc the hibernate criteria object
-	 * @param criteria criteria object
-	 * @param sorting The optional sorting directive
-	 * @param applySorting Apply the sorting?
-	 * @throws InvalidCriteriaException
-	 * @see #applyCriteria(DetachedCriteria, ICriteria)
-	 */
-	private <E extends IEntity> void applyCriteriaStrict(DetachedCriteria dc, ICriteria<E> criteria,
-			Sorting sorting,
+	private <E extends IEntity> void applyCriteria(DetachedCriteria dc, ICriteria<E> criteria, Sorting sorting,
 			boolean applySorting) throws InvalidCriteriaException {
 		if(criteria.isSet()) {
 			final CriterionGroup pg = criteria.getPrimaryGroup();
@@ -482,8 +407,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	private <E extends IEntity> void applyCriterion(DetachedCriteria dc, ICriterion ctn, ICriteria<E> criteria,
-			Sorting sorting,
-			Junction junction) throws InvalidCriteriaException {
+			Sorting sorting, Junction junction) throws InvalidCriteriaException {
 		if(!ctn.isSet()) {
 			return;
 		}
@@ -548,8 +472,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 			return;
 		}
 		final Comparator c = ctn.getComparator();
-		if(Comparator.CONTAINS.equals(c) || Comparator.ENDS_WITH.equals(c) || Comparator.EQUALS.equals(c)
-				|| Comparator.LIKE.equals(c) || Comparator.STARTS_WITH.equals(c)) {
+		if(Comparator.CONTAINS == c || Comparator.ENDS_WITH == c || Comparator.EQUALS == c || Comparator.LIKE == c
+				|| Comparator.STARTS_WITH == c) {
 
 			((SimpleExpression) expression).ignoreCase();
 		}
@@ -562,7 +486,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		try {
-			applyCriteriaStrict(dc, nativeCriteria, sorting, true);
+			applyCriteria(dc, nativeCriteria, sorting, true);
 		}
 		catch(final InvalidCriteriaException e) {
 			throw new PersistenceException(e.getMessage(), e);
@@ -584,8 +508,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids,
-			Sorting sorting) {
+	public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids, Sorting sorting) {
 		if(CollectionUtil.isEmpty(ids)) {
 			return new ArrayList<E>();
 		}
@@ -604,12 +527,12 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting,
-			int offset, int pageSize)
-			throws InvalidCriteriaException {
+	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, int offset,
+			int pageSize) throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		List<SearchResult<E>> rlist = null;
 		int totalCount = -1;
+		final EntityManager em = getEntityManager();
 		switch(criteria.getCriteriaType()) {
 
 			case ENTITY: {
@@ -640,16 +563,16 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				// same name and additional suffix of .count
 				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
 				if(!snq.isSupportsPaging()) {
-					throw new InvalidCriteriaException(snq.getBaseQueryName() + " query does not support paging.");
+					throw new InvalidCriteriaException(snq.getQueryName() + " query does not support paging.");
 				}
-				String queryName = snq.getBaseQueryName();
-				String countQueryName = snq.getBaseQueryName() + ".count";
-				final org.hibernate.Query cq = assembleNamedQuery(countQueryName, null, null, null, false);
+				String queryName = snq.getQueryName();
+				String countQueryName = snq.getQueryName() + ".count";
+				final org.hibernate.Query cq = assembleQuery(em, countQueryName, null, null, null, false);
 				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
 				totalCount = count.intValue();
 				final org.hibernate.Query q =
-						assembleNamedQuery(queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
+						assembleQuery(em, queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
 				rlist = q.setFirstResult(offset).setMaxResults(pageSize).list();
 				break;
 			}
@@ -658,14 +581,15 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
 				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
-				String queryName = snq.getBaseQueryName();
-				String countQueryName = snq.getBaseQueryName() + ".count";
-				final org.hibernate.Query cq = assembleNamedQuery(countQueryName, criteria.getQueryParams(), null, null, false);
+				String queryName = snq.getQueryName();
+				String countQueryName = snq.getQueryName() + ".count";
+				final org.hibernate.Query cq =
+						assembleQuery(em, countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
 				totalCount = count.intValue();
 				final ResultTransformer rt = new ScalarSearchResultTransformer(criteria.getEntityClass());
-				final org.hibernate.Query q = assembleNamedQuery(queryName, criteria.getQueryParams(), sorting, rt, true);
+				final org.hibernate.Query q = assembleQuery(em, queryName, criteria.getQueryParams(), sorting, rt, true);
 				rlist = q.setFirstResult(offset).setMaxResults(pageSize).list();
 				break;
 			}
