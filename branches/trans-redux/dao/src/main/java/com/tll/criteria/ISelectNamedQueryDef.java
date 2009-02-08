@@ -18,19 +18,9 @@ public interface ISelectNamedQueryDef {
 	Class<?> getEntityType();
 
 	/**
-	 * The "base" query name w/o regard to a sorting directive in the query name.
-	 * <p>
-	 * 
-	 * <pre>
-	 * named-query name CONVENTION:
-	 *   {base query name}:{sorting directive}
-	 * Where:
-	 *   &quot;base query name&quot;  - the name of the &quot;root&quot; query (i.e. w/o regard to sorting)
-	 *   &quot;sort property&quot;    - the property alias by which the declared query is sorted
-	 * </pre>
-	 * @return the base query name w/o regard to a sorting directive.
+	 * @return The name of the named query.
 	 */
-	String getBaseQueryName();
+	String getQueryName();
 
 	/**
 	 * Is the query scalar (or entity based)?

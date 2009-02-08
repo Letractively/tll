@@ -141,7 +141,7 @@ public class ListingServiceTest extends DbTest {
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
 		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
-		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getBaseQueryName());
+		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getQueryName());
 		search.setQueryParam(new IntPropertyValue("ispId", 1));
 		
 		Sorting initialSorting = new Sorting("name");

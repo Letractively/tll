@@ -22,6 +22,23 @@ public class Sorting implements IMarshalable {
 	/**
 	 * Constructor
 	 * @param primaryPropertyName
+	 */
+	public Sorting(String primaryPropertyName) {
+		this(new SortColumn(primaryPropertyName, (String) null));
+	}
+
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
+	 * @param parentAlias
+	 */
+	public Sorting(String primaryPropertyName, String parentAlias) {
+		this(new SortColumn(primaryPropertyName, parentAlias));
+	}
+
+	/**
+	 * Constructor
+	 * @param primaryPropertyName
 	 * @param direction
 	 * @param ignoreCase
 	 */
@@ -32,9 +49,12 @@ public class Sorting implements IMarshalable {
 	/**
 	 * Constructor
 	 * @param primaryPropertyName
+	 * @param parentAlias
+	 * @param direction
+	 * @param ignoreCase
 	 */
-	public Sorting(String primaryPropertyName) {
-		this(new SortColumn(primaryPropertyName, null));
+	public Sorting(String primaryPropertyName, String parentAlias, SortDir direction, Boolean ignoreCase) {
+		this(new SortColumn(primaryPropertyName, parentAlias, direction, ignoreCase));
 	}
 
 	/**
@@ -114,7 +134,7 @@ public class Sorting implements IMarshalable {
 	@Override
 	public String toString() {
 		if(size() < 1) return "";
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < columns.length; i++) {
 			sb.append(columns[i].toString());
 			if(i < columns.length - 1) {

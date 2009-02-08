@@ -21,11 +21,9 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	private String propertyName;
 
 	/**
-	 * The parent ref alias name. Intended mainly to be used in sql/orm queries.
-	 * In an ORM context, this property is necessary to avoid ambiguity in the
-	 * query.
+	 * The parent alias name used to resolve the actual sorting column.
 	 */
-	// private String parentAlias;
+	private String parentAlias;
 
 	/**
 	 * The sort direction: ascending or descending
@@ -55,10 +53,29 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	/**
 	 * Constructor
 	 * @param propertyName
+	 * @param parentAlias
+	 */
+	public SortColumn(String propertyName, String parentAlias) {
+		this(propertyName, parentAlias, DEFAULT_SORT_DIR, DEFAULT_IGNORE_CASE);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
 	 * @param direction
 	 */
 	public SortColumn(String propertyName, SortDir direction) {
-		this(propertyName, direction, DEFAULT_IGNORE_CASE);
+		this(propertyName, null, direction, DEFAULT_IGNORE_CASE);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param direction
+	 */
+	public SortColumn(String propertyName, String parentAlias, SortDir direction) {
+		this(propertyName, null, direction, DEFAULT_IGNORE_CASE);
 	}
 
 	/**
@@ -68,8 +85,20 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	 * @param ignoreCase
 	 */
 	public SortColumn(String propertyName, SortDir direction, Boolean ignoreCase) {
+		this(propertyName, null, direction, ignoreCase);
+	}
+
+	/**
+	 * Constructor
+	 * @param propertyName
+	 * @param parentAlias
+	 * @param direction
+	 * @param ignoreCase
+	 */
+	public SortColumn(String propertyName, String parentAlias, SortDir direction, Boolean ignoreCase) {
 		this();
 		setPropertyName(propertyName);
+		setParentAlias(parentAlias);
 		setDirection(direction);
 		setIgnoreCase(ignoreCase);
 	}
@@ -106,6 +135,41 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 		this.ignoreCase = ignoreCase;
 	}
 
+	/**
+	 * The parent alias in the query string. This may be <code>null</code> and is
+	 * needed when more than one alias is used in a query. With such a query, this
+	 * property resolves the column. <br>
+	 * Example, in the following query, the parent alias for the name column is
+	 * "intf":
+	 * 
+	 * <pre>
+	 *   select
+	 * 	   intf.id as id,
+	 * 	   intf.name as name,
+	 * 	   intf.code as code,
+	 * 	   intf.description as description,
+	 * 	   intf.dateModified as dateModified,
+	 * 	   count(options) as numOptions
+	 * 	 from
+	 * 	   Interface intf
+	 * 	   join intf.options options
+	 * 	 group by intf.name 
+	 * 	 order by intf.name
+	 * </pre>
+	 * @return The parent alias name.
+	 */
+	protected String getParentAlias() {
+		return parentAlias;
+	}
+
+	/**
+	 * @param parentAlias the parent alias name to set to properly resolve the
+	 *        sort column in a query string.
+	 */
+	protected void setParentAlias(String parentAlias) {
+		this.parentAlias = parentAlias;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
@@ -119,7 +183,11 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 		if(ignoreCase == null) {
 			if(other.ignoreCase != null) return false;
 		}
-		if(!ignoreCase.equals(other.ignoreCase)) return false;
+		else if(!ignoreCase.equals(other.ignoreCase)) return false;
+		if(parentAlias == null) {
+			if(other.parentAlias != null) return false;
+		}
+		else if(!parentAlias.equals(other.parentAlias)) return false;
 		if(propertyName == null) {
 			if(other.propertyName != null) return false;
 		}
@@ -133,6 +201,7 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 		int result = 1;
 		result = prime * result + ((direction == null) ? 0 : direction.hashCode());
 		result = prime * result + ((ignoreCase == null) ? 0 : ignoreCase.hashCode());
+		result = prime * result + ((parentAlias == null) ? 0 : parentAlias.hashCode());
 		result = prime * result + ((propertyName == null) ? 0 : propertyName.hashCode());
 		return result;
 	}
@@ -144,6 +213,6 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	 */
 	@Override
 	public String toString() {
-		return propertyName + " " + getDirection().getSqlclause();
+		return (parentAlias == null ? "" : parentAlias + ".") + propertyName + " " + getDirection().getSqlclause();
 	}
 }

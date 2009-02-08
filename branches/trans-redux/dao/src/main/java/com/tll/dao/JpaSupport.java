@@ -27,7 +27,9 @@ public abstract class JpaSupport {
 	}
 
 	/**
-	 * @return the current entity manager of the active scoped unit of work
+	 * Obtains a <em><b>new</b></em> {@link EntityManager} instance each time this
+	 * method is called!
+	 * @return A newly created {@link EntityManager}.
 	 */
 	protected final EntityManager getEntityManager() {
 		return emPrvdr.get();

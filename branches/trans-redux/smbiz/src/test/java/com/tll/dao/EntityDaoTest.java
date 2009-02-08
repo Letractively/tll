@@ -7,14 +7,10 @@ package com.tll.dao;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Collection;
 
 import org.testng.annotations.Test;
 
-import com.tll.model.IEntity;
 import com.tll.util.CommonUtil;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * EntityDaoTest
@@ -23,9 +19,13 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 @Test(groups = "dao")
 public class EntityDaoTest extends AbstractEntityDaoTest {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected Collection<IEntityDaoTestHandler<IEntity>> getDaoTestHandlers() {
+	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
+		/*
+		return new IEntityDaoTestHandler<?>[] {
+			new InterfaceSingleDaoTestHandler()
+		};
+		*/
 		try {
 			Class<?>[] handlerTypes =
 					CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, new FilenameFilter() {
@@ -36,14 +36,13 @@ public class EntityDaoTest extends AbstractEntityDaoTest {
 						}
 					});
 
-			IEntityDaoTestHandler<IEntity>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
+			IEntityDaoTestHandler<?>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
 			int i = 0;
 			for(Class<?> type : handlerTypes) {
-				IEntityDaoTestHandler<IEntity> handler = (IEntityDaoTestHandler<IEntity>) type.newInstance();
+				IEntityDaoTestHandler<?> handler = (IEntityDaoTestHandler<?>) type.newInstance();
 				arr[i++] = handler;
 			}
-
-			return Arrays.asList(arr);
+			return arr;
 		}
 		catch(ClassNotFoundException e) {
 			throw new IllegalStateException("Unable to obtain the entity dao test handlers: " + e.getMessage(), e);
