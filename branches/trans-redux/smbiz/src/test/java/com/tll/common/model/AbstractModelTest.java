@@ -16,7 +16,6 @@ import com.tll.DbTest;
 import com.tll.TestUtils;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
-import com.tll.dao.JpaMode;
 import com.tll.di.DaoModule;
 import com.tll.model.schema.PropertyType;
 
@@ -139,7 +138,7 @@ public abstract class AbstractModelTest extends DbTest {
 	 * Constructor
 	 */
 	public AbstractModelTest() {
-		super(JpaMode.NONE, false);
+		super(DaoMode.MOCK, false, false);
 	}
 
 	@Override

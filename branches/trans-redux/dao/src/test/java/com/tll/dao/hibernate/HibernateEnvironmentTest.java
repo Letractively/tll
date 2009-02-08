@@ -5,21 +5,22 @@
  */
 package com.tll.dao.hibernate;
 
+import javax.persistence.EntityManager;
+
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.Stage;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
-import com.tll.dao.JpaMode;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
-import com.tll.di.JpaModule;
 
 /**
  * HibernateEnvironmentTest - Verifies hibernate loads error free
@@ -47,8 +48,10 @@ public class HibernateEnvironmentTest {
 	 * Verifies the loading of the Hibernate environment.
 	 */
 	public void test() {
-		Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), JpaMode.LOCAL.toString());
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
-		Guice.createInjector(Stage.DEVELOPMENT, new JpaModule(), new DaoModule());
+		Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DaoModule());
+		Provider<EntityManager> emp = i.getProvider(EntityManager.class);
+		EntityManager em = emp.get();
+		assert em != null;
 	}
 }

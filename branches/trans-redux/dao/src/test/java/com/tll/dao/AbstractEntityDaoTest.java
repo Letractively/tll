@@ -29,7 +29,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.tll.DbTest;
-import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
@@ -245,8 +244,6 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 */
 	private IEntityDaoTestHandler<IEntity> entityHandler;
 
-	private DaoMode daoMode;
-
 	/**
 	 * Stack of test entity pks that are retained for proper datastore cleanup at
 	 * the completion of dao testing for a particular entity type.
@@ -264,7 +261,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * Constructor
 	 */
 	public AbstractEntityDaoTest() {
-		super();
+		super(false, true);
 	}
 
 	/**
@@ -283,32 +280,8 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = "daoMode")
 	public final void onBeforeClass(String daoModeStr) {
-		setDaoMode(daoModeStr);
+		setDaoMode(EnumUtil.fromString(DaoMode.class, daoModeStr));
 		beforeClass();
-	}
-
-	private void setDaoMode(String daoModeStr) {
-		if(this.daoMode != null || injector != null) {
-			throw new IllegalStateException("The dao mode has already been set.");
-		}
-		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
-		
-		// for dao impl tests, the jpa mode is soley dependent on the dao mode
-		JpaMode jpaMode = null;
-		switch(daoMode) {
-			case ORM:
-				jpaMode = JpaMode.LOCAL;
-				break;
-			case MOCK:
-				jpaMode = JpaMode.NONE;
-				break;
-			default:
-				throw new IllegalStateException("Unhandled dao mode: " + daoMode.name());
-		}
-		setJpaMode(jpaMode);
-
-		// impt: update the config so the dao module loads accordingly
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
 	}
 
 	@AfterClass(alwaysRun = true)
@@ -325,7 +298,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
 
-		if(daoMode == DaoMode.ORM) {
+		if(getDaoMode() == DaoMode.ORM) {
 			// create a db shell to ensure db exists and stubbed
 			Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
 			DbShell dbShell = i.getInstance(DbShell.class);

@@ -228,49 +228,53 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	public <E extends IEntity> E persist(E entity) {
-		return persistInternal(entity, true);
-	}
-
-	private <E extends IEntity> E persistInternal(E entity, boolean flush) {
-		E merged;
-		try {
-			final EntityManager em = getEntityManager();
-			// TODO figure out how to get away with NOT merging!
-			merged = em.merge(entity);
-			em.persist(merged);
-			em.flush();
-		}
-		catch(final RuntimeException re) {
-			throw dbDialectHandler.translate(re);
-		}
-		return merged;
+		return persistInternal(entity, true, getEntityManager());
 	}
 
 	public <E extends IEntity> Collection<E> persistAll(Collection<E> entities) {
 		if(entities == null) return null;
 		final Collection<E> merged = new HashSet<E>(entities.size());
+		final EntityManager em = getEntityManager();
 		for(final E e : entities) {
-			merged.add(persistInternal(e, false));
+			merged.add(persistInternal(e, false, em));
 		}
-		getEntityManager().flush();
+		em.flush();
 		return merged;
 	}
-
-	public <E extends IEntity> void purge(E entity) {
+	
+	private <E extends IEntity> E persistInternal(E entity, boolean flush, EntityManager em) {
 		try {
-			getEntityManager().remove(getEntityManager().merge(entity));
+			E merged = em.merge(entity);
+			em.persist(merged);
+			if(flush) em.flush();
+			return merged;
 		}
 		catch(final RuntimeException re) {
 			throw dbDialectHandler.translate(re);
 		}
 	}
 
+	public <E extends IEntity> void purge(E entity) {
+		purgeInternal(entity, true, getEntityManager());
+	}
+
 	public <E extends IEntity> void purgeAll(Collection<E> entities) {
-		if(CollectionUtil.isEmpty(entities)) {
-			return;
+		if(!CollectionUtil.isEmpty(entities)) {
+			final EntityManager em = getEntityManager();
+			for(final E e : entities) {
+				purgeInternal(e, false, em);
+			}
+			em.flush();
 		}
-		for(final E e : entities) {
-			purge(e);
+	}
+
+	private <E extends IEntity> void purgeInternal(E entity, boolean flush, EntityManager em) {
+		try {
+			em.remove(em.merge(entity));
+			if(flush) em.flush();
+		}
+		catch(final RuntimeException re) {
+			throw dbDialectHandler.translate(re);
 		}
 	}
 

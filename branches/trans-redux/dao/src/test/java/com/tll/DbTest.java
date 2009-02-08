@@ -11,25 +11,27 @@ import javax.persistence.EntityManagerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
+import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.JpaMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.jdbc.DbShell;
+import com.tll.di.DaoModule;
 import com.tll.di.DbShellModule;
-import com.tll.di.JpaModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
 /**
  * DbTest - Test that supports raw transactions having an accessible
- * <code>jpaMode</code> member property.
+ * <code>daoMode</code> member property.
  * @author jpk
  */
 public abstract class DbTest extends AbstractInjectedTest {
@@ -71,11 +73,19 @@ public abstract class DbTest extends AbstractInjectedTest {
 	}
 
 	/**
-	 * The JPA mode.
+	 * Create a {@link DbShell} instance?
 	 */
-	private JpaMode jpaMode;
-
 	private final boolean createDbShell;
+
+	/**
+	 * Add in-house transaction support?
+	 */
+	private final boolean adHocTransactions;
+
+	/**
+	 * The required dao mode for knowing how to handle transactions.
+	 */
+	private DaoMode daoMode;
 
 	/**
 	 * Used to check if a transaction is in progress only when using Spring
@@ -99,59 +109,70 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * Constructor
 	 */
 	public DbTest() {
-		this(null, false);
+		this(null, false, false);
 	}
 
 	/**
 	 * Constructor
+	 * @param createDbShell
+	 * @param adHocTransactions
+	 * @see #DbTest(DaoMode, boolean, boolean)
 	 */
-	protected DbTest(boolean createDbShell) {
-		this(null, createDbShell);
+	protected DbTest(boolean createDbShell, boolean adHocTransactions) {
+		this(null, createDbShell, adHocTransactions);
 	}
 
 	/**
 	 * Constructor
-	 * @param jpaMode The JpaMode to employ for this test.
+	 * @param daoMode The {@link DaoMode} to employ for this test. This is
+	 *        necessary to know how to handle datastore transactions.
 	 * @param createDbShell Make a {@link DbShell} available?
+	 * @param adHocTransactions Add ad-hoc transaction support? If
+	 *        <code>false</code>, the test is expected to provide transaction
+	 *        support as this test depends on them when the <code>daoMode</code>
+	 *        equals {@link DaoMode#ORM}.
 	 */
-	protected DbTest(JpaMode jpaMode, boolean createDbShell) {
+	protected DbTest(DaoMode daoMode, boolean createDbShell, boolean adHocTransactions) {
 		super();
-		setJpaMode(jpaMode);
+		setDaoMode(daoMode);
 		this.createDbShell = createDbShell;
+		this.adHocTransactions = adHocTransactions;
 	}
 
 	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
-		assert jpaMode != null : "The JpaMode must be specified for db supporting tests";
-		if(createDbShell && (jpaMode != JpaMode.NONE && jpaMode != JpaMode.MOCK)) {
+		assert daoMode != null : "The DaoMode must be specified for db supporting tests";
+		if(daoMode.isDatastore() && adHocTransactions) {
+			// add JTA trans support for testing
+			modules.add(new Module() {
+
+				@Override
+				public void configure(Binder binder) {
+					// PlatformTransactionManager
+					binder.bind(PlatformTransactionManager.class).toInstance(
+							new JtaTransactionManager(new com.atomikos.icatch.jta.UserTransactionImp()));
+				}
+			});
+		}
+		if(createDbShell && (daoMode.isDatastore())) {
 			modules.add(new DbShellModule());
 		}
-		modules.add(new JpaModule());
 	}
 
-	@Override
-	protected void afterClass() {
-		super.afterClass();
-		if(jpaMode != JpaMode.NONE && jpaMode != JpaMode.SPRING) {
-			getEntityManager().close();
-			getEntityManagerFactory().close();
-		}
-	}
-	
-	protected final JpaMode getJpaMode() {
-		return jpaMode;
+	protected final DaoMode getDaoMode() {
+		return daoMode;
 	}
 
-	protected final void setJpaMode(JpaMode jpaMode) {
-		if(this.jpaMode != null || injector != null) {
-			throw new IllegalStateException("The JPA mode has already been set.");
+	protected final void setDaoMode(DaoMode daoMode) {
+		if(this.daoMode != null || injector != null) {
+			throw new IllegalStateException("The DAO mode has already been set.");
 		}
-		if(jpaMode != null) {
+		if(daoMode != null) {
 			// update the config
-			Config.instance().setProperty(JpaModule.ConfigKeys.JPA_MODE_PARAM.getKey(), jpaMode.toString());
+			Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
 		}
-		this.jpaMode = jpaMode;
+		this.daoMode = daoMode;
 	}
 
 	/**
@@ -184,13 +205,10 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(isTransStarted()) {
 			throw new IllegalStateException("Transaction already started.");
 		}
-		if(jpaMode == JpaMode.SPRING) {
+		if(daoMode == DaoMode.ORM) {
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 			transStatus = getTransactionManager().getTransaction(def);
-		}
-		else if(jpaMode != JpaMode.NONE) {
-			getEntityManager().getTransaction().begin();
 		}
 		transStarted = true;
 	}
@@ -219,20 +237,14 @@ public abstract class DbTest extends AbstractInjectedTest {
 			throw new IllegalStateException("No transaction in progress");
 		}
 		if(transCompleteFlag) {
-			if(jpaMode == JpaMode.SPRING) {
+			if(daoMode == DaoMode.ORM) {
 				getTransactionManager().commit(transStatus);
-			}
-			else if(jpaMode != JpaMode.NONE) {
-				getEntityManager().getTransaction().commit();
 			}
 			transCompleteFlag = false;
 		}
 		else {
-			if(jpaMode == JpaMode.SPRING) {
+			if(daoMode == DaoMode.ORM) {
 				getTransactionManager().rollback(transStatus);
-			}
-			else if(jpaMode != JpaMode.NONE) {
-				getEntityManager().getTransaction().rollback();
 			}
 		}
 		transStarted = false;

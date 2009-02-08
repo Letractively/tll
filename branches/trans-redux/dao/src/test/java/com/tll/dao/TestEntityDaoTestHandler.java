@@ -104,10 +104,7 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		e.setParent(parent);
 
 		Address address1 = create(Address.class, true);
-		address1 = persist(address1);
-
 		Address address2 = create(Address.class, true);
-		address2 = persist(address2);
 		
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);

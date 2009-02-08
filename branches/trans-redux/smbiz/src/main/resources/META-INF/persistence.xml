@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
   version="1.0">
   
-  <persistence-unit name="${db.name}" transaction-type="RESOURCE_LOCAL">
+  <persistence-unit name="${db.name}" transaction-type="JTA">
   
     <description>${app.name} persistence unit.</description>
     
@@ -37,7 +37,11 @@
       <property name="hibernate.cache.region_prefix" value="${hibernate.cache.region_prefix}" />
       <property name="hibernate.cache.use_query_cache" value="${hibernate.cache.use_query_cache}" />
       <property name="hibernate.generate_statistics" value="${hibernate.generate_statistics}" />
+      
       <property name="hibernate.ejb.event.merge" value="${hibernate.ejb.event.merge}" />
+      
+      <property name="hibernate.transaction.manager_lookup_class" value="${hibernate.transaction.manager_lookup_class}" />
+
       <property name="hibernate.validator.autoregister_listeners" value="${hibernate.validator.autoregister_listeners}" />
     </properties>
     
