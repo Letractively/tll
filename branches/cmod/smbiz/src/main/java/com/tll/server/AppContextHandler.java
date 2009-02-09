@@ -84,19 +84,10 @@ public class AppContextHandler implements IBootstrapHandler {
 		IAppContext ac =
 				(IAppContext) servletContext.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
 		if(ac != null) {
-			try {
-				final EntityManagerFactory emf = ac.getEntityManagerFactory();
-				if(emf != null) {
-					log.debug("Closing EntityManagerFactory ...");
-					emf.close();
-				}
-			}
-			catch(final RuntimeException e) {
-				// Guice will throw a ConfigurationException when there is no binding
-				// for the class specified in Injector.getInstance()
-				// so we keep it silent (NOTE: ConfigurationException is only package
-				// visible so we have to resort to its superclass: RuntimeException)
-				log.error(e.getMessage(), e);
+			final EntityManagerFactory emf = ac.getEntityManagerFactory();
+			if(emf != null) {
+				log.debug("Closing EntityManagerFactory ...");
+				emf.close();
 			}
 		}
 	}

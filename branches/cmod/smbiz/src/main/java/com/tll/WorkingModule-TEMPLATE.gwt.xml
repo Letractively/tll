@@ -3,13 +3,13 @@
 -->
 <module rename-to="com.tll.SmbizAdminApp">
   <inherits name="com.tll.SmbizAdminApp" />
-  <set-property name="user.agent" value="gecko" />
+  
+  <!-- set user.agent to ie6 for host mode compatibility -->
+  <set-property name="user.agent" value="ie6" />
   <set-property name="locale" value="default" />
   
   <!-- Add gwt-log support, default level `DEBUG` -->
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-
-  <entry-point class="com.tll.client.admin.SmbizAdmin" />
 
   <stylesheet src="css/admin.css" />
 </module>

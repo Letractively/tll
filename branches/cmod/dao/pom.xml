@@ -14,10 +14,6 @@
   <version>1.0-SNAPSHOT</version>
   <description>DAO abstraction layer.</description>
   
-  <properties>
-    <atomikos.version>3.5.1</atomikos.version>
-  </properties>
-
   <build>
     <filters>
       <filter>src/test/resources/config.properties</filter>
@@ -138,11 +134,6 @@
     </dependency>
     
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-    
-    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>1.0-SNAPSHOT</version>
@@ -189,26 +180,13 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aspects</artifactId>
-    </dependency>
     
-    <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -230,15 +208,15 @@
       <scope>runtime</scope>    
     </dependency>    
     
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+    </dependency>
+    
     <!-- atomikos jta impl deps (embedded JTA server) -->
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <version>${atomikos.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jdbc</artifactId>
       <version>${atomikos.version}</version>
     </dependency>
     <dependency>

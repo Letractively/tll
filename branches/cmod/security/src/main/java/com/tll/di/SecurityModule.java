@@ -20,7 +20,7 @@ public class SecurityModule extends CompositeModule {
 	 * @author jpk
 	 */
 	public static enum ConfigKeys implements IConfigKey {
-		SECURITY_MODE_PARAM("app.security.mode");
+		SECURITY_MODE_PARAM("security.mode");
 
 		private final String key;
 

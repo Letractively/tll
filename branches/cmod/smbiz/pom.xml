@@ -34,7 +34,7 @@
     <finalName>smbiz</finalName>
     
     <filters>
-      <filter>src/main/resources/config.properties</filter>
+      <filter>src/main/resources/config-root.properties</filter>
       <filter>src/main/resources/config-${env}.properties</filter>
     </filters>
     <resources>
@@ -44,7 +44,7 @@
         <includes>
           <include>*.*</include>
         </includes>
-        <!-- don't copy config.properties - it is dependent on the active profile and therefore is handled explicitly -->
+        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
         <excludes>
           <exclude>config*.properties</exclude>
         </excludes>
@@ -91,37 +91,6 @@
         </includes>
       </resource>
     </resources>
-    
-    <pluginManagement>
-      <plugins>
-        
-        <!-- gwt-maven plugin -->
-        <plugin>
-          <groupId>com.totsp.gwt</groupId>
-          <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-          <version>2.0-beta26</version>
-          <configuration>
-            <logLevel>INFO</logLevel>
-            <compileTargets>
-              <value>com.tll.WorkingModule</value>
-            </compileTargets>
-            <runTarget>com.tll.WorkingModule/SmbizAdmin.html</runTarget>
-            <style>OBF</style>
-            <noServer>false</noServer>
-            <extraJvmArgs>-Xmx512M -Xms64M</extraJvmArgs>
-            <i18nConstantsNames>
-              <value>com.tll.client.Constants</value>
-            </i18nConstantsNames>
-            <!-- 
-            <i18nMessagesNames>
-              <value>com.totsp.sample.client.AppMessages</value>
-            </i18nMessagesNames>
-            -->
-            <gwtVersion>${gwtVersion}</gwtVersion>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     
     <plugins>
     
@@ -193,7 +162,7 @@
                 def dir = new File(project.basedir, 'target/classes/com/tll/client')
                 ant.mkdir(dir: dir)
                 
-                File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config.properties')
+                File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config-root.properties')
                 File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.env}.properties')
                 
                 def config = Config.instance()
@@ -240,16 +209,37 @@
         </configuration>
       </plugin>
       
-      <!--  GWT-Maven plugin -->
+      <!-- GWT-Maven plugin -->
+      <!-- mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt -->
       <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+        <version>2.0-beta26</version>
+        <configuration>
+          <logLevel>INFO</logLevel>
+          <compileTargets>
+            <value>com.tll.SmbizAdminApp</value>
+          </compileTargets>
+          <runTarget>com.tll.SmbizAdminApp/SmbizAdmin.html</runTarget>
+          <style>OBF</style>
+          <noServer>false</noServer>
+          <extraJvmArgs>-Xmx512M -Xms64M</extraJvmArgs>
+          <i18nConstantsNames>
+            <value>com.tll.client.Constants</value>
+          </i18nConstantsNames>
+          <!-- 
+          <i18nMessagesNames>
+            <value>com.totsp.sample.client.AppMessages</value>
+          </i18nMessagesNames>
+          -->
+          <gwtVersion>${gwtVersion}</gwtVersion>
+        </configuration>
         <executions>
           <execution>
             <goals>
-              <!-- <goal>mergewebxml</goal> -->
+              <goal>mergewebxml</goal>
               <!-- <goal>i18n</goal> -->
-              <!-- <goal>compile</goal> -->
+              <goal>compile</goal>
               <!-- <goal>test</goal> -->
             </goals>
           </execution>
@@ -459,10 +449,6 @@
       <artifactId>ejb3-persistence</artifactId>
     </dependency>
     <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
     </dependency>
@@ -480,6 +466,13 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-jta</artifactId>
+      <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
     
@@ -514,10 +507,9 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
     </dependency>
-    
     <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>

@@ -81,7 +81,7 @@ public abstract class AbstractSecurityFilter implements Filter {
 	}
 
 	@Override
-	public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		if(request instanceof HttpServletRequest) {
 			final ISecurityContext sc =
