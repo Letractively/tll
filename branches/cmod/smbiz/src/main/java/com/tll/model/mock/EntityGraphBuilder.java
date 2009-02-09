@@ -303,7 +303,7 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = add(User.class, true);
+		User u = add(User.class, false);
 		u.addAuthority(getRandomEntity(Authority.class));
 		u.setAccount(getNthEntity(Asp.class, 1));
 		u.setAddress(getRandomEntity(Address.class));

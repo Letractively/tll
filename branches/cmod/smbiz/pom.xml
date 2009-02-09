@@ -14,7 +14,7 @@
   <version>0.9.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <description>The smbiz app</description>
-  
+
   <!-- include the GWT-Maven repo as plugin, and as standard -->
   <pluginRepositories>
     <pluginRepository>
@@ -30,12 +30,17 @@
     </repository>
   </repositories>
   
+  <properties>
+    <mode>dev</mode>
+    <environment>dev</environment>
+  </properties>
+  
   <build>
     <finalName>smbiz</finalName>
-    
+
     <filters>
       <filter>src/main/resources/config-root.properties</filter>
-      <filter>src/main/resources/config-${env}.properties</filter>
+      <filter>src/main/resources/config-${environment}.properties</filter>
     </filters>
     <resources>
       <resource>
@@ -72,12 +77,11 @@
         </includes>
         <targetPath>META-INF</targetPath>
       </resource>
-      
-      <!-- 
-        Identify the source files needed for GWT compile in the main source src tree
-        excluding those *transitive sources* (i.e. the sources contained in the declareed dependencies section).
-          
-        IMPT NOTE: This reflects the sources identified in the bound GWT module's source declarations.  
+
+      <!--
+        Identify the source files needed for GWT compile in the main source src tree excluding those *transitive
+        sources* (i.e. the sources contained in the declareed dependencies section). IMPT NOTE: This reflects the
+        sources identified in the bound GWT module's source declarations.
       -->
       <resource>
         <directory>src/main/java</directory>
@@ -92,82 +96,79 @@
       </resource>
     </resources>
     
-    <plugins>
-    
-      <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.1</version>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.groovy.maven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>mysql</groupId>
+              <artifactId>mysql-connector-java</artifactId>
+              <version>${mysqlConnectorVersion}</version>  
+            </dependency>
+          </dependencies>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <weaveDependencies>
-            <weaveDependency>
+          <classpath>
+            <element>
+              <groupId>commons-lang</groupId>
+              <artifactId>commons-lang</artifactId>
+            </element>
+            <element>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </element>
+            <element>
+              <groupId>commons-configuration</groupId>
+              <artifactId>commons-configuration</artifactId>
+            </element>
+            <element>
               <groupId>com.tll</groupId>
-              <artifactId>tll-service</artifactId>
-            </weaveDependency>
-          </weaveDependencies>
-          <aspectLibraries>
-            <aspectLibrary>
-              <groupId>org.springframework</groupId>
-              <artifactId>spring-aspects</artifactId>
-            </aspectLibrary>
-          </aspectLibraries>
+              <artifactId>tll-config</artifactId>
+              <version>1.0-SNAPSHOT</version>
+            </element>
+            <element>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-dao</artifactId>
+              <version>1.0-SNAPSHOT</version>
+            </element>
+          </classpath>
         </configuration>
-        <executions>
-          <execution>
-            <id>aj compile</id>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <executions>
-          
           <execution>
-            <id>config-props</id>
+            <id>generate-resources</id>
             <phase>generate-resources</phase>
-            <goals><goal>execute</goal></goals>
+            <goals>
+              <goal>execute</goal>
+            </goals>
             <configuration>
-              <classpath>
-                <element>
-                  <groupId>commons-lang</groupId>
-                  <artifactId>commons-lang</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-logging</groupId>
-                  <artifactId>commons-logging</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-configuration</groupId>
-                  <artifactId>commons-configuration</artifactId>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-config</artifactId>
-                  <version>1.0-SNAPSHOT</version>
-                </element>
-              </classpath>
               <source><![CDATA[
-                import com.tll.config.Config
-                
                 def NL = System.getProperty("line.separator")
                 
                 def dir = new File(project.basedir, 'target/classes/com/tll/client')
                 ant.mkdir(dir: dir)
                 
                 File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config-root.properties')
-                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.env}.properties')
+                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.environment}.properties')
                 
-                def config = Config.instance()
+                def config = com.tll.config.Config.instance()
                 config.loadProperties(fBaseConfig.toURI().toURL(), true, false)
                 config.loadProperties(fProfileConfig.toURI().toURL(), true, true)
+                
+                // set profile dependent properties
+                config.setProperty('environment', project.properties.environment)
+                config.setProperty('debug', project.properties.debug)
+                config.setProperty('db.dao.mode', project.properties['db.dao.mode'])
+                config.setProperty('security.mode', project.properties['security.mode'])
                 
                 // create aggregated config.properties file..
                 config.saveAsPropFile(new File(project.basedir.toString() + '/target/classes/config.properties'))
@@ -193,59 +194,71 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <!-- 
+          NOTE: we have to specify at least one test file 
+          otherwise maven resorts to dynamic class finding of unit tests! 
+          -->
           <suiteXmlFiles>
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile> -->
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile> -->
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile> -->
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-client-model.xml</suiteXmlFile> -->
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-client-model.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
-      
+
       <!-- GWT-Maven plugin -->
-      <!-- mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt -->
+      <!-- 
+        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt (shell invocation) 
+        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:debug (shell invocation w/ jvm debug hook) 
+        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:test (run GWTTestCase derived unit tests)
+      -->
       <plugin>
         <groupId>com.totsp.gwt</groupId>
         <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
         <version>2.0-beta26</version>
         <configuration>
-          <logLevel>INFO</logLevel>
-          <compileTargets>
-            <value>com.tll.SmbizAdminApp</value>
-          </compileTargets>
-          <runTarget>com.tll.SmbizAdminApp/SmbizAdmin.html</runTarget>
-          <style>OBF</style>
-          <noServer>false</noServer>
-          <extraJvmArgs>-Xmx512M -Xms64M</extraJvmArgs>
-          <i18nConstantsNames>
-            <value>com.tll.client.Constants</value>
-          </i18nConstantsNames>
-          <!-- 
-          <i18nMessagesNames>
-            <value>com.totsp.sample.client.AppMessages</value>
-          </i18nMessagesNames>
-          -->
           <gwtVersion>${gwtVersion}</gwtVersion>
+          <logLevel>INFO</logLevel>
+          <enableAssertions>true</enableAssertions>
+          <resourcesOnPath>false</resourcesOnPath>
+          <extraJvmArgs>-Xmx256M</extraJvmArgs>
+          <noServer>false</noServer>
+          <port>8888</port>
+          <tomcat>${pom.basedir}/target/tomcat</tomcat>
+          <webXml>${pom.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+          <webXmlServletPathAsIs>true</webXmlServletPathAsIs>
+          <compileTargets>
+            <value>${gwt.compile.target}</value>
+          </compileTargets>
+          <runTarget>${gwt.run.target}</runTarget>
         </configuration>
         <executions>
           <execution>
+            <id>gwt-compile</id>
+            <phase>process-classes</phase>
             <goals>
-              <goal>mergewebxml</goal>
-              <!-- <goal>i18n</goal> -->
               <goal>compile</goal>
-              <!-- <goal>test</goal> -->
+              <!-- <goal>i18n</goal> -->
+            </goals>
+          </execution>
+          <execution>
+            <id>gwt-test</id>
+            <!-- <phase>test</phase> -->
+            <goals>
+              <goal>test</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-      
+
       <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
       <!--
         (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
@@ -277,7 +290,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <!--
         If you want to use the target/web.xml file mergewebxml produces, tell the war plugin to use it. Also, exclude
         what you want from the final artifact here.
@@ -301,35 +314,118 @@
   </build>
 
   <profiles>
-    
+
     <!-- smbiz dev profile -->
     <profile>
       <id>dev</id>
       <properties>
-        <env>dev</env>
+        <debug>true</debug>
+        <db.dao.mode>MOCK</db.dao.mode>
+        <security.mode>NONE</security.mode>
+        <gwt.compile.target>com.tll.WorkingModule</gwt.compile.target>
+        <gwt.run.target>com.tll.WorkingModule/SmbizAdmin.html</gwt.run.target>
       </properties>
       <activation>
         <property>
-          <name>smbiz.mode</name>
+          <name>mode</name>
           <value>dev</value>
         </property>
       </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.groovy.maven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <executions>
+              <!--  
+              this task ensures we have a test db created and stubbed 
+              NOTE: No db ops occur if the test db already exists 
+              -->
+              <execution>
+                <id>ensure-devdb-created</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <source><![CDATA[
+                    if(project.properties['db.dao.mode'] == 'ORM') {
+                      File f = new File(project.basedir.toString() + '/target/classes/config.properties')
+                      def config = com.tll.config.Config.instance()
+                      config.loadProperties(f.toURI().toURL(), true, true)
+                      String path = project.basedir.toString() + '/target/classes/'
+                      File fSchema = new File(path, config.getString('db.resource.schema'))
+                      File fStub = new File(path, config.getString('db.resource.stub'))
+                      File fDelete = new File(path, config.getString('db.resource.delete'))
+                      def shell = com.tll.dao.jdbc.DbShellBuilder.getDbShell(config, 
+                        fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
+                      if(shell.create()) {
+                        println('Stubbing test db..')
+                        shell.stub();
+                      }
+                    }
+                  ]]></source>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
-    
+
     <!-- smbiz production profile -->
     <profile>
-      <id>production</id>
+      <id>prod</id>
       <properties>
-        <env>production</env>
+        <debug>false</debug>
+        <environment>dev</environment>
+        <db.dao.mode>ORM</db.dao.mode>
+        <security.mode>ACEGI</security.mode>
+        <gwt.compile.target>com.tll.SmbizAdminApp</gwt.compile.target>
+        <gwt.run.target>com.tll.SmbizAdminApp/SmbizAdmin.html</gwt.run.target>
       </properties>
       <activation>
         <property>
-          <name>smbiz.mode</name>
+          <name>mode</name>
           <value>prod</value>
         </property>
       </activation>
+      <build>
+        <plugins>
+          <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <version>1.1</version>
+            <configuration>
+              <source>1.6</source>
+              <target>1.6</target>
+              <weaveDependencies>
+                <weaveDependency>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-service</artifactId>
+                </weaveDependency>
+              </weaveDependencies>
+              <aspectLibraries>
+                <aspectLibrary>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-aspects</artifactId>
+                </aspectLibrary>
+              </aspectLibraries>
+            </configuration>
+            <executions>
+              <execution>
+                <id>aspectj-weave</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
-    
+
     <profile>
       <id>gwt-dev-windows</id>
       <properties>
@@ -366,7 +462,7 @@
   </profiles>
 
   <dependencies>
-    
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
@@ -389,7 +485,7 @@
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
     </dependency>
-  
+
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -435,7 +531,7 @@
       <artifactId>tll-security</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-  
+
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
@@ -452,7 +548,7 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
     </dependency>
-  
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -468,14 +564,14 @@
       <artifactId>mysql-connector-java</artifactId>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
       <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-support</artifactId>
@@ -498,10 +594,8 @@
       <artifactId>spring-security-core</artifactId>
     </dependency>
     <!--
-    <dependency>
-    	<groupId>org.springframework.security</groupId>
-    	<artifactId>spring-security-acl</artifactId>
-    </dependency>
+      <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-acl</artifactId>
+      </dependency>
     -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -515,12 +609,12 @@
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
     </dependency>
-  
+
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
     </dependency>
-    
+
     <!--  GWT sources deps -->
     <dependency>
       <groupId>com.tll</groupId>
@@ -562,7 +656,7 @@
       <scope>provided</scope>
       <type>jar</type>
     </dependency>
-    
+
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
@@ -580,7 +674,7 @@
       <classifier>${platform}-libs</classifier>
       <type>zip</type>
       <scope>provided</scope>
-    </dependency>       
+    </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
@@ -588,7 +682,7 @@
       <classifier>${platform}</classifier>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-incubator</artifactId>
@@ -599,7 +693,7 @@
       <artifactId>gwt-log</artifactId>
       <version>2.5.3</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -639,7 +733,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>

@@ -13,16 +13,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 
 import com.tll.server.ISecurityContext;
+import com.tll.server.SecurityMode;
 
 /**
  * AuthenticationProcessingFilter
  * @author jpk
  */
-public class AuthenticationProcessingFilter extends AbstractSecurityFilter {
+public abstract class AuthenticationProcessingFilter extends AbstractSecurityFilter {
+
+	protected static final Log log = LogFactory.getLog(AuthenticationProcessingFilter.class);
 
 	/**
 	 * Wrapped - Thin wrapper around Acegi's
@@ -50,48 +55,64 @@ public class AuthenticationProcessingFilter extends AbstractSecurityFilter {
 	private final Wrapped wrapped = new Wrapped();
 
 	/**
+	 * Does non-Acegi filtering.
+	 * @param request
+	 * @param response
+	 * @param chain
+	 * @throws IOException
+	 * @throws ServletException
+	 */
+	protected abstract void doFilterNonAcegi(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException;
+
+	/**
 	 * Invoked upon successful authentication.
 	 * @throws IOException
 	 */
-	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-			Authentication authResult) throws IOException {
-		// base impl no-op
-	}
+	protected abstract void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			Authentication authResult) throws IOException;
 
 	/**
 	 * Invoked upon failed authentication.
 	 * @throws IOException
 	 */
-	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException failed) throws IOException {
-		// base impl no-op
+	protected abstract void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException;
+
+	@Override
+	public void init(FilterConfig config) throws ServletException {
+		log.debug("Initializing the AuthenticationProcessingFilter..");
+		ISecurityContext sc = getSecurityContext(config);
+		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
+			wrapped.setAuthenticationManager(sc.getAuthenticationManager());
+
+			String afu = config.getInitParameter("authenticationFailureUrl");
+			if(afu == null) {
+				throw new Error("The init parameter 'authenticationFailureUrl' must be declared");
+			}
+			wrapped.setAuthenticationFailureUrl(afu);
+
+			String dtu = config.getInitParameter("defaultTargetUrl");
+			if(dtu == null) {
+				throw new Error("The init parameter 'defaultTargetUrl' must be declared");
+			}
+			wrapped.setDefaultTargetUrl(dtu);
+
+			// avoids Acegi's SavedRequest mechanism
+			wrapped.setAlwaysUseDefaultTargetUrl(true);
+		}
 	}
 
 	@Override
-	protected void doInitAcegi(FilterConfig config, ISecurityContext securityContext) /*throws ServletException*/{
-		wrapped.setAuthenticationManager(securityContext.getAuthenticationManager());
-
-		String afu = config.getInitParameter("authenticationFailureUrl");
-		if(afu == null) {
-			throw new Error("The init parameter 'authenticationFailureUrl' must be declared");
-		}
-		wrapped.setAuthenticationFailureUrl(afu);
-
-		String dtu = config.getInitParameter("defaultTargetUrl");
-		if(dtu == null) {
-			throw new Error("The init parameter 'defaultTargetUrl' must be declared");
-		}
-		wrapped.setDefaultTargetUrl(dtu);
-
-		// avoids Acegi's SavedRequest mechanism
-		wrapped.setAlwaysUseDefaultTargetUrl(true);
-	}
-
-	@Override
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
-			ISecurityContext securityContext) throws IOException,
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		wrapped.doFilter(request, response, chain);
+		log.debug("AuthenticationProcessingFilter filtering..");
+		if(getSecurityContext(request).getSecurityMode() == SecurityMode.ACEGI) {
+			wrapped.doFilter(request, response, chain);
+		}
+		else {
+			doFilterNonAcegi(request, response, chain);
+		}
 	}
 
 }

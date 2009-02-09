@@ -6,6 +6,7 @@
 package com.tll.dao.jdbc;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.sql.DataSource;
@@ -14,7 +15,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -47,22 +47,12 @@ public final class DbShell {
 	private final String dbName;
 
 	/**
-	 * The file name on the classpath holding the DDL commands representing the db
-	 * schema.
+	 * The URLs that point to the ddl schema, sql stub and the sql delete
+	 * resources respectively. <br>
+	 * NOTE: these resources are in the form of {@link URI} to accommodate the use
+	 * case of being contained within a jar file (or other some such).
 	 */
-	private final String dbSchemaFileName;
-
-	/**
-	 * The file name on the classpath holding the SQL commands that inserts the
-	 * initial data set.
-	 */
-	private final String dbDataStubFileName;
-
-	/**
-	 * The file name on the classpath holding the SQL commands that clears all
-	 * data from the database.
-	 */
-	private final String dbDataDeleteFileName;
+	private final URL dbSchemaResource, dbStubResource, dbDelResource;
 
 	/**
 	 * The data source pointing to the "root" database repository.
@@ -92,14 +82,14 @@ public final class DbShell {
 	 * @param urlPrefix
 	 * @param username
 	 * @param password
-	 * @param dbSchemaFileName
-	 * @param dbDataDeleteFileName
-	 * @param dbDataStubFileName
+	 * @param dbSchemaResource
+	 * @param dbStubResource
+	 * @param dbDelResource
 	 * @param exceptionTranslator
 	 */
 	@Inject
 	public DbShell(String rootDbName, String dbName, String urlPrefix, String username, String password,
-			String dbSchemaFileName, String dbDataDeleteFileName, String dbDataStubFileName,
+			URL dbSchemaResource, URL dbStubResource, URL dbDelResource,
 			IDbDialectHandler exceptionTranslator) {
 		super();
 
@@ -109,9 +99,11 @@ public final class DbShell {
 		this.rootDataSource = new SingleConnectionDataSource(rootUrl, username, password, false);
 		this.dataSource = new SingleConnectionDataSource(url, username, password, false);
 		this.dbName = dbName;
-		this.dbSchemaFileName = dbSchemaFileName;
-		this.dbDataDeleteFileName = dbDataDeleteFileName;
-		this.dbDataStubFileName = dbDataStubFileName;
+		
+		this.dbSchemaResource = dbSchemaResource;
+		this.dbStubResource = dbStubResource;
+		this.dbDelResource = dbDelResource;
+		
 		this.exceptionTranslator = exceptionTranslator;
 
 		if(log.isInfoEnabled()) {
@@ -150,17 +142,18 @@ public final class DbShell {
 	}
 
 	/**
-	 * Executes SQL commands held in the given file against the given data source.
+	 * Executes sql/ddl commands held in the given resource against the given data
+	 * source.
 	 * @param dataSource
-	 * @param f
+	 * @param url The sql/ddl resource to load and invoke
 	 */
-	private void executeSqlCommandsFromFile(DataSource dataSource, URL url) {
+	private void executeDbCommandsFromResource(DataSource dataSource, URL url) {
 		String s;
 		try {
 			s = IOUtils.toString(url.openStream());
 		}
 		catch(IOException e) {
-			throw new SystemError("Unable to read sql/ddl file contents: " + e.getMessage(), e);
+			throw new SystemError("Unable to read sql/ddl resource: " + e.getMessage(), e);
 		}
 
 		// remove comments
@@ -175,7 +168,7 @@ public final class DbShell {
 		}
 
 		if(log.isDebugEnabled()) {
-			log.debug("Executing SQL command file: " + url.getFile() + "...");
+			log.debug("Executing SQL/DDL commands: " + url.getPath() + "...");
 		}
 		String[] sqls = StringUtils.split(sb.toString(), SQL_COMMAND_DELIM_CHAR);
 		for(String sql : sqls) {
@@ -205,13 +198,8 @@ public final class DbShell {
 		}
 
 		// create db schema
-		try {
-			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbSchemaFileName)).getURL());
-			if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
-		}
-		catch(IOException e) {
-			throw new SystemError("Unable to create db schema: " + e.getMessage(), e);
-		}
+		executeDbCommandsFromResource(dataSource, dbSchemaResource);
+		if(log.isInfoEnabled()) log.info(dbName + " database schema created.");
 		return true;
 	}
 
@@ -244,8 +232,7 @@ public final class DbShell {
 	 */
 	public boolean clear() {
 		try {
-			ClassPathResource resource = new ClassPathResource(dbDataDeleteFileName);
-			executeSqlCommandsFromFile(dataSource, resource.getURL());
+			executeDbCommandsFromResource(dataSource, dbDelResource);
 			if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
 			return true;
 		}
@@ -254,27 +241,21 @@ public final class DbShell {
 				throw dae;
 			}
 		}
-		catch(IOException e) {
-			throw new SystemError(e.getMessage(), e);
-		}
 		return false;
 	}
 
 	/**
-	 * Adds data to the db with the data set gotten from loading the db stub file.
-	 * The db <em>must</em> already exist else an error is raised.
+	 * Adds data to the db with the data set gotten from loading the db stub
+	 * resource. The db <em>must</em> already exist else an error is raised.
 	 * @return <code>true</code> if the db was actually stubbed with the stub data
 	 *         as a result of calling this method.
 	 */
 	public boolean stub() {
 
 		try {
-			executeSqlCommandsFromFile(dataSource, (new ClassPathResource(dbDataStubFileName)).getURL());
+			executeDbCommandsFromResource(dataSource, dbStubResource);
 			if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
 			return true;
-		}
-		catch(IOException e) {
-			throw new SystemError(e.getMessage(), e);
 		}
 		catch(DataAccessException dae) {
 			if(!exceptionTranslator.isUnknownDatabase(dae)) {

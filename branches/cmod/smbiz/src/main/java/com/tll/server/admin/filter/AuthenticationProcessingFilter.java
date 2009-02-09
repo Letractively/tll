@@ -15,13 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationException;
 import org.springframework.security.context.SecurityContextHolder;
 
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.model.User;
 import com.tll.server.IAppContext;
-import com.tll.server.ISecurityContext;
 import com.tll.server.admin.AdminContext;
 import com.tll.service.entity.user.IUserService;
 
@@ -58,53 +58,43 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 	 * The servlet session attribute key identifying the {@link AdminContext}.
 	 */
 	public static final String SA_ADMIN_CONTEXT = "ac";
-	
-	@Override
-	protected void doFilterAcegi(ServletRequest request, ServletResponse response, FilterChain chain,
-			ISecurityContext securityContext) throws IOException,
-			ServletException {
-		doFilterCommon(request, response, chain);
-		super.doFilterAcegi(request, response, chain, securityContext);
-	}
 
 	@Override
-	protected void doFilterNoSecurity(ServletRequest request, ServletResponse response, FilterChain chain)
+	protected void doFilterNonAcegi(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		doFilterCommon(request, response, chain);
-		super.doFilterNoSecurity(request, response, chain);
-	}
-
-	private void doFilterCommon(ServletRequest request, ServletResponse response, FilterChain chain)
-			/*throws IOException, ServletException*/{
-		if(request instanceof HttpServletRequest) {
-			HttpServletRequest hsr = (HttpServletRequest) request;
-			HttpSession session = hsr.getSession(false);
+		log.debug("Creating mock admin context from default user email specified in config..");
+		try {
+			final HttpServletRequest hsr = (HttpServletRequest) request;
+			final HttpSession session = hsr.getSession(false);
 			assert session != null;
-			ServletContext sc = session.getServletContext();
+			final ServletContext sc = session.getServletContext();
 			AdminContext ac = (AdminContext) session.getAttribute(SA_ADMIN_CONTEXT);
 			if(ac == null) {
+				String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
+				assert defaultUserEmail != null : "No default user email defined in the app configuration!";
 				IAppContext appContext = (IAppContext) sc.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
 				if(appContext == null) {
 					throw new Error("Unable to obtain the app context");
 				}
 				IUserService userService = appContext.getEntityServiceFactory().instance(IUserService.class);
-				String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
-				assert defaultUserEmail != null : "No default user email defined in the app configuration!";
 				User user = userService.findByUsername(defaultUserEmail);
 				ac = new AdminContext();
 				ac.setUser(user);
 				ac.setAccount(user.getAccount());
-				hsr.getSession(false).setAttribute(SA_ADMIN_CONTEXT, ac);
+				session.setAttribute(SA_ADMIN_CONTEXT, ac);
 			}
+		}
+		finally {
+			chain.doFilter(request, response);
 		}
 	}
 
 	@Override
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-			Authentication authResult) throws IOException {
-		super.onSuccessfulAuthentication(request, response, authResult);
+			Authentication authResult) /*throws IOException*/{
 
 		// create an AdminContext for this servlet session
+		log.debug("Creating admin context from acegi security context..");
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		assert user != null;
 		AdminContext ac = new AdminContext();
@@ -113,5 +103,12 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 		// user's owning account
 
 		request.getSession(false).setAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT, ac);
+	}
+
+	@Override
+	protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) /*throws IOException*/{
+		log.debug("User authentication failed");
+		// no-op
 	}
 }

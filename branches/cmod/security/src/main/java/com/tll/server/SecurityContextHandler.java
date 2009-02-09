@@ -20,7 +20,8 @@ import com.tll.di.SecurityModule.ConfigKeys;
 import com.tll.util.EnumUtil;
 
 /**
- * AppContextBootstrapper
+ * SecurityContextHandler - Sets the {@link ISecurityContext} in the
+ * {@link ServletContext}.
  * @author jpk
  */
 public class SecurityContextHandler implements IBootstrapHandler {
@@ -41,7 +42,7 @@ public class SecurityContextHandler implements IBootstrapHandler {
 					injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
 		}
 
-		log.info("Setting security context..");
+		log.info("Setting security context (SecurityMode: " + securityMode + ")..");
 		servletContext.setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,
 				authenticationManager, httpRequesetAccessDecisionManager));
 	}
