@@ -15,6 +15,11 @@
   <description>Contains client and server classes supporting the tll client-side Model construct.</description>
 
   <dependencies>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-rpc</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>

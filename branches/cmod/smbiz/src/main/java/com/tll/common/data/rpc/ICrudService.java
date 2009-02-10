@@ -5,6 +5,7 @@
 package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityFetchPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
@@ -19,6 +20,7 @@ import com.tll.common.model.RefKey;
  * ICrudService
  * @author jpk
  */
+@RemoteServiceRelativePath(value = "rpc/crud")
 public interface ICrudService extends RemoteService {
 
 	/**

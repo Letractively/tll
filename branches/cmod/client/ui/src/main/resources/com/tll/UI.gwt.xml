@@ -1,0 +1,26 @@
+<module>
+  <inherits name="com.google.gwt.user.User" />
+  
+  <!--  un-comment to go international (commenting out means quicker compile) -->
+  <!-- <inherits name="com.google.gwt.i18n.I18N" /> -->
+
+  <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+  <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+
+  <!-- gwt-log support, default level `DEBUG` -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  
+  <!-- client package sources -->
+  <source path="client" />
+  
+  <public path="public" />
+  
+  <stylesheet src="css/reset.css" />
+  <stylesheet src="css/base.css" />
+  <stylesheet src="css/widget-gwt.css" />
+  <stylesheet src="css/widget-tll.css" />
+  <stylesheet src="css/msg.css" />
+  <stylesheet src="css/options.css" />
+  <stylesheet src="css/toolbar.css" />
+
+</module>

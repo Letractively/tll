@@ -6,6 +6,7 @@
 package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.IMarshalable;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -17,6 +18,7 @@ import com.tll.common.search.ISearch;
  * @param <R> The row data type
  * @author jpk
  */
+@RemoteServiceRelativePath(value = "rpc/listing")
 public interface IListingService<S extends ISearch, R extends IMarshalable> extends RemoteService {
 
 	/**

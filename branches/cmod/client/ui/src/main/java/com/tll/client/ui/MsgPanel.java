@@ -6,10 +6,10 @@ package com.tll.client.ui;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.tll.client.App;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -19,6 +19,11 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  */
 public final class MsgPanel extends TimedPositionedPopup {
+
+	/**
+	 * The app wide image bundle.
+	 */
+	private static final MsgImageBundle imageBundle = (MsgImageBundle) GWT.create(MsgImageBundle.class);
 
 	/**
 	 * Styles - (msg.css)
@@ -106,17 +111,17 @@ public final class MsgPanel extends TimedPositionedPopup {
 		Image img = new Image();
 		switch(level) {
 			case WARN:
-				App.imgs().warn().applyTo(img);
+				imageBundle.warn().applyTo(img);
 				break;
 			case ERROR:
-				App.imgs().error().applyTo(img);
+				imageBundle.error().applyTo(img);
 				break;
 			case FATAL:
-				App.imgs().fatal().applyTo(img);
+				imageBundle.fatal().applyTo(img);
 				break;
 			default:
 			case INFO:
-				App.imgs().info().applyTo(img);
+				imageBundle.info().applyTo(img);
 				break;
 		}
 		return img;

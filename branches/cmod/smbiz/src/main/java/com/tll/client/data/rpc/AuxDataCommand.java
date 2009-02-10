@@ -6,7 +6,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataPayload;
@@ -23,7 +22,6 @@ public final class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 	private static final IAuxDataServiceAsync svc;
 	static {
 		svc = (IAuxDataServiceAsync) GWT.create(IAuxDataService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/aux");
 	}
 
 	private final Widget sourcingWidget;

@@ -6,7 +6,6 @@ package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.IListingOperator;
@@ -34,7 +33,6 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	private static final IListingServiceAsync<ISearch, Model> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/listing");
 	}
 
 	/**

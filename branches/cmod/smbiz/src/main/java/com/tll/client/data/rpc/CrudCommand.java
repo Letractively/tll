@@ -5,7 +5,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataRequest;
@@ -40,7 +39,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	private static final ICrudServiceAsync svc;
 	static {
 		svc = (ICrudServiceAsync) GWT.create(ICrudService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/crud");
 	}
 
 	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
