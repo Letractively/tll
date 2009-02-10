@@ -29,12 +29,12 @@
       <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
     </repository>
   </repositories>
-  
+
   <properties>
     <mode>dev</mode>
     <environment>dev</environment>
   </properties>
-  
+
   <build>
     <finalName>smbiz</finalName>
 
@@ -95,7 +95,7 @@
         </includes>
       </resource>
     </resources>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -105,35 +105,35 @@
             <dependency>
               <groupId>mysql</groupId>
               <artifactId>mysql-connector-java</artifactId>
-              <version>${mysqlConnectorVersion}</version>  
+              <version>${mysqlConnectorVersion}</version>
             </dependency>
           </dependencies>
-        <configuration>
-          <classpath>
-            <element>
-              <groupId>commons-lang</groupId>
-              <artifactId>commons-lang</artifactId>
-            </element>
-            <element>
-              <groupId>commons-logging</groupId>
-              <artifactId>commons-logging</artifactId>
-            </element>
-            <element>
-              <groupId>commons-configuration</groupId>
-              <artifactId>commons-configuration</artifactId>
-            </element>
-            <element>
-              <groupId>com.tll</groupId>
-              <artifactId>tll-config</artifactId>
-              <version>1.0-SNAPSHOT</version>
-            </element>
-            <element>
-              <groupId>com.tll</groupId>
-              <artifactId>tll-dao</artifactId>
-              <version>1.0-SNAPSHOT</version>
-            </element>
-          </classpath>
-        </configuration>
+          <configuration>
+            <classpath>
+              <element>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+              </element>
+              <element>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+              </element>
+              <element>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+              </element>
+              <element>
+                <groupId>com.tll</groupId>
+                <artifactId>tll-config</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </element>
+              <element>
+                <groupId>com.tll</groupId>
+                <artifactId>tll-dao</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </element>
+            </classpath>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -200,9 +200,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!-- 
-          NOTE: we have to specify at least one test file 
-          otherwise maven resorts to dynamic class finding of unit tests! 
+          <!--
+            NOTE: we have to specify at least one test file otherwise maven resorts to dynamic class finding of unit
+            tests!
           -->
           <suiteXmlFiles>
             <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
@@ -215,10 +215,10 @@
       </plugin>
 
       <!-- GWT-Maven plugin -->
-      <!-- 
-        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt (shell invocation) 
-        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:debug (shell invocation w/ jvm debug hook) 
-        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:test (run GWTTestCase derived unit tests)
+      <!--
+        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt (shell invocation) mvn
+        com.totsp.gwt:maven-googlewebtoolkit2-plugin:debug (shell invocation w/ jvm debug hook) mvn
+        com.totsp.gwt:maven-googlewebtoolkit2-plugin:test (run GWTTestCase derived unit tests)
       -->
       <plugin>
         <groupId>com.totsp.gwt</groupId>
@@ -337,9 +337,9 @@
             <groupId>org.codehaus.groovy.maven</groupId>
             <artifactId>gmaven-plugin</artifactId>
             <executions>
-              <!--  
-              this task ensures we have a test db created and stubbed 
-              NOTE: No db ops occur if the test db already exists 
+              <!--
+                this task ensures we have a test db created and stubbed NOTE: No db ops occur if the test db already
+                exists
               -->
               <execution>
                 <id>ensure-devdb-created</id>
@@ -655,6 +655,28 @@
       <classifier>sources</classifier>
       <scope>provided</scope>
       <type>jar</type>
+    </dependency>
+    
+    <!-- tll client (GWT) deps -->
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-rpc</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-login</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
