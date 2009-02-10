@@ -70,7 +70,7 @@
 
   <filter-mapping>
     <filter-name>CacheManagerFilter</filter-name>
-    <url-pattern>/rpc/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
 
   <filter>
@@ -80,7 +80,7 @@
   
   <filter-mapping>
     <filter-name>OpenEntityManagerInViewFilter</filter-name>
-    <url-pattern>/rpc/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
   
   <filter-mapping>

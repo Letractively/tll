@@ -81,10 +81,10 @@ public abstract class App {
 	 * @return The base URL of the app
 	 */
 	public static String getBaseUrl() {
-		if(GWT.isScript()) {
+		//if(GWT.isScript()) {
 			return GWT.getModuleBaseURL();
-		}
-		return "/";
+		//}
+		//return "/";
 	}
 
 	/**
