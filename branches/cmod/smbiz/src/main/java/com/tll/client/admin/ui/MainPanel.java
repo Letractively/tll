@@ -5,6 +5,7 @@ package com.tll.client.admin.ui;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
@@ -225,7 +226,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			frmLogout = new FormPanel();
 			frmLogout.setMethod(FormPanel.METHOD_POST);
-			frmLogout.setAction(App.getBaseUrl() + "adminLogout");
+			frmLogout.setAction(GWT.getModuleBaseURL() + "adminLogout");
 			frmLogout.add(g);
 			frmLogout.addFormHandler(this);
 

@@ -7,7 +7,6 @@ package com.tll.client.data.rpc;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.common.data.Payload;
 import com.tll.common.data.rpc.IForgotPasswordService;
 import com.tll.common.data.rpc.IForgotPasswordServiceAsync;
@@ -21,7 +20,7 @@ public final class ForgotPasswordCommand extends RpcCommand<Payload> {
 	private static final IForgotPasswordServiceAsync svc;
 	static {
 		svc = (IForgotPasswordServiceAsync) GWT.create(IForgotPasswordService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/adminForgotPassword");
+		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/adminForgotPassword");
 	}
 
 	private final Widget sourcingWidget;

@@ -6,12 +6,12 @@ package com.tll.client.mvc;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.tll.client.App;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewRequestEvent;
+import com.tll.client.ui.UI;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
@@ -51,7 +51,7 @@ public abstract class AbstractController implements IController {
 	 */
 	protected static final void onViewReady(final IView view) {
 		final boolean showBusy = (ViewManager.instance().findView(view.getViewKey()) == null);
-		if(showBusy) App.busy();
+		if(showBusy) UI.busy();
 		DeferredCommand.addCommand(new Command() {
 
 			public void execute() {
@@ -59,7 +59,7 @@ public abstract class AbstractController implements IController {
 					ViewManager.instance().setCurrentView(view);
 				}
 				finally {
-					if(showBusy) App.unbusy();
+					if(showBusy) UI.unbusy();
 				}
 			}
 		});

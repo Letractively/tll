@@ -3,6 +3,7 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,7 +17,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.data.rpc.ForgotPasswordCommand;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IUserSessionListener;
@@ -56,7 +56,7 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		tbPswd.setName("j_password");
 
 		form = new FormPanel();
-		form.setAction(App.getBaseUrl() + "j_acegi_security_check");
+		form.setAction(GWT.getModuleBaseURL() + "j_acegi_security_check");
 		form.setMethod(FormPanel.METHOD_POST);
 
 		VerticalPanel vert = new VerticalPanel();

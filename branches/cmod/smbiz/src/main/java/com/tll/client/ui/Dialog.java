@@ -9,7 +9,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
-import com.tll.client.App;
 
 /**
  * Dialog
@@ -44,7 +43,7 @@ public class Dialog extends DialogBox {
 		// we check for is attached (i.e. is showing) to avoid suprious call to
 		// App.busy() which will invalidate the glass panel counting mechanism
 		if(!isAttached()) {
-			if(showOverlay) App.busy();
+			if(showOverlay) UI.busy();
 			super.show();
 		}
 	}
@@ -55,7 +54,7 @@ public class Dialog extends DialogBox {
 		// App.unbusy() which will invalidate the glass panel counting mechanism
 		if(isAttached()) {
 			super.hide();
-			if(showOverlay) App.unbusy();
+			if(showOverlay) UI.unbusy();
 			if(focusOnCloseWidget != null) {
 				DeferredCommand.addCommand(new FocusCommand(focusOnCloseWidget, true));
 			}

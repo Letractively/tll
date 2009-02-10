@@ -7,7 +7,7 @@ package com.tll.client.data.rpc;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
+import com.tll.client.ui.UI;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -83,13 +83,13 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	static void rpc(boolean sending) {
 		if(sending) {
 			rpcCounter++;
-			App.darkenBusyPanel();
-			App.busy();
+			UI.darkenBusyPanel();
+			UI.busy();
 		}
 		else {
 			--rpcCounter;
-			App.unbusy();
-			App.lightenBusyPanel();
+			UI.unbusy();
+			UI.lightenBusyPanel();
 		}
 	}
 

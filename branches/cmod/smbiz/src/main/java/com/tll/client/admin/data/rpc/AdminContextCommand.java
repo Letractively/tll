@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.admin.data.rpc.IAdminContextListener.ChangeType;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
@@ -30,7 +29,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	private static final IAdminContextServiceAsync svc;
 	static {
 		svc = (IAdminContextServiceAsync) GWT.create(IAdminContextService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/adminContext");
+		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/adminContext");
 	}
 
 	private final ListenerCollection adminContextListeners = new ListenerCollection();

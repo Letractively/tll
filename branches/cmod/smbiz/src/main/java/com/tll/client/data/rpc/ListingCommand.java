@@ -8,7 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
@@ -35,7 +34,7 @@ public final class ListingCommand<S extends ISearch> extends RpcCommand<ListingP
 	private static final IListingServiceAsync<ISearch, Model> svc;
 	static {
 		svc = (IListingServiceAsync) GWT.create(IListingService.class);
-		((ServiceDefTarget) svc).setServiceEntryPoint(App.getBaseUrl() + "rpc/listing");
+		((ServiceDefTarget) svc).setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/listing");
 	}
 
 	/**
