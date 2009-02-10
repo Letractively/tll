@@ -9,22 +9,12 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-ui</artifactId>
-  <name>client-widget</name>
+  <artifactId>client-model</artifactId>
+  <name>client-model</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Houses common client ui related stuff.</description>
+  <description>Contains client and server classes supporting the tll client-side Model construct.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <version>1.5-Dec_28</version>
-    </dependency>
   </dependencies>
 
 </project>

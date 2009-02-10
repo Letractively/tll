@@ -13,4 +13,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Provides client side login/logout functionality.</description>
   
+  <dependencies>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  
 </project>

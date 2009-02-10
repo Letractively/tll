@@ -9,22 +9,12 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-ui</artifactId>
-  <name>client-widget</name>
+  <artifactId>client-field</artifactId>
+  <name>client-field</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Houses common client ui related stuff.</description>
+  <description>Houses the client-side IField classes providing bi-directional field-model binding based on the http://code.google.com/p/gwittir/ project.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <version>1.5-Dec_28</version>
-    </dependency>
   </dependencies>
 
 </project>
