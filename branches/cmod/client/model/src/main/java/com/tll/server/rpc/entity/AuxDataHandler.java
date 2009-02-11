@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 22, 2008
  */
-package com.tll.server.rpc;
+package com.tll.server.rpc.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +21,6 @@ import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
 import com.tll.refdata.RefDataType;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.EntityTypeUtil;
-import com.tll.server.rpc.entity.IMEntityServiceContext;
 import com.tll.service.entity.IEntityService;
 
 /**

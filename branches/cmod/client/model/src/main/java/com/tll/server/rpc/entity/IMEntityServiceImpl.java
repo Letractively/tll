@@ -1,13 +1,11 @@
 package com.tll.server.rpc.entity;
 
-import com.tll.common.data.EntityFetchPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
-import com.tll.common.data.EntityRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.model.IEntityType;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
@@ -24,51 +22,40 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
 public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 
 	/**
-	 * Get an empty entity.
+	 * Get an empty prototypical entity of a particular type.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityFetchPrototypeRequest}
-	 * @param entityType The guaranteed non-<code>null</code> resolved
-	 *        {@link IEntityType} for the {@link EntityRequest}.
-	 * @param payload
+	 *        {@link EntityPrototypeRequest}
+	 * @param payload The payload to get filled
 	 */
-	// TODO change to generateEntity where generate is always true ?
-	void getEmptyEntity(IMEntityServiceContext context, EntityFetchPrototypeRequest request, IEntityType entityType,
-			EntityPayload payload);
+	void prototype(IMEntityServiceContext context, EntityPrototypeRequest request, EntityPayload payload);
 
 	/**
 	 * Loads an entity.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
 	 *        {@link EntityLoadRequest}
-	 * @param entityType The guaranteed non-<code>null</code> resolved
-	 *        {@link IEntityType} for the {@link EntityRequest}.
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void load(IMEntityServiceContext context, EntityLoadRequest request, IEntityType entityType, EntityPayload payload);
+	void load(IMEntityServiceContext context, EntityLoadRequest request, EntityPayload payload);
 
 	/**
 	 * Persists an entity.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
 	 *        {@link EntityPersistRequest}
-	 * @param entityType The guaranteed non-<code>null</code> resolved
-	 *        {@link IEntityType} for the {@link EntityRequest}.
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void persist(IMEntityServiceContext context, EntityPersistRequest request, IEntityType entityType,
-			EntityPayload payload);
+	void persist(IMEntityServiceContext context, EntityPersistRequest request, EntityPayload payload);
 
 	/**
 	 * Purges an entity.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
 	 *        {@link EntityPurgeRequest}
-	 * @param entityType The guaranteed non-<code>null</code> resolved
-	 *        {@link IEntityType} for the {@link EntityRequest}.
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void purge(IMEntityServiceContext context, EntityPurgeRequest request, IEntityType entityType, EntityPayload payload);
+	void purge(IMEntityServiceContext context, EntityPurgeRequest request, EntityPayload payload);
 
 	/**
 	 * Translate client-side search to server-side serach.
@@ -77,8 +64,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<E> translate(IMEntityServiceContext context, S search)
-			throws IllegalArgumentException;
+	ICriteria<E> translate(IMEntityServiceContext context, S search) throws IllegalArgumentException;
 
 	/**
 	 * Gets the entity type specific marshaling options.

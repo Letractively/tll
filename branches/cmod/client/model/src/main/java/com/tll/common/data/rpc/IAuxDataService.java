@@ -11,7 +11,7 @@ import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 
 /**
- * IAuxDataService
+ * IAuxDataService - Contract for providing "auxiliary" data to the client.
  * @author jpk
  */
 @RemoteServiceRelativePath(value = "rpc/aux")
@@ -23,5 +23,4 @@ public interface IAuxDataService extends RemoteService {
 	 * @return Auxiliary payload
 	 */
 	AuxDataPayload handleAuxDataRequest(AuxDataRequest request);
-
 }

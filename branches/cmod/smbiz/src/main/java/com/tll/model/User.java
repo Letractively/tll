@@ -31,6 +31,7 @@ import org.springframework.security.userdetails.UserDetails;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
+import com.tll.service.IForgotPasswordHandler.IUserRef;
 
 /**
  * The account user entity
@@ -39,7 +40,8 @@ import com.tll.model.schema.BusinessObject;
 @Entity
 @Table(name = "user")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
-public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity {
+public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity,
+		IUserRef {
 
 	private static final long serialVersionUID = -6126885590318834318L;
 

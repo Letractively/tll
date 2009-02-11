@@ -36,8 +36,9 @@
     </description>
     <param-name>di.handlers</param-name>
     <param-value> 
-      com.tll.server.AppContextHandler
-      com.tll.server.SecurityContextHandler
+      com.tll.server.rpc.entity.MEntityServiceBootstrapper
+      com.tll.server.AppContextBootstrapper
+      com.tll.server.SecurityContextBootstrapper
     </param-value>
   </context-param>
 

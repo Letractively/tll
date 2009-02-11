@@ -8,6 +8,7 @@ package com.tll.server.rpc.entity;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
+import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
@@ -27,6 +28,11 @@ public interface IMEntityServiceContext {
 	 * {@link ServletContext}.
 	 */
 	static final String SERVLET_CONTEXT_KEY = IMEntityServiceContext.class.getName();
+	
+	/**
+	 * @return The dao mode.
+	 */
+	DaoMode getDaoMode();
 
 	/**
 	 * @return The marshaler.

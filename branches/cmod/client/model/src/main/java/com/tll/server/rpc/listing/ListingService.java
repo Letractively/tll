@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.sun.xml.internal.ws.client.RequestContext;
 import com.tll.SystemError;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
@@ -32,18 +31,20 @@ import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.RpcServlet;
+import com.tll.server.rpc.entity.AbstractEntityServiceContextRpcServlet;
 import com.tll.server.rpc.entity.EntityTypeUtil;
+import com.tll.server.rpc.entity.IMEntityServiceContext;
 import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
 
 /**
  * ListingService - Handles client listing requests.
+ * @param <E> the entity type
+ * @param <S> the search type
  * @author jpk
- * @param <E>
- * @param <S>
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
+public final class ListingService<E extends IEntity, S extends ISearch> extends AbstractEntityServiceContextRpcServlet
+		implements
 		IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
@@ -77,8 +78,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 		if(!status.hasErrors() && listingRequest != null) {
 
-			final RequestContext requestContext = getRequestContext();
-			final HttpServletRequest request = requestContext.getRequest();
+			final IMEntityServiceContext context = getMEntityServiceContext();
+			final HttpServletRequest request = getThreadLocalRequest();
 			assert request != null;
 
 			Integer offset = listingRequest.getOffset();
@@ -121,12 +122,13 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						// resolve the entity class and corres. marshaling entity service
 						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
 						final IMEntityServiceImpl<E, S> mEntitySvc =
-								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
+								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass, context
+										.getServiceResolver());
 
 						// translate client side criteria to server side criteria
 						final ICriteria<E> criteria;
 						try {
-							criteria = mEntitySvc.translate(requestContext, EntityTypeUtil.entityTypeFromClass(entityClass), search);
+							criteria = mEntitySvc.translate(context, search);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -135,7 +137,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 						// resolve the listing handler data provider
 						final IListHandlerDataProvider<E> dataProvider =
-								requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(entityClass);
+								context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();
@@ -165,7 +167,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 						// transform to marshaling list handler
 						final IMarshalingListHandler<E> marshalingListHandler =
-								mEntitySvc.getMarshalingListHandler(requestContext, listingDef);
+								mEntitySvc.getMarshalingListHandler(context, listingDef);
 						marshalingListHandler.setWrappedHandler(listHandler);
 
 						// instantiate the handler
@@ -192,10 +194,10 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 				}
 			}
 			catch(final ListingException e) {
-				AppServletUtil.handleException(requestContext, status, e, null, false);
+				context.getExceptionHandler().handleException(status, e, null, false);
 			}
 			catch(final RuntimeException re) {
-				AppServletUtil.handleException(requestContext, status, re, null, true);
+				context.getExceptionHandler().handleException(status, re, null, true);
 				throw re;
 			}
 

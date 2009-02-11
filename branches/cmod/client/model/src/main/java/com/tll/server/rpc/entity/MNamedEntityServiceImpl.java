@@ -7,7 +7,6 @@ package com.tll.server.rpc.entity;
 
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
-import com.tll.common.model.IEntityType;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.model.INamedEntity;
@@ -25,7 +24,7 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected N coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
-			final IEntityType entityType, final EntityPayload payload) {
+			final EntityPayload payload) {
 
 		if(request.isLoadByName()) {
 			// load by name
@@ -34,13 +33,13 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 				payload.getStatus().addMsg("A name must be specified.", MsgLevel.ERROR);
 				return null;
 			}
-			final Class<N> entityClass = (Class<N>) EntityTypeUtil.getEntityClass(entityType);
+			final Class<N> entityClass = (Class<N>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final INamedEntityService<N> namedEntityService =
 					(INamedEntityService<N>) context.getEntityServiceFactory().instanceByEntityType(
 							entityClass);
 			return namedEntityService.load(new NameKey<N>(entityClass, name));
 		}
 
-		return super.coreLoad(context, request, entityType, payload);
+		return super.coreLoad(context, request, payload);
 	}
 }

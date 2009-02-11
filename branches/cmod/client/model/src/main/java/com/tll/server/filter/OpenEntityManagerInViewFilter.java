@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.tll.dao.DaoMode;
+import com.tll.server.rpc.entity.IMEntityServiceContext;
 
 /**
  * OpenEntityManagerInViewFilter
@@ -28,9 +29,10 @@ public class OpenEntityManagerInViewFilter extends org.springframework.orm.jpa.s
 		super.initFilterBean();
 
 		FilterConfig config = this.getFilterConfig();
-		IAppContext ac = (IAppContext) config.getServletContext().getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
-		if(ac.getDaoMode() == DaoMode.ORM) {
-			if((emf = ac.getEntityManagerFactory()) == null) {
+		IMEntityServiceContext context =
+				(IMEntityServiceContext) config.getServletContext().getAttribute(IMEntityServiceContext.SERVLET_CONTEXT_KEY);
+		if(context.getDaoMode() == DaoMode.ORM) {
+			if((emf = context.getEntityManagerFactory()) == null) {
 				throw new Error("Can't obtain entity manager factory reference.");
 			}
 		}

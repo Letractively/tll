@@ -20,12 +20,8 @@ import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
 import com.tll.model.ChangeUserCredentialsFailedException;
-import com.tll.model.User;
-import com.tll.server.AppServletUtil;
-import com.tll.server.IAppContext;
-import com.tll.server.RequestContext;
-import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.service.entity.user.IUserService;
+import com.tll.service.IForgotPasswordHandler;
+import com.tll.service.IForgotPasswordHandler.IUserRef;
 import com.tll.util.StringUtil;
 
 /**
@@ -36,6 +32,11 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 
 	private static final long serialVersionUID = 1144692563596509841L;
 	private static final String EMAIL_TEMPLATE_NAME = "forgot-password";
+	
+	private ForgotPasswordServiceContext getContext() {
+		return (ForgotPasswordServiceContext) getThreadLocalRequest().getSession(false).getServletContext().getAttribute(
+				ForgotPasswordServiceContext.SERVLET_CONTEXT_KEY);
+	}
 
 	public Payload requestPassword(final String emailAddress) {
 		final Status status = new Status();
@@ -46,28 +47,28 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 			status.addMsg("An email address must be specified.", MsgLevel.ERROR);
 		}
 		else {
-			final RequestContext rc = getRequestContext();
+			final ForgotPasswordServiceContext context = getContext();
 			try {
-				final IAppContext ac = rc.getAppContext();
-				final IEntityServiceFactory esf = ac.getEntityServiceFactory();
-				final IUserService userService = esf.instance(IUserService.class);
-				final User user = (User) userService.loadUserByUsername(emailAddress);
-				data.put("emailAddress", user.getUsername());
-				data.put("password", userService.resetPassword(user.getId()));
-				final MailManager mailManager = ac.getMailManager();
+				final IForgotPasswordHandler handler = context.getForgotPasswordHandler();
+				final IUserRef user = handler.getUserRef(emailAddress);
+				final String rp = handler.resetPassword(user.getId());
+				data.put("username", user.getUsername());
+				data.put("emailAddress", user.getEmailAddress());
+				data.put("password", rp);
+				final MailManager mailManager = context.getMailManager();
 				final MailRouting mr = mailManager.buildAppSenderMailRouting(user.getEmailAddress());
 				final IMailContext mailContext = mailManager.buildTextTemplateContext(mr, EMAIL_TEMPLATE_NAME, data);
 				mailManager.sendEmail(mailContext);
 				status.addMsg("Password reminder email was sent.", MsgLevel.INFO);
 			}
 			catch(final EntityNotFoundException nfe) {
-				AppServletUtil.handleException(rc, p.getStatus(), nfe, nfe.getMessage(), false);
+				context.getExceptionHandler().handleException(p.getStatus(), nfe, nfe.getMessage(), false);
 			}
 			catch(final ChangeUserCredentialsFailedException e) {
-				AppServletUtil.handleException(rc, p.getStatus(), e, e.getMessage(), false);
+				context.getExceptionHandler().handleException(p.getStatus(), e, e.getMessage(), false);
 			}
 			catch(final MailSendException mse) {
-				AppServletUtil.handleException(rc, p.getStatus(), mse, mse.getMessage(), true);
+				context.getExceptionHandler().handleException(p.getStatus(), mse, mse.getMessage(), true);
 			}
 		}
 

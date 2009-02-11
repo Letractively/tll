@@ -135,6 +135,12 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		return user;
 	}
 
+	@Override
+	public IUserRef getUserRef(String username) throws EntityNotFoundException {
+		// NOTE: the username is the email address
+		return findByEmail(username);
+	}
+
 	/**
 	 * {@link UserDetailsService} implementation
 	 * @param username
@@ -144,14 +150,14 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		try {
-			return findByUsername(username);
+			return findByEmail(username);
 		}
 		catch(final EntityNotFoundException enfe) {
 			throw new UsernameNotFoundException("Username '" + username + "' not found");
 		}
 	}
 
-	public User findByUsername(String emailAddress) throws EntityNotFoundException {
+	private User findByEmail(String emailAddress) throws EntityNotFoundException {
 		User user;
 		try {
 			Criteria<User> criteria = new Criteria<User>(User.class);

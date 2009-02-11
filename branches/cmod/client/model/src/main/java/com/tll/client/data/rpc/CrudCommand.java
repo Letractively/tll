@@ -8,7 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityFetchPrototypeRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
@@ -70,7 +70,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 		if(entityType == null) {
 			throw new IllegalArgumentException("An entity type must be specified.");
 		}
-		entityRequest = new EntityFetchPrototypeRequest(entityType, generate);
+		entityRequest = new EntityPrototypeRequest(entityType, generate);
 		crudOp = CrudOp.FETCH_PROTOTYPE;
 	}
 
@@ -178,7 +178,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	protected void doExecute() {
 		switch(crudOp) {
 			case FETCH_PROTOTYPE:
-				svc.getEmptyEntity((EntityFetchPrototypeRequest) entityRequest, getAsyncCallback());
+				svc.getEmptyEntity((EntityPrototypeRequest) entityRequest, getAsyncCallback());
 				break;
 
 			case LOAD:

@@ -11,7 +11,7 @@ import com.tll.common.model.IEntityType;
  * EntityFetchPrototypeRequest
  * @author jpk
  */
-public class EntityFetchPrototypeRequest extends EntityRequest {
+public class EntityPrototypeRequest extends EntityRequest {
 
 	private IEntityType entityType;
 
@@ -23,7 +23,7 @@ public class EntityFetchPrototypeRequest extends EntityRequest {
 	/**
 	 * Constructor
 	 */
-	public EntityFetchPrototypeRequest() {
+	public EntityPrototypeRequest() {
 		super();
 	}
 
@@ -32,7 +32,7 @@ public class EntityFetchPrototypeRequest extends EntityRequest {
 	 * @param entityType
 	 * @param generate
 	 */
-	public EntityFetchPrototypeRequest(IEntityType entityType, boolean generate) {
+	public EntityPrototypeRequest(IEntityType entityType, boolean generate) {
 		super();
 		this.entityType = entityType;
 		this.generate = generate;

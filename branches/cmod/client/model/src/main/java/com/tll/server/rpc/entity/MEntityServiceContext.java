@@ -8,6 +8,7 @@ package com.tll.server.rpc.entity;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
+import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
@@ -23,6 +24,7 @@ import com.tll.service.entity.IEntityServiceFactory;
  */
 public class MEntityServiceContext implements IMEntityServiceContext {
 	
+	private final DaoMode daoMode;
 	private final RefData refData;
 	private final MailManager mailManager;
 	private final Marshaler marshaler;
@@ -35,6 +37,7 @@ public class MEntityServiceContext implements IMEntityServiceContext {
 
 	/**
 	 * Constructor
+	 * @param daoMode
 	 * @param refData
 	 * @param mailManager
 	 * @param marshaler
@@ -45,11 +48,12 @@ public class MEntityServiceContext implements IMEntityServiceContext {
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
-	public MEntityServiceContext(RefData refData, MailManager mailManager, Marshaler marshaler,
+	public MEntityServiceContext(DaoMode daoMode, RefData refData, MailManager mailManager, Marshaler marshaler,
 			EntityManagerFactory entityManagerFactory, IEntityFactory entityFactory,
 			IEntityServiceFactory entityServiceFactory, IMEntityServiceImplResolver mEntityServiceImplResolver,
 			INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
 		super();
+		this.daoMode = daoMode;
 		this.refData = refData;
 		this.mailManager = mailManager;
 		this.marshaler = marshaler;
@@ -59,6 +63,11 @@ public class MEntityServiceContext implements IMEntityServiceContext {
 		this.mEntityServiceImplResolver = mEntityServiceImplResolver;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
+	}
+
+	@Override
+	public DaoMode getDaoMode() {
+		return daoMode;
 	}
 
 	@Override

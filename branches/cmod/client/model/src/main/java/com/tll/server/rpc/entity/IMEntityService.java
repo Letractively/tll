@@ -7,26 +7,21 @@ package com.tll.server.rpc.entity;
 
 import com.tll.SystemError;
 import com.tll.common.data.RemoteListingDefinition;
+import com.tll.common.data.rpc.IAuxDataService;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
-import com.tll.service.entity.IEntityService;
 
 /**
  * IMEntityService - Performs tasks specific to a single entity type.
+ * @param <E> the entity type
+ * @param <S> the client side search type
  * @author jpk
- * @param <E>
- * @param <S>
  */
-public interface IMEntityService<E extends IEntity, S extends ISearch> extends ICrudService {
-
-	/**
-	 * @return The {@link IEntityService}.
-	 */
-	IEntityService<E> getEntityService();
+public interface IMEntityService<E extends IEntity, S extends ISearch> extends ICrudService, IAuxDataService {
 
 	/**
 	 * Translates {@link ISearch} instances to server-side compatible
@@ -37,7 +32,7 @@ public interface IMEntityService<E extends IEntity, S extends ISearch> extends I
 	 * @throws SystemError When the impl service is unable to be properly
 	 *         resolved.
 	 */
-	ICriteria<? extends E> translate(ISearch search) throws IllegalArgumentException, SystemError;
+	ICriteria<? extends E> translate(S search) throws IllegalArgumentException, SystemError;
 
 	/**
 	 * Provides an {@link IMarshalingListHandler} for use by

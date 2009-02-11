@@ -96,7 +96,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			throw new Error(e.getMessage(), e);
 		}
 
-		servletContext.setAttribute(IMEntityServiceContext.SERVLET_CONTEXT_KEY, new MEntityServiceContext(refdata,
+		servletContext.setAttribute(IMEntityServiceContext.SERVLET_CONTEXT_KEY, new MEntityServiceContext(daoMode, refdata,
 				mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory, sr, nqr, exceptionHandler));
 	}
 

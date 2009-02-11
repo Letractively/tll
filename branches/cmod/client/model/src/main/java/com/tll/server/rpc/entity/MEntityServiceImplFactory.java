@@ -30,7 +30,10 @@ public final class MEntityServiceImplFactory {
 	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
 	 *         found or a service impl instantiation error occurrs.
 	 */
-	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass, IMEntityServiceImplResolver resolver) {
+	@SuppressWarnings("unchecked")
+	public static IMEntityServiceImpl<IEntity, ISearch> instance(
+			final Class<? extends IEntity> entityClass,
+			final IMEntityServiceImplResolver resolver) {
 		Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> svcType;
 		IMEntityServiceImpl<? extends IEntity, ? extends ISearch> svc;
 		
@@ -40,15 +43,15 @@ public final class MEntityServiceImplFactory {
 			try {
 				svc = svcType.newInstance();
 			}
-			catch(InstantiationException e) {
+			catch(final InstantiationException e) {
 				throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityClass, e);
 			}
-			catch(IllegalAccessException e) {
+			catch(final IllegalAccessException e) {
 				throw new SystemError("Unable to access MEntityService class for entity type: " + entityClass, e);
 			}
 			map.put(svcType, svc);
 		}
-		return svc;
+		return (IMEntityServiceImpl<IEntity, ISearch>) svc;
 	}
 
 }

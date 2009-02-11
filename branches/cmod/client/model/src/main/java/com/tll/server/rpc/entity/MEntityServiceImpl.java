@@ -15,14 +15,13 @@ import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 
 import com.tll.SystemError;
-import com.tll.common.data.EntityFetchPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.common.msg.Msg.MsgAttr;
@@ -36,7 +35,6 @@ import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.server.rpc.AuxDataHandler;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.server.rpc.listing.MarshalingListHandler;
 import com.tll.server.rpc.listing.PropKeyListHandler;
@@ -72,12 +70,12 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	protected abstract void handlePersistOptions(IMEntityServiceContext context, E e, EntityOptions options)
 			throws SystemError;
 
-	public final void getEmptyEntity(final IMEntityServiceContext context, final EntityFetchPrototypeRequest request,
-			final IEntityType entityType, final EntityPayload payload) {
+	public final void prototype(final IMEntityServiceContext context, final EntityPrototypeRequest request,
+			final EntityPayload payload) {
 		try {
 			final IEntity e =
 					context.getEntityFactory().createEntity(
-							EntityTypeUtil.getEntityClass(entityType),
+							EntityTypeUtil.getEntityClass(request.getEntityType()),
 							request.isGenerate());
 			final Model group =
 					context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
@@ -102,10 +100,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 */
 	@SuppressWarnings("unchecked")
 	protected E coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
-			final IEntityType entityType, final EntityPayload payload) {
+			final EntityPayload payload) {
 		
 		// core entity loading
-		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
+		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 		final IEntityService<E> svc =
 				context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
@@ -128,9 +126,9 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	public final void load(final IMEntityServiceContext context, final EntityLoadRequest request,
-			final IEntityType entityType, final EntityPayload payload) {
+			final EntityPayload payload) {
 		try {
-			final E e = coreLoad(context, request, entityType, payload);
+			final E e = coreLoad(context, request, payload);
 			if(e == null) {
 				return;
 			}
@@ -170,10 +168,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 	@SuppressWarnings("unchecked")
 	public final void persist(final IMEntityServiceContext context, final EntityPersistRequest request,
-			final IEntityType entityType, final EntityPayload payload) {
+			final EntityPayload payload) {
 		try {
 			// core persist
-			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
+			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final Model entity = request.getEntity();
 			E e = context.getMarshaler().unmarshalEntity(entityClass, entity);
 			final IEntityService<E> svc =
@@ -209,13 +207,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void purge(final IMEntityServiceContext context, final EntityPurgeRequest entityRequest,
-			final IEntityType entityType, final EntityPayload payload) {
+	public final void purge(final IMEntityServiceContext context, final EntityPurgeRequest request,
+			final EntityPayload payload) {
 		try {
-			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
+			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final IEntityService<E> svc =
 					context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final RefKey entityRef = entityRequest.getEntityRef();
+			final RefKey entityRef = request.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}
@@ -257,10 +255,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			throws IllegalArgumentException;
 
 	@SuppressWarnings("unchecked")
-	public final ICriteria<E> translate(final IMEntityServiceContext context, final IEntityType entityType, final S search)
+	public final ICriteria<E> translate(final IMEntityServiceContext context, final S search)
 			throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
-		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
+		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
 		Criteria<E> criteria;
 		final List<IQueryParam> queryParams = search.getQueryParams();
 
