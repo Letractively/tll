@@ -14,4 +14,11 @@ import com.tll.INameValueProvider;
  * @author jpk
  */
 public interface IEntityType extends INameValueProvider<String> {
+	
+	/**
+	 * This method serves as a way to resolve {@link IEntityType} instances to
+	 * entity {@link Class} instances.
+	 * @return The un-qualified entity class name (w/o the package name).
+	 */
+	String getEntityClassName();
 }

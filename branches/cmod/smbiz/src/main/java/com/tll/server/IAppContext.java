@@ -9,17 +9,14 @@ import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
 import com.tll.dao.DaoMode;
-import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
-import com.tll.refdata.RefData;
-import com.tll.server.marshal.Marshaler;
-import com.tll.service.entity.IEntityServiceFactory;
+import com.tll.server.rpc.entity.IMEntityServiceContext;
 
 /**
  * IAppContext
  * @author jpk
  */
-public interface IAppContext {
+public interface IAppContext extends IMEntityServiceContext {
 
 	/**
 	 * The key identifying the sole {@link IAppContext} in the
@@ -46,26 +43,6 @@ public interface IAppContext {
 	 * @return The sole {@link IEntityFactory}.
 	 */
 	IEntityFactory getEntityFactory();
-
-	/**
-	 * @return The sole {@link IEntityServiceFactory} instance.
-	 */
-	IEntityServiceFactory getEntityServiceFactory();
-
-	/**
-	 * @return The application ref data.
-	 */
-	RefData getAppRefData();
-
-	/**
-	 * @return The mail manager.
-	 */
-	MailManager getMailManager();
-
-	/**
-	 * @return The marshaler.
-	 */
-	Marshaler getMarshaler();
 
 	/**
 	 * @return The dao mode of the app.

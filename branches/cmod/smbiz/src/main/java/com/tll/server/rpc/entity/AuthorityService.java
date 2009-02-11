@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.server.rpc.entity.impl;
+package com.tll.server.rpc.entity;
 
 import java.util.Map;
 

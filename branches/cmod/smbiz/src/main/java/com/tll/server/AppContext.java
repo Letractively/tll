@@ -67,7 +67,7 @@ public class AppContext implements IAppContext {
 	}
 
 	@Override
-	public RefData getAppRefData() {
+	public RefData getRefData() {
 		return refData;
 	}
 

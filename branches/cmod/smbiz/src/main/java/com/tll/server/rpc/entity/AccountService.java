@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Sep 14, 2007
  */
-package com.tll.server.rpc.entity.impl;
+package com.tll.server.rpc.entity;
 
 import java.util.Map;
 

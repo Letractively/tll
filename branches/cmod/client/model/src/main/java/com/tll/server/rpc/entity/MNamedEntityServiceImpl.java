@@ -9,11 +9,10 @@ import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
-import com.tll.model.EntityType;
 import com.tll.model.EntityTypeUtil;
+import com.tll.model.IEntityType;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
-import com.tll.server.RequestContext;
 import com.tll.service.entity.INamedEntityService;
 
 /**
@@ -25,8 +24,8 @@ import com.tll.service.entity.INamedEntityService;
 public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends ISearch> extends MEntityServiceImpl<N, S> {
 
 	@Override
-	protected N coreLoad(final RequestContext requestContext, final EntityLoadRequest request,
-			final EntityType entityType, final EntityPayload payload) {
+	protected N coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
+			final IEntityType entityType, final EntityPayload payload) {
 
 		if(request.isLoadByName()) {
 			// load by name
@@ -37,11 +36,11 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 			}
 			final Class<N> entityClass = EntityTypeUtil.entityClassFromType(entityType);
 			final INamedEntityService<N> namedEntityService =
-					(INamedEntityService<N>) requestContext.getAppContext().getEntityServiceFactory().instanceByEntityType(
+					(INamedEntityService<N>) context.getEntityServiceFactory().instanceByEntityType(
 							entityClass);
 			return namedEntityService.load(new NameKey<N>(entityClass, name));
 		}
 
-		return super.coreLoad(requestContext, request, entityType, payload);
+		return super.coreLoad(context, request, entityType, payload);
 	}
 }

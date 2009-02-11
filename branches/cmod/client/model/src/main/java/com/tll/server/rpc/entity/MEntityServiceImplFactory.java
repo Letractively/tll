@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.search.ISearch;
-import com.tll.model.EntityType;
 import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.entity.impl.AccountAddressService;
@@ -38,21 +37,10 @@ public final class MEntityServiceImplFactory {
 	 *         found or an service instantiation related exception occurrs.
 	 */
 	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass) {
-		return instance(EntityTypeUtil.entityTypeFromClass(entityClass));
-	}
-
-	/**
-	 * Returns the {@link IMEntityServiceImpl} instance for the given
-	 * {@link EntityType}.
-	 * @param entityType The {@link EntityType}
-	 * @return the supporting entity service
-	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
-	 *         found or an service instantiation related exception occurrs.
-	 */
-	@SuppressWarnings("unchecked")
-	public static IMEntityServiceImpl<IEntity, ISearch> instance(EntityType entityType) {
 		Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> svcType;
 		IMEntityServiceImpl<IEntity, ISearch> svc;
+		
+		if()
 		switch(entityType) {
 			case ADDRESS:
 				svcType = AddressService.class;

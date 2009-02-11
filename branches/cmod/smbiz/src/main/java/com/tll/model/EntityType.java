@@ -1,5 +1,6 @@
 package com.tll.model;
 
+import com.tll.util.StringUtil;
 
 /**
  * EntityType - Enumeration impl of {@link IEntityType} identifying all relevant
@@ -56,6 +57,10 @@ public enum EntityType implements IEntityType {
 
 	public String getValue() {
 		return name();
+	}
+
+	public String getEntityClassName() {
+		return StringUtil.enumStyleToJavaClassNotation(name());
 	}
 
 	public boolean isAbstract() {

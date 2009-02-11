@@ -5,6 +5,8 @@
  */
 package com.tll.server.rpc.entity;
 
+import org.hibernate.type.EntityType;
+
 import com.tll.SystemError;
 import com.tll.common.data.EntityFetchPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
@@ -17,9 +19,8 @@ import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
-import com.tll.model.EntityType;
 import com.tll.model.IEntity;
-import com.tll.server.AppServletUtil;
+import com.tll.model.IEntityType;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 import com.tll.service.entity.IEntityService;
@@ -51,7 +52,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 		}
 
 		// validate entity type string
-		EntityType entityType = request.getEntityType();
+		IEntityType entityType = request.getEntityType();
 		if(entityType == null) {
 			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR);
 			return null;
@@ -62,7 +63,7 @@ public class MEntityServiceDelegate extends RpcServlet implements IMEntityServic
 			return MEntityServiceImplFactory.instance(entityType);
 		}
 		catch(final SystemError se) {
-			AppServletUtil.handleException(getRequestContext(), payload.getStatus(), se, se.getMessage(), true);
+			handleException(getRequestContext(), payload.getStatus(), se, se.getMessage(), true);
 			return null;
 		}
 	}
