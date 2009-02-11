@@ -5,8 +5,8 @@
  */
 package com.tll.common.search;
 
+import com.tll.common.model.IEntityType;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.IEntityType;
 import com.tll.util.DateRange;
 
 /**

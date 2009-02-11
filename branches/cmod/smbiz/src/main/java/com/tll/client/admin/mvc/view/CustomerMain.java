@@ -9,7 +9,7 @@ import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * CustomerMain - ISP root view.
@@ -22,7 +22,7 @@ public class CustomerMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(EntityType.CUSTOMER);
+			super(SmbizEntityType.CUSTOMER);
 		}
 
 		@Override

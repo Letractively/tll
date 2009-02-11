@@ -78,7 +78,7 @@ public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 	/*
 	private void setParentAccountViewLink(IFieldGroupModelBinding bindingDef) {
 		// set the parent account view link
-		Model accountModel = bindingDef.resolveModel(EntityType.ACCOUNT);
+		Model accountModel = bindingDef.resolveModel(SmbizEntityType.ACCOUNT);
 		Model parentAccount;
 		try {
 			parentAccount = accountModel.relatedOne("account").getModel();

@@ -24,7 +24,7 @@ import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * IspListingView
@@ -88,12 +88,12 @@ public final class IspListingView extends ListingView {
 	@Override
 	protected void doInitialization(ViewRequestEvent viewRequest) {
 
-		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
+		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		criteria.setNamedQuery("account.ispList");
 
 		final AccountListingConfig config = new AccountListingConfig() {
 
-			private final String listingElementName = EntityType.ISP.getName();
+			private final String listingElementName = SmbizEntityType.ISP.getName();
 
 			private final Column[] columns =
 					new Column[] {
@@ -156,7 +156,7 @@ public final class IspListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, EntityType.ISP.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.ISP.toString() + "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

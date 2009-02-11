@@ -14,12 +14,10 @@ import com.tll.criteria.Comparator;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Account;
 import com.tll.model.AccountStatus;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.util.EnumUtil;
@@ -27,15 +25,15 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
 
-	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
+	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(RequestContext requestContext, Account e, EntityOptions entityOptions,
+	protected void handleLoadOptions(IMEntityServiceContext context, Account e, EntityOptions entityOptions,
 			Map<String, RefKey> refs) throws SystemError {
 
-		IEntityServiceFactory entityServiceFactory = requestContext.getAppContext().getEntityServiceFactory();
+		IEntityServiceFactory entityServiceFactory = context.getEntityServiceFactory();
 
 		// THIS is taken care of via open session in view filter and auto-proxy
 		// loading in hibernate
@@ -67,17 +65,17 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 		*/
 
 		// load parent account ref?
-		if(entityOptions.isRelatedRefRequested(EntityType.ACCOUNT) && e.getParent() != null) {
+		if(entityOptions.isRelatedRefRequested(SmbizEntityType.ACCOUNT) && e.getParent() != null) {
 			PrimaryKey<Account> pk = new PrimaryKey<Account>(Account.class, e.getParent().getId());
 			IAccountService svc = entityServiceFactory.instance(IAccountService.class);
 			Account parent = svc.load(pk);
-			RefKey er = new RefKey(EntityType.ACCOUNT, parent.getId(), parent.getName());
+			RefKey er = new RefKey(SmbizEntityType.ACCOUNT, parent.getId(), parent.getName());
 			refs.put("parent", er);
 		}
 	}
 
 	@Override
-	protected void handlePersistOptions(RequestContext requestContext, Account e, EntityOptions options)
+	protected void handlePersistOptions(IMEntityServiceContext context, Account e, EntityOptions options)
 			throws SystemError {
 		// no-op
 	}
@@ -88,8 +86,8 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected void handleSearchTranslation(RequestContext requestContext, AccountSearch search,
-			ICriteria<? extends Account> criteria) {
+	protected void handleSearchTranslation(IMEntityServiceContext context, AccountSearch search,
+			ICriteria<Account> criteria) {
 
 		// date ranges
 		criteria.getPrimaryGroup().addCriterion("dateCreated", search.getDateCreatedRange());

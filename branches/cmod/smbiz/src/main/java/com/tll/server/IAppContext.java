@@ -9,14 +9,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
 import com.tll.dao.DaoMode;
-import com.tll.model.IEntityFactory;
-import com.tll.server.rpc.entity.IMEntityServiceContext;
 
 /**
  * IAppContext
  * @author jpk
  */
-public interface IAppContext extends IMEntityServiceContext {
+public interface IAppContext {
 
 	/**
 	 * The key identifying the sole {@link IAppContext} in the
@@ -42,7 +40,7 @@ public interface IAppContext extends IMEntityServiceContext {
 	/**
 	 * @return The sole {@link IEntityFactory}.
 	 */
-	IEntityFactory getEntityFactory();
+	//IEntityFactory getEntityFactory();
 
 	/**
 	 * @return The dao mode of the app.

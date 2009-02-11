@@ -9,14 +9,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.search.ISearch;
-import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.entity.impl.AccountAddressService;
-import com.tll.server.rpc.entity.impl.AccountService;
-import com.tll.server.rpc.entity.impl.AddressService;
-import com.tll.server.rpc.entity.impl.AuthorityService;
-import com.tll.server.rpc.entity.impl.InterfaceService;
-import com.tll.server.rpc.entity.impl.UserService;
 
 /**
  * MEntityServiceImplFactory - Provides {@link IMEntityServiceImpl}
@@ -31,56 +24,27 @@ public final class MEntityServiceImplFactory {
 	/**
 	 * Returns the {@link IMEntityServiceImpl} instance for the given entity
 	 * {@link Class}.
-	 * @param entityClass The entity {@link Class}
+	 * @param entityClass The entity type
+	 * @param resolver The {@link IMEntityServiceImplResolver}
 	 * @return the supporting entity service
 	 * @throws SystemError When no {@link IMEntityServiceImpl} implementation is
-	 *         found or an service instantiation related exception occurrs.
+	 *         found or a service impl instantiation error occurrs.
 	 */
-	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass) {
+	public static IMEntityServiceImpl<? extends IEntity, ? extends ISearch> instance(Class<? extends IEntity> entityClass, IMEntityServiceImplResolver resolver) {
 		Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> svcType;
-		IMEntityServiceImpl<IEntity, ISearch> svc;
+		IMEntityServiceImpl<? extends IEntity, ? extends ISearch> svc;
 		
-		if()
-		switch(entityType) {
-			case ADDRESS:
-				svcType = AddressService.class;
-				break;
-			case ASP:
-			case ISP:
-			case MERCHANT:
-			case CUSTOMER:
-			case ACCOUNT:
-				svcType = AccountService.class;
-				break;
-			case ACCOUNT_ADDRESS:
-				svcType = AccountAddressService.class;
-				break;
-			case USER:
-				svcType = UserService.class;
-				break;
-			case AUTHORITY:
-				svcType = AuthorityService.class;
-				break;
-			case INTERFACE:
-			case INTERFACE_SINGLE:
-			case INTERFACE_SWITCH:
-			case INTERFACE_MULTI:
-				svcType = InterfaceService.class;
-				break;
-			default:
-				throw new SystemError("Unhandled MEntityServiceImpl entity type: " + entityType);
-		}
-
-		svc = (IMEntityServiceImpl<IEntity, ISearch>) map.get(svcType);
+		svcType = resolver.resolveMEntityServiceImpl(entityClass);
+		svc = map.get(svcType);
 		if(svc == null) {
 			try {
-				svc = (IMEntityServiceImpl<IEntity, ISearch>) svcType.newInstance();
+				svc = svcType.newInstance();
 			}
 			catch(InstantiationException e) {
-				throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityType, e);
+				throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityClass, e);
 			}
 			catch(IllegalAccessException e) {
-				throw new SystemError("Unable to access MEntityService class for entity type: " + entityType, e);
+				throw new SystemError("Unable to access MEntityService class for entity type: " + entityClass, e);
 			}
 			map.put(svcType, svc);
 		}

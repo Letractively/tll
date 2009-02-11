@@ -5,7 +5,6 @@
  */
 package com.tll.common.model;
 
-import com.tll.model.IEntityType;
 import com.tll.model.schema.PropertyType;
 
 /**

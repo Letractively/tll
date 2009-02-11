@@ -6,7 +6,7 @@ package com.tll.common.search;
 
 import com.tll.common.search.EntitySearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * UserSearch
@@ -28,7 +28,7 @@ public class AddressSearch extends EntitySearch {
 	 * @param criteriaType
 	 */
 	public AddressSearch(CriteriaType criteriaType) {
-		super(criteriaType, EntityType.ADDRESS);
+		super(criteriaType, SmbizEntityType.ADDRESS);
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class AddressSearch extends EntitySearch {
 	 * @param businessKeyName
 	 */
 	public AddressSearch(String businessKeyName) {
-		super(businessKeyName, EntityType.ADDRESS);
+		super(businessKeyName, SmbizEntityType.ADDRESS);
 	}
 
 	@Override

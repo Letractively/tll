@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * MerchantMain - ISP root view.
@@ -21,7 +21,7 @@ public class MerchantMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(EntityType.MERCHANT);
+			super(SmbizEntityType.MERCHANT);
 		}
 
 		@Override

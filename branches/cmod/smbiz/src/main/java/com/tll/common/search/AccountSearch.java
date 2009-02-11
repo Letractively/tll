@@ -7,7 +7,7 @@ package com.tll.common.search;
 import com.tll.common.model.RefKey;
 import com.tll.common.search.NamedTimeStampEntitySearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * AccountSearch
@@ -30,7 +30,7 @@ public final class AccountSearch extends NamedTimeStampEntitySearch {
 	 * @param criteriaType
 	 * @param accountType The entity type corres. to a concrete account type.
 	 */
-	public AccountSearch(CriteriaType criteriaType, EntityType accountType) {
+	public AccountSearch(CriteriaType criteriaType, SmbizEntityType accountType) {
 		super(criteriaType, accountType);
 	}
 
@@ -39,7 +39,7 @@ public final class AccountSearch extends NamedTimeStampEntitySearch {
 	 * @param businessKeyName
 	 */
 	public AccountSearch(String businessKeyName) {
-		super(businessKeyName, EntityType.ACCOUNT);
+		super(businessKeyName, SmbizEntityType.ACCOUNT);
 	}
 
 	public final RefKey getParentAccountRef() {

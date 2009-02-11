@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.tll.dao.DaoMode;
-import com.tll.server.IAppContext;
 
 /**
  * OpenEntityManagerInViewFilter

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.tll.IMarshalable;
-import com.tll.model.IEntityType;
+import com.tll.common.model.IEntityType;
 import com.tll.refdata.RefDataType;
 
 /**

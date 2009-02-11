@@ -24,9 +24,9 @@ import com.tll.util.EnumUtil;
  * {@link ServletContext}.
  * @author jpk
  */
-public class SecurityContextHandler implements IBootstrapHandler {
+public class SecurityContextBootstrapper implements IBootstrapHandler {
 	
-	private static final Log log = LogFactory.getLog(SecurityContextHandler.class);
+	private static final Log log = LogFactory.getLog(SecurityContextBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {

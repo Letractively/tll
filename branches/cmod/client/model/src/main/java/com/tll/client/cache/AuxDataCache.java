@@ -14,8 +14,8 @@ import java.util.Set;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
+import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.model.IEntityType;
 import com.tll.refdata.RefDataType;
 
 /**

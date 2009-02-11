@@ -17,7 +17,7 @@ import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 import com.tll.common.model.UnsetPropertyException;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
@@ -104,7 +104,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		@SuppressWarnings("unchecked")
 		@Override
 		protected M createPrototypeModel() {
-			return (M) AuxDataCache.instance().getEntityPrototype(EntityType.INTERFACE_OPTION);
+			return (M) AuxDataCache.instance().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
 		}
 
 		@Override

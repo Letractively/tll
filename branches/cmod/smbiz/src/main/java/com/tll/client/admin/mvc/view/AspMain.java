@@ -15,7 +15,7 @@ import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * AspMain - ASP root view.
@@ -28,7 +28,7 @@ public class AspMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(EntityType.ASP);
+			super(SmbizEntityType.ASP);
 		}
 
 		@Override
@@ -48,7 +48,7 @@ public class AspMain extends MainView {
 	public AspMain() {
 		super();
 
-		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.ISP);
+		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
 		links.add(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));

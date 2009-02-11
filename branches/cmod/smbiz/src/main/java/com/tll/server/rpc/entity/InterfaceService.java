@@ -14,9 +14,7 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Interface;
 import com.tll.model.key.IBusinessKey;
-import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**
  * InterfaceService
@@ -27,17 +25,17 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 	private static final MarshalOptions marshalOptions = MarshalOptions.UNCONSTRAINED_MARSHALING;
 
 	@Override
-	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
+	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(RequestContext requestContext, Interface e, EntityOptions options,
+	protected void handleLoadOptions(IMEntityServiceContext context, Interface e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(RequestContext requestContext, Interface e, EntityOptions options)
+	protected void handlePersistOptions(IMEntityServiceContext context, Interface e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -47,8 +45,8 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 	}
 
 	@Override
-	protected void handleSearchTranslation(RequestContext requestContext, ISearch search,
-			ICriteria<? extends Interface> criteria) throws IllegalArgumentException {
+	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search, ICriteria<Interface> criteria)
+			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 }

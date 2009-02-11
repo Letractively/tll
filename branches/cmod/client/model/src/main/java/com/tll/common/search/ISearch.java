@@ -7,9 +7,9 @@ package com.tll.common.search;
 import java.util.List;
 
 import com.tll.IMarshalable;
+import com.tll.common.model.IEntityType;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
-import com.tll.model.IEntityType;
 
 /**
  * ISearch - Client side search criteria definition.

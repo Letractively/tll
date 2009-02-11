@@ -43,7 +43,7 @@ import com.tll.di.RefDataModule;
 import com.tll.di.VelocityModule;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.mail.MailManager;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
 import com.tll.server.AppContext;
@@ -140,7 +140,7 @@ public class ListingServiceTest extends DbTest {
 
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
-		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
+		final AccountSearch search = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
 		search.setNamedQuery(SelectNamedQueries.MERCHANT_LISTING.getQueryName());
 		search.setQueryParam(new IntPropertyValue("ispId", 1));
 		

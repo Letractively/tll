@@ -4,8 +4,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +13,6 @@ import javax.persistence.EntityNotFoundException;
 
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
-import org.springframework.mail.MailSendException;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityFetchPrototypeRequest;
@@ -25,23 +22,18 @@ import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.data.Status;
+import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.mail.MailManager;
-import com.tll.mail.NameEmail;
-import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityType;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.rpc.AuxDataHandler;
@@ -57,65 +49,6 @@ import com.tll.service.entity.IEntityService;
  * @param <S>
  */
 public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> implements IMEntityServiceImpl<E, S> {
-
-	/**
-	 * Used for doling out exception notification emails.
-	 */
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-
-	/**
-	 * Unified way to handle exceptions for an RPC call.
-	 * @param context
-	 * @param status The Status that will be sent to the client.
-	 * @param t The exception.
-	 * @param uiDisplayText The text to display to the user in the UI. May be
-	 *        <code>null</code> in which case, the message will not be displayed
-	 *        in the UI.
-	 * @param emailException Whether or not a notification email is sent
-	 *        containing the exception stack trace etc.
-	 */
-	public static void handleException(final IMEntityServiceContext context, final Status status, final Throwable t,
-			final String uiDisplayText, final boolean emailException) {
-		assert status != null && t != null;
-		String emsg = t.getMessage();
-		if(emsg == null) {
-			emsg = t.getClass().getSimpleName();
-		}
-		assert emsg != null;
-		if(t instanceof RuntimeException) {
-			status.addMsg(emsg, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
-			if(uiDisplayText != null) {
-				status.addMsg(uiDisplayText, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag);
-			}
-		}
-		else {
-			status.addMsg(emsg, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
-			if(uiDisplayText != null) {
-				status.addMsg(uiDisplayText, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag);
-			}
-		}
-		if(emailException) {
-			final Map<String, Object> data = new HashMap<String, Object>();
-			data.put("header", "Exception Notification (" + t.getClass().getSimpleName() + ")");
-			data.put("datetime", sdf.format(new Date()));
-			data.put("error", emsg);
-			final StackTraceElement ste =
-					(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
-			data.put("trace", ste == null ? "[NO STACK TRACE]" : ste.toString());
-			try {
-				final MailManager mailManager = context.getMailManager();
-				final String onErrorEmail = Config.instance().getString("mail.onerror.ToAddress");
-				final String onErrorName = Config.instance().getString("mail.onerror.ToName");
-				final NameEmail ne = new NameEmail(onErrorName, onErrorEmail);
-				mailManager.sendEmail(mailManager.buildTextTemplateContext(mailManager.buildAppSenderMailRouting(ne),
-						"exception-notification", data));
-			}
-			catch(final MailSendException mse) {
-				status.addMsg("Unable to send exception notification email: " + mse.getMessage(), MsgLevel.ERROR,
-						MsgAttr.NODISPLAY.flag);
-			}
-		}
-	}
 
 	/**
 	 * Loads additional entity properties.
@@ -144,17 +77,17 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		try {
 			final IEntity e =
 					context.getEntityFactory().createEntity(
-							EntityTypeUtil.entityClassFromType(entityType),
+							EntityTypeUtil.getEntityClass(entityType),
 							request.isGenerate());
 			final Model group =
 					context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
 			payload.setEntity(group);
 		}
 		catch(final SystemError se) {
-			handleException(context, payload.getStatus(), se, se.getMessage(), true);
+			context.getExceptionHandler().handleException(payload.getStatus(), se, se.getMessage(), true);
 		}
 		catch(final RuntimeException re) {
-			handleException(context, payload.getStatus(), re, re.getMessage(), true);
+			context.getExceptionHandler().handleException(payload.getStatus(), re, re.getMessage(), true);
 			throw re;
 		}
 	}
@@ -170,8 +103,9 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	@SuppressWarnings("unchecked")
 	protected E coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
 			final IEntityType entityType, final EntityPayload payload) {
+		
 		// core entity loading
-		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
+		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
 		final IEntityService<E> svc =
 				context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
@@ -222,23 +156,24 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 				AuxDataHandler.getAuxData(context, request.auxDataRequest, payload);
 			}
 		}
-		catch(final EntityNotFoundException enfe) {
-			handleException(context, payload.getStatus(), enfe, enfe.getMessage(), false);
+		catch(final EntityNotFoundException e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
 		}
-		catch(final SystemError se) {
-			handleException(context, payload.getStatus(), se, se.getMessage(), true);
+		catch(final SystemError e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
 		}
-		catch(final RuntimeException re) {
-			handleException(context, payload.getStatus(), re, re.getMessage(), true);
-			throw re;
+		catch(final RuntimeException e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			throw e;
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void persist(final IMEntityServiceContext context, final EntityPersistRequest request,
 			final IEntityType entityType, final EntityPayload payload) {
 		try {
 			// core persist
-			final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
+			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
 			final Model entity = request.getEntity();
 			E e = context.getMarshaler().unmarshalEntity(entityClass, entity);
 			final IEntityService<E> svc =
@@ -255,8 +190,8 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
 		}
-		catch(final EntityExistsException e1) {
-			handleException(context, payload.getStatus(), e1, e1.getMessage(), false);
+		catch(final EntityExistsException e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
 		}
 		catch(final InvalidStateException ise) {
 			for(final InvalidValue iv : ise.getInvalidValues()) {
@@ -264,42 +199,42 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 			}
 		}
-		catch(final SystemError se) {
-			handleException(context, payload.getStatus(), se, null, true);
+		catch(final SystemError e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
 		}
-		catch(final RuntimeException re) {
-			handleException(context, payload.getStatus(), re, null, true);
-			throw re;
+		catch(final RuntimeException e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			throw e;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public final void purge(final IMEntityServiceContext context, final EntityPurgeRequest entityRequest,
-			final IEntityType entityType, final EntityPayload p) {
+			final IEntityType entityType, final EntityPayload payload) {
 		try {
-			final Class<IEntity> entityClass = EntityTypeUtil.entityClassFromType(entityType);
-			final IEntityService<IEntity> svc =
+			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
+			final IEntityService<E> svc =
 					context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final RefKey entityRef = entityRequest.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}
 			final PrimaryKey pk = new PrimaryKey(entityClass, entityRef.getId());
-			final IEntity e = svc.load(pk);
+			final E e = svc.load(pk);
 			svc.purge(e);
 
-			p.setEntityRef(entityRef);
-			p.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
+			payload.setEntityRef(entityRef);
+			payload.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
 		}
 		catch(final EntityNotFoundException e) {
-			handleException(context, p.getStatus(), e, e.getMessage(), false);
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
 		}
-		catch(final SystemError se) {
-			handleException(context, p.getStatus(), se, se.getMessage(), true);
+		catch(final SystemError e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
 		}
-		catch(final RuntimeException re) {
-			handleException(context, p.getStatus(), re, re.getMessage(), true);
-			throw re;
+		catch(final RuntimeException e) {
+			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			throw e;
 		}
 	}
 
@@ -318,18 +253,19 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 *         unsupported.
 	 */
 	protected abstract void handleSearchTranslation(IMEntityServiceContext context, S search,
-			ICriteria<? extends E> criteria) throws IllegalArgumentException;
+			ICriteria<E> criteria)
+			throws IllegalArgumentException;
 
+	@SuppressWarnings("unchecked")
 	public final ICriteria<E> translate(final IMEntityServiceContext context, final IEntityType entityType, final S search)
 			throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
-		final Class<E> entityClass = EntityTypeUtil.entityClassFromType(entityType);
+		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(entityType);
 		Criteria<E> criteria;
 		final List<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
-			//SelectNamedQueries nq = EnumUtil.fromString(SelectNamedQueries.class, search.getNamedQuery());
-			ISelectNamedQueryDef queryDef = getQueryResolver().resolveNamedQuery(search.getNamedQuery());
+			ISelectNamedQueryDef queryDef = context.getQueryResolver().resolveNamedQuery(search.getNamedQuery());
 			if(queryDef == null) {
 				throw new IllegalArgumentException("Unable to resolve named query: " + search.getNamedQuery());
 			}

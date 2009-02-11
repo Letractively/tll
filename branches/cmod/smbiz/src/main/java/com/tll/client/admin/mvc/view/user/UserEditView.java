@@ -12,7 +12,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * UserEditView
@@ -58,7 +58,7 @@ public class UserEditView extends EditView {
 	@Override
 	protected AuxDataRequest getNeededAuxData() {
 		AuxDataRequest auxDataRequest = new AuxDataRequest();
-		auxDataRequest.requestEntityList(EntityType.AUTHORITY);
+		auxDataRequest.requestEntityList(SmbizEntityType.AUTHORITY);
 		return auxDataRequest;
 	}
 

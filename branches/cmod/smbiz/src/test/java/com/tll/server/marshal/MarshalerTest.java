@@ -28,13 +28,13 @@ import com.tll.di.ModelModule;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.CreditCardType;
-import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.PaymentInfo;
 import com.tll.model.mock.EntityGraph;
 import com.tll.model.mock.EntityGraphBuilder;
 import com.tll.model.mock.MockEntityFactory;
+import com.tll.server.rpc.EntityTypeUtil;
 import com.tll.util.CommonUtil;
 
 /**

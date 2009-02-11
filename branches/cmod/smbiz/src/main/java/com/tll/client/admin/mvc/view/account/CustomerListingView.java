@@ -24,7 +24,7 @@ import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * CustomerListingView
@@ -127,13 +127,13 @@ public final class CustomerListingView extends ListingView {
 		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(this, r.ispRef));
 		mercListingLink.setText(mercRef.getName());
 
-		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.CUSTOMER);
+		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);
 		criteria.setNamedQuery("account.customerList");
 		criteria.setQueryParam(new IntPropertyValue("merchantId", mercRef.getId()));
 
 		final AccountListingConfig config = new AccountListingConfig() {
 
-			private final String listingElementName = EntityType.CUSTOMER.getName();
+			private final String listingElementName = SmbizEntityType.CUSTOMER.getName();
 
 			private final Column[] columns =
 					new Column[] {
@@ -184,7 +184,7 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, EntityType.CUSTOMER.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.CUSTOMER.toString() + "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

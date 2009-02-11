@@ -24,7 +24,7 @@ import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.AddressType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * AccountPanel
@@ -182,7 +182,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		@SuppressWarnings("unchecked")
 		@Override
 		protected M createPrototypeModel() {
-			return (M) AuxDataCache.instance().getEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+			return (M) AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override

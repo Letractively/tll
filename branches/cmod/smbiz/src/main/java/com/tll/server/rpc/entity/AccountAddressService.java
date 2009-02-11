@@ -13,7 +13,6 @@ import com.tll.common.model.RefKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.AccountAddress;
-import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.server.marshal.MarshalOptions;
 
@@ -27,16 +26,6 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 
 	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
 		return marshalOptions;
-	}
-
-	@Override
-	public INamedQueryResolver getQueryResolver() {
-		return NamedQueryResolver.instance();
-	}
-
-	@Override
-	public boolean supports(Class<? extends IEntity> entityClass) {
-		return false;
 	}
 
 	@Override
@@ -58,7 +47,8 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 
 	@Override
 	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search,
-			ICriteria<? extends AccountAddress> criteria) throws IllegalArgumentException {
+			ICriteria<AccountAddress> criteria) throws IllegalArgumentException {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
+
 }

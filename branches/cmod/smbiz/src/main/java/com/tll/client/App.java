@@ -18,7 +18,7 @@ import com.tll.client.ui.field.SelectField;
 import com.tll.common.convert.IdConverter;
 import com.tll.common.model.Model;
 import com.tll.common.util.SimpleComparator;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * App - General app wide utility methods and constants.
@@ -137,7 +137,7 @@ public abstract class App {
 	 */
 	public static Map<Integer, String> getCurrencyDataMap() {
 		if(currencyMap == null) {
-			List<Model> currencies = AuxDataCache.instance().getEntityList(EntityType.CURRENCY);
+			List<Model> currencies = AuxDataCache.instance().getEntityList(SmbizEntityType.CURRENCY);
 			if(currencies == null) return null;
 			currencyMap = new HashMap<Integer, String>();
 			StringBuilder sb = new StringBuilder();

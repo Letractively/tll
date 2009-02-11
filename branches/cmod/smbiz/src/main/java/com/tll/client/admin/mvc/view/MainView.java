@@ -12,7 +12,7 @@ import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRequestEvent;
-import com.tll.model.IEntityType;
+import com.tll.common.model.IEntityType;
 
 /**
  * MainView - The root view base class for all account types.

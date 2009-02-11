@@ -33,13 +33,14 @@ import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.common.data.AuxDataRequest;
+import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * InterfacesView - AbstractView for managing Interfaces and the sub-entities.
@@ -92,25 +93,26 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel((EntityType) intfRef.getType()), false, true);
+				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
-				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SWITCH);
-				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_SINGLE);
-				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_MULTI);
-				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION);
-				auxDataRequest.requestEntityPrototype(EntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
+				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
+				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SINGLE);
+				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_MULTI);
+				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
+				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(EntityType intfType) {
-				switch(intfType) {
-					case INTERFACE_MULTI:
-					case INTERFACE_SINGLE:
-						return new MultiOptionInterfacePanel<Model>();
-					case INTERFACE_SWITCH:
-						return new SwitchInterfacePanel<Model>();
-					default:
+			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(IEntityType intfType) {
+				if(SmbizEntityType.INTERFACE_MULTI.name().equals(intfType.getValue())
+						|| SmbizEntityType.INTERFACE_SINGLE.name().equals(intfType.getValue())) {
+					return new MultiOptionInterfacePanel<Model>();
+				}
+				else if(SmbizEntityType.INTERFACE_SWITCH.name().equals(intfType.getValue())) {
+					return new SwitchInterfacePanel<Model>();
+				}
+				else {
 						throw new IllegalArgumentException();
 				}
 			}
@@ -169,7 +171,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 */
 		public InterfacesStack() {
 			super();
-			String listingName = EntityType.INTERFACE.name();
+			String listingName = SmbizEntityType.INTERFACE.name();
 			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery("interface.summaryList");
 			Sorting defaultSorting = new Sorting("name");
@@ -311,7 +313,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
 		return event.getSource() == this
-				|| (event.getModelRef() != null && ((EntityType) event.getModelRef().getType()).isInterfaceType());
+				|| (event.getModelRef() != null && ((SmbizEntityType) event.getModelRef().getType()).isInterfaceType());
 	}
 
 	@Override

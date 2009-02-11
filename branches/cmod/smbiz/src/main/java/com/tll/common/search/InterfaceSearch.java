@@ -6,7 +6,7 @@ package com.tll.common.search;
 
 import com.tll.common.search.NamedTimeStampEntitySearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * InterfaceSearch
@@ -26,7 +26,7 @@ public class InterfaceSearch extends NamedTimeStampEntitySearch {
 	 * @param criteriaType
 	 */
 	public InterfaceSearch(CriteriaType criteriaType) {
-		super(criteriaType, EntityType.INTERFACE);
+		super(criteriaType, SmbizEntityType.INTERFACE);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class InterfaceSearch extends NamedTimeStampEntitySearch {
 	 * @param businessKeyName
 	 */
 	public InterfaceSearch(String businessKeyName) {
-		super(businessKeyName, EntityType.INTERFACE);
+		super(businessKeyName, SmbizEntityType.INTERFACE);
 	}
 
 	@Override

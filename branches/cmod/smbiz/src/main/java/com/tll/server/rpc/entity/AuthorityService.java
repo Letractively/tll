@@ -14,9 +14,7 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Authority;
 import com.tll.model.key.IBusinessKey;
-import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.MNamedEntityServiceImpl;
 
 /**
  * AuthorityService
@@ -27,17 +25,17 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
 	@Override
-	public MarshalOptions getMarshalOptions(RequestContext requestContext) {
+	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(RequestContext requestContext, Authority e, EntityOptions options,
+	protected void handleLoadOptions(IMEntityServiceContext context, Authority e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(RequestContext requestContext, Authority e, EntityOptions options)
+	protected void handlePersistOptions(IMEntityServiceContext context, Authority e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -47,8 +45,8 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 	}
 
 	@Override
-	protected void handleSearchTranslation(RequestContext requestContext, ISearch search,
-			ICriteria<? extends Authority> criteria) throws IllegalArgumentException {
+	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search, ICriteria<Authority> criteria)
+			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 }

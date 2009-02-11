@@ -1,13 +1,15 @@
 package com.tll.model;
 
+import com.tll.INameValueProvider;
+import com.tll.common.model.IEntityType;
 import com.tll.util.StringUtil;
 
 /**
- * EntityType - Enumeration impl of {@link IEntityType} identifying all relevant
+ * SmbizEntityType - Enumeration impl of {@link IEntityType} identifying all relevant
  * entity type in the app.
  * @author jpk
  */
-public enum EntityType implements IEntityType {
+public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	ACCOUNT("Account"),
 	ASP("Asp"),
 	ISP("Isp"),
@@ -44,10 +46,12 @@ public enum EntityType implements IEntityType {
 	SHIP_BOUND_COST("Ship Bound Cost"),
 	SHIP_MODE("Ship Mode"),
 	SITE_CODE("Site Code");
+	
+	private static final String MODEL_PACKAGE_NAME = SmbizEntityType.class.getPackage().getName();
 
 	private String name;
 
-	private EntityType(String name) {
+	private SmbizEntityType(String name) {
 		this.name = name;
 	}
 
@@ -60,9 +64,14 @@ public enum EntityType implements IEntityType {
 	}
 
 	public String getEntityClassName() {
-		return StringUtil.enumStyleToJavaClassNotation(name());
+		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToJavaClassNotation(name());
 	}
 
+	public String getPresentationName() {
+		return getName();
+	}
+
+	/*
 	public boolean isAbstract() {
 		return ACCOUNT.equals(this) || INTERFACE.equals(this);
 	}
@@ -76,6 +85,7 @@ public enum EntityType implements IEntityType {
 		return INTERFACE.equals(this) || INTERFACE_MULTI.equals(this) || INTERFACE_SINGLE.equals(this)
 				|| INTERFACE_SWITCH.equals(this);
 	}
+	*/
 
 	/**
 	 * Mimics the java class hierarchy mechanism so we can check for
@@ -83,7 +93,8 @@ public enum EntityType implements IEntityType {
 	 * @param type entity type
 	 * @return true/false
 	 */
-	public boolean isSubtype(EntityType type) {
+	/*
+	public boolean isSubtype(SmbizEntityType type) {
 		switch(this) {
 			case ACCOUNT:
 				return type.isAccountType();
@@ -92,4 +103,5 @@ public enum EntityType implements IEntityType {
 		}
 		return false;
 	}
+	*/
 }

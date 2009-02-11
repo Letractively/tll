@@ -39,7 +39,7 @@ import com.tll.common.util.ObjectUtil;
 import com.tll.model.AccountStatus;
 import com.tll.model.AddressType;
 import com.tll.model.CreditCardType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
 import com.tll.refdata.RefDataType;
@@ -65,7 +65,7 @@ public final class ClientTestUtils {
 			// set needed aux data cache
 			List<Model> list = new ArrayList<Model>();
 			list.add(stubCurrency());
-			AuxDataCache.instance().cacheEntityList(EntityType.CURRENCY, list);
+			AuxDataCache.instance().cacheEntityList(SmbizEntityType.CURRENCY, list);
 
 			Map<String, String> cc = new HashMap<String, String>();
 			cc.put("us", "United States");
@@ -315,7 +315,7 @@ public final class ClientTestUtils {
 	 * @return A stubbed root model for testing.
 	 */
 	public static Model getTestRootModel() {
-		Model account = stubAccount(stubAccount(null, EntityType.ASP, 1), EntityType.ISP, 2);
+		Model account = stubAccount(stubAccount(null, SmbizEntityType.ASP, 1), SmbizEntityType.ISP, 2);
 
 		Model aa1 = stubAccountAddress(account, stubAddress(1), 1);
 		Model aa2 = stubAccountAddress(account, stubAddress(2), 2);
@@ -323,7 +323,7 @@ public final class ClientTestUtils {
 		Set<Model> addresses = new LinkedHashSet<Model>();
 		addresses.add(aa1);
 		addresses.add(aa2);
-		account.set(new RelatedManyProperty(EntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
+		account.set(new RelatedManyProperty(SmbizEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
 		return account;
 	}
@@ -333,7 +333,7 @@ public final class ClientTestUtils {
 	 * @return new instance
 	 */
 	public static Model stubCurrency() {
-		Model m = new Model(EntityType.CURRENCY);
+		Model m = new Model(SmbizEntityType.CURRENCY);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
@@ -347,7 +347,7 @@ public final class ClientTestUtils {
 	 * @return new instance
 	 */
 	public static Model stubAddress(int num) {
-		Model address = new Model(EntityType.ADDRESS);
+		Model address = new Model(SmbizEntityType.ADDRESS);
 		address.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
 		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
 				"email" + num + "@domain.com"));
@@ -376,7 +376,7 @@ public final class ClientTestUtils {
 	 * @return new Model representing payment info
 	 */
 	public static Model stubPaymentInfo() {
-		Model m = new Model(EntityType.PAYMENT_INFO);
+		Model m = new Model(SmbizEntityType.PAYMENT_INFO);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));
@@ -419,7 +419,7 @@ public final class ClientTestUtils {
 	 * @param num
 	 * @return new instance
 	 */
-	public static Model stubAccount(Model parentAccount, EntityType accountType, int num) {
+	public static Model stubAccount(Model parentAccount, SmbizEntityType accountType, int num) {
 		Model m = new Model(accountType);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
 		m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
@@ -444,9 +444,9 @@ public final class ClientTestUtils {
 				.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
 						new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
-		m.set(new RelatedOneProperty(EntityType.CURRENCY, "currency", true, stubCurrency()));
-		m.set(new RelatedOneProperty(EntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
-		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "parent", true, parentAccount));
+		m.set(new RelatedOneProperty(SmbizEntityType.CURRENCY, "currency", true, stubCurrency()));
+		m.set(new RelatedOneProperty(SmbizEntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
+		m.set(new RelatedOneProperty(SmbizEntityType.ACCOUNT, "parent", true, parentAccount));
 		return m;
 	}
 
@@ -458,12 +458,12 @@ public final class ClientTestUtils {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		Model m = new Model(EntityType.ACCOUNT_ADDRESS);
+		Model m = new Model(SmbizEntityType.ACCOUNT_ADDRESS);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
-		m.set(new RelatedOneProperty(EntityType.ACCOUNT, "account", true, account));
-		m.set(new RelatedOneProperty(EntityType.ADDRESS, "address", false, address));
+		m.set(new RelatedOneProperty(SmbizEntityType.ACCOUNT, "account", true, account));
+		m.set(new RelatedOneProperty(SmbizEntityType.ADDRESS, "address", false, address));
 		return m;
 	}
 

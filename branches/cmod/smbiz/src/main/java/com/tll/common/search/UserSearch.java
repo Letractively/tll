@@ -6,7 +6,7 @@ package com.tll.common.search;
 
 import com.tll.common.search.NamedTimeStampEntitySearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * UserSearch
@@ -26,7 +26,7 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 	 * @param criteriaType
 	 */
 	public UserSearch(CriteriaType criteriaType) {
-		super(criteriaType, EntityType.USER);
+		super(criteriaType, SmbizEntityType.USER);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class UserSearch extends NamedTimeStampEntitySearch {
 	 * @param businessKeyName
 	 */
 	public UserSearch(String businessKeyName) {
-		super(businessKeyName, EntityType.USER);
+		super(businessKeyName, SmbizEntityType.USER);
 	}
 
 	@Override

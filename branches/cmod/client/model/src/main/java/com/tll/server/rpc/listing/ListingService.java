@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.sun.xml.internal.ws.client.RequestContext;
 import com.tll.SystemError;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
@@ -30,11 +31,9 @@ import com.tll.listhandler.IListHandlerDataProvider;
 import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
-import com.tll.model.EntityTypeUtil;
 import com.tll.model.IEntity;
-import com.tll.server.AppServletUtil;
-import com.tll.server.RequestContext;
 import com.tll.server.rpc.RpcServlet;
+import com.tll.server.rpc.entity.EntityTypeUtil;
 import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
 
@@ -120,7 +119,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// resolve the entity class and corres. marshaling entity service
-						final Class<E> entityClass = EntityTypeUtil.entityClassFromType(search.getEntityType());
+						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
 						final IMEntityServiceImpl<E, S> mEntitySvc =
 								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass);
 

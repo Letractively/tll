@@ -11,7 +11,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 import com.tll.refdata.RefDataType;
 
 /**
@@ -42,9 +42,9 @@ public class AccountEditView extends EditView {
 	private static final EntityOptions entityOptions = new EntityOptions();
 
 	static {
-		entityOptions.requestRelated(EntityType.PAYMENT_INFO);
-		entityOptions.requestRelated(EntityType.ACCOUNT_ADDRESS);
-		entityOptions.requestRelatedRef(EntityType.ACCOUNT);
+		entityOptions.requestRelated(SmbizEntityType.PAYMENT_INFO);
+		entityOptions.requestRelated(SmbizEntityType.ACCOUNT_ADDRESS);
+		entityOptions.requestRelatedRef(SmbizEntityType.ACCOUNT);
 	}
 
 	/**
@@ -62,10 +62,10 @@ public class AccountEditView extends EditView {
 	@Override
 	protected AuxDataRequest getNeededAuxData() {
 		AuxDataRequest auxDataRequest = new AuxDataRequest();
-		auxDataRequest.requestEntityList(EntityType.CURRENCY);
+		auxDataRequest.requestEntityList(SmbizEntityType.CURRENCY);
 		auxDataRequest.requestAppRefData(RefDataType.US_STATES);
 		auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);
-		auxDataRequest.requestEntityPrototype(EntityType.ACCOUNT_ADDRESS);
+		auxDataRequest.requestEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		return auxDataRequest;
 	}
 

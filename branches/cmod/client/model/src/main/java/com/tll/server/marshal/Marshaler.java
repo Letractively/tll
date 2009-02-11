@@ -26,6 +26,7 @@ import com.tll.common.model.CharacterPropertyValue;
 import com.tll.common.model.DatePropertyValue;
 import com.tll.common.model.EnumPropertyValue;
 import com.tll.common.model.FloatPropertyValue;
+import com.tll.common.model.IEntityType;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.LongPropertyValue;
@@ -35,8 +36,6 @@ import com.tll.common.model.RelatedOneProperty;
 import com.tll.common.model.StringMapPropertyValue;
 import com.tll.common.model.StringPropertyValue;
 import com.tll.dao.SearchResult;
-import com.tll.model.EntityType;
-import com.tll.model.EntityTypeUtil;
 import com.tll.model.IChildEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
@@ -46,6 +45,7 @@ import com.tll.model.schema.Nested;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
+import com.tll.server.rpc.entity.EntityTypeUtil;
 
 /**
  * Marshaler - Converts server-side entities to client-bound Data transfer
@@ -276,7 +276,7 @@ public final class Marshaler {
 		}
 
 		final Class<? extends IEntity> entityClass = source.entityClass();
-		final Model model = new Model(EntityTypeUtil.entityTypeFromClass(entityClass));
+		final Model model = new Model(EntityTypeUtil.getEntityType(entityClass));
 
 		b = new Binding(source, model);
 		visited.push(b);
@@ -312,8 +312,8 @@ public final class Marshaler {
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
-						final EntityType etype =
-								ri.getRelatedType() == null ? null : EntityTypeUtil.entityTypeFromClass(ri.getRelatedType());
+						final IEntityType etype =
+								ri.getRelatedType() == null ? null : EntityTypeUtil.getEntityType(ri.getRelatedType());
 						prop = new RelatedOneProperty(etype, pname, reference, ngrp);
 					}
 				}
@@ -332,7 +332,8 @@ public final class Marshaler {
 								list.add(nested);
 							}
 						}
-						prop = new RelatedManyProperty(EntityTypeUtil.entityTypeFromClass(ri.getRelatedType()), pname, reference, list);
+						prop =
+								new RelatedManyProperty(EntityTypeUtil.getEntityType(ri.getRelatedType()), pname, reference, list);
 					}
 				}
 
@@ -383,7 +384,7 @@ public final class Marshaler {
 	 */
 	public <S extends IScalar> Model marshalScalar(final S source, final MarshalOptions options) {
 
-		final Model model = new Model(EntityTypeUtil.entityTypeFromClass(source.getRefType()));
+		final Model model = new Model(EntityTypeUtil.getEntityType(source.getRefType()));
 
 		final Map<String, Object> tupleMap = source.getTupleMap();
 		for(final String pname : tupleMap.keySet()) {
@@ -470,10 +471,10 @@ public final class Marshaler {
 
 				case RELATED_ONE: {
 					final Model rltdOne = (Model) pval;
-					final EntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();
+					final IEntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();
 					final IEntity toOne =
 							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil
-									.entityClassFromType(entityType), rltdOne, visited));
+									.getEntityClass(entityType), rltdOne, visited));
 					val = toOne;
 				}
 					break;
@@ -495,9 +496,9 @@ public final class Marshaler {
 					if(el != null) {
 						for(final Object obj : el) {
 							final Model model = (Model) obj;
-							final EntityType entityType = model.getEntityType();
+							final IEntityType entityType = model.getEntityType();
 							final IEntity clcEntity =
-									model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.entityClassFromType(entityType), model,
+									model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.getEntityClass(entityType), model,
 											visited);
 							if(clcEntity instanceof IChildEntity) {
 								((IChildEntity) clcEntity).setParent(e);

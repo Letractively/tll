@@ -5,9 +5,9 @@
  */
 package com.tll.common.data;
 
+import com.tll.common.model.IEntityType;
 import com.tll.common.model.RefKey;
 import com.tll.common.search.ISearch;
-import com.tll.model.IEntityType;
 
 /**
  * EntityLoadRequest

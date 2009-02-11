@@ -7,10 +7,10 @@ import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.RemoteListingDefinition;
+import com.tll.common.model.IEntityType;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
-import com.tll.model.IEntityType;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 
@@ -18,23 +18,10 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
  * IMEntityServiceImpl - Server side support for the RPC {@link IMEntityService}
  * implementation delegate.
  * @author jpk
- * @param <E> The entity type
+ * @param <E> The "root" entity type
  * @param <S> The search type
  */
 public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
-
-	/**
-	 * Does this impl support the given entity type? This is used by the delegator
-	 * to properly route requests.
-	 * @param entityClass The entity type
-	 * @return true/false
-	 */
-	boolean supports(Class<? extends IEntity> entityClass);
-
-	/**
-	 * @return The named query resolver.
-	 */
-	INamedQueryResolver getQueryResolver();
 
 	/**
 	 * Get an empty entity.
@@ -86,13 +73,11 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	/**
 	 * Translate client-side search to server-side serach.
 	 * @param context Guaranteed non-<code>null</code>
-	 * @param entityType The guaranteed non-<code>null</code> resolved
-	 *        {@link IEntityType} for the {@link ISearch}.
 	 * @param search The client side {@link ISearch} instance
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<E> translate(IMEntityServiceContext context, IEntityType entityType, S search)
+	ICriteria<E> translate(IMEntityServiceContext context, S search)
 			throws IllegalArgumentException;
 
 	/**

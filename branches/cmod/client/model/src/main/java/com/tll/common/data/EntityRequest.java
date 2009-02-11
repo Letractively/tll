@@ -7,7 +7,7 @@ package com.tll.common.data;
 import org.hibernate.type.EntityType;
 
 import com.tll.IMarshalable;
-import com.tll.model.IEntityType;
+import com.tll.common.model.IEntityType;
 
 /**
  * EntityRequest - Encapsulates the needed properties to fullfill an entity

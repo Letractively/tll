@@ -13,7 +13,7 @@ import com.tll.common.admin.AdminContext;
 import com.tll.common.model.RefKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
-import com.tll.model.EntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * IspMain - ISP root view.
@@ -26,7 +26,7 @@ public class IspMain extends MainView {
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(EntityType.ISP);
+			super(SmbizEntityType.ISP);
 		}
 
 		@Override
@@ -48,7 +48,7 @@ public class IspMain extends MainView {
 		RefKey userAccountRef = ac.getUserAccount().getRefKey();
 		assert userAccountRef != null && userAccountRef.isSet();
 
-		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, EntityType.MERCHANT);
+		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
 		as.setParentAccountRef(userAccountRef);
 
 		addWidget(links);

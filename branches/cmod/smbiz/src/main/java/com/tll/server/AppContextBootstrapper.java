@@ -26,7 +26,7 @@ import com.tll.util.EnumUtil;
  * AppContextBootstrapper
  * @author jpk
  */
-public class AppContextHandler implements IBootstrapHandler {
+public class AppContextBootstrapper implements IBootstrapHandler {
 
 	/**
 	 * ConfigKeys - Configuration property keys for the app context.
@@ -53,7 +53,7 @@ public class AppContextHandler implements IBootstrapHandler {
 		}
 	}
 	
-	private static final Log log = LogFactory.getLog(AppContextHandler.class);
+	private static final Log log = LogFactory.getLog(AppContextBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {

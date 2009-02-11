@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.tll.IMarshalable;
-import com.tll.model.IEntityType;
+import com.tll.common.model.IEntityType;
 
 /**
  * EntityOptions - Provision for specifying persistence options (eager loading
