@@ -4,7 +4,6 @@
  */
 package com.tll.client.ui;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
@@ -41,11 +40,6 @@ public abstract class Toolbar extends Composite {
 		public static final String BUTTON = "button";
 	}
 	
-	/**
-	 * Core toolbar specific image bundle.
-	 */
-	public static final ToolbarImageBundle imageBundle = (ToolbarImageBundle) GWT.create(ToolbarImageBundle.class);
-
 	// private final FlowPanel pnl = new FlowPanel();
 	private final HorizontalPanel pnl = new HorizontalPanel();
 

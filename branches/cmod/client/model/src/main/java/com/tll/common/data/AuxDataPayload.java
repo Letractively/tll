@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
+import com.tll.model.IEntityType;
 import com.tll.refdata.RefDataType;
 
 /**

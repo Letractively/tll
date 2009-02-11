@@ -6,6 +6,7 @@ package com.tll.common.model;
 
 import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
+import com.tll.model.IEntityType;
 
 /**
  * RefKey - Generic model entity proxy encapsulating the uniqueness of the
@@ -90,7 +91,7 @@ public final class RefKey implements IMarshalable, IDescriptorProvider {
 	 * @return A UI friendly String
 	 */
 	public String descriptor() {
-		return (name != null) ? type.getPresentationName() + " '" + name + '\'' : type.getPresentationName();
+		return (name != null) ? type.getName() + " '" + name + '\'' : type.getName();
 	}
 
 	@Override

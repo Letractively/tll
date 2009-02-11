@@ -12,9 +12,9 @@ import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
+import com.tll.model.IEntityType;
 
 /**
  * ModelChangeManager - Acts as a mediator centralizing app-wide handling of

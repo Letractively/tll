@@ -36,7 +36,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @return New Option instance
 	 */
 	private static Option editOption(String subjectName) {
-		return new Option(EDIT_OPTION_PREFIX + subjectName, imageBundle.pencil().createImage());
+		return new Option(EDIT_OPTION_PREFIX + subjectName, imageBundle.edit().createImage());
 	}
 
 	/**
@@ -47,7 +47,7 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * @return New Option instance
 	 */
 	private static Option deleteOption(String subjectName) {
-		return new Option(DELETE_OPTION_PREFIX + subjectName, imageBundle.trash().createImage());
+		return new Option(DELETE_OPTION_PREFIX + subjectName, imageBundle.delete().createImage());
 	}
 
 	/**

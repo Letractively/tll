@@ -14,8 +14,8 @@ import java.util.Set;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
+import com.tll.model.IEntityType;
 import com.tll.refdata.RefDataType;
 
 /**
@@ -34,11 +34,6 @@ public final class AuxDataCache {
 		}
 		return instance;
 	}
-
-	/**
-	 * Map of app available currencies.
-	 */
-	private static Map<Integer, String> currencyMap;
 
 	/**
 	 * Map of app ref data name/value pairs keyed by the app ref data type.<br>
@@ -183,41 +178,6 @@ public final class AuxDataCache {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Provides a map of the available currencies.
-	 * @return Map of the the system currency ids keyed by the data store currency
-	 *         id.
-	 */
-	// TODO move back to smbiz!
-	public Map<Integer, String> getCurrencyDataMap() {
-		if(currencyMap == null) {
-			List<Model> currencies = getEntityList(new IEntityType() {
-
-				@Override
-				public String getPresentationName() {
-					return "Currency";
-				}
-
-				@Override
-				public String getClassName() {
-					return "com.tll.model.Currency";
-				}
-			});
-			if(currencies == null) return null;
-			currencyMap = new HashMap<Integer, String>();
-			StringBuilder sb = new StringBuilder();
-			for(Model e : currencies) {
-				sb.setLength(0);
-				sb.append(e.asString("symbol"));
-				sb.append(" - ");
-				sb.append(e.getName());
-				currencyMap.put(e.getId(), sb.toString());
-			}
-			return currencyMap;
-		}
-		return currencyMap;
 	}
 
 	public boolean isCached(AuxDataType type, Object obj) {

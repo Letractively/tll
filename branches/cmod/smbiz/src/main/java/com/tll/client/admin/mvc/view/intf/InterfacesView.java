@@ -35,7 +35,7 @@ import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
-import com.tll.common.search.impl.InterfaceSearch;
+import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -92,7 +92,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(resolveInterfacePanel((EntityType) intfRef.getType()), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -311,7 +311,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
 		return event.getSource() == this
-				|| (event.getModelRef() != null && event.getModelRef().getType().isInterfaceType());
+				|| (event.getModelRef() != null && ((EntityType) event.getModelRef().getType()).isInterfaceType());
 	}
 
 	@Override

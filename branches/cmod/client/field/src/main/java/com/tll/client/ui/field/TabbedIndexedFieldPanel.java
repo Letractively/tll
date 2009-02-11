@@ -8,8 +8,10 @@ package com.tll.client.ui.field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -22,7 +24,6 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.WidgetAndLabel;
 import com.tll.common.bind.IBindable;
@@ -36,6 +37,34 @@ import com.tll.common.bind.IBindable;
  */
 public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
 		IndexedFieldPanel<I, M> implements TabListener {
+
+	/**
+	 * ImageBundle
+	 * @author jpk
+	 */
+	public interface ImageBundle extends com.google.gwt.user.client.ui.ImageBundle {
+
+		/**
+		 * add (16x16)
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/add.gif")
+		AbstractImagePrototype add();
+
+		/**
+		 * undo (18x18)
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/undo.gif")
+		AbstractImagePrototype undo();
+
+		/**
+		 * delete (18x18)
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/delete.gif")
+		AbstractImagePrototype delete();
+	}
 
 	/**
 	 * Styles - (widget-tll.css)
@@ -96,6 +125,11 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 
 	} // EmptyWidget
+
+	/**
+	 * The app wide image bundle.
+	 */
+	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
 
 	/**
 	 * The composite wrapped panel holding the tab widget.
@@ -172,7 +206,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 		if(enableDelete || isNew) {
 			final ToggleButton btnDeleteTgl =
-					new ToggleButton(App.imgs().delete().createImage(), App.imgs().undo().createImage());
+					new ToggleButton(imageBundle.delete().createImage(), imageBundle.undo().createImage());
 			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
 			btnDeleteTgl.setTitle("Delete " + labelText);
 			btnDeleteTgl.getElement().setPropertyBoolean("new", isNew);
@@ -269,7 +303,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		if(enableAdd) {
 			// add trailing *add* tab
-			PushButton pb = new PushButton(App.imgs().add().createImage());
+			PushButton pb = new PushButton(imageBundle.add().createImage());
 			pb.setTitle("Add " + getIndexTypeName());
 			pb.addClickListener(new ClickListener() {
 

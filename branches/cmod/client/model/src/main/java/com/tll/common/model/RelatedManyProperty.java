@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.tll.common.bind.PropertyChangeEvent;
+import com.tll.model.IEntityType;
 import com.tll.model.schema.PropertyType;
 
 /**

@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.ImageBundle;
  * EditRowImageBundle
  * @author jpk
  */
-// TODO rename image resources to indicate edit row option functionality!
 public interface EditRowImageBundle extends ImageBundle {
 
 	/**
@@ -20,12 +19,12 @@ public interface EditRowImageBundle extends ImageBundle {
 	 * @return the image prototype
 	 */
 	@Resource(value = "com/tll/public/images/pencil.gif")
-	AbstractImagePrototype pencil();
+	AbstractImagePrototype edit();
 
 	/**
 	 * trash
 	 * @return the image prototype
 	 */
 	@Resource(value = "com/tll/public/images/trash.gif")
-	AbstractImagePrototype trash();
+	AbstractImagePrototype delete();
 }

@@ -17,10 +17,10 @@ import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.ICrudServiceAsync;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.common.search.ISearch;
+import com.tll.model.IEntityType;
 
 /**
  * CrudCommand - Issues CRUD commands to the server.

@@ -3,6 +3,8 @@
  */
 package com.tll.common.model;
 
+import com.tll.model.IEntityType;
+
 
 /**
  * AbstractRelationalProperty - Base class for Model properties that are

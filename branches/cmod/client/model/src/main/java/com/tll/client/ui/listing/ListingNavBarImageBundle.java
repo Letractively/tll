@@ -14,6 +14,20 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public interface ListingNavBarImageBundle extends com.google.gwt.user.client.ui.ImageBundle {
 
 	/**
+	 * split
+	 * @return the image prototype
+	 */
+	@Resource(value = "com/tll/public/images/split.gif")
+	AbstractImagePrototype split();
+
+	/**
+	 * split
+	 * @return the image prototype
+	 */
+	@Resource(value = "com/tll/public/images/refresh.gif")
+	AbstractImagePrototype refresh();
+
+	/**
 	 * page_first
 	 * @return the image prototype
 	 */

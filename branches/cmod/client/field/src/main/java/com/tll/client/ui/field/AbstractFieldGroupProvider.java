@@ -17,7 +17,6 @@ import com.tll.common.convert.BooleanPassThroughConverter;
 import com.tll.common.convert.DatePassThroughConverter;
 import com.tll.common.convert.EnumToStringConverter;
 import com.tll.common.convert.IFormattedConverter;
-import com.tll.common.convert.IdConverter;
 import com.tll.common.convert.NoFormatStringConverter;
 import com.tll.common.convert.RefDataMapConverter;
 import com.tll.common.model.Model;
@@ -32,11 +31,6 @@ import com.tll.refdata.RefDataType;
  * @author jpk
  */
 public abstract class AbstractFieldGroupProvider implements IFieldGroupProvider {
-
-	/**
-	 * The currency id converter.
-	 */
-	private static final IdConverter currencyIdConverter = new IdConverter(AuxDataCache.instance().getCurrencyDataMap());
 
 	/**
 	 * Converts a {@link Number} to a {@link String} instance with currency
@@ -155,20 +149,6 @@ public abstract class AbstractFieldGroupProvider implements IFieldGroupProvider 
 			String helpText, Class<E> type) {
 		return FieldFactory.fselect(name, propName, labelText, helpText, Arrays.asList(type.getEnumConstants()),
 				SimpleComparator.INSTANCE, new EnumToStringConverter<E>());
-	}
-
-	/**
-	 * Creates a new {@link SelectField} of app recognized currencies.
-	 * @param name
-	 * @param propName
-	 * @param labelText
-	 * @param helpText
-	 * @return select field containing the app currencies
-	 */
-	protected static final SelectField<Integer> fcurrencies(String name, String propName, String labelText,
-			String helpText) {
-		return FieldFactory.fselect(name, propName, labelText, helpText, AuxDataCache.instance().getCurrencyDataMap()
-				.keySet(), SimpleComparator.INSTANCE, currencyIdConverter);
 	}
 
 	/**

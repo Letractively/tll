@@ -7,6 +7,7 @@ package com.tll.common.model;
 
 import java.util.List;
 
+import com.tll.model.IEntityType;
 import com.tll.model.schema.PropertyType;
 
 /**

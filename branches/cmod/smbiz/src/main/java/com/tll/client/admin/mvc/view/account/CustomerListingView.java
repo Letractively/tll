@@ -18,7 +18,7 @@ import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
-import com.tll.common.search.impl.AccountSearch;
+import com.tll.common.search.AccountSearch;
 import com.tll.common.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;

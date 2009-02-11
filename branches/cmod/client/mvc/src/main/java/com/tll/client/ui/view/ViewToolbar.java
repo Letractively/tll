@@ -4,13 +4,14 @@
  */
 package com.tll.client.ui.view;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesMouseEvents;
 import com.google.gwt.user.client.ui.ToggleButton;
-import com.tll.client.App;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.Toolbar;
 
@@ -19,7 +20,63 @@ import com.tll.client.ui.Toolbar;
  * @author jpk
  */
 public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
+	
+	/**
+	 * ImageBundle
+	 * @author jpk
+	 */
+	public interface ImageBundle extends com.google.gwt.user.client.ui.ImageBundle {
 
+		/**
+		 * split
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/split.gif")
+		AbstractImagePrototype split();
+
+		/**
+		 * arrow_sm_right
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/arrow_sm_right.gif")
+		AbstractImagePrototype arrow_sm_right();
+
+		/**
+		 * arrow_sm_down
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/arrow_sm_down.gif")
+		AbstractImagePrototype arrow_sm_down();
+
+		/**
+		 * close
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/close.gif")
+		AbstractImagePrototype close();
+
+		/**
+		 * external (11x11)
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/external.gif")
+		AbstractImagePrototype external();
+
+		/**
+		 * permalink (11x11)
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/permalink.gif")
+		AbstractImagePrototype permalink();
+
+		/**
+		 * refresh
+		 * @return the image prototype
+		 */
+		@Resource(value = "com/tll/public/images/refresh.gif")
+		AbstractImagePrototype refresh();
+	}
+	
 	/**
 	 * Styles - (view.css)
 	 * @author jpk
@@ -29,6 +86,8 @@ public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 		public static final String VIEW_TOOLBAR = "viewToolbar";
 		public static final String VIEW_TITLE = "viewTitle";
 	} // Styles
+	
+	private static final ImageBundle imageBundle = GWT.create(ImageBundle.class);
 
 	static final String TITLE_MINIMIZE = "Minimize";
 	static final String TITLE_MAXIMIZE = "Maximize";
@@ -56,13 +115,14 @@ public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 		assert viewDisplayName != null && viewOptions != null && clickListener != null;
 		viewTitle = new Label(viewDisplayName);
 		btnMinimize =
-				viewOptions.isMinimizable() ? new ToggleButton(App.imgs().arrow_sm_down().createImage(), App.imgs()
+				viewOptions.isMinimizable() ? new ToggleButton(imageBundle.arrow_sm_down().createImage(), imageBundle
 						.arrow_sm_right().createImage(), clickListener) : null;
 		btnPop =
-				viewOptions.isPopable() ? new ToggleButton(App.imgs().external().createImage(), App.imgs().permalink()
+				viewOptions.isPopable() ? new ToggleButton(imageBundle.external().createImage(), imageBundle.permalink()
 						.createImage(), clickListener) : null;
-		btnClose = viewOptions.isClosable() ? new PushButton(App.imgs().close().createImage(), clickListener) : null;
-		btnRefresh = viewOptions.isRefreshable() ? new PushButton(App.imgs().refresh().createImage(), clickListener) : null;
+		btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickListener) : null;
+		btnRefresh =
+				viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickListener) : null;
 
 		addStyleName(Styles.VIEW_TOOLBAR);
 		viewTitle.setStyleName(Styles.VIEW_TITLE);

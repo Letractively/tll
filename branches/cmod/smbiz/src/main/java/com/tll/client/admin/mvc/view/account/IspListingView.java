@@ -18,7 +18,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
-import com.tll.common.search.impl.AccountSearch;
+import com.tll.common.search.AccountSearch;
 import com.tll.common.util.GlobalFormat;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;

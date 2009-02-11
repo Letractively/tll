@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Aug 29, 2007
  */
-package com.tll.common.search.impl;
+package com.tll.common.search;
 
 import com.tll.common.search.EntitySearch;
 import com.tll.criteria.CriteriaType;

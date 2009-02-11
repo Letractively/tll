@@ -27,7 +27,7 @@ import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.rpc.IListingService;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
-import com.tll.common.search.impl.AccountSearch;
+import com.tll.common.search.AccountSearch;
 import com.tll.config.Config;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.SelectNamedQueries;

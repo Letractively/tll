@@ -8,10 +8,10 @@ import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.RemoteListingDefinition;
-import com.tll.common.model.IEntityType;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityType;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**

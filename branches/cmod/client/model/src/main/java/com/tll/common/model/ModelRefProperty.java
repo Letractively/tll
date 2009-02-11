@@ -3,6 +3,8 @@
  */
 package com.tll.common.model;
 
+import com.tll.model.IEntityType;
+
 
 /**
  * ModelRefProperty - Thin wrapper around a {@link Model} in order to realize

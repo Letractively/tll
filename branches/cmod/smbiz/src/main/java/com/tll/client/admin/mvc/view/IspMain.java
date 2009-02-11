@@ -11,7 +11,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.common.admin.AdminContext;
 import com.tll.common.model.RefKey;
-import com.tll.common.search.impl.AccountSearch;
+import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.EntityType;
 

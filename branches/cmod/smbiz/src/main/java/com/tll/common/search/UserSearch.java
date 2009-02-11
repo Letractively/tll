@@ -2,22 +2,22 @@
  * The Logic Lab
  * @author jpk Aug 29, 2007
  */
-package com.tll.common.search.impl;
+package com.tll.common.search;
 
 import com.tll.common.search.NamedTimeStampEntitySearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.EntityType;
 
 /**
- * InterfaceSearch
+ * UserSearch
  * @author jpk
  */
-public class InterfaceSearch extends NamedTimeStampEntitySearch {
+public class UserSearch extends NamedTimeStampEntitySearch {
 
 	/**
 	 * Constructor
 	 */
-	public InterfaceSearch() {
+	public UserSearch() {
 		super();
 	}
 
@@ -25,20 +25,21 @@ public class InterfaceSearch extends NamedTimeStampEntitySearch {
 	 * Constructor
 	 * @param criteriaType
 	 */
-	public InterfaceSearch(CriteriaType criteriaType) {
-		super(criteriaType, EntityType.INTERFACE);
+	public UserSearch(CriteriaType criteriaType) {
+		super(criteriaType, EntityType.USER);
 	}
 
 	/**
 	 * Constructor
 	 * @param businessKeyName
 	 */
-	public InterfaceSearch(String businessKeyName) {
-		super(businessKeyName, EntityType.INTERFACE);
+	public UserSearch(String businessKeyName) {
+		super(businessKeyName, EntityType.USER);
 	}
 
 	@Override
 	public void clear() {
 		super.clear();
+
 	}
 }

@@ -5,8 +5,8 @@
  */
 package com.tll.common.data;
 
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
+import com.tll.model.IEntityType;
 
 /**
  * EntityPersistRequest

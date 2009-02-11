@@ -38,7 +38,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 	/**
 	 * The listing nav bar specific image bundle.
 	 */
-	private static final ListingNavBarImageBundle listingNavBarImageBundle =
+	private static final ListingNavBarImageBundle imageBundle =
 			(ListingNavBarImageBundle) GWT.create(ListingNavBarImageBundle.class);
 
 	/**
@@ -133,10 +133,10 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 		pageSize = config.getPageSize();
 
 		if(pageSize > 0) {
-			imgPageFirst = listingNavBarImageBundle.page_first().createImage();
-			imgPagePrev = listingNavBarImageBundle.page_prev().createImage();
-			imgPageNext = listingNavBarImageBundle.page_next().createImage();
-			imgPageLast = listingNavBarImageBundle.page_last().createImage();
+			imgPageFirst = imageBundle.page_first().createImage();
+			imgPagePrev = imageBundle.page_prev().createImage();
+			imgPageNext = imageBundle.page_next().createImage();
+			imgPageLast = imageBundle.page_last().createImage();
 
 			btnPageFirst = new PushButton(imgPageFirst, this);
 			btnPagePrev = new PushButton(imgPagePrev, this);
@@ -330,37 +330,37 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			// first page btn
 			btnPageFirst.setEnabled(!isFirstPage);
 			if(isFirstPage) {
-				listingNavBarImageBundle.page_first_disabled().applyTo(imgPageFirst);
+				imageBundle.page_first_disabled().applyTo(imgPageFirst);
 			}
 			else {
-				listingNavBarImageBundle.page_first().applyTo(imgPageFirst);
+				imageBundle.page_first().applyTo(imgPageFirst);
 			}
 
 			// last page btn
 			btnPageLast.setEnabled(!isLastPage);
 			if(isLastPage) {
-				listingNavBarImageBundle.page_last_disabled().applyTo(imgPageLast);
+				imageBundle.page_last_disabled().applyTo(imgPageLast);
 			}
 			else {
-				listingNavBarImageBundle.page_last().applyTo(imgPageLast);
+				imageBundle.page_last().applyTo(imgPageLast);
 			}
 
 			// prev page btn
 			btnPagePrev.setEnabled(!isFirstPage);
 			if(isFirstPage) {
-				listingNavBarImageBundle.page_prev_disabled().applyTo(imgPagePrev);
+				imageBundle.page_prev_disabled().applyTo(imgPagePrev);
 			}
 			else {
-				listingNavBarImageBundle.page_prev().applyTo(imgPagePrev);
+				imageBundle.page_prev().applyTo(imgPagePrev);
 			}
 
 			// next page btn
 			btnPageNext.setEnabled(!isLastPage);
 			if(isLastPage) {
-				listingNavBarImageBundle.page_next_disabled().applyTo(imgPageNext);
+				imageBundle.page_next_disabled().applyTo(imgPageNext);
 			}
 			else {
-				listingNavBarImageBundle.page_next().applyTo(imgPageNext);
+				imageBundle.page_next().applyTo(imgPageNext);
 			}
 
 			tbPage.setText(Integer.toString(crntPage));

@@ -5,6 +5,8 @@
  */
 package com.tll.common.model;
 
+import com.tll.model.IEntityType;
+
 
 /**
  * IRelationalProperty - Indicates a relationship within a model.

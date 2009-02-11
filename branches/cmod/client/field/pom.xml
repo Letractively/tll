@@ -15,6 +15,11 @@
   <description>Houses the client-side IField classes providing bi-directional field-model binding based on the http://code.google.com/p/gwittir/ project.</description>
 
   <dependencies>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>
