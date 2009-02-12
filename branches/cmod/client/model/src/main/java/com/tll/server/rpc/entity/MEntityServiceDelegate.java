@@ -22,6 +22,7 @@ import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
+import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**
@@ -29,10 +30,14 @@ import com.tll.server.rpc.listing.IMarshalingListHandler;
  * rpc requests.
  * @author jpk
  */
-public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServlet implements
+public class MEntityServiceDelegate extends RpcServlet implements
 		IMEntityService<IEntity, ISearch> {
 
 	private static final long serialVersionUID = 5017008307371980402L;
+	
+	private MEntityContext getMEntityContext() {
+		return (MEntityContext) getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+	}
 
 	/**
 	 * Validates an inbound entity request.
@@ -80,11 +85,11 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 	private IMEntityServiceImpl<? extends IEntity, ? extends ISearch> resolveEntityServiceImpl(
 			final IEntityType entityType, final EntityPayload payload) {
 		try {
-			return MEntityServiceImplFactory.instance(EntityTypeUtil.getEntityClass(entityType), getMEntityServiceContext()
+			return MEntityServiceImplFactory.instance(EntityTypeUtil.getEntityClass(entityType), getMEntityContext()
 					.getServiceResolver());
 		}
 		catch(final SystemError se) {
-			getMEntityServiceContext().getExceptionHandler().handleException(payload.getStatus(), se, se.getMessage(), true);
+			getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), se, se.getMessage(), true);
 			// return null;
 			throw se;
 		}
@@ -95,13 +100,13 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 		final AuxDataPayload payload = new AuxDataPayload();
 		if(validateAuxDataRequest(request, payload)) {
 			try {
-				AuxDataHandler.getAuxData(getMEntityServiceContext(), request, payload);
+				AuxDataHandler.getAuxData(getMEntityContext(), request, payload);
 			}
 			catch(final SystemError se) {
-				getMEntityServiceContext().getExceptionHandler().handleException(payload.getStatus(), se, null, true);
+				getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), se, null, true);
 			}
 			catch(final RuntimeException re) {
-				getMEntityServiceContext().getExceptionHandler().handleException(payload.getStatus(), re, null, true);
+				getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), re, null, true);
 				throw re;
 			}
 		}
@@ -115,7 +120,7 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
 					resolveEntityServiceImpl(request.getEntityType(), payload);
 			if(impl != null) {
-				impl.prototype(getMEntityServiceContext(), request, payload);
+				impl.prototype(getMEntityContext(), request, payload);
 			}
 		}
 		return payload;
@@ -128,7 +133,7 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
 					resolveEntityServiceImpl(request.getEntityType(), payload);
 			if(impl != null) {
-				impl.load(getMEntityServiceContext(), request, payload);
+				impl.load(getMEntityContext(), request, payload);
 			}
 		}
 		return payload;
@@ -141,7 +146,7 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
 					resolveEntityServiceImpl(request.getEntityType(), payload);
 			if(impl != null) {
-				impl.persist(getMEntityServiceContext(), request, payload);
+				impl.persist(getMEntityContext(), request, payload);
 			}
 		}
 		return payload;
@@ -154,7 +159,7 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
 					resolveEntityServiceImpl(request.getEntityType(), payload);
 			if(impl != null) {
-				impl.purge(getMEntityServiceContext(), request, payload);
+				impl.purge(getMEntityContext(), request, payload);
 			}
 		}
 		return payload;
@@ -165,11 +170,12 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 		if(search == null) {
 			throw new IllegalArgumentException("Null search argument.");
 		}
-		final IMEntityServiceContext context = getMEntityServiceContext();
+		final MEntityContext context = getMEntityContext();
 		final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(search.getEntityType());
 		return MEntityServiceImplFactory.instance(entityClass, context.getServiceResolver())
 				.translate(
-				getMEntityServiceContext(), search);
+				getMEntityContext(),
+				search);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -181,9 +187,9 @@ public class MEntityServiceDelegate extends AbstractEntityServiceContextRpcServl
 		final IEntityType entityType = listingDefinition.getSearchCriteria().getEntityType();
 		final MEntityServiceImpl<IEntity, ISearch> svc =
 				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(EntityTypeUtil
-						.getEntityClass(entityType), getMEntityServiceContext()
+						.getEntityClass(entityType), getMEntityContext()
 						.getServiceResolver());
-		return svc.getMarshalingListHandler(getMEntityServiceContext(), listingDefinition);
+		return svc.getMarshalingListHandler(getMEntityContext(), listingDefinition);
 	}
 
 }

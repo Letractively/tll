@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 10, 2009
  */
-package com.tll.common.convert;
+package com.tll.client.convert;
 
 import java.util.Map;
 

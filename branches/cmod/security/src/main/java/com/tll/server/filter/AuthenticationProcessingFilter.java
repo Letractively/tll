@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 
-import com.tll.server.ISecurityContext;
+import com.tll.server.SecurityContext;
 import com.tll.server.SecurityMode;
 
 /**
@@ -82,17 +82,17 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing the AuthenticationProcessingFilter..");
-		ISecurityContext sc = getSecurityContext(config);
+		final SecurityContext sc = getSecurityContext(config);
 		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
 			wrapped.setAuthenticationManager(sc.getAuthenticationManager());
 
-			String afu = config.getInitParameter("authenticationFailureUrl");
+			final String afu = config.getInitParameter("authenticationFailureUrl");
 			if(afu == null) {
 				throw new Error("The init parameter 'authenticationFailureUrl' must be declared");
 			}
 			wrapped.setAuthenticationFailureUrl(afu);
 
-			String dtu = config.getInitParameter("defaultTargetUrl");
+			final String dtu = config.getInitParameter("defaultTargetUrl");
 			if(dtu == null) {
 				throw new Error("The init parameter 'defaultTargetUrl' must be declared");
 			}

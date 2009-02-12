@@ -27,17 +27,17 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
 	@Override
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
+	public MarshalOptions getMarshalOptions(MEntityContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext context, Address e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext context, Address e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext context, Address e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, Address e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -56,7 +56,7 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext context, AddressSearch search,
+	protected void handleSearchTranslation(MEntityContext context, AddressSearch search,
 			ICriteria<Address> criteria) throws IllegalArgumentException {
 		throw new UnsupportedOperationException("No search implemented for Address type");
 	}

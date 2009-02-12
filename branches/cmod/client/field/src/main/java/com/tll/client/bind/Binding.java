@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
@@ -16,7 +17,6 @@ import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.IndexedPropertyChangeEvent;
 import com.tll.common.bind.PropertyChangeEvent;
-import com.tll.common.convert.IConverter;
 import com.tll.common.model.PropertyPath;
 
 /**

@@ -17,7 +17,7 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationP
 import org.springframework.security.userdetails.memory.UserAttribute;
 import org.springframework.security.userdetails.memory.UserAttributeEditor;
 
-import com.tll.server.ISecurityContext;
+import com.tll.server.SecurityContext;
 import com.tll.server.SecurityMode;
 
 /**
@@ -36,22 +36,22 @@ public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing AnonymousProcessingFilter..");
-		final ISecurityContext sc = getSecurityContext(config);
+		final SecurityContext sc = getSecurityContext(config);
 
 		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
-			String k = config.getInitParameter("key");
+			final String k = config.getInitParameter("key");
 			if(k == null) {
 				throw new Error("The init parameter 'key' must be declared");
 			}
 			wrapped.setKey(k);
 
-			String ua = config.getInitParameter("userAttribute");
+			final String ua = config.getInitParameter("userAttribute");
 			if(ua == null) {
 				throw new Error("The init parameter 'userAttribute' must be declared");
 			}
-			UserAttributeEditor uae = new UserAttributeEditor();
+			final UserAttributeEditor uae = new UserAttributeEditor();
 			uae.setAsText(ua);
-			UserAttribute userAttribute = (UserAttribute) uae.getValue();
+			final UserAttribute userAttribute = (UserAttribute) uae.getValue();
 			wrapped.setUserAttribute(userAttribute);
 		}
 	}
@@ -60,7 +60,7 @@ public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		log.debug("AnonymousProcessingFilter filtering..");
-		ISecurityContext sc = getSecurityContext(request);
+		final SecurityContext sc = getSecurityContext(request);
 		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
 			wrapped.doFilter(request, response, chain);
 		}

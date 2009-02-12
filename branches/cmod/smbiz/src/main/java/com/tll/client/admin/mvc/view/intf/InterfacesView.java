@@ -105,11 +105,11 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			}
 
 			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(IEntityType intfType) {
-				if(SmbizEntityType.INTERFACE_MULTI.name().equals(intfType.getValue())
-						|| SmbizEntityType.INTERFACE_SINGLE.name().equals(intfType.getValue())) {
+				final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, intfType);
+				if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
 					return new MultiOptionInterfacePanel<Model>();
 				}
-				else if(SmbizEntityType.INTERFACE_SWITCH.name().equals(intfType.getValue())) {
+				else if(SmbizEntityType.INTERFACE_SWITCH == set) {
 					return new SwitchInterfacePanel<Model>();
 				}
 				else {
@@ -171,10 +171,10 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 */
 		public InterfacesStack() {
 			super();
-			String listingName = SmbizEntityType.INTERFACE.name();
-			InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
+			final String listingName = SmbizEntityType.INTERFACE.name();
+			final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery("interface.summaryList");
-			Sorting defaultSorting = new Sorting("name");
+			final Sorting defaultSorting = new Sorting("name");
 			listingCommand =
 					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
@@ -197,10 +197,10 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		 * @return HTML string
 		 */
 		private String getStackHtml(Model model) {
-			String name = model.getName();
-			String desc = model.asString("description");
-			String type = model.getEntityType().getName();
-			int i = type.indexOf('-');
+			final String name = model.getName();
+			final String desc = model.asString("description");
+			String type = model.getEntityType().getPresentationName();
+			final int i = type.indexOf('-');
 			if(i > 0) type = type.substring(0, i);
 			return "<p class=\"" + Style.FLOAT_LEFT + "\"><span class=\"" + Style.BOLD + "\">" + name + " </span> (" + type
 					+ ") </p><p class=\"" + Style.SMALL_ITALIC + " " + Style.FLOAT_RIGHT + "\">" + desc + "</p>";
@@ -209,7 +209,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		@Override
 		public void showStack(int index) {
 			if(initialized) {
-				InterfaceStack ir = list.get(index);
+				final InterfaceStack ir = list.get(index);
 				ir.loadInterfaceIfNecessary();
 			}
 			super.showStack(index);
@@ -220,15 +220,15 @@ public class InterfacesView extends AbstractView implements ClickListener {
 			clear();
 
 			list.clear();
-			Model[] intfs = event.getPageElements();
+			final Model[] intfs = event.getPageElements();
 
 			if(intfs == null || intfs.length < 1) return;
 
 			for(int i = 0; i < intfs.length; i++) {
-				Model data = intfs[i];
-				RefKey ref = data.getRefKey();
+				final Model data = intfs[i];
+				final RefKey ref = data.getRefKey();
 				assert ref != null && ref.isSet();
-				InterfaceStack ir = new InterfaceStack(ref);
+				final InterfaceStack ir = new InterfaceStack(ref);
 				list.add(ir);
 				add(ir.editPanel, getStackHtml(data), true);
 			}
@@ -237,7 +237,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 		void handleModelChangeSuccess(ModelChangeEvent event) {
 			final Widget ew = (Widget) event.getSource();
-			for(InterfaceStack iv : list) {
+			for(final InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeSuccess(event);
 					return;
@@ -247,7 +247,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 		void handleModelChangeError(ModelChangeEvent event) {
 			final Widget ew = (Widget) event.getSource();
-			for(InterfaceStack iv : list) {
+			for(final InterfaceStack iv : list) {
 				if(ew == iv.editPanel) {
 					iv.handleModelChangeError(event);
 					return;
@@ -312,8 +312,8 @@ public class InterfacesView extends AbstractView implements ClickListener {
 
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		return event.getSource() == this
-				|| (event.getModelRef() != null && ((SmbizEntityType) event.getModelRef().getType()).isInterfaceType());
+		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getType());
+		return event.getSource() == this || (event.getModelRef() != null && set.isInterfaceType());
 	}
 
 	@Override

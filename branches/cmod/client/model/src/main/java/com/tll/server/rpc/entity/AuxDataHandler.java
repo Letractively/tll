@@ -35,7 +35,7 @@ public abstract class AuxDataHandler {
 	 * @param auxDataRequest
 	 * @param payload
 	 */
-	public static void getAuxData(IMEntityServiceContext context, final AuxDataRequest auxDataRequest,
+	public static void getAuxData(MEntityContext context, final AuxDataRequest auxDataRequest,
 			final AuxDataPayload payload) {
 
 		Map<RefDataType, Map<String, String>> appRefDataMap = null;

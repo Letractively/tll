@@ -34,7 +34,6 @@ import com.tll.model.PaymentInfo;
 import com.tll.model.mock.EntityGraph;
 import com.tll.model.mock.EntityGraphBuilder;
 import com.tll.model.mock.MockEntityFactory;
-import com.tll.server.rpc.EntityTypeUtil;
 import com.tll.util.CommonUtil;
 
 /**
@@ -98,7 +97,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
-			Assert.assertEquals(model.getEntityType(), EntityTypeUtil.entityTypeFromClass(e.entityClass()),
+			Assert.assertEquals(model.getEntityType().getEntityClassName().equals(e.entityClass().getName()),
 					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
 			final RefKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
@@ -118,7 +117,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	@Test
 	public void testCircularEntity() throws Exception {
 		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
-		EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
+		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Asp asp = entityGraph.getEntityByType(Asp.class);
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
@@ -206,9 +205,9 @@ public class MarshalerTest extends AbstractInjectedTest {
 		final Account e = getMockEntityFactory().getEntityCopy(Account.class, false);
 		assert e != null;
 		e.setAddresses(null);
-		Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		final Model m = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		assert m != null;
-		IModelProperty mp = m.get("addresses");
+		final IModelProperty mp = m.get("addresses");
 		assert mp != null;
 	}
 }

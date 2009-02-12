@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Jan 30, 2009
+ * @author jpk Jan 30, 2009
  */
 package com.tll.server.rpc.entity;
 
@@ -17,13 +16,17 @@ import com.tll.server.rpc.ExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
- * AppContext - An instance of this type is stored in the {@link ServletContext}
- * providing references to app scoped constructs for use by servlets to fulfill
- * requests.
+ * MEntityServiceContext
  * @author jpk
  */
-public class MEntityServiceContext implements IMEntityServiceContext {
-	
+public class MEntityContext {
+
+	/**
+	 * The key identifying the {@link MEntityContext} in the
+	 * {@link ServletContext}.
+	 */
+	public static final String SERVLET_CONTEXT_KEY = MEntityContext.class.getName();
+
 	private final DaoMode daoMode;
 	private final RefData refData;
 	private final MailManager mailManager;
@@ -48,7 +51,7 @@ public class MEntityServiceContext implements IMEntityServiceContext {
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
-	public MEntityServiceContext(DaoMode daoMode, RefData refData, MailManager mailManager, Marshaler marshaler,
+	public MEntityContext(DaoMode daoMode, RefData refData, MailManager mailManager, Marshaler marshaler,
 			EntityManagerFactory entityManagerFactory, IEntityFactory entityFactory,
 			IEntityServiceFactory entityServiceFactory, IMEntityServiceImplResolver mEntityServiceImplResolver,
 			INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
@@ -65,52 +68,42 @@ public class MEntityServiceContext implements IMEntityServiceContext {
 		this.exceptionHandler = exceptionHandler;
 	}
 
-	@Override
 	public DaoMode getDaoMode() {
 		return daoMode;
 	}
 
-	@Override
 	public IEntityServiceFactory getEntityServiceFactory() {
 		return entityServiceFactory;
 	}
 
-	@Override
 	public RefData getRefData() {
 		return refData;
 	}
 
-	@Override
 	public IEntityFactory getEntityFactory() {
 		return entityFactory;
 	}
 
-	@Override
 	public EntityManagerFactory getEntityManagerFactory() {
 		return entityManagerFactory;
 	}
 
-	@Override
 	public MailManager getMailManager() {
 		return mailManager;
 	}
 
-	@Override
 	public Marshaler getMarshaler() {
 		return marshaler;
 	}
 
-	@Override
 	public IMEntityServiceImplResolver getServiceResolver() {
 		return mEntityServiceImplResolver;
 	}
 
-	@Override
 	public INamedQueryResolver getQueryResolver() {
 		return namedQueryResolver;
 	}
 
-	@Override
 	public ExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}

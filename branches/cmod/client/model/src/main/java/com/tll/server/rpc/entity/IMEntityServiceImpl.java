@@ -28,7 +28,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 *        {@link EntityPrototypeRequest}
 	 * @param payload The payload to get filled
 	 */
-	void prototype(IMEntityServiceContext context, EntityPrototypeRequest request, EntityPayload payload);
+	void prototype(MEntityContext context, EntityPrototypeRequest request, EntityPayload payload);
 
 	/**
 	 * Loads an entity.
@@ -37,7 +37,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 *        {@link EntityLoadRequest}
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void load(IMEntityServiceContext context, EntityLoadRequest request, EntityPayload payload);
+	void load(MEntityContext context, EntityLoadRequest request, EntityPayload payload);
 
 	/**
 	 * Persists an entity.
@@ -46,7 +46,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 *        {@link EntityPersistRequest}
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void persist(IMEntityServiceContext context, EntityPersistRequest request, EntityPayload payload);
+	void persist(MEntityContext context, EntityPersistRequest request, EntityPayload payload);
 
 	/**
 	 * Purges an entity.
@@ -55,7 +55,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 *        {@link EntityPurgeRequest}
 	 * @param payload The {@link EntityPayload} that is filled
 	 */
-	void purge(IMEntityServiceContext context, EntityPurgeRequest request, EntityPayload payload);
+	void purge(MEntityContext context, EntityPurgeRequest request, EntityPayload payload);
 
 	/**
 	 * Translate client-side search to server-side serach.
@@ -64,14 +64,14 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<E> translate(IMEntityServiceContext context, S search) throws IllegalArgumentException;
+	ICriteria<E> translate(MEntityContext context, S search) throws IllegalArgumentException;
 
 	/**
 	 * Gets the entity type specific marshaling options.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @return The {@link MarshalOptions}
 	 */
-	MarshalOptions getMarshalOptions(IMEntityServiceContext context);
+	MarshalOptions getMarshalOptions(MEntityContext context);
 
 	/**
 	 * Provides the entity type specific {@link IMarshalingListHandler}.
@@ -79,7 +79,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @param listingDefinition The listing definition
 	 * @return The marshaling list handler.
 	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(IMEntityServiceContext context,
+	IMarshalingListHandler<E> getMarshalingListHandler(MEntityContext context,
 			RemoteListingDefinition<S> listingDefinition);
 
 }

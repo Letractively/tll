@@ -21,8 +21,9 @@ import org.springframework.security.context.SecurityContextHolder;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.model.User;
-import com.tll.server.IAppContext;
+import com.tll.server.AppContext;
 import com.tll.server.admin.AdminContext;
+import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.service.entity.user.IUserService;
 
 /**
@@ -70,14 +71,15 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 			final ServletContext sc = session.getServletContext();
 			AdminContext ac = (AdminContext) session.getAttribute(SA_ADMIN_CONTEXT);
 			if(ac == null) {
-				String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
+				final String defaultUserEmail = Config.instance().getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
 				assert defaultUserEmail != null : "No default user email defined in the app configuration!";
-				IAppContext appContext = (IAppContext) sc.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
+				final AppContext appContext = (AppContext) sc.getAttribute(AppContext.SERVLET_CONTEXT_KEY);
 				if(appContext == null) {
 					throw new Error("Unable to obtain the app context");
 				}
-				IUserService userService = appContext.getEntityServiceFactory().instance(IUserService.class);
-				User user = userService.findByUsername(defaultUserEmail);
+				final MEntityContext mec = (MEntityContext) sc.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+				final IUserService userService = mec.getEntityServiceFactory().instance(IUserService.class);
+				final User user = (User) userService.loadUserByUsername(defaultUserEmail);
 				ac = new AdminContext();
 				ac.setUser(user);
 				ac.setAccount(user.getAccount());
@@ -95,9 +97,9 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 
 		// create an AdminContext for this servlet session
 		log.debug("Creating admin context from acegi security context..");
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		assert user != null;
-		AdminContext ac = new AdminContext();
+		final AdminContext ac = new AdminContext();
 		ac.setUser(user);
 		ac.setAccount(user.getAccount()); // default set the current account to the
 		// user's owning account

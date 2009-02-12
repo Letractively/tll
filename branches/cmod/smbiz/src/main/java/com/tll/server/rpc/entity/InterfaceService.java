@@ -25,17 +25,17 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 	private static final MarshalOptions marshalOptions = MarshalOptions.UNCONSTRAINED_MARSHALING;
 
 	@Override
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
+	public MarshalOptions getMarshalOptions(MEntityContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext context, Interface e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext context, Interface e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext context, Interface e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, Interface e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -45,7 +45,7 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search, ICriteria<Interface> criteria)
+	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Interface> criteria)
 			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}

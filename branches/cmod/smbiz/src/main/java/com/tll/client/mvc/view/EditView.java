@@ -68,7 +68,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
-		String s = modelRef.getType().getName();
+		String s = modelRef.getType().getPresentationName();
 		if(modelRef.getName() != null) {
 			s += " " + modelRef.getName();
 		}
@@ -80,7 +80,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		String s = modelRef.getName();
 		if(s == null) {
 			// fallback to the entity type
-			s = modelRef.getType().getName();
+			s = modelRef.getType().getPresentationName();
 		}
 		return "Edit " + s;
 	}
@@ -100,7 +100,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	@Override
 	protected final void doInitialization(ViewRequestEvent viewRequest) {
 		assert viewRequest instanceof EditViewRequest;
-		EditViewRequest r = (EditViewRequest) viewRequest;
+		final EditViewRequest r = (EditViewRequest) viewRequest;
 		model = r.getModel();
 		if(model == null) {
 			setModelRef(r.getModelRef());

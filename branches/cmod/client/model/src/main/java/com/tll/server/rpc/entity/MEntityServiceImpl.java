@@ -57,7 +57,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @param context The request context.
 	 * @throws SystemError When any error occurrs.
 	 */
-	protected abstract void handleLoadOptions(IMEntityServiceContext context, E e, EntityOptions options,
+	protected abstract void handleLoadOptions(MEntityContext context, E e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError;
 
 	/**
@@ -67,10 +67,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @param context The request context.
 	 * @throws SystemError When any error occurrs.
 	 */
-	protected abstract void handlePersistOptions(IMEntityServiceContext context, E e, EntityOptions options)
+	protected abstract void handlePersistOptions(MEntityContext context, E e, EntityOptions options)
 			throws SystemError;
 
-	public final void prototype(final IMEntityServiceContext context, final EntityPrototypeRequest request,
+	public final void prototype(final MEntityContext context, final EntityPrototypeRequest request,
 			final EntityPayload payload) {
 		try {
 			final IEntity e =
@@ -99,7 +99,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @return The loaded {@link IEntity}
 	 */
 	@SuppressWarnings("unchecked")
-	protected E coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
+	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request,
 			final EntityPayload payload) {
 		
 		// core entity loading
@@ -125,7 +125,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		return svc.load(new PrimaryKey(entityClass, id));
 	}
 
-	public final void load(final IMEntityServiceContext context, final EntityLoadRequest request,
+	public final void load(final MEntityContext context, final EntityLoadRequest request,
 			final EntityPayload payload) {
 		try {
 			final E e = coreLoad(context, request, payload);
@@ -167,7 +167,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void persist(final IMEntityServiceContext context, final EntityPersistRequest request,
+	public final void persist(final MEntityContext context, final EntityPersistRequest request,
 			final EntityPayload payload) {
 		try {
 			// core persist
@@ -207,7 +207,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void purge(final IMEntityServiceContext context, final EntityPurgeRequest request,
+	public final void purge(final MEntityContext context, final EntityPurgeRequest request,
 			final EntityPayload payload) {
 		try {
 			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
@@ -250,12 +250,12 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @throws IllegalArgumentException When the <code>search</code> parameter is
 	 *         unsupported.
 	 */
-	protected abstract void handleSearchTranslation(IMEntityServiceContext context, S search,
+	protected abstract void handleSearchTranslation(MEntityContext context, S search,
 			ICriteria<E> criteria)
 			throws IllegalArgumentException;
 
 	@SuppressWarnings("unchecked")
-	public final ICriteria<E> translate(final IMEntityServiceContext context, final S search)
+	public final ICriteria<E> translate(final MEntityContext context, final S search)
 			throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
@@ -282,7 +282,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Sub-classes should override this method for specific table requirements
 	 * based on the listing command particulars.
 	 */
-	public IMarshalingListHandler<E> getMarshalingListHandler(final IMEntityServiceContext context,
+	public IMarshalingListHandler<E> getMarshalingListHandler(final MEntityContext context,
 			final RemoteListingDefinition<S> listingDefinition) {
 		if(listingDefinition.getPropKeys() != null) {
 			return new PropKeyListHandler<E>(context.getMarshaler(),

@@ -37,18 +37,18 @@ public class BootstrapperTest {
 	public void beforeTest(String daoModeStr, String securityModeStr) {
 
 		// handle the dao mode
-		DaoMode daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
+		final DaoMode daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
 		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
-		SecurityMode securityMode = EnumUtil.fromString(SecurityMode.class, securityModeStr);
+		final SecurityMode securityMode = EnumUtil.fromString(SecurityMode.class, securityModeStr);
 		Config.instance().setProperty(SecurityModule.ConfigKeys.SECURITY_MODE_PARAM.getKey(), securityMode.toString());
 		log.debug("SecurityMode: " + securityMode);
 	}
 
 	private ServletContext getMockServletContext() {
-		MockServletContext context = new MockServletContext();
+		final MockServletContext context = new MockServletContext();
 		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, 
 				"com.tll.di.VelocityModule \r\n"
 				+ "com.tll.di.MailModule \r\n" 
@@ -70,12 +70,12 @@ public class BootstrapperTest {
 
 	@Test
 	public void test() throws Exception {
-		ServletContext context = getMockServletContext();
-		ServletContextEvent event = new ServletContextEvent(context);
-		Bootstrapper bootstraper = new Bootstrapper();
+		final ServletContext context = getMockServletContext();
+		final ServletContextEvent event = new ServletContextEvent(context);
+		final Bootstrapper bootstraper = new Bootstrapper();
 		bootstraper.contextInitialized(event);
-		IAppContext ac = (IAppContext) context.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
-		ISecurityContext sc = (ISecurityContext) context.getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY);
+		final AppContext ac = (AppContext) context.getAttribute(AppContext.SERVLET_CONTEXT_KEY);
+		final SecurityContext sc = (SecurityContext) context.getAttribute(SecurityContext.SERVLET_CONTEXT_KEY);
 		Assert.assertNotNull(ac);
 		Assert.assertNotNull(sc);
 	}

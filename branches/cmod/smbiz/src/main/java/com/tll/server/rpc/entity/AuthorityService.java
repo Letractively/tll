@@ -25,17 +25,17 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
 	@Override
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
+	public MarshalOptions getMarshalOptions(MEntityContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext context, Authority e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext context, Authority e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext context, Authority e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, Authority e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -45,7 +45,7 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search, ICriteria<Authority> criteria)
+	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Authority> criteria)
 			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}

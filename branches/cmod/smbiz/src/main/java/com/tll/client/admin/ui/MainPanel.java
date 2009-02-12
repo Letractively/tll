@@ -114,11 +114,11 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		dockPanel.add(center, DockPanel.CENTER);
 		dockPanel.setStylePrimaryName(Styles.MAIN);
 
-		Element headerTd = header.getElement().getParentElement();
-		Element viewpathTd = viewpath.getElement().getParentElement();
-		Element centerTd = center.getElement().getParentElement();
-		Element rightNavTd = rightNav.getElement().getParentElement();
-		Element footerTd = footer.getElement().getParentElement();
+		final Element headerTd = header.getElement().getParentElement();
+		final Element viewpathTd = viewpath.getElement().getParentElement();
+		final Element centerTd = center.getElement().getParentElement();
+		final Element rightNavTd = rightNav.getElement().getParentElement();
+		final Element footerTd = footer.getElement().getParentElement();
 
 		headerTd.setPropertyString("id", "headerTd");
 		viewpathTd.setPropertyString("id", "viewpathTd");
@@ -139,8 +139,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
 		if(changeType == ChangeType.USER_CHANGE) {
-			Model user = ac.getUser();
-			Model account = ac.getUserAccount();
+			final Model user = ac.getUser();
+			final Model account = ac.getUserAccount();
 
 			// update the current user panel
 			rightNav.setCurrentUser(user);
@@ -293,7 +293,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 
 		public void onSubmitComplete(FormSubmitCompleteEvent event) {
-			String results = event.getResults();
+			final String results = event.getResults();
 			if(results == null || results.length() == 0) {
 				// successful logoff
 				userSessionListeners.fireLogout();
@@ -309,10 +309,10 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			String dm;
 			try {
-				Model account = user.relatedOne("account").getModel();
+				final Model account = user.relatedOne("account").getModel();
 				dm = Fmt.format(account.getDateModified(), GlobalFormat.DATE);
 			}
-			catch(PropertyPathException e) {
+			catch(final PropertyPathException e) {
 				dm = "";
 			}
 			this.lblUserAccount.setText(dm);
@@ -320,7 +320,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentAccount(Model account) {
 			this.lblCrntAcnt.setText(account.getName());
-			this.lblCrntAcntType.setText(account.getEntityType().getName());
+			this.lblCrntAcntType.setText(account.getEntityType().getPresentationName());
 			this.lblCrntAcntDateCreated.setText(Fmt.format(account.getDateCreated(), GlobalFormat.DATE));
 		}
 
@@ -369,9 +369,9 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 
 		public void onStatusEvent(StatusEvent event) {
-			Status status = event.getStatus();
+			final Status status = event.getStatus();
 			if(status != null) {
-				List<Msg> gms = status.getGlobalDisplayMsgs();
+				final List<Msg> gms = status.getGlobalDisplayMsgs();
 				if(gms != null && gms.size() > 0) {
 					MsgManager.instance().post(true, gms, Position.CENTER, this, -1, true).show();
 				}

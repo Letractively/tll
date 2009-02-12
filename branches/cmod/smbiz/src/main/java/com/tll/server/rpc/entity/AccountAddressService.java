@@ -24,18 +24,18 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 1);
 
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
+	public MarshalOptions getMarshalOptions(MEntityContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext context, AccountAddress e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext context, AccountAddress e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 		// no-op
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext context, AccountAddress e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, AccountAddress e, EntityOptions options)
 			throws SystemError {
 		// no-op
 	}
@@ -46,7 +46,7 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext context, ISearch search,
+	protected void handleSearchTranslation(MEntityContext context, ISearch search,
 			ICriteria<AccountAddress> criteria) throws IllegalArgumentException {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}

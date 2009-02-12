@@ -11,9 +11,9 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.NoFormatStringConverter;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.convert.IConverter;
-import com.tll.common.convert.NoFormatStringConverter;
 import com.tll.common.util.SimpleComparator;
 
 /**

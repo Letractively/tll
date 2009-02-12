@@ -13,6 +13,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.common.model.IEntityType;
+import com.tll.model.SmbizEntityType;
 
 /**
  * MainView - The root view base class for all account types.
@@ -38,7 +39,8 @@ public abstract class MainView extends AbstractView {
 		}
 
 		private static String getMainViewName(IEntityType accountType) {
-			return accountType.getValue() + "_MAIN";
+			final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, accountType);
+			return set.getValue() + "_MAIN";
 		}
 
 		protected MainViewClass(IEntityType accountType) {

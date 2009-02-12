@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.common.convert.IConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 

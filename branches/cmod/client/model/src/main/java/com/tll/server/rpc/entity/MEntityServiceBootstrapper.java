@@ -96,14 +96,14 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			throw new Error(e.getMessage(), e);
 		}
 
-		servletContext.setAttribute(IMEntityServiceContext.SERVLET_CONTEXT_KEY, new MEntityServiceContext(daoMode, refdata,
+		servletContext.setAttribute(MEntityContext.SERVLET_CONTEXT_KEY, new MEntityContext(daoMode, refdata,
 				mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory, sr, nqr, exceptionHandler));
 	}
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
-		IMEntityServiceContext c =
-				(IMEntityServiceContext) servletContext.getAttribute(IMEntityServiceContext.SERVLET_CONTEXT_KEY);
+		MEntityContext c =
+				(MEntityContext) servletContext.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
 		if(c != null) {
 			final EntityManagerFactory emf = c.getEntityManagerFactory();
 			if(emf != null) {

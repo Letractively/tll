@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.security.ui.AccessDeniedHandlerImpl;
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 
-import com.tll.server.ISecurityContext;
+import com.tll.server.SecurityContext;
 import com.tll.server.SecurityMode;
 
 /**
@@ -36,23 +36,23 @@ public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		log.debug("Initializing the ExceptionTranslationFilter..");
-		ISecurityContext sc = getSecurityContext(config);
+		final SecurityContext sc = getSecurityContext(config);
 		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
 			// access denied handler
-			String ep = config.getInitParameter("errorPage");
+			final String ep = config.getInitParameter("errorPage");
 			if(ep == null) {
 				throw new Error("The init parameter 'errorPage' must be declared");
 			}
-			AccessDeniedHandlerImpl impl = new AccessDeniedHandlerImpl();
+			final AccessDeniedHandlerImpl impl = new AccessDeniedHandlerImpl();
 			impl.setErrorPage(ep);
 			wrapped.setAccessDeniedHandler(impl);
 
 			// authentication entry point
-			String lfu = config.getInitParameter("loginFormUrl");
+			final String lfu = config.getInitParameter("loginFormUrl");
 			if(lfu == null) {
 				throw new ServletException("The init parameter 'loginFormUrl' must be declared");
 			}
-			AuthenticationProcessingFilterEntryPoint apfep = new AuthenticationProcessingFilterEntryPoint();
+			final AuthenticationProcessingFilterEntryPoint apfep = new AuthenticationProcessingFilterEntryPoint();
 			apfep.setLoginFormUrl(lfu);
 			wrapped.setAuthenticationEntryPoint(apfep);
 		}
@@ -62,7 +62,7 @@ public class ExceptionTranslationFilter extends AbstractSecurityFilter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		log.debug("ExceptionTranslationFilter filtering..");
-		ISecurityContext sc = getSecurityContext(request);
+		final SecurityContext sc = getSecurityContext(request);
 		if(sc.getSecurityMode() == SecurityMode.ACEGI) {
 			wrapped.doFilter(request, response, chain);
 		}

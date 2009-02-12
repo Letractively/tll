@@ -12,7 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.tll.server.ISecurityContext;
+import com.tll.server.SecurityContext;
 
 /**
  * AbstractSecurityFilter - Base class for all security related {@link Filter}s.
@@ -26,12 +26,12 @@ public abstract class AbstractSecurityFilter implements Filter {
 	 * @return The non-<code>null</code> security context.
 	 * @throws ServletException When the security context can't be obtained.
 	 */
-	protected final ISecurityContext getSecurityContext(ServletRequest request) throws ServletException {
+	protected final SecurityContext getSecurityContext(ServletRequest request) throws ServletException {
 		assert request != null;
 		final HttpSession session = ((HttpServletRequest) request).getSession(false);
-		ISecurityContext sc =
-				session == null ? null : (ISecurityContext) session.getServletContext().getAttribute(
-						ISecurityContext.SERVLET_CONTEXT_KEY);
+		final SecurityContext sc =
+				session == null ? null : (SecurityContext) session.getServletContext().getAttribute(
+						SecurityContext.SERVLET_CONTEXT_KEY);
 		if(sc == null) {
 			throw new ServletException("Unable to obtain the security context from the request");
 		}
@@ -44,10 +44,10 @@ public abstract class AbstractSecurityFilter implements Filter {
 	 * @return The non-<code>null</code> security context.
 	 * @throws ServletException When the security context can't be obtained.
 	 */
-	protected final ISecurityContext getSecurityContext(FilterConfig config) throws ServletException {
+	protected final SecurityContext getSecurityContext(FilterConfig config) throws ServletException {
 		assert config != null;
-		ISecurityContext sc =
-				(ISecurityContext) config.getServletContext().getAttribute(ISecurityContext.SERVLET_CONTEXT_KEY);
+		final SecurityContext sc =
+				(SecurityContext) config.getServletContext().getAttribute(SecurityContext.SERVLET_CONTEXT_KEY);
 		if(sc == null) {
 			throw new ServletException("Unable to obtain the security context from the filter configuration.");
 		}

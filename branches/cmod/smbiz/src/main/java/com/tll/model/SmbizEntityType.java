@@ -71,7 +71,6 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		return getName();
 	}
 
-	/*
 	public boolean isAbstract() {
 		return ACCOUNT.equals(this) || INTERFACE.equals(this);
 	}
@@ -85,7 +84,6 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		return INTERFACE.equals(this) || INTERFACE_MULTI.equals(this) || INTERFACE_SINGLE.equals(this)
 				|| INTERFACE_SWITCH.equals(this);
 	}
-	*/
 
 	/**
 	 * Mimics the java class hierarchy mechanism so we can check for
@@ -93,7 +91,6 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	 * @param type entity type
 	 * @return true/false
 	 */
-	/*
 	public boolean isSubtype(SmbizEntityType type) {
 		switch(this) {
 			case ACCOUNT:
@@ -103,5 +100,4 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		}
 		return false;
 	}
-	*/
 }

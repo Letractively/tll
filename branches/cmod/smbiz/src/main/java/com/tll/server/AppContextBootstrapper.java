@@ -5,7 +5,6 @@
  */
 package com.tll.server;
 
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
@@ -14,13 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Injector;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.dao.DaoMode;
-import com.tll.mail.MailManager;
-import com.tll.model.IEntityFactory;
-import com.tll.refdata.RefData;
-import com.tll.server.marshal.Marshaler;
-import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.util.EnumUtil;
 
 /**
  * AppContextBootstrapper
@@ -35,8 +27,7 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 	public static enum ConfigKeys implements IConfigKey {
 
 		ENVIRONMENT_PARAM("environment"),
-		DEBUG_PARAM("debug"),
-		DAO_MODE_PARAM("db.dao.mode");
+		DEBUG_PARAM("debug");
 
 		private final String key;
 
@@ -57,39 +48,16 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
+		log.debug("Bootstrapping the app context..");
 		final boolean debug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
 		final String environment = Config.instance().getString(ConfigKeys.ENVIRONMENT_PARAM.getKey());
-
-		final DaoMode daoMode =
-				EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
-
-		final RefData refdata = injector.getInstance(RefData.class);
-		final MailManager mailManager = injector.getInstance(MailManager.class);
-		
-		final Marshaler marshaler = injector.getInstance(Marshaler.class);
-		final EntityManagerFactory entityManagerFactory =
-				daoMode == DaoMode.ORM ? injector.getInstance(EntityManagerFactory.class) : null;
-		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
-		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
-
-		AppContext c =
-				new AppContext(debug, environment, refdata, mailManager, marshaler, daoMode, entityManagerFactory,
-						entityFactory, entityServiceFactory);
-
-		servletContext.setAttribute(IAppContext.SERVLET_CONTEXT_KEY, c);
+		final AppContext c = new AppContext(debug, environment);
+		servletContext.setAttribute(AppContext.SERVLET_CONTEXT_KEY, c);
 	}
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
-		IAppContext ac =
-				(IAppContext) servletContext.getAttribute(IAppContext.SERVLET_CONTEXT_KEY);
-		if(ac != null) {
-			final EntityManagerFactory emf = ac.getEntityManagerFactory();
-			if(emf != null) {
-				log.debug("Closing EntityManagerFactory ...");
-				emf.close();
-			}
-		}
+		// no-op
 	}
 
 }

@@ -5,10 +5,10 @@
  */
 package com.tll.client.admin.ui.field;
 
+import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.common.convert.IFormattedConverter;
 import com.tll.common.util.GlobalFormat;
 import com.tll.model.CreditCardType;
 import com.tll.refdata.RefDataType;

@@ -1,6 +1,6 @@
 package com.tll.client.admin.ui.field.account;
 
-import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.admin.ui.field.CurrencyAwareFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.model.AccountStatus;
 
@@ -8,7 +8,7 @@ import com.tll.model.AccountStatus;
  * AccountFieldsProvider
  * @author jpk
  */
-public class AccountFieldsProvider extends AbstractFieldGroupProvider {
+public class AccountFieldsProvider extends CurrencyAwareFieldGroupProvider {
 
 	@Override
 	protected String getFieldGroupName() {

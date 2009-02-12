@@ -25,12 +25,12 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
 
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext context) {
+	public MarshalOptions getMarshalOptions(MEntityContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext context, Account e, EntityOptions entityOptions,
+	protected void handleLoadOptions(MEntityContext context, Account e, EntityOptions entityOptions,
 			Map<String, RefKey> refs) throws SystemError {
 
 		IEntityServiceFactory entityServiceFactory = context.getEntityServiceFactory();
@@ -75,7 +75,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext context, Account e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, Account e, EntityOptions options)
 			throws SystemError {
 		// no-op
 	}
@@ -86,7 +86,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext context, AccountSearch search,
+	protected void handleSearchTranslation(MEntityContext context, AccountSearch search,
 			ICriteria<Account> criteria) {
 
 		// date ranges

@@ -23,7 +23,7 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected N coreLoad(final IMEntityServiceContext context, final EntityLoadRequest request,
+	protected N coreLoad(final MEntityContext context, final EntityLoadRequest request,
 			final EntityPayload payload) {
 
 		if(request.isLoadByName()) {

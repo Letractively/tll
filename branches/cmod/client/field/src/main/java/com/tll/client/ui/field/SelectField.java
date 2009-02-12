@@ -13,7 +13,7 @@ import java.util.Iterator;
 import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.common.convert.IConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
 /**

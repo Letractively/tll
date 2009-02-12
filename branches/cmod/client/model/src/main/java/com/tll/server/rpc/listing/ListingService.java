@@ -31,10 +31,10 @@ import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.entity.AbstractEntityServiceContextRpcServlet;
+import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.entity.EntityTypeUtil;
-import com.tll.server.rpc.entity.IMEntityServiceContext;
 import com.tll.server.rpc.entity.IMEntityServiceImpl;
+import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.server.rpc.entity.MEntityServiceImplFactory;
 
 /**
@@ -43,7 +43,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * @param <S> the search type
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends AbstractEntityServiceContextRpcServlet
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet
 		implements
 		IListingService<S, Model> {
 
@@ -78,8 +78,9 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 		if(!status.hasErrors() && listingRequest != null) {
 
-			final IMEntityServiceContext context = getMEntityServiceContext();
-			final HttpServletRequest request = getThreadLocalRequest();
+			final HttpServletRequest request = getRequestContext().getRequest();
+			final MEntityContext context =
+					(MEntityContext) getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
 			assert request != null;
 
 			Integer offset = listingRequest.getOffset();

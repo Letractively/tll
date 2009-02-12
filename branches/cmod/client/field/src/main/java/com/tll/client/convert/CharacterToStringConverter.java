@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 12, 2009
  */
-package com.tll.common.convert;
+package com.tll.client.convert;
 
 /**
  * CharacterToStringConverter

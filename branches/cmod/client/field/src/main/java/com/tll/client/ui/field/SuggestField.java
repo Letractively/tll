@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestionEvent;
 import com.google.gwt.user.client.ui.SuggestionHandler;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.common.convert.IConverter;
+import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
 /**

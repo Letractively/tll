@@ -20,7 +20,7 @@ import com.tll.di.SecurityModule.ConfigKeys;
 import com.tll.util.EnumUtil;
 
 /**
- * SecurityContextHandler - Sets the {@link ISecurityContext} in the
+ * SecurityContextBootstrapper - Sets the {@link SecurityContext} in the
  * {@link ServletContext}.
  * @author jpk
  */
@@ -43,7 +43,7 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 		}
 
 		log.info("Setting security context (SecurityMode: " + securityMode + ")..");
-		servletContext.setAttribute(ISecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,
+		servletContext.setAttribute(SecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,
 				authenticationManager, httpRequesetAccessDecisionManager));
 	}
 

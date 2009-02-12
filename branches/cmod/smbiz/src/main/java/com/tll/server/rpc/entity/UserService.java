@@ -25,17 +25,17 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 1);
 
 	@Override
-	public MarshalOptions getMarshalOptions(IMEntityServiceContext contexxt) {
+	public MarshalOptions getMarshalOptions(MEntityContext contexxt) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(IMEntityServiceContext contexxt, User e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext contexxt, User e, EntityOptions options,
 			Map<String, RefKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(IMEntityServiceContext contexxt, User e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext contexxt, User e, EntityOptions options)
 			throws SystemError {
 	}
 
@@ -45,7 +45,7 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(IMEntityServiceContext contexxt, UserSearch search,
+	protected void handleSearchTranslation(MEntityContext contexxt, UserSearch search,
 			ICriteria<User> criteria)
 			throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
