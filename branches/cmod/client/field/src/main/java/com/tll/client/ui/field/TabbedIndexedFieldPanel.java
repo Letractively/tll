@@ -31,9 +31,9 @@ import com.tll.common.bind.IBindable;
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
  * a {@link TabPanel} to show the indexed field panels.
- * @author jpk
  * @param <I> the index field panel type
  * @param <M> the model type
+ * @author jpk
  */
 public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
 		IndexedFieldPanel<I, M> implements TabListener {
@@ -108,7 +108,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 			spnl.setStylePrimaryName(Styles.EMPTY);
 			initWidget(spnl);
 			if(enableAdd) {
-				Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
+				final Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
 				button.addClickListener(new ClickListener() {
 
 					public void onClick(Widget sender) {
@@ -127,7 +127,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	} // EmptyWidget
 
 	/**
-	 * The app wide image bundle.
+	 * The local image bundle for this widget.
 	 */
 	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
 
@@ -249,7 +249,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 	@Override
 	protected I remove(int index) throws IndexOutOfBoundsException {
-		I removed = super.remove(index);
+		final I removed = super.remove(index);
 		if(removed != null) {
 			// remove the tab
 			if(!tabPanel.remove(index)) {
@@ -292,8 +292,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		else {
 			// add the *existing* index field panels to the tab panel
-			for(Index<I> i : indexPanels) {
-				Widget tw = getTabWidget(i.fp, false);
+			for(final Index<I> i : indexPanels) {
+				final Widget tw = getTabWidget(i.fp, false);
 				tabWidgets.add(tw);
 				if(enableDelete) {
 					((WidgetAndLabel) tw).getTheWidget().setTitle("Delete " + getIndexTypeName());
@@ -303,7 +303,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		if(enableAdd) {
 			// add trailing *add* tab
-			PushButton pb = new PushButton(imageBundle.add().createImage());
+			final PushButton pb = new PushButton(imageBundle.add().createImage());
 			pb.setTitle("Add " + getIndexTypeName());
 			pb.addClickListener(new ClickListener() {
 

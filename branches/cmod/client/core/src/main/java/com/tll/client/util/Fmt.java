@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Sep 2, 2007
  */
-package com.tll.common.util;
+package com.tll.client.util;
 
 import java.util.Date;
 import java.util.HashMap;

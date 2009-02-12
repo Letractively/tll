@@ -1,8 +1,8 @@
 package com.tll.client.validate;
 
 import com.google.gwt.i18n.client.NumberFormat;
-import com.tll.common.util.Fmt;
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * DecimalValidator

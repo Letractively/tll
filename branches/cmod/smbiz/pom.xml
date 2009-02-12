@@ -680,17 +680,17 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-login</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-field</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-login</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 

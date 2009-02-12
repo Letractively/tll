@@ -4,7 +4,7 @@
  */
 package com.tll.client.ui;
 
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * IHasFormat - Indicates formatting support.

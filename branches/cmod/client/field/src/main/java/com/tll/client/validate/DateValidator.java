@@ -3,10 +3,10 @@ package com.tll.client.validate;
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.util.Fmt;
-import com.tll.common.util.GlobalFormat;
 import com.tll.common.util.StringUtil;
 
 /**

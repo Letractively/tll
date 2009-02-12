@@ -44,13 +44,13 @@ import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.admin.AdminContext;
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.msg.Msg;
-import com.tll.common.util.Fmt;
-import com.tll.common.util.GlobalFormat;
 
 /**
  * MainPanel

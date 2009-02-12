@@ -5,7 +5,7 @@
  */
 package com.tll.client.convert;
 
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * NoFormatStringConverter

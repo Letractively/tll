@@ -3,7 +3,7 @@
  * @author jpk
  * Jul 11, 2008
  */
-package com.tll.client.cache;
+package com.tll.client.storage;
 
 /**
  * StorageException

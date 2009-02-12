@@ -6,13 +6,7 @@ package com.tll.common.model;
 
 import org.testng.annotations.Test;
 
-import com.tll.model.AccountAddress;
-import com.tll.model.Address;
-import com.tll.model.Asp;
-import com.tll.model.Currency;
-import com.tll.model.PaymentInfo;
-import com.tll.model.mock.MockEntityFactory;
-import com.tll.server.marshal.MarshalOptions;
+import com.tll.common.model.mock.TestModelStubber;
 
 /**
  * PropertyPathModelResolutionTest
@@ -21,19 +15,6 @@ import com.tll.server.marshal.MarshalOptions;
 @Test(groups = "client-model")
 public class PropertyPathModelResolutionTest extends AbstractModelTest {
 	
-	private Model getTestModel() {
-		MockEntityFactory mef = getMockEntityFactory();
-
-		Asp asp = mef.getEntityCopy(Asp.class, true);
-		asp.setCurrency(mef.getEntityCopy(Currency.class, true));
-		asp.setPaymentInfo(mef.getEntityCopy(PaymentInfo.class, true));
-		AccountAddress aa = mef.getEntityCopy(AccountAddress.class, true);
-		aa.setAddress(mef.getEntityCopy(Address.class, true));
-		asp.addAccountAddress(aa);
-
-		return getMarshaler().marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
-	}
-
 	/**
 	 * Test the property path resolution of EXISTING property values
 	 * @throws Exception Upon any encountered failure
@@ -44,7 +25,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		String path;
 		Model model;
 
-		model = getTestModel();
+		model = TestModelStubber.stubTestModel();
 
 		path = "name";
 		prop = model.getModelProperty(path);
@@ -59,7 +40,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		try {
 			prop = model.getModelProperty(path);
 		}
-		catch(NullNodeInPropPathException e) {
+		catch(final NullNodeInPropPathException e) {
 			// expected
 		}
 
@@ -77,7 +58,7 @@ public class PropertyPathModelResolutionTest extends AbstractModelTest {
 		try {
 			prop = model.getModelProperty(path);
 		}
-		catch(IndexOutOfRangeInPropPathException e) {
+		catch(final IndexOutOfRangeInPropPathException e) {
 			// expected
 		}
 

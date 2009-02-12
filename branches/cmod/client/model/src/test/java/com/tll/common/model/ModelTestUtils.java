@@ -1,6 +1,7 @@
 /**
  * The Logic Lab
- * @author jpk Dec 18, 2007
+ * @author jpk
+ * Feb 12, 2009
  */
 package com.tll.common.model;
 
@@ -9,26 +10,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.testng.annotations.BeforeClass;
-
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
-import com.tll.AbstractInjectedTest;
-import com.tll.TestUtils;
-import com.tll.di.MockEntityFactoryModule;
-import com.tll.di.ModelModule;
-import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.mock.MockEntityFactory;
-import com.tll.model.mock.MockPrimaryKeyGenerator;
+import com.tll.client.TestUtils;
 import com.tll.model.schema.PropertyType;
-import com.tll.server.marshal.Marshaler;
+
 
 /**
- * AbstractModelTest - Base class for testing client model stuff.
+ * ModelTestUtils
  * @author jpk
  */
-public abstract class AbstractModelTest extends AbstractInjectedTest {
+public class ModelTestUtils {
 
 	/**
 	 * Validates a source {@link Model} to a copied {@link Model} verifying the
@@ -39,9 +29,50 @@ public abstract class AbstractModelTest extends AbstractInjectedTest {
 	 *        properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
+	public static void validateCopy(final Model source, final Model copy, final boolean compareReferences)
 			throws Exception {
 		compare(source, copy, compareReferences, true, new ArrayList<Model>());
+	}
+
+	/**
+	 * Validates all properties contained in the given {@link Model} are clear.
+	 * @param source
+	 * @param visited
+	 * @throws Exception
+	 */
+	public static void validateClear(final Model source, final List<Model> visited) throws Exception {
+		assert source != null;
+
+		for(final Iterator<IModelProperty> itr = source.iterator(); itr.hasNext();) {
+			final IModelProperty srcMp = itr.next();
+			final PropertyType pvType = srcMp.getType();
+			if(pvType.isValue()) {
+				// require cleared property value
+				final Object srcValue = srcMp.getValue();
+				TestUtils.validateEmpty(srcValue);
+			}
+			else if(pvType == PropertyType.RELATED_ONE) {
+				// drill into if not already visited
+				final ModelRefProperty srcMrp = (ModelRefProperty) srcMp;
+				final Model m = srcMrp.getModel();
+				visited.add(m);
+				if(m != null) {
+					validateClear(m, visited);
+				}
+			}
+			else if(pvType == PropertyType.RELATED_MANY) {
+				final RelatedManyProperty srcRmp = (RelatedManyProperty) srcMp;
+				final List<Model> srcSet = srcRmp.getList();
+				if(srcSet != null) {
+					for(final Model m : srcSet) {
+						if(!visited.contains(m)) {
+							visited.add(m);
+							validateClear(m, visited);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -52,7 +83,7 @@ public abstract class AbstractModelTest extends AbstractInjectedTest {
 	 *        properties?
 	 * @throws Exception When a copy discrepancy is encountered
 	 */
-	static void equals(final Model source, final Model target, final boolean compareReferences) throws Exception {
+	public static void equals(final Model source, final Model target, final boolean compareReferences) throws Exception {
 		compare(source, target, compareReferences, false, new ArrayList<Model>());
 	}
 
@@ -70,7 +101,7 @@ public abstract class AbstractModelTest extends AbstractInjectedTest {
 	 * @param visited
 	 * @throws Exception
 	 */
-	static void compare(Model source, Model target, final boolean compareReferences,
+	private static void compare(Model source, Model target, final boolean compareReferences,
 			boolean requireDistinctModelProperties, List<Model> visited) throws Exception {
 		assert source != null && target != null;
 
@@ -137,33 +168,5 @@ public abstract class AbstractModelTest extends AbstractInjectedTest {
 				}
 			}
 		}
-	}
-
-	@Override
-	protected final void addModules(List<Module> modules) {
-		super.addModules(modules);
-		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
-		modules.add(new Module() {
-
-			@Override
-			public void configure(Binder binder) {
-				// IPrimaryKeyGenerator
-				binder.bind(IPrimaryKeyGenerator.class).to(MockPrimaryKeyGenerator.class).in(Scopes.SINGLETON);
-			}
-		});
-	}
-
-	@BeforeClass(alwaysRun = true)
-	public final void onBeforeClass() {
-		beforeClass();
-	}
-
-	protected final MockEntityFactory getMockEntityFactory() {
-		return injector.getInstance(MockEntityFactory.class);
-	}
-
-	protected final Marshaler getMarshaler() {
-		return injector.getInstance(Marshaler.class);
 	}
 }

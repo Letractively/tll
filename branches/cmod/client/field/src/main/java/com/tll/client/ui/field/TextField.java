@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.IHasFormat;
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 

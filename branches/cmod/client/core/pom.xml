@@ -13,6 +13,19 @@
   <name>client-core</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses core client and common classes and resources intended for use by all other client modules.</description>
+  
+  <build>
+    
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+    </resources>
+    
+  </build>
 
   <dependencies>
     <dependency>

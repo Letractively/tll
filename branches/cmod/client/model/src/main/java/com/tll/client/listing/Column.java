@@ -1,6 +1,6 @@
 package com.tll.client.listing;
 
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * Column - Listing column definition. A {@link Column} collection dictates the

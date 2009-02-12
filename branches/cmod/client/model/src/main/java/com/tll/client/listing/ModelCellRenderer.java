@@ -4,13 +4,13 @@
  */
 package com.tll.client.listing;
 
+import com.tll.client.util.Fmt;
 import com.tll.common.model.IPropertyValue;
 import com.tll.common.model.ISelfFormattingPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.NullNodeInPropPathException;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
-import com.tll.common.util.Fmt;
 
 /**
  * ModelCellRenderer - Table cell renderer for {@link Model} row data.

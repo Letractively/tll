@@ -19,6 +19,7 @@
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>

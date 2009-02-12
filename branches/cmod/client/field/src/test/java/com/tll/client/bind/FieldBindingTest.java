@@ -3,10 +3,10 @@ package com.tll.client.bind;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.ClientTestUtils;
-import com.tll.client.ClientTestUtils.TestFieldPanel;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.TestUtil.TestFieldPanel;
 import com.tll.common.model.Model;
+import com.tll.common.model.ModelTestUtils;
 import com.tll.common.model.PropertyPathException;
 
 /**
@@ -58,9 +58,9 @@ public class FieldBindingTest extends GWTTestCase {
 	 * Tests the initial binding of model properties to fields.
 	 */
 	public void testBind() {
-		TestFieldPanel fieldPanel = new TestFieldPanel();
+		final TestFieldPanel fieldPanel = new TestFieldPanel();
 		fieldPanel.setAction(new TestModelFieldGroupBindingAction());
-		fieldPanel.setModel(ClientTestUtils.getTestRootModel());
+		fieldPanel.setModel(ModelTestUtils.stubAccount());
 		RootPanel.get().add(fieldPanel);
 	}
 }

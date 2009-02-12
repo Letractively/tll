@@ -16,13 +16,12 @@ import com.tll.client.convert.EnumToStringConverter;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.convert.NoFormatStringConverter;
 import com.tll.client.convert.RefDataMapConverter;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.CreditCardValidator;
 import com.tll.client.validate.EmailAddressValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.common.model.Model;
-import com.tll.common.util.Fmt;
-import com.tll.common.util.GlobalFormat;
-import com.tll.common.util.SimpleComparator;
 import com.tll.refdata.RefDataType;
 
 /**

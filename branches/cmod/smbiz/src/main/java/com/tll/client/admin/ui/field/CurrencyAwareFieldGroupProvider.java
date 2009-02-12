@@ -14,8 +14,8 @@ import com.tll.client.convert.IdConverter;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.SelectField;
+import com.tll.client.ui.field.SimpleComparator;
 import com.tll.common.model.Model;
-import com.tll.common.util.SimpleComparator;
 import com.tll.model.SmbizEntityType;
 
 /**

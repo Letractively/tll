@@ -1,8 +1,33 @@
 <module>
   <inherits name="com.google.gwt.user.User" />
 
+  <!-- client exclusive source path -->
+  <source path="client" />
+  
+  <!-- shared (client/server) source path -->
   <source path="common" />
 
+  <!-- non client package sources -->
+  <source>
+    <!-- tll-core -->
+    <include name="IMarshalable.java" />
+    <include name="IDescriptorProvider.java" />
+    <include name="INameValueProvider.java" />
+    <include name="util/DateRange.java" />
+  </source>
+  
   <public path="public" />
+
+  <replace-with class="com.tll.client.storage.CookieStorage.CookieConstants">
+    <when-type-is class="com.tll.client.storage.CookieStorage.CookieConstantsIE6" />
+    <when-property-is name="user.agent" value="ie6" />
+  </replace-with>
+  
+  <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
+    <when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
+    <any>
+      <when-property-is name="user.agent" value="ie6" />
+    </any>
+  </replace-with>
 
 </module>

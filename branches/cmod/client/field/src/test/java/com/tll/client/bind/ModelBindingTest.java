@@ -11,12 +11,12 @@ import java.util.List;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.ClientTestUtils;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.PropertyChangeSupport;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IndexOutOfRangeInPropPathException;
 import com.tll.common.model.Model;
+import com.tll.common.model.ModelTestUtils;
 
 /**
  * ModelBindingTest - Test that verifies client side data binding using
@@ -37,12 +37,12 @@ public class ModelBindingTest extends GWTTestCase {
 	 */
 	public void testModelChangeSupportAggregation() throws Exception {
 
-		Model[] lr = stubLeftAndRight();
-		Model left = lr[0];
-		Model right = lr[1];
+		final Model[] lr = stubLeftAndRight();
+		final Model left = lr[0];
+		final Model right = lr[1];
 
-		Binding binding = new Binding();
-		List<Binding> children = binding.getChildren();
+		final Binding binding = new Binding();
+		final List<Binding> children = binding.getChildren();
 		children.add(new Binding(left, right, Model.ID_PROPERTY));
 		children.add(new Binding(left, right, Model.NAME_PROPERTY));
 		children.add(new Binding(left, right, Model.DATE_CREATED_PROPERTY));
@@ -60,12 +60,12 @@ public class ModelBindingTest extends GWTTestCase {
 	 */
 	public void testPropertyChangeSyncing() throws Exception {
 
-		Model[] lr = stubLeftAndRight();
-		Model left = lr[0];
-		Model right = lr[1];
+		final Model[] lr = stubLeftAndRight();
+		final Model left = lr[0];
+		final Model right = lr[1];
 
-		Binding binding = new Binding();
-		List<Binding> children = binding.getChildren();
+		final Binding binding = new Binding();
+		final List<Binding> children = binding.getChildren();
 		children.add(new Binding(left, right, Model.ID_PROPERTY));
 		children.add(new Binding(left, right, Model.NAME_PROPERTY));
 		children.add(new Binding(left, right, Model.DATE_CREATED_PROPERTY));
@@ -104,12 +104,12 @@ public class ModelBindingTest extends GWTTestCase {
 	 */
 	public void testIndexedPropertyMutation() throws Exception {
 
-		Model[] lr = stubLeftAndRight();
-		Model left = lr[0];
-		Model right = lr[1];
+		final Model[] lr = stubLeftAndRight();
+		final Model left = lr[0];
+		final Model right = lr[1];
 
 		// create the binding
-		Binding binding = new Binding();
+		final Binding binding = new Binding();
 		binding.getChildren().add(new Binding(left, right, "addresses"));
 		binding.bind();
 
@@ -122,7 +122,7 @@ public class ModelBindingTest extends GWTTestCase {
 		try {
 			val = left.getProperty("addresses[1]");
 		}
-		catch(IndexOutOfRangeInPropPathException e) {
+		catch(final IndexOutOfRangeInPropPathException e) {
 			// expected
 		}
 		val = left.getProperty("addresses");
@@ -132,7 +132,7 @@ public class ModelBindingTest extends GWTTestCase {
 		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
 
 		// add an indexed property on the right
-		Model aa = ClientTestUtils.stubAccountAddress(right, ClientTestUtils.stubAddress(2), 2);
+		final Model aa = ModelTestUtils.stubAccountAddress(right, ModelTestUtils.stubAddress(2), 2);
 		right.setProperty("addresses[1]", aa);
 
 		// verify
@@ -152,9 +152,9 @@ public class ModelBindingTest extends GWTTestCase {
 	protected void verifyInSync(Model left, Model right) throws Exception {
 		// verify the properties changes are syncd
 		try {
-			ClientTestUtils.equals(left, right, true);
+			ModelTestUtils.equals(left, right, true);
 		}
-		catch(Exception e) {
+		catch(final Exception e) {
 			throw new Exception("Model " + left.toString() + " is out of sync with: " + right.toString(), e);
 		}
 	}
@@ -164,12 +164,12 @@ public class ModelBindingTest extends GWTTestCase {
 	 * @return 2 element array where the first element is the left model
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
-		Model left = ClientTestUtils.getTestRootModel();
-		Model right = left.copy(true);
+		final Model left = ModelTestUtils.stubAccount();
+		final Model right = left.copy(true);
 		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
-		ClientTestUtils.validateCopy(left, right, true);
+		ModelTestUtils.validateCopy(left, right, true);
 
 		return new Model[] {
 			left, right };

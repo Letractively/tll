@@ -15,7 +15,9 @@
   
   <public path="public" />
   
+  <!-- css reset (based on YUI) -->
   <stylesheet src="css/reset.css" />
+
   <stylesheet src="css/base.css" />
   <stylesheet src="css/widget-gwt.css" />
   <stylesheet src="css/widget-tll.css" />

@@ -3,10 +3,12 @@
  * @author jpk
  * Dec 27, 2008
  */
-package com.tll.common.util;
+package com.tll.client.ui.field;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import com.tll.common.util.ObjectUtil;
 
 /**
  * SimpleComparator

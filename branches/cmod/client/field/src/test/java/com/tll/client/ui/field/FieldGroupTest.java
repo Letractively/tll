@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.ClientTestUtils;
 
 /**
  * FieldGroupTest
@@ -25,7 +24,7 @@ public class FieldGroupTest extends GWTTestCase {
 
 	private static void fillPropNames(IField<?, ?> f, Collection<String> propNames) {
 		if(f instanceof FieldGroup) {
-			for(IField<?, ?> c : (FieldGroup) f) {
+			for(final IField<?, ?> c : (FieldGroup) f) {
 				fillPropNames(c, propNames);
 			}
 		}
@@ -35,7 +34,7 @@ public class FieldGroupTest extends GWTTestCase {
 	}
 
 	private Collection<String> getPropNames(FieldGroup fg) {
-		Set<String> set = new HashSet<String>();
+		final Set<String> set = new HashSet<String>();
 		fillPropNames(fg, set);
 		return set;
 	}
@@ -44,11 +43,11 @@ public class FieldGroupTest extends GWTTestCase {
 	 * Tests {@link FieldGroup#getField(String)}.
 	 */
 	public void testGetField() {
-		FieldGroup fg = ClientTestUtils.getRootFieldGroupProvider().getFieldGroup();
-		Collection<String> propNames = getPropNames(fg);
+		final FieldGroup fg = TestUtil.getRootFieldGroupProvider().getFieldGroup();
+		final Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
-		for(String prop : propNames) {
-			IField<?, ?> f = fg.getField(prop);
+		for(final String prop : propNames) {
+			final IField<?, ?> f = fg.getField(prop);
 			assert f != null;
 			assert f.getPropertyName() != null && f.getPropertyName().equals(prop);
 		}

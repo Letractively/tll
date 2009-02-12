@@ -57,16 +57,4 @@
   <stylesheet src="css/viewpath.css" />
   <stylesheet src="css/view.css" />
 
-  <replace-with class="com.tll.client.cache.CookieStorage.CookieConstants">
-    <when-type-is class="com.tll.client.cache.CookieStorage.CookieConstantsIE6" />
-    <when-property-is name="user.agent" value="ie6" />
-  </replace-with>
-  
-  <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
-    <when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
-    <any>
-      <when-property-is name="user.agent" value="ie6" />
-    </any>
-  </replace-with>
-
 </module>

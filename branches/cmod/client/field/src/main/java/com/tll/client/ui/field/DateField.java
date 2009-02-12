@@ -15,8 +15,8 @@ import com.google.gwt.widgetideas.client.event.KeyDownEvent;
 import com.google.gwt.widgetideas.client.event.KeyDownHandler;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IHasFormat;
-import com.tll.common.util.Fmt;
-import com.tll.common.util.GlobalFormat;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * DateField

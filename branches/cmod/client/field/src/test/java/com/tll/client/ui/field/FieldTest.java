@@ -14,7 +14,6 @@ import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.NoFormatStringConverter;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.util.SimpleComparator;
 
 /**
  * FieldTest - Tests the core {@link IField} methods for the {@link IField}
