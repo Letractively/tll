@@ -13,8 +13,8 @@ import com.tll.model.IEntity;
 /**
  * IMarshalingListHandler - List handler responsible for transforming requested
  * rows from a {@link SearchResult} to a marshalable construct.
+ * @param <E> The entity type
  * @author jpk
- * @param <E>
  */
 public interface IMarshalingListHandler<E extends IEntity> extends IDecoratedListHandler<SearchResult<E>, Model> {
 

@@ -167,8 +167,16 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// transform to marshaling list handler
-						final IMarshalingListHandler<E> marshalingListHandler =
-								mEntitySvc.getMarshalingListHandler(context, listingDef);
+						final IMarshalingListHandler<E> marshalingListHandler;
+						if(listingDef.getPropKeys() != null) {
+							marshalingListHandler =
+									new PropKeyListHandler<E>(context.getMarshaler(), mEntitySvc.getMarshalOptions(context), listingDef
+											.getPropKeys());
+						}
+						else {
+							marshalingListHandler =
+									new MarshalingListHandler<E>(context.getMarshaler(), mEntitySvc.getMarshalOptions(context));
+						}
 						marshalingListHandler.setWrappedHandler(listHandler);
 
 						// instantiate the handler

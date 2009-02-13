@@ -15,7 +15,6 @@ import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.Payload;
-import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.Status;
 import com.tll.common.model.IEntityType;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -23,7 +22,6 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**
  * MEntityServiceDelegate - Front line rpc servlet that routes entity related
@@ -177,19 +175,4 @@ public class MEntityServiceDelegate extends RpcServlet implements
 				getMEntityContext(),
 				search);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public IMarshalingListHandler<IEntity> getMarshalingListHandler(final RemoteListingDefinition listingDefinition) {
-		if(listingDefinition == null || listingDefinition.getSearchCriteria() == null) {
-			throw new IllegalArgumentException("A listing command and member search property must be set.");
-		}
-		final IEntityType entityType = listingDefinition.getSearchCriteria().getEntityType();
-		final MEntityServiceImpl<IEntity, ISearch> svc =
-				(MEntityServiceImpl<IEntity, ISearch>) MEntityServiceImplFactory.instance(EntityTypeUtil
-						.getEntityClass(entityType), getMEntityContext()
-						.getServiceResolver());
-		return svc.getMarshalingListHandler(getMEntityContext(), listingDefinition);
-	}
-
 }

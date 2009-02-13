@@ -21,7 +21,6 @@ import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
-import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.model.Model;
 import com.tll.common.model.RefKey;
 import com.tll.common.msg.Msg.MsgAttr;
@@ -35,9 +34,6 @@ import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.server.rpc.listing.IMarshalingListHandler;
-import com.tll.server.rpc.listing.MarshalingListHandler;
-import com.tll.server.rpc.listing.PropKeyListHandler;
 import com.tll.service.entity.IEntityService;
 
 /**
@@ -109,13 +105,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 		if(request.isLoadByBusinessKey()) {
 			// load by business key
-			S search = (S) request.getSearch();
+			final S search = (S) request.getSearch();
 			if(search == null) {
 				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
 				return null;
 			}
 
-			IBusinessKey key = handleBusinessKeyTranslation(search);
+			final IBusinessKey key = handleBusinessKeyTranslation(search);
 
 			return svc.load(key);
 		}
@@ -263,7 +259,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		final List<IQueryParam> queryParams = search.getQueryParams();
 
 		if(criteriaType.isQuery()) {
-			ISelectNamedQueryDef queryDef = context.getQueryResolver().resolveNamedQuery(search.getNamedQuery());
+			final ISelectNamedQueryDef queryDef = context.getQueryResolver().resolveNamedQuery(search.getNamedQuery());
 			if(queryDef == null) {
 				throw new IllegalArgumentException("Unable to resolve named query: " + search.getNamedQuery());
 			}
@@ -276,20 +272,5 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		}
 
 		return criteria;
-	}
-
-	/*
-	 * Sub-classes should override this method for specific table requirements
-	 * based on the listing command particulars.
-	 */
-	public IMarshalingListHandler<E> getMarshalingListHandler(final MEntityContext context,
-			final RemoteListingDefinition<S> listingDefinition) {
-		if(listingDefinition.getPropKeys() != null) {
-			return new PropKeyListHandler<E>(context.getMarshaler(),
-					getMarshalOptions(context),
-					listingDefinition.getPropKeys());
-		}
-		return new MarshalingListHandler<E>(context.getMarshaler(),
-				getMarshalOptions(context));
 	}
 }

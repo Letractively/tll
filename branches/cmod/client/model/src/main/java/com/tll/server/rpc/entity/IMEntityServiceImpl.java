@@ -5,12 +5,10 @@ import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
-import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.listing.IMarshalingListHandler;
 
 /**
  * IMEntityServiceImpl - Server side support for the RPC {@link IMEntityService}
@@ -72,14 +70,4 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @return The {@link MarshalOptions}
 	 */
 	MarshalOptions getMarshalOptions(MEntityContext context);
-
-	/**
-	 * Provides the entity type specific {@link IMarshalingListHandler}.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param listingDefinition The listing definition
-	 * @return The marshaling list handler.
-	 */
-	IMarshalingListHandler<E> getMarshalingListHandler(MEntityContext context,
-			RemoteListingDefinition<S> listingDefinition);
-
 }

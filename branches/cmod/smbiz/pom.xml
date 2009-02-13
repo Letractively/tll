@@ -690,6 +690,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-listing</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-login</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
