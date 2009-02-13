@@ -88,7 +88,6 @@
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
-          <include>**/model/IEntityType.java</include>
           <include>**/model/AccountStatus.java</include>
           <include>**/model/AddressType.java</include>
           <include>**/model/CreditCardType.java</include>

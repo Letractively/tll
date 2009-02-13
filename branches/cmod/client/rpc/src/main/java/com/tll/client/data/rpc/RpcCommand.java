@@ -7,7 +7,6 @@ package com.tll.client.data.rpc;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.UI;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -24,11 +23,6 @@ import com.tll.common.msg.Msg.MsgLevel;
 public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, ISourcesRpcEvents {
 
 	/**
-	 * Tracks the number of RPC calls in process.
-	 */
-	private static int rpcCounter = 0;
-
-	/**
 	 * The RPC listeners. This serves as a generic way to issue notification on
 	 * RPC return.
 	 */
@@ -41,10 +35,8 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 	/**
 	 * Constructor
-	 * @throws IllegalArgumentException When the sourcing Widget is
-	 *         <code>null</code>
 	 */
-	public RpcCommand() throws IllegalArgumentException {
+	public RpcCommand() {
 		super();
 	}
 
@@ -80,6 +72,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	 * the RPC status.
 	 * @param sending
 	 */
+	/*
 	static void rpc(boolean sending) {
 		if(sending) {
 			rpcCounter++;
@@ -92,19 +85,24 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 			UI.lightenBusyPanel();
 		}
 	}
-
+	*/
+	
 	/**
 	 * Does the actual RPC execution.
 	 */
 	protected abstract void doExecute();
 
 	public final void execute() {
-		rpc(true);
+		//rpc(true);
 		try {
 			doExecute();
+			// fire RPC send event
+			if(rpcListeners != null) {
+				rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget()));
+			}
 		}
-		catch(Throwable t) {
-			rpc(false);
+		catch(final Throwable t) {
+			//rpc(false);
 			if(t instanceof RuntimeException) {
 				throw (RuntimeException) t;
 			}
@@ -112,12 +110,12 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	}
 
 	public final void onSuccess(P result) {
-		rpc(false);
+		//rpc(false);
 		handleSuccess(result);
 	}
 
 	public final void onFailure(Throwable caught) {
-		rpc(false);
+		//rpc(false);
 		handleFailure(caught);
 	}
 
@@ -129,7 +127,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 		// fire RPC event
 		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), result, false));
+			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), result));
 		}
 
 		// fire status event
@@ -145,7 +143,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 		// fire RPC event
 		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), caught, true));
+			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), caught));
 		}
 
 		// fire status event

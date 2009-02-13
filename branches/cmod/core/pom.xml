@@ -16,14 +16,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.code.guice</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
@@ -43,10 +35,23 @@
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    
+    <!-- gwt-user is only needed to satisfy the IMarshalable interface -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+    
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>

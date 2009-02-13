@@ -16,39 +16,78 @@ import com.tll.common.data.Payload;
  */
 @SuppressWarnings("serial")
 public final class RpcEvent extends EventObject {
-
-	/**
-	 * The RPC result
-	 */
-	private final Object result;
-
-	/**
-	 * Was there an RPC error?
-	 */
-	private final boolean rpcError;
-
-	/**
-	 * Constructor
-	 * @param source
-	 * @param result
-	 * @param rpcError
-	 */
-	public RpcEvent(Widget source, Object result, boolean rpcError) {
-		super(source);
-		this.result = result;
-		this.rpcError = rpcError;
+	
+	public static enum Type {
+		/**
+		 * An RPC command was just sent.
+		 */
+		SENT,
+		/**
+		 * An RPC command was successfull and was just received.
+		 */
+		RECEIVED,
+		/**
+		 * An RPC error occcurred.
+		 */
+		ERROR;
 	}
 
-	public Object getResult() {
-		return result;
+	private final Type type;
+
+	/**
+	 * The RPC payload.
+	 */
+	private final Payload payload;
+
+	/**
+	 * The RPC error.
+	 */
+	private final Throwable error;
+
+	/**
+	 * Constructor - Use for RPC send calls.
+	 * @param source
+	 */
+	public RpcEvent(Widget source) {
+		super(source);
+		this.type = Type.SENT;
+		this.payload = null;
+		this.error = null;
+	}
+
+	/**
+	 * Constructor - Use for successful RPC retrievals.
+	 * @param source
+	 * @param payload The payload
+	 */
+	public RpcEvent(Widget source, Payload payload) {
+		super(source);
+		this.type = Type.RECEIVED;
+		this.payload = payload;
+		this.error = null;
+	}
+
+	/**
+	 * Constructor - Use for un-successful RPC calls.
+	 * @param source
+	 * @param error The RPC error
+	 */
+	public RpcEvent(Widget source, Throwable error) {
+		super(source);
+		this.type = Type.ERROR;
+		this.payload = null;
+		this.error = error;
+	}
+	
+	public Type getType() {
+		return type;
 	}
 
 	public Payload getPayload() {
-		return (result instanceof Payload) ? (Payload) result : null;
+		return payload;
 	}
-
-	public boolean isRpcError() {
-		return rpcError;
+	
+	public Throwable getError() {
+		return error;
 	}
-
 }

@@ -35,6 +35,8 @@
     <gwtVersion>1.5.3</gwtVersion>
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    <junitVersion>4.5</junitVersion>
+    <testNGVersion>5.8</testNGVersion>
   </properties>
 
   <modules>
@@ -133,7 +135,7 @@
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
-            <id>attach-sources</id>
+            <id>jar-sources</id>
             <phase>verify</phase>
             <goals>
               <goal>jar</goal>
@@ -143,7 +145,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>attach-test-sources</id>
+            <id>jar-test-sources</id>
             <phase>verify</phase>
             <goals>
               <goal>test-jar</goal>
@@ -405,14 +407,14 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>5.8</version>
+        <version>${testNGVersion}</version>
         <classifier>jdk15</classifier>
       </dependency>
 
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.5</version>
+        <version>${junitVersion}</version>
       </dependency>
 
     </dependencies>

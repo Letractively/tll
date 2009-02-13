@@ -9,15 +9,20 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Contains client modules.</description>
   
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>1</version>
+  </parent>
+  
   <properties>
-    <gwtVersion>1.5.3</gwtVersion>
     <gwtIncubatorVersion>1.5-Dec_28</gwtIncubatorVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
-    <junitVersion>4.5</junitVersion>
   </properties>
 
   <modules>
     <module>core</module>
+    <module>cache</module>
     <module>rpc</module>
     <module>ui</module>
     <module>model</module>
@@ -34,6 +39,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
+            <!-- 
+            NOTE: we target 1.6 since there is code used on the server as well when considering GWT targeted code
+            The only *known* constraint here is ensuring @Override tags driven from interface implementations 
+            must *not* be present.  
+            -->
             <source>1.6</source>
             <target>1.6</target>
           </configuration>

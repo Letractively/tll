@@ -12,7 +12,7 @@
   <artifactId>client-core</artifactId>
   <name>client-core</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Houses core client and common classes and resources intended for use by all other client modules.</description>
+  <description>Houses core client and server assets for use by all other client modules.</description>
   
   <build>
     
