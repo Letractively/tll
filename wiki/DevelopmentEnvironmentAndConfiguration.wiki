@@ -1,6 +1,10 @@
 #labels Featured,Phase-Requirements
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
+*NOTE:* 
+_THIS WIKI NEEDS TO BE UPDATED BASED ON THE RECENT MIGRATION TO MAVEN.
+CONSIDER THIS WIKI DEPRECATED!_
+
 =Required Software=
 The following software is required:
 || *Name* || *Version* ||
