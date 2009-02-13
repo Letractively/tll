@@ -4,10 +4,10 @@
  */
 package com.tll.client.mvc.view.account;
 
-import com.tll.client.admin.ui.field.account.AccountPanel;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.ui.field.account.AccountPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.client.admin.ui.view;
+package com.tll.client.ui.view;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;

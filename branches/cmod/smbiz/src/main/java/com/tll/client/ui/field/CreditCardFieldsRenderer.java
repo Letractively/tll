@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 4, 2009
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.FieldGroup;

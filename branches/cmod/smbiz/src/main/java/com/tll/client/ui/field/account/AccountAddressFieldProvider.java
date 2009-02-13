@@ -3,10 +3,10 @@
  * @author jpk
  * Jan 6, 2009
  */
-package com.tll.client.admin.ui.field.account;
+package com.tll.client.ui.field.account;
 
-import com.tll.client.admin.ui.field.AddressFieldsProvider;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.ui.field.AddressFieldsProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.model.AddressType;
 

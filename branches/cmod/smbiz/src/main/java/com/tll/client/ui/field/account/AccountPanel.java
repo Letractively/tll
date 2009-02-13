@@ -2,16 +2,16 @@
  * The Logic Lab
  * @author jpk Sep 14, 2007
  */
-package com.tll.client.admin.ui.field.account;
+package com.tll.client.ui.field.account;
 
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.bind.AbstractModelEditAction;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;

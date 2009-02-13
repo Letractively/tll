@@ -3,7 +3,7 @@
  * @author jpk
  * Apr 21, 2008
  */
-package com.tll.client.admin.ui.listing;
+package com.tll.client.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.ITableCellRenderer;

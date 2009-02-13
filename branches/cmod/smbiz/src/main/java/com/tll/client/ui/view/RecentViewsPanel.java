@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 3, 2008
  */
-package com.tll.client.admin.ui.view;
+package com.tll.client.ui.view;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;

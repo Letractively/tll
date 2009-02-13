@@ -3,10 +3,10 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.client.admin.ui.field.user;
+package com.tll.client.ui.field.user;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.tll.client.admin.ui.field.AddressFieldsRenderer;
+import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;

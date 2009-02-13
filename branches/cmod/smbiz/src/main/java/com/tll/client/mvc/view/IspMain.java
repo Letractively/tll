@@ -5,7 +5,7 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.SmbizAdmin;
+import com.tll.client.SmbizAdmin;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;

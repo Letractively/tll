@@ -3,7 +3,7 @@
  * @author jkirton
  * May 21, 2008
  */
-package com.tll.client.admin.ui.field.intf;
+package com.tll.client.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;

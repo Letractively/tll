@@ -1,6 +1,6 @@
-package com.tll.client.admin.ui.field.account;
+package com.tll.client.ui.field.account;
 
-import com.tll.client.admin.ui.field.CurrencyAwareFieldGroupProvider;
+import com.tll.client.ui.field.CurrencyAwareFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.model.AccountStatus;
 

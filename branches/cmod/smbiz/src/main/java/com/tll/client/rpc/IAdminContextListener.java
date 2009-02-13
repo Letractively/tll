@@ -3,7 +3,7 @@
  * @author jpk
  * Aug 25, 2007
  */
-package com.tll.client.admin.rpc;
+package com.tll.client.rpc;
 
 import java.util.EventListener;
 

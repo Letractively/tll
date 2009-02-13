@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 11, 2009
  */
-package com.tll.client.admin.ui.field;
+package com.tll.client.ui.field;
 
 import java.util.HashMap;
 import java.util.List;

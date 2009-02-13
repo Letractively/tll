@@ -1,14 +1,10 @@
-package com.tll.client.admin;
+package com.tll.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.App;
-import com.tll.client.admin.rpc.AdminContextCommand;
-import com.tll.client.admin.rpc.IAdminContextListener;
-import com.tll.client.admin.ui.MainPanel;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.mvc.view.AspMain;
 import com.tll.client.mvc.view.CustomerMain;
@@ -20,7 +16,10 @@ import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.account.MerchantListingView;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.user.UserEditView;
+import com.tll.client.rpc.AdminContextCommand;
+import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.LoginDialog;
+import com.tll.client.ui.MainPanel;
 import com.tll.common.AdminContext;
 
 /**

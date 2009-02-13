@@ -2,16 +2,16 @@
  * The Logic Lab
  * @author jpk Nov 4, 2007
  */
-package com.tll.client.admin.ui.field.account;
+package com.tll.client.ui.field.account;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.tll.client.admin.ui.field.BankFieldsProvider;
-import com.tll.client.admin.ui.field.BankFieldsRenderer;
-import com.tll.client.admin.ui.field.CreditCardFieldsProvider;
-import com.tll.client.admin.ui.field.CreditCardFieldsRenderer;
+import com.tll.client.ui.field.BankFieldsProvider;
+import com.tll.client.ui.field.BankFieldsRenderer;
+import com.tll.client.ui.field.CreditCardFieldsProvider;
+import com.tll.client.ui.field.CreditCardFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;

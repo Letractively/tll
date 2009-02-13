@@ -1,7 +1,7 @@
 <module>
   <inherits name="com.tll.Smbiz" />
 
-  <entry-point class="com.tll.client.admin.SmbizAdmin" />
+  <entry-point class="com.tll.client.SmbizAdmin" />
 
   <stylesheet src="css/admin.css" />
 

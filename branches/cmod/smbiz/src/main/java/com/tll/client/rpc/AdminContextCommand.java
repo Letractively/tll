@@ -3,15 +3,15 @@
  * @author jpk
  * Aug 28, 2007
  */
-package com.tll.client.admin.rpc;
+package com.tll.client.rpc;
 
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.rpc.IAdminContextListener.ChangeType;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
+import com.tll.client.rpc.IAdminContextListener.ChangeType;
 import com.tll.common.AdminContext;
 import com.tll.common.data.rpc.AdminContextPayload;
 import com.tll.common.data.rpc.IAdminContextService;

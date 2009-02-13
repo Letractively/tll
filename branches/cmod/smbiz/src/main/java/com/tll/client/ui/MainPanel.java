@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.client.admin.ui;
+package com.tll.client.ui;
 
 import java.util.List;
 
@@ -26,9 +26,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
-import com.tll.client.admin.rpc.IAdminContextListener;
-import com.tll.client.admin.ui.view.RecentViewsPanel;
-import com.tll.client.admin.ui.view.ViewPathPanel;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusListener;
 import com.tll.client.data.rpc.IUserSessionListener;
@@ -41,8 +38,10 @@ import com.tll.client.mvc.view.EditViewRequest;
 import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
-import com.tll.client.ui.StatusDisplay;
+import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.view.RecentViewsPanel;
+import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;

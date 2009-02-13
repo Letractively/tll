@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2008
  */
-package com.tll.client.admin.ui.field.intf;
+package com.tll.client.ui.field.intf;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;

@@ -5,11 +5,11 @@
  */
 package com.tll.client.mvc.view.user;
 
-import com.tll.client.admin.ui.field.user.UserPanel;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
+import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.Model;
 import com.tll.model.SmbizEntityType;
