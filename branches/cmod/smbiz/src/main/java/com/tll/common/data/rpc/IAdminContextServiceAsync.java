@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.common.admin.data.rpc;
+package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

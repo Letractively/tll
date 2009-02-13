@@ -3,11 +3,11 @@
  * @author jpk
  * Aug 25, 2007
  */
-package com.tll.client.admin.data.rpc;
+package com.tll.client.admin.rpc;
 
 import java.util.EventListener;
 
-import com.tll.common.admin.AdminContext;
+import com.tll.common.AdminContext;
 
 /**
  * IAdminContextListener

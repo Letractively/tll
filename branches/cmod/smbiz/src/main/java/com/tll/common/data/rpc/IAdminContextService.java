@@ -1,11 +1,11 @@
 /**
  * The Logic Lab
  */
-package com.tll.common.admin.data.rpc;
+package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.tll.common.admin.AdminContext;
+import com.tll.common.AdminContext;
 
 /**
  * IAdminContextService

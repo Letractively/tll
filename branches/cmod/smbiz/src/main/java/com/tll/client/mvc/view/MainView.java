@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 14, 2008
  */
-package com.tll.client.admin.mvc.view;
+package com.tll.client.mvc.view;
 
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractView;

@@ -2,31 +2,32 @@
  * The Logic Lab
  * @author jpk Aug 28, 2007
  */
-package com.tll.client.admin.mvc.view;
+package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
+import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.model.SmbizEntityType;
 
 /**
- * MerchantMain - ISP root view.
+ * CustomerMain - ISP root view.
  * @author jpk
  */
-public class MerchantMain extends MainView {
+public class CustomerMain extends MainView {
 
 	public static final Class klas = new Class();
 
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(SmbizEntityType.MERCHANT);
+			super(SmbizEntityType.CUSTOMER);
 		}
 
 		@Override
 		public IView newView() {
-			return new MerchantMain();
+			return new CustomerMain();
 		}
 	}
 
@@ -35,13 +36,14 @@ public class MerchantMain extends MainView {
 	/**
 	 * Constructor
 	 */
-	public MerchantMain() {
+	public CustomerMain() {
 		super();
+		links.add(new ViewRequestLink("Customer Listing", "Customer Listing", null));
 		addWidget(links);
 	}
 
 	public String getLongViewName() {
-		return "Merchant Main";
+		return "Customer Main";
 	}
 
 	protected Widget getViewWidgetInternal() {

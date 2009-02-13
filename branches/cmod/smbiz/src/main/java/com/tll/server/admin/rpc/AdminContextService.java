@@ -4,10 +4,10 @@
  */
 package com.tll.server.admin.rpc;
 
-import com.tll.common.admin.AdminContext;
-import com.tll.common.admin.data.rpc.AdminContextPayload;
-import com.tll.common.admin.data.rpc.IAdminContextService;
+import com.tll.common.AdminContext;
 import com.tll.common.data.Status;
+import com.tll.common.data.rpc.AdminContextPayload;
+import com.tll.common.data.rpc.IAdminContextService;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;

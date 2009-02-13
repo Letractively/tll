@@ -2,15 +2,15 @@
  * The Logic Lab
  * @author jpk Aug 28, 2007
  */
-package com.tll.client.admin.mvc.view;
+package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.mvc.view.account.IspListingView;
-import com.tll.client.admin.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.mvc.view.account.IspListingView;
+import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.common.search.AccountSearch;

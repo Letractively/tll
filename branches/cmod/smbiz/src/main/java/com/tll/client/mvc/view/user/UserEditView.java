@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.client.admin.mvc.view.user;
+package com.tll.client.mvc.view.user;
 
 import com.tll.client.admin.ui.field.user.UserPanel;
 import com.tll.client.mvc.view.EditView;

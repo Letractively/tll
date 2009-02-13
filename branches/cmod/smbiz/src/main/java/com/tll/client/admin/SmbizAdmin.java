@@ -6,22 +6,22 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.App;
-import com.tll.client.admin.data.rpc.AdminContextCommand;
-import com.tll.client.admin.data.rpc.IAdminContextListener;
-import com.tll.client.admin.mvc.view.AspMain;
-import com.tll.client.admin.mvc.view.CustomerMain;
-import com.tll.client.admin.mvc.view.IspMain;
-import com.tll.client.admin.mvc.view.MerchantMain;
-import com.tll.client.admin.mvc.view.account.CustomerListingView;
-import com.tll.client.admin.mvc.view.account.IspListingView;
-import com.tll.client.admin.mvc.view.account.MerchantListingView;
-import com.tll.client.admin.mvc.view.intf.InterfacesView;
-import com.tll.client.admin.mvc.view.user.UserEditView;
+import com.tll.client.admin.rpc.AdminContextCommand;
+import com.tll.client.admin.rpc.IAdminContextListener;
 import com.tll.client.admin.ui.MainPanel;
 import com.tll.client.data.rpc.IUserSessionListener;
+import com.tll.client.mvc.view.AspMain;
+import com.tll.client.mvc.view.CustomerMain;
+import com.tll.client.mvc.view.IspMain;
+import com.tll.client.mvc.view.MerchantMain;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.mvc.view.account.CustomerListingView;
+import com.tll.client.mvc.view.account.IspListingView;
+import com.tll.client.mvc.view.account.MerchantListingView;
+import com.tll.client.mvc.view.intf.InterfacesView;
+import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.ui.LoginDialog;
-import com.tll.common.admin.AdminContext;
+import com.tll.common.AdminContext;
 
 /**
  * Smbiz Admin module.

@@ -2,36 +2,31 @@
  * The Logic Lab
  * @author jpk Aug 28, 2007
  */
-package com.tll.client.admin.mvc.view;
+package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.SmbizAdmin;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.common.admin.AdminContext;
-import com.tll.common.model.RefKey;
-import com.tll.common.search.AccountSearch;
-import com.tll.criteria.CriteriaType;
 import com.tll.model.SmbizEntityType;
 
 /**
- * IspMain - ISP root view.
+ * MerchantMain - ISP root view.
  * @author jpk
  */
-public class IspMain extends MainView {
+public class MerchantMain extends MainView {
 
 	public static final Class klas = new Class();
 
 	public static final class Class extends MainViewClass {
 
 		public Class() {
-			super(SmbizEntityType.ISP);
+			super(SmbizEntityType.MERCHANT);
 		}
 
 		@Override
 		public IView newView() {
-			return new IspMain();
+			return new MerchantMain();
 		}
 	}
 
@@ -40,22 +35,13 @@ public class IspMain extends MainView {
 	/**
 	 * Constructor
 	 */
-	public IspMain() {
+	public MerchantMain() {
 		super();
-
-		AdminContext ac = SmbizAdmin.getAdminContext();
-		assert ac != null;
-		RefKey userAccountRef = ac.getUserAccount().getRefKey();
-		assert userAccountRef != null && userAccountRef.isSet();
-
-		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
-		as.setParentAccountRef(userAccountRef);
-
 		addWidget(links);
 	}
 
 	public String getLongViewName() {
-		return "ISP Main";
+		return "Merchant Main";
 	}
 
 	protected Widget getViewWidgetInternal() {

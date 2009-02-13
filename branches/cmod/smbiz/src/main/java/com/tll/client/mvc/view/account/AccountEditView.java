@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 14, 2008
  */
-package com.tll.client.admin.mvc.view.account;
+package com.tll.client.mvc.view.account;
 
 import com.tll.client.admin.ui.field.account.AccountPanel;
 import com.tll.client.mvc.view.EditView;

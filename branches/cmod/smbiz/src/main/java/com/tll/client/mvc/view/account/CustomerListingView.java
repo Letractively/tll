@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.client.admin.mvc.view.account;
+package com.tll.client.mvc.view.account;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.admin.ui.listing.AccountListingConfig;

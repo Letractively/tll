@@ -3,7 +3,7 @@
  * @author jpk
  * Feb 24, 2008
  */
-package com.tll.client.admin.mvc.view.intf;
+package com.tll.client.mvc.view.intf;
 
 import java.util.ArrayList;
 import java.util.List;

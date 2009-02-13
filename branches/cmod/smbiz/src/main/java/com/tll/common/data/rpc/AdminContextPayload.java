@@ -3,9 +3,9 @@
  * @author jpk
  * Sep 3, 2007
  */
-package com.tll.common.admin.data.rpc;
+package com.tll.common.data.rpc;
 
-import com.tll.common.admin.AdminContext;
+import com.tll.common.AdminContext;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 

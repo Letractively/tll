@@ -3,7 +3,7 @@
  * @author jpk
  * Aug 24, 2007
  */
-package com.tll.common.admin;
+package com.tll.common;
 
 import com.tll.IMarshalable;
 import com.tll.common.model.Model;
