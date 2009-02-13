@@ -1,7 +1,7 @@
 /**
  * The Logic Lab
  */
-package com.tll.server.admin.filter;
+package com.tll.server.filter;
 
 import java.io.IOException;
 
@@ -21,8 +21,8 @@ import org.springframework.security.context.SecurityContextHolder;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.model.User;
+import com.tll.server.AdminContext;
 import com.tll.server.AppContext;
-import com.tll.server.admin.AdminContext;
 import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.service.entity.user.IUserService;
 

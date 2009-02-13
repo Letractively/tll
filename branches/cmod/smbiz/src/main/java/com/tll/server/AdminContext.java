@@ -3,7 +3,7 @@
  * @author jpk
  * Aug 24, 2007
  */
-package com.tll.server.admin;
+package com.tll.server;
 
 import com.tll.model.Account;
 import com.tll.model.User;
