@@ -1,0 +1,31 @@
+<module>
+  <inherits name="com.tll.UI" />
+  
+  <!-- client exclusive source path -->
+  <source path="client" />
+  
+  <!-- shared (client/server) source path -->
+  <source path="common" />
+
+  <!-- non client package sources -->
+  <source>
+    <include name="model/schema/PropertyType.java" />
+    <include name="model/schema/ISchemaProperty.java" />
+    <include name="model/schema/AbstractSchemaProperty.java" />
+    <include name="model/schema/PropertyMetadata.java" />
+    <include name="model/schema/IPropertyMetadataProvider.java" />
+    <include name="model/IEntityType.java" />
+    <include name="dao/SortDir.java" />
+    <include name="dao/SortColumn.java" />
+    <include name="dao/Sorting.java" />
+    <include name="criteria/IPropertyNameProvider.java" />
+    <include name="criteria/CriteriaType.java" />
+    <include name="criteria/IQueryParam.java" />
+    <include name="listhandler/ListHandlerType.java" />
+    <include name="refdata/RefDataType.java" />
+  </source>
+
+  <public path="public" />
+
+  <stylesheet src="css/tableview.css" />
+</module>

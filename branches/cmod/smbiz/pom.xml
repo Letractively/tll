@@ -81,14 +81,14 @@
       <!--
         Identify the source files needed for GWT compile in the main source src tree excluding those *transitive
         sources* (i.e. the sources contained in the declareed dependencies section). IMPT NOTE: This reflects the
-        sources identified in the bound GWT module's source declarations.
+        sources identified in the bound GWT modules' source declarations.
       -->
       <resource>
         <directory>src/main/java</directory>
         <includes>
           <include>**/client/**</include>
           <include>**/common/**</include>
-          <include>**/model/EntityType.java</include>
+          <include>**/model/IEntityType.java</include>
           <include>**/model/AccountStatus.java</include>
           <include>**/model/AddressType.java</include>
           <include>**/model/CreditCardType.java</include>

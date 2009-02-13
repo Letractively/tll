@@ -8,7 +8,6 @@ import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
-import com.tll.client.ui.view.ViewRequestLink;
 
 /**
  * ViewStack - Manages two lists:
@@ -33,9 +32,9 @@ final class ViewStack {
 	private final List<ViewContainer> cache;
 
 	/**
-	 * Distinct list of {@link ViewRequestLink}s representing all visited views
-	 * relative to the app's life-cycle in chronological order <em>EXCLUDING</em>
-	 * those whose associated views are present in the {@link #cache} list.
+	 * Distinct list of {@link IViewRef}s representing all visited views relative
+	 * to the app's life-cycle in chronological order <em>EXCLUDING</em> those
+	 * whose associated views are present in the {@link #cache} list.
 	 * <em>This</em> list effectively serves as the second-level cache enabling
 	 * the ability to "re-constitute" a view at any time during the app's loaded
 	 * life-cycle.
@@ -84,11 +83,11 @@ final class ViewStack {
 	 * @return The index of the viewContainer on the cache or -1 if not present.
 	 */
 	public int searchCache(ViewKey viewKey) {
-		Iterator<ViewContainer> itr = cacheIterator(0);
+		final Iterator<ViewContainer> itr = cacheIterator(0);
 		if(itr != null) {
 			int i = 0;
 			while(itr.hasNext()) {
-				ViewContainer cv = itr.next();
+				final ViewContainer cv = itr.next();
 				if(viewKey.equals(cv.getView().getViewKey())) return i;
 				i++;
 			}
@@ -105,8 +104,8 @@ final class ViewStack {
 	 */
 	int searchVisited(ViewKey key) {
 		int i = 0;
-		for(IViewRef vref : visited) {
-			ViewKey vkey = vref.getViewKey();
+		for(final IViewRef vref : visited) {
+			final ViewKey vkey = vref.getViewKey();
 			if(vkey.equals(key)) {
 				return i;
 			}
@@ -125,9 +124,9 @@ final class ViewStack {
 	 */
 	public ViewContainer push(ViewContainer viewContainer) {
 		assert viewContainer != null;
-		IView view = viewContainer.getView();
+		final IView view = viewContainer.getView();
 		assert view != null;
-		ViewKey key = view.getViewKey();
+		final ViewKey key = view.getViewKey();
 		assert key != null;
 
 		final int cacheIndex = searchCache(key);
@@ -161,7 +160,7 @@ final class ViewStack {
 	 */
 	public void moveToLast(ViewContainer viewContainer) {
 		assert viewContainer != null;
-		int index = cache.indexOf(viewContainer);
+		final int index = cache.indexOf(viewContainer);
 		assert index >= 0;
 		cache.remove(index);
 		cache.add(viewContainer);

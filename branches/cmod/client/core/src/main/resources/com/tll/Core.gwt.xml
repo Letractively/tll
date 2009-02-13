@@ -23,11 +23,4 @@
     <when-property-is name="user.agent" value="ie6" />
   </replace-with>
   
-  <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
-    <when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
-    <any>
-      <when-property-is name="user.agent" value="ie6" />
-    </any>
-  </replace-with>
-
 </module>

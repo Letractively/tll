@@ -1,0 +1,12 @@
+<module>
+  <inherits name="com.tll.UI" />
+  
+  <!-- client exclusive source path -->
+  <source path="client" />
+
+  <!--  shared (client/server) -->
+  <source path="common" />
+  
+  <public path="public" />
+
+</module>
