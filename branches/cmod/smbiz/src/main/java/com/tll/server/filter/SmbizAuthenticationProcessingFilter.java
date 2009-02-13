@@ -27,10 +27,10 @@ import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.service.entity.user.IUserService;
 
 /**
- * AuthenticationProcessingFilter
+ * SmbizAuthenticationProcessingFilter
  * @author jpk
  */
-public final class AuthenticationProcessingFilter extends com.tll.server.filter.AuthenticationProcessingFilter {
+public final class SmbizAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
 	/**
 	 * ConfigKeys - Configuration property key names used by the app.
@@ -104,7 +104,7 @@ public final class AuthenticationProcessingFilter extends com.tll.server.filter.
 		ac.setAccount(user.getAccount()); // default set the current account to the
 		// user's owning account
 
-		request.getSession(false).setAttribute(AuthenticationProcessingFilter.SA_ADMIN_CONTEXT, ac);
+		request.getSession(false).setAttribute(SmbizAuthenticationProcessingFilter.SA_ADMIN_CONTEXT, ac);
 	}
 
 	@Override

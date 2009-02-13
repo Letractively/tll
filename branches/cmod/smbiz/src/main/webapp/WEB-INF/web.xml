@@ -91,7 +91,7 @@
   
   <filter>
     <filter-name>AuthenticationProcessingFilter</filter-name>
-    <filter-class>com.tll.server.filter.AuthenticationProcessingFilter</filter-class>
+    <filter-class>com.tll.server.filter.SmbizAuthenticationProcessingFilter</filter-class>
 		<init-param>
 			<param-name>authenticationFailureUrl</param-name>
 			<param-value>/adminLogin?login_error=1</param-value>
