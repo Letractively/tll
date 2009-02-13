@@ -18,33 +18,6 @@
     <filters>
       <filter>src/test/resources/config.properties</filter>
     </filters>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <excludes>
-          <exclude>testng.xml</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources/db</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources/META-INF</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <targetPath>META-INF</targetPath>
-      </testResource>
-    </testResources>
     
     <plugins>
       <plugin>
@@ -89,24 +62,6 @@
                 <exclude>**/TestEntityDaoTestHandler.class</exclude>
               </excludes>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <!-- create a separate jar to hold the test model package which is useful for other testing -->
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/test-persistence-unit.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>dao-test-persistence-unit</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
@@ -250,6 +205,11 @@
       <version>1.0-SNAPSHOT</version>
       <classifier>tests</classifier>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>test-persistence-unit</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>

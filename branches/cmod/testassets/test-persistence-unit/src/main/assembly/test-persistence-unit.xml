@@ -6,8 +6,9 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>${project.basedir}/target/test-classes</directory>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
+      <!-- 
       <includes>
         <include>**/model/**</include>
         <include>**/META-INF/**</include>
@@ -15,6 +16,7 @@
         <include>ehcache.xml</include>
         <include>mock-entities.xml</include>
       </includes>
+      -->
     </fileSet>
   </fileSets>
 </assembly>

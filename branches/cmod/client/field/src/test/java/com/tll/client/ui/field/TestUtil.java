@@ -15,10 +15,10 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
-import com.tll.common.model.ModelTestUtils;
 import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.CreditCardType;
 import com.tll.common.model.mock.TestEntityType;
+import com.tll.common.model.mock.TestModelStubber;
 import com.tll.refdata.RefDataType;
 
 
@@ -130,7 +130,7 @@ public class TestUtil {
 		private TestFieldGroupProvider() {
 			// set needed aux data cache
 			final List<Model> list = new ArrayList<Model>();
-			list.add(ModelTestUtils.stubCurrency());
+			list.add(TestModelStubber.stubCurrency());
 			AuxDataCache.instance().cacheEntityList(TestEntityType.CURRENCY, list);
 
 			final Map<String, String> cc = new HashMap<String, String>();

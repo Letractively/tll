@@ -13,14 +13,4 @@
     <module>test-persistence-unit</module>
   </modules>
   
-  <build>
-    <testResources></testResources>
-    
-    <plugins>
-    </plugins>
-  </build>
-  
-  <dependencies>
-  </dependencies>
-
 </project>

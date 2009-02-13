@@ -6,8 +6,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.TestUtil.TestFieldPanel;
 import com.tll.common.model.Model;
-import com.tll.common.model.ModelTestUtils;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.mock.TestModelStubber;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.
@@ -60,7 +60,7 @@ public class FieldBindingTest extends GWTTestCase {
 	public void testBind() {
 		final TestFieldPanel fieldPanel = new TestFieldPanel();
 		fieldPanel.setAction(new TestModelFieldGroupBindingAction());
-		fieldPanel.setModel(ModelTestUtils.stubAccount());
+		fieldPanel.setModel(TestModelStubber.stubAccount());
 		RootPanel.get().add(fieldPanel);
 	}
 }

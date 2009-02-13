@@ -26,11 +26,10 @@ import com.tll.di.DaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Account;
-import com.tll.model.Asp;
-import com.tll.model.CreditCardType;
+import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
-import com.tll.model.PaymentInfo;
+import com.tll.model.NestedEntity;
 import com.tll.model.mock.EntityGraph;
 import com.tll.model.mock.EntityGraphBuilder;
 import com.tll.model.mock.MockEntityFactory;
@@ -42,6 +41,17 @@ import com.tll.util.CommonUtil;
  */
 @Test(groups = "server")
 public class MarshalerTest extends AbstractInjectedTest {
+
+	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
+
+	static {
+		tupleMap.put("string", "a string");
+		tupleMap.put("date", new Date());
+		tupleMap.put("integer", new Integer(1));
+		tupleMap.put("character", new Character('c'));
+		tupleMap.put("enum", FieldEnum.OPEN);
+		tupleMap.put("boolean", new Boolean(true));
+	}
 
 	/**
 	 * Constructor
@@ -118,25 +128,25 @@ public class MarshalerTest extends AbstractInjectedTest {
 	public void testCircularEntity() throws Exception {
 		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
-		final Asp asp = entityGraph.getEntityByType(Asp.class);
+		final Account teste = entityGraph.getEntityByType(Account.class);
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final Model model = marshaler.marshalEntity(asp, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		final Model model = marshaler.marshalEntity(teste, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		assert model != null;
-		final Asp reasp = marshaler.unmarshalEntity(Asp.class, model);
-		assert reasp != null;
-		assert asp.equals(reasp);
+		final Account unmarshaled = marshaler.unmarshalEntity(Account.class, model);
+		assert unmarshaled != null;
+		assert teste.equals(unmarshaled);
 	}
 
 	/**
-	 * Tests the special PaymentInfo entity case
+	 * Tests the marshaling of a nested entity.
 	 * @throws Exception Upon failure
 	 */
 	@Test
-	public void testPaymentInfo() throws Exception {
+	public void testNestedEntity() throws Exception {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
-		final IEntity e = getMockEntityFactory().getEntityCopy(PaymentInfo.class, false);
+		final IEntity e = getMockEntityFactory().getEntityCopy(NestedEntity.class, false);
 		Assert.assertNotNull(e);
 
 		final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
@@ -144,17 +154,6 @@ public class MarshalerTest extends AbstractInjectedTest {
 		final IEntity e2 = marshaler.unmarshalEntity(e.entityClass(), model);
 		Assert.assertNotNull(e2);
 		Assert.assertEquals(e, e2);
-	}
-
-	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
-
-	static {
-		tupleMap.put("string", "a string");
-		tupleMap.put("date", new Date());
-		tupleMap.put("integer", new Integer(1));
-		tupleMap.put("character", new Character('c'));
-		tupleMap.put("enum", CreditCardType.VISA);
-		tupleMap.put("boolean", new Boolean(true));
 	}
 
 	/**
