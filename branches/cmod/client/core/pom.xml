@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>tll-client</artifactId>
     <groupId>com.tll</groupId>
+    <artifactId>tll-client</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -15,27 +15,6 @@
   <description>Houses core client and server assets for use by all other client modules.</description>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>gwt-tests</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <useSystemClassLoader>false</useSystemClassLoader>
-              <includes>
-                <include>**/*GWTTest.java</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 
   <dependencies>
@@ -43,6 +22,14 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
     </dependency>
   </dependencies>
 

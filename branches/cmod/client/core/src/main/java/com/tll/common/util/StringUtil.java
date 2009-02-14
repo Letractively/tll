@@ -21,10 +21,19 @@ public abstract class StringUtil {
 	}
 
 	/**
-	 * Abbreviates a string.
-	 * @param str
-	 * @param length
-	 * @return {@link String}
+	 * Abbreviates a string by shortening it to the given length
+	 * <ul>
+	 * <li>If the given string is <code>null</code> or empty, the given string is
+	 * returned un-altered.
+	 * <li>If the given string's length is less than or equal to the given length,
+	 * the string is returned un-altered.
+	 * <li>If the given string's length is greater than the given length, the
+	 * string is abbreviated to the given length with "..." appended so the the
+	 * final length <em>equals</em> that given.
+	 * </ul>
+	 * @param str The string to abbreviate
+	 * @param length The desired abbreviation length
+	 * @return An "abbreviated" string.
 	 */
 	public static String abbr(String str, int length) {
 		if(isEmpty(str) || str.length() <= length) {
@@ -48,7 +57,7 @@ public abstract class StringUtil {
 			return str;
 		}
 		replaceChars = replace.toCharArray();
-		StringBuilder sb = new StringBuilder(strlen);
+		final StringBuilder sb = new StringBuilder(strlen);
 		int sCut = 0;
 		for(int eCut; (eCut = str.indexOf(find, sCut)) != -1; sCut = eCut + findlen) {
 			sb.append(chars, sCut, (eCut - sCut)).append(replaceChars);
@@ -118,14 +127,14 @@ public abstract class StringUtil {
 	public static String enumStyleToPresentation(String s) {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasUnderscore = false;
-		char[] chars = s.toCharArray();
-		StringBuilder sb = new StringBuilder(chars.length + 32);
+		final char[] chars = s.toCharArray();
+		final StringBuilder sb = new StringBuilder(chars.length + 32);
 		sb.append(Character.toUpperCase(chars[0]));
 		for(int i = 1; i < chars.length; i++) {
 			if(priorWasUnderscore) {
 				sb.append(' ');
 			}
-			char c = priorWasUnderscore ? Character.toUpperCase(chars[i]) : Character.toLowerCase(chars[i]);
+			final char c = priorWasUnderscore ? Character.toUpperCase(chars[i]) : Character.toLowerCase(chars[i]);
 			if(c != '_') {
 				sb.append(c);
 			}
@@ -159,19 +168,10 @@ public abstract class StringUtil {
 	/**
 	 * Converts an ENUM_STYLE string to a camelCased string.
 	 * @param s
-	 * @return {@link String}
-	 */
-	public static String enumStyleToCamelCase(final String s) {
-		return enumStyleToCamelCase(s, false);
-	}
-
-	/**
-	 * Converts an ENUM_STYLE string to a camelCased string.
-	 * @param s
 	 * @param firstCharCapitalized Capitalize the first character in the string?
 	 * @return {@link String}
 	 */
-	private static String enumStyleToCamelCase(final String s, final boolean firstCharCapitalized) {
+	public static String enumStyleToCamelCase(final String s, final boolean firstCharCapitalized) {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasUnderscore = false;
 		final char[] chars = s.toCharArray();
@@ -185,24 +185,6 @@ public abstract class StringUtil {
 			priorWasUnderscore = (c == '_');
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Converts an ENUM_STYLE string to a JavaClassNotation string.
-	 * @param s
-	 * @return {@link String}
-	 */
-	public static String enumStyleToJavaClassNotation(final String s) {
-		return enumStyleToCamelCase(s, true);
-	}
-
-	/**
-	 * Converts a JavaClassNotation string to an ENUM_STYLE string.
-	 * @param s
-	 * @return {@link String}
-	 */
-	public static String javaClassNotationToEnumStyle(final String s) {
-		return camelCaseToEnumStyle(s);
 	}
 
 	/**

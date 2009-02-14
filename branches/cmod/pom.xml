@@ -46,6 +46,9 @@
   </scm>
 
   <properties>
+    <mode>dev</mode>
+    <environment>dev</environment>
+
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
     <gwtVersion>0.0.0</gwtVersion>
@@ -75,7 +78,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          
+
           <!-- TODO fix - this isn't hooking into the default build lifecycle! -->
           <!-- fail the build if we have used but undeclared compile time dependencies -->
           <executions>
@@ -210,7 +213,12 @@
   </build>
 
   <profiles>
-    <profile><!-- Production profile -->
+    <!-- dev (global) profile -->
+    <profile>
+      <id>dev</id>
+    </profile>
+    <!-- prod (global) profile -->
+    <profile>
       <id>prod</id>
       <build>
         <plugins>
@@ -225,42 +233,6 @@
         </plugins>
       </build>
     </profile>
-    
-    <!-- GWT unpacking profiles -->
-    <profile>
-      <id>gwt-dev-windows</id>
-      <properties>
-        <platform>windows</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-mac</id>
-      <properties>
-        <platform>mac</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-linux</id>
-      <properties>
-        <platform>linux</platform>
-      </properties>
-      <activation>
-        <os>
-          <name>linux</name>
-        </os>
-      </activation>
-    </profile>
-  
   </profiles>
 
   <dependencyManagement>
@@ -428,12 +400,12 @@
         <version>${springVersion}</version>
       </dependency>
       <dependency>
-      <groupId>org.springframework.security</groupId>
+        <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
         <version>2.0.4</version>
       </dependency>
       <dependency>
-      <groupId>org.springframework.security</groupId>
+        <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-acl</artifactId>
         <version>2.0.4</version>
       </dependency>
@@ -476,7 +448,7 @@
         <artifactId>servlet-api</artifactId>
         <version>2.4</version>
       </dependency>
-      
+
       <!-- GWT -->
       <dependency>
         <groupId>com.google.gwt</groupId>

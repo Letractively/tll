@@ -140,16 +140,36 @@ public final class Msg implements IMarshalable {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if(this == o) return true;
-		if(o == null || o instanceof Msg == false) return false;
-		final Msg that = (Msg) o;
-		return msg != null && msg.equals(that.msg) && level == that.level;
+	public boolean equals(Object obj) {
+		// NOTE: we ignore the attribs property
+		if(this == obj) return true;
+		if(obj == null) return false;
+		if(getClass() != obj.getClass()) return false;
+		final Msg other = (Msg) obj;
+		if(level == null) {
+			if(other.level != null) return false;
+		}
+		else if(!level.equals(other.level)) return false;
+		if(msg == null) {
+			if(other.msg != null) return false;
+		}
+		else if(!msg.equals(other.msg)) return false;
+		if(refToken == null) {
+			if(other.refToken != null) return false;
+		}
+		else if(!refToken.equals(other.refToken)) return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return (msg == null ? 0 : msg.hashCode()) + 7 * level.hashCode();
+		// NOTE: we ignore the attribs property
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((level == null) ? 0 : level.hashCode());
+		result = prime * result + ((msg == null) ? 0 : msg.hashCode());
+		result = prime * result + ((refToken == null) ? 0 : refToken.hashCode());
+		return result;
 	}
 
 	@Override

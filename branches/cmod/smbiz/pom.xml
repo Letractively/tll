@@ -15,11 +15,6 @@
   <packaging>war</packaging>
   <description>The smbiz app</description>
 
-  <properties>
-    <mode>dev</mode>
-    <environment>dev</environment>
-  </properties>
-
   <build>
     <finalName>smbiz</finalName>
 
@@ -272,18 +267,20 @@
     <profile>
       <id>dev</id>
       <properties>
-        <debug>true</debug>
+        <!-- <debug>true</debug> -->
         <db.dao.mode>MOCK</db.dao.mode>
         <security.mode>NONE</security.mode>
         <gwt.compile.target>com.tll.WorkingModule</gwt.compile.target>
         <gwt.run.target>com.tll.WorkingModule/SmbizAdmin.html</gwt.run.target>
       </properties>
+      <!-- 
       <activation>
         <property>
           <name>mode</name>
           <value>dev</value>
         </property>
       </activation>
+      -->
       <build>
         <plugins>
           <plugin>
@@ -330,8 +327,7 @@
     <profile>
       <id>prod</id>
       <properties>
-        <debug>false</debug>
-        <environment>dev</environment>
+        <!-- <debug>false</debug> -->
         <db.dao.mode>ORM</db.dao.mode>
         <security.mode>ACEGI</security.mode>
         <gwt.compile.target>com.tll.SmbizAdminApp</gwt.compile.target>
@@ -377,6 +373,41 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+  
+    <!-- GWT unpacking profiles -->
+    <profile>
+      <id>gwt-dev-windows</id>
+      <properties>
+        <platform>windows</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-mac</id>
+      <properties>
+        <platform>mac</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-linux</id>
+      <properties>
+        <platform>linux</platform>
+      </properties>
+      <activation>
+        <os>
+          <name>linux</name>
+        </os>
+      </activation>
     </profile>
   
   </profiles>
