@@ -10,9 +10,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 
@@ -59,8 +60,8 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 		this.itemComparator = itemComparator;
 		this.itemConverter = itemConverter;
 		lb = new ListBox(true);
-		lb.addClickListener(this);
-		lb.addChangeListener(this);
+		lb.addClickHandler(this);
+		lb.addChangeHandler(this);
 		setOptions(options);
 	}
 
@@ -72,9 +73,9 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 		if(this.options == null) this.options = new ArrayList<I>();
 		lb.clear();
 
-		ArrayList<I> newSelected = new ArrayList<I>();
+		final ArrayList<I> newSelected = new ArrayList<I>();
 
-		for(I item : options) {
+		for(final I item : options) {
 			addItem(item);
 			if(selected != null && contains(selected, item)) {
 				lb.setItemSelected(this.lb.getItemCount() - 1, true);
@@ -82,7 +83,7 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 			}
 		}
 
-		ArrayList<I> old = selected;
+		final ArrayList<I> old = selected;
 		selected = newSelected;
 
 		firePropertyChange(selected, old);
@@ -96,7 +97,7 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected FocusWidget getEditable() {
 		return lb;
 	}
 
@@ -131,8 +132,8 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 
 	public void removeItem(final I item) {
 		int i = 0;
-		for(Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
-			I option = it.next();
+		for(final Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
+			final I option = it.next();
 			if(itemComparator.compare(option, item) == 0) {
 				options.remove(option);
 				removeItem(i);
@@ -156,11 +157,11 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	@Override
 	protected void setNativeValue(Collection<I> nativeValue) {
 		int i = 0;
-		ArrayList<I> old = selected;
+		final ArrayList<I> old = selected;
 		selected = new ArrayList<I>();
 
-		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-			I item = it.next();
+		for(final Iterator<I> it = options.iterator(); it.hasNext(); i++) {
+			final I item = it.next();
 			if(nativeValue != null && contains(nativeValue, item)) {
 				lb.setItemSelected(i, true);
 				selected.add(item);
@@ -183,7 +184,7 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	public String getText() {
 		// comma delimit
 		if(selected != null) {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			for(int i = 0; i < selected.size(); i++) {
 				sb.append(ToStringConverter.INSTANCE.convert(selected.get(i)));
 				if(i < selected.size() - 1) {
@@ -200,7 +201,7 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	}
 
 	private boolean contains(final Collection<I> c, final I item) {
-		for(I next : c) {
+		for(final I next : c) {
 			if(itemComparator.compare(item, next) == 0) {
 				return true;
 			}
@@ -209,16 +210,16 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	}
 
 	private void update() {
-		ArrayList<I> selected = new ArrayList<I>();
-		Iterator<I> it = options.iterator();
+		final ArrayList<I> selected = new ArrayList<I>();
+		final Iterator<I> it = options.iterator();
 		for(int i = 0; (i < lb.getItemCount()) && it.hasNext(); i++) {
-			I item = it.next();
+			final I item = it.next();
 			if(lb.isItemSelected(i)) {
 				selected.add(item);
 			}
 		}
 
-		ArrayList<I> old = this.selected;
+		final ArrayList<I> old = this.selected;
 		this.selected = selected;
 
 		firePropertyChange(selected, old);
@@ -227,14 +228,14 @@ public final class MultiSelectField<I> extends AbstractField<Collection<I>, Coll
 	}
 
 	@Override
-	public void onChange(Widget sender) {
-		super.onChange(this);
+	public void onChange(ChangeEvent event) {
+		super.onChange(event);
 		update();
 	}
 
 	@Override
-	public void onClick(Widget sender) {
-		super.onClick(sender);
+	public void onClick(ClickEvent event) {
+		super.onClick(event);
 		update();
 	}
 }

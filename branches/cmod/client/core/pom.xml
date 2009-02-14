@@ -13,18 +13,29 @@
   <name>client-core</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses core client and server assets for use by all other client modules.</description>
-  
+
   <build>
-    
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
-    </resources>
-    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-tests</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <useSystemClassLoader>false</useSystemClassLoader>
+              <includes>
+                <include>**/*GWTTest.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>

@@ -4,12 +4,12 @@
  */
 package com.tll.client.ui.listing;
 
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,7 +25,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R> extends Composite implements HasFocus, IListingListener<R> {
+public abstract class ListingWidget<R> extends Composite implements Focusable, KeyDownHandler, IListingListener<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -86,12 +86,12 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 	 */
 	protected ListingWidget(IListingConfig<R> config, ListingTable<R> table) {
 		super();
-		FlowPanel tableViewPanel = new FlowPanel();
+		final FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
 
 		// add a caption if specified
 		if(config.getCaption() != null) {
-			Label caption = new Label(config.getCaption());
+			final Label caption = new Label(config.getCaption());
 			caption.setStyleName(Styles.CAPTION);
 			tableViewPanel.add(caption);
 		}
@@ -102,7 +102,7 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 
 		// table
 		portal.add(table);
-		focusPanel.addKeyboardListener(table);
+		focusPanel.addKeyDownHandler(this);
 		this.table = table;
 
 		// generate nav bar
@@ -147,9 +147,8 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 	 */
 	public final void setRowOptionsDelegate(IRowOptionsDelegate rowOptionsDelegate) {
 		if(rowPopup == null) {
-			rowPopup = new RowContextPopup();
-			table.addTableListener(rowPopup);
-			focusPanel.addMouseListener(rowPopup);
+			rowPopup = new RowContextPopup(table);
+			//focusPanel.addMouseHandler(rowPopup);
 		}
 		rowPopup.setDelegate(rowOptionsDelegate);
 	}
@@ -205,20 +204,8 @@ public abstract class ListingWidget<R> extends Composite implements HasFocus, IL
 		focusPanel.setTabIndex(index);
 	}
 
-	public final void addFocusListener(FocusListener listener) {
-		focusPanel.addFocusListener(listener);
-	}
-
-	public final void removeFocusListener(FocusListener listener) {
-		focusPanel.removeFocusListener(listener);
-	}
-
-	public final void addKeyboardListener(KeyboardListener listener) {
-		focusPanel.addKeyboardListener(listener);
-	}
-
-	public final void removeKeyboardListener(KeyboardListener listener) {
-		focusPanel.removeKeyboardListener(listener);
+	public void onKeyDown(KeyDownEvent event) {
+		delegateEvent(table, event);
 	}
 
 	public final void onListingEvent(ListingEvent<R> event) {

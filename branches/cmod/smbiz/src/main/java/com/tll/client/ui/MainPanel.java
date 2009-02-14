@@ -7,24 +7,25 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.App;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusListener;
@@ -175,7 +176,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 	}
 
-	private final class RightNav extends VerticalPanel implements ClickListener, FormHandler {
+	private final class RightNav extends VerticalPanel implements ClickHandler, SubmitHandler, SubmitCompleteHandler {
 
 		FormPanel frmLogout;
 		Button btnLogoff;
@@ -227,7 +228,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			frmLogout.setMethod(FormPanel.METHOD_POST);
 			frmLogout.setAction(GWT.getModuleBaseURL() + "adminLogout");
 			frmLogout.add(g);
-			frmLogout.addFormHandler(this);
+			frmLogout.addSubmitHandler(this);
+			frmLogout.addSubmitCompleteHandler(this);
 
 			SimplePanel simplePanel = new SimplePanel();
 			DOM.setElementAttribute(simplePanel.getElement(), "id", "currentUser");
@@ -279,19 +281,19 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			add(dpStatusDisplay);
 		}
 
-		public void onClick(Widget sender) {
-			if(sender == btnLogoff) {
+		public void onClick(ClickEvent event) {
+			if(event.getSource() == btnLogoff) {
 				frmLogout.submit();
 			}
 		}
 
-		public void onSubmit(FormSubmitEvent event) {
+		public void onSubmit(SubmitEvent event) {
 			if(!Window.confirm("Are you sure you want to Log out?")) {
-				event.setCancelled(true);
+				event.cancel();
 			}
 		}
 
-		public void onSubmitComplete(FormSubmitCompleteEvent event) {
+		public void onSubmitComplete(SubmitCompleteEvent event) {
 			final String results = event.getResults();
 			if(results == null || results.length() == 0) {
 				// successful logoff

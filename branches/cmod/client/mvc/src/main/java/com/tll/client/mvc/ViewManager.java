@@ -9,8 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.model.IModelChangeListener;
 import com.tll.client.model.ModelChangeEvent;
@@ -29,7 +30,7 @@ import com.tll.client.ui.view.ViewContainer;
  * controller. View history is also managed here.
  * @author jpk
  */
-public final class ViewManager implements ISourcesViewEvents, IModelChangeListener, HistoryListener {
+public final class ViewManager implements ISourcesViewEvents, IModelChangeListener, ValueChangeHandler<String> {
 
 	/**
 	 * The default number of views to cache.
@@ -83,7 +84,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * The view request that is pending.
 	 * <p>
 	 * In order to comply with the history event system, we must be routed from
-	 * the {@link HistoryListener#onHistoryChanged(String)} context.
+	 * the browser history context.
 	 * <p>
 	 * <strong>AbstractView request procedure:</strong>
 	 * <ol>
@@ -102,7 +103,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	private ViewManager() {
 		super();
 
-		History.addHistoryListener(this);
+		History.addValueChangeHandler(this);
 
 		// add supported controllers
 		controllers.add(new ShowViewController());
@@ -153,7 +154,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		}
 
 		// determine whether to show pinned or popped
-		boolean showPopped = ((cacheIndex == -1) && view.getOptions().isInitiallyPopped());
+		final boolean showPopped = ((cacheIndex == -1) && view.getOptions().isInitiallyPopped());
 
 		// set the view
 		try {
@@ -171,7 +172,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 				currentViewContainer = vc;
 			}
 		}
-		catch(RuntimeException re) {
+		catch(final RuntimeException re) {
 			if(cacheIndex != -1 && currentViewContainer != null) {
 				// revert the cache state
 				cache.add(cacheIndex, currentViewContainer);
@@ -211,7 +212,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		assert vc != null;
 
 		// find the newest pinned view excluding the one to be unloaded
-		ViewContainer newestPinned = findFirstView(0, false, vc.getView().getViewKey());
+		final ViewContainer newestPinned = findFirstView(0, false, vc.getView().getViewKey());
 		if(newestPinned == null) {
 			// we have no alternate pinned view to show!
 			return null;
@@ -245,8 +246,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		if(cache.cacheSize() == 0) {
 			return;
 		}
-		for(Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
-			ViewContainer vc = itr.next();
+		for(final Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
+			final ViewContainer vc = itr.next();
 			vc.close();
 			vc.onDestroy();
 		}
@@ -266,10 +267,10 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 */
 	private ViewContainer findFirstView(int beginIndex, boolean popped, ViewKey exclude) {
 		assert beginIndex >= 0 && beginIndex <= cache.cacheSize();
-		Iterator<ViewContainer> itr = cache.cacheIterator(beginIndex);
+		final Iterator<ViewContainer> itr = cache.cacheIterator(beginIndex);
 		if(itr != null) {
 			while(itr.hasNext()) {
-				ViewContainer vc = itr.next();
+				final ViewContainer vc = itr.next();
 				if(exclude == null || !exclude.equals(vc.getView().getViewKey())) {
 					if(vc.isPopped() == popped) {
 						return vc;
@@ -309,10 +310,10 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 *         view cache.
 	 */
 	ViewContainer findView(ViewKey viewKey) {
-		Iterator<ViewContainer> itr = cache.cacheIterator(0);
+		final Iterator<ViewContainer> itr = cache.cacheIterator(0);
 		if(itr != null) {
 			while(itr.hasNext()) {
-				ViewContainer vc = itr.next();
+				final ViewContainer vc = itr.next();
 				if(vc.getView().getViewKey().equals(viewKey)) {
 					return vc;
 				}
@@ -328,11 +329,11 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 *         view cache.
 	 */
 	ViewContainer findView(int viewKeyHash) {
-		Iterator<ViewContainer> itr = cache.cacheIterator(0);
+		final Iterator<ViewContainer> itr = cache.cacheIterator(0);
 		if(itr != null) {
 			while(itr.hasNext()) {
-				ViewContainer vc = itr.next();
-				int hc = vc.getView().getViewKey().hashCode();
+				final ViewContainer vc = itr.next();
+				final int hc = vc.getView().getViewKey().hashCode();
 				if(hc == viewKeyHash) {
 					return vc;
 				}
@@ -347,9 +348,9 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * @return Array of {@link IViewRef}s
 	 */
 	public IViewRef[] getRecentViews() {
-		List<ViewContainer> list = new ArrayList<ViewContainer>();
-		for(Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
-			ViewContainer vc = itr.next();
+		final List<ViewContainer> list = new ArrayList<ViewContainer>();
+		for(final Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
+			final ViewContainer vc = itr.next();
 			if(!vc.getViewState().isPopped()) {
 				list.add(vc);
 			}
@@ -358,8 +359,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		final IViewRef[] array = new IViewRef[cnt];
 		if(cnt > 0) {
 			int i = cnt;
-			for(Iterator<ViewContainer> itr = list.iterator(); itr.hasNext();) {
-				ViewContainer vc = itr.next();
+			for(final Iterator<ViewContainer> itr = list.iterator(); itr.hasNext();) {
+				final ViewContainer vc = itr.next();
 				array[--i] = vc.getView();
 			}
 		}
@@ -382,11 +383,11 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 		if(cache.cacheSize() < 2) return null;
 
-		List<IViewRef> list = new ArrayList<IViewRef>(MAX_VIEW_PATH_ELEMENTS);
+		final List<IViewRef> list = new ArrayList<IViewRef>(MAX_VIEW_PATH_ELEMENTS);
 
 		// spew out primary view cache
-		for(Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
-			ViewContainer vc = itr.next();
+		for(final Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
+			final ViewContainer vc = itr.next();
 			if(vc != initialViewContainer && vc != currentViewContainer && !vc.isPopped()) {
 				if(list.size() == MAX_VIEW_PATH_ELEMENTS) break;
 				list.add(0, vc.getView());
@@ -395,10 +396,10 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 		// fill up to max allowed view path elements with secondary cache entries
 		if(list.size() < MAX_VIEW_PATH_ELEMENTS) {
-			Iterator<IViewRef> itr = cache.visitedIterator(0);
+			final Iterator<IViewRef> itr = cache.visitedIterator(0);
 			if(itr != null) {
 				while(itr.hasNext() && list.size() <= MAX_VIEW_PATH_ELEMENTS) {
-					IViewRef ref = itr.next();
+					final IViewRef ref = itr.next();
 					if(!ref.getViewKey().equals(currentViewContainer.getView().getViewKey())) {
 						list.add(0, ref);
 					}
@@ -409,8 +410,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		// ensure initial view is present
 		if(currentViewContainer != initialViewContainer) {
 			boolean exists = false;
-			for(Iterator<IViewRef> itr = list.iterator(); itr.hasNext();) {
-				IViewRef ref = itr.next();
+			for(final Iterator<IViewRef> itr = list.iterator(); itr.hasNext();) {
+				final IViewRef ref = itr.next();
 				if(ref.getViewKey().equals(initialViewContainer.getView().getViewKey())) {
 					exists = true;
 					break;
@@ -442,7 +443,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		// pop the view
 		currentViewContainer.pop(parentViewPanel);
 
-		ViewContainer nextCurrent = findFirstView(1, false, null);
+		final ViewContainer nextCurrent = findFirstView(1, false, null);
 		return nextCurrent == null ? null : nextCurrent.getView().getViewKey();
 	}
 
@@ -460,9 +461,9 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 	public void onModelChangeEvent(ModelChangeEvent event) {
 		// pass the event to all cached views
-		Iterator<ViewContainer> itr = cache.cacheIterator(0);
+		final Iterator<ViewContainer> itr = cache.cacheIterator(0);
 		while(itr.hasNext()) {
-			IView view = itr.next().getView();
+			final IView view = itr.next().getView();
 			view.onModelChangeEvent(event);
 		}
 	}
@@ -502,7 +503,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 	private void doDispatch(ViewRequestEvent request) {
 		// do actual disptach
-		for(IController c : controllers) {
+		for(final IController c : controllers) {
 			if(c.canHandle(request)) {
 				c.handle(request);
 				return;
@@ -511,8 +512,8 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		throw new IllegalStateException("Unhandled view request: " + request.toString());
 	}
 
-	public void onHistoryChanged(String historyToken) {
-		final int viewKeyHash = ViewKey.extractViewKeyHash(historyToken);
+	public void onValueChange(ValueChangeEvent<String> event) {
+		final int viewKeyHash = ViewKey.extractViewKeyHash(event.getValue());
 		if(viewKeyHash == -1) return;
 
 		if(pendingViewRequest == null) {
@@ -520,14 +521,14 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 			// history directly)
 
 			// is the view still cached?
-			ViewContainer vc = findView(viewKeyHash);
+			final ViewContainer vc = findView(viewKeyHash);
 			if(vc != null) {
 				setCurrentView(vc.getView());
 			}
 			else {
 				// TODO figure out what to do here
 				// currently a no-op
-				Log.trace("ViewManager.onHistoryChanged() - Can't find view container for " + historyToken);
+				Log.trace("ViewManager.onHistoryChanged() - Can't find view container for " + event.getValue());
 			}
 			return;
 		}

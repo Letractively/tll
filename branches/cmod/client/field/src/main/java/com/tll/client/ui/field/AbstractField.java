@@ -7,14 +7,16 @@ package com.tll.client.ui.field;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
@@ -48,7 +50,7 @@ import com.tll.model.schema.PropertyMetadata;
  * @author jpk
  */
 public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBindable> implements IField<B, V>,
-		HasFocus, ClickListener, ChangeListener {
+		Focusable, ClickHandler, ChangeHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -200,7 +202,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(fldLbl == null) {
 			fldLbl = new FieldLabel();
 			fldLbl.setFor(domId);
-			fldLbl.addClickListener(this);
+			fldLbl.addClickHandler(this);
 		}
 		fldLbl.setText(labelText == null ? "" : labelText);
 	}
@@ -312,7 +314,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
-	protected abstract HasFocus getEditable();
+	protected abstract Focusable getEditable();
 
 	/**
 	 * Either marks or un-marks this field as dirty in the UI based on its current
@@ -341,7 +343,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	public final void applyPropertyMetadata(IPropertyMetadataProvider provider) {
 		// Log.debug("AbstractField.applyPropertyMetadata() for " + toString());
-		PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
+		final PropertyMetadata metadata = provider.getPropertyMetadata(getPropertyName());
 		if(metadata == null) {
 			Log.warn("No property metadata found for field: " + toString());
 		}
@@ -364,7 +366,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 					break;
 				case DATE:
 					if(this instanceof IHasFormat) {
-						GlobalFormat format = ((IHasFormat) this).getFormat();
+						final GlobalFormat format = ((IHasFormat) this).getFormat();
 						if(format != null && format.isDateFormat()) {
 							addValidator(DateValidator.instance(format));
 						}
@@ -373,7 +375,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 				case FLOAT:
 				case DOUBLE:
 					if(this instanceof IHasFormat) {
-						GlobalFormat format = ((IHasFormat) this).getFormat();
+						final GlobalFormat format = ((IHasFormat) this).getFormat();
 						if(format != null && format.isNumericFormat()) {
 							addValidator(DecimalValidator.instance(format));
 						}
@@ -527,68 +529,42 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		}
 	}
 
-	public final void addKeyboardListener(KeyboardListener listener) {
+	public final void addFocusHandler(FocusHandler handler) {
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		getEditable().addKeyboardListener(listener);
+		((HasFocusHandlers) getEditable()).addFocusHandler(handler);
 		// }
 	}
 
-	public final void removeKeyboardListener(KeyboardListener listener) {
-		// NOTE: we must be deterministic here as the editability may intermittently
-		// change
-		// if(!isReadOnly()) {
-		getEditable().removeKeyboardListener(listener);
-		// }
+	@Override
+	public int getTabIndex() {
+		return getEditable().getTabIndex();
 	}
 
-	public final void addFocusListener(FocusListener listener) {
-		// NOTE: we must be deterministic here as the editability may intermittently
-		// change
-		// if(!isReadOnly()) {
-		getEditable().addFocusListener(listener);
-		// }
+	@Override
+	public void setAccessKey(char key) {
+		if(!readOnly) getEditable().setAccessKey(key);
 	}
 
-	public final void removeFocusListener(FocusListener listener) {
-		// NOTE: we must be deterministic here as the editability may intermittently
-		// change
-		// if(!isReadOnly()) {
-		getEditable().removeFocusListener(listener);
-		// }
+	@Override
+	public void setFocus(boolean focused) {
+		if(!readOnly) getEditable().setFocus(focused);
 	}
 
-	public final int getTabIndex() {
-		return readOnly ? -1 : getEditable().getTabIndex();
+	@Override
+	public void setTabIndex(int index) {
+		if(!readOnly) getEditable().setTabIndex(index);
 	}
 
-	public final void setAccessKey(char key) {
-		if(!readOnly) {
-			getEditable().setTabIndex(key);
-		}
-	}
-
-	public final void setFocus(boolean focused) {
-		if(!readOnly) {
-			getEditable().setFocus(focused);
-		}
-	}
-
-	public final void setTabIndex(int index) {
-		if(!readOnly) {
-			getEditable().setTabIndex(index);
-		}
-	}
-
-	public void onClick(Widget sender) {
+	public void onClick(ClickEvent event) {
 		// toggle the display of any bound UI msgs for this field when the field
 		// label is clicked
-		if(sender == fldLbl) toggleMsgs();
+		if(event.getSource() == fldLbl) toggleMsgs();
 	}
 
-	public void onChange(Widget sender) {
-		assert sender == this;
+	public void onChange(ChangeEvent event) {
+		assert event.getSource() == this;
 
 		// dirty check
 		markDirty();
@@ -609,7 +585,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		try {
 			setValue((B) value);
 		}
-		catch(RuntimeException e) {
+		catch(final RuntimeException e) {
 			throw new Exception("Unable to set field " + this + " value", e);
 		}
 	}
@@ -664,7 +640,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		AbstractField other = (AbstractField) obj;
+		final AbstractField other = (AbstractField) obj;
 		return (!property.equals(other.property));
 	}
 

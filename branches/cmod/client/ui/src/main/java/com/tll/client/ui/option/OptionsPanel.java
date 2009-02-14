@@ -7,9 +7,12 @@ package com.tll.client.ui.option;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,7 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
  * selectable via mouse and keyboard.
  * @author jpk
  */
-public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseListener, ISourcesOptionEvents {
+public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, ISourcesOptionEvents {
 
 	/**
 	 * Styles - (options.css)
@@ -42,7 +45,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	public OptionsPanel() {
 		super();
 		setWidget(vp);
-		addKeyboardListener(this);
+		addKeyDownHandler(this);
 		setStyleName(Styles.OPTIONS);
 	}
 
@@ -66,7 +69,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	private void addOption(Option option) {
 		options.add(option);
 		vp.add(option);
-		option.addMouseListener(this);
+		option.addMouseDownHandler(this);
 	}
 
 	/**
@@ -75,14 +78,14 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	 * @param rmv Remove from {@link #options}?
 	 */
 	private void removeOption(Option option, boolean rmv) {
-		option.removeMouseListener(this);
+		//option.removeMouseListener(this);
 		vp.remove(option);
 		if(rmv) options.remove(option);
 	}
 
 	private void clearOptions() {
 		crntIndx = -1;
-		for(Option option : options) {
+		for(final Option option : options) {
 			removeOption(option, false);
 		}
 		options.clear();
@@ -96,7 +99,7 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 	public void setOptions(Option[] options) {
 		clearOptions();
 		if(options != null) {
-			for(Option element2 : options) {
+			for(final Option element2 : options) {
 				addOption(element2);
 			}
 		}
@@ -134,15 +137,15 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		}
 	}
 
-	public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-		switch(keyCode) {
-			case KeyboardListener.KEY_UP:
+	public void onKeyDown(KeyDownEvent event) {
+		switch(event.getNativeKeyCode()) {
+			case KeyCodes.KEY_UP:
 				setCurrentOption(crntIndx - 1, true);
 				break;
-			case KeyboardListener.KEY_DOWN:
+			case KeyCodes.KEY_DOWN:
 				setCurrentOption(crntIndx + 1, true);
 				break;
-			case KeyboardListener.KEY_ENTER:
+			case KeyCodes.KEY_ENTER:
 				if(crntIndx >= 0 && optionListeners != null) {
 					optionListeners.fireOnSelected(new OptionEvent(this, options.get(crntIndx).getText()));
 				}
@@ -150,18 +153,12 @@ public class OptionsPanel extends FocusPanel implements KeyboardListener, MouseL
 		}
 	}
 
-	public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-	}
-
-	public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-	}
-
-	public void onMouseDown(Widget sender, int x, int y) {
-		final int index = options.indexOf(sender);
+	public void onMouseDown(MouseDownEvent event) {
+		final int index = options.indexOf(event.getSource());
 		if(index >= 0) {
 			setCurrentOption(index, false);
 			if(optionListeners != null) {
-				optionListeners.fireOnSelected(new OptionEvent(this, ((Option) sender).getText()));
+				optionListeners.fireOnSelected(new OptionEvent(this, ((Option) event.getSource()).getText()));
 			}
 		}
 	}

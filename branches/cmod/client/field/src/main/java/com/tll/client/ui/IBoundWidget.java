@@ -2,7 +2,7 @@ package com.tll.client.ui;
 
 import java.util.Comparator;
 
-import com.google.gwt.user.client.ui.SourcesChangeEvents;
+import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
 import com.tll.common.bind.IBindable;
@@ -18,7 +18,7 @@ import com.tll.common.bind.IBindable;
  *        value.
  * @param <M> The model type which must be boundWidget.
  */
-public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, SourcesChangeEvents {
+public interface IBoundWidget<B, V, M extends IBindable> extends IBindable, HasChangeHandlers {
 
 	/**
 	 * Generic token indicating the name of the value property. Used when firing

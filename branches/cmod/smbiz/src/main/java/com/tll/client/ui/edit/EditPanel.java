@@ -7,9 +7,10 @@ package com.tll.client.ui.edit;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -33,7 +34,7 @@ import com.tll.common.msg.Msg;
  * and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ClickListener, ISourcesEditEvents {
+public final class EditPanel extends Composite implements ClickHandler, ISourcesEditEvents {
 
 	/**
 	 * Styles - (admin.css)
@@ -188,16 +189,16 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 	 */
 	public void applyErrorMsgs(final List<Msg> msgs) {
 		// MsgManager.instance().clear(RootPanel.get(), false);
-		for(Msg msg : msgs) {
+		for(final Msg msg : msgs) {
 			boolean msgBound = false;
 			if(msg.getRefToken() != null) {
 				try {
-					Widget fw = fieldPanel.getField(msg.getRefToken());
+					final Widget fw = fieldPanel.getField(msg.getRefToken());
 					assert fw != null;
 					MsgManager.instance().post(false, msg, Position.BOTTOM, fw, -1, false).show();
 					msgBound = true;
 				}
-				catch(UnsetPropertyException e) {
+				catch(final UnsetPropertyException e) {
 					// ok
 				}
 			}
@@ -209,7 +210,8 @@ public final class EditPanel extends Composite implements ClickListener, ISource
 		MsgManager.instance().show(RootPanel.get(), true, false);
 	}
 
-	public void onClick(Widget sender) {
+	public void onClick(ClickEvent event) {
+		final Object sender = event.getSource();
 		if(sender == btnSave) {
 			fieldPanel.getAction().execute();
 			// TODO propagate

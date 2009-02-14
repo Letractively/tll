@@ -4,22 +4,23 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ClickListenerCollection;
 import com.google.gwt.user.client.ui.HasHTML;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * SimpleHyperLink - Copied from gwtTk library.
  * @author jpk
  */
-public class SimpleHyperLink extends Widget implements HasText, HasHTML, SourcesClickEvents {
+public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClickHandlers {
 
-	private ClickListenerCollection m_listeners;
+	//private ClickListenerCollection m_listeners;
 
 	public SimpleHyperLink() {
 		this(null, null);
@@ -31,10 +32,10 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, Sources
 
 	/**
 	 * Constructs a new SimpleHyperLink
-	 * @param text a String or null
-	 * @param clickListener a ClickListener or null
+	 * @param text a String or <code>null</code>
+	 * @param clickHandler May be <code>null</code>
 	 */
-	public SimpleHyperLink(String text, ClickListener clickListener) {
+	public SimpleHyperLink(String text, ClickHandler clickHandler) {
 		setElement(DOM.createAnchor());
 
 		// prevents text selection by double-click
@@ -48,17 +49,15 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, Sources
 			setText(text);
 		}
 
-		if(clickListener != null) {
-			addClickListener(clickListener);
+		if(clickHandler != null) {
+			addHandler(clickHandler, ClickEvent.getType());
 		}
 	}
 
 	@Override
 	public void onBrowserEvent(Event event) {
 		if(event.getTypeInt() == Event.ONCLICK) {
-			if(m_listeners != null) {
-				m_listeners.fireClick(this);
-			}
+			//fireEvent(event);
 			// keep '#' out of the location bar
 			DOM.eventPreventDefault(event);
 		}
@@ -82,17 +81,7 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, Sources
 		getElement().setInnerHTML(html);
 	}
 
-	// SourcesClickEvents methods
-	public void addClickListener(ClickListener listener) {
-		if(m_listeners == null) {
-			m_listeners = new ClickListenerCollection();
-		}
-		m_listeners.add(listener);
-	}
-
-	public void removeClickListener(ClickListener listener) {
-		if(m_listeners != null) {
-			m_listeners.remove(listener);
-		}
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return null;
 	}
 }

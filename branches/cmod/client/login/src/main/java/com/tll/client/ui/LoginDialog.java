@@ -4,19 +4,20 @@
 package com.tll.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.data.rpc.ForgotPasswordCommand;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IUserSessionListener;
@@ -25,7 +26,8 @@ import com.tll.client.data.rpc.IUserSessionListener;
  * LoginDialog
  * @author jpk
  */
-public class LoginDialog extends Dialog implements FormHandler, ClickListener, ISourcesUserSessionEvents {
+public class LoginDialog extends Dialog implements SubmitHandler, SubmitCompleteHandler, ClickHandler,
+		ISourcesUserSessionEvents {
 
 	private final Label lblStatusMsg;
 	private final FormPanel form;
@@ -59,7 +61,7 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		form.setAction(GWT.getModuleBaseURL() + "j_acegi_security_check");
 		form.setMethod(FormPanel.METHOD_POST);
 
-		VerticalPanel vert = new VerticalPanel();
+		final VerticalPanel vert = new VerticalPanel();
 		vert.setSpacing(2);
 
 		vert.add(lblStatusMsg);
@@ -69,7 +71,7 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		lnkTgl = new SimpleHyperLink("Forgot Password", this);
 		lnkTgl.setTitle("Forgot Password");
 
-		Grid grid = new Grid(3, 2);
+		final Grid grid = new Grid(3, 2);
 		grid.setWidth("100%");
 		grid.setCellSpacing(2);
 		grid.setWidget(0, 0, new Label("Email Address:"));
@@ -80,7 +82,8 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		grid.setWidget(2, 1, lnkTgl);
 		vert.add(grid);
 
-		form.addFormHandler(this);
+		form.addSubmitHandler(this);
+		form.addSubmitCompleteHandler(this);
 
 		form.setWidget(vert);
 
@@ -105,25 +108,25 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		return "Forgot Password".equals(lnkTgl.getTitle());
 	}
 
-	public void onClick(Widget sender) {
-		if(sender == btnSubmit) {
+	public void onClick(ClickEvent event) {
+		if(event.getSource() == btnSubmit) {
 			if(isLoginMode()) {
 				// DeferredCommand.addCommand(new FocusCommand(btnSubmit, false));
 				setVisible(false);
 				form.submit();
 			}
 			else {
-				String emailAddress = tbEmail.getText();
+				final String emailAddress = tbEmail.getText();
 				if(emailAddress.length() == 0) {
 					lblStatusMsg.setText("Your email address must be specified for password retrieval.");
 					return;
 				}
 
-				ForgotPasswordCommand fpc = new ForgotPasswordCommand(this, emailAddress);
+				final ForgotPasswordCommand fpc = new ForgotPasswordCommand(this, emailAddress);
 				fpc.execute();
 			}
 		}
-		else if(sender == lnkTgl) {
+		else if(event.getSource() == lnkTgl) {
 			if(!isLoginMode()) {
 				// to login mode
 				lblStatusMsg.setText(null);
@@ -148,24 +151,24 @@ public class LoginDialog extends Dialog implements FormHandler, ClickListener, I
 		}
 	}
 
-	public void onSubmit(FormSubmitEvent event) {
-		StringBuilder msg = new StringBuilder(128);
+	public void onSubmit(SubmitEvent event) {
+		final StringBuilder msg = new StringBuilder(128);
 		if(tbEmail.getText().length() == 0) {
 			msg.append("Please specify your email address.");
-			event.setCancelled(true);
+			event.cancel();
 		}
 		if(tbPswd.getText().length() == 0) {
 			msg.append("Please specify your password.");
-			event.setCancelled(true);
+			event.cancel();
 		}
-		if(event.isCancelled()) {
+		if(event.isCanceled()) {
 			setVisible(false);
 		}
 		lblStatusMsg.setText(msg.toString());
 	}
 
-	public void onSubmitComplete(FormSubmitCompleteEvent event) {
-		String results = event.getResults();
+	public void onSubmitComplete(SubmitCompleteEvent event) {
+		final String results = event.getResults();
 		if(results == null || results.length() == 0) {
 			// successful login
 			userSessionListeners.fireLogin();

@@ -1,12 +1,12 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.ClickListenerCollection;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
 import com.tll.common.util.StringUtil;
@@ -15,7 +15,7 @@ import com.tll.common.util.StringUtil;
  * FieldLabel - the field label of an {@link AbstractField} impl.
  * @author jpk
  */
-public final class FieldLabel extends Widget implements HasText, SourcesClickEvents {
+public final class FieldLabel extends Widget implements HasText, HasClickHandlers {
 
 	private static final String requiredToken = "<sup class=\"" + IField.Styles.REQUIRED + "\">*</sup>";
 
@@ -23,7 +23,6 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 
 	private boolean required;
 	private String text;
-	private ClickListenerCollection clickListeners;
 
 	/**
 	 * Constructor
@@ -57,17 +56,10 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 		this(null, null, false);
 	}
 
-	public void addClickListener(ClickListener listener) {
-		if(clickListeners == null) {
-			clickListeners = new ClickListenerCollection();
-		}
-		clickListeners.add(listener);
-	}
-
-	public void removeClickListener(ClickListener listener) {
-		if(clickListeners != null) {
-			clickListeners.remove(listener);
-		}
+	@Override
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		//return addDomHandler(handler, type);
+		return null; // TODO fix
 	}
 
 	@Override
@@ -75,11 +67,11 @@ public final class FieldLabel extends Widget implements HasText, SourcesClickEve
 		super.onBrowserEvent(event);
 		switch(event.getTypeInt()) {
 			case Event.ONCLICK:
-				if(clickListeners != null) clickListeners.fireClick(this);
+				//fireEvent(todo gwt event);
 				break;
 		}
 	}
-
+	
 	/**
 	 * Sets the for attrubute.
 	 * @param fldId The DOM element id of the associated form field.

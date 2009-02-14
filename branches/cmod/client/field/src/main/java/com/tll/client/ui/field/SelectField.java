@@ -10,9 +10,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
@@ -56,7 +56,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 		setComparator(comparator);
 		this.itemConverter = itemConverter;
 		lb = new ListBox();
-		lb.addChangeListener(this);
+		lb.addChangeHandler(this);
 		setOptions(options);
 	}
 
@@ -70,7 +70,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 		I newSelected = null;
 
-		for(I item : options) {
+		for(final I item : options) {
 			addItem(item);
 			if(selected != null && selected.equals(item)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
@@ -78,7 +78,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 			}
 		}
 
-		I old = selected;
+		final I old = selected;
 		selected = newSelected;
 
 		firePropertyChange(selected, old);
@@ -92,7 +92,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected Focusable getEditable() {
 		return lb;
 	}
 
@@ -127,8 +127,8 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 	public void removeItem(final I item) {
 		int i = 0;
-		for(Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
-			I option = it.next();
+		for(final Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
+			final I option = it.next();
 			if(getComparator().compare(option, item) == 0) {
 				options.remove(option);
 				removeItem(i);
@@ -153,11 +153,11 @@ public final class SelectField<I> extends AbstractField<I, I> {
 	protected void setNativeValue(I nativeValue) {
 		if(options == null) throw new IllegalStateException("No options specified.");
 		int i = 0;
-		I old = selected;
+		final I old = selected;
 		selected = null;
 
-		for(Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-			I item = it.next();
+		for(final Iterator<I> it = options.iterator(); it.hasNext(); i++) {
+			final I item = it.next();
 			if(getComparator().compare(nativeValue, item) == 0) {
 				lb.setItemSelected(i, true);
 				selected = item;
@@ -187,9 +187,9 @@ public final class SelectField<I> extends AbstractField<I, I> {
 
 	private void update() {
 		I selected = null;
-		Iterator<I> it = options.iterator();
+		final Iterator<I> it = options.iterator();
 		for(int i = 0; (i < lb.getItemCount()) && it.hasNext(); i++) {
-			I item = it.next();
+			final I item = it.next();
 			if(lb.isItemSelected(i)) {
 				selected = item;
 				break;
@@ -197,7 +197,7 @@ public final class SelectField<I> extends AbstractField<I, I> {
 		}
 
 		if(this.selected != selected) {
-			I old = this.selected;
+			final I old = this.selected;
 			this.selected = selected;
 
 			firePropertyChange(selected, old);
@@ -206,8 +206,8 @@ public final class SelectField<I> extends AbstractField<I, I> {
 	}
 
 	@Override
-	public void onChange(Widget sender) {
+	public void onChange(ChangeEvent event) {
 		update();
-		super.onChange(this);
+		super.onChange(event);
 	}
 }

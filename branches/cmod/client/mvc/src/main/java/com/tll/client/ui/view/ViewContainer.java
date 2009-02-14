@@ -6,11 +6,20 @@
 package com.tll.client.ui.view;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventPreview;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -31,8 +40,8 @@ import com.tll.client.ui.ISourcesDragEvents;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class ViewContainer extends SimplePanel implements MouseListener, ISourcesDragEvents, ClickListener,
-		EventPreview {
+public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
+		ISourcesDragEvents, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -85,7 +94,7 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		}
 
 		Element getWidgetTr(Widget w) {
-			Element td = getTd(w);
+			final Element td = getTd(w);
 			return td == null ? null : td.getParentElement();
 		}
 	}
@@ -105,14 +114,16 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		setWidget(mainLayout);
 	}
 
-	public boolean onEventPreview(Event event) {
+	@Override
+	public void onPreviewNativeEvent(NativePreviewEvent event) {
 		// NOTE: we should only be in the popped state for previewing events
 		// assert isPopped() == true; (commented out for performance - but asserts
 		// ok)
 
 		final int type = event.getTypeInt();
-		final Element target = event.getTarget();
-		boolean eventTargetsPopup = getElement().isOrHasChild(target);
+		final NativeEvent ne = event.getNativeEvent();
+		final Element target = ne.getTarget();
+		final boolean eventTargetsPopup = getElement().isOrHasChild(target);
 
 		switch(type) {
 			case Event.ONMOUSEDOWN:
@@ -120,7 +131,8 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 				// DialogBox content) to keep text from being selected when it
 				// is dragged.
 				if(toolbar.viewTitle.getElement().isOrHasChild(target)) {
-					DOM.eventPreventDefault(event);
+					//DOM.eventPreventDefault(event);
+					ne.preventDefault();
 				}
 			case Event.ONMOUSEUP:
 			case Event.ONMOUSEMOVE:
@@ -128,8 +140,8 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 			case Event.ONDBLCLICK: {
 				// Don't eat events if event capture is enabled, as this can interfere
 				// with dialog dragging, for example.
-				if(DOM.getCaptureElement() != null) {
-					return true;
+				if(DOM.getCaptureElement() == null) {
+					event.cancel();
 				}
 				break;
 			}
@@ -145,7 +157,9 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 		// NOTE: we dis-allow UI interaction with content NOT contained w/in this
 		// view container!
-		return eventTargetsPopup;
+		if(!eventTargetsPopup) {
+			event.cancel();
+		}
 	}
 
 	/**
@@ -168,15 +182,30 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 		};
 	}
+	
+	private HandlerRegistration hrEventPreview, hrMouseDown, hrMouseMove, hrMouseUp;
 
 	public void addDragListener(IDragListener listener) {
-		if(dragListeners.size() == 0) toolbar.addMouseListener(this);
+		if(dragListeners.size() == 0) {
+			assert hrMouseDown == null;
+			hrMouseDown = toolbar.addMouseDownHandler(this);
+			hrMouseMove = toolbar.addMouseMoveHandler(this);
+			hrMouseUp = toolbar.addMouseUpHandler(this);
+		}
 		dragListeners.add(listener);
 	}
 
 	public void removeDragListener(IDragListener listener) {
 		dragListeners.remove(listener);
-		if(dragListeners.size() == 0) toolbar.removeMouseListener(this);
+		if(dragListeners.size() == 0) {
+			assert hrMouseDown != null;
+			hrMouseDown.removeHandler();
+			hrMouseDown = null;
+			hrMouseMove.removeHandler();
+			hrMouseMove = null;
+			hrMouseUp.removeHandler();
+			hrMouseUp = null;
+		}
 	}
 
 	public boolean isPopped() {
@@ -195,27 +224,28 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		}
 	}
 
-	public void onMouseDown(Widget sender, int x, int y) {
+	public void onMouseDown(MouseDownEvent event) {
 		if(isPopped()) {
-			endDrag(sender);
-			DOM.setCapture(sender.getElement());
+			endDrag((Widget) event.getSource());
+			//DOM.setCapture(event.getNativeEvent().getTarget());
+			event.stopPropagation();
 			mouseIsDown = true;
-			assert x >= 0 && y >= 0;
-			dragStartX = x;
-			dragStartY = y;
+			assert event.getClientX() >= 0 && event.getClientY() >= 0;
+			dragStartX = event.getClientX();
+			dragStartY = event.getClientY();
 		}
 	}
 
-	public void onMouseMove(Widget sender, int x, int y) {
-		assert sender == toolbar.viewTitle;
+	public void onMouseMove(MouseMoveEvent event) {
+		assert event.getSource() == toolbar.viewTitle;
 		if(mouseIsDown) {
 			if(!dragging) {
 				dragging = true;
 				dragListeners.fireDragStart(new DragEvent(this, dragStartX, dragStartY));
 			}
 
-			int absX = x + getAbsoluteLeft();
-			int absY = y + getAbsoluteTop();
+			final int absX = event.getClientX() + getAbsoluteLeft();
+			final int absY = event.getClientY() + getAbsoluteTop();
 
 			int nx = absX - dragStartX;
 			int ny = absY - dragStartY;
@@ -224,27 +254,21 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 			if(nx < 0) nx = 0;
 			if(ny < 0) ny = 0;
 
-			Element elm = getElement();
+			final Element elm = getElement();
 			elm.getStyle().setPropertyPx("left", nx);
 			elm.getStyle().setPropertyPx("top", ny);
 
-			dragListeners.fireDragging(new DragEvent(this, x - dragStartX, y - dragStartY));
+			dragListeners.fireDragging(new DragEvent(this, event.getClientX() - dragStartX, event.getClientY() - dragStartY));
 		}
 	}
 
-	public void onMouseUp(Widget sender, int x, int y) {
+	public void onMouseUp(MouseUpEvent event) {
 		if(mouseIsDown) {
-			endDrag(sender);
+			endDrag((Widget) event.getSource());
 			dragListeners.fireDragEnd(new DragEvent(this));
 		}
 	}
-
-	public void onMouseEnter(Widget sender) {
-	}
-
-	public void onMouseLeave(Widget sender) {
-	}
-
+	
 	/**
 	 * Pops the view container out of the natural DOM layout making its
 	 * positioning absolute and and adding it to the {@link RootPanel} using the
@@ -270,11 +294,11 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 			mainLayout.removeStyleDependentName(Styles.PINNED);
 			mainLayout.addStyleDependentName(Styles.POPPED);
 
-			int width = getWidget().getOffsetWidth();
+			final int width = getWidget().getOffsetWidth();
 			// int width = getWidget().getOffsetWidth();
 			// int height = getWidget().getOffsetHeight();
 
-			Element elm = getElement();
+			final Element elm = getElement();
 			elm.getStyle().setProperty("position", "absolute");
 			elm.getStyle().setPropertyPx("left", left);
 			elm.getStyle().setPropertyPx("top", top);
@@ -296,7 +320,8 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 
 			addDragListener(MsgManager.instance());
 
-			DOM.addEventPreview(this);
+			assert hrEventPreview == null;
+			hrEventPreview = Event.addNativePreviewHandler(this);
 		}
 	}
 
@@ -308,11 +333,13 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 		if(!isAttached() || isPopped()) {
 			assert parent != null;
 
-			DOM.removeEventPreview(this);
+			assert hrEventPreview != null;
+			hrEventPreview.removeHandler();
+			hrEventPreview = null;
 
 			removeDragListener(MsgManager.instance());
 
-			Element elm = getElement();
+			final Element elm = getElement();
 			elm.getStyle().setProperty("position", "");
 			elm.getStyle().setProperty("left", "");
 			elm.getStyle().setProperty("top", "");
@@ -361,14 +388,18 @@ public final class ViewContainer extends SimplePanel implements MouseListener, I
 	 */
 	public void close() {
 		removeFromParent();
-		DOM.removeEventPreview(this);
+		if(hrEventPreview != null) {
+			hrEventPreview.removeHandler();
+		}
+		//DOM.removeEventPreview(this);
 	}
 
-	public void onClick(Widget sender) {
-
+	public void onClick(ClickEvent event) {
+		final Object sender = event.getSource();
+		
 		// pop the view
 		if(sender == toolbar.btnPop) {
-			boolean popped = isPopped();
+			final boolean popped = isPopped();
 			ViewManager.instance().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
 		}
 

@@ -9,18 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +39,7 @@ import com.tll.common.bind.IBindable;
  * @author jpk
  */
 public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
-		IndexedFieldPanel<I, M> implements TabListener {
+		IndexedFieldPanel<I, M> implements BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
 
 	/**
 	 * ImageBundle
@@ -109,9 +112,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 			initWidget(spnl);
 			if(enableAdd) {
 				final Button button = new Button("Click to add a new " + getIndexTypeName() + "..");
-				button.addClickListener(new ClickListener() {
+				button.addClickHandler(new ClickHandler() {
 
-					public void onClick(Widget sender) {
+					public void onClick(ClickEvent event) {
 						add();
 						tabPanel.setVisible(true);
 						emptyWidget.setVisible(false);
@@ -168,7 +171,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		this.enableDelete = enableDelete;
 
 		// listen to tab events
-		tabPanel.addTabListener(this);
+		tabPanel.addBeforeSelectionHandler(this);
+		tabPanel.addSelectionHandler(this);
 
 		pnl.add(tabPanel);
 
@@ -210,15 +214,15 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
 			btnDeleteTgl.setTitle("Delete " + labelText);
 			btnDeleteTgl.getElement().setPropertyBoolean("new", isNew);
-			btnDeleteTgl.addClickListener(new ClickListener() {
+			btnDeleteTgl.addClickHandler(new ClickHandler() {
 
-				public void onClick(Widget sender) {
-					if(sender.getElement().getPropertyBoolean("new")) {
+				public void onClick(ClickEvent event) {
+					if(event.getNativeEvent().getTarget().getPropertyBoolean("new")) {
 						remove(tabPanel.getTabBar().getSelectedTab());
 					}
 					else {
 						markDeleted(tabPanel.getTabBar().getSelectedTab(), btnDeleteTgl.isDown());
-						assert sender == btnDeleteTgl;
+						assert event.getSource() == btnDeleteTgl;
 						btnDeleteTgl.setTitle(btnDeleteTgl.isDown() ? "Un-delete " + labelText : "Delete " + labelText);
 					}
 				}
@@ -305,9 +309,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 			// add trailing *add* tab
 			final PushButton pb = new PushButton(imageBundle.add().createImage());
 			pb.setTitle("Add " + getIndexTypeName());
-			pb.addClickListener(new ClickListener() {
+			pb.addClickHandler(new ClickHandler() {
 
-				public void onClick(Widget sender) {
+				public void onClick(ClickEvent event) {
 					add();
 				}
 			});
@@ -315,23 +319,23 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 	}
 
-	public boolean onBeforeTabSelected(SourcesTabEvents sender, int tabIndex) {
-		assert sender == tabPanel;
+	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+		assert event.getSource() == tabPanel;
 
 		if(lastSelectedTabIndex != -1) {
 			// hide msgs on last tab
 			MsgManager.instance().show(tabPanel.getWidget(lastSelectedTabIndex), false, true);
 		}
 
-		return true;
+		//return true;
+		event.cancel(); // TODO verify this actually prevents tab selection
 	}
 
-	public void onTabSelected(SourcesTabEvents sender, int tabIndex) {
-
+	public void onSelection(SelectionEvent<Integer> event) {
 		// show msgs on selected tab
-		MsgManager.instance().show(tabPanel.getWidget(tabIndex), false, true);
+		MsgManager.instance().show(tabPanel.getWidget(event.getSelectedItem()), false, true);
 
-		lastSelectedTabIndex = tabIndex;
+		lastSelectedTabIndex = event.getSelectedItem();
 	}
 
 	@Override

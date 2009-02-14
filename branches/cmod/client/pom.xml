@@ -26,79 +26,27 @@
     <module>rpc</module>
     <module>ui</module>
     <module>model</module>
-    <module>field</module>
+    <module>listing</module>
     <module>mvc</module>
+    <module>field</module>
     <module>login</module>
   </modules>
-
-  <build>
   
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <!-- 
-            NOTE: we target 1.6 since there is code used on the server as well when considering GWT targeted code
-            The only *known* constraint here is ensuring @Override tags driven from interface implementations 
-            must *not* be present.  
-            -->
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-        
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          
-          <!-- The server side dependency jar -->
-          <executions>
-            <execution>
-              <id>common-classes-jar</id>
-              <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-              <configuration>
-                <classifier>common</classifier>
-                <includes>
-                  <include>com/tll/common/**/*.class</include>
-                </includes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>com.totsp.gwt</groupId>
-          <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-          <version>2.0-beta26</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-      
-      <!-- GWT-Maven plugin -->
-      <plugin>
-        <groupId>com.totsp.gwt</groupId>
-        <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-        <configuration>
-          <gwtVersion>${gwtVersion}</gwtVersion>
-          <logLevel>INFO</logLevel>
-          <enableAssertions>true</enableAssertions>
-          <resourcesOnPath>true</resourcesOnPath>
-          <extraJvmArgs>-Xmx256M</extraJvmArgs>
-          <noServer>false</noServer>
-          <port>8888</port>
-        </configuration>
-      </plugin>
-    </plugins>
-
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
-
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -110,17 +58,6 @@
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt-incubator</artifactId>
         <version>${gwtIncubatorVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-user</artifactId>
-        <version>${gwtVersion}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junitVersion}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

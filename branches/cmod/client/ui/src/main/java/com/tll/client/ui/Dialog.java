@@ -4,11 +4,12 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.Focusable;
 
 /**
  * Dialog
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.ui.KeyboardListener;
  */
 public class Dialog extends DialogBox {
 
-	private final HasFocus focusOnCloseWidget;
+	private final Focusable focusOnCloseWidget;
 
 	private final boolean showOverlay;
 
@@ -32,7 +33,7 @@ public class Dialog extends DialogBox {
 	 * @param focusOnCloseWidget
 	 * @param showOverlay
 	 */
-	public Dialog(HasFocus focusOnCloseWidget, boolean showOverlay) {
+	public Dialog(Focusable focusOnCloseWidget, boolean showOverlay) {
 		super(false, true);
 		this.focusOnCloseWidget = focusOnCloseWidget;
 		this.showOverlay = showOverlay;
@@ -62,17 +63,16 @@ public class Dialog extends DialogBox {
 	}
 
 	@Override
-	public boolean onEventPreview(Event event) {
-		final boolean rval = super.onEventPreview(event);
-		if(rval) {
+	protected void onPreviewNativeEvent(NativePreviewEvent event) {
+		super.onPreviewNativeEvent(event);
+		if(!event.isCanceled()) {
 			if(event.getTypeInt() == Event.ONKEYDOWN) {
-				if(event.getKeyCode() == KeyboardListener.KEY_ESCAPE) {
+				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
 					hide();
 				}
 
 			}
 		}
-		return rval;
 	}
 
 }

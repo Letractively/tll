@@ -8,8 +8,9 @@ package com.tll.client.mvc.view.intf;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
@@ -47,7 +48,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public class InterfacesView extends AbstractView implements ClickListener {
+public class InterfacesView extends AbstractView implements ClickHandler {
 
 	public static final Class klas = new Class();
 
@@ -266,7 +267,7 @@ public class InterfacesView extends AbstractView implements ClickListener {
 	 */
 	public InterfacesView() {
 		super();
-		btnAddIntf.addClickListener(this);
+		btnAddIntf.addClickHandler(this);
 		addWidget(btnAddIntf);
 		addWidget(intfStack);
 	}
@@ -304,8 +305,8 @@ public class InterfacesView extends AbstractView implements ClickListener {
 		return new StaticViewRequest(this, klas);
 	}
 
-	public void onClick(Widget sender) {
-		if(sender == btnAddIntf) {
+	public void onClick(ClickEvent event) {
+		if(event.getSource() == btnAddIntf) {
 			// TODO add an interface
 		}
 	}

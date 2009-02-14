@@ -4,9 +4,9 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
@@ -38,7 +38,7 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 		setConverter(converter);
 		// setComparator(SimpleComparator.INSTANCE);
 		ta = new TextArea();
-		ta.addChangeListener(this);
+		ta.addChangeHandler(this);
 		setNumRows(numRows);
 		setNumCols(numCols);
 	}
@@ -76,20 +76,20 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected Focusable getEditable() {
 		return ta;
 	}
 
 	public String getValue() {
-		String t = ta.getText();
+		final String t = ta.getText();
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
 	@Override
 	protected void setNativeValue(String nativeValue) {
-		String old = getValue();
+		final String old = getValue();
 		setText(nativeValue);
-		String newval = getValue();
+		final String newval = getValue();
 		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
@@ -101,8 +101,8 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 	}
 
 	@Override
-	public void onChange(Widget sender) {
-		super.onChange(this);
+	public void onChange(ChangeEvent event) {
+		super.onChange(event);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

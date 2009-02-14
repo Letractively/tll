@@ -4,10 +4,11 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.IHasFormat;
@@ -41,27 +42,21 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 		tb = new TextBox();
 		setVisibleLen(visibleLength);
 		// tb.addFocusListener(this);
-		tb.addChangeListener(this);
-		addKeyboardListener(new KeyboardListener() {
+		tb.addChangeHandler(this);
+		addHandler(new KeyPressHandler() {
 
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-			}
-
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-				if(keyCode == KeyboardListener.KEY_ENTER) {
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getCharCode() == 'e') { // TODO change to enter key!
 					setFocus(false);
 					setFocus(true);
 				}
 			}
-
-			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-			}
-
-		});
+		}, KeyPressEvent.getType());
+		
 	}
 
 	public GlobalFormat getFormat() {
-		IConverter<String, B> c = getConverter();
+		final IConverter<String, B> c = getConverter();
 		if(c instanceof IFormattedConverter) {
 			return ((IFormattedConverter<String, B>) c).getFormat();
 		}
@@ -97,20 +92,20 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected Focusable getEditable() {
 		return tb;
 	}
 
 	public String getValue() {
-		String t = tb.getText();
+		final String t = tb.getText();
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
 	@Override
 	protected void setNativeValue(String nativeValue) {
-		String old = getValue();
+		final String old = getValue();
 		setText(nativeValue);
-		String newval = getValue();
+		final String newval = getValue();
 		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		}
@@ -122,8 +117,8 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	}
 
 	@Override
-	public void onChange(Widget sender) {
-		super.onChange(this);
+	public void onChange(ChangeEvent event) {
+		super.onChange(event);
 		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

@@ -3,8 +3,9 @@ package com.tll.client.ui;
 import java.util.Comparator;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ChangeListenerCollection;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
@@ -46,7 +47,7 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	/**
 	 * The widget specific change listeners.
 	 */
-	private ChangeListenerCollection changeListeners;
+	//private ChangeListenerCollection changeListeners;
 
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
@@ -116,24 +117,17 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 		Log.debug("AbstractBoundWidget.setModel() - END");
 	}
 
-	public final void addChangeListener(ChangeListener listener) {
-		if(changeListeners == null) {
-			changeListeners = new ChangeListenerCollection();
-		}
-		changeListeners.add(listener);
-	}
-
-	public final void removeChangeListener(ChangeListener listener) {
-		if(changeListeners != null) {
-			changeListeners.remove(listener);
-		}
+	@Override
+	public HandlerRegistration addChangeHandler(ChangeHandler handler) {
+		return addHandler(handler, ChangeEvent.getType());
 	}
 
 	/**
 	 * Fires a change event for subscribed {@link ChangeListener}s.
 	 */
 	protected final void fireChangeListeners() {
-		if(changeListeners != null) changeListeners.fireChange(this);
+		//DomEvent.fireNativeEvent(com.google.gwt.dom.client.NativeEvent, this);
+		// TODO fix
 	}
 
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {

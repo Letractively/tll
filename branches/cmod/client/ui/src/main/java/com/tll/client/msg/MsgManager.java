@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.ScrollListener;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragListener;
@@ -21,7 +22,7 @@ import com.tll.common.msg.Msg;
  * DOM and manages their life-cycle.
  * @author jpk
  */
-public final class MsgManager implements IDragListener, ScrollListener {
+public final class MsgManager implements IDragListener, ScrollHandler {
 
 	/**
 	 * the singleton instance
@@ -126,9 +127,9 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 */
 	public void show(Widget w, boolean show, boolean drillDown) {
 		if(drillDown) {
-			List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
+			final List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
 			if(list == null) return;
-			for(MsgPanel mp : list) {
+			for(final MsgPanel mp : list) {
 				if(show) {
 					mp.show();
 				}
@@ -138,7 +139,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 			}
 		}
 		else {
-			MsgPanel mp = findMsgPanel(w.getElement());
+			final MsgPanel mp = findMsgPanel(w.getElement());
 			if(mp == null) return;
 			if(show)
 				mp.show();
@@ -155,14 +156,14 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 */
 	public void toggle(Widget w, boolean drillDown) {
 		if(drillDown) {
-			List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
+			final List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
 			if(list == null) return;
-			for(MsgPanel mp : list) {
+			for(final MsgPanel mp : list) {
 				mp.toggle();
 			}
 		}
 		else {
-			MsgPanel mp = findMsgPanel(w.getElement());
+			final MsgPanel mp = findMsgPanel(w.getElement());
 			if(mp != null) mp.toggle();
 		}
 	}
@@ -175,15 +176,15 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 */
 	public void clear(Widget w, boolean drillDown) {
 		if(drillDown) {
-			List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
+			final List<MsgPanel> list = findContainedMsgPanels(w, PopupState.EITHER);
 			if(list == null) return;
-			for(MsgPanel mp : list) {
+			for(final MsgPanel mp : list) {
 				mp.hide();
 				msgPanels.remove(mp);
 			}
 		}
 		else {
-			MsgPanel mp = findMsgPanel(w.getElement());
+			final MsgPanel mp = findMsgPanel(w.getElement());
 			if(mp != null) {
 				mp.hide();
 				msgPanels.remove(mp);
@@ -195,7 +196,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * Clears all content from all referenced {@link MsgPanel}s.
 	 */
 	public void clear() {
-		for(MsgPanel mp : msgPanels) {
+		for(final MsgPanel mp : msgPanels) {
 			mp.hide();
 		}
 		msgPanels.clear();
@@ -211,7 +212,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * @return New MsgPanel instance
 	 */
 	private MsgPanel stubMsgPanel(boolean autoHide, Position position, Element refElement, int duration, boolean showImage) {
-		MsgPanel mp = new MsgPanel(autoHide, position, refElement, duration, showImage);
+		final MsgPanel mp = new MsgPanel(autoHide, position, refElement, duration, showImage);
 		msgPanels.add(mp);
 		return mp;
 	}
@@ -223,7 +224,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 * @return The bound MsgPanel or <code>null</code> if none bound.
 	 */
 	private MsgPanel findMsgPanel(Element refElement) {
-		for(MsgPanel mp : msgPanels) {
+		for(final MsgPanel mp : msgPanels) {
 			if(mp.getRefElement() == refElement) {
 				return mp;
 			}
@@ -239,8 +240,8 @@ public final class MsgManager implements IDragListener, ScrollListener {
 	 */
 	private List<MsgPanel> findContainedMsgPanels(Widget w, PopupState state) {
 		if(w == null) return null;
-		List<MsgPanel> list = new ArrayList<MsgPanel>();
-		for(MsgPanel mp : msgPanels) {
+		final List<MsgPanel> list = new ArrayList<MsgPanel>();
+		for(final MsgPanel mp : msgPanels) {
 			if(w.getElement().isOrHasChild(mp.getRefElement())) {
 				boolean add = false;
 				switch(state) {
@@ -264,7 +265,7 @@ public final class MsgManager implements IDragListener, ScrollListener {
 		// tell the contained msg panels we are dragging
 		draggingMsgPanels = findContainedMsgPanels((Widget) event.getSource(), PopupState.SHOWING);
 		if(draggingMsgPanels == null) return;
-		for(MsgPanel mp : draggingMsgPanels) {
+		for(final MsgPanel mp : draggingMsgPanels) {
 			mp.hide();
 		}
 	}
@@ -274,14 +275,14 @@ public final class MsgManager implements IDragListener, ScrollListener {
 
 	public void onDragEnd(DragEvent event) {
 		if(draggingMsgPanels == null) return;
-		for(MsgPanel mp : draggingMsgPanels) {
+		for(final MsgPanel mp : draggingMsgPanels) {
 			mp.show();
 		}
 		draggingMsgPanels = null;
 	}
 
-	public void onScroll(Widget widget, int scrollLeft, int scrollTop) {
+	public void onScroll(ScrollEvent event) {
 		// hide all showing msg panels contained in the widget
-		show(widget, false, true);
+		show((Widget) event.getSource(), false, true);
 	}
 }

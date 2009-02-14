@@ -4,7 +4,8 @@
  */
 package com.tll.client.ui.field.account;
 
-import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -96,7 +97,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 			cmpsr.addWidget(dpAddresses);
 
 			// payment info block
-			FlowPanel fp = new FlowPanel();
+			final FlowPanel fp = new FlowPanel();
 			fp.add((Widget) fg.getFieldByName("acntPersistPymntInfo"));
 			fp.add(paymentInfoPanel);
 			dpPaymentInfo.add(fp);
@@ -130,8 +131,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 					// address row
 					cmpsr.newRow();
-					FlowPanel fp = new FlowPanel();
-					AddressFieldsRenderer r = new AddressFieldsRenderer();
+					final FlowPanel fp = new FlowPanel();
+					final AddressFieldsRenderer r = new AddressFieldsRenderer();
 					r.render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
 				}
@@ -172,7 +173,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 				type = (AddressType) aap.getModel().getProperty("type");
 				aaName = (String) aap.getModel().getProperty("name");
 			}
-			catch(PropertyPathException e) {
+			catch(final PropertyPathException e) {
 				throw new IllegalStateException(e);
 			}
 
@@ -213,10 +214,10 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
-		FieldGroup fg = (new IFieldGroupProvider() {
+		final FieldGroup fg = (new IFieldGroupProvider() {
 
 			public FieldGroup getFieldGroup() {
-				FieldGroup fg = (new AccountFieldsProvider()).getFieldGroup();
+				final FieldGroup fg = (new AccountFieldsProvider()).getFieldGroup();
 				fg.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
 				fg.addField("addresses", addressesPanel.getFieldGroup());
 				return fg;
@@ -228,21 +229,21 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		fg.getField("status").addChangeListener(new ChangeListener() {
+		fg.getField("status").addChangeHandler(new ChangeHandler() {
 
-			public void onChange(Widget sender) {
-				String s = getFieldGroup().getField("status").getText().toLowerCase();
+			public void onChange(ChangeEvent event) {
+				final String s = getFieldGroup().getField("status").getText().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				IField<?, ?> f = getFieldGroup().getField("dateCancelled");
+				final IField<?, ?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		fg.getField("persistPymntInfo").addChangeListener(new ChangeListener() {
+		fg.getField("persistPymntInfo").addChangeHandler(new ChangeHandler() {
 
-			public void onChange(Widget sender) {
-				paymentInfoPanel.getFieldGroup().setEnabled(((CheckboxField<?>) sender).isChecked());
+			public void onChange(ChangeEvent event) {
+				paymentInfoPanel.getFieldGroup().setEnabled(((CheckboxField<?>) event.getSource()).isChecked());
 			}
 		});
 

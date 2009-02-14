@@ -6,11 +6,11 @@ package com.tll.client.ui.field;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.ui.FocusListener;
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
-import com.google.gwt.widgetideas.client.event.ChangeEvent;
-import com.google.gwt.widgetideas.client.event.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 import com.google.gwt.widgetideas.client.event.KeyDownEvent;
 import com.google.gwt.widgetideas.client.event.KeyDownHandler;
 import com.tll.client.convert.IConverter;
@@ -23,30 +23,14 @@ import com.tll.client.util.GlobalFormat;
  * @author jpk
  * @param <B> the bound type
  */
-public class DateField<B> extends AbstractField<B, Date> implements ChangeHandler<Date>, IHasFormat {
+public class DateField<B> extends AbstractField<B, Date> implements ValueChangeHandler<Date>, IHasFormat {
 
 	/**
-	 * DateBox - Extended to support {@link HasFocus}.
+	 * DateBox - Extended to support {@link Focusable}.
 	 * @author jpk
 	 */
-	private static final class DateBox extends com.google.gwt.widgetideas.datepicker.client.DateBox implements HasFocus,
+	private static final class DateBox extends com.google.gwt.user.datepicker.client.DateBox implements Focusable,
 			KeyDownHandler {
-
-		public void addKeyboardListener(KeyboardListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeKeyboardListener(KeyboardListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void addFocusListener(FocusListener listener) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void removeFocusListener(FocusListener listener) {
-			throw new UnsupportedOperationException();
-		}
 
 		public void onKeyDown(KeyDownEvent event) {
 			if(event.isAlphaNumeric()) {
@@ -78,8 +62,8 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 		super(name, propName, labelText, helpText);
 		setConverter(converter);
 		db = new DateBox();
-		db.getDatePicker().addChangeHandler(this);
-		db.setDateFormat(Fmt.getDateTimeFormat(GlobalFormat.DATE));
+		db.getDatePicker().addValueChangeHandler(this);
+		db.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(GlobalFormat.DATE)));
 	}
 
 	public GlobalFormat getFormat() {
@@ -91,12 +75,12 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	}
 
 	@Override
-	protected HasFocus getEditable() {
-		return db;
+	protected FocusWidget getEditable() {
+		return db.getTextBox();
 	}
 
 	public String getText() {
-		return db.getText();
+		return db.getTextBox().getText();
 	}
 
 	public void setText(String text) {
@@ -111,10 +95,11 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 	protected void setNativeValue(Date nativeValue) {
 		// NOTE: this fires the onChange event
 		if(nativeValue == null) {
-			db.clear();
+			db.setValue(null);
 		}
 		else {
-			db.getDatePicker().setSelectedDate(nativeValue);
+			db.setValue(nativeValue);
+			//setSelectedDate(nativeValue);
 		}
 	}
 
@@ -123,10 +108,11 @@ public class DateField<B> extends AbstractField<B, Date> implements ChangeHandle
 		setNativeValue(getConverter().convert(value));
 	}
 
-	public void onChange(ChangeEvent<Date> event) {
-		seldate = event.getNewValue();
-		super.onChange(this);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, event.getOldValue(), seldate);
+	public void onValueChange(ValueChangeEvent<Date> event) {
+		final Date old = seldate;
+		seldate = event.getValue();
+		super.onChange(null); // TODO fix
+		changeSupport.firePropertyChange(PROPERTY_VALUE, old, seldate);
 		fireChangeListeners();
 	}
 }

@@ -4,9 +4,12 @@
  */
 package com.tll.client.ui.field.account;
 
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.event.logical.shared.HasBeforeSelectionHandlers;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.ui.field.BankFieldsProvider;
 import com.tll.client.ui.field.BankFieldsRenderer;
@@ -22,7 +25,8 @@ import com.tll.common.bind.IBindable;
  * @author jpk
  * @param <M>
  */
-public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel, M> implements SourcesTabEvents {
+public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel, M> implements
+		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
 	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
@@ -85,18 +89,20 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	@Override
 	public FieldGroup generateFieldGroup() {
-		FieldGroup fg = new FieldGroup("Payment Info");
+		final FieldGroup fg = new FieldGroup("Payment Info");
 		fg.addField(creditCardPanel.getFieldGroup());
 		fg.addField(bankPanel.getFieldGroup());
 		return fg;
 	}
 
-	public void addTabListener(TabListener listener) {
-		tabPanel.addTabListener(listener);
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Integer> handler) {
+		// TODO finish
+		return null;
 	}
 
-	public void removeTabListener(TabListener listener) {
-		tabPanel.removeTabListener(listener);
+	public HandlerRegistration addBeforeSelectionHandler(BeforeSelectionHandler<Integer> handler) {
+		// TODO finish
+		return null;
 	}
 
 	@Override

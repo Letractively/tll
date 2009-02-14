@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
@@ -69,7 +69,7 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 		fp.add(rbPanel);
 		setOptions(options);
 		// fp.addFocusListener(this);
-		addChangeListener(this);
+		addChangeHandler(this);
 	}
 
 	/**
@@ -85,12 +85,12 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 		old = getValue();
 		rbPanel.clear();
 		radioButtons.clear();
-		IConverter<String, B> converter = getConverter();
-		for(B n : options) {
-			String sval = converter.convert(n);
-			RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
+		final IConverter<String, B> converter = getConverter();
+		for(final B n : options) {
+			final String sval = converter.convert(n);
+			final RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
 			rb.setStyleName(Styles.LABEL);
-			rb.addClickListener(this);
+			rb.addClickHandler(this);
 			rbPanel.add(rb);
 			radioButtons.add(rb);
 			if(sval == old || (sval != null && sval.equals(old))) {
@@ -104,14 +104,14 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	}
 
 	@Override
-	public HasFocus getEditable() {
+	public Focusable getEditable() {
 		return fp;
 	}
 
 	public String getValue() {
 		int i = 0;
-		for(RadioButton rb : radioButtons) {
-			if(rb.isChecked()) {
+		for(final RadioButton rb : radioButtons) {
+			if(rb.getValue() == Boolean.TRUE) {
 				return getConverter().convert(options.get(i));
 			}
 			i++;
@@ -123,9 +123,9 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	protected void setNativeValue(String nativeValue) {
 		final String old = getValue();
 		int i = 0;
-		for(Object o : options) {
+		for(final Object o : options) {
 			if(o.equals(nativeValue)) {
-				radioButtons.get(i).setChecked(true);
+				radioButtons.get(i).setValue(Boolean.TRUE);
 			}
 			i++;
 		}
@@ -148,9 +148,9 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	}
 
 	@Override
-	public void onClick(Widget sender) {
-		super.onClick(sender);
-		String cv = getValue();
+	public void onClick(ClickEvent event) {
+		super.onClick(event);
+		final String cv = getValue();
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
 		old = cv;
 		fireChangeListeners();

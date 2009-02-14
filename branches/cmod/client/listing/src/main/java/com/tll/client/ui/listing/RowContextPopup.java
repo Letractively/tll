@@ -1,7 +1,9 @@
 package com.tll.client.ui.listing;
 
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
@@ -11,7 +13,7 @@ import com.tll.client.ui.option.OptionsPopup;
  * RowContextPopup - The {@link Option}s panel pop-up.
  * @author jpk
  */
-public final class RowContextPopup extends OptionsPopup implements TableListener {
+public final class RowContextPopup extends OptionsPopup implements ClickHandler {
 
 	private static final int SHOW_DURATION = 2000; // 2s
 
@@ -19,6 +21,11 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 	 * The bound {@link IRowOptionsDelegate}
 	 */
 	private IRowOptionsDelegate rowOpDelegate;
+	
+	/**
+	 * The needed table ref.
+	 */
+	private final HTMLTable table;
 
 	/**
 	 * The row index for this row context.
@@ -27,9 +34,11 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 
 	/**
 	 * Constructor
+	 * @param table The table ref
 	 */
-	public RowContextPopup() {
+	public RowContextPopup(HTMLTable table) {
 		super(SHOW_DURATION);
+		this.table = table;
 	}
 
 	/**
@@ -47,10 +56,12 @@ public final class RowContextPopup extends OptionsPopup implements TableListener
 		super.show();
 	}
 
-	public final void onCellClicked(SourcesTableEvents sender, int row, int cell) {
+	public void onClick(ClickEvent event) {
 		// assert sender == table.getTableWidget();
 
 		// TODO account for deleted rows!!!
+		final Cell cell = table.getCellForEvent(event);
+		final int row = cell.getRowIndex();
 
 		// account for header row
 		if(row < 1) return;

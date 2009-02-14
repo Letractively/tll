@@ -5,12 +5,16 @@
 package com.tll.client.ui.listing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -32,7 +36,7 @@ import com.tll.common.util.StringUtil;
  * @param <R> The row data type.
  * @author jpk
  */
-public class ListingNavBar<R> extends Toolbar implements ClickListener, KeyboardListener, ChangeListener,
+public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHandler, ChangeHandler,
 		IListingListener<R> {
 
 	/**
@@ -149,8 +153,8 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			btnPageLast.setTitle("Last Page");
 			tbPage.setTitle("Current Page");
 
-			tbPage.addKeyboardListener(this);
-			tbPage.addChangeListener(this);
+			tbPage.addKeyUpHandler(this);
+			tbPage.addChangeHandler(this);
 			tbPage.setMaxLength(4);
 			tbPage.setStyleName(Styles.PAGE);
 
@@ -164,7 +168,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			add(split);
 
 			// Page x of y
-			FlowPanel pageXofY = new FlowPanel();
+			final FlowPanel pageXofY = new FlowPanel();
 			pageXofY.addStyleName(Styles.PAGE_CONTAINER);
 			pageXofY.add(lblPagePre);
 			pageXofY.add(tbPage);
@@ -199,7 +203,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 		// show add button?
 		if(config.getAddRowHandler() != null) {
 			// imgAdd = imageBundle.add().createImage();
-			String title = "Add " + config.getListingElementName();
+			final String title = "Add " + config.getListingElementName();
 			btnAdd = new PushButton(title, this);
 			btnAdd.setTitle(title);
 			if(pageSize > 0 || config.isShowRefreshBtn()) {
@@ -242,7 +246,8 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 		return this;
 	}
 
-	public void onClick(Widget sender) {
+	public void onClick(ClickEvent event) {
+		final Object sender = event.getSource();
 		if(pageSize > 0) {
 			if(sender == btnPageFirst) {
 				listingOperator.firstPage();
@@ -264,26 +269,20 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 			assert addRowDelegate != null;
 			addRowDelegate.handleAddRow();
 		}
-		((HasFocus) sender).setFocus(false);
+		((Focusable) sender).setFocus(false);
 	}
 
-	public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-	}
-
-	public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-	}
-
-	public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-		if(sender == tbPage) {
-			if(keyCode == KEY_ENTER) {
+	public void onKeyUp(KeyUpEvent event) {
+		if(event.getSource() == tbPage) {
+			if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 				tbPage.setFocus(false); // force invocation of onChange() event.
 			}
 		}
 	}
 
-	public void onChange(Widget sender) {
-		if(sender == tbPage) {
-			String s = tbPage.getText();
+	public void onChange(ChangeEvent event) {
+		if(event.getSource() == tbPage) {
+			final String s = tbPage.getText();
 			int page = 0;
 			boolean valid = true;
 			try {
@@ -292,11 +291,11 @@ public class ListingNavBar<R> extends Toolbar implements ClickListener, Keyboard
 					valid = false;
 				}
 			}
-			catch(NumberFormatException e) {
+			catch(final NumberFormatException e) {
 				valid = false;
 			}
 			if(!valid) {
-				String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
+				final String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
 					new Integer(1), new Integer(numPages) });
 				MsgManager.instance().post(true, new Msg(smsg, MsgLevel.ERROR), Position.BOTTOM, tbPage, 3000, true).show();
 				tbPage.setText(Integer.toString(crntPage));

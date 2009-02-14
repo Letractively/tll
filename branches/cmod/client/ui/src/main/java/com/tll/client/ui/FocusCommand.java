@@ -6,7 +6,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.user.client.ui.Focusable;
 
 /**
  * FocusCommand
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.HasFocus;
  */
 public class FocusCommand implements Command {
 
-	protected final HasFocus w;
+	protected final Focusable w;
 	protected final boolean focus;
 
 	/**
@@ -22,7 +22,7 @@ public class FocusCommand implements Command {
 	 * @param w
 	 * @param focus
 	 */
-	public FocusCommand(HasFocus w, boolean focus) {
+	public FocusCommand(Focusable w, boolean focus) {
 		super();
 		this.w = w;
 		this.focus = focus;

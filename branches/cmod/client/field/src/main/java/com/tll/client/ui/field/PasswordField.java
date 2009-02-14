@@ -5,10 +5,11 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
@@ -39,23 +40,17 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 		setVisibleLen(visibleLength);
 		setConverter(converter);
 		// tb.addFocusListener(this);
-		tb.addChangeListener(this);
-		addKeyboardListener(new KeyboardListener() {
+		tb.addChangeHandler(this);
+		addHandler(new KeyPressHandler() {
 
-			public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-			}
-
-			public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-				if(keyCode == KeyboardListener.KEY_ENTER) {
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				if(event.getCharCode() == 'e') { // TODO fix for enter key!
 					setFocus(false);
 					setFocus(true);
 				}
 			}
-
-			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-			}
-
-		});
+		}, KeyPressEvent.getType());
 	}
 
 	public int getVisibleLen() {
@@ -83,20 +78,20 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected FocusWidget getEditable() {
 		return tb;
 	}
 
 	public String getValue() {
-		String t = tb.getText();
+		final String t = tb.getText();
 		return StringUtil.isEmpty(t) ? null : t;
 	}
 
 	@Override
 	protected void setNativeValue(String nativeValue) {
-		String old = getValue();
+		final String old = getValue();
 		setText(nativeValue);
-		String newval = getValue();
+		final String newval = getValue();
 		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
@@ -108,8 +103,8 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 	}
 
 	@Override
-	public void onChange(Widget sender) {
-		super.onChange(this);
+	public void onChange(ChangeEvent event) {
+		super.onChange(event);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		old = getValue();
 		fireChangeListeners();

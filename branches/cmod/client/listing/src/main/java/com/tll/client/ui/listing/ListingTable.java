@@ -6,19 +6,19 @@ package com.tll.client.ui.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesTableEvents;
-import com.google.gwt.user.client.ui.TableListener;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingListener;
@@ -35,7 +35,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R>
  */
-public class ListingTable<R> extends Grid implements TableListener, KeyboardListener, IListingListener<R> {
+public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingListener<R> {
 	
 	/**
 	 * The listing table specific image bundle.
@@ -126,7 +126,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 	public ListingTable(IListingConfig<R> config) {
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
-		addTableListener(this);
+		addClickHandler(this);
 		initialize(config);
 	}
 
@@ -145,7 +145,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
 
 		int rn = -1;
-		Column[] columns = config.getColumns();
+		final Column[] columns = config.getColumns();
 		for(int i = 0; i < columns.length; i++) {
 			if(Column.ROW_COUNT_COL_PROP.equals(columns[i].getPropertyName())) {
 				rn = i;
@@ -178,7 +178,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 	 */
 	private int resolveColumnIndex(String colProp) {
 		for(int i = 0; i < columns.length; i++) {
-			Column c = columns[i];
+			final Column c = columns[i];
 			if(c.getPropertyName().equals(colProp)) {
 				return i;
 			}
@@ -188,10 +188,10 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 	private void applySorting(Sorting sorting) {
 		assert sortlinks != null && sorting != null;
-		SortColumn sc = sorting.getPrimarySortColumn();
+		final SortColumn sc = sorting.getPrimarySortColumn();
 
 		// resolve the column index
-		int index = resolveColumnIndex(sc.getPropertyName());
+		final int index = resolveColumnIndex(sc.getPropertyName());
 
 		// reset old sort column (if there is one)
 		if(crntSortColIndex >= 0) {
@@ -207,7 +207,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 	 * SortLink
 	 * @author jpk
 	 */
-	private final class SortLink extends Composite implements ClickListener {
+	private final class SortLink extends Composite implements ClickHandler {
 
 		private final FlowPanel pnl = new FlowPanel();
 
@@ -234,15 +234,15 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 
 			this.direction = direction;
 
-			SortDir reverseDir = direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC;
-			String reverseTitle = "Sort " + (reverseDir.getName());
+			final SortDir reverseDir = direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC;
+			final String reverseTitle = "Sort " + (reverseDir.getName());
 
 			// set the title to the reverse of the current sort dir
 			lnk.setTitle(reverseTitle);
 
 			if(imgSortDir == null) {
 				imgSortDir = new Image();
-				imgSortDir.addClickListener(this);
+				imgSortDir.addClickHandler(this);
 				imgSortDir.setStyleName(Styles.SORT);
 			}
 
@@ -264,9 +264,9 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 			pnl.remove(0);
 		}
 
-		public void onClick(Widget sender) {
-			if(sender == lnk) {
-				SortColumn sc =
+		public void onClick(ClickEvent event) {
+			if(event.getSource() == lnk) {
+				final SortColumn sc =
 						new SortColumn(column.getPropertyName(), direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC,
 								ignoreCaseWhenSorting);
 				listingOperator.sort(new Sorting(sc));
@@ -281,8 +281,8 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		getRowFormatter().addStyleName(0, Styles.HEAD);
 
 		for(int c = 0; c < columns.length; c++) {
-			Column col = columns[c];
-			boolean isRowCntCol = Column.ROW_COUNT_COL_PROP.equals(col.getPropertyName());
+			final Column col = columns[c];
+			final boolean isRowCntCol = Column.ROW_COUNT_COL_PROP.equals(col.getPropertyName());
 			if(isRowCntCol) {
 				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
 				getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
@@ -293,7 +293,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 				}
 				else {
 					assert sortlinks != null;
-					SortLink sl = new SortLink(col);
+					final SortLink sl = new SortLink(col);
 					sortlinks[c] = sl;
 					setWidget(0, c, sl);
 				}
@@ -371,10 +371,10 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		switch(event.getTypeInt()) {
 
 			case Event.ONMOUSEOVER:
-				Element td = getEventTargetCell(event);
+				final Element td = getEventTargetCell(event);
 				if(td == null) return;
-				Element tr = td.getParentElement();
-				Element tbody = tr.getParentElement();
+				final Element tr = td.getParentElement();
+				final Element tbody = tr.getParentElement();
 				setActiveRow(DOM.getChildIndex((com.google.gwt.user.client.Element) tbody.cast(),
 						(com.google.gwt.user.client.Element) tr.cast()));
 				break;
@@ -388,39 +388,35 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 		}
 	}
 
-	public void onCellClicked(SourcesTableEvents sender, int row, int cell) {
-		if(sender == this) {
-			setCurrentRow(row);
+	public void onClick(ClickEvent event) {
+		if(event.getSource() == this) {
+			final Cell cell = getCellForEvent(event);
+			setCurrentRow(cell.getRowIndex());
 		}
 	}
 
-	public void onKeyDown(Widget sender, char keyCode, int modifiers) {
+	public void onKeyDown(KeyDownEvent event) {
 		// if(sender != focusPanel) return;
-		if(keyCode == KeyboardListener.KEY_UP) {
+		final int keyCode = event.getNativeKeyCode();
+		if(keyCode == KeyCodes.KEY_UP) {
 			setActiveRow(actvRowIndex - 1);
 		}
-		else if(keyCode == KeyboardListener.KEY_DOWN) {
+		else if(keyCode == KeyCodes.KEY_DOWN) {
 			setActiveRow(actvRowIndex + 1);
 		}
-		else if(keyCode == KeyboardListener.KEY_ENTER) {
+		else if(keyCode == KeyCodes.KEY_ENTER) {
 			setCurrentRow(actvRowIndex);
 		}
-		else if(keyCode == KeyboardListener.KEY_PAGEUP) {
+		else if(keyCode == KeyCodes.KEY_PAGEUP) {
 			if(crntPage > 1) {
 				listingOperator.previousPage();
 			}
 		}
-		else if(keyCode == KeyboardListener.KEY_PAGEDOWN) {
+		else if(keyCode == KeyCodes.KEY_PAGEDOWN) {
 			if(crntPage < numPages) {
 				listingOperator.nextPage();
 			}
 		}
-	}
-
-	public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-	}
-
-	public void onKeyUp(Widget sender, char keyCode, int modifiers) {
 	}
 
 	private void setActiveRow(int rowIndex) {
@@ -532,7 +528,7 @@ public class ListingTable<R> extends Grid implements TableListener, KeyboardList
 				}
 
 				// toggle the odd/even styling
-				HTMLTable.RowFormatter rf = getRowFormatter();
+				final HTMLTable.RowFormatter rf = getRowFormatter();
 				if(rf.getStyleName(i).indexOf(Styles.EVEN) >= 0) {
 					rf.removeStyleName(i, Styles.EVEN);
 					rf.addStyleName(i, Styles.ODD);

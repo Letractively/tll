@@ -4,8 +4,8 @@
  */
 package com.tll.client.ui.view;
 
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewRequestEvent;
@@ -15,7 +15,7 @@ import com.tll.client.ui.SimpleHyperLink;
  * ViewRequestLink - Link that delegates a view request to the mvc dispatcher.
  * @author jpk
  */
-public final class ViewRequestLink extends SimpleHyperLink implements ClickListener {
+public final class ViewRequestLink extends SimpleHyperLink implements ClickHandler {
 
 	/**
 	 * The sourcing view request.
@@ -40,15 +40,15 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickListe
 		super(shortViewName);
 		setTitle(longViewName);
 		setViewRequest(viewRequest);
-		addClickListener(this);
+		addClickHandler(this);
 	}
 
 	public void setViewRequest(ViewRequestEvent viewRequest) {
 		this.viewRequest = viewRequest;
 	}
 
-	public void onClick(Widget sender) {
-		if(sender == this) {
+	public void onClick(ClickEvent event) {
+		if(event.getSource() == this) {
 			assert viewRequest != null;
 			ViewManager.instance().dispatch(viewRequest);
 		}

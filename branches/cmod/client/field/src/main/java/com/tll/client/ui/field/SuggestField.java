@@ -6,12 +6,13 @@ package com.tll.client.ui.field;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasFocus;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestionEvent;
-import com.google.gwt.user.client.ui.SuggestionHandler;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
@@ -20,7 +21,7 @@ import com.tll.common.util.ObjectUtil;
  * @param <B> The bound type
  * @author jpk
  */
-public final class SuggestField<B> extends AbstractField<B, String> implements SuggestionHandler {
+public final class SuggestField<B> extends AbstractField<B, String> implements SelectionHandler<Suggestion> {
 
 	private final SuggestBox sb;
 
@@ -46,13 +47,13 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 		}
 		setConverter(converter);
 
-		MultiWordSuggestOracle o = new MultiWordSuggestOracle();
-		for(B s : suggestions) {
+		final MultiWordSuggestOracle o = new MultiWordSuggestOracle();
+		for(final B s : suggestions) {
 			o.add(converter.convert(s));
 		}
 		sb = new SuggestBox(o);
-		sb.addChangeListener(this);
-		sb.addEventHandler(this);
+		sb.getTextBox().addChangeHandler(this);
+		sb.addSelectionHandler(this);
 	}
 
 	public String getText() {
@@ -64,12 +65,13 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected Focusable getEditable() {
 		return sb;
 	}
 
-	public void onSuggestionSelected(SuggestionEvent event) {
-		String newval = event.getSelectedSuggestion().getReplacementString();
+	@Override
+	public void onSelection(SelectionEvent<Suggestion> event) {
+		final String newval = event.getSelectedItem().getReplacementString();
 		if(!ObjectUtil.equals(crnt, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, crnt, newval);
 			crnt = newval;
@@ -82,9 +84,9 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 
 	@Override
 	protected void setNativeValue(String nativeValue) {
-		String old = getValue();
+		final String old = getValue();
 		setText(nativeValue);
-		String newval = getValue();
+		final String newval = getValue();
 		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
@@ -96,8 +98,8 @@ public final class SuggestField<B> extends AbstractField<B, String> implements S
 	}
 
 	@Override
-	public void onChange(Widget sender) {
-		super.onChange(this);
+	public void onChange(ChangeEvent event) {
+		super.onChange(event);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, crnt, getValue());
 		crnt = getValue();
 		fireChangeListeners();

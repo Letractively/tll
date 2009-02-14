@@ -11,6 +11,22 @@
   <url>http://tll.googlecode.com</url>
   <inceptionYear>2005</inceptionYear>
 
+  <pluginRepositories>
+    <!-- for gwt-maven plugin -->
+    <pluginRepository>
+      <id>gwt-maven</id>
+      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <repositories>
+    <!-- for gwt-maven plugin -->
+    <repository>
+      <id>gwt-maven</id>
+      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+    </repository>
+  </repositories>
+
   <developers>
     <developer>
       <id>jpk</id>
@@ -32,7 +48,7 @@
   <properties>
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
-    <gwtVersion>1.5.3</gwtVersion>
+    <gwtVersion>0.0.0</gwtVersion>
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     <junitVersion>4.5</junitVersion>
@@ -156,6 +172,39 @@
           </execution>
         </executions>
       </plugin>
+
+      <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
+      <!--
+        (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
+        just want a maven way to handle gwt deps)
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-dev</artifactId>
+                  <version>${gwtVersion}</version>
+                  <classifier>${platform}-libs</classifier>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
 
   </build>
@@ -176,6 +225,42 @@
         </plugins>
       </build>
     </profile>
+    
+    <!-- GWT unpacking profiles -->
+    <profile>
+      <id>gwt-dev-windows</id>
+      <properties>
+        <platform>windows</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-mac</id>
+      <properties>
+        <platform>mac</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-linux</id>
+      <properties>
+        <platform>linux</platform>
+      </properties>
+      <activation>
+        <os>
+          <name>linux</name>
+        </os>
+      </activation>
+    </profile>
+  
   </profiles>
 
   <dependencyManagement>

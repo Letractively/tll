@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.common.util;
+package com.tll.util;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.tll.IMarshalable;

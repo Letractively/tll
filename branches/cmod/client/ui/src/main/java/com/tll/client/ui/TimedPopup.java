@@ -4,8 +4,9 @@
  */
 package com.tll.client.ui;
 
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * keep an internal flag in sync with the sub-classes' <code>showing</code> property.
  * @author jpk
  */
-public abstract class TimedPopup extends PopupPanel implements PopupListener {
+public abstract class TimedPopup extends PopupPanel implements CloseHandler<PopupPanel> {
 
 	/**
 	 * The time in mili-seconds for the panel to be shown. <br>
@@ -47,11 +48,11 @@ public abstract class TimedPopup extends PopupPanel implements PopupListener {
 	public TimedPopup(boolean autoHide, boolean modal, int duration) {
 		super(autoHide, modal);
 		this.duration = duration;
-		addPopupListener(this);
+		addCloseHandler(this);
 	}
 
-	public void onPopupClosed(PopupPanel sender, boolean autoClosed) {
-		if(sender == this) {
+	public void onClose(CloseEvent<PopupPanel> event) {
+		if(event.getTarget() == this) {
 			tpshowing = false;
 		}
 	}
@@ -74,26 +75,25 @@ public abstract class TimedPopup extends PopupPanel implements PopupListener {
 
 	@Override
 	public void show() {
-		if(tpshowing) {
-			return;
-		}
-		tpshowing = true;
-		doShow();
-		if(duration > 0) {
-			startTimer();
+		if(!tpshowing) {
+			tpshowing = true;
+			doShow();
+			if(duration > 0) {
+				startTimer();
+			}
 		}
 	}
 
 	@Override
 	public void hide() {
-		if(!tpshowing) {
-			return;
+		if(tpshowing) {
+			tpshowing = false;
+			cancelTimer();
+			doHide();
 		}
-		tpshowing = false;
-		cancelTimer();
-		doHide();
 	}
 
+	@Override
 	public boolean isShowing() {
 		return tpshowing;
 	}

@@ -5,12 +5,20 @@
 package com.tll.client.ui.view;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasMouseDownHandlers;
+import com.google.gwt.event.dom.client.HasMouseMoveHandlers;
+import com.google.gwt.event.dom.client.HasMouseUpHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SourcesMouseEvents;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.Toolbar;
@@ -19,7 +27,7 @@ import com.tll.client.ui.Toolbar;
  * ViewToolbar - A UI toolbar for user management of views.
  * @author jpk
  */
-public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
+public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMouseMoveHandlers, HasMouseUpHandlers {
 	
 	/**
 	 * ImageBundle
@@ -107,22 +115,21 @@ public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 	 * @param viewDisplayName
 	 * @param viewOptions The view options that dictates the appearance/behavior
 	 *        of view toolbars.
-	 * @param clickListener The listener for click events occurring w/in this
-	 *        toolbar.
+	 * @param clickHandler For click events occurring w/in this toolbar.
 	 */
-	public ViewToolbar(String viewDisplayName, ViewOptions viewOptions, ClickListener clickListener) {
+	public ViewToolbar(String viewDisplayName, ViewOptions viewOptions, ClickHandler clickHandler) {
 		super();
-		assert viewDisplayName != null && viewOptions != null && clickListener != null;
+		assert viewDisplayName != null && viewOptions != null && clickHandler != null;
 		viewTitle = new Label(viewDisplayName);
 		btnMinimize =
 				viewOptions.isMinimizable() ? new ToggleButton(imageBundle.arrow_sm_down().createImage(), imageBundle
-						.arrow_sm_right().createImage(), clickListener) : null;
+						.arrow_sm_right().createImage(), clickHandler) : null;
 		btnPop =
 				viewOptions.isPopable() ? new ToggleButton(imageBundle.external().createImage(), imageBundle.permalink()
-						.createImage(), clickListener) : null;
-		btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickListener) : null;
+						.createImage(), clickHandler) : null;
+		btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickHandler) : null;
 		btnRefresh =
-				viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickListener) : null;
+				viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickHandler) : null;
 
 		addStyleName(Styles.VIEW_TOOLBAR);
 		viewTitle.setStyleName(Styles.VIEW_TITLE);
@@ -139,11 +146,15 @@ public class ViewToolbar extends Toolbar implements SourcesMouseEvents {
 
 	}
 
-	public void addMouseListener(MouseListener listener) {
-		viewTitle.addMouseListener(listener);
+	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+		return addDomHandler(handler, MouseDownEvent.getType());
 	}
 
-	public void removeMouseListener(MouseListener listener) {
-		viewTitle.removeMouseListener(listener);
+	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+		return addDomHandler(handler, MouseUpEvent.getType());
+	}
+
+	public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+		return addDomHandler(handler, MouseMoveEvent.getType());
 	}
 }

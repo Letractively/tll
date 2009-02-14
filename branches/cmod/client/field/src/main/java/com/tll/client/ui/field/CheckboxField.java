@@ -4,9 +4,9 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasFocus;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 import com.tll.common.util.ObjectUtil;
@@ -41,17 +41,17 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 		cb = new CheckBox(cblabelText);
 		cb.setStyleName(Styles.LABEL);
 		// cb.addFocusListener(this);
-		cb.addClickListener(this);
-		addChangeListener(this);
+		cb.addClickHandler(this);
+		addChangeHandler(this);
 	}
 
 	@Override
-	protected HasFocus getEditable() {
+	protected FocusWidget getEditable() {
 		return cb;
 	}
 
 	public boolean isChecked() {
-		return cb.isChecked();
+		return cb.getValue() == Boolean.TRUE; 
 	}
 
 	@Override
@@ -69,18 +69,18 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 	}
 
 	public void setChecked(boolean checked) {
-		cb.setChecked(checked);
+		cb.setValue(checked ? Boolean.TRUE : Boolean.FALSE);
 	}
 
 	public Boolean getValue() {
-		return cb.isChecked() ? Boolean.TRUE : Boolean.FALSE;
+		return cb.getValue();
 	}
 
 	@Override
 	protected void setNativeValue(Boolean nativeValue) {
-		Boolean old = getValue();
+		final Boolean old = getValue();
 		setChecked(nativeValue == null ? false : nativeValue);
-		Boolean newval = getValue();
+		final Boolean newval = getValue();
 		if(!ObjectUtil.equals(old, newval)) {
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
 		}
@@ -92,11 +92,11 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 	}
 
 	@Override
-	public void onClick(Widget sender) {
-		assert sender == cb;
-		super.onClick(sender);
+	public void onClick(ClickEvent event) {
+		assert event.getSource() == cb;
+		super.onClick(event);
 		// i.e. not is checked since this event fires before the click value sticks!
-		Boolean old = !(isChecked() ? Boolean.FALSE : Boolean.TRUE);
+		final Boolean old = !(isChecked() ? Boolean.FALSE : Boolean.TRUE);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
 		fireChangeListeners();
 	}
