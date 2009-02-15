@@ -79,10 +79,12 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	}
 
 	@Override
-	public void onOptionSelected(OptionEvent event) {
+	public void onOptionEvent(OptionEvent event) {
 		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
-		super.onOptionSelected(event);
-		rowOpDelegate.handleOptionSelection(event.optionText, rowIndex);
+		super.onOptionEvent(event);
+		if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
+			rowOpDelegate.handleOptionSelection(event.optionText, rowIndex);
+		}
 	}
 
 }

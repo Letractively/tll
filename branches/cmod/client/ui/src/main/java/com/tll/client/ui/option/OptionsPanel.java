@@ -12,16 +12,19 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * OptionsPanel - Panel containing a vertical list of options that are
  * selectable via mouse and keyboard.
  * @author jpk
  */
-public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, ISourcesOptionEvents {
+public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, MouseOverHandler,
+		IHasOptionHandlers {
 
 	/**
 	 * Styles - (options.css)
@@ -37,7 +40,6 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 	protected final List<Option> options = new ArrayList<Option>();
 	private final VerticalPanel vp = new VerticalPanel();
 	private int crntIndx = -1;
-	private OptionListenerCollection optionListeners;
 
 	/**
 	 * Constructor
@@ -49,17 +51,9 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 		setStyleName(Styles.OPTIONS);
 	}
 
-	public void addOptionListener(IOptionListener listener) {
-		if(optionListeners == null) {
-			optionListeners = new OptionListenerCollection();
-		}
-		optionListeners.add(listener);
-	}
-
-	public void removeOptionListener(IOptionListener listener) {
-		if(optionListeners != null) {
-			optionListeners.remove(listener);
-		}
+	@Override
+	public HandlerRegistration addOptionHandler(IOptionHandler handler) {
+		return addHandler(handler, OptionEvent.TYPE);
 	}
 
 	/**
@@ -70,6 +64,7 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 		options.add(option);
 		vp.add(option);
 		option.addMouseDownHandler(this);
+		option.addMouseOverHandler(this);
 	}
 
 	/**
@@ -132,8 +127,8 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 		options.get(index).getElement().getParentElement().setClassName(Styles.ACTIVE);
 		this.crntIndx = index;
 
-		if(fireCurrentOptionChanged && optionListeners != null) {
-			optionListeners.fireOnCurrentChanged(new OptionEvent(this, options.get(crntIndx).getText()));
+		if(fireCurrentOptionChanged) {
+			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, options.get(crntIndx).getText()));
 		}
 	}
 
@@ -146,8 +141,8 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 				setCurrentOption(crntIndx + 1, true);
 				break;
 			case KeyCodes.KEY_ENTER:
-				if(crntIndx >= 0 && optionListeners != null) {
-					optionListeners.fireOnSelected(new OptionEvent(this, options.get(crntIndx).getText()));
+				if(crntIndx >= 0) {
+					fireEvent(new OptionEvent(OptionEvent.EventType.SELECTED, options.get(crntIndx).getText()));
 				}
 				break;
 		}
@@ -157,29 +152,16 @@ public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDow
 		final int index = options.indexOf(event.getSource());
 		if(index >= 0) {
 			setCurrentOption(index, false);
-			if(optionListeners != null) {
-				optionListeners.fireOnSelected(new OptionEvent(this, ((Option) event.getSource()).getText()));
-			}
+			fireEvent(new OptionEvent(OptionEvent.EventType.SELECTED, ((Option) event.getSource()).getText()));
 		}
 	}
 
-	public void onMouseEnter(Widget sender) {
-		final int index = options.indexOf(sender);
+	public void onMouseOver(MouseOverEvent event) {
+		final int index = options.indexOf(event.getSource());
 		if(index >= 0) {
 			setCurrentOption(index, false);
-			if(optionListeners != null) {
-				optionListeners.fireOnCurrentChanged(new OptionEvent(this, ((Option) sender).getText()));
-			}
+			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, ((Option) event.getSource()).getText()));
 		}
-	}
-
-	public void onMouseLeave(Widget sender) {
-	}
-
-	public void onMouseMove(Widget sender, int x, int y) {
-	}
-
-	public void onMouseUp(Widget sender, int x, int y) {
 	}
 
 	@Override

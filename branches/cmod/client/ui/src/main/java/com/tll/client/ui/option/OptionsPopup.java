@@ -9,17 +9,22 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.TimedPopup;
 
 /**
  * OptionsPopup
  * @author jpk
  */
-public abstract class OptionsPopup extends TimedPopup implements MouseDownHandler, IOptionListener,
-		ISourcesOptionEvents {
+public abstract class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
+		IOptionHandler,
+		IHasOptionHandlers {
 
 	protected final OptionsPanel optionsPanel = new OptionsPanel();
 
@@ -31,8 +36,7 @@ public abstract class OptionsPopup extends TimedPopup implements MouseDownHandle
 	 */
 	public OptionsPopup(int duration) {
 		super(true, false, duration);
-		optionsPanel.addOptionListener(this);
-		//keyboardListeners.add(optionsPanel);
+		optionsPanel.addOptionHandler(this);
 		addHandler(optionsPanel, KeyDownEvent.getType());
 		setWidget(optionsPanel);
 	}
@@ -70,30 +74,31 @@ public abstract class OptionsPopup extends TimedPopup implements MouseDownHandle
 		setPopupPosition(event.getClientX() + 13 + elm.getAbsoluteLeft(), event.getClientY() - 5 + elm.getAbsoluteTop());
 	}
 
-	public void onMouseEnter(Widget sender) {
-		cancelTimer();
-	}
-
-	public void onMouseLeave(Widget sender) {
+	@Override
+	public void onMouseOut(MouseOutEvent event) {
 		startTimer();
 	}
 
-	public void onCurrentOptionChanged(OptionEvent event) {
-		assert (event.getSource() == optionsPanel);
+	@Override
+	public void onMouseOver(MouseOverEvent event) {
 		cancelTimer();
 	}
 
-	public void onOptionSelected(OptionEvent event) {
+	@Override
+	public HandlerRegistration addOptionHandler(IOptionHandler handler) {
+		return optionsPanel.addOptionHandler(handler);
+	}
+
+	@Override
+	public void onOptionEvent(OptionEvent event) {
 		assert (event.getSource() == optionsPanel);
-		hide();
+		switch(event.getOptionEventType()) {
+			case CHANGED:
+				cancelTimer();
+				break;
+			case SELECTED:
+				hide();
+				break;
+		}
 	}
-
-	public void addOptionListener(IOptionListener listener) {
-		optionsPanel.addOptionListener(listener);
-	}
-
-	public void removeOptionListener(IOptionListener listener) {
-		optionsPanel.removeOptionListener(listener);
-	}
-
 }
