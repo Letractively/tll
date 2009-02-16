@@ -13,6 +13,43 @@
   <name>tll-core</name>
   <version>1.0-SNAPSHOT</version>
   <description>Core types used by tll projects</description>
+  
+  <profiles>
+    <!-- GWT unpacking profiles -->
+    <profile>
+      <id>gwt-dev-windows</id>
+      <properties>
+        <platform>windows</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-mac</id>
+      <properties>
+        <platform>mac</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-linux</id>
+      <properties>
+        <platform>linux</platform>
+      </properties>
+      <activation>
+        <os>
+          <name>linux</name>
+        </os>
+      </activation>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>

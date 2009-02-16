@@ -11,8 +11,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
-import com.google.gwt.widgetideas.client.event.KeyDownEvent;
-import com.google.gwt.widgetideas.client.event.KeyDownHandler;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
@@ -29,17 +27,7 @@ public class DateField<B> extends AbstractField<B, Date> implements ValueChangeH
 	 * DateBox - Extended to support {@link Focusable}.
 	 * @author jpk
 	 */
-	private static final class DateBox extends com.google.gwt.user.datepicker.client.DateBox implements Focusable,
-			KeyDownHandler {
-
-		public void onKeyDown(KeyDownEvent event) {
-			if(event.isAlphaNumeric()) {
-				// disallow this!
-				event.getBrowserEvent().preventDefault();
-				// event.getBrowserEvent().cancelBubble(true);
-			}
-		}
-
+	private static final class DateBox extends com.google.gwt.user.datepicker.client.DateBox implements Focusable {
 	}
 
 	private final DateBox db;

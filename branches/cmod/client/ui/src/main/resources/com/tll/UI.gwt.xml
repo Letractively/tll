@@ -4,8 +4,7 @@
   <!--  un-comment to go international (commenting out means quicker compile) -->
   <!-- <inherits name="com.google.gwt.i18n.I18N" /> -->
 
-  <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
-  <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+  <inherits name='com.google.gwt.widgetideas.GlassPanel' />
 
   <!-- gwt-log support, default level `DEBUG` -->
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />

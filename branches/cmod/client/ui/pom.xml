@@ -13,7 +13,37 @@
   <name>client-widget</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
-
+  
+  <build>
+    <plugins>
+    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-compile</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+                <property name="gwt.compile.modules" value="com.tll.UITests" />
+                <!-- <echo message="test classpath: ${test_classpath}" /> -->
+                <ant antfile="${basedir}/../build-gwt.xml">
+                  <target name="compile" />
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
@@ -21,9 +51,23 @@
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <version>1.5-Dec_28</version>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator-glasspanel</artifactId>
+      <version>1.5.729</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

@@ -11,22 +11,6 @@
   <url>http://tll.googlecode.com</url>
   <inceptionYear>2005</inceptionYear>
 
-  <pluginRepositories>
-    <!-- for gwt-maven plugin -->
-    <pluginRepository>
-      <id>gwt-maven</id>
-      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <repositories>
-    <!-- for gwt-maven plugin -->
-    <repository>
-      <id>gwt-maven</id>
-      <url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
-    </repository>
-  </repositories>
-
   <developers>
     <developer>
       <id>jpk</id>
