@@ -26,6 +26,14 @@ public final class Option extends Label {
 	/**
 	 * Constructor
 	 * @param text The option text
+	 */
+	public Option(String text) {
+		this(text, null);
+	}
+
+	/**
+	 * Constructor
+	 * @param text The option text
 	 * @param img The optional image the is placed before the option text.
 	 */
 	public Option(String text, Image img) {
@@ -35,7 +43,7 @@ public final class Option extends Label {
 		if(img != null) {
 			getElement().appendChild((new ImageContainer(img)).getElement());
 		}
-		Element txt = DOM.createSpan();
+		final Element txt = DOM.createSpan();
 		txt.setInnerText(text);
 		getElement().appendChild(txt);
 	}

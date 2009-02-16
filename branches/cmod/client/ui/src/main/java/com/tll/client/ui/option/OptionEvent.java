@@ -72,4 +72,9 @@ public class OptionEvent extends GwtEvent<IOptionHandler> {
 	public String getOptionText() {
 		return optionText;
 	}
+
+	@Override
+	public String toDebugString() {
+		return etype + "|" + optionText;
+	}
 }

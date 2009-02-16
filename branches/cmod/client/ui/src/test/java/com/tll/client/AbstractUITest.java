@@ -8,11 +8,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -47,19 +45,14 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		}
 
 		/**
-		 * Runs the test.
-		 * @param testPanel The {@link Panel} onto which any UI artifacts are to be
-		 *        attached.
+		 * Loads the UI test artifacts in the ui.
 		 */
-		public abstract void doTest(Panel testPanel);
+		public abstract void load();
 
 		/**
-		 * Called when leaving this particular test context in the browser history
-		 * stack.
-		 * @param testPanel The {@link Panel} from which any UI added artifacts as a
-		 *        result of invoking {@link #doTest(Panel)} are to be removed.
+		 * Unloads the UI test artifacts from the ui.
 		 */
-		public abstract void cleanup(Panel testPanel);
+		public abstract void unload();
 	}
 
 	/**
@@ -70,7 +63,6 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 
 	private final Grid testList = new Grid(1, 3);
 	private final Hyperlink backLink = new Hyperlink("Back", "Back");
-	private final FlowPanel testPanel = new FlowPanel();
 	private final UITestCase[] tests;
 	private UITestCase current;
 
@@ -126,9 +118,11 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		RootPanel.get().add(l);
 
 		// stub the test links
-		testList.getElement().getStyle().setProperty("padding", "1em");
+		testList.getElement().getStyle().setProperty("margin", "1em");
 		testList.setCellSpacing(5);
 		testList.setBorderWidth(1);
+		testList.getRowFormatter().setStyleName(0, "bold");
+		testList.getColumnFormatter().setStyleName(0, "italic");
 		testList.setWidget(0, 0, new Label("#"));
 		testList.setWidget(0, 1, new Label("Test"));
 		testList.setWidget(0, 2, new Label("Description"));
@@ -144,10 +138,9 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		}
 		RootPanel.get().add(testList);
 		
+		backLink.getElement().getStyle().setProperty("padding", "1em");
 		backLink.setVisible(false);
 		RootPanel.get().add(backLink);
-		RootPanel.get().add(testPanel);
-		testPanel.setWidth("700px");
 	}
 
 	private void toggleViewState(boolean gotoTest) {
@@ -162,12 +155,10 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		DeferredCommand.addCommand(new Command() {
 
 			public void execute() {
-				testPanel.clear();
-
 				if(ROOT_HISTORY_TOKEN.equals(historyToken) || backLink.getTargetHistoryToken().equals(historyToken)) {
 					if(current != null) {
 						try {
-							current.cleanup(testPanel);
+							current.unload();
 						}
 						finally {
 							current = null;
@@ -182,7 +173,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 						assert current == null;
 						current = test;
 						toggleViewState(true);
-						test.doTest(testPanel);
+						test.load();
 						return;
 					}
 				}

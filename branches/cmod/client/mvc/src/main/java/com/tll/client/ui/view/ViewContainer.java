@@ -32,8 +32,9 @@ import com.tll.client.mvc.view.IViewState;
 import com.tll.client.mvc.view.PinPopViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
 import com.tll.client.ui.DragEvent;
-import com.tll.client.ui.IDragListener;
-import com.tll.client.ui.ISourcesDragEvents;
+import com.tll.client.ui.IDragHandler;
+import com.tll.client.ui.IHasDragEvents;
+import com.tll.client.ui.DragEvent.DragMode;
 
 /**
  * ViewContainer - UI container for {@link IView} implementations.
@@ -41,7 +42,7 @@ import com.tll.client.ui.ISourcesDragEvents;
  */
 @SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
-		ISourcesDragEvents, ClickHandler, NativePreviewHandler {
+		IHasDragEvents, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -75,9 +76,6 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 
 	private boolean mouseIsDown, dragging;
 	private int dragStartX, dragStartY;
-	// private DragInfo dragInfo;
-
-	private final DragListenerCollection dragListeners = new DragListenerCollection();
 
 	/**
 	 * MyVerticalPanel - Simple extension of VerticalPanel to get at td and tr
@@ -183,29 +181,16 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 		};
 	}
 	
-	private HandlerRegistration hrEventPreview, hrMouseDown, hrMouseMove, hrMouseUp;
+	private HandlerRegistration hrEventPreview, hrDrag, hrMsgManagerDragHandler;
 
-	public void addDragListener(IDragListener listener) {
-		if(dragListeners.size() == 0) {
-			assert hrMouseDown == null;
-			hrMouseDown = toolbar.addMouseDownHandler(this);
-			hrMouseMove = toolbar.addMouseMoveHandler(this);
-			hrMouseUp = toolbar.addMouseUpHandler(this);
+	@Override
+	public HandlerRegistration addDragHandler(IDragHandler handler) {
+		if(hrDrag == null) {
+			toolbar.addMouseDownHandler(this);
+			toolbar.addMouseMoveHandler(this);
+			toolbar.addMouseUpHandler(this);
 		}
-		dragListeners.add(listener);
-	}
-
-	public void removeDragListener(IDragListener listener) {
-		dragListeners.remove(listener);
-		if(dragListeners.size() == 0) {
-			assert hrMouseDown != null;
-			hrMouseDown.removeHandler();
-			hrMouseDown = null;
-			hrMouseMove.removeHandler();
-			hrMouseMove = null;
-			hrMouseUp.removeHandler();
-			hrMouseUp = null;
-		}
+		return (hrDrag = addHandler(handler, DragEvent.TYPE));
 	}
 
 	public boolean isPopped() {
@@ -241,7 +226,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 		if(mouseIsDown) {
 			if(!dragging) {
 				dragging = true;
-				dragListeners.fireDragStart(new DragEvent(this, dragStartX, dragStartY));
+				fireEvent(new DragEvent(DragMode.START, dragStartX, dragStartY));
 			}
 
 			final int absX = event.getClientX() + getAbsoluteLeft();
@@ -258,14 +243,14 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			elm.getStyle().setPropertyPx("left", nx);
 			elm.getStyle().setPropertyPx("top", ny);
 
-			dragListeners.fireDragging(new DragEvent(this, event.getClientX() - dragStartX, event.getClientY() - dragStartY));
+			fireEvent(new DragEvent(DragMode.DRAGGING, event.getClientX() - dragStartX, event.getClientY() - dragStartY));
 		}
 	}
 
 	public void onMouseUp(MouseUpEvent event) {
 		if(mouseIsDown) {
 			endDrag((Widget) event.getSource());
-			dragListeners.fireDragEnd(new DragEvent(this));
+			fireEvent(new DragEvent(DragMode.END));
 		}
 	}
 	
@@ -318,7 +303,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			toolbar.btnPop.setDown(true);
 			toolbar.btnPop.setTitle(ViewToolbar.TITLE_PIN);
 
-			addDragListener(MsgManager.instance());
+			hrMsgManagerDragHandler = addDragHandler(MsgManager.instance());
 
 			assert hrEventPreview == null;
 			hrEventPreview = Event.addNativePreviewHandler(this);
@@ -337,7 +322,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			hrEventPreview.removeHandler();
 			hrEventPreview = null;
 
-			removeDragListener(MsgManager.instance());
+			hrMsgManagerDragHandler.removeHandler();
 
 			final Element elm = getElement();
 			elm.getStyle().setProperty("position", "");

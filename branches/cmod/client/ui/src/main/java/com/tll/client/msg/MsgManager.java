@@ -12,7 +12,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.DragEvent;
-import com.tll.client.ui.IDragListener;
+import com.tll.client.ui.IDragHandler;
 import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.common.msg.Msg;
@@ -22,7 +22,7 @@ import com.tll.common.msg.Msg;
  * DOM and manages their life-cycle.
  * @author jpk
  */
-public final class MsgManager implements IDragListener, ScrollHandler {
+public final class MsgManager implements IDragHandler, ScrollHandler {
 
 	/**
 	 * the singleton instance
@@ -260,25 +260,28 @@ public final class MsgManager implements IDragListener, ScrollHandler {
 		return list;
 	}
 
-	public void onDragStart(DragEvent event) {
-		assert draggingMsgPanels == null;
-		// tell the contained msg panels we are dragging
-		draggingMsgPanels = findContainedMsgPanels((Widget) event.getSource(), PopupState.SHOWING);
-		if(draggingMsgPanels == null) return;
-		for(final MsgPanel mp : draggingMsgPanels) {
-			mp.hide();
+	public void onDrag(DragEvent event) {
+		switch(event.dragMode) {
+			case DRAGGING:
+				break;
+			case START:
+				assert draggingMsgPanels == null;
+				// tell the contained msg panels we are dragging
+				if((draggingMsgPanels = findContainedMsgPanels((Widget) event.getSource(), PopupState.SHOWING)) != null) {
+					for(final MsgPanel mp : draggingMsgPanels) {
+						mp.hide();
+					}
+				}
+				break;
+			case END:
+				if(draggingMsgPanels != null) {
+					for(final MsgPanel mp : draggingMsgPanels) {
+						mp.show();
+					}
+					draggingMsgPanels = null;
+				}
+				break;
 		}
-	}
-
-	public void onDragging(DragEvent event) {
-	}
-
-	public void onDragEnd(DragEvent event) {
-		if(draggingMsgPanels == null) return;
-		for(final MsgPanel mp : draggingMsgPanels) {
-			mp.show();
-		}
-		draggingMsgPanels = null;
 	}
 
 	public void onScroll(ScrollEvent event) {
