@@ -17,6 +17,23 @@
       <scope>test</scope>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
+      <excludes>
+        <exclude>*:zip</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <scope>test</scope>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <includes>
+          <include>**/*.dll</include>
+        </includes>
+      </unpackOptions>
+      <outputDirectory>/WEB-INF/lib</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>com.google.gwt:gwt-dev</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 

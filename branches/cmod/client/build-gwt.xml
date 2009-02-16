@@ -1,9 +1,14 @@
 <!--
-	Intended for global use by all client projects in a maven antrun context.
+	Intended for global use by all client projects.
 	
-	Two properties must be specified from maven:
+	These properties must be present in the ant context to run the compile target:
 		1) gwt.compile.classpath
 		2) gwt.compile.modules
+		
+  These properties must be present in the ant context to run the shell target:
+		1) gwt.shell.project.dir
+		2) gwt.shell.startupUrl
+		3) gwt.shell.entryModule
 	
 	http://code.google.com/docreader/#p=google-web-toolkit-doc-1-6&s=google-web-toolkit-doc-1-6&t=ReleaseNotes_1_6_UpgradeGuide
 	
@@ -37,6 +42,17 @@
 	<path id="gwt.compile.classpath">
 		<pathelement path="${gwt.compile.classpath}"/>
 	</path>
+	
+	<path id="gwt.shell.classpath">
+		<path location="${gwt.shell.project.dir}/target/classes" />
+		<path location="${gwt.shell.project.dir}/target/test-classes" />
+		<path location="${gwt.shell.project.dir}/src/main/java" />
+		<path location="${gwt.shell.project.dir}/src/test/java" />
+		<fileset dir="${gwt.shell.project.dir}/target/war/WEB-INF/lib">
+			<!--<include name="**/*.jar" />-->
+			<include name="**" />
+		</fileset>
+	</path>
 
 	<!--
    [java] Google Web Toolkit 0.0.0
@@ -69,6 +85,24 @@
 			<arg value="-logLevel" />
 			<arg value="INFO" />
 			<arg value="${gwt.compile.modules}" />
+		</java>
+	</target>
+	
+	<target name="shell" description="Invokes the GWT host mode shell. NOTE: The war dir must already be constructed!">
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
+			<classpath refid="gwt.shell.classpath" />
+			<jvmarg value="-Xms128m" />
+			<jvmarg value="-Xmx512m" />
+			<jvmarg value="-ea" />
+			<arg value="-war" />
+			<arg value="${gwt.shell.project.dir}/target/war" />
+			<arg value="-style" />
+			<arg value="OBF" />
+			<arg value="-logLevel" />
+			<arg value="INFO" />
+			<arg value="-startupUrl" />
+			<arg value="${gwt.shell.startupUrl}" />
+			<arg value="${gwt.shell.entryModule}" />
 		</java>
 	</target>
 

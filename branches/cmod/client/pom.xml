@@ -16,7 +16,7 @@
   </parent>
   
   <properties>
-    <gwtIncubatorVersion>1.5-Dec_28</gwtIncubatorVersion>
+    <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
   </properties>
 
@@ -112,9 +112,9 @@
         <version>${gwtLogVersion}</version>
       </dependency>
       <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt-incubator</artifactId>
-        <version>${gwtIncubatorVersion}</version>
+        <groupId>com.google.code.gwt-incubator</groupId>
+        <artifactId>gwt-incubator-glasspanel</artifactId>
+        <version>${gwtIncubatorGlassPanelVersion}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -143,7 +143,7 @@
       <artifactId>gwt-dev</artifactId>
       <version>${gwtVersion}</version>
       <classifier>${platform}</classifier>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

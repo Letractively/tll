@@ -53,7 +53,6 @@
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
       <artifactId>gwt-incubator-glasspanel</artifactId>
-      <version>1.5.729</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
