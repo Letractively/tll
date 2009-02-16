@@ -76,8 +76,8 @@ public abstract class TimedPopup extends PopupPanel implements CloseHandler<Popu
 	@Override
 	public void show() {
 		if(!tpshowing) {
-			tpshowing = true;
 			doShow();
+			tpshowing = true;
 			if(duration > 0) {
 				startTimer();
 			}
@@ -87,9 +87,9 @@ public abstract class TimedPopup extends PopupPanel implements CloseHandler<Popu
 	@Override
 	public void hide() {
 		if(tpshowing) {
-			tpshowing = false;
 			cancelTimer();
 			doHide();
+			tpshowing = false;
 		}
 	}
 

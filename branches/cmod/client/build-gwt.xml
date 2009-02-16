@@ -105,5 +105,27 @@
 			<arg value="${gwt.shell.entryModule}" />
 		</java>
 	</target>
+	
+	<target name="shell-debug" description="Invokes the GWT host mode shell w/ a jvm debug hook at port 8000. NOTE: The war dir must already be constructed!">
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
+			<classpath refid="gwt.shell.classpath" />
+			<jvmarg value="-Xms128m" />
+			<jvmarg value="-Xmx512m" />
+			<jvmarg value="-ea" />
+			<jvmarg value="-Xdebug" />
+			<jvmarg value="-Xnoagent" />
+			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
+			<jvmarg value="-Djava.compiler=NONE" />
+			<arg value="-war" />
+			<arg value="${gwt.shell.project.dir}/target/war" />
+			<arg value="-style" />
+			<arg value="OBF" />
+			<arg value="-logLevel" />
+			<arg value="INFO" />
+			<arg value="-startupUrl" />
+			<arg value="${gwt.shell.startupUrl}" />
+			<arg value="${gwt.shell.entryModule}" />
+		</java>
+	</target>
 
 </project>
