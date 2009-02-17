@@ -148,7 +148,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	public final void setRowOptionsDelegate(IRowOptionsDelegate rowOptionsDelegate) {
 		if(rowPopup == null) {
 			rowPopup = new RowContextPopup(table);
-			//focusPanel.addMouseHandler(rowPopup);
+			focusPanel.addMouseDownHandler(rowPopup);
 		}
 		rowPopup.setDelegate(rowOptionsDelegate);
 	}

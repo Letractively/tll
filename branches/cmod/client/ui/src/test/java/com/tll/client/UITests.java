@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -22,6 +23,7 @@ import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
+import com.tll.client.ui.option.OptionsPopup;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -39,9 +41,9 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new MsgPanelTest(), new DialogTest(), new OptionsPanelTest() };
+			new MsgPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest() };
 	}
-	
+
 	/**
 	 * MsgPanelTest - Tests {@link MsgPanel} layout.
 	 * @author jpk
@@ -75,7 +77,7 @@ public final class UITests extends AbstractUITest {
 			return "MsgPanel";
 		}
 	} // MsgPanelTest
-	
+
 	/**
 	 * DialogTest
 	 * @author jpk
@@ -96,7 +98,7 @@ public final class UITests extends AbstractUITest {
 				}
 			}
 		}
-		
+
 		void buildDialog(boolean showOverlay) {
 			btnHide = new Button("Hide", new ClickHandler() {
 
@@ -153,13 +155,13 @@ public final class UITests extends AbstractUITest {
 			return "Dialog";
 		}
 	} // DialogTest
-	
+
 	/**
 	 * OptionsPanelTest
 	 * @author jpk
 	 */
 	static final class OptionsPanelTest extends UITestCase {
-		
+
 		/**
 		 * OptionEventIndicator - Indicates Option events visually as they occur.
 		 */
@@ -175,10 +177,10 @@ public final class UITests extends AbstractUITest {
 			 */
 			public OptionEventIndicator() {
 				super();
-				
+
 				sp.setWidth("200px");
 				sp.setHeight("200px");
-				
+
 				btnClear.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -213,13 +215,13 @@ public final class UITests extends AbstractUITest {
 		@Override
 		public void load() {
 			optionPnlWrapper = new SimplePanel();
-			
+
 			op = new OptionsPanel();
 			op.setOptions(new Option[] {
 				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
 				new Option("Option 5"), new Option("Option 6"), new Option("Option 7"), new Option("Option 8"),
 				new Option("Option 9"), new Option("Option 10"), new Option("Option 11"), new Option("Option 12") });
-			
+
 			optionPnlWrapper.setWidth("200px");
 			optionPnlWrapper.setHeight("200px");
 			optionPnlWrapper.setWidget(op);
@@ -228,7 +230,7 @@ public final class UITests extends AbstractUITest {
 			hp.setSpacing(10);
 			hp.getElement().getStyle().setProperty("padding", "1em");
 			hp.add(optionPnlWrapper);
-			
+
 			indicator = new OptionEventIndicator();
 			op.addOptionHandler(indicator);
 			hp.add(indicator);
@@ -246,4 +248,58 @@ public final class UITests extends AbstractUITest {
 			return "OptionsPanel";
 		}
 	}
+
+	/**
+	 * OptionsPanelTest
+	 * @author jpk
+	 */
+	static final class OptionsPopupTest extends UITestCase {
+
+		FocusPanel contextArea = new FocusPanel();
+		OptionsPopup popup;
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPopup panel";
+		}
+
+		@Override
+		public String getName() {
+			return "OptionsPopup";
+		}
+
+		@Override
+		public void load() {
+			popup = new OptionsPopup(2000);
+			popup.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5") });
+
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			// IMPT: this enables the popup to be positioned at the mouse click location!
+			contextArea.addMouseDownHandler(popup);
+
+			contextArea.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					if(!popup.isShowing()) {
+						popup.show();
+					}
+				}
+			});
+
+			RootPanel.get().add(contextArea);
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			popup = null;
+		}
+	} // OptionsPopupTest
 }

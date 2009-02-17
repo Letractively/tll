@@ -34,7 +34,7 @@ public final class Option extends Label {
 	/**
 	 * Constructor
 	 * @param text The option text
-	 * @param img The optional image the is placed before the option text.
+	 * @param img Optional image placed before the option text.
 	 */
 	public Option(String text, Image img) {
 		super();

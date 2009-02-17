@@ -43,7 +43,7 @@ public abstract class TimedPopup extends PopupPanel implements CloseHandler<Popu
 	 * Constructor
 	 * @param autoHide
 	 * @param modal
-	 * @param duration
+	 * @param duration The duration in mili-seconds
 	 */
 	public TimedPopup(boolean autoHide, boolean modal, int duration) {
 		super(autoHide, modal);

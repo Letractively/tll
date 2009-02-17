@@ -4,9 +4,8 @@
  */
 package com.tll.client.ui.option;
 
-import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -19,25 +18,25 @@ import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.tll.client.ui.TimedPopup;
 
 /**
- * OptionsPopup
+ * OptionsPopup - A context menu popup widget that pops up at mouse click
+ * locations.
  * @author jpk
  */
-public abstract class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
-		IOptionHandler,
-		IHasOptionHandlers {
+public class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
+		IOptionHandler, IHasOptionHandlers {
 
 	protected final OptionsPanel optionsPanel = new OptionsPanel();
 
-	//private final KeyboardListenerCollection keyboardListeners = new KeyboardListenerCollection();
-
 	/**
 	 * Constructor
-	 * @param duration
+	 * @param duration The duration in mili-seconds
 	 */
 	public OptionsPopup(int duration) {
 		super(true, false, duration);
 		optionsPanel.addOptionHandler(this);
-		addHandler(optionsPanel, KeyDownEvent.getType());
+		addDomHandler(this, MouseDownEvent.getType());
+		addDomHandler(this, MouseOverEvent.getType());
+		addDomHandler(this, MouseOutEvent.getType());
 		setWidget(optionsPanel);
 	}
 
@@ -51,36 +50,41 @@ public abstract class OptionsPopup extends TimedPopup implements MouseDownHandle
 		if(!event.isCanceled()) {
 			switch(event.getTypeInt()) {
 				case Event.ONKEYDOWN: {
-					final int key = event.getNativeEvent().getKeyCode();
-					switch(key) {
+					//Log.debug("OptionsPopup.onPreviewNativeEvent: " + event.toDebugString());
+					switch(event.getNativeEvent().getKeyCode()) {
 						case KeyCodes.KEY_UP:
 						case KeyCodes.KEY_DOWN:
 						case KeyCodes.KEY_ENTER:
-							//keyboardListeners.fireKeyboardEvent(this, event);
-							fireEvent(event);
-							event.cancel(); // TODO or consume?
+							DomEvent.fireNativeEvent(event.getNativeEvent(), optionsPanel);
+							//optionsPanel.fireEvent(KeyDownEvent); // TODO why does this not work ?
+							event.cancel();
+							break;
 						case KeyCodes.KEY_ESCAPE:
 							hide();
-							event.cancel(); // TODO or consume?
+							event.cancel();
+							break;
 					}
 				}
 			}
 		}
 	}
-
+	
 	public void onMouseDown(MouseDownEvent event) {
-		final Element elm = event.getNativeEvent().getTarget();
+		//Log.debug("OptionsPopup.onMouseDown: " + event.toDebugString());
+		//final Element elm = event.getNativeEvent().getTarget();
 		// need to UN-offset the positioning of the focus panel (the sender)
-		setPopupPosition(event.getClientX() + 13 + elm.getAbsoluteLeft(), event.getClientY() - 5 + elm.getAbsoluteTop());
+		setPopupPosition(event.getClientX() + 13, event.getClientY() - 5);
 	}
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
+		//Log.debug("OptionsPopup.onMouseOut: " + event.toDebugString());
 		startTimer();
 	}
 
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
+		//Log.debug("OptionsPopup.onMouseOver: " + event.toDebugString());
 		cancelTimer();
 	}
 
@@ -91,6 +95,7 @@ public abstract class OptionsPopup extends TimedPopup implements MouseDownHandle
 
 	@Override
 	public void onOptionEvent(OptionEvent event) {
+		//Log.debug("OptionsPopup.onOptionEvent: " + event.toDebugString());
 		assert (event.getSource() == optionsPanel);
 		switch(event.getOptionEventType()) {
 			case CHANGED:
