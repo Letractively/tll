@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewState;
@@ -35,6 +34,7 @@ import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragHandler;
 import com.tll.client.ui.IHasDragEvents;
 import com.tll.client.ui.DragEvent.DragMode;
+import com.tll.client.ui.msg.MsgManager;
 
 /**
  * ViewContainer - UI container for {@link IView} implementations.
@@ -303,7 +303,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			toolbar.btnPop.setDown(true);
 			toolbar.btnPop.setTitle(ViewToolbar.TITLE_PIN);
 
-			hrMsgManagerDragHandler = addDragHandler(MsgManager.instance());
+			hrMsgManagerDragHandler = addDragHandler(MsgManager.get());
 
 			assert hrEventPreview == null;
 			hrEventPreview = Event.addNativePreviewHandler(this);

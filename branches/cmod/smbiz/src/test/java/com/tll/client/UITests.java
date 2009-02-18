@@ -27,7 +27,6 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ShowViewRequest;
@@ -36,10 +35,9 @@ import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.MsgPanel;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
-import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.field.AddressFieldsProvider;
 import com.tll.client.ui.field.AddressFieldsRenderer;
@@ -51,6 +49,7 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.listing.ListingNavBar;
+import com.tll.client.ui.msg.MsgManager;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.bind.IBindable;
@@ -146,7 +145,7 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 
 			public void execute() {
 				testPanel.clear();
-				MsgManager.instance().clear();
+				MsgManager.get().clear();
 
 				boolean gotoTest = true;
 				if(TEST_MSG_PANEL.equals(historyToken)) {
@@ -459,6 +458,6 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
 		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
 
-		MsgManager.instance().post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
+		MsgManager.get().post(msgs, RootPanel.get(), true).show(Position.CENTER, -1);
 	}
 }

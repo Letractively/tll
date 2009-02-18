@@ -27,8 +27,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.WidgetAndLabel;
+import com.tll.client.ui.msg.MsgManager;
+import com.tll.client.ui.msg.MsgManager.PopupState;
 import com.tll.common.bind.IBindable;
 
 /**
@@ -324,7 +325,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 		if(lastSelectedTabIndex != -1) {
 			// hide msgs on last tab
-			MsgManager.instance().show(tabPanel.getWidget(lastSelectedTabIndex), false, true);
+			MsgManager.get().findMsgOperators(tabPanel.getWidget(lastSelectedTabIndex), true, PopupState.SHOWING).hide();
 		}
 
 		//return true;
@@ -333,7 +334,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 	public void onSelection(SelectionEvent<Integer> event) {
 		// show msgs on selected tab
-		MsgManager.instance().show(tabPanel.getWidget(event.getSelectedItem()), false, true);
+		MsgManager.get().findMsgOperators(tabPanel.getWidget(event.getSelectedItem()), true, PopupState.HIDING).show();
 
 		lastSelectedTabIndex = event.getSelectedItem();
 	}

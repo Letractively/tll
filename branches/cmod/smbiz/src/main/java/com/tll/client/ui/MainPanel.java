@@ -33,14 +33,13 @@ import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.model.ModelChangeManager;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewRequest;
 import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.msg.MsgManager;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewRequestLink;
@@ -366,7 +365,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			ModelChangeManager.instance().removeModelChangeListener(ViewManager.instance());
 			ViewManager.instance().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
-			MsgManager.instance().clear();
+			MsgManager.get().clear();
 		}
 
 		public void onStatusEvent(StatusEvent event) {
@@ -374,7 +373,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			if(status != null) {
 				final List<Msg> gms = status.getGlobalDisplayMsgs();
 				if(gms != null && gms.size() > 0) {
-					MsgManager.instance().post(true, gms, Position.CENTER, this, -1, true).show();
+					MsgManager.get().post(gms, this, true).show(Position.CENTER, -1);
 				}
 			}
 		}

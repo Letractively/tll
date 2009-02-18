@@ -18,11 +18,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.Position;
+import com.tll.client.ui.msg.MsgManager;
+import com.tll.client.ui.msg.MsgManager.PopupState;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
@@ -447,15 +448,15 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	private void addMsgs(List<Msg> msgs) {
-		MsgManager.instance().post(false, msgs, Position.BOTTOM, this, -1, false).show();
+		MsgManager.get().post(msgs, this, false).show(Position.BOTTOM, -1);
 	}
 
 	private void clearMsgs() {
-		MsgManager.instance().clear(this, true);
+		MsgManager.get().clear(this, true);
 	}
 
 	private void toggleMsgs() {
-		MsgManager.instance().toggle(this, true);
+		MsgManager.get().findMsgOperators(this, false, PopupState.EITHER).toggle();
 	}
 
 	protected void draw() {

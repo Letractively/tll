@@ -24,9 +24,9 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
-import com.tll.client.msg.MsgManager;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.Toolbar;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.msg.MsgManager;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.util.StringUtil;
@@ -297,7 +297,7 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			if(!valid) {
 				final String smsg = StringUtil.replaceVariables("Please enter a number between %1 and %2.", new Object[] {
 					new Integer(1), new Integer(numPages) });
-				MsgManager.instance().post(true, new Msg(smsg, MsgLevel.ERROR), Position.BOTTOM, tbPage, 3000, true).show();
+				MsgManager.get().post(new Msg(smsg, MsgLevel.ERROR), tbPage, true).show(Position.BOTTOM, 3000);
 				tbPage.setText(Integer.toString(crntPage));
 				return;
 			}

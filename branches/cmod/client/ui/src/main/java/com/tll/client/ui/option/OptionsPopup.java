@@ -15,24 +15,35 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
-import com.tll.client.ui.TimedPopup;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.tll.client.ui.PopupHideTimer;
 
 /**
  * OptionsPopup - A context menu popup widget that pops up at mouse click
  * locations.
  * @author jpk
  */
-public class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
+public class OptionsPopup extends PopupPanel implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
 		IOptionHandler, IHasOptionHandlers {
 
 	protected final OptionsPanel optionsPanel = new OptionsPanel();
+	
+	private final PopupHideTimer timer;
+	
+	/**
+	 * The show duration in mili-seconds.
+	 */
+	private final int duration;
 
 	/**
 	 * Constructor
-	 * @param duration The duration in mili-seconds
+	 * @param duration The duration in mili-seconds. <code>-1</code> indicates
+	 *        indefinite.
 	 */
 	public OptionsPopup(int duration) {
-		super(true, false, duration);
+		super(true, false);
+		timer = new PopupHideTimer(this);
+		this.duration = duration;
 		optionsPanel.addOptionHandler(this);
 		addDomHandler(this, MouseDownEvent.getType());
 		addDomHandler(this, MouseOverEvent.getType());
@@ -79,13 +90,13 @@ public class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseO
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		//Log.debug("OptionsPopup.onMouseOut: " + event.toDebugString());
-		startTimer();
+		timer.schedule(duration);
 	}
 
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
 		//Log.debug("OptionsPopup.onMouseOver: " + event.toDebugString());
-		cancelTimer();
+		timer.cancel();
 	}
 
 	@Override
@@ -99,7 +110,7 @@ public class OptionsPopup extends TimedPopup implements MouseDownHandler, MouseO
 		assert (event.getSource() == optionsPanel);
 		switch(event.getOptionEventType()) {
 			case CHANGED:
-				cancelTimer();
+				timer.cancel();
 				break;
 			case SELECTED:
 				hide();

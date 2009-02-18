@@ -17,11 +17,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.msg.MsgManager;
 import com.tll.common.model.Model;
 import com.tll.common.model.UnsetPropertyException;
 import com.tll.common.msg.Msg;
@@ -195,7 +195,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 				try {
 					final Widget fw = fieldPanel.getField(msg.getRefToken());
 					assert fw != null;
-					MsgManager.instance().post(false, msg, Position.BOTTOM, fw, -1, false).show();
+					MsgManager.get().post(msg, fw, false).show();
 					msgBound = true;
 				}
 				catch(final UnsetPropertyException e) {
@@ -204,10 +204,10 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 			}
 			if(!msgBound) {
 				// post as global
-				MsgManager.instance().post(true, msg, Position.CENTER, RootPanel.get(), -1, false);
+				MsgManager.get().post(msg, RootPanel.get(), false);
 			}
 		}
-		MsgManager.instance().show(RootPanel.get(), true, false);
+		MsgManager.get().findMsgOperator(RootPanel.get()).show(Position.CENTER, 3000);
 	}
 
 	public void onClick(ClickEvent event) {

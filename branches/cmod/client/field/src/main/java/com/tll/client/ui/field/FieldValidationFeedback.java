@@ -6,8 +6,8 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.msg.MsgManager;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.Position;
+import com.tll.client.ui.msg.MsgManager;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
 
@@ -33,13 +33,13 @@ public final class FieldValidationFeedback implements IValidationFeedback {
 	}
 
 	public void handleException(Object source, ValidationException exception) {
-		MsgManager.instance().post(false, exception.getErrors(), Position.BOTTOM, (Widget) source, -1, true).show();
+		MsgManager.get().post(exception.getErrors(), (Widget) source, true).show(Position.BOTTOM, -1);
 		((Widget) source).removeStyleName(IField.Styles.DIRTY);
 		((Widget) source).addStyleName(IField.Styles.INVALID);
 	}
 
 	public void resolve(Object source) {
-		MsgManager.instance().clear((Widget) source, false);
+		MsgManager.get().clear((Widget) source, false);
 		((Widget) source).removeStyleName(IField.Styles.INVALID);
 	}
 }

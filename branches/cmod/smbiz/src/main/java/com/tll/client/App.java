@@ -7,7 +7,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.tll.client.ui.ImageBundle;
-import com.tll.client.ui.MsgImageBundle;
 
 /**
  * App - General app wide utility methods and constants.
@@ -21,7 +20,7 @@ public abstract class App {
 	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
 
 	/**
-	 * @return the app scoped {@link MsgImageBundle} instance.
+	 * @return the app scoped image bundle instance.
 	 */
 	public static ImageBundle imgs() {
 		return imageBundle;

@@ -50,7 +50,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 		this.rowOpDelegate = rowOpDelegate;
 	}
 
-	private void show(int row) {
+	private void showAtRow(int row) {
 		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
 		setOptions(rowOpDelegate.getOptions(row));
 		super.show();
@@ -68,12 +68,12 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 
 		if(row != this.rowIndex) {
 			hide();
-			show(row);
+			showAtRow(row);
 		}
 		else if(isShowing())
 			hide();
 		else
-			show(row);
+			showAtRow(row);
 
 		this.rowIndex = row;
 	}

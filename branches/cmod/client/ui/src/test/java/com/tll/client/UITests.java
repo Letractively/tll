@@ -1,7 +1,6 @@
 package com.tll.client;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,10 +14,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.ui.Dialog;
-import com.tll.client.ui.MsgPanel;
-import com.tll.client.ui.TimedPositionedPopup.Position;
+import com.tll.client.ui.msg.MsgManager;
+import com.tll.client.ui.msg.MsgManager.PopupState;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
@@ -41,42 +39,8 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new MsgPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest() };
+			new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgManagerTest() };
 	}
-
-	/**
-	 * MsgPanelTest - Tests {@link MsgPanel} layout.
-	 * @author jpk
-	 */
-	static final class MsgPanelTest extends UITestCase {
-
-		@Override
-		public void unload() {
-			MsgManager.instance().clear();
-		}
-
-		@Override
-		public void load() {
-			final List<Msg> msgs = new ArrayList<Msg>();
-			msgs.add(new Msg("This is an error message.", MsgLevel.ERROR));
-			msgs.add(new Msg("This is another error message.", MsgLevel.ERROR));
-			msgs.add(new Msg("This is a warn message.", MsgLevel.WARN));
-			msgs.add(new Msg("This is an info message.", MsgLevel.INFO));
-			msgs.add(new Msg("This is another info message.", MsgLevel.INFO));
-			msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
-			MsgManager.instance().post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
-		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the layout/CSS of MsgPanels";
-		}
-
-		@Override
-		public String getName() {
-			return "MsgPanel";
-		}
-	} // MsgPanelTest
 
 	/**
 	 * DialogTest
@@ -87,6 +51,16 @@ public final class UITests extends AbstractUITest {
 		VerticalPanel vp;
 		Dialog dlg;
 		Button btnShow, btnShowOverlay, btnHide;
+
+		@Override
+		public String getName() {
+			return "Dialog";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the Dialog widget.";
+		}
 
 		@Override
 		public void unload() {
@@ -145,15 +119,6 @@ public final class UITests extends AbstractUITest {
 			vp.add(btnShowOverlay);
 		}
 
-		@Override
-		public String getDescription() {
-			return "Tests the Dialog widget";
-		}
-
-		@Override
-		public String getName() {
-			return "Dialog";
-		}
 	} // DialogTest
 
 	/**
@@ -208,6 +173,16 @@ public final class UITests extends AbstractUITest {
 		OptionEventIndicator indicator;
 
 		@Override
+		public String getName() {
+			return "OptionsPanel";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPanel functionality and event handling.";
+		}
+
+		@Override
 		public void unload() {
 			RootPanel.get().remove(hp);
 		}
@@ -237,16 +212,6 @@ public final class UITests extends AbstractUITest {
 
 			RootPanel.get().add(hp);
 		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the OptionsPanel functionality and event handling.";
-		}
-
-		@Override
-		public String getName() {
-			return "OptionsPanel";
-		}
 	}
 
 	/**
@@ -260,7 +225,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public String getDescription() {
-			return "Tests the OptionsPopup panel";
+			return "Tests the OptionsPopup panel.";
 		}
 
 		@Override
@@ -302,4 +267,140 @@ public final class UITests extends AbstractUITest {
 			popup = null;
 		}
 	} // OptionsPopupTest
+
+	/**
+	 * MsgManagerTest
+	 * @author jpk
+	 */
+	static final class MsgManagerTest extends UITestCase {
+
+		static final Msg msgInfo = new Msg("An info message.", MsgLevel.INFO);
+		static final Msg msgWarn = new Msg("A warn message.", MsgLevel.WARN);
+		static final Msg msgError = new Msg("An error message.", MsgLevel.ERROR);
+		static final Msg msgFatal = new Msg("A fatal message.", MsgLevel.FATAL);
+
+		static final Msg[] allMsgs = new Msg[] {
+			msgInfo, msgWarn, msgError, msgFatal };
+
+		HorizontalPanel layout;
+		VerticalPanel buttonPanel;
+		FlowPanel context, nestedContext;
+		Label refWidget;
+
+		@Override
+		public String getName() {
+			return "MsgManager";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests MsgManager routines.";
+		}
+
+		private void stubContext() {
+			context = new FlowPanel();
+			context.setSize("200px", "200px");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
+			context.getElement().getStyle().setProperty("padding", "10px");
+
+			nestedContext = new FlowPanel();
+			nestedContext.setSize("100px", "100px");
+			nestedContext.getElement().getStyle().setProperty("border", "1px solid gray");
+			nestedContext.getElement().getStyle().setProperty("padding", "5px");
+			context.add(nestedContext);
+
+			refWidget = new Label("Ref Widget");
+			refWidget.getElement().getStyle().setProperty("border", "1px solid gray");
+			refWidget.getElement().getStyle().setProperty("margin", "5px");
+			nestedContext.add(refWidget);
+		}
+
+		private void stubTestButtons() {
+			buttonPanel = new VerticalPanel();
+
+			buttonPanel.add(new Button("Show All Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).show();
+				}
+			}));
+			buttonPanel.add(new Button("Hide All Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).hide();
+				}
+			}));
+			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().clear();
+				}
+			}));
+			buttonPanel.add(new Button("Clear Nested Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().clear(nestedContext, true);
+				}
+			}));
+			buttonPanel.add(new Button("Clear Ref Widget Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().clear(refWidget, false);
+				}
+			}));
+			buttonPanel.add(new Button("Post Ref Widget Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().post(Arrays.asList(allMsgs), refWidget, false);
+				}
+			}));
+			buttonPanel.add(new Button("Set Ref Widget Messages", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().post(Arrays.asList(allMsgs), refWidget, true);
+				}
+			}));
+			buttonPanel.add(new Button("Show Message Level Images", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).showMsgLevelImages(true);
+				}
+			}));
+			buttonPanel.add(new Button("Hide Message Level Images", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).showMsgLevelImages(false);
+				}
+			}));
+		}
+
+		@Override
+		public void load() {
+			stubContext();
+			stubTestButtons();
+			layout = new HorizontalPanel();
+			layout.add(buttonPanel);
+			layout.add(context);
+			layout.getElement().getStyle().setProperty("margin", "1em");
+			layout.setSpacing(5);
+			RootPanel.get().add(layout);
+		}
+
+		@Override
+		public void unload() {
+			layout.removeFromParent();
+			context = null;
+			buttonPanel = null;
+			layout = null;
+		}
+	} // MsgManagerTest
 }
