@@ -17,7 +17,7 @@ public abstract class UI {
 	/**
 	 * The single busy panel that is shared among the client widgets.
 	 */
-	private static final BusyPanel theBusyPanel = new BusyPanel(false, null, 20, new ThrobbingPanel());
+	private static final BusyPanel theBusyPanel = new BusyPanel(false, null, 20);
 
 	/**
 	 * The global counter used to decide on whether to show/hide the busy panel.

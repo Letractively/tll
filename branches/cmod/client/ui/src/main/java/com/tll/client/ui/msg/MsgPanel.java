@@ -168,6 +168,7 @@ final class MsgPanel extends PopupPanel implements IMsgOperator {
 	@Override
 	public void show(Position position, int duration) {
 		PopupPositioner.setPopupPosition(this, refElement, position);
+		setAutoHideEnabled(duration <= 0);
 		super.show();
 		if(duration > 0) {
 			if(hideTimer == null) {

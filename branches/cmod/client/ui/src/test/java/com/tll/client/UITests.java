@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.msg.MsgManager;
 import com.tll.client.ui.msg.MsgManager.PopupState;
@@ -39,7 +40,7 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgManagerTest() };
+			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgManagerTest() };
 	}
 
 	/**
@@ -403,4 +404,76 @@ public final class UITests extends AbstractUITest {
 			layout = null;
 		}
 	} // MsgManagerTest
+
+	/**
+	 * BusyPanelTest - Tests the {@link BusyPanel}.
+	 * @author jpk
+	 */
+	static final class BusyPanelTest extends UITestCase {
+
+		HorizontalPanel layout;
+		VerticalPanel buttonPanel;
+		FlowPanel context;
+		BusyPanel busyPanel = new BusyPanel(true, null, 20);
+		
+		@Override
+		public String getName() {
+			return "BusyPanel";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the BusyPanel globally and locally.";
+		}
+
+		private void stubContext() {
+			context = new FlowPanel();
+			context.setSize("200px", "200px");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
+			context.getElement().getStyle().setProperty("padding", "10px");
+
+		}
+
+		private void stubTestButtons() {
+			buttonPanel = new VerticalPanel();
+
+			buttonPanel.add(new Button("Test Local", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					BusyPanel.getAbsoluteOverlay(context).add(busyPanel, 0, 0);
+				}
+			}));
+			buttonPanel.add(new Button("Test Global", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					RootPanel.get().add(busyPanel, 0, 0);
+				}
+			}));
+		}
+
+		@Override
+		public void load() {
+			stubContext();
+			stubTestButtons();
+			layout = new HorizontalPanel();
+			layout.add(buttonPanel);
+			layout.add(context);
+			layout.getElement().getStyle().setProperty("margin", "1em");
+			layout.setSpacing(5);
+			RootPanel.get().add(layout);
+		}
+
+		@Override
+		public void unload() {
+			busyPanel.removeFromParent();
+			busyPanel = null;
+			layout.removeFromParent();
+			context = null;
+			buttonPanel = null;
+			layout = null;
+		}
+		
+	} // BusyPanelTest
 }
