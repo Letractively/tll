@@ -22,7 +22,7 @@ public class ValidationException extends Exception {
 
 	private final List<Msg> errors;
 
-	private final Map<Widget, List<Msg>> sourcedErrors;
+	//private final Map<Widget, List<Msg>> sourcedErrors;
 
 	/**
 	 * Constructor
@@ -32,7 +32,7 @@ public class ValidationException extends Exception {
 		super();
 		errors = new ArrayList<Msg>(1);
 		errors.add(error);
-		sourcedErrors = null;
+		//sourcedErrors = null;
 	}
 
 	/**
@@ -42,7 +42,7 @@ public class ValidationException extends Exception {
 	public ValidationException(List<Msg> errors) {
 		super();
 		this.errors = errors;
-		sourcedErrors = null;
+		//sourcedErrors = null;
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class ValidationException extends Exception {
 	public ValidationException(Map<Widget, List<Msg>> sourcedErrors) {
 		super();
 		this.errors = null;
-		this.sourcedErrors = sourcedErrors;
+		//this.sourcedErrors = sourcedErrors;
 	}
 
 	/**
@@ -74,7 +74,9 @@ public class ValidationException extends Exception {
 	/**
 	 * @return The error messages for multiple sources.
 	 */
+	/*
 	public Map<Widget, List<Msg>> getSourcedErrors() {
 		return sourcedErrors;
 	}
+	*/
 }

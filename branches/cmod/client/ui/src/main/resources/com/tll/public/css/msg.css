@@ -3,7 +3,6 @@
 /* MsgPanel */
 
 .msg {
-  
 }
 
 .msg .msg {
@@ -12,16 +11,17 @@
 }
 
 .msg ul {
-  float: left;
+  /*float: right;*/
+  margin: 1px;
 }
 
 .msg .ic {
   float: left;
   margin: 2px;
+  /*margin-right: 10px;*/
 }
 
 .msg ul,.msg ul li {
-  
 }
 
 .msg p {

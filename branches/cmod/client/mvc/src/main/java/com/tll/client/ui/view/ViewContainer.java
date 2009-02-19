@@ -34,7 +34,6 @@ import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragHandler;
 import com.tll.client.ui.IHasDragEvents;
 import com.tll.client.ui.DragEvent.DragMode;
-import com.tll.client.ui.msg.MsgManager;
 
 /**
  * ViewContainer - UI container for {@link IView} implementations.
@@ -181,7 +180,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 		};
 	}
 	
-	private HandlerRegistration hrEventPreview, hrDrag, hrMsgManagerDragHandler;
+	private HandlerRegistration hrEventPreview, hrDrag;
 
 	@Override
 	public HandlerRegistration addDragHandler(IDragHandler handler) {
@@ -303,8 +302,6 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			toolbar.btnPop.setDown(true);
 			toolbar.btnPop.setTitle(ViewToolbar.TITLE_PIN);
 
-			hrMsgManagerDragHandler = addDragHandler(MsgManager.get());
-
 			assert hrEventPreview == null;
 			hrEventPreview = Event.addNativePreviewHandler(this);
 		}
@@ -321,8 +318,6 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			assert hrEventPreview != null;
 			hrEventPreview.removeHandler();
 			hrEventPreview = null;
-
-			hrMsgManagerDragHandler.removeHandler();
 
 			final Element elm = getElement();
 			elm.getStyle().setProperty("position", "");

@@ -12,9 +12,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
-import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
@@ -66,10 +66,10 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 				Log.debug("AbstractModelEditAction.populateBinding()..");
 				populateBinding(fieldPanel);
 			}
-			catch(ClassCastException e) {
+			catch(final ClassCastException e) {
 				throw new IllegalArgumentException("The bindable must be a field panel");
 			}
-			catch(PropertyPathException e) {
+			catch(final PropertyPathException e) {
 				throw new IllegalStateException("Unable to set bindable", e);
 			}
 		}
@@ -92,7 +92,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 			Log.debug("AbstractModelEditAction.unbind()..");
 
 			// clear the indexed..
-			for(IndexedFieldPanel<?, ?> ifp : indexed) {
+			for(final IndexedFieldPanel<?, ?> ifp : indexed) {
 				ifp.clear();
 			}
 
@@ -139,13 +139,13 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		final M model = fieldPanel.getModel();
 		assert model != null;
 
-		Set<IField<?, ?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
+		final Set<IField<?, ?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
 		assert fset != null;
 		if(fset.size() < 1) {
 			throw new UnsetPropertyException(parentPropPath);
 		}
 
-		for(IField<?, ?> f : fset) {
+		for(final IField<?, ?> f : fset) {
 			addFieldBinding(model, f.getPropertyName(), f);
 		}
 	}
@@ -175,6 +175,6 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 		}
 		binding.getChildren().add(
 				new Binding(model, modelProperty, null, null, field, IBoundWidget.PROPERTY_VALUE, field,
-						FieldValidationFeedback.instance()));
+						new FieldValidationFeedback()));
 	}
 }

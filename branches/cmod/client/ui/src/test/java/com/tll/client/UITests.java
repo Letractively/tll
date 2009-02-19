@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -16,8 +17,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
-import com.tll.client.ui.msg.MsgManager;
-import com.tll.client.ui.msg.MsgManager.PopupState;
+import com.tll.client.ui.msg.IMsgOperator;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
@@ -40,7 +41,7 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgManagerTest() };
+			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgPopupRegistryTest() };
 	}
 
 	/**
@@ -270,10 +271,10 @@ public final class UITests extends AbstractUITest {
 	} // OptionsPopupTest
 
 	/**
-	 * MsgManagerTest
+	 * MsgPopupRegistryTest
 	 * @author jpk
 	 */
-	static final class MsgManagerTest extends UITestCase {
+	static final class MsgPopupRegistryTest extends UITestCase {
 
 		static final Msg msgInfo = new Msg("An info message.", MsgLevel.INFO);
 		static final Msg msgWarn = new Msg("A warn message.", MsgLevel.WARN);
@@ -283,6 +284,7 @@ public final class UITests extends AbstractUITest {
 		static final Msg[] allMsgs = new Msg[] {
 			msgInfo, msgWarn, msgError, msgFatal };
 
+		MsgPopupRegistry registry;
 		HorizontalPanel layout;
 		VerticalPanel buttonPanel;
 		FlowPanel context, nestedContext;
@@ -290,12 +292,12 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public String getName() {
-			return "MsgManager";
+			return "MsgPopupRegistry";
 		}
 
 		@Override
 		public String getDescription() {
-			return "Tests MsgManager routines.";
+			return "Tests MsgPopupRegistry routines.";
 		}
 
 		private void stubContext() {
@@ -323,69 +325,94 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).show();
+					registry.getOperator(context, true).showMsgs();
 				}
 			}));
 			buttonPanel.add(new Button("Hide All Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).hide();
+					registry.getOperator(context, true).hideMsgs();
 				}
 			}));
 			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().clear();
-				}
-			}));
-			buttonPanel.add(new Button("Clear Nested Messages", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					MsgManager.get().clear(nestedContext, true);
+					registry.getOperator(context, true).clearMsgs();
 				}
 			}));
 			buttonPanel.add(new Button("Clear Ref Widget Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().clear(refWidget, false);
+					registry.getOperator(refWidget, false).clearMsgs();
 				}
 			}));
-			buttonPanel.add(new Button("Post Ref Widget Messages", new ClickHandler() {
+			buttonPanel.add(new Button("Add Ref Widget Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().post(Arrays.asList(allMsgs), refWidget, false);
+					registry.addMsgs(Arrays.asList(allMsgs), refWidget, false);
 				}
 			}));
 			buttonPanel.add(new Button("Set Ref Widget Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().post(Arrays.asList(allMsgs), refWidget, true);
+					registry.addMsgs(Arrays.asList(allMsgs), refWidget, true);
 				}
 			}));
 			buttonPanel.add(new Button("Show Message Level Images", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).showMsgLevelImages(true);
+					registry.getOperator(context, true).setShowMsgLevelImages(true);
 				}
 			}));
 			buttonPanel.add(new Button("Hide Message Level Images", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MsgManager.get().findMsgOperators(context, true, PopupState.EITHER).showMsgLevelImages(false);
+					registry.getOperator(context, true).setShowMsgLevelImages(false);
+				}
+			}));
+			buttonPanel.add(new Button("Test cloaking", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					registry.clear();
+					registry.addMsg(msgWarn, refWidget, false);
+					final IMsgOperator operator = registry.getOperator(refWidget, false);
+					nestedContext.setVisible(false);
+					operator.showMsgs();
+					Window
+							.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
+
+					nestedContext.setVisible(true);
+					operator.showMsgs();
+					Window.alert("Now it should be showing because the nestedContext's visibliity was just set to true.");
+				}
+			}));
+			buttonPanel.add(new Button("Test scroll handling", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("TODO: implement");
+				}
+			}));
+			buttonPanel.add(new Button("Test drag handling", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("TODO: implement");
 				}
 			}));
 		}
 
 		@Override
 		public void load() {
+			registry = new MsgPopupRegistry();
 			stubContext();
 			stubTestButtons();
 			layout = new HorizontalPanel();
@@ -402,6 +429,8 @@ public final class UITests extends AbstractUITest {
 			context = null;
 			buttonPanel = null;
 			layout = null;
+			registry.clear();
+			registry = null;
 		}
 	} // MsgManagerTest
 

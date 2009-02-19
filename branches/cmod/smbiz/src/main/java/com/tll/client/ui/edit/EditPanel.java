@@ -13,15 +13,12 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.msg.MsgManager;
 import com.tll.common.model.Model;
 import com.tll.common.model.UnsetPropertyException;
 import com.tll.common.msg.Msg;
@@ -187,6 +184,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 * {@link FieldPanel}.
 	 * @param msgs The error messages to apply
 	 */
+	// TODO fix this!!!
 	public void applyErrorMsgs(final List<Msg> msgs) {
 		// MsgManager.instance().clear(RootPanel.get(), false);
 		for(final Msg msg : msgs) {
@@ -195,7 +193,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 				try {
 					final Widget fw = fieldPanel.getField(msg.getRefToken());
 					assert fw != null;
-					MsgManager.get().post(msg, fw, false).show();
+					//MsgManager.get().post(msg, fw, false).show();
 					msgBound = true;
 				}
 				catch(final UnsetPropertyException e) {
@@ -204,10 +202,10 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 			}
 			if(!msgBound) {
 				// post as global
-				MsgManager.get().post(msg, RootPanel.get(), false);
+				//MsgManager.get().post(msg, RootPanel.get(), false);
 			}
 		}
-		MsgManager.get().findMsgOperator(RootPanel.get()).show(Position.CENTER, 3000);
+		//MsgManager.get().findMsgOperator(RootPanel.get()).show(Position.CENTER, 3000);
 	}
 
 	public void onClick(ClickEvent event) {

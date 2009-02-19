@@ -28,8 +28,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
-import com.tll.client.ui.msg.MsgManager;
-import com.tll.client.ui.msg.MsgManager.PopupState;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
 
 /**
@@ -158,6 +157,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	private int lastSelectedTabIndex = -1;
 
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
+	
+	private final MsgPopupRegistry registry = new MsgPopupRegistry();
 
 	/**
 	 * Constructor
@@ -325,7 +326,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 		if(lastSelectedTabIndex != -1) {
 			// hide msgs on last tab
-			MsgManager.get().findMsgOperators(tabPanel.getWidget(lastSelectedTabIndex), true, PopupState.SHOWING).hide();
+			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).hideMsgs();
 		}
 
 		//return true;
@@ -334,7 +335,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 	public void onSelection(SelectionEvent<Integer> event) {
 		// show msgs on selected tab
-		MsgManager.get().findMsgOperators(tabPanel.getWidget(event.getSelectedItem()), true, PopupState.HIDING).show();
+		registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs();
 
 		lastSelectedTabIndex = event.getSelectedItem();
 	}

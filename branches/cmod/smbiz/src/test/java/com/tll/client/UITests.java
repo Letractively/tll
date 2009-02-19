@@ -1,8 +1,6 @@
 package com.tll.client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -35,7 +33,6 @@ import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.Position;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.edit.EditPanel;
@@ -49,13 +46,10 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.listing.ListingNavBar;
-import com.tll.client.ui.msg.MsgManager;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.dao.Sorting;
 import com.tll.refdata.RefDataType;
 
@@ -69,13 +63,12 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 	/**
 	 * The test names.
 	 */
-	static final String TEST_MSG_PANEL = "TEST_MSG_PANEL";
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
 	static final String TEST_FIELDS = "TEST_FIELDS";
 
 	static String[] tests = new String[] {
-		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
+		TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -145,13 +138,9 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 
 			public void execute() {
 				testPanel.clear();
-				MsgManager.get().clear();
-
 				boolean gotoTest = true;
-				if(TEST_MSG_PANEL.equals(historyToken)) {
-					testMsgPanel();
-				}
-				else if(TEST_TOOLBAR.equals(historyToken)) {
+				
+				if(TEST_TOOLBAR.equals(historyToken)) {
 					testToolbar();
 				}
 				else if(TEST_VIEW_CONTAINER.equals(historyToken)) {
@@ -437,27 +426,5 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 			}
 		}));
 		testPanel.add(vc);
-	}
-
-	/**
-	 * <p>
-	 * Test: TEST_MSG_PANEL
-	 * <p>
-	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/Style.
-	 */
-	void testMsgPanel() {
-
-		// create msgs
-		final List<Msg> msgs = new ArrayList<Msg>();
-		// msgs.add(new Msg("This is a fatal message.", MsgLevel.FATAL));
-		msgs.add(new Msg("This is an error message.", MsgLevel.ERROR));
-		msgs.add(new Msg("This is another error message.", MsgLevel.ERROR));
-		msgs.add(new Msg("This is a warn message.", MsgLevel.WARN));
-		msgs.add(new Msg("This is an info message.", MsgLevel.INFO));
-		msgs.add(new Msg("This is another info message.", MsgLevel.INFO));
-		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
-		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
-
-		MsgManager.get().post(msgs, RootPanel.get(), true).show(Position.CENTER, -1);
 	}
 }

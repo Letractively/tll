@@ -173,7 +173,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 */
 	private I add(M model) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
-		I ip = createIndexPanel(model);
+		final I ip = createIndexPanel(model);
 
 		ip.setModel(model);
 
@@ -186,7 +186,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 
 		ip.getFieldGroup().setName(topGroup.getName() + '[' + (size() - 1) + ']');
 		topGroup.addField(ip.getFieldGroup());
-		Binding indexBinding = new Binding();
+		final Binding indexBinding = new Binding();
 		binding.getChildren().add(indexBinding);
 		bind(ip.getFieldGroup(), model, indexBinding);
 
@@ -204,7 +204,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	protected void update(int index, M model) throws IndexOutOfBoundsException {
 		assert model != null;
 		unbindAtIndex(index);
-		FieldGroup fg = indexPanels.get(index).fp.getFieldGroup();
+		final FieldGroup fg = indexPanels.get(index).fp.getFieldGroup();
 		bind(fg, model, binding.getChildren().get(index));
 	}
 
@@ -216,7 +216,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected I remove(int index) throws IndexOutOfBoundsException {
-		Index<I> removed = indexPanels.remove(index);
+		final Index<I> removed = indexPanels.remove(index);
 		topGroup.removeField(removed.fp.getFieldGroup());
 		unbindAtIndex(index);
 		return removed.fp;
@@ -229,7 +229,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		Index<I> ip = indexPanels.get(index);
+		final Index<I> ip = indexPanels.get(index);
 		ip.markedDeleted = deleted;
 		ip.fp.getFieldGroup().setEnabled(!deleted);
 	}
@@ -239,7 +239,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @param index The index at which to unbind
 	 */
 	private void unbindAtIndex(int index) {
-		Binding indexBinding = binding.getChildren().get(index);
+		final Binding indexBinding = binding.getChildren().get(index);
 		indexBinding.unbind();
 		indexBinding.getChildren().clear();
 	}
@@ -252,7 +252,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		Log.debug("IndexedFieldPanel.regenerate() - START");
 		clear();
 		if(value != null) {
-			for(M m : value) {
+			for(final M m : value) {
 				add(m);
 			}
 		}
@@ -269,32 +269,33 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *        binding.
 	 */
 	private void bind(FieldGroup fg, M model, Binding indexBinding) {
-		for(IField<?, ?> f : fg) {
+		for(final IField<?, ?> f : fg) {
 			if(f instanceof FieldGroup == false) {
-				String propName = f.getPropertyName();
+				final String propName = f.getPropertyName();
 				try {
 
 					// bind
+					// TODO specify a MsgPopupRegistry in the FieldValidationFeedback constructor below 
 					if(indexBinding != null) {
 						binding.getChildren().add(
-								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f, FieldValidationFeedback
-										.instance()));
+								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f,
+										new FieldValidationFeedback(null)));
 					}
 
 					// set field value
 					f.setProperty(IBoundWidget.PROPERTY_VALUE, model.getProperty(propName));
 				}
-				catch(UnsetPropertyException e) {
+				catch(final UnsetPropertyException e) {
 					// ok
 				}
-				catch(NullNodeInPropPathException e) {
+				catch(final NullNodeInPropPathException e) {
 					// ok
 				}
-				catch(PropertyPathException e) {
+				catch(final PropertyPathException e) {
 					// bad proeperty path/name
 					throw new IllegalStateException(e);
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					// bad value
 					throw new IllegalStateException(e);
 				}
@@ -321,7 +322,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	}
 
 	public final void setValue(Collection<M> value) {
-		Collection<M> old = this.value;
+		final Collection<M> old = this.value;
 		this.value = value;
 		if(changeSupport != null) changeSupport.firePropertyChange("value", old, this.value);
 

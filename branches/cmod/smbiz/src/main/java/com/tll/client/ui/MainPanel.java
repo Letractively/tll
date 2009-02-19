@@ -39,7 +39,7 @@ import com.tll.client.mvc.view.StaticViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
-import com.tll.client.ui.msg.MsgManager;
+import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewRequestLink;
@@ -365,7 +365,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			ModelChangeManager.instance().removeModelChangeListener(ViewManager.instance());
 			ViewManager.instance().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
-			MsgManager.get().clear();
+			//MsgManager.get().clear();
 		}
 
 		public void onStatusEvent(StatusEvent event) {
@@ -373,7 +373,9 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			if(status != null) {
 				final List<Msg> gms = status.getGlobalDisplayMsgs();
 				if(gms != null && gms.size() > 0) {
-					MsgManager.get().post(gms, this, true).show(Position.CENTER, -1);
+					// TODO create a dedicated inlined widget to handle global status messages.
+					//MsgManager.get().post(gms, this, true).show(Position.CENTER, -1);
+					Msgs.post(gms, this, Position.CENTER, -1, true);
 				}
 			}
 		}

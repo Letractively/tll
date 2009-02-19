@@ -4,8 +4,6 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.List;
-
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -21,9 +19,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBoundWidget;
 import com.tll.client.ui.IBoundWidget;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.ui.Position;
-import com.tll.client.ui.msg.MsgManager;
-import com.tll.client.ui.msg.MsgManager.PopupState;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
@@ -38,7 +33,6 @@ import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.MalformedPropPathException;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.msg.Msg;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -433,30 +427,14 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		return value;
 	}
 
-	private void markInvalid(boolean invalid, List<Msg> msgs) {
+	private void markInvalid(boolean invalid) {
 		if(invalid) {
 			removeStyleName(Styles.DIRTY);
 			addStyleName(Styles.INVALID);
-			if(msgs != null) {
-				addMsgs(msgs);
-			}
 		}
 		else {
 			removeStyleName(Styles.INVALID);
-			clearMsgs();
 		}
-	}
-
-	private void addMsgs(List<Msg> msgs) {
-		MsgManager.get().post(msgs, this, false).show(Position.BOTTOM, -1);
-	}
-
-	private void clearMsgs() {
-		MsgManager.get().clear(this, true);
-	}
-
-	private void toggleMsgs() {
-		MsgManager.get().findMsgOperators(this, false, PopupState.EITHER).toggle();
 	}
 
 	protected void draw() {
@@ -520,7 +498,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			clearMsgs();
+			//clearMsgs();
 			removeStyleName(Styles.INVALID);
 			removeStyleName(Styles.DIRTY);
 		}
@@ -561,7 +539,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	public void onClick(ClickEvent event) {
 		// toggle the display of any bound UI msgs for this field when the field
 		// label is clicked
-		if(event.getSource() == fldLbl) toggleMsgs();
+		//if(event.getSource() == fldLbl) toggleMsgs();
 	}
 
 	public void onChange(ChangeEvent event) {
@@ -615,7 +593,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	public final void reset() {
 		if(initialValueSet) {
 			setNativeValue(initialValue);
-			markInvalid(false, null);
+			markInvalid(false);
 			removeStyleName(Styles.DIRTY);
 		}
 	}
@@ -628,7 +606,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	@Override
 	protected void onUnload() {
-		clearMsgs();
+		//clearMsgs();
 		super.onUnload();
 	}
 
