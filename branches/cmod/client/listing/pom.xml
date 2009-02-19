@@ -19,13 +19,17 @@
   
   <dependencies>
     <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-mail</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-refdata</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -70,6 +74,20 @@
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
