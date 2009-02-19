@@ -3,8 +3,7 @@
  */
 package com.tll.server.marshal;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,7 +18,6 @@ import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
@@ -33,13 +31,13 @@ import com.tll.model.NestedEntity;
 import com.tll.model.mock.EntityGraph;
 import com.tll.model.mock.EntityGraphBuilder;
 import com.tll.model.mock.MockEntityFactory;
-import com.tll.util.CommonUtil;
 
 /**
  * EntityMarshallerTest
  * @author jpk
  */
-@Test(groups = "server")
+@Test(groups = {
+	"server", "client-model" })
 public class MarshalerTest extends AbstractInjectedTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
@@ -84,43 +82,6 @@ public class MarshalerTest extends AbstractInjectedTest {
 	}
 
 	/**
-	 * Simple test to verify basic entity marshaling for all system entities.
-	 * @throws Exception Upon failure
-	 */
-	@Test
-	public void testAllEntitiesWithNoHierarchy() throws Exception {
-		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
-		final Class<? extends IEntity>[] entityClasses =
-				CommonUtil.getClasses("com.tll.model", IEntity.class, true, null, new FilenameFilter() {
-
-					@Override
-					public boolean accept(File dir, String name) {
-						// we only want the actual smbiz model classes!
-						return (dir.getPath().indexOf("smbiz") > 0) && (dir.getPath().indexOf("classes") > 0)
-								&& (dir.getPath().indexOf("test") < 0);
-					}
-				});
-		for(final Class<? extends IEntity> entityClass : entityClasses) {
-			final IEntity e = getMockEntityFactory().getEntityCopy(entityClass, false);
-			Assert.assertNotNull(e);
-			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
-
-			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
-			Assert.assertEquals(model.getEntityType().getEntityClassName().equals(e.entityClass().getName()),
-					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
-			final RefKey refKey = model.getRefKey();
-			assert refKey != null : "The marshaled entity model's ref key was found null";
-			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";
-
-			Assert.assertNotNull(model);
-			final IEntity e2 = marshaler.unmarshalEntity(e.entityClass(), model);
-			Assert.assertNotNull(e2);
-			Assert.assertEquals(e, e2);
-		}
-	}
-
-	/**
 	 * Tests marshaler handling of entity circular referencing.
 	 * @throws Exception Upon failure
 	 */
@@ -128,14 +89,20 @@ public class MarshalerTest extends AbstractInjectedTest {
 	public void testCircularEntity() throws Exception {
 		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
-		final Account teste = entityGraph.getEntityByType(Account.class);
 		final Marshaler marshaler = getMarshaler();
-		assert marshaler != null;
-		final Model model = marshaler.marshalEntity(teste, MarshalOptions.UNCONSTRAINED_MARSHALING);
+		
+		// wire up a circular entity
+		final Collection<Account> accounts = entityGraph.getEntitiesByType(Account.class);
+		// NOTE: we expect 3 of them per test-persistence-unit jar
+		final Account account = accounts.iterator().next();
+		final Account parentAccount = accounts.iterator().next();
+		account.setParent(parentAccount);
+
+		final Model model = marshaler.marshalEntity(account, MarshalOptions.UNCONSTRAINED_MARSHALING);
 		assert model != null;
 		final Account unmarshaled = marshaler.unmarshalEntity(Account.class, model);
 		assert unmarshaled != null;
-		assert teste.equals(unmarshaled);
+		assert account.equals(unmarshaled);
 	}
 
 	/**

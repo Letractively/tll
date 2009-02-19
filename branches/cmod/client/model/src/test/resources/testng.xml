@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="smbiz-client-model-tests">
+<suite name="client-model-tests">
   
   <test name="client-model-tests" annotations="JDK">
     <groups>
@@ -9,6 +9,7 @@
     </groups>
     <packages>
       <package name="com.tll.common.*" />
+      <package name="com.tll.server.*" />
     </packages>
   </test>
   
