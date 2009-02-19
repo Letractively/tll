@@ -62,9 +62,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-
-          <!-- TODO fix - this isn't hooking into the default build lifecycle! -->
-          <!-- fail the build if we have used but undeclared compile time dependencies -->
           <executions>
             <execution>
               <id>analyze-compile-deps</id>
