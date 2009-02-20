@@ -12,7 +12,8 @@ import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * Used to transport "status" messages from the server to the client.
+ * Status - Wrapper around a collection of {@link Msg}s usually employed for
+ * decorating client-bound payloads.
  * @author jpk
  */
 public final class Status implements IMarshalable {

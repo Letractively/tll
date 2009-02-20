@@ -93,19 +93,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>gwt-tests</id>
-            <configuration>
-              <argLine>-Xms128m -Xmx512m -ea</argLine>
-              <useSystemClassLoader>false</useSystemClassLoader>
-              <includes>
-                <include>**/*GWTTest.java</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>-Xms128m -Xmx512m -ea</argLine>
+          <includes>
+            <include>**/*GWTTest.java</include>
+          </includes>
+        </configuration>
       </plugin>
+      
     </plugins>
   </build>
   
