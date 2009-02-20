@@ -28,7 +28,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
-		return "com.tll.Test";
+		return "com.tll.Field";
 	}
 
 	/**

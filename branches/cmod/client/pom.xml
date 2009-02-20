@@ -40,6 +40,7 @@
       <resource>
         <directory>src/main/java</directory>
         <includes>
+          <include>**/*.gwt.xml</include>
           <include>**/client/**</include>
           <include>**/common/**</include>
         </includes>
@@ -52,6 +53,7 @@
       <testResource>
         <directory>src/test/java</directory>
         <includes>
+          <include>**/*.gwt.xml</include>
           <include>**/client/**</include>
           <include>**/common/**</include>
         </includes>
@@ -60,6 +62,26 @@
     
     <plugins>
 
+      <!--
+        currently, gwt surefire driven GWTTest derived tests create these project dirs 
+        which should be removed during the clean phase.
+      -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.gwt-temp</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>tomcat</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+  
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-3</version>

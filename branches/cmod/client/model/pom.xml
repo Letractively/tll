@@ -15,44 +15,40 @@
   <description>Contains client and server classes supporting the tll client-side Model construct.</description>
   
   <build>
-    <pluginManagement>
-      <plugins>
-        
-        <!-- NOTE: we turn off the failOnWarning flag since maven thinks we don't need spring-web but we do! -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>analyze-compile-deps</id>
-              <goals>
-                <goal>analyze-only</goal>
-              </goals>
-              <phase>install</phase>
-              <configuration>
-                <failOnWarning>false</failOnWarning>
-                <ignoreNonCompile>true</ignoreNonCompile>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    
     <plugins>
+      
+      <!-- override client test default which invokes only GWTTest derived tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>true</useSystemClassLoader>
+          <argLine>-Xms128m -Xmx512m -ea</argLine>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      
+      <!-- NOTE: we turn off the failOnWarning flag since maven thinks we don't need spring-web but we do! -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
+            <id>analyze-compile-deps</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <phase>install</phase>
             <configuration>
-              <suiteXmlFiles>
-                <suiteXmlFile>${pom.basedir}/src/test/resources/testng.xml</suiteXmlFile>
-              </suiteXmlFiles>
+              <failOnWarning>false</failOnWarning>
+              <ignoreNonCompile>true</ignoreNonCompile>
             </configuration>
           </execution>
         </executions>
       </plugin>
+      
     </plugins>
   </build>
 
