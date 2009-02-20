@@ -22,9 +22,9 @@
 
   <modules>
     <module>core</module>
+    <module>ui</module>
     <module>cache</module>
     <module>rpc</module>
-    <module>ui</module>
     <module>model</module>
     <module>listing</module>
     <module>mvc</module>
