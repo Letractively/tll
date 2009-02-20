@@ -20,11 +20,11 @@ import com.tll.common.model.ModelTestUtils;
 import com.tll.common.model.mock.TestModelStubber;
 
 /**
- * ModelBindingTest - Test that verifies client side data binding using
+ * ModelBindingGWTTest - Test that verifies client side data binding using
  * {@link Model} {@link IBindable} implementation.
  * @author jpk
  */
-public class ModelBindingTest extends GWTTestCase {
+public class ModelBindingGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {

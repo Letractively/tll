@@ -12,10 +12,10 @@ import java.util.Set;
 import com.google.gwt.junit.client.GWTTestCase;
 
 /**
- * FieldGroupTest
+ * FieldGroupGWTTest
  * @author jpk
  */
-public class FieldGroupTest extends GWTTestCase {
+public class FieldGroupGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
@@ -43,7 +43,7 @@ public class FieldGroupTest extends GWTTestCase {
 	 * Tests {@link FieldGroup#getField(String)}.
 	 */
 	public void testGetField() {
-		final FieldGroup fg = TestUtil.getRootFieldGroupProvider().getFieldGroup();
+		final FieldGroup fg = MockFieldGroupProviders.getRootFieldGroupProvider().getFieldGroup();
 		final Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
 		for(final String prop : propNames) {

@@ -4,7 +4,7 @@ import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.TestUtil.TestFieldPanel;
+import com.tll.client.ui.field.MockFieldGroupProviders.TestFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.mock.TestModelStubber;
@@ -12,7 +12,7 @@ import com.tll.common.model.mock.TestModelStubber;
 /**
  * GWT JUnit tests must extend GWTTestCase.
  */
-public class FieldBindingTest extends GWTTestCase {
+public class FieldBindingGWTTest extends GWTTestCase {
 
 	/**
 	 * Must refer to a valid module that sources this class.

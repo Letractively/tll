@@ -23,10 +23,10 @@ import com.tll.refdata.RefDataType;
 
 
 /**
- * TestUtil
+ * MockFieldGroupProviders
  * @author jpk
  */
-public class TestUtil {
+public class MockFieldGroupProviders {
 
 	/**
 	 * AccountFieldsProvider

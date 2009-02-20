@@ -16,11 +16,11 @@ import com.tll.client.convert.NoFormatStringConverter;
 import com.tll.client.validate.ValidationException;
 
 /**
- * FieldTest - Tests the core {@link IField} methods for the {@link IField}
+ * FieldGWTTest - Tests the core {@link IField} methods for the {@link IField}
  * implementations.
  * @author jpk
  */
-public class FieldTest extends GWTTestCase {
+public class FieldGWTTest extends GWTTestCase {
 
 	static final String PROP_NAME = "value";
 	static final String EMPTY_STRING_VALUE = "";
