@@ -47,7 +47,9 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	SHIP_MODE("Ship Mode"),
 	SITE_CODE("Site Code");
 	
-	private static final String MODEL_PACKAGE_NAME = SmbizEntityType.class.getPackage().getName();
+	//private static final String MODEL_PACKAGE_NAME = SmbizEntityType.class.getPackage().getName();
+	// above won't GWT compile
+	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
 
 	private String name;
 

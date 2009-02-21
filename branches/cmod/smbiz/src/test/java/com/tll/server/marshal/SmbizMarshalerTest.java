@@ -5,7 +5,6 @@ package com.tll.server.marshal;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
-import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
 import com.tll.model.mock.MockEntityFactory;
 import com.tll.util.CommonUtil;
@@ -37,15 +35,6 @@ import com.tll.util.CommonUtil;
 public class SmbizMarshalerTest extends AbstractInjectedTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
-
-	static {
-		tupleMap.put("string", "a string");
-		tupleMap.put("date", new Date());
-		tupleMap.put("integer", new Integer(1));
-		tupleMap.put("character", new Character('c'));
-		tupleMap.put("enum", FieldEnum.OPEN);
-		tupleMap.put("boolean", new Boolean(true));
-	}
 
 	/**
 	 * Constructor

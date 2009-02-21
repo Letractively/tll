@@ -10,7 +10,7 @@
 
   <groupId>com.tll</groupId>
   <artifactId>client-ui</artifactId>
-  <name>client-widget</name>
+  <name>client-ui</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
   

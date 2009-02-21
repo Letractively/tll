@@ -20,7 +20,8 @@ public enum TestEntityType implements IEntityType, INameValueProvider<String> {
 	PAYMENT_INFO("Payment Info"),
 	CURRENCY("Currency");
 
-	private static final String MODEL_PACKAGE_NAME = TestEntityType.class.getPackage().getName();
+	//private static final String MODEL_PACKAGE_NAME = TestEntityType.class.getPackage().getName();
+	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
 
 	private String name;
 

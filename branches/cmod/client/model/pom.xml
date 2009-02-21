@@ -30,20 +30,18 @@
         </configuration>
       </plugin>
       
-      <!-- NOTE: we turn off the failOnWarning flag since maven thinks we don't need spring-web but we do! -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <!-- override default gwt test assets inclusion patterns -->
         <executions>
           <execution>
-            <id>analyze-compile-deps</id>
-            <goals>
-              <goal>analyze-only</goal>
-            </goals>
-            <phase>install</phase>
+            <id>gwt-test-assets</id>
             <configuration>
-              <failOnWarning>false</failOnWarning>
-              <ignoreNonCompile>true</ignoreNonCompile>
+              <includes>
+                <include>**/ModelTestUtils.*</include>
+                <include>**/common/model/mock/**</include>
+              </includes>
             </configuration>
           </execution>
         </executions>
@@ -54,26 +52,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.code.guice</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
-    
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
     </dependency>
     
     <dependency>
@@ -83,6 +63,56 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>aopalliance</groupId>
+          <artifactId>aopalliance</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>aopalliance</groupId>
+          <artifactId>aopalliance</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-tx</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
     </dependency>
     
     <dependency>
@@ -136,11 +166,6 @@
       <artifactId>client-rpc</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-ui</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
@@ -153,7 +178,7 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-      <classifier>tests</classifier>
+      <classifier>gwt-test-assets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

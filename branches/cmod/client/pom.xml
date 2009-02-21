@@ -71,7 +71,7 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>.gwt-temp</directory>
+              <directory>.gwt-tmp</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
@@ -111,6 +111,35 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+          <!-- 
+          create a dedicated GWT test asset jar for use as a 
+          dependency for gwt host mode and GWTTestCase tests 
+          -->
+        <executions>
+          <execution>
+            <id>gwt-test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
+              <classifier>gwt-test-assets</classifier>
+              <!-- exclude non-gwt tests as we only want helper/support classes -->
+              <includes>
+                <include>**/client/**/*Util*</include>
+                <include>**/common/**/*Util*</include>
+                <include>**/client/**/Abstract*Test*</include>
+                <include>**/common/**/Abstract*Test*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -156,11 +185,13 @@
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <scope>runtime</scope>
     </dependency>
+    -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
@@ -175,41 +206,4 @@
     </dependency>
   </dependencies>
   
-  <profiles>
-    <!-- GWT unpacking profiles -->
-    <profile>
-      <id>gwt-dev-windows</id>
-      <properties>
-        <platform>windows</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-mac</id>
-      <properties>
-        <platform>mac</platform>
-      </properties>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-    </profile>
-    <profile>
-      <id>gwt-dev-linux</id>
-      <properties>
-        <platform>linux</platform>
-      </properties>
-      <activation>
-        <os>
-          <name>linux</name>
-        </os>
-      </activation>
-    </profile>
-  </profiles>
-
 </project>
