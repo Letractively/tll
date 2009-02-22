@@ -3,11 +3,11 @@ package com.tll.client.bind;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.tll.client.mock.MockBinding;
+import com.tll.client.mock.MockFieldPanels;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.MockFieldGroupProviders.TestFieldPanel;
 import com.tll.common.model.Model;
-import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.mock.TestModelStubber;
+import com.tll.common.model.mock.MockModelStubber;
 
 /**
  * GWT JUnit tests must extend GWTTestCase.
@@ -23,44 +23,12 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	}
 
 	/**
-	 * TestModelFieldGroupBindingAction
-	 * @author jpk
-	 */
-	static class TestModelFieldGroupBindingAction extends AbstractModelEditAction<Model, FieldPanel<FlowPanel, Model>> {
-
-		@Override
-		protected void populateBinding(FieldPanel<FlowPanel, Model> fp) throws PropertyPathException {
-
-			addFieldBinding(fp, Model.NAME_PROPERTY);
-			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
-			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
-			addFieldBinding(fp, "parent.name");
-			addFieldBinding(fp, "status");
-			addFieldBinding(fp, "dateCancelled");
-			addFieldBinding(fp, "currency.id");
-			addFieldBinding(fp, "billingModel");
-			addFieldBinding(fp, "billingCycle");
-			addFieldBinding(fp, "dateLastCharged");
-			addFieldBinding(fp, "nextChargeDate");
-			addFieldBinding(fp, "persistPymntInfo");
-
-			addNestedFieldBindings(fp, "paymentInfo");
-
-			// addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
-		}
-
-		public void execute() {
-		}
-
-	} // TestModelFieldGroupBindingAction
-
-	/**
 	 * Tests the initial binding of model properties to fields.
 	 */
 	public void testBind() {
-		final TestFieldPanel fieldPanel = new TestFieldPanel();
-		fieldPanel.setAction(new TestModelFieldGroupBindingAction());
-		fieldPanel.setModel(TestModelStubber.stubAccount());
+		final FieldPanel<FlowPanel, Model> fieldPanel = MockFieldPanels.getMockRootFieldPanel();
+		fieldPanel.setAction(new MockBinding());
+		fieldPanel.setModel(MockModelStubber.stubAccount());
 		RootPanel.get().add(fieldPanel);
 	}
 }

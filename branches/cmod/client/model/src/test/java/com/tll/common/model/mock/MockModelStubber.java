@@ -26,7 +26,7 @@ import com.tll.model.schema.PropertyType;
  * TestModelFactory - Ad-hoc factory for generating testable {@link Model} instances.
  * @author jpk
  */
-public class TestModelStubber {
+public class MockModelStubber {
 	
 	/**
 	 * Provides a {@link Model} via {@link #stubAccount()}.
@@ -45,7 +45,7 @@ public class TestModelStubber {
 	 * @return A stubbed root model for testing.
 	 */
 	public static Model stubAccount() {
-		final Model account = stubAccount(stubAccount(null, TestEntityType.ACCOUNT, 1), TestEntityType.ACCOUNT, 2);
+		final Model account = stubAccount(stubAccount(null, MockEntityType.ACCOUNT, 1), MockEntityType.ACCOUNT, 2);
 
 		final Model aa1 = stubAccountAddress(account, stubAddress(1), 1);
 		final Model aa2 = stubAccountAddress(account, stubAddress(2), 2);
@@ -53,7 +53,7 @@ public class TestModelStubber {
 		final Set<Model> addresses = new LinkedHashSet<Model>();
 		addresses.add(aa1);
 		addresses.add(aa2);
-		account.set(new RelatedManyProperty(TestEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
+		account.set(new RelatedManyProperty(MockEntityType.ACCOUNT_ADDRESS, "addresses", false, addresses));
 
 		return account;
 	}
@@ -65,7 +65,7 @@ public class TestModelStubber {
 	 * @param num
 	 * @return new instance
 	 */
-	public static Model stubAccount(Model parentAccount, TestEntityType accountType, int num) {
+	public static Model stubAccount(Model parentAccount, MockEntityType accountType, int num) {
 		final Model m = new Model(accountType);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
 		m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
@@ -90,9 +90,9 @@ public class TestModelStubber {
 				.set(new DatePropertyValue("nextChargeDate", new PropertyMetadata(PropertyType.DATE, false, true, 32),
 						new Date()));
 		m.set(new DatePropertyValue("dateCancelled", new PropertyMetadata(PropertyType.DATE, false, true, 32), new Date()));
-		m.set(new RelatedOneProperty(TestEntityType.CURRENCY, "currency", true, stubCurrency()));
-		m.set(new RelatedOneProperty(TestEntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
-		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, "parent", true, parentAccount));
+		m.set(new RelatedOneProperty(MockEntityType.CURRENCY, "currency", true, stubCurrency()));
+		m.set(new RelatedOneProperty(MockEntityType.PAYMENT_INFO, "paymentInfo", false, stubPaymentInfo()));
+		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "parent", true, parentAccount));
 		return m;
 	}
 
@@ -104,12 +104,12 @@ public class TestModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		final Model m = new Model(TestEntityType.ACCOUNT_ADDRESS);
+		final Model m = new Model(MockEntityType.ACCOUNT_ADDRESS);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, num));
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
-		m.set(new RelatedOneProperty(TestEntityType.ACCOUNT, "account", true, account));
-		m.set(new RelatedOneProperty(TestEntityType.ADDRESS, "address", false, address));
+		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "account", true, account));
+		m.set(new RelatedOneProperty(MockEntityType.ADDRESS, "address", false, address));
 		return m;
 	}
 
@@ -119,7 +119,7 @@ public class TestModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAddress(int num) {
-		final Model address = new Model(TestEntityType.ADDRESS);
+		final Model address = new Model(MockEntityType.ADDRESS);
 		address.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), num));
 		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
 				"email" + num + "@domain.com"));
@@ -148,7 +148,7 @@ public class TestModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubCurrency() {
-		final Model m = new Model(TestEntityType.CURRENCY);
+		final Model m = new Model(MockEntityType.CURRENCY);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
@@ -161,7 +161,7 @@ public class TestModelStubber {
 	 * @return new Model representing payment info
 	 */
 	public static Model stubPaymentInfo() {
-		final Model m = new Model(TestEntityType.PAYMENT_INFO);
+		final Model m = new Model(MockEntityType.PAYMENT_INFO);
 		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), 1));
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));

@@ -159,7 +159,7 @@ public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 	}
 
 	/**
-	 * TestFieldPanel - Used for the fields test.
+	 * MockFieldPanels - Used for the fields test.
 	 * @author jpk
 	 */
 	private static final class TestFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {

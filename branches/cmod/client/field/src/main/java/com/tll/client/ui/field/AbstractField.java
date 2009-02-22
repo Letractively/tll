@@ -9,8 +9,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -304,7 +302,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 			if(isAttached()) draw();
 		}
 	}
-
+	
 	/**
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
@@ -508,13 +506,13 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		}
 	}
 
-	public final void addFocusHandler(FocusHandler handler) {
+	//public final void addFocusHandler(FocusHandler handler) {
 		// NOTE: we must be deterministic here as the editability may intermittently
 		// change
 		// if(!isReadOnly()) {
-		((HasFocusHandlers) getEditable()).addFocusHandler(handler);
+		//((HasFocusHandlers) getEditable()).addFocusHandler(handler);
 		// }
-	}
+	//}
 
 	@Override
 	public int getTabIndex() {

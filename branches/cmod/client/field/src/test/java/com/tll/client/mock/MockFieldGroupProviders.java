@@ -3,22 +3,25 @@
  * @author jpk
  * Feb 12, 2009
  */
-package com.tll.client.ui.field;
+package com.tll.client.mock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.convert.IFormattedConverter;
+import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.ui.field.FieldFactory;
+import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.CreditCardType;
-import com.tll.common.model.mock.TestEntityType;
-import com.tll.common.model.mock.TestModelStubber;
+import com.tll.common.model.mock.MockEntityType;
+import com.tll.common.model.mock.MockModelStubber;
 import com.tll.refdata.RefDataType;
 
 
@@ -117,21 +120,22 @@ public class MockFieldGroupProviders {
 	}
 
 	/**
-	 * TestFieldGroupProvider
+	 * MockFieldGroupProvider
 	 * @author jpk
 	 */
-	private static final class TestFieldGroupProvider implements IFieldGroupProvider {
+	// TODO delete and mockify the other existing providers
+	static final class MockFieldGroupProvider implements IFieldGroupProvider {
 
-		public static final TestFieldGroupProvider INSTANCE = new TestFieldGroupProvider();
+		public static final MockFieldGroupProvider INSTANCE = new MockFieldGroupProvider();
 
 		/**
 		 * Constructor
 		 */
-		private TestFieldGroupProvider() {
+		private MockFieldGroupProvider() {
 			// set needed aux data cache
 			final List<Model> list = new ArrayList<Model>();
-			list.add(TestModelStubber.stubCurrency());
-			AuxDataCache.instance().cacheEntityList(TestEntityType.CURRENCY, list);
+			list.add(MockModelStubber.stubCurrency());
+			AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
 
 			final Map<String, String> cc = new HashMap<String, String>();
 			cc.put("us", "United States");
@@ -163,38 +167,9 @@ public class MockFieldGroupProviders {
 	}
 
 	/**
-	 * TestFieldPanel
-	 * @author jpk
-	 */
-	public static class TestFieldPanel extends FieldPanel<FlowPanel, Model> {
-
-		FlowPanel panel = new FlowPanel();
-
-		/**
-		 * Constructor
-		 */
-		public TestFieldPanel() {
-			super();
-			initWidget(panel);
-			setRenderer(new IFieldRenderer<FlowPanel>() {
-
-				public void render(FlowPanel widget, FieldGroup fg) {
-					// no-op
-				}
-			});
-		}
-
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return TestFieldGroupProvider.INSTANCE.getFieldGroup();
-		}
-
-	}
-
-	/**
 	 * @return A test {@link IFieldGroupProvider}.
 	 */
 	public static IFieldGroupProvider getRootFieldGroupProvider() {
-		return TestFieldGroupProvider.INSTANCE;
+		return MockFieldGroupProvider.INSTANCE;
 	}
 }

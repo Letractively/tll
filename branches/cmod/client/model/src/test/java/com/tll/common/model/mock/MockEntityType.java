@@ -9,10 +9,10 @@ import com.tll.common.model.IEntityType;
 import com.tll.common.util.StringUtil;
 
 /**
- * TestEntityType
+ * MockEntityType
  * @author jpk
  */
-public enum TestEntityType implements IEntityType, INameValueProvider<String> {
+public enum MockEntityType implements IEntityType, INameValueProvider<String> {
 
 	ACCOUNT("Account"),
 	ACCOUNT_ADDRESS("Account Address"),
@@ -20,12 +20,12 @@ public enum TestEntityType implements IEntityType, INameValueProvider<String> {
 	PAYMENT_INFO("Payment Info"),
 	CURRENCY("Currency");
 
-	//private static final String MODEL_PACKAGE_NAME = TestEntityType.class.getPackage().getName();
+	//private static final String MODEL_PACKAGE_NAME = MockEntityType.class.getPackage().getName();
 	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
 
 	private String name;
 
-	private TestEntityType(String name) {
+	private MockEntityType(String name) {
 		this.name = name;
 	}
 

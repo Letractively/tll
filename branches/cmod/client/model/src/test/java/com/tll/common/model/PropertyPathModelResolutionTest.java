@@ -4,7 +4,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.common.model.mock.TestModelStubber;
+import com.tll.common.model.mock.MockModelStubber;
 
 /**
  * PropertyPathModelResolutionTest
@@ -21,7 +21,7 @@ public class PropertyPathModelResolutionTest {
 		String path;
 		Model model;
 
-		model = TestModelStubber.stubTestModel();
+		model = MockModelStubber.stubTestModel();
 
 		path = "name";
 		prop = model.getModelProperty(path);

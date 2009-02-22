@@ -17,7 +17,7 @@ import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IndexOutOfRangeInPropPathException;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelTestUtils;
-import com.tll.common.model.mock.TestModelStubber;
+import com.tll.common.model.mock.MockModelStubber;
 
 /**
  * ModelBindingGWTTest - Test that verifies client side data binding using
@@ -133,7 +133,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 		Assert.assertTrue(val instanceof List && ((List<?>) val).size() == 1);
 
 		// add an indexed property on the right
-		final Model aa = TestModelStubber.stubAccountAddress(right, TestModelStubber.stubAddress(2), 2);
+		final Model aa = MockModelStubber.stubAccountAddress(right, MockModelStubber.stubAddress(2), 2);
 		right.setProperty("addresses[1]", aa);
 
 		// verify
@@ -165,7 +165,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	 * @return 2 element array where the first element is the left model
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
-		final Model left = TestModelStubber.stubAccount();
+		final Model left = MockModelStubber.stubAccount();
 		final Model right = left.copy(true);
 		// right.setAsRoot();
 

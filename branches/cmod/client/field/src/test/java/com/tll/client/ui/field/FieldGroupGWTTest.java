@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.junit.client.GWTTestCase;
+import com.tll.client.mock.MockFieldGroupProviders;
 
 /**
  * FieldGroupGWTTest
