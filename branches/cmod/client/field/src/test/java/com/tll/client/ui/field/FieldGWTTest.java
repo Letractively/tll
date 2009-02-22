@@ -31,7 +31,7 @@ public class FieldGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
-		return "com.tll.Test";
+		return "com.tll.FieldTest";
 	}
 
 	protected void validateFieldCommon(IField<?, ?> f) throws Exception {
@@ -43,13 +43,13 @@ public class FieldGWTTest extends GWTTestCase {
 
 		// test requiredness validation (except for checkboxes)
 		if(f instanceof CheckboxField == false) {
-			boolean or = f.isRequired();
+			final boolean or = f.isRequired();
 			f.setRequired(true);
 			try {
 				f.validate();
 				Assert.fail("Requiredness validation failed");
 			}
-			catch(ValidationException e) {
+			catch(final ValidationException e) {
 				// expected
 			}
 			f.setRequired(or);
@@ -70,15 +70,15 @@ public class FieldGWTTest extends GWTTestCase {
 
 		// test max length validation
 		if(f instanceof IHasMaxLength) {
-			int oml = ((IHasMaxLength) f).getMaxLen();
-			String ov = f.getValue();
+			final int oml = ((IHasMaxLength) f).getMaxLen();
+			final String ov = f.getValue();
 			f.setValue(STRING_VALUE);
 			((IHasMaxLength) f).setMaxLen(2);
 			try {
 				f.validate();
 				Assert.fail("IHasMaxLength validation failed");
 			}
-			catch(ValidationException e) {
+			catch(final ValidationException e) {
 				// expected
 			}
 			// restore state
@@ -114,17 +114,17 @@ public class FieldGWTTest extends GWTTestCase {
 	 */
 	@SuppressWarnings("deprecation")
 	public void testDateField() throws Exception {
-		DateField<Date> f = FieldFactory.fdate(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, datePassThroughConverter);
+		final DateField<Date> f = FieldFactory.fdate(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, datePassThroughConverter);
 		validateFieldCommon(f);
 
-		Date now = new Date();
+		final Date now = new Date();
 		now.setSeconds(0); // GWT short date format doesn't do seconds (fine)
 
 		f.setValue(now);
 		assert now.equals(f.getValue());
 
 		f.setValue(now);
-		Date fdate = f.getValue();
+		final Date fdate = f.getValue();
 		// NOTE: we compare the dates as *Strings* to get around "micro-time"
 		// difference that Date.setSeconds() doesn't handle
 		assert now.toString().equals(fdate.toString());
@@ -135,7 +135,7 @@ public class FieldGWTTest extends GWTTestCase {
 	 * @throws Exception
 	 */
 	public void testCheckboxField() throws Exception {
-		CheckboxField<Boolean> f =
+		final CheckboxField<Boolean> f =
 				FieldFactory.fcheckbox(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, new IConverter<Boolean, Boolean>() {
 
 					public Boolean convert(Boolean o) throws IllegalArgumentException {
@@ -152,9 +152,9 @@ public class FieldGWTTest extends GWTTestCase {
 	}
 
 	public void testSuggestField() throws Exception {
-		String[] as = new String[] {
+		final String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SuggestField<String> f =
+		final SuggestField<String> f =
 				FieldFactory.fsuggest(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
 						NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);
@@ -164,9 +164,9 @@ public class FieldGWTTest extends GWTTestCase {
 	}
 
 	public void testRadioGroupField() throws Exception {
-		String[] as = new String[] {
+		final String[] as = new String[] {
 			"s1", "s2", "s3" };
-		RadioGroupField<String> f =
+		final RadioGroupField<String> f =
 				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
 						NoFormatStringConverter.INSTANCE, true);
 		validateFieldCommon(f);
@@ -175,9 +175,9 @@ public class FieldGWTTest extends GWTTestCase {
 	}
 
 	public void testSelectField() throws Exception {
-		String[] as = new String[] {
+		final String[] as = new String[] {
 			"s1", "s2", "s3" };
-		SelectField<String> f =
+		final SelectField<String> f =
 				FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as), SimpleComparator.INSTANCE,
 						NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);
@@ -186,9 +186,9 @@ public class FieldGWTTest extends GWTTestCase {
 	}
 
 	public void testMultiSelectField() throws Exception {
-		String[] as = new String[] {
+		final String[] as = new String[] {
 			"s1", "s2", "s3" };
-		MultiSelectField<String> f =
+		final MultiSelectField<String> f =
 				FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, Arrays.asList(as),
 						SimpleComparator.INSTANCE, NoFormatStringConverter.INSTANCE);
 		validateFieldCommon(f);

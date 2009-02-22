@@ -5,17 +5,11 @@
  */
 package com.tll.common.model;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import com.tll.common.model.MalformedPropPathException;
-import com.tll.common.model.PropertyPath;
 
 /**
  * PropertyPathTest - Test the public methods for {@link PropertyPath}.
  * @author jpk
  */
-@Test(groups = "client-model")
 public class PropertyPathTest {
 
 	public void test() throws Exception {
@@ -45,9 +39,9 @@ public class PropertyPathTest {
 		assert pp.indexAt(0) == -1;
 		try {
 			pp.nameAt(1);
-			Assert.fail();
+			throw new Exception("fail");
 		}
-		catch(ArrayIndexOutOfBoundsException e) {
+		catch(final ArrayIndexOutOfBoundsException e) {
 			// expected
 		}
 
@@ -68,7 +62,7 @@ public class PropertyPathTest {
 		try {
 			pp.indexAt(0);
 		}
-		catch(MalformedPropPathException e) {
+		catch(final MalformedPropPathException e) {
 			// expected
 		}
 

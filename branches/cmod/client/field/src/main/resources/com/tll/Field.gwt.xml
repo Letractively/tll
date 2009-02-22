@@ -1,6 +1,7 @@
 <module>
   <inherits name="com.tll.Model" />
-
+  <inherits name="com.tll.UI" />
+  
   <source path="client" />
 
   <public path="public" />

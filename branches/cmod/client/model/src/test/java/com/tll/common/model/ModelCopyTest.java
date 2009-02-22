@@ -4,22 +4,18 @@
  */
 package com.tll.common.model;
 
-import org.testng.annotations.Test;
-
 import com.tll.common.model.mock.TestModelStubber;
 
 /**
  * ModelCopyTest - Test the {@link Model#copy(boolean)} method.
  * @author jpk
  */
-@Test(groups = "client-model")
-public class ModelCopyTest extends AbstractModelTest {
+public class ModelCopyTest {
 
 	/**
 	 * Verifies the copy method.
 	 * @throws Exception When the test fails.
 	 */
-	@Test
 	public void test() throws Exception {
 		final Model model = TestModelStubber.stubTestModel();
 		final Model copy = model.copy(true);

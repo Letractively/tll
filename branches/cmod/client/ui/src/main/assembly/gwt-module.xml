@@ -1,0 +1,21 @@
+<assembly>
+  <id>UI</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <includes>
+        <include>**/client/**</include>
+        <include>**/common/**</include>
+        <include>**/public/**</include>
+        <include>**/*.gwt.xml</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+  
+</assembly>

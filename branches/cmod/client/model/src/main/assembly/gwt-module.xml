@@ -1,0 +1,48 @@
+<assembly>
+  <id>Model</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <includes>
+        <include>**/client/**</include>
+        <include>**/common/**</include>
+        <include>**/public/**</include>
+        <include>**/*.gwt.xml</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+  
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <scope>test</scope>
+      <includes>
+        <include>com.tll:tll-refdata:*</include>
+        <include>com.tll:tll-model:*</include>
+        <include>com.tll:tll-dao:*</include>
+      </includes>
+      <unpack>true</unpack>
+      <unpackOptions>
+        <includes>
+          <include>**/model/schema/PropertyType*</include>
+          <include>**/model/schema/ISchemaProperty*</include>
+          <include>**/model/schema/AbstractSchemaProperty*</include>
+          <include>**/model/schema/PropertyMetadata*</include>
+          <include>**/model/schema/IPropertyMetadataProvider*</include>
+          <include>**/model/IEntityType*</include>
+          <include>**/criteria/IPropertyNameProvider*</include>
+          <include>**/criteria/CriteriaType*</include>
+          <include>**/criteria/IQueryParam*</include>
+          <include>**/refdata/RefDataType*</include>
+        </includes>
+      </unpackOptions>
+    </dependencySet>
+  </dependencySets>
+
+</assembly>

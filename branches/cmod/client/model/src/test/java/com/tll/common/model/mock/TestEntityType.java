@@ -6,7 +6,7 @@ package com.tll.common.model.mock;
 
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
-import com.tll.util.StringUtil;
+import com.tll.common.util.StringUtil;
 
 /**
  * TestEntityType
@@ -38,7 +38,7 @@ public enum TestEntityType implements IEntityType, INameValueProvider<String> {
 	}
 
 	public String getEntityClassName() {
-		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToJavaClassNotation(name());
+		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToCamelCase(name(), true);
 	}
 
 	public String getPresentationName() {

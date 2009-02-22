@@ -1,14 +1,19 @@
 <module>
-  <inherits name="com.tll.Core" />
+  <!-- <inherits name="com.tll.UI" /> -->
+  <inherits name="com.tll.Field" />
   
-  <!-- client exclusive source path -->
   <source path="client" />
-  
-  <!-- shared (client/server) source path -->
   <source path="common" />
-
-  <!-- non client package sources -->
+  
+  <!-- tragically, we have to re-declare any nested source paths in inherited modules for gwt junit tests -->
   <source>
+    <include name="IMarshalable.java" />
+    <include name="IDescriptorProvider.java" />
+    <include name="INameValueProvider.java" />
+    <include name="util/DateRange.java" />
+    <include name="util/FNum.java" />
+    <include name="util/DataPoint.java" />
+  
     <include name="model/schema/PropertyType.java" />
     <include name="model/schema/ISchemaProperty.java" />
     <include name="model/schema/AbstractSchemaProperty.java" />
@@ -19,7 +24,5 @@
     <include name="criteria/IQueryParam.java" />
     <include name="refdata/RefDataType.java" />
   </source>
-
-  <public path="public" />
-
+  
 </module>

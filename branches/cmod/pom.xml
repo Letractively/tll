@@ -52,8 +52,8 @@
     <module>service</module>
     <module>servlet</module>
     <module>security</module>
-    <module>client</module>
-    <module>smbiz</module>
+    <!-- TODO temp <module>client</module> -->
+    <!-- TODO temp (or not?) don't aggregate smbiz module <module>smbiz</module> -->
   </modules>
 
   <build>
@@ -80,6 +80,15 @@
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
@@ -91,8 +100,8 @@
         </configuration>
 
         <!--
-          Retain the test classes only and not the test resources so we don't pollute the test classpath for dependent
-          modules.
+        Retain the test classes only and not the test resources so we don't 
+        pollute the test classpath for dependent modules.
         -->
         <executions>
           <execution>
@@ -102,21 +111,13 @@
               <goal>test-jar</goal>
             </goals>
             <configuration>
+              <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
               <includes>
-                <include>**/*Test*.class</include>
+                <include>**/*Test*</include>
               </includes>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
       </plugin>
       
       <plugin>
@@ -152,16 +153,6 @@
               <excludeResources>true</excludeResources>
             </configuration>
           </execution>
-          <execution>
-            <id>jar-test-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-            <configuration>
-              <excludeResources>true</excludeResources>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
 
@@ -170,7 +161,8 @@
         (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
         just want a maven way to handle gwt deps)
       -->
-      <!-- 
+      
+      <!-- TODO temp debug commentout 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

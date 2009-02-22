@@ -4,22 +4,18 @@
  */
 package com.tll.common.model;
 
-import org.testng.annotations.Test;
-
 import com.tll.common.model.mock.TestModelStubber;
 
 /**
  * PropertyPathModelResolutionTest
  * @author jpk
  */
-@Test(groups = "client-model")
-public class PropertyPathModelResolutionTest extends AbstractModelTest {
+public class PropertyPathModelResolutionTest {
 	
 	/**
 	 * Test the property path resolution of EXISTING property values
 	 * @throws Exception Upon any encountered failure
 	 */
-	@Test
 	public void testResolution() throws Exception {
 		IModelProperty prop;
 		String path;

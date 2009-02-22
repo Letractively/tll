@@ -33,20 +33,40 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <!-- override default gwt test assets inclusion patterns -->
         <executions>
           <execution>
-            <id>gwt-test-assets</id>
+            <id>test-assets</id>
             <configuration>
               <includes>
-                <include>**/ModelTestUtils.*</include>
-                <include>**/common/model/mock/**</include>
+                <include>**/*Test*</include>
+                <include>**/mock/**</include>
               </includes>
             </configuration>
           </execution>
         </executions>
       </plugin>
       
+      <!-- 
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-3</version>
+        <executions>
+          <execution>
+            <id>gwt-module-assembly</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/gwt-module.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
     </plugins>
   </build>
 
@@ -169,6 +189,28 @@
     
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-refdata</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>1.0-SNAPSHOT</version>
       <classifier>tests</classifier>
@@ -178,7 +220,7 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-      <classifier>gwt-test-assets</classifier>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

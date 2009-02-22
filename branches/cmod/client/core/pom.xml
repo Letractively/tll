@@ -14,6 +14,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses core client and server assets for use by all other client modules.</description>
 
+  <!-- 
   <build>
     <plugins>
       <plugin>
@@ -36,7 +37,8 @@
       </plugin>
     </plugins>
   </build>
-
+  -->
+  
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>

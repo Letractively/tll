@@ -19,7 +19,7 @@ public class FieldGroupGWTTest extends GWTTestCase {
 
 	@Override
 	public String getModuleName() {
-		return "com.tll.Test";
+		return "com.tll.FieldTest";
 	}
 
 	private static void fillPropNames(IField<?, ?> f, Collection<String> propNames) {

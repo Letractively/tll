@@ -40,7 +40,6 @@
       <resource>
         <directory>src/main/java</directory>
         <includes>
-          <include>**/*.gwt.xml</include>
           <include>**/client/**</include>
           <include>**/common/**</include>
         </includes>
@@ -53,7 +52,6 @@
       <testResource>
         <directory>src/test/java</directory>
         <includes>
-          <include>**/*.gwt.xml</include>
           <include>**/client/**</include>
           <include>**/common/**</include>
         </includes>
@@ -111,35 +109,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-          <!-- 
-          create a dedicated GWT test asset jar for use as a 
-          dependency for gwt host mode and GWTTestCase tests 
-          -->
-        <executions>
-          <execution>
-            <id>gwt-test-assets</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
-              <classifier>gwt-test-assets</classifier>
-              <!-- exclude non-gwt tests as we only want helper/support classes -->
-              <includes>
-                <include>**/client/**/*Util*</include>
-                <include>**/common/**/*Util*</include>
-                <include>**/client/**/Abstract*Test*</include>
-                <include>**/common/**/Abstract*Test*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
       <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
