@@ -1,28 +1,4 @@
 <module>
-  <!-- <inherits name="com.tll.UI" /> -->
   <inherits name="com.tll.Field" />
-  
-  <source path="client" />
-  <source path="common" />
-  
-  <!-- tragically, we have to re-declare any nested source paths in inherited modules for gwt junit tests -->
-  <source>
-    <include name="IMarshalable.java" />
-    <include name="IDescriptorProvider.java" />
-    <include name="INameValueProvider.java" />
-    <include name="util/DateRange.java" />
-    <include name="util/FNum.java" />
-    <include name="util/DataPoint.java" />
-  
-    <include name="model/schema/PropertyType.java" />
-    <include name="model/schema/ISchemaProperty.java" />
-    <include name="model/schema/AbstractSchemaProperty.java" />
-    <include name="model/schema/PropertyMetadata.java" />
-    <include name="model/schema/IPropertyMetadataProvider.java" />
-    <include name="criteria/IPropertyNameProvider.java" />
-    <include name="criteria/CriteriaType.java" />
-    <include name="criteria/IQueryParam.java" />
-    <include name="refdata/RefDataType.java" />
-  </source>
   
 </module>

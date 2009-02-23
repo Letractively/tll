@@ -111,9 +111,9 @@
               <goal>test-jar</goal>
             </goals>
             <configuration>
-              <classesDirectory>${project.build.testOutputDirectory}</classesDirectory>
               <includes>
                 <include>**/*Test*</include>
+                <include>**/mock/**</include>
               </includes>
             </configuration>
           </execution>

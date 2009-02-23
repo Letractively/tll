@@ -2,10 +2,6 @@
   <inherits name="com.tll.Model" />
   <inherits name="com.tll.UI" />
   
-  <source path="client" />
-
-  <public path="public" />
-
   <replace-with class="com.tll.client.ui.field.impl.FieldLabelImplIE">
     <when-type-is class="com.tll.client.ui.field.impl.FieldLabelImpl" />
     <any>

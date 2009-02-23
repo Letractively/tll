@@ -1,9 +1,6 @@
 <module>
   <inherits name="com.tll.Core" />
   
-  <!-- client exclusive source path -->
-  <source path="client" />
-
   <stylesheet src="css/viewpath.css" />
   <stylesheet src="css/view.css" />
   

@@ -1,12 +1,4 @@
 <module>
   <inherits name="com.tll.Core" />
   
-  <!-- client exclusive source path -->
-  <source path="client" />
-
-  <!--  shared (client/server) -->
-  <source path="common" />
-  
-  <public path="public" />
-
 </module>

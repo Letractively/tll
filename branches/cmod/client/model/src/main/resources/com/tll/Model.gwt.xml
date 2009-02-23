@@ -1,23 +1,22 @@
 <module>
   <inherits name="com.tll.Core" />
   
-  <!-- client exclusive source path -->
-  <source path="client" />
+  <source path="model">
+    <include name="schema/PropertyType.java" />
+    <include name="schema/ISchemaProperty.java" />
+    <include name="schema/AbstractSchemaProperty.java" />
+    <include name="schema/PropertyMetadata.java" />
+    <include name="schema/IPropertyMetadataProvider.java" />
+  </source>
   
-  <!-- shared (client/server) source path -->
-  <source path="common" />
-
-  <!-- non client package sources -->
-  <source>
-    <include name="model/schema/PropertyType.java" />
-    <include name="model/schema/ISchemaProperty.java" />
-    <include name="model/schema/AbstractSchemaProperty.java" />
-    <include name="model/schema/PropertyMetadata.java" />
-    <include name="model/schema/IPropertyMetadataProvider.java" />
-    <include name="criteria/IPropertyNameProvider.java" />
-    <include name="criteria/CriteriaType.java" />
-    <include name="criteria/IQueryParam.java" />
-    <include name="refdata/RefDataType.java" />
+  <source path="criteria">
+    <include name="IPropertyNameProvider.java" />
+    <include name="CriteriaType.java" />
+    <include name="IQueryParam.java" />
+  </source>
+  
+  <source path="refdata">
+    <include name="RefDataType.java" />
   </source>
 
   <public path="public" />

@@ -4,8 +4,6 @@
  */
 package com.tll.common.data;
 
-import org.hibernate.type.EntityType;
-
 import com.tll.IMarshalable;
 import com.tll.common.model.IEntityType;
 
@@ -36,8 +34,7 @@ public abstract class EntityRequest implements IMarshalable {
 	}
 
 	/**
-	 * @return The entity type. Must corres. to a {@link EntityType} constant and
-	 *         be non-<code>null</code>.
+	 * @return The required entity type.
 	 */
 	public abstract IEntityType getEntityType();
 }

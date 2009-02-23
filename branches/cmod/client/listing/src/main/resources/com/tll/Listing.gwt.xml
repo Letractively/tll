@@ -1,18 +1,9 @@
 <module>
   <inherits name="com.tll.Model" />
   
-  <!-- client exclusive source path -->
-  <source path="client" />
-  
-  <!-- shared (client/server) source path -->
-  <source path="common" />
-
   <!-- non client package sources -->
-  <source>
-    <include name="listhandler/ListHandlerType.java" />
-    <include name="refdata/RefDataType.java" />
+  <source path="listhandler">
+    <include name="ListHandlerType.java" />
   </source>
-
-  <public path="public" />
-
+  
 </module>

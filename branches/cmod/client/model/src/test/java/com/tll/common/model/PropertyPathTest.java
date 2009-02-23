@@ -5,11 +5,14 @@
  */
 package com.tll.common.model;
 
+import org.testng.annotations.Test;
+
 
 /**
  * PropertyPathTest - Test the public methods for {@link PropertyPath}.
  * @author jpk
  */
+@Test(groups = "client-model")
 public class PropertyPathTest {
 
 	public void test() throws Exception {

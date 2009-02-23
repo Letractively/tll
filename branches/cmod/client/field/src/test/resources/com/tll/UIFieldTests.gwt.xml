@@ -1,36 +1,19 @@
 <module rename-to="uitests">
   <inherits name="com.tll.Field" />
-  <inherits name="com.tll.UI" />
+  
+  <source path="client">
+    <exclude name="**/*GWTTest*" />
+  </source>
+  
+  <source path="common/model">
+    <exclude name="*Test.java" />
+  </source>
   
   <!-- target host mode browser only -->
   <set-property name="user.agent" value="ie6" />
   <set-property name="locale" value="default" />
   
   <set-property name="log_DivLogger" value="DISABLED" />
-  
-  <source path="client">
-    <exclude name="**/*GWTTest*.java" />
-  </source>
-  
-  <!-- tragically, we have to re-declare any nested source paths in inherited modules -->
-  <source>
-    <include name="IMarshalable.java" />
-    <include name="IDescriptorProvider.java" />
-    <include name="INameValueProvider.java" />
-    <include name="util/DateRange.java" />
-    <include name="util/FNum.java" />
-    <include name="util/DataPoint.java" />
-  
-    <include name="model/schema/PropertyType.java" />
-    <include name="model/schema/ISchemaProperty.java" />
-    <include name="model/schema/AbstractSchemaProperty.java" />
-    <include name="model/schema/PropertyMetadata.java" />
-    <include name="model/schema/IPropertyMetadataProvider.java" />
-    <include name="criteria/IPropertyNameProvider.java" />
-    <include name="criteria/CriteriaType.java" />
-    <include name="criteria/IQueryParam.java" />
-    <include name="refdata/RefDataType.java" />
-  </source>
   
   <entry-point class="com.tll.client.UIFieldTests" />
 </module>

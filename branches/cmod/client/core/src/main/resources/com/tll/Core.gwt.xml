@@ -6,16 +6,18 @@
   
   <!-- shared (client/server) source path -->
   <source path="common" />
-
+  
   <!-- non client package sources -->
-  <source>
-    <!-- tll-core -->
+  <source path=""><!-- (i.e. the current dir) -->
     <include name="IMarshalable.java" />
     <include name="IDescriptorProvider.java" />
     <include name="INameValueProvider.java" />
-    <include name="util/DateRange.java" />
-    <include name="util/FNum.java" />
-    <include name="util/DataPoint.java" />
+  </source>
+  
+  <source path="util">
+    <include name="DateRange.java" />
+    <include name="FNum.java" />
+    <include name="DataPoint.java" />
   </source>
   
   <public path="public" />

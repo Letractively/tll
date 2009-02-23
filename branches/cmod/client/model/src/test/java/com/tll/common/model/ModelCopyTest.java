@@ -4,6 +4,8 @@
  */
 package com.tll.common.model;
 
+import org.testng.annotations.Test;
+
 import com.tll.common.model.mock.MockModelStubber;
 import com.tll.common.model.mock.MockModelStubber.ModelType;
 
@@ -11,6 +13,7 @@ import com.tll.common.model.mock.MockModelStubber.ModelType;
  * ModelCopyTest - Test the {@link Model#copy(boolean)} method.
  * @author jpk
  */
+@Test(groups = "client-model")
 public class ModelCopyTest {
 
 	/**

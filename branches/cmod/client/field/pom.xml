@@ -64,7 +64,7 @@
               <tasks>
                 <property name="gwt.compile.classpath" refid="maven.test.classpath" />
                 <property name="gwt.compile.modules" value="com.tll.UIFieldTests" />
-                <!-- <echo message="test classpath: ${test_classpath}" /> -->
+                <echo message="test classpath: ${gwt.compile.classpath}" />
                 <ant antfile="${basedir}/../build-gwt.xml">
                   <target name="compile" />
                 </ant>

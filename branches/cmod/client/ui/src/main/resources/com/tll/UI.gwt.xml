@@ -9,11 +9,6 @@
   <!-- gwt-log support, default level `DEBUG` -->
   <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
   
-  <!-- client package sources -->
-  <source path="client" />
-  
-  <public path="public" />
-  
   <!-- css reset (based on YUI) -->
   <stylesheet src="css/reset.css" />
 
