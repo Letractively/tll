@@ -3,7 +3,6 @@ package com.tll.client.mock;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.mock.MockFieldGroupProviders.MockFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
@@ -23,11 +22,11 @@ import com.tll.common.model.mock.MockEntityType;
 public abstract class MockFieldPanels {
 
 	/**
-	 * SimpleFieldPanel
+	 * SimpleFieldPanel - Purely non-relational properties
 	 * @author jpk
 	 * @param <M>
 	 */
-	static class SimpleFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	public static class SimpleFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		final FlowPanel panel = new FlowPanel();
 
@@ -83,17 +82,17 @@ public abstract class MockFieldPanels {
 	 * @author jpk
 	 * @param <M>
 	 */
-	static class IndexFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	public static class IndexFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
-			return null;
+			return (new MockFieldGroupProviders.AccountAddressFieldsProvider()).getFieldGroup();
 		}
 
-	}
+	} // IndexFieldPanel
 
 	/**
-	 * AddressesPanel
+	 * IndexedFieldPanel
 	 * @author jpk
 	 * @param <M> The model type
 	 */
@@ -141,10 +140,11 @@ public abstract class MockFieldPanels {
 	} // IndexedFieldPanel
 
 	/**
-	 * MockRootFieldPanel
+	 * ComplexFieldPanel - Contains a simple field panel mocking a related one
+	 * model, and an indexed field panel mocking a related many model collection.
 	 * @author jpk
 	 */
-	static class MockRootFieldPanel extends FieldPanel<FlowPanel, Model> {
+	public static class ComplexFieldPanel extends FieldPanel<FlowPanel, Model> {
 
 		FlowPanel panel = new FlowPanel();
 		
@@ -155,7 +155,7 @@ public abstract class MockFieldPanels {
 		/**
 		 * Constructor
 		 */
-		public MockRootFieldPanel() {
+		public ComplexFieldPanel() {
 			super();
 			initWidget(panel);
 			setRenderer(new IFieldRenderer<FlowPanel>() {
@@ -196,11 +196,7 @@ public abstract class MockFieldPanels {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
-			return MockFieldGroupProvider.INSTANCE.getFieldGroup();
+			return (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
 		}
-	}
-	
-	public static MockRootFieldPanel getMockRootFieldPanel() {
-		return new MockRootFieldPanel();
-	}
+	} // ComplexFieldPanel
 }

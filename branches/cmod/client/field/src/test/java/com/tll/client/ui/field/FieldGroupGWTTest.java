@@ -44,7 +44,7 @@ public class FieldGroupGWTTest extends GWTTestCase {
 	 * Tests {@link FieldGroup#getField(String)}.
 	 */
 	public void testGetField() {
-		final FieldGroup fg = MockFieldGroupProviders.getRootFieldGroupProvider().getFieldGroup();
+		final FieldGroup fg = (new MockFieldGroupProviders.AddressFieldsProvider()).getFieldGroup();
 		final Collection<String> propNames = getPropNames(fg);
 		assert propNames != null && propNames.size() > 0;
 		for(final String prop : propNames) {

@@ -5,6 +5,7 @@
 package com.tll.common.model;
 
 import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.mock.MockModelStubber.ModelType;
 
 /**
  * PropertyPathModelResolutionTest
@@ -17,12 +18,11 @@ public class PropertyPathModelResolutionTest {
 	 * @throws Exception Upon any encountered failure
 	 */
 	public void testResolution() throws Exception {
+		final Model model = MockModelStubber.create(ModelType.COMPLEX);
+
 		IModelProperty prop;
 		String path;
-		Model model;
-
-		model = MockModelStubber.stubTestModel();
-
+		
 		path = "name";
 		prop = model.getModelProperty(path);
 		assert prop != null : "Unable to resolve property path: " + path;

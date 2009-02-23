@@ -65,9 +65,9 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	/**
 	 * Constructor
+	 * @param manyType The related many Model type.
 	 * @param propName
 	 * @param reference
-	 * @param manyType The related many Model type.
 	 * @param clc Collection of {@link Model}s.
 	 */
 	public RelatedManyProperty(final IEntityType manyType, final String propName, final boolean reference,
@@ -136,7 +136,7 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 
 	@Override
 	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		PropertyPath pp = new PropertyPath(propPath);
+		final PropertyPath pp = new PropertyPath(propPath);
 		if(pp.isIndexed()) {
 			if(value != null && value instanceof Model == false) {
 				throw new Exception("The value must be a Model instance");
@@ -190,8 +190,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 		sb.append(isReference() ? "|REF|" : "");
 		sb.append(" [");
 		if(list != null) {
-			for(Iterator<Model> itr = list.iterator(); itr.hasNext();) {
-				Model m = itr.next();
+			for(final Iterator<Model> itr = list.iterator(); itr.hasNext();) {
+				final Model m = itr.next();
 				sb.append(m == null ? "-empty-" : m.toString());
 				if(itr.hasNext()) {
 					sb.append(", ");

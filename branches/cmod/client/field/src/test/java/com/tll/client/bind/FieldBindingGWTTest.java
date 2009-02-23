@@ -26,7 +26,7 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	 * Tests the initial binding of model properties to fields.
 	 */
 	public void testBind() {
-		final FieldPanel<FlowPanel, Model> fieldPanel = MockFieldPanels.getMockRootFieldPanel();
+		final FieldPanel<FlowPanel, Model> fieldPanel = new MockFieldPanels.ComplexFieldPanel();
 		fieldPanel.setAction(new MockBinding());
 		fieldPanel.setModel(MockModelStubber.stubAccount());
 		RootPanel.get().add(fieldPanel);

@@ -11,14 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.CharacterToStringConverter;
 import com.tll.client.convert.IFormattedConverter;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.AccountStatus;
+import com.tll.common.model.mock.AddressType;
 import com.tll.common.model.mock.CreditCardType;
 import com.tll.common.model.mock.MockEntityType;
 import com.tll.common.model.mock.MockModelStubber;
@@ -30,50 +31,73 @@ import com.tll.refdata.RefDataType;
  * @author jpk
  */
 public class MockFieldGroupProviders {
+	
+	static final IFormattedConverter<String, Integer> noFormatIntToStringConverter =
+			new IFormattedConverter<String, Integer>() {
+
+			public String convert(Integer o) throws IllegalArgumentException {
+					return o == null ? "" : o.toString();
+				}
+
+				public GlobalFormat getFormat() {
+					return null;
+				}
+			};
+
+	/*
+	 * Fill the client side aux data cache with needed data.. 
+	 */
+	static {
+		// set needed aux data cache
+		final List<Model> list = new ArrayList<Model>();
+		list.add(MockModelStubber.stubCurrency());
+		AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
+
+		final Map<String, String> cc = new HashMap<String, String>();
+		cc.put("us", "United States");
+		cc.put("br", "Brazil");
+		AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+
+		final Map<String, String> st = new HashMap<String, String>();
+		st.put("MI", "Michigan");
+		st.put("CA", "California");
+		AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+	}
 
 	/**
-	 * AccountFieldsProvider
+	 * AddressFieldsProvider
 	 * @author jpk
 	 */
-	static class AccountFieldsProvider extends AbstractFieldGroupProvider {
+	public static final class AddressFieldsProvider extends AbstractFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
-			return "Account";
+			return "Address";
 		}
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
-			fg.addField(fstext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
-			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
-			fg.addField(fddate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
-			//fg.addField(fcurrencies("acntCurrencyId", "currency.id", "Currency", "Currency"));
-			fg.addField(fstext("acntBillingModel", "billingModel", "Billing Model", "Billing Model", 18));
-			fg.addField(fstext("acntBillingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
-			fg.addField(fddate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
-			fg.addField(fddate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
-			fg.addField(fbool("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?"));
+			fg.addField(femail("adrsEmailAddress", "emailAddress", "Email Address", "Email Address", 30));
+			fg.addField(fstext("adrsFirstName", "firstName", "First Name", "First Name", 20));
+			fg.addField(fstext("adrsLastName", "lastName", "Last Name", "Last Name", 20));
+			fg.addField(FieldFactory.ftext("adrsMi", "mi", "MI", "Middle Initial", 1, CharacterToStringConverter.INSTANCE));
+			fg.addField(fstext("adrsCompany", "company", "Company", "Company", 20));
+			fg.addField(fstext("adrsAttn", "attn", "Attn", "Attention", 10));
+			fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
+			fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
+			fg.addField(fstext("adrsCity", "city", "City", "City", 30));
+			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
+			fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
+			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
 		}
-	}
 
+	}
+	
 	/**
 	 * CreditCardFieldsProvider
 	 * @author jpk
 	 */
-	static class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
-
-		private final IFormattedConverter<String, Integer> noFormatIntToStringConverter =
-				new IFormattedConverter<String, Integer>() {
-
-					public String convert(Integer o) throws IllegalArgumentException {
-						return o == null ? "" : o.toString();
-					}
-
-					public GlobalFormat getFormat() {
-						return null;
-					}
-				};
+	public static class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -103,7 +127,7 @@ public class MockFieldGroupProviders {
 	 * BankFieldsProvider
 	 * @author jpk
 	 */
-	static class BankFieldsProvider extends AbstractFieldGroupProvider {
+	public static class BankFieldsProvider extends AbstractFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -118,58 +142,51 @@ public class MockFieldGroupProviders {
 		}
 
 	}
-
+	
 	/**
-	 * MockFieldGroupProvider
+	 * AccountAddressFieldsProvider
 	 * @author jpk
 	 */
-	// TODO delete and mockify the other existing providers
-	static final class MockFieldGroupProvider implements IFieldGroupProvider {
+	public static class AccountAddressFieldsProvider extends AbstractFieldGroupProvider {
 
-		public static final MockFieldGroupProvider INSTANCE = new MockFieldGroupProvider();
-
-		/**
-		 * Constructor
-		 */
-		private MockFieldGroupProvider() {
-			// set needed aux data cache
-			final List<Model> list = new ArrayList<Model>();
-			list.add(MockModelStubber.stubCurrency());
-			AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
-
-			final Map<String, String> cc = new HashMap<String, String>();
-			cc.put("us", "United States");
-			cc.put("br", "Brazil");
-			AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
-
-			final Map<String, String> st = new HashMap<String, String>();
-			st.put("MI", "Michigan");
-			st.put("CA", "California");
-			AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+		@Override
+		protected String getFieldGroupName() {
+			return "Account Address";
 		}
 
-		public FieldGroup getFieldGroup() {
-			final IFieldGroupProvider fpAccount = new AccountFieldsProvider();
-			final FieldGroup fg = fpAccount.getFieldGroup();
-
-			fg.addField("parent", fpAccount.getFieldGroup());
-
-			final FieldGroup fgPaymentInfo = new FieldGroup("paymentInfo");
-			fgPaymentInfo.addField((new CreditCardFieldsProvider()).getFieldGroup());
-			fgPaymentInfo.addField((new BankFieldsProvider()).getFieldGroup());
-
-			fg.addField("paymentInfo", fgPaymentInfo);
-
-			fg.addField("addresses", new FieldGroup("addresses"));
-
-			return fg;
+		@Override
+		protected void populateFieldGroup(FieldGroup fg) {
+			addModelCommon(fg, true, true);
+			fg.addField(fenumselect("type", "type", "Type", "Account Address Type", AddressType.class));
+			final FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
+			fgAddress.setName("address");
+			fg.addField("address", fgAddress);
 		}
 	}
 
 	/**
-	 * @return A test {@link IFieldGroupProvider}.
+	 * AccountFieldsProvider - Provides non-relational account properties.
+	 * @author jpk
 	 */
-	public static IFieldGroupProvider getRootFieldGroupProvider() {
-		return MockFieldGroupProvider.INSTANCE;
+	public static class AccountFieldsProvider extends AbstractFieldGroupProvider {
+
+		@Override
+		protected String getFieldGroupName() {
+			return "Account";
+		}
+
+		@Override
+		public void populateFieldGroup(FieldGroup fg) {
+			addModelCommon(fg, true, true);
+			fg.addField(fstext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
+			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
+			fg.addField(fddate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
+			//fg.addField(fcurrencies("acntCurrencyId", "currency.id", "Currency", "Currency"));
+			fg.addField(fstext("acntBillingModel", "billingModel", "Billing Model", "Billing Model", 18));
+			fg.addField(fstext("acntBillingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
+			fg.addField(fddate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
+			fg.addField(fddate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
+			fg.addField(fbool("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?"));
+		}
 	}
 }

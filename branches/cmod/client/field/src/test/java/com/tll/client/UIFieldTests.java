@@ -44,7 +44,7 @@ public final class UIFieldTests extends AbstractUITest {
 
 		@Override
 		public void load() {
-			fp = MockFieldPanels.getMockRootFieldPanel();
+			fp = new MockFieldPanels.ComplexFieldPanel();
 
 			context = new SimplePanel();
 			context.getElement().getStyle().setProperty("margin", "1em");
