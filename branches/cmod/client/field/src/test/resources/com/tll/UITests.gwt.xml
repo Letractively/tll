@@ -15,5 +15,5 @@
   
   <set-property name="log_DivLogger" value="DISABLED" />
   
-  <entry-point class="com.tll.client.UIFieldTests" />
+  <entry-point class="com.tll.client.UITests" />
 </module>

@@ -5,10 +5,9 @@
 		1) gwt.compile.classpath
 		2) gwt.compile.modules
 		
-  These properties must be present in the ant context to run the shell target:
-		1) gwt.shell.project.dir
-		2) gwt.shell.startupUrl
-		3) gwt.shell.entryModule
+  These properties must be present in the ant context to run the shell and shell-debug target:
+		1) gwt.shell.startupUrl
+		2) gwt.shell.entryModule
 	
 	http://code.google.com/docreader/#p=google-web-toolkit-doc-1-6&s=google-web-toolkit-doc-1-6&t=ReleaseNotes_1_6_UpgradeGuide
 	
@@ -43,17 +42,6 @@
 		<pathelement path="${gwt.compile.classpath}"/>
 	</path>
 	
-	<path id="gwt.shell.classpath">
-		<path location="${gwt.shell.project.dir}/target/classes" />
-		<path location="${gwt.shell.project.dir}/target/test-classes" />
-		<path location="${gwt.shell.project.dir}/src/main/java" />
-		<path location="${gwt.shell.project.dir}/src/test/java" />
-		<fileset dir="${gwt.shell.project.dir}/target/war/WEB-INF/lib">
-			<!--<include name="**/*.jar" />-->
-			<include name="**" />
-		</fileset>
-	</path>
-
 	<!--
    [java] Google Web Toolkit 0.0.0
    [java] Compiler [-logLevel level] [-treeLogger] [-workDir dir] [-gen dir] [-style style] [-ea] [-validateOnly] [-localWorkers count] [-war dir] [-extra dir] module[s]
@@ -88,44 +76,12 @@
 		</java>
 	</target>
 	
-	<target name="shell" description="Invokes the GWT host mode shell. NOTE: The war dir must already be constructed!">
-		<java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
-			<classpath refid="gwt.shell.classpath" />
-			<jvmarg value="-Xms128m" />
-			<jvmarg value="-Xmx512m" />
-			<jvmarg value="-ea" />
-			<arg value="-war" />
-			<arg value="${gwt.shell.project.dir}/target/war" />
-			<arg value="-style" />
-			<arg value="OBF" />
-			<arg value="-logLevel" />
-			<arg value="INFO" />
-			<arg value="-startupUrl" />
-			<arg value="${gwt.shell.startupUrl}" />
-			<arg value="${gwt.shell.entryModule}" />
-		</java>
+	<target name="build-shell-exec-file" description="Builds a batch file to invoke the gwt shell.">
+		<echo file="shell.bat" message="java -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style OBF -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
-	
-	<target name="shell-debug" description="Invokes the GWT host mode shell w/ a jvm debug hook at port 8000. NOTE: The war dir must already be constructed!">
-		<java failonerror="true" fork="true" classname="com.google.gwt.dev.HostedMode">
-			<classpath refid="gwt.shell.classpath" />
-			<jvmarg value="-Xms128m" />
-			<jvmarg value="-Xmx512m" />
-			<jvmarg value="-ea" />
-			<jvmarg value="-Xdebug" />
-			<jvmarg value="-Xnoagent" />
-			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
-			<jvmarg value="-Djava.compiler=NONE" />
-			<arg value="-war" />
-			<arg value="${gwt.shell.project.dir}/target/war" />
-			<arg value="-style" />
-			<arg value="OBF" />
-			<arg value="-logLevel" />
-			<arg value="INFO" />
-			<arg value="-startupUrl" />
-			<arg value="${gwt.shell.startupUrl}" />
-			<arg value="${gwt.shell.entryModule}" />
-		</java>
+
+	<target name="build-shell-debug-exec-file" description="Builds a batch file to invoke the gwt shell with a jvm debug hook at port 8000.">
+		<echo file="debug.bat" message="java -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style OBF -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
 	</target>
 
 </project>

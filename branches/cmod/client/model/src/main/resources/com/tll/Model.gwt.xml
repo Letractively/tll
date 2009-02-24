@@ -19,6 +19,4 @@
     <include name="RefDataType.java" />
   </source>
 
-  <public path="public" />
-
 </module>

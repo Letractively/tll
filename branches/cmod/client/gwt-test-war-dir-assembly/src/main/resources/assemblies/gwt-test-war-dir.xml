@@ -12,6 +12,7 @@
     </fileSet>
   </fileSets>
 
+  <!-- 
   <dependencySets>
     <dependencySet>
       <scope>test</scope>
@@ -36,5 +37,6 @@
       </includes>
     </dependencySet>
   </dependencySets>
-
+  -->
+  
 </assembly>

@@ -11,7 +11,7 @@ import com.tll.common.model.Model;
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
  * compiled GWT code.
  */
-public final class UIFieldTests extends AbstractUITest {
+public final class UITests extends AbstractUITest {
 
 	@Override
 	protected String getTestSubjectName() {
@@ -20,26 +20,26 @@ public final class UIFieldTests extends AbstractUITest {
 
 	@Override
 	protected UITestCase[] getTestCases() {
-		return new UITestCase[] { new FieldPanelTest() };
+		return new UITestCase[] { new ModelFieldBindingTest() };
 	}
 
 	/**
-	 * FieldPanelTest
+	 * ModelFieldBindingTest
 	 * @author jpk
 	 */
-	static final class FieldPanelTest extends UITestCase {
+	static final class ModelFieldBindingTest extends UITestCase {
 
 		SimplePanel context;
 		FieldPanel<FlowPanel, Model> fp;
 
 		@Override
 		public String getName() {
-			return "FieldPanel";
+			return "Model/Field binding";
 		}
 
 		@Override
 		public String getDescription() {
-			return "Displays all available field widgets in a simple mocked FieldPanel.";
+			return "Tests model/field binding with handling a nested model collection.";
 		}
 
 		@Override
@@ -67,5 +67,5 @@ public final class UIFieldTests extends AbstractUITest {
 			}
 		}
 
-	} // FieldPanelTest
+	} // ModelFieldBindingTest
 }

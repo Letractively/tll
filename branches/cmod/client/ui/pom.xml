@@ -15,54 +15,6 @@
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
   
   <build>
-    <plugins>
-    
-      <!-- 
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-3</version>
-        <executions>
-          <execution>
-            <id>gwt-module-assembly</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/gwt-module.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>gwt-compile</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
-                <property name="gwt.compile.modules" value="com.tll.UITests" />
-                <!-- <echo message="test classpath: ${test_classpath}" /> -->
-                <ant antfile="${basedir}/../build-gwt.xml">
-                  <target name="compile" />
-                </ant>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    
-    </plugins>
   </build>
   
   <dependencies>

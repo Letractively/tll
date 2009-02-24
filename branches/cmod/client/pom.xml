@@ -109,6 +109,34 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-compile</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+                <property name="gwt.compile.modules" value="com.tll.UITests" />
+                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
+                <property name="gwt.shell.startupUrl" value="UITests.html" />
+                <echo message="test classpath: ${gwt.compile.classpath}" />
+                <ant antfile="${basedir}/../build-gwt.xml">
+                  <!-- <target name="compile" /> -->
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -120,6 +148,33 @@
             <include>**/*GWTTest.java</include>
           </includes>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+
+        <!--
+        override to exclude project specific gwt ui test assests
+        -->
+        <executions>
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*UITests*</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Test*</include>
+                <include>**/mock/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       
     </plugins>
