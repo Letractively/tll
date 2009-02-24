@@ -541,7 +541,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public void onChange(ChangeEvent event) {
-		assert event.getSource() == this;
+		assert event.getSource() == getEditable();
 
 		// dirty check
 		markDirty();

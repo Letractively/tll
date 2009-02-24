@@ -1,11 +1,13 @@
 package com.tll.client;
 
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.tll.client.mock.MockFieldPanels;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.mock.ComplexFieldPanel;
+import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.field.ModelViewer;
 import com.tll.common.model.Model;
+import com.tll.common.model.mock.MockModelStubber;
+import com.tll.common.model.mock.MockModelStubber.ModelType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -20,17 +22,21 @@ public final class UITests extends AbstractUITest {
 
 	@Override
 	protected UITestCase[] getTestCases() {
-		return new UITestCase[] { new ModelFieldBindingTest() };
+		return new UITestCase[] { new FieldBindingLifecycleTest() };
 	}
 
 	/**
-	 * ModelFieldBindingTest
+	 * FieldBindingLifecycleTest - Tests field/model binding functionality through
+	 * a mocked model field panel and edit panel.
 	 * @author jpk
 	 */
-	static final class ModelFieldBindingTest extends UITestCase {
+	static final class FieldBindingLifecycleTest extends UITestCase {
 
-		SimplePanel context;
-		FieldPanel<FlowPanel, Model> fp;
+		HorizontalPanel context;
+		EditPanel ep;
+		ModelViewer mv;
+		Model m;
+		
 
 		@Override
 		public String getName() {
@@ -44,28 +50,42 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public void load() {
-			fp = new MockFieldPanels.ComplexFieldPanel();
-
-			context = new SimplePanel();
+			context = new HorizontalPanel();
 			context.getElement().getStyle().setProperty("margin", "1em");
 			context.getElement().getStyle().setProperty("padding", "1em");
 			context.getElement().getStyle().setProperty("border", "1px solid gray");
-			context.setWidget(fp);
+
+			mv = new ModelViewer(250, 350);
+			ep = new EditPanel(new ComplexFieldPanel(), false, false);
+			ep.addEditListener(mv);
+
+			context.add(ep);
+			context.add(mv);
 
 			RootPanel.get().add(context);
+			
+			m = MockModelStubber.create(ModelType.COMPLEX);
+			ep.setModel(m);
+			mv.setModel(m);
 		}
 
 		@Override
 		public void unload() {
-			if(fp != null) {
-				fp.removeFromParent();
-				fp= null;
+			if(ep != null) {
+				// TODO do we need to cleanup bindings ???
+				ep.removeFromParent();
+				ep = null;
+			}
+			if(mv != null) {
+				mv.removeFromParent();
+				mv = null;
 			}
 			if(context != null) {
 				context.removeFromParent();
 				context = null;
 			}
+			m = null;
 		}
 
-	} // ModelFieldBindingTest
+	} // FieldBindingLifecycleTest
 }

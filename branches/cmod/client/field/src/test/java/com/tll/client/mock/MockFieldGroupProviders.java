@@ -44,31 +44,45 @@ public class MockFieldGroupProviders {
 				}
 			};
 
-	/*
-	 * Fill the client side aux data cache with needed data.. 
+	/**
+	 * AbstractMockFieldGroupProvider
+	 * @author jpk
 	 */
-	static {
-		// set needed aux data cache
-		final List<Model> list = new ArrayList<Model>();
-		list.add(MockModelStubber.stubCurrency());
-		AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
+	static abstract class AbstractMockFieldGroupProvider extends AbstractFieldGroupProvider {
 
-		final Map<String, String> cc = new HashMap<String, String>();
-		cc.put("us", "United States");
-		cc.put("br", "Brazil");
-		AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+		private static boolean auxDataInitialized;
 
-		final Map<String, String> st = new HashMap<String, String>();
-		st.put("MI", "Michigan");
-		st.put("CA", "California");
-		AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
-	}
+		/**
+		 * Constructor
+		 */
+		protected AbstractMockFieldGroupProvider() {
+			super();
+			if(!auxDataInitialized) {
+				// set needed aux data cache
+				final List<Model> list = new ArrayList<Model>();
+				list.add(MockModelStubber.stubCurrency());
+				AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
+
+				final Map<String, String> cc = new HashMap<String, String>();
+				cc.put("us", "United States");
+				cc.put("br", "Brazil");
+				AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+
+				final Map<String, String> st = new HashMap<String, String>();
+				st.put("MI", "Michigan");
+				st.put("CA", "California");
+				AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+
+				auxDataInitialized = true;
+			}
+		}
+	} // AbstractMockFieldGroupProvider
 
 	/**
 	 * AddressFieldsProvider
 	 * @author jpk
 	 */
-	public static final class AddressFieldsProvider extends AbstractFieldGroupProvider {
+	public static final class AddressFieldsProvider extends AbstractMockFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -92,16 +106,16 @@ public class MockFieldGroupProviders {
 		}
 
 	}
-	
+
 	/**
-	 * CreditCardFieldsProvider
+	 * PaymentInfoFieldsProvider
 	 * @author jpk
 	 */
-	public static class CreditCardFieldsProvider extends AbstractFieldGroupProvider {
+	public static class PaymentInfoFieldsProvider extends AbstractMockFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
-			return "Credit Card";
+			return "Payment Info";
 		}
 
 		@Override
@@ -121,25 +135,6 @@ public class MockFieldGroupProviders {
 			fg.addField(fstext("ccZip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
 			fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
 		}
-	}
-
-	/**
-	 * BankFieldsProvider
-	 * @author jpk
-	 */
-	public static class BankFieldsProvider extends AbstractFieldGroupProvider {
-
-		@Override
-		protected String getFieldGroupName() {
-			return "Bank Info";
-		}
-
-		@Override
-		public void populateFieldGroup(FieldGroup fg) {
-			fg.addField(fstext("bankName", "paymentData_bankName", "Bank Name", "Bank Name", 40));
-			fg.addField(fstext("bankAccountNo", "paymentData_bankAccountNo", "Account Num", "Account Num", 30));
-			fg.addField(fstext("bankRoutingNo", "paymentData_bankRoutingNo", "Routing Num", "Routing Num", 20));
-		}
 
 	}
 	
@@ -147,7 +142,7 @@ public class MockFieldGroupProviders {
 	 * AccountAddressFieldsProvider
 	 * @author jpk
 	 */
-	public static class AccountAddressFieldsProvider extends AbstractFieldGroupProvider {
+	public static class AccountAddressFieldsProvider extends AbstractMockFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -168,7 +163,7 @@ public class MockFieldGroupProviders {
 	 * AccountFieldsProvider - Provides non-relational account properties.
 	 * @author jpk
 	 */
-	public static class AccountFieldsProvider extends AbstractFieldGroupProvider {
+	public static class AccountFieldsProvider extends AbstractMockFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {

@@ -18,7 +18,7 @@ import com.tll.common.msg.Msg;
  * <p>
  * Since this type of registry caches these popups, thier life-cycle is
  * "extended" beyond hiding the popup. As such, <b>the registry client is
- * responsible for clearing ultimately clearing them in the registry!</b>
+ * responsible for ultimately clearing them in this registry.</b>
  * @author jpk
  */
 public final class MsgPopupRegistry {

@@ -3,8 +3,7 @@ package com.tll.client.bind;
 import com.google.gwt.junit.client.GWTTestCase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.mock.MockBinding;
-import com.tll.client.mock.MockFieldPanels;
+import com.tll.client.mock.ComplexFieldPanel;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.MockModelStubber;
@@ -26,8 +25,8 @@ public class FieldBindingGWTTest extends GWTTestCase {
 	 * Tests the initial binding of model properties to fields.
 	 */
 	public void testBind() {
-		final FieldPanel<FlowPanel, Model> fieldPanel = new MockFieldPanels.ComplexFieldPanel();
-		fieldPanel.setAction(new MockBinding());
+		final FieldPanel<FlowPanel, Model> fieldPanel = new ComplexFieldPanel();
+		//fieldPanel.setAction(new SimpleBindingAction());
 		fieldPanel.setModel(MockModelStubber.stubAccount());
 		RootPanel.get().add(fieldPanel);
 	}

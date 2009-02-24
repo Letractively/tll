@@ -21,17 +21,17 @@ import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
- * AbstractModelEditAction - Common base class for all concrete model edit
- * action classes in the client app.
+ * AbstractBindingAction - Common base class for binding actions whose action
+ * transfers field data to the model.
  * @param <M> the model type
  * @param <FP> the field panel type
  * @author jpk
  */
-public abstract class AbstractModelEditAction<M extends IBindable, FP extends FieldPanel<?, M>> implements
+public abstract class AbstractBindingAction<M extends IBindable, FP extends FieldPanel<?, M>> implements
 		IBindingAction {
 
 	/**
-	 * The bindable (field panel) this action acts on.
+	 * The bindable (field panel) this binding action acts on.
 	 */
 	FP fieldPanel;
 
@@ -63,7 +63,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 
 		if(fieldPanel.getModel() != null) {
 			try {
-				Log.debug("AbstractModelEditAction.populateBinding()..");
+				Log.debug("AbstractBindingAction.populateBinding()..");
 				populateBinding(fieldPanel);
 			}
 			catch(final ClassCastException e) {
@@ -74,10 +74,20 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 			}
 		}
 	}
+	
+	/**
+	 * Transfers field data to the model through the defined bindings.
+	 */
+	@Override
+	public final void execute() {
+		// populate the model from field data..
+		if(!bound) throw new IllegalStateException();
+		binding.setLeft();
+	}
 
 	public void bind() {
 		if(!bound) {
-			Log.debug("AbstractModelEditAction.bind()..");
+			Log.debug("AbstractBindingAction.bind()..");
 
 			// bind primary..
 			binding.bind();
@@ -89,7 +99,7 @@ public abstract class AbstractModelEditAction<M extends IBindable, FP extends Fi
 
 	public void unbind() {
 		if(bound) {
-			Log.debug("AbstractModelEditAction.unbind()..");
+			Log.debug("AbstractBindingAction.unbind()..");
 
 			// clear the indexed..
 			for(final IndexedFieldPanel<?, ?> ifp : indexed) {

@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.AbstractModelEditAction;
+import com.tll.client.bind.AbstractBindingAction;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.CheckboxField;
@@ -38,7 +38,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	 * AccountEditAction
 	 * @author jpk
 	 */
-	private class AccountEditAction extends AbstractModelEditAction<M, AccountPanel<M>> {
+	private class AccountEditAction extends AbstractBindingAction<M, AccountPanel<M>> {
 
 		@Override
 		protected void populateBinding(AccountPanel<M> fp) throws PropertyPathException {
@@ -58,10 +58,6 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 			addNestedFieldBindings(fp, "paymentInfo");
 
 			addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
-		}
-
-		public void execute() {
-			// TODO anything?
 		}
 	}
 
@@ -208,8 +204,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	public AccountPanel() {
 		super();
 		initWidget(panel);
-		setAction(new AccountEditAction());
 		setRenderer(new AccountFieldsRenderer());
+		setAction(new AccountEditAction());
 	}
 
 	@Override

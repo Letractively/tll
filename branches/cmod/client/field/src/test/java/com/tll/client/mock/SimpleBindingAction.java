@@ -1,16 +1,16 @@
 package com.tll.client.mock;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.tll.client.bind.AbstractModelEditAction;
+import com.tll.client.bind.AbstractBindingAction;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 
 /**
- * MockBinding
+ * SimpleBindingAction
  * @author jpk
  */
-public class MockBinding extends AbstractModelEditAction<Model, FieldPanel<FlowPanel, Model>> {
+public class SimpleBindingAction extends AbstractBindingAction<Model, FieldPanel<FlowPanel, Model>> {
 
 	@Override
 	protected void populateBinding(FieldPanel<FlowPanel, Model> fp) throws PropertyPathException {
@@ -27,13 +27,5 @@ public class MockBinding extends AbstractModelEditAction<Model, FieldPanel<FlowP
 		addFieldBinding(fp, "dateLastCharged");
 		addFieldBinding(fp, "nextChargeDate");
 		addFieldBinding(fp, "persistPymntInfo");
-
-		addNestedFieldBindings(fp, "paymentInfo");
-
-		// addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
 	}
-
-	public void execute() {
-	}
-
 }

@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.tll.common.model.BooleanPropertyValue;
+import com.tll.common.model.CharacterPropertyValue;
 import com.tll.common.model.DatePropertyValue;
 import com.tll.common.model.EnumPropertyValue;
 import com.tll.common.model.FloatPropertyValue;
@@ -144,7 +145,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, num, null, false);
+		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, num, ("Adrs " + num), true);
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
 		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "account", true, account));
@@ -165,7 +166,7 @@ public class MockModelStubber {
 				"firstname " + num));
 		address.set(new StringPropertyValue("lastName", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"lastname " + num));
-		address.set(new StringPropertyValue("mi", new PropertyMetadata(PropertyType.CHAR, false, false, 1), "m"));
+		address.set(new CharacterPropertyValue("mi", new PropertyMetadata(PropertyType.CHAR, false, false, 1), 'm'));
 		address.set(new StringPropertyValue("address1", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"address1 " + num));
 		address.set(new StringPropertyValue("address2", new PropertyMetadata(PropertyType.STRING, false, false, 32),
