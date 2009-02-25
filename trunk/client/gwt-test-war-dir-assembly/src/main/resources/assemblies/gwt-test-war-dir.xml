@@ -1,0 +1,14 @@
+<assembly>
+  <id>gwt-test-war-dir</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>web.xml</include>
+        <include>*.html</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>

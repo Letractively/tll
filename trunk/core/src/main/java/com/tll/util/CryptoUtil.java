@@ -24,6 +24,7 @@ import sun.misc.BASE64Encoder;
  * CryptoUtil - Utility class for cryptologic-related methods.
  * @author jpk
  */
+@SuppressWarnings("restriction")
 public abstract class CryptoUtil {
 
 	private static final String CIPHER_TRANSFORMATION = "DES";

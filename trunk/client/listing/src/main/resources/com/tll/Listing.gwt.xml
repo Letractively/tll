@@ -1,0 +1,9 @@
+<module>
+  <inherits name="com.tll.Model" />
+  
+  <!-- non client package sources -->
+  <source path="listhandler">
+    <include name="ListHandlerType.java" />
+  </source>
+  
+</module>

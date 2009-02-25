@@ -12,6 +12,7 @@ import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
+import com.tll.client.ui.view.ViewRequestLink;
 
 /**
  * ViewPathPanel - Renders the current view path.

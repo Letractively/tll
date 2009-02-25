@@ -62,7 +62,7 @@ public final class Bootstrapper implements ServletContextListener {
 	 * The servlet context param name identifying the dependency injection
 	 * handlers.
 	 */
-	static final String DEPENDENCY_HANDLER_CLASS_NAMES = "do.handlers";
+	static final String DEPENDENCY_HANDLER_CLASS_NAMES = "di.handlers";
 
 	/**
 	 * Creates a dependency injector from the {@link ServletContext}'s init
@@ -138,14 +138,20 @@ public final class Bootstrapper implements ServletContextListener {
 		// load the dependency handler definitions
 		loadDependencyHandlers(servletContext);
 
-		for(IBootstrapHandler handler : handlers) {
-			handler.startup(injector, servletContext);
+		// start 'em up
+		if(handlers != null) {
+			for(IBootstrapHandler handler : handlers) {
+				handler.startup(injector, servletContext);
+			}
 		}
 	}
 
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
-		for(IBootstrapHandler handler : handlers) {
-			handler.shutdown(servletContextEvent.getServletContext());
+		// shut 'em down
+		if(handlers != null) {
+			for(IBootstrapHandler handler : handlers) {
+				handler.shutdown(servletContextEvent.getServletContext());
+			}
 		}
 	}
 }

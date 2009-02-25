@@ -1,0 +1,25 @@
+<module>
+  <inherits name="com.google.gwt.user.User" />
+
+  <!-- client exclusive source path -->
+  <source path="client" />
+  
+  <!-- shared (client/server) source path -->
+  <source path="common" />
+  
+  <!-- non client package sources -->
+  <source path=""><!-- (i.e. the current dir) -->
+    <include name="IMarshalable.java" />
+    <include name="IDescriptorProvider.java" />
+    <include name="INameValueProvider.java" />
+  </source>
+  
+  <source path="util">
+    <include name="DateRange.java" />
+    <include name="FNum.java" />
+    <include name="DataPoint.java" />
+  </source>
+  
+  <public path="public" />
+
+</module>

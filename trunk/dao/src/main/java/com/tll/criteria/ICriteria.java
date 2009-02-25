@@ -10,6 +10,7 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
+// TODO perhaps eliminate the un-necessary interface
 public interface ICriteria<E extends IEntity> extends Serializable {
 
 	/**

@@ -1,0 +1,14 @@
+<module>
+  <inherits name="com.google.gwt.user.User" />
+
+  <!-- client exclusive source path -->
+  <source path="client" />
+  
+  <public path="public" />
+
+  <replace-with class="com.tll.client.storage.CookieStorage.CookieConstants">
+    <when-type-is class="com.tll.client.storage.CookieStorage.CookieConstantsIE6" />
+    <when-property-is name="user.agent" value="ie6" />
+  </replace-with>
+  
+</module>

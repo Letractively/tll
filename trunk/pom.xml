@@ -30,9 +30,16 @@
   </scm>
 
   <properties>
+    <mode>dev</mode>
+    <environment>dev</environment>
+
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
-    <gwtVersion>1.5.3</gwtVersion>
+    <gwtVersion>1.6.4838</gwtVersion>
+    <atomikos.version>3.5.1</atomikos.version>
+    <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    <junitVersion>4.5</junitVersion>
+    <testNGVersion>5.8</testNGVersion>
   </properties>
 
   <modules>
@@ -45,91 +52,104 @@
     <module>service</module>
     <module>servlet</module>
     <module>security</module>
-    <module>smbiz</module>
+    <!-- TODO temp <module>client</module> -->
+    <!-- TODO temp (or not?) don't aggregate smbiz module <module>smbiz</module> -->
   </modules>
 
   <build>
+    
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          
-          <!-- fail the build if we have used but undeclared compile time dependencies -->
-          <executions>
-            <execution>
-              <id>analyze-compile-deps</id>
-              <goals>
-                <goal>analyze-only</goal>
-              </goals>
-              <phase>install</phase>
-              <configuration>
-                <failOnWarning>true</failOnWarning>
-                <ignoreNonCompile>true</ignoreNonCompile>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <mode>dev</mode>
-                <url>${pom.url}</url>
-              </manifestEntries>
-            </archive>
-          </configuration>
-
-          <!--
-            Retain the test classes only and not the test resources so we don't pollute the test classpath for dependent
-            modules.
-          -->
-          <executions>
-            <execution>
-              <id>test-assets</id>
-              <phase>package</phase>
-              <goals>
-                <goal>test-jar</goal>
-              </goals>
-              <configuration>
-                <includes>
-                  <include>**/*Test*.class</include>
-                </includes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
           <version>1.0-rc-4</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.2-beta-3</version>
+        </plugin>
       </plugins>
-
     </pluginManagement>
 
     <plugins>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <mode>dev</mode>
+              <url>${pom.url}</url>
+            </manifestEntries>
+          </archive>
+        </configuration>
+
+        <!--
+        Retain the test classes only and not the test resources so we don't 
+        pollute the test classpath for dependent modules.
+        -->
+        <executions>
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*Test*</include>
+                <include>**/mock/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>analyze-compile-deps</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <failOnWarning>true</failOnWarning>
+              <ignoreNonCompile>true</ignoreNonCompile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <!-- create the sources jar for installs -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
-            <id>attach-sources</id>
+            <id>jar-sources</id>
             <phase>verify</phase>
             <goals>
               <goal>jar</goal>
@@ -138,24 +158,55 @@
               <excludeResources>true</excludeResources>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+
+      <!--  Use the dependency plugin to unpack gwt-dev-PLATFORM-libs.zip -->
+      <!--
+        (this is a replacement for the old "automatic" mode - useful if you don't have GWT installed already, or you
+        just want a maven way to handle gwt deps)
+      -->
+      
+      <!-- TODO temp debug commentout 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
           <execution>
-            <id>attach-test-sources</id>
-            <phase>verify</phase>
+            <id>unpack</id>
+            <phase>compile</phase>
             <goals>
-              <goal>test-jar</goal>
+              <goal>unpack</goal>
             </goals>
             <configuration>
-              <excludeResources>true</excludeResources>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.google.gwt</groupId>
+                  <artifactId>gwt-dev</artifactId>
+                  <version>${gwtVersion}</version>
+                  <classifier>${platform}-libs</classifier>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${settings.localRepository}/com/google/gwt/gwt-dev/${gwtVersion}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>
       </plugin>
+      -->
+      
     </plugins>
 
   </build>
 
   <profiles>
-    <profile><!-- Production profile -->
+    <!-- dev (global) profile -->
+    <profile>
+      <id>dev</id>
+    </profile>
+    <!-- prod (global) profile -->
+    <profile>
       <id>prod</id>
       <build>
         <plugins>
@@ -169,6 +220,41 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    
+    <!-- GWT unpacking profiles -->
+    <profile>
+      <id>gwt-dev-windows</id>
+      <properties>
+        <platform>windows</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-mac</id>
+      <properties>
+        <platform>mac</platform>
+      </properties>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+    </profile>
+    <profile>
+      <id>gwt-dev-linux</id>
+      <properties>
+        <platform>linux</platform>
+      </properties>
+      <activation>
+        <os>
+          <name>linux</name>
+        </os>
+      </activation>
     </profile>
   </profiles>
 
@@ -237,17 +323,28 @@
         <artifactId>persistence-api</artifactId>
         <version>1.0</version>
       </dependency>
+      <dependency>
+        <groupId>javax.transaction</groupId>
+        <artifactId>jta</artifactId>
+        <version>1.1</version>
+      </dependency>
 
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>1.5.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>net.sf.jsr107cache</groupId>
+            <artifactId>jsr107cache</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.6</version>
+        <version>${mysqlConnectorVersion}</version>
       </dependency>
 
       <dependency>
@@ -332,12 +429,12 @@
         <version>${springVersion}</version>
       </dependency>
       <dependency>
-      <groupId>org.springframework.security</groupId>
+        <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
         <version>2.0.4</version>
       </dependency>
       <dependency>
-      <groupId>org.springframework.security</groupId>
+        <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-acl</artifactId>
         <version>2.0.4</version>
       </dependency>
@@ -380,7 +477,7 @@
         <artifactId>servlet-api</artifactId>
         <version>2.4</version>
       </dependency>
-      
+
       <!-- GWT -->
       <dependency>
         <groupId>com.google.gwt</groupId>
@@ -396,14 +493,14 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>5.8</version>
+        <version>${testNGVersion}</version>
         <classifier>jdk15</classifier>
       </dependency>
 
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.5</version>
+        <version>${junitVersion}</version>
       </dependency>
 
     </dependencies>

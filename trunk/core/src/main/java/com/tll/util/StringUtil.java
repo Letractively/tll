@@ -94,7 +94,7 @@ public final class StringUtil {
 			return str;
 		}
 		replaceChars = replace.toCharArray();
-		final StringBuffer sb = new StringBuffer(strlen);
+		final StringBuilder sb = new StringBuilder(strlen);
 		int sCut = 0;
 		for(int eCut; (eCut = str.indexOf(find, sCut)) != -1; sCut = eCut + findlen) {
 			sb.append(chars, sCut, (eCut - sCut)).append(replaceChars);
@@ -140,7 +140,7 @@ public final class StringUtil {
 		}
 		// remove extra spaces and replace with single space
 		str = str.replaceAll(" +", " ");
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		for(int i = 0; i < str.length(); i++) {
 			final char ch = str.charAt(i);
 			if(charset.indexOf(ch) == -1) {
@@ -154,7 +154,7 @@ public final class StringUtil {
 		if(arr == null || arr.length == 0) {
 			return null;
 		}
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for(final String element : arr) {
 			if(!first) {
@@ -189,7 +189,7 @@ public final class StringUtil {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasLower = false;
 		final char[] chars = s.toCharArray();
-		final StringBuffer sb = new StringBuffer(chars.length + 32);
+		final StringBuilder sb = new StringBuilder(chars.length + 32);
 		for(int i = 0; i < chars.length; i++) {
 			if(Character.isUpperCase(chars[i])) {
 				if(priorWasLower && i > 0) {
@@ -212,7 +212,7 @@ public final class StringUtil {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasUnderscore = false;
 		final char[] chars = s.toCharArray();
-		final StringBuffer sb = new StringBuffer(chars.length + 32);
+		final StringBuilder sb = new StringBuilder(chars.length + 32);
 		sb.append(firstCharCapitalized ? Character.toUpperCase(chars[0]) : Character.toLowerCase(chars[0]));
 		for(int i = 1; i < chars.length; i++) {
 			final char c = priorWasUnderscore ? Character.toUpperCase(chars[i]) : Character.toLowerCase(chars[i]);
@@ -252,8 +252,13 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Converts a bean notation string into a user-presentable string. This method
-	 * basically uppercases each word, and converts a period to a space.
+	 * Converts an OGNL token (Object Graph Notation Language) string into a
+	 * user-presentable string. <br>
+	 * E.g.:
+	 * 
+	 * <pre>
+	 * &quot;bean1.bean2.bean3&quot; -&gt; &quot;Bean1 Bean2 Bean3&quot;
+	 * </pre>
 	 * @param str bean notation string
 	 * @return a string representation that can be shown to a user.
 	 */
@@ -261,7 +266,7 @@ public final class StringUtil {
 		// track whether we have encountered a period
 		// default to true since we always want to capitalize the first character
 		boolean foundDot = true;
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 		for(int i = 0; i < str.length(); i++) {
 			final char ch = str.charAt(i);
 			if(foundDot) {
@@ -288,16 +293,17 @@ public final class StringUtil {
 	}
 
 	/**
-	 * Capitalizes the first char in the given string and inserts spaces between
-	 * char sequences having a lower-case char to the left of an upper-case char.
-	 * @param s The camel cased string (Java convention).
-	 * @return {@link String}
+	 * Capitalizes the first char in the given camelCasedString inserting spaces
+	 * between char sequences having a lower-case char to the left of an
+	 * upper-case char.
+	 * @param s The camelCasedString (Java convention).
+	 * @return A presentation worthy {@link String}.
 	 */
 	public static String formatCamelCase(final String s) {
 		if(s == null || s.length() < 1) return s;
 		boolean priorWasLower = false;
 		final char[] chars = s.toCharArray();
-		final StringBuffer sb = new StringBuffer(chars.length + 32);
+		final StringBuilder sb = new StringBuilder(chars.length + 32);
 		sb.append(Character.toUpperCase(chars[0]));
 		for(int i = 1; i < chars.length; i++) {
 			final char c = chars[i];

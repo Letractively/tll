@@ -5,11 +5,13 @@
  */
 package com.tll.model.mock;
 
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.lang.math.RandomUtils;
 
 import com.tll.model.IEntity;
+import com.tll.model.ITimeStampEntity;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 
 
@@ -92,7 +94,13 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 		if(!set.add(e)) {
 			throw new IllegalStateException("Unable to add entity to the graph: " + e);
 		}
-		e.setVersion(0); // since we are now in the graph
+		// since we are now in the graph, mimic persistence behavior:
+		e.setVersion(0);
+		if(e instanceof ITimeStampEntity) {
+			final Date now = new Date();
+			((ITimeStampEntity) e).setDateCreated(now);
+			((ITimeStampEntity) e).setDateModified(now);
+		}
 		return e;
 	}
 

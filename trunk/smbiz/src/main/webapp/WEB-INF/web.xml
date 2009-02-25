@@ -36,8 +36,9 @@
     </description>
     <param-name>di.handlers</param-name>
     <param-value> 
-      com.tll.server.AppContextHandler
-      com.tll.server.SecurityContextHandler
+      com.tll.server.rpc.entity.MEntityServiceBootstrapper
+      com.tll.server.SecurityContextBootstrapper
+      com.tll.server.AppContextBootstrapper
     </param-value>
   </context-param>
 
@@ -70,7 +71,7 @@
 
   <filter-mapping>
     <filter-name>CacheManagerFilter</filter-name>
-    <url-pattern>/rpc/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
 
   <filter>
@@ -80,7 +81,7 @@
   
   <filter-mapping>
     <filter-name>OpenEntityManagerInViewFilter</filter-name>
-    <url-pattern>/rpc/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
   
   <filter-mapping>
@@ -90,7 +91,7 @@
   
   <filter>
     <filter-name>AuthenticationProcessingFilter</filter-name>
-    <filter-class>com.tll.server.admin.filter.AuthenticationProcessingFilter</filter-class>
+    <filter-class>com.tll.server.filter.SmbizAuthenticationProcessingFilter</filter-class>
 		<init-param>
 			<param-name>authenticationFailureUrl</param-name>
 			<param-value>/adminLogin?login_error=1</param-value>
@@ -279,7 +280,7 @@
   
   <servlet>
     <servlet-name>AdminContextService</servlet-name>
-    <servlet-class>com.tll.server.admin.rpc.AdminContextService</servlet-class>
+    <servlet-class>com.tll.server.rpc.AdminContextService</servlet-class>
   </servlet>
   
   <servlet-mapping>

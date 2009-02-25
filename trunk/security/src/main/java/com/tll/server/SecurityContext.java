@@ -5,15 +5,23 @@
  */
 package com.tll.server;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.security.AccessDecisionManager;
 import org.springframework.security.AuthenticationManager;
 
 /**
- * SecurityContext - {@link ISecurityContext} impl.
+ * SecurityContext - {@link SecurityContext} impl.
  * @author jpk
  */
-public class SecurityContext implements ISecurityContext {
+public class SecurityContext {
 
+	/**
+	 * The key identifying the sole {@link SecurityContext} in the
+	 * {@link ServletContext}.
+	 */
+	public static final String SERVLET_CONTEXT_KEY = SecurityContext.class.getName();
+	
 	private final SecurityMode securityMode;
 	private final AuthenticationManager authenticationManager;
 	private final AccessDecisionManager httpRequestAccessDecisionManager;
@@ -32,17 +40,14 @@ public class SecurityContext implements ISecurityContext {
 		this.httpRequestAccessDecisionManager = httpRequestAccessDecisionManager;
 	}
 
-	@Override
 	public SecurityMode getSecurityMode() {
 		return securityMode;
 	}
 
-	@Override
 	public AuthenticationManager getAuthenticationManager() {
 		return authenticationManager;
 	}
 
-	@Override
 	public AccessDecisionManager getHttpRequestAccessDecisionManager() {
 		return httpRequestAccessDecisionManager;
 	}

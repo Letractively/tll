@@ -1,46 +1,43 @@
 package com.tll.client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.admin.mvc.view.intf.InterfacesView;
-import com.tll.client.admin.ui.field.AddressFieldsProvider;
-import com.tll.client.admin.ui.field.AddressFieldsRenderer;
 import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.BooleanPassThroughConverter;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.msg.MsgManager;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRequestEvent;
+import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.MsgPanel;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.client.ui.Toolbar;
-import com.tll.client.ui.TimedPositionedPopup.Position;
 import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.field.AddressFieldsProvider;
+import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
@@ -52,10 +49,7 @@ import com.tll.client.ui.listing.ListingNavBar;
 import com.tll.client.ui.view.ViewContainer;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.bind.IBindable;
-import com.tll.common.convert.BooleanPassThroughConverter;
 import com.tll.common.model.Model;
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.dao.Sorting;
 import com.tll.refdata.RefDataType;
 
@@ -64,18 +58,17 @@ import com.tll.refdata.RefDataType;
  * compiled GWT code.
  */
 @SuppressWarnings("synthetic-access")
-public final class UITests implements EntryPoint, HistoryListener {
+public final class UITests implements EntryPoint, ValueChangeHandler<String> {
 
 	/**
 	 * The test names.
 	 */
-	static final String TEST_MSG_PANEL = "TEST_MSG_PANEL";
 	static final String TEST_TOOLBAR = "TEST_TOOLBAR";
 	static final String TEST_VIEW_CONTAINER = "TEST_VIEW_CONTAINER";
 	static final String TEST_FIELDS = "TEST_FIELDS";
 
 	static String[] tests = new String[] {
-		TEST_MSG_PANEL, TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
+		TEST_TOOLBAR, TEST_VIEW_CONTAINER, TEST_FIELDS };
 
 	final HtmlListPanel testList = new HtmlListPanel(true);
 	final Hyperlink backLink = new Hyperlink("Back", "Back");
@@ -98,11 +91,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		// try/catch is necessary here because GWT.setUncaughtExceptionHandler()
 		// will work not until onModuleLoad() has returned
 		try {
-			History.addHistoryListener(this);
+			History.addValueChangeHandler(this);
 			stubTestLinks();
 			initAuxDataCache();
 		}
-		catch(RuntimeException e) {
+		catch(final RuntimeException e) {
 			GWT.log("Error in 'onModuleLoad()' method", e);
 			e.printStackTrace();
 		}
@@ -110,11 +103,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 
 	private void initAuxDataCache() {
 		// stub aux data cache
-		Map<String, String> cc = new HashMap<String, String>();
+		final Map<String, String> cc = new HashMap<String, String>();
 		cc.put("us", "United States");
 		AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
 
-		Map<String, String> st = new HashMap<String, String>();
+		final Map<String, String> st = new HashMap<String, String>();
 		st.put("ca", "California");
 		AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
 	}
@@ -123,8 +116,8 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * Setup links to invoke the desired tests.
 	 */
 	private void stubTestLinks() {
-		for(String element : tests) {
-			Hyperlink link = new Hyperlink(element, element);
+		for(final String element : tests) {
+			final Hyperlink link = new Hyperlink(element, element);
 			testList.add(link);
 		}
 		RootPanel.get().add(testList);
@@ -139,18 +132,15 @@ public final class UITests implements EntryPoint, HistoryListener {
 		backLink.setVisible(gotoTest);
 	}
 
-	public void onHistoryChanged(final String historyToken) {
+	public void onValueChange(final ValueChangeEvent<String> event) {
+		final String historyToken = event.getValue();
 		DeferredCommand.addCommand(new Command() {
 
 			public void execute() {
 				testPanel.clear();
-				MsgManager.instance().clear();
-
 				boolean gotoTest = true;
-				if(TEST_MSG_PANEL.equals(historyToken)) {
-					testMsgPanel();
-				}
-				else if(TEST_TOOLBAR.equals(historyToken)) {
+				
+				if(TEST_TOOLBAR.equals(historyToken)) {
 					testToolbar();
 				}
 				else if(TEST_VIEW_CONTAINER.equals(historyToken)) {
@@ -169,7 +159,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 	}
 
 	/**
-	 * TestFieldPanel - Used for the fields test.
+	 * MockFieldPanels - Used for the fields test.
 	 * @author jpk
 	 */
 	private static final class TestFieldPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
@@ -193,7 +183,7 @@ public final class UITests implements EntryPoint, HistoryListener {
 			setRenderer(new IFieldRenderer<FlowPanel>() {
 
 				public void render(FlowPanel panel, FieldGroup fg) {
-					FieldGroup afg = (FieldGroup) fg.getFieldByName("address");
+					final FieldGroup afg = (FieldGroup) fg.getFieldByName("address");
 					afg.addFields(fg.getFields("address"));
 					(new AddressFieldsRenderer()).render(addressPanel, null);
 
@@ -212,9 +202,9 @@ public final class UITests implements EntryPoint, HistoryListener {
 			return (new IFieldGroupProvider() {
 
 				public FieldGroup getFieldGroup() {
-					FieldGroup fg = new FieldGroup("test");
+					final FieldGroup fg = new FieldGroup("test");
 					fg.setName("address");
-					FieldGroup afg = (new AddressFieldsProvider()).getFieldGroup();
+					final FieldGroup afg = (new AddressFieldsProvider()).getFieldGroup();
 					fg.addField("address", afg);
 
 					// set address2 as read only
@@ -246,11 +236,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testPanel.add(ep);
 
 		// add button toggle read only/editable
-		Button btnRO = new Button("Read Only", new ClickListener() {
+		final Button btnRO = new Button("Read Only", new ClickHandler() {
 
-			public void onClick(Widget sender) {
-				Button b = (Button) sender;
-				boolean readOnly = b.getText().equals("Read Only");
+			public void onClick(ClickEvent event) {
+				final Button b = (Button) event.getSource();
+				final boolean readOnly = b.getText().equals("Read Only");
 				fieldPanel.getFieldGroup().setReadOnly(readOnly);
 				b.setText(readOnly ? "Editable" : "Read Only");
 			}
@@ -259,11 +249,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testPanel.add(btnRO);
 
 		// add button toggle enable/disable
-		Button btnEnbl = new Button("Disable", new ClickListener() {
+		final Button btnEnbl = new Button("Disable", new ClickHandler() {
 
-			public void onClick(Widget sender) {
-				Button b = (Button) sender;
-				boolean enable = b.getText().equals("Enable");
+			public void onClick(ClickEvent event) {
+				final Button b = (Button) event.getSource();
+				final boolean enable = b.getText().equals("Enable");
 				fieldPanel.getFieldGroup().setEnabled(enable);
 				b.setText(enable ? "Disable" : "Enable");
 			}
@@ -272,11 +262,11 @@ public final class UITests implements EntryPoint, HistoryListener {
 		testPanel.add(btnEnbl);
 
 		// add button toggle show/hide
-		Button btnVisible = new Button("Hide", new ClickListener() {
+		final Button btnVisible = new Button("Hide", new ClickHandler() {
 
-			public void onClick(Widget sender) {
-				Button b = (Button) sender;
-				boolean show = b.getText().equals("Show");
+			public void onClick(ClickEvent event) {
+				final Button b = (Button) event.getSource();
+				final boolean show = b.getText().equals("Show");
 				fieldPanel.setVisible(show);
 				b.setText(show ? "Hide" : "Show");
 			}
@@ -293,17 +283,17 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 * Purpose: Renders populated {@link Toolbar} impls to verify its DOM/Style.
 	 */
 	void testToolbar() {
-		ViewToolbar vt =
+		final ViewToolbar vt =
 				new ViewToolbar("AbstractView Display Name", new ViewOptions(true, true, true, true, true),
-						new ClickListener() {
+						new ClickHandler() {
 
-							public void onClick(Widget sender) {
+							public void onClick(ClickEvent event) {
 							}
 
 						});
 		testPanel.add(vt);
 
-		ListingNavBar<Model> listingToolbar = new ListingNavBar<Model>(new IListingConfig<Model>() {
+		final ListingNavBar<Model> listingToolbar = new ListingNavBar<Model>(new IListingConfig<Model>() {
 
 			public boolean isSortable() {
 				return true;
@@ -419,12 +409,12 @@ public final class UITests implements EntryPoint, HistoryListener {
 	 */
 	void testViewContainer() {
 
-		TestViewClass viewClass = new TestViewClass();
+		final TestViewClass viewClass = new TestViewClass();
 		final ViewContainer vc = new ViewContainer(viewClass.newView());
-		testPanel.add(new SimpleHyperLink("Pop", new ClickListener() {
+		testPanel.add(new SimpleHyperLink("Pop", new ClickHandler() {
 
-			public void onClick(Widget sender) {
-				SimpleHyperLink sh = (SimpleHyperLink) sender;
+			public void onClick(ClickEvent event) {
+				final SimpleHyperLink sh = (SimpleHyperLink) event.getSource();
 				if(sh.getText().equals("Pop")) {
 					vc.pop(testPanel);
 					sh.setText("Pin");
@@ -436,27 +426,5 @@ public final class UITests implements EntryPoint, HistoryListener {
 			}
 		}));
 		testPanel.add(vc);
-	}
-
-	/**
-	 * <p>
-	 * Test: TEST_MSG_PANEL
-	 * <p>
-	 * Purpose: Renders a populated {@link MsgPanel} to verify its DOM/Style.
-	 */
-	void testMsgPanel() {
-
-		// create msgs
-		List<Msg> msgs = new ArrayList<Msg>();
-		// msgs.add(new Msg("This is a fatal message.", MsgLevel.FATAL));
-		msgs.add(new Msg("This is an error message.", MsgLevel.ERROR));
-		msgs.add(new Msg("This is another error message.", MsgLevel.ERROR));
-		msgs.add(new Msg("This is a warn message.", MsgLevel.WARN));
-		msgs.add(new Msg("This is an info message.", MsgLevel.INFO));
-		msgs.add(new Msg("This is another info message.", MsgLevel.INFO));
-		msgs.add(new Msg("This is yet another info message.", MsgLevel.INFO));
-		// msgs.add(new Msg("This is a success message.", MsgLevel.SUCCESS));
-
-		MsgManager.instance().post(false, msgs, Position.CENTER, RootPanel.get(), -1, true).show();
 	}
 }

@@ -11,13 +11,14 @@ import org.springframework.security.userdetails.UserDetailsService;
 import com.tll.model.Account;
 import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.User;
+import com.tll.service.IForgotPasswordHandler;
 import com.tll.service.entity.INamedEntityService;
 
 /**
  * IUserService
  * @author jpk
  */
-public interface IUserService extends INamedEntityService<User>, UserDetailsService {
+public interface IUserService extends INamedEntityService<User>, UserDetailsService, IForgotPasswordHandler {
 
 	/**
 	 * Create a user given an account, username and password.
@@ -44,22 +45,8 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @param username
 	 * @param newUsername
 	 * @param newRawPassword
-	 * @throws ChangeUserCredentialsFailedException
+	 * @throws ChangeUserCredentialsFailedException When the operation fails
 	 */
 	void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
 			throws ChangeUserCredentialsFailedException;
-
-	/**
-	 * @param userId
-	 * @return the new reset password
-	 * @throws ChangeUserCredentialsFailedException
-	 */
-	String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException;
-
-	/**
-	 * Loads a {@link User} by email address auto-deproxying the related account.
-	 * @param emailAddress
-	 * @return the matching user
-	 */
-	User findByUsername(String emailAddress);
 }

@@ -12,11 +12,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.StringUtils;
-
 /**
  * CommonUtil - common utility methods.
  * @author jpk
@@ -153,9 +148,9 @@ public abstract class CommonUtil {
 			final URL resource = resources.nextElement();
 			try {
 				final URI uri = resource.toURI();
-				String rpath = uri.getPath();
+				final String rpath = uri.getPath();
 				if(rpath != null) {
-					File dir = new File(rpath);
+					final File dir = new File(rpath);
 					if(filter != null) {
 						if(!filter.accept(dir, null)) {
 							continue;
@@ -168,7 +163,7 @@ public abstract class CommonUtil {
 				throw new ClassNotFoundException(pckgname + " (" + resource.getPath()
 						+ ") does not appear to be a valid package");
 			}
-			catch(NullPointerException e) {
+			catch(final NullPointerException e) {
 				// ok - continue
 			}
 		}
@@ -201,32 +196,4 @@ public abstract class CommonUtil {
 		classes.toArray(classesA);
 		return classesA;
 	}
-
-	/**
-	 * Retrieves the contents of a file as a string with system default encoding
-	 * on the classpath under a given path of a given name.
-	 * @param path The path of the file
-	 * @param fileName The name of the file.
-	 * @return String containing the file contents
-	 * @throws IOException
-	 */
-	public static String getClasspathFileContents(final String path, final String fileName) throws IOException {
-		final Resource resource = new ClassPathResource(path);
-		return FileUtils.readFileToString(resource.getFile(), System.getProperty("encoding"));
-	}
-
-	/**
-	 * Retrieves the contents of a file as a string with system default encoding
-	 * on the classpath under a given path of a given name.
-	 * @param claz The class name from which the path is determined.
-	 * @param fileName The name of the file.
-	 * @return the file contents
-	 * @throws IOException
-	 * @see #getClasspathFileContents(String, String)
-	 */
-	public static String getClasspathFileContents(final Class<?> claz, final String fileName) throws IOException {
-		final String path = StringUtils.replace(claz.getPackage().getName(), ".", "/") + '/' + fileName;
-		return getClasspathFileContents(path, fileName);
-	}
-
 }
