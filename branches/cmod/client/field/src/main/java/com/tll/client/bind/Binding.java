@@ -79,8 +79,8 @@ public final class Binding {
 
 	/**
 	 * DefaultPropertyChangeListener - Listens for property changes for a property
-	 * in a given <em>instance</em> and propagates changes to this property to a
-	 * given <em>target<em> object.
+	 * in a given <em>instance</em> and propagates these changes to a
+	 * <em>target<em> object.
 	 * @author jpk
 	 */
 	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
@@ -106,7 +106,7 @@ public final class Binding {
 				try {
 					value = instance.validator.validate(value);
 				}
-				catch(ValidationException ve) {
+				catch(final ValidationException ve) {
 					if(instance.feedback != null) {
 						if(lastException != null) {
 							instance.feedback.resolve(propertyChangeEvent.getSource());
@@ -141,7 +141,7 @@ public final class Binding {
 			try {
 				target.object.setProperty(targetProperty, value);
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				throw new RuntimeException("Unable to set property: " + targetProperty, e);
 			}
 		}
@@ -178,7 +178,7 @@ public final class Binding {
 				bound = true;
 			}
 
-			BindingInstance newInstance = createBindingInstance(sourceObject, propertyName);
+			final BindingInstance newInstance = createBindingInstance(sourceObject, propertyName);
 
 			bound = newInstance.object != null;
 
@@ -380,7 +380,7 @@ public final class Binding {
 				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
 						.getProperty(right.property)));
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -402,7 +402,7 @@ public final class Binding {
 				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
 						.getProperty(left.property)));
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -475,6 +475,7 @@ public final class Binding {
 	 * Validates <em>all</em> bindings in this binding.
 	 * @return boolean indicating this binding is valid.
 	 */
+	/*
 	public boolean validate() {
 		boolean valid = true;
 
@@ -529,11 +530,13 @@ public final class Binding {
 
 		return valid;
 	}
-
+	*/
+	
 	/**
 	 * Validates stopping at the first found invalid binding.
 	 * @return boolean indicating if all values are valid.
 	 */
+	/*
 	public boolean isValid() {
 		try {
 			if((left != null) && (right != null)) {
@@ -562,23 +565,28 @@ public final class Binding {
 			throw new RuntimeException(e);
 		}
 	}
-
+	*/
+	
 	/**
 	 * Returns the left hand BindingInstance.
 	 * @return Returns the left hand BindingInstance.
 	 */
+	/*
 	public BindingInstance getLeft() {
 		return left;
 	}
-
+	*/
+	
 	/**
 	 * Returns the right hand BindingInstance.
 	 * @return Returns the left hand BindingInstance.
 	 */
+	/*
 	public BindingInstance getRight() {
 		return right;
 	}
-
+	*/
+	
 	/**
 	 * Creates an instance of {@link BindingInstance}.
 	 * @param object
@@ -587,14 +595,14 @@ public final class Binding {
 	 */
 	private BindingInstance createBindingInstance(IBindable object, String propertyName) {
 		int dotIndex = propertyName.indexOf(".");
-		BindingInstance instance = new BindingInstance();
+		final BindingInstance instance = new BindingInstance();
 
-		NestedPropertyChangeListener rtpcl =
+		final NestedPropertyChangeListener rtpcl =
 				(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
 
 		if(dotIndex != -1) {
-			ArrayList<IBindable> parents = new ArrayList<IBindable>();
-			ArrayList<String> propertyNames = new ArrayList<String>();
+			final ArrayList<IBindable> parents = new ArrayList<IBindable>();
+			final ArrayList<String> propertyNames = new ArrayList<String>();
 
 			while(dotIndex != -1) {
 				String pname = propertyName.substring(0, dotIndex);
@@ -603,7 +611,7 @@ public final class Binding {
 
 				try {
 					String discriminator = null;
-					int descIndex = pname.indexOf("[");
+					final int descIndex = pname.indexOf("[");
 
 					if(descIndex != -1) {
 						discriminator = pname.substring(descIndex + 1, pname.indexOf("]", descIndex));
@@ -621,10 +629,10 @@ public final class Binding {
 						object = (IBindable) object.getProperty(pname);
 					}
 				}
-				catch(ClassCastException cce) {
+				catch(final ClassCastException cce) {
 					throw new RuntimeException("Nonbindable sub property: " + object + " . " + pname, cce);
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					throw new RuntimeException(e);
 				}
 
@@ -646,7 +654,7 @@ public final class Binding {
 
 	@SuppressWarnings("unchecked")
 	private IBindable getDiscriminatedObject(Object collectionOrArray, String discriminator) {
-		int equalsIndex = discriminator.indexOf("=");
+		final int equalsIndex = discriminator.indexOf("=");
 
 		if(collectionOrArray instanceof Collection && (equalsIndex == -1)) {
 			return getBindableAtCollectionIndex((Collection<IBindable>) collectionOrArray, Integer.parseInt(discriminator));
@@ -668,13 +676,13 @@ public final class Binding {
 	}
 
 	private IBindable getBindableHavingPropertyOfValue(IBindable[] array, String propertyName, String stringValue) {
-		for(IBindable b : array) {
+		for(final IBindable b : array) {
 			try {
 				if((b.getProperty(propertyName) + "").equals(stringValue)) {
 					return b;
 				}
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -682,13 +690,13 @@ public final class Binding {
 	}
 
 	private IBindable getBindableHavingPropertyOfValue(Iterable<IBindable> itr, String propertyName, String stringValue) {
-		for(IBindable b : itr) {
+		for(final IBindable b : itr) {
 			try {
 				if((b.getProperty(propertyName) + "").equals(stringValue)) {
 					return b;
 				}
 			}
-			catch(Exception e) {
+			catch(final Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -699,8 +707,8 @@ public final class Binding {
 	private IBindable getBindableAtMapKey(Map<String, IBindable> map, String key) {
 		IBindable result = null;
 
-		for(Iterator<Entry<String, IBindable>> it = map.entrySet().iterator(); it.hasNext();) {
-			Entry<String, IBindable> e = it.next();
+		for(final Iterator<Entry<String, IBindable>> it = map.entrySet().iterator(); it.hasNext();) {
+			final Entry<String, IBindable> e = it.next();
 			if(e.getKey().toString().equals(key)) {
 				result = e.getValue();
 				break;
@@ -712,7 +720,7 @@ public final class Binding {
 
 	private IBindable getBindableAtCollectionIndex(Iterable<IBindable> collection, int index) {
 		int i = 0;
-		for(IBindable b : collection) {
+		for(final IBindable b : collection) {
 			if(i++ == index) return b;
 		}
 		throw new IndexOutOfBoundsException("Binding discriminator too high: " + index);

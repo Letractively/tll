@@ -51,11 +51,12 @@ public final class UITests extends AbstractUITest {
 		@Override
 		public void load() {
 			context = new HorizontalPanel();
+			context.setSpacing(7);
+			context.setBorderWidth(1);
 			context.getElement().getStyle().setProperty("margin", "1em");
-			context.getElement().getStyle().setProperty("padding", "1em");
-			context.getElement().getStyle().setProperty("border", "1px solid gray");
+			//context.getElement().getStyle().setProperty("border", "1px solid gray");
 
-			mv = new ModelViewer(250, 350);
+			mv = new ModelViewer();
 			ep = new EditPanel(new ComplexFieldPanel(), false, false);
 			ep.addEditListener(mv);
 

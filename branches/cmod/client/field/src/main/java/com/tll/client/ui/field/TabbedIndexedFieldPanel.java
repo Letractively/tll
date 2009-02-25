@@ -323,20 +323,17 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 
 	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 		assert event.getSource() == tabPanel;
-
 		if(lastSelectedTabIndex != -1) {
 			// hide msgs on last tab
 			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).hideMsgs();
 		}
-
-		//return true;
-		event.cancel(); // TODO verify this actually prevents tab selection
 	}
 
 	public void onSelection(SelectionEvent<Integer> event) {
 		// show msgs on selected tab
-		registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs();
-
+		if(lastSelectedTabIndex != -1) {
+			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs();
+		}
 		lastSelectedTabIndex = event.getSelectedItem();
 	}
 

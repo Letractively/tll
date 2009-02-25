@@ -6,16 +6,20 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.util.Fmt;
+import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IModelRefProperty;
+import com.tll.common.model.IPropertyValue;
+import com.tll.common.model.IndexedProperty;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.RelatedManyProperty;
@@ -27,21 +31,19 @@ import com.tll.model.schema.PropertyType;
  */
 public class ModelViewer extends Composite implements IEditListener {
 
-	private final ScrollPanel scrollPanel;
+	private final Panel panel;
 	private final Tree tree;
 	private Model model;
 
 	/**
 	 * Constructor
-	 * @param pixelWidth
-	 * @param pixelHeight
 	 */
-	public ModelViewer(int pixelWidth, int pixelHeight) {
+	public ModelViewer() {
 		super();
 		tree = new Tree();
-		scrollPanel = new ScrollPanel(tree);
-		scrollPanel.setPixelSize(pixelWidth, pixelHeight);
-		initWidget(scrollPanel);
+		panel = new SimplePanel();
+		panel.add(tree);
+		initWidget(panel);
 	}
 
 	/**
@@ -56,7 +58,7 @@ public class ModelViewer extends Composite implements IEditListener {
 		}
 		this.model = model;
 	}
-
+	
 	/**
 	 * Fills the tree with the given model properties.
 	 * @param model
@@ -68,7 +70,13 @@ public class ModelViewer extends Composite implements IEditListener {
 		tree.clear();
 
 		// add model ref root tree item
-		final TreeItem root = new TreeItem(model.toString());
+		final TreeItem root;
+		try {
+			root = new TreeItem(getModelRefHtml((IModelRefProperty) model.getModelProperty(null)));
+		}
+		catch(final PropertyPathException e) {
+			throw new Error(e);
+		}
 		tree.addItem(root);
 
 		// add model props..
@@ -80,17 +88,68 @@ public class ModelViewer extends Composite implements IEditListener {
 		catch(final PropertyPathException e) {
 			throw new IllegalStateException();
 		}
+		
+		root.setState(true);
 	}
 
 	@SuppressWarnings("serial")
-	static final class VisitedStack extends ArrayList<Model> {
+	static final class VisitedStack extends ArrayList<IModelProperty> {
 
-		boolean exists(final Model model) {
-			for(final Model m : this) {
-				if(m == model) return true;
+		boolean exists(final IModelProperty prop) {
+			for(final IModelProperty p : this) {
+				if(p == prop) return true;
 			}
 			return false;
 		}
+	}
+	
+	private String getPropValueHtml(IPropertyValue p) {
+		String sval;
+		if(p.getValue() == null) {
+			sval = "-";
+		}
+		else if(p.getType() == PropertyType.DATE) {
+			sval = Fmt.format(p.getValue(), GlobalFormat.TIMESTAMP);
+		}
+		else {
+			sval = p.getValue().toString();
+		}
+		return "<span style=\"color:gray\">" + p.getPropertyName() + "</span>&nbsp;<span style=\"color:blue\">"
+				+ sval + "</span>";
+	}
+
+	private String getModelRefHtml(IModelRefProperty p) {
+		String sval;
+		if(p.getModel() == null) {
+			sval = "-";
+		}
+		else {
+			sval = p.getModel().toString();
+		}
+		if(p.getType() == PropertyType.INDEXED) {
+			return "<span style=\"color:green\"><b>[" + ((IndexedProperty) p).getIndex()
+					+ "]</b></span>&nbsp;<span style=\"color:gray\">" + sval + "</span>";
+		}
+		// related one
+		if(p.getPropertyName() == null) {
+			// presume the root model
+			return "<b>" + sval + "</b>";
+		}
+		return "<span style=\"color:maroon\"><b>" + p.getPropertyName() + "</b></span>&nbsp;<span style=\"color:gray\">"
+		+ sval
+		+ "</span>";
+	}
+
+	private String getModelCollectionHtml(RelatedManyProperty p) {
+		String sval;
+		if(p.getList() == null) {
+			sval = "-";
+		}
+		else {
+			sval = "(" + p.size() + ")";
+		}
+		return "<span style=\"color:darkgreen\"><b>" + p.getPropertyName() + "</b>&nbsp;<span style=\"color:gray\">" + sval
+				+ "</span>";
 	}
 
 	/**
@@ -100,39 +159,41 @@ public class ModelViewer extends Composite implements IEditListener {
 	 * @param visited
 	 */
 	private void addProp(IModelProperty prop, TreeItem parent, final VisitedStack visited) throws PropertyPathException {
+		// check visited
+		if(!visited.exists(prop)) {
+			visited.add(prop);
+		}
+		else {
+			return;
+		}
+		
 		final PropertyType ptype = prop.getType();
 		if(ptype.isModelRef()) {
 			// related one
+			final TreeItem branch = new TreeItem(getModelRefHtml((IModelRefProperty) prop));
+			parent.addItem(branch);
 			final Model m = ((IModelRefProperty) prop).getModel();
-			if(m == null || !visited.exists(m)) {
-				final TreeItem branch = new TreeItem(prop.toString());
-				parent.addItem(branch);
-				if(m != null) {
-					visited.add(m);
-					for(final IModelProperty nprop : m) {
-						addProp(nprop, branch, visited);
-					}
+			if(m != null) {
+				for(final IModelProperty nprop : m) {
+					addProp(nprop, branch, visited);
 				}
 			}
 		}
 		else if(ptype.isRelational()) {
 			// related many
-			final TreeItem branch = new TreeItem(prop.toString());
+			final TreeItem branch = new TreeItem(getModelCollectionHtml((RelatedManyProperty) prop));
 			parent.addItem(branch);
-			final List<Model> list = ((RelatedManyProperty) prop).getList();
-			if(list != null) {
-				for(final Model m : list) {
-					if(!visited.exists(m)) {
-						visited.add(m);
-						addProp(m.getModelProperty(null), branch, visited);
-					}
-				}
+			for(final IndexedProperty ip : (RelatedManyProperty) prop) {
+				addProp(ip, branch, visited);
 			}
 		}
 		else {
 			// non-relational value property
 			assert ptype.isValue() == true;
-			parent.addItem(prop.toString());
+			// don't enumerate the id property (its redundant)
+			if(!Model.ID_PROPERTY.equals(prop.getPropertyName())) {
+				parent.addItem(getPropValueHtml((IPropertyValue) prop));
+			}
 		}
 	}
 

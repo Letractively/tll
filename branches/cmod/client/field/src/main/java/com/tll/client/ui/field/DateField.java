@@ -98,8 +98,6 @@ public class DateField<B> extends AbstractField<B, Date> implements ValueChangeH
 	public void onValueChange(ValueChangeEvent<Date> event) {
 		final Date old = seldate;
 		seldate = event.getValue();
-		//fireEvent(TODO)
-		//super.onChange(ChangeEvent.fireNativeEvent(nativeEvent, handlerSource));
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, seldate);
 		fireChangeListeners();
 	}

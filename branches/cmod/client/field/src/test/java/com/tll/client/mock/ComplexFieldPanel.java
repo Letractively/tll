@@ -127,23 +127,26 @@ public class ComplexFieldPanel extends MockFieldPanel {
 							cmpsr.addField(fg.getFieldByName("adrsMi"));
 							cmpsr.addField(fg.getFieldByName("adrsLastName"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsAttn"));
-							cmpsr.addField(fg.getFieldByName("adrsCompany"));
+							//cmpsr.newRow();
+							//cmpsr.addField(fg.getFieldByName("adrsAttn"));
+							//cmpsr.addField(fg.getFieldByName("adrsCompany"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsAddress1"));
+							//cmpsr.newRow();
+							//cmpsr.addField(fg.getFieldByName("adrsAddress1"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsAddress2"));
+							//cmpsr.newRow();
+							//cmpsr.addField(fg.getFieldByName("adrsAddress2"));
 
 							cmpsr.newRow();
 							cmpsr.addField(fg.getFieldByName("adrsCity"));
 							cmpsr.addField(fg.getFieldByName("adrsProvince"));
 
 							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsPostalCode"));
+							//cmpsr.addField(fg.getFieldByName("adrsPostalCode"));
 							cmpsr.addField(fg.getFieldByName("adrsCountry"));
+							
+							cmpsr.addField(fg.getFieldByName("adrsBoolean"));
+							cmpsr.addField(fg.getFieldByName("adrsFloat"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
@@ -237,13 +240,12 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.addField(fg.getFieldByName("acntDateLastCharged"));
 				cmpsr.addField(fg.getFieldByName("acntNextChargeDate"));
 
-				// third row
-				cmpsr.newRow();
-
 				// related one panel
+				cmpsr.newRow();
 				cmpsr.addWidget(relatedOnePanel);
 
 				// related many (indexed) panel
+				cmpsr.newRow();
 				cmpsr.addWidget(indexedPanel);
 			}
 		});

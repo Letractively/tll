@@ -98,6 +98,6 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 		// i.e. not is checked since this event fires before the click value sticks!
 		final Boolean old = !(isChecked() ? Boolean.FALSE : Boolean.TRUE);
 		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		fireChangeListeners();
+		//fireChangeListeners();
 	}
 }

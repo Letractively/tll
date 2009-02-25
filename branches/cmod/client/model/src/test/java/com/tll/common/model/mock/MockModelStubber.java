@@ -179,6 +179,14 @@ public class MockModelStubber {
 				"zip " + num));
 		address.set(new StringPropertyValue("country", new PropertyMetadata(PropertyType.STRING, false, true, 32),
 				"country " + num));
+		
+		// test boolean prop types..
+		address.set(new BooleanPropertyValue("boolean", new PropertyMetadata(PropertyType.BOOL, false, true, -1),
+				Boolean.TRUE));
+
+		// test float prop types..
+		address.set(new FloatPropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), 33.33f));
+		
 		return address;
 	}
 

@@ -3,8 +3,10 @@ package com.tll.client.ui;
 import java.util.Comparator;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
@@ -123,11 +125,10 @@ public abstract class AbstractBoundWidget<B, V, M extends IBindable> extends Com
 	}
 
 	/**
-	 * Fires a change event for subscribed {@link ChangeListener}s.
+	 * Fires a change event for subscribed listeners.
 	 */
 	protected final void fireChangeListeners() {
-		//DomEvent.fireNativeEvent(com.google.gwt.dom.client.NativeEvent, this);
-		// TODO fix
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this);
 	}
 
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {

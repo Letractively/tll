@@ -95,14 +95,18 @@ public class MockFieldGroupProviders {
 			fg.addField(fstext("adrsFirstName", "firstName", "First Name", "First Name", 20));
 			fg.addField(fstext("adrsLastName", "lastName", "Last Name", "Last Name", 20));
 			fg.addField(FieldFactory.ftext("adrsMi", "mi", "MI", "Middle Initial", 1, CharacterToStringConverter.INSTANCE));
-			fg.addField(fstext("adrsCompany", "company", "Company", "Company", 20));
-			fg.addField(fstext("adrsAttn", "attn", "Attn", "Attention", 10));
-			fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
-			fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
+			//fg.addField(fstext("adrsCompany", "company", "Company", "Company", 20));
+			//fg.addField(fstext("adrsAttn", "attn", "Attn", "Attention", 10));
+			//fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
+			//fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
 			fg.addField(fstext("adrsCity", "city", "City", "City", 30));
 			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
-			fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
+			//fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
 			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
+			
+			// ad hoc props to verify types
+			fg.addField(fbool("adrsBoolean", "boolean", "Boolean", "Boolean"));
+			fg.addField(fstext("adrsFloat", "float", "Float", "Float", 5));
 		}
 
 	}
