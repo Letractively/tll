@@ -1,0 +1,11 @@
+<module rename-to="uitests">
+  <inherits name="com.tll.UI" />
+  
+  <!-- target host mode browser only -->
+  <set-property name="user.agent" value="ie6" />
+  <set-property name="locale" value="default" />
+  
+  <set-property name="log_DivLogger" value="DISABLED" />
+  
+  <entry-point class="com.tll.client.UITests" />
+</module>

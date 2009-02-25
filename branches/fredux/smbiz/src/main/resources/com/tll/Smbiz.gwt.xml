@@ -1,0 +1,30 @@
+<module>
+  <!-- TODO will have to tweak what we inherit -->
+  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.Listing" />
+  <inherits name="com.tll.UI" />
+  <inherits name="com.tll.Login" />
+  
+  <!--  un-comment to go international (commenting out means quicker compile) -->
+  <!-- <inherits name="com.google.gwt.i18n.I18N" /> -->
+
+  <inherits name='com.google.gwt.widgetideas.WidgetIdeas' />
+  <!-- <inherits name='com.google.gwt.widgetideas.LibIdeas' /> -->
+
+  <!-- gwt-log support, default level `DEBUG` -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  
+  <!-- non client package sources -->
+  <!-- 
+  TODO figure out how to prevent overriding what is declared in the Model module
+  we probably have to create a distinct sub-package to hold these java sources
+  to avoid *REPLACING* the sources declared in the Model module file  
+  -->
+  <source>
+    <include name="model/SmbizEntityType.java" />
+    <include name="model/AccountStatus.java" />
+    <include name="model/AddressType.java" />
+    <include name="model/CreditCardType.java" />
+  </source>
+
+</module>

@@ -1,0 +1,43 @@
+@CHARSET "ISO-8859-1";
+
+.fld input, .fld select, .fld textarea {
+	padding: 0;
+	margin: 3px 6px 3px 0;
+}
+
+/* non IE rules (for mozilla) */
+.fld input[type='text'] {
+	height: 1.5em;
+}
+
+.fld input[type='checkbox'] {
+	height: 1.22em;
+	margin-right: 3px !important;
+}
+/* END non IE rules */
+
+.fld .lbl, label {
+	color: blue;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+label .rqd {
+	color: red;
+	font-size: 14px;
+}
+
+.error input, .error select, .error textarea {
+	border: 1px solid red !important;
+	background-color: #FFFFCC;
+}
+
+.dirty input, .dirty select, .dirty textarea {
+	border: 1px solid #007BBF !important;
+	background-color: #DFF4FF;
+}
+
+.fld .icon {
+	cursor: pointer;
+	display: inline;
+}
