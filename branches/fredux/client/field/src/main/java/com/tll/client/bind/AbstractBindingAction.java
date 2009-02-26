@@ -27,7 +27,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @param <FP> the field panel type
  * @author jpk
  */
-public abstract class AbstractBindingAction<M extends IBindable, FP extends FieldPanel<?, M>> implements
+public abstract class AbstractBindingAction<M extends IBindable, FP extends FieldPanel<?>> implements
 		IBindingAction {
 
 	/**
@@ -127,7 +127,7 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 	 * @param indexedProperty
 	 * @param indexedFieldPanel
 	 */
-	protected final <I extends FieldPanel<? extends Widget, M>> void addIndexedFieldBinding(M model,
+	protected final <I extends FieldPanel<? extends Widget>> void addIndexedFieldBinding(M model,
 			String indexedProperty, IndexedFieldPanel<I, M> indexedFieldPanel) {
 
 		// add binding to the many value collection in the primary binding

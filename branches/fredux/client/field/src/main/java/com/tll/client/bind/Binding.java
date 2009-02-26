@@ -327,7 +327,7 @@ public final class Binding {
 	 * @param modelProperty The common property name for <em>both</em> the left
 	 *        and right objects.
 	 */
-	public Binding(IBindable model, IBindableWidget<?, ? extends IBindable> widget, IValidator validator,
+	public Binding(IBindable model, IBindableWidget<?> widget, IValidator validator,
 			IValidationFeedback feedback,
 			String modelProperty) {
 		this(model, modelProperty, null, null, widget, "value", validator, feedback);
