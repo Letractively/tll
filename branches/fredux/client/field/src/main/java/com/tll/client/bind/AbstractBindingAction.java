@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.IBoundWidget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.client.ui.field.IField;
@@ -132,7 +132,7 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 
 		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(
-				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBoundWidget.PROPERTY_VALUE, null, null));
+				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBindableWidget.PROPERTY_VALUE, null, null));
 
 		// retain indexed binding ref
 		indexed.add(indexedFieldPanel);
@@ -149,13 +149,13 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 		final M model = fieldPanel.getModel();
 		assert model != null;
 
-		final Set<IField<?, ?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
+		final Set<IField<?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
 		assert fset != null;
 		if(fset.size() < 1) {
 			throw new UnsetPropertyException(parentPropPath);
 		}
 
-		for(final IField<?, ?> f : fset) {
+		for(final IField<?> f : fset) {
 			addFieldBinding(model, f.getPropertyName(), f);
 		}
 	}
@@ -177,14 +177,14 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 	 * @param modelProperty
 	 * @param field
 	 */
-	private void addFieldBinding(M model, String modelProperty, IField<?, ?> field) {
+	private void addFieldBinding(M model, String modelProperty, IField<?> field) {
 		Log.debug("Binding field: " + field + " to model [" + model + "]." + modelProperty);
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {
 			field.applyPropertyMetadata((IPropertyMetadataProvider) model);
 		}
 		binding.getChildren().add(
-				new Binding(model, modelProperty, null, null, field, IBoundWidget.PROPERTY_VALUE, field,
+				new Binding(model, modelProperty, null, null, field, IBindableWidget.PROPERTY_VALUE, field,
 						new FieldValidationFeedback()));
 	}
 }

@@ -4,27 +4,26 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.TextBox;
-import com.tll.client.convert.IConverter;
-import com.tll.client.convert.IFormattedConverter;
-import com.tll.client.ui.IHasFormat;
-import com.tll.client.util.GlobalFormat;
-import com.tll.common.util.ObjectUtil;
-import com.tll.common.util.StringUtil;
 
 /**
  * TextField
- * @param <B> The bound type
  * @author jpk
  */
-public final class TextField<B> extends AbstractField<B, String> implements IHasMaxLength, IHasFormat {
+public final class TextField extends AbstractField<String> implements IHasMaxLength {
 
-	private final TextBox tb;
-	private String old;
+	/**
+	 * Impl
+	 * @author jpk
+	 */
+	static final class Impl extends TextBox implements IEditable<String> {
+
+	}
+
+	private final Impl tb;
 
 	/**
 	 * Constructor
@@ -33,38 +32,22 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	 * @param labelText
 	 * @param helpText
 	 * @param visibleLength
-	 * @param converter
 	 */
-	TextField(String name, String propName, String labelText, String helpText, int visibleLength,
-			IConverter<String, B> converter) {
+	TextField(String name, String propName, String labelText, String helpText, int visibleLength) {
 		super(name, propName, labelText, helpText);
-		setConverter(converter);
-		tb = new TextBox();
+		tb = new Impl();
 		setVisibleLen(visibleLength);
-		// tb.addFocusListener(this);
-		tb.addChangeHandler(this);
+		tb.addValueChangeHandler(this);
 		addHandler(new KeyPressHandler() {
 
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getCharCode() == 'e') { // TODO change to enter key!
+				if(event.getCharCode() == KeyCodes.KEY_ENTER) {
 					setFocus(false);
 					setFocus(true);
 				}
 			}
 		}, KeyPressEvent.getType());
 		
-	}
-
-	public GlobalFormat getFormat() {
-		final IConverter<String, B> c = getConverter();
-		if(c instanceof IFormattedConverter) {
-			return ((IFormattedConverter<String, B>) c).getFormat();
-		}
-		return null;
-	}
-
-	public void setFormat(GlobalFormat format) {
-		throw new UnsupportedOperationException();
 	}
 
 	public int getVisibleLen() {
@@ -92,35 +75,7 @@ public final class TextField<B> extends AbstractField<B, String> implements IHas
 	}
 
 	@Override
-	protected Focusable getEditable() {
+	protected IEditable<String> getEditable() {
 		return tb;
-	}
-
-	public String getValue() {
-		final String t = tb.getText();
-		return StringUtil.isEmpty(t) ? null : t;
-	}
-
-	@Override
-	protected void setNativeValue(String nativeValue) {
-		final String old = getValue();
-		setText(nativeValue);
-		final String newval = getValue();
-		if(!ObjectUtil.equals(old, newval)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		}
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-
-	@Override
-	public void onChange(ChangeEvent event) {
-		super.onChange(event);
-		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		old = getValue();
-		fireChangeListeners();
 	}
 }

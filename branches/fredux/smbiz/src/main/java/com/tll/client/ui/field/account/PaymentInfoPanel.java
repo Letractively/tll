@@ -25,10 +25,10 @@ import com.tll.common.bind.IBindable;
  * @author jpk
  * @param <M>
  */
-public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel, M> implements
+public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel> implements
 		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
-	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 		/**
 		 * Constructor
@@ -46,7 +46,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	}
 
-	private static class BankPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	private static class BankPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 		/**
 		 * Constructor

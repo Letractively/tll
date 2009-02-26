@@ -4,23 +4,24 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.TextArea;
-import com.tll.client.convert.IConverter;
-import com.tll.common.util.ObjectUtil;
-import com.tll.common.util.StringUtil;
 
 /**
  * TextAreaField
- * @param <B> The bound type
  * @author jpk
  */
-public class TextAreaField<B> extends AbstractField<B, String> implements IHasMaxLength {
+public class TextAreaField extends AbstractField<String> implements IHasMaxLength {
+
+	/**
+	 * Impl
+	 * @author jpk
+	 */
+	static final class Impl extends TextArea implements IEditable<String> {
+
+	}
 
 	int maxLen = -1;
-	private final TextArea ta;
-	private String old;
+	private final Impl ta;
 
 	/**
 	 * Constructor
@@ -30,15 +31,11 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 	 * @param helpText
 	 * @param numRows if -1, value won't be set
 	 * @param numCols if -1, value won't be set
-	 * @param converter
 	 */
-	TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols,
-			IConverter<String, B> converter) {
+	TextAreaField(String name, String propName, String labelText, String helpText, int numRows, int numCols) {
 		super(name, propName, labelText, helpText);
-		setConverter(converter);
-		// setComparator(SimpleComparator.INSTANCE);
-		ta = new TextArea();
-		ta.addChangeHandler(this);
+		ta = new Impl();
+		ta.addValueChangeHandler(this);
 		setNumRows(numRows);
 		setNumCols(numCols);
 	}
@@ -76,35 +73,7 @@ public class TextAreaField<B> extends AbstractField<B, String> implements IHasMa
 	}
 
 	@Override
-	protected Focusable getEditable() {
+	protected IEditable<String> getEditable() {
 		return ta;
-	}
-
-	public String getValue() {
-		final String t = ta.getText();
-		return StringUtil.isEmpty(t) ? null : t;
-	}
-
-	@Override
-	protected void setNativeValue(String nativeValue) {
-		final String old = getValue();
-		setText(nativeValue);
-		final String newval = getValue();
-		if(!ObjectUtil.equals(old, newval)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
-		}
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-
-	@Override
-	public void onChange(ChangeEvent event) {
-		super.onChange(event);
-		if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		old = getValue();
-		fireChangeListeners();
 	}
 }

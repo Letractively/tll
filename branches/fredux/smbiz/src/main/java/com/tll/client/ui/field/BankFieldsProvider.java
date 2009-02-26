@@ -5,8 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.ui.field.AbstractFieldGroupProvider;
-import com.tll.client.ui.field.FieldGroup;
 
 /**
  * BankFieldsProvider
@@ -21,9 +19,9 @@ public class BankFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fg) {
-		fg.addField(fstext("bankName", "paymentData_bankName", "Bank Name", "Bank Name", 40));
-		fg.addField(fstext("bankAccountNo", "paymentData_bankAccountNo", "Account Num", "Account Num", 30));
-		fg.addField(fstext("bankRoutingNo", "paymentData_bankRoutingNo", "Routing Num", "Routing Num", 20));
+		fg.addField(FieldFactory.ftext("bankName", "paymentData_bankName", "Bank Name", "Bank Name", 40));
+		fg.addField(FieldFactory.ftext("bankAccountNo", "paymentData_bankAccountNo", "Account Num", "Account Num", 30));
+		fg.addField(FieldFactory.ftext("bankRoutingNo", "paymentData_bankRoutingNo", "Routing Num", "Routing Num", 20));
 	}
 
 }

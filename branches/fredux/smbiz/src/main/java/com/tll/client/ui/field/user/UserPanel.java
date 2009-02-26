@@ -20,7 +20,7 @@ import com.tll.common.model.Model;
  * @author jpk
  * @param <M> the model type
  */
-public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
@@ -49,8 +49,8 @@ public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
 
 			// third row
 			cmpsr.newRow();
-			FlowPanel fp = new FlowPanel();
-			AddressFieldsRenderer afr = new AddressFieldsRenderer();
+			final FlowPanel fp = new FlowPanel();
+			final AddressFieldsRenderer afr = new AddressFieldsRenderer();
 			afr.render(fp, null);
 			cmpsr.addWidget(fp);
 		}

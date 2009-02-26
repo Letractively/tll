@@ -5,40 +5,77 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
-import com.tll.client.convert.IConverter;
 import com.tll.common.util.ObjectUtil;
 
 /**
  * SelectField - Single select list box.
  * @author jpk
- * @param <I> The option "item" (element) type
  */
-public final class SelectField<I> extends AbstractField<I, I> {
+public final class SelectField extends AbstractDataField<String> {
 
+	/**
+	 * Impl
+	 * @author jpk
+	 */
+	final class Impl extends ListBox implements IEditable<String>, ChangeHandler {
+
+		/**
+		 * Constructor
+		 */
+		public Impl() {
+			super(false);
+		}
+
+		@Override
+		public void onChange(ChangeEvent event) {
+			ValueChangeEvent.fire(this, getValue());
+		}
+
+		@Override
+		public String getValue() {
+			final int i = getSelectedIndex();
+			return i == -1 ? null : getItemText(i);
+		}
+
+		@Override
+		public void setValue(String value, boolean fireEvents) {
+			final String old = getValue();
+			setValue(value);
+			final String nval = getValue();
+			if(fireEvents && !ObjectUtil.equals(old, nval)) {
+				ValueChangeEvent.fire(this, nval);
+			}
+		}
+
+		@Override
+		public void setValue(String value) {
+			setSelectedIndex(-1);
+			for(int i = 0; i < getItemCount(); i++) {
+				if(value.equals(getValue(i))) {
+					setSelectedIndex(i);
+					return;
+				}
+			}
+		}
+
+		@Override
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+			return addHandler(handler, ValueChangeEvent.getType());
+		}
+	}
+	
 	/**
 	 * The list box widget.
 	 */
-	private final ListBox lb;
-
-	/**
-	 * The list options.
-	 */
-	private Collection<I> options;
-
-	/**
-	 * The selected option.
-	 */
-	private I selected;
-
-	private final IConverter<String, I> itemConverter;
+	private final Impl lb;
 
 	/**
 	 * Constructor
@@ -46,53 +83,45 @@ public final class SelectField<I> extends AbstractField<I, I> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param options
-	 * @param comparator
-	 * @param itemConverter
+	 * @param data
 	 */
-	SelectField(String name, String propName, String labelText, String helpText, Collection<I> options,
-			Comparator<Object> comparator, IConverter<String, I> itemConverter) {
+	SelectField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
 		super(name, propName, labelText, helpText);
-		setComparator(comparator);
-		this.itemConverter = itemConverter;
-		lb = new ListBox();
-		lb.addChangeHandler(this);
-		setOptions(options);
+		lb = new Impl();
+		addValueChangeHandler(this);
+		setData(data);
 	}
 
-	/**
-	 * Sets the options.
-	 * @param options The options to set
-	 */
-	public void setOptions(Collection<I> options) {
-		if(this.options == null) this.options = new ArrayList<I>();
+	@Override
+	public void setData(Map<String, String> data) {
+		final String oldval = lb.getValue();
 		lb.clear();
-
-		I newSelected = null;
-
-		for(final I item : options) {
-			addItem(item);
-			if(selected != null && selected.equals(item)) {
+		for(final String key : data.keySet()) {
+			final String val = data.get(key);
+			lb.addItem(key, val);
+			if(val.equals(oldval)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
-				newSelected = item;
 			}
-		}
-
-		final I old = selected;
-		selected = newSelected;
-
-		firePropertyChange(selected, old);
-		fireChangeListeners();
-	}
-
-	private void firePropertyChange(I selected, I old) {
-		if(changeSupport != null) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, selected);
 		}
 	}
 
 	@Override
-	protected Focusable getEditable() {
+	public void addDataItem(String name, String value) {
+		lb.addItem(name, value);
+	}
+
+	@Override
+	public void removeDataItem(String value) {
+		for(int i = 0; i < lb.getItemCount(); i++) {
+			if(lb.getValue(i).equals(value)) {
+				lb.removeItem(i);
+				return;
+			}
+		}
+	}
+
+	@Override
+	protected IEditable<String> getEditable() {
 		return lb;
 	}
 
@@ -120,94 +149,15 @@ public final class SelectField<I> extends AbstractField<I, I> {
 		lb.setVisibleItemCount(visibleItems);
 	}
 
-	public void addItem(final I item) {
-		options.add(item);
-		lb.addItem(itemConverter.convert(item));
-	}
-
-	public void removeItem(final I item) {
-		int i = 0;
-		for(final Iterator<I> it = this.options.iterator(); it.hasNext(); i++) {
-			final I option = it.next();
-			if(getComparator().compare(option, item) == 0) {
-				options.remove(option);
-				removeItem(i);
-			}
-		}
-	}
-
-	public void removeItem(final int index) {
-		lb.removeItem(index);
-		update();
-	}
-
 	public int getSelectedIndex() {
 		return lb.getSelectedIndex();
 	}
 
-	public I getValue() {
-		return selected;
-	}
-
-	@Override
-	protected void setNativeValue(I nativeValue) {
-		if(options == null) throw new IllegalStateException("No options specified.");
-		int i = 0;
-		final I old = selected;
-		selected = null;
-
-		for(final Iterator<I> it = options.iterator(); it.hasNext(); i++) {
-			final I item = it.next();
-			if(getComparator().compare(nativeValue, item) == 0) {
-				lb.setItemSelected(i, true);
-				selected = item;
-				break;
-			}
-		}
-
-		if(!ObjectUtil.equals(old, selected)) {
-			firePropertyChange(selected, old);
-			fireChangeListeners();
-		}
-	}
-
-	@Override
-	protected void doSetValue(I value) {
-		setNativeValue(value);
-	}
-
 	public String getText() {
-		final int si = getSelectedIndex();
-		return si < 0 ? "" : lb.getItemText(si);
+		return lb.getSelectedIndex() == -1 ? null : lb.getItemText(lb.getSelectedIndex());
 	}
 
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
-	}
-
-	private void update() {
-		I selected = null;
-		final Iterator<I> it = options.iterator();
-		for(int i = 0; (i < lb.getItemCount()) && it.hasNext(); i++) {
-			final I item = it.next();
-			if(lb.isItemSelected(i)) {
-				selected = item;
-				break;
-			}
-		}
-
-		if(this.selected != selected) {
-			final I old = this.selected;
-			this.selected = selected;
-
-			firePropertyChange(selected, old);
-			fireChangeListeners();
-		}
-	}
-
-	@Override
-	public void onChange(ChangeEvent event) {
-		update();
-		super.onChange(event);
 	}
 }

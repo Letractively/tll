@@ -35,7 +35,7 @@
 
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
-    <gwtVersion>1.6.4838</gwtVersion>
+    <gwtVersion>1.6.1</gwtVersion>
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     <junitVersion>4.5</junitVersion>
@@ -43,6 +43,7 @@
   </properties>
 
   <modules>
+    <module>testassets</module>
     <module>core</module>
     <module>config</module>
     <module>mail</module>

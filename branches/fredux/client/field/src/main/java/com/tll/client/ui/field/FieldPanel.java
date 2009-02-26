@@ -5,11 +5,12 @@
 package com.tll.client.ui.field;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.IBoundWidget;
-import com.tll.common.bind.IBindable;
+import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
 
@@ -19,10 +20,9 @@ import com.tll.common.model.UnsetPropertyException;
  * <p>
  * <em><b>IMPT: </b>The composite wrapped widget is used for field rendering.  Consequently, it must be ensured that types of the two match.</em>
  * @param <W> The widget type employed for field rendering
- * @param <M> The model type
  * @author jpk
  */
-public abstract class FieldPanel<W extends Widget, M extends IBindable> extends AbstractBoundWidget<M, FieldGroup, M>
+public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidget<FieldGroup>
 		implements IFieldGroupProvider {
 
 	/**
@@ -55,31 +55,6 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	}
 
 	/**
-	 * @return The field group for this field panel.
-	 */
-	public final FieldGroup getFieldGroup() {
-		if(fields == null) {
-			Log.debug(toString() + ".generateFieldGroup()..");
-			setFieldGroup(generateFieldGroup());
-		}
-		return fields;
-	}
-
-	/**
-	 * Sets the field group.
-	 * @param fields The required field group
-	 */
-	public final void setFieldGroup(FieldGroup fields) {
-		if(fields == null) {
-			throw new IllegalArgumentException("A field group must be specified");
-		}
-		if(this.fields != fields) {
-			this.fields = fields;
-			this.fields.setFeedbackWidget(this);
-		}
-	}
-
-	/**
 	 * Sets the field renderer.
 	 * @param renderer
 	 */
@@ -107,19 +82,42 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 		renderer.render(getWidget(), getFieldGroup());
 	}
 
-	public FieldGroup getValue() {
-		return getFieldGroup();
-	}
+	/*
+	public void setModel(M model) {
+		// TODO verify if this is ok to do
+		if(this.model != null && model == this.model) return;
+		Log.debug("AbstractBindableWidget.setModel() - START");
 
-	public void setValue(M value) {
-		setModel(value);
-	}
+		final M old = this.model;
 
+		final IBindingAction action = getAction();
+
+		if(old != null && action != null) {
+			action.unbind();
+		}
+
+		this.model = model;
+
+		if(action != null) {
+			Log.debug("AbstractBindableWidget.setModel() - setting bindable..");
+			action.setBindable(this);
+			//if(isAttached() && model != null) {
+			if(model != null) {
+				Log.debug("AbstractBindableWidget.setModel() - binding..");
+				action.bind();
+			}
+		}
+
+		// changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
+		Log.debug("AbstractBindableWidget.setModel() - END");
+	}
+	*/
+	
 	/**
 	 * Searches the member field group for the field whose property name matches
 	 * that given. <br>
 	 * NOTE: The field, if found, is returned in the form of an
-	 * {@link AbstractField} so it may serve as an {@link IBoundWidget} when
+	 * {@link AbstractField} so it may serve as an {@link IBindableWidget} when
 	 * necessary.
 	 * @param propPath The property path of the sought field.
 	 * @return The non-<code>null</code> field
@@ -127,20 +125,59 @@ public abstract class FieldPanel<W extends Widget, M extends IBindable> extends 
 	 *         field group
 	 */
 	// TODO see if we can make this private
-	public final AbstractField<?, ?> getField(String propPath) throws UnsetPropertyException {
-		IField<?, ?> f = getFieldGroup().getField(propPath);
+	public final AbstractField<?> getField(String propPath) throws UnsetPropertyException {
+		final IField<?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		return (AbstractField<?, ?>) f;
+		return (AbstractField<?>) f;
 	}
 
-	public Object getProperty(String propPath) throws PropertyPathException {
+	public final Object getProperty(String propPath) throws PropertyPathException {
 		return getField(propPath).getProperty(propPath);
 	}
 
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		getField(propPath).setProperty(propPath, value);
+	}
+	
+	public final FieldGroup getFieldGroup() {
+		if(fields == null) {
+			Log.debug(toString() + ".generateFieldGroup()..");
+			setValue(generateFieldGroup());
+		}
+		return fields;
+	}
+	
+	public final void setFieldGroup(FieldGroup fields) {
+		if(fields == null) {
+			throw new IllegalArgumentException("A field group must be specified");
+		}
+		if(this.fields != fields) {
+			this.fields = fields;
+			this.fields.setFeedbackWidget(this);
+		}
+	}
+
+	@Override
+	public final FieldGroup getValue() {
+		return getFieldGroup();
+	}
+
+	@Override
+	public final void setValue(FieldGroup value, boolean fireEvents) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public final void setValue(FieldGroup fields) {
+		setFieldGroup(fields);
+	}
+
+	@Override
+	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<FieldGroup> handler) {
+		//return addHandler(handler, ValueChangeEvent.getType());
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 	 * OptionPanel
 	 * @author jpk
 	 */
-	static final class OptionPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	static final class OptionPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 		FlowPanel canvas = new FlowPanel();
 
@@ -63,7 +63,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 			// pricing
 			cmpsr.newRow();
-			Grid g = new Grid(2, 3);
+			final Grid g = new Grid(2, 3);
 			g.setWidget(0, 0, (Widget) fg.getFieldByName("optnSetUpCost"));
 			g.setWidget(0, 1, (Widget) fg.getFieldByName("optnMonthlyCost"));
 			g.setWidget(0, 2, (Widget) fg.getFieldByName("optnAnnualCost"));
@@ -96,7 +96,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			try {
 				return indexFieldPanel.getField(Model.NAME_PROPERTY).getText();
 			}
-			catch(UnsetPropertyException e) {
+			catch(final UnsetPropertyException e) {
 				throw new IllegalStateException(e);
 			}
 		}
@@ -128,7 +128,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
-		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
+		final FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
 		// fg.addField("options", optionsPanel.getFieldGroup());
 		return fg;
 	}

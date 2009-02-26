@@ -5,12 +5,10 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.Map;
 
-import com.tll.client.convert.IConverter;
-import com.tll.client.convert.NoFormatStringConverter;
+import com.tll.client.ui.IWidgetRenderer;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * FieldFactory
@@ -20,18 +18,16 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link TextField} instance.
-	 * @param <B> the bound type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param visibleLength
-	 * @param converter
 	 * @return new field
 	 */
-	public static final <B> TextField<B> ftext(String name, String propName, String labelText, String helpText,
-			int visibleLength, IConverter<String, B> converter) {
-		return new TextField<B>(name, propName, labelText, helpText, visibleLength, converter);
+	public static final TextField ftext(String name, String propName, String labelText, String helpText,
+			int visibleLength) {
+		return new TextField(name, propName, labelText, helpText, visibleLength);
 	}
 
 	/**
@@ -43,42 +39,49 @@ public abstract class FieldFactory {
 	 * @param visibleLength
 	 * @return new field
 	 */
-	public static final PasswordField<String> fpassword(String name, String propName, String labelText, String helpText,
+	public static final PasswordField fpassword(String name, String propName, String labelText, String helpText,
 			int visibleLength) {
-		return new PasswordField<String>(name, propName, labelText, helpText, visibleLength,
-				NoFormatStringConverter.INSTANCE);
+		return new PasswordField(name, propName, labelText, helpText, visibleLength);
 	}
 
 	/**
 	 * Creates new {@link DateField} instance.
-	 * @param <B> The bound type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
-	 * @param converter
 	 * @return new field
 	 */
-	public static final <B> DateField<B> fdate(String name, String propName, String labelText, String helpText,
-			IConverter<Date, B> converter) {
-		return new DateField<B>(name, propName, labelText, helpText, converter);
+	public static final DateField fdate(String name, String propName, String labelText, String helpText) {
+		return new DateField(name, propName, labelText, helpText, null);
+	}
+
+	/**
+	 * Creates new {@link DateField} instance.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param format the date format which defaults to {@link GlobalFormat#DATE}.
+	 * @return new field
+	 */
+	public static final DateField fdate(String name, String propName, String labelText, String helpText,
+			GlobalFormat format) {
+		return new DateField(name, propName, labelText, helpText, (format == null ? GlobalFormat.DATE : format));
 	}
 
 	/**
 	 * Creates a Check box field that is designed to be bound to a boolean type
 	 * using String-wise constants "true" and "false" to indicate the boolean
 	 * value respectively.
-	 * @param <B> The bound type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
-	 * @param converter
 	 * @return new field
 	 */
-	public static final <B> CheckboxField<B> fcheckbox(String name, String propName, String labelText, String helpText,
-			IConverter<Boolean, B> converter) {
-		return new CheckboxField<B>(name, propName, labelText, helpText, converter);
+	public static final CheckboxField fcheckbox(String name, String propName, String labelText, String helpText) {
+		return new CheckboxField(name, propName, labelText, helpText);
 	}
 
 	/**
@@ -91,77 +94,66 @@ public abstract class FieldFactory {
 	 * @param numCols
 	 * @return new field
 	 */
-	public static final TextAreaField<String> ftextarea(String name, String propName, String labelText, String helpText,
+	public static final TextAreaField ftextarea(String name, String propName, String labelText, String helpText,
 			int numRows, int numCols) {
-		return new TextAreaField<String>(name, propName, labelText, helpText, numRows, numCols,
-				NoFormatStringConverter.INSTANCE);
+		return new TextAreaField(name, propName, labelText, helpText, numRows, numCols);
 	}
 
 	/**
 	 * Creates a new {@link SelectField} instance.
-	 * @param <I> The option "item" (element) type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param options
-	 * @param comparator
-	 * @param itemConverter
+	 * @param data
 	 * @return new field
 	 */
-	public static final <I> SelectField<I> fselect(String name, String propName, String labelText, String helpText,
-			Collection<I> options, Comparator<Object> comparator, IConverter<String, I> itemConverter) {
-		return new SelectField<I>(name, propName, labelText, helpText, options, comparator, itemConverter);
+	public static final SelectField fselect(String name, String propName, String labelText, String helpText,
+			Map<String, String> data) {
+		return new SelectField(name, propName, labelText, helpText, data);
 	}
 
 	/**
 	 * Creates a new {@link MultiSelectField} instance.
-	 * @param <I> The option "item" (element) type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param options
-	 * @param itemComparator
-	 * @param itemConverter
+	 * @param data
 	 * @return new field
 	 */
-	public static final <I> MultiSelectField<I> fmultiselect(String name, String propName, String labelText,
-			String helpText, Collection<I> options, Comparator<Object> itemComparator, IConverter<String, I> itemConverter) {
-		return new MultiSelectField<I>(name, propName, labelText, helpText, options, itemComparator, itemConverter);
+	public static final MultiSelectField fmultiselect(String name, String propName, String labelText, String helpText,
+			Map<String, String> data) {
+		return new MultiSelectField(name, propName, labelText, helpText, data);
 	}
 
 	/**
 	 * Creates a new {@link SuggestField} instance.
-	 * @param <B> The bound type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
-	 * @param suggestions
-	 * @param converter
+	 * @param data
 	 * @return new field
 	 */
-	public static final <B> SuggestField<B> fsuggest(String name, String propName, String labelText, String helpText,
-			Collection<B> suggestions, IConverter<String, B> converter) {
-		return new SuggestField<B>(name, propName, labelText, helpText, suggestions, converter);
+	public static final SuggestField fsuggest(String name, String propName, String labelText, String helpText,
+			Map<String, String> data) {
+		return new SuggestField(name, propName, labelText, helpText, data);
 	}
 
 	/**
 	 * Creates a new {@link RadioGroupField} instance.
-	 * @param <B> The bound type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
-	 * @param options
-	 * @param converter
-	 * @param renderHorizontal
+	 * @param data name/value pairs where the map is keyed by the name
+	 * @param renderer
 	 * @return new field
 	 */
-	public static final <B> RadioGroupField<B> fradiogroup(String name, String propName, String labelText,
-			String helpText, Collection<B> options, IConverter<String, B> converter, boolean renderHorizontal) {
-		return new RadioGroupField<B>(name, propName, labelText, helpText, options, converter, renderHorizontal);
+	public static final RadioGroupField fradiogroup(String name, String propName, String labelText, String helpText,
+			Map<String, String> data, IWidgetRenderer renderer) {
+		return new RadioGroupField(name, propName, labelText, helpText, renderer, data);
 	}
 
 }

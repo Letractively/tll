@@ -4,8 +4,8 @@
  */
 package com.tll.client.ui.field.account;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.AbstractBindingAction;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
-import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
@@ -32,7 +31,7 @@ import com.tll.model.SmbizEntityType;
  * @param <M> the model type
  * @author jpk
  */
-public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 	/**
 	 * AccountEditAction
@@ -105,7 +104,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	private static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+	private static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 		final FlowPanel panel = new FlowPanel();
 
@@ -208,6 +207,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 		setAction(new AccountEditAction());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new IFieldGroupProvider() {
@@ -225,21 +225,21 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> 
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		fg.getField("status").addChangeHandler(new ChangeHandler() {
+		((IField<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
 
-			public void onChange(ChangeEvent event) {
-				final String s = getFieldGroup().getField("status").getText().toLowerCase();
+			public void onValueChange(ValueChangeEvent<String> event) {
+				final String s = event.getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				final IField<?, ?> f = getFieldGroup().getField("dateCancelled");
+				final IField<?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		fg.getField("persistPymntInfo").addChangeHandler(new ChangeHandler() {
+		((IField<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-			public void onChange(ChangeEvent event) {
-				paymentInfoPanel.getFieldGroup().setEnabled(((CheckboxField<?>) event.getSource()).isChecked());
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				paymentInfoPanel.getFieldGroup().setEnabled(event.getValue());
 			}
 		});
 

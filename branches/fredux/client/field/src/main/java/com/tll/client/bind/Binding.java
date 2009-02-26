@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
-import com.tll.client.ui.IBoundWidget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -320,15 +320,17 @@ public final class Binding {
 	 * Shorthand for creating a new binding of a model prop to a bound widget. The
 	 * bound widget provided will become the right-hand binding and the bound
 	 * widget's model property becomes the left-hand binding.
-	 * @param widget IBoundWidget containing the model.
+	 * @param model
+	 * @param widget IBindableWidget containing the model.
 	 * @param validator A validator for the BouldWidget's value property.
 	 * @param feedback A feedback implementation for validation errors.
 	 * @param modelProperty The common property name for <em>both</em> the left
 	 *        and right objects.
 	 */
-	public Binding(IBoundWidget<?, ?, ? extends IBindable> widget, IValidator validator, IValidationFeedback feedback,
+	public Binding(IBindable model, IBindableWidget<?, ? extends IBindable> widget, IValidator validator,
+			IValidationFeedback feedback,
 			String modelProperty) {
-		this(widget.getModel(), modelProperty, null, null, widget, "value", validator, feedback);
+		this(model, modelProperty, null, null, widget, "value", validator, feedback);
 	}
 
 	/**

@@ -5,17 +5,19 @@
 package com.tll.client.ui.field;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.IBoundWidget;
+import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
@@ -28,7 +30,6 @@ import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.MalformedPropPathException;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.util.ObjectUtil;
@@ -38,12 +39,22 @@ import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
- * @param <B> the bound type
- * @param <V> native field type
+ * @param <T> the value type
  * @author jpk
  */
-public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBindable> implements IField<B, V>,
-		Focusable, ClickHandler, ChangeHandler {
+public abstract class AbstractField<T> extends AbstractBindableWidget<T> 
+implements IField<T>,
+		ValueChangeHandler<T>, Focusable, ClickHandler {
+	
+	/**
+	 * IEditable - Marker type interface to commonize focusability and value
+	 * providing ability.
+	 * @author jpk
+	 * @param <T> the value type
+	 */
+	interface IEditable<T> extends Focusable, HasValue<T> {
+
+	}
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -114,9 +125,9 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private CompositeValidator validator;
 
 	/**
-	 * The initial value needed to perform a reset operation.
+	 * The initial value and the current old value.
 	 */
-	private V initialValue;
+	private T initialValue, oldValue;
 
 	/**
 	 * Flag to indicate whether or not the initial value is set.
@@ -307,7 +318,7 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
-	protected abstract Focusable getEditable();
+	protected abstract IEditable<T> getEditable();
 
 	/**
 	 * Either marks or un-marks this field as dirty in the UI based on its current
@@ -506,14 +517,6 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		}
 	}
 
-	//public final void addFocusHandler(FocusHandler handler) {
-		// NOTE: we must be deterministic here as the editability may intermittently
-		// change
-		// if(!isReadOnly()) {
-		//((HasFocusHandlers) getEditable()).addFocusHandler(handler);
-		// }
-	//}
-
 	@Override
 	public int getTabIndex() {
 		return getEditable().getTabIndex();
@@ -540,15 +543,8 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		//if(event.getSource() == fldLbl) toggleMsgs();
 	}
 
-	public void onChange(ChangeEvent event) {
-		assert event.getSource() == getEditable();
-
-		// dirty check
-		markDirty();
-	}
-
 	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
+		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		return getValue();
@@ -556,41 +552,54 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	@SuppressWarnings("unchecked")
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
+		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		try {
-			setValue((B) value);
+			setValue((T) value);
 		}
 		catch(final RuntimeException e) {
 			throw new Exception("Unable to set field " + this + " value", e);
 		}
 	}
 
-	/**
-	 * Sub-class impl for setting field value.
-	 * @param value
-	 */
-	protected abstract void doSetValue(B value);
+	@Override
+	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+		return (getEditable()).addValueChangeHandler(handler);
+	}
 
-	public final void setValue(B value) {
-		doSetValue(value);
+	@Override
+	public final void onValueChange(ValueChangeEvent<T> event) {
+		final T old = oldValue;
+		oldValue = event.getValue();
+		if(!ObjectUtil.equals(old, oldValue)) {
+			markDirty();
+			changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
+		}
+	}
+	
+	@Override
+	public final T getValue() {
+		return getEditable().getValue();
+	}
+
+	@Override
+	public final void setValue(T value) {
+		setValue(value, false);
+	}
+
+	@Override
+	public final void setValue(T value, boolean fireEvents) {
+		getEditable().setValue(value, fireEvents);
 		if(!initialValueSet) {
 			initialValue = getValue();
 			initialValueSet = true;
 		}
 	}
 
-	/**
-	 * Responsible for setting the field's value given the value in native type as
-	 * well as triggering property change events if necessary.
-	 * @param nativeValue
-	 */
-	protected abstract void setNativeValue(V nativeValue);
-
 	public final void reset() {
 		if(initialValueSet) {
-			setNativeValue(initialValue);
+			setValue(initialValue);
 			markInvalid(false);
 			removeStyleName(Styles.DIRTY);
 		}

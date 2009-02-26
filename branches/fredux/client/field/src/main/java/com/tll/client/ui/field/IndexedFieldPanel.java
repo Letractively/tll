@@ -10,10 +10,12 @@ import java.util.Collection;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
-import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.IBoundWidget;
+import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.NullNodeInPropPathException;
 import com.tll.common.model.PropertyPathException;
@@ -29,57 +31,32 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @param <M> the model type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
-		AbstractBoundWidget<Collection<M>, Collection<M>, M> implements IFieldGroupProvider/*, Iterable<I>*/{
+public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, M extends IBindable> extends
+		AbstractBindableWidget<Collection<M>> implements IFieldGroupProvider/*, Iterable<I>*/{
 
 	/**
 	 * Index
 	 * @author jpk
 	 * @param <I> The index type
+	 * @param <M> the model type
 	 */
-	protected static final class Index<I> {
+	protected static final class Index<I, M extends IBindable> {
 
 		I fp;
+		M model;
 		boolean markedDeleted;
 
 		/**
 		 * Constructor
 		 * @param fp
+		 * @param model
 		 */
-		public Index(I fp) {
+		public Index(I fp, M model) {
 			super();
 			this.fp = fp;
+			this.model = model;
 		}
 	} // Index
-
-	/*
-	private final class IndexIterator implements Iterator<I> {
-
-		public IndexIterator() {
-			super();
-			this.size = indexPanels == null ? 0 : indexPanels.size();
-		}
-
-		private int index = -1;
-		private final int size;
-
-		public boolean hasNext() {
-			return index < (size - 1);
-		}
-
-		public I next() {
-			if(index >= size) {
-				throw new NoSuchElementException();
-			}
-			return indexPanels.get(++index).fp;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-		
-	} // IndexIterator
-	*/
 
 	/**
 	 * The group that serving as a common parent to the index field groups.
@@ -89,7 +66,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	/**
 	 * The list of indexed {@link FieldPanel}s.
 	 */
-	protected final List<Index<I>> indexPanels = new ArrayList<Index<I>>();
+	protected final List<Index<I, M>> indexPanels = new ArrayList<Index<I, M>>();
 
 	/**
 	 * The model data collection.
@@ -175,14 +152,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		Log.debug("IndexedFieldPanel.add() - START");
 		final I ip = createIndexPanel(model);
 
-		ip.setModel(model);
-
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {
 			ip.getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
 		}
 
-		indexPanels.add(new Index<I>(ip));
+		indexPanels.add(new Index<I, M>(ip, model));
 
 		ip.getFieldGroup().setName(topGroup.getName() + '[' + (size() - 1) + ']');
 		topGroup.addField(ip.getFieldGroup());
@@ -216,7 +191,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected I remove(int index) throws IndexOutOfBoundsException {
-		final Index<I> removed = indexPanels.remove(index);
+		final Index<I, M> removed = indexPanels.remove(index);
 		topGroup.removeField(removed.fp.getFieldGroup());
 		unbindAtIndex(index);
 		return removed.fp;
@@ -229,7 +204,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		final Index<I> ip = indexPanels.get(index);
+		final Index<I, M> ip = indexPanels.get(index);
 		ip.markedDeleted = deleted;
 		ip.fp.getFieldGroup().setEnabled(!deleted);
 	}
@@ -269,7 +244,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 	 *        binding.
 	 */
 	private void bind(FieldGroup fg, M model, Binding indexBinding) {
-		for(final IField<?, ?> f : fg) {
+		for(final IField<?> f : fg) {
 			if(f instanceof FieldGroup == false) {
 				final String propName = f.getPropertyName();
 				try {
@@ -278,12 +253,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 					// TODO specify a MsgPopupRegistry in the FieldValidationFeedback constructor below 
 					if(indexBinding != null) {
 						binding.getChildren().add(
-								new Binding(model, propName, null, null, f, IBoundWidget.PROPERTY_VALUE, f,
+								new Binding(model, propName, null, null, f, IBindableWidget.PROPERTY_VALUE, f,
 										new FieldValidationFeedback(null)));
 					}
 
 					// set field value
-					f.setProperty(IBoundWidget.PROPERTY_VALUE, model.getProperty(propName));
+					f.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
 				}
 				catch(final UnsetPropertyException e) {
 					// ok
@@ -329,6 +304,16 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget, M
 		if(isAttached()) {
 			regenerate();
 		}
+	}
+
+	@Override
+	public void setValue(Collection<M> value, boolean fireEvents) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<M>> handler) {
+		throw new UnsupportedOperationException();
 	}
 
 	public final Object getProperty(String propPath) {

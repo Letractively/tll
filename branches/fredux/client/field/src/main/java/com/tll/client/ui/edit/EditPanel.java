@@ -66,7 +66,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel<? extends Widget, Model> fieldPanel;
+	private final FieldPanel<? extends Widget> fieldPanel;
 
 	/**
 	 * The panel containing the edit buttons
@@ -85,7 +85,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget, Model> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
@@ -160,7 +160,6 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
 		fieldPanel.setModel(model);
-
 		if(model != null) {
 			assert isAttached() == true;
 			setEditMode(model.isNew());
@@ -168,12 +167,6 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 			if(!fieldPanel.isAttached()) {
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
-			}
-		}
-		else {
-			// clean up
-			if(fieldPanel.getAction() != null) {
-				fieldPanel.getAction().unbind();
 			}
 		}
 		Log.debug("EditPanel.setModel() - END");

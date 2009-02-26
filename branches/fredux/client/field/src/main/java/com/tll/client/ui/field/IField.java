@@ -4,9 +4,9 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
@@ -20,11 +20,10 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * IField - Abstraction for managing the display and editing of data.
  * <p>
  * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
- * @param <B> The "bound" type
- * @param <V> The native field value type (usu. a String but not limited to it)
+ * @param <T> The value type
  * @author jpk
  */
-public interface IField<B, V> extends IPropertyNameProvider, HasChangeHandlers, HasName, HasText, IHasHelpText,
+public interface IField<T> extends IPropertyNameProvider, HasValue<T>, HasName, HasText, IHasHelpText,
 		IBindable, IValidator {
 
 	/**
@@ -70,17 +69,6 @@ public interface IField<B, V> extends IPropertyNameProvider, HasChangeHandlers, 
 	 * @param propName The property name
 	 */
 	void setPropertyName(String propName);
-
-	/**
-	 * @return The field value.
-	 */
-	V getValue();
-
-	/**
-	 * Sets the field's value.
-	 * @param value
-	 */
-	void setValue(B value);
 
 	/**
 	 * Clears the field's value.

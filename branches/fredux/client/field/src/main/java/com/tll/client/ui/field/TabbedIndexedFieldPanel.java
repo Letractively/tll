@@ -38,7 +38,7 @@ import com.tll.common.bind.IBindable;
  * @param <M> the model type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget>, M extends IBindable> extends
 		IndexedFieldPanel<I, M> implements BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
 
 	/**
@@ -298,7 +298,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		else {
 			// add the *existing* index field panels to the tab panel
-			for(final Index<I> i : indexPanels) {
+			for(final Index<I, M> i : indexPanels) {
 				final Widget tw = getTabWidget(i.fp, false);
 				tabWidgets.add(tw);
 				if(enableDelete) {

@@ -1,7 +1,7 @@
 package com.tll.client.mock;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.bind.AbstractBindingAction;
@@ -252,6 +252,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		setAction(new BindingAction());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new IFieldGroupProvider() {
@@ -269,21 +270,21 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		fg.getField("status").addChangeHandler(new ChangeHandler() {
+		fg.getField("status").addValueChangeHandler(new ValueChangeHandler() {
 
-			public void onChange(ChangeEvent event) {
+			public void onValueChange(ValueChangeEvent event) {
 				final String s = getFieldGroup().getField("status").getText().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				final IField<?, ?> f = getFieldGroup().getField("dateCancelled");
+				final IField<?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		fg.getField("persistPymntInfo").addChangeHandler(new ChangeHandler() {
+		fg.getField("persistPymntInfo").addValueChangeHandler(new ValueChangeHandler() {
 
-			public void onChange(ChangeEvent event) {
-				relatedOnePanel.getFieldGroup().setEnabled(((CheckboxField<?>) event.getSource()).isChecked());
+			public void onValueChange(ValueChangeEvent event) {
+				relatedOnePanel.getFieldGroup().setEnabled(((CheckboxField) event.getSource()).isChecked());
 			}
 		});
 
