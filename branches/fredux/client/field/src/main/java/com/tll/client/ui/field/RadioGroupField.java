@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -115,7 +116,18 @@ public final class RadioGroupField extends AbstractDataField<String> {
 		final RadioButton rb = new RadioButton("rg_" + getDomId(), name);
 		rb.setFormValue(value);
 		rb.setStyleName(Styles.LABEL);
-		rb.addClickHandler(this);
+		rb.addClickHandler(new ClickHandler() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void onClick(ClickEvent event) {
+				assert event.getSource() instanceof RadioButton;
+				final RadioButton rb = (RadioButton) event.getSource();
+				final String val = rb.getFormValue();
+				// fire a value change event..
+				ValueChangeEvent.fire(fp, val);
+			}
+		});
 		return rb;
 	}
 
@@ -165,16 +177,5 @@ public final class RadioGroupField extends AbstractDataField<String> {
 
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void onClick(ClickEvent event) {
-		super.onClick(event);
-		
-		assert event.getSource() instanceof RadioButton;
-		final RadioButton rb = (RadioButton) event.getSource();
-		final String val = rb.getFormValue();
-		// fire a value change event..
-		ValueChangeEvent.fire(this, val);
 	}
 }

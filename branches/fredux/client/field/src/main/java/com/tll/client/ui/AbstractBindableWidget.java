@@ -2,6 +2,7 @@ package com.tll.client.ui;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeSupport;
 
@@ -18,6 +19,13 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	
+	/**
+	 * Optional ref to registry for message popups. <br>
+	 * This allows for msg popups bound to child widgets to be managed as a
+	 * flyweight.
+	 */
+	protected MsgPopupRegistry mregistry;
 
 	/**
 	 * Constructor
@@ -44,6 +52,16 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 
 	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
 		changeSupport.removePropertyChangeListener(propertyName, l);
+	}
+
+	@Override
+	public final MsgPopupRegistry getMsgPopupRegistry() {
+		return mregistry;
+	}
+
+	@Override
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		this.mregistry = mregistry;
 	}
 
 	@Override

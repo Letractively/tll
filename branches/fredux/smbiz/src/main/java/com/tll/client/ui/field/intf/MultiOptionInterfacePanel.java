@@ -13,10 +13,10 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
-import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.SmbizEntityType;
 
 /**
@@ -31,7 +31,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 	 * OptionPanel
 	 * @author jpk
 	 */
-	static final class OptionPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+	static final class OptionPanel extends FieldPanel<FlowPanel> {
 
 		FlowPanel canvas = new FlowPanel();
 
@@ -77,7 +77,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 	}
 
-	final class OptionsPanel extends TabbedIndexedFieldPanel<OptionPanel<M>, M> {
+	final class OptionsPanel extends TabbedIndexedFieldPanel<OptionPanel> {
 
 		/**
 		 * Constructor
@@ -92,13 +92,14 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 
 		@Override
-		protected String getTabLabelText(OptionPanel<M> indexFieldPanel) {
-			try {
-				return indexFieldPanel.getField(Model.NAME_PROPERTY).getText();
-			}
-			catch(final UnsetPropertyException e) {
-				throw new IllegalStateException(e);
-			}
+		protected String getTabLabelText(Index<OptionPanel> index) {
+			//try {
+			final IFieldWidget<?> fw = (IFieldWidget<?>) index.getFieldPanel().getFieldGroup().getField(Model.NAME_PROPERTY);
+			return fw.getText();
+			//}
+			//catch(final UnsetPropertyException e) {
+			//throw new IllegalStateException(e);
+			//}
 		}
 
 		@SuppressWarnings("unchecked")
@@ -108,8 +109,8 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 
 		@Override
-		protected OptionPanel<M> createIndexPanel(M model) {
-			return new OptionPanel<M>();
+		protected OptionPanel createIndexPanel(IBindable model) {
+			return new OptionPanel();
 		}
 
 	} // OptionsPanel

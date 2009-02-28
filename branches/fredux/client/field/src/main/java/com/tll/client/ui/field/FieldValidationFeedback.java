@@ -20,25 +20,18 @@ public final class FieldValidationFeedback implements IValidationFeedback {
 
 	/**
 	 * Constructor
-	 */
-	public FieldValidationFeedback() {
-		super();
-		this.mregistry = null;
-	}
-
-	/**
-	 * Constructor
 	 * @param mregistry Registry that is responsible for the life-cycle of popup
 	 *        messages.
 	 */
 	public FieldValidationFeedback(MsgPopupRegistry mregistry) {
+		if(mregistry == null) throw new IllegalArgumentException();
 		this.mregistry = mregistry;
 	}
 
 	public void handleException(Object source, ValidationException exception) {
 		((Widget) source).removeStyleName(IField.Styles.DIRTY);
 		((Widget) source).addStyleName(IField.Styles.INVALID);
-		if(mregistry != null && exception.getErrors() != null) {
+		if(exception.getErrors() != null) {
 			for(final Msg m : exception.getErrors()) {
 				mregistry.addMsg(m, (Widget) source, false);
 			}
@@ -47,8 +40,6 @@ public final class FieldValidationFeedback implements IValidationFeedback {
 
 	public void resolve(Object source) {
 		((Widget) source).removeStyleName(IField.Styles.INVALID);
-		if(mregistry != null) {
-			mregistry.getOperator((Widget) source, false).clearMsgs();
-		}
+		mregistry.getOperator((Widget) source, false).clearMsgs();
 	}
 }

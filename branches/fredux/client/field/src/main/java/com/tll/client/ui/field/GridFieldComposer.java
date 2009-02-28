@@ -81,6 +81,7 @@ public class GridFieldComposer implements IFieldComposer {
 	 * @param field The field to add
 	 */
 	public void addField(IField<?> field) {
-		add(field.getFieldLabel(), field.getWidget());
+		final IFieldWidget<?> fw = (IFieldWidget<?>) field;
+		add(fw.getFieldLabel(), field.getWidget());
 	}
 }

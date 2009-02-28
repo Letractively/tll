@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
 
@@ -54,6 +55,13 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 		return (W) super.getWidget();
 	}
 
+	@Override
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		this.mregistry = mregistry;
+		// propagate to the fields
+		fields.setMsgPopupRegistry(mregistry);
+	}
+
 	/**
 	 * Sets the field renderer.
 	 * @param renderer
@@ -82,55 +90,23 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 		renderer.render(getWidget(), getFieldGroup());
 	}
 
-	/*
-	public void setModel(M model) {
-		// TODO verify if this is ok to do
-		if(this.model != null && model == this.model) return;
-		Log.debug("AbstractBindableWidget.setModel() - START");
-
-		final M old = this.model;
-
-		final IBindingAction action = getAction();
-
-		if(old != null && action != null) {
-			action.unbind();
-		}
-
-		this.model = model;
-
-		if(action != null) {
-			Log.debug("AbstractBindableWidget.setModel() - setting bindable..");
-			action.setBindable(this);
-			//if(isAttached() && model != null) {
-			if(model != null) {
-				Log.debug("AbstractBindableWidget.setModel() - binding..");
-				action.bind();
-			}
-		}
-
-		// changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
-		Log.debug("AbstractBindableWidget.setModel() - END");
-	}
-	*/
-	
 	/**
 	 * Searches the member field group for the field whose property name matches
 	 * that given. <br>
 	 * NOTE: The field, if found, is returned in the form of an
-	 * {@link AbstractField} so it may serve as an {@link IBindableWidget} when
+	 * {@link IFieldWidget} so it may serve as an {@link IBindableWidget} when
 	 * necessary.
 	 * @param propPath The property path of the sought field.
 	 * @return The non-<code>null</code> field
 	 * @throws UnsetPropertyException When the field does not exist in the member
 	 *         field group
 	 */
-	// TODO see if we can make this private
-	public final AbstractField<?> getField(String propPath) throws UnsetPropertyException {
+	private IFieldWidget<?> getField(String propPath) throws UnsetPropertyException {
 		final IField<?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		return (AbstractField<?>) f;
+		return (IFieldWidget<?>) f;
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {

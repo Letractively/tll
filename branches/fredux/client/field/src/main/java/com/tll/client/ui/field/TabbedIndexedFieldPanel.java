@@ -29,17 +29,15 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.common.bind.IBindable;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
  * a {@link TabPanel} to show the indexed field panels.
  * @param <I> the index field panel type
- * @param <M> the model type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget>, M extends IBindable> extends
-		IndexedFieldPanel<I, M> implements BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I> implements
+		BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
 
 	/**
 	 * ImageBundle
@@ -196,19 +194,19 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	 * @param indexFieldPanel
 	 * @return label text
 	 */
-	protected abstract String getTabLabelText(I indexFieldPanel);
+	protected abstract String getTabLabelText(Index<I> index);
 
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
 	 * tab of the {@link TabPanel}.
-	 * @param indexFieldPanel
+	 * @param index The index ref
 	 * @param isNew Is this a newly added index field panel?
 	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
 	 *         at the index assoc. with the given index field panel.
 	 */
-	private Widget getTabWidget(I indexFieldPanel, boolean isNew) {
+	private Widget getTabWidget(Index<I> index, boolean isNew) {
 
-		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(indexFieldPanel);
+		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(index);
 
 		if(enableDelete || isNew) {
 			final ToggleButton btnDeleteTgl =
@@ -237,11 +235,11 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	}
 
 	@Override
-	protected I add() {
-		final I indexFieldPanel = super.add();
+	protected Index<I> add() {
+		final Index<I> index = super.add();
 		final int insertIndex = tabPanel.getWidgetCount() == 0 ? 0 : tabPanel.getWidgetCount() - 1;
-		final Widget tw = getTabWidget(indexFieldPanel, true);
-		tabPanel.insert(indexFieldPanel, tw, insertIndex);
+		final Widget tw = getTabWidget(index, true);
+		tabPanel.insert(index.fieldPanel, tw, insertIndex);
 		tabWidgets.add(tw);
 		// auto-select the added tab
 		DeferredCommand.addCommand(new Command() {
@@ -250,12 +248,12 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 				tabPanel.selectTab(insertIndex);
 			}
 		});
-		return indexFieldPanel;
+		return index;
 	}
 
 	@Override
-	protected I remove(int index) throws IndexOutOfBoundsException {
-		final I removed = super.remove(index);
+	protected Index<I> remove(int index) throws IndexOutOfBoundsException {
+		final Index<I> removed = super.remove(index);
 		if(removed != null) {
 			// remove the tab
 			if(!tabPanel.remove(index)) {
@@ -298,13 +296,13 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		}
 		else {
 			// add the *existing* index field panels to the tab panel
-			for(final Index<I, M> i : indexPanels) {
-				final Widget tw = getTabWidget(i.fp, false);
+			for(final Index<I> i : indexPanels) {
+				final Widget tw = getTabWidget(i, false);
 				tabWidgets.add(tw);
 				if(enableDelete) {
 					((WidgetAndLabel) tw).getTheWidget().setTitle("Delete " + getIndexTypeName());
 				}
-				tabPanel.add(i.fp, getTabWidget(i.fp, false));
+				tabPanel.add(i.fieldPanel, getTabWidget(i, false));
 			}
 		}
 		if(enableAdd) {

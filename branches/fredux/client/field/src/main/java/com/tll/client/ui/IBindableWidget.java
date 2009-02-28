@@ -1,6 +1,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.HasValue;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
 
 /**
@@ -29,4 +30,16 @@ public interface IBindableWidget<T> extends IBindable, HasValue<T> {
 	 * property change events.
 	 */
 	static final String PROPERTY_MODEL = "model";
+
+	/**
+	 * @return The employed message popup registry.
+	 */
+	MsgPopupRegistry getMsgPopupRegistry();
+
+	/**
+	 * Sets the message popup registry enabling popups to me managed as a
+	 * flyweight.
+	 * @param mregistry the message popup registry
+	 */
+	void setMsgPopupRegistry(MsgPopupRegistry mregistry);
 }

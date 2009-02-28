@@ -43,7 +43,7 @@ import com.tll.model.schema.PropertyMetadata;
  * @author jpk
  */
 public abstract class AbstractField<T> extends AbstractBindableWidget<T> 
-implements IField<T>,
+implements IFieldWidget<T>,
 		ValueChangeHandler<T>, Focusable, ClickHandler {
 	
 	/**

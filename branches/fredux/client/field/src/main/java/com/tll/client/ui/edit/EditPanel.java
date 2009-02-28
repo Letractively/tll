@@ -16,11 +16,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.IModelFieldBinding;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.model.Model;
-import com.tll.common.model.UnsetPropertyException;
 import com.tll.common.msg.Msg;
 
 /**
@@ -64,31 +66,31 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
-	 * Contains the actual edit fields.
-	 */
-	private final FieldPanel<? extends Widget> fieldPanel;
-
-	/**
 	 * The panel containing the edit buttons
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
+	/**
+	 * the model/field binding action.
+	 */
+	private final IModelFieldBinding binding;
+
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
 	/**
 	 * Constructor
-	 * @param fieldPanel The required {@link FieldPanel}
+	 * @param binding the model/field binding action
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(IModelFieldBinding binding, boolean showCancelBtn, boolean showDeleteBtn) {
 
-		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
-		this.fieldPanel = fieldPanel;
+		if(binding == null) throw new IllegalArgumentException("A model/field binding must be specified.");
+		this.binding = binding;
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -136,12 +138,6 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		editListeners.remove(listener);
 	}
 
-	/*
-	public FieldPanel<? extends Widget, Model> getFieldPanel() {
-		return fieldPanel;
-	}
-	*/
-
 	private void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
 		// now show the button row
@@ -159,57 +155,48 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
-		fieldPanel.setModel(model);
+		binding.setModel(model);
 		if(model != null) {
 			assert isAttached() == true;
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
-			if(!fieldPanel.isAttached()) {
+			if(!binding.getRootFieldPanel().isAttached()) {
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
-				portal.add(fieldPanel);
+				portal.add(binding.getRootFieldPanel());
 			}
 		}
 		Log.debug("EditPanel.setModel() - END");
 	}
 
 	/**
-	 * Applies error messages to the fields contained in the member
+	 * Applies field error messages to the fields contained in the member
 	 * {@link FieldPanel}.
-	 * @param msgs The error messages to apply
+	 * @param msgs The field error messages to apply
 	 */
-	// TODO fix this!!!
-	public void applyErrorMsgs(final List<Msg> msgs) {
-		// MsgManager.instance().clear(RootPanel.get(), false);
+	public void applyFieldErrors(final List<Msg> msgs) {
+		final FieldGroup root = binding.getRootFieldPanel().getFieldGroup();
+		final MsgPopupRegistry mregistry = binding.getRootFieldPanel().getMsgPopupRegistry();
 		for(final Msg msg : msgs) {
-			boolean msgBound = false;
 			if(msg.getRefToken() != null) {
-				try {
-					final Widget fw = fieldPanel.getField(msg.getRefToken());
-					assert fw != null;
-					//MsgManager.get().post(msg, fw, false).show();
-					msgBound = true;
+				final Widget fw = root.getField(msg.getRefToken()).getWidget();
+				if(fw == null) {
+					throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
 				}
-				catch(final UnsetPropertyException e) {
-					// ok
-				}
-			}
-			if(!msgBound) {
-				// post as global
-				//MsgManager.get().post(msg, RootPanel.get(), false);
+				mregistry.addMsg(msg, fw, false);
 			}
 		}
-		//MsgManager.get().findMsgOperator(RootPanel.get()).show(Position.CENTER, 3000);
 	}
 
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
-			fieldPanel.getAction().execute();
+			//fieldPanel.getAction().execute();
+			binding.execute();
 			// TODO propagate
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			fieldPanel.getFieldGroup().reset();
+			binding.getRootFieldPanel().getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));

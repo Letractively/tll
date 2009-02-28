@@ -93,7 +93,6 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 	MultiSelectField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
-		lb.addClickHandler(this);
 		lb.addValueChangeHandler(this);
 		setData(data);
 	}

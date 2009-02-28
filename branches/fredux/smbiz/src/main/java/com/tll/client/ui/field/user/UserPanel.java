@@ -12,15 +12,13 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
 /**
  * UserPanel
  * @author jpk
- * @param <M> the model type
  */
-public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+public class UserPanel extends FieldPanel<FlowPanel> {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 

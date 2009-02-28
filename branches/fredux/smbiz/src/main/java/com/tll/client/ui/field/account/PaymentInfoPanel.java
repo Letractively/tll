@@ -18,17 +18,15 @@ import com.tll.client.ui.field.CreditCardFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.common.bind.IBindable;
 
 /**
  * PaymentInfoPanel
  * @author jpk
- * @param <M>
  */
-public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel> implements
+public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
-	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+	private static class CreditCardPanel extends FieldPanel<FlowPanel> {
 
 		/**
 		 * Constructor
@@ -46,7 +44,7 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	}
 
-	private static class BankPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+	private static class BankPanel extends FieldPanel<FlowPanel> {
 
 		/**
 		 * Constructor
@@ -66,16 +64,16 @@ public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabP
 
 	final TabPanel tabPanel = new TabPanel();
 
-	private final CreditCardPanel<M> creditCardPanel;
-	private final BankPanel<M> bankPanel;
+	private final CreditCardPanel creditCardPanel;
+	private final BankPanel bankPanel;
 
 	/**
 	 * Constructor
 	 */
 	public PaymentInfoPanel() {
 		super();
-		creditCardPanel = new CreditCardPanel<M>();
-		bankPanel = new BankPanel<M>();
+		creditCardPanel = new CreditCardPanel();
+		bankPanel = new BankPanel();
 		initWidget(tabPanel);
 		setRenderer(new IFieldRenderer<TabPanel>() {
 

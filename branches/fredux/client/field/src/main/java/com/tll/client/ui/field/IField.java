@@ -5,10 +5,9 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.IHasHelpText;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IBindable;
@@ -23,8 +22,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * @param <T> The value type
  * @author jpk
  */
-public interface IField<T> extends IPropertyNameProvider, HasValue<T>, HasName, HasText, IHasHelpText,
-		IBindable, IValidator {
+public interface IField<T> extends IPropertyNameProvider, HasName, HasValue<T>, IBindable, IValidator {
 
 	/**
 	 * Styles - (field.css)
@@ -69,6 +67,12 @@ public interface IField<T> extends IPropertyNameProvider, HasValue<T>, HasName, 
 	 * @param propName The property name
 	 */
 	void setPropertyName(String propName);
+	
+	/**
+	 * Sets the message popup registry.
+	 * @param mregistry
+	 */
+	void setMsgPopupRegistry(MsgPopupRegistry mregistry);
 
 	/**
 	 * Clears the field's value.
@@ -129,23 +133,6 @@ public interface IField<T> extends IPropertyNameProvider, HasValue<T>, HasName, 
 	 * @return The field Widget.
 	 */
 	Widget getWidget();
-
-	/**
-	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
-	 */
-	FieldLabel getFieldLabel();
-
-	/**
-	 * Sets the ancestor Widget that contains this field.
-	 * @param fieldContainer The desired ancestor {@link Widget}
-	 */
-	void setFieldContainer(Widget fieldContainer);
-
-	/**
-	 * Sets the ancestor Widget for this field's label {@link Widget}.
-	 * @param fieldLabelContainer The desired ancestor {@link Widget}
-	 */
-	void setFieldLabelContainer(Widget fieldLabelContainer);
 
 	/**
 	 * Applies property metadata to this field.

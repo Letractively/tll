@@ -4,15 +4,16 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.AbstractBindingAction;
+import com.tll.client.bind.AbstractModelFieldBinding;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
+import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.mock.AddressType;
@@ -29,26 +30,31 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 * AccountEditAction
 	 * @author jpk
 	 */
-	class BindingAction extends AbstractBindingAction<Model, ComplexFieldPanel> {
+	class BindingAction extends AbstractModelFieldBinding {
 
 		@Override
-		protected void populateBinding(ComplexFieldPanel fp) throws PropertyPathException {
-			addFieldBinding(fp, Model.NAME_PROPERTY);
-			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
-			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
-			addFieldBinding(fp, "parent.name");
-			addFieldBinding(fp, "status");
-			addFieldBinding(fp, "dateCancelled");
-			//addFieldBinding(fp, "currency.id");
-			addFieldBinding(fp, "billingModel");
-			addFieldBinding(fp, "billingCycle");
-			addFieldBinding(fp, "dateLastCharged");
-			addFieldBinding(fp, "nextChargeDate");
-			addFieldBinding(fp, "persistPymntInfo");
+		public FieldPanel<?> getRootFieldPanel() {
+			return ComplexFieldPanel.this;
+		}
 
-			addNestedFieldBindings(fp, "paymentInfo");
+		@Override
+		protected void populateBinding() throws PropertyPathException {
+			addFieldBinding(Model.NAME_PROPERTY);
+			addFieldBinding(Model.DATE_CREATED_PROPERTY);
+			addFieldBinding(Model.DATE_MODIFIED_PROPERTY);
+			addFieldBinding("parent.name");
+			addFieldBinding("status");
+			addFieldBinding("dateCancelled");
+			//addFieldBinding("currency.id");
+			addFieldBinding("billingModel");
+			addFieldBinding("billingCycle");
+			addFieldBinding("dateLastCharged");
+			addFieldBinding("nextChargeDate");
+			addFieldBinding("persistPymntInfo");
 
-			addIndexedFieldBinding(fp.getModel(), "addresses", indexedPanel);
+			addNestedFieldBindings("paymentInfo");
+
+			addIndexedFieldBinding("addresses", indexedPanel);
 		}
 	} // BindingAction
 
@@ -164,7 +170,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 * IndexedFieldPanel
 	 * @author jpk
 	 */
-	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel, Model> {
+	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
 
 		/**
 		 * Constructor
@@ -179,12 +185,12 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		}
 
 		@Override
-		protected String getTabLabelText(IndexFieldPanel aap) {
+		protected String getTabLabelText(Index<IndexFieldPanel> index) {
 			AddressType type;
 			String aaName;
 			try {
-				type = (AddressType) aap.getModel().getProperty("type");
-				aaName = (String) aap.getModel().getProperty("name");
+				type = (AddressType) index.getModel().getProperty("type");
+				aaName = (String) index.getModel().getProperty("name");
 			}
 			catch(final PropertyPathException e) {
 				throw new IllegalStateException(e);
@@ -199,7 +205,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		}
 
 		@Override
-		protected IndexFieldPanel createIndexPanel(Model indexModel) {
+		protected IndexFieldPanel createIndexPanel(IBindable indexModel) {
 			return new IndexFieldPanel();
 		}
 
@@ -249,7 +255,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.addWidget(indexedPanel);
 			}
 		});
-		setAction(new BindingAction());
+		//setAction(new BindingAction());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -270,10 +276,10 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		fg.getField("status").addValueChangeHandler(new ValueChangeHandler() {
+		((IField<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
 
-			public void onValueChange(ValueChangeEvent event) {
-				final String s = getFieldGroup().getField("status").getText().toLowerCase();
+			public void onValueChange(ValueChangeEvent<String> event) {
+				final String s = event.getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
 				final IField<?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
@@ -281,10 +287,10 @@ public class ComplexFieldPanel extends MockFieldPanel {
 			}
 		});
 
-		fg.getField("persistPymntInfo").addValueChangeHandler(new ValueChangeHandler() {
+		((IField<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-			public void onValueChange(ValueChangeEvent event) {
-				relatedOnePanel.getFieldGroup().setEnabled(((CheckboxField) event.getSource()).isChecked());
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				indexedPanel.getFieldGroup().setEnabled(event.getValue());
 			}
 		});
 

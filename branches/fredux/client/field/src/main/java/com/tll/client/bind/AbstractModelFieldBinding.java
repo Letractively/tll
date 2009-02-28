@@ -5,40 +5,42 @@
  */
 package com.tll.client.bind;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IndexedFieldPanel;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
+import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
- * AbstractBindingAction - Common base class for binding actions whose action
+ * AbstractModelFieldBinding - Common base class for binding actions whose action
  * transfers field data to the model.
- * @param <M> the model type
- * @param <FP> the field panel type
  * @author jpk
  */
-public abstract class AbstractBindingAction<M extends IBindable, FP extends FieldPanel<?>> implements
-		IBindingAction {
+public abstract class AbstractModelFieldBinding implements IModelFieldBinding {
 
 	/**
-	 * The bindable (field panel) this binding action acts on.
+	 * the model ref.
 	 */
-	FP fieldPanel;
+	protected IBindable model;
 
 	/**
 	 * The primary binding.
 	 */
-	private final Binding binding = new Binding();
+	protected final Binding binding = new Binding();
+	
+	/**
+	 * The msg popup registry for this binding.
+	 */
+	protected final MsgPopupRegistry mregistry = new MsgPopupRegistry();
 
 	/**
 	 * Aggregation of indexed field panels referenced here for life-cycle
@@ -47,34 +49,13 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 	 * NOTE: We can't aggregate all bindings under one common parent due to the
 	 * way indexed properties are handled.
 	 */
-	private final Set<IndexedFieldPanel<?, ?>> indexed = new HashSet<IndexedFieldPanel<?, ?>>();
+	//protected final Set<IndexedFieldPanel<?, ?>> indexed = new HashSet<IndexedFieldPanel<?, ?>>();
 
+	/**
+	 * Flag to indicate whether or not we are bound.
+	 */
 	private boolean bound;
 
-	@SuppressWarnings("unchecked")
-	public <B extends IBindable> void setBindable(B bindable) {
-		if(bound) {
-			throw new IllegalStateException("Model edit binding is already bound");
-		}
-		else if(bindable instanceof FieldPanel == false) {
-			throw new IllegalArgumentException("The bindable must be a field panel");
-		}
-		this.fieldPanel = (FP) bindable;
-
-		if(fieldPanel.getModel() != null) {
-			try {
-				Log.debug("AbstractBindingAction.populateBinding()..");
-				populateBinding(fieldPanel);
-			}
-			catch(final ClassCastException e) {
-				throw new IllegalArgumentException("The bindable must be a field panel");
-			}
-			catch(final PropertyPathException e) {
-				throw new IllegalStateException("Unable to set bindable", e);
-			}
-		}
-	}
-	
 	/**
 	 * Transfers field data to the model through the defined bindings.
 	 */
@@ -87,8 +68,17 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 
 	public void bind() {
 		if(!bound) {
-			Log.debug("AbstractBindingAction.bind()..");
-
+			Log.debug("AbstractModelFieldBinding.populateBinding()..");
+			try {
+				populateBinding();
+			}
+			catch(final PropertyPathException e) {
+				throw new IllegalStateException("Unable to bind: " + e.getMessage(), e);
+			}
+			
+			// propagate the mregistry..
+			getRootFieldPanel().setMsgPopupRegistry(mregistry);
+			
 			// bind primary..
 			binding.bind();
 			binding.setRight(); // populate the fields
@@ -99,13 +89,15 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 
 	public void unbind() {
 		if(bound) {
-			Log.debug("AbstractBindingAction.unbind()..");
+			Log.debug("AbstractModelFieldBinding.unbind()..");
 
 			// clear the indexed..
+			/*
 			for(final IndexedFieldPanel<?, ?> ifp : indexed) {
 				ifp.clear();
 			}
-
+			*/
+			
 			// unbind primary
 			binding.unbind();
 			binding.getChildren().clear();
@@ -113,62 +105,98 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 		}
 	}
 
+	@Override
+	public final void setModel(IBindable model) {
+		// don't spuriously re-apply the same model instance!
+		if(this.model != null && model == this.model) {
+			return;
+		}
+		Log.debug("AbstractModelFieldBinding.setModel() - START");
+
+		if(this.model != null) {
+			unbind();
+		}
+
+		this.model = model;
+
+		//Log.debug("AbstractModelFieldBinding.setModel() - setting bindable..");
+		//setBindable(this);
+
+		//if(isAttached() && model != null) {
+		if(model != null) {
+			Log.debug("AbstractModelFieldBinding.setModel() - binding..");
+			bind();
+		}
+
+		// changeSupport.firePropertyChange(PROPERTY_MODEL, old, model);
+		Log.debug("AbstractModelFieldBinding.setModel() - END");
+	}
+	
 	/**
 	 * Responsible for filling the <code>binding</code> member property.
-	 * @param bindable
 	 * @throws PropertyPathException
 	 */
-	protected abstract void populateBinding(FP bindable) throws PropertyPathException;
+	protected abstract void populateBinding() throws PropertyPathException;
 
 	/**
 	 * Adds an indexed field binding.
 	 * @param <I> the index field panel type
-	 * @param model
 	 * @param indexedProperty
 	 * @param indexedFieldPanel
 	 */
-	protected final <I extends FieldPanel<? extends Widget>> void addIndexedFieldBinding(M model,
-			String indexedProperty, IndexedFieldPanel<I, M> indexedFieldPanel) {
+	protected final <I extends FieldPanel<?>, M extends IBindable> void addIndexedFieldBinding(String indexedProperty,
+			IndexedFieldPanel<I> indexedFieldPanel) {
 
 		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(
 				new Binding(model, indexedProperty, null, null, indexedFieldPanel, IBindableWidget.PROPERTY_VALUE, null, null));
 
 		// retain indexed binding ref
-		indexed.add(indexedFieldPanel);
+		//indexed.add(indexedFieldPanel);
 	}
 
 	/**
 	 * Adds multiple nested field bindings based on a given parent property path
-	 * @param fieldPanel
 	 * @param parentPropPath
 	 * @throws UnsetPropertyException
 	 */
-	protected final void addNestedFieldBindings(FP fieldPanel, String parentPropPath) throws UnsetPropertyException {
-
-		final M model = fieldPanel.getModel();
-		assert model != null;
-
-		final Set<IField<?>> fset = fieldPanel.getFieldGroup().getFields(parentPropPath);
+	protected final void addNestedFieldBindings(String parentPropPath)
+			throws UnsetPropertyException {
+		final Set<IField<?>> fset = getRootFieldPanel().getFieldGroup().getFields(parentPropPath);
 		assert fset != null;
 		if(fset.size() < 1) {
 			throw new UnsetPropertyException(parentPropPath);
 		}
 
 		for(final IField<?> f : fset) {
-			addFieldBinding(model, f.getPropertyName(), f);
+			addFieldBinding(f.getPropertyName(), f);
 		}
 	}
 
 	/**
 	 * Shorthand for adding a child field binding.
-	 * @param fieldPanel
 	 * @param modelProperty
 	 * @throws UnsetPropertyException When the field can't be extracted from the
 	 *         given {@link FieldPanel}.
 	 */
-	protected final void addFieldBinding(FP fieldPanel, String modelProperty) throws UnsetPropertyException {
-		addFieldBinding(fieldPanel.getModel(), modelProperty, fieldPanel.getField(modelProperty));
+	protected final void addFieldBinding(String modelProperty) throws UnsetPropertyException {
+		addFieldBinding(modelProperty, getRootFieldPanel().getFieldGroup().getField(modelProperty));
+	}
+	
+	/**
+	 * Shorthand for adding common model/field bindings.
+	 * @param name add model name binding?
+	 * @param timestamp add date created/modified bindings?
+	 * @throws UnsetPropertyException
+	 */
+	protected final void addCommonModelFieldBindings(boolean name, boolean timestamp) throws UnsetPropertyException {
+		if(name) {
+			addFieldBinding(Model.NAME_PROPERTY);
+		}
+		if(timestamp) {
+			addFieldBinding(Model.DATE_CREATED_PROPERTY);
+			addFieldBinding(Model.DATE_MODIFIED_PROPERTY);
+		}
 	}
 
 	/**
@@ -177,7 +205,7 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 	 * @param modelProperty
 	 * @param field
 	 */
-	private void addFieldBinding(M model, String modelProperty, IField<?> field) {
+	private void addFieldBinding(String modelProperty, IField<?> field) {
 		Log.debug("Binding field: " + field + " to model [" + model + "]." + modelProperty);
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {
@@ -185,6 +213,6 @@ public abstract class AbstractBindingAction<M extends IBindable, FP extends Fiel
 		}
 		binding.getChildren().add(
 				new Binding(model, modelProperty, null, null, field, IBindableWidget.PROPERTY_VALUE, field,
-						new FieldValidationFeedback()));
+						new FieldValidationFeedback(mregistry)));
 	}
 }

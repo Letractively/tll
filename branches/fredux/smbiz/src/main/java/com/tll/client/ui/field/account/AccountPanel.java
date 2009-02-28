@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.AbstractBindingAction;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
@@ -32,33 +31,6 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
-
-	/**
-	 * AccountEditAction
-	 * @author jpk
-	 */
-	private class AccountEditAction extends AbstractBindingAction<M, AccountPanel<M>> {
-
-		@Override
-		protected void populateBinding(AccountPanel<M> fp) throws PropertyPathException {
-			addFieldBinding(fp, Model.NAME_PROPERTY);
-			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
-			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
-			addFieldBinding(fp, "parent.name");
-			addFieldBinding(fp, "status");
-			addFieldBinding(fp, "dateCancelled");
-			addFieldBinding(fp, "currency.id");
-			addFieldBinding(fp, "billingModel");
-			addFieldBinding(fp, "billingCycle");
-			addFieldBinding(fp, "dateLastCharged");
-			addFieldBinding(fp, "nextChargeDate");
-			addFieldBinding(fp, "persistPymntInfo");
-
-			addNestedFieldBindings(fp, "paymentInfo");
-
-			addIndexedFieldBinding(fp.getModel(), "addresses", addressesPanel);
-		}
-	}
 
 	class AccountFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
@@ -104,7 +76,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	private static final class AccountAddressPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+	private static final class AccountAddressPanel extends FieldPanel<FlowPanel> {
 
 		final FlowPanel panel = new FlowPanel();
 
@@ -143,10 +115,8 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 	/**
 	 * AddressesPanel
 	 * @author jpk
-	 * @param <M> The model type
 	 */
-	private static final class AddressesPanel<M extends IBindable> extends
-			TabbedIndexedFieldPanel<AccountAddressPanel<M>, M> {
+	static final class AddressesPanel extends TabbedIndexedFieldPanel<AccountAddressPanel> {
 
 		/**
 		 * Constructor
@@ -161,12 +131,12 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		protected String getTabLabelText(AccountAddressPanel<M> aap) {
+		protected String getTabLabelText(Index<AccountAddressPanel> index) {
 			AddressType type;
 			String aaName;
 			try {
-				type = (AddressType) aap.getModel().getProperty("type");
-				aaName = (String) aap.getModel().getProperty("name");
+				type = (AddressType) index.getModel().getProperty("type");
+				aaName = (String) index.getModel().getProperty("name");
 			}
 			catch(final PropertyPathException e) {
 				throw new IllegalStateException(e);
@@ -175,15 +145,14 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 			return aaName + " (" + type.getName() + ")";
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		protected M createPrototypeModel() {
-			return (M) AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
+		protected IBindable createPrototypeModel() {
+			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override
-		protected AccountAddressPanel<M> createIndexPanel(M indexModel) {
-			return new AccountAddressPanel<M>();
+		protected AccountAddressPanel createIndexPanel(IBindable indexModel) {
+			return new AccountAddressPanel();
 		}
 
 	} // AddressesPanel
@@ -191,20 +160,19 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 	private final FlowPanel panel = new FlowPanel();
 
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
-	protected final PaymentInfoPanel<M> paymentInfoPanel = new PaymentInfoPanel<M>();
+	protected final PaymentInfoPanel paymentInfoPanel = new PaymentInfoPanel();
 
 	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
-	protected final AddressesPanel<M> addressesPanel = new AddressesPanel<M>();
+	protected final AddressesPanel addressesPanel = new AddressesPanel();
 
 	/**
 	 * Constructor
 	 */
-	@SuppressWarnings("synthetic-access")
 	public AccountPanel() {
 		super();
 		initWidget(panel);
 		setRenderer(new AccountFieldsRenderer());
-		setAction(new AccountEditAction());
+		//setAction(new AccountEditAction());
 	}
 
 	@SuppressWarnings("unchecked")

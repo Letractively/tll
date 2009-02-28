@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Jan 3, 2009
+ * @author jpk Jan 3, 2009
  */
 package com.tll.client.ui.field;
 
@@ -12,7 +11,6 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IBindableWidget;
@@ -28,34 +26,41 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * indexing operations sync with the {@link FieldPanel}'s member ("underlying")
  * field group.
  * @param <I> the index field panel type
- * @param <M> the model type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, M extends IBindable> extends
-		AbstractBindableWidget<Collection<M>> implements IFieldGroupProvider/*, Iterable<I>*/{
+public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends AbstractBindableWidget<Collection<IBindable>>
+		implements IFieldGroupProvider {
 
 	/**
-	 * Index
-	 * @author jpk
+	 * Index - Encapsulates a model and field panel for an indexed position.
 	 * @param <I> The index type
-	 * @param <M> the model type
+	 * @author jpk
 	 */
-	protected static final class Index<I, M extends IBindable> {
+	public static final class Index<I> {
 
-		I fp;
-		M model;
+		final IBindable model;
+		final I fieldPanel;
 		boolean markedDeleted;
 
 		/**
 		 * Constructor
-		 * @param fp
 		 * @param model
+		 * @param fieldPanel
 		 */
-		public Index(I fp, M model) {
+		public Index(IBindable model, I fieldPanel) {
 			super();
-			this.fp = fp;
 			this.model = model;
+			this.fieldPanel = fieldPanel;
 		}
+
+		public IBindable getModel() {
+			return model;
+		}
+
+		public I getFieldPanel() {
+			return fieldPanel;
+		}
+
 	} // Index
 
 	/**
@@ -66,12 +71,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	/**
 	 * The list of indexed {@link FieldPanel}s.
 	 */
-	protected final List<Index<I, M>> indexPanels = new ArrayList<Index<I, M>>();
+	protected final List<Index<I>> indexPanels = new ArrayList<Index<I>>();
 
 	/**
 	 * The model data collection.
 	 */
-	private Collection<M> value;
+	private Collection<IBindable> value;
 
 	/**
 	 * Holds bindings that bind {@link #value} to {@link #list}. Each sub-binding
@@ -92,12 +97,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 		this.topGroup = new FieldGroup(name);
 	}
 
-	/*
-	public Iterator<I> iterator() {
-		return new IndexIterator();
-	}
-	*/
-
 	/**
 	 * @return The top-most aggregate {@link FieldGroup} containing the index
 	 *         {@link FieldGroup}s.
@@ -117,7 +116,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 * @return A prototype model used to bind a newly added indexed field panel.
 	 *         This model will be bound to the added field panel.
 	 */
-	protected abstract M createPrototypeModel();
+	protected abstract IBindable createPrototypeModel();
 
 	/**
 	 * Factory method to obtain a new index field panel instance.
@@ -125,7 +124,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 *        consequently, may be ignored if there are no such properties.
 	 * @return new field panel instance for employ at a particular index.
 	 */
-	protected abstract I createIndexPanel(M indexModel);
+	protected abstract I createIndexPanel(IBindable indexModel);
 
 	/**
 	 * Draws the composite wrapped widget.
@@ -135,7 +134,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	/**
 	 * Adds a new indexed field group
 	 */
-	protected I add() {
+	protected Index<I> add() {
 		return add(createPrototypeModel());
 	}
 
@@ -148,7 +147,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private I add(M model) throws IllegalArgumentException {
+	private Index<I> add(IBindable model) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
 		final I ip = createIndexPanel(model);
 
@@ -157,7 +156,8 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 			ip.getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
 		}
 
-		indexPanels.add(new Index<I, M>(ip, model));
+		final Index<I> index = new Index<I>(model, ip);
+		indexPanels.add(index);
 
 		ip.getFieldGroup().setName(topGroup.getName() + '[' + (size() - 1) + ']');
 		topGroup.addField(ip.getFieldGroup());
@@ -165,7 +165,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 		binding.getChildren().add(indexBinding);
 		bind(ip.getFieldGroup(), model, indexBinding);
 
-		return ip;
+		return index;
 	}
 
 	/**
@@ -176,10 +176,10 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 *        group
 	 * @throws IndexOutOfBoundsException When the given index is out of bounds
 	 */
-	protected void update(int index, M model) throws IndexOutOfBoundsException {
+	protected void update(int index, IBindable model) throws IndexOutOfBoundsException {
 		assert model != null;
 		unbindAtIndex(index);
-		final FieldGroup fg = indexPanels.get(index).fp.getFieldGroup();
+		final FieldGroup fg = indexPanels.get(index).fieldPanel.getFieldGroup();
 		bind(fg, model, binding.getChildren().get(index));
 	}
 
@@ -190,11 +190,11 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 * @return The removed field group
 	 * @throws IndexOutOfBoundsException
 	 */
-	protected I remove(int index) throws IndexOutOfBoundsException {
-		final Index<I, M> removed = indexPanels.remove(index);
-		topGroup.removeField(removed.fp.getFieldGroup());
+	protected Index<I> remove(int index) throws IndexOutOfBoundsException {
+		final Index<I> removed = indexPanels.remove(index);
+		topGroup.removeField(removed.fieldPanel.getFieldGroup());
 		unbindAtIndex(index);
-		return removed.fp;
+		return removed;
 	}
 
 	/**
@@ -204,9 +204,9 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		final Index<I, M> ip = indexPanels.get(index);
+		final Index<I> ip = indexPanels.get(index);
 		ip.markedDeleted = deleted;
-		ip.fp.getFieldGroup().setEnabled(!deleted);
+		ip.fieldPanel.getFieldGroup().setEnabled(!deleted);
 	}
 
 	/**
@@ -227,7 +227,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 		Log.debug("IndexedFieldPanel.regenerate() - START");
 		clear();
 		if(value != null) {
-			for(final M m : value) {
+			for(final IBindable m : value) {
 				add(m);
 			}
 		}
@@ -243,7 +243,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	 *        field group whose value is successfully set will be added under this
 	 *        binding.
 	 */
-	private void bind(FieldGroup fg, M model, Binding indexBinding) {
+	private void bind(FieldGroup fg, IBindable model, Binding indexBinding) {
 		for(final IField<?> f : fg) {
 			if(f instanceof FieldGroup == false) {
 				final String propName = f.getPropertyName();
@@ -292,12 +292,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 		indexPanels.clear();
 	}
 
-	public final Collection<M> getValue() {
+	public final Collection<IBindable> getValue() {
 		return value;
 	}
 
-	public final void setValue(Collection<M> value) {
-		final Collection<M> old = this.value;
+	public final void setValue(Collection<IBindable> value) {
+		final Collection<IBindable> old = this.value;
 		this.value = value;
 		if(changeSupport != null) changeSupport.firePropertyChange("value", old, this.value);
 
@@ -307,12 +307,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 	}
 
 	@Override
-	public void setValue(Collection<M> value, boolean fireEvents) {
+	public void setValue(Collection<IBindable> value, boolean fireEvents) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<M>> handler) {
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<IBindable>> handler) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -328,7 +328,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<? extends Widget>, 
 		if(value instanceof Collection == false) {
 			throw new Exception("The value must be a collection");
 		}
-		setValue((Collection<M>) value);
+		setValue((Collection<IBindable>) value);
 	}
 
 	@Override

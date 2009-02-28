@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
+import com.tll.client.bind.AbstractModelFieldBinding;
 import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.listing.IListingListener;
 import com.tll.client.listing.ListingEvent;
@@ -30,6 +31,7 @@ import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditListener;
 import com.tll.client.ui.edit.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.SwitchInterfacePanel;
@@ -79,6 +81,19 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		 */
 		private final class InterfaceStack implements IEditListener {
 
+			private final class EditAction extends AbstractModelFieldBinding {
+
+				@Override
+				public FieldPanel<?> getRootFieldPanel() {
+					return resolveInterfacePanel(intfRef.getType());
+				}
+
+				@Override
+				protected void populateBinding() /*throws PropertyPathException*/{
+					// TODO
+				}
+			}
+			
 			// private final int stackIndex;
 			private final RefKey intfRef;
 			private Model model; // the interface model
@@ -94,7 +109,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(new EditAction(), false, true);
 				editPanel.addEditListener(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -134,7 +149,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			}
 
 			void handleModelChangeError(ModelChangeEvent event) {
-				editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+				editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
 			}
 
 			void handleModelChangeSuccess(ModelChangeEvent event) {

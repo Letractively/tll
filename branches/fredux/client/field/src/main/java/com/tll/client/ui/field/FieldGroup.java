@@ -16,6 +16,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -204,12 +205,11 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 		throw new UnsupportedOperationException();
 	}
 
-	public String getHelpText() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setHelpText(String helpText) {
-		throw new UnsupportedOperationException();
+	@Override
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		for(final IField<?> field : fields) {
+			field.setMsgPopupRegistry(mregistry);
+		}
 	}
 
 	/**
@@ -262,7 +262,20 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 	public IField<?> getFieldByName(String name) {
 		return name == null ? null : findFieldByName(name, this);
 	}
-
+	
+	/**
+	 * Recursively searches for a field <em>widget</em> having the given name.
+	 * @param name
+	 * @return The found field widget or <code>null</code> if no field widget
+	 *         exists with the given name.
+	 */
+	/*
+	public IFieldWidget<?> getFieldWidgetByName(String name) {
+		final IField<?> f = getFieldByName(name);
+		return f == null ? null : ((f instanceof IFieldWidget) ? (IFieldWidget<?>) f : null);
+	}
+	*/
+	
 	/**
 	 * Finds all fields whose property name begins with the given property path.
 	 * @param propPath The property path
@@ -539,27 +552,7 @@ public final class FieldGroup implements IField<Set<IField<?>>>, Iterable<IField
 		return value;
 	}
 
-	public FieldLabel getFieldLabel() {
-		throw new UnsupportedOperationException();
-	}
-
 	public Widget getWidget() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setFieldContainer(Widget fieldContainer) {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setFieldLabelContainer(Widget fieldLabelContainer) {
-		throw new UnsupportedOperationException();
-	}
-
-	public String getText() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
 

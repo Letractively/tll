@@ -1,8 +1,9 @@
 package com.tll.client.bind;
 
-
 /**
- * IBindingAction - "Controls" a given component participating in a binding.
+ * IBindingAction - Encapsulates bi-directional binding between two bindable
+ * targets. The operations performed upon {@link #execute()} are implmentation
+ * dependent.
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
