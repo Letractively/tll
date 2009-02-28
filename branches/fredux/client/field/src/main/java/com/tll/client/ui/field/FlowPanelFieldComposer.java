@@ -97,7 +97,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 	/**
 	 * Adds a field label and Widget to the canvas. If the label text is
 	 * <code>null</code>, no label is added. If the Widget is an IField
-	 * {@link #addField(IField)} should be called instead.
+	 * {@link #addField(IFieldWidget)} should be called instead.
 	 * @param label The label text
 	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
@@ -110,11 +110,10 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(IField<?> field) {
-		final IFieldWidget<?> fw = (IFieldWidget<?>) field;
-		add(fw.getFieldLabel(), field.getWidget());
-		fw.setFieldContainer(last.getParent());
-		fw.setFieldLabelContainer(last.getParent());
+	public void addField(IFieldWidget<?> field) {
+		add(field.getFieldLabel(), field.getWidget());
+		field.setFieldContainer(last.getParent());
+		field.setFieldLabelContainer(last.getParent());
 	}
 
 	/**

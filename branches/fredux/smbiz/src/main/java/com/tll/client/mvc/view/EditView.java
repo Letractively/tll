@@ -4,13 +4,13 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.bind.IModelFieldBinding;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
@@ -46,13 +46,13 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 	/**
 	 * Constructor
-	 * @param binding The model field binding
+	 * @param fieldPanel The required field panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(IModelFieldBinding binding, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(binding, true, false);
+		editPanel = new EditPanel(fieldPanel, true, false);
 		editPanel.addEditListener(this);
 
 		this.entityOptions = entityOptions;

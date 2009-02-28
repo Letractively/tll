@@ -4,14 +4,12 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.AbstractModelFieldBinding;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
-import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
@@ -25,38 +23,6 @@ import com.tll.common.model.mock.MockEntityType;
  * @author jpk
  */
 public class ComplexFieldPanel extends MockFieldPanel {
-
-	/**
-	 * AccountEditAction
-	 * @author jpk
-	 */
-	class BindingAction extends AbstractModelFieldBinding {
-
-		@Override
-		public FieldPanel<?> getRootFieldPanel() {
-			return ComplexFieldPanel.this;
-		}
-
-		@Override
-		protected void populateBinding() throws PropertyPathException {
-			addFieldBinding(Model.NAME_PROPERTY);
-			addFieldBinding(Model.DATE_CREATED_PROPERTY);
-			addFieldBinding(Model.DATE_MODIFIED_PROPERTY);
-			addFieldBinding("parent.name");
-			addFieldBinding("status");
-			addFieldBinding("dateCancelled");
-			//addFieldBinding("currency.id");
-			addFieldBinding("billingModel");
-			addFieldBinding("billingCycle");
-			addFieldBinding("dateLastCharged");
-			addFieldBinding("nextChargeDate");
-			addFieldBinding("persistPymntInfo");
-
-			addNestedFieldBindings("paymentInfo");
-
-			addIndexedFieldBinding("addresses", indexedPanel);
-		}
-	} // BindingAction
 
 	/**
 	 * RelatedOnePanel
@@ -76,15 +42,15 @@ public class ComplexFieldPanel extends MockFieldPanel {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
-					cmpsr.addField(fg.getFieldByName("ccType"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccType"));
 
-					cmpsr.addField(fg.getFieldByName("ccNum"));
-					cmpsr.addField(fg.getFieldByName("ccCvv2"));
-					cmpsr.addField(fg.getFieldByName("ccExpMonth"));
-					cmpsr.addField(fg.getFieldByName("ccExpYear"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccNum"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccCvv2"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccExpMonth"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccExpYear"));
 
 					cmpsr.newRow();
-					cmpsr.addField(fg.getFieldByName("ccName"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccName"));
 				}
 			});
 		}
@@ -113,7 +79,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 					cmpsr.setCanvas(panel);
 
 					// account address type/name row
-					cmpsr.addField(fg.getFieldByName("type"));
+					cmpsr.addField(fg.getFieldWidgetByName("type"));
 					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
 
 					// address row
@@ -126,33 +92,33 @@ public class ComplexFieldPanel extends MockFieldPanel {
 							final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 							cmpsr.setCanvas(widget);
 
-							cmpsr.addField(fg.getFieldByName("adrsEmailAddress"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
 
 							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsFirstName"));
-							cmpsr.addField(fg.getFieldByName("adrsMi"));
-							cmpsr.addField(fg.getFieldByName("adrsLastName"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAttn"));
-							//cmpsr.addField(fg.getFieldByName("adrsCompany"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsCompany"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAddress1"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress1"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAddress2"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
 							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsCity"));
-							cmpsr.addField(fg.getFieldByName("adrsProvince"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
 
 							cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsPostalCode"));
-							cmpsr.addField(fg.getFieldByName("adrsCountry"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
 							
-							cmpsr.addField(fg.getFieldByName("adrsBoolean"));
-							cmpsr.addField(fg.getFieldByName("adrsFloat"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
@@ -176,7 +142,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		 * Constructor
 		 */
 		public IndexedFieldPanel() {
-			super("Addresses", true, true);
+			super("Addresses", "addresses", true, true);
 		}
 
 		@Override
@@ -229,22 +195,22 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.setCanvas(panel);
 
 				// first row
-				cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
-				cmpsr.addField(fg.getFieldByName("acntStatus"));
-				cmpsr.addField(fg.getFieldByName("acntDateCancelled"));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				cmpsr.addField(fg.getFieldByName("acntParentName"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldByName("acntBillingModel"));
-				cmpsr.addField(fg.getFieldByName("acntBillingCycle"));
-				cmpsr.addField(fg.getFieldByName("acntDateLastCharged"));
-				cmpsr.addField(fg.getFieldByName("acntNextChargeDate"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
 
 				// related one panel
 				cmpsr.newRow();
@@ -276,18 +242,18 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		((IField<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
+		((IFieldWidget<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
 				final String s = event.getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				final IField<?> f = getFieldGroup().getField("dateCancelled");
+				final IFieldWidget<?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IField<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		((IFieldWidget<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				indexedPanel.getFieldGroup().setEnabled(event.getValue());

@@ -74,13 +74,13 @@ implements IFieldWidget<T>,
 	private final String domId;
 
 	/**
-	 * The field name.
+	 * The unique field name.
 	 */
 	private String name;
 
 	/**
 	 * The full property path intended to uniquely identify this field relative to
-	 * a common root construct.
+	 * a common root object.
 	 * <p>
 	 * <em>NOTE: This is distinct from the field's <code>name</code> property.
 	 */
@@ -146,9 +146,9 @@ implements IFieldWidget<T>,
 	 * @throws IllegalArgumentException When no property propName is given
 	 */
 	public AbstractField(String name, String propName, String labelText, String helpText) {
-		domId = 'f' + Integer.toString(++fieldCounter);
 		setName(name);
 		setPropertyName(propName);
+		domId = 'f' + Integer.toString(++fieldCounter);
 
 		// set the label
 		setLabelText(labelText);
@@ -230,13 +230,13 @@ implements IFieldWidget<T>,
 	}
 
 	public final String getPropertyName() {
-		if(StringUtil.isEmpty(name)) {
-			throw new IllegalArgumentException("A field must have a property name.");
-		}
 		return property;
 	}
 
 	public final void setPropertyName(String propName) {
+		if(StringUtil.isEmpty(name)) {
+			throw new IllegalArgumentException("A field must have a property name.");
+		}
 		this.property = propName;
 	}
 
@@ -627,12 +627,12 @@ implements IFieldWidget<T>,
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
 		final AbstractField other = (AbstractField) obj;
-		return (!property.equals(other.property));
+		return (!name.equals(other.name));
 	}
 
 	@Override
 	public final int hashCode() {
-		return 31 + property.hashCode();
+		return 31 + name.hashCode();
 	}
 
 	@Override

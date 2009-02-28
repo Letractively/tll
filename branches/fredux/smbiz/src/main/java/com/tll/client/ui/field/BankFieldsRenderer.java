@@ -6,9 +6,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.GridFieldComposer;
-import com.tll.client.ui.field.IFieldRenderer;
 
 /**
  * BankFieldsRenderer
@@ -20,9 +17,9 @@ public class BankFieldsRenderer implements IFieldRenderer<FlowPanel> {
 		final GridFieldComposer cmpsr = new GridFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getFieldByName("bankName"));
-		cmpsr.addField(fg.getFieldByName("bankAccountNo"));
-		cmpsr.addField(fg.getFieldByName("bankRoutingNo"));
+		cmpsr.addField(fg.getFieldWidgetByName("bankName"));
+		cmpsr.addField(fg.getFieldWidgetByName("bankAccountNo"));
+		cmpsr.addField(fg.getFieldWidgetByName("bankRoutingNo"));
 	}
 
 }

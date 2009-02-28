@@ -28,14 +28,14 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("intfName"));
-			cmpsr.addField(fg.getFieldByName("intfCode"));
-			cmpsr.addField(fg.getFieldByName("intfDescription"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfName"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetAlignment();
 
 			cmpsr.newRow();
@@ -56,7 +56,7 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
-		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
+		final FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
 
 		// the switch option
 		fg.addField("options[0]", (new OptionFieldProvider()).getFieldGroup());

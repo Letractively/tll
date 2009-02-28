@@ -15,9 +15,9 @@ import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
-import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
@@ -27,10 +27,9 @@ import com.tll.model.SmbizEntityType;
 
 /**
  * AccountPanel
- * @param <M> the model type
  * @author jpk
  */
-public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
+public class AccountPanel extends FieldPanel<FlowPanel> {
 
 	class AccountFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
@@ -39,23 +38,23 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldByName("acntStatus"));
-			cmpsr.addField(fg.getFieldByName("acntDateCancelled"));
-			cmpsr.addField(fg.getFieldByName("acntCurrencyId"));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntCurrencyId"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			cmpsr.addField(fg.getFieldByName("acntParentName"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 
 			// second row (billing)
 			cmpsr.newRow();
-			cmpsr.addField(fg.getFieldByName("acntBillingModel"));
-			cmpsr.addField(fg.getFieldByName("acntBillingCycle"));
-			cmpsr.addField(fg.getFieldByName("acntDateLastCharged"));
-			cmpsr.addField(fg.getFieldByName("acntNextChargeDate"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
+			cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
 
 			// third row
 			cmpsr.newRow();
@@ -65,7 +64,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 
 			// payment info block
 			final FlowPanel fp = new FlowPanel();
-			fp.add((Widget) fg.getFieldByName("acntPersistPymntInfo"));
+			fp.add((Widget) fg.getFieldWidgetByName("acntPersistPymntInfo"));
 			fp.add(paymentInfoPanel);
 			dpPaymentInfo.add(fp);
 			cmpsr.addWidget(dpPaymentInfo);
@@ -93,7 +92,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 					cmpsr.setCanvas(panel);
 
 					// account address type/name row
-					cmpsr.addField(fg.getFieldByName("type"));
+					cmpsr.addField(fg.getFieldWidgetByName("type"));
 					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
 
 					// address row
@@ -122,7 +121,7 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 		 * Constructor
 		 */
 		public AddressesPanel() {
-			super("Addresses", true, true);
+			super("Addresses", "addresses", true, true);
 		}
 
 		@Override
@@ -188,23 +187,23 @@ public class AccountPanel<M extends IBindable> extends FieldPanel<FlowPanel> {
 			}
 		}).getFieldGroup();
 
-		paymentInfoPanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
-		addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
+		paymentInfoPanel.getFieldGroup().setWidget(dpPaymentInfo);
+		addressesPanel.getFieldGroup().setWidget(dpAddresses);
 
 		fg.getField("parent.name").setReadOnly(true);
 
-		((IField<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
+		((IFieldWidget<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
 				final String s = event.getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				final IField<?> f = getFieldGroup().getField("dateCancelled");
+				final IFieldWidget<?> f = getFieldGroup().getField("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IField<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		((IFieldWidget<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				paymentInfoPanel.getFieldGroup().setEnabled(event.getValue());

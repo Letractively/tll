@@ -5,24 +5,20 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IBindable;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.criteria.IPropertyNameProvider;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
  * <p>
- * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
- * @param <T> The value type
+ * <em><b>NOTE: </b>fields are considered equal only if their names are the same.</em>
  * @author jpk
  */
-public interface IField<T> extends IPropertyNameProvider, HasName, HasValue<T>, IBindable, IValidator {
+public interface IField extends HasName {
 
 	/**
 	 * Styles - (field.css)
@@ -62,12 +58,6 @@ public interface IField<T> extends IPropertyNameProvider, HasName, HasValue<T>, 
 
 	} // Styles
 
-	/**
-	 * Sets the property name for this field.
-	 * @param propName The property name
-	 */
-	void setPropertyName(String propName);
-	
 	/**
 	 * Sets the message popup registry.
 	 * @param mregistry
@@ -130,7 +120,10 @@ public interface IField<T> extends IPropertyNameProvider, HasName, HasValue<T>, 
 	void setVisible(boolean visible);
 
 	/**
-	 * @return The field Widget.
+	 * Provides the handle to the actual ui widget. <br>
+	 * NOTE: For field groups, this method serves as a way to associate a ui
+	 * widget with the field group mainly used for validation feedback purposes.
+	 * @return handle to the actual ui {@link Widget}.
 	 */
 	Widget getWidget();
 
@@ -153,7 +146,7 @@ public interface IField<T> extends IPropertyNameProvider, HasName, HasValue<T>, 
 	void removeValidator(IValidator validator);
 
 	/**
-	 * Validates the field's held value.
+	 * Validates the field's state.
 	 * @throws ValidationException When invalid
 	 */
 	void validate() throws ValidationException;

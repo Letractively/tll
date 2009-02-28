@@ -161,11 +161,13 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	/**
 	 * Constructor
 	 * @param name The collective name
+	 * @param indexedPropertyName The name of the indexed property relative to a
+	 *        parent root model.
 	 * @param enableAdd Allow tabs to be added?
 	 * @param enableDelete Allow tabs to be marked as deleted?
 	 */
-	public TabbedIndexedFieldPanel(String name, boolean enableAdd, boolean enableDelete) {
-		super(name);
+	public TabbedIndexedFieldPanel(String name, String indexedPropertyName, boolean enableAdd, boolean enableDelete) {
+		super(name, indexedPropertyName);
 
 		this.enableAdd = enableAdd;
 		this.enableDelete = enableDelete;

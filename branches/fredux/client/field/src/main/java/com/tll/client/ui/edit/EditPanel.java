@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IModelFieldBinding;
+import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
@@ -66,31 +66,31 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	private final SimplePanel portal = new SimplePanel();
 
 	/**
+	 * Contains the actual edit fields.
+	 */
+	private final FieldPanel<? extends Widget> fieldPanel;
+
+	/**
 	 * The panel containing the edit buttons
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
-	/**
-	 * the model/field binding action.
-	 */
-	private final IModelFieldBinding binding;
-
 	private final EditListenerCollection editListeners = new EditListenerCollection();
 
 	/**
 	 * Constructor
-	 * @param binding the model/field binding action
+	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(IModelFieldBinding binding, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
 
-		if(binding == null) throw new IllegalArgumentException("A model/field binding must be specified.");
-		this.binding = binding;
+		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
+		this.fieldPanel = fieldPanel;
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -155,14 +155,15 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
-		binding.setModel(model);
+		fieldPanel.setModel(model);
 		if(model != null) {
 			assert isAttached() == true;
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
-			if(!binding.getRootFieldPanel().isAttached()) {
+			if(!fieldPanel.isAttached()) {
+				fieldPanel.setAction(new FieldBindingAction());
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
-				portal.add(binding.getRootFieldPanel());
+				portal.add(fieldPanel);
 			}
 		}
 		Log.debug("EditPanel.setModel() - END");
@@ -174,8 +175,8 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 * @param msgs The field error messages to apply
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
-		final FieldGroup root = binding.getRootFieldPanel().getFieldGroup();
-		final MsgPopupRegistry mregistry = binding.getRootFieldPanel().getMsgPopupRegistry();
+		final FieldGroup root = fieldPanel.getFieldGroup();
+		final MsgPopupRegistry mregistry = fieldPanel.getMsgPopupRegistry();
 		for(final Msg msg : msgs) {
 			if(msg.getRefToken() != null) {
 				final Widget fw = root.getField(msg.getRefToken()).getWidget();
@@ -190,13 +191,12 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
-			//fieldPanel.getAction().execute();
-			binding.execute();
+			fieldPanel.getAction().execute();
 			// TODO propagate
 			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 		}
 		else if(sender == btnReset) {
-			binding.getRootFieldPanel().getFieldGroup().reset();
+			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));

@@ -5,12 +5,10 @@
  */
 package com.tll.client.mvc.view.user;
 
-import com.tll.client.bind.AbstractModelFieldBinding;
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.model.SmbizEntityType;
@@ -44,26 +42,11 @@ public class UserEditView extends EditView {
 
 	}
 	
-	private static final class EditAction extends AbstractModelFieldBinding {
-
-		UserPanel p = new UserPanel();
-
-		@Override
-		public FieldPanel<?> getRootFieldPanel() {
-			return p;
-		}
-
-		@Override
-		protected void populateBinding() /*throws PropertyPathException*/{
-			// TODO
-		}
-	}
-
 	/**
 	 * Constructor
 	 */
 	public UserEditView() {
-		super(new EditAction(), null);
+		super(new UserPanel(), null);
 	}
 
 	@Override

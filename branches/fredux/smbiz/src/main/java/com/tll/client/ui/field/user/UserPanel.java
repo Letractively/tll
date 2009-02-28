@@ -28,21 +28,21 @@ public class UserPanel extends FieldPanel<FlowPanel> {
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("userName"));
-			cmpsr.addField(fg.getFieldByName("userEmailAddress"));
-			cmpsr.addField(fg.getFieldByName("userLocked"));
+			cmpsr.addField(fg.getFieldWidgetByName("userName"));
+			cmpsr.addField(fg.getFieldWidgetByName("userEmailAddress"));
+			cmpsr.addField(fg.getFieldWidgetByName("userLocked"));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName("userEnabled"));
+			cmpsr.addField(fg.getFieldWidgetByName("userEnabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getFieldByName("userExpires"));
+			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
 
 			// parent account ref link
 			lnkAccount = new ViewRequestLink();
 			cmpsr.addWidget("Account", lnkAccount);
 
-			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// third row

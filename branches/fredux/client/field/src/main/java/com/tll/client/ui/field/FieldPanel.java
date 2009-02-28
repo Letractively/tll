@@ -10,7 +10,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
-import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.UnsetPropertyException;
@@ -93,20 +92,17 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	/**
 	 * Searches the member field group for the field whose property name matches
 	 * that given. <br>
-	 * NOTE: The field, if found, is returned in the form of an
-	 * {@link IFieldWidget} so it may serve as an {@link IBindableWidget} when
-	 * necessary.
 	 * @param propPath The property path of the sought field.
 	 * @return The non-<code>null</code> field
 	 * @throws UnsetPropertyException When the field does not exist in the member
 	 *         field group
 	 */
 	private IFieldWidget<?> getField(String propPath) throws UnsetPropertyException {
-		final IField<?> f = getFieldGroup().getField(propPath);
+		final IFieldWidget<?> f = getFieldGroup().getField(propPath);
 		if(f == null) {
 			throw new UnsetPropertyException(propPath);
 		}
-		return (IFieldWidget<?>) f;
+		return f;
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {
@@ -120,7 +116,7 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	public final FieldGroup getFieldGroup() {
 		if(fields == null) {
 			Log.debug(toString() + ".generateFieldGroup()..");
-			setValue(generateFieldGroup());
+			setFieldGroup(generateFieldGroup());
 		}
 		return fields;
 	}
@@ -131,7 +127,7 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 		}
 		if(this.fields != fields) {
 			this.fields = fields;
-			this.fields.setFeedbackWidget(this);
+			this.fields.setWidget(this);
 		}
 	}
 

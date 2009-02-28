@@ -64,6 +64,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	} // Index
 
 	/**
+	 * The indexed property name used to bind this indexed widget to a parent
+	 * binding action.
+	 */
+	private final String indexedPropertyName;
+
+	/**
 	 * The group that serving as a common parent to the index field groups.
 	 */
 	private final FieldGroup topGroup;
@@ -79,9 +85,9 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	private Collection<IBindable> value;
 
 	/**
-	 * Holds bindings that bind {@link #value} to {@link #list}. Each sub-binding
-	 * under this binding corresponds to a the field group of the same index in
-	 * the {@link #list}.
+	 * Holds bindings that bind {@link #value} to {@link #indexPanels}. Each
+	 * sub-binding under this binding corresponds to the field group of the same
+	 * index in the {@link #list}.
 	 */
 	private final Binding binding = new Binding();
 
@@ -91,10 +97,13 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 * Constructor
 	 * @param name The name to ascribe to this field panel which serves the name
 	 *        of the underlying top field group as well
+	 * @param indexedPropertyName The name of the indexed property relative to a
+	 *        parent root model.
 	 */
-	public IndexedFieldPanel(String name) {
+	public IndexedFieldPanel(String name, String indexedPropertyName) {
 		super();
 		this.topGroup = new FieldGroup(name);
+		this.indexedPropertyName = indexedPropertyName;
 	}
 
 	/**
@@ -103,6 +112,14 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 */
 	public final FieldGroup getFieldGroup() {
 		return topGroup;
+	}
+
+	/**
+	 * @return The property path that identifies this indexed property in a parent
+	 *         root model
+	 */
+	public final String getIndexedPropertyName() {
+		return indexedPropertyName;
 	}
 
 	/**
@@ -244,21 +261,22 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 *        binding.
 	 */
 	private void bind(FieldGroup fg, IBindable model, Binding indexBinding) {
-		for(final IField<?> f : fg) {
-			if(f instanceof FieldGroup == false) {
-				final String propName = f.getPropertyName();
+		for(final IField f : fg) {
+			if(f instanceof IFieldWidget) {
+				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
+				final String propName = fw.getPropertyName();
 				try {
 
 					// bind
 					// TODO specify a MsgPopupRegistry in the FieldValidationFeedback constructor below 
 					if(indexBinding != null) {
 						binding.getChildren().add(
-								new Binding(model, propName, null, null, f, IBindableWidget.PROPERTY_VALUE, f,
+								new Binding(model, propName, null, null, fw, IBindableWidget.PROPERTY_VALUE, fw,
 										new FieldValidationFeedback(null)));
 					}
 
 					// set field value
-					f.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
+					fw.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
 				}
 				catch(final UnsetPropertyException e) {
 					// ok
@@ -340,6 +358,12 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 			draw();
 			drawn = true;
 		}
+	}
+	
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		clear();
 	}
 
 	@Override

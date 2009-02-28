@@ -7,7 +7,6 @@ package com.tll.client.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -57,19 +56,19 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldByName("code"));
-			cmpsr.addField(fg.getFieldByName("description"));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName("code"));
+			cmpsr.addField(fg.getFieldWidgetByName("description"));
 
 			// pricing
 			cmpsr.newRow();
 			final Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, (Widget) fg.getFieldByName("optnSetUpCost"));
-			g.setWidget(0, 1, (Widget) fg.getFieldByName("optnMonthlyCost"));
-			g.setWidget(0, 2, (Widget) fg.getFieldByName("optnAnnualCost"));
-			g.setWidget(1, 0, (Widget) fg.getFieldByName("optnBaseSetupPrice"));
-			g.setWidget(1, 1, (Widget) fg.getFieldByName("optnBaseMonthlyPrice"));
-			g.setWidget(1, 2, (Widget) fg.getFieldByName("optnBaseAnnualPrice"));
+			g.setWidget(0, 0, fg.getFieldByName("optnSetUpCost").getWidget());
+			g.setWidget(0, 1, fg.getFieldByName("optnMonthlyCost").getWidget());
+			g.setWidget(0, 2, fg.getFieldByName("optnAnnualCost").getWidget());
+			g.setWidget(1, 0, fg.getFieldByName("optnBaseSetupPrice").getWidget());
+			g.setWidget(1, 1, fg.getFieldByName("optnBaseMonthlyPrice").getWidget());
+			g.setWidget(1, 2, fg.getFieldByName("optnBaseAnnualPrice").getWidget());
 			cmpsr.addWidget(g);
 
 			// cmpsr.newRow();
@@ -83,7 +82,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		 * Constructor
 		 */
 		public OptionsPanel() {
-			super("Options", true, true);
+			super("Options", "options", true, true);
 		}
 
 		@Override
@@ -94,7 +93,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		@Override
 		protected String getTabLabelText(Index<OptionPanel> index) {
 			//try {
-			final IFieldWidget<?> fw = (IFieldWidget<?>) index.getFieldPanel().getFieldGroup().getField(Model.NAME_PROPERTY);
+			final IFieldWidget<?> fw = index.getFieldPanel().getFieldGroup().getField(Model.NAME_PROPERTY);
 			return fw.getText();
 			//}
 			//catch(final UnsetPropertyException e) {
