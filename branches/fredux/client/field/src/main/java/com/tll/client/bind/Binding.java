@@ -80,7 +80,7 @@ public final class Binding {
 	/**
 	 * DefaultPropertyChangeListener - Listens for property changes for a property
 	 * in a given <em>instance</em> and propagates these changes to a
-	 * <em>target<em> object.
+	 * <em>targeted<em> {@link IPropertyChangeListener}.
 	 * @author jpk
 	 */
 	private static final class DefaultPropertyChangeListener implements IPropertyChangeListener {
@@ -376,8 +376,8 @@ public final class Binding {
 	 * Sets the left hand property to the current value of the right.
 	 */
 	public void setLeft() {
-		Log.debug("Binding.setLeft..");
 		if((left != null) && (right != null) && right.object != null) {
+			Log.debug("Binding.setLeft..");
 			try {
 				right.listener.propertyChange(new PropertyChangeEvent(right.object, right.property, null, right.object
 						.getProperty(right.property)));
@@ -398,8 +398,8 @@ public final class Binding {
 	 * Sets the right object's property to the current value of the left.
 	 */
 	public void setRight() {
-		Log.debug("Binding.setRight..");
 		if((left != null) && (right != null) && left.object != null) {
+			Log.debug("Binding.setRight..");
 			try {
 				left.listener.propertyChange(new PropertyChangeEvent(left.object, left.property, null, left.object
 						.getProperty(left.property)));
@@ -424,9 +424,8 @@ public final class Binding {
 	 * existing having the same name.
 	 */
 	public void bind() {
-		Log.debug("Binding.binding..");
 		if((left != null) && (right != null)) {
-
+			Log.debug("Binding.binding..");
 			left.object.addPropertyChangeListener(left.property, left.listener);
 
 			if(left.nestedListener != null) {
@@ -451,8 +450,8 @@ public final class Binding {
 	 * Breaks the two way binding and removes all listeners.
 	 */
 	public void unbind() {
-		Log.debug("Binding.unbinding..");
 		if((left != null) && (right != null)) {
+			Log.debug("Binding.unbinding..");
 			left.object.removePropertyChangeListener(left.property, left.listener);
 
 			if(left.nestedListener != null) {

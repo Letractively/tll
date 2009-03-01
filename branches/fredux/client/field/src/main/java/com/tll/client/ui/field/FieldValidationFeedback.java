@@ -5,6 +5,7 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.ValidationException;
@@ -33,7 +34,7 @@ public final class FieldValidationFeedback implements IValidationFeedback {
 		((Widget) source).addStyleName(IField.Styles.INVALID);
 		if(exception.getErrors() != null) {
 			for(final Msg m : exception.getErrors()) {
-				mregistry.addMsg(m, (Widget) source, false);
+				mregistry.addMsg(m, (Widget) source, false).showMsgs(Position.BOTTOM, -1, true);
 			}
 		}
 	}

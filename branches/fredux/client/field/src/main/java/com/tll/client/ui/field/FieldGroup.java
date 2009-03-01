@@ -464,10 +464,17 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void clear() {
+	public void clearValue() {
 		for(final IField f : fields) {
-			f.clear();
+			f.clearValue();
 		}
+	}
+	
+	/**
+	 * Removes all child fields from this group.
+	 */
+	public void clear() {
+		fields.clear();
 	}
 
 	public void reset() {

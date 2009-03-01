@@ -4,6 +4,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.tll.client.bind.IAction;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
@@ -221,7 +222,18 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.addWidget(indexedPanel);
 			}
 		});
-		//setAction(new BindingAction());
+	}
+
+	@Override
+	public void setModel(IBindable model) {
+		super.setModel(model);
+		indexedPanel.setModel(model);
+	}
+
+	@Override
+	public void setAction(IAction action) {
+		super.setAction(action);
+		indexedPanel.setAction(action);
 	}
 
 	@SuppressWarnings("unchecked")

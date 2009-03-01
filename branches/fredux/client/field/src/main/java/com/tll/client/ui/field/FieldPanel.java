@@ -58,7 +58,7 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
 		this.mregistry = mregistry;
 		// propagate to the fields
-		fields.setMsgPopupRegistry(mregistry);
+		if(fields != null) fields.setMsgPopupRegistry(mregistry);
 	}
 
 	/**

@@ -14,10 +14,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.bind.Binding;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
-import com.tll.common.model.NullNodeInPropPathException;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.UnsetPropertyException;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -87,7 +86,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	/**
 	 * Holds bindings that bind {@link #value} to {@link #indexPanels}. Each
 	 * sub-binding under this binding corresponds to the field group of the same
-	 * index in the {@link #list}.
+	 * index in the {@link #indexPanels}.
 	 */
 	private final Binding binding = new Binding();
 
@@ -260,24 +259,22 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 *        field group whose value is successfully set will be added under this
 	 *        binding.
 	 */
-	private void bind(FieldGroup fg, IBindable model, Binding indexBinding) {
+	private void bind(FieldGroup fg, final IBindable model, final Binding indexBinding) {
+		assert indexBinding != null;
+		fg.setMsgPopupRegistry(getMsgPopupRegistry());
 		for(final IField f : fg) {
 			if(f instanceof IFieldWidget) {
 				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
 				final String propName = fw.getPropertyName();
-				try {
-
+				//try {
 					// bind
-					// TODO specify a MsgPopupRegistry in the FieldValidationFeedback constructor below 
-					if(indexBinding != null) {
-						binding.getChildren().add(
-								new Binding(model, propName, null, null, fw, IBindableWidget.PROPERTY_VALUE, fw,
-										new FieldValidationFeedback(null)));
-					}
-
+					indexBinding.getChildren().add(
+							new Binding(model, propName, null, null, fw, IBindableWidget.PROPERTY_VALUE, fw,
+									new FieldValidationFeedback(getMsgPopupRegistry())));
 					// set field value
-					fw.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
-				}
+					//fw.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
+				//}
+				/*
 				catch(final UnsetPropertyException e) {
 					// ok
 				}
@@ -292,12 +289,15 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 					// bad value
 					throw new IllegalStateException(e);
 				}
+				*/
 			}
 			else {
 				// drill down
 				bind((FieldGroup) f, model, indexBinding);
 			}
 		}
+		indexBinding.bind();
+		indexBinding.setRight();
 	}
 
 	/**
@@ -307,6 +307,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 		Log.debug("IndexedFieldPanel.clearing " + toString() + "..");
 		binding.unbind();
 		binding.getChildren().clear();
+		topGroup.clear();
 		indexPanels.clear();
 	}
 
@@ -315,13 +316,18 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	}
 
 	public final void setValue(Collection<IBindable> value) {
+		if(this.value != null && this.value == value) return;
 		final Collection<IBindable> old = this.value;
 		this.value = value;
-		if(changeSupport != null) changeSupport.firePropertyChange("value", old, this.value);
+		changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
+		regenerate();
+	}
 
-		if(isAttached()) {
-			regenerate();
-		}
+	@Override
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		super.setMsgPopupRegistry(mregistry);
+		// propagate to the fields
+		topGroup.setMsgPopupRegistry(mregistry);
 	}
 
 	@Override
@@ -353,7 +359,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	protected void onAttach() {
 		super.onAttach();
 		if(!drawn) {
-			regenerate();
 			Log.debug("IndexedFieldPanel.onAttach() drawing..");
 			draw();
 			drawn = true;
@@ -368,6 +373,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 
 	@Override
 	public String toString() {
-		return "IndexedFieldPanel [ " + (topGroup.getName() == null ? "<noname>" : topGroup.getName()) + " ]";
+		return "IndexedFieldPanel [ " + indexedPropertyName + " ]";
 	}
 }

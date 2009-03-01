@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.bind.IBindable;
@@ -64,18 +63,18 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, true);
-			fg.addField(FieldFactory.ftext("intfCode", "code", "Code", "Code", 20));
-			fg.addField(FieldFactory.ftextarea("intfDescription", "description", "Desc", "Description", 3, 8));
+			fg.addField(ftext("intfCode", "code", "Code", "Code", 20));
+			fg.addField(ftextarea("intfDescription", "description", "Desc", "Description", 3, 8));
 
-			fg.addField(FieldFactory.fcheckbox("intfIsAvailableAsp", "isAvailableAsp", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsAvailableIsp", "isAvailableIsp", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsAvailableMerchant", "isAvailableMerchant", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsAvailableCustomer", "isAvailableCustomer", null, null));
+			fg.addField(fcheckbox("intfIsAvailableAsp", "isAvailableAsp", null, null));
+			fg.addField(fcheckbox("intfIsAvailableIsp", "isAvailableIsp", null, null));
+			fg.addField(fcheckbox("intfIsAvailableMerchant", "isAvailableMerchant", null, null));
+			fg.addField(fcheckbox("intfIsAvailableCustomer", "isAvailableCustomer", null, null));
 
-			fg.addField(FieldFactory.fcheckbox("intfIsRequiredAsp", "isRequiredAsp", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsRequiredIsp", "isRequiredIsp", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsRequiredMerchant", "isRequiredMerchant", null, null));
-			fg.addField(FieldFactory.fcheckbox("intfIsRequiredCustomer", "isRequiredCustomer", null, null));
+			fg.addField(fcheckbox("intfIsRequiredAsp", "isRequiredAsp", null, null));
+			fg.addField(fcheckbox("intfIsRequiredIsp", "isRequiredIsp", null, null));
+			fg.addField(fcheckbox("intfIsRequiredMerchant", "isRequiredMerchant", null, null));
+			fg.addField(fcheckbox("intfIsRequiredCustomer", "isRequiredCustomer", null, null));
 		}
 	}
 
@@ -89,16 +88,16 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, false);
-			fg.addField(FieldFactory.ftext("optnCode", "code", "Code", "Code", 20));
-			fg.addField(FieldFactory.ftextarea("description", "description", "Desc", "Description", 3, 8));
+			fg.addField(ftext("optnCode", "code", "Code", "Code", 20));
+			fg.addField(ftextarea("description", "description", "Desc", "Description", 3, 8));
 
-			fg.addField(FieldFactory.ftext("optnSetUpCost", "setUpCost", "Set Up", "Set Up Cost", 8));
-			fg.addField(FieldFactory.ftext("optnMonthlyCost", "monthlyCost", "Monthly", "Monthly Cost", 8));
-			fg.addField(FieldFactory.ftext("optnAnnualCost", "annualCost", "Annual", "Annual Cost", 8));
+			fg.addField(ftext("optnSetUpCost", "setUpCost", "Set Up", "Set Up Cost", 8));
+			fg.addField(ftext("optnMonthlyCost", "monthlyCost", "Monthly", "Monthly Cost", 8));
+			fg.addField(ftext("optnAnnualCost", "annualCost", "Annual", "Annual Cost", 8));
 
-			fg.addField(FieldFactory.ftext("optnBaseSetupPrice", "baseSetupPrice", "Set Up", "Base Set Up Price", 8));
-			fg.addField(FieldFactory.ftext("optnBaseMonthlyPrice", "baseMonthlyPrice", "Monthly", "Base Monthly Price", 8));
-			fg.addField(FieldFactory.ftext("optnBaseAnnualPrice", "baseAnnualPrice", "Annual", "Base Annual Price", 8));
+			fg.addField(ftext("optnBaseSetupPrice", "baseSetupPrice", "Set Up", "Base Set Up Price", 8));
+			fg.addField(ftext("optnBaseMonthlyPrice", "baseMonthlyPrice", "Monthly", "Base Monthly Price", 8));
+			fg.addField(ftext("optnBaseAnnualPrice", "baseAnnualPrice", "Annual", "Base Annual Price", 8));
 		}
 
 	}
@@ -113,8 +112,8 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, false);
-			fg.addField(FieldFactory.ftext("paramCode", "code", "Code", "Code", 20));
-			fg.addField(FieldFactory.ftextarea("paramDescription", "description", "Desc", "Description", 3, 8));
+			fg.addField(ftext("paramCode", "code", "Code", "Code", 20));
+			fg.addField(ftextarea("paramDescription", "description", "Desc", "Description", 3, 8));
 		}
 
 	}

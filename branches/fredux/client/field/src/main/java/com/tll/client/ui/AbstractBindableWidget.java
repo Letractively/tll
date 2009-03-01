@@ -46,7 +46,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	}
 
 	@Override
-	public final void setAction(IAction action) {
+	public/*final*/void setAction(IAction action) {
 		this.action = action;
 	}
 
@@ -56,7 +56,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	}
 
 	@Override
-	public final void setModel(IBindable model) {
+	public/*final*/void setModel(IBindable model) {
 		// don't spuriously re-apply the same model instance!
 		if(this.model != null && model == this.model) {
 			return;
@@ -73,14 +73,14 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		this.model = model;
 
 		if(action instanceof IBindingAction) {
-			//((IBindingAction) getAction()).set(this);
+			((IBindingAction) action).set(this);
 			if(isAttached() && (model != null)) {
 				Log.debug("AbstractBindableWidget - re-binding existing action..");
 				((IBindingAction) action).bind(this);
 			}
 		}
-		Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
-		changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
+		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
+		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
 	@Override
@@ -116,14 +116,12 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + toString() + "..");
-		/*
 		if(action instanceof IBindingAction) {
 		  ((IBindingAction) action).set(this);
 		}
-		*/
 		super.onAttach();
-		Log.debug("Firing prop change 'attach' event for " + toString() + "..");
-		changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), false, true);
+		//Log.debug("Firing prop change 'attach' event for " + toString() + "..");
+		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), false, true);
 	}
 
 	@Override
@@ -143,7 +141,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		if(action instanceof IBindingAction && (model != null)) {
 			((IBindingAction) action).unbind(this);
 		}
-		changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
+		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}
 
 	@Override

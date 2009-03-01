@@ -11,10 +11,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -28,7 +24,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
-import com.tll.client.ui.msg.MsgPopupRegistry;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
@@ -36,8 +31,7 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I> implements
-		BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I> {
 
 	/**
 	 * ImageBundle
@@ -152,12 +146,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	 */
 	private final boolean enableAdd, enableDelete;
 
-	private int lastSelectedTabIndex = -1;
-
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
 	
-	private final MsgPopupRegistry registry = new MsgPopupRegistry();
-
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -173,8 +163,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		this.enableDelete = enableDelete;
 
 		// listen to tab events
-		tabPanel.addBeforeSelectionHandler(this);
-		tabPanel.addSelectionHandler(this);
+		//tabPanel.addBeforeSelectionHandler(this);
+		//tabPanel.addSelectionHandler(this);
 
 		pnl.add(tabPanel);
 
@@ -319,22 +309,6 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 			});
 			tabPanel.add(new SimplePanel(), pb);
 		}
-	}
-
-	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-		assert event.getSource() == tabPanel;
-		if(lastSelectedTabIndex != -1) {
-			// hide msgs on last tab
-			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).hideMsgs();
-		}
-	}
-
-	public void onSelection(SelectionEvent<Integer> event) {
-		// show msgs on selected tab
-		if(lastSelectedTabIndex != -1) {
-			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs();
-		}
-		lastSelectedTabIndex = event.getSelectedItem();
 	}
 
 	@Override

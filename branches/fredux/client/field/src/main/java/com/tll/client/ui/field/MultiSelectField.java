@@ -15,6 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
+import com.tll.client.convert.IConverter;
 
 /**
  * SelectField
@@ -77,6 +78,26 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
+	
+	/**
+	 * Converter
+	 * @author jpk
+	 */
+	static final class Converter implements IConverter<Collection<String>, Object> {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Collection<String> convert(Object in) throws IllegalArgumentException {
+			try {
+				return (Collection<String>) in;
+			}
+			catch(final ClassCastException e) {
+				throw new IllegalArgumentException("The value must be a collection of strings.");
+			}
+		}
+	}
+
+	private static final Converter CONVERTER = new Converter();
 
 	/**
 	 * The list box widget.
@@ -96,6 +117,11 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
 		setData(data);
+	}
+
+	@Override
+	protected IConverter<Collection<String>, Object> getConverter() {
+		return CONVERTER;
 	}
 
 	/**

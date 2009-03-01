@@ -1,9 +1,11 @@
 /**
  * The Logic Lab
- * @author jpk
- * Dec 29, 2008
+ * @author jpk Dec 29, 2008
  */
 package com.tll.client.bind;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
@@ -24,120 +26,110 @@ import com.tll.model.schema.IPropertyMetadataProvider;
 public final class FieldBindingAction implements IBindingAction {
 
 	/**
-	 * The primary binding.
+	 * Aggregation of the bound widgets and their corresponding bindings.
 	 */
-	protected final Binding binding = new Binding();
-
-	/**
-	 * Aggregation of the bound widgets for this model/field binding instance.
-	 */
-	//private final Set<IBindableWidget<?>> boundWidgets = new HashSet<IBindableWidget<?>>();
-
-	/**
-	 * Flag to indicate whether or not we are bound.
-	 */
-	private boolean bound;
+	private final Map<IBindableWidget<?>, Binding> bindings = new HashMap<IBindableWidget<?>, Binding>();
 
 	/**
 	 * Transfers field data to the model through the defined bindings.
 	 */
 	@Override
 	public final void execute() {
-		// populate the model from field data..
-		if(!bound) throw new IllegalStateException();
-		binding.setLeft();
+		for(final Binding b : bindings.values()) {
+			b.setLeft();
+		}
 	}
 
 	@Override
 	public void set(IBindableWidget<?> widget) {
-		/*
-		if(!boundWidgets.add(widget)) {
+		Log.debug("FieldBindingAction.set(): " + widget);
+		if(bindings.containsKey(widget)) {
 			throw new IllegalArgumentException();
 		}
-		*/
-		// propagate an mregistry instance..
-		widget.setMsgPopupRegistry(new MsgPopupRegistry());
+		bindings.put(widget, new Binding());
 	}
 
 	@Override
 	public void bind(IBindableWidget<?> widget) {
-		if(!bound) {
-			Log.debug("FieldBindingAction.populateBinding()..");
+		if(!bindings.containsKey(widget)) throw new IllegalStateException(); // not set!
+		Log.debug("FieldBindingAction.bind(): " + widget);
 
-			// populate binding..
-			try {
-				populateBinding(widget);
-			}
-			catch(final PropertyPathException e) {
-				throw new IllegalStateException("Unable to bind: " + e.getMessage(), e);
-			}
-			
-			// bind primary..
-			binding.bind();
-			binding.setRight(); // populate the fields
+		// get an mregistry
+		final MsgPopupRegistry mregistry = new MsgPopupRegistry();
 
-			bound = true;
+		// generate the binding for this widget
+		final Binding b = bindings.get(widget);
+		assert b != null;
+		try {
+			populateBinding(b, widget, mregistry);
 		}
+		catch(final PropertyPathException e) {
+			throw new IllegalStateException("Unable to bind: " + e.getMessage(), e);
+		}
+
+		// bind..
+		b.bind();
+		b.setRight(); // populate the fields
 	}
 
 	@Override
 	public void unbind(IBindableWidget<?> widget) {
-		if(bound) {
-			Log.debug("FieldBindingAction.unbind()..");
+		if(bindings.containsKey(widget)) {
+			Log.debug("FieldBindingAction.unbind(): " + widget);
 
 			// unbind the primary bindings..
-			binding.unbind();
-			binding.getChildren().clear();
+			final Binding b = bindings.get(widget);
+			b.unbind();
+			b.getChildren().clear();
 
-			// clear out the bound widgets..
-			//boundWidgets.clear();
-			
-			bound = false;
+			bindings.remove(widget);
 		}
 	}
 
 	/**
-	 * Adds bindings for a single bindable widget.
-	 * @param widget the bindable widget being bound
+	 * Generates bindings for the given bindable widget.
+	 * @param b the binding to populate
+	 * @param widget the bindable widget
+	 * @param mregistry the message registry
 	 * @throws PropertyPathException
 	 */
-	private void populateBinding(IBindableWidget<?> widget) throws PropertyPathException {
+	private void populateBinding(Binding b, IBindableWidget<?> widget, MsgPopupRegistry mregistry)
+			throws PropertyPathException {
 		assert widget != null;
-		final MsgPopupRegistry mregistry = widget.getMsgPopupRegistry();
-		final IBindable model = widget.getModel();
 		if(widget instanceof IndexedFieldPanel) {
-			addIndexedBinding((IndexedFieldPanel<?>) widget);
+			addIndexedBinding(b, (IndexedFieldPanel<?>) widget);
 		}
 		else if(widget instanceof FieldPanel) {
+			final IBindable model = widget.getModel();
+			if(model == null) throw new IllegalStateException("No model set.");
 			for(final IFieldWidget<?> fw : ((FieldPanel<?>) widget).getFieldGroup().getFieldWidgets(null)) {
 				// TODO check for field binding elidgibility somehow!!
-				addFieldBinding(model, fw, mregistry);
+				addFieldBinding(b, model, fw, mregistry);
 			}
 		}
 		else {
 			throw new IllegalArgumentException("Unsupported bindable widget type: " + widget.getClass());
 		}
-
-		// retain binding ref
-		//boundWidgets.add(widget);
+		widget.setMsgPopupRegistry(mregistry);
 	}
-	
-	private void addIndexedBinding(IndexedFieldPanel<?> indexedPanel) {
+
+	private void addIndexedBinding(Binding binding, IndexedFieldPanel<?> indexedPanel) {
+		Log.debug("Binding indexed field panel: " + indexedPanel);
 		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(
 				new Binding(indexedPanel.getModel(), indexedPanel.getIndexedPropertyName(), null, null, indexedPanel,
 						IBindableWidget.PROPERTY_VALUE, null, null));
-
 	}
 
 	/**
 	 * Adds an "atomic" field widget/model binding.
+	 * @param binding
 	 * @param model
 	 * @param modelProperty
 	 * @param field
 	 * @param mregistry
 	 */
-	private void addFieldBinding(IBindable model, IFieldWidget<?> field, MsgPopupRegistry mregistry) {
+	private void addFieldBinding(Binding binding, IBindable model, IFieldWidget<?> field, MsgPopupRegistry mregistry) {
 		Log.debug("Binding field: " + field + " to model [" + model + "]." + field.getPropertyName());
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {

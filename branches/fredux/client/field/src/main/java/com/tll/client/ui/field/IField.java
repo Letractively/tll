@@ -67,7 +67,7 @@ public interface IField extends HasName {
 	/**
 	 * Clears the field's value.
 	 */
-	void clear();
+	void clearValue();
 
 	/**
 	 * Resets the field's value to that which was when originally set.

@@ -16,9 +16,11 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.convert.IConverter;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
+import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
@@ -240,7 +242,7 @@ implements IFieldWidget<T>,
 		this.property = propName;
 	}
 
-	public final void clear() {
+	public final void clearValue() {
 		setValue(null);
 	}
 
@@ -372,7 +374,7 @@ implements IFieldWidget<T>,
 					if(this instanceof IHasFormat) {
 						final GlobalFormat format = ((IHasFormat) this).getFormat();
 						if(format != null && format.isDateFormat()) {
-							addValidator(DateValidator.instance(format));
+							addValidator(DateValidator.get(format));
 						}
 					}
 					break;
@@ -443,6 +445,9 @@ implements IFieldWidget<T>,
 		}
 		else {
 			removeStyleName(Styles.INVALID);
+			if(getMsgPopupRegistry() != null) {
+				getMsgPopupRegistry().getOperator(this, false).clearMsgs();
+			}
 		}
 	}
 
@@ -507,8 +512,7 @@ implements IFieldWidget<T>,
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			//clearMsgs();
-			removeStyleName(Styles.INVALID);
+			markInvalid(false);
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
@@ -540,7 +544,10 @@ implements IFieldWidget<T>,
 	public void onClick(ClickEvent event) {
 		// toggle the display of any bound UI msgs for this field when the field
 		// label is clicked
-		//if(event.getSource() == fldLbl) toggleMsgs();
+		if(getMsgPopupRegistry() != null && event.getSource() == fldLbl) {
+			final IMsgOperator op = getMsgPopupRegistry().getOperator(this, false);
+			op.showMsgs(!op.isShowing());
+		}
 	}
 
 	public final Object getProperty(String propPath) throws PropertyPathException {
@@ -549,20 +556,24 @@ implements IFieldWidget<T>,
 		}
 		return getValue();
 	}
+	
+	/**
+	 * @return The converter needed to type coerce un-typed inbound values.
+	 */
+	protected abstract IConverter<T, Object> getConverter();
 
-	@SuppressWarnings("unchecked")
-	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
 		try {
-			setValue((T) value);
+			setValue(getConverter().convert(value));
 		}
 		catch(final RuntimeException e) {
 			throw new Exception("Unable to set field " + this + " value", e);
 		}
 	}
-
+	
 	@Override
 	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
 		//return (getEditable()).addValueChangeHandler(handler);

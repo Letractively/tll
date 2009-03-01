@@ -12,6 +12,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * SuggestField
@@ -67,6 +69,11 @@ public final class SuggestField extends AbstractDataField<String> {
 		setData(data);
 	}
 	
+	@Override
+	protected IConverter<String, Object> getConverter() {
+		return ToStringConverter.INSTANCE;
+	}
+
 	private String getValueFromKey(String uiKey) {
 		for(final String dv : data.keySet()) {
 			final String dk = data.get(dv);

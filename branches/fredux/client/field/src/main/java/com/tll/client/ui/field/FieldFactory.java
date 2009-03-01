@@ -1,14 +1,21 @@
 /**
  * The Logic Lab
- * @author jpk
- * Dec 28, 2008
+ * @author jpk Dec 28, 2008
  */
 package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.tll.client.cache.AuxDataCache;
+import com.tll.client.convert.EnumToDataMapConverter;
 import com.tll.client.ui.IWidgetRenderer;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.CreditCardValidator;
+import com.tll.client.validate.DateValidator;
+import com.tll.client.validate.EmailAddressValidator;
+import com.tll.client.validate.EnumValidator;
+import com.tll.common.model.Model;
+import com.tll.refdata.RefDataType;
 
 /**
  * FieldFactory
@@ -67,7 +74,9 @@ public abstract class FieldFactory {
 	 */
 	public static final DateField fdate(String name, String propName, String labelText, String helpText,
 			GlobalFormat format) {
-		return new DateField(name, propName, labelText, helpText, (format == null ? GlobalFormat.DATE : format));
+		final DateField f = new DateField(name, propName, labelText, helpText, format);
+		f.addValidator(DateValidator.get(format));
+		return f;
 	}
 
 	/**
@@ -156,4 +165,91 @@ public abstract class FieldFactory {
 		return new RadioGroupField(name, propName, labelText, helpText, renderer, data);
 	}
 
+	/**
+	 * Creates a new {@link TextField} instance with email address validation.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param visibleLength
+	 * @return new field
+	 */
+	public static final TextField femail(String name, String propName, String labelText, String helpText,
+			int visibleLength) {
+		final TextField f = ftext(name, propName, labelText, helpText, visibleLength);
+		f.addValidator(EmailAddressValidator.INSTANCE);
+		return f;
+	}
+
+	/**
+	 * Creates a new {@link TextField} instance with credit card number
+	 * validation.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText The on hover tool tip text
+	 * @param visibleLength
+	 * @return new field
+	 */
+	public static final TextField fcreditcard(String name, String propName, String labelText, String helpText,
+			int visibleLength) {
+		final TextField f = ftext(name, propName, labelText, helpText, visibleLength);
+		f.addValidator(CreditCardValidator.INSTANCE);
+		return f;
+	}
+
+	/**
+	 * Creates a new {@link SelectField} whose options are enumeration elements.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText
+	 * @param type
+	 * @return select field containing String-wise enum values of the given type
+	 */
+	public static final SelectField fenumselect(String name, String propName, String labelText, String helpText,
+			final Class<? extends Enum<?>> type) {
+		final SelectField f = fselect(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE.convert(type));
+		f.addValidator(new EnumValidator(type));
+		return f;
+	}
+
+	/**
+	 * Creates a new {@link SuggestField} whose suggestions are defined by the
+	 * given {@link RefDataType}.
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText
+	 * @param refDataType
+	 * @return select field containing the app currencies
+	 */
+	public static final SuggestField frefdata(String name, String propName, String labelText, String helpText,
+			RefDataType refDataType) {
+		return fsuggest(name, propName, labelText, helpText, AuxDataCache.instance().getRefDataMap(refDataType));
+	}
+
+	/**
+	 * Creates an entity name text field.
+	 * @return The created entity name field
+	 */
+	public static final TextField entityNameField() {
+		return ftext(Model.NAME_PROPERTY, Model.NAME_PROPERTY, "Name", "Name", 30);
+	}
+
+	/**
+	 * Creates entity date created and date modified read only fields returning
+	 * them in an array where the first element is the date created field.
+	 * @return DateField array
+	 */
+	public static final DateField[] entityTimestampFields() {
+		final DateField dateCreated =
+				fdate(Model.DATE_CREATED_PROPERTY, Model.DATE_CREATED_PROPERTY, "Created", "Date Created");
+		final DateField dateModified =
+				fdate(Model.DATE_MODIFIED_PROPERTY, Model.DATE_MODIFIED_PROPERTY, "Modified", "Date Modified");
+		dateCreated.setReadOnly(true);
+		dateModified.setReadOnly(true);
+		return new DateField[] {
+			dateCreated, dateModified };
+	}
 }

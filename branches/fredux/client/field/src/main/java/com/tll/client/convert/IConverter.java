@@ -17,10 +17,10 @@ public interface IConverter<O, I> {
 
 	/**
 	 * Converts the given input instance to an instance of the slated output type.
-	 * @param o The object to render
-	 * @return The rendered object
+	 * @param in The "input" object to convert
+	 * @return The converted object
 	 * @throws IllegalArgumentException When the given object can't be converted
 	 *         for whatever reason.
 	 */
-	O convert(I o) throws IllegalArgumentException;
+	O convert(I in) throws IllegalArgumentException;
 }

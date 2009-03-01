@@ -29,7 +29,7 @@ public class DateValidator implements IValidator {
 	 * @throws IllegalArgumentException When the given date format is
 	 *         <code>null</code> or invalid.
 	 */
-	public static final DateValidator instance(GlobalFormat dateFormat) {
+	public static final DateValidator get(GlobalFormat dateFormat) {
 		switch(dateFormat) {
 			case DATE:
 				return DATE_VALIDATOR;

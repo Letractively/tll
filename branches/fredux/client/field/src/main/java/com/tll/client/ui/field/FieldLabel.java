@@ -1,11 +1,11 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
@@ -58,26 +58,14 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		//return addDomHandler(handler, type);
-		return null; // TODO fix
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 
-	@Override
-	public void onBrowserEvent(Event event) {
-		super.onBrowserEvent(event);
-		switch(event.getTypeInt()) {
-			case Event.ONCLICK:
-				//fireEvent(todo gwt event);
-				break;
-		}
-	}
-	
 	/**
 	 * Sets the for attrubute.
 	 * @param fldId The DOM element id of the associated form field.
 	 */
 	public void setFor(String fldId) {
-		sinkEvents(Event.ONCLICK);
 		impl.setFor(getElement(), fldId);
 	}
 

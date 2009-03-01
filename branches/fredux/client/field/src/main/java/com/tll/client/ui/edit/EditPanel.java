@@ -191,9 +191,13 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
-			fieldPanel.getAction().execute();
-			// TODO propagate
-			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
+			try {
+				fieldPanel.getAction().execute();
+				editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
+			}
+			catch(final RuntimeException e) {
+				// TODO handle
+			}
 		}
 		else if(sender == btnReset) {
 			fieldPanel.getFieldGroup().reset();
@@ -219,5 +223,6 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	protected void onUnload() {
 		super.onUnload();
 		// portal.removeScrollListener(MsgManager.instance);
+		if(fieldPanel.getMsgPopupRegistry() != null) fieldPanel.getMsgPopupRegistry().clear();
 	}
 }

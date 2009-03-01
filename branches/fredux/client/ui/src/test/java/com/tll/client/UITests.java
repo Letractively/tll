@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.option.IOptionHandler;
@@ -325,14 +326,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs();
+					registry.getOperator(context, true).showMsgs(true);
 				}
 			}));
 			buttonPanel.add(new Button("Hide All Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).hideMsgs();
+					registry.getOperator(context, true).showMsgs(false);
 				}
 			}));
 			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
@@ -367,14 +368,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).setShowMsgLevelImages(true);
+					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, true);
 				}
 			}));
 			buttonPanel.add(new Button("Hide Message Level Images", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).setShowMsgLevelImages(false);
+					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, false);
 				}
 			}));
 			buttonPanel.add(new Button("Test cloaking", new ClickHandler() {
@@ -385,12 +386,12 @@ public final class UITests extends AbstractUITest {
 					registry.addMsg(msgWarn, refWidget, false);
 					final IMsgOperator operator = registry.getOperator(refWidget, false);
 					nestedContext.setVisible(false);
-					operator.showMsgs();
+					operator.showMsgs(true);
 					Window
 							.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
 
 					nestedContext.setVisible(true);
-					operator.showMsgs();
+					operator.showMsgs(true);
 					Window.alert("Now it should be showing because the nestedContext's visibliity was just set to true.");
 				}
 			}));

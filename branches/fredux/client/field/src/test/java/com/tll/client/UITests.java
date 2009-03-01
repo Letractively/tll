@@ -46,10 +46,10 @@ public final class UITests extends AbstractUITest {
 		return new UITestCase[] {
 			new FieldWidgetTest(), new FieldBindingLifecycleTest() };
 	}
-	
+
 	/**
-	 * FieldBindingLifecycleTest - Tests field/model binding functionality through
-	 * a mocked model field panel and edit panel.
+	 * FieldWidgetTest - tests the rendering of fields and their value change
+	 * event handling for all defined field widget types.
 	 * @author jpk
 	 */
 	static final class FieldWidgetTest extends UITestCase {
@@ -57,6 +57,7 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel layout;
 		FlowPanel pfields;
 		ValueChangeDisplay vcd;
+		FieldGroup group;
 
 		@Override
 		public String getName() {
@@ -122,8 +123,8 @@ public final class UITests extends AbstractUITest {
 			}
 		}
 		
-		private FieldGroup generateFields() {
-			final FieldGroup group = new FieldGroup("group");
+		private void generateFields() {
+			group = new FieldGroup("group");
 			
 			final Map<String, String> data = new LinkedHashMap<String, String>();
 			data.put("valueA", "Key1");
@@ -233,8 +234,6 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
-			
-			return group;
 		}
 
 		@Override
@@ -254,7 +253,7 @@ public final class UITests extends AbstractUITest {
 
 			final GridFieldComposer composer = new GridFieldComposer();
 			composer.setCanvas(pfields);
-			final FieldGroup group = generateFields();
+			generateFields();
 			for(final IFieldWidget<?> f : group.getFieldWidgets(null)) {
 				composer.addField(f);
 			}
@@ -263,6 +262,7 @@ public final class UITests extends AbstractUITest {
 		@Override
 		public void unload() {
 			layout.removeFromParent();
+			group = null;
 			vcd = null;
 			pfields = null;
 			layout = null;

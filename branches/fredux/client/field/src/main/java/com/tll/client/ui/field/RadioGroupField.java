@@ -15,6 +15,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToStringConverter;
 import com.tll.client.ui.IWidgetRenderer;
 import com.tll.client.ui.VerticalRenderer;
 import com.tll.common.util.ObjectUtil;
@@ -106,6 +108,11 @@ public final class RadioGroupField extends AbstractDataField<String> {
 		setData(data);
 	}
 	
+	@Override
+	protected IConverter<String, Object> getConverter() {
+		return ToStringConverter.INSTANCE;
+	}
+
 	private void render() {
 		assert renderer != null;
 		fp.clear();

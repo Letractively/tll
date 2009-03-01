@@ -173,56 +173,62 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	}
 
 	@Override
-	public void hideMsgs() {
-		hide();
+	public void showMsgs(Position position, int milliDuration, boolean showMsgLevelImages) {
+		setPosition(position);
+		setDuration(milliDuration);
+		setShowMsgLevelImages(showMsgLevelImages);
+		showMsgs(true);
 	}
 
-	@Override
-	public void setDuration(int milliseconds) {
+	void setDuration(int milliseconds) {
 		this.duration = milliseconds;
 	}
 
-	@Override
-	public void setPosition(Position position) {
+	void setPosition(Position position) {
 		this.position = position;
 	}
 
 	@Override
-	public void showMsgs() {
-		// make sure we aren't currently cloaked!
-		if(!DOMExt.isCloaked(refWidget.getElement())) {
-			setAutoHideEnabled(duration <= 0);
-			assert refWidget != null;
-			setPopupPositionAndShow(new PositionCallback() {
+	public void showMsgs(boolean show) {
+		if(show) {
+			// make sure we aren't currently cloaked!
+			if(!DOMExt.isCloaked(refWidget.getElement())) {
+				setAutoHideEnabled(duration <= 0);
+				assert refWidget != null;
+				setPopupPositionAndShow(new PositionCallback() {
 
-				@SuppressWarnings("synthetic-access")
-				@Override
-				public void setPosition(int offsetWidth, int offsetHeight) {
-					int left = 0, top = 0;
-					final int rel = refWidget.getAbsoluteLeft();
-					final int ret = refWidget.getAbsoluteTop();
-					switch(position) {
-						default:
-						case BOTTOM:
-							// position the msg panel left-aligned and directly beneath the ref
-							// widget
-							left = rel;
-							top = ret + refWidget.getOffsetHeight();
-							break;
-						case CENTER: {
-							left = rel + (refWidget.getOffsetWidth() / 2) - (offsetWidth / 2);
-							top = ret + (refWidget.getOffsetHeight() / 2) - (offsetHeight / 2);
-							break;
+					@SuppressWarnings("synthetic-access")
+					@Override
+					public void setPosition(int offsetWidth, int offsetHeight) {
+						int left = 0, top = 0;
+						final int rel = refWidget.getAbsoluteLeft();
+						final int ret = refWidget.getAbsoluteTop();
+						switch(position) {
+							default:
+							case BOTTOM:
+								// position the msg panel left-aligned and directly beneath the ref
+								// widget
+								left = rel;
+								top = ret + refWidget.getOffsetHeight();
+								break;
+							case CENTER: {
+								left = rel + (refWidget.getOffsetWidth() / 2) - (offsetWidth / 2);
+								top = ret + (refWidget.getOffsetHeight() / 2) - (offsetHeight / 2);
+								break;
+							}
 						}
+						setPopupPosition(Math.max(0, left), Math.max(0, top));
 					}
-					setPopupPosition(Math.max(0, left), Math.max(0, top));
+				});
+				if(duration > 0) {
+					if(hideTimer == null) {
+						hideTimer = new PopupHideTimer(this);
+					}
+					hideTimer.schedule(duration);
 				}
-			});
-			if(duration > 0) {
-				if(hideTimer == null) {
-					hideTimer = new PopupHideTimer(this);
-				}
-				hideTimer.schedule(duration);
+			}
+			else {
+				hide();
 			}
 		}
 	}
@@ -232,7 +238,7 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 		container.clear();
 	}
 
-	public void setShowMsgLevelImages(boolean show) {
+	void setShowMsgLevelImages(boolean show) {
 		FlowPanel mlp;
 		for(final Object o : container) {
 			mlp = (FlowPanel) o;

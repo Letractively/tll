@@ -8,6 +8,8 @@ package com.tll.client.ui.field;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * PasswordField
@@ -48,6 +50,11 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 				}
 			}
 		}, KeyPressEvent.getType());
+	}
+
+	@Override
+	protected IConverter<String, Object> getConverter() {
+		return ToStringConverter.INSTANCE;
 	}
 
 	public int getVisibleLen() {

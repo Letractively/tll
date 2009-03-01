@@ -8,6 +8,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.TextBox;
+import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToStringConverter;
 
 /**
  * TextField
@@ -48,6 +50,11 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 			}
 		}, KeyPressEvent.getType());
 		
+	}
+
+	@Override
+	protected IConverter<String, Object> getConverter() {
+		return ToStringConverter.INSTANCE;
 	}
 
 	public int getVisibleLen() {
