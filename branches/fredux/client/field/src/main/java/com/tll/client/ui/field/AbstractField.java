@@ -565,15 +565,18 @@ implements IFieldWidget<T>,
 
 	@Override
 	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
-		return (getEditable()).addValueChangeHandler(handler);
+		//return (getEditable()).addValueChangeHandler(handler);
+		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override
 	public final void onValueChange(ValueChangeEvent<T> event) {
+		assert event.getSource() == getEditable();
 		final T old = oldValue;
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
 			markDirty();
+			ValueChangeEvent.fire(this, oldValue);
 			changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
 	}
@@ -613,7 +616,6 @@ implements IFieldWidget<T>,
 
 	@Override
 	protected void onUnload() {
-		//clearMsgs();
 		super.onUnload();
 	}
 

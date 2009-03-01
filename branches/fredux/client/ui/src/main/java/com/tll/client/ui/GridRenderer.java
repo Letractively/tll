@@ -12,32 +12,30 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public final class GridRenderer implements IWidgetRenderer {
 
-	private final int numRows, numCols;
+	private final int numCols;
 
 	/**
 	 * Constructor
-	 * @param numRows
 	 * @param numCols
 	 */
-	public GridRenderer(int numRows, int numCols) {
+	public GridRenderer(int numCols) {
 		super();
-		this.numRows = numRows;
 		this.numCols = numCols;
 	}
 
 	@Override
 	public Panel render(Collection<? extends Widget> buttons) {
+		final int numRows = (int) Math.ceil((double) buttons.size() / (double) numCols);
 		final Grid panel = new Grid(numRows, numCols);
 		int row, col;
 		row = col = 0;
 		for(final Widget rb : buttons) {
-			panel.setWidget(row, col++, rb);
 			if(col == numCols) {
 				// new row
 				row++;
 				col = 0;
 			}
-			panel.setWidget(row, col, rb);
+			panel.setWidget(row, col++, rb);
 		}
 		return panel;
 	}

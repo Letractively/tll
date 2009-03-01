@@ -141,18 +141,16 @@ public final class RadioGroupField extends AbstractDataField<String> {
 		radioButtons.clear();
 		if(data != null) {
 			for(final String key : data.keySet()) {
-				radioButtons.add(create(key, data.get(key)));
+				radioButtons.add(create(data.get(key), key));
 			}
 		}
-		if(isAttached()) {
-			render();
-		}
+		if(isAttached()) render();
 	}
 	
 	@Override
 	public void addDataItem(String name, String value) {
 		radioButtons.add(create(name, value));
-		render();
+		if(isAttached()) render();
 	}
 
 	@Override
@@ -163,7 +161,7 @@ public final class RadioGroupField extends AbstractDataField<String> {
 				break;
 			}
 		}
-		render();
+		if(isAttached()) render();
 	}
 
 	@Override
@@ -177,5 +175,11 @@ public final class RadioGroupField extends AbstractDataField<String> {
 
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
+		render();
 	}
 }

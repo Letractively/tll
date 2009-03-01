@@ -33,6 +33,7 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		 */
 		public Impl() {
 			super(true);
+			addChangeHandler(this);
 		}
 
 		@Override
@@ -104,8 +105,8 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 	@Override
 	public void setData(Map<String, String> data) {
 		lb.clear();
-		for(final String key : data.keySet()) {
-			final String val = data.get(key);
+		for(final String val : data.keySet()) {
+			final String key = data.get(val);
 			lb.addItem(key, val);
 		}
 	}

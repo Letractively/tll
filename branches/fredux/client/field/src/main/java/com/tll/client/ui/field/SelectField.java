@@ -32,6 +32,7 @@ public final class SelectField extends AbstractDataField<String> {
 		 */
 		public Impl() {
 			super(false);
+			addChangeHandler(this);
 		}
 
 		@Override
@@ -42,7 +43,7 @@ public final class SelectField extends AbstractDataField<String> {
 		@Override
 		public String getValue() {
 			final int i = getSelectedIndex();
-			return i == -1 ? null : getItemText(i);
+			return i == -1 ? null : getValue(i);
 		}
 
 		@Override
@@ -88,7 +89,7 @@ public final class SelectField extends AbstractDataField<String> {
 	SelectField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
-		addValueChangeHandler(this);
+		lb.addValueChangeHandler(this);
 		setData(data);
 	}
 
@@ -96,8 +97,8 @@ public final class SelectField extends AbstractDataField<String> {
 	public void setData(Map<String, String> data) {
 		final String oldval = lb.getValue();
 		lb.clear();
-		for(final String key : data.keySet()) {
-			final String val = data.get(key);
+		for(final String val : data.keySet()) {
+			final String key = data.get(val);
 			lb.addItem(key, val);
 			if(val.equals(oldval)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);

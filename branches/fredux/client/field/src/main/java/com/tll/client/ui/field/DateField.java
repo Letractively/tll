@@ -46,10 +46,9 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 */
 	DateField(String name, String propName, String labelText, String helpText, GlobalFormat format) {
 		super(name, propName, labelText, helpText);
-		setFormat(format);
 		dbox = new Impl();
 		dbox.addValueChangeHandler(this);
-		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
+		setFormat(format);
 	}
 
 	public GlobalFormat getFormat() {
@@ -57,8 +56,9 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	}
 
 	public void setFormat(GlobalFormat format) {
-		if(dateFormat == null || !dateFormat.isDateFormat()) throw new IllegalArgumentException();
+		if(format == null || !format.isDateFormat()) throw new IllegalArgumentException();
 		this.dateFormat = format;
+		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
 	}
 
 	@Override

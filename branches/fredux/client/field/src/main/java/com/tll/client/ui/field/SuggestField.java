@@ -6,8 +6,12 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 
 /**
  * SuggestField
@@ -48,15 +52,36 @@ public final class SuggestField extends AbstractDataField<String> {
 	SuggestField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
 		super(name, propName, labelText, helpText);
 		sb = new Impl();
-		addValueChangeHandler(this);
+		// fires when suggest box is manually edited
+		sb.addValueChangeHandler(this);
+		
+		// fires when, you guessed it, a selection is clicked
+		sb.addSelectionHandler(new SelectionHandler<Suggestion>() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				ValueChangeEvent.fire(sb, getValueFromKey(event.getSelectedItem().getReplacementString()));
+			}
+		});
 		setData(data);
+	}
+	
+	private String getValueFromKey(String uiKey) {
+		for(final String dv : data.keySet()) {
+			final String dk = data.get(dv);
+			if(dk.equals(uiKey)) {
+				return dv;
+			}
+		}
+		throw new IllegalStateException();
 	}
 	
 	private void buildOracle() {
 		final MultiWordSuggestOracle oracle = sb.getOracle();
 		oracle.clear();
 		if(data != null) {
-			for(final String s : data.keySet()) {
+			for(final String s : data.values()) {
 				oracle.add(s);
 			}
 		}
