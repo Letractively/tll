@@ -28,6 +28,16 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		public Impl(String label) {
 			super(label);
 		}
+
+		@Override
+		public void setValue(Boolean value) {
+			super.setValue(value == null ? Boolean.FALSE : value);
+		}
+
+		@Override
+		public void setValue(Boolean value, boolean fireEvents) {
+			super.setValue(value == null ? Boolean.FALSE : value, fireEvents);
+		}
 	}
 
 	private final Impl cb;
@@ -52,6 +62,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		cb = new Impl(cblabelText);
 		cb.setStyleName(Styles.LABEL);
 		cb.addClickHandler(this);
+		cb.addBlurHandler(this);
 		cb.addValueChangeHandler(this);
 	}
 

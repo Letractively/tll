@@ -40,6 +40,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 		tb = new Impl();
 		setVisibleLen(visibleLength);
 		tb.addValueChangeHandler(this);
+		tb.addBlurHandler(this);
 		addHandler(new KeyPressHandler() {
 
 			public void onKeyPress(KeyPressEvent event) {

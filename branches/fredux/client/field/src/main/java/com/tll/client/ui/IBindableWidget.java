@@ -1,7 +1,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.HasValue;
-import com.tll.client.bind.IAction;
+import com.tll.client.bind.IBindingAction;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
 
@@ -87,11 +87,13 @@ public interface IBindableWidget<T> extends IBindable, HasValue<T> {
 	/**
 	 * @return The action for this bindable widget.
 	 */
-	IAction getAction();
+	@SuppressWarnings("unchecked")
+	IBindingAction getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action
 	 */
-	void setAction(IAction action);
+	@SuppressWarnings("unchecked")
+	void setAction(IBindingAction action);
 }

@@ -11,6 +11,10 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -31,7 +35,8 @@ import com.tll.client.ui.WidgetAndLabel;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I> {
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I, FlowPanel>
+		implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**
 	 * ImageBundle
@@ -84,7 +89,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		 */
 		public static final String DELETE_BUTTON = "delbtn";
 	}
-
+	
 	/**
 	 * EmptyWidget - Displayed in place of the tab panel when no index field
 	 * panels exist.
@@ -139,7 +144,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	/**
 	 * The widget that is shown when there are no index field panels.
 	 */
-	private final EmptyWidget emptyWidget;
+	private EmptyWidget emptyWidget;
 
 	/**
 	 * Enable user to add and delete index field panels?
@@ -147,6 +152,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	private final boolean enableAdd, enableDelete;
 
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
+	
+	private int lastSelectedTabIndex = -1;
 	
 	/**
 	 * Constructor
@@ -163,17 +170,15 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		this.enableDelete = enableDelete;
 
 		// listen to tab events
-		//tabPanel.addBeforeSelectionHandler(this);
-		//tabPanel.addSelectionHandler(this);
+		tabPanel.addBeforeSelectionHandler(this);
+		tabPanel.addSelectionHandler(this);
 
-		pnl.add(tabPanel);
-
-		emptyWidget = new EmptyWidget();
-		emptyWidget.setVisible(false);
-		pnl.add(emptyWidget);
-
-		pnl.setStylePrimaryName(Styles.ROOT);
 		initWidget(pnl);
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -282,6 +287,14 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	protected final void draw() {
 		assert tabPanel.getWidgetCount() == 0;
 
+		pnl.add(tabPanel);
+
+		emptyWidget = new EmptyWidget();
+		emptyWidget.setVisible(false);
+		pnl.add(emptyWidget);
+
+		pnl.setStylePrimaryName(Styles.ROOT);
+		
 		if(size() == 0) {
 			tabPanel.setVisible(false);
 			emptyWidget.setVisible(true);
@@ -309,6 +322,20 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 			});
 			tabPanel.add(new SimplePanel(), pb);
 		}
+	}
+
+	@Override
+	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+		assert event.getSource() == tabPanel;
+		if(lastSelectedTabIndex != -1) {
+			// hide msgs on last tab
+			getMsgPopupRegistry().getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs(false);
+		}
+	}
+
+	@Override
+	public void onSelection(SelectionEvent<Integer> event) {
+		lastSelectedTabIndex = event.getSelectedItem();
 	}
 
 	@Override

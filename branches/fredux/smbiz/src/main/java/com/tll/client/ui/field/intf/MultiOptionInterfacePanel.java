@@ -47,6 +47,10 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			return (new OptionFieldProvider()).getFieldGroup();
 		}
 
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	class OptionRenderer implements IFieldRenderer<FlowPanel> {
@@ -132,4 +136,10 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		// fg.addField("options", optionsPanel.getFieldGroup());
 		return fg;
 	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return null;
+	}
+
 }

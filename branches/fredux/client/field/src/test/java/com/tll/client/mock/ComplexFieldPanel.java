@@ -4,8 +4,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.IAction;
-import com.tll.client.cache.AuxDataCache;
+import com.tll.client.bind.IBindingAction;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
@@ -16,7 +15,7 @@ import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.mock.AddressType;
-import com.tll.common.model.mock.MockEntityType;
+import com.tll.common.model.mock.MockModelStubber;
 
 /**
  * ComplexFieldPanel - Contains a simple field panel mocking a related one
@@ -31,12 +30,14 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 */
 	class RelatedOnePanel extends MockFieldPanel {
 
-		/**
-		 * Constructor
-		 */
-		public RelatedOnePanel() {
-			super();
-			setRenderer(new IFieldRenderer<FlowPanel>() {
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return new MockFieldGroupProviders.PaymentInfoFieldsProvider().getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
 
 				@Override
 				public void render(FlowPanel panel, FieldGroup fg) {
@@ -53,12 +54,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 					cmpsr.newRow();
 					cmpsr.addField(fg.getFieldWidgetByName("ccName"));
 				}
-			});
-		}
-
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.PaymentInfoFieldsProvider().getFieldGroup();
+			};
 		}
 	} // RelatedOnePanel
 
@@ -68,12 +64,14 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 */
 	class IndexFieldPanel extends MockFieldPanel {
 
-		/**
-		 * Constructor
-		 */
-		public IndexFieldPanel() {
-			super();
-			setRenderer(new IFieldRenderer<FlowPanel>() {
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return new MockFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
 
 				public void render(FlowPanel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
@@ -124,13 +122,9 @@ public class ComplexFieldPanel extends MockFieldPanel {
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
 				}
-			});
+			};
 		}
 
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
-		}
 	} // IndexFieldPanel
 
 	/**
@@ -138,7 +132,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 * @author jpk
 	 */
 	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
-
+		
 		/**
 		 * Constructor
 		 */
@@ -168,7 +162,9 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.instance().getEntityPrototype(MockEntityType.ACCOUNT_ADDRESS);
+			final Model m = MockModelStubber.stubAccountAddress(null, MockModelStubber.stubAddress(1), 1);
+			m.clearPropertyValues(false);
+			return m;
 		}
 
 		@Override
@@ -189,7 +185,11 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		super();
 		relatedOnePanel = new RelatedOnePanel();
 		indexedPanel = new IndexedFieldPanel();
-		setRenderer(new IFieldRenderer<FlowPanel>() {
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new IFieldRenderer<FlowPanel>() {
 
 			public void render(FlowPanel widget, FieldGroup fg) {
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
@@ -221,7 +221,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.newRow();
 				cmpsr.addWidget(indexedPanel);
 			}
-		});
+		};
 	}
 
 	@Override
@@ -230,8 +230,9 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		indexedPanel.setModel(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void setAction(IAction action) {
+	public void setAction(IBindingAction action) {
 		super.setAction(action);
 		indexedPanel.setAction(action);
 	}

@@ -5,8 +5,11 @@
 package com.tll.client.ui.field;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -46,7 +49,7 @@ import com.tll.model.schema.PropertyMetadata;
  */
 public abstract class AbstractField<T> extends AbstractBindableWidget<T> 
 implements IFieldWidget<T>,
-		ValueChangeHandler<T>, Focusable, ClickHandler {
+		ValueChangeHandler<T>, Focusable, ClickHandler, BlurHandler {
 	
 	/**
 	 * IEditable - Marker type interface to commonize focusability and value
@@ -54,7 +57,7 @@ implements IFieldWidget<T>,
 	 * @author jpk
 	 * @param <T> the value type
 	 */
-	interface IEditable<T> extends Focusable, HasValue<T> {
+	interface IEditable<T> extends Focusable, HasValue<T>, HasBlurHandlers {
 
 	}
 
@@ -414,9 +417,16 @@ implements IFieldWidget<T>,
 	}
 
 	public final void validate() throws ValidationException {
-		validate(getValue());
+		try {
+			validate(getValue());
+			markInvalid(false);
+		}
+		catch(final ValidationException e) {
+			markInvalid(true);
+			throw e;
+		}
 	}
-
+	
 	public final Object validate(Object value) throws ValidationException {
 		// check field requiredness
 		if(isRequired()) {
@@ -445,9 +455,7 @@ implements IFieldWidget<T>,
 		}
 		else {
 			removeStyleName(Styles.INVALID);
-			if(getMsgPopupRegistry() != null) {
-				getMsgPopupRegistry().getOperator(this, false).clearMsgs();
-			}
+			getMsgPopupRegistry().getOperator(this, false).clearMsgs();
 		}
 	}
 
@@ -546,7 +554,18 @@ implements IFieldWidget<T>,
 		// label is clicked
 		if(getMsgPopupRegistry() != null && event.getSource() == fldLbl) {
 			final IMsgOperator op = getMsgPopupRegistry().getOperator(this, false);
-			op.showMsgs(!op.isShowing());
+			op.showMsgs(op.isShowing());
+		}
+	}
+
+	@Override
+	public void onBlur(BlurEvent event) {
+		try {
+			validate();
+			markDirty();
+		}
+		catch(final ValidationException e) {
+			getMsgPopupRegistry().addMsgs(e.getErrors(), this, true).showMsgs(true);
 		}
 	}
 
@@ -586,9 +605,9 @@ implements IFieldWidget<T>,
 		final T old = oldValue;
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
-			markDirty();
 			ValueChangeEvent.fire(this, oldValue);
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
+			// we don't want auto-transfer!!!
+			//changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
 	}
 	

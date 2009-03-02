@@ -15,6 +15,7 @@ public interface IAction {
 
 	/**
 	 * Executes the action.
+	 * @throws Exception When an error occurs.
 	 */
-	void execute();
+	void execute() throws Exception;
 }

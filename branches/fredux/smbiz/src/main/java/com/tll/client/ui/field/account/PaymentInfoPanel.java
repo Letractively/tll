@@ -34,12 +34,16 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		public CreditCardPanel() {
 			super();
 			initWidget(new FlowPanel());
-			setRenderer(new CreditCardFieldsRenderer());
 		}
 
 		@Override
 		public FieldGroup generateFieldGroup() {
 			return (new CreditCardFieldsProvider()).getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new CreditCardFieldsRenderer();
 		}
 
 	}
@@ -52,7 +56,6 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		public BankPanel() {
 			super();
 			initWidget(new FlowPanel());
-			setRenderer(new BankFieldsRenderer());
 		}
 
 		@Override
@@ -60,6 +63,10 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 			return (new BankFieldsProvider()).getFieldGroup();
 		}
 
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new BankFieldsRenderer();
+		}
 	}
 
 	final TabPanel tabPanel = new TabPanel();
@@ -75,14 +82,18 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		creditCardPanel = new CreditCardPanel();
 		bankPanel = new BankPanel();
 		initWidget(tabPanel);
-		setRenderer(new IFieldRenderer<TabPanel>() {
+	}
+
+	@Override
+	public IFieldRenderer<TabPanel> getRenderer() {
+		return new IFieldRenderer<TabPanel>() {
 
 			@SuppressWarnings("synthetic-access")
 			public void render(TabPanel panel, FieldGroup fg) {
 				panel.add(creditCardPanel, "Credit Card");
 				panel.add(bankPanel, "Bank");
 			}
-		});
+		};
 	}
 
 	@Override

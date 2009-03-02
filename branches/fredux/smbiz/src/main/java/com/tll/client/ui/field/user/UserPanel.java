@@ -65,12 +65,16 @@ public class UserPanel extends FieldPanel<FlowPanel> {
 	public UserPanel() {
 		super();
 		initWidget(canvas);
-		setRenderer(new UserFieldsRenderer());
 	}
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		return (new UserFieldsProvider()).getFieldGroup();
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new UserFieldsRenderer();
 	}
 
 	/*

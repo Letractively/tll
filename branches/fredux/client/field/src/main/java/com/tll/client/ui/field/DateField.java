@@ -6,6 +6,9 @@ package com.tll.client.ui.field;
 
 import java.util.Date;
 
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 import com.tll.client.convert.IConverter;
@@ -26,6 +29,11 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 * @author jpk
 	 */
 	static final class Impl extends DateBox implements IEditable<Date> {
+
+		@Override
+		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+			return addDomHandler(handler, BlurEvent.getType());
+		}
 
 	}
 	
@@ -72,6 +80,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		super(name, propName, labelText, helpText);
 		dbox = new Impl();
 		dbox.addValueChangeHandler(this);
+		dbox.addBlurHandler(this);
 		setFormat(format);
 		converter = new ToDateConverter();
 	}

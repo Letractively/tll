@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.model.UnsetPropertyException;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -29,11 +28,6 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	 * The field group.
 	 */
 	private FieldGroup fields;
-
-	/**
-	 * The field renderer.
-	 */
-	private IFieldRenderer<W> renderer;
 
 	private boolean drawn;
 
@@ -62,12 +56,10 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	}
 
 	/**
-	 * Sets the field renderer.
-	 * @param renderer
+	 * Provides the field panel renderer (drawer).
+	 * @return the renderer
 	 */
-	public final void setRenderer(IFieldRenderer<W> renderer) {
-		this.renderer = renderer;
-	}
+	protected abstract IFieldRenderer<W> getRenderer();
 
 	/**
 	 * Generates a fresh field group with fields this panel will maintain. This
@@ -79,38 +71,24 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	protected abstract FieldGroup generateFieldGroup();
 
 	/**
-	 * Draws the fields.
+	 * Responsible for rendering the fields in the ui. The default is to employ
+	 * the provided renderer via {@link #getRenderer()}. Sub-classes may extend
+	 * this method to circumvent this strategy thus avoiding the call to
+	 * {@link #getRenderer()}.
 	 */
-	private void draw() {
-		if(renderer == null) {
-			throw new IllegalStateException("No field renderer set");
-		}
+	protected void draw() {
 		Log.debug(toString() + ".draw()..");
-		renderer.render(getWidget(), getFieldGroup());
+		getRenderer().render(getWidget(), getFieldGroup());
 	}
 
-	/**
-	 * Searches the member field group for the field whose property name matches
-	 * that given. <br>
-	 * @param propPath The property path of the sought field.
-	 * @return The non-<code>null</code> field
-	 * @throws UnsetPropertyException When the field does not exist in the member
-	 *         field group
-	 */
-	private IFieldWidget<?> getField(String propPath) throws UnsetPropertyException {
-		final IFieldWidget<?> f = getFieldGroup().getField(propPath);
-		if(f == null) {
-			throw new UnsetPropertyException(propPath);
-		}
-		return f;
+	@SuppressWarnings("unused")
+	public Object getProperty(String propPath) throws PropertyPathException {
+		throw new UnsupportedOperationException();
 	}
 
-	public final Object getProperty(String propPath) throws PropertyPathException {
-		return getField(propPath).getProperty(propPath);
-	}
-
-	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		getField(propPath).setProperty(propPath, value);
+	@SuppressWarnings("unused")
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		throw new UnsupportedOperationException();
 	}
 	
 	public final FieldGroup getFieldGroup() {
@@ -148,7 +126,6 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 
 	@Override
 	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<FieldGroup> handler) {
-		//return addHandler(handler, ValueChangeEvent.getType());
 		throw new UnsupportedOperationException();
 	}
 

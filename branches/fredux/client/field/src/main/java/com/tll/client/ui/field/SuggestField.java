@@ -6,9 +6,12 @@ package com.tll.client.ui.field;
 
 import java.util.Map;
 
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -36,6 +39,11 @@ public final class SuggestField extends AbstractDataField<String> {
 
 		MultiWordSuggestOracle getOracle() {
 			return (MultiWordSuggestOracle) getSuggestOracle();
+		}
+
+		@Override
+		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+			return addDomHandler(handler, BlurEvent.getType());
 		}
 	}
 
@@ -66,6 +74,7 @@ public final class SuggestField extends AbstractDataField<String> {
 				ValueChangeEvent.fire(sb, getValueFromKey(event.getSelectedItem().getReplacementString()));
 			}
 		});
+		sb.addBlurHandler(this);
 		setData(data);
 	}
 	

@@ -2,7 +2,6 @@ package com.tll.client.ui;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
-import com.tll.client.bind.IAction;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
@@ -26,7 +25,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	/**
 	 * The optional action.
 	 */
-	private IAction action;
+	private IBindingAction<T, IBindableWidget<T>> action;
 
 	/**
 	 * Optional ref to registry for message popups. <br>
@@ -40,13 +39,15 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	 */
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public final IAction getAction() {
+	public final IBindingAction getAction() {
 		return action;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public/*final*/void setAction(IAction action) {
+	public/*final*/void setAction(IBindingAction action) {
 		this.action = action;
 	}
 
@@ -65,18 +66,18 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		
 		final IBindable old = this.model;
 		
-		if(action instanceof IBindingAction && (old != null)) {
+		if(old != null) {
 			Log.debug("AbstractBindableWidget - unbinding existing action..");
-			((IBindingAction) action).unbind(this);
+			action.unbind(this);
 		}
 
 		this.model = model;
 
-		if(action instanceof IBindingAction) {
-			((IBindingAction) action).set(this);
+		if(action != null) {
+			action.set(this);
 			if(isAttached() && (model != null)) {
 				Log.debug("AbstractBindableWidget - re-binding existing action..");
-				((IBindingAction) action).bind(this);
+				action.bind(this);
 			}
 		}
 		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
@@ -116,8 +117,9 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + toString() + "..");
-		if(action instanceof IBindingAction) {
-		  ((IBindingAction) action).set(this);
+	  if(action != null) {
+			Log.debug("Setting action [" + action + "] on [" + this + "]..");
+			action.set(this);
 		}
 		super.onAttach();
 		//Log.debug("Firing prop change 'attach' event for " + toString() + "..");
@@ -128,9 +130,9 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	protected void onLoad() {
 		Log.debug("Loading " + toString() + "..");
 		super.onLoad();
-		if(action instanceof IBindingAction) {
-			Log.debug("Binding action" + getAction() + "..");
-			((IBindingAction) action).bind(this);
+		if(action != null) {
+			Log.debug("Binding action [" + action + "] on [" + this + "]..");
+			action.bind(this);
 		}
 	}
 
@@ -138,8 +140,9 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	protected void onDetach() {
 		Log.debug("Detatching " + toString() + "..");
 		super.onDetach();
-		if(action instanceof IBindingAction && (model != null)) {
-			((IBindingAction) action).unbind(this);
+		if(action != null) {
+			Log.debug("Unbinding action [" + action + "] from [" + this + "]..");
+			action.unbind(this);
 		}
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}

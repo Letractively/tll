@@ -195,7 +195,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 				fieldPanel.getAction().execute();
 				editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
 			}
-			catch(final RuntimeException e) {
+			catch(final Exception e) {
 				// TODO handle
 			}
 		}

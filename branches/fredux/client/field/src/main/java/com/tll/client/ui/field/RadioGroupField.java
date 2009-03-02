@@ -135,6 +135,7 @@ public final class RadioGroupField extends AbstractDataField<String> {
 				ValueChangeEvent.fire(fp, val);
 			}
 		});
+		rb.addBlurHandler(this);
 		return rb;
 	}
 

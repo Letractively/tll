@@ -116,6 +116,7 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
+		lb.addBlurHandler(this);
 		setData(data);
 	}
 

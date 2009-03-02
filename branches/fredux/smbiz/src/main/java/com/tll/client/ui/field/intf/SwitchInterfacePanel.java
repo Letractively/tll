@@ -51,7 +51,6 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 	public SwitchInterfacePanel() {
 		super();
 		initWidget(canvas);
-		setRenderer(new SwitchInterfaceFieldsRenderer());
 	}
 
 	@Override
@@ -62,5 +61,10 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 		fg.addField("options[0]", (new OptionFieldProvider()).getFieldGroup());
 
 		return fg;
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new SwitchInterfaceFieldsRenderer();
 	}
 }

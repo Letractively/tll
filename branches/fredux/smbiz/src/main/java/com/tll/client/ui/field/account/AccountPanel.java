@@ -85,7 +85,16 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		public AccountAddressPanel() {
 			super();
 			initWidget(panel);
-			setRenderer(new IFieldRenderer<FlowPanel>() {
+		}
+
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return (new AccountAddressFieldProvider()).getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
 
 				public void render(FlowPanel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
@@ -102,12 +111,7 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 					r.render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
 				}
-			});
-		}
-
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return (new AccountAddressFieldProvider()).getFieldGroup();
+			};
 		}
 	} // AccountAddressPanel
 
@@ -170,8 +174,6 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 	public AccountPanel() {
 		super();
 		initWidget(panel);
-		setRenderer(new AccountFieldsRenderer());
-		//setAction(new AccountEditAction());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -211,5 +213,10 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		});
 
 		return fg;
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new AccountFieldsRenderer();
 	}
 }

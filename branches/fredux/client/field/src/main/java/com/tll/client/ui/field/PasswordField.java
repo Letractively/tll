@@ -40,6 +40,7 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		tb = new Impl();
 		setVisibleLen(visibleLength);
 		tb.addValueChangeHandler(this);
+		tb.addBlurHandler(this);
 		addHandler(new KeyPressHandler() {
 
 			@Override

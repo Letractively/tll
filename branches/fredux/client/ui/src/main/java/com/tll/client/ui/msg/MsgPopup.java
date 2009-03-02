@@ -227,9 +227,9 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 					hideTimer.schedule(duration);
 				}
 			}
-			else {
-				hide();
-			}
+		}
+		else {
+			hide();
 		}
 	}
 

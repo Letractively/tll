@@ -38,6 +38,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		super(name, propName, labelText, helpText);
 		ta = new Impl();
 		ta.addValueChangeHandler(this);
+		ta.addBlurHandler(this);
 		setNumRows(numRows);
 		setNumCols(numCols);
 	}

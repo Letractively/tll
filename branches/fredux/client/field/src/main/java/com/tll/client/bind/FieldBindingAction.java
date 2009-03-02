@@ -9,11 +9,13 @@ import java.util.Map;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldValidationFeedback;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -23,25 +25,32 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * bi-directional communication between the two.
  * @author jpk
  */
-public final class FieldBindingAction implements IBindingAction {
-
+public final class FieldBindingAction implements IBindingAction<FieldGroup, FieldPanel<?>> {
+	
 	/**
 	 * Aggregation of the bound widgets and their corresponding bindings.
 	 */
-	private final Map<IBindableWidget<?>, Binding> bindings = new HashMap<IBindableWidget<?>, Binding>();
+	private final Map<IBindableWidget<FieldGroup>, Binding> bindings =
+			new HashMap<IBindableWidget<FieldGroup>, Binding>();
+	
+	/**
+	 * The principal validator.
+	 */
+	//private IValidator validator;
 
 	/**
 	 * Transfers field data to the model through the defined bindings.
+	 * @throws ValidationException When the operation fails
 	 */
 	@Override
-	public final void execute() {
+	public final void execute() throws ValidationException {
 		for(final Binding b : bindings.values()) {
 			b.setLeft();
 		}
 	}
 
 	@Override
-	public void set(IBindableWidget<?> widget) {
+	public void set(FieldPanel<?> widget) {
 		Log.debug("FieldBindingAction.set(): " + widget);
 		if(bindings.containsKey(widget)) {
 			throw new IllegalArgumentException();
@@ -50,7 +59,7 @@ public final class FieldBindingAction implements IBindingAction {
 	}
 
 	@Override
-	public void bind(IBindableWidget<?> widget) {
+	public void bind(FieldPanel<?> widget) {
 		if(!bindings.containsKey(widget)) throw new IllegalStateException(); // not set!
 		Log.debug("FieldBindingAction.bind(): " + widget);
 
@@ -73,7 +82,7 @@ public final class FieldBindingAction implements IBindingAction {
 	}
 
 	@Override
-	public void unbind(IBindableWidget<?> widget) {
+	public void unbind(FieldPanel<?> widget) {
 		if(bindings.containsKey(widget)) {
 			Log.debug("FieldBindingAction.unbind(): " + widget);
 
@@ -97,7 +106,7 @@ public final class FieldBindingAction implements IBindingAction {
 			throws PropertyPathException {
 		assert widget != null;
 		if(widget instanceof IndexedFieldPanel) {
-			addIndexedBinding(b, (IndexedFieldPanel<?>) widget);
+			addIndexedBinding(b, (IndexedFieldPanel<?, ?>) widget);
 		}
 		else if(widget instanceof FieldPanel) {
 			final IBindable model = widget.getModel();
@@ -113,7 +122,7 @@ public final class FieldBindingAction implements IBindingAction {
 		widget.setMsgPopupRegistry(mregistry);
 	}
 
-	private void addIndexedBinding(Binding binding, IndexedFieldPanel<?> indexedPanel) {
+	private void addIndexedBinding(Binding binding, IndexedFieldPanel<?, ?> indexedPanel) {
 		Log.debug("Binding indexed field panel: " + indexedPanel);
 		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(

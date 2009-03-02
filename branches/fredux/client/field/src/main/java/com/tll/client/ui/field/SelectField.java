@@ -92,6 +92,7 @@ public final class SelectField extends AbstractDataField<String> {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
+		lb.addBlurHandler(this);
 		setData(data);
 	}
 

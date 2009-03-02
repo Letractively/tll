@@ -9,10 +9,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
-import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
@@ -25,10 +23,10 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * indexing operations sync with the {@link FieldPanel}'s member ("underlying")
  * field group.
  * @param <I> the index field panel type
+ * @param <W> the field panel widget render type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends AbstractBindableWidget<Collection<IBindable>>
-		implements IFieldGroupProvider {
+public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widget> extends FieldPanel<W> {
 
 	/**
 	 * Index - Encapsulates a model and field panel for an indexed position.
@@ -69,11 +67,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	private final String indexedPropertyName;
 
 	/**
-	 * The group that serving as a common parent to the index field groups.
-	 */
-	private final FieldGroup topGroup;
-
-	/**
 	 * The list of indexed {@link FieldPanel}s.
 	 */
 	protected final List<Index<I>> indexPanels = new ArrayList<Index<I>>();
@@ -90,8 +83,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 */
 	private final Binding binding = new Binding();
 
-	private boolean drawn;
-
 	/**
 	 * Constructor
 	 * @param name The name to ascribe to this field panel which serves the name
@@ -101,16 +92,8 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 */
 	public IndexedFieldPanel(String name, String indexedPropertyName) {
 		super();
-		this.topGroup = new FieldGroup(name);
+		setFieldGroup(new FieldGroup(name));
 		this.indexedPropertyName = indexedPropertyName;
-	}
-
-	/**
-	 * @return The top-most aggregate {@link FieldGroup} containing the index
-	 *         {@link FieldGroup}s.
-	 */
-	public final FieldGroup getFieldGroup() {
-		return topGroup;
 	}
 
 	/**
@@ -143,11 +126,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	protected abstract I createIndexPanel(IBindable indexModel);
 
 	/**
-	 * Draws the composite wrapped widget.
-	 */
-	protected abstract void draw();
-
-	/**
 	 * Adds a new indexed field group
 	 */
 	protected Index<I> add() {
@@ -175,8 +153,8 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 		final Index<I> index = new Index<I>(model, ip);
 		indexPanels.add(index);
 
-		ip.getFieldGroup().setName(topGroup.getName() + '[' + (size() - 1) + ']');
-		topGroup.addField(ip.getFieldGroup());
+		ip.getFieldGroup().setName(getFieldGroup().getName() + '[' + (size() - 1) + ']');
+		getFieldGroup().addField(ip.getFieldGroup());
 		final Binding indexBinding = new Binding();
 		binding.getChildren().add(indexBinding);
 		bind(ip.getFieldGroup(), model, indexBinding);
@@ -208,7 +186,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	 */
 	protected Index<I> remove(int index) throws IndexOutOfBoundsException {
 		final Index<I> removed = indexPanels.remove(index);
-		topGroup.removeField(removed.fieldPanel.getFieldGroup());
+		getFieldGroup().removeField(removed.fieldPanel.getFieldGroup());
 		unbindAtIndex(index);
 		return removed;
 	}
@@ -307,39 +285,18 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 		Log.debug("IndexedFieldPanel.clearing " + toString() + "..");
 		binding.unbind();
 		binding.getChildren().clear();
-		topGroup.clear();
+		getFieldGroup().clear();
 		indexPanels.clear();
-	}
-
-	public final Collection<IBindable> getValue() {
-		return value;
-	}
-
-	public final void setValue(Collection<IBindable> value) {
-		if(this.value != null && this.value == value) return;
-		final Collection<IBindable> old = this.value;
-		this.value = value;
-		changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
-		regenerate();
 	}
 
 	@Override
 	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
 		super.setMsgPopupRegistry(mregistry);
 		// propagate to the fields
-		topGroup.setMsgPopupRegistry(mregistry);
+		getFieldGroup().setMsgPopupRegistry(mregistry);
 	}
 
 	@Override
-	public void setValue(Collection<IBindable> value, boolean fireEvents) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<IBindable>> handler) {
-		throw new UnsupportedOperationException();
-	}
-
 	public final Object getProperty(String propPath) {
 		return getValue();
 	}
@@ -347,27 +304,28 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>> extends Abstrac
 	/*
 	 * NOTE: we ignore the given property path
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		if(this.value != null && this.value == value) return;
 		if(value instanceof Collection == false) {
 			throw new Exception("The value must be a collection");
 		}
-		setValue((Collection<IBindable>) value);
+		//final Collection<IBindable> old = this.value;
+		this.value = (Collection<IBindable>) value;
+		// we don't want auto-data transfer
+		//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
+		regenerate();
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
-		if(!drawn) {
-			Log.debug("IndexedFieldPanel.onAttach() drawing..");
-			draw();
-			drawn = true;
-		}
+	protected FieldGroup generateFieldGroup() {
+		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	protected void onDetach() {
-		super.onDetach();
+	protected void onUnload() {
+		super.onUnload();
 		clear();
 	}
 

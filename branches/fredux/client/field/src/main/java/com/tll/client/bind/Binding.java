@@ -66,7 +66,7 @@ public final class Binding {
 
 		private IPropertyChangeListener listener;
 
-		private NestedPropertyChangeListener nestedListener;
+		//private NestedPropertyChangeListener nestedListener;
 
 		/**
 		 * Constructor
@@ -156,6 +156,7 @@ public final class Binding {
 	 * NestedPropertyChangeListener
 	 * @author jpk
 	 */
+	/*
 	private final class NestedPropertyChangeListener implements IPropertyChangeListener {
 
 		BindingInstance target;
@@ -214,7 +215,8 @@ public final class Binding {
 			return "[Nested Listener for: " + propertyName + " ] ";
 		}
 	} // NestedPropertyChangeListener
-
+	*/
+	
 	private BindingInstance left;
 	private BindingInstance right;
 	private List<Binding> children;
@@ -222,7 +224,7 @@ public final class Binding {
 	/**
 	 * TRUE = left; FALSE = right;
 	 */
-	private Boolean lastSet = null;
+	//private Boolean lastSet = null;
 	private boolean bound = false;
 
 	/**
@@ -391,7 +393,7 @@ public final class Binding {
 			children.get(i).setLeft();
 		}
 
-		lastSet = Boolean.TRUE;
+		//lastSet = Boolean.TRUE;
 	}
 
 	/**
@@ -413,7 +415,7 @@ public final class Binding {
 			children.get(i).setRight();
 		}
 
-		lastSet = Boolean.FALSE;
+		//lastSet = Boolean.FALSE;
 	}
 
 	/**
@@ -424,19 +426,19 @@ public final class Binding {
 	 * existing having the same name.
 	 */
 	public void bind() {
-		if((left != null) && (right != null)) {
+		if(!bound && (left != null) && (right != null)) {
 			Log.debug("Binding.binding..");
 			left.object.addPropertyChangeListener(left.property, left.listener);
 
-			if(left.nestedListener != null) {
-				left.nestedListener.setup();
-			}
+			//if(left.nestedListener != null) {
+			//left.nestedListener.setup();
+			//}
 
 			right.object.addPropertyChangeListener(right.property, right.listener);
 
-			if(right.nestedListener != null) {
-				right.nestedListener.setup();
-			}
+			//if(right.nestedListener != null) {
+			//right.nestedListener.setup();
+			//}
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
@@ -450,19 +452,19 @@ public final class Binding {
 	 * Breaks the two way binding and removes all listeners.
 	 */
 	public void unbind() {
-		if((left != null) && (right != null)) {
+		if(bound && (left != null) && (right != null)) {
 			Log.debug("Binding.unbinding..");
 			left.object.removePropertyChangeListener(left.property, left.listener);
 
-			if(left.nestedListener != null) {
-				left.nestedListener.cleanup();
-			}
+			//if(left.nestedListener != null) {
+			//left.nestedListener.cleanup();
+			//}
 
 			right.object.removePropertyChangeListener(right.property, right.listener);
 
-			if(right.nestedListener != null) {
-				right.nestedListener.cleanup();
-			}
+			//if(right.nestedListener != null) {
+			//right.nestedListener.cleanup();
+			//}
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
@@ -476,7 +478,6 @@ public final class Binding {
 	 * Validates <em>all</em> bindings in this binding.
 	 * @return boolean indicating this binding is valid.
 	 */
-	/*
 	public boolean validate() {
 		boolean valid = true;
 
@@ -485,7 +486,7 @@ public final class Binding {
 				try {
 					left.validator.validate(left.object.getProperty(left.property));
 				}
-				catch(ValidationException ve) {
+				catch(final ValidationException ve) {
 					valid = false;
 
 					if(left.feedback != null) {
@@ -496,7 +497,7 @@ public final class Binding {
 						((DefaultPropertyChangeListener) left.listener).lastException = ve;
 					}
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					valid = false;
 					Log.warn("Binding warning", e);
 				}
@@ -506,7 +507,7 @@ public final class Binding {
 				try {
 					right.validator.validate(right.object.getProperty(right.property));
 				}
-				catch(ValidationException ve) {
+				catch(final ValidationException ve) {
 					valid = false;
 
 					if(right.feedback != null) {
@@ -517,7 +518,7 @@ public final class Binding {
 						((DefaultPropertyChangeListener) right.listener).lastException = ve;
 					}
 				}
-				catch(Exception e) {
+				catch(final Exception e) {
 					valid = false;
 					Log.warn("Binding warning", e);
 				}
@@ -525,19 +526,17 @@ public final class Binding {
 		}
 
 		for(int i = 0; (children != null) && (i < children.size()); i++) {
-			Binding child = children.get(i);
+			final Binding child = children.get(i);
 			valid = valid & child.validate();
 		}
 
 		return valid;
 	}
-	*/
 	
 	/**
 	 * Validates stopping at the first found invalid binding.
 	 * @return boolean indicating if all values are valid.
 	 */
-	/*
 	public boolean isValid() {
 		try {
 			if((left != null) && (right != null)) {
@@ -558,15 +557,14 @@ public final class Binding {
 
 			return valid;
 		}
-		catch(ValidationException ve) {
+		catch(final ValidationException ve) {
 			Log.warn("Binding validation info", ve);
 			return false;
 		}
-		catch(Exception e) {
+		catch(final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	*/
 	
 	/**
 	 * Returns the left hand BindingInstance.
@@ -598,8 +596,8 @@ public final class Binding {
 		int dotIndex = propertyName.indexOf(".");
 		final BindingInstance instance = new BindingInstance();
 
-		final NestedPropertyChangeListener rtpcl =
-				(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
+		//final NestedPropertyChangeListener rtpcl =
+		//(dotIndex == -1) ? null : new NestedPropertyChangeListener(instance, object, propertyName);
 
 		if(dotIndex != -1) {
 			final ArrayList<IBindable> parents = new ArrayList<IBindable>();
@@ -640,15 +638,15 @@ public final class Binding {
 				dotIndex = propertyName.indexOf(".");
 			}
 
-			rtpcl.parents = new IBindable[parents.size()];
-			parents.toArray(rtpcl.parents);
-			rtpcl.propertyNames = new String[propertyNames.size()];
-			propertyNames.toArray(rtpcl.propertyNames);
+			//rtpcl.parents = new IBindable[parents.size()];
+			//parents.toArray(rtpcl.parents);
+			//rtpcl.propertyNames = new String[propertyNames.size()];
+			//propertyNames.toArray(rtpcl.propertyNames);
 		}
 
 		instance.object = object;
 		instance.property = propertyName;
-		instance.nestedListener = rtpcl;
+		//instance.nestedListener = rtpcl;
 
 		return instance;
 	}

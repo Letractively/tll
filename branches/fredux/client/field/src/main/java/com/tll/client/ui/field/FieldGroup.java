@@ -172,6 +172,8 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * The Widget that is used to convey validation feedback.
 	 */
 	private Widget feedbackWidget;
+	
+	private MsgPopupRegistry mregistry;
 
 	/**
 	 * Constructor
@@ -193,6 +195,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	@Override
 	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		this.mregistry = mregistry;
 		for(final IField field : fields) {
 			field.setMsgPopupRegistry(mregistry);
 		}
@@ -506,6 +509,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	public void validate() throws ValidationException {
+		if(feedbackWidget == null || mregistry == null) {
+			throw new IllegalStateException();
+		}
 		final Map<Widget, List<Msg>> errors = new HashMap<Widget, List<Msg>>();
 		for(final IField field : fields) {
 			try {
@@ -521,9 +527,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			}
 			catch(final ValidationException e) {
 				errors.put(feedbackWidget, e.getErrors());
+				mregistry.addMsgs(e.getErrors(), feedbackWidget, true);
 			}
 		}
 		if(errors.size() > 0) {
+			// TODO post all msgs globally
 			throw new ValidationException(errors);
 		}
 	}
