@@ -11,7 +11,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FieldValidationFeedback;
+import com.tll.client.ui.field.FieldPopupValidationFeedback;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
@@ -122,12 +122,14 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup, Fiel
 		widget.setMsgPopupRegistry(mregistry);
 	}
 
-	private void addIndexedBinding(Binding binding, IndexedFieldPanel<?, ?> indexedPanel) {
+	private void addIndexedBinding(Binding binding,
+			IndexedFieldPanel<?, ?> indexedPanel) {
 		Log.debug("Binding indexed field panel: " + indexedPanel);
 		// add binding to the many value collection in the primary binding
 		binding.getChildren().add(
-				new Binding(indexedPanel.getModel(), indexedPanel.getIndexedPropertyName(), null, null, indexedPanel,
-						IBindableWidget.PROPERTY_VALUE, null, null));
+				new Binding(indexedPanel.getModel(), indexedPanel
+								.getIndexedPropertyName(), null, null, null, indexedPanel, IBindableWidget.PROPERTY_VALUE, null, null,
+								null));
 	}
 
 	/**
@@ -138,14 +140,16 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup, Fiel
 	 * @param field
 	 * @param mregistry
 	 */
-	private void addFieldBinding(Binding binding, IBindable model, IFieldWidget<?> field, MsgPopupRegistry mregistry) {
+	private void addFieldBinding(Binding binding, IBindable model, IFieldWidget<?> field,
+			MsgPopupRegistry mregistry) {
 		Log.debug("Binding field: " + field + " to model [" + model + "]." + field.getPropertyName());
 		// apply property metadata
 		if(model instanceof IPropertyMetadataProvider) {
 			field.applyPropertyMetadata((IPropertyMetadataProvider) model);
 		}
 		binding.getChildren().add(
-				new Binding(model, field.getPropertyName(), null, null, field, IBindableWidget.PROPERTY_VALUE, field,
-						new FieldValidationFeedback(mregistry)));
+				new Binding(model, field.getPropertyName(), null, null, null, field,
+						IBindableWidget.PROPERTY_VALUE, null, field,
+						new FieldPopupValidationFeedback(mregistry)));
 	}
 }

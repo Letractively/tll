@@ -243,31 +243,9 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 		for(final IField f : fg) {
 			if(f instanceof IFieldWidget) {
 				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
-				final String propName = fw.getPropertyName();
-				//try {
-					// bind
-					indexBinding.getChildren().add(
-							new Binding(model, propName, null, null, fw, IBindableWidget.PROPERTY_VALUE, fw,
-									new FieldValidationFeedback(getMsgPopupRegistry())));
-					// set field value
-					//fw.setProperty(IBindableWidget.PROPERTY_VALUE, model.getProperty(propName));
-				//}
-				/*
-				catch(final UnsetPropertyException e) {
-					// ok
-				}
-				catch(final NullNodeInPropPathException e) {
-					// ok
-				}
-				catch(final PropertyPathException e) {
-					// bad proeperty path/name
-					throw new IllegalStateException(e);
-				}
-				catch(final Exception e) {
-					// bad value
-					throw new IllegalStateException(e);
-				}
-				*/
+				indexBinding.getChildren().add(
+						new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
+								new FieldPopupValidationFeedback(getMsgPopupRegistry())));
 			}
 			else {
 				// drill down

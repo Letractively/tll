@@ -97,7 +97,7 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		@Override
 		protected String getTabLabelText(Index<OptionPanel> index) {
 			//try {
-			final IFieldWidget<?> fw = index.getFieldPanel().getFieldGroup().getField(Model.NAME_PROPERTY);
+			final IFieldWidget<?> fw = index.getFieldPanel().getFieldGroup().getFieldWidget(Model.NAME_PROPERTY);
 			return fw.getText();
 			//}
 			//catch(final UnsetPropertyException e) {

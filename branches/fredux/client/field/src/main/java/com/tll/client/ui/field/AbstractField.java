@@ -340,6 +340,17 @@ implements IFieldWidget<T>,
 		}
 	}
 
+	private void markInvalid(boolean invalid) {
+		if(invalid) {
+			removeStyleName(Styles.DIRTY);
+			addStyleName(Styles.INVALID);
+		}
+		else {
+			removeStyleName(Styles.INVALID);
+			getMsgPopupRegistry().getOperator(this, false).clearMsgs();
+		}
+	}
+
 	public final void addValidator(IValidator validator) {
 		if(validator != null && validator != NotEmptyValidator.INSTANCE
 				&& (validator instanceof StringLengthValidator == false)) {
@@ -446,17 +457,6 @@ implements IFieldWidget<T>,
 		}
 
 		return value;
-	}
-
-	private void markInvalid(boolean invalid) {
-		if(invalid) {
-			removeStyleName(Styles.DIRTY);
-			addStyleName(Styles.INVALID);
-		}
-		else {
-			removeStyleName(Styles.INVALID);
-			getMsgPopupRegistry().getOperator(this, false).clearMsgs();
-		}
 	}
 
 	protected void draw() {
@@ -658,8 +658,7 @@ implements IFieldWidget<T>,
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		final AbstractField other = (AbstractField) obj;
-		return (!name.equals(other.name));
+		return (!name.equals(((AbstractField) obj).name));
 	}
 
 	@Override

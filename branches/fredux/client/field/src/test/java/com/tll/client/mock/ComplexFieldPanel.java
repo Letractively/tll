@@ -79,7 +79,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidgetByName("type"));
-					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidget(Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -253,20 +253,20 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		//relatedOnePanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 		//addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 
-		fg.getField("parent.name").setReadOnly(true);
+		fg.getFieldWidget("parent.name").setReadOnly(true);
 
-		((IFieldWidget<String>) fg.getField("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
+		((IFieldWidget<String>) fg.getFieldWidget("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
 				final String s = event.getValue().toLowerCase();
 				final boolean closed = "closed".equals(s);
-				final IFieldWidget<?> f = getFieldGroup().getField("dateCancelled");
+				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IFieldWidget<Boolean>) fg.getField("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				indexedPanel.getFieldGroup().setEnabled(event.getValue());

@@ -26,8 +26,6 @@ import com.tll.common.model.PropertyPath;
  * <b>IMPT:</b> This construct currently does <em>not</em> support adding or
  * removing relational type properties! In other words, the assumption in this
  * class' logic is always a non-<code>null</code> ref on bound properties.
- * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
@@ -62,7 +60,7 @@ public final class Binding {
 		/**
 		 * A IValidationFeedback object when needed.
 		 */
-		public IValidationFeedback feedback;
+		public IValidationFeedback<Object> feedback;
 
 		private IPropertyChangeListener listener;
 
@@ -225,6 +223,7 @@ public final class Binding {
 	 * TRUE = left; FALSE = right;
 	 */
 	//private Boolean lastSet = null;
+	
 	private boolean bound = false;
 
 	/**
@@ -268,8 +267,8 @@ public final class Binding {
 	 * @param rightValidator IValidator for the right hand property.
 	 * @param rightFeedback Feedback for the right hand validator.
 	 */
-	public Binding(IBindable left, String leftProperty, IValidator leftValidator, IValidationFeedback leftFeedback,
-			IBindable right, String rightProperty, IValidator rightValidator, IValidationFeedback rightFeedback) {
+	public Binding(IBindable left, String leftProperty, IValidator leftValidator, IValidationFeedback<?> leftFeedback,
+			IBindable right, String rightProperty, IValidator rightValidator, IValidationFeedback<?> rightFeedback) {
 		this(left, leftProperty, null, leftValidator, leftFeedback, right, rightProperty, null, rightValidator,
 				rightFeedback);
 	}
@@ -285,8 +284,8 @@ public final class Binding {
 	 * @param property The common property name for <em>both</em> the left and
 	 *        right objects.
 	 */
-	public Binding(IBindable left, IValidator leftValidator, IValidationFeedback leftFeedback, IBindable right,
-			IValidator rightValidator, IValidationFeedback rightFeedback, String property) {
+	public Binding(IBindable left, IValidator leftValidator, IValidationFeedback<?> leftFeedback, IBindable right,
+			IValidator rightValidator, IValidationFeedback<?> rightFeedback, String property) {
 		this(left, property, leftValidator, leftFeedback, right, property, rightValidator, rightFeedback);
 	}
 
@@ -330,7 +329,7 @@ public final class Binding {
 	 *        and right objects.
 	 */
 	public Binding(IBindable model, IBindableWidget<?> widget, IValidator validator,
-			IValidationFeedback feedback,
+			IValidationFeedback<?> feedback,
 			String modelProperty) {
 		this(model, modelProperty, null, null, widget, "value", validator, feedback);
 	}
@@ -348,19 +347,20 @@ public final class Binding {
 	 * @param rightValidator
 	 * @param rightFeedback
 	 */
-	private Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
-			IValidator leftValidator, IValidationFeedback leftFeedback, IBindable right, String rightProperty,
-			IConverter<Object, Object> rightConverter, IValidator rightValidator, IValidationFeedback rightFeedback) {
+	@SuppressWarnings("unchecked")
+	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
+			IValidator leftValidator, IValidationFeedback<?> leftFeedback, IBindable right, String rightProperty,
+			IConverter<Object, Object> rightConverter, IValidator rightValidator, IValidationFeedback<?> rightFeedback) {
 
 		this.left = createBindingInstance(left, leftProperty);
 		this.left.converter = leftConverter;
 		this.left.validator = leftValidator;
-		this.left.feedback = leftFeedback;
+		this.left.feedback = (IValidationFeedback<Object>) leftFeedback;
 
 		this.right = createBindingInstance(right, rightProperty);
 		this.right.converter = rightConverter;
 		this.right.validator = rightValidator;
-		this.right.feedback = rightFeedback;
+		this.right.feedback = (IValidationFeedback<Object>) rightFeedback;
 
 		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
 		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);
@@ -371,7 +371,8 @@ public final class Binding {
 	 * @return List of child bindings.
 	 */
 	public List<Binding> getChildren() {
-		return children = (children == null) ? new ArrayList<Binding>() : children;
+		return children =
+				(children == null) ? new ArrayList<Binding>() : children;
 	}
 
 	/**
@@ -478,6 +479,7 @@ public final class Binding {
 	 * Validates <em>all</em> bindings in this binding.
 	 * @return boolean indicating this binding is valid.
 	 */
+	/*
 	public boolean validate() {
 		boolean valid = true;
 
@@ -532,11 +534,13 @@ public final class Binding {
 
 		return valid;
 	}
-	
+	*/
+
 	/**
 	 * Validates stopping at the first found invalid binding.
 	 * @return boolean indicating if all values are valid.
 	 */
+	/*
 	public boolean isValid() {
 		try {
 			if((left != null) && (right != null)) {
@@ -565,7 +569,8 @@ public final class Binding {
 			throw new RuntimeException(e);
 		}
 	}
-	
+	*/
+
 	/**
 	 * Returns the left hand BindingInstance.
 	 * @return Returns the left hand BindingInstance.
@@ -575,7 +580,7 @@ public final class Binding {
 		return left;
 	}
 	*/
-	
+
 	/**
 	 * Returns the right hand BindingInstance.
 	 * @return Returns the left hand BindingInstance.
@@ -585,7 +590,7 @@ public final class Binding {
 		return right;
 	}
 	*/
-	
+
 	/**
 	 * Creates an instance of {@link BindingInstance}.
 	 * @param object

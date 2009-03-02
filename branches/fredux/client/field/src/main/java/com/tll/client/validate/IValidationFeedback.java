@@ -3,22 +3,21 @@ package com.tll.client.validate;
 /**
  * IValidationFeedback - Serves to propagate validation feedback throughout a
  * particular artifact.
- * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
+ * @param <T> the source type
  */
-public interface IValidationFeedback {
+public interface IValidationFeedback<T> {
 
 	/**
 	 * Handles the validation exception.
 	 * @param source
 	 * @param exception
 	 */
-	void handleException(Object source, ValidationException exception);
+	void handleException(T source, ValidationException exception);
 
 	/**
 	 * Resolve the validation error.
 	 * @param source
 	 */
-	void resolve(Object source);
+	void resolve(T source);
 }

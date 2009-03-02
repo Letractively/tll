@@ -27,7 +27,7 @@ public class UserFieldsProvider extends AbstractFieldGroupProvider {
 		final TextField email = femail("userEmailAddress", "emailAddress", "Email Address", "Email Address", 30);
 		email.setReadOnly(true);
 		fg.addField(email);
-		fg.getField("userEmailAddress").setReadOnly(true);
+		fg.getFieldWidget("userEmailAddress").setReadOnly(true);
 		fg.addField(fcheckbox("userLocked", "locked", "Locked", "Locked"));
 		fg.addField(fcheckbox("userEnabled", "enabled", "Enabled", "Enabled"));
 		fg.addField(fdate("userExpires", "expires", "Expires", "Expires"));

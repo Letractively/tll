@@ -4,20 +4,17 @@
  */
 package com.tll.client.ui.field;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.CompositeValidationException;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.PropertyPath;
-import com.tll.common.msg.Msg;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -135,8 +132,8 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
-	 * Recursively pre-pends the given parent property path to all child fields'
-	 * property names.
+	 * Recursively pre-pends the given parent property path to all applicable
+	 * child fields' property names.
 	 * @param parentPropPath The parent property path to pre-pend
 	 */
 	private static void setParentPropertyPath(IField field, String parentPropPath) {
@@ -149,6 +146,36 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			assert field instanceof IFieldWidget;
 			((IFieldWidget<?>) field).setPropertyName(PropertyPath.getPropertyPath(parentPropPath, ((IFieldWidget<?>) field)
 					.getPropertyName()));
+		}
+	}
+
+	/**
+	 * Verifies a field's worthiness to add to this group based on:
+	 * <ol>
+	 * <li>Name uniqueness for <em>all</em> existing fields in this group.
+	 * <li>Property name uniqueness <em>if</em> the given field is an
+	 * {@link IFieldWidget} instance.
+	 * </ol>
+	 * @param f the field to verify
+	 * @throws IllegalArgumentException When the verification fails.
+	 */
+	private static void verifyAddField(final IField f, FieldGroup group) throws IllegalArgumentException {
+		assert group != null;
+		if(f == null) throw new IllegalArgumentException("No field specified.");
+		final boolean isWidget = (f instanceof IFieldWidget);
+		for(final IField ef : group) {
+			if(f.getName().equals(ef.getName())) {
+				throw new IllegalArgumentException("Field name: '" + f.getName() + "' already exists.");
+			}
+			if(isWidget && (ef instanceof IFieldWidget)) {
+				if(((IFieldWidget<?>) f).getPropertyName().equals(((IFieldWidget<?>) ef).getPropertyName())) {
+					throw new IllegalArgumentException("Field property name: '" + ((IFieldWidget<?>) f).getPropertyName()
+							+ "' already exists.");
+				}
+			}
+			if(ef instanceof FieldGroup) {
+				verifyAddField(f, (FieldGroup) ef);
+			}
 		}
 	}
 
@@ -177,11 +204,23 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Constructor
-	 * @param name The required name for this field group.
+	 * @param name The required unique name for this field group.
 	 */
 	public FieldGroup(String name) {
 		super();
 		setName(name);
+	}
+
+	public Iterator<IField> iterator() {
+		return fields.iterator();
+	}
+
+	@Override
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		this.mregistry = mregistry;
+		for(final IField field : fields) {
+			field.setMsgPopupRegistry(mregistry);
+		}
 	}
 
 	public String getName() {
@@ -191,14 +230,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	public void setName(String name) {
 		if(name == null) throw new IllegalArgumentException();
 		this.name = name;
-	}
-
-	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		this.mregistry = mregistry;
-		for(final IField field : fields) {
-			field.setMsgPopupRegistry(mregistry);
-		}
 	}
 
 	/**
@@ -217,19 +248,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		this.feedbackWidget = feedbackWidget;
 	}
 
-	public Iterator<IField> iterator() {
-		return fields.iterator();
-	}
-	
-	/**
-	 * Recursively searches for a field widget having the given property name.
-	 * @param propertyName
-	 * @return The found field or <code>null</code> if it doesn't exist.
-	 */
-	public IFieldWidget<?> getField(String propertyName) {
-		return propertyName == null ? null : findByPropertyName(propertyName, this);
-	}
-
 	/**
 	 * Recursively searches for a field having the given name.
 	 * @param name
@@ -238,6 +256,15 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 */
 	public IField getFieldByName(String name) {
 		return findByName(name, this);
+	}
+
+	/**
+	 * Recursively searches for a field widget having the given property name.
+	 * @param propertyName
+	 * @return The found field or <code>null</code> if it doesn't exist.
+	 */
+	public IFieldWidget<?> getFieldWidget(String propertyName) {
+		return propertyName == null ? null : findByPropertyName(propertyName, this);
 	}
 
 	/**
@@ -265,34 +292,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return set;
 	}
 	
-	/**
-	 * Verifies a field's worthiness to add to this group based on:
-	 * <ol>
-	 * <li>Name uniqueness for <em>all</em> existing fields in this group.
-	 * <li>Property name uniqueness <em>if</em> the given field is an
-	 * {@link IFieldWidget} instance.
-	 * </ol>
-	 * @param f the field to verify
-	 * @throws IllegalArgumentException When the verification fails.
-	 */
-	private static void verifyAddField(final IField f, FieldGroup group) throws IllegalArgumentException {
-		final boolean isWidget = (f instanceof IFieldWidget);
-		for(final IField ef : group) {
-			if(f.getName().equals(ef.getName())) {
-				throw new IllegalArgumentException("Field name: '" + f.getName() + "' already exists.");
-			}
-			if(isWidget && (ef instanceof IFieldWidget)) {
-				if(((IFieldWidget<?>) f).getPropertyName().equals(((IFieldWidget<?>) ef).getPropertyName())) {
-					throw new IllegalArgumentException("Field property name: '" + ((IFieldWidget<?>) f).getPropertyName()
-							+ "' already exists.");
-				}
-			}
-			if(ef instanceof FieldGroup) {
-				verifyAddField(f, (FieldGroup) ef);
-			}
-		}
-	}
-
 	/**
 	 * Adds a field to this field group.
 	 * @param field The field to add
@@ -508,31 +507,37 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void validate() throws ValidationException {
+	public void validate() throws CompositeValidationException {
 		if(feedbackWidget == null || mregistry == null) {
 			throw new IllegalStateException();
 		}
-		final Map<Widget, List<Msg>> errors = new HashMap<Widget, List<Msg>>();
+		
+		boolean hasErrors = false;
+		final CompositeValidationException errors = new CompositeValidationException();
+		
 		for(final IField field : fields) {
 			try {
 				field.validate();
 			}
 			catch(final ValidationException e) {
-				errors.put(field.getWidget(), e.getErrors());
+				errors.add(e.getErrors(), field);
+				hasErrors = true;
 			}
 		}
+		
 		if(validator != null) {
 			try {
 				validator.validate(null);
 			}
 			catch(final ValidationException e) {
-				errors.put(feedbackWidget, e.getErrors());
-				mregistry.addMsgs(e.getErrors(), feedbackWidget, true);
+				errors.add(e.getErrors(), this);
+				//mregistry.addMsgs(e.getErrors(), feedbackWidget, true);
+				hasErrors = true;
 			}
 		}
-		if(errors.size() > 0) {
-			// TODO post all msgs globally
-			throw new ValidationException(errors);
+		
+		if(hasErrors) {
+			throw errors;
 		}
 	}
 

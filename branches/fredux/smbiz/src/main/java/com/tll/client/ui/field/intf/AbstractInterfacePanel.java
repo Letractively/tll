@@ -29,15 +29,15 @@ public abstract class AbstractInterfacePanel<W extends Widget, M extends IBindab
 		g.setWidget(0, 3, new Label("Mrc"));
 		g.setWidget(0, 4, new Label("Cst"));
 		g.setWidget(1, 0, new Label("Available?"));
-		g.setWidget(1, 1, (Widget) fg.getField("isAvailableAsp"));
-		g.setWidget(1, 2, (Widget) fg.getField("isAvailableIsp"));
-		g.setWidget(1, 3, (Widget) fg.getField("isAvailableMerchant"));
-		g.setWidget(1, 4, (Widget) fg.getField("isAvailableCustomer"));
+		g.setWidget(1, 1, (Widget) fg.getFieldWidget("isAvailableAsp"));
+		g.setWidget(1, 2, (Widget) fg.getFieldWidget("isAvailableIsp"));
+		g.setWidget(1, 3, (Widget) fg.getFieldWidget("isAvailableMerchant"));
+		g.setWidget(1, 4, (Widget) fg.getFieldWidget("isAvailableCustomer"));
 		g.setWidget(2, 0, new Label("Required?"));
-		g.setWidget(2, 1, (Widget) fg.getField("isRequiredAsp"));
-		g.setWidget(2, 2, (Widget) fg.getField("isRequiredIsp"));
-		g.setWidget(2, 3, (Widget) fg.getField("isRequiredMerchant"));
-		g.setWidget(2, 4, (Widget) fg.getField("isRequiredCustomer"));
+		g.setWidget(2, 1, (Widget) fg.getFieldWidget("isRequiredAsp"));
+		g.setWidget(2, 2, (Widget) fg.getFieldWidget("isRequiredIsp"));
+		g.setWidget(2, 3, (Widget) fg.getFieldWidget("isRequiredMerchant"));
+		g.setWidget(2, 4, (Widget) fg.getFieldWidget("isRequiredCustomer"));
 		return g;
 	}
 

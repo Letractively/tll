@@ -179,7 +179,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		final MsgPopupRegistry mregistry = fieldPanel.getMsgPopupRegistry();
 		for(final Msg msg : msgs) {
 			if(msg.getRefToken() != null) {
-				final Widget fw = root.getField(msg.getRefToken()).getWidget();
+				final Widget fw = root.getFieldWidget(msg.getRefToken()).getWidget();
 				if(fw == null) {
 					throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
 				}
