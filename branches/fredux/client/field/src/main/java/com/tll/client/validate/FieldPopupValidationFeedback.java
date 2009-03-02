@@ -2,12 +2,12 @@
  * The Logic Lab
  * @author jpk Dec 30, 2008
  */
-package com.tll.client.ui.field;
+package com.tll.client.validate;
 
 import com.tll.client.ui.Position;
+import com.tll.client.ui.field.IField;
+import com.tll.client.ui.field.IField.Styles;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.IValidationFeedback;
-import com.tll.client.validate.ValidationException;
 import com.tll.common.msg.Msg;
 
 /**

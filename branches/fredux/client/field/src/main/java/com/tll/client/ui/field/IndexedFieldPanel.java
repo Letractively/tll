@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.FieldPopupValidationFeedback;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.schema.IPropertyMetadataProvider;
