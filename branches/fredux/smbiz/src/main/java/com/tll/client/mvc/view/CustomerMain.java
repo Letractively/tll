@@ -5,8 +5,6 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.model.SmbizEntityType;
@@ -38,7 +36,7 @@ public class CustomerMain extends MainView {
 	 */
 	public CustomerMain() {
 		super();
-		links.add(new ViewRequestLink("Customer Listing", "Customer Listing", null));
+		links.append(new ViewRequestLink("Customer Listing", "Customer Listing", null));
 		addWidget(links);
 	}
 

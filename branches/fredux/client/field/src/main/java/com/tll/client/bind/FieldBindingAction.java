@@ -14,7 +14,7 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IndexedFieldPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.FieldPopupValidationFeedback;
+import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
@@ -150,6 +150,6 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup, Fiel
 		binding.getChildren().add(
 				new Binding(model, field.getPropertyName(), null, null, null, field,
 						IBindableWidget.PROPERTY_VALUE, null, field,
-						new FieldPopupValidationFeedback(mregistry)));
+						new PopupValidationFeedback<IFieldWidget<?>>(mregistry)));
 	}
 }

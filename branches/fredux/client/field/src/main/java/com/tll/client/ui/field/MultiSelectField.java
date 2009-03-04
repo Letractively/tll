@@ -121,7 +121,7 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 	}
 
 	@Override
-	protected IConverter<Collection<String>, Object> getConverter() {
+	public IConverter<Collection<String>, Object> getConverter() {
 		return CONVERTER;
 	}
 

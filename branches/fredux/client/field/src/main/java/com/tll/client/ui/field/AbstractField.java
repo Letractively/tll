@@ -12,16 +12,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.convert.IConverter;
 import com.tll.client.ui.AbstractBindableWidget;
-import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.util.GlobalFormat;
@@ -35,8 +32,6 @@ import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.model.MalformedPropPathException;
-import com.tll.common.model.PropertyPathException;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -567,36 +562,6 @@ implements IFieldWidget<T>,
 		catch(final ValidationException e) {
 			getMsgPopupRegistry().addMsgs(e.getErrors(), this, true).showMsgs(true);
 		}
-	}
-
-	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
-		return getValue();
-	}
-	
-	/**
-	 * @return The converter needed to type coerce un-typed inbound values.
-	 */
-	protected abstract IConverter<T, Object> getConverter();
-
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
-		try {
-			setValue(getConverter().convert(value));
-		}
-		catch(final RuntimeException e) {
-			throw new Exception("Unable to set field " + this + " value", e);
-		}
-	}
-	
-	@Override
-	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
-		//return (getEditable()).addValueChangeHandler(handler);
-		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override

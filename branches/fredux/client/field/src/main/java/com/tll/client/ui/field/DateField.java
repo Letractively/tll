@@ -86,7 +86,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	}
 
 	@Override
-	protected IConverter<Date, Object> getConverter() {
+	public IConverter<Date, Object> getConverter() {
 		return converter;
 	}
 

@@ -6,9 +6,6 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.StaticViewRequest;
-import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
@@ -48,12 +45,12 @@ public class AspMain extends MainView {
 	public AspMain() {
 		super();
 
-		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
+		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
-		links.add(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
-		links.add(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));
-		links.add(new Hyperlink("Site Summary", "siteSmry"));
+		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
+		links.append(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));
+		links.append(new Hyperlink("Site Summary", "siteSmry"));
 		addWidget(links);
 
 		/*

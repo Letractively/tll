@@ -15,13 +15,22 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * SimpleHyperLink - Copied from gwtTk library.
+ * SimpleHyperLink - An anchor element that binds click handlers with out
+ * invoking the browser's default click event action which involves GWT's
+ * history mechanism which is what we want to avoid.
  * @author jpk
  */
 public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClickHandlers {
+	
+	/**
+	 * Styles - (widget-tll.css)
+	 * @author jpk
+	 */
+	static class Styles {
 
-	//private ClickListenerCollection m_listeners;
-
+		public static final String SIMPLE = "tll-SimpleHyperLink";
+	}
+	
 	public SimpleHyperLink() {
 		this(null, null);
 	}
@@ -41,25 +50,24 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 		// prevents text selection by double-click
 		getElement().setPropertyString("href", "#");
 
-		sinkEvents(Event.ONCLICK);
-
-		setStyleName("tk-SimpleHyperLink");
+		setStyleName(Styles.SIMPLE);
 
 		if(text != null) {
 			setText(text);
 		}
 
 		if(clickHandler != null) {
-			addHandler(clickHandler, ClickEvent.getType());
+			addClickHandler(clickHandler);
 		}
 	}
 
 	@Override
 	public void onBrowserEvent(Event event) {
+		super.onBrowserEvent(event);
 		if(event.getTypeInt() == Event.ONCLICK) {
-			//fireEvent(event);
 			// keep '#' out of the location bar
 			DOM.eventPreventDefault(event);
+			//DOM.eventCancelBubble(event, true);
 		}
 	}
 
@@ -82,6 +90,6 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 	}
 
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		return null;
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 }

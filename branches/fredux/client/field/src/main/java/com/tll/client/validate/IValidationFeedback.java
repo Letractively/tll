@@ -1,12 +1,14 @@
 package com.tll.client.validate;
 
+import com.tll.client.ui.IWidgetProvider;
+
 /**
  * IValidationFeedback - Serves to propagate validation feedback throughout a
  * particular artifact.
  * @author jpk
- * @param <T> the source type
+ * @param <T> the source type able to identify a widget
  */
-public interface IValidationFeedback<T> {
+public interface IValidationFeedback<T extends IWidgetProvider> {
 
 	/**
 	 * Handles the validation exception.

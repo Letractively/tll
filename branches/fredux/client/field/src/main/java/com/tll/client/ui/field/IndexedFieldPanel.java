@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.FieldPopupValidationFeedback;
+import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -246,7 +246,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
 				indexBinding.getChildren().add(
 						new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-								new FieldPopupValidationFeedback(getMsgPopupRegistry())));
+								new PopupValidationFeedback<IFieldWidget<?>>(getMsgPopupRegistry())));
 			}
 			else {
 				// drill down

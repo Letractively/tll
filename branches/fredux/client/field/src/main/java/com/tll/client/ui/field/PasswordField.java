@@ -54,7 +54,7 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 	}
 
 	@Override
-	protected IConverter<String, Object> getConverter() {
+	public IConverter<String, Object> getConverter() {
 		return ToStringConverter.INSTANCE;
 	}
 

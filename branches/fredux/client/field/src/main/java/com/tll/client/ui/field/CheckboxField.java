@@ -67,7 +67,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	}
 
 	@Override
-	protected IConverter<Boolean, Object> getConverter() {
+	public IConverter<Boolean, Object> getConverter() {
 		return ToBooleanConverter.DEFAULT;
 	}
 

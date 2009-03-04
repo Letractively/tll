@@ -5,13 +5,10 @@
 package com.tll.client.ui.field;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.common.model.PropertyPathException;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -81,16 +78,6 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 		getRenderer().render(getWidget(), getFieldGroup());
 	}
 
-	@SuppressWarnings("unused")
-	public Object getProperty(String propPath) throws PropertyPathException {
-		throw new UnsupportedOperationException();
-	}
-
-	@SuppressWarnings("unused")
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		throw new UnsupportedOperationException();
-	}
-	
 	public final FieldGroup getFieldGroup() {
 		if(fields == null) {
 			Log.debug(toString() + ".generateFieldGroup()..");
@@ -115,18 +102,8 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	}
 
 	@Override
-	public final void setValue(FieldGroup value, boolean fireEvents) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public final void setValue(FieldGroup fields) {
 		setFieldGroup(fields);
-	}
-
-	@Override
-	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<FieldGroup> handler) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

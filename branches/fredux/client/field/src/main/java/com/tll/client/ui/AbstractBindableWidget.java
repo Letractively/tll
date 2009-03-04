@@ -1,12 +1,18 @@
 package com.tll.client.ui;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
+import com.tll.client.convert.IConverter;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeSupport;
+import com.tll.common.model.MalformedPropPathException;
+import com.tll.common.model.PropertyPathException;
 
 /**
  * AbstractBindableWidget
@@ -94,24 +100,81 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		this.mregistry = mregistry;
 	}
 
+	@Override
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
 		return changeSupport.getPropertyChangeListeners();
 	}
 
+	@Override
 	public final void addPropertyChangeListener(IPropertyChangeListener l) {
 		changeSupport.addPropertyChangeListener(l);
 	}
 
+	@Override
 	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener l) {
 		changeSupport.addPropertyChangeListener(propertyName, l);
 	}
 
+	@Override
 	public final void removePropertyChangeListener(IPropertyChangeListener l) {
 		changeSupport.removePropertyChangeListener(l);
 	}
 
+	@Override
 	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
 		changeSupport.removePropertyChangeListener(propertyName, l);
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	@Override
+	public Object getProperty(String propPath) throws PropertyPathException {
+		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		return getValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
+			throw new MalformedPropPathException(propPath);
+		}
+		final IConverter<T, Object> converter = getConverter();
+		if(converter == null) {
+			// attempt to cast
+			try {
+				setValue((T) value);
+			}
+			catch(final ClassCastException e) {
+				throw new Exception("Unable to coerce the value type - employ a converter");
+			}
+		}
+		else {
+			// employ the provided converter
+			try {
+				setValue(converter.convert(value));
+			}
+			catch(final RuntimeException e) {
+				throw new Exception("Unable to set " + this + " value: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	@Override
+	public void setValue(T value, boolean fireEvents) {
+		// default is to not support this method
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IConverter<T, Object> getConverter() {
+		// default impl is no converter
+		return null;
 	}
 
 	@Override

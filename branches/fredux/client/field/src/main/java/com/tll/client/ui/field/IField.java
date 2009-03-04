@@ -5,7 +5,7 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
-import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -18,7 +18,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * <em><b>NOTE: </b>fields are considered equal only if their names are the same.</em>
  * @author jpk
  */
-public interface IField extends HasName {
+public interface IField extends HasName, IWidgetProvider {
 
 	/**
 	 * Styles - (field.css)
@@ -118,14 +118,6 @@ public interface IField extends HasName {
 	 * @param visible true/false
 	 */
 	void setVisible(boolean visible);
-
-	/**
-	 * Provides the handle to the actual ui widget. <br>
-	 * NOTE: For field groups, this method serves as a way to associate a ui
-	 * widget with the field group mainly used for validation feedback purposes.
-	 * @return handle to the actual ui {@link Widget}.
-	 */
-	Widget getWidget();
 
 	/**
 	 * Applies property metadata to this field.

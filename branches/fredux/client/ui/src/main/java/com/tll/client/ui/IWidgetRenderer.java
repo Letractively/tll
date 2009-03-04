@@ -11,15 +11,15 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * IWidgetRenderer - renders widgets.
+ * IWidgetRenderer - Renders a collection of widgets.
  * @author jpk
  */
 public interface IWidgetRenderer {
 
 	/**
-	 * Renders a collection of like widgets producing a panel that contains them.
+	 * Renders a collection of widgets returning a panel that contains them.
 	 * @param widgetCollection widget collection to render
-	 * @return newly created panel that contains the rendered widgets.
+	 * @return newly created panel containing the widgets.
 	 */
 	Panel render(Collection<? extends Widget> widgetCollection);
 }

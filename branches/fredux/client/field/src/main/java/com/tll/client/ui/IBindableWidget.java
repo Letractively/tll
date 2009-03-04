@@ -2,6 +2,7 @@ package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.tll.client.bind.IBindingAction;
+import com.tll.client.convert.IConverter;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.common.bind.IBindable;
 
@@ -72,7 +73,12 @@ public interface IBindableWidget<T> extends IBindable, HasValue<T> {
 	 * @param mregistry the message popup registry
 	 */
 	void setMsgPopupRegistry(MsgPopupRegistry mregistry);
-	
+
+	/**
+	 * @return Optional converter used to type coerce un-typed inbound values.
+	 */
+	IConverter<T, Object> getConverter();
+
 	/**
 	 * @return The bound model
 	 */

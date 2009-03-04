@@ -44,7 +44,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 	}
 
 	@Override
-	protected IConverter<String, Object> getConverter() {
+	public IConverter<String, Object> getConverter() {
 		return ToStringConverter.INSTANCE;
 	}
 

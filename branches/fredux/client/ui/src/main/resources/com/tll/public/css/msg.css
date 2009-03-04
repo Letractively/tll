@@ -1,8 +1,7 @@
 @CHARSET "ISO-8859-1";
 
-/* MsgPanel */
-
 .msg {
+  
 }
 
 .msg .msg {
@@ -11,52 +10,81 @@
 }
 
 .msg ul {
-  /*float: right;*/
   margin: 1px;
 }
 
 .msg .ic {
   float: left;
   margin: 2px;
-  /*margin-right: 10px;*/
 }
 
 .msg ul,.msg ul li {
+  
 }
 
-.msg p {
+.msg p, .msg a {
   font-size: 12px;
   line-height: 120%;
   white-space: nowrap;
   margin: 2px 2px 0 2px;
 }
 
+.msg a:hover {
+  text-decoration: underline;
+}
+
 .msg .info {
-  color: #2C6688;
   background-color: #DBEAF3;
   border: solid 1px #AFD1E5;
 }
 
-.msg .success {
-  color: #006600;
-  background-color: #CCFFCC;
-  border: solid 1px #66CC66;
+.msg .info * {
+  color: #2C6688;
 }
 
 .msg .warn {
-  color: #666600;
   background-color: #FFFFCC;
   border: solid 1px #EFEF07;
 }
 
+.msg .warn * {
+  color: #666600;
+}
+
 .msg .error {
-  color: #CC0000;
   background-color: #FEE2E2;
   border: solid 1px #CC6666;
 }
 
+.msg .error * {
+  color: #CC0000;
+}
+
 .msg .fatal {
-  color: maroon;
   background-color: #FEE2E2;
   border: solid 1px maroon;
+}
+
+.msg .fatal * {
+  color: maroon;
+}
+
+/* global msg panel specific */
+.gmsg {
+  
+}
+
+.gmsg .title {
+  padding: 2px;
+}
+
+.gmsg li {
+  list-style-type: disc;
+  margin-left: 35px;
+}
+
+.gmsg .container {
+  margin: 2px;
+  padding-left: 2px;
+  padding-right: 2px;
 }

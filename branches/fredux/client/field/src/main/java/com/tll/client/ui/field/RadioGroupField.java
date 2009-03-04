@@ -109,7 +109,7 @@ public final class RadioGroupField extends AbstractDataField<String> {
 	}
 	
 	@Override
-	protected IConverter<String, Object> getConverter() {
+	public IConverter<String, Object> getConverter() {
 		return ToStringConverter.INSTANCE;
 	}
 

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
@@ -60,7 +61,7 @@ public final class Binding {
 		/**
 		 * A IValidationFeedback object when needed.
 		 */
-		public IValidationFeedback<Object> feedback;
+		public IValidationFeedback<IWidgetProvider> feedback;
 
 		private IPropertyChangeListener listener;
 
@@ -107,9 +108,9 @@ public final class Binding {
 				catch(final ValidationException ve) {
 					if(instance.feedback != null) {
 						if(lastException != null) {
-							instance.feedback.resolve(propertyChangeEvent.getSource());
+							instance.feedback.resolve((IWidgetProvider) propertyChangeEvent.getSource());
 						}
-						instance.feedback.handleException(propertyChangeEvent.getSource(), ve);
+						instance.feedback.handleException((IWidgetProvider) propertyChangeEvent.getSource(), ve);
 						lastException = ve;
 						return;
 					}
@@ -119,7 +120,7 @@ public final class Binding {
 			}
 
 			if(instance.feedback != null) {
-				instance.feedback.resolve(propertyChangeEvent.getSource());
+				instance.feedback.resolve((IWidgetProvider) propertyChangeEvent.getSource());
 			}
 
 			lastException = null;
@@ -349,18 +350,19 @@ public final class Binding {
 	 */
 	@SuppressWarnings("unchecked")
 	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
-			IValidator leftValidator, IValidationFeedback<?> leftFeedback, IBindable right, String rightProperty,
-			IConverter<Object, Object> rightConverter, IValidator rightValidator, IValidationFeedback<?> rightFeedback) {
+			IValidator leftValidator, IValidationFeedback<? extends IWidgetProvider> leftFeedback, IBindable right,
+			String rightProperty, IConverter<Object, Object> rightConverter, IValidator rightValidator,
+			IValidationFeedback<? extends IWidgetProvider> rightFeedback) {
 
 		this.left = createBindingInstance(left, leftProperty);
 		this.left.converter = leftConverter;
 		this.left.validator = leftValidator;
-		this.left.feedback = (IValidationFeedback<Object>) leftFeedback;
+		this.left.feedback = (IValidationFeedback<IWidgetProvider>) leftFeedback;
 
 		this.right = createBindingInstance(right, rightProperty);
 		this.right.converter = rightConverter;
 		this.right.validator = rightValidator;
-		this.right.feedback = (IValidationFeedback<Object>) rightFeedback;
+		this.right.feedback = (IValidationFeedback<IWidgetProvider>) rightFeedback;
 
 		this.left.listener = new DefaultPropertyChangeListener(this.left, this.right);
 		this.right.listener = new DefaultPropertyChangeListener(this.right, this.left);

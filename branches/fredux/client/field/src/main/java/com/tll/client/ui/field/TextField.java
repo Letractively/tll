@@ -54,7 +54,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 	}
 
 	@Override
-	protected IConverter<String, Object> getConverter() {
+	public IConverter<String, Object> getConverter() {
 		return ToStringConverter.INSTANCE;
 	}
 
