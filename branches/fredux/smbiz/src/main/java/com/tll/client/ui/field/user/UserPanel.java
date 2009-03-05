@@ -8,7 +8,7 @@ package com.tll.client.ui.field.user;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
@@ -18,14 +18,14 @@ import com.tll.common.model.Model;
  * UserPanel
  * @author jpk
  */
-public class UserPanel extends FieldPanel<FlowPanel> {
+public class UserPanel extends FlowFieldPanel {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
 		@SuppressWarnings("synthetic-access")
 		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(canvas);
+			cmpsr.setCanvas(panel);
 
 			// first row
 			cmpsr.addField(fg.getFieldWidgetByName("userName"));
@@ -55,17 +55,7 @@ public class UserPanel extends FieldPanel<FlowPanel> {
 
 	}
 
-	private final FlowPanel canvas = new FlowPanel();
-
 	private ViewRequestLink lnkAccount;
-
-	/**
-	 * Constructor
-	 */
-	public UserPanel() {
-		super();
-		initWidget(canvas);
-	}
 
 	@Override
 	protected FieldGroup generateFieldGroup() {

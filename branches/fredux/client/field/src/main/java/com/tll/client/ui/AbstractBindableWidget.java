@@ -7,7 +7,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
-import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.IValidationFeedback;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeSupport;
@@ -18,10 +18,10 @@ import com.tll.common.model.PropertyPathException;
  * AbstractBindableWidget
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
- * @param <T> The value type
+ * @param <V> The value type
  * @author jpk
  */
-public abstract class AbstractBindableWidget<T> extends Composite implements IBindableWidget<T> {
+public abstract class AbstractBindableWidget<V> extends Composite implements IBindableWidget<V> {
 
 	/**
 	 * The optional model.
@@ -31,14 +31,12 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	/**
 	 * The optional action.
 	 */
-	private IBindingAction<T, IBindableWidget<T>> action;
+	private IBindingAction<V, IBindableWidget<V>> action;
 
 	/**
-	 * Optional ref to registry for message popups. <br>
-	 * This allows for msg popups bound to child widgets to be managed as a
-	 * flyweight.
+	 * Responsible for handling validation exceptions.
 	 */
-	protected MsgPopupRegistry mregistry;
+	IValidationFeedback validationHandler;
 
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
@@ -53,7 +51,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public/*final*/void setAction(IBindingAction action) {
+	public final void setAction(IBindingAction action) {
 		this.action = action;
 	}
 
@@ -63,7 +61,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	}
 
 	@Override
-	public/*final*/void setModel(IBindable model) {
+	public final void setModel(IBindable model) {
 		// don't spuriously re-apply the same model instance!
 		if(this.model != null && model == this.model) {
 			return;
@@ -90,14 +88,12 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
-	@Override
-	public final MsgPopupRegistry getMsgPopupRegistry() {
-		return mregistry;
+	public final IValidationFeedback getValidationHandler() {
+		return validationHandler;
 	}
 
-	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		this.mregistry = mregistry;
+	public void setValidationHandler(IValidationFeedback validationHandler) {
+		this.validationHandler = validationHandler;
 	}
 
 	@Override
@@ -126,7 +122,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
@@ -144,11 +140,11 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
-		final IConverter<T, Object> converter = getConverter();
+		final IConverter<V, Object> converter = getConverter();
 		if(converter == null) {
 			// attempt to cast
 			try {
-				setValue((T) value);
+				setValue((V) value);
 			}
 			catch(final ClassCastException e) {
 				throw new Exception("Unable to coerce the value type - employ a converter");
@@ -166,13 +162,13 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 	}
 
 	@Override
-	public void setValue(T value, boolean fireEvents) {
+	public void setValue(V value, boolean fireEvents) {
 		// default is to not support this method
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public IConverter<T, Object> getConverter() {
+	public IConverter<V, Object> getConverter() {
 		// default impl is no converter
 		return null;
 	}
@@ -207,6 +203,7 @@ public abstract class AbstractBindableWidget<T> extends Composite implements IBi
 			Log.debug("Unbinding action [" + action + "] from [" + this + "]..");
 			action.unbind(this);
 		}
+		//Log.debug("Firing prop change 'detach' event for " + toString() + "..");
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}
 

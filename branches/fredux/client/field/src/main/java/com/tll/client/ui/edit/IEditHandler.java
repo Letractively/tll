@@ -5,18 +5,18 @@
  */
 package com.tll.client.ui.edit;
 
-import java.util.EventListener;
+import com.google.gwt.event.shared.EventHandler;
 
 
 /**
- * IEditListener - Listens to edit events.
+ * IEditHandler - Listens to edit events.
  * @author jpk
  */
-public interface IEditListener extends EventListener {
+public interface IEditHandler extends EventHandler {
 
 	/**
 	 * Fired when an edit event occurs.
 	 * @param event The event
 	 */
-	void onEditEvent(EditEvent event);
+	void onEdit(EditEvent event);
 }

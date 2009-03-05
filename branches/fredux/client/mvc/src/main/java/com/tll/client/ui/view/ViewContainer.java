@@ -32,7 +32,7 @@ import com.tll.client.mvc.view.PinPopViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
 import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragHandler;
-import com.tll.client.ui.IHasDragEvents;
+import com.tll.client.ui.IHasDragHandlers;
 import com.tll.client.ui.DragEvent.DragMode;
 
 /**
@@ -41,7 +41,7 @@ import com.tll.client.ui.DragEvent.DragMode;
  */
 @SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
-		IHasDragEvents, ClickHandler, NativePreviewHandler {
+		IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)

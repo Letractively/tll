@@ -1,59 +1,42 @@
 /**
  * The Logic Lab
- * @author jpk
- * Apr 13, 2008
+ * @author jpk Apr 13, 2008
  */
 package com.tll.client.validate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * ValidationException - Default un-sourced validation error.
+ * ValidationException - The one and only validation exception type.
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class ValidationException extends Exception implements IValidationError {
+public final class ValidationException extends Exception {
 
-	private final List<Msg> errors;
+	/**
+	 * The sole error.
+	 */
+	private final IError error;
 
 	/**
 	 * Constructor
 	 * @param error
 	 */
-	public ValidationException(Msg error) {
-		errors = new ArrayList<Msg>(1);
-		errors.add(error);
+	public ValidationException(IError error) {
+		this.error = error;
 	}
 
 	/**
-	 * Constructor
-	 * @param errors
+	 * Constructor - Creates a simple scalar (error message only) error.
+	 * @param error the error message
 	 */
-	public ValidationException(List<Msg> errors) {
-		this.errors = errors;
+	public ValidationException(final String error) {
+		this.error = new ScalarError(error);
 	}
 
 	/**
-	 * Constructor
-	 * @param error
+	 * @return the sole error.
 	 */
-	public ValidationException(String error) {
-		this(new Msg(error, MsgLevel.ERROR));
-	}
-
-	@Override
-	public Type getType() {
-		return Type.UNSOURCED; // the default
-	}
-
-	/**
-	 * @return The error messages.
-	 */
-	public List<Msg> getErrors() {
-		return errors;
+	public IError getError() {
+		return error;
 	}
 }

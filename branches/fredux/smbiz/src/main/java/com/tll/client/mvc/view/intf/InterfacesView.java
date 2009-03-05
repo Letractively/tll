@@ -28,7 +28,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
-import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
@@ -77,7 +77,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IEditListener {
+		private final class InterfaceStack implements IEditHandler {
 
 			// private final int stackIndex;
 			private final RefKey intfRef;
@@ -95,7 +95,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				this.intfRef = intfRef;
 
 				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
-				editPanel.addEditListener(this);
+				editPanel.addEditHandler(this);
 				editPanel.setVisible(false); // hide initially
 
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
@@ -124,7 +124,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				}
 			}
 
-			public void onEditEvent(EditEvent event) {
+			public void onEdit(EditEvent event) {
 				if(event.getOp().isSave()) {
 					ModelChangeManager.instance().persistModel(editPanel, model, null);
 				}

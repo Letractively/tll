@@ -129,6 +129,16 @@ public class MutableMsgLevelPanel extends Composite {
 		container.add(fp);
 		container.add(list);
 	}
+	
+	private String html(Msg msg, IWidgetRef ref) {
+		assert msg != null && ref != null;
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<b>");
+		sb.append(ref.descriptor());
+		sb.append(":</b>&nbsp;&nbsp;");
+		sb.append(msg.getMsg());
+		return sb.toString();
+	}
 
 	/**
 	 * Creates the widget contained in the li widget conveying the message.
@@ -141,7 +151,7 @@ public class MutableMsgLevelPanel extends Composite {
 	private Widget liEntry(Msg msg, final IWidgetRef ref) {
 		Widget liw;
 		if(ref != null && (ref.getWidget() instanceof Focusable)) {
-			liw = new SimpleHyperLink(msg.getMsg(), new ClickHandler() {
+			liw = new SimpleHyperLink(html(msg, ref), true, new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {

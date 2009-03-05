@@ -303,7 +303,7 @@ public final class UITests extends AbstractUITest {
 
 			mv = new ModelViewer();
 			ep = new EditPanel(new ComplexFieldPanel(), false, false);
-			ep.addEditListener(mv);
+			ep.addEditHandler(mv);
 
 			context.add(ep);
 			context.add(mv);

@@ -5,16 +5,13 @@
  */
 package com.tll.client.ui.edit;
 
-import java.util.EventObject;
-
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
  * EditEvent
  * @author jpk
  */
-@SuppressWarnings("serial")
-public final class EditEvent extends EventObject {
+public final class EditEvent extends GwtEvent<IEditHandler> {
 
 	public enum EditOp {
 		ADD,
@@ -27,19 +24,40 @@ public final class EditEvent extends EventObject {
 		}
 	}
 
+	public static final Type<IEditHandler> TYPE = new Type<IEditHandler>();
+	
+  /**
+	 * Fires a value change event on all registered handlers in the handler
+	 * manager.If no such handlers exist, this method will do nothing.
+	 * @param <I> the old value type
+	 * @param source the source of the handlers
+	 * @param op the edit operation
+	 */
+	public static <I> void fire(IHasEditHandlers source, EditOp op) {
+		source.fireEvent(new EditEvent(op));
+	}
+
 	private final EditOp op;
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param op
 	 */
-	public EditEvent(Widget source, EditOp op) {
-		super(source);
+	EditEvent(EditOp op) {
 		this.op = op;
 	}
 
 	public EditOp getOp() {
 		return op;
+	}
+
+	@Override
+	protected void dispatch(IEditHandler handler) {
+		handler.onEdit(this);
+	}
+
+	@Override
+	public GwtEvent.Type<IEditHandler> getAssociatedType() {
+		return TYPE;
 	}
 }

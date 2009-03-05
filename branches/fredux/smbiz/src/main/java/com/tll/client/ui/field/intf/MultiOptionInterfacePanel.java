@@ -90,6 +90,11 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 
 		@Override
+		public FieldPanel<?> getParentFieldPanel() {
+			return MultiOptionInterfacePanel.this;
+		}
+
+		@Override
 		protected String getIndexTypeName() {
 			return "Option";
 		}

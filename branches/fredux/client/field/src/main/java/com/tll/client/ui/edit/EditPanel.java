@@ -9,6 +9,7 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -21,7 +22,9 @@ import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.validate.Errors;
+import com.tll.client.validate.ScalarError;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
 
@@ -33,7 +36,7 @@ import com.tll.common.msg.Msg;
  * and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ClickHandler, ISourcesEditEvents {
+public final class EditPanel extends Composite implements ClickHandler, IHasEditHandlers {
 
 	/**
 	 * Styles - (admin.css)
@@ -76,8 +79,6 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
-
-	private final EditListenerCollection editListeners = new EditListenerCollection();
 
 	/**
 	 * Constructor
@@ -130,12 +131,9 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		initWidget(panel);
 	}
 
-	public void addEditListener(IEditListener listener) {
-		editListeners.add(listener);
-	}
-
-	public void removeEditListener(IEditListener listener) {
-		editListeners.remove(listener);
+	@Override
+	public HandlerRegistration addEditHandler(IEditHandler handler) {
+		return addHandler(handler, EditEvent.TYPE);
 	}
 
 	private void setEditMode(boolean isAdd) {
@@ -176,16 +174,13 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
-		final MsgPopupRegistry mregistry = fieldPanel.getMsgPopupRegistry();
+		final Errors errors = new Errors();
 		for(final Msg msg : msgs) {
-			if(msg.getRefToken() != null) {
-				final Widget fw = root.getFieldWidget(msg.getRefToken()).getWidget();
-				if(fw == null) {
-					throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
-				}
-				mregistry.addMsg(msg, fw, false);
-			}
+			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
+			if(fw == null) throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
+			errors.add(new ScalarError(msg.getMsg()), fw);
 		}
+		
 	}
 
 	public void onClick(ClickEvent event) {
@@ -193,7 +188,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		if(sender == btnSave) {
 			try {
 				fieldPanel.getAction().execute();
-				editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
+				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
 			}
 			catch(final Exception e) {
 				// TODO handle
@@ -203,15 +198,16 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
+			EditEvent.fire(this, EditOp.UPDATE);
 		}
 		else if(sender == btnCancel) {
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL));
+			EditEvent.fire(this, EditOp.CANCEL);
 		}
 	}
 
 	@Override
 	protected void onLoad() {
+		Log.debug("EditPanel.onLoad()..");
 		super.onLoad();
 		// portal.addScrollListener(MsgManager.instance);
 		if(btnCancel != null) {
@@ -221,8 +217,8 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 
 	@Override
 	protected void onUnload() {
+		Log.debug("EditPanel.onUnload()..");
 		super.onUnload();
 		// portal.removeScrollListener(MsgManager.instance);
-		if(fieldPanel.getMsgPopupRegistry() != null) fieldPanel.getMsgPopupRegistry().clear();
 	}
 }

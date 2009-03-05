@@ -97,4 +97,9 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public String getLabelText() {
+		return cblabelText;
+	}
 }

@@ -4,8 +4,9 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.IBindingAction;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -22,13 +23,13 @@ import com.tll.common.model.mock.MockModelStubber;
  * model, and an indexed field panel mocking a related many model collection.
  * @author jpk
  */
-public class ComplexFieldPanel extends MockFieldPanel {
+public class ComplexFieldPanel extends FlowFieldPanel {
 
 	/**
 	 * RelatedOnePanel
 	 * @author jpk
 	 */
-	class RelatedOnePanel extends MockFieldPanel {
+	class RelatedOnePanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -62,7 +63,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 * IndexFieldPanel
 	 * @author jpk
 	 */
-	class IndexFieldPanel extends MockFieldPanel {
+	class IndexFieldPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -141,6 +142,11 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		}
 
 		@Override
+		public FieldPanel<?> getParentFieldPanel() {
+			return ComplexFieldPanel.this;
+		}
+
+		@Override
 		protected String getIndexTypeName() {
 			return "Account Address";
 		}
@@ -193,7 +199,7 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 			public void render(FlowPanel widget, FieldGroup fg) {
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-				cmpsr.setCanvas(panel);
+				cmpsr.setCanvas(widget);
 
 				// first row
 				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
@@ -222,19 +228,6 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.addWidget(indexedPanel);
 			}
 		};
-	}
-
-	@Override
-	public void setModel(IBindable model) {
-		super.setModel(model);
-		indexedPanel.setModel(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void setAction(IBindingAction action) {
-		super.setAction(action);
-		indexedPanel.setAction(action);
 	}
 
 	@SuppressWarnings("unchecked")

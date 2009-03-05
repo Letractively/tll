@@ -14,6 +14,7 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
@@ -31,61 +32,11 @@ import com.tll.model.SmbizEntityType;
  */
 public class AccountPanel extends FieldPanel<FlowPanel> {
 
-	class AccountFieldsRenderer implements IFieldRenderer<FlowPanel> {
-
-		public void render(FlowPanel panel, FieldGroup fg) {
-			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(panel);
-
-			// first row
-			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
-			cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
-			cmpsr.addField(fg.getFieldWidgetByName("acntCurrencyId"));
-			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
-			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
-			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
-
-			// second row (billing)
-			cmpsr.newRow();
-			cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
-			cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
-			cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
-			cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
-
-			// third row
-			cmpsr.newRow();
-			// account addresses block
-			dpAddresses.add(addressesPanel);
-			cmpsr.addWidget(dpAddresses);
-
-			// payment info block
-			final FlowPanel fp = new FlowPanel();
-			fp.add((Widget) fg.getFieldWidgetByName("acntPersistPymntInfo"));
-			fp.add(paymentInfoPanel);
-			dpPaymentInfo.add(fp);
-			cmpsr.addWidget(dpPaymentInfo);
-		}
-	}
-
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	private static final class AccountAddressPanel extends FieldPanel<FlowPanel> {
-
-		final FlowPanel panel = new FlowPanel();
-
-		/**
-		 * Constructor
-		 */
-		public AccountAddressPanel() {
-			super();
-			initWidget(panel);
-		}
+	static final class AccountAddressPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -119,13 +70,18 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 	 * AddressesPanel
 	 * @author jpk
 	 */
-	static final class AddressesPanel extends TabbedIndexedFieldPanel<AccountAddressPanel> {
+	final class AddressesPanel extends TabbedIndexedFieldPanel<AccountAddressPanel> {
 
 		/**
 		 * Constructor
 		 */
 		public AddressesPanel() {
 			super("Addresses", "addresses", true, true);
+		}
+
+		@Override
+		public FieldPanel<?> getParentFieldPanel() {
+			return AccountPanel.this;
 		}
 
 		@Override
@@ -217,6 +173,45 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 
 	@Override
 	public IFieldRenderer<FlowPanel> getRenderer() {
-		return new AccountFieldsRenderer();
+		return new IFieldRenderer<FlowPanel>() {
+
+			@Override
+			public void render(FlowPanel widget, FieldGroup fg) {
+				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+				cmpsr.setCanvas(widget);
+
+				// first row
+				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntCurrencyId"));
+				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
+				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.stopFlow();
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+
+				// second row (billing)
+				cmpsr.newRow();
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
+
+				// third row
+				cmpsr.newRow();
+				// account addresses block
+				dpAddresses.add(addressesPanel);
+				cmpsr.addWidget(dpAddresses);
+
+				// payment info block
+				final FlowPanel fp = new FlowPanel();
+				fp.add((Widget) fg.getFieldWidgetByName("acntPersistPymntInfo"));
+				fp.add(paymentInfoPanel);
+				dpPaymentInfo.add(fp);
+				cmpsr.addWidget(dpPaymentInfo);
+			}
+		};
 	}
 }

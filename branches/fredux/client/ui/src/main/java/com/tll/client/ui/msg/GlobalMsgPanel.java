@@ -12,8 +12,8 @@ import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * GlobalMsgPanel - Displays messages associated with a particular referencable
- * widget.
+ * GlobalMsgPanel - Displayes sourced and un-sourced messages that are
+ * removable.
  * @author jpk
  */
 public class GlobalMsgPanel extends Composite {
@@ -72,6 +72,11 @@ public class GlobalMsgPanel extends Composite {
 		return (MutableMsgLevelPanel) container.getWidget(index(level));
 	}
 
+	/**
+	 * Add multiple sourced messages.
+	 * @param wref
+	 * @param msgs
+	 */
 	public void add(IWidgetRef wref, Iterable<Msg> msgs) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
@@ -81,6 +86,24 @@ public class GlobalMsgPanel extends Composite {
 		}
 	}
 	
+	/**
+	 * Add a single sourced message.
+	 * @param wref
+	 * @param msg
+	 */
+	public void add(IWidgetRef wref, Msg msg) {
+		MutableMsgLevelPanel p;
+		for(final MsgLevel level : order) {
+			p = getMsgLevelPanel(level);
+			p.add(wref, msg);
+			if(p.size() > 0) p.setVisible(true);
+		}
+	}
+
+	/**
+	 * Add multiple of un-sourced messages.
+	 * @param msgs
+	 */
 	public void add(Iterable<Msg> msgs) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
@@ -90,6 +113,23 @@ public class GlobalMsgPanel extends Composite {
 		}
 	}
 	
+	/**
+	 * Add a single un-sourced message.
+	 * @param msg
+	 */
+	public void add(Msg msg) {
+		MutableMsgLevelPanel p;
+		for(final MsgLevel level : order) {
+			p = getMsgLevelPanel(level);
+			p.add(msg);
+			if(p.size() > 0) p.setVisible(true);
+		}
+	}
+	
+	/**
+	 * Remove all posted messages that source to the given widget.
+	 * @param wref the widget reference
+	 */
 	public void remove(IWidgetRef wref) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
@@ -99,6 +139,9 @@ public class GlobalMsgPanel extends Composite {
 		}
 	}
 	
+	/**
+	 * Remove all posted un-sourced messages.
+	 */
 	public void removeUnsourced() {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
@@ -108,32 +151,41 @@ public class GlobalMsgPanel extends Composite {
 		}
 	}
 	
+	/**
+	 * Clear all messages of the given level.
+	 * @param level
+	 */
 	public void clear(MsgLevel level) {
 		final MutableMsgLevelPanel p = getMsgLevelPanel(level);
 		p.clear();
 		p.setVisible(false);
 	}
 
+	/**
+	 * Remove <em>all</em> messages.
+	 */
 	public void clear() {
 		for(final MsgLevel level : order) {
 			clear(level);
 		}
 	}
 
+	/**
+	 * @param level
+	 * @return the number of posted messages of the given level.
+	 */
 	public int size(MsgLevel level) {
 		return getMsgLevelPanel(level).size();
 	}
 
+	/**
+	 * @return the total number of posted messages.
+	 */
 	public int size() {
 		int c = 0;
 		for(final MsgLevel l : order) {
 			c += size(l);
 		}
 		return c;
-	}
-
-	@Override
-	protected void onLoad() {
-		super.onLoad();
 	}
 }

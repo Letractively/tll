@@ -40,11 +40,12 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 	}
 
 	/**
-	 * Constructs a new SimpleHyperLink
-	 * @param text a String or <code>null</code>
-	 * @param clickHandler May be <code>null</code>
+	 * Constructor
+	 * @param text
+	 * @param html treat <code>text</code> as an html string?
+	 * @param clickHandler
 	 */
-	public SimpleHyperLink(String text, ClickHandler clickHandler) {
+	public SimpleHyperLink(String text, boolean html, ClickHandler clickHandler) {
 		setElement(DOM.createAnchor());
 
 		// prevents text selection by double-click
@@ -53,12 +54,26 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 		setStyleName(Styles.SIMPLE);
 
 		if(text != null) {
-			setText(text);
+			if(html) {
+				setHTML(text);
+			}
+			else {
+				setText(text);
+			}
 		}
 
 		if(clickHandler != null) {
 			addClickHandler(clickHandler);
 		}
+	}
+	
+	/**
+	 * Constructs
+	 * @param text a String or <code>null</code>
+	 * @param clickHandler May be <code>null</code>
+	 */
+	public SimpleHyperLink(String text, ClickHandler clickHandler) {
+		this(text, false, clickHandler);
 	}
 
 	@Override

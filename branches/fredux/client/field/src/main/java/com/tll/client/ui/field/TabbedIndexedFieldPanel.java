@@ -28,6 +28,9 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.PopupValidationFeedback;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
@@ -155,6 +158,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	
 	private int lastSelectedTabIndex = -1;
 	
+	private MsgPopupRegistry mregistry;
+
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -323,13 +328,21 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 			tabPanel.add(new SimplePanel(), pb);
 		}
 	}
+	
+	@Override
+	public void setValidationHandler(IValidationFeedback validationHandler) {
+		super.setValidationHandler(validationHandler);
+		if(validationHandler instanceof PopupValidationFeedback) {
+			this.mregistry = ((PopupValidationFeedback) validationHandler).getMsgPopupRegistry();
+		}
+	}
 
 	@Override
 	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 		assert event.getSource() == tabPanel;
-		if(lastSelectedTabIndex != -1) {
+		if(lastSelectedTabIndex != -1 && mregistry != null) {
 			// hide msgs on last tab
-			getMsgPopupRegistry().getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs(false);
+			mregistry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs(false);
 		}
 	}
 

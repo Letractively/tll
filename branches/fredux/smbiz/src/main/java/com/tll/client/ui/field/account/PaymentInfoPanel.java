@@ -17,6 +17,7 @@ import com.tll.client.ui.field.CreditCardFieldsProvider;
 import com.tll.client.ui.field.CreditCardFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
 
 /**
@@ -26,15 +27,7 @@ import com.tll.client.ui.field.IFieldRenderer;
 public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
-	private static class CreditCardPanel extends FieldPanel<FlowPanel> {
-
-		/**
-		 * Constructor
-		 */
-		public CreditCardPanel() {
-			super();
-			initWidget(new FlowPanel());
-		}
+	static final class CreditCardPanel extends FlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {
@@ -48,15 +41,7 @@ public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 
 	}
 
-	private static class BankPanel extends FieldPanel<FlowPanel> {
-
-		/**
-		 * Constructor
-		 */
-		public BankPanel() {
-			super();
-			initWidget(new FlowPanel());
-		}
+	static final class BankPanel extends FlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {

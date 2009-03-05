@@ -5,34 +5,50 @@
  */
 package com.tll.client.validate;
 
+import java.util.List;
+import java.util.Map;
+
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.validate.IError.Type;
 
 /**
  * PanelValidationFeedback
- * @param <T> the source type
  * @author jpk
  */
-public class PanelValidationFeedback<T extends IWidgetRef> implements IValidationFeedback<T> {
+public final class PanelValidationFeedback implements IValidationFeedback {
 
-	final GlobalMsgPanel msgPanel;
+	private final GlobalMsgPanel msgPanel;
 
 	/**
 	 * Constructor
-	 * @param panel the panel to which validation messages are appended
+	 * @param msgPanel the panel to which validation messages are appended
 	 */
-	private PanelValidationFeedback(GlobalMsgPanel msgPanel) {
-		super();
+	public PanelValidationFeedback(GlobalMsgPanel msgPanel) {
+		if(msgPanel == null) throw new IllegalArgumentException();
 		this.msgPanel = msgPanel;
 	}
 
 	@Override
-	public void handleException(T source, ValidationException exception) {
-		msgPanel.add(source, exception.getErrors());
+	public void handleError(IWidgetRef source, IError error) {
+		if(error instanceof Errors) {
+			final Map<IWidgetRef, List<IError>> map = ((Errors) error).getSourcedErrors();
+			for(final IWidgetRef wref : map.keySet()) {
+				final List<IError> errors = map.get(wref);
+				for(final IError e : errors) {
+					if(e.getType() == Type.SCALAR) {
+						msgPanel.add(wref, ((ScalarError) e).getMessages());
+					}
+				}
+			}
+		}
+		else if(error instanceof ScalarError) {
+			msgPanel.add(source, ((ScalarError) error).getMessages());
+		}
 	}
 
 	@Override
-	public void resolve(T source) {
+	public void resolveError(IWidgetRef source) {
 		msgPanel.remove(source);
 	}
 }

@@ -23,7 +23,7 @@ public class DragEvent extends GwtEvent<IDragHandler> {
 		DRAGGING,
 		/**
 		 * This trigger is necessary as there may be drag gestures that are too fast
-		 * for the browser to process and here is where we get a change to
+		 * for the browser to process and here is where we get a chance to
 		 * "clean up" in particular finalizing the position of relevant widgets.
 		 */
 		END;

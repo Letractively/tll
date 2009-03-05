@@ -5,8 +5,8 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
-import com.tll.client.ui.IWidgetProvider;
-import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.ui.IWidgetRef;
+import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -18,7 +18,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * <em><b>NOTE: </b>fields are considered equal only if their names are the same.</em>
  * @author jpk
  */
-public interface IField extends HasName, IWidgetProvider {
+public interface IField extends HasName, IWidgetRef {
 
 	/**
 	 * Styles - (field.css)
@@ -59,10 +59,10 @@ public interface IField extends HasName, IWidgetProvider {
 	} // Styles
 
 	/**
-	 * Sets the message popup registry.
-	 * @param mregistry
+	 * Sets the validation handler.
+	 * @param validationHandler
 	 */
-	void setMsgPopupRegistry(MsgPopupRegistry mregistry);
+	void setValidationHandler(IValidationFeedback validationHandler);
 
 	/**
 	 * Clears the field's value.

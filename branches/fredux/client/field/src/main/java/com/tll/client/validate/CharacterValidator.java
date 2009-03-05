@@ -18,9 +18,12 @@ public class CharacterValidator implements IValidator {
 		super();
 	}
 
-	public Object validate(Object value) {
+	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Character) return value;
-		final String s = value.toString();
+		if(value instanceof String == false) {
+			throw new ValidationException("Invalid character.");
+		}
+		final String s = (String) value;
 		return s.length() < 1 ? null : new Character(value.toString().charAt(0));
 	}
 

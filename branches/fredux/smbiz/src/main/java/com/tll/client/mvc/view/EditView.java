@@ -9,7 +9,7 @@ import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
-import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
@@ -21,7 +21,7 @@ import com.tll.common.model.RefKey;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView implements IEditListener {
+public abstract class EditView extends AbstractView implements IEditHandler {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -53,7 +53,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		super();
 
 		editPanel = new EditPanel(fieldPanel, true, false);
-		editPanel.addEditListener(this);
+		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;
 
@@ -131,7 +131,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
-	public final void onEditEvent(EditEvent event) {
+	public final void onEdit(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
 				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), false));

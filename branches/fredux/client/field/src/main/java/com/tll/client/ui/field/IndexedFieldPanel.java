@@ -12,8 +12,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.Binding;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -86,16 +84,23 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 
 	/**
 	 * Constructor
-	 * @param name The name to ascribe to this field panel which serves the name
-	 *        of the underlying top field group as well
-	 * @param indexedPropertyName The name of the indexed property relative to a
-	 *        parent root model.
+	 * @param name The name to ascribe to this field panel serving as this field
+	 *        panel's field group name
+	 * @param indexedPropertyName The name of the indexed property relative to the
+	 *        parent field panel
 	 */
 	public IndexedFieldPanel(String name, String indexedPropertyName) {
 		super();
 		setFieldGroup(new FieldGroup(name));
 		this.indexedPropertyName = indexedPropertyName;
 	}
+
+	/**
+	 * Provides the ref to the parent field panel which is necessary for proper
+	 * model/field binding.
+	 * @return Ref to the parent field panel.
+	 */
+	public abstract FieldPanel<?> getParentFieldPanel();
 
 	/**
 	 * @return The property path that identifies this indexed property in a parent
@@ -240,13 +245,13 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	 */
 	private void bind(FieldGroup fg, final IBindable model, final Binding indexBinding) {
 		assert indexBinding != null;
-		fg.setMsgPopupRegistry(getMsgPopupRegistry());
+		fg.setValidationHandler(getValidationHandler());
 		for(final IField f : fg) {
 			if(f instanceof IFieldWidget) {
 				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
 				indexBinding.getChildren().add(
 						new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-								new PopupValidationFeedback<IFieldWidget<?>>(getMsgPopupRegistry())));
+								getValidationHandler()));
 			}
 			else {
 				// drill down
@@ -269,13 +274,6 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	}
 
 	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		super.setMsgPopupRegistry(mregistry);
-		// propagate to the fields
-		getFieldGroup().setMsgPopupRegistry(mregistry);
-	}
-
-	@Override
 	public final Object getProperty(String propPath) {
 		return getValue();
 	}
@@ -292,7 +290,7 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 		}
 		//final Collection<IBindable> old = this.value;
 		this.value = (Collection<IBindable>) value;
-		// we don't want auto-data transfer
+		// we don't want auto-transfer of data!!
 		//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
 		regenerate();
 	}
@@ -300,6 +298,17 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void onAttach() {
+		final FieldPanel<?> parent = getParentFieldPanel();
+		if(parent == null) throw new IllegalStateException();
+		if(parent.getAction() != null && parent.getModel() != null) {
+			setAction(parent.getAction());
+			setModel(parent.getModel());
+		}
+		super.onAttach();
 	}
 
 	@Override

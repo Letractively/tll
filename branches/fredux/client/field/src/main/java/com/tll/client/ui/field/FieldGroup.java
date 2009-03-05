@@ -9,9 +9,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.CompositeValidationException;
 import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.Errors;
+import com.tll.client.validate.IValidationFeedback;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.PropertyPath;
@@ -180,8 +180,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	/**
-	 * The optional name. This is only used for convenient identification
-	 * purposes.
+	 * The required presentation worthy and unique name to ascribe to this group.
 	 */
 	private String name;
 
@@ -200,8 +199,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 */
 	private Widget feedbackWidget;
 	
-	private MsgPopupRegistry mregistry;
-
 	/**
 	 * Constructor
 	 * @param name The required unique name for this field group.
@@ -211,15 +208,19 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		setName(name);
 	}
 
+	@Override
+	public String descriptor() {
+		return getName();
+	}
+
 	public Iterator<IField> iterator() {
 		return fields.iterator();
 	}
 
 	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		this.mregistry = mregistry;
+	public void setValidationHandler(IValidationFeedback validationHandler) {
 		for(final IField field : fields) {
-			field.setMsgPopupRegistry(mregistry);
+			field.setValidationHandler(validationHandler);
 		}
 	}
 
@@ -507,21 +508,15 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void validate() throws CompositeValidationException {
-		if(feedbackWidget == null || mregistry == null) {
-			throw new IllegalStateException();
-		}
-		
-		boolean hasErrors = false;
-		final CompositeValidationException errors = new CompositeValidationException();
+	public void validate() throws ValidationException {
+		final Errors errors = new Errors();
 		
 		for(final IField field : fields) {
 			try {
 				field.validate();
 			}
 			catch(final ValidationException e) {
-				errors.add(e.getErrors(), field);
-				hasErrors = true;
+				errors.add(e.getError(), field);
 			}
 		}
 		
@@ -530,14 +525,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 				validator.validate(null);
 			}
 			catch(final ValidationException e) {
-				errors.add(e.getErrors(), this);
-				//mregistry.addMsgs(e.getErrors(), feedbackWidget, true);
-				hasErrors = true;
+				errors.add(e.getError(), this);
 			}
 		}
 		
-		if(hasErrors) {
-			throw errors;
+		if(errors.size() > 0) {
+			throw new ValidationException(errors);
 		}
 	}
 

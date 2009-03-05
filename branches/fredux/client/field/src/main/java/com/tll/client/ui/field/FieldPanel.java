@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
-import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.IValidationFeedback;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -46,12 +46,12 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	}
 
 	@Override
-	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		this.mregistry = mregistry;
+	public void setValidationHandler(IValidationFeedback validationHandler) {
+		super.setValidationHandler(validationHandler);
 		// propagate to the fields
-		if(fields != null) fields.setMsgPopupRegistry(mregistry);
+		if(fields != null) fields.setValidationHandler(validationHandler);
 	}
-
+	
 	/**
 	 * Provides the field panel renderer (drawer).
 	 * @return the renderer
@@ -66,7 +66,7 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	 * @return The FieldGroup for this panel ensuring it is first populated.
 	 */
 	protected abstract FieldGroup generateFieldGroup();
-
+	
 	/**
 	 * Responsible for rendering the fields in the ui. The default is to employ
 	 * the provided renderer via {@link #getRenderer()}. Sub-classes may extend
@@ -117,6 +117,6 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 
 	@Override
 	public String toString() {
-		return "FieldPanel [ " + (fields == null ? "-nofields-" : fields.getName()) + " ]";
+		return "FieldPanel[" + (fields == null ? "-nofields-" : fields.getName()) + "]";
 	}
 }

@@ -36,7 +36,7 @@ public class EnumValidator implements IValidator {
 				return e;
 			}
 		}
-		throw new ValidationException("Invalid value: " + sval);
+		throw new ValidationException("Unsupported value.");
 	}
 
 }

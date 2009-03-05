@@ -69,8 +69,8 @@ public class DecimalValidator implements IValidator {
 		try {
 			return numberFormat.parse(value.toString());
 		}
-		catch(NumberFormatException nfe) {
-			throw new ValidationException("Must be a decimal of format: '" + numberFormat.getPattern() + "'.");
+		catch(final NumberFormatException nfe) {
+			throw new ValidationException("Value must be a decimal of format: '" + numberFormat.getPattern() + "'.");
 		}
 	}
 }

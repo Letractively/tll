@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.tll.client.ui.edit.EditEvent;
-import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IModelProperty;
@@ -29,7 +29,7 @@ import com.tll.model.schema.PropertyType;
  * ModelViewer - Views model properties in a hierarchical tree widget.
  * @author jpk
  */
-public class ModelViewer extends Composite implements IEditListener {
+public class ModelViewer extends Composite implements IEditHandler {
 
 	private final Panel panel;
 	private final Tree tree;
@@ -198,7 +198,7 @@ public class ModelViewer extends Composite implements IEditListener {
 	}
 
 	@Override
-	public void onEditEvent(EditEvent event) {
+	public void onEdit(EditEvent event) {
 		// re-build tree
 		fillTree(model);
 	}

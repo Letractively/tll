@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
@@ -30,6 +29,7 @@ import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
+import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.util.ObjectUtil;
@@ -39,12 +39,12 @@ import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
- * @param <T> the value type
+ * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<T> extends AbstractBindableWidget<T> 
-implements IFieldWidget<T>,
-		ValueChangeHandler<T>, Focusable, ClickHandler, BlurHandler {
+public abstract class AbstractField<V> extends AbstractBindableWidget<V> 
+implements IFieldWidget<V>,
+		ValueChangeHandler<V>, Focusable, ClickHandler, BlurHandler {
 	
 	/**
 	 * IEditable - Marker type interface to commonize focusability and value
@@ -127,7 +127,7 @@ implements IFieldWidget<T>,
 	/**
 	 * The initial value and the current old value.
 	 */
-	private T initialValue, oldValue;
+	private V initialValue, oldValue;
 
 	/**
 	 * Flag to indicate whether or not the initial value is set.
@@ -170,6 +170,11 @@ implements IFieldWidget<T>,
 		return this;
 	}
 
+	@Override
+	public final String descriptor() {
+		return getLabelText();
+	}
+
 	/**
 	 * Sets the Widget to be the field's containing Widget. This is necessary to
 	 * apply certain styling to the appropriate dom node.
@@ -196,13 +201,17 @@ implements IFieldWidget<T>,
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
 	}
+	
+	public String getLabelText() {
+		return fldLbl == null ? "" : fldLbl.getText();
+	}
 
 	/**
 	 * Set the field's associated label.
 	 * @param labelText The label text. If <code>null</code>, the label will be
 	 *        removed.
 	 */
-	public void setLabelText(String labelText) {
+	public final void setLabelText(String labelText) {
 		if(fldLbl == null) {
 			fldLbl = new FieldLabel();
 			fldLbl.setFor(domId);
@@ -318,7 +327,7 @@ implements IFieldWidget<T>,
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
-	protected abstract IEditable<T> getEditable();
+	protected abstract IEditable<V> getEditable();
 
 	/**
 	 * Either marks or un-marks this field as dirty in the UI based on its current
@@ -342,7 +351,7 @@ implements IFieldWidget<T>,
 		}
 		else {
 			removeStyleName(Styles.INVALID);
-			getMsgPopupRegistry().getOperator(this, false).clearMsgs();
+			getValidationHandler().resolveError(this);
 		}
 	}
 
@@ -484,9 +493,6 @@ implements IFieldWidget<T>,
 			// set help text
 			rof.setTitle(helpText);
 
-			// final Object val = getValue();
-			// String sval = val == null ? null :
-			// ToStringConverter.INSTANCE.render(val);
 			String sval = getText();
 			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
 			rof.setText(sval);
@@ -547,9 +553,8 @@ implements IFieldWidget<T>,
 	public void onClick(ClickEvent event) {
 		// toggle the display of any bound UI msgs for this field when the field
 		// label is clicked
-		if(getMsgPopupRegistry() != null && event.getSource() == fldLbl) {
-			final IMsgOperator op = getMsgPopupRegistry().getOperator(this, false);
-			op.showMsgs(op.isShowing());
+		if(event.getSource() == fldLbl && (getValidationHandler() instanceof PopupValidationFeedback)) {
+			((PopupValidationFeedback) getValidationHandler()).toggleNotification(this);
 		}
 	}
 
@@ -560,14 +565,15 @@ implements IFieldWidget<T>,
 			markDirty();
 		}
 		catch(final ValidationException e) {
-			getMsgPopupRegistry().addMsgs(e.getErrors(), this, true).showMsgs(true);
+			//getMsgPopupRegistry().addMsgs(e.getErrors(), this, true).showMsgs(true);
+			getValidationHandler().handleError(this, e.getError());
 		}
 	}
 
 	@Override
-	public final void onValueChange(ValueChangeEvent<T> event) {
+	public final void onValueChange(ValueChangeEvent<V> event) {
 		assert event.getSource() == getEditable();
-		final T old = oldValue;
+		final V old = oldValue;
 		oldValue = event.getValue();
 		if(!ObjectUtil.equals(old, oldValue)) {
 			ValueChangeEvent.fire(this, oldValue);
@@ -577,17 +583,17 @@ implements IFieldWidget<T>,
 	}
 	
 	@Override
-	public final T getValue() {
+	public final V getValue() {
 		return getEditable().getValue();
 	}
 
 	@Override
-	public final void setValue(T value) {
+	public final void setValue(V value) {
 		setValue(value, false);
 	}
 
 	@Override
-	public final void setValue(T value, boolean fireEvents) {
+	public final void setValue(V value, boolean fireEvents) {
 		getEditable().setValue(value, fireEvents);
 		if(!initialValueSet) {
 			initialValue = getValue();
