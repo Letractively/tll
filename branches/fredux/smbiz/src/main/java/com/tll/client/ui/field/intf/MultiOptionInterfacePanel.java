@@ -99,7 +99,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<Flow
 		}
 
 		@Override
-		protected String getTabLabelText(OptionPanel index) {
+		protected String getInstanceName(OptionPanel index) {
 			//try {
 			final IFieldWidget<?> fw = index.getFieldGroup().getFieldWidget(Model.NAME_PROPERTY);
 			return fw.getText();
