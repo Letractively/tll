@@ -32,7 +32,7 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	 * @param helpText
 	 * @return select field containing the app currencies
 	 */
-	protected static final SelectField fcurrencies(String name, String propName, String labelText,
+	protected static final SelectField<String> fcurrencies(String name, String propName, String labelText,
 			String helpText) {
 		return fselect(name, propName, labelText, helpText, getCurrencyDataMap());
 	}

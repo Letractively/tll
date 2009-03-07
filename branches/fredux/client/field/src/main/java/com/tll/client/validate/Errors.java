@@ -47,7 +47,7 @@ public class Errors implements IError {
 		List<IError> list = sourced.get(field);
 		if(list == null) {
 			list = new ArrayList<IError>();
-			sourced.put(null, list);
+			sourced.put(field, list);
 		}
 		list.add(error);
 		numErrors++;

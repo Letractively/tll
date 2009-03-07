@@ -4,10 +4,7 @@
  */
 package com.tll.client.validate;
 
-import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.IWidgetRef;
-import com.tll.client.ui.Position;
-import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IError.Type;
 
@@ -16,7 +13,7 @@ import com.tll.client.validate.IError.Type;
  * messages.
  * @author jpk
  */
-public final class PopupValidationFeedback implements IErrorHandler {
+public final class PopupValidationFeedback implements IPopupErrorHandler {
 
 	private final MsgPopupRegistry mregistry;
 
@@ -36,8 +33,7 @@ public final class PopupValidationFeedback implements IErrorHandler {
 	public void handleError(IWidgetRef source, IError error) {
 		// we only handle scalar errors
 		if(error.getType() == Type.SCALAR) {
-			mregistry.addMsgs(((ScalarError) error).getMessages(), source.getWidget(), true).showMsgs(
-					Position.BOTTOM, -1, true);
+			mregistry.addMsgs(((ScalarError) error).getMessages(), source.getWidget(), true);
 		}
 	}
 
@@ -45,11 +41,6 @@ public final class PopupValidationFeedback implements IErrorHandler {
 		mregistry.getOperator(source.getWidget(), false).clearMsgs();
 	}
 	
-	public void toggleErrorNotification(IWidgetProvider source) {
-		final IMsgOperator op = mregistry.getOperator(source.getWidget(), false);
-		op.showMsgs(op.isShowing());
-	}
-
 	@Override
 	public void clear() {
 		mregistry.clear();

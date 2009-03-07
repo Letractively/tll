@@ -13,7 +13,7 @@ import com.tll.client.ui.IBindableCollectionWidget;
 /**
  * AbstractCollectionDataField - Enables a collection of data values to be the
  * value type.
- * @param <V> the data <em>element<em> value type
+ * @param <V> the data <em>element</em> value type
  * @author jpk
  */
 public abstract class AbstractCollectionDataField<V> extends AbstractDataField<V, Collection<V>> implements

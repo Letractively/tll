@@ -4,6 +4,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HasText;
@@ -15,7 +19,7 @@ import com.tll.common.util.StringUtil;
  * FieldLabel - the field label of an {@link AbstractField} impl.
  * @author jpk
  */
-public final class FieldLabel extends Widget implements HasText, HasClickHandlers {
+public final class FieldLabel extends Widget implements HasText, HasClickHandlers, IHasHoverHandlers {
 
 	private static final String requiredToken = "<sup class=\"" + IField.Styles.REQUIRED + "\">*</sup>";
 
@@ -59,6 +63,16 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return addDomHandler(handler, ClickEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		return addDomHandler(handler, MouseOverEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		return addDomHandler(handler, MouseOutEvent.getType());
 	}
 
 	/**

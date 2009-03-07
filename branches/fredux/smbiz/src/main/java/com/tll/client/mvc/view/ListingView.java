@@ -43,7 +43,7 @@ public abstract class ListingView extends AbstractView {
 		 */
 		@Override
 		protected void doEditRow(int rowIndex) {
-			ViewManager.instance().dispatch(
+			ViewManager.get().dispatch(
 					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowRef(rowIndex)));
 		}
 
@@ -54,7 +54,7 @@ public abstract class ListingView extends AbstractView {
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ModelChangeManager.instance().deleteModel(ListingView.this, listingWidget.getRowRef(rowIndex), null);
+			ModelChangeManager.get().deleteModel(ListingView.this, listingWidget.getRowRef(rowIndex), null);
 		}
 
 	}

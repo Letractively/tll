@@ -55,9 +55,8 @@ public final class FieldBindingAction implements IBindingAction {
 		this.globalErrorHandler = globalErrorHandler;
 
 		// create the binding error handler
-		final MsgPopupRegistry mregistry = new MsgPopupRegistry();
 		bindingErrorHandler =
-				new ErrorHandlerDelegate(mregistry, new FieldValidationStyleHandler(), new PopupValidationFeedback(mregistry));
+				new ErrorHandlerDelegate(new FieldValidationStyleHandler(), new PopupValidationFeedback(new MsgPopupRegistry()));
 	}
 
 	/**
@@ -68,23 +67,30 @@ public final class FieldBindingAction implements IBindingAction {
 	public final void execute() throws ValidationException {
 		if(root == null) throw new IllegalStateException();
 		
-		// validate
 		globalErrorHandler.clear();
 		try {
+			// validate
 			root.getFieldGroup().validate();
+			
+			// update the model
+			for(final Binding b : bindings.values()) {
+				b.setLeft();
+			}
 		}
 		catch(final ValidationException e) {
 			globalErrorHandler.handleError(null, e.getError());
 			throw e;
 		}
 		catch(final Exception e) {
-			globalErrorHandler.handleError(null, new ScalarError(e.getMessage()));
+			String emsg;
+			if(e.getCause() != null) {
+				emsg = e.getCause().getMessage();
+			}
+			else {
+				emsg = e.getMessage();
+			}
+			globalErrorHandler.handleError(null, new ScalarError(emsg));
 			throw new ValidationException(e.getMessage());
-		}
-
-		// update the model
-		for(final Binding b : bindings.values()) {
-			b.setLeft();
 		}
 	}
 

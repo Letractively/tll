@@ -265,7 +265,7 @@ public final class UITests extends AbstractUITest {
 			
 			final MsgPopupRegistry mregistry = new MsgPopupRegistry();
 			final ErrorHandlerDelegate errorHandler =
-					new ErrorHandlerDelegate(mregistry, new PopupValidationFeedback(mregistry));
+					new ErrorHandlerDelegate(new PopupValidationFeedback(mregistry));
 			group.setErrorHandler(errorHandler);
 		}
 

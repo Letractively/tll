@@ -152,7 +152,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		protected String getTabLabelText(IndexFieldPanel index) {
+		protected String getInstanceName(IndexFieldPanel index) {
 			AddressType type;
 			String aaName;
 			try {

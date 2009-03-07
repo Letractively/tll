@@ -7,25 +7,27 @@ package com.tll.client.ui.field;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasBlurHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IHasFormat;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.IErrorHandler;
+import com.tll.client.validate.IPopupErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
@@ -43,17 +45,7 @@ import com.tll.model.schema.PropertyMetadata;
  */
 public abstract class AbstractField<V> extends AbstractBindableWidget<V> 
 implements IFieldWidget<V>,
-		ValueChangeHandler<V>, Focusable, ClickHandler, BlurHandler {
-	
-	/**
-	 * IEditable - Marker type interface to commonize focusability and value
-	 * providing ability.
-	 * @author jpk
-	 * @param <T> the value type
-	 */
-	interface IEditable<T> extends Focusable, HasValue<T>, HasBlurHandlers {
-
-	}
+		ValueChangeHandler<V>, Focusable, BlurHandler, IHoverHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -132,6 +124,12 @@ implements IFieldWidget<V>,
 	 * Flag to indicate whether or not the initial value is set.
 	 */
 	private boolean initialValueSet;
+	
+	private HandlerRegistration rMseOut, rMsgOvr;
+
+	private MsgPopupRegistry mregistry;
+	
+	private boolean valid;
 
 	/**
 	 * Constructor
@@ -214,7 +212,7 @@ implements IFieldWidget<V>,
 		if(fldLbl == null) {
 			fldLbl = new FieldLabel();
 			fldLbl.setFor(domId);
-			fldLbl.addClickHandler(this);
+			//fldLbl.addClickHandler(this);
 		}
 		fldLbl.setText(labelText == null ? "" : labelText);
 	}
@@ -370,43 +368,46 @@ implements IFieldWidget<V>,
 
 			// set the type coercion validator
 			switch(metadata.getPropertyType()) {
+				case STRING:
+				case ENUM:
+					// no type coercion validator needed
+					break;
+				
 				case BOOL:
 					addValidator(BooleanValidator.INSTANCE);
 					break;
+				
+				case DATE: {
+					GlobalFormat format = null;
+					if(this instanceof IHasFormat) {
+						 format = ((IHasFormat) this).getFormat();
+					}
+					addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
+					break;
+				}
+				
+				case INT:
+					addValidator(IntegerValidator.INSTANCE);
+					break;
+				
+				case FLOAT:
+				case DOUBLE: {
+					GlobalFormat format = null;
+					if(this instanceof IHasFormat) {
+						format = ((IHasFormat) this).getFormat();
+					}
+					addValidator(DecimalValidator.get(format == null ? GlobalFormat.DECIMAL : format));
+					break;
+				}
+				
 				case CHAR:
 					addValidator(CharacterValidator.INSTANCE);
 					break;
-				case DATE:
-					if(this instanceof IHasFormat) {
-						final GlobalFormat format = ((IHasFormat) this).getFormat();
-						if(format != null && format.isDateFormat()) {
-							addValidator(DateValidator.get(format));
-						}
-					}
-					break;
-				case FLOAT:
-				case DOUBLE:
-					if(this instanceof IHasFormat) {
-						final GlobalFormat format = ((IHasFormat) this).getFormat();
-						if(format != null && format.isNumericFormat()) {
-							addValidator(DecimalValidator.instance(format));
-						}
-					}
-					break;
-				case INT:
+				
 				case LONG:
-					addValidator(IntegerValidator.INSTANCE);
-					break;
-
+					// TODO handle - intentional fall through
 				case STRING_MAP:
-					// TODO handle string map type coercion ?
-					break;
-
-				case ENUM:
-				case STRING:
-					// no type coercion validator needed
-					break;
-
+					// TODO handle string map type coercion - intentional fall through
 				default:
 					throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
 			}
@@ -430,22 +431,52 @@ implements IFieldWidget<V>,
 		}
 	}
 	
-	public final Object validate(Object value) throws ValidationException {
-		// check field requiredness
-		if(isRequired()) {
-			value = NotEmptyValidator.INSTANCE.validate(value);
+	private void trackHover(boolean track) {
+		// resolve the hoverable
+		if(track) {
+			final IHasHoverHandlers hoverable = fldLbl == null ? getEditable() : fldLbl;
+			if(rMseOut == null) rMseOut = hoverable.addMouseOutHandler(this);
+			if(rMsgOvr == null) rMsgOvr = hoverable.addMouseOverHandler(this);
 		}
-
-		// check max length
-		if(this instanceof IHasMaxLength) {
-			final int maxlen = ((IHasMaxLength) this).getMaxLen();
-			if(maxlen != -1) {
-				value = StringLengthValidator.validate(value, -1, maxlen);
+		else {
+			if(rMseOut != null) {
+				rMseOut.removeHandler();
+				rMseOut = null;
+			}
+			if(rMsgOvr != null) {
+				rMsgOvr.removeHandler();
+				rMsgOvr = null;
 			}
 		}
+	}
+	
+	public final Object validate(Object value) throws ValidationException {
+		try {
+			// check field requiredness
+			if(isRequired()) {
+				value = NotEmptyValidator.INSTANCE.validate(value);
+			}
 
-		if(validator != null) {
-			value = validator.validate(value);
+			// check max length
+			if(this instanceof IHasMaxLength) {
+				final int maxlen = ((IHasMaxLength) this).getMaxLen();
+				if(maxlen != -1) {
+					value = StringLengthValidator.validate(value, -1, maxlen);
+				}
+			}
+
+			if(validator != null) {
+				value = validator.validate(value);
+			}
+			
+			valid = true;
+		}
+		catch(final ValidationException e) {
+			valid = false;
+			throw e;
+		}
+		finally {
+			if(!valid && isAttached()) trackHover(true);
 		}
 
 		return value;
@@ -537,12 +568,12 @@ implements IFieldWidget<V>,
 	public void setTabIndex(int index) {
 		if(!readOnly) getEditable().setTabIndex(index);
 	}
-
-	public void onClick(ClickEvent event) {
-		// toggle the display of any bound UI msgs for this field when the field
-		// label is clicked
-		if(event.getSource() == fldLbl) {
-			getErrorHandler().toggleErrorNotification(this);
+	
+	@Override
+	public void setErrorHandler(IErrorHandler errorHandler) {
+		super.setErrorHandler(errorHandler);
+		if(errorHandler instanceof IPopupErrorHandler) {
+			mregistry = ((IPopupErrorHandler) errorHandler).getMsgPopupRegistry();
 		}
 	}
 
@@ -553,8 +584,21 @@ implements IFieldWidget<V>,
 			dirtyCheck();
 		}
 		catch(final ValidationException e) {
-			//getErrorHandler().handleError(this, e.getError());
 			// ok
+		}
+	}
+
+	@Override
+	public void onMouseOver(MouseOverEvent event) {
+		if(mregistry != null) {
+			mregistry.getOperator(this, false).showMsgs(!valid);
+		}
+	}
+
+	@Override
+	public void onMouseOut(MouseOutEvent event) {
+		if(mregistry != null && !valid) {
+			mregistry.getOperator(this, false).showMsgs(false);
 		}
 	}
 
@@ -595,6 +639,7 @@ implements IFieldWidget<V>,
 			getErrorHandler().resolveError(this);
 			removeStyleName(Styles.DIRTY);
 		}
+		trackHover(false);
 	}
 
 	@Override

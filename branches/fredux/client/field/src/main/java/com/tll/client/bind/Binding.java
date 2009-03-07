@@ -141,7 +141,7 @@ public final class Binding {
 				target.object.setProperty(targetProperty, value);
 			}
 			catch(final Exception e) {
-				throw new RuntimeException("Unable to set property: " + targetProperty, e);
+				throw new RuntimeException("Unable to set property '" + targetProperty + "': " + e.getMessage(), e);
 			}
 		}
 

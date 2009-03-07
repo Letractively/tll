@@ -40,34 +40,33 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 
 		@Override
 		public V getValue() {
-			int i = 0;
 			for(final RadioButton rb : radioButtons) {
 				if(rb.getValue() == Boolean.TRUE) {
 					return getDataValue(rb.getFormValue());
 				}
-				i++;
 			}
 			return null;
 		}
 
 		@Override
 		public void setValue(V value, boolean fireEvents) {
-			final V old = getValue();
+			final V old = fireEvents ? getValue() : null;
 			setValue(value);
-			if(fireEvents && !ObjectUtil.equals(old, value)) {
-				ValueChangeEvent.fire(this, value);
+			if(fireEvents) {
+				final V nval = getValue();
+				if(!ObjectUtil.equals(old, nval)) {
+					ValueChangeEvent.fire(this, nval);
+				}
 			}
 		}
 
 		@Override
 		public void setValue(V value) {
-			int i = 0;
 			for(final RadioButton rb : radioButtons) {
 				if(getDataValue(rb.getFormValue()).equals(value)) {
 					rb.setValue(Boolean.TRUE);
 					return;
 				}
-				i++;
 			}
 		}
 	}

@@ -8,7 +8,6 @@ package com.tll.client.validate;
 import java.util.List;
 import java.util.Map;
 
-import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.validate.IError.Type;
@@ -51,11 +50,6 @@ public final class BillboardValidationFeedback implements IErrorHandler {
 	@Override
 	public void resolveError(IWidgetRef source) {
 		msgPanel.remove(source);
-	}
-
-	@Override
-	public void toggleErrorNotification(IWidgetProvider source) {
-		// no-op
 	}
 
 	@Override

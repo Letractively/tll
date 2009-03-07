@@ -26,7 +26,7 @@ public class DecimalValidator implements IValidator {
 	 * @throws IllegalArgumentException When the given number format is
 	 *         <code>null</code> or invalid.
 	 */
-	public static final DecimalValidator instance(GlobalFormat numberFormat) {
+	public static final DecimalValidator get(GlobalFormat numberFormat) {
 		switch(numberFormat) {
 			case CURRENCY:
 				return CURRENCY_VALIDATOR;

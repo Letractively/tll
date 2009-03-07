@@ -8,7 +8,6 @@ package com.tll.client.validate;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 
@@ -17,22 +16,25 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
  * delegates calls to child handlers.
  * @author jpk
  */
-public final class ErrorHandlerDelegate implements IErrorHandler {
+public final class ErrorHandlerDelegate implements IPopupErrorHandler {
 
-	private final MsgPopupRegistry mregistry;
-	
+	/**
+	 * The mregistry ref if we have a popup error handler delegatee.
+	 */
+	private MsgPopupRegistry mregistry;
+
 	private final Set<IErrorHandler> handlers = new HashSet<IErrorHandler>();
 
 	/**
 	 * Constructor
-	 * @param mregistry the message popup registry
 	 * @param handlers The handlers to which validation feedback is delegated
 	 */
-	public ErrorHandlerDelegate(MsgPopupRegistry mregistry, IErrorHandler... handlers) {
-		if(mregistry == null) throw new IllegalArgumentException();
-		this.mregistry = mregistry;
+	public ErrorHandlerDelegate(IErrorHandler... handlers) {
 		for(final IErrorHandler handler : handlers) {
 			if(handler != null) this.handlers.add(handler);
+			if(handler instanceof IPopupErrorHandler) {
+				this.mregistry = ((IPopupErrorHandler) handler).getMsgPopupRegistry();
+			}
 		}
 	}
 
@@ -54,13 +56,6 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 	public void resolveError(IWidgetRef source) {
 		for(final IErrorHandler handler : handlers) {
 			handler.resolveError(source);
-		}
-	}
-
-	@Override
-	public void toggleErrorNotification(IWidgetProvider source) {
-		for(final IErrorHandler handler : handlers) {
-			handler.toggleErrorNotification(source);
 		}
 	}
 

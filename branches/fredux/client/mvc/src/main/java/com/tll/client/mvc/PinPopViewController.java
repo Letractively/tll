@@ -26,7 +26,7 @@ class PinPopViewController extends AbstractController {
 		ViewKey key;
 		if(r.isPop()) {
 			// pop the view...
-			key = ViewManager.instance().popCurrentView();
+			key = ViewManager.get().popCurrentView();
 			if(key != null) {
 				// route through dispatcher to update history
 				// Dispatcher.instance().dispatch(new SimpleViewRequest(r.getWidget(), key));
@@ -35,9 +35,9 @@ class PinPopViewController extends AbstractController {
 		}
 		else {
 			// pin the view...
-			ViewContainer vc = ViewManager.instance().findView(r.getViewKey());
+			ViewContainer vc = ViewManager.get().findView(r.getViewKey());
 			assert vc != null;
-			if(ViewManager.instance().closePoppedView(vc)) {
+			if(ViewManager.get().closePoppedView(vc)) {
 				onViewReady(vc.getView());
 			}
 		}

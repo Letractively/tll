@@ -1,6 +1,5 @@
 package com.tll.client.validate;
 
-import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.IWidgetRef;
 
 /**
@@ -21,12 +20,6 @@ public interface IErrorHandler {
 	 * @param source
 	 */
 	void resolveError(IWidgetRef source);
-
-	/**
-	 * Turn on or off the display the validation feedback.
-	 * @param source the source
-	 */
-	void toggleErrorNotification(IWidgetProvider source);
 	
 	/**
 	 * Life-cycle provision to clear out <em>all</em> errors and internal state.

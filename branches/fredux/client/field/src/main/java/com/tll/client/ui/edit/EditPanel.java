@@ -19,16 +19,19 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
+import com.tll.client.ui.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.ui.msg.Msgs;
 import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.ScalarError;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
@@ -83,6 +86,8 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
+	
+	private String modelDescriptor;
 
 	/**
 	 * Constructor
@@ -165,6 +170,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
+		modelDescriptor = model == null ? null : model.toString();
 		fieldPanel.setModel(model);
 		if(model != null) {
 			assert isAttached() == true;
@@ -200,6 +206,8 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		if(sender == btnSave) {
 			try {
 				fieldPanel.getAction().execute();
+				Msgs.post(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO), this, Position.CENTER,
+						3000, true);
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
 			}
 			catch(final Exception e) {

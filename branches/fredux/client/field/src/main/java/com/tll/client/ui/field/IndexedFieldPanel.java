@@ -57,7 +57,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 */
 	public IndexedFieldPanel(String name, String indexedPropertyName) {
 		super();
-		//setFieldGroup(new FieldGroup(name));
 		group = new FieldGroup(name);
 		this.indexedPropertyName = indexedPropertyName;
 	}
@@ -118,7 +117,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		indexPanels.add(ip);
 
 		ip.setModel(model);
-		ip.getFieldGroup().setName(group.getName() + '[' + (size() - 1) + ']');
+		ip.getFieldGroup().setName(ip.getFieldGroup().descriptor() + " - " + size());
 		group.addField(ip.getFieldGroup());
 		ip.setErrorHandler(getParentFieldPanel().getErrorHandler());
 		getParentFieldPanel().getAction().bind(ip);

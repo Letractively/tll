@@ -89,7 +89,7 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		protected String getTabLabelText(AccountAddressPanel index) {
+		protected String getInstanceName(AccountAddressPanel index) {
 			AddressType type;
 			String aaName;
 			try {

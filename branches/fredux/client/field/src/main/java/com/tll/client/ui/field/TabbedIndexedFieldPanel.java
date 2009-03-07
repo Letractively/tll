@@ -187,11 +187,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	protected abstract String getIndexTypeName();
 
 	/**
-	 * Provides the tab label text for the given index field panel.
-	 * @param indexFieldPanel
-	 * @return label text
+	 * @return A <em>unique</em> name for an index.
 	 */
-	protected abstract String getTabLabelText(I index);
+	protected abstract String getInstanceName(I index);
 
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
@@ -203,7 +201,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	 */
 	private Widget getTabWidget(I index, boolean isNew) {
 
-		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(index);
+		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getInstanceName(index);
 
 		if(enableDelete || isNew) {
 			final ToggleButton btnDeleteTgl =

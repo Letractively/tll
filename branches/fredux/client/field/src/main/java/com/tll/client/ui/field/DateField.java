@@ -8,6 +8,10 @@ import java.util.Date;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
@@ -35,6 +39,15 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 			return addDomHandler(handler, BlurEvent.getType());
 		}
 
+		@Override
+		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+			return addDomHandler(handler, MouseOverEvent.getType());
+		}
+
+		@Override
+		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+			return addDomHandler(handler, MouseOutEvent.getType());
+		}
 	}
 	
 	/**

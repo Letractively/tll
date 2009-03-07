@@ -119,9 +119,9 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
+			ModelChangeManager.get().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
-		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
+		else if(!ModelChangeManager.get().fetchAuxData(this, getNeededAuxData())) {
 			editPanel.setModel(model);
 		}
 	}
@@ -135,15 +135,15 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	public final void onEdit(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), false));
+				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
-				ModelChangeManager.instance().persistModel(this, model, entityOptions);
+				ModelChangeManager.get().persistModel(this, model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					ModelChangeManager.instance().deleteModel(this, modelRef, entityOptions);
+					ModelChangeManager.get().deleteModel(this, modelRef, entityOptions);
 				}
 				break;
 		}
@@ -181,7 +181,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 				break;
 
 			case DELETED:
-				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), true));
+				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), true));
 				break;
 		}
 	}

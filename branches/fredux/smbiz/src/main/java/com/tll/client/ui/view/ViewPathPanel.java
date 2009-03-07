@@ -58,7 +58,7 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 
 	public void onCurrentViewChanged(ViewChangedEvent event) {
 		ulPanel.clear();
-		final IViewRef[] viewPath = ViewManager.instance().getViewPath();
+		final IViewRef[] viewPath = ViewManager.get().getViewPath();
 		if(viewPath != null && viewPath.length > 0) {
 			final int count = viewPath.length;
 			for(int i = 0; i < count; i++) {
@@ -82,12 +82,12 @@ public class ViewPathPanel extends Composite implements IViewEventListener {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.instance().addViewEventListener(this);
+		ViewManager.get().addViewEventListener(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.instance().removeViewEventListener(this);
+		ViewManager.get().removeViewEventListener(this);
 	}
 }

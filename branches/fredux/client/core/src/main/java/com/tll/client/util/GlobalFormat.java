@@ -22,7 +22,7 @@ public enum GlobalFormat {
 	}
 
 	public boolean isNumericFormat() {
-		return this == CURRENCY || this == PERCENT || this == PERCENT || this == DECIMAL;
+		return this == CURRENCY || this == PERCENT || this == DECIMAL;
 	}
 
 	public boolean isBooleanFormat() {

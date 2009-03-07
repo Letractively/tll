@@ -9,12 +9,14 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.ui.IHasFormat;
+import com.tll.client.util.GlobalFormat;
 
 /**
  * TextField
  * @author jpk
  */
-public final class TextField extends AbstractField<String> implements IHasMaxLength {
+public final class TextField extends AbstractField<String> implements IHasMaxLength, IHasFormat {
 
 	/**
 	 * Impl
@@ -25,6 +27,11 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 	}
 
 	private final Impl tb;
+	
+	/**
+	 * Optional format direcive.
+	 */
+	private GlobalFormat format;
 
 	/**
 	 * Constructor
@@ -51,6 +58,16 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 			}
 		}, KeyPressEvent.getType());
 		
+	}
+
+	@Override
+	public GlobalFormat getFormat() {
+		return format;
+	}
+
+	@Override
+	public void setFormat(GlobalFormat format) {
+		this.format = format;
 	}
 
 	public int getVisibleLen() {

@@ -8,6 +8,10 @@ import java.util.Map;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -43,6 +47,16 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		@Override
 		public HandlerRegistration addBlurHandler(BlurHandler handler) {
 			return addDomHandler(handler, BlurEvent.getType());
+		}
+		
+		@Override
+		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+			return addDomHandler(handler, MouseOverEvent.getType());
+		}
+
+		@Override
+		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+			return addDomHandler(handler, MouseOutEvent.getType());
 		}
 	}
 

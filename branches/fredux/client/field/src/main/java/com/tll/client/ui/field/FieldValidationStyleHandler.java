@@ -5,7 +5,6 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.ui.IWidgetProvider;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.IErrorHandler;
@@ -30,11 +29,6 @@ public class FieldValidationStyleHandler implements IErrorHandler {
 		if(source instanceof IField) {
 			source.getWidget().removeStyleName(IField.Styles.INVALID);
 		}
-	}
-
-	@Override
-	public void toggleErrorNotification(IWidgetProvider source) {
-		// no-op
 	}
 
 	@Override

@@ -49,11 +49,13 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 
 		@Override
 		public void setValue(V value, boolean fireEvents) {
-			final V old = getValue();
+			final V old = fireEvents ? getValue() : null;
 			setValue(value);
-			final V nval = getValue();
-			if(fireEvents && !ObjectUtil.equals(old, nval)) {
-				ValueChangeEvent.fire(this, nval);
+			if(fireEvents) {
+				final V nval = getValue();
+				if(!ObjectUtil.equals(old, nval)) {
+					ValueChangeEvent.fire(this, nval);
+				}
 			}
 		}
 

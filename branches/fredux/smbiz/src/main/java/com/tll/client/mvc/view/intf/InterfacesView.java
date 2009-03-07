@@ -121,16 +121,16 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					ModelChangeManager.instance().loadModel(editPanel, intfRef, null, auxDataRequest);
+					ModelChangeManager.get().loadModel(editPanel, intfRef, null, auxDataRequest);
 				}
 			}
 
 			public void onEdit(EditEvent event) {
 				if(event.getOp().isSave()) {
-					ModelChangeManager.instance().persistModel(editPanel, model, null);
+					ModelChangeManager.get().persistModel(editPanel, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					ModelChangeManager.instance().deleteModel(editPanel, model.getRefKey(), null);
+					ModelChangeManager.get().deleteModel(editPanel, model.getRefKey(), null);
 				}
 			}
 

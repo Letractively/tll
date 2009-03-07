@@ -60,7 +60,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		this.cblabelText = labelText;
 		cb = new Impl(cblabelText);
 		cb.setStyleName(Styles.LABEL);
-		cb.addClickHandler(this);
+		//cb.addClickHandler(this);
 		cb.addBlurHandler(this);
 		cb.addValueChangeHandler(this);
 	}
