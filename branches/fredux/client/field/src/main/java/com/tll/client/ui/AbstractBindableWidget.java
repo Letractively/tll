@@ -7,8 +7,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IModel;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeSupport;
 import com.tll.common.model.MalformedPropPathException;
@@ -22,46 +23,49 @@ import com.tll.common.model.PropertyPathException;
  * @author jpk
  */
 public abstract class AbstractBindableWidget<V> extends Composite implements IBindableWidget<V> {
+	
+	/**
+	 * The converter for handling in-bound un-typed values.
+	 */
+	IConverter<V, Object> converter;
 
 	/**
 	 * The optional model.
 	 */
-	IBindable model;
+	IModel model;
 
 	/**
 	 * The optional action.
 	 */
-	private IBindingAction<V, IBindableWidget<V>> action;
+	private IBindingAction action;
 
 	/**
 	 * Responsible for handling validation exceptions.
 	 */
-	IValidationFeedback validationHandler;
+	private IErrorHandler errorHandler;
 
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final IBindingAction getAction() {
 		return action;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public final void setAction(IBindingAction action) {
 		this.action = action;
 	}
 
 	@Override
-	public final IBindable getModel() {
+	public final IModel getModel() {
 		return model;
 	}
 
 	@Override
-	public final void setModel(IBindable model) {
+	public void setModel(IModel model) {
 		// don't spuriously re-apply the same model instance!
 		if(this.model != null && model == this.model) {
 			return;
@@ -88,12 +92,12 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
-	public final IValidationFeedback getValidationHandler() {
-		return validationHandler;
+	public final IErrorHandler getErrorHandler() {
+		return errorHandler;
 	}
 
-	public void setValidationHandler(IValidationFeedback validationHandler) {
-		this.validationHandler = validationHandler;
+	public void setErrorHandler(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 
 	@Override
@@ -127,7 +131,7 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	}
 
 	@Override
-	public Object getProperty(String propPath) throws PropertyPathException {
+	public final Object getProperty(String propPath) throws PropertyPathException {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
@@ -136,7 +140,7 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+	public final void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
@@ -147,17 +151,12 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 				setValue((V) value);
 			}
 			catch(final ClassCastException e) {
-				throw new Exception("Unable to coerce the value type - employ a converter");
+				throw new IllegalArgumentException("Unable to coerce the value type - employ a converter");
 			}
 		}
 		else {
 			// employ the provided converter
-			try {
-				setValue(converter.convert(value));
-			}
-			catch(final RuntimeException e) {
-				throw new Exception("Unable to set " + this + " value: " + e.getMessage(), e);
-			}
+			setValue(converter.convert(value));
 		}
 	}
 
@@ -168,9 +167,13 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	}
 
 	@Override
-	public IConverter<V, Object> getConverter() {
-		// default impl is no converter
-		return null;
+	public final IConverter<V, Object> getConverter() {
+		return converter;
+	}
+
+	@Override
+	public final void setConverter(IConverter<V, Object> converter) {
+		this.converter = converter;
 	}
 
 	@Override

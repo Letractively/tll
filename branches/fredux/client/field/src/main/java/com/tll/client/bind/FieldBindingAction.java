@@ -4,47 +4,60 @@
  */
 package com.tll.client.bind;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FieldValidationStyleHandler;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IndexedFieldPanel;
-import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.PanelValidationFeedback;
+import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.PopupValidationFeedback;
+import com.tll.client.validate.ScalarError;
 import com.tll.client.validate.ValidationException;
-import com.tll.client.validate.ValidationFeedbackDelegate;
-import com.tll.common.bind.IBindable;
-import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * FieldBindingAction - Action that binds fields to model properties enabling
  * bi-directional communication between the two.
  * @author jpk
  */
-public final class FieldBindingAction implements IBindingAction<FieldGroup, FieldPanel<?>> {
-	
-	private final Binding binding;
-	
-	private final MsgPopupRegistry mregistry;
+public final class FieldBindingAction implements IBindingAction {
 
-	private final ValidationFeedbackDelegate errorDelegate;
-	
+	private final IErrorHandler bindingErrorHandler;
+
+	private final IErrorHandler globalErrorHandler;
+
+	/**
+	 * The root field panel subject to binding.
+	 */
 	private FieldPanel<?> root;
+	
+	Map<IBindableWidget<?>, Binding> bindings = new HashMap<IBindableWidget<?>, Binding>(); 
 
 	/**
 	 * Constructor
 	 */
 	public FieldBindingAction() {
-		binding = new Binding();
-		mregistry = new MsgPopupRegistry();
-		final PopupValidationFeedback popupFeedback = new PopupValidationFeedback(mregistry);
-		final PanelValidationFeedback panelFeedback = new PanelValidationFeedback(new GlobalMsgPanel());
-		final FieldValidationStyleHandler fieldStyleHandler = new FieldValidationStyleHandler();
-		errorDelegate = new ValidationFeedbackDelegate(popupFeedback, panelFeedback, fieldStyleHandler);
+		this(null);
+	}
+
+	/**
+	 * Constructor
+	 * @param globalErrorHandler error handler to employ only when global
+	 *        validation is performed. Local (binding) validation error handling
+	 *        is taken care of internally.
+	 */
+	public FieldBindingAction(IErrorHandler globalErrorHandler) {
+		this.globalErrorHandler = globalErrorHandler;
+
+		// create the binding error handler
+		final MsgPopupRegistry mregistry = new MsgPopupRegistry();
+		bindingErrorHandler =
+				new ErrorHandlerDelegate(mregistry, new FieldValidationStyleHandler(), new PopupValidationFeedback(mregistry));
 	}
 
 	/**
@@ -54,66 +67,93 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup, Fiel
 	@Override
 	public final void execute() throws ValidationException {
 		if(root == null) throw new IllegalStateException();
-		root.getFieldGroup().validate();
-		binding.setLeft();
-	}
+		
+		// validate
+		globalErrorHandler.clear();
+		try {
+			root.getFieldGroup().validate();
+		}
+		catch(final ValidationException e) {
+			globalErrorHandler.handleError(null, e.getError());
+			throw e;
+		}
+		catch(final Exception e) {
+			globalErrorHandler.handleError(null, new ScalarError(e.getMessage()));
+			throw new ValidationException(e.getMessage());
+		}
 
-	@Override
-	public void set(FieldPanel<?> widget) {
-		Log.debug("FieldBindingAction.set(): " + widget);
-		if(root == null) {
-			this.root = widget;
+		// update the model
+		for(final Binding b : bindings.values()) {
+			b.setLeft();
 		}
 	}
 
 	@Override
-	public void bind(FieldPanel<?> widget) {
-		if(root == null) throw new IllegalStateException();
-		if(widget == root) {
-			final IBindable model = widget.getModel();
-			if(model == null) throw new IllegalStateException("No model set on the root field panel.");
-			
-			// create bindings for all provided field widgets in the root field panel..
-			for(final IFieldWidget<?> fw : ((FieldPanel<?>) widget).getFieldGroup().getFieldWidgets(null)) {
-				Log.debug("Binding fw: " + fw + " to model [" + model + "]." + fw.getPropertyName());
-				// apply property metadata
-				if(model instanceof IPropertyMetadataProvider) {
-					fw.applyPropertyMetadata((IPropertyMetadataProvider) model);
-				}
-				binding.getChildren().add(
-						new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-								errorDelegate));
-			}
-			
-			// bind
-			binding.bind();
-
-			// populate the fields
-			binding.setRight();
+	public final void set(IBindableWidget<?> widget) {
+		if(widget instanceof FieldPanel) {
+			if(root != null) throw new IllegalStateException();
+			Log.debug("FieldBindingAction.set(): " + widget);
+			root = (FieldPanel<?>) widget;
+			root.setErrorHandler(bindingErrorHandler);
 		}
-		else if(widget instanceof IndexedFieldPanel) {
-			if(((IndexedFieldPanel<?, ?>) widget).getParentFieldPanel() != root) {
-				throw new IllegalStateException();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public final void bind(IBindableWidget<?> widget) {
+		Binding b = null;
+		if(widget instanceof IndexedFieldPanel) {
+			if(((IndexedFieldPanel) widget).getParentFieldPanel() != root) {
+				throw new IllegalArgumentException();
 			}
 			Log.debug("Binding indexed field panel: " + widget);
-			// add binding to the many value collection in the primary binding
-			final Binding b =
-					new Binding(widget.getModel(), ((IndexedFieldPanel<?, ?>) widget).getIndexedPropertyName(), null, null, null,
+			// add binding to the many value collection only
+			b =
+					new Binding(root.getModel(), ((IndexedFieldPanel<?, ?>) widget).getIndexedPropertyName(), null, null, null,
 							widget, IBindableWidget.PROPERTY_VALUE, null, null, null);
-			b.bind();
-			b.setRight();
-			binding.getChildren().add(b);
 		}
-		widget.setValidationHandler(errorDelegate);
+		/*else if(root == widget) {*/
+		else if(widget instanceof FieldPanel) {
+			if(widget.getModel() == null) throw new IllegalArgumentException("No model set");
+			final FieldPanel<?> fp = (FieldPanel<?>) widget;
+			b = new Binding();
+			// create bindings for all provided field widgets in the root field group
+			for(final IFieldWidget<?> fw : fp.getFieldGroup().getFieldWidgets(null)) {
+				Log.debug("Binding fw: " + fw + " to model [" + fp.getModel() + "]." + fw.getPropertyName());
+				b.getChildren().add(
+						new Binding(fp.getModel(), fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE,
+								null, fw, bindingErrorHandler));
+			}
+		}
+
+		if(b == null) {
+			throw new IllegalArgumentException("Unable to resolve binding.");
+		}
+		
+		bindings.put(widget, b);
+		
+		// bind
+		b.bind();
+
+		// populate the fields
+		b.setRight();
 	}
 
 	@Override
-	public void unbind(FieldPanel<?> widget) {
-		if(root == widget) {
-			binding.unbind();
-			binding.getChildren().clear();
+	public final void unbind(IBindableWidget<?> widget) {
+		final Binding b = bindings.get(widget);
+		if(b != null) {
+			b.unbind();
+			b.getChildren().clear();
+			bindings.remove(widget);
+		}
+	}
 
-			mregistry.clear();
+	@Override
+	public void unset(IBindableWidget<?> widget) {
+		unbind(widget);
+		if(root == widget) {
+			root = null;
 		}
 	}
 }

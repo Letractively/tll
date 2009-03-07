@@ -15,14 +15,13 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 
 /**
  * SuggestField
  * @author jpk
  */
-public final class SuggestField extends AbstractDataField<String> {
+public final class SuggestField extends AbstractDataField<String, String> {
 
 	/**
 	 * Impl
@@ -71,26 +70,12 @@ public final class SuggestField extends AbstractDataField<String> {
 			@SuppressWarnings("synthetic-access")
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				ValueChangeEvent.fire(sb, getValueFromKey(event.getSelectedItem().getReplacementString()));
+				ValueChangeEvent.fire(sb, getDataValue(event.getSelectedItem().getReplacementString()));
 			}
 		});
 		sb.addBlurHandler(this);
+		setConverter(ToStringConverter.INSTANCE);
 		setData(data);
-	}
-	
-	@Override
-	public IConverter<String, Object> getConverter() {
-		return ToStringConverter.INSTANCE;
-	}
-
-	private String getValueFromKey(String uiKey) {
-		for(final String dv : data.keySet()) {
-			final String dk = data.get(dv);
-			if(dk.equals(uiKey)) {
-				return dv;
-			}
-		}
-		throw new IllegalStateException();
 	}
 	
 	private void buildOracle() {
@@ -105,7 +90,7 @@ public final class SuggestField extends AbstractDataField<String> {
 
 	@Override
 	public void setData(Map<String, String> data) {
-		this.data = data;
+		super.setData(data);
 		buildOracle();
 	}
 

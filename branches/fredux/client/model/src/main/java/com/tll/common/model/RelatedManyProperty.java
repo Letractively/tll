@@ -135,11 +135,11 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	}
 
 	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		final PropertyPath pp = new PropertyPath(propPath);
 		if(pp.isIndexed()) {
 			if(value != null && value instanceof Model == false) {
-				throw new Exception("The value must be a Model instance");
+				throw new IllegalArgumentException("The value must be a Model instance");
 			}
 
 			final Model m = (Model) value;

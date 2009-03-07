@@ -15,10 +15,10 @@ import com.tll.criteria.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.
- * @param <T> the value type
+ * @param <V> the value type
  * @author jpk
  */
-public interface IFieldWidget<T> extends IField, IBindable, IPropertyNameProvider, HasValue<T>, HasText, IHasHelpText,
+public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText,
 		IValidator {
 
 	/**

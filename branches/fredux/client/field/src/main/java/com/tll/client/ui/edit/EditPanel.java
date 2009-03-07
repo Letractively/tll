@@ -23,6 +23,8 @@ import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.ScalarError;
 import com.tll.common.model.Model;
@@ -57,7 +59,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		 */
 		public static final String PORTAL = "portal";
 	}
-
+	
 	/**
 	 * The composite's target widget
 	 */
@@ -72,6 +74,8 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * Contains the actual edit fields.
 	 */
 	private final FieldPanel<? extends Widget> fieldPanel;
+	
+	private final FieldBindingAction editAction;
 
 	/**
 	 * The panel containing the edit buttons
@@ -82,16 +86,24 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 
 	/**
 	 * Constructor
+	 * @param globalMsgPanel Optional global message panel. If specified, it will
+	 *        be employed in providing field validation feedback
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(GlobalMsgPanel globalMsgPanel, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
+			boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
+		
+		final BillboardValidationFeedback globalFeedback =
+				globalMsgPanel == null ? null : new BillboardValidationFeedback(globalMsgPanel);
+
+		editAction = new FieldBindingAction(globalFeedback);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -159,7 +171,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {
-				fieldPanel.setAction(new FieldBindingAction());
+				fieldPanel.setAction(editAction);
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
 			}
@@ -191,7 +203,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
 			}
 			catch(final Exception e) {
-				// TODO handle
+				// already handled
 			}
 		}
 		else if(sender == btnReset) {

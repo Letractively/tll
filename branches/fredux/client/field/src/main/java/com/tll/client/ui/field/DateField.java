@@ -66,8 +66,6 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 */
 	private final Impl dbox;
 	
-	private final ToDateConverter converter;
-
 	/**
 	 * Constructor
 	 * @param name
@@ -82,12 +80,6 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		dbox.addValueChangeHandler(this);
 		dbox.addBlurHandler(this);
 		setFormat(format);
-		converter = new ToDateConverter();
-	}
-
-	@Override
-	public IConverter<Date, Object> getConverter() {
-		return converter;
 	}
 
 	public GlobalFormat getFormat() {
@@ -98,6 +90,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		if(format != null && !format.isDateFormat()) throw new IllegalArgumentException();
 		this.dateFormat = format == null ? GlobalFormat.DATE : format;
 		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
+		setConverter(new ToDateConverter());
 	}
 
 	@Override

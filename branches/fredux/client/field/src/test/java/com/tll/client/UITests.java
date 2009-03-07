@@ -25,7 +25,11 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.ModelViewer;
+import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.MockModelStubber;
 import com.tll.common.model.mock.MockModelStubber.ModelType;
@@ -53,6 +57,17 @@ public final class UITests extends AbstractUITest {
 	 * @author jpk
 	 */
 	static final class FieldWidgetTest extends UITestCase {
+		
+		enum TestEnum {
+			ENUM_1,
+			ENUM_2,
+			ENUM_3,
+			ENUM_4,
+			ENUM_5,
+			ENUM_6,
+			ENUM_7,
+			ENUM_8;
+		}
 
 		HorizontalPanel layout;
 		FlowPanel pfields;
@@ -141,6 +156,7 @@ public final class UITests extends AbstractUITest {
 			IFieldWidget<String> sfw;
 			IFieldWidget<Boolean> bfw;
 			IFieldWidget<Date> dfw;
+			IFieldWidget<TestEnum> efw;
 			IFieldWidget<Collection<String>> cfw;
 			
 			sfw = FieldFactory.ftext("ftext", "ftext", "TextField", "TextField", 8);
@@ -234,6 +250,23 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
+			
+			efw =
+					FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
+							new GridRenderer(3));
+			group.addField(efw);
+			efw.addValueChangeHandler(new ValueChangeHandler<TestEnum>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<TestEnum> event) {
+					vcd.addRow(event);
+				}
+			});
+			
+			final MsgPopupRegistry mregistry = new MsgPopupRegistry();
+			final ErrorHandlerDelegate errorHandler =
+					new ErrorHandlerDelegate(mregistry, new PopupValidationFeedback(mregistry));
+			group.setErrorHandler(errorHandler);
 		}
 
 		@Override
@@ -277,7 +310,9 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class FieldBindingLifecycleTest extends UITestCase {
 
-		HorizontalPanel context;
+		HorizontalPanel layout;
+		VerticalPanel context;
+		GlobalMsgPanel gmp;
 		EditPanel ep;
 		ModelViewer mv;
 		Model m;
@@ -295,20 +330,26 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public void load() {
-			context = new HorizontalPanel();
-			context.setSpacing(7);
-			context.setBorderWidth(1);
-			context.getElement().getStyle().setProperty("margin", "1em");
-			//context.getElement().getStyle().setProperty("border", "1px solid gray");
+			layout = new HorizontalPanel();
+			layout.setSpacing(7);
+			layout.setBorderWidth(1);
+			layout.getElement().getStyle().setProperty("margin", "1em");
+			
+			gmp = new GlobalMsgPanel();
 
 			mv = new ModelViewer();
-			ep = new EditPanel(new ComplexFieldPanel(), false, false);
+			ep = new EditPanel(gmp, new ComplexFieldPanel(), false, false);
 			ep.addEditHandler(mv);
 
+			context = new VerticalPanel();
+			context.getElement().getStyle().setProperty("margin", "5px");
+			context.add(gmp);
 			context.add(ep);
-			context.add(mv);
+			
+			layout.add(context);
+			layout.add(mv);
 
-			RootPanel.get().add(context);
+			RootPanel.get().add(layout);
 			
 			m = MockModelStubber.create(ModelType.COMPLEX);
 			ep.setModel(m);
@@ -317,19 +358,14 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public void unload() {
-			if(ep != null) {
-				// TODO do we need to cleanup bindings ???
-				ep.removeFromParent();
-				ep = null;
+			if(layout != null) {
+				layout.removeFromParent();
+				layout = null;
 			}
-			if(mv != null) {
-				mv.removeFromParent();
-				mv = null;
-			}
-			if(context != null) {
-				context.removeFromParent();
-				context = null;
-			}
+			context = null;
+			gmp = null;
+			ep = null;
+			mv = null;
 			m = null;
 		}
 

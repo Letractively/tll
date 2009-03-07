@@ -12,9 +12,9 @@ import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.AddressType;
 import com.tll.common.model.mock.MockModelStubber;
 
@@ -116,7 +116,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 							cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
 							cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
-							
+
 							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
 							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
 						}
@@ -133,7 +133,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 	 * @author jpk
 	 */
 	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
-		
+
 		/**
 		 * Constructor
 		 */
@@ -152,7 +152,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		protected String getTabLabelText(Index<IndexFieldPanel> index) {
+		protected String getTabLabelText(IndexFieldPanel index) {
 			AddressType type;
 			String aaName;
 			try {
@@ -174,7 +174,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		protected IndexFieldPanel createIndexPanel(IBindable indexModel) {
+		protected IndexFieldPanel createIndexPanel() {
 			return new IndexFieldPanel();
 		}
 
@@ -248,23 +248,25 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 		fg.getFieldWidget("parent.name").setReadOnly(true);
 
-		((IFieldWidget<String>) fg.getFieldWidget("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
+		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
+				.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
-			public void onValueChange(ValueChangeEvent<String> event) {
-				final String s = event.getValue().toLowerCase();
-				final boolean closed = "closed".equals(s);
-				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
-				f.setVisible(closed);
-				f.setRequired(closed);
-			}
-		});
+					@Override
+					public void onValueChange(ValueChangeEvent<AccountStatus> event) {
+						final boolean closed = event.getValue() == AccountStatus.CLOSED;
+						final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+						f.setVisible(closed);
+						f.setRequired(closed);
+					}
+				});
 
-		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
+				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				indexedPanel.getFieldGroup().setEnabled(event.getValue());
-			}
-		});
+					public void onValueChange(ValueChangeEvent<Boolean> event) {
+						indexedPanel.getFieldGroup().setEnabled(event.getValue());
+					}
+				});
 
 		return fg;
 	}

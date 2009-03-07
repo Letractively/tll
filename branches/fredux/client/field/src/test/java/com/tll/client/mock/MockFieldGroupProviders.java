@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.convert.EnumToDataMapConverter;
 import com.tll.client.ui.HorizontalRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
@@ -110,8 +109,8 @@ public class MockFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			fg.addField(fradiogroup("ccType", "paymentData_ccType", "Type", "Type", EnumToDataMapConverter.INSTANCE
-					.convert(CreditCardType.class), HorizontalRenderer.INSTANCE));
+			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class,
+					HorizontalRenderer.INSTANCE));
 			fg.addField(fcreditcard("ccNum", "paymentData_ccNum", "Num", null, 15));
 			fg.addField(ftext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
 			fg.addField(ftext("ccExpMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));

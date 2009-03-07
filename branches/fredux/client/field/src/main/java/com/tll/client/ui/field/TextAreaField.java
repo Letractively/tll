@@ -5,7 +5,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.TextArea;
-import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 
 /**
@@ -39,13 +38,9 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 		ta = new Impl();
 		ta.addValueChangeHandler(this);
 		ta.addBlurHandler(this);
+		setConverter(ToStringConverter.INSTANCE);
 		setNumRows(numRows);
 		setNumCols(numCols);
-	}
-
-	@Override
-	public IConverter<String, Object> getConverter() {
-		return ToStringConverter.INSTANCE;
 	}
 
 	public int getNumRows() {

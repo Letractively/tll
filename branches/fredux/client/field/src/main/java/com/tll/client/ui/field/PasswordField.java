@@ -5,10 +5,10 @@
  */
 package com.tll.client.ui.field;
 
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.tll.client.convert.IConverter;
 import com.tll.client.convert.ToStringConverter;
 
 /**
@@ -41,21 +41,17 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		setVisibleLen(visibleLength);
 		tb.addValueChangeHandler(this);
 		tb.addBlurHandler(this);
+		setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
 
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getCharCode() == 'e') { // TODO fix for enter key!
+				if(event.getCharCode() == KeyCodes.KEY_ENTER) {
 					setFocus(false);
 					setFocus(true);
 				}
 			}
 		}, KeyPressEvent.getType());
-	}
-
-	@Override
-	public IConverter<String, Object> getConverter() {
-		return ToStringConverter.INSTANCE;
 	}
 
 	public int getVisibleLen() {

@@ -10,54 +10,20 @@ import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.Binding;
-import com.tll.client.ui.IBindableWidget;
-import com.tll.common.bind.IBindable;
-import com.tll.common.model.PropertyPathException;
-import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.common.bind.IModel;
 
 /**
  * IndexedFieldPanel - Caters to the display of field collections that are
  * indexable by adapting the {@link FieldPanel} with index related routines. All
  * indexing operations sync with the {@link FieldPanel}'s member ("underlying")
  * field group.
+ * @param <W> the indexed field panel widget render type
  * @param <I> the index field panel type
- * @param <W> the field panel widget render type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widget> extends FieldPanel<W> {
-
-	/**
-	 * Index - Encapsulates a model and field panel for an indexed position.
-	 * @param <I> The index type
-	 * @author jpk
-	 */
-	public static final class Index<I> {
-
-		final IBindable model;
-		final I fieldPanel;
-		boolean markedDeleted;
-
-		/**
-		 * Constructor
-		 * @param model
-		 * @param fieldPanel
-		 */
-		public Index(IBindable model, I fieldPanel) {
-			super();
-			this.model = model;
-			this.fieldPanel = fieldPanel;
-		}
-
-		public IBindable getModel() {
-			return model;
-		}
-
-		public I getFieldPanel() {
-			return fieldPanel;
-		}
-
-	} // Index
+public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends
+		AbstractBindableWidget<Collection<IModel>> implements IFieldGroupProvider {
 
 	/**
 	 * The indexed property name used to bind this indexed widget to a parent
@@ -66,21 +32,21 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	private final String indexedPropertyName;
 
 	/**
-	 * The list of indexed {@link FieldPanel}s.
+	 * The list of {@link IndexFieldPanel}s.
 	 */
-	protected final List<Index<I>> indexPanels = new ArrayList<Index<I>>();
+	protected final List<I> indexPanels = new ArrayList<I>();
 
 	/**
 	 * The model data collection.
 	 */
-	private Collection<IBindable> value;
-
+	private Collection<IModel> value;
+	
 	/**
-	 * Holds bindings that bind {@link #value} to {@link #indexPanels}. Each
-	 * sub-binding under this binding corresponds to the field group of the same
-	 * index in the {@link #indexPanels}.
+	 * The root field group. Child groups correspond to the index panels.
 	 */
-	private final Binding binding = new Binding();
+	private final FieldGroup group;
+	
+	private boolean drawn;
 
 	/**
 	 * Constructor
@@ -91,7 +57,8 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	 */
 	public IndexedFieldPanel(String name, String indexedPropertyName) {
 		super();
-		setFieldGroup(new FieldGroup(name));
+		//setFieldGroup(new FieldGroup(name));
+		group = new FieldGroup(name);
 		this.indexedPropertyName = indexedPropertyName;
 	}
 
@@ -103,38 +70,36 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	public abstract FieldPanel<?> getParentFieldPanel();
 
 	/**
-	 * @return The property path that identifies this indexed property in a parent
-	 *         root model
+	 * @return The property path that identifies this indexed property relative to
+	 *         the parent field panel
 	 */
 	public final String getIndexedPropertyName() {
 		return indexedPropertyName;
 	}
 
 	/**
-	 * @return The number of indexed {@link FieldPanel}s.
+	 * @return The number of {@link IndexFieldPanel}s.
 	 */
 	protected final int size() {
 		return indexPanels.size();
 	}
 
 	/**
-	 * @return A prototype model used to bind a newly added indexed field panel.
-	 *         This model will be bound to the added field panel.
+	 * @return A prototype model used to bind to a newly added indexed field
+	 *         panel.
 	 */
-	protected abstract IBindable createPrototypeModel();
+	protected abstract IModel createPrototypeModel();
 
 	/**
 	 * Factory method to obtain a new index field panel instance.
-	 * @param indexModel Provided to set field panel specific properties and,
-	 *        consequently, may be ignored if there are no such properties.
 	 * @return new field panel instance for employ at a particular index.
 	 */
-	protected abstract I createIndexPanel(IBindable indexModel);
+	protected abstract I createIndexPanel();
 
 	/**
 	 * Adds a new indexed field group
 	 */
-	protected Index<I> add() {
+	protected I add() {
 		return add(createPrototypeModel());
 	}
 
@@ -147,40 +112,18 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private Index<I> add(IBindable model) throws IllegalArgumentException {
+	private I add(IModel model) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
-		final I ip = createIndexPanel(model);
+		final I ip = createIndexPanel();
+		indexPanels.add(ip);
 
-		// apply property metadata
-		if(model instanceof IPropertyMetadataProvider) {
-			ip.getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
-		}
+		ip.setModel(model);
+		ip.getFieldGroup().setName(group.getName() + '[' + (size() - 1) + ']');
+		group.addField(ip.getFieldGroup());
+		ip.setErrorHandler(getParentFieldPanel().getErrorHandler());
+		getParentFieldPanel().getAction().bind(ip);
 
-		final Index<I> index = new Index<I>(model, ip);
-		indexPanels.add(index);
-
-		ip.getFieldGroup().setName(getFieldGroup().getName() + '[' + (size() - 1) + ']');
-		getFieldGroup().addField(ip.getFieldGroup());
-		final Binding indexBinding = new Binding();
-		binding.getChildren().add(indexBinding);
-		bind(ip.getFieldGroup(), model, indexBinding);
-
-		return index;
-	}
-
-	/**
-	 * Updates an <em>existing</em> indexed field group with data provided by the
-	 * given model syncing with the underlying field group.
-	 * @param index The index at which the field group is replaced
-	 * @param model The model from which data is retrieved to update the field
-	 *        group
-	 * @throws IndexOutOfBoundsException When the given index is out of bounds
-	 */
-	protected void update(int index, IBindable model) throws IndexOutOfBoundsException {
-		assert model != null;
-		unbindAtIndex(index);
-		final FieldGroup fg = indexPanels.get(index).fieldPanel.getFieldGroup();
-		bind(fg, model, binding.getChildren().get(index));
+		return ip;
 	}
 
 	/**
@@ -190,10 +133,10 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	 * @return The removed field group
 	 * @throws IndexOutOfBoundsException
 	 */
-	protected Index<I> remove(int index) throws IndexOutOfBoundsException {
-		final Index<I> removed = indexPanels.remove(index);
-		getFieldGroup().removeField(removed.fieldPanel.getFieldGroup());
-		unbindAtIndex(index);
+	protected I remove(int index) throws IndexOutOfBoundsException {
+		final I removed = indexPanels.remove(index);
+		group.removeField(removed.getFieldGroup());
+		getParentFieldPanel().getAction().unbind(removed);
 		return removed;
 	}
 
@@ -204,117 +147,61 @@ public abstract class IndexedFieldPanel<I extends FieldPanel<?>, W extends Widge
 	 * @throws IndexOutOfBoundsException
 	 */
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		final Index<I> ip = indexPanels.get(index);
-		ip.markedDeleted = deleted;
-		ip.fieldPanel.getFieldGroup().setEnabled(!deleted);
-	}
-
-	/**
-	 * Unbinds and removes all child bindings at the given index.
-	 * @param index The index at which to unbind
-	 */
-	private void unbindAtIndex(int index) {
-		final Binding indexBinding = binding.getChildren().get(index);
-		indexBinding.unbind();
-		indexBinding.getChildren().clear();
-	}
-
-	/**
-	 * Regenerates the indexed field group list from the member {@link #value}
-	 * collection.
-	 */
-	private void regenerate() {
-		Log.debug("IndexedFieldPanel.regenerate() - START");
-		clear();
-		if(value != null) {
-			for(final IBindable m : value) {
-				add(m);
-			}
-		}
-		Log.debug("IndexedFieldPanel.regenerate() - END");
-	}
-
-	/**
-	 * Creates bindings for the fields in the given field panel to properties on
-	 * the given model then updates the field values.
-	 * @param fg The indexed field group to be updated
-	 * @param model The model
-	 * @param indexBinding If specified, bindings for each field in the given
-	 *        field group whose value is successfully set will be added under this
-	 *        binding.
-	 */
-	private void bind(FieldGroup fg, final IBindable model, final Binding indexBinding) {
-		assert indexBinding != null;
-		fg.setValidationHandler(getValidationHandler());
-		for(final IField f : fg) {
-			if(f instanceof IFieldWidget) {
-				final IFieldWidget<?> fw = (IFieldWidget<?>) f;
-				indexBinding.getChildren().add(
-						new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-								getValidationHandler()));
-			}
-			else {
-				// drill down
-				bind((FieldGroup) f, model, indexBinding);
-			}
-		}
-		indexBinding.bind();
-		indexBinding.setRight();
+		final I ip = indexPanels.get(index);
+		ip.getModel().setMarkedDeleted(deleted);
+		ip.getFieldGroup().setEnabled(!deleted);
 	}
 
 	/**
 	 * Clears the field group list cleaning up bindings and listeners.
 	 */
-	public void clear() {
-		Log.debug("IndexedFieldPanel.clearing " + toString() + "..");
-		binding.unbind();
-		binding.getChildren().clear();
-		getFieldGroup().clear();
+	protected void clear() {
+		group.clear();
 		indexPanels.clear();
 	}
 
 	@Override
-	public final Object getProperty(String propPath) {
-		return getValue();
+	public Collection<IModel> getValue() {
+		return value;
 	}
 
-	/*
-	 * NOTE: we ignore the given property path
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(this.value != null && this.value == value) return;
-		if(value instanceof Collection == false) {
-			throw new Exception("The value must be a collection");
-		}
+	public void setValue(Collection<IModel> value) {
 		//final Collection<IBindable> old = this.value;
-		this.value = (Collection<IBindable>) value;
+		if(this.value != null) clear();
+		this.value = value;
 		// we don't want auto-transfer of data!!
 		//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
-		regenerate();
+		for(final IModel m : this.value) {
+			add(m);
+		}
 	}
 
 	@Override
-	protected FieldGroup generateFieldGroup() {
-		throw new UnsupportedOperationException();
+	public FieldGroup getFieldGroup() {
+		return group;
 	}
 
 	@Override
 	protected void onAttach() {
 		final FieldPanel<?> parent = getParentFieldPanel();
 		if(parent == null) throw new IllegalStateException();
-		if(parent.getAction() != null && parent.getModel() != null) {
-			setAction(parent.getAction());
-			setModel(parent.getModel());
-		}
+		parent.getAction().bind(this);
 		super.onAttach();
 	}
+	
+	/**
+	 * Draws the contents in the ui.
+	 */
+	protected abstract void draw();
 
 	@Override
-	protected void onUnload() {
-		super.onUnload();
-		clear();
+	protected void onLoad() {
+		super.onLoad();
+		if(!drawn) {
+			draw();
+			drawn = true;
+		}
 	}
 
 	@Override

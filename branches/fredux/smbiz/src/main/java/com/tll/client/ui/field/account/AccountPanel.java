@@ -14,13 +14,12 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IModel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.AddressType;
@@ -36,7 +35,7 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FlowFieldPanel {
+	static final class AccountAddressPanel extends FieldPanel<FlowPanel> {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -90,7 +89,7 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		protected String getTabLabelText(Index<AccountAddressPanel> index) {
+		protected String getTabLabelText(AccountAddressPanel index) {
 			AddressType type;
 			String aaName;
 			try {
@@ -105,12 +104,12 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		protected IBindable createPrototypeModel() {
+		protected IModel createPrototypeModel() {
 			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override
-		protected AccountAddressPanel createIndexPanel(IBindable indexModel) {
+		protected AccountAddressPanel createIndexPanel() {
 			return new AccountAddressPanel();
 		}
 

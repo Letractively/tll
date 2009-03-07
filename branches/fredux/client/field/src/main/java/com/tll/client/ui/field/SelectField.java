@@ -13,21 +13,20 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
-import com.tll.client.convert.IConverter;
-import com.tll.client.convert.ToStringConverter;
 import com.tll.common.util.ObjectUtil;
 
 /**
  * SelectField - Single select list box.
+ * @param <V> the value type
  * @author jpk
  */
-public final class SelectField extends AbstractDataField<String> {
+public final class SelectField<V> extends AbstractDataField<V, V> {
 
 	/**
 	 * Impl
 	 * @author jpk
 	 */
-	final class Impl extends ListBox implements IEditable<String>, ChangeHandler {
+	final class Impl extends ListBox implements IEditable<V>, ChangeHandler {
 
 		/**
 		 * Constructor
@@ -43,34 +42,36 @@ public final class SelectField extends AbstractDataField<String> {
 		}
 
 		@Override
-		public String getValue() {
+		public V getValue() {
 			final int i = getSelectedIndex();
-			return i == -1 ? null : getValue(i);
+			return i == -1 ? null : getDataValue(getValue(i));
 		}
 
 		@Override
-		public void setValue(String value, boolean fireEvents) {
-			final String old = getValue();
+		public void setValue(V value, boolean fireEvents) {
+			final V old = getValue();
 			setValue(value);
-			final String nval = getValue();
+			final V nval = getValue();
 			if(fireEvents && !ObjectUtil.equals(old, nval)) {
 				ValueChangeEvent.fire(this, nval);
 			}
 		}
 
 		@Override
-		public void setValue(String value) {
+		public void setValue(V value) {
 			setSelectedIndex(-1);
-			for(int i = 0; i < getItemCount(); i++) {
-				if(value.equals(getValue(i))) {
-					setSelectedIndex(i);
-					return;
+			if(value != null) {
+				for(int i = 0; i < getItemCount(); i++) {
+					if(value.equals(getDataValue(getValue(i)))) {
+						setSelectedIndex(i);
+						return;
+					}
 				}
 			}
 		}
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
@@ -86,28 +87,22 @@ public final class SelectField extends AbstractDataField<String> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param data
 	 */
-	SelectField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
+	SelectField(String name, String propName, String labelText, String helpText, Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
 		lb.addBlurHandler(this);
 		setData(data);
 	}
-
+	
 	@Override
-	public IConverter<String, Object> getConverter() {
-		return ToStringConverter.INSTANCE;
-	}
-
-	@Override
-	public void setData(Map<String, String> data) {
-		final String oldval = lb.getValue();
+	public void setData(Map<V, String> data) {
+		super.setData(data);
+		final V oldval = lb.getValue();
 		lb.clear();
-		for(final String val : data.keySet()) {
-			final String key = data.get(val);
-			lb.addItem(key, val);
+		for(final V val : data.keySet()) {
+			lb.addItem(data.get(val));
 			if(val.equals(oldval)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
 			}
@@ -115,12 +110,14 @@ public final class SelectField extends AbstractDataField<String> {
 	}
 
 	@Override
-	public void addDataItem(String name, String value) {
-		lb.addItem(name, value);
+	public void addDataItem(String name, V value) {
+		super.addDataItem(name, value);
+		lb.addItem(name);
 	}
 
 	@Override
-	public void removeDataItem(String value) {
+	public void removeDataItem(V value) {
+		super.removeDataItem(value);
 		for(int i = 0; i < lb.getItemCount(); i++) {
 			if(lb.getValue(i).equals(value)) {
 				lb.removeItem(i);
@@ -130,7 +127,7 @@ public final class SelectField extends AbstractDataField<String> {
 	}
 
 	@Override
-	protected IEditable<String> getEditable() {
+	protected IEditable<V> getEditable() {
 		return lb;
 	}
 

@@ -10,14 +10,13 @@ import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IError.Type;
-import com.tll.common.msg.Msg;
 
 /**
  * PopupValidationFeedback - Provides "local" validation feedback via popup
  * messages.
  * @author jpk
  */
-public final class PopupValidationFeedback implements IValidationFeedback {
+public final class PopupValidationFeedback implements IErrorHandler {
 
 	private final MsgPopupRegistry mregistry;
 
@@ -34,26 +33,25 @@ public final class PopupValidationFeedback implements IValidationFeedback {
 		return mregistry;
 	}
 
-	public void handleError(IWidgetRef widgetProvider, IError error) {
+	public void handleError(IWidgetRef source, IError error) {
 		// we only handle scalar errors
 		if(error.getType() == Type.SCALAR) {
-			for(final Msg m : ((ScalarError) error).getMessages()) {
-				mregistry.addMsg(m, widgetProvider.getWidget(), false).showMsgs(Position.BOTTOM, -1, true);
-			}
+			mregistry.addMsgs(((ScalarError) error).getMessages(), source.getWidget(), true).showMsgs(
+					Position.BOTTOM, -1, true);
 		}
 	}
 
-	public void resolveError(IWidgetRef widgetProvider) {
-		mregistry.getOperator(widgetProvider.getWidget(), false).clearMsgs();
+	public void resolveError(IWidgetRef source) {
+		mregistry.getOperator(source.getWidget(), false).clearMsgs();
 	}
 	
-	/**
-	 * Specific to popup validation feedback, this method turns on or off the
-	 * display of the popup validation messages.
-	 * @param widgetProvider
-	 */
-	public void toggleNotification(IWidgetProvider widgetProvider) {
-		final IMsgOperator op = mregistry.getOperator(widgetProvider.getWidget(), false);
+	public void toggleErrorNotification(IWidgetProvider source) {
+		final IMsgOperator op = mregistry.getOperator(source.getWidget(), false);
 		op.showMsgs(op.isShowing());
+	}
+
+	@Override
+	public void clear() {
+		mregistry.clear();
 	}
 }

@@ -6,7 +6,7 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.tll.client.ui.IWidgetRef;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -60,9 +60,9 @@ public interface IField extends HasName, IWidgetRef {
 
 	/**
 	 * Sets the validation handler.
-	 * @param validationHandler
+	 * @param errorHandler
 	 */
-	void setValidationHandler(IValidationFeedback validationHandler);
+	void setErrorHandler(IErrorHandler errorHandler);
 
 	/**
 	 * Clears the field's value.

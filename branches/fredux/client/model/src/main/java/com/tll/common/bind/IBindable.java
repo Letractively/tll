@@ -32,7 +32,8 @@ public interface IBindable extends ISourcesPropertyChangeEvents {
 	 * @param value The property value to set
 	 * @throws PropertyPathException When the property path is invalid or the
 	 *         given value is not compatible with this property.
-	 * @throws Exception When the given value leads to an error of any kind
+	 * @throws IllegalArgumentException When the given value leads to an error of
+	 *         any kind
 	 */
-	void setProperty(String propPath, Object value) throws PropertyPathException, Exception;
+	void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException;
 }

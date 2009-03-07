@@ -8,7 +8,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
+import com.tll.common.bind.IModel;
+import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -46,12 +48,21 @@ public abstract class FieldPanel<W extends Widget> extends AbstractBindableWidge
 	}
 
 	@Override
-	public void setValidationHandler(IValidationFeedback validationHandler) {
-		super.setValidationHandler(validationHandler);
+	public void setErrorHandler(IErrorHandler errorHandler) {
+		super.setErrorHandler(errorHandler);
 		// propagate to the fields
-		if(fields != null) fields.setValidationHandler(validationHandler);
+		getFieldGroup().setErrorHandler(errorHandler);
 	}
 	
+	@Override
+	public void setModel(IModel model) {
+		super.setModel(model);
+		// apply property metadata
+		if(model instanceof IPropertyMetadataProvider) {
+			getFieldGroup().applyPropertyMetadata((IPropertyMetadataProvider) model);
+		}
+	}
+
 	/**
 	 * Provides the field panel renderer (drawer).
 	 * @return the renderer

@@ -4,6 +4,7 @@
  */
 package com.tll.client.ui.field;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
@@ -24,7 +25,8 @@ import com.tll.refdata.RefDataType;
 public abstract class FieldFactory {
 
 	/**
-	 * Creates a new {@link TextField} instance.
+	 * Creates a new {@link TextField} instance. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -38,7 +40,8 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates a new {@link PasswordField} instance.
+	 * Creates a new {@link PasswordField} instance. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -52,7 +55,8 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates new {@link DateField} instance.
+	 * Creates new {@link DateField} instance. <br>
+	 * NOTE: the value type is {@link Date}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -64,7 +68,8 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates new {@link DateField} instance.
+	 * Creates new {@link DateField} instance. <br>
+	 * NOTE: the value type is {@link Date}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -82,7 +87,8 @@ public abstract class FieldFactory {
 	/**
 	 * Creates a Check box field that is designed to be bound to a boolean type
 	 * using String-wise constants "true" and "false" to indicate the boolean
-	 * value respectively.
+	 * value respectively. <br>
+	 * NOTE: the value type is {@link Boolean}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -94,7 +100,8 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates a new {@link TextAreaField} instance.
+	 * Creates a new {@link TextAreaField} instance. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -110,6 +117,7 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link SelectField} instance.
+	 * @param <V> the value type
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -117,13 +125,15 @@ public abstract class FieldFactory {
 	 * @param data
 	 * @return new field
 	 */
-	public static final SelectField fselect(String name, String propName, String labelText, String helpText,
-			Map<String, String> data) {
-		return new SelectField(name, propName, labelText, helpText, data);
+	public static final <V> SelectField<V> fselect(String name, String propName, String labelText, String helpText,
+			Map<V, String> data) {
+		return new SelectField<V>(name, propName, labelText, helpText, data);
 	}
 
 	/**
-	 * Creates a new {@link MultiSelectField} instance.
+	 * Creates a new {@link MultiSelectField} instance. <br>
+	 * NOTE: the value type is {@link String}.
+	 * @param <V> the collection element value type
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -131,13 +141,14 @@ public abstract class FieldFactory {
 	 * @param data
 	 * @return new field
 	 */
-	public static final MultiSelectField fmultiselect(String name, String propName, String labelText, String helpText,
-			Map<String, String> data) {
-		return new MultiSelectField(name, propName, labelText, helpText, data);
+	public static final <V> MultiSelectField<V> fmultiselect(String name, String propName, String labelText,
+			String helpText, Map<V, String> data) {
+		return new MultiSelectField<V>(name, propName, labelText, helpText, data);
 	}
 
 	/**
-	 * Creates a new {@link SuggestField} instance.
+	 * Creates a new {@link SuggestField} instance. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -152,21 +163,23 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link RadioGroupField} instance.
+	 * @param <V> the value type
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param data name/value pairs where the map is keyed by the name
-	 * @param renderer
+	 * @param renderer renders the radio buttons
 	 * @return new field
 	 */
-	public static final RadioGroupField fradiogroup(String name, String propName, String labelText, String helpText,
-			Map<String, String> data, IWidgetRenderer renderer) {
-		return new RadioGroupField(name, propName, labelText, helpText, renderer, data);
+	public static final <V> RadioGroupField<V> fradiogroup(String name, String propName, String labelText,
+			String helpText, Map<V, String> data, IWidgetRenderer renderer) {
+		return new RadioGroupField<V>(name, propName, labelText, helpText, renderer, data);
 	}
 
 	/**
-	 * Creates a new {@link TextField} instance with email address validation.
+	 * Creates a new {@link TextField} instance with email address validation. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -183,7 +196,8 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates a new {@link TextField} instance with credit card number
-	 * validation.
+	 * validation. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -199,7 +213,9 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates a new {@link SelectField} whose options are enumeration elements.
+	 * Creates a new {@link SelectField} whose options are enumeration elements. <br>
+	 * NOTE: the value type is {@link Enum}.
+	 * @param <E> the enum type
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -207,16 +223,45 @@ public abstract class FieldFactory {
 	 * @param type
 	 * @return select field containing String-wise enum values of the given type
 	 */
-	public static final SelectField fenumselect(String name, String propName, String labelText, String helpText,
-			final Class<? extends Enum<?>> type) {
-		final SelectField f = fselect(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE.convert(type));
+	@SuppressWarnings("unchecked")
+	public static final <E extends Enum<E>> SelectField<E> fenumselect(String name, String propName, String labelText,
+			String helpText,
+			final Class<E> type) {
+		final SelectField<E> f =
+				fselect(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE.convert(type));
+		//f.addValidator(new EnumValidator(type));
+		return f;
+	}
+
+	/**
+	 * Creates a new {@link RadioGroupField} whose options are the elements of the
+	 * given enumeration type. <br>
+	 * NOTE: the value type is {@link Enum}.
+	 * @param <E> the enum type
+	 * @param name
+	 * @param propName
+	 * @param labelText
+	 * @param helpText
+	 * @param type
+	 * @param renderer renders the radio buttons
+	 * @return radio group field containing radio buttons each corresponding the
+	 *         an enumeration.
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <E extends Enum<E>> RadioGroupField<E> fenumradio(String name, String propName, String labelText,
+			String helpText,
+			final Class<E> type, IWidgetRenderer renderer) {
+		final RadioGroupField<E> f =
+				fradiogroup(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE
+						.convert(type), renderer);
 		f.addValidator(new EnumValidator(type));
 		return f;
 	}
 
 	/**
 	 * Creates a new {@link SuggestField} whose suggestions are defined by the
-	 * given {@link RefDataType}.
+	 * given {@link RefDataType}. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @param name
 	 * @param propName
 	 * @param labelText
@@ -230,7 +275,8 @@ public abstract class FieldFactory {
 	}
 
 	/**
-	 * Creates an entity name text field.
+	 * Creates an entity name text field. <br>
+	 * NOTE: the value type is {@link String}.
 	 * @return The created entity name field
 	 */
 	public static final TextField entityNameField() {
@@ -239,7 +285,8 @@ public abstract class FieldFactory {
 
 	/**
 	 * Creates entity date created and date modified read only fields returning
-	 * them in an array where the first element is the date created field.
+	 * them in an array where the first element is the date created field. <br>
+	 * NOTE: the value type is {@link Date}.
 	 * @return DateField array
 	 */
 	public static final DateField[] entityTimestampFields() {

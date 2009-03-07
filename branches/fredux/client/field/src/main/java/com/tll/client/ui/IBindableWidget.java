@@ -3,8 +3,9 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.HasValue;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IModel;
 
 /**
  * IBindableWidget - Extension of {@link IBindable} relevant to ui widgets
@@ -22,42 +23,47 @@ public interface IBindableWidget<V> extends IBindable, HasValue<V> {
 	static final String PROPERTY_VALUE = "value";
 
 	/**
-	 * @return Optional converter used to type coerce un-typed inbound values.
+	 * @return Optional converter used to type coerce un-typed inbound values when
+	 *         {@link #setProperty(String, Object)} is called.
 	 */
 	IConverter<V, Object> getConverter();
+	
+	/**
+	 * Sets the converter.
+	 * @param converter
+	 */
+	void setConverter(IConverter<V, Object> converter);
 
 	/**
 	 * @return The bound model
 	 */
-	IBindable getModel();
+	IModel getModel();
 
 	/**
 	 * Sets the model to be bound to this bindable widget.
 	 * @param model the bindable model
 	 */
-	void setModel(IBindable model);
+	void setModel(IModel model);
 
 	/**
 	 * @return The action for this bindable widget.
 	 */
-	@SuppressWarnings("unchecked")
 	IBindingAction getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action
 	 */
-	@SuppressWarnings("unchecked")
 	void setAction(IBindingAction action);
-	
-	/**
-	 * @return The validation feedback handler.
-	 */
-	IValidationFeedback getValidationHandler();
 
 	/**
-	 * Sets the validation feedback handler.
-	 * @param validationHandler
+	 * @return The error handler.
 	 */
-	void setValidationHandler(IValidationFeedback validationHandler);
+	IErrorHandler getErrorHandler();
+
+	/**
+	 * Sets the error handler.
+	 * @param errorHandler
+	 */
+	void setErrorHandler(IErrorHandler errorHandler);
 }

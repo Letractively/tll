@@ -15,19 +15,19 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
-import com.tll.client.convert.IConverter;
 
 /**
- * SelectField
+ * MultiSelectField
+ * @param <V> the data element value type
  * @author jpk
  */
-public final class MultiSelectField extends AbstractDataField<Collection<String>> {
+public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 
 	/**
 	 * Impl
 	 * @author jpk
 	 */
-	final class Impl extends ListBox implements IEditable<Collection<String>>, ChangeHandler {
+	final class Impl extends ListBox implements IEditable<Collection<V>>, ChangeHandler {
 
 		/**
 		 * Constructor
@@ -43,18 +43,18 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		}
 
 		@Override
-		public Collection<String> getValue() {
-			final ArrayList<String> sel = new ArrayList<String>(); 
+		public Collection<V> getValue() {
+			final ArrayList<V> sel = new ArrayList<V>(); 
 			for(int i = 0; i < getItemCount(); i++) {
 				if(isItemSelected(i)) {
-					sel.add(getValue(i));
+					sel.add(getDataValue(getValue(i)));
 				}
 			}
 			return sel;
 		}
 
 		@Override
-		public void setValue(Collection<String> value, boolean fireEvents) {
+		public void setValue(Collection<V> value, boolean fireEvents) {
 			setValue(value);
 			if(fireEvents) {
 				ValueChangeEvent.fire(this, getValue());
@@ -62,43 +62,26 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		}
 
 		@Override
-		public void setValue(Collection<String> value) {
+		public void setValue(Collection<V> value) {
 			setSelectedIndex(-1);
-			for(int i = 0; i < getItemCount(); i++) {
-				for(final String val : value) {
-					if(val.equals(getValue(i))) {
-						setItemSelected(i, true);
+			if(value != null) {
+				for(int i = 0; i < getItemCount(); i++) {
+					for(final V val : value) {
+						final String rv = getRenderer().convert(val);
+						if(rv != null && rv.equals(getValue(i))) {
+							setItemSelected(i, true);
+						}
 					}
 				}
 			}
 		}
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<String>> handler) {
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<V>> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
 		}
 	}
 	
-	/**
-	 * Converter
-	 * @author jpk
-	 */
-	static final class Converter implements IConverter<Collection<String>, Object> {
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public Collection<String> convert(Object in) throws IllegalArgumentException {
-			try {
-				return (Collection<String>) in;
-			}
-			catch(final ClassCastException e) {
-				throw new IllegalArgumentException("The value must be a collection of strings.");
-			}
-		}
-	}
-
-	private static final Converter CONVERTER = new Converter();
-
 	/**
 	 * The list box widget.
 	 */
@@ -112,7 +95,7 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 	 * @param helpText
 	 * @param data
 	 */
-	MultiSelectField(String name, String propName, String labelText, String helpText, Map<String, String> data) {
+	MultiSelectField(String name, String propName, String labelText, String helpText, Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		lb = new Impl();
 		lb.addValueChangeHandler(this);
@@ -120,33 +103,31 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 		setData(data);
 	}
 
-	@Override
-	public IConverter<Collection<String>, Object> getConverter() {
-		return CONVERTER;
-	}
-
 	/**
 	 * Sets the options.
 	 * @param data The options to set
 	 */
 	@Override
-	public void setData(Map<String, String> data) {
+	public void setData(Map<V, String> data) {
+		super.setData(data);
 		lb.clear();
-		for(final String val : data.keySet()) {
+		for(final V val : data.keySet()) {
 			final String key = data.get(val);
-			lb.addItem(key, val);
+			lb.addItem(key);
 		}
 	}
 
 	@Override
-	public void addDataItem(String name, String value) {
-		lb.addItem(name, value);
+	public void addDataItem(String name, V value) {
+		super.addDataItem(name, value);
+		lb.addItem(name);
 	}
 
 	@Override
-	public void removeDataItem(String value) {
+	public void removeDataItem(V value) {
+		super.removeDataItem(value);
 		for(int i = 0; i < lb.getItemCount(); i++) {
-			if(lb.getValue(i).equals(value)) {
+			if(lb.getValue(i).equals(getToken(value))) {
 				lb.removeItem(i);
 				return;
 			}
@@ -154,7 +135,7 @@ public final class MultiSelectField extends AbstractDataField<Collection<String>
 	}
 
 	@Override
-	protected IEditable<Collection<String>> getEditable() {
+	protected IEditable<Collection<V>> getEditable() {
 		return lb;
 	}
 

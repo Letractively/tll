@@ -52,7 +52,8 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(fieldPanel, true, false);
+		// TODO add global msg panel ref
+		editPanel = new EditPanel(null, fieldPanel, true, false);
 		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;

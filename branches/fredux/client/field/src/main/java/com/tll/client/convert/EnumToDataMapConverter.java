@@ -6,17 +6,19 @@
 package com.tll.client.convert;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.tll.INameValueProvider;
 
-
 /**
  * EnumToDataMapConverter
+ * @param <E> the enum type
  * @author jpk
  */
-public class EnumToDataMapConverter implements IConverter<Map<String, String>, Class<? extends Enum<?>>> {
+public class EnumToDataMapConverter<E extends Enum<E>> implements IConverter<Map<E, String>, Class<E>> {
 	
+	@SuppressWarnings("unchecked")
 	public static final EnumToDataMapConverter INSTANCE = new EnumToDataMapConverter();
 
 	/**
@@ -27,16 +29,15 @@ public class EnumToDataMapConverter implements IConverter<Map<String, String>, C
 	}
 
 	@Override
-	public Map<String, String> convert(Class<? extends Enum<?>> enmType) throws IllegalArgumentException {
-		final HashMap<String, String> map = new HashMap<String, String>();
-		for(final Enum<?> enm : enmType.getEnumConstants()) {
+	public Map<E, String> convert(Class<E> enmType) throws IllegalArgumentException {
+		final HashMap<E, String> map = new LinkedHashMap<E, String>();
+		for(final E enm : enmType.getEnumConstants()) {
 			if(enm instanceof INameValueProvider) {
 				final INameValueProvider<?> nvp = (INameValueProvider<?>) enm;
-				final String sval = ToStringConverter.INSTANCE.convert(nvp.getValue());
-				map.put(sval, nvp.getName());
+				map.put(enm, nvp.getName());
 			}
 			else {
-				map.put(enm.name(), enm.name());
+				map.put(enm, enm.name());
 			}
 		}
 		return map;

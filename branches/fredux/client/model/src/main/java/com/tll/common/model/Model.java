@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.tll.IMarshalable;
-import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IModel;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -24,7 +24,7 @@ import com.tll.model.schema.PropertyType;
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IModel, IPropertyMetadataProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -105,7 +105,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @return true/false
 	 */
 	public boolean isNew() {
-		IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
+		final IntPropertyValue prop = (IntPropertyValue) get(VERSION_PROPERTY);
 		return prop == null ? true : (prop.getInteger() == null);
 	}
 
@@ -114,7 +114,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @return The entity id
 	 */
 	public Integer getId() {
-		IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
+		final IntPropertyValue prop = (IntPropertyValue) get(ID_PROPERTY);
 		return prop == null ? null : prop.getInteger();
 	}
 
@@ -123,7 +123,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * @return The entities' name
 	 */
 	public String getName() {
-		StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
+		final StringPropertyValue prop = (StringPropertyValue) get(NAME_PROPERTY);
 		return prop == null ? null : prop.getString();
 	}
 
@@ -132,7 +132,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         don't support this property.
 	 */
 	public Date getDateCreated() {
-		DatePropertyValue prop = (DatePropertyValue) get(DATE_CREATED_PROPERTY);
+		final DatePropertyValue prop = (DatePropertyValue) get(DATE_CREATED_PROPERTY);
 		return prop == null ? null : prop.getDate();
 	}
 
@@ -141,7 +141,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         that don't support this property.
 	 */
 	public Date getDateModified() {
-		DatePropertyValue prop = (DatePropertyValue) get(DATE_MODIFIED_PROPERTY);
+		final DatePropertyValue prop = (DatePropertyValue) get(DATE_MODIFIED_PROPERTY);
 		return prop == null ? null : prop.getDate();
 	}
 
@@ -151,13 +151,13 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public RefKey getRefKey() {
 		Integer id = null;
-		IModelProperty pvId = get(ID_PROPERTY);
+		final IModelProperty pvId = get(ID_PROPERTY);
 		if(pvId != null && pvId.getType() == PropertyType.INT) {
 			id = ((IntPropertyValue) pvId).getInteger();
 		}
 
 		String name = null;
-		IModelProperty pvName = get(NAME_PROPERTY);
+		final IModelProperty pvName = get(NAME_PROPERTY);
 		if(pvName != null && pvName.getType() == PropertyType.STRING) {
 			name = ((StringPropertyValue) pvName).getString();
 		}
@@ -189,7 +189,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public IModelProperty get(String name) {
 		if(name == null) return null;
-		for(IModelProperty prop : props) {
+		for(final IModelProperty prop : props) {
 			if(name.equals(prop.getPropertyName())) return prop;
 		}
 		return null;
@@ -205,7 +205,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 */
 	public void set(IModelProperty propValue) {
 		if(propValue == null) return;
-		IModelProperty prop = get(propValue.getPropertyName());
+		final IModelProperty prop = get(propValue.getPropertyName());
 		if(prop != null) {
 			props.remove(prop);
 		}
@@ -226,7 +226,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		try {
 			prop = getModelProperty(propPath);
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 		assert prop != null;
@@ -240,7 +240,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		return getModelProperty(propPath).getValue();
 	}
 
-	public void setProperty(String propPath, Object value) throws Exception, PropertyPathException {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		if(PropertyPath.isIndexed(propPath)) {
 			// divert to the "physical" related many property as indexed properties
 			// are "virtual"
@@ -260,7 +260,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		try {
 			return getModelProperty(propPath) != null;
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			return false;
 		}
 	}
@@ -296,7 +296,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         doesn't point to an existing model property.
 	 */
 	public IPropertyValue getPropertyValue(String propPath) throws PropPathNodeMismatchException, PropertyPathException {
-		IModelProperty prop = getModelProperty(propPath);
+		final IModelProperty prop = getModelProperty(propPath);
 		if(prop == null) return null;
 		if(!prop.getType().isValue()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "value");
@@ -314,7 +314,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         resolved or does not map to an {@link IModelRefProperty}.
 	 */
 	public Model getNestedModel(String propPath) throws PropertyPathException {
-		IModelProperty prop = getModelProperty(propPath);
+		final IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(!prop.getType().isModelRef()) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -332,7 +332,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         resolved or does not map to related one property.
 	 */
 	public RelatedOneProperty relatedOne(String propPath) throws PropertyPathException {
-		IModelProperty prop = getModelProperty(propPath);
+		final IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_ONE) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -350,7 +350,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         resolved or does not map to a related many property.
 	 */
 	public RelatedManyProperty relatedMany(String propPath) throws PropertyPathException {
-		IModelProperty prop = getModelProperty(propPath);
+		final IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.RELATED_MANY) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(),
@@ -369,7 +369,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 *         resolved or does not map to an indexed property.
 	 */
 	public IndexedProperty indexed(String propPath) throws PropertyPathException {
-		IModelProperty prop = getModelProperty(propPath);
+		final IModelProperty prop = getModelProperty(propPath);
 		assert prop != null;
 		if(prop.getType() != PropertyType.INDEXED) {
 			throw new PropPathNodeMismatchException(propPath, prop.getPropertyName(), prop.getType().toString(), "indexed");
@@ -381,7 +381,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		try {
 			return getPropertyValue(propPath).getMetadata();
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			return null;
 		}
 	}
@@ -407,8 +407,8 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		for(int i = 0; i < len; i++) {
 			final String pname = pp.nameAt(i);
 			final int index = pp.indexAt(i);
-			boolean indexed = (index >= 0);
-			boolean atEnd = (i == len - 1);
+			final boolean indexed = (index >= 0);
+			final boolean atEnd = (i == len - 1);
 
 			// find the prop val under current group
 			prop = model.get(pname);
@@ -436,7 +436,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					throw new PropPathNodeMismatchException(pp.toString(), pname, pvType.toString(), PropertyType.RELATED_MANY
 							.toString());
 				}
-				IModelRefProperty mrp = (IModelRefProperty) prop;
+				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				if(atEnd) {
 					// return new RelatedOneProperty(mrp.getRelatedType(),
 					// mrp.getPropertyName(), mrp.isReference(), mrp.getModel());
@@ -444,7 +444,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 					return mrp;
 				}
 				// get the nested group...
-				Model ng = mrp.getModel();
+				final Model ng = mrp.getModel();
 				if(ng == null) {
 					throw new NullNodeInPropPathException(pp.toString(), pname);
 				}
@@ -454,7 +454,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 			// related many prop val
 			else if(pvType == PropertyType.RELATED_MANY) {
-				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(!indexed) {
 					if(atEnd) {
 						return rmp;
@@ -565,34 +565,34 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		if(source == null) return null;
 
 		// check visited
-		CopyBinding binding = (CopyBinding) visited.find(source);
+		final CopyBinding binding = (CopyBinding) visited.find(source);
 		if(binding != null) return binding.target;
 
-		Model copy = new Model(source.entityType);
+		final Model copy = new Model(source.entityType);
 
 		visited.add(new CopyBinding(source, copy));
 
 		copy.markedDeleted = source.markedDeleted;
 
-		for(IModelProperty prop : source.props) {
+		for(final IModelProperty prop : source.props) {
 			assert prop != null;
 
 			// related one or indexed prop...
 			if(prop instanceof IModelRefProperty) {
-				IModelRefProperty mrp = (IModelRefProperty) prop;
-				Model model =
+				final IModelRefProperty mrp = (IModelRefProperty) prop;
+				final Model model =
 						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, visited) : mrp.getModel();
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
 			// related many...
 			else if(prop instanceof RelatedManyProperty) {
-				RelatedManyProperty rmp = (RelatedManyProperty) prop;
-				List<Model> list = rmp.getList();
+				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				final List<Model> list = rmp.getList();
 				List<Model> nlist = null;
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
-					for(Model model : list) {
+					for(final Model model : list) {
 						nlist.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, visited) : model);
 					}
 				}
@@ -639,19 +639,19 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		if(model == null) return;
 
 		// check visited
-		PropBinding binding = visited.find(model);
+		final PropBinding binding = visited.find(model);
 		if(binding != null) return;
 
 		visited.add(new PropBinding(model));
 
 		model.markedDeleted = false;
 
-		for(IModelProperty prop : model.props) {
+		for(final IModelProperty prop : model.props) {
 			assert prop != null;
 
 			// model prop (relational) val...
 			if(prop instanceof IModelRefProperty) {
-				IModelRefProperty gpv = (IModelRefProperty) prop;
+				final IModelRefProperty gpv = (IModelRefProperty) prop;
 				if(clearReferences || !gpv.isReference()) {
 					clearProps(gpv.getModel(), clearReferences, visited);
 				}
@@ -659,11 +659,11 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 
 			// model list (relational) prop val...
 			else if(prop instanceof RelatedManyProperty) {
-				RelatedManyProperty rmp = (RelatedManyProperty) prop;
+				final RelatedManyProperty rmp = (RelatedManyProperty) prop;
 				if(clearReferences || !rmp.isReference()) {
-					List<Model> list = rmp.getList();
+					final List<Model> list = rmp.getList();
 					if(list != null) {
-						for(Model m : list) {
+						for(final Model m : list) {
 							clearProps(m, clearReferences, visited);
 						}
 					}
@@ -708,7 +708,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		try {
 			resolvePropertyPath(propertyName).addPropertyChangeListener(listener);
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			throw new IllegalArgumentException("Unable to add property change listener", e);
 		}
 	}
@@ -725,7 +725,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 		try {
 			resolvePropertyPath(propertyName).removePropertyChangeListener(listener);
 		}
-		catch(PropertyPathException e) {
+		catch(final PropertyPathException e) {
 			throw new IllegalArgumentException("Unable to remove property change listener", e);
 		}
 	}

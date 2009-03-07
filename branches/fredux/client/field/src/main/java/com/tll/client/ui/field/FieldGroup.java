@@ -11,7 +11,7 @@ import java.util.Set;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.Errors;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.PropertyPath;
@@ -218,9 +218,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	}
 
 	@Override
-	public void setValidationHandler(IValidationFeedback validationHandler) {
+	public void setErrorHandler(IErrorHandler errorHandler) {
 		for(final IField field : fields) {
-			field.setValidationHandler(validationHandler);
+			field.setErrorHandler(errorHandler);
 		}
 	}
 
@@ -507,16 +507,19 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			this.validator.remove(validator);
 		}
 	}
-
-	public void validate() throws ValidationException {
-		final Errors errors = new Errors();
-		
+	
+	private void validate(Errors errors) {
 		for(final IField field : fields) {
-			try {
-				field.validate();
+			if(field instanceof FieldGroup) {
+				((FieldGroup) field).validate(errors);
 			}
-			catch(final ValidationException e) {
-				errors.add(e.getError(), field);
+			else {
+				try {
+					field.validate();
+				}
+				catch(final ValidationException e) {
+					errors.add(e.getError(), field);
+				}
 			}
 		}
 		
@@ -528,7 +531,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 				errors.add(e.getError(), this);
 			}
 		}
-		
+	}
+
+	public void validate() throws ValidationException {
+		final Errors errors = new Errors();
+		validate(errors);
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);
 		}

@@ -94,7 +94,8 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
+				// TODO add global msg panel ref
+				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getType()), false, true);
 				editPanel.addEditHandler(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -105,13 +106,13 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(IEntityType intfType) {
+			private AbstractInterfacePanel<? extends Widget> resolveInterfacePanel(IEntityType intfType) {
 				final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, intfType);
 				if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
-					return new MultiOptionInterfacePanel<Model>();
+					return new MultiOptionInterfacePanel();
 				}
 				else if(SmbizEntityType.INTERFACE_SWITCH == set) {
-					return new SwitchInterfacePanel<Model>();
+					return new SwitchInterfacePanel();
 				}
 				else {
 						throw new IllegalArgumentException();

@@ -14,7 +14,7 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.bind.IBindable;
+import com.tll.common.bind.IModel;
 import com.tll.common.model.Model;
 import com.tll.model.SmbizEntityType;
 
@@ -22,9 +22,8 @@ import com.tll.model.SmbizEntityType;
  * MultiOptionInterfacePanel - Interface panel for interfaces where more than
  * one option is allowed.
  * @author jpk
- * @param <M>
  */
-public final class MultiOptionInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<FlowPanel, M> {
+public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<FlowPanel> {
 
 	/**
 	 * OptionPanel
@@ -100,9 +99,9 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 		}
 
 		@Override
-		protected String getTabLabelText(Index<OptionPanel> index) {
+		protected String getTabLabelText(OptionPanel index) {
 			//try {
-			final IFieldWidget<?> fw = index.getFieldPanel().getFieldGroup().getFieldWidget(Model.NAME_PROPERTY);
+			final IFieldWidget<?> fw = index.getFieldGroup().getFieldWidget(Model.NAME_PROPERTY);
 			return fw.getText();
 			//}
 			//catch(final UnsetPropertyException e) {
@@ -110,14 +109,13 @@ public final class MultiOptionInterfacePanel<M extends IBindable> extends Abstra
 			//}
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		protected M createPrototypeModel() {
-			return (M) AuxDataCache.instance().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
+		protected IModel createPrototypeModel() {
+			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
 		}
 
 		@Override
-		protected OptionPanel createIndexPanel(IBindable model) {
+		protected OptionPanel createIndexPanel() {
 			return new OptionPanel();
 		}
 

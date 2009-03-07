@@ -29,7 +29,6 @@ import com.tll.client.validate.DecimalValidator;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
-import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.util.ObjectUtil;
@@ -333,7 +332,7 @@ implements IFieldWidget<V>,
 	 * Either marks or un-marks this field as dirty in the UI based on its current
 	 * value and the set initial value.
 	 */
-	private void markDirty() {
+	private void dirtyCheck() {
 		if(initialValueSet) {
 			if(!ObjectUtil.equals(initialValue, getValue())) {
 				addStyleName(Styles.DIRTY);
@@ -341,17 +340,6 @@ implements IFieldWidget<V>,
 			else {
 				removeStyleName(Styles.DIRTY);
 			}
-		}
-	}
-
-	private void markInvalid(boolean invalid) {
-		if(invalid) {
-			removeStyleName(Styles.DIRTY);
-			addStyleName(Styles.INVALID);
-		}
-		else {
-			removeStyleName(Styles.INVALID);
-			getValidationHandler().resolveError(this);
 		}
 	}
 
@@ -434,10 +422,10 @@ implements IFieldWidget<V>,
 	public final void validate() throws ValidationException {
 		try {
 			validate(getValue());
-			markInvalid(false);
+			getErrorHandler().resolveError(this);
 		}
 		catch(final ValidationException e) {
-			markInvalid(true);
+			getErrorHandler().handleError(this, e.getError());
 			throw e;
 		}
 	}
@@ -521,12 +509,12 @@ implements IFieldWidget<V>,
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			markInvalid(false);
+			getErrorHandler().resolveError(this);
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
 			// show/hide edit styling
-			markDirty();
+			dirtyCheck();
 		}
 	}
 
@@ -553,8 +541,8 @@ implements IFieldWidget<V>,
 	public void onClick(ClickEvent event) {
 		// toggle the display of any bound UI msgs for this field when the field
 		// label is clicked
-		if(event.getSource() == fldLbl && (getValidationHandler() instanceof PopupValidationFeedback)) {
-			((PopupValidationFeedback) getValidationHandler()).toggleNotification(this);
+		if(event.getSource() == fldLbl) {
+			getErrorHandler().toggleErrorNotification(this);
 		}
 	}
 
@@ -562,11 +550,11 @@ implements IFieldWidget<V>,
 	public void onBlur(BlurEvent event) {
 		try {
 			validate();
-			markDirty();
+			dirtyCheck();
 		}
 		catch(final ValidationException e) {
-			//getMsgPopupRegistry().addMsgs(e.getErrors(), this, true).showMsgs(true);
-			getValidationHandler().handleError(this, e.getError());
+			//getErrorHandler().handleError(this, e.getError());
+			// ok
 		}
 	}
 
@@ -604,7 +592,7 @@ implements IFieldWidget<V>,
 	public final void reset() {
 		if(initialValueSet) {
 			setValue(initialValue);
-			markInvalid(false);
+			getErrorHandler().resolveError(this);
 			removeStyleName(Styles.DIRTY);
 		}
 	}

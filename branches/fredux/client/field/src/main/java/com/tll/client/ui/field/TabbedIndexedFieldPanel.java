@@ -29,8 +29,8 @@ import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
 import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.IValidationFeedback;
-import com.tll.client.validate.PopupValidationFeedback;
+import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.IErrorHandler;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
@@ -38,7 +38,7 @@ import com.tll.client.validate.PopupValidationFeedback;
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<I, FlowPanel>
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
 		implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**
@@ -181,11 +181,6 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		initWidget(pnl);
 	}
 
-	@Override
-	public IFieldRenderer<FlowPanel> getRenderer() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * @return The generic name for what is being indexed.
 	 */
@@ -196,7 +191,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	 * @param indexFieldPanel
 	 * @return label text
 	 */
-	protected abstract String getTabLabelText(Index<I> index);
+	protected abstract String getTabLabelText(I index);
 
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
@@ -206,7 +201,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
 	 *         at the index assoc. with the given index field panel.
 	 */
-	private Widget getTabWidget(Index<I> index, boolean isNew) {
+	private Widget getTabWidget(I index, boolean isNew) {
 
 		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(index);
 
@@ -237,11 +232,11 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	}
 
 	@Override
-	protected Index<I> add() {
-		final Index<I> index = super.add();
+	protected I add() {
+		final I index = super.add();
 		final int insertIndex = tabPanel.getWidgetCount() == 0 ? 0 : tabPanel.getWidgetCount() - 1;
 		final Widget tw = getTabWidget(index, true);
-		tabPanel.insert(index.fieldPanel, tw, insertIndex);
+		tabPanel.insert(index, tw, insertIndex);
 		tabWidgets.add(tw);
 		// auto-select the added tab
 		DeferredCommand.addCommand(new Command() {
@@ -254,22 +249,21 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	}
 
 	@Override
-	protected Index<I> remove(int index) throws IndexOutOfBoundsException {
-		final Index<I> removed = super.remove(index);
-		if(removed != null) {
-			// remove the tab
-			if(!tabPanel.remove(index)) {
-				// shouldn't happen
-				throw new IllegalStateException();
-			}
-			tabWidgets.remove(index);
-			if(tabPanel.getWidgetCount() == 0 || (enableAdd && tabPanel.getWidgetCount() == 1)) {
-				tabPanel.setVisible(false);
-				emptyWidget.setVisible(true);
-			}
-			else {
-				tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
-			}
+	protected I remove(int index) throws IndexOutOfBoundsException {
+		final I removed = super.remove(index);
+		assert removed != null;
+		// remove the tab
+		if(!tabPanel.remove(index)) {
+			// shouldn't happen
+			throw new IllegalStateException();
+		}
+		tabWidgets.remove(index);
+		if(tabPanel.getWidgetCount() == 0 || (enableAdd && tabPanel.getWidgetCount() == 1)) {
+			tabPanel.setVisible(false);
+			emptyWidget.setVisible(true);
+		}
+		else {
+			tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
 		}
 		return removed;
 	}
@@ -282,7 +276,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	}
 
 	@Override
-	public void clear() {
+	protected void clear() {
 		super.clear();
 		tabPanel.clear();
 		tabWidgets.clear();
@@ -306,13 +300,13 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		}
 		else {
 			// add the *existing* index field panels to the tab panel
-			for(final Index<I> i : indexPanels) {
+			for(final I i : indexPanels) {
 				final Widget tw = getTabWidget(i, false);
 				tabWidgets.add(tw);
 				if(enableDelete) {
 					((WidgetAndLabel) tw).getTheWidget().setTitle("Delete " + getIndexTypeName());
 				}
-				tabPanel.add(i.fieldPanel, getTabWidget(i, false));
+				tabPanel.add(i, getTabWidget(i, false));
 			}
 		}
 		if(enableAdd) {
@@ -330,11 +324,12 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	}
 	
 	@Override
-	public void setValidationHandler(IValidationFeedback validationHandler) {
-		super.setValidationHandler(validationHandler);
-		if(validationHandler instanceof PopupValidationFeedback) {
-			this.mregistry = ((PopupValidationFeedback) validationHandler).getMsgPopupRegistry();
+	public void setErrorHandler(IErrorHandler errorHandler) {
+		super.setErrorHandler(errorHandler);
+		if(errorHandler instanceof ErrorHandlerDelegate) {
+			mregistry = ((ErrorHandlerDelegate) errorHandler).getMsgPopupRegistry();
 		}
+		if(mregistry == null) throw new IllegalArgumentException();
 	}
 
 	@Override

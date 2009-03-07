@@ -148,7 +148,7 @@ public class FieldGWTTest extends GWTTestCase {
 		data.put("s1", "S1");
 		data.put("s2", "S2");
 		data.put("s3", "S3");
-		final RadioGroupField f =
+		final RadioGroupField<String> f =
 				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data, VerticalRenderer.INSTANCE);
 		validateFieldCommon(f);
 
@@ -160,7 +160,7 @@ public class FieldGWTTest extends GWTTestCase {
 		data.put("s1", "S1");
 		data.put("s2", "S2");
 		data.put("s3", "S3");
-		final SelectField f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data);
+		final SelectField<String> f = FieldFactory.fselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data);
 		validateFieldCommon(f);
 
 		// TODO finish
@@ -171,7 +171,7 @@ public class FieldGWTTest extends GWTTestCase {
 		data.put("s1", "S1");
 		data.put("s2", "S2");
 		data.put("s3", "S3");
-		final MultiSelectField f = FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data);
+		final MultiSelectField<String> f = FieldFactory.fmultiselect(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data);
 		validateFieldCommon(f);
 
 		// TODO finish

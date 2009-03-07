@@ -10,15 +10,13 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
- * @param <M>
  */
-public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<FlowPanel, M> {
+public final class SwitchInterfacePanel extends AbstractInterfacePanel<FlowPanel> {
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
 

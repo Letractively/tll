@@ -11,7 +11,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IWidgetRef;
-import com.tll.client.validate.IValidationFeedback;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IBindable;
@@ -59,9 +59,9 @@ public final class Binding {
 		public IValidator validator;
 
 		/**
-		 * A IValidationFeedback object when needed.
+		 * A IErrorHandler object when needed.
 		 */
-		public IValidationFeedback feedback;
+		public IErrorHandler feedback;
 
 		private IPropertyChangeListener listener;
 
@@ -269,8 +269,8 @@ public final class Binding {
 	 * @param rightFeedback Feedback for the right hand validator.
 	 */
 	public Binding(IBindable left, String leftProperty, IValidator leftValidator,
-			IValidationFeedback leftFeedback,
-			IBindable right, String rightProperty, IValidator rightValidator, IValidationFeedback rightFeedback) {
+			IErrorHandler leftFeedback,
+			IBindable right, String rightProperty, IValidator rightValidator, IErrorHandler rightFeedback) {
 		this(left, leftProperty, null, leftValidator, leftFeedback, right, rightProperty, null, rightValidator,
 				rightFeedback);
 	}
@@ -287,8 +287,8 @@ public final class Binding {
 	 *        right objects.
 	 */
 	public Binding(IBindable left, IValidator leftValidator,
-			IValidationFeedback leftFeedback, IBindable right,
-			IValidator rightValidator, IValidationFeedback rightFeedback, String property) {
+			IErrorHandler leftFeedback, IBindable right,
+			IValidator rightValidator, IErrorHandler rightFeedback, String property) {
 		this(left, property, leftValidator, leftFeedback, right, property, rightValidator, rightFeedback);
 	}
 
@@ -332,7 +332,7 @@ public final class Binding {
 	 *        and right objects.
 	 */
 	public Binding(IBindable model, IBindableWidget<?> widget, IValidator validator,
-			IValidationFeedback feedback,
+			IErrorHandler feedback,
 			String modelProperty) {
 		this(model, modelProperty, null, null, widget, "value", validator, feedback);
 	}
@@ -352,9 +352,9 @@ public final class Binding {
 	 */
 	public Binding(IBindable left, String leftProperty, IConverter<Object, Object> leftConverter,
 			IValidator leftValidator,
-			IValidationFeedback leftFeedback, IBindable right,
+			IErrorHandler leftFeedback, IBindable right,
 			String rightProperty, IConverter<Object, Object> rightConverter, IValidator rightValidator,
-			IValidationFeedback rightFeedback) {
+			IErrorHandler rightFeedback) {
 
 		this.left = createBindingInstance(left, leftProperty);
 		this.left.converter = leftConverter;
