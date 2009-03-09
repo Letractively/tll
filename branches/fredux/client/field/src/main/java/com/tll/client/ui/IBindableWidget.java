@@ -3,7 +3,6 @@ package com.tll.client.ui;
 import com.google.gwt.user.client.ui.HasValue;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
-import com.tll.client.validate.IErrorHandler;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IModel;
 
@@ -11,9 +10,9 @@ import com.tll.common.bind.IModel;
  * IBindableWidget - Extension of {@link IBindable} relevant to ui widgets
  * capable of participating in a binding.
  * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em> @author
- * jpk
+ * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @param <V> the value type
+ * @author jpk
  */
 public interface IBindableWidget<V> extends IBindable, HasValue<V> {
 	
@@ -48,22 +47,11 @@ public interface IBindableWidget<V> extends IBindable, HasValue<V> {
 	/**
 	 * @return The action for this bindable widget.
 	 */
-	IBindingAction getAction();
+	IBindingAction<V> getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action
 	 */
-	void setAction(IBindingAction action);
-
-	/**
-	 * @return The error handler.
-	 */
-	IErrorHandler getErrorHandler();
-
-	/**
-	 * Sets the error handler.
-	 * @param errorHandler
-	 */
-	void setErrorHandler(IErrorHandler errorHandler);
+	void setAction(IBindingAction<V> action);
 }

@@ -5,7 +5,9 @@
  */
 package com.tll.client.ui.msg;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.DOM;
@@ -24,10 +26,10 @@ import com.tll.common.msg.Msg;
 public final class MsgPopupRegistry {
 
 	/**
-	 * The managed cache of popups for this registry.
+	 * The managed cache of popups for this registry keyed by ref widget.
 	 */
-	private final Set<MsgPopup> popups = new HashSet<MsgPopup>();
-
+	private final Map<Widget, MsgPopup> cache = new HashMap<Widget, MsgPopup>();
+	
 	/**
 	 * Factory type method providing an {@link IMsgOperator} for all message
 	 * popups bound either to it or any dom-wise child widget.
@@ -75,7 +77,7 @@ public final class MsgPopupRegistry {
 	 * This method clears out all cached message popups from this registry.
 	 */
 	public void clear() {
-		popups.clear();
+		cache.clear();
 	}
 
 	/**
@@ -86,7 +88,7 @@ public final class MsgPopupRegistry {
 	 */
 	private Set<MsgPopup> drill(Widget w) {
 		final HashSet<MsgPopup> set = new HashSet<MsgPopup>();
-		for(final MsgPopup mp : popups) {
+		for(final MsgPopup mp : cache.values()) {
 			if(mp.getRefWidget() == w || ((DOM.isOrHasChild(w.getElement(), mp.getRefWidget().getElement())))) {
 				set.add(mp);
 			}
@@ -102,13 +104,11 @@ public final class MsgPopupRegistry {
 	 * @return The never <code>null</code> bound message popup.
 	 */
 	private MsgPopup getMsgPopup(Widget w) {
-		for(final MsgPopup mp : popups) {
-			if(mp.getRefWidget() == w) {
-				return mp;
-			}
+		MsgPopup mp = cache.get(w);
+		if(mp == null) {
+			mp = new MsgPopup(w);
+			cache.put(w, mp);
 		}
-		final MsgPopup mp = new MsgPopup(w);
-		popups.add(mp);
 		return mp;
 	}
 }

@@ -13,9 +13,9 @@ import com.tll.client.validate.IError.Type;
  * messages.
  * @author jpk
  */
-public final class PopupValidationFeedback implements IPopupErrorHandler {
+public class PopupValidationFeedback implements IPopupErrorHandler {
 
-	private final MsgPopupRegistry mregistry;
+	protected final MsgPopupRegistry mregistry;
 
 	/**
 	 * Constructor

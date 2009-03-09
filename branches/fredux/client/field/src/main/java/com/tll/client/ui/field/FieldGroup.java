@@ -220,13 +220,6 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return fields.iterator();
 	}
 
-	@Override
-	public void setErrorHandler(IErrorHandler errorHandler) {
-		for(final IField field : fields) {
-			field.setErrorHandler(errorHandler);
-		}
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -505,10 +498,8 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void removeValidator(IValidator validator) {
-		if(validator != null && this.validator != null) {
-			this.validator.remove(validator);
-		}
+	public void removeValidator(Class<? extends IValidator> type) {
+		if(validator != null) this.validator.remove(type);
 	}
 	
 	/**
@@ -533,20 +524,22 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
 	 * qualified" field better validation feedback.
 	 * @param errors the sole constant instance
+	 * @param showFeedback
 	 * @param group the field group
 	 * @param parents the field group parents
 	 */
-	private static void validate(final Errors errors, FieldGroup group, List<FieldGroup> parents) {
+	private static void validate(final Errors errors, final boolean showFeedback, FieldGroup group,
+			List<FieldGroup> parents) {
 		for(final IField field : group) {
 			if(field instanceof FieldGroup) {
 				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
 				list.addAll(parents);
 				list.add(group);
-				validate(errors, ((FieldGroup) field), list);
+				validate(errors, showFeedback, ((FieldGroup) field), list);
 			}
 			else {
 				try {
-					field.validate();
+					field.validate(showFeedback);
 				}
 				catch(final ValidationException e) {
 					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
@@ -578,17 +571,24 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void validate() throws ValidationException {
+	public void validate(boolean showFeedback) throws ValidationException {
 		final Errors errors = new Errors();
-		validate(errors, this, new ArrayList<FieldGroup>());
+		validate(errors, showFeedback, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);
 		}
 	}
 
 	@Override
-	public int hashCode() {
-		return 37 + name.hashCode();
+	public IErrorHandler getErrorHandler() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setErrorHandler(IErrorHandler errorHandler) {
+		for(final IField f : fields) {
+			f.setErrorHandler(errorHandler);
+		}
 	}
 
 	@Override
@@ -600,6 +600,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		assert name != null;
 		if(!name.equals(other.name)) return false;
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return 37 + name.hashCode();
 	}
 
 	@Override

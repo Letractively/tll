@@ -19,14 +19,11 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
-import com.tll.client.ui.Position;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.GlobalMsgPanel;
-import com.tll.client.ui.msg.Msgs;
-import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.ScalarError;
 import com.tll.common.model.Model;
@@ -88,6 +85,8 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
 	
 	private String modelDescriptor;
+	
+	private final GlobalMsgPanel globalMsgPanel;
 
 	/**
 	 * Constructor
@@ -105,10 +104,9 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 		
-		final BillboardValidationFeedback globalFeedback =
-				globalMsgPanel == null ? null : new BillboardValidationFeedback(globalMsgPanel);
-
-		editAction = new FieldBindingAction(globalFeedback);
+		if(globalMsgPanel == null) throw new IllegalArgumentException("A global message panel must be specified.");
+		this.globalMsgPanel = globalMsgPanel;
+		editAction = new FieldBindingAction(globalMsgPanel);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -191,7 +189,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * @param msgs The field error messages to apply
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
-		final FieldGroup root = fieldPanel.getFieldGroup();
+		final FieldGroup root = fieldPanel.getValue();
 		final Errors errors = new Errors();
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
@@ -205,17 +203,18 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
 			try {
+				Log.debug("EditPanel - Saving..");
 				fieldPanel.getAction().execute();
-				Msgs.post(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO), this, Position.CENTER,
-						3000, true);
+				globalMsgPanel.add(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO));
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
+				Log.debug("EditPanel - Saving complete.");
 			}
 			catch(final Exception e) {
-				// already handled
+				Log.error(e.getMessage());
 			}
 		}
 		else if(sender == btnReset) {
-			fieldPanel.getFieldGroup().reset();
+			fieldPanel.getValue().reset();
 		}
 		else if(sender == btnDelete) {
 			EditEvent.fire(this, EditOp.UPDATE);

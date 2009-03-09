@@ -8,7 +8,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.field.IField.Styles;
+import com.tll.client.ui.field.IFieldWidget.Styles;
 
 /**
  * GridFieldComposer - Lays out fields in a vertical style having the following

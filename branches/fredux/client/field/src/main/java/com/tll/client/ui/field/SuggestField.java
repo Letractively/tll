@@ -31,13 +31,25 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	 * Impl
 	 * @author jpk
 	 */
-	static final class Impl extends SuggestBox implements IEditable<String> {
+	final class Impl extends SuggestBox implements IEditable<String> {
 
 		/**
 		 * Constructor
 		 */
 		public Impl() {
 			super(new MultiWordSuggestOracle());
+		}
+
+		@Override
+		public String getValue() {
+			final String s = super.getValue();
+			try {
+				return getDataValue(s);
+			}
+			catch(final IllegalArgumentException e) {
+				// ok
+			}
+			return s;
 		}
 
 		MultiWordSuggestOracle getOracle() {
@@ -62,8 +74,6 @@ public final class SuggestField extends AbstractDataField<String, String> {
 
 	private final Impl sb;
 	
-	private Map<String, String> data;
-
 	/**
 	 * Constructor
 	 * @param name
@@ -95,6 +105,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	private void buildOracle() {
 		final MultiWordSuggestOracle oracle = sb.getOracle();
 		oracle.clear();
+		final Map<String, String> data = getData();
 		if(data != null) {
 			for(final String s : data.values()) {
 				oracle.add(s);
@@ -110,16 +121,14 @@ public final class SuggestField extends AbstractDataField<String, String> {
 
 	@Override
 	public void addDataItem(String name, String value) {
-		if(data.put(value, name) == null) {
-			sb.getOracle().add(name);
-		}
+		super.addDataItem(name, value);
+		sb.getOracle().add(name);
 	}
 
 	@Override
 	public void removeDataItem(String value) {
-		if(data.remove(value) != null) {
-			buildOracle();
-		}
+		super.removeDataItem(value);
+		buildOracle();
 	}
 
 	public String getText() {
@@ -131,7 +140,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 	}
 
 	@Override
-	protected IEditable<String> getEditable() {
+	public IEditable<String> getEditable() {
 		return sb;
 	}
 }

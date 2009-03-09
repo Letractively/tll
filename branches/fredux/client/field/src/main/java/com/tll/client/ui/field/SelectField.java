@@ -129,7 +129,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 	}
 
 	@Override
-	protected IEditable<V> getEditable() {
+	public IEditable<V> getEditable() {
 		return lb;
 	}
 

@@ -26,10 +26,7 @@ import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.ModelViewer;
 import com.tll.client.ui.msg.GlobalMsgPanel;
-import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.util.GlobalFormat;
-import com.tll.client.validate.ErrorHandlerDelegate;
-import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.MockModelStubber;
 import com.tll.common.model.mock.MockModelStubber.ModelType;
@@ -262,11 +259,6 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
-			
-			final MsgPopupRegistry mregistry = new MsgPopupRegistry();
-			final ErrorHandlerDelegate errorHandler =
-					new ErrorHandlerDelegate(new PopupValidationFeedback(mregistry));
-			group.setErrorHandler(errorHandler);
 		}
 
 		@Override

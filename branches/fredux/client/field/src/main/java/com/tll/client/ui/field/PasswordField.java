@@ -66,8 +66,8 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		return tb.getMaxLength();
 	}
 
-	public void setMaxLen(int maxLen) {
-		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
+	public void setMaxLen(int maxlen) {
+		tb.setMaxLength(maxlen < 0 ? 256 : maxlen);
 	}
 
 	public String getText() {
@@ -79,7 +79,7 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 	}
 
 	@Override
-	protected IEditable<String> getEditable() {
+	public IEditable<String> getEditable() {
 		return tb;
 	}
 }

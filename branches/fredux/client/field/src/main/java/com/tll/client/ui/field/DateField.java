@@ -107,7 +107,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	}
 
 	@Override
-	protected IEditable<Date> getEditable() {
+	public IEditable<Date> getEditable() {
 		return dbox;
 	}
 

@@ -21,7 +21,7 @@ import com.tll.common.util.StringUtil;
  */
 public final class FieldLabel extends Widget implements HasText, HasClickHandlers, IHasHoverHandlers {
 
-	private static final String requiredToken = "<sup class=\"" + IField.Styles.REQUIRED + "\">*</sup>";
+	private static final String requiredToken = "<sup class=\"" + IFieldWidget.Styles.REQUIRED + "\">*</sup>";
 
 	private static final FieldLabelImpl impl = (FieldLabelImpl) GWT.create(FieldLabelImpl.class);
 
@@ -38,7 +38,7 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	public FieldLabel(String text, String fldId, boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
-		setStyleName(IField.Styles.LABEL);
+		setStyleName(IFieldWidget.Styles.LABEL);
 		setText(text);
 		if(fldId != null) {
 			setFor(fldId);

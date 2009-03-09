@@ -76,7 +76,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 	}
 
 	@Override
-	protected IEditable<String> getEditable() {
+	public IEditable<String> getEditable() {
 		return ta;
 	}
 }

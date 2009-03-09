@@ -39,6 +39,13 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 	public void setData(Map<E, String> data) {
 		this.data = data;
 	}
+	
+	/**
+	 * @return the data map
+	 */
+	protected final Map<E, String> getData() {
+		return data;
+	}
 
 	/**
 	 * Adds a single value/name data item.
@@ -57,11 +64,11 @@ public abstract class AbstractDataField<E, V> extends AbstractField<V> {
 		data.remove(value);
 	}
 
-	public String getToken(E value) {
+	public final String getToken(E value) {
 		return data.get(value);
 	}
 
-	public E getDataValue(String key) {
+	public final E getDataValue(String key) {
 		for(final E val : data.keySet()) {
 			if(data.get(val).equals(key)) {
 				return val;

@@ -45,6 +45,12 @@ public class MockModelStubber {
 		 */
 		COMPLEX;
 	}
+	
+	/**
+	 * Global static for ensuring all ids are unique for proper equals/hashcode
+	 * behavior down the line.
+	 */
+	private static int nextUniqueId = 0;
 
 	/**
 	 * Creates a {@link Model} instance of the given mock type.
@@ -65,22 +71,22 @@ public class MockModelStubber {
 	/**
 	 * Stubs a model of the given type having the given id.
 	 * @param type the model entity type
-	 * @param id the id to ascribe
 	 * @param name optional name property value. If non-<code>null</code>, a
 	 *        standard entity name property will be added.
 	 * @param name add the standard entity timestamping properties?
 	 * @return the stubbed model
 	 */
-	private static Model stubModel(MockEntityType type, int id, String name, boolean timestamping) {
+	private static Model stubModel(MockEntityType type, String name, boolean timestamping) {
 		final Model m = new Model(type);
-		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1), id));
+		m.set(new IntPropertyValue(Model.ID_PROPERTY, new PropertyMetadata(PropertyType.INT, false, true, -1),
+				++nextUniqueId));
 		if(name != null) {
 			m.set(new StringPropertyValue(Model.NAME_PROPERTY, new PropertyMetadata(PropertyType.STRING, false, true, 32),
 					name));
 		}
-		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new PropertyMetadata(PropertyType.DATE, false, true, 32),
+		m.set(new DatePropertyValue(Model.DATE_CREATED_PROPERTY, new PropertyMetadata(PropertyType.DATE, true, true, 32),
 				new Date()));
-		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new PropertyMetadata(PropertyType.DATE, false, true, 32),
+		m.set(new DatePropertyValue(Model.DATE_MODIFIED_PROPERTY, new PropertyMetadata(PropertyType.DATE, true, true, 32),
 				new Date()));
 		return m;
 	}
@@ -114,7 +120,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccount(Model parentAccount, MockEntityType accountType, int num) {
-		final Model m = stubModel(accountType, num, "ISP " + num, true);
+		final Model m = stubModel(accountType, "ISP " + num, true);
 		m
 				.set(new EnumPropertyValue("status", new PropertyMetadata(PropertyType.ENUM, false, true, 16),
 						AccountStatus.OPEN));
@@ -145,7 +151,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAccountAddress(Model account, Model address, int num) {
-		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, num, ("Adrs " + num), true);
+		final Model m = stubModel(MockEntityType.ACCOUNT_ADDRESS, ("Adrs " + num), true);
 		m.set(new EnumPropertyValue("type", new PropertyMetadata(PropertyType.ENUM, false, true, 8),
 				AddressType.values()[num - 1]));
 		m.set(new RelatedOneProperty(MockEntityType.ACCOUNT, "account", true, account));
@@ -159,7 +165,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubAddress(int num) {
-		final Model address = stubModel(MockEntityType.ADDRESS, num, null, false);
+		final Model address = stubModel(MockEntityType.ADDRESS, null, false);
 		address.set(new StringPropertyValue("emailAddress", new PropertyMetadata(PropertyType.STRING, false, false, 32),
 				"email" + num + "@domain.com"));
 		address.set(new StringPropertyValue("firstName", new PropertyMetadata(PropertyType.STRING, false, false, 32),
@@ -195,7 +201,7 @@ public class MockModelStubber {
 	 * @return new instance
 	 */
 	public static Model stubCurrency() {
-		final Model m = stubModel(MockEntityType.CURRENCY, 1, null, false);
+		final Model m = stubModel(MockEntityType.CURRENCY, null, false);
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
 		m.set(new FloatPropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.FLOAT, false, true, -1), 1f));
@@ -207,7 +213,7 @@ public class MockModelStubber {
 	 * @return new Model representing payment info
 	 */
 	public static Model stubPaymentInfo() {
-		final Model m = stubModel(MockEntityType.PAYMENT_INFO, 1, null, false);
+		final Model m = stubModel(MockEntityType.PAYMENT_INFO, null, false);
 		m.set(new StringPropertyValue("paymentData_bankAccountNo", new PropertyMetadata(PropertyType.STRING, false, false,
 				16), "0005543"));
 		m.set(new StringPropertyValue("paymentData_bankName", new PropertyMetadata(PropertyType.STRING, false, false, 16),

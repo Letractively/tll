@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.common.bind.IBindable;
+import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.criteria.IPropertyNameProvider;
 
 /**
@@ -20,6 +21,49 @@ import com.tll.criteria.IPropertyNameProvider;
  */
 public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText,
 		IValidator {
+
+	/**
+	 * Styles - (field.css)
+	 * @author jpk
+	 */
+	static final class Styles {
+
+		/**
+		 * Style indicating a UI artifact is a field.
+		 */
+		public static final String FIELD = "fld";
+
+		/**
+		 * Style for field labels.
+		 */
+		public static final String LABEL = "lbl";
+
+		/**
+		 * Style indicating a field's requiredness.
+		 */
+		public static final String REQUIRED = "rqd";
+
+		/**
+		 * Style indicating the field's value is dirty (changed).
+		 */
+		public static final String DIRTY = "dirty";
+
+		/**
+		 * Style indicating the field's value is invalid.
+		 */
+		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
+
+		/**
+		 * Style for disabling a field.
+		 */
+		public static final String DISABLED = "disabled";
+
+	} // Styles
+	
+	/**
+	 * @return the editable (form control).
+	 */
+	IEditable<?> getEditable();
 
 	/**
 	 * Sets the property name for this field.
@@ -43,4 +87,10 @@ public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvide
 	 * @param fieldLabelContainer The desired ancestor {@link Widget}
 	 */
 	void setFieldLabelContainer(Widget fieldLabelContainer);
+
+	
+	/**
+	 * @return the current validity state.
+	 */
+	boolean isValid();
 }

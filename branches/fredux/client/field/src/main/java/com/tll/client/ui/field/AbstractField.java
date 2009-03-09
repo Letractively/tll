@@ -7,11 +7,8 @@ package com.tll.client.ui.field;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -19,15 +16,14 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.AbstractBindableWidget;
 import com.tll.client.ui.IHasFormat;
-import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.IError;
 import com.tll.client.validate.IErrorHandler;
-import com.tll.client.validate.IPopupErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
@@ -45,7 +41,7 @@ import com.tll.model.schema.PropertyMetadata;
  */
 public abstract class AbstractField<V> extends AbstractBindableWidget<V> 
 implements IFieldWidget<V>,
-		ValueChangeHandler<V>, Focusable, BlurHandler, IHoverHandler {
+		ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -125,9 +121,7 @@ implements IFieldWidget<V>,
 	 */
 	private boolean initialValueSet;
 	
-	private HandlerRegistration rMseOut, rMsgOvr;
-
-	private MsgPopupRegistry mregistry;
+	private IErrorHandler errorHandler;
 	
 	private boolean valid;
 
@@ -272,8 +266,14 @@ implements IFieldWidget<V>,
 			fldLbl.setRequired(readOnly ? false : required);
 		}
 		this.required = required;
+		if(required) {
+			addValidator(NotEmptyValidator.INSTANCE);
+		}
+		else {
+			removeValidator(NotEmptyValidator.class);
+		}
 	}
-
+	
 	public final boolean isEnabled() {
 		return enabled;
 	}
@@ -324,7 +324,7 @@ implements IFieldWidget<V>,
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
-	protected abstract IEditable<V> getEditable();
+	public abstract IEditable<V> getEditable();
 
 	/**
 	 * Either marks or un-marks this field as dirty in the UI based on its current
@@ -363,7 +363,8 @@ implements IFieldWidget<V>,
 
 			// maxlength
 			if(this instanceof IHasMaxLength) {
-				((IHasMaxLength) this).setMaxLen(metadata.getMaxLen());
+				final int maxlen = metadata.getMaxLen();
+				((IHasMaxLength) this).setMaxLen(maxlen);
 			}
 
 			// set the type coercion validator
@@ -414,71 +415,61 @@ implements IFieldWidget<V>,
 		}
 	}
 
-	public final void removeValidator(IValidator validator) {
-		if(validator != null && this.validator != null) {
-			this.validator.remove(validator);
+	public final void removeValidator(Class<? extends IValidator> type) {
+		if(validator != null) validator.remove(type);
+	}
+
+	@Override
+	public final boolean isValid() {
+		return valid;
+	}
+	
+	private void resolveError() {
+		if(errorHandler != null) {
+			errorHandler.resolveError(this);
 		}
 	}
 
-	public final void validate() throws ValidationException {
-		try {
-			validate(getValue());
-			getErrorHandler().resolveError(this);
-		}
-		catch(final ValidationException e) {
-			getErrorHandler().handleError(this, e.getError());
-			throw e;
+	private void handleError(IError error) {
+		if(errorHandler != null) {
+			errorHandler.handleError(this, error);
 		}
 	}
-	
-	private void trackHover(boolean track) {
-		// resolve the hoverable
-		if(track) {
-			final IHasHoverHandlers hoverable = fldLbl == null ? getEditable() : fldLbl;
-			if(rMseOut == null) rMseOut = hoverable.addMouseOutHandler(this);
-			if(rMsgOvr == null) rMsgOvr = hoverable.addMouseOverHandler(this);
+
+	public final void validate(boolean showFeedback) throws ValidationException {
+		validate(getValue());
+		try {
+			validate(getValue());
+			resolveError();
 		}
-		else {
-			if(rMseOut != null) {
-				rMseOut.removeHandler();
-				rMseOut = null;
-			}
-			if(rMsgOvr != null) {
-				rMsgOvr.removeHandler();
-				rMsgOvr = null;
-			}
+		catch(final ValidationException e) {
+			if(showFeedback) handleError(e.getError());
+			throw e;
 		}
 	}
 	
 	public final Object validate(Object value) throws ValidationException {
 		try {
-			// check field requiredness
-			if(isRequired()) {
-				value = NotEmptyValidator.INSTANCE.validate(value);
-			}
-
-			// check max length
-			if(this instanceof IHasMaxLength) {
-				final int maxlen = ((IHasMaxLength) this).getMaxLen();
-				if(maxlen != -1) {
-					value = StringLengthValidator.validate(value, -1, maxlen);
-				}
-			}
-
 			if(validator != null) {
 				value = validator.validate(value);
 			}
-			
 			valid = true;
 		}
 		catch(final ValidationException e) {
 			valid = false;
 			throw e;
 		}
+		/*
 		finally {
-			if(!valid && isAttached()) trackHover(true);
+			if(!valid && isAttached()) {
+				trackHover(true);
+			}
+			else if(valid) {
+				trackHover(false);
+			}
 		}
-
+		*/
+		
 		return value;
 	}
 
@@ -540,7 +531,7 @@ implements IFieldWidget<V>,
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			getErrorHandler().resolveError(this);
+			resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
@@ -568,40 +559,18 @@ implements IFieldWidget<V>,
 	public void setTabIndex(int index) {
 		if(!readOnly) getEditable().setTabIndex(index);
 	}
-	
-	@Override
-	public void setErrorHandler(IErrorHandler errorHandler) {
-		super.setErrorHandler(errorHandler);
-		if(errorHandler instanceof IPopupErrorHandler) {
-			mregistry = ((IPopupErrorHandler) errorHandler).getMsgPopupRegistry();
-		}
-	}
 
 	@Override
 	public void onBlur(BlurEvent event) {
 		try {
-			validate();
+			validate(true);
 			dirtyCheck();
 		}
 		catch(final ValidationException e) {
 			// ok
 		}
 	}
-
-	@Override
-	public void onMouseOver(MouseOverEvent event) {
-		if(mregistry != null) {
-			mregistry.getOperator(this, false).showMsgs(!valid);
-		}
-	}
-
-	@Override
-	public void onMouseOut(MouseOutEvent event) {
-		if(mregistry != null && !valid) {
-			mregistry.getOperator(this, false).showMsgs(false);
-		}
-	}
-
+	
 	@Override
 	public final void onValueChange(ValueChangeEvent<V> event) {
 		assert event.getSource() == getEditable();
@@ -636,10 +605,19 @@ implements IFieldWidget<V>,
 	public final void reset() {
 		if(initialValueSet) {
 			setValue(initialValue);
-			getErrorHandler().resolveError(this);
+			resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
-		trackHover(false);
+	}
+
+	@Override
+	public final IErrorHandler getErrorHandler() {
+		return errorHandler;
+	}
+
+	@Override
+	public final void setErrorHandler(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 
 	@Override

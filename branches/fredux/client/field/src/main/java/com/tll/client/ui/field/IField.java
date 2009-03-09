@@ -9,7 +9,6 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -21,42 +20,9 @@ import com.tll.model.schema.IPropertyMetadataProvider;
 public interface IField extends HasName, IWidgetRef {
 
 	/**
-	 * Styles - (field.css)
-	 * @author jpk
+	 * @return The error handler.
 	 */
-	static final class Styles {
-
-		/**
-		 * Style indicating a UI artifact is a field.
-		 */
-		public static final String FIELD = "fld";
-
-		/**
-		 * Style for field labels.
-		 */
-		public static final String LABEL = "lbl";
-
-		/**
-		 * Style indicating a field's requiredness.
-		 */
-		public static final String REQUIRED = "rqd";
-
-		/**
-		 * Style indicating the field's value is dirty (changed).
-		 */
-		public static final String DIRTY = "dirty";
-
-		/**
-		 * Style indicating the field's value is invalid.
-		 */
-		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
-
-		/**
-		 * Style for disabling a field.
-		 */
-		public static final String DISABLED = "disabled";
-
-	} // Styles
+	IErrorHandler getErrorHandler();
 
 	/**
 	 * Sets the validation handler.
@@ -128,18 +94,21 @@ public interface IField extends HasName, IWidgetRef {
 	/**
 	 * Adds a validator.
 	 * @param validator The validtor to add
+	 * @throws IllegalArgumentException When the given validator is
+	 *         <code>null</code> or one of the same type already exists.
 	 */
-	void addValidator(IValidator validator);
+	void addValidator(IValidator validator) throws IllegalArgumentException;
 
 	/**
-	 * Removes a validator.
-	 * @param validator The validtor to remove
+	 * Removes a validator given its type.
+	 * @param type The validator type to remove
 	 */
-	void removeValidator(IValidator validator);
+	void removeValidator(Class<? extends IValidator> type);
 
 	/**
 	 * Validates the field's state.
+	 * @param showFeedback
 	 * @throws ValidationException When invalid
 	 */
-	void validate() throws ValidationException;
+	void validate(boolean showFeedback) throws ValidationException;
 }

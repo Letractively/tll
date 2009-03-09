@@ -95,7 +95,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 	}
 
 	@Override
-	protected IEditable<String> getEditable() {
+	public IEditable<String> getEditable() {
 		return tb;
 	}
 }

@@ -66,7 +66,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	}
 
 	@Override
-	protected IEditable<Boolean> getEditable() {
+	public IEditable<Boolean> getEditable() {
 		return cb;
 	}
 

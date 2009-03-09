@@ -135,7 +135,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 	}
 
 	@Override
-	protected IEditable<Collection<V>> getEditable() {
+	public IEditable<Collection<V>> getEditable() {
 		return lb;
 	}
 

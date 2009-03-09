@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.Br;
-import com.tll.client.ui.field.IField.Styles;
+import com.tll.client.ui.field.IFieldWidget.Styles;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following

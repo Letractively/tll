@@ -7,7 +7,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
-import com.tll.client.validate.IErrorHandler;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IModel;
 import com.tll.common.bind.IPropertyChangeListener;
@@ -19,10 +18,12 @@ import com.tll.common.model.PropertyPathException;
  * AbstractBindableWidget
  * <p>
  * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
- * @param <V> The value type
+ * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractBindableWidget<V> extends Composite implements IBindableWidget<V> {
+@SuppressWarnings("unchecked")
+public abstract class AbstractBindableWidget<V> extends Composite implements
+		IBindableWidget<V> {
 	
 	/**
 	 * The converter for handling in-bound un-typed values.
@@ -37,12 +38,12 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	/**
 	 * The optional action.
 	 */
-	private IBindingAction action;
+	private IBindingAction<V> action;
 
 	/**
 	 * Responsible for handling validation exceptions.
 	 */
-	private IErrorHandler errorHandler;
+	//private IErrorHandler errorHandler;
 
 	/**
 	 * Responsible for disseminating <em>property</em> change events.
@@ -50,12 +51,12 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 	@Override
-	public final IBindingAction getAction() {
+	public final IBindingAction<V> getAction() {
 		return action;
 	}
 
 	@Override
-	public final void setAction(IBindingAction action) {
+	public final void setAction(IBindingAction<V> action) {
 		this.action = action;
 	}
 
@@ -92,6 +93,7 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
+	/*
 	public final IErrorHandler getErrorHandler() {
 		return errorHandler;
 	}
@@ -99,7 +101,8 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 	public void setErrorHandler(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
-
+	*/
+	
 	@Override
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
 		return changeSupport.getPropertyChangeListeners();
@@ -138,7 +141,6 @@ public abstract class AbstractBindableWidget<V> extends Composite implements IBi
 		return getValue();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public final void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {

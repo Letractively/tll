@@ -334,7 +334,7 @@ public final class Binding {
 	public Binding(IBindable model, IBindableWidget<?> widget, IValidator validator,
 			IErrorHandler feedback,
 			String modelProperty) {
-		this(model, modelProperty, null, null, widget, "value", validator, feedback);
+		this(model, modelProperty, null, null, widget, IBindableWidget.PROPERTY_VALUE, validator, feedback);
 	}
 
 	/**

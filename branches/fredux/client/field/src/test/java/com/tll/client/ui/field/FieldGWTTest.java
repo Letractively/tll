@@ -45,7 +45,7 @@ public class FieldGWTTest extends GWTTestCase {
 			final boolean or = f.isRequired();
 			f.setRequired(true);
 			try {
-				f.validate();
+				f.validate(false);
 				Assert.fail("Requiredness validation failed");
 			}
 			catch(final ValidationException e) {
@@ -74,7 +74,7 @@ public class FieldGWTTest extends GWTTestCase {
 			f.setValue(STRING_VALUE);
 			((IHasMaxLength) f).setMaxLen(2);
 			try {
-				f.validate();
+				f.validate(false);
 				Assert.fail("IHasMaxLength validation failed");
 			}
 			catch(final ValidationException e) {
