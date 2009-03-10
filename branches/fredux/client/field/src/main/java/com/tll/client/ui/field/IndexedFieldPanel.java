@@ -24,12 +24,15 @@ import com.tll.common.bind.IModel;
  * The {@link IndexedFieldPanel} is savagely different from its brethren
  * {@link FieldPanel} in that the value type is a raw reference to a model
  * collection rather than a {@link FieldGroup}. Because of this, this field
- * panel type manages its own binding life-cycle which is soley dicated by the
+ * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
  * <p>
  * {@link IndexedFieldPanel}s <em>must</em> "subscribe" to its parent
  * {@link FieldPanel}'s binding action and this panel does so upon dom
  * attachment.
+ * <p>
+ * <b>IMPT:</b> This panel's field group is expected to be a child of the parent
+ * field panel's field group.
  * @param <W> the indexed field panel widget render type
  * @param <I> the index field panel type
  * @author jpk
@@ -38,7 +41,8 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		AbstractBindableWidget<Collection<IModel>> implements IFieldGroupProvider {
 
 	/**
-	 * Index
+	 * Index - Wrapper class for each field panel at an index encapsulating the
+	 * field panel and its own field binding action.
 	 * @author jpk
 	 * @param <I> the index field panel type
 	 */
@@ -73,8 +77,8 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	/**
-	 * The indexed property name needed to bind to the indexed model collection
-	 * that is provided by the parent field binding action.
+	 * The indexed property name identifying the related many model collection in
+	 * the root model.
 	 */
 	private final String indexedPropertyName;
 
@@ -85,41 +89,45 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 
 	/**
 	 * The root field group containing only child {@link FieldGroup}s associated
-	 * with each indexed {@link FieldPanel}.
+	 * with each indexed {@link FieldPanel}. This group corresponds property path
+	 * wise to the related many model collection in the root model specified by
+	 * {@link #indexedPropertyName}.
 	 */
 	private final FieldGroup group;
 
 	/**
-	 * Internally held ref to the model collection to know whether to re-bind or
-	 * not. This avoids spurious re-binds when property change events fire!
+	 * Internally held ref to the related many model collection to know whether to
+	 * re-bind or not. This avoids spurious re-binds when property change events
+	 * fire!
 	 */
 	private transient Collection<IModel> value;
 
 	/**
 	 * Constructor
-	 * @param name The name to ascribe to this field panel serving as this field
-	 *        panel's field group name
-	 * @param indexedPropertyName The required name of the indexed property
-	 *        relative to the parent field panel. This is needed to "subscribe" to
-	 *        the parent's binding life-cycle so that this panel receives the raw
-	 *        model collection!
+	 * @param fieldGroupName The presentation worthy field group for the managed
+	 *        field group containing the indexable sub-field groups
+	 * @param indexedPropertyName The name of the indexed property identifying the
+	 *        related many model collection in the root model (the model held in
+	 *        the parent field panel). This is needed to "subscribe" to the
+	 *        parent's binding life-cycle so that this panel receives the raw
+	 *        model collection during binding
 	 */
-	public IndexedFieldPanel(String name, String indexedPropertyName) {
+	public IndexedFieldPanel(String fieldGroupName, String indexedPropertyName) {
 		super();
-		group = new FieldGroup(name);
+		group = new FieldGroup(fieldGroupName);
 		this.indexedPropertyName = indexedPropertyName;
 	}
 
 	/**
-	 * @return A newly created iterator over the index panels.
+	 * @return A newly created iterator over the indexed field panels.
 	 */
 	protected final Iterator<? extends IProvider<I>> getIndexIterator() {
 		return indexPanels.iterator();
 	}
 
 	/**
-	 * Provides the ref to the parent field panel which is necessary for proper
-	 * model/field binding.
+	 * Required ref to the parent field panel to be able to hook into the paren't
+	 * binding action.
 	 * @return Ref to the parent field panel.
 	 */
 	public abstract FieldPanel<?> getParentFieldPanel();
@@ -243,8 +251,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 * Clears the field group list cleaning up bindings and listeners.
 	 */
 	protected void clear() {
-		group.clear();
-		indexPanels.clear();
+		// remove in reverse to avoid spurious index group re-names
+		for(int i = size() - 1; i >= 0; i--) {
+			remove(i);
+		}
+		assert group.size() == 0;
+		assert indexPanels.size() == 0;
 	}
 
 	/**
@@ -264,6 +276,9 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		final I ip = createIndexPanel();
 		ip.setModel(model);
 		
+		// NOTE: we *don't* specify and error handler for this index field panel's binding actions
+		// as this is handled by the parent binding action since 
+		// its root field group is expected to contain this panel's field group as a child
 		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
 		indexPanels.add(index);
 
