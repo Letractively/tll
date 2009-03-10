@@ -18,9 +18,9 @@ public interface IError {
 	 */
 	static enum Type {
 		/**
-		 * A single error with no knowledge of its source.
+		 * A single error.
 		 */
-		SCALAR,
+		SINGLE,
 		/**
 		 * A collection of errors.
 		 */

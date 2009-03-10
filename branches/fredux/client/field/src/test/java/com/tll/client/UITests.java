@@ -19,7 +19,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.tll.client.mock.ComplexFieldPanel;
 import com.tll.client.ui.GridRenderer;
+import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.GridFieldComposer;
@@ -27,6 +29,7 @@ import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.ModelViewer;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.util.GlobalFormat;
+import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.MockModelStubber;
 import com.tll.common.model.mock.MockModelStubber.ModelType;
@@ -331,7 +334,18 @@ public final class UITests extends AbstractUITest {
 
 			mv = new ModelViewer();
 			ep = new EditPanel(gmp, new ComplexFieldPanel(), false, false);
-			ep.addEditHandler(mv);
+			ep.addEditHandler(new IEditHandler() {
+
+				@Override
+				public void onEdit(EditEvent event) {
+					// mimic model persist life-cycle
+					assert m != null;
+					final Model mcopy = m.copy(true);
+					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
+					ep.setModel(mcopy);
+					mv.setModel(mcopy);
+				}
+			});
 
 			context = new VerticalPanel();
 			context.getElement().getStyle().setProperty("margin", "5px");

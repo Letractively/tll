@@ -17,6 +17,7 @@ import com.tll.client.ui.field.IFieldWidget.Styles;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.PopupValidationFeedback;
+import com.tll.client.validate.IError.Type;
 
 /**
  * FieldErrorHandler - Localized error handling for field widgets.
@@ -48,21 +49,23 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error) {
-		super.handleError(source, error);
+	public void handleError(IWidgetRef source, IError error, int attribs) {
+		super.handleError(source, error, attribs);
 		
-		if(source instanceof IFieldWidget) {
-			// handle styling
-			source.getWidget().removeStyleName(Styles.DIRTY);
-			source.getWidget().addStyleName(Styles.INVALID);
-			
-			// track popup hovering
-			MouseRegs regs = invalids.get(source);
-			if(regs == null) {
-				regs = new MouseRegs();
-				invalids.put((IFieldWidget<?>) source, regs);
+		if(error.getType() == Type.SINGLE && Attrib.isLocal(attribs)) {
+			if(source instanceof IFieldWidget) {
+				// handle styling
+				source.getWidget().removeStyleName(Styles.DIRTY);
+				source.getWidget().addStyleName(Styles.INVALID);
+
+				// track popup hovering
+				MouseRegs regs = invalids.get(source);
+				if(regs == null) {
+					regs = new MouseRegs();
+					invalids.put((IFieldWidget<?>) source, regs);
+				}
+				trackHover((IFieldWidget<?>) source, regs, true);
 			}
-			trackHover((IFieldWidget<?>) source, regs, true);
 		}
 	}
 
@@ -84,19 +87,24 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	@Override
 	public void onMouseOver(MouseOverEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
-		mregistry.getOperator(field.getWidget(), false).showMsgs(!field.isValid());
+		if(field != null) {
+			mregistry.getOperator(field.getWidget(), false).showMsgs(!field.isValid());
+		}
 	}
 
 	@Override
 	public void clear() {
 		super.clear();
+		for(final IFieldWidget<?> fw : invalids.keySet()) {
+			trackHover(fw, invalids.get(fw), false);
+		}
 		invalids.clear();
 	}
 
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
-		if(!field.isValid()) {
+		if(field != null && !field.isValid()) {
 			mregistry.getOperator(field.getWidget(), false).showMsgs(false);
 		}
 	}
@@ -106,7 +114,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 		for(final IFieldWidget<?> fw : invalids.keySet()) {
 			if(src == fw || src == fw.getFieldLabel()) return fw;
 		}
-		throw new IllegalStateException();
+		return null;
 	}
 
 	/**

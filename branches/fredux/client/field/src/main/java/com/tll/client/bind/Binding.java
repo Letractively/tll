@@ -14,6 +14,7 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.IndexedPropertyChangeEvent;
@@ -110,7 +111,8 @@ public final class Binding {
 						if(lastException != null) {
 							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource());
 						}
-						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError());
+						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError(), Attrib.LOCAL
+								.flag());
 						lastException = ve;
 						return;
 					}

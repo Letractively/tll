@@ -20,13 +20,18 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
-import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.BillboardValidationFeedback;
+import com.tll.client.validate.Error;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.Errors;
-import com.tll.client.validate.ScalarError;
-import com.tll.common.model.Model;
+import com.tll.client.validate.IErrorHandler;
+import com.tll.common.bind.IModel;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -86,27 +91,31 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	
 	private String modelDescriptor;
 	
-	private final GlobalMsgPanel globalMsgPanel;
+	private final IMsgDisplay msgDisplay;
 
 	/**
 	 * Constructor
-	 * @param globalMsgPanel Optional global message panel. If specified, it will
-	 *        be employed in providing field validation feedback
+	 * @param msgDisplay Optional message display employed for providing field
+	 *        validation feedback
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(GlobalMsgPanel globalMsgPanel, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
+	public EditPanel(IMsgDisplay msgDisplay, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
 			boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 		
-		if(globalMsgPanel == null) throw new IllegalArgumentException("A global message panel must be specified.");
-		this.globalMsgPanel = globalMsgPanel;
-		editAction = new FieldBindingAction(globalMsgPanel);
+		if(msgDisplay == null) throw new IllegalArgumentException("A global message panel must be specified.");
+		this.msgDisplay = msgDisplay;
+		
+		final IErrorHandler eh =
+				new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
+						new MsgPopupRegistry()));
+		editAction = new FieldBindingAction(eh);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -166,9 +175,9 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * cleared.
 	 * @param model The model to set
 	 */
-	public void setModel(Model model) {
+	public void setModel(IModel model) {
 		Log.debug("EditPanel.setModel() - START");
-		modelDescriptor = model == null ? null : model.toString();
+		modelDescriptor = model == null ? null : model.descriptor();
 		fieldPanel.setModel(model);
 		if(model != null) {
 			assert isAttached() == true;
@@ -194,9 +203,8 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
 			if(fw == null) throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
-			errors.add(new ScalarError(msg.getMsg()), fw);
+			errors.add(new Error(msg.getMsg()), fw);
 		}
-		
 	}
 
 	public void onClick(ClickEvent event) {
@@ -205,7 +213,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 			try {
 				Log.debug("EditPanel - Saving..");
 				fieldPanel.getAction().execute();
-				globalMsgPanel.add(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO));
+				msgDisplay.add(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO));
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
 				Log.debug("EditPanel - Saving complete.");
 			}

@@ -6,7 +6,7 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.tll.client.ui.IWidgetRef;
-import com.tll.client.validate.IErrorHandler;
+import com.tll.client.validate.IHasErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -17,18 +17,7 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * <em><b>NOTE: </b>fields are considered equal only if their names are the same.</em>
  * @author jpk
  */
-public interface IField extends HasName, IWidgetRef {
-
-	/**
-	 * @return The error handler.
-	 */
-	IErrorHandler getErrorHandler();
-
-	/**
-	 * Sets the validation handler.
-	 * @param errorHandler
-	 */
-	void setErrorHandler(IErrorHandler errorHandler);
+public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 
 	/**
 	 * Clears the field's value.
@@ -107,8 +96,7 @@ public interface IField extends HasName, IWidgetRef {
 
 	/**
 	 * Validates the field's state.
-	 * @param showFeedback
 	 * @throws ValidationException When invalid
 	 */
-	void validate(boolean showFeedback) throws ValidationException;
+	void validate() throws ValidationException;
 }

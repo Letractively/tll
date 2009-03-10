@@ -201,7 +201,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * The Widget that is used to convey validation feedback.
 	 */
 	private Widget feedbackWidget;
-	
+
+	/**
+	 * The error handler to employ for validation.
+	 */
+	private IErrorHandler errorHandler;
+
 	/**
 	 * Constructor
 	 * @param name The required unique name for this field group.
@@ -524,22 +529,21 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
 	 * qualified" field better validation feedback.
 	 * @param errors the sole constant instance
-	 * @param showFeedback
 	 * @param group the field group
 	 * @param parents the field group parents
 	 */
-	private static void validate(final Errors errors, final boolean showFeedback, FieldGroup group,
+	private static void validate(final Errors errors, FieldGroup group,
 			List<FieldGroup> parents) {
 		for(final IField field : group) {
 			if(field instanceof FieldGroup) {
 				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
 				list.addAll(parents);
 				list.add(group);
-				validate(errors, showFeedback, ((FieldGroup) field), list);
+				validate(errors, ((FieldGroup) field), list);
 			}
 			else {
 				try {
-					field.validate(showFeedback);
+					field.validate();
 				}
 				catch(final ValidationException e) {
 					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
@@ -571,9 +575,9 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		}
 	}
 
-	public void validate(boolean showFeedback) throws ValidationException {
+	public void validate() throws ValidationException {
 		final Errors errors = new Errors();
-		validate(errors, showFeedback, this, new ArrayList<FieldGroup>());
+		validate(errors, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);
 		}
@@ -581,11 +585,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	@Override
 	public IErrorHandler getErrorHandler() {
-		throw new UnsupportedOperationException();
+		return errorHandler;
 	}
 
 	@Override
 	public void setErrorHandler(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 		for(final IField f : fields) {
 			f.setErrorHandler(errorHandler);
 		}

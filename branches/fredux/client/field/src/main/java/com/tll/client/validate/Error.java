@@ -12,23 +12,23 @@ import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * ScalarError - An error with one or more error messages.
+ * Error - A single error with one or more error messages.
  * @author jpk
  */
-public class ScalarError implements IError {
+public class Error implements IError {
 	
 	private final List<Msg> errorMsgs;
 
 	@Override
 	public Type getType() {
-		return Type.SCALAR;
+		return Type.SINGLE;
 	}
 
 	/**
 	 * Constructor
 	 * @param errorMsg
 	 */
-	public ScalarError(String errorMsg) {
+	public Error(String errorMsg) {
 		errorMsgs = new ArrayList<Msg>();
 		errorMsgs.add(new Msg(errorMsg, MsgLevel.ERROR));
 	}
@@ -37,7 +37,7 @@ public class ScalarError implements IError {
 	 * Constructor
 	 * @param errorMsgs
 	 */
-	public ScalarError(List<Msg> errorMsgs) {
+	public Error(List<Msg> errorMsgs) {
 		this.errorMsgs = errorMsgs;
 	}
 

@@ -12,7 +12,7 @@ import com.tll.common.bind.IModel;
  * @author jpk
  */
 public interface IBindingAction<V> extends IAction {
-
+	
 	/**
 	 * Sets the given widget to this binding action.
 	 * @param widget the widget to set

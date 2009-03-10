@@ -59,9 +59,9 @@ public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvide
 		public static final String DISABLED = "disabled";
 
 	} // Styles
-	
+
 	/**
-	 * @return the editable (form control).
+	 * @return the editable interface.
 	 */
 	IEditable<?> getEditable();
 
@@ -93,4 +93,19 @@ public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvide
 	 * @return the current validity state.
 	 */
 	boolean isValid();
+
+	/**
+	 * This property is a generalized switch. When a field widget is on, it is
+	 * available in the ui for full life-cycle interaction. When off, it is not
+	 * visible in the ui and does <em>not</em> participate in any field related
+	 * life-cycles. In other words, it serves as only as a reference when off.
+	 * @return <code>true</code> if the field widget is on.
+	 */
+	//boolean isOn();
+
+	/**
+	 * Turn the field widget on or off.
+	 * @param on
+	 */
+	//void turnOn(boolean on);
 }

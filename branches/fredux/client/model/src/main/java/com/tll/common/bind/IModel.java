@@ -5,6 +5,8 @@
  */
 package com.tll.common.bind;
 
+import com.tll.IDescriptorProvider;
+import com.tll.common.model.IEntityType;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
@@ -12,7 +14,9 @@ import com.tll.model.schema.IPropertyMetadataProvider;
  * methods primarily serve to support binding of indexed properties.
  * @author jpk
  */
-public interface IModel extends IBindable, IPropertyMetadataProvider {
+public interface IModel extends IBindable, IPropertyMetadataProvider, IDescriptorProvider {
+	
+	IEntityType getEntityType();
 
 	/**
 	 * Has this model not yet been persisted?

@@ -21,10 +21,15 @@ import com.tll.common.msg.Msg;
 public class Errors implements IError {
 
 	/**
-	 * Cache errors keyed by the source.
+	 * The cache of sourced errors.
 	 */
 	private Map<IWidgetRef, List<IError>> sourced;
-	
+
+	/**
+	 * The cache of un-sourced errors.
+	 */
+	private List<IError> unsourced;
+
 	/**
 	 * The total number of errors with no regard to the source.
 	 */
@@ -38,18 +43,29 @@ public class Errors implements IError {
 	/**
 	 * Add sourced errors.
 	 * @param error the errors
-	 * @param field the sourcing field
+	 * @param source the source of the error. May be <code>null</code> in which
+	 *        case this error is cached as un-sourced otherwise it is cached as
+	 *        sourced.
 	 */
-	public void add(IError error, IWidgetRef field) {
-		if(sourced == null) {
-			sourced = new HashMap<IWidgetRef, List<IError>>();
+	public void add(IError error, IWidgetRef source) {
+		if(error == null) throw new IllegalArgumentException();
+		if(source == null) {
+			if(unsourced == null) {
+				unsourced = new ArrayList<IError>();
+			}
+			unsourced.add(error);
 		}
-		List<IError> list = sourced.get(field);
-		if(list == null) {
-			list = new ArrayList<IError>();
-			sourced.put(field, list);
+		else {
+			if(sourced == null) {
+				sourced = new HashMap<IWidgetRef, List<IError>>();
+			}
+			List<IError> list = sourced.get(source);
+			if(list == null) {
+				list = new ArrayList<IError>();
+				sourced.put(source, list);
+			}
+			list.add(error);
 		}
-		list.add(error);
 		numErrors++;
 	}
 
@@ -61,8 +77,12 @@ public class Errors implements IError {
 		return sourced;
 	}
 	
+	public List<IError> getUnsourcedErrors() {
+		return unsourced;
+	}
+
 	/**
-	 * @return The number of errors irrespective of the error source.
+	 * @return The number of sourced and un-sourced errors.
 	 */
 	public int size() {
 		return numErrors;

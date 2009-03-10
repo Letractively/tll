@@ -41,11 +41,6 @@ public abstract class AbstractBindableWidget<V> extends Composite implements
 	private IBindingAction<V> action;
 
 	/**
-	 * Responsible for handling validation exceptions.
-	 */
-	//private IErrorHandler errorHandler;
-
-	/**
 	 * Responsible for disseminating <em>property</em> change events.
 	 */
 	protected final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
@@ -77,7 +72,7 @@ public abstract class AbstractBindableWidget<V> extends Composite implements
 		
 		if(old != null) {
 			Log.debug("AbstractBindableWidget - unbinding existing action..");
-			action.unbind(this);
+			action.unset(this);
 		}
 
 		this.model = model;
@@ -93,16 +88,6 @@ public abstract class AbstractBindableWidget<V> extends Composite implements
 		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
-	/*
-	public final IErrorHandler getErrorHandler() {
-		return errorHandler;
-	}
-
-	public void setErrorHandler(IErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
-	}
-	*/
-	
 	@Override
 	public final IPropertyChangeListener[] getPropertyChangeListeners() {
 		return changeSupport.getPropertyChangeListeners();

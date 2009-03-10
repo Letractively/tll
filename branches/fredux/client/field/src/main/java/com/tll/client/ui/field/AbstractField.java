@@ -27,8 +27,8 @@ import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
-import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
+import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -123,7 +123,7 @@ implements IFieldWidget<V>,
 	
 	private IErrorHandler errorHandler;
 	
-	private boolean valid;
+	private boolean valid = true;
 
 	/**
 	 * Constructor
@@ -242,6 +242,9 @@ implements IFieldWidget<V>,
 
 	public final void clearValue() {
 		setValue(null);
+		this.initialValue = null;
+		this.initialValueSet = false;
+		this.oldValue = null;
 	}
 
 	public final boolean isReadOnly() {
@@ -342,11 +345,11 @@ implements IFieldWidget<V>,
 	}
 
 	public final void addValidator(IValidator validator) {
-		if(validator != null && validator != NotEmptyValidator.INSTANCE
-				&& (validator instanceof StringLengthValidator == false)) {
+		if(validator != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
 			}
+			this.validator.remove(validator.getClass());
 			this.validator.add(validator);
 		}
 	}
@@ -425,25 +428,25 @@ implements IFieldWidget<V>,
 	}
 	
 	private void resolveError() {
-		if(errorHandler != null) {
+		if(!valid && errorHandler != null) {
 			errorHandler.resolveError(this);
 		}
+		valid = true;
 	}
 
 	private void handleError(IError error) {
 		if(errorHandler != null) {
-			errorHandler.handleError(this, error);
+			errorHandler.handleError(this, error, Attrib.LOCAL.flag());
 		}
 	}
 
-	public final void validate(boolean showFeedback) throws ValidationException {
-		validate(getValue());
+	public final void validate() throws ValidationException {
 		try {
 			validate(getValue());
 			resolveError();
 		}
 		catch(final ValidationException e) {
-			if(showFeedback) handleError(e.getError());
+			handleError(e.getError());
 			throw e;
 		}
 	}
@@ -531,7 +534,7 @@ implements IFieldWidget<V>,
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			resolveError();
+			//resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
@@ -563,7 +566,7 @@ implements IFieldWidget<V>,
 	@Override
 	public void onBlur(BlurEvent event) {
 		try {
-			validate(true);
+			validate();
 			dirtyCheck();
 		}
 		catch(final ValidationException e) {

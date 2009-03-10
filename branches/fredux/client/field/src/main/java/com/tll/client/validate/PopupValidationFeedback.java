@@ -5,6 +5,7 @@
 package com.tll.client.validate;
 
 import com.tll.client.ui.IWidgetRef;
+import com.tll.client.ui.msg.IHasMsgPopupRegistry;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.IError.Type;
 
@@ -13,27 +14,31 @@ import com.tll.client.validate.IError.Type;
  * messages.
  * @author jpk
  */
-public class PopupValidationFeedback implements IPopupErrorHandler {
+public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegistry {
 
-	protected final MsgPopupRegistry mregistry;
+	protected MsgPopupRegistry mregistry;
 
 	/**
 	 * Constructor
 	 * @param mregistry The required message popup registry
 	 */
 	public PopupValidationFeedback(MsgPopupRegistry mregistry) {
-		if(mregistry == null) throw new IllegalArgumentException();
-		this.mregistry = mregistry;
+		setMsgPopupRegistry(mregistry);
 	}
 
 	public MsgPopupRegistry getMsgPopupRegistry() {
 		return mregistry;
 	}
 
-	public void handleError(IWidgetRef source, IError error) {
-		// we only handle scalar errors
-		if(error.getType() == Type.SCALAR) {
-			mregistry.addMsgs(((ScalarError) error).getMessages(), source.getWidget(), true);
+	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
+		if(mregistry == null) throw new IllegalArgumentException();
+		this.mregistry = mregistry;
+	}
+
+	public void handleError(IWidgetRef source, IError error, int attribs) {
+		// we only handle single local errors
+		if(error.getType() == Type.SINGLE && Attrib.isLocal(attribs)) {
+			mregistry.addMsgs(((Error) error).getMessages(), source.getWidget(), true);
 		}
 	}
 

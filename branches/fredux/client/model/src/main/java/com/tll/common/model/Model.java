@@ -731,6 +731,11 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	}
 
 	@Override
+	public String descriptor() {
+		return getRefKey().descriptor();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(!(obj instanceof Model)) return false;

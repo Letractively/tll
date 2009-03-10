@@ -9,9 +9,10 @@
   
   <!-- non client package sources -->
   <source path=""><!-- (i.e. the current dir) -->
-    <include name="IMarshalable.java" />
-    <include name="IDescriptorProvider.java" />
+    <include name="IProvider.java" />
     <include name="INameValueProvider.java" />
+    <include name="IDescriptorProvider.java" />
+    <include name="IMarshalable.java" />
   </source>
   
   <source path="util">

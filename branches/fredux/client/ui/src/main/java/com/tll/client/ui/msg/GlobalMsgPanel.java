@@ -16,7 +16,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * removable.
  * @author jpk
  */
-public class GlobalMsgPanel extends Composite {
+public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 
 	/**
 	 * Styles - (msg.css)

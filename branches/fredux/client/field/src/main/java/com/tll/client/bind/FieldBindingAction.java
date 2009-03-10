@@ -8,16 +8,12 @@ import java.util.Collection;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldWidget;
-import com.tll.client.ui.msg.GlobalMsgPanel;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.BillboardValidationFeedback;
-import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.Error;
 import com.tll.client.validate.IErrorHandler;
-import com.tll.client.validate.ScalarError;
 import com.tll.client.validate.ValidationException;
+import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.bind.IModel;
 
 /**
@@ -27,11 +23,32 @@ import com.tll.common.bind.IModel;
  */
 public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 
-	private final GlobalMsgPanel globalMsgPanel;
-	
-	private final IErrorHandler bindingErrorHandler;
+	/**
+	 * Generalized binding creation routine to bind a {@link FieldGroup} instance
+	 * to an {@link IModel} instance.
+	 * <p>
+	 * All {@link IFieldWidget}s are extracted from the given field group and
+	 * bound to the corresponding model properties with the sole exception that
+	 * "managed" model properties are <em>not</em> bound.
+	 * @param group
+	 * @param model
+	 * @param errorHandler
+	 * @return the created {@link Binding}.
+	 */
+	public static Binding createBinding(FieldGroup group, IModel model, IErrorHandler errorHandler) {
+		final Binding b = new Binding();
+		group.setErrorHandler(errorHandler);
+		// create bindings for all provided field widgets in the root field group
+		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
+			Log.debug("Binding field group: " + group + " to model [" + model + "]." + fw.getPropertyName());
+			b.getChildren().add(
+					new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
+							errorHandler));
+		}
+		return b;
+	}
 
-	private final IErrorHandler globalErrorHandler;
+	private final IErrorHandler errorHandler;
 
 	/**
 	 * The root field group.
@@ -42,7 +59,7 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 	 * The [root] model.
 	 */
 	private IModel model;
-	
+
 	/**
 	 * The sole binding.
 	 */
@@ -50,23 +67,19 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 
 	/**
 	 * Constructor
-	 * @param globalMsgPanel the optional global message panel. If specified, a
-	 *        global validation error handler will direct feedback to it.
 	 */
-	public FieldBindingAction(GlobalMsgPanel globalMsgPanel) {
-		if(globalMsgPanel == null) throw new IllegalArgumentException();
-		this.globalMsgPanel = globalMsgPanel;
-		globalErrorHandler = new BillboardValidationFeedback(globalMsgPanel);
+	public FieldBindingAction() {
+		this(null);
+	}
 
-		// create the binding error handler
-		bindingErrorHandler =
-				new ErrorHandlerDelegate(new FieldErrorHandler(new MsgPopupRegistry()));
+	/**
+	 * Constructor
+	 * @param errorHandler the error handler to employ
+	 */
+	public FieldBindingAction(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
-	
-	public GlobalMsgPanel getGlobalMsgPanel() {
-		return globalMsgPanel;
-	}
-	
+
 	private void ensureSet() throws IllegalStateException {
 		if(rootGroup == null) {
 			throw new IllegalStateException("Not root field group set.");
@@ -84,17 +97,17 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 	@Override
 	public void execute() throws IllegalStateException, ValidationException {
 		ensureSet();
-		
-		globalErrorHandler.clear();
+
+		if(errorHandler != null) errorHandler.clear();
 		try {
 			// validate
-			rootGroup.validate(true);
-			
+			rootGroup.validate();
+
 			// update the model
 			binding.setLeft();
 		}
 		catch(final ValidationException e) {
-			globalErrorHandler.handleError(null, e.getError());
+			if(errorHandler != null) errorHandler.handleError(null, e.getError(), Attrib.GLOBAL.flag());
 			throw e;
 		}
 		catch(final Exception e) {
@@ -108,37 +121,29 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 			if(emsg == null) {
 				emsg = "Unknown error occurred.";
 			}
-			globalErrorHandler.handleError(null, new ScalarError(emsg));
+			if(errorHandler != null) errorHandler.handleError(null, new Error(emsg), Attrib.GLOBAL.flag());
 			throw new ValidationException(e.getMessage());
 		}
 	}
 
 	@Override
 	public void set(IBindableWidget<FieldGroup> widget) {
-		if(rootGroup != null) throw new IllegalStateException("Already set.");
-		Log.debug("FieldBindingAction.set(): " + widget);
-		rootGroup = widget.getValue();
-		model = widget.getModel();
-		ensureSet();
-		widget.getValue().setErrorHandler(bindingErrorHandler);
+		if(rootGroup == null) {
+			Log.debug("FieldBindingAction.set(): " + widget);
+			rootGroup = widget.getValue();
+			model = widget.getModel();
+			ensureSet();
+		}
 	}
-	
+
 	@Override
 	public void bind(IBindableWidget<FieldGroup> widget) {
 		ensureSet();
 		// we only allow binding of the set root field group
 		if(widget.getValue() != rootGroup) {
-			throw new IllegalArgumentException("May only bind the root field group.");
+			throw new IllegalArgumentException("Can only bind the field group of the set widget.");
 		}
-		final Binding b = new Binding();
-		// create bindings for all provided field widgets in the root field group
-		for(final IFieldWidget<?> fw : widget.getValue().getFieldWidgets(null)) {
-			Log.debug("Binding field: " + fw + " to model [" + model + "]." + fw.getPropertyName());
-			b.getChildren().add(
-					new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-							bindingErrorHandler));
-		}
-		bind(b);
+		bind(createBinding(rootGroup, model, errorHandler));
 	}
 
 	@Override
@@ -146,13 +151,13 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 		ensureSet();
 		Log.debug("Binding indexed field panel: " + widget);
 		// add binding to the many value collection only
-		bind(new Binding(model, indexedPropertyName, null, null, null, widget,
-				IBindableWidget.PROPERTY_VALUE, null, null, null));
+		bind(new Binding(model, indexedPropertyName, null, null, null, widget, IBindableWidget.PROPERTY_VALUE, null, null,
+				null));
 	}
 
 	private void bind(Binding b) {
 		binding.getChildren().add(b);
-		
+
 		// bind
 		b.bind();
 
@@ -172,6 +177,7 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 	@Override
 	public void unset(IBindableWidget<FieldGroup> widget) {
 		unbind(widget);
+		rootGroup.clearValue();
 		rootGroup = null;
 		model = null;
 	}
