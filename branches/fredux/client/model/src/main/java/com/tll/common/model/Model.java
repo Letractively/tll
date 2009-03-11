@@ -58,7 +58,7 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private final /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The entity type.
@@ -201,15 +201,48 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	 * mapped to the ascribed property name, it is replaced by the one given.
 	 * <p>
 	 * <em><b>IMPT:</b> This method does not fire property change events.</em>
-	 * @param propValue The replacing {@link IPropertyValue}
+	 * @param mprop The replacing {@link IPropertyValue}
 	 */
-	public void set(IModelProperty propValue) {
-		if(propValue == null) return;
-		final IModelProperty prop = get(propValue.getPropertyName());
-		if(prop != null) {
-			props.remove(prop);
+	public void set(IModelProperty mprop) {
+		if(mprop == null) return;
+		final IModelProperty prop = get(mprop.getPropertyName());
+		if(prop != mprop) {
+			if(prop != null) {
+				props.remove(prop);
+			}
+			props.add(mprop);
 		}
-		props.add(propValue);
+	}
+
+	/**
+	 * Physically removes the given model property from this model if it exists.
+	 * @param mprop the property ref to remove
+	 * @param drill drill down into nested models?
+	 * @return <code>true</code> if the property was removed.
+	 */
+	public boolean remove(final IModelProperty mprop, final boolean drill) {
+		Object rmv = null;
+		for(final IModelProperty prop : props) {
+			if(mprop == prop) {
+				rmv = prop;
+				break;
+			}
+			else if(drill && prop.getType().isModelRef()) {
+				// drill down
+				return ((IModelRefProperty) prop).getModel().remove(prop, true);
+			}
+			else if(drill && prop.getType() == PropertyType.RELATED_MANY) {
+				for(final Model m : ((RelatedManyProperty) prop).getList()) {
+					if(m.remove(mprop, true)) {
+						return true;
+					}
+				}
+			}
+		}
+		if(rmv != null) {
+			return props.remove(rmv);
+		}
+		return false;
 	}
 
 	/**
@@ -544,13 +577,28 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	}
 
 	/**
+	 * Deep copies this instance ignoring those nested models marked as deleted.
+	 * @param copyReferences Copy relational properties that are marked as
+	 *        reference?
+	 * @return Clone of this instance or <code>null</code> if this model is marked
+	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
+	 *         <code>true</code>.
+	 */
+	public Model copy(final boolean copyReferences) {
+		return copy(this, copyReferences, true, new BindingStack<CopyBinding>());
+	}
+
+	/**
 	 * Deep copies this instance.
 	 * @param copyReferences Copy relational properties that are marked as
 	 *        reference?
-	 * @return Clone of this instance
+	 * @param copyMarkedDeleted Copy nested models marked as deleted?
+	 * @return Clone of this instance or <code>null</code> if this model is marked
+	 *         as deleted and the given <code>copyMarkedDeleted</code> param is
+	 *         <code>true</code>.
 	 */
-	public Model copy(final boolean copyReferences) {
-		return copy(this, copyReferences, new BindingStack<CopyBinding>());
+	public Model copy(final boolean copyReferences, boolean copyMarkedDeleted) {
+		return copy(this, copyReferences, copyMarkedDeleted, new BindingStack<CopyBinding>());
 	}
 
 	/**
@@ -558,12 +606,16 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	 * @param source The model to be copied
 	 * @param copyReferences Copy relational properties that are marked as
 	 *        reference?
+	 * @param copyMarkedDeleted Copy models marked as deleted?
 	 * @param visited
 	 * @return A deep copy of the model
 	 */
-	private static Model copy(Model source, final boolean copyReferences, BindingStack<CopyBinding> visited) {
+	private static Model copy(Model source, final boolean copyReferences, final boolean copyMarkedDeleted,
+			BindingStack<CopyBinding> visited) {
 
 		if(source == null) return null;
+
+		if(!copyMarkedDeleted && source.isMarkedDeleted()) return null;
 
 		// check visited
 		final CopyBinding binding = (CopyBinding) visited.find(source);
@@ -582,7 +634,10 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 			if(prop instanceof IModelRefProperty) {
 				final IModelRefProperty mrp = (IModelRefProperty) prop;
 				final Model model =
-						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, visited) : mrp.getModel();
+						(copyMarkedDeleted || (!copyMarkedDeleted && mrp.getModel() != null && !mrp.getModel().isMarkedDeleted())) ?
+						(copyReferences || !mrp.isReference()) ? copy(mrp.getModel(), copyReferences, copyMarkedDeleted, visited)
+								: mrp.getModel()
+								: null;
 				copy.props.add(new RelatedOneProperty(mrp.getRelatedType(), mrp.getPropertyName(), mrp.isReference(), model));
 			}
 
@@ -594,7 +649,11 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 				if(list != null) {
 					nlist = new ArrayList<Model>(list.size());
 					for(final Model model : list) {
-						nlist.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, visited) : model);
+						if(copyMarkedDeleted || (!copyMarkedDeleted && !model.isMarkedDeleted())) {
+							nlist
+									.add((copyReferences || !rmp.isReference()) ? copy(model, copyReferences, copyMarkedDeleted, visited)
+											: model);
+						}
 					}
 				}
 				copy.props.add(new RelatedManyProperty(rmp.getRelatedType(), rmp.getPropertyName(), rmp.isReference(), nlist));

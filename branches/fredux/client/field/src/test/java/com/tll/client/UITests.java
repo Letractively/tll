@@ -340,10 +340,11 @@ public final class UITests extends AbstractUITest {
 				public void onEdit(EditEvent event) {
 					// mimic model persist life-cycle
 					assert m != null;
-					final Model mcopy = m.copy(true);
+					final Model mcopy = m.copy(true, false);
 					mcopy.set(new IntPropertyValue(Model.VERSION_PROPERTY, 1));
 					ep.setModel(mcopy);
 					mv.setModel(mcopy);
+					m = mcopy;
 				}
 			});
 
