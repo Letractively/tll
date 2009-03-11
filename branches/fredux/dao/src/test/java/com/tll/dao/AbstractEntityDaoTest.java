@@ -174,9 +174,10 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	/**
 	 * Compare a clc of entity ids and entites ensuring the id list is referenced
 	 * w/in the entity list
+	 * @param <E>
 	 * @param ids
 	 * @param entities
-	 * @return
+	 * @return true/false
 	 */
 	protected static final <E extends IEntity> boolean entitiesAndIdsEquals(Collection<Integer> ids,
 			Collection<E> entities) {
@@ -203,6 +204,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 
 	/**
 	 * Ensures two entities are non-unique by business key.
+	 * @param <E>
 	 * @param e1
 	 * @param e2
 	 */
@@ -214,10 +216,10 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		try {
 			BusinessKeyUtil.apply(e2, BusinessKeyFactory.create(e1));
 		}
-		catch(BusinessKeyNotDefinedException e) {
+		catch(final BusinessKeyNotDefinedException e) {
 			// assume ok
 		}
-		catch(BusinessKeyPropertyException e) {
+		catch(final BusinessKeyPropertyException e) {
 			Assert.fail(e.getMessage());
 		}
 	}
@@ -293,8 +295,8 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 
 		if(getDaoMode() == DaoMode.ORM) {
 			// create a db shell to ensure db exists and stubbed
-			Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
-			DbShell dbShell = i.getInstance(DbShell.class);
+			final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
+			final DbShell dbShell = i.getInstance(DbShell.class);
 			dbShell.create();
 			dbShell.clear();
 		}
@@ -352,7 +354,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		// object graph matches the retained number prior to testing for the current
 		// entity type
 		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
-			int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
+			final int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 			Assert.assertEquals(afterNumEntities, numEntities, entityHandler + " dao test handler didn't clean up properly!");
 		}
 	}
@@ -375,7 +377,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		
 		// teardown test entities..
 		if(testEntityRefStack.size() > 0) {
-			for(PrimaryKey<IEntity> pk : testEntityRefStack) {
+			for(final PrimaryKey<IEntity> pk : testEntityRefStack) {
 				assert pk.getType() == entityHandler.entityClass();
 				startNewTransaction();
 				try {
@@ -383,7 +385,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 					entityHandler.teardownTestEntity(dao.load(pk));
 					setComplete();
 				}
-				catch(EntityNotFoundException e) {
+				catch(final EntityNotFoundException e) {
 					// ok
 				}
 				finally {
@@ -413,6 +415,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 
 	/**
 	 * Provide a fresh entity instance of the ascribed type.
+	 * @param <E>
 	 * @return New entity instance
 	 * @throws Exception
 	 */
@@ -433,6 +436,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * @param entityClass
 	 * @param n
 	 * @return a list of unique and generated test entities
+	 * @throws Exception
 	 */
 	private List<IEntity> getNUniqueTestEntities(Class<IEntity> entityClass, int n) throws Exception {
 		Assert.assertTrue(n > 0 && n <= 50, "Invalid number for unique entity generation: " + n
@@ -462,14 +466,14 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	@Test
 	public final void test() throws Exception {
 
-		for(IEntityDaoTestHandler<?> handler : entityHandlers) {
+		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
 			handler.init(dao, getMockEntityFactory());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
 			
 			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
 			beforeEntityType();
 			// run all tests
-			for(Method method : AbstractEntityDaoTest.class.getDeclaredMethods()) {
+			for(final Method method : AbstractEntityDaoTest.class.getDeclaredMethods()) {
 				if(method.getName().startsWith("dao")) {
 					beforeMethod();
 					logger.debug("Testing " + method.getName() + " for entity type: " + handler.entityClass() + "...");
@@ -491,14 +495,14 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
-		Integer persistentId = e.getId();
+		final Integer persistentId = e.getId();
 
 		// retrieve by name key if applicable..
 		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
 			logger.debug("Perfoming actual find by name dao test..");
-			Class<?> nec = entityHandler.entityClass();
-			String name = ((INamedEntity) e).getName();
-			NameKey<INamedEntity> nk = new NameKey(nec, name);
+			final Class<?> nec = entityHandler.entityClass();
+			final String name = ((INamedEntity) e).getName();
+			final NameKey<INamedEntity> nk = new NameKey(nec, name);
 			startNewTransaction();
 			try {
 				e = dao.load(nk);
@@ -508,10 +512,10 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 						+ entityHandler.entityClass());
 				entityHandler.verifyLoadedEntityState(e);
 			}
-			catch(NonUniqueResultException ex) {
+			catch(final NonUniqueResultException ex) {
 				// ok
 			}
-			catch(QueryException ex) {
+			catch(final QueryException ex) {
 				// ok - this means the INamedEntity doesn't have the getName() method
 				// mapped to "name" which is possible in some cases where we impl
 				// INamedEntity but map INamedEntity.getName() to another ORM property
@@ -591,7 +595,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 			e = getEntityFromDb(new PrimaryKey<IEntity>(e));
 			Assert.assertNull(e, "The entity was not purged");
 		}
-		catch(EntityNotFoundException ex) {
+		catch(final EntityNotFoundException ex) {
 			// expected
 		}
 		endTransaction();
@@ -664,7 +668,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		}
 		setComplete();
 		endTransaction();
-		Criteria<IEntity> criteria = new Criteria<IEntity>(entityHandler.entityClass());
+		final Criteria<IEntity> criteria = new Criteria<IEntity>(entityHandler.entityClass());
 		criteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		// get ids
@@ -754,30 +758,30 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 
 	private void daoPurgeNewEntity() throws Exception {
 		IEntity e = getTestEntity();
-		PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
+		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
 		dao.purge(e);
 		try {
 			e = dao.load(pk);
 			Assert.fail("An EntityNotFoundException should have occurred (" + pk + ")");
 		}
-		catch(EntityNotFoundException ex) {
+		catch(final EntityNotFoundException ex) {
 			// expected
 		}
 	}
 	
 	private void daoTestSelectNamedQueries() throws Exception {
-		ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
+		final ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
 		if(queryDefs == null) return;
-		for(ISelectNamedQueryDef qdef : queryDefs) {
-			IQueryParam[] params = entityHandler.getParamsForTestQuery(qdef);
-			List<IQueryParam> list = params == null ? null : Arrays.asList(params);
-			Criteria<IEntity> c = new Criteria<IEntity>(qdef, list);
-			List<SearchResult<IEntity>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
+		for(final ISelectNamedQueryDef qdef : queryDefs) {
+			final IQueryParam[] params = entityHandler.getParamsForTestQuery(qdef);
+			final List<IQueryParam> list = params == null ? null : Arrays.asList(params);
+			final Criteria<IEntity> c = new Criteria<IEntity>(qdef, list);
+			final List<SearchResult<IEntity>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
 			// Assert.assertTrue(result != null && result.size() > 0, "No named query results");
 			// for now, since we can't guarantee results based on the varied nature of
 			// the query defs, we first check for resutls and pass if there aren't any
 			if(result != null && result.size() > 0) {
-				for(SearchResult<IEntity> sr : result) {
+				for(final SearchResult<IEntity> sr : result) {
 					if(qdef.isScalar()) {
 						Assert.assertTrue(sr.getScalar() != null, "No scalar in scalar search result");
 					}

@@ -47,7 +47,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 		try {
 			graph.validate();
 		}
-		catch(NonUniqueBusinessKeyException e) {
+		catch(final NonUniqueBusinessKeyException e) {
 			throw new IllegalStateException("Non-business key unique entity graph", e);
 		}
 		return graph;
@@ -90,7 +90,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 */
 	@SuppressWarnings("unchecked")
 	private <E extends IEntity> E addEntity(E e) {
-		Set set = getNonNullEntitySet(e.entityClass());
+		final Set set = getNonNullEntitySet(e.entityClass());
 		if(!set.add(e)) {
 			throw new IllegalStateException("Unable to add entity to the graph: " + e);
 		}
@@ -123,12 +123,12 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @param entityType
 	 * @param makeUnique Attempt to make the entities business key unique before
 	 *        adding?
-	 * @parm n The number of copies to generate
+	 * @param n The number of copies to generate
 	 * @return The generated entity set that was added to the graph.
 	 */
 	protected final <E extends IEntity> Set<E> addN(Class<E> entityType, boolean makeUnique, int n) {
-		Set<E> set = mockEntityFactory.getNEntityCopies(entityType, n, makeUnique);
-		for(E e : set) {
+		final Set<E> set = mockEntityFactory.getNEntityCopies(entityType, n, makeUnique);
+		for(final E e : set) {
 			addEntity(e);
 		}
 		return set;
@@ -142,8 +142,8 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @return The generated entity set that was added to the graph.
 	 */
 	protected final <E extends IEntity> Set<E> addAll(Class<E> entityType) {
-		Set<E> set = mockEntityFactory.getAllEntityCopies(entityType);
-		for(E e : set) {
+		final Set<E> set = mockEntityFactory.getAllEntityCopies(entityType);
+		for(final E e : set) {
 			addEntity(e);
 		}
 		return set;
@@ -158,11 +158,11 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 *         of entities of the given type.
 	 */
 	protected final <E extends IEntity> E getNthEntity(Class<E> entityType, int n) {
-		Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
 		final int size = set == null ? 0 : set.size();
 		if(set != null && size >= n) {
 			int i = 0;
-			for(E e : set) {
+			for(final E e : set) {
 				if(++i == n) {
 					return e;
 				}
@@ -179,7 +179,7 @@ public abstract class AbstractEntityGraphBuilder implements IEntityGraphBuilder 
 	 * @return The randomly selected entity from the graph.
 	 */
 	protected final <E extends IEntity> E getRandomEntity(Class<E> entityType) {
-		Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
+		final Set<E> set = (Set<E>) graph.getEntitiesByType(entityType);
 		if(set == null || set.size() == 0) {
 			throw new IllegalStateException("No entities of the given type yet exist.");
 		}

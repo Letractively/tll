@@ -40,6 +40,7 @@ public class HtmlListPanel extends Composite {
 
 		/**
 		 * Constructor
+		 * @param ordered
 		 */
 		HtmlList(boolean ordered) {
 			setElement(ordered ? DOM.createElement("ol") : DOM.createElement("ul"));

@@ -29,13 +29,12 @@ public class EmailAddressValidator implements IValidator {
 	}
 
 	public Object validate(Object value) throws ValidationException {
-		if(value == null) return true;
-		if(!(value instanceof String)) return false;
-		String string = (String) value;
-		if(string.length() == 0) return true;
+		if(value == null) return null;
+		final String string = value.toString();
+		if(string.length() == 0) return string;
 		if(!string.matches(pattern)) {
 			throw new ValidationException("Invalid email address.");
 		}
-		return value;
+		return string;
 	}
 }

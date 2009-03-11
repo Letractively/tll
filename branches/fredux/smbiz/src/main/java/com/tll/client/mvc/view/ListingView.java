@@ -39,7 +39,6 @@ public abstract class ListingView extends AbstractView {
 		/**
 		 * This method is invoked whtn a row is targeted for editing.
 		 * @param rowIndex The row index of the targeted row
-		 * @param rowRef The ref of the row to edit
 		 */
 		@Override
 		protected void doEditRow(int rowIndex) {
@@ -50,7 +49,6 @@ public abstract class ListingView extends AbstractView {
 		/**
 		 * This method is invoked when a row is targeted for deletion.
 		 * @param rowIndex The row index of the targeted row
-		 * @param rowRef The ref of the row to delete
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {

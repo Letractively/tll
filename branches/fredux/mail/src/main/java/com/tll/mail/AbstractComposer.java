@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 /**
  * The abstract mime message composer.
  * @author jpk
+ * @param <C> the mail context type
  */
 abstract class AbstractComposer<C extends IMailContext> implements IComposer<C> {
 
@@ -19,6 +20,7 @@ abstract class AbstractComposer<C extends IMailContext> implements IComposer<C> 
 	 * Implementation specific composition.
 	 * @param helper Spring's mime message helper.
 	 * @param context The mail context.
+	 * @throws MailPreparationException
 	 */
 	protected abstract void composeImpl(MimeMessageHelper helper, C context) throws MailPreparationException;
 

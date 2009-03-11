@@ -98,7 +98,6 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	/**
 	 * This method is invoked whtn a row is targeted for editing.
 	 * @param rowIndex The row index of the targeted row
-	 * @param rowRef The ref of the row to edit
 	 */
 	protected void doEditRow(int rowIndex) {
 		// no-op
@@ -107,7 +106,6 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	/**
 	 * This method is invoked when a row is targeted for deletion.
 	 * @param rowIndex The row index of the targeted row
-	 * @param rowRef The ref of the row to delete
 	 */
 	protected void doDeleteRow(int rowIndex) {
 		// no-op
@@ -117,7 +115,6 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 	 * Performs custom row ops other that edit and delete.
 	 * @param optionText The option text of the selection option
 	 * @param rowIndex The row index of the targeted row
-	 * @param rowRef The ref of the targeted row
 	 */
 	protected void handleRowOp(String optionText, int rowIndex) {
 		// no-op
@@ -127,16 +124,16 @@ public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 		if(isStaticOptions() && staticOptions != null) {
 			return staticOptions;
 		}
-		List<Option> options = new ArrayList<Option>();
+		final List<Option> options = new ArrayList<Option>();
 		if(isRowEditable(rowIndex)) options.add(editOption(getListingElementName()));
 		if(isRowDeletable(rowIndex)) options.add(deleteOption(getListingElementName()));
-		Option[] customOps = getCustomRowOps(rowIndex);
+		final Option[] customOps = getCustomRowOps(rowIndex);
 		if(customOps != null) {
-			for(Option o : customOps) {
+			for(final Option o : customOps) {
 				options.add(o);
 			}
 		}
-		Option[] arr = options.toArray(new Option[options.size()]);
+		final Option[] arr = options.toArray(new Option[options.size()]);
 		if(isStaticOptions()) {
 			staticOptions = arr;
 		}

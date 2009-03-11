@@ -73,7 +73,7 @@ public class MockModelStubber {
 	 * @param type the model entity type
 	 * @param name optional name property value. If non-<code>null</code>, a
 	 *        standard entity name property will be added.
-	 * @param name add the standard entity timestamping properties?
+	 * @param timestamping add the standard entity timestamping properties?
 	 * @return the stubbed model
 	 */
 	private static Model stubModel(MockEntityType type, String name, boolean timestamping) {

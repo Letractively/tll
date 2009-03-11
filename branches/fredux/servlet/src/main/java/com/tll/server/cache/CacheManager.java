@@ -235,6 +235,10 @@ public final class CacheManager {
 	 * Single method to store object references in the cache manager given a
 	 * scope. Returns the given cache key argument under which the object was
 	 * stored for convenience.
+	 * @param cacheKey
+	 * @param obj
+	 * @param scope
+	 * @return the cache string
 	 */
 	private String storeWithCacheKey(String cacheKey, Object obj, int scope) {
 		store(cacheKey, obj, scope);
@@ -353,9 +357,9 @@ public final class CacheManager {
 	}
 
 	public void clearAllCacheKeysHavingCacheClass(Class<?> cacheClass) {
-		List<String> toRmv = new ArrayList<String>();
-		for(String cacheKey : cache.keySet()) {
-			String substr = "-" + getClassHashCodeString(cacheClass);
+		final List<String> toRmv = new ArrayList<String>();
+		for(final String cacheKey : cache.keySet()) {
+			final String substr = "-" + getClassHashCodeString(cacheClass);
 			if(cacheKey.indexOf(substr) > 0) {
 				toRmv.add(cacheKey);
 			}
@@ -388,7 +392,7 @@ public final class CacheManager {
 			if(log.isDebugEnabled()) log.warn("No cached object found under key: '" + key + "' for clearing.");
 			return null;
 		}
-		Object co = cache.remove(key);
+		final Object co = cache.remove(key);
 		scopes.remove(key);
 		if(log.isDebugEnabled()) log.debug("Cleared cache object under key: " + key);
 		return co;
@@ -408,9 +412,9 @@ public final class CacheManager {
 	}
 
 	public void clearSessionScope() {
-		List<String> toRmv = new ArrayList<String>();
-		for(String key : scopes.keySet()) {
-			Integer scope = scopes.get(key);
+		final List<String> toRmv = new ArrayList<String>();
+		for(final String key : scopes.keySet()) {
+			final Integer scope = scopes.get(key);
 			if(scope.intValue() == SCOPE_SESSION) {
 				toRmv.add(key);
 			}
@@ -419,9 +423,9 @@ public final class CacheManager {
 	}
 
 	public void clearPageScope() {
-		List<String> toRmv = new ArrayList<String>();
-		for(String key : scopes.keySet()) {
-			Integer scope = scopes.get(key);
+		final List<String> toRmv = new ArrayList<String>();
+		for(final String key : scopes.keySet()) {
+			final Integer scope = scopes.get(key);
 			if(scope.intValue() == SCOPE_PAGE) {
 				toRmv.add(key);
 			}

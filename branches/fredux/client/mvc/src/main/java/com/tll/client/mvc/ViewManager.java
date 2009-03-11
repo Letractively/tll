@@ -449,7 +449,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 	/**
 	 * Closes a popped view.
-	 * @param view The popped view to close.
+	 * @param vc The view container to close.
 	 * @return <code>true</code> if the given view is in popped state and
 	 *         successful.
 	 */

@@ -525,6 +525,7 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	/**
 	 * BindingStack
 	 * @author jpk
+	 * @param <B>
 	 */
 	@SuppressWarnings("serial")
 	static final class BindingStack<B extends PropBinding> extends ArrayList<B> {

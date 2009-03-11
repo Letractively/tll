@@ -35,6 +35,7 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * finds an entity of the given id in the set or null if not found. If the
 	 * given id is null, null is returned.
+	 * @param <E>
 	 * @param clc the collection to look in
 	 * @param id the id of the entity to find
 	 * @return the found entity or null if not found
@@ -43,7 +44,7 @@ public abstract class EntityBase implements IEntity {
 		if(id == null || clc == null) {
 			return null;
 		}
-		for(E e : clc) {
+		for(final E e : clc) {
 			if(id.equals(e.getId())) {
 				return e;
 			}
@@ -54,6 +55,7 @@ public abstract class EntityBase implements IEntity {
 	/**
 	 * finds an entity of the given name in the collection or null if not found.
 	 * If the given id is null, null is returned.
+	 * @param <N>
 	 * @param clc the collection to look in
 	 * @param name the name of the named entity to find
 	 * @return the found named entity or null if not found
@@ -62,7 +64,7 @@ public abstract class EntityBase implements IEntity {
 		if(name == null || clc == null) {
 			return null;
 		}
-		for(N e : clc) {
+		for(final N e : clc) {
 			if(name.equals(e.getName())) {
 				return e;
 			}
@@ -72,6 +74,7 @@ public abstract class EntityBase implements IEntity {
 
 	/**
 	 * adds an entity to a set. if the set or entity is null, nothing happens.
+	 * @param <E>
 	 * @param clc the collection to which the entity is being added
 	 * @param e the entity to be added
 	 */
@@ -91,6 +94,7 @@ public abstract class EntityBase implements IEntity {
 
 	/**
 	 * Adds a collection of entities to a target entity collection.
+	 * @param <E>
 	 * @param toAdd
 	 * @param clc the collection to which the entities are added
 	 */
@@ -100,7 +104,7 @@ public abstract class EntityBase implements IEntity {
 			if(clc == null) {
 				throw new IllegalStateException("The collection argument must not be null");
 			}
-			for(E e : toAdd) {
+			for(final E e : toAdd) {
 				addEntityToCollection(clc, e);
 			}
 		}
@@ -108,6 +112,7 @@ public abstract class EntityBase implements IEntity {
 
 	/**
 	 * Removes an entity from a collection.
+	 * @param <E>
 	 * @param clc
 	 * @param e
 	 */
@@ -120,13 +125,14 @@ public abstract class EntityBase implements IEntity {
 	}
 
 	/**
+	 * @param <E>
 	 * @param clc of entities (which may be child entities)
 	 */
 	protected final static <E extends IEntity> void clearEntityCollection(Collection<E> clc) {
 		if(clc == null || clc.size() < 1) {
 			return;
 		}
-		for(E e : clc) {
+		for(final E e : clc) {
 			if(e instanceof IChildEntity) {
 				((IChildEntity) e).setParent(null);
 			}

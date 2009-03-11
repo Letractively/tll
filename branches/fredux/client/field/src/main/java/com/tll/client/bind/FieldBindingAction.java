@@ -116,7 +116,7 @@ public final class FieldBindingAction implements IBindingAction {
 				emsg = "Unknown error occurred.";
 			}
 			if(errorHandler != null) errorHandler.handleError(null, new Error(emsg), Attrib.GLOBAL.flag());
-			throw new ValidationException(e.getMessage());
+			throw new ValidationException(emsg);
 		}
 	}
 
@@ -158,11 +158,14 @@ public final class FieldBindingAction implements IBindingAction {
 			throw new IllegalArgumentException();
 		}
 		
-		// TODO handle unbinding of indexed better
-		// trigger the removal of the indexed elements
-		//for(final IBindableIndexedWidget indexed : indexedWidgets) {
-		//indexed.clear();
-		//}
+		// undind the indexed
+		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
+		if(indexedWidgets != null) {
+			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
+				Log.debug("Un-binding: " + iw);
+				iw.clearIndexed();
+			}
+		}
 		
 		binding.unbind();
 		binding.getChildren().clear();
@@ -174,7 +177,6 @@ public final class FieldBindingAction implements IBindingAction {
 		rootGroup.clearValue();
 		rootGroup = null;
 		model = null;
-		//indexedWidgets.clear();
 	}
 
 	private void ensureSet() throws IllegalStateException {

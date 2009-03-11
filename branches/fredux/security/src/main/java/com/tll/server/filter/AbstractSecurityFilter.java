@@ -21,7 +21,7 @@ import com.tll.server.SecurityContext;
 public abstract class AbstractSecurityFilter implements Filter {
 
 	/**
-	 * Gets the non-<code>null</code> {@link ISecurityContext} instance.
+	 * Gets the non-<code>null</code> {@link SecurityContext} instance.
 	 * @param request The servlet request
 	 * @return The non-<code>null</code> security context.
 	 * @throws ServletException When the security context can't be obtained.
@@ -39,7 +39,7 @@ public abstract class AbstractSecurityFilter implements Filter {
 	}
 
 	/**
-	 * Gets the non-<code>null</code> {@link ISecurityContext} instance.
+	 * Gets the non-<code>null</code> {@link SecurityContext} instance.
 	 * @param config The filter config
 	 * @return The non-<code>null</code> security context.
 	 * @throws ServletException When the security context can't be obtained.

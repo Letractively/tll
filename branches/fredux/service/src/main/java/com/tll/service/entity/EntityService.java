@@ -47,7 +47,6 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 
 	/**
 	 * Constructor
-	 * @param daoClass
 	 * @param dao
 	 * @param entityAssembler
 	 */
@@ -89,12 +88,12 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	protected final void validateAll(Collection<E> entities) throws InvalidStateException {
 		if(entities != null && entities.size() > 0) {
 			InvalidValue[] arr = new InvalidValue[] {};
-			for(E e : entities) {
+			for(final E e : entities) {
 				if(e != null) {
 					try {
 						validate(e);
 					}
-					catch(InvalidStateException ise) {
+					catch(final InvalidStateException ise) {
 						arr = (InvalidValue[]) ArrayUtils.add(arr, ise.getInvalidValues());
 					}
 				}

@@ -79,7 +79,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	private final Impl fp = new Impl();
 
 	/**
-	 * List of radio buttons contained in {@link #rbPanel}. There is one for each
+	 * List of radio buttons contained in {@link #fp}. There is one for each
 	 * option.
 	 */
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();

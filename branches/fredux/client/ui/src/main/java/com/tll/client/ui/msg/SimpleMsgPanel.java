@@ -102,7 +102,9 @@ public class SimpleMsgPanel extends Composite {
 	/**
 	 * Gets the msg sub-panel associated with the given msg level. If not present,
 	 * it is created.
-	 * @return
+	 * @param level
+	 * @param createIfAbsent
+	 * @return the associated message panel or <code>null<code>
 	 */
 	private FlowPanel getMsgLevelPanel(MsgLevel level, boolean createIfAbsent) {
 		FlowPanel mlp;

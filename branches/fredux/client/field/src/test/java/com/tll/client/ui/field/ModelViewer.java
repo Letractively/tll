@@ -155,6 +155,7 @@ public class ModelViewer extends Composite {
 	 * @param prop the current model property
 	 * @param parent the parent tree item
 	 * @param visited
+	 * @throws PropertyPathException
 	 */
 	private void addProp(IModelProperty prop, TreeItem parent, final VisitedStack visited) throws PropertyPathException {
 		// check visited

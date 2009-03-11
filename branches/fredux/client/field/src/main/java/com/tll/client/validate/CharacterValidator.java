@@ -20,11 +20,11 @@ public class CharacterValidator implements IValidator {
 
 	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Character) return value;
-		if(value instanceof String == false) {
-			throw new ValidationException("Invalid character.");
+		final String s = value.toString();
+		if(s.length() != 1) {
+			throw new ValidationException("The value must be a single character.");
 		}
-		final String s = (String) value;
-		return s.length() < 1 ? null : new Character(value.toString().charAt(0));
+		return new Character(s.charAt(0));
 	}
 
 }

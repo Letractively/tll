@@ -67,7 +67,6 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 
 	/**
 	 * Posts unsourced errors.
-	 * @param wref
 	 * @param errors
 	 */
 	private void post(Collection<IError> errors) {
@@ -79,7 +78,6 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 
 	/**
 	 * Posts a single unsourced error.
-	 * @param wref
 	 * @param error
 	 */
 	private void post(IError error) {

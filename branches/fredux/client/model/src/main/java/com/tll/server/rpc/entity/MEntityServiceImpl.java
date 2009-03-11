@@ -90,7 +90,6 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Does the core entity loading.
 	 * @param context
 	 * @param request
-	 * @param entityType
 	 * @param payload
 	 * @return The loaded {@link IEntity}
 	 */
@@ -241,6 +240,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 	/**
 	 * Handles the entity specific search to criteria translation.
+	 * @param context
 	 * @param search
 	 * @param criteria
 	 * @throws IllegalArgumentException When the <code>search</code> parameter is

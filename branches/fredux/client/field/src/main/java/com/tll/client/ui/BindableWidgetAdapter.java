@@ -8,6 +8,7 @@ package com.tll.client.ui;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.PropertyChangeSupport;
@@ -15,7 +16,18 @@ import com.tll.common.model.MalformedPropPathException;
 import com.tll.common.model.PropertyPathException;
 
 /**
- * BindableWidgetAdapter
+ * BindableWidgetAdapter - Enables widget bindability by composition (rather
+ * than by inheritance). A widget wishing to realize bindability using
+ * {@link BindableWidgetAdapter} must first inherit {@link IBindableWidget}. The
+ * method impls then delegate to the {@link BindableWidgetAdapter} data memeber
+ * instance.
+ * <p>
+ * The methods: {@link #getValue()}, {@link #setValue(Object)} and
+ * {@link #setValue(Object, boolean)} must be implemented by the delegator.
+ * <p>
+ * The {@link Widget} methods: <code>fireEvent()</code> and
+ * <code>addValueChangeHandler(...)</code> must be implemented by the delegator
+ * since they are protected methods.
  * @author jpk
  * @param <V> the value type
  */
@@ -127,11 +139,13 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 
 	@Override
 	public void fireEvent(GwtEvent<?> event) {
+		// the delegator must implement this
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+		// the delegator must implement this
 		throw new UnsupportedOperationException();
 	}
 }

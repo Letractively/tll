@@ -32,8 +32,9 @@ import com.tll.common.model.PropertyPathException;
  * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
  * <p>
- * <b>IMPT:</b> This panel's field group is expected to be a child of the parent
- * field panel's field group.
+ * Moreover, each indexed element is comprised of its own child field group and
+ * binding action. <b>IMPT:</b> This panel's field group is expected to be a
+ * child of the parent field panel's field group.
  * @param <W> the indexed field panel widget render type
  * @param <I> the index field panel type
  * @author jpk
@@ -140,7 +141,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	public final void setValue(Collection<IModel> value) {
 		if(this.value != value) {
 			this.value = null;
-			clear();
+			clearIndexed();
 			// we don't want auto-transfer of data!!
 			//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
 			if(value != null) {
@@ -181,11 +182,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 * Adds an indexed field group populating the fields with data held in the
 	 * given model.
 	 * @param model The model to be converted to a field group
+	 * @param isUiAdd
 	 * @throws IllegalArgumentException When the field to add already exists in
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private void add(IModel model, boolean isAddUi) throws IllegalArgumentException {
+	private void add(IModel model, boolean isUiAdd) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
 	
 		final I ip = createIndexPanel();
@@ -195,7 +197,9 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		// as this is handled by the parent binding action since 
 		// its root field group is expected to contain this panel's field group as a child
 		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
-		indexPanels.add(index);
+		if(!indexPanels.add(index)) {
+			throw new IllegalStateException();
+		}
 	
 		index.setFieldGroupName(size());
 		getFieldGroup().addField(ip.getFieldGroup());
@@ -207,25 +211,28 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		ip.getFieldGroup().setErrorHandler(getFieldGroup().getErrorHandler());
 	
 		// add in the ui
-		addUi(ip, isAddUi);
+		addUi(ip, isUiAdd);
 	}
 
 	/**
 	 * Removes an indexed field group at the given index syncing with the
 	 * underlying field group.
 	 * @param index The index at which the field group is removed
+	 * @param isUiRemove Are we removing via the UI?
 	 * @throws IndexOutOfBoundsException
 	 */
-	protected final void remove(int index) throws IndexOutOfBoundsException {
+	protected final void remove(int index, boolean isUiRemove) throws IndexOutOfBoundsException {
 		// remove from the ui first
-		removeUi(index);
+		removeUi(index, isUiRemove);
 	
 		final boolean rebuildNames = index < indexPanels.size() - 1;
 		Index<I> remove = indexPanels.remove(index);
 		assert remove != null;
 	
 		remove.binding.unbind(remove.fieldPanel);
-		getFieldGroup().removeField(remove.fieldPanel.getFieldGroup());
+		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
+			throw new IllegalStateException();
+		}
 		remove = null;
 	
 		// re-set remaining field group names if necessary
@@ -239,8 +246,10 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	/**
 	 * Removes the index panel from the ui at the given numeric index.
 	 * @param index the numeric index at which to remove the index panel in the ui
+	 * @param isUiRemove Are we removing via the UI?
+	 * @throws IndexOutOfBoundsException
 	 */
-	protected abstract void removeUi(int index) throws IndexOutOfBoundsException;
+	protected abstract void removeUi(int index, boolean isUiRemove) throws IndexOutOfBoundsException;
 
 	/**
 	 * Marks or un-marks a field panel at the given index as deleted.
@@ -254,13 +263,10 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		ip.fieldPanel.getFieldGroup().setEnabled(!deleted);
 	}
 
-	/**
-	 * Clears the field group list cleaning up bindings and listeners.
-	 */
-	public final void clear() {
+	public final void clearIndexed() {
 		// remove in reverse to avoid spurious index group re-names
 		for(int i = size() - 1; i >= 0; i--) {
-			remove(i);
+			remove(i, false);
 		}
 		assert getFieldGroup().size() == 0;
 		assert indexPanels.size() == 0;

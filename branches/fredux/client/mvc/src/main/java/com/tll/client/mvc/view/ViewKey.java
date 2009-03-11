@@ -4,6 +4,7 @@
  */
 package com.tll.client.mvc.view;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.History;
 
 /**
@@ -14,7 +15,7 @@ public final class ViewKey {
 
 	/**
 	 * Used to dis-ambiguate {@link History} tokens. I.e. whether the history
-	 * token passed to the {@link History#onHistoryChanged(String)} method is a
+	 * token passed to the {@link History} {@link ValueChangeEvent} method is a
 	 * call for a view.
 	 */
 	private static final String VIEW_TOKEN_PREFIX = "v";
@@ -86,7 +87,7 @@ public final class ViewKey {
 	public boolean equals(Object obj) {
 		if(obj == this) return true;
 		if(obj instanceof ViewKey == false) return false;
-		ViewKey that = (ViewKey) obj;
+		final ViewKey that = (ViewKey) obj;
 		return that.viewClass.equals(this.viewClass) && that.viewId == viewId;
 	}
 

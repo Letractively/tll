@@ -37,20 +37,22 @@ import com.tll.model.key.PrimaryKey;
 public abstract class DbTest extends AbstractInjectedTest {
 
 	/**
-	 * Retrieves the entity from the db given a {@link IPrimaryKey}.
+	 * Retrieves the entity from the db given a {@link PrimaryKey}.
 	 * <p>
 	 * <Strong>IMPT NOTE: </strong> we use the dao find methodology as this
 	 * ensures a db hit.
+	 * @param dao
+	 * @param <E>
 	 * @param key the primary key
 	 * @return the entity from the db or <code>null</code> if not found.
 	 */
 	protected static final <E extends IEntity> E getEntityFromDb(IEntityDao dao, PrimaryKey<E> key) {
-		Criteria<E> criteria = new Criteria<E>(key.getType());
+		final Criteria<E> criteria = new Criteria<E>(key.getType());
 		criteria.getPrimaryGroup().addCriterion(key);
 		try {
 			return dao.findEntity(criteria);
 		}
-		catch(InvalidCriteriaException e) {
+		catch(final InvalidCriteriaException e) {
 			throw new IllegalStateException("Unexpected invalid criteria exception occurred: " + e.getMessage());
 		}
 	}
@@ -67,7 +69,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 		try {
 			return dao.find(criteria, null);
 		}
-		catch(InvalidCriteriaException e) {
+		catch(final InvalidCriteriaException e) {
 			throw new IllegalStateException("Unexpected invalid criteria exception occurred: " + e.getMessage());
 		}
 	}
@@ -206,7 +208,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 			throw new IllegalStateException("Transaction already started.");
 		}
 		if(daoMode == DaoMode.ORM) {
-			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+			final DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 			transStatus = getTransactionManager().getTransaction(def);
 		}

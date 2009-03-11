@@ -163,6 +163,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	/**
 	 * Stubs distinct left and right {@link Model} instances
 	 * @return 2 element array where the first element is the left model
+	 * @throws Exception
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
 		final Model left = MockModelStubber.stubAccount();

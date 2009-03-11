@@ -26,15 +26,14 @@ public class CreditCardValidator implements IValidator {
 
 	public Object validate(Object value) throws ValidationException {
 		if(value != null) {
-			if(!(value instanceof String)) throw new ValidationException("Not a string.");
-			String creditCard = (String) value;
-			char[] chars = creditCard.toCharArray();
+			final String creditCard = value.toString();
+			final char[] chars = creditCard.toCharArray();
 
-			List<Integer> ints = new ArrayList<Integer>();
-			for(char c : chars) {
+			final List<Integer> ints = new ArrayList<Integer>();
+			for(final char c : chars) {
 				if(Character.isDigit(c)) ints.add(c - '0');
 			}
-			int length = ints.size();
+			final int length = ints.size();
 			int sum = 0;
 			boolean even = false;
 			for(int index = length - 1; index >= 0; index--) {

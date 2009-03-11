@@ -160,8 +160,6 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	
 	//private int lastSelectedTabIndex = -1;
 	
-	//private MsgPopupRegistry mregistry;
-
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -204,15 +202,16 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	protected abstract String getIndexTypeName();
 
 	/**
+	 * @param index
 	 * @return A <em>unique</em> name for an index.
 	 */
 	protected abstract String getInstanceName(I index);
-	
+
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
 	 * tab of the {@link TabPanel}.
 	 * @param index The index ref
-	 * @param isUiAdd Are we adding a new index via the ui?
+	 * @param isUiAdd Are we adding a new index via the UI?
 	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
 	 *         at the index assoc. with the given index field panel.
 	 */
@@ -230,7 +229,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 
 				public void onClick(ClickEvent event) {
 					if(event.getNativeEvent().getTarget().getPropertyBoolean(UI_ADD)) {
-						remove(tabPanel.getTabBar().getSelectedTab());
+						remove(tabPanel.getTabBar().getSelectedTab(), true);
 					}
 					else {
 						markDeleted(tabPanel.getTabBar().getSelectedTab(), btnDeleteTgl.isDown());
@@ -252,6 +251,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		final Widget tw = getTabWidget(index, isUiAdd);
 		tabPanel.insert(index, tw, insertIndex);
 		tabWidgets.add(tw);
+		tabPanel.setVisible(true);
+		emptyWidget.setVisible(false);
 		if(isUiAdd) {
 			// auto-select the added tab
 			DeferredCommand.addCommand(new Command() {
@@ -264,19 +265,19 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	}
 
 	@Override
-	protected void removeUi(int index) throws IndexOutOfBoundsException {
+	protected void removeUi(int index, boolean isUiRemove) throws IndexOutOfBoundsException {
 		// remove the tab
 		if(!tabPanel.remove(index)) {
 			// shouldn't happen
 			throw new IllegalStateException();
 		}
 		tabWidgets.remove(index);
-		if(tabPanel.getWidgetCount() == 0 || (enableAdd && tabPanel.getWidgetCount() == 1)) {
+		if(size() == 0) {
 			tabPanel.setVisible(false);
 			emptyWidget.setVisible(true);
 		}
 		else {
-			tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
+			if(isUiRemove) tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
 		}
 	}
 
@@ -287,44 +288,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		super.markDeleted(index, deleted);
 	}
 
-	/*
-	@Override
-	public void clear() {
-		if(enableAdd) {
-			for(final Iterator<? extends IProvider<I>> itr = getIndexIterator(); itr.hasNext();) {
-				if(!tabPanel.remove(itr.next().get())) {
-					throw new IllegalStateException();
-				}
-			}
-		}
-		else {
-			tabPanel.clear();
-		}
-		tabWidgets.clear();
-		super.clear();
-	}
-	*/
-	
-	/*
-	@Override
-	public void setErrorHandler(IErrorHandler errorHandler) {
-		super.setErrorHandler(errorHandler);
-		if(errorHandler instanceof ErrorHandlerDelegate) {
-			mregistry = ((ErrorHandlerDelegate) errorHandler).getMsgPopupRegistry();
-		}
-		if(mregistry == null) throw new IllegalArgumentException();
-	}
-	*/
-	
 	@Override
 	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 		assert event.getSource() == tabPanel;
-		/*
-		if(lastSelectedTabIndex != -1 && mregistry != null) {
-			// hide msgs on last tab
-			mregistry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs(false);
-		}
-		*/
 		if(enableAdd && (event.getItem().intValue() == tabPanel.getTabBar().getTabCount() - 1)) {
 			add();
 		}

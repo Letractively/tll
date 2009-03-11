@@ -130,8 +130,8 @@ public final class Marshaler {
 
 	/**
 	 * Simple check to filter out certain properties based on their name.
-	 * @param propName
-	 * @return
+	 * @param pd
+	 * @return true/false
 	 */
 	private boolean isMarshalableProperty(final PropertyDescriptor pd) {
 		// check bound method annotations and honor @Transient
@@ -168,7 +168,7 @@ public final class Marshaler {
 	 * @param ptype The property type
 	 * @param pname The property name
 	 * @param obj The value. May be <code>null</code>.
-	 * @param metadata The property meta data. May be <code>null</code>.
+	 * @param pdata The property meta data. May be <code>null</code>.
 	 * @return new IModelProperty instance or <code>null</code> if the given
 	 *         property type does NOT corres. to a rudimentary property value.
 	 */
@@ -262,6 +262,8 @@ public final class Marshaler {
 	 * @param <E> The entity type
 	 * @param source The source IEntity to marshal. May not be <code>null</code>.
 	 * @param options The marshaling options. May NOT be <code>null</code>.
+	 * @param depth
+	 * @param visited
 	 * @return Marshaled {@link Model}.
 	 * @throws SystemError upon any error encountered.
 	 */
@@ -308,7 +310,7 @@ public final class Marshaler {
 				// related one
 				if(IEntity.class.isAssignableFrom(ptype)) {
 					final RelationInfo ri = getRelationInfo(entityClass, pname);
-					boolean reference = ri.isReference();
+					final boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
@@ -321,7 +323,7 @@ public final class Marshaler {
 				// related many collection
 				else if(Collection.class.isAssignableFrom(ptype)) {
 					final RelationInfo ri = getRelationInfo(entityClass, pname);
-					boolean reference = ri.isReference();
+					final boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						List<Model> list = null;
 						if(obj != null) {
@@ -555,7 +557,7 @@ public final class Marshaler {
 		try {
 			return schemaInfo.getPropertyMetadata(entityClass, propName);
 		}
-		catch(SchemaInfoException e) {
+		catch(final SchemaInfoException e) {
 			return null;
 		}
 	}

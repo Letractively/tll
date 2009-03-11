@@ -43,7 +43,6 @@ public interface IEntityDaoTestHandler<E extends IEntity> {
 
 	/**
 	 * Corollary to {@link #persistDependentEntities()}
-	 * @param entityDao
 	 */
 	void purgeDependentEntities();
 

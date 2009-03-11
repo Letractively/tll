@@ -229,9 +229,9 @@ public final class EntityDao implements IEntityDao {
 	/**
 	 * Mock dao impls should override as necessary to best provide the satisfying
 	 * entities.
+	 * @param <E>
 	 * @param criteria
 	 * @return List of entities that best satisfies the query ref
-	 * @throws InvalidCriteriaException
 	 */
 	private <E extends IEntity> List<E> processQuery(final ICriteria<E> criteria) {
 		// base impl: return all
@@ -267,12 +267,12 @@ public final class EntityDao implements IEntityDao {
 									"Mock dao implementations are only able to handle a single criterion entityGroup.");
 						}
 						if(ctn.isSet()) {
-							Collection<E> clc = entityGraph.getEntitiesByType(criteria.getEntityClass());
+							final Collection<E> clc = entityGraph.getEntitiesByType(criteria.getEntityClass());
 							if(clc != null) {
 								for(final E e : clc) {
 									final String pn = ctn.getPropertyName();
 									Object pv = null;
-									BeanWrapper bw = new BeanWrapperImpl(e);
+									final BeanWrapper bw = new BeanWrapperImpl(e);
 
 									try {
 										pv = bw.getPropertyValue(pn);
@@ -339,7 +339,7 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, final List<Integer> ids, Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityGraph.getEntitiesByType(entityType);
+		final Collection<E> clc = entityGraph.getEntitiesByType(entityType);
 		if(clc != null) {
 			for(final E e : clc) {
 				for(final Integer id : ids) {
@@ -371,7 +371,7 @@ public final class EntityDao implements IEntityDao {
 		if(key == null || !key.isSet()) {
 			throw new IllegalArgumentException("Empty or unset business key");
 		}
-		Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
+		final Collection<E> clc = entityGraph.getEntitiesByType(key.getType());
 		if(clc != null) {
 			for(final E e : clc) {
 				try {
@@ -379,7 +379,7 @@ public final class EntityDao implements IEntityDao {
 						return e;
 					}
 				}
-				catch(RuntimeException e1) {
+				catch(final RuntimeException e1) {
 					throw new PersistenceException(e1.getMessage(), e1);
 				}
 			}
@@ -388,7 +388,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E load(final PrimaryKey<E> key) {
-		E e = entityGraph.getEntity(key);
+		final E e = entityGraph.getEntity(key);
 		if(e == null) {
 			throw new EntityNotFoundException(key.descriptor() + " not found.");
 		}
@@ -399,12 +399,12 @@ public final class EntityDao implements IEntityDao {
 		if(key == null || !key.isSet()) {
 			throw new IllegalArgumentException("Empty or unset name key");
 		}
-		Collection<N> clc = entityGraph.getEntitiesByType(key.getType());
+		final Collection<N> clc = entityGraph.getEntitiesByType(key.getType());
 		N rslt = null;
 		if(clc != null) {
 			for(final N e : clc) {
 				String name;
-				BeanWrapper bw = new BeanWrapperImpl(e);
+				final BeanWrapper bw = new BeanWrapperImpl(e);
 				try {
 					final Object o = bw.getPropertyValue(key.getNameProperty());
 					name = (String) o;
@@ -430,7 +430,7 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> List<E> loadAll(Class<E> entityType) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityGraph.getEntitiesByType(entityType);
+		final Collection<E> clc = entityGraph.getEntitiesByType(entityType);
 		if(clc != null) list.addAll(clc);
 		return list;
 	}
@@ -452,10 +452,10 @@ public final class EntityDao implements IEntityDao {
 		try {
 			entityGraph.setEntity(entity);
 		}
-		catch(IllegalStateException e) {
+		catch(final IllegalStateException e) {
 			throw new EntityExistsException(entity.descriptor() + " already exists.");
 		}
-		catch(NonUniqueBusinessKeyException e) {
+		catch(final NonUniqueBusinessKeyException e) {
 			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage(), e);
 		}
 		
@@ -494,7 +494,7 @@ public final class EntityDao implements IEntityDao {
 
 	public <E extends IEntity> void purgeAll(final Collection<E> entities) {
 		if(entities == null || entities.size() < 1) return;
-		for(E e : entities) {
+		for(final E e : entities) {
 			purge(e);
 		}
 	}
@@ -502,7 +502,7 @@ public final class EntityDao implements IEntityDao {
 	public <E extends IEntity> List<E> getEntitiesFromIds(final Class<E> entityClass, final Collection<Integer> ids,
 			final Sorting sorting) {
 		final List<E> list = new ArrayList<E>();
-		Collection<E> clc = entityGraph.getEntitiesByType(entityClass);
+		final Collection<E> clc = entityGraph.getEntitiesByType(entityClass);
 		if(clc != null) {
 			for(final E e : clc) {
 				for(final Integer id : ids) {

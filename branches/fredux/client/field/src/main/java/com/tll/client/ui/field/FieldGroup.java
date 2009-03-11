@@ -137,6 +137,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	/**
 	 * Recursively pre-pends the given parent property path to all applicable
 	 * child fields' property names.
+	 * @param field
 	 * @param parentPropPath The parent property path to pre-pend
 	 */
 	private static void setParentPropertyPath(IField field, String parentPropPath) {
@@ -160,6 +161,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * {@link IFieldWidget} instance.
 	 * </ol>
 	 * @param f the field to verify
+	 * @param group
 	 * @throws IllegalArgumentException When the verification fails.
 	 */
 	private static void verifyAddField(final IField f, FieldGroup group) throws IllegalArgumentException {
@@ -385,10 +387,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		if(field == null || field == this) return false;
 		for(final IField fld : fields) {
 			if(fld == field) {
-				return fields.remove(field);
+				final boolean b = fields.remove(field);
+				assert b == true;
+				return b;
 			}
 			else if(fld instanceof FieldGroup) {
-				((FieldGroup) fld).removeField(field);
+				return ((FieldGroup) fld).removeField(field);
 			}
 		}
 		return false;

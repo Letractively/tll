@@ -67,6 +67,9 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 
 	/**
 	 * Invoked upon successful authentication.
+	 * @param request
+	 * @param response
+	 * @param authResult
 	 * @throws IOException
 	 */
 	protected abstract void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
@@ -74,6 +77,9 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 
 	/**
 	 * Invoked upon failed authentication.
+	 * @param request
+	 * @param response
+	 * @param failed
 	 * @throws IOException
 	 */
 	protected abstract void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,

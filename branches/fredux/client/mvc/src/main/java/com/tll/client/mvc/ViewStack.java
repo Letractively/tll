@@ -98,7 +98,7 @@ final class ViewStack {
 	/**
 	 * Calculates the index of the associated view ref in the visisted list for a
 	 * given ViewContainer.
-	 * @param vc The ViewContainer
+	 * @param key The view key
 	 * @return The index or <code>-1</code> if no associated view ref exists in
 	 *         the visited list.
 	 */

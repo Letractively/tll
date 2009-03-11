@@ -68,12 +68,12 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * dynamic sorting.
 	 */
 	private static final String ORDER_BY_TOKEN = "order by ";
-	
+
 	/**
 	 * @param <T>
 	 * @param maybeProxy
 	 * @param baseClass
-	 * @return
+	 * @return the deproxied instance
 	 * @throws ClassCastException
 	 */
 	private static <T> T deproxy(Object maybeProxy, Class<T> baseClass) throws ClassCastException {
@@ -90,6 +90,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * <code>Criteria</code>.
 	 * @param dc the hibernate criteria object
 	 * @param sorting sorting object
+	 * @throws InvalidCriteriaException
 	 */
 	private static void applySorting(DetachedCriteria dc, Sorting sorting) throws InvalidCriteriaException {
 		if(sorting != null) {
@@ -210,7 +211,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	
 	private <E extends IEntity> E persistInternal(E entity, boolean flush, EntityManager em) {
 		try {
-			E merged = em.merge(entity);
+			final E merged = em.merge(entity);
 			em.persist(merged);
 			if(flush) em.flush();
 			return merged;
@@ -287,6 +288,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * Process criteria instances providing a distinct list of matching results
 	 * whose elements are either {@link SearchResult} or {@link IEntity} instances
 	 * depending on the specified {@link CriteriaType}.
+	 * @param <E>
 	 * @param criteria Assumed non-<code>null</code>.
 	 * @param sorting The optional sorting directive
 	 * @param applySorting Apply the sorting?
@@ -362,7 +364,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 		// fill the named params (if any)
 		if(queryParams != null && queryParams.size() > 0) {
-			for(IQueryParam queryParam : queryParams) {
+			for(final IQueryParam queryParam : queryParams) {
 				hbmQ.setParameter(queryParam.getPropertyName(), queryParam.getValue());
 			}
 		}
@@ -382,6 +384,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * there is no common interface for <code>DetachedCriteria</code> and
 	 * <code>Criteria</code>. This method may be overridden by subclasses and thus
 	 * is not called from processUniqueCriteria(ICriteria).
+	 * @param <E>
 	 * @param dc the hibernate criteria object
 	 * @param criteria Criteria object
 	 * @param sorting The optional sorting directive
@@ -481,7 +484,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> findByIds(Class<E> entityType, List<Integer> ids, Sorting sorting) {
-		com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(entityType);
+		final com.tll.criteria.Criteria<E> nativeCriteria = new com.tll.criteria.Criteria<E>(entityType);
 		nativeCriteria.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, ids, Comparator.IN, false);
 		final DetachedCriteria dc = DetachedCriteria.forClass(nativeCriteria.getEntityClass());
 		dc.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -565,8 +568,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				if(!snq.isSupportsPaging()) {
 					throw new InvalidCriteriaException(snq.getQueryName() + " query does not support paging.");
 				}
-				String queryName = snq.getQueryName();
-				String countQueryName = snq.getQueryName() + ".count";
+				final String queryName = snq.getQueryName();
+				final String countQueryName = snq.getQueryName() + ".count";
 				final org.hibernate.Query cq = assembleQuery(em, countQueryName, null, null, null, false);
 				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
@@ -581,8 +584,8 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				// get the count by convention looking for a couter-part named query w/
 				// same name and additional suffix of .count
 				final ISelectNamedQueryDef snq = criteria.getNamedQueryDefinition();
-				String queryName = snq.getQueryName();
-				String countQueryName = snq.getQueryName() + ".count";
+				final String queryName = snq.getQueryName();
+				final String countQueryName = snq.getQueryName() + ".count";
 				final org.hibernate.Query cq =
 						assembleQuery(em, countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.uniqueResult();
@@ -617,9 +620,9 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	public int executeQuery(String queryName, IQueryParam[] params) {
-		Query q = getEntityManager().createNamedQuery(queryName);
+		final Query q = getEntityManager().createNamedQuery(queryName);
 		if(params != null) {
-			for(IQueryParam param : params) {
+			for(final IQueryParam param : params) {
 				q.setParameter(param.getPropertyName(), param.getValue());
 			}
 		}

@@ -15,7 +15,7 @@ import com.tll.common.bind.IHasModel;
 public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel {
 
 	/**
-	 * @return the indexed children of <code>null<code> if there are none.
+	 * @return the indexed children or <code>null<code> if there are none.
 	 */
 	IIndexedFieldBoundWidget[] getIndexedChildren();
 

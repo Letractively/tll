@@ -60,6 +60,7 @@ public final class IspListingView extends ListingView {
 
 		/**
 		 * Constructor
+		 * @param viewClass
 		 * @param source
 		 */
 		IspListingViewRequest(Class viewClass, Widget source) {
