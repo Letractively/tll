@@ -10,13 +10,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IProvider;
 import com.tll.client.bind.FieldBindingAction;
-import com.tll.client.bind.IBindingAction;
-import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.client.convert.IConverter;
+import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.bind.IModel;
+import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.PropertyPathException;
 
 /**
  * IndexedFieldPanel - Caters to the display of indexed field collections.
@@ -27,18 +32,14 @@ import com.tll.common.bind.IModel;
  * panel type manages its own binding life-cycle which is triggered by the
  * {@link #setValue(Collection)} and {@link #getValue()} methods.
  * <p>
- * {@link IndexedFieldPanel}s <em>must</em> "subscribe" to its parent
- * {@link FieldPanel}'s binding action and this panel does so upon dom
- * attachment.
- * <p>
  * <b>IMPT:</b> This panel's field group is expected to be a child of the parent
  * field panel's field group.
  * @param <W> the indexed field panel widget render type
  * @param <I> the index field panel type
  * @author jpk
  */
-public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends
-		AbstractBindableWidget<Collection<IModel>> implements IFieldGroupProvider {
+public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends FieldPanel<W> implements
+		IIndexedFieldBoundWidget {
 
 	/**
 	 * Index - Wrapper class for each field panel at an index encapsulating the
@@ -72,9 +73,11 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		}
 		
 		public void setFieldGroupName(int index) {
-			fieldPanel.getValue().setName(getIndexTypeName() + " - " + index);
+			fieldPanel.getFieldGroup().setName(getIndexTypeName() + " - " + index);
 		}
 	}
+	
+	private final BindableWidgetAdapter<Collection<IModel>> adapter;
 
 	/**
 	 * The indexed property name identifying the related many model collection in
@@ -86,14 +89,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 * The list of indexed {@link FieldPanel}s.
 	 */
 	private final List<Index<I>> indexPanels = new ArrayList<Index<I>>();
-
-	/**
-	 * The root field group containing only child {@link FieldGroup}s associated
-	 * with each indexed {@link FieldPanel}. This group corresponds property path
-	 * wise to the related many model collection in the root model specified by
-	 * {@link #indexedPropertyName}.
-	 */
-	private final FieldGroup group;
 
 	/**
 	 * Internally held ref to the related many model collection to know whether to
@@ -113,24 +108,15 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 *        model collection during binding
 	 */
 	public IndexedFieldPanel(String fieldGroupName, String indexedPropertyName) {
-		super();
-		group = new FieldGroup(fieldGroupName);
+		adapter = new BindableWidgetAdapter<Collection<IModel>>(this);
+		setFieldGroup(new FieldGroup(fieldGroupName));
 		this.indexedPropertyName = indexedPropertyName;
 	}
 
-	/**
-	 * @return A newly created iterator over the indexed field panels.
-	 */
-	protected final Iterator<? extends IProvider<I>> getIndexIterator() {
-		return indexPanels.iterator();
+	@Override
+	public final String getIndexedPropertyName() {
+		return indexedPropertyName;
 	}
-
-	/**
-	 * Required ref to the parent field panel to be able to hook into the paren't
-	 * binding action.
-	 * @return Ref to the parent field panel.
-	 */
-	public abstract FieldPanel<?> getParentFieldPanel();
 
 	@Override
 	public final Collection<IModel> getValue() {
@@ -165,18 +151,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		}
 	}
 
-	@Override
-	public final FieldGroup getFieldGroup() {
-		return group;
-	}
-
-	/**
-	 * @return The number of {@link IndexFieldPanel}s.
-	 */
-	protected final int size() {
-		return indexPanels.size();
-	}
-
 	/**
 	 * @return A prototype model used to bind to a newly added indexed field
 	 *         panel.
@@ -204,10 +178,37 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	protected abstract void addUi(I index, boolean isUiAdd);
 
 	/**
-	 * Removes the index panel from the ui at the given numeric index.
-	 * @param index the numeric index at which to remove the index panel in the ui
+	 * Adds an indexed field group populating the fields with data held in the
+	 * given model.
+	 * @param model The model to be converted to a field group
+	 * @throws IllegalArgumentException When the field to add already exists in
+	 *         the underlying field group or has the same name as an existing
+	 *         field in the underlying group.
 	 */
-	protected abstract void removeUi(int index) throws IndexOutOfBoundsException;
+	private void add(IModel model, boolean isAddUi) throws IllegalArgumentException {
+		Log.debug("IndexedFieldPanel.add() - START");
+	
+		final I ip = createIndexPanel();
+		ip.setModel(model);
+		
+		// NOTE: we *don't* specify and error handler for this index field panel's binding actions
+		// as this is handled by the parent binding action since 
+		// its root field group is expected to contain this panel's field group as a child
+		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
+		indexPanels.add(index);
+	
+		index.setFieldGroupName(size());
+		getFieldGroup().addField(ip.getFieldGroup());
+	
+		index.binding.set(index.fieldPanel);
+		index.binding.bind(index.fieldPanel);
+	
+		// propagate the error handler from parent field group to this index field group
+		ip.getFieldGroup().setErrorHandler(getFieldGroup().getErrorHandler());
+	
+		// add in the ui
+		addUi(ip, isAddUi);
+	}
 
 	/**
 	 * Removes an indexed field group at the given index syncing with the
@@ -218,15 +219,15 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	protected final void remove(int index) throws IndexOutOfBoundsException {
 		// remove from the ui first
 		removeUi(index);
-
+	
 		final boolean rebuildNames = index < indexPanels.size() - 1;
 		Index<I> remove = indexPanels.remove(index);
-		assert remove != null && remove.fieldPanel.getModel().isNew() == false;
-
+		assert remove != null;
+	
 		remove.binding.unbind(remove.fieldPanel);
-		group.removeField(remove.fieldPanel.getValue());
+		getFieldGroup().removeField(remove.fieldPanel.getFieldGroup());
 		remove = null;
-
+	
 		// re-set remaining field group names if necessary
 		if(rebuildNames) {
 			for(int i = 0; i < indexPanels.size(); i++) {
@@ -234,6 +235,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 			}
 		}
 	}
+
+	/**
+	 * Removes the index panel from the ui at the given numeric index.
+	 * @param index the numeric index at which to remove the index panel in the ui
+	 */
+	protected abstract void removeUi(int index) throws IndexOutOfBoundsException;
 
 	/**
 	 * Marks or un-marks a field panel at the given index as deleted.
@@ -244,63 +251,96 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
 		final Index<I> ip = indexPanels.get(index);
 		ip.fieldPanel.getModel().setMarkedDeleted(deleted);
-		ip.fieldPanel.getValue().setEnabled(!deleted);
+		ip.fieldPanel.getFieldGroup().setEnabled(!deleted);
 	}
 
 	/**
 	 * Clears the field group list cleaning up bindings and listeners.
 	 */
-	protected void clear() {
+	public final void clear() {
 		// remove in reverse to avoid spurious index group re-names
 		for(int i = size() - 1; i >= 0; i--) {
 			remove(i);
 		}
-		assert group.size() == 0;
+		assert getFieldGroup().size() == 0;
 		assert indexPanels.size() == 0;
 	}
 
-	/**
-	 * Adds an indexed field group populating the fields with data held in the
-	 * given model.
-	 * @param model The model to be converted to a field group
-	 * @throws IllegalArgumentException When the field to add already exists in
-	 *         the underlying field group or has the same name as an existing
-	 *         field in the underlying group.
-	 */
-	private void add(IModel model, boolean isAddUi) throws IllegalArgumentException {
-		Log.debug("IndexedFieldPanel.add() - START");
-
-		final IBindingAction<FieldGroup> parentBindingAction = getParentFieldPanel().getAction();
-		assert parentBindingAction != null;
-		
-		final I ip = createIndexPanel();
-		ip.setModel(model);
-		
-		// NOTE: we *don't* specify and error handler for this index field panel's binding actions
-		// as this is handled by the parent binding action since 
-		// its root field group is expected to contain this panel's field group as a child
-		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
-		indexPanels.add(index);
-
-		index.setFieldGroupName(size());
-		group.addField(ip.getValue());
-
-		index.binding.set(index.fieldPanel);
-		index.binding.bind(index.fieldPanel);
-
-		// propagate the error handler from parent field group to this index field group
-		ip.getValue().setErrorHandler(getParentFieldPanel().getValue().getErrorHandler());
-
-		// add in the ui
-		addUi(ip, isAddUi);
+	@Override
+	protected FieldGroup generateFieldGroup() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected void onAttach() {
-		final FieldPanel<?> parent = getParentFieldPanel();
-		if(parent == null || parent.getAction() == null) throw new IllegalStateException();
-		parent.getAction().bindIndexed(this, indexedPropertyName);
-		super.onAttach();
+	protected IFieldRenderer<W> getRenderer() {
+		// default is no renderer
+		// TODO revert to renderer impl strategy
+		return null;
+	}
+
+	/**
+	 * @return A newly created iterator over the indexed field panels.
+	 */
+	protected final Iterator<? extends IProvider<I>> getIndexIterator() {
+		return indexPanels.iterator();
+	}
+
+	/**
+	 * @return The number of indexed elements.
+	 */
+	protected final int size() {
+		return indexPanels.size();
+	}
+
+	@Override
+	public void setValue(Collection<IModel> value, boolean fireEvents) {
+		// default is to not support this method
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public final IConverter<Collection<IModel>, Object> getConverter() {
+		return adapter.getConverter();
+	}
+
+	@Override
+	public final void setConverter(IConverter<Collection<IModel>, Object> converter) {
+		adapter.setConverter(converter);
+	}
+
+	@Override
+	public final Object getProperty(String propPath) throws PropertyPathException {
+		return adapter.getProperty(propPath);
+	}
+
+	@Override
+	public final void setProperty(String propPath, Object value) throws IllegalArgumentException, PropertyPathException {
+		adapter.setProperty(propPath, value);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(IPropertyChangeListener l) {
+		adapter.addPropertyChangeListener(l);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener l) {
+		adapter.addPropertyChangeListener(propertyName, l);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(IPropertyChangeListener l) {
+		adapter.removePropertyChangeListener(l);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener l) {
+		adapter.removePropertyChangeListener(propertyName, l);
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<IModel>> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override

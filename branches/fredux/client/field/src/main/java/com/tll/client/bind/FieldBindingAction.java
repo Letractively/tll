@@ -4,12 +4,12 @@
  */
 package com.tll.client.bind;
 
-import java.util.Collection;
-
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
@@ -21,7 +21,7 @@ import com.tll.common.bind.IModel;
  * bi-directional communication between the two.
  * @author jpk
  */
-public final class FieldBindingAction implements IBindingAction<FieldGroup> {
+public final class FieldBindingAction implements IBindingAction {
 
 	/**
 	 * Generalized binding creation routine to bind a {@link FieldGroup} instance
@@ -48,6 +48,9 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 		return b;
 	}
 
+	/**
+	 * The error handler to employ.
+	 */
 	private final IErrorHandler errorHandler;
 
 	/**
@@ -78,15 +81,6 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 	 */
 	public FieldBindingAction(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
-	}
-
-	private void ensureSet() throws IllegalStateException {
-		if(rootGroup == null) {
-			throw new IllegalStateException("Not root field group set.");
-		}
-		if(model == null) {
-			throw new IllegalStateException("Not model set.");
-		}
 	}
 
 	/**
@@ -127,32 +121,69 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 	}
 
 	@Override
-	public void set(IBindableWidget<FieldGroup> widget) {
+	public void set(IFieldBoundWidget widget) {
 		if(rootGroup == null) {
 			Log.debug("FieldBindingAction.set(): " + widget);
-			rootGroup = widget.getValue();
+			rootGroup = widget.getFieldGroup();
 			model = widget.getModel();
 			ensureSet();
 		}
 	}
 
 	@Override
-	public void bind(IBindableWidget<FieldGroup> widget) {
+	public void bind(IFieldBoundWidget widget) {
 		ensureSet();
 		// we only allow binding of the set root field group
-		if(widget.getValue() != rootGroup) {
+		if(widget.getFieldGroup() != rootGroup) {
 			throw new IllegalArgumentException("Can only bind the field group of the set widget.");
 		}
 		bind(createBinding(rootGroup, model, errorHandler));
+		
+		// bind the indexed
+		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
+		if(indexedWidgets != null) {
+			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
+				Log.debug("Binding: " + iw);
+				// add binding to the many value collection only
+				bind(new Binding(model, iw.getIndexedPropertyName(), null, null, null, iw, IBindableWidget.PROPERTY_VALUE,
+						null, null, null));
+
+			}
+		}
 	}
 
 	@Override
-	public void bindIndexed(IBindableWidget<Collection<IModel>> widget, String indexedPropertyName) {
-		ensureSet();
-		Log.debug("Binding indexed field panel: " + widget);
-		// add binding to the many value collection only
-		bind(new Binding(model, indexedPropertyName, null, null, null, widget, IBindableWidget.PROPERTY_VALUE, null, null,
-				null));
+	public void unbind(IFieldBoundWidget widget) {
+		if(widget == null || widget.getFieldGroup() != rootGroup) {
+			throw new IllegalArgumentException();
+		}
+		
+		// TODO handle unbinding of indexed better
+		// trigger the removal of the indexed elements
+		//for(final IBindableIndexedWidget indexed : indexedWidgets) {
+		//indexed.clear();
+		//}
+		
+		binding.unbind();
+		binding.getChildren().clear();
+	}
+
+	@Override
+	public void unset(IFieldBoundWidget widget) {
+		unbind(widget);
+		rootGroup.clearValue();
+		rootGroup = null;
+		model = null;
+		//indexedWidgets.clear();
+	}
+
+	private void ensureSet() throws IllegalStateException {
+		if(rootGroup == null) {
+			throw new IllegalStateException("Not root field group set.");
+		}
+		if(model == null) {
+			throw new IllegalStateException("Not model set.");
+		}
 	}
 
 	private void bind(Binding b) {
@@ -163,22 +194,5 @@ public final class FieldBindingAction implements IBindingAction<FieldGroup> {
 
 		// populate the fields
 		b.setRight();
-	}
-
-	@Override
-	public void unbind(IBindableWidget<FieldGroup> widget) {
-		if(widget == null || widget.getValue() != rootGroup) {
-			throw new IllegalArgumentException();
-		}
-		binding.unbind();
-		binding.getChildren().clear();
-	}
-
-	@Override
-	public void unset(IBindableWidget<FieldGroup> widget) {
-		unbind(widget);
-		rootGroup.clearValue();
-		rootGroup = null;
-		model = null;
 	}
 }

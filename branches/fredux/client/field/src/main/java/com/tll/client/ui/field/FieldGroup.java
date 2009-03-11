@@ -206,7 +206,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * The error handler to employ for validation.
 	 */
 	private IErrorHandler errorHandler;
-
+	
 	/**
 	 * Constructor
 	 * @param name The required unique name for this field group.

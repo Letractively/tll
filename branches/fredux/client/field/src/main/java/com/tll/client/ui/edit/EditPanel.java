@@ -198,7 +198,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * @param msgs The field error messages to apply
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
-		final FieldGroup root = fieldPanel.getValue();
+		final FieldGroup root = fieldPanel.getFieldGroup();
 		final Errors errors = new Errors();
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
@@ -218,11 +218,16 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 				Log.debug("EditPanel - Saving complete.");
 			}
 			catch(final Exception e) {
-				Log.error(e.getMessage());
+				String emsg = e.getMessage();
+				if(emsg == null) {
+					emsg = e.getClass().toString();
+				}
+				assert emsg != null;
+				Log.error(emsg);
 			}
 		}
 		else if(sender == btnReset) {
-			fieldPanel.getValue().reset();
+			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
 			EditEvent.fire(this, EditOp.UPDATE);

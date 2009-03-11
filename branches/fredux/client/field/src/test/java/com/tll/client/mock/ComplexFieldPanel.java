@@ -5,12 +5,12 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -142,11 +142,6 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		}
 
 		@Override
-		public FieldPanel<?> getParentFieldPanel() {
-			return ComplexFieldPanel.this;
-		}
-
-		@Override
 		protected String getIndexTypeName() {
 			return "Account Address";
 		}
@@ -269,5 +264,10 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 				});
 
 		return fg;
+	}
+
+	@Override
+	public IIndexedFieldBoundWidget[] getIndexedChildren() {
+		return new IIndexedFieldBoundWidget[] { indexedPanel };
 	}
 }

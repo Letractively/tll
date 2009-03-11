@@ -9,12 +9,15 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.AbstractBindableWidget;
+import com.tll.client.convert.IConverter;
+import com.tll.client.ui.BindableWidgetAdapter;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
@@ -29,6 +32,8 @@ import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.ValidationException;
 import com.tll.client.validate.IErrorHandler.Attrib;
+import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.PropertyPathException;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -39,8 +44,7 @@ import com.tll.model.schema.PropertyMetadata;
  * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<V> extends AbstractBindableWidget<V> 
-implements IFieldWidget<V>,
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, IBindableWidget<V>,
 		ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
@@ -54,6 +58,8 @@ implements IFieldWidget<V>,
 	private static int fieldCounter = 0;
 
 	private static final String dfltReadOnlyEmptyValue = "-";
+	
+	private final BindableWidgetAdapter<V> adapter;
 
 	/**
 	 * The unique DOM element id of this field.
@@ -151,6 +157,53 @@ implements IFieldWidget<V>,
 		pnl.setStyleName(Styles.FIELD);
 
 		initWidget(pnl);
+
+		adapter = new BindableWidgetAdapter<V>(this);
+	}
+
+	@Override
+	public final Object getProperty(String propPath) throws PropertyPathException {
+		return adapter.getProperty(propPath);
+	}
+
+	@Override
+	public final void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+		adapter.setProperty(propPath, value);
+	}
+
+	@Override
+	public final IConverter<V, Object> getConverter() {
+		return adapter.getConverter();
+	}
+
+	@Override
+	public final void setConverter(IConverter<V, Object> converter) {
+		adapter.setConverter(converter);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
+		adapter.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		adapter.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
+		adapter.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		adapter.removePropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	/*

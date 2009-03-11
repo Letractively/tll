@@ -79,11 +79,6 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		public FieldPanel<?> getParentFieldPanel() {
-			return AccountPanel.this;
-		}
-
-		@Override
 		protected String getIndexTypeName() {
 			return "Account Address";
 		}

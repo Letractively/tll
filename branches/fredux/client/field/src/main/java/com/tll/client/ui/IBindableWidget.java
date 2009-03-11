@@ -1,10 +1,8 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.HasValue;
-import com.tll.client.bind.IBindingAction;
 import com.tll.client.convert.IConverter;
 import com.tll.common.bind.IBindable;
-import com.tll.common.bind.IModel;
 
 /**
  * IBindableWidget - Extension of {@link IBindable} relevant to ui widgets
@@ -32,26 +30,4 @@ public interface IBindableWidget<V> extends IBindable, HasValue<V> {
 	 * @param converter
 	 */
 	void setConverter(IConverter<V, Object> converter);
-
-	/**
-	 * @return The bound model
-	 */
-	IModel getModel();
-
-	/**
-	 * Sets the model to be bound to this bindable widget.
-	 * @param model the bindable model
-	 */
-	void setModel(IModel model);
-
-	/**
-	 * @return The action for this bindable widget.
-	 */
-	IBindingAction<V> getAction();
-
-	/**
-	 * Sets the action.
-	 * @param action
-	 */
-	void setAction(IBindingAction<V> action);
 }

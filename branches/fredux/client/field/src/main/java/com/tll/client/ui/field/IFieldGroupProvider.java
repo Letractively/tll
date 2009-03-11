@@ -13,8 +13,7 @@ package com.tll.client.ui.field;
 public interface IFieldGroupProvider {
 
 	/**
-	 * Provides a {@link FieldGroup} instance.
-	 * @return A new {@link FieldGroup} instance.
+	 * @return A field group.
 	 */
 	FieldGroup getFieldGroup();
 }

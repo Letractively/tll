@@ -5,8 +5,8 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 
 /**
- * IEditable - Marker type interface to aggregate focusability and value
- * providing ability.
+ * IEditable - Marker type interface to aggregate focusability, "hoverability"
+ * and value providing ability.
  * @author jpk
  * @param <T> the value type
  */

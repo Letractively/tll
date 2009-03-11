@@ -89,11 +89,6 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<Flow
 		}
 
 		@Override
-		public FieldPanel<?> getParentFieldPanel() {
-			return MultiOptionInterfacePanel.this;
-		}
-
-		@Override
 		protected String getIndexTypeName() {
 			return "Option";
 		}

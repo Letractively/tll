@@ -6,11 +6,10 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
-import com.tll.common.bind.IBindable;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.criteria.IPropertyNameProvider;
 
@@ -19,7 +18,7 @@ import com.tll.criteria.IPropertyNameProvider;
  * @param <V> the value type
  * @author jpk
  */
-public interface IFieldWidget<V> extends IField, IBindable, IPropertyNameProvider, HasValue<V>, HasText, IHasHelpText,
+public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNameProvider, HasText, IHasHelpText,
 		IValidator {
 
 	/**

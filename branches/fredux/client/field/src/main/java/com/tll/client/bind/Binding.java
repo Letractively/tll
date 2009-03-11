@@ -434,7 +434,6 @@ public final class Binding {
 	 */
 	public void bind() {
 		if(!bound && (left != null) && (right != null)) {
-			Log.debug("Binding.binding..");
 			left.object.addPropertyChangeListener(left.property, left.listener);
 
 			//if(left.nestedListener != null) {
@@ -460,7 +459,6 @@ public final class Binding {
 	 */
 	public void unbind() {
 		if(bound && (left != null) && (right != null)) {
-			Log.debug("Binding.unbinding..");
 			left.object.removePropertyChangeListener(left.property, left.listener);
 
 			//if(left.nestedListener != null) {

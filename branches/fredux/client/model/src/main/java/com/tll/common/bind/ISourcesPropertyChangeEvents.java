@@ -8,8 +8,6 @@ package com.tll.common.bind;
 /**
  * ISourcesPropertyChangeEvents - Indicates the ability to fire
  * {@link PropertyChangeEvent}s.
- * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
  * @author jpk
  */
 public interface ISourcesPropertyChangeEvents {
@@ -26,11 +24,6 @@ public interface ISourcesPropertyChangeEvents {
 	 * @param listener
 	 */
 	void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener);
-
-	/**
-	 * @return The property listeners.
-	 */
-	IPropertyChangeListener[] getPropertyChangeListeners();
 
 	/**
 	 * Removes a property change listener.

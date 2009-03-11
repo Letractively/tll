@@ -6,7 +6,6 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +27,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.IProvider;
 import com.tll.client.ui.WidgetAndLabel;
 
 /**
@@ -289,8 +287,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		super.markDeleted(index, deleted);
 	}
 
+	/*
 	@Override
-	protected void clear() {
+	public void clear() {
 		if(enableAdd) {
 			for(final Iterator<? extends IProvider<I>> itr = getIndexIterator(); itr.hasNext();) {
 				if(!tabPanel.remove(itr.next().get())) {
@@ -304,7 +303,8 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		tabWidgets.clear();
 		super.clear();
 	}
-
+	*/
+	
 	/*
 	@Override
 	public void setErrorHandler(IErrorHandler errorHandler) {

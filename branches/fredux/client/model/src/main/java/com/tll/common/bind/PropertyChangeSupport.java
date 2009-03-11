@@ -46,7 +46,7 @@ public class PropertyChangeSupport {
 
 	public synchronized void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
 		if((propertyName != null) && (listener != null)) {
-			List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
+			final List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
 			if(listeners != null) {
 				listeners.remove(listener);
 			}
@@ -62,66 +62,14 @@ public class PropertyChangeSupport {
 				selectedPropertiesChangeListeners.put(propertyName, listeners);
 			}
 
-			// RI compatibility
-			if(listener instanceof PropertyChangeListenerProxy) {
-				PropertyChangeListenerProxy proxy = (PropertyChangeListenerProxy) listener;
-
-				listeners.add(new PropertyChangeListenerProxy(proxy.getPropertyName(), (IPropertyChangeListener) proxy
-						.getListener()));
-			}
-			else {
-				listeners.add(listener);
-			}
-		}
-	}
-
-	public synchronized IPropertyChangeListener[] getPropertyChangeListeners(String propertyName) {
-		List<IPropertyChangeListener> listeners = null;
-
-		if(propertyName != null) {
-			listeners = selectedPropertiesChangeListeners.get(propertyName);
-		}
-
-		if(listeners == null) {
-			return new IPropertyChangeListener[] {};
-		}
-
-		IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[listeners.size()];
-		Iterator<IPropertyChangeListener> iter = listeners.iterator();
-		for(int i = 0; i < changeListeners.length; i++) {
-			changeListeners[i] = iter.next();
-		}
-		return changeListeners;
-	}
-
-	public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
-		PropertyChangeEvent event = createPropertyChangeEvent(propertyName, oldValue, newValue);
-		doFirePropertyChange(event);
-	}
-
-	public void fireIndexedPropertyChange(String propertyName, int index, boolean oldValue, boolean newValue) {
-
-		if(oldValue != newValue) {
-			fireIndexedPropertyChange(propertyName, index, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
-		}
-	}
-
-	public void firePropertyChange(String propertyName, int oldValue, int newValue) {
-		PropertyChangeEvent event = createPropertyChangeEvent(propertyName, oldValue, newValue);
-		doFirePropertyChange(event);
-	}
-
-	public void fireIndexedPropertyChange(String propertyName, int index, int oldValue, int newValue) {
-
-		if(oldValue != newValue) {
-			fireIndexedPropertyChange(propertyName, index, new Integer(oldValue), new Integer(newValue));
+			listeners.add(listener);
 		}
 	}
 
 	public synchronized boolean hasListeners(String propertyName) {
 		boolean result = allPropertiesChangeListeners.size() > 0;
 		if(!result && (propertyName != null)) {
-			List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
+			final List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
 			if(listeners != null) {
 				result = listeners.size() > 0;
 			}
@@ -131,52 +79,14 @@ public class PropertyChangeSupport {
 
 	public synchronized void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if(listener != null) {
-			if(listener instanceof PropertyChangeListenerProxy) {
-				String name = ((PropertyChangeListenerProxy) listener).getPropertyName();
-				IPropertyChangeListener lst = (IPropertyChangeListener) ((PropertyChangeListenerProxy) listener).getListener();
-
-				removePropertyChangeListener(name, lst);
-			}
-			else {
-				allPropertiesChangeListeners.remove(listener);
-			}
+			allPropertiesChangeListeners.remove(listener);
 		}
 	}
 
 	public synchronized void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if(listener != null) {
-			if(listener instanceof PropertyChangeListenerProxy) {
-				String name = ((PropertyChangeListenerProxy) listener).getPropertyName();
-				IPropertyChangeListener lst = (IPropertyChangeListener) ((PropertyChangeListenerProxy) listener).getListener();
-				addPropertyChangeListener(name, lst);
-			}
-			else {
-				allPropertiesChangeListeners.add(listener);
-			}
+			allPropertiesChangeListeners.add(listener);
 		}
-	}
-
-	public synchronized IPropertyChangeListener[] getPropertyChangeListeners() {
-		ArrayList<IPropertyChangeListener> result = new ArrayList<IPropertyChangeListener>(allPropertiesChangeListeners);
-
-		for(Iterator<String> it = selectedPropertiesChangeListeners.keySet().iterator(); it.hasNext();) {
-			String propertyName = it.next();
-			List<IPropertyChangeListener> selectedListeners = selectedPropertiesChangeListeners.get(propertyName);
-
-			if(selectedListeners != null) {
-				for(Iterator<IPropertyChangeListener> it1 = selectedListeners.iterator(); it1.hasNext();) {
-					IPropertyChangeListener listener = it1.next();
-					result.add(new PropertyChangeListenerProxy(propertyName, listener));
-				}
-			}
-		}
-
-		IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[result.size()];
-		Iterator<IPropertyChangeListener> iter = result.iterator();
-		for(int i = 0; i < changeListeners.length; i++) {
-			changeListeners[i] = iter.next();
-		}
-		return changeListeners;
 	}
 
 	public void firePropertyChange(PropertyChangeEvent event) {
@@ -187,18 +97,10 @@ public class PropertyChangeSupport {
 		return new PropertyChangeEvent(sourceBean, propertyName, oldValue, newValue);
 	}
 
-	private PropertyChangeEvent createPropertyChangeEvent(String propertyName, boolean oldValue, boolean newValue) {
-		return new PropertyChangeEvent(sourceBean, propertyName, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
-	}
-
-	private PropertyChangeEvent createPropertyChangeEvent(String propertyName, int oldValue, int newValue) {
-		return new PropertyChangeEvent(sourceBean, propertyName, new Integer(oldValue), new Integer(newValue));
-	}
-
 	private void doFirePropertyChange(PropertyChangeEvent event) {
-		String propertyName = event.getPropertyName();
-		Object oldValue = event.getOldValue();
-		Object newValue = event.getNewValue();
+		final String propertyName = event.getPropertyName();
+		final Object oldValue = event.getOldValue();
+		final Object newValue = event.getNewValue();
 
 		if((newValue != null) && (oldValue != null) && newValue.equals(oldValue)) {
 			return;
@@ -208,20 +110,20 @@ public class PropertyChangeSupport {
 		 * Copy the listeners collections so they can be modified while we fire
 		 * events.
 		 */
-		List<IPropertyChangeListener> allListeners = new ArrayList<IPropertyChangeListener>();
+		final List<IPropertyChangeListener> allListeners = new ArrayList<IPropertyChangeListener>();
 
 		// Listeners to all property change events
 		allListeners.addAll(allPropertiesChangeListeners);
 
 		// Listens to a given property change
-		List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
+		final List<IPropertyChangeListener> listeners = selectedPropertiesChangeListeners.get(propertyName);
 		if(listeners != null) {
 			allListeners.addAll(listeners);
 		}
 
 		// Fire the listeners
-		for(Iterator<IPropertyChangeListener> iter = allListeners.iterator(); iter.hasNext();) {
-			IPropertyChangeListener listener = iter.next();
+		for(final Iterator<IPropertyChangeListener> iter = allListeners.iterator(); iter.hasNext();) {
+			final IPropertyChangeListener listener = iter.next();
 			listener.propertyChange(event);
 		}
 	}
