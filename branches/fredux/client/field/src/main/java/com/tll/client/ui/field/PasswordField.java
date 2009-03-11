@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.validate.StringLengthValidator;
 
 /**
  * PasswordField
@@ -66,8 +67,14 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 		return tb.getMaxLength();
 	}
 
-	public void setMaxLen(int maxlen) {
-		tb.setMaxLength(maxlen < 0 ? 256 : maxlen);
+	public void setMaxLen(int maxLen) {
+		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
+		if(maxLen == -1) {
+			removeValidator(StringLengthValidator.class);
+		}
+		else {
+			addValidator(new StringLengthValidator(0, maxLen));
+		}
 	}
 
 	public String getText() {

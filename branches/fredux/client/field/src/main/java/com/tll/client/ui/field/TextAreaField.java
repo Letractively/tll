@@ -6,6 +6,7 @@ package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.TextArea;
 import com.tll.client.convert.ToStringConverter;
+import com.tll.client.validate.StringLengthValidator;
 
 /**
  * TextAreaField
@@ -65,6 +66,12 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 
 	public void setMaxLen(int maxLen) {
 		this.maxLen = maxLen;
+		if(maxLen == -1) {
+			removeValidator(StringLengthValidator.class);
+		}
+		else {
+			addValidator(new StringLengthValidator(0, maxLen));
+		}
 	}
 
 	public String getText() {

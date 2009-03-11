@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.tll.client.convert.ToStringConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.StringLengthValidator;
 
 /**
  * TextField
@@ -84,6 +85,12 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 
 	public void setMaxLen(int maxLen) {
 		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
+		if(maxLen == -1) {
+			removeValidator(StringLengthValidator.class);
+		}
+		else {
+			addValidator(new StringLengthValidator(0, maxLen));
+		}
 	}
 
 	public String getText() {

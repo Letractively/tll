@@ -106,7 +106,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		lb.clear();
 		for(final V val : data.keySet()) {
 			lb.addItem(data.get(val));
-			if(val.equals(oldval)) {
+			if(ObjectUtil.equals(val, oldval)) {
 				lb.setItemSelected(lb.getItemCount() - 1, true);
 			}
 		}
