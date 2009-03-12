@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <artifactId>tll-testassets</artifactId>
+    <artifactId>tll-mock</artifactId>
     <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>

@@ -8,17 +8,17 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Contains mock constructs to aid in testing or otherwise.</description>
   <packaging>pom</packaging>
-  
+
   <parent>
     <groupId>com.tll</groupId>
     <artifactId>tll</artifactId>
-    <version>1</version>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <modules>
     <module>model</module>
     <module>persistence-unit</module>
     <module>service-layer</module>
   </modules>
-  
+
 </project>
