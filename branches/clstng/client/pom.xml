@@ -1,0 +1,230 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.tll</groupId>
+  <artifactId>tll-client</artifactId>
+  <packaging>pom</packaging>
+  <name>tll-client</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Contains client modules.</description>
+  
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>1</version>
+  </parent>
+  
+  <properties>
+    <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
+    <gwtLogVersion>2.5.3</gwtLogVersion>
+  </properties>
+
+  <modules>
+    <module>core</module>
+    <module>ui</module>
+    <module>cache</module>
+    <module>rpc</module>
+    <module>model</module>
+    <module>listing</module>
+    <module>mvc</module>
+    <module>field</module>
+    <module>login</module>
+  </modules>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+        </includes>
+      </testResource>
+    </testResources>
+    
+    <plugins>
+
+      <!--
+        currently, gwt surefire driven GWTTest derived tests create these project dirs 
+        which should be removed during the clean phase.
+      -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.gwt-tmp</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>tomcat</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+  
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>com.tll</groupId>
+            <artifactId>gwt-test-war-dir-assembly</artifactId>
+            <version>1.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-compile</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+                <property name="gwt.compile.modules" value="com.tll.UITests" />
+                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
+                <property name="gwt.shell.startupUrl" value="UITests.html" />
+                <echo message="test classpath: ${gwt.compile.classpath}" />
+                <ant antfile="${basedir}/../build-gwt.xml">
+                  <!-- <target name="compile" /> -->
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>-Xms128m -Xmx512m -ea</argLine>
+          <includes>
+            <include>**/*GWTTest.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+
+        <!--
+        override to exclude project specific gwt ui test assests
+        -->
+        <executions>
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*UITests*</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Test*</include>
+                <include>**/mock/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+    </plugins>
+  </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.code.gwt-log</groupId>
+        <artifactId>gwt-log</artifactId>
+        <version>${gwtLogVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gwt-incubator</groupId>
+        <artifactId>gwt-incubator-glasspanel</artifactId>
+        <version>${gwtIncubatorGlassPanelVersion}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}-libs</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+</project>

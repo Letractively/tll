@@ -1,0 +1,703 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>1</version>
+  </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>smbiz</artifactId>
+  <name>smbiz</name>
+  <version>0.9.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <description>The smbiz app</description>
+
+  <build>
+    <finalName>smbiz</finalName>
+
+    <filters>
+      <filter>src/main/resources/config-root.properties</filter>
+      <filter>src/main/resources/config-${environment}.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources/db</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources/refdata</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+      </resource>
+      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
+      <resource>
+        <directory>src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+
+      <!--
+        Identify the source files needed for GWT compile in the main source src tree excluding those *transitive
+        sources* (i.e. the sources contained in the declareed dependencies section). IMPT NOTE: This reflects the
+        sources identified in the bound GWT modules' source declarations.
+      -->
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+          <include>**/model/AccountStatus.java</include>
+          <include>**/model/AddressType.java</include>
+          <include>**/model/CreditCardType.java</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.groovy.maven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>mysql</groupId>
+              <artifactId>mysql-connector-java</artifactId>
+              <version>${mysqlConnectorVersion}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <classpath>
+              <element>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+              </element>
+              <element>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+              </element>
+              <element>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+              </element>
+              <element>
+                <groupId>com.tll</groupId>
+                <artifactId>tll-config</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </element>
+              <element>
+                <groupId>com.tll</groupId>
+                <artifactId>tll-dao</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </element>
+            </classpath>
+            <source></source>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source><![CDATA[
+                def NL = System.getProperty("line.separator")
+                
+                def dir = new File(project.basedir, 'target/classes/com/tll/client')
+                ant.mkdir(dir: dir)
+                
+                File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config-root.properties')
+                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.environment}.properties')
+                
+                def config = com.tll.config.Config.instance()
+                config.loadProperties(fBaseConfig.toURI().toURL(), true, false)
+                config.loadProperties(fProfileConfig.toURI().toURL(), true, true)
+                
+                // set profile dependent properties
+                config.setProperty('environment', project.properties.environment)
+                config.setProperty('debug', project.properties.debug)
+                config.setProperty('db.dao.mode', project.properties['db.dao.mode'])
+                config.setProperty('security.mode', project.properties['security.mode'])
+                
+                // create aggregated config.properties file..
+                config.saveAsPropFile(new File(project.basedir.toString() + '/target/classes/config.properties'))
+                
+                // create GWT Constants.properties file..
+                def gwtProps = new HashMap();
+                gwtProps.put("appVersion", project.version)
+                gwtProps.put("environment", config.getString('environment'))
+                gwtProps.put("debug", config.getString('debug'))
+                def f = new File(project.basedir, 'target/classes/com/tll/client/Constants.properties')
+                f.createNewFile()
+                StringBuilder sbuf = new StringBuilder(1024)
+                gwtProps.each() {key, value -> 
+                  sbuf.append(key)
+                  sbuf.append(' ')
+                  sbuf.append(value)
+                  sbuf.append(NL)
+                }
+                f.write(sbuf.toString())
+                
+              ]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- direct unit test invocations to the testng.xml file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!--
+            NOTE: we have to specify at least one test file otherwise maven resorts to dynamic class finding of unit
+            tests!
+          -->
+          <suiteXmlFiles>
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile> -->
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile> -->
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile> -->
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-client-model.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+
+      <!-- GWT-Maven plugin -->
+      <!--
+        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt (shell invocation) mvn
+        com.totsp.gwt:maven-googlewebtoolkit2-plugin:debug (shell invocation w/ jvm debug hook) mvn
+        com.totsp.gwt:maven-googlewebtoolkit2-plugin:test (run GWTTestCase derived unit tests)
+      -->
+      <plugin>
+        <groupId>com.totsp.gwt</groupId>
+        <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+        <version>2.0-beta26</version>
+        <configuration>
+          <gwtVersion>${gwtVersion}</gwtVersion>
+          <logLevel>INFO</logLevel>
+          <enableAssertions>true</enableAssertions>
+          <resourcesOnPath>false</resourcesOnPath>
+          <extraJvmArgs>-Xmx512M -Xms128M</extraJvmArgs>
+          <noServer>false</noServer>
+          <port>8888</port>
+          <tomcat>${pom.basedir}/target/tomcat</tomcat>
+          <webXml>${pom.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
+          <webXmlServletPathAsIs>true</webXmlServletPathAsIs>
+          <compileTargets>
+            <value>${gwt.compile.target}</value>
+          </compileTargets>
+          <runTarget>${gwt.run.target}</runTarget>
+        </configuration>
+        <executions>
+          <execution>
+            <id>gwt-compile</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>compile</goal>
+              <!-- <goal>i18n</goal> -->
+            </goals>
+          </execution>
+          <execution>
+            <id>gwt-test</id>
+            <!-- <phase>test</phase> -->
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+        If you want to use the target/web.xml file mergewebxml produces, tell the war plugin to use it. Also, exclude
+        what you want from the final artifact here.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webXml>target/web.xml</webXml>
+          <warSourceExcludes>
+            .gwt-tmp/**,
+            **/*.gwt.xml,
+            **/*.java,
+            WEB-INF/classes/**/client/**,
+            WEB-INF/classes/**/common/**/*Async.class,
+            WEB-INF/classes/**/public/**,
+          </warSourceExcludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <!-- smbiz dev profile -->
+    <profile>
+      <id>dev</id>
+      <properties>
+        <!-- <debug>true</debug> -->
+        <db.dao.mode>MOCK</db.dao.mode>
+        <security.mode>NONE</security.mode>
+        <gwt.compile.target>com.tll.WorkingModule</gwt.compile.target>
+        <gwt.run.target>com.tll.WorkingModule/SmbizAdmin.html</gwt.run.target>
+      </properties>
+      <!-- 
+      <activation>
+        <property>
+          <name>mode</name>
+          <value>dev</value>
+        </property>
+      </activation>
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.groovy.maven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <executions>
+              <!--
+                this task ensures we have a test db created and stubbed NOTE: No db ops occur if the test db already
+                exists
+              -->
+              <execution>
+                <id>ensure-devdb-created</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <source><![CDATA[
+                    if(project.properties['db.dao.mode'] == 'ORM') {
+                      File f = new File(project.basedir.toString() + '/target/classes/config.properties')
+                      def config = com.tll.config.Config.instance()
+                      config.loadProperties(f.toURI().toURL(), true, true)
+                      String path = project.basedir.toString() + '/target/classes/'
+                      File fSchema = new File(path, config.getString('db.resource.schema'))
+                      File fStub = new File(path, config.getString('db.resource.stub'))
+                      File fDelete = new File(path, config.getString('db.resource.delete'))
+                      def shell = com.tll.dao.jdbc.DbShellBuilder.getDbShell(config, 
+                        fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
+                      if(shell.create()) {
+                        println('Stubbing test db..')
+                        shell.stub();
+                      }
+                    }
+                  ]]></source>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- smbiz production profile -->
+    <profile>
+      <id>prod</id>
+      <properties>
+        <!-- <debug>false</debug> -->
+        <db.dao.mode>ORM</db.dao.mode>
+        <security.mode>ACEGI</security.mode>
+        <gwt.compile.target>com.tll.SmbizAdminApp</gwt.compile.target>
+        <gwt.run.target>com.tll.SmbizAdminApp/SmbizAdmin.html</gwt.run.target>
+      </properties>
+      <activation>
+        <property>
+          <name>mode</name>
+          <value>prod</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <version>1.1</version>
+            <configuration>
+              <source>1.6</source>
+              <target>1.6</target>
+              <weaveDependencies>
+                <weaveDependency>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-service</artifactId>
+                </weaveDependency>
+              </weaveDependencies>
+              <aspectLibraries>
+                <aspectLibrary>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-aspects</artifactId>
+                </aspectLibrary>
+              </aspectLibraries>
+            </configuration>
+            <executions>
+              <execution>
+                <id>aspectj-weave</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  
+  </profiles>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-refdata</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mail</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-servlet</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-security</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>ejb3-persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-c3p0</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+    <!--
+      <dependency> <groupId>org.springframework.security</groupId> <artifactId>spring-security-acl</artifactId>
+      </dependency>
+    -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+
+    <!--  GWT sources deps -->
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-refdata</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+    
+    <!-- tll client (GWT) deps -->
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-mvc</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-rpc</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-field</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-listing</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-login</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}-libs</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}</classifier>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.atomikos</groupId>
+      <artifactId>transactions-jta</artifactId>
+      <version>${atomikos.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-support</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-incubator</artifactId>
+      <version>1.5-Dec_28</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+      <version>2.5.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.8</version>
+      <classifier>jdk15</classifier>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>

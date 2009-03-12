@@ -1,0 +1,43 @@
+<assembly>
+  <id>gwt-test-war-dir</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>*.html</include>
+      </includes>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>web.xml</include>
+      </includes>
+      <outputDirectory>/WEB-INF</outputDirectory>
+    </fileSet>
+  </fileSets>
+
+  <!-- groupId:artifactId:type:classifier -->
+  <!-- 
+  <dependencySets>
+    <dependencySet>
+      <scope>runtime</scope>
+      <outputDirectory>/WEB-INF/lib</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>com.tll:tll-core</include>
+        <include>com.tll:tll-config</include>
+        <include>com.tll:tll-refdata</include>
+        <include>com.tll:tll-dao</include>
+        <include>com.tll:tll-service</include>
+        <include>com.tll:tll-servlet</include>
+        <include>com.tll:client-rpc</include>
+        <include>com.tll:client-model</include>
+        <include>com.google.gwt:gwt-servlet</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+  -->
+</assembly>
