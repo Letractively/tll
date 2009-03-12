@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-mail</artifactId>
   <name>tll-mail</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Programmatic email assembly and distribution using Spring and javax.mail via a simplified api.</description>
 
   <build>

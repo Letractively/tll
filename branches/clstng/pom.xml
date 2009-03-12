@@ -6,7 +6,7 @@
   <artifactId>tll</artifactId>
   <packaging>pom</packaging>
   <name>tll</name>
-  <version>1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>The tll super pom.</description>
   <url>http://tll.googlecode.com</url>
   <inceptionYear>2005</inceptionYear>

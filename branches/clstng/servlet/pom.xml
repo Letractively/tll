@@ -10,7 +10,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-servlet</artifactId>
   <name>tll-servlet</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>Houses common servlet routines.</description>
   
   <dependencies>

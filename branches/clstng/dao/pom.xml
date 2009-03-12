@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>tll-dao</artifactId>
   <name>tll-dao</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>DAO abstraction layer.</description>
   
   <build>
