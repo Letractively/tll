@@ -1,8 +1,0 @@
-<module>
-  <inherits name="com.tll.Field" />
-  
-  <source path="common/model">
-    <exclude name="*Test.java" />
-  </source>
-
-</module>
