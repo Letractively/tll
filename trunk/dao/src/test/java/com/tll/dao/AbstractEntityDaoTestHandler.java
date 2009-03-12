@@ -48,7 +48,7 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * Shortcut to {@link MockEntityFactory#getAllEntityCopies(Class)}.
 	 * @param <D>
 	 * @param entityType
-	 * @return
+	 * @return set of entities
 	 */
 	protected final <D extends IEntity> Set<D> getAll(Class<D> entityType) {
 		return mockEntityFactory.getAllEntityCopies(entityType);
@@ -79,8 +79,6 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 	 * @param <D>
 	 * @param entityType
 	 * @param makeUnique
-	 * @param mockEntityFactory
-	 * @param entityDao
 	 * @return The created and persisted entity
 	 */
 	protected final <D extends IEntity> D createAndPersist(Class<D> entityType, boolean makeUnique) {

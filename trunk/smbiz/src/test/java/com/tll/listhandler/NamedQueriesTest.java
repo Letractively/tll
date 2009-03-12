@@ -53,7 +53,7 @@ public class NamedQueriesTest extends DbTest {
 			new HashMap<SelectNamedQueries, List<IQueryParam>>();
 
 	static {
-		for(SelectNamedQueries nq : SelectNamedQueries.values()) {
+		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
 			switch(nq) {
 				case ISP_LISTING:
 					querySortBindings.put(nq, new SortColumn("dateCreated"));
@@ -61,14 +61,14 @@ public class NamedQueriesTest extends DbTest {
 					break;
 				case MERCHANT_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated"));
-					List<IQueryParam> list = new ArrayList<IQueryParam>();
+					final List<IQueryParam> list = new ArrayList<IQueryParam>();
 					list.add(new QueryParam("ispId", PropertyType.INT, new Integer(2)));
 					queryParamsBindings.put(nq, list);
 					break;
 				}
 				case CUSTOMER_LISTING: {
 					querySortBindings.put(nq, new SortColumn("dateCreated", "c"));
-					List<IQueryParam> list = new ArrayList<IQueryParam>();
+					final List<IQueryParam> list = new ArrayList<IQueryParam>();
 					list.add(new QueryParam("merchantId", PropertyType.INT, new Integer(2)));
 					queryParamsBindings.put(nq, list);
 					break;
@@ -122,6 +122,8 @@ public class NamedQueriesTest extends DbTest {
 	}
 
 	/**
+	 * @param <E>
+	 * @param entityClass
 	 * @return The {@link IListHandlerDataProvider} subject to testing.
 	 */
 	protected <E extends IEntity> IListHandlerDataProvider<E> getListHandlerDataProvider(Class<E> entityClass) {
@@ -148,13 +150,13 @@ public class NamedQueriesTest extends DbTest {
 		ICriteria<IEntity> criteria;
 
 		// iterator through all defined select named queries
-		for(SelectNamedQueries nq : querySortBindings.keySet()) {
+		for(final SelectNamedQueries nq : querySortBindings.keySet()) {
 			dataProvider = getListHandlerDataProvider((Class<IEntity>) nq.getEntityType());
 			criteria = new Criteria<IEntity>(nq, queryParamsBindings.get(nq));
-			Sorting sorting = new Sorting(querySortBindings.get(nq));
+			final Sorting sorting = new Sorting(querySortBindings.get(nq));
 
 			// test for all list handler types
-			for(ListHandlerType lht : ListHandlerType.values()) {
+			for(final ListHandlerType lht : ListHandlerType.values()) {
 				IListHandler<SearchResult<IEntity>> listHandler = null;
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
@@ -166,7 +168,7 @@ public class NamedQueriesTest extends DbTest {
 							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 							Assert.fail("Able to create id list based list handler for a scalar named query!");
 						}
-						catch(InvalidCriteriaException e) {
+						catch(final InvalidCriteriaException e) {
 							// expected
 						}
 						break;

@@ -45,6 +45,9 @@ public final class PropertyMetadata extends AbstractSchemaProperty {
 		return managed;
 	}
 
+	/**
+	 * @return the allowed max length or <code>-1</code> if undefined.
+	 */
 	public int getMaxLen() {
 		return maxLen;
 	}

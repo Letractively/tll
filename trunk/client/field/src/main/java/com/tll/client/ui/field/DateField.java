@@ -6,69 +6,108 @@ package com.tll.client.ui.field;
 
 import java.util.Date;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
+import com.tll.client.validate.DateValidator;
+import com.tll.client.validate.ValidationException;
 
 /**
  * DateField
  * @author jpk
- * @param <B> the bound type
  */
-public class DateField<B> extends AbstractField<B, Date> implements ValueChangeHandler<Date>, IHasFormat {
-
+public class DateField extends AbstractField<Date> implements IHasFormat {
+	
 	/**
-	 * FocusableDateBox - For some reason {@link DateBox} has the
-	 * {@link Focusable} methods declared yet does not implement the
-	 * {@link Focusable} interface!
+	 * Impl
 	 * @author jpk
 	 */
-	final class FocusableDateBox extends DateBox implements Focusable {
+	static final class Impl extends DateBox implements IEditable<Date> {
+
+		@Override
+		public HandlerRegistration addBlurHandler(BlurHandler handler) {
+			return addDomHandler(handler, BlurEvent.getType());
+		}
+
+		@Override
+		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+			return addDomHandler(handler, MouseOverEvent.getType());
+		}
+
+		@Override
+		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+			return addDomHandler(handler, MouseOutEvent.getType());
+		}
+	}
+	
+	/**
+	 * ToDateConverter
+	 * @author jpk
+	 */
+	final class ToDateConverter implements IConverter<Date, Object> {
+
+		@SuppressWarnings("synthetic-access")
+		@Override
+		public Date convert(Object in) throws IllegalArgumentException {
+			try {
+				return (Date) DateValidator.get(dateFormat).validate(in);
+			}
+			catch(final ValidationException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
 
 	}
 
 	/**
-	 * The target date box.
+	 * The date display format.
 	 */
-	private final FocusableDateBox dbox;
+	private GlobalFormat dateFormat;
 
 	/**
-	 * The currently selected date
+	 * The target date box.
 	 */
-	private Date seldate;
-
+	private final Impl dbox;
+	
 	/**
 	 * Constructor
 	 * @param name
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param converter
+	 * @param format
 	 */
-	DateField(String name, String propName, String labelText, String helpText, IConverter<Date, B> converter) {
+	DateField(String name, String propName, String labelText, String helpText, GlobalFormat format) {
 		super(name, propName, labelText, helpText);
-		setConverter(converter);
-		dbox = new FocusableDateBox();
+		dbox = new Impl();
 		dbox.addValueChangeHandler(this);
-		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(GlobalFormat.DATE)));
+		dbox.addBlurHandler(this);
+		setFormat(format);
 	}
 
 	public GlobalFormat getFormat() {
-		return GlobalFormat.DATE;
+		return dateFormat;
 	}
 
 	public void setFormat(GlobalFormat format) {
-		throw new UnsupportedOperationException();
+		if(format != null && !format.isDateFormat()) throw new IllegalArgumentException();
+		this.dateFormat = format == null ? GlobalFormat.DATE : format;
+		dbox.setFormat(new DefaultFormat(Fmt.getDateTimeFormat(dateFormat)));
+		setConverter(new ToDateConverter());
 	}
 
 	@Override
-	protected Focusable getEditable() {
+	public IEditable<Date> getEditable() {
 		return dbox;
 	}
 
@@ -78,27 +117,5 @@ public class DateField<B> extends AbstractField<B, Date> implements ValueChangeH
 
 	public void setText(String text) {
 		dbox.getTextBox().setText(text);
-	}
-
-	public Date getValue() {
-		return seldate;
-	}
-
-	@Override
-	protected void setNativeValue(Date nativeValue) {
-		// NOTE: this fires the onChange event
-		dbox.setValue(nativeValue);
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-	
-	public void onValueChange(ValueChangeEvent<Date> event) {
-		final Date old = seldate;
-		seldate = event.getValue();
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, seldate);
-		fireChangeListeners();
 	}
 }

@@ -30,7 +30,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 
 	private static ModelChangeManager instance = new ModelChangeManager();
 
-	public static ModelChangeManager instance() {
+	public static ModelChangeManager get() {
 		return instance;
 	}
 

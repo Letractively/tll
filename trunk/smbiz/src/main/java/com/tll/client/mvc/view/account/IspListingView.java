@@ -60,6 +60,7 @@ public final class IspListingView extends ListingView {
 
 		/**
 		 * Constructor
+		 * @param viewClass
 		 * @param source
 		 */
 		IspListingViewRequest(Class viewClass, Widget source) {
@@ -128,7 +129,7 @@ public final class IspListingView extends ListingView {
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Merchant Listing") == 0) {
-						ViewManager.instance().dispatch(
+						ViewManager.get().dispatch(
 								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowRef(rowIndex)));
 					}
 				}

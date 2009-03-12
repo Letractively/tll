@@ -4,13 +4,12 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
-import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
@@ -22,7 +21,7 @@ import com.tll.common.model.RefKey;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView implements IEditListener {
+public abstract class EditView extends AbstractView implements IEditHandler {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -50,11 +49,12 @@ public abstract class EditView extends AbstractView implements IEditListener {
 	 * @param fieldPanel The required field panel
 	 * @param entityOptions Optional entity options
 	 */
-	public EditView(FieldPanel<? extends Widget, Model> fieldPanel, final EntityOptions entityOptions) {
+	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		editPanel = new EditPanel(fieldPanel, true, false);
-		editPanel.addEditListener(this);
+		// TODO add global msg panel ref
+		editPanel = new EditPanel(null, fieldPanel, true, false);
+		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;
 
@@ -119,9 +119,9 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			ModelChangeManager.instance().loadModel(this, modelRef, entityOptions, getNeededAuxData());
+			ModelChangeManager.get().loadModel(this, modelRef, entityOptions, getNeededAuxData());
 		}
-		else if(!ModelChangeManager.instance().fetchAuxData(this, getNeededAuxData())) {
+		else if(!ModelChangeManager.get().fetchAuxData(this, getNeededAuxData())) {
 			editPanel.setModel(model);
 		}
 	}
@@ -132,18 +132,18 @@ public abstract class EditView extends AbstractView implements IEditListener {
 		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
-	public final void onEditEvent(EditEvent event) {
+	public final void onEdit(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), false));
+				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
-				ModelChangeManager.instance().persistModel(this, model, entityOptions);
+				ModelChangeManager.get().persistModel(this, model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					ModelChangeManager.instance().deleteModel(this, modelRef, entityOptions);
+					ModelChangeManager.get().deleteModel(this, modelRef, entityOptions);
 				}
 				break;
 		}
@@ -159,7 +159,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
-		editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+		editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public abstract class EditView extends AbstractView implements IEditListener {
 				break;
 
 			case DELETED:
-				ViewManager.instance().dispatch(new UnloadViewRequest(this, getViewKey(), true));
+				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), true));
 				break;
 		}
 	}

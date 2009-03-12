@@ -6,9 +6,6 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FlowPanelFieldComposer;
-import com.tll.client.ui.field.IFieldRenderer;
 
 /**
  * AddressFieldsRenderer
@@ -17,33 +14,33 @@ import com.tll.client.ui.field.IFieldRenderer;
 public class AddressFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
 	public void render(FlowPanel panel, FieldGroup fg) {
-		FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+		final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 		cmpsr.setCanvas(panel);
 
-		cmpsr.addField(fg.getFieldByName("adrsEmailAddress"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsFirstName"));
-		cmpsr.addField(fg.getFieldByName("adrsMi"));
-		cmpsr.addField(fg.getFieldByName("adrsLastName"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsAttn"));
-		cmpsr.addField(fg.getFieldByName("adrsCompany"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsCompany"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsAddress1"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsAddress1"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsAddress2"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsCity"));
-		cmpsr.addField(fg.getFieldByName("adrsProvince"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
 
 		cmpsr.newRow();
-		cmpsr.addField(fg.getFieldByName("adrsPostalCode"));
-		cmpsr.addField(fg.getFieldByName("adrsCountry"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
+		cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
 	}
 
 }

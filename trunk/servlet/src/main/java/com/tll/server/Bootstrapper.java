@@ -68,6 +68,7 @@ public final class Bootstrapper implements ServletContextListener {
 	 * Creates a dependency injector from the {@link ServletContext}'s init
 	 * params.
 	 * @param context The servlet context.
+	 * @param stage
 	 * @return new dependency injector instance
 	 */
 	private static Injector createInjector(ServletContext context, Stage stage) {
@@ -140,7 +141,7 @@ public final class Bootstrapper implements ServletContextListener {
 
 		// start 'em up
 		if(handlers != null) {
-			for(IBootstrapHandler handler : handlers) {
+			for(final IBootstrapHandler handler : handlers) {
 				handler.startup(injector, servletContext);
 			}
 		}
@@ -149,7 +150,7 @@ public final class Bootstrapper implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
 		// shut 'em down
 		if(handlers != null) {
-			for(IBootstrapHandler handler : handlers) {
+			for(final IBootstrapHandler handler : handlers) {
 				handler.shutdown(servletContextEvent.getServletContext());
 			}
 		}

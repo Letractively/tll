@@ -75,7 +75,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	/**
 	 * @param entityClass
 	 * @param propertyName
-	 * @return
+	 * @return the schema property ref
 	 * @throws SchemaInfoException
 	 */
 	private ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
@@ -263,7 +263,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		// one to many?
 		final OneToMany otm = m.getAnnotation(OneToMany.class);
 		if(otm != null) {
-			Class<? extends IEntity> rmec =
+			final Class<? extends IEntity> rmec =
 					(Class<? extends IEntity>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
 			cascades = otm.cascade();
 			return new RelationInfo(rmec, PropertyType.RELATED_MANY, (cascades == null || cascades.length == 0));

@@ -1,91 +1,61 @@
 package com.tll.client.mock;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.tll.client.bind.AbstractBindingAction;
-import com.tll.client.cache.AuxDataCache;
-import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
-import com.tll.client.ui.field.IField;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.AddressType;
-import com.tll.common.model.mock.MockEntityType;
+import com.tll.common.model.mock.MockModelStubber;
 
 /**
  * ComplexFieldPanel - Contains a simple field panel mocking a related one
  * model, and an indexed field panel mocking a related many model collection.
  * @author jpk
  */
-public class ComplexFieldPanel extends MockFieldPanel {
-
-	/**
-	 * AccountEditAction
-	 * @author jpk
-	 */
-	class BindingAction extends AbstractBindingAction<Model, ComplexFieldPanel> {
-
-		@Override
-		protected void populateBinding(ComplexFieldPanel fp) throws PropertyPathException {
-			addFieldBinding(fp, Model.NAME_PROPERTY);
-			addFieldBinding(fp, Model.DATE_CREATED_PROPERTY);
-			addFieldBinding(fp, Model.DATE_MODIFIED_PROPERTY);
-			addFieldBinding(fp, "parent.name");
-			addFieldBinding(fp, "status");
-			addFieldBinding(fp, "dateCancelled");
-			//addFieldBinding(fp, "currency.id");
-			addFieldBinding(fp, "billingModel");
-			addFieldBinding(fp, "billingCycle");
-			addFieldBinding(fp, "dateLastCharged");
-			addFieldBinding(fp, "nextChargeDate");
-			addFieldBinding(fp, "persistPymntInfo");
-
-			addNestedFieldBindings(fp, "paymentInfo");
-
-			addIndexedFieldBinding(fp.getModel(), "addresses", indexedPanel);
-		}
-	} // BindingAction
+public class ComplexFieldPanel extends FlowFieldPanel {
 
 	/**
 	 * RelatedOnePanel
 	 * @author jpk
 	 */
-	class RelatedOnePanel extends MockFieldPanel {
+	class RelatedOnePanel extends FlowFieldPanel {
 
-		/**
-		 * Constructor
-		 */
-		public RelatedOnePanel() {
-			super();
-			setRenderer(new IFieldRenderer<FlowPanel>() {
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return new MockFieldGroupProviders.PaymentInfoFieldsProvider().getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
 
 				@Override
 				public void render(FlowPanel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
-					cmpsr.addField(fg.getFieldByName("ccType"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccType"));
 
-					cmpsr.addField(fg.getFieldByName("ccNum"));
-					cmpsr.addField(fg.getFieldByName("ccCvv2"));
-					cmpsr.addField(fg.getFieldByName("ccExpMonth"));
-					cmpsr.addField(fg.getFieldByName("ccExpYear"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccNum"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccCvv2"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccExpMonth"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccExpYear"));
 
 					cmpsr.newRow();
-					cmpsr.addField(fg.getFieldByName("ccName"));
+					cmpsr.addField(fg.getFieldWidgetByName("ccName"));
 				}
-			});
-		}
-
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.PaymentInfoFieldsProvider().getFieldGroup();
+			};
 		}
 	} // RelatedOnePanel
 
@@ -93,22 +63,24 @@ public class ComplexFieldPanel extends MockFieldPanel {
 	 * IndexFieldPanel
 	 * @author jpk
 	 */
-	class IndexFieldPanel extends MockFieldPanel {
+	class IndexFieldPanel extends FlowFieldPanel {
 
-		/**
-		 * Constructor
-		 */
-		public IndexFieldPanel() {
-			super();
-			setRenderer(new IFieldRenderer<FlowPanel>() {
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return new MockFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
+		}
+
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
 
 				public void render(FlowPanel panel, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 					cmpsr.setCanvas(panel);
 
 					// account address type/name row
-					cmpsr.addField(fg.getFieldByName("type"));
-					cmpsr.addField(fg.getField(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidgetByName("type"));
+					cmpsr.addField(fg.getFieldWidget(Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -120,57 +92,53 @@ public class ComplexFieldPanel extends MockFieldPanel {
 							final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 							cmpsr.setCanvas(widget);
 
-							cmpsr.addField(fg.getFieldByName("adrsEmailAddress"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
 
 							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsFirstName"));
-							cmpsr.addField(fg.getFieldByName("adrsMi"));
-							cmpsr.addField(fg.getFieldByName("adrsLastName"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAttn"));
-							//cmpsr.addField(fg.getFieldByName("adrsCompany"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsCompany"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAddress1"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress1"));
 
 							//cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsAddress2"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
 							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldByName("adrsCity"));
-							cmpsr.addField(fg.getFieldByName("adrsProvince"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
 
 							cmpsr.newRow();
-							//cmpsr.addField(fg.getFieldByName("adrsPostalCode"));
-							cmpsr.addField(fg.getFieldByName("adrsCountry"));
-							
-							cmpsr.addField(fg.getFieldByName("adrsBoolean"));
-							cmpsr.addField(fg.getFieldByName("adrsFloat"));
+							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
+
+							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
 				}
-			});
+			};
 		}
 
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.AccountAddressFieldsProvider().getFieldGroup();
-		}
 	} // IndexFieldPanel
 
 	/**
 	 * IndexedFieldPanel
 	 * @author jpk
 	 */
-	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel, Model> {
+	class IndexedFieldPanel extends TabbedIndexedFieldPanel<IndexFieldPanel> {
 
 		/**
 		 * Constructor
 		 */
 		public IndexedFieldPanel() {
-			super("Addresses", true, true);
+			super("Addresses", "addresses", true, true);
 		}
 
 		@Override
@@ -179,12 +147,12 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		}
 
 		@Override
-		protected String getTabLabelText(IndexFieldPanel aap) {
+		protected String getInstanceName(IndexFieldPanel index) {
 			AddressType type;
 			String aaName;
 			try {
-				type = (AddressType) aap.getModel().getProperty("type");
-				aaName = (String) aap.getModel().getProperty("name");
+				type = (AddressType) index.getModel().getProperty("type");
+				aaName = (String) index.getModel().getProperty("name");
 			}
 			catch(final PropertyPathException e) {
 				throw new IllegalStateException(e);
@@ -195,11 +163,13 @@ public class ComplexFieldPanel extends MockFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.instance().getEntityPrototype(MockEntityType.ACCOUNT_ADDRESS);
+			final Model m = MockModelStubber.stubAccountAddress(null, MockModelStubber.stubAddress(1), 1);
+			m.clearPropertyValues(false);
+			return m;
 		}
 
 		@Override
-		protected IndexFieldPanel createIndexPanel(Model indexModel) {
+		protected IndexFieldPanel createIndexPanel() {
 			return new IndexFieldPanel();
 		}
 
@@ -216,29 +186,33 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		super();
 		relatedOnePanel = new RelatedOnePanel();
 		indexedPanel = new IndexedFieldPanel();
-		setRenderer(new IFieldRenderer<FlowPanel>() {
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new IFieldRenderer<FlowPanel>() {
 
 			public void render(FlowPanel widget, FieldGroup fg) {
 				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-				cmpsr.setCanvas(panel);
+				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldByName(Model.NAME_PROPERTY));
-				cmpsr.addField(fg.getFieldByName("acntStatus"));
-				cmpsr.addField(fg.getFieldByName("acntDateCancelled"));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				cmpsr.addField(fg.getFieldByName("acntParentName"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
-				cmpsr.addField(fg.getFieldByName("acntBillingModel"));
-				cmpsr.addField(fg.getFieldByName("acntBillingCycle"));
-				cmpsr.addField(fg.getFieldByName("acntDateLastCharged"));
-				cmpsr.addField(fg.getFieldByName("acntNextChargeDate"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingModel"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntBillingCycle"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntDateLastCharged"));
+				cmpsr.addField(fg.getFieldWidgetByName("acntNextChargeDate"));
 
 				// related one panel
 				cmpsr.newRow();
@@ -248,10 +222,10 @@ public class ComplexFieldPanel extends MockFieldPanel {
 				cmpsr.newRow();
 				cmpsr.addWidget(indexedPanel);
 			}
-		});
-		setAction(new BindingAction());
+		};
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new IFieldGroupProvider() {
@@ -267,26 +241,33 @@ public class ComplexFieldPanel extends MockFieldPanel {
 		//relatedOnePanel.getFieldGroup().setFeedbackWidget(dpPaymentInfo);
 		//addressesPanel.getFieldGroup().setFeedbackWidget(dpAddresses);
 
-		fg.getField("parent.name").setReadOnly(true);
+		fg.getFieldWidget("parent.name").setReadOnly(true);
 
-		fg.getField("status").addChangeHandler(new ChangeHandler() {
+		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
+				.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
-			public void onChange(ChangeEvent event) {
-				final String s = getFieldGroup().getField("status").getText().toLowerCase();
-				final boolean closed = "closed".equals(s);
-				final IField<?, ?> f = getFieldGroup().getField("dateCancelled");
-				f.setVisible(closed);
-				f.setRequired(closed);
-			}
-		});
+					@Override
+					public void onValueChange(ValueChangeEvent<AccountStatus> event) {
+						final boolean closed = event.getValue() == AccountStatus.CLOSED;
+						final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+						f.setVisible(closed);
+						f.setRequired(closed);
+					}
+				});
 
-		fg.getField("persistPymntInfo").addChangeHandler(new ChangeHandler() {
+		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
+				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-			public void onChange(ChangeEvent event) {
-				relatedOnePanel.getFieldGroup().setEnabled(((CheckboxField<?>) event.getSource()).isChecked());
-			}
-		});
+					public void onValueChange(ValueChangeEvent<Boolean> event) {
+						indexedPanel.getFieldGroup().setEnabled(event.getValue());
+					}
+				});
 
 		return fg;
+	}
+
+	@Override
+	public IIndexedFieldBoundWidget[] getIndexedChildren() {
+		return new IIndexedFieldBoundWidget[] { indexedPanel };
 	}
 }

@@ -29,13 +29,13 @@ class UnloadViewController extends AbstractController {
 		assert viewKey != null;
 
 		// get the view to be unloaded
-		ViewContainer viewToUnload = ViewManager.instance().findView(viewKey);
+		ViewContainer viewToUnload = ViewManager.get().findView(viewKey);
 		if(viewToUnload == null) {
 			throw new IllegalArgumentException("Unable to resolve existing view for unloading");
 		}
 
 		// unload the view
-		IView newestPinned = ViewManager.instance().unloadView(viewToUnload, r.isRemoveFromCache());
+		IView newestPinned = ViewManager.get().unloadView(viewToUnload, r.isRemoveFromCache());
 		if(newestPinned != null) {
 			// Dispatcher.instance().dispatch(new SimpleViewRequest(r.getWidget(),
 			// newestPinned.getViewKey()));

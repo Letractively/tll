@@ -39,22 +39,20 @@ public abstract class ListingView extends AbstractView {
 		/**
 		 * This method is invoked whtn a row is targeted for editing.
 		 * @param rowIndex The row index of the targeted row
-		 * @param rowRef The ref of the row to edit
 		 */
 		@Override
 		protected void doEditRow(int rowIndex) {
-			ViewManager.instance().dispatch(
+			ViewManager.get().dispatch(
 					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowRef(rowIndex)));
 		}
 
 		/**
 		 * This method is invoked when a row is targeted for deletion.
 		 * @param rowIndex The row index of the targeted row
-		 * @param rowRef The ref of the row to delete
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ModelChangeManager.instance().deleteModel(ListingView.this, listingWidget.getRowRef(rowIndex), null);
+			ModelChangeManager.get().deleteModel(ListingView.this, listingWidget.getRowRef(rowIndex), null);
 		}
 
 	}

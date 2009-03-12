@@ -5,8 +5,6 @@ import java.util.Date;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.util.StringUtil;
 
 /**
@@ -29,7 +27,7 @@ public class DateValidator implements IValidator {
 	 * @throws IllegalArgumentException When the given date format is
 	 *         <code>null</code> or invalid.
 	 */
-	public static final DateValidator instance(GlobalFormat dateFormat) {
+	public static final DateValidator get(GlobalFormat dateFormat) {
 		switch(dateFormat) {
 			case DATE:
 				return DATE_VALIDATOR;
@@ -73,9 +71,8 @@ public class DateValidator implements IValidator {
 		try {
 			return dateFormat.parse(s);
 		}
-		catch(Throwable e) {
-			throw new ValidationException(new Msg("Must be a date of format: '" + dateFormat.getPattern() + "'.",
-					MsgLevel.ERROR));
+		catch(final Throwable e) {
+			throw new ValidationException("Invalid date.");
 		}
 	}
 }

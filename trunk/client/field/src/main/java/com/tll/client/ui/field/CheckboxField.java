@@ -4,21 +4,42 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FocusWidget;
-import com.tll.client.convert.IConverter;
+import com.tll.client.convert.ToBooleanConverter;
 import com.tll.client.convert.ToStringConverter;
-import com.tll.common.util.ObjectUtil;
 
 /**
  * CheckboxField
- * @param <B> the bound type
  * @author jpk
  */
-public final class CheckboxField<B> extends AbstractField<B, Boolean> {
+public final class CheckboxField extends AbstractField<Boolean> {
+	
+	/**
+	 * Impl
+	 * @author jpk
+	 */
+	private static final class Impl extends CheckBox implements IEditable<Boolean> {
 
-	private final CheckBox cb;
+		/**
+		 * Constructor
+		 * @param label
+		 */
+		public Impl(String label) {
+			super(label);
+		}
+
+		@Override
+		public void setValue(Boolean value) {
+			super.setValue(value == null ? Boolean.FALSE : value);
+		}
+
+		@Override
+		public void setValue(Boolean value, boolean fireEvents) {
+			super.setValue(value == null ? Boolean.FALSE : value, fireEvents);
+		}
+	}
+
+	private final Impl cb;
 
 	/**
 	 * This text overrides the base field label text mechanism in order to have
@@ -32,26 +53,29 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param converter
 	 */
-	CheckboxField(String name, String propName, String labelText, String helpText, IConverter<Boolean, B> converter) {
+	CheckboxField(String name, String propName, String labelText, String helpText) {
 		super(name, propName, null, helpText);
+		setConverter(ToBooleanConverter.DEFAULT);
 		this.cblabelText = labelText;
-		setConverter(converter);
-		cb = new CheckBox(cblabelText);
+		cb = new Impl(cblabelText);
 		cb.setStyleName(Styles.LABEL);
-		// cb.addFocusListener(this);
-		cb.addClickHandler(this);
-		addChangeHandler(this);
+		//cb.addClickHandler(this);
+		cb.addBlurHandler(this);
+		cb.addValueChangeHandler(this);
 	}
 
 	@Override
-	protected FocusWidget getEditable() {
+	public IEditable<Boolean> getEditable() {
 		return cb;
 	}
 
 	public boolean isChecked() {
 		return cb.getValue() == Boolean.TRUE; 
+	}
+
+	public void setChecked(boolean checked) {
+		cb.setValue(checked ? Boolean.TRUE : Boolean.FALSE);
 	}
 
 	@Override
@@ -67,37 +91,9 @@ public final class CheckboxField<B> extends AbstractField<B, Boolean> {
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
-
-	public void setChecked(boolean checked) {
-		cb.setValue(checked ? Boolean.TRUE : Boolean.FALSE);
-	}
-
-	public Boolean getValue() {
-		return cb.getValue();
-	}
-
+	
 	@Override
-	protected void setNativeValue(Boolean nativeValue) {
-		final Boolean old = getValue();
-		setChecked(nativeValue == null ? false : nativeValue);
-		final Boolean newval = getValue();
-		if(!ObjectUtil.equals(old, newval)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
-		}
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-
-	@Override
-	public void onClick(ClickEvent event) {
-		assert event.getSource() == cb;
-		super.onClick(event);
-		// i.e. not is checked since this event fires before the click value sticks!
-		final Boolean old = !(isChecked() ? Boolean.FALSE : Boolean.TRUE);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		//fireChangeListeners();
+	public String getLabelText() {
+		return cblabelText;
 	}
 }

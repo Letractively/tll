@@ -5,46 +5,89 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.ui.CellPanel;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.tll.client.convert.IConverter;
+import com.tll.client.ui.IWidgetRenderer;
+import com.tll.client.ui.VerticalRenderer;
 import com.tll.common.util.ObjectUtil;
 
 /**
  * RadioGroupField
- * @param <B> The bound type
+ * @param <V> the data element value type
  * @author jpk
  */
-public final class RadioGroupField<B> extends AbstractField<B, String> {
-
-	private final FocusPanel fp = new FocusPanel();
-
+public final class RadioGroupField<V> extends AbstractDataField<V, V> {
+	
 	/**
-	 * Panel that contains only the radio buttons. Is either vertical or
-	 * horizontal.
+	 * Impl
+	 * @author jpk
 	 */
-	private final CellPanel rbPanel;
+	@SuppressWarnings("synthetic-access")
+	final class Impl extends FocusPanel implements IEditable<V> {
+		
+		@Override
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+			return addHandler(handler, ValueChangeEvent.getType());
+		}
 
+		@Override
+		public V getValue() {
+			for(final RadioButton rb : radioButtons) {
+				if(rb.getValue() == Boolean.TRUE) {
+					return getDataValue(rb.getFormValue());
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public void setValue(V value, boolean fireEvents) {
+			final V old = fireEvents ? getValue() : null;
+			setValue(value);
+			if(fireEvents) {
+				final V nval = getValue();
+				if(!ObjectUtil.equals(old, nval)) {
+					ValueChangeEvent.fire(this, nval);
+				}
+			}
+		}
+
+		@Override
+		public void setValue(V value) {
+			for(final RadioButton rb : radioButtons) {
+				if(getDataValue(rb.getFormValue()).equals(value)) {
+					rb.setValue(Boolean.TRUE);
+					return;
+				}
+			}
+		}
+	}
+	
 	/**
-	 * The options.
+	 * The default radio button renderer.
 	 */
-	private List<B> options;
+	private static final IWidgetRenderer DEFAULT_RENDERER = VerticalRenderer.INSTANCE;
+
+	private final Impl fp = new Impl();
 
 	/**
-	 * List of radio buttons contained in {@link #rbPanel}. There is one for each
+	 * List of radio buttons contained in {@link #fp}. There is one for each
 	 * option.
 	 */
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();
-
-	private String old;
+	
+	/**
+	 * The radio button renderer.
+	 */
+	private final IWidgetRenderer renderer;
 
 	/**
 	 * Constructor
@@ -52,95 +95,85 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	 * @param propName
 	 * @param labelText
 	 * @param helpText
-	 * @param options
-	 * @param converter
-	 * @param renderHorizontal
+	 * @param renderer the render to employ for rendering the radio buttons
+	 * @param data
 	 */
-	RadioGroupField(String name, String propName, String labelText, String helpText, Collection<B> options,
-			IConverter<String, B> converter, boolean renderHorizontal) {
+	RadioGroupField(String name, String propName, String labelText, String helpText, IWidgetRenderer renderer,
+			Map<V, String> data) {
 		super(name, propName, labelText, helpText);
-		setConverter(converter);
-		if(renderHorizontal) {
-			rbPanel = new HorizontalPanel();
-		}
-		else {
-			rbPanel = new VerticalPanel();
-		}
-		fp.add(rbPanel);
-		setOptions(options);
-		// fp.addFocusListener(this);
-		addChangeHandler(this);
+		this.renderer = renderer == null ? DEFAULT_RENDERER : renderer;
+		fp.addValueChangeHandler(this);
+		setData(data);
+	}
+
+	private void render() {
+		assert renderer != null;
+		fp.clear();
+		fp.add(renderer.render(radioButtons));
+	}
+	
+	private RadioButton create(String name) {
+		final RadioButton rb = new RadioButton("rg_" + getDomId(), name);
+		rb.setFormValue(name);
+		rb.setStyleName(Styles.LABEL);
+		rb.addClickHandler(new ClickHandler() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void onClick(ClickEvent event) {
+				assert event.getSource() instanceof RadioButton;
+				final RadioButton rb = (RadioButton) event.getSource();
+				// fire a value change event..
+				ValueChangeEvent.fire(fp, getDataValue(rb.getFormValue()));
+			}
+		});
+		rb.addBlurHandler(this);
+		return rb;
 	}
 
 	/**
 	 * Builds or re-builds the radio buttons firing change events if the current
 	 * value becomes orphaned.
-	 * @param options
+	 * @param data
 	 */
-	public void setOptions(Collection<B> options) {
-		if(options == null || options.size() < 1) {
-			throw new IllegalArgumentException("No options specified.");
-		}
-		boolean valueBound = false;
-		old = getValue();
-		rbPanel.clear();
+	@Override
+	public void setData(Map<V, String> data) {
+		super.setData(data);
 		radioButtons.clear();
-		final IConverter<String, B> converter = getConverter();
-		for(final B n : options) {
-			final String sval = converter.convert(n);
-			final RadioButton rb = new RadioButton("rg_" + getDomId(), sval);
-			rb.setStyleName(Styles.LABEL);
-			rb.addClickHandler(this);
-			rbPanel.add(rb);
-			radioButtons.add(rb);
-			if(sval == old || (sval != null && sval.equals(old))) {
-				valueBound = true;
+		if(data != null) {
+			for(final String name : data.values()) {
+				radioButtons.add(create(name));
 			}
 		}
-		if(!valueBound && old != null) {
-			if(changeSupport != null) changeSupport.firePropertyChange(PROPERTY_VALUE, old, null);
-			fireChangeListeners();
-		}
+		if(isAttached()) render();
+	}
+	
+	@Override
+	public void addDataItem(String name, V value) {
+		super.addDataItem(name, value);
+		radioButtons.add(create(name));
+		if(isAttached()) render();
 	}
 
 	@Override
-	public Focusable getEditable() {
+	public void removeDataItem(V value) {
+		super.removeDataItem(value);
+		for(final RadioButton rb : radioButtons) {
+			if(rb.getValue().equals(value)) {
+				radioButtons.remove(rb);
+				break;
+			}
+		}
+		if(isAttached()) render();
+	}
+
+	@Override
+	public IEditable<V> getEditable() {
 		return fp;
 	}
 
-	public String getValue() {
-		int i = 0;
-		for(final RadioButton rb : radioButtons) {
-			if(rb.getValue() == Boolean.TRUE) {
-				return getConverter().convert(options.get(i));
-			}
-			i++;
-		}
-		return null;
-	}
-
-	@Override
-	protected void setNativeValue(String nativeValue) {
-		final String old = getValue();
-		int i = 0;
-		for(final Object o : options) {
-			if(o.equals(nativeValue)) {
-				radioButtons.get(i).setValue(Boolean.TRUE);
-			}
-			i++;
-		}
-		if(!ObjectUtil.equals(old, nativeValue)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, nativeValue);
-		}
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-
 	public String getText() {
-		return getValue();
+		return getToken(fp.getValue());
 	}
 
 	public void setText(String text) {
@@ -148,11 +181,8 @@ public final class RadioGroupField<B> extends AbstractField<B, String> {
 	}
 
 	@Override
-	public void onClick(ClickEvent event) {
-		super.onClick(event);
-		final String cv = getValue();
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, cv);
-		old = cv;
-		fireChangeListeners();
+	protected void onLoad() {
+		super.onLoad();
+		render();
 	}
 }

@@ -5,17 +5,19 @@
 package com.tll.client.ui.field;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.AbstractBoundWidget;
-import com.tll.client.ui.IBoundWidget;
+import com.tll.client.convert.IConverter;
+import com.tll.client.ui.BindableWidgetAdapter;
+import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
@@ -23,13 +25,14 @@ import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.IError;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
-import com.tll.client.validate.StringLengthValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IBindable;
-import com.tll.common.model.MalformedPropPathException;
+import com.tll.client.validate.IErrorHandler.Attrib;
+import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.util.ObjectUtil;
 import com.tll.common.util.StringUtil;
@@ -38,12 +41,11 @@ import com.tll.model.schema.PropertyMetadata;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
- * @param <B> the bound type
- * @param <V> native field type
+ * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBindable> implements IField<B, V>,
-		Focusable, ClickHandler, ChangeHandler {
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, IBindableWidget<V>,
+		ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -56,6 +58,8 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private static int fieldCounter = 0;
 
 	private static final String dfltReadOnlyEmptyValue = "-";
+	
+	private final BindableWidgetAdapter<V> adapter;
 
 	/**
 	 * The unique DOM element id of this field.
@@ -63,13 +67,13 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private final String domId;
 
 	/**
-	 * The field name.
+	 * The unique field name.
 	 */
 	private String name;
 
 	/**
 	 * The full property path intended to uniquely identify this field relative to
-	 * a common root construct.
+	 * a common root object.
 	 * <p>
 	 * <em>NOTE: This is distinct from the field's <code>name</code> property.
 	 */
@@ -114,14 +118,18 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	private CompositeValidator validator;
 
 	/**
-	 * The initial value needed to perform a reset operation.
+	 * The initial value and the current old value.
 	 */
-	private V initialValue;
+	private V initialValue, oldValue;
 
 	/**
 	 * Flag to indicate whether or not the initial value is set.
 	 */
 	private boolean initialValueSet;
+	
+	private IErrorHandler errorHandler;
+	
+	private boolean valid = true;
 
 	/**
 	 * Constructor
@@ -135,9 +143,9 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	 * @throws IllegalArgumentException When no property propName is given
 	 */
 	public AbstractField(String name, String propName, String labelText, String helpText) {
-		domId = 'f' + Integer.toString(++fieldCounter);
 		setName(name);
 		setPropertyName(propName);
+		domId = 'f' + Integer.toString(++fieldCounter);
 
 		// set the label
 		setLabelText(labelText);
@@ -149,6 +157,53 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		pnl.setStyleName(Styles.FIELD);
 
 		initWidget(pnl);
+
+		adapter = new BindableWidgetAdapter<V>(this);
+	}
+
+	@Override
+	public final Object getProperty(String propPath) throws PropertyPathException {
+		return adapter.getProperty(propPath);
+	}
+
+	@Override
+	public final void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
+		adapter.setProperty(propPath, value);
+	}
+
+	@Override
+	public final IConverter<V, Object> getConverter() {
+		return adapter.getConverter();
+	}
+
+	@Override
+	public final void setConverter(IConverter<V, Object> converter) {
+		adapter.setConverter(converter);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(IPropertyChangeListener listener) {
+		adapter.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		adapter.addPropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
+		adapter.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
+		adapter.removePropertyChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public final HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	/*
@@ -157,6 +212,11 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	@Override
 	public final Widget getWidget() {
 		return this;
+	}
+
+	@Override
+	public final String descriptor() {
+		return getLabelText();
 	}
 
 	/**
@@ -185,17 +245,21 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
 	}
+	
+	public String getLabelText() {
+		return fldLbl == null ? "" : fldLbl.getText();
+	}
 
 	/**
 	 * Set the field's associated label.
 	 * @param labelText The label text. If <code>null</code>, the label will be
 	 *        removed.
 	 */
-	public void setLabelText(String labelText) {
+	public final void setLabelText(String labelText) {
 		if(fldLbl == null) {
 			fldLbl = new FieldLabel();
 			fldLbl.setFor(domId);
-			fldLbl.addClickHandler(this);
+			//fldLbl.addClickHandler(this);
 		}
 		fldLbl.setText(labelText == null ? "" : labelText);
 	}
@@ -219,18 +283,21 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public final String getPropertyName() {
-		if(StringUtil.isEmpty(name)) {
-			throw new IllegalArgumentException("A field must have a property name.");
-		}
 		return property;
 	}
 
 	public final void setPropertyName(String propName) {
+		if(StringUtil.isEmpty(name)) {
+			throw new IllegalArgumentException("A field must have a property name.");
+		}
 		this.property = propName;
 	}
 
-	public final void clear() {
+	public final void clearValue() {
 		setValue(null);
+		this.initialValue = null;
+		this.initialValueSet = false;
+		this.oldValue = null;
 	}
 
 	public final boolean isReadOnly() {
@@ -255,8 +322,14 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 			fldLbl.setRequired(readOnly ? false : required);
 		}
 		this.required = required;
+		if(required) {
+			addValidator(NotEmptyValidator.INSTANCE);
+		}
+		else {
+			removeValidator(NotEmptyValidator.class);
+		}
 	}
-
+	
 	public final boolean isEnabled() {
 		return enabled;
 	}
@@ -307,13 +380,13 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
 	 */
-	protected abstract Focusable getEditable();
+	public abstract IEditable<V> getEditable();
 
 	/**
 	 * Either marks or un-marks this field as dirty in the UI based on its current
 	 * value and the set initial value.
 	 */
-	private void markDirty() {
+	private void dirtyCheck() {
 		if(initialValueSet) {
 			if(!ObjectUtil.equals(initialValue, getValue())) {
 				addStyleName(Styles.DIRTY);
@@ -325,11 +398,11 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 	}
 
 	public final void addValidator(IValidator validator) {
-		if(validator != null && validator != NotEmptyValidator.INSTANCE
-				&& (validator instanceof StringLengthValidator == false)) {
+		if(validator != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
 			}
+			this.validator.remove(validator.getClass());
 			this.validator.add(validator);
 		}
 	}
@@ -346,93 +419,114 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 			// maxlength
 			if(this instanceof IHasMaxLength) {
-				((IHasMaxLength) this).setMaxLen(metadata.getMaxLen());
+				final int maxlen = metadata.getMaxLen();
+				((IHasMaxLength) this).setMaxLen(maxlen);
 			}
 
 			// set the type coercion validator
 			switch(metadata.getPropertyType()) {
+				case STRING:
+				case ENUM:
+					// no type coercion validator needed
+					break;
+				
 				case BOOL:
 					addValidator(BooleanValidator.INSTANCE);
 					break;
+				
+				case DATE: {
+					GlobalFormat format = null;
+					if(this instanceof IHasFormat) {
+						 format = ((IHasFormat) this).getFormat();
+					}
+					addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
+					break;
+				}
+				
+				case INT:
+					addValidator(IntegerValidator.INSTANCE);
+					break;
+				
+				case FLOAT:
+				case DOUBLE: {
+					GlobalFormat format = null;
+					if(this instanceof IHasFormat) {
+						format = ((IHasFormat) this).getFormat();
+					}
+					addValidator(DecimalValidator.get(format == null ? GlobalFormat.DECIMAL : format));
+					break;
+				}
+				
 				case CHAR:
 					addValidator(CharacterValidator.INSTANCE);
 					break;
-				case DATE:
-					if(this instanceof IHasFormat) {
-						final GlobalFormat format = ((IHasFormat) this).getFormat();
-						if(format != null && format.isDateFormat()) {
-							addValidator(DateValidator.instance(format));
-						}
-					}
-					break;
-				case FLOAT:
-				case DOUBLE:
-					if(this instanceof IHasFormat) {
-						final GlobalFormat format = ((IHasFormat) this).getFormat();
-						if(format != null && format.isNumericFormat()) {
-							addValidator(DecimalValidator.instance(format));
-						}
-					}
-					break;
-				case INT:
+				
 				case LONG:
-					addValidator(IntegerValidator.INSTANCE);
-					break;
-
+					// TODO handle - intentional fall through
 				case STRING_MAP:
-					// TODO handle string map type coercion ?
-					break;
-
-				case ENUM:
-				case STRING:
-					// no type coercion validator needed
-					break;
-
+					// TODO handle string map type coercion - intentional fall through
 				default:
 					throw new IllegalStateException("Unhandled property type: " + metadata.getPropertyType().name());
 			}
 		}
 	}
 
-	public final void removeValidator(IValidator validator) {
-		if(validator != null && this.validator != null) {
-			this.validator.remove(validator);
+	public final void removeValidator(Class<? extends IValidator> type) {
+		if(validator != null) validator.remove(type);
+	}
+
+	@Override
+	public final boolean isValid() {
+		return valid;
+	}
+	
+	private void resolveError() {
+		if(!valid && errorHandler != null) {
+			errorHandler.resolveError(this);
+		}
+		valid = true;
+	}
+
+	private void handleError(IError error) {
+		if(errorHandler != null) {
+			errorHandler.handleError(this, error, Attrib.LOCAL.flag());
 		}
 	}
 
 	public final void validate() throws ValidationException {
-		validate(getValue());
-	}
-
-	public final Object validate(Object value) throws ValidationException {
-		// check field requiredness
-		if(isRequired()) {
-			value = NotEmptyValidator.INSTANCE.validate(value);
+		try {
+			validate(getValue());
+			resolveError();
 		}
-
-		// check max length
-		if(this instanceof IHasMaxLength) {
-			final int maxlen = ((IHasMaxLength) this).getMaxLen();
-			if(maxlen != -1) {
-				value = StringLengthValidator.validate(value, -1, maxlen);
+		catch(final ValidationException e) {
+			handleError(e.getError());
+			throw e;
+		}
+	}
+	
+	public final Object validate(Object value) throws ValidationException {
+		try {
+			if(validator != null) {
+				value = validator.validate(value);
+			}
+			valid = true;
+		}
+		catch(final ValidationException e) {
+			valid = false;
+			throw e;
+		}
+		/*
+		finally {
+			if(!valid && isAttached()) {
+				trackHover(true);
+			}
+			else if(valid) {
+				trackHover(false);
 			}
 		}
-
-		if(validator != null) {
-			value = validator.validate(value);
-		}
-
+		*/
+		
 		return value;
-	}
-
-	private void markInvalid(boolean invalid) {
-		if(invalid) {
-			removeStyleName(Styles.DIRTY);
-			addStyleName(Styles.INVALID);
-		}
-		else {
-			removeStyleName(Styles.INVALID);
-		}
 	}
 
 	protected void draw() {
@@ -465,9 +559,6 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 			// set help text
 			rof.setTitle(helpText);
 
-			// final Object val = getValue();
-			// String sval = val == null ? null :
-			// ToStringConverter.INSTANCE.render(val);
 			String sval = getText();
 			sval = StringUtil.isEmpty(sval) ? dfltReadOnlyEmptyValue : sval;
 			rof.setText(sval);
@@ -496,23 +587,14 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			//clearMsgs();
-			removeStyleName(Styles.INVALID);
+			//resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {
 			// show/hide edit styling
-			markDirty();
+			dirtyCheck();
 		}
 	}
-
-	//public final void addFocusHandler(FocusHandler handler) {
-		// NOTE: we must be deterministic here as the editability may intermittently
-		// change
-		// if(!isReadOnly()) {
-		//((HasFocusHandlers) getEditable()).addFocusHandler(handler);
-		// }
-	//}
 
 	@Override
 	public int getTabIndex() {
@@ -534,66 +616,64 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(!readOnly) getEditable().setTabIndex(index);
 	}
 
-	public void onClick(ClickEvent event) {
-		// toggle the display of any bound UI msgs for this field when the field
-		// label is clicked
-		//if(event.getSource() == fldLbl) toggleMsgs();
-	}
-
-	public void onChange(ChangeEvent event) {
-		assert event.getSource() == getEditable();
-
-		// dirty check
-		markDirty();
-	}
-
-	public final Object getProperty(String propPath) throws PropertyPathException {
-		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
-		return getValue();
-	}
-
-	@SuppressWarnings("unchecked")
-	public final void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
-		if(!IBoundWidget.PROPERTY_VALUE.equals(propPath)) {
-			throw new MalformedPropPathException(propPath);
-		}
+	@Override
+	public void onBlur(BlurEvent event) {
 		try {
-			setValue((B) value);
+			validate();
+			dirtyCheck();
 		}
-		catch(final RuntimeException e) {
-			throw new Exception("Unable to set field " + this + " value", e);
+		catch(final ValidationException e) {
+			// ok
 		}
 	}
+	
+	@Override
+	public final void onValueChange(ValueChangeEvent<V> event) {
+		assert event.getSource() == getEditable();
+		final V old = oldValue;
+		oldValue = event.getValue();
+		if(!ObjectUtil.equals(old, oldValue)) {
+			ValueChangeEvent.fire(this, oldValue);
+			// we don't want auto-transfer!!!
+			//changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
+		}
+	}
+	
+	@Override
+	public final V getValue() {
+		return getEditable().getValue();
+	}
 
-	/**
-	 * Sub-class impl for setting field value.
-	 * @param value
-	 */
-	protected abstract void doSetValue(B value);
+	@Override
+	public final void setValue(V value) {
+		setValue(value, false);
+	}
 
-	public final void setValue(B value) {
-		doSetValue(value);
+	@Override
+	public final void setValue(V value, boolean fireEvents) {
+		getEditable().setValue(value, fireEvents);
 		if(!initialValueSet) {
 			initialValue = getValue();
 			initialValueSet = true;
 		}
 	}
 
-	/**
-	 * Responsible for setting the field's value given the value in native type as
-	 * well as triggering property change events if necessary.
-	 * @param nativeValue
-	 */
-	protected abstract void setNativeValue(V nativeValue);
-
 	public final void reset() {
 		if(initialValueSet) {
-			setNativeValue(initialValue);
-			markInvalid(false);
+			setValue(initialValue);
+			resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
+	}
+
+	@Override
+	public final IErrorHandler getErrorHandler() {
+		return errorHandler;
+	}
+
+	@Override
+	public final void setErrorHandler(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 
 	@Override
@@ -604,7 +684,6 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 
 	@Override
 	protected void onUnload() {
-		//clearMsgs();
 		super.onUnload();
 	}
 
@@ -617,13 +696,12 @@ public abstract class AbstractField<B, V> extends AbstractBoundWidget<B, V, IBin
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;
-		final AbstractField other = (AbstractField) obj;
-		return (!property.equals(other.property));
+		return (!name.equals(((AbstractField) obj).name));
 	}
 
 	@Override
 	public final int hashCode() {
-		return 31 + property.hashCode();
+		return 31 + name.hashCode();
 	}
 
 	@Override

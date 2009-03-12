@@ -81,6 +81,7 @@ public final class CustomerListingView extends ListingView {
 		 * Constructor
 		 * @param source
 		 * @param mercRef The parent merchant ref
+		 * @param ispRef
 		 */
 		CustomerListingViewRequest(Widget source, RefKey mercRef, RefKey ispRef) {
 			super(source, klas);
@@ -116,7 +117,7 @@ public final class CustomerListingView extends ListingView {
 	@Override
 	public void doInitialization(ViewRequestEvent viewRequest) {
 		assert viewRequest instanceof CustomerListingViewRequest;
-		CustomerListingViewRequest r = (CustomerListingViewRequest) viewRequest;
+		final CustomerListingViewRequest r = (CustomerListingViewRequest) viewRequest;
 
 		assert r.ispRef != null && r.ispRef.isSet();
 		ispRef = r.ispRef;

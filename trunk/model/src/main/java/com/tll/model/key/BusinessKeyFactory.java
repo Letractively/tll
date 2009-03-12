@@ -29,6 +29,7 @@ public final class BusinessKeyFactory {
 	/**
 	 * BusinessKeyDefinition - Local impl of {@link IBusinessKeyDefinition}.
 	 * @author jpk
+	 * @param <E>
 	 */
 	private static final class BusinessKeyDefinition<E extends IEntity> implements IBusinessKeyDefinition<E> {
 
@@ -83,8 +84,8 @@ public final class BusinessKeyFactory {
 			// no bks defined
 			return null;
 		}
-		Set<IBusinessKeyDefinition<E>> set = new HashSet<IBusinessKeyDefinition<E>>();
-		for(BusinessKeyDef def : bo.businessKeys()) {
+		final Set<IBusinessKeyDefinition<E>> set = new HashSet<IBusinessKeyDefinition<E>>();
+		for(final BusinessKeyDef def : bo.businessKeys()) {
 			set.add(new BusinessKeyDefinition<E>(entityClass, def.name(), def.properties()));
 		}
 		return set;
@@ -101,7 +102,7 @@ public final class BusinessKeyFactory {
 			definitions(entityClass);
 			return true;
 		}
-		catch(BusinessKeyNotDefinedException e) {
+		catch(final BusinessKeyNotDefinedException e) {
 			return false;
 		}
 	}
@@ -121,7 +122,7 @@ public final class BusinessKeyFactory {
 			map.put(entityClass, (Set) discoverBusinessKeys(entityClass));
 		}
 
-		Set set = map.get(entityClass);
+		final Set set = map.get(entityClass);
 		if(set == null) {
 			throw new BusinessKeyNotDefinedException(entityClass);
 		}
@@ -141,8 +142,8 @@ public final class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> IBusinessKeyDefinition<E> getDefinition(Class<E> entityClass, String businessKeyName)
 			throws BusinessKeyNotDefinedException {
-		IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
-		for(IBusinessKeyDefinition<E> def : defs) {
+		final IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
+		for(final IBusinessKeyDefinition<E> def : defs) {
 			if(def.getBusinessKeyName().equals(businessKeyName)) {
 				return def;
 			}
@@ -160,8 +161,8 @@ public final class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> IBusinessKey<E>[] create(Class<E> entityClass)
 			throws BusinessKeyNotDefinedException {
-		IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
-		BusinessKey<E>[] bks = new BusinessKey[defs.length];
+		final IBusinessKeyDefinition<E>[] defs = definitions(entityClass);
+		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
 			bks[i] = new BusinessKey<E>(defs[i]);
 		}
@@ -212,8 +213,8 @@ public final class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> IBusinessKey<E>[] create(E entity) throws BusinessKeyNotDefinedException,
 			BusinessKeyPropertyException {
-		IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entity.entityClass());
-		BusinessKey<E>[] bks = new BusinessKey[defs.length];
+		final IBusinessKeyDefinition<E>[] defs = definitions((Class<E>) entity.entityClass());
+		final BusinessKey<E>[] bks = new BusinessKey[defs.length];
 		for(int i = 0; i < defs.length; ++i) {
 			bks[i] = new BusinessKey<E>(defs[i]);
 		}
@@ -236,7 +237,7 @@ public final class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> IBusinessKey<E> create(E entity, IBusinessKeyDefinition<E> def)
 			throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
-		IBusinessKey<E> bk = create(def);
+		final IBusinessKey<E> bk = create(def);
 		fill(new BeanWrapperImpl(entity), bk);
 		return bk;
 	}
@@ -256,8 +257,8 @@ public final class BusinessKeyFactory {
 	 */
 	public static <E extends IEntity> BusinessKey<E> create(E entity, String businessKeyName)
 			throws BusinessKeyNotDefinedException, BusinessKeyPropertyException {
-		IBusinessKeyDefinition<E> theDef = getDefinition((Class<E>) entity.entityClass(), businessKeyName);
-		BusinessKey<E>[] bks = new BusinessKey[] { new BusinessKey(theDef) };
+		final IBusinessKeyDefinition<E> theDef = getDefinition((Class<E>) entity.entityClass(), businessKeyName);
+		final BusinessKey<E>[] bks = new BusinessKey[] { new BusinessKey(theDef) };
 		fill(entity, bks);
 		return bks[0];
 	}
@@ -269,8 +270,8 @@ public final class BusinessKeyFactory {
 	 * @param bks The business keys.
 	 */
 	private static <E extends IEntity> void fill(E entity, IBusinessKey<E>[] bks) {
-		BeanWrapperImpl wrappedEntity = new BeanWrapperImpl(entity);
-		for(IBusinessKey<E> bk : bks) {
+		final BeanWrapperImpl wrappedEntity = new BeanWrapperImpl(entity);
+		for(final IBusinessKey<E> bk : bks) {
 			fill(wrappedEntity, bk);
 		}
 	}
@@ -278,15 +279,16 @@ public final class BusinessKeyFactory {
 	/**
 	 * Fills the given business key with values held in the given entity.
 	 * @param <E> The entity type
-	 * @param entity The entity whose state is applied to the given business key.
+	 * @param wrappedEntity The entity whose state is applied to the given
+	 *        business key.
 	 * @param bk The business key.
 	 */
 	private static <E extends IEntity> void fill(BeanWrapperImpl wrappedEntity, IBusinessKey<E> bk) {
-		for(String pname : bk.getPropertyNames()) {
+		for(final String pname : bk.getPropertyNames()) {
 			try {
 				bk.setPropertyValue(pname, wrappedEntity.getPropertyValue(pname));
 			}
-			catch(NullValueInNestedPathException e) {
+			catch(final NullValueInNestedPathException e) {
 				// ok
 			}
 		}

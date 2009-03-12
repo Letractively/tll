@@ -56,26 +56,26 @@ public final class RecentViewsPanel extends Composite implements IViewEventListe
 		// NOTE: rebuild the ulPanel (it's MUCH easier than trying to remove/insert)
 		ulPanel.clear();
 
-		final IViewRef[] refs = ViewManager.instance().getRecentViews();
+		final IViewRef[] refs = ViewManager.get().getRecentViews();
 		final int count = refs.length;
 
 		// re-build the recent view list
 		// NOTE: ending at 1 before last element (skip the current view)
 		for(int i = 0; i < count - 1; i++) {
-			ulPanel.add(IViewRef.Tools.getViewLink(refs[i]));
+			ulPanel.append(IViewRef.Tools.getViewLink(refs[i]));
 		}
 	}
 
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.instance().addViewEventListener(this);
+		ViewManager.get().addViewEventListener(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.instance().removeViewEventListener(this);
+		ViewManager.get().removeViewEventListener(this);
 	}
 
 }

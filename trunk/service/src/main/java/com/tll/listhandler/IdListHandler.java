@@ -26,6 +26,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	 * @param dataProvider The data provider used to fetch the list elements with
 	 *        the given criteria.
 	 * @param criteria The criteria used to generate the underlying list
+	 * @param sorting
 	 */
 	IdListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
@@ -50,7 +51,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 			try {
 				ids = dataProvider.getIds(criteria, sorting);
 			}
-			catch(InvalidCriteriaException e) {
+			catch(final InvalidCriteriaException e) {
 				throw new ListHandlerException(e.getMessage());
 			}
 		}
@@ -65,7 +66,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 		// adjust the end index if it exceeds the bounds of the id list
 		if(ei > size - 1) ei = size - 1;
 
-		List<Integer> subids = ids.subList(offset, ei);
+		final List<Integer> subids = ids.subList(offset, ei);
 
 		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sorting);
 		if(list == null || list.size() != subids.size()) {

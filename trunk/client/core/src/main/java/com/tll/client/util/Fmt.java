@@ -66,7 +66,7 @@ public abstract class Fmt {
 	 *         not represent a decimal format.
 	 */
 	public static NumberFormat getDecimalFormat(GlobalFormat format) throws IllegalArgumentException {
-		if(!format.isDateFormat()) throw new IllegalArgumentException("Not a number format");
+		if(!format.isNumericFormat()) throw new IllegalArgumentException("Not a number format");
 		return decimalFormatBindings.get(format);
 	}
 

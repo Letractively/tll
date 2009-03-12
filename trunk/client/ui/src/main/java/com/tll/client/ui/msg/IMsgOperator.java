@@ -16,37 +16,32 @@ import com.tll.client.ui.Position;
 public interface IMsgOperator extends IDragHandler, ScrollHandler {
 
 	/**
-	 * Sets the message positioning scheme relative to a targeted ui element.
-	 * @param position The relative positioning scheme
+	 * @return <code>true</code> of the message popup(s) are showing.
 	 */
-	void setPosition(Position position);
+	boolean isShowing();
 
 	/**
-	 * Sets the length of time in milliseconds that messages are shown.
+	 * Shows or hides the messages.
+	 * @param show show or hide?
+	 */
+	void showMsgs(boolean show);
+
+	/**
+	 * Sets the msg popup display attributes then shows the popup. This is an all
+	 * in one way to set display attributes and show the popup in one call.
 	 * <p>
-	 * If <code>-1</code>, the message is shown indefinitely until the user clicks
-	 * outside the popup (i.e.: The <code>autoHide</code> popup property is set to
-	 * <code>true</code> in this case).
-	 * @param milliseconds the show duration in milliseconds
+	 * By default they are: {@link Position#BOTTOM}, <code>-1</code>,
+	 * <code>false</code>.
+	 * @param position The relative positioning scheme relative to the targeted ui
+	 *        element.
+	 * @param milliDuration the show duration in milliseconds. If <code>-1</code>,
+	 *        the message is shown indefinitely until the user clicks outside the
+	 *        popup (i.e.: The <code>autoHide</code> popup property is set to
+	 *        <code>true</code> in this case).
+	 * @param showMsgLevelImages show message level images?
 	 */
-	void setDuration(int milliseconds);
-
-	/**
-	 * Sets the flag for showing the message level image.
-	 * @param show true/false
-	 */
-	void setShowMsgLevelImages(boolean show);
-
-	/**
-	 * Shows the messages.
-	 */
-	void showMsgs();
-
-	/**
-	 * Hide the messages.
-	 */
-	void hideMsgs();
-
+	void showMsgs(Position position, int milliDuration, boolean showMsgLevelImages);
+	
 	/**
 	 * Removes all messages permanantly.
 	 */

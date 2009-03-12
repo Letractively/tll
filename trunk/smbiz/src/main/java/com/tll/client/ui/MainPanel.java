@@ -146,7 +146,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentAccount(account);
 
 			// set the initial view based on the user's account type
-			ViewManager.instance().dispatch(
+			ViewManager.get().dispatch(
 					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
@@ -154,7 +154,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentAccount(ac.getAccount());
 
 			// clear out the views
-			ViewManager.instance().clear();
+			ViewManager.get().clear();
 		}
 		else if(changeType == ChangeType.INVALIDATE) {
 			// clear out state in right nav
@@ -162,7 +162,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.clearCurrentAccount();
 
 			// clear out the views
-			ViewManager.instance().clear();
+			ViewManager.get().clear();
 		}
 	}
 
@@ -354,16 +354,16 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onLoad() {
 			super.onLoad();
 			StatusEventDispatcher.instance().addStatusListener(this);
-			ViewManager.instance().initialize(this);
+			ViewManager.get().initialize(this);
 			// set the main model change listener so views see all model change events
-			ModelChangeManager.instance().addModelChangeListener(ViewManager.instance());
+			ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
-			ModelChangeManager.instance().removeModelChangeListener(ViewManager.instance());
-			ViewManager.instance().clear();
+			ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
+			ViewManager.get().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
 			//MsgManager.get().clear();
 		}

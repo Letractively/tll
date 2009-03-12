@@ -43,37 +43,27 @@ final class MsgOperatorFlyweight implements IMsgOperator, Iterable<IMsgOperator>
 	}
 
 	@Override
-	public void hideMsgs() {
+	public void showMsgs(Position position, int milliDuration, boolean showMsgLevelImages) {
 		for(final IMsgOperator o : operators) {
-			o.hideMsgs();
+			o.showMsgs(position, milliDuration, showMsgLevelImages);
 		}
 	}
 
+	/**
+	 * We return <code>true</code> when at least one is showing.
+	 */
 	@Override
-	public void setDuration(int milliseconds) {
+	public boolean isShowing() {
 		for(final IMsgOperator o : operators) {
-			o.setDuration(milliseconds);
+			if(o.isShowing()) return true;
 		}
+		return false;
 	}
 
 	@Override
-	public void setPosition(Position position) {
+	public void showMsgs(boolean show) {
 		for(final IMsgOperator o : operators) {
-			o.setPosition(position);
-		}
-	}
-
-	@Override
-	public void setShowMsgLevelImages(boolean show) {
-		for(final IMsgOperator o : operators) {
-			o.setShowMsgLevelImages(show);
-		}
-	}
-
-	@Override
-	public void showMsgs() {
-		for(final IMsgOperator o : operators) {
-			o.showMsgs();
+			o.showMsgs(show);
 		}
 	}
 
@@ -85,12 +75,12 @@ final class MsgOperatorFlyweight implements IMsgOperator, Iterable<IMsgOperator>
 			case START:
 				// tell the contained msg popups we are dragging
 				for(final IMsgOperator o : operators) {
-					o.hideMsgs();
+					o.showMsgs(false);
 				}
 				break;
 			case END:
 				for(final IMsgOperator o : operators) {
-					o.showMsgs();
+					o.showMsgs(true);
 				}
 				break;
 		}
@@ -100,7 +90,7 @@ final class MsgOperatorFlyweight implements IMsgOperator, Iterable<IMsgOperator>
 	public void onScroll(ScrollEvent event) {
 		// hide all showing msg popups
 		for(final IMsgOperator o : operators) {
-			o.hideMsgs();
+			o.showMsgs(false);
 		}
 	}
 

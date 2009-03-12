@@ -18,10 +18,14 @@ public class CharacterValidator implements IValidator {
 		super();
 	}
 
-	public Object validate(Object value) {
+	public Object validate(Object value) throws ValidationException {
 		if(value == null || value instanceof Character) return value;
 		final String s = value.toString();
-		return s.length() < 1 ? null : new Character(value.toString().charAt(0));
+		if(s.length() == 0) return null;
+		if(s.length() != 1) {
+			throw new ValidationException("The value must be a single character.");
+		}
+		return new Character(s.charAt(0));
 	}
 
 }

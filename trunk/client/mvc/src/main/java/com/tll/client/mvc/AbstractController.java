@@ -30,12 +30,12 @@ public abstract class AbstractController implements IController {
 	 */
 	protected static final IView resolveView(ViewRequestEvent viewRequest) {
 		assert viewRequest != null;
-		ViewKey viewKey = viewRequest.getViewKey();
+		final ViewKey viewKey = viewRequest.getViewKey();
 		assert viewKey != null;
-		ViewContainer vc = ViewManager.instance().findView(viewKey);
+		final ViewContainer vc = ViewManager.get().findView(viewKey);
 		if(vc == null) {
 			// create a fresh instance
-			IView view = viewKey.getViewClass().newView();
+			final IView view = viewKey.getViewClass().newView();
 			// initialize the view
 			view.initialize(viewRequest);
 			// load the view
@@ -47,16 +47,16 @@ public abstract class AbstractController implements IController {
 
 	/**
 	 * Sets the view.
-	 * @param managedViewProvider
+	 * @param view
 	 */
 	protected static final void onViewReady(final IView view) {
-		final boolean showBusy = (ViewManager.instance().findView(view.getViewKey()) == null);
+		final boolean showBusy = (ViewManager.get().findView(view.getViewKey()) == null);
 		if(showBusy) UI.busy();
 		DeferredCommand.addCommand(new Command() {
 
 			public void execute() {
 				try {
-					ViewManager.instance().setCurrentView(view);
+					ViewManager.get().setCurrentView(view);
 				}
 				finally {
 					if(showBusy) UI.unbusy();

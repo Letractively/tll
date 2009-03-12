@@ -11,7 +11,6 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.model.Model;
 import com.tll.model.SmbizEntityType;
 
 /**
@@ -42,12 +41,12 @@ public class UserEditView extends EditView {
 		}
 
 	}
-
+	
 	/**
 	 * Constructor
 	 */
 	public UserEditView() {
-		super(new UserPanel<Model>(), null);
+		super(new UserPanel(), null);
 	}
 
 	@Override
@@ -57,7 +56,7 @@ public class UserEditView extends EditView {
 
 	@Override
 	protected AuxDataRequest getNeededAuxData() {
-		AuxDataRequest auxDataRequest = new AuxDataRequest();
+		final AuxDataRequest auxDataRequest = new AuxDataRequest();
 		auxDataRequest.requestEntityList(SmbizEntityType.AUTHORITY);
 		return auxDataRequest;
 	}

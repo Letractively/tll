@@ -10,7 +10,6 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.account.AccountPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.Model;
 import com.tll.model.SmbizEntityType;
 import com.tll.refdata.RefDataType;
 
@@ -51,7 +50,7 @@ public class AccountEditView extends EditView {
 	 * Constructor
 	 */
 	public AccountEditView() {
-		super(new AccountPanel<Model>(), entityOptions);
+		super(new AccountPanel(), entityOptions);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class AccountEditView extends EditView {
 
 	@Override
 	protected AuxDataRequest getNeededAuxData() {
-		AuxDataRequest auxDataRequest = new AuxDataRequest();
+		final AuxDataRequest auxDataRequest = new AuxDataRequest();
 		auxDataRequest.requestEntityList(SmbizEntityType.CURRENCY);
 		auxDataRequest.requestAppRefData(RefDataType.US_STATES);
 		auxDataRequest.requestAppRefData(RefDataType.ISO_COUNTRY_CODES);

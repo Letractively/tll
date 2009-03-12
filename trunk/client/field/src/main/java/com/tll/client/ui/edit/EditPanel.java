@@ -9,6 +9,7 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -16,12 +17,23 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldErrorHandler;
+import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.common.model.Model;
-import com.tll.common.model.UnsetPropertyException;
+import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.BillboardValidationFeedback;
+import com.tll.client.validate.Error;
+import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.Errors;
+import com.tll.client.validate.IErrorHandler;
+import com.tll.common.bind.IModel;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
@@ -31,7 +43,7 @@ import com.tll.common.msg.Msg;
  * and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ClickHandler, ISourcesEditEvents {
+public final class EditPanel extends Composite implements ClickHandler, IHasEditHandlers {
 
 	/**
 	 * Styles - (admin.css)
@@ -52,7 +64,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		 */
 		public static final String PORTAL = "portal";
 	}
-
+	
 	/**
 	 * The composite's target widget
 	 */
@@ -66,7 +78,9 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	/**
 	 * Contains the actual edit fields.
 	 */
-	private final FieldPanel<? extends Widget, Model> fieldPanel;
+	private final FieldPanel<? extends Widget> fieldPanel;
+	
+	private final FieldBindingAction editAction;
 
 	/**
 	 * The panel containing the edit buttons
@@ -74,21 +88,34 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
-
-	private final EditListenerCollection editListeners = new EditListenerCollection();
+	
+	private String modelDescriptor;
+	
+	private final IMsgDisplay msgDisplay;
 
 	/**
 	 * Constructor
+	 * @param msgDisplay Optional message display employed for providing field
+	 *        validation feedback
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(FieldPanel<? extends Widget, Model> fieldPanel, boolean showCancelBtn, boolean showDeleteBtn) {
+	public EditPanel(IMsgDisplay msgDisplay, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
+			boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
+		
+		if(msgDisplay == null) throw new IllegalArgumentException("A global message panel must be specified.");
+		this.msgDisplay = msgDisplay;
+		
+		final IErrorHandler eh =
+				new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
+						new MsgPopupRegistry()));
+		editAction = new FieldBindingAction(eh);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -128,19 +155,10 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 		initWidget(panel);
 	}
 
-	public void addEditListener(IEditListener listener) {
-		editListeners.add(listener);
+	@Override
+	public HandlerRegistration addEditHandler(IEditHandler handler) {
+		return addHandler(handler, EditEvent.TYPE);
 	}
-
-	public void removeEditListener(IEditListener listener) {
-		editListeners.remove(listener);
-	}
-
-	/*
-	public FieldPanel<? extends Widget, Model> getFieldPanel() {
-		return fieldPanel;
-	}
-	*/
 
 	private void setEditMode(boolean isAdd) {
 		btnSave.setText(isAdd ? "Add" : "Update");
@@ -157,77 +175,71 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 	 * cleared.
 	 * @param model The model to set
 	 */
-	public void setModel(Model model) {
+	public void setModel(IModel model) {
 		Log.debug("EditPanel.setModel() - START");
+		modelDescriptor = model == null ? null : model.descriptor();
 		fieldPanel.setModel(model);
-
 		if(model != null) {
 			assert isAttached() == true;
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {
+				fieldPanel.setAction(editAction);
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
-			}
-		}
-		else {
-			// clean up
-			if(fieldPanel.getAction() != null) {
-				fieldPanel.getAction().unbind();
 			}
 		}
 		Log.debug("EditPanel.setModel() - END");
 	}
 
 	/**
-	 * Applies error messages to the fields contained in the member
+	 * Applies field error messages to the fields contained in the member
 	 * {@link FieldPanel}.
-	 * @param msgs The error messages to apply
+	 * @param msgs The field error messages to apply
 	 */
-	// TODO fix this!!!
-	public void applyErrorMsgs(final List<Msg> msgs) {
-		// MsgManager.instance().clear(RootPanel.get(), false);
+	public void applyFieldErrors(final List<Msg> msgs) {
+		final FieldGroup root = fieldPanel.getFieldGroup();
+		final Errors errors = new Errors();
 		for(final Msg msg : msgs) {
-			boolean msgBound = false;
-			if(msg.getRefToken() != null) {
-				try {
-					final Widget fw = fieldPanel.getField(msg.getRefToken());
-					assert fw != null;
-					//MsgManager.get().post(msg, fw, false).show();
-					msgBound = true;
-				}
-				catch(final UnsetPropertyException e) {
-					// ok
-				}
-			}
-			if(!msgBound) {
-				// post as global
-				//MsgManager.get().post(msg, RootPanel.get(), false);
-			}
+			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
+			if(fw == null) throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
+			errors.add(new Error(msg.getMsg()), fw);
 		}
-		//MsgManager.get().findMsgOperator(RootPanel.get()).show(Position.CENTER, 3000);
 	}
 
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
 		if(sender == btnSave) {
-			fieldPanel.getAction().execute();
-			// TODO propagate
-			editListeners.fireEditEvent(new EditEvent(this, isAdd() ? EditOp.ADD : EditOp.UPDATE));
+			try {
+				Log.debug("EditPanel - Saving..");
+				fieldPanel.getAction().execute();
+				msgDisplay.add(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO));
+				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
+				Log.debug("EditPanel - Saving complete.");
+			}
+			catch(final Exception e) {
+				String emsg = e.getMessage();
+				if(emsg == null) {
+					emsg = e.getClass().toString();
+				}
+				assert emsg != null;
+				Log.error(emsg);
+			}
 		}
 		else if(sender == btnReset) {
 			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.DELETE));
+			EditEvent.fire(this, EditOp.UPDATE);
 		}
 		else if(sender == btnCancel) {
-			editListeners.fireEditEvent(new EditEvent(this, EditOp.CANCEL));
+			EditEvent.fire(this, EditOp.CANCEL);
 		}
 	}
 
 	@Override
 	protected void onLoad() {
+		Log.debug("EditPanel.onLoad()..");
 		super.onLoad();
 		// portal.addScrollListener(MsgManager.instance);
 		if(btnCancel != null) {
@@ -237,6 +249,7 @@ public final class EditPanel extends Composite implements ClickHandler, ISources
 
 	@Override
 	protected void onUnload() {
+		Log.debug("EditPanel.onUnload()..");
 		super.onUnload();
 		// portal.removeScrollListener(MsgManager.instance);
 	}

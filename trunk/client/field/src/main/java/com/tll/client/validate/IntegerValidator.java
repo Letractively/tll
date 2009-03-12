@@ -19,8 +19,8 @@ public class IntegerValidator implements IValidator {
 		try {
 			return Integer.valueOf(value.toString());
 		}
-		catch(NumberFormatException nfe) {
-			throw new ValidationException("Must be an integer value.");
+		catch(final NumberFormatException nfe) {
+			throw new ValidationException("Value must be a numeric integer.");
 		}
 	}
 }

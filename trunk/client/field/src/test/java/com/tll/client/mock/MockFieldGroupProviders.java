@@ -11,12 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.convert.CharacterToStringConverter;
-import com.tll.client.convert.IFormattedConverter;
+import com.tll.client.ui.HorizontalRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
-import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.AddressType;
@@ -32,18 +29,6 @@ import com.tll.refdata.RefDataType;
  */
 public class MockFieldGroupProviders {
 	
-	static final IFormattedConverter<String, Integer> noFormatIntToStringConverter =
-			new IFormattedConverter<String, Integer>() {
-
-			public String convert(Integer o) throws IllegalArgumentException {
-					return o == null ? "" : o.toString();
-				}
-
-				public GlobalFormat getFormat() {
-					return null;
-				}
-			};
-
 	/**
 	 * AbstractMockFieldGroupProvider
 	 * @author jpk
@@ -92,21 +77,21 @@ public class MockFieldGroupProviders {
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			fg.addField(femail("adrsEmailAddress", "emailAddress", "Email Address", "Email Address", 30));
-			fg.addField(fstext("adrsFirstName", "firstName", "First Name", "First Name", 20));
-			fg.addField(fstext("adrsLastName", "lastName", "Last Name", "Last Name", 20));
-			fg.addField(FieldFactory.ftext("adrsMi", "mi", "MI", "Middle Initial", 1, CharacterToStringConverter.INSTANCE));
+			fg.addField(ftext("adrsFirstName", "firstName", "First Name", "First Name", 20));
+			fg.addField(ftext("adrsLastName", "lastName", "Last Name", "Last Name", 20));
+			fg.addField(ftext("adrsMi", "mi", "MI", "Middle Initial", 1));
 			//fg.addField(fstext("adrsCompany", "company", "Company", "Company", 20));
 			//fg.addField(fstext("adrsAttn", "attn", "Attn", "Attention", 10));
 			//fg.addField(fstext("adrsAddress1", "address1", "Address 1", "Address 1", 40));
 			//fg.addField(fstext("adrsAddress2", "address2", "Address 2", "Address 2", 40));
-			fg.addField(fstext("adrsCity", "city", "City", "City", 30));
+			fg.addField(ftext("adrsCity", "city", "City", "City", 30));
 			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
 			//fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
 			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
 			
 			// ad hoc props to verify types
-			fg.addField(fbool("adrsBoolean", "boolean", "Boolean", "Boolean"));
-			fg.addField(fstext("adrsFloat", "float", "Float", "Float", 5));
+			fg.addField(fcheckbox("adrsBoolean", "boolean", "Boolean", "Boolean"));
+			fg.addField(ftext("adrsFloat", "float", "Float", "Float", 5));
 		}
 
 	}
@@ -124,19 +109,18 @@ public class MockFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			fg.addField(fenumselect("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class));
+			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class,
+					HorizontalRenderer.INSTANCE));
 			fg.addField(fcreditcard("ccNum", "paymentData_ccNum", "Num", null, 15));
-			fg.addField(fstext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
-			fg.addField(FieldFactory.ftext("ccExpMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2,
-					noFormatIntToStringConverter));
-			fg.addField(FieldFactory.ftext("ccExpYear", "paymentData_ccExpYear", "Exp Year", "Expiration Year", 4,
-					noFormatIntToStringConverter));
-			fg.addField(fstext("ccName", "paymentData_ccName", "Name", "Name", 30));
-			fg.addField(fstext("ccAddress1", "paymentData_ccAddress1", "Address 1", "Address 1", 40));
-			fg.addField(fstext("ccAddress2", "paymentData_ccAddress2", "Address 2", "Address 2", 40));
-			fg.addField(fstext("ccCity", "paymentData_ccCity", "City", "City", 30));
+			fg.addField(ftext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
+			fg.addField(ftext("ccExpMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));
+			fg.addField(ftext("ccExpYear", "paymentData_ccExpYear", "Exp Year", "Expiration Year", 4));
+			fg.addField(ftext("ccName", "paymentData_ccName", "Name", "Name", 30));
+			fg.addField(ftext("ccAddress1", "paymentData_ccAddress1", "Address 1", "Address 1", 40));
+			fg.addField(ftext("ccAddress2", "paymentData_ccAddress2", "Address 2", "Address 2", 40));
+			fg.addField(ftext("ccCity", "paymentData_ccCity", "City", "City", 30));
 			fg.addField(frefdata("ccState", "paymentData_ccState", "State/Province", "State", RefDataType.US_STATES));
-			fg.addField(fstext("ccZip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
+			fg.addField(ftext("ccZip", "paymentData_ccZip", "Postal Code", "Postal Code", 15));
 			fg.addField(frefdata("ccCountry", "paymentData_ccCountry", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
 		}
 
@@ -177,15 +161,17 @@ public class MockFieldGroupProviders {
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			addModelCommon(fg, true, true);
-			fg.addField(fstext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
+			fg.addField(ftext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
 			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
-			fg.addField(fddate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
+			fg.addField(fdate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
 			//fg.addField(fcurrencies("acntCurrencyId", "currency.id", "Currency", "Currency"));
-			fg.addField(fstext("acntBillingModel", "billingModel", "Billing Model", "Billing Model", 18));
-			fg.addField(fstext("acntBillingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
-			fg.addField(fddate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
-			fg.addField(fddate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
-			fg.addField(fbool("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?", "PersistPayment Info?"));
+			fg.addField(ftext("acntBillingModel", "billingModel", "Billing Model", "Billing Model", 18));
+			fg.addField(ftext("acntBillingCycle", "billingCycle", "Billing Cycle", "Billing Cycle", 18));
+			fg.addField(fdate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
+			fg.addField(fdate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
+			fg
+					.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
+					"PersistPayment Info?"));
 		}
 	}
 }

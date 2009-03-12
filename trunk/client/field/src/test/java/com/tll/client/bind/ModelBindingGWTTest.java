@@ -163,6 +163,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 	/**
 	 * Stubs distinct left and right {@link Model} instances
 	 * @return 2 element array where the first element is the left model
+	 * @throws Exception
 	 */
 	protected Model[] stubLeftAndRight() throws Exception {
 		final Model left = MockModelStubber.stubAccount();
@@ -170,7 +171,7 @@ public class ModelBindingGWTTest extends GWTTestCase {
 		// right.setAsRoot();
 
 		// sanity check: verify we are equal before we bind
-		ModelTestUtils.validateCopy(left, right, true);
+		ModelTestUtils.validateCopy(left, right, true, false);
 
 		return new Model[] {
 			left, right };

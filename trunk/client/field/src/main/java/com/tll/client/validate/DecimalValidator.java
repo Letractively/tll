@@ -26,7 +26,7 @@ public class DecimalValidator implements IValidator {
 	 * @throws IllegalArgumentException When the given number format is
 	 *         <code>null</code> or invalid.
 	 */
-	public static final DecimalValidator instance(GlobalFormat numberFormat) {
+	public static final DecimalValidator get(GlobalFormat numberFormat) {
 		switch(numberFormat) {
 			case CURRENCY:
 				return CURRENCY_VALIDATOR;
@@ -69,8 +69,8 @@ public class DecimalValidator implements IValidator {
 		try {
 			return numberFormat.parse(value.toString());
 		}
-		catch(NumberFormatException nfe) {
-			throw new ValidationException("Must be a decimal of format: '" + numberFormat.getPattern() + "'.");
+		catch(final NumberFormatException nfe) {
+			throw new ValidationException("Value must be a decimal of format: '" + numberFormat.getPattern() + "'.");
 		}
 	}
 }

@@ -32,7 +32,7 @@ import com.tll.client.mvc.view.PinPopViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
 import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragHandler;
-import com.tll.client.ui.IHasDragEvents;
+import com.tll.client.ui.IHasDragHandlers;
 import com.tll.client.ui.DragEvent.DragMode;
 
 /**
@@ -41,7 +41,7 @@ import com.tll.client.ui.DragEvent.DragMode;
  */
 @SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
-		IHasDragEvents, ClickHandler, NativePreviewHandler {
+		IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -380,12 +380,12 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 		// pop the view
 		if(sender == toolbar.btnPop) {
 			final boolean popped = isPopped();
-			ViewManager.instance().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
+			ViewManager.get().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
 		}
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			ViewManager.instance().dispatch(new UnloadViewRequest(this, view.getViewKey(), true));
+			ViewManager.get().dispatch(new UnloadViewRequest(this, view.getViewKey(), true));
 		}
 
 		// minimize/mazimize the view

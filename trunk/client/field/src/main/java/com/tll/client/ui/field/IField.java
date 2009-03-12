@@ -4,88 +4,25 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.user.client.ui.HasName;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.IHasHelpText;
+import com.tll.client.ui.IWidgetRef;
+import com.tll.client.validate.IHasErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IBindable;
-import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.criteria.IPropertyNameProvider;
 import com.tll.model.schema.IPropertyMetadataProvider;
 
 /**
  * IField - Abstraction for managing the display and editing of data.
  * <p>
- * <em><b>NOTE: </b>fields are considered equal only if their property names are the same.</em>
- * @param <B> The "bound" type
- * @param <V> The native field value type (usu. a String but not limited to it)
+ * <em><b>NOTE: </b>fields are considered equal only if their names are the same.</em>
  * @author jpk
  */
-public interface IField<B, V> extends IPropertyNameProvider, HasChangeHandlers, HasName, HasText, IHasHelpText,
-		IBindable, IValidator {
-
-	/**
-	 * Styles - (field.css)
-	 * @author jpk
-	 */
-	static final class Styles {
-
-		/**
-		 * Style indicating a UI artifact is a field.
-		 */
-		public static final String FIELD = "fld";
-
-		/**
-		 * Style for field labels.
-		 */
-		public static final String LABEL = "lbl";
-
-		/**
-		 * Style indicating a field's requiredness.
-		 */
-		public static final String REQUIRED = "rqd";
-
-		/**
-		 * Style indicating the field's value is dirty (changed).
-		 */
-		public static final String DIRTY = "dirty";
-
-		/**
-		 * Style indicating the field's value is invalid.
-		 */
-		public static final String INVALID = MsgLevel.ERROR.getName().toLowerCase();
-
-		/**
-		 * Style for disabling a field.
-		 */
-		public static final String DISABLED = "disabled";
-
-	} // Styles
-
-	/**
-	 * Sets the property name for this field.
-	 * @param propName The property name
-	 */
-	void setPropertyName(String propName);
-
-	/**
-	 * @return The field value.
-	 */
-	V getValue();
-
-	/**
-	 * Sets the field's value.
-	 * @param value
-	 */
-	void setValue(B value);
+public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 
 	/**
 	 * Clears the field's value.
 	 */
-	void clear();
+	void clearValue();
 
 	/**
 	 * Resets the field's value to that which was when originally set.
@@ -138,28 +75,6 @@ public interface IField<B, V> extends IPropertyNameProvider, HasChangeHandlers, 
 	void setVisible(boolean visible);
 
 	/**
-	 * @return The field Widget.
-	 */
-	Widget getWidget();
-
-	/**
-	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
-	 */
-	FieldLabel getFieldLabel();
-
-	/**
-	 * Sets the ancestor Widget that contains this field.
-	 * @param fieldContainer The desired ancestor {@link Widget}
-	 */
-	void setFieldContainer(Widget fieldContainer);
-
-	/**
-	 * Sets the ancestor Widget for this field's label {@link Widget}.
-	 * @param fieldLabelContainer The desired ancestor {@link Widget}
-	 */
-	void setFieldLabelContainer(Widget fieldLabelContainer);
-
-	/**
 	 * Applies property metadata to this field.
 	 * @param provider The property metadata provider.
 	 */
@@ -168,17 +83,19 @@ public interface IField<B, V> extends IPropertyNameProvider, HasChangeHandlers, 
 	/**
 	 * Adds a validator.
 	 * @param validator The validtor to add
+	 * @throws IllegalArgumentException When the given validator is
+	 *         <code>null</code> or one of the same type already exists.
 	 */
-	void addValidator(IValidator validator);
+	void addValidator(IValidator validator) throws IllegalArgumentException;
 
 	/**
-	 * Removes a validator.
-	 * @param validator The validtor to remove
+	 * Removes a validator given its type.
+	 * @param type The validator type to remove
 	 */
-	void removeValidator(IValidator validator);
+	void removeValidator(Class<? extends IValidator> type);
 
 	/**
-	 * Validates the field's held value.
+	 * Validates the field's state.
 	 * @throws ValidationException When invalid
 	 */
 	void validate() throws ValidationException;

@@ -46,11 +46,8 @@ public abstract class Msgs {
 	 */
 	public static void post(Msg msg, Widget w, Position p, int duration, boolean showMsgLevelImage) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.setPosition(p);
-		mp.setDuration(duration);
 		mp.addMsg(msg);
-		mp.setShowMsgLevelImages(showMsgLevelImage);
-		mp.show();
+		mp.showMsgs(p, duration, showMsgLevelImage);
 	}
 
 	/**
@@ -77,10 +74,7 @@ public abstract class Msgs {
 	 */
 	public static void post(Iterable<Msg> msgs, Widget w, Position p, int duration, boolean showMsgLevelImage) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.setPosition(p);
-		mp.setDuration(duration);
 		mp.addMsgs(msgs);
-		mp.setShowMsgLevelImages(showMsgLevelImage);
-		mp.show();
+		mp.showMsgs(p, duration, showMsgLevelImage);
 	}
 }

@@ -17,74 +17,68 @@ import com.tll.client.ui.field.CreditCardFieldsProvider;
 import com.tll.client.ui.field.CreditCardFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.common.bind.IBindable;
 
 /**
  * PaymentInfoPanel
  * @author jpk
- * @param <M>
  */
-public final class PaymentInfoPanel<M extends IBindable> extends FieldPanel<TabPanel, M> implements
+public final class PaymentInfoPanel extends FieldPanel<TabPanel> implements
 		HasSelectionHandlers<Integer>, HasBeforeSelectionHandlers<Integer> {
 
-	private static class CreditCardPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
-
-		/**
-		 * Constructor
-		 */
-		public CreditCardPanel() {
-			super();
-			initWidget(new FlowPanel());
-			setRenderer(new CreditCardFieldsRenderer());
-		}
+	static final class CreditCardPanel extends FlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {
 			return (new CreditCardFieldsProvider()).getFieldGroup();
 		}
 
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new CreditCardFieldsRenderer();
+		}
+
 	}
 
-	private static class BankPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
-
-		/**
-		 * Constructor
-		 */
-		public BankPanel() {
-			super();
-			initWidget(new FlowPanel());
-			setRenderer(new BankFieldsRenderer());
-		}
+	static final class BankPanel extends FlowFieldPanel {
 
 		@Override
 		public FieldGroup generateFieldGroup() {
 			return (new BankFieldsProvider()).getFieldGroup();
 		}
 
+		@Override
+		public IFieldRenderer<FlowPanel> getRenderer() {
+			return new BankFieldsRenderer();
+		}
 	}
 
 	final TabPanel tabPanel = new TabPanel();
 
-	private final CreditCardPanel<M> creditCardPanel;
-	private final BankPanel<M> bankPanel;
+	private final CreditCardPanel creditCardPanel;
+	private final BankPanel bankPanel;
 
 	/**
 	 * Constructor
 	 */
 	public PaymentInfoPanel() {
 		super();
-		creditCardPanel = new CreditCardPanel<M>();
-		bankPanel = new BankPanel<M>();
+		creditCardPanel = new CreditCardPanel();
+		bankPanel = new BankPanel();
 		initWidget(tabPanel);
-		setRenderer(new IFieldRenderer<TabPanel>() {
+	}
+
+	@Override
+	public IFieldRenderer<TabPanel> getRenderer() {
+		return new IFieldRenderer<TabPanel>() {
 
 			@SuppressWarnings("synthetic-access")
 			public void render(TabPanel panel, FieldGroup fg) {
 				panel.add(creditCardPanel, "Credit Card");
 				panel.add(bankPanel, "Bank");
 			}
-		});
+		};
 	}
 
 	@Override

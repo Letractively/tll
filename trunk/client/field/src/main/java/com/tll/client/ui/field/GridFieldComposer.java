@@ -8,7 +8,7 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.field.IField.Styles;
+import com.tll.client.ui.field.IFieldWidget.Styles;
 
 /**
  * GridFieldComposer - Lays out fields in a vertical style having the following
@@ -66,8 +66,8 @@ public class GridFieldComposer implements IFieldComposer {
 
 	/**
 	 * Adds a field label and Widget row. If the label text is <code>null</code>,
-	 * no label is added. If the Widget is an IField {@link #addField(IField)}
-	 * should be called instead.
+	 * no label is added. If the Widget is an IField
+	 * {@link #addField(IFieldWidget)} should be called instead.
 	 * @param label The label text
 	 * @param w The non-IField and non-FieldPanel Widget to add
 	 */
@@ -80,7 +80,7 @@ public class GridFieldComposer implements IFieldComposer {
 	 * field and if non-<code>null</code>, is added as well.
 	 * @param field The field to add
 	 */
-	public void addField(IField<?, ?> field) {
+	public void addField(IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 	}
 }

@@ -45,7 +45,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	// singleton
 	private static ViewManager instance;
 
-	public static ViewManager instance() {
+	public static ViewManager get() {
 		if(instance == null) instance = new ViewManager();
 		return instance;
 	}
@@ -449,7 +449,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 
 	/**
 	 * Closes a popped view.
-	 * @param view The popped view to close.
+	 * @param vc The view container to close.
 	 * @return <code>true</code> if the given view is in popped state and
 	 *         successful.
 	 */

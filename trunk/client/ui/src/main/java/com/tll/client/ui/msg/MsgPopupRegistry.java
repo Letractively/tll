@@ -5,7 +5,9 @@
  */
 package com.tll.client.ui.msg;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.DOM;
@@ -24,10 +26,10 @@ import com.tll.common.msg.Msg;
 public final class MsgPopupRegistry {
 
 	/**
-	 * The managed cache of popups for this registry.
+	 * The managed cache of popups for this registry keyed by ref widget.
 	 */
-	private final Set<MsgPopup> popups = new HashSet<MsgPopup>();
-
+	private final Map<Widget, MsgPopup> cache = new HashMap<Widget, MsgPopup>();
+	
 	/**
 	 * Factory type method providing an {@link IMsgOperator} for all message
 	 * popups bound either to it or any dom-wise child widget.
@@ -35,10 +37,10 @@ public final class MsgPopupRegistry {
 	 * @param drillDown if <code>true</code>, all dom-wise nested message popups
 	 *        will be bound to the returned operator. if <code>false</code>, only
 	 *        the message popup for the given widget is bound.
-	 * @return Newly created collective message operator.
+	 * @return a message operator.
 	 */
 	public IMsgOperator getOperator(Widget w, boolean drillDown) {
-		return new MsgOperatorFlyweight(find(w, drillDown));
+		return drillDown ? new MsgOperatorFlyweight(drill(w)) : getMsgPopup(w);
 	}
 
 	/**
@@ -47,11 +49,13 @@ public final class MsgPopupRegistry {
 	 * @param msg the message to add
 	 * @param w the target widget
 	 * @param clearExisting clear existing messages first?
+	 * @return the associated operator for the given widget
 	 */
-	public void addMsg(Msg msg, Widget w, boolean clearExisting) {
+	public IMsgOperator addMsg(Msg msg, Widget w, boolean clearExisting) {
 		final MsgPopup mp = getMsgPopup(w);
 		if(clearExisting) mp.clearMsgs();
 		mp.addMsg(msg);
+		return mp;
 	}
 
 	/**
@@ -60,38 +64,38 @@ public final class MsgPopupRegistry {
 	 * @param msgs the messages to add
 	 * @param w the target widget
 	 * @param clearExisting clear existing messages first?
+	 * @return the associated operator for the given widget
 	 */
-	public void addMsgs(Iterable<Msg> msgs, Widget w, boolean clearExisting) {
+	public IMsgOperator addMsgs(Iterable<Msg> msgs, Widget w, boolean clearExisting) {
 		final MsgPopup mp = getMsgPopup(w);
 		if(clearExisting) mp.clearMsgs();
 		mp.addMsgs(msgs);
+		return mp;
 	}
 
 	/**
 	 * This method clears out all cached message popups from this registry.
 	 */
 	public void clear() {
-		popups.clear();
+		cache.clear();
 	}
 
 	/**
 	 * Provides a never-<code>null</code> set of message popups whose ref widget
-	 * either matches the given widget or is a dom-wise child of the given widget
-	 * when the drill down flag is <code>true</code>.
+	 * either matches the given widget or is a dom-wise child of the given widget.
 	 * @param w
-	 * @param drillDown
 	 * @return Never-<code>null</code> set of message popups which may be empty
 	 */
-	private Set<MsgPopup> find(Widget w, boolean drillDown) {
+	private Set<MsgPopup> drill(Widget w) {
 		final HashSet<MsgPopup> set = new HashSet<MsgPopup>();
-		for(final MsgPopup mp : popups) {
-			if(mp.getRefWidget() == w || (drillDown && (DOM.isOrHasChild(w.getElement(), mp.getRefWidget().getElement())))) {
+		for(final MsgPopup mp : cache.values()) {
+			if(mp.getRefWidget() == w || ((DOM.isOrHasChild(w.getElement(), mp.getRefWidget().getElement())))) {
 				set.add(mp);
 			}
 		}
 		return set;
 	}
-
+	
 	/**
 	 * Searches the held cache of popups for the one that targets the given
 	 * widget. If one exists, it is returned otherwise one is created, added the
@@ -100,13 +104,11 @@ public final class MsgPopupRegistry {
 	 * @return The never <code>null</code> bound message popup.
 	 */
 	private MsgPopup getMsgPopup(Widget w) {
-		for(final MsgPopup mp : popups) {
-			if(mp.getRefWidget() == w) {
-				return mp;
-			}
+		MsgPopup mp = cache.get(w);
+		if(mp == null) {
+			mp = new MsgPopup(w);
+			cache.put(w, mp);
 		}
-		final MsgPopup mp = new MsgPopup(w);
-		popups.add(mp);
 		return mp;
 	}
 }

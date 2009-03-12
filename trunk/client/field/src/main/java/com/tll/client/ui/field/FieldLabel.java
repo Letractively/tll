@@ -1,11 +1,15 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
@@ -15,9 +19,9 @@ import com.tll.common.util.StringUtil;
  * FieldLabel - the field label of an {@link AbstractField} impl.
  * @author jpk
  */
-public final class FieldLabel extends Widget implements HasText, HasClickHandlers {
+public final class FieldLabel extends Widget implements HasText, HasClickHandlers, IHasHoverHandlers {
 
-	private static final String requiredToken = "<sup class=\"" + IField.Styles.REQUIRED + "\">*</sup>";
+	private static final String requiredToken = "<sup class=\"" + IFieldWidget.Styles.REQUIRED + "\">*</sup>";
 
 	private static final FieldLabelImpl impl = (FieldLabelImpl) GWT.create(FieldLabelImpl.class);
 
@@ -34,7 +38,7 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	public FieldLabel(String text, String fldId, boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
-		setStyleName(IField.Styles.LABEL);
+		setStyleName(IFieldWidget.Styles.LABEL);
 		setText(text);
 		if(fldId != null) {
 			setFor(fldId);
@@ -58,26 +62,24 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
-		//return addDomHandler(handler, type);
-		return null; // TODO fix
+		return addDomHandler(handler, ClickEvent.getType());
 	}
 
 	@Override
-	public void onBrowserEvent(Event event) {
-		super.onBrowserEvent(event);
-		switch(event.getTypeInt()) {
-			case Event.ONCLICK:
-				//fireEvent(todo gwt event);
-				break;
-		}
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		return addDomHandler(handler, MouseOverEvent.getType());
 	}
-	
+
+	@Override
+	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+
 	/**
 	 * Sets the for attrubute.
 	 * @param fldId The DOM element id of the associated form field.
 	 */
 	public void setFor(String fldId) {
-		sinkEvents(Event.ONCLICK);
 		impl.setFor(getElement(), fldId);
 	}
 

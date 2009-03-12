@@ -8,71 +8,63 @@ package com.tll.client.ui.field.user;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.view.ViewRequestLink;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
 /**
  * UserPanel
  * @author jpk
- * @param <M> the model type
  */
-public class UserPanel<M extends IBindable> extends FieldPanel<FlowPanel, M> {
+public class UserPanel extends FlowFieldPanel {
 
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
 		@SuppressWarnings("synthetic-access")
 		public void render(FlowPanel panel, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(canvas);
+			cmpsr.setCanvas(panel);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("userName"));
-			cmpsr.addField(fg.getFieldByName("userEmailAddress"));
-			cmpsr.addField(fg.getFieldByName("userLocked"));
+			cmpsr.addField(fg.getFieldWidgetByName("userName"));
+			cmpsr.addField(fg.getFieldWidgetByName("userEmailAddress"));
+			cmpsr.addField(fg.getFieldWidgetByName("userLocked"));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName("userEnabled"));
+			cmpsr.addField(fg.getFieldWidgetByName("userEnabled"));
 			cmpsr.resetFlow();
-			cmpsr.addField(fg.getFieldByName("userExpires"));
+			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
 
 			// parent account ref link
 			lnkAccount = new ViewRequestLink();
 			cmpsr.addWidget("Account", lnkAccount);
 
-			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// third row
 			cmpsr.newRow();
-			FlowPanel fp = new FlowPanel();
-			AddressFieldsRenderer afr = new AddressFieldsRenderer();
+			final FlowPanel fp = new FlowPanel();
+			final AddressFieldsRenderer afr = new AddressFieldsRenderer();
 			afr.render(fp, null);
 			cmpsr.addWidget(fp);
 		}
 
 	}
 
-	private final FlowPanel canvas = new FlowPanel();
-
 	private ViewRequestLink lnkAccount;
-
-	/**
-	 * Constructor
-	 */
-	public UserPanel() {
-		super();
-		initWidget(canvas);
-		setRenderer(new UserFieldsRenderer());
-	}
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		return (new UserFieldsProvider()).getFieldGroup();
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new UserFieldsRenderer();
 	}
 
 	/*

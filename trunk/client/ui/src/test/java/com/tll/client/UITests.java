@@ -1,5 +1,6 @@
 package com.tll.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,9 +15,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
+import com.tll.client.ui.IWidgetRef;
+import com.tll.client.ui.Position;
+import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.option.IOptionHandler;
@@ -41,7 +47,8 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(), new MsgPopupRegistryTest() };
+			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
+			new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
 	}
 
 	/**
@@ -271,6 +278,198 @@ public final class UITests extends AbstractUITest {
 	} // OptionsPopupTest
 
 	/**
+	 * GlobalMsgPanelTest
+	 * @author jpk
+	 */
+	static final class GlobalMsgPanelTest extends DefaultUITestCase {
+
+		static IWidgetRef createRef(final Widget w, final String descriptor) {
+			return new IWidgetRef() {
+
+				@Override
+				public Widget getWidget() {
+					return w;
+				}
+
+				@Override
+				public String descriptor() {
+					return descriptor;
+				}
+			};
+		}
+
+		static Iterable<Msg> stubMsgs(MsgLevel level, int num) {
+			final ArrayList<Msg> list = new ArrayList<Msg>(num);
+			for(int i = 0; i < num; i++) {
+				list.add(new Msg("This is " + level.getName() + " message #" + Integer.toString(i + 1), level));
+			}
+			return list;
+		}
+		
+		GlobalMsgPanel gmp;
+		HorizontalPanel refWidgetPanel;
+		IWidgetRef refTextBox1, refTextBox2, refLabel;
+
+		/**
+		 * Constructor
+		 */
+		public GlobalMsgPanelTest() {
+			super("GlobalMsgPanel", "Verifies the GlobalMsgPanel layout and its operations.");
+		}
+
+		@Override
+		protected Widget getContext() {
+			if(gmp == null) {
+				gmp = new GlobalMsgPanel();
+			}
+			return gmp;
+		}
+
+		@Override
+		protected void init() {
+			refWidgetPanel = new HorizontalPanel();
+			refWidgetPanel.getElement().getStyle().setProperty("margin", "1em");
+			refWidgetPanel.setSpacing(5);
+
+			TextBox tb = new TextBox();
+			tb.setValue("Text Box 1");
+			refTextBox1 = createRef(tb, "Text Box 1");
+			refWidgetPanel.add(refTextBox1.getWidget());
+
+			tb = new TextBox();
+			tb.setValue("Text Box 2");
+			refTextBox2 = createRef(tb, "Text Box 2");
+			refWidgetPanel.add(refTextBox2.getWidget());
+
+			refLabel = createRef(new Label("Label"), "Label");
+			refWidgetPanel.add(refLabel.getWidget());
+
+			RootPanel.get().add(refWidgetPanel);
+		}
+
+		@Override
+		protected void teardown() {
+			refWidgetPanel.removeFromParent();
+			refWidgetPanel = null;
+		}
+		
+		@Override
+		protected Button[] getTestActions() {
+			return new Button[] { 
+				new Button("Clear all Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear();
+					}
+				}),
+				new Button("Clear Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.FATAL);
+					}
+				}),
+				new Button("Clear Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.ERROR);
+					}
+				}),
+				new Button("Clear Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.WARN);
+					}
+				}),
+				new Button("Clear Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.INFO);
+					}
+				}),
+				new Button("Remove Text Box 1 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refTextBox1);
+					}
+				}),
+				new Button("Remove Text Box 2 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refTextBox2);
+					}
+				}),
+				new Button("Remove Label Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refLabel);
+					}
+				}),
+				new Button("Remove Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.removeUnsourced();
+					}
+				}),
+				new Button("Add Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.FATAL, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.FATAL, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.FATAL, 1));
+					}
+				}),
+				new Button("Add Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.ERROR, 1));
+					}
+				}),
+				new Button("Add Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.WARN, 1));
+					}
+				}),
+				new Button("Add Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.INFO, 1));
+					}
+				}),
+				new Button("Add Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(stubMsgs(MsgLevel.FATAL, 1));
+					}
+				})
+			};
+		}
+	} // GlobalMsgPanelTest
+
+	/**
 	 * MsgPopupRegistryTest
 	 * @author jpk
 	 */
@@ -325,14 +524,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).showMsgs();
+					registry.getOperator(context, true).showMsgs(true);
 				}
 			}));
 			buttonPanel.add(new Button("Hide All Messages", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).hideMsgs();
+					registry.getOperator(context, true).showMsgs(false);
 				}
 			}));
 			buttonPanel.add(new Button("Clear All Messages", new ClickHandler() {
@@ -367,14 +566,14 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).setShowMsgLevelImages(true);
+					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, true);
 				}
 			}));
 			buttonPanel.add(new Button("Hide Message Level Images", new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					registry.getOperator(context, true).setShowMsgLevelImages(false);
+					registry.getOperator(context, true).showMsgs(Position.BOTTOM, -1, false);
 				}
 			}));
 			buttonPanel.add(new Button("Test cloaking", new ClickHandler() {
@@ -385,12 +584,12 @@ public final class UITests extends AbstractUITest {
 					registry.addMsg(msgWarn, refWidget, false);
 					final IMsgOperator operator = registry.getOperator(refWidget, false);
 					nestedContext.setVisible(false);
-					operator.showMsgs();
+					operator.showMsgs(true);
 					Window
 							.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
 
 					nestedContext.setVisible(true);
-					operator.showMsgs();
+					operator.showMsgs(true);
 					Window.alert("Now it should be showing because the nestedContext's visibliity was just set to true.");
 				}
 			}));
@@ -444,7 +643,7 @@ public final class UITests extends AbstractUITest {
 		VerticalPanel buttonPanel;
 		FlowPanel context;
 		BusyPanel busyPanel = new BusyPanel(true, null, 20);
-		
+
 		@Override
 		public String getName() {
 			return "BusyPanel";
@@ -503,6 +702,6 @@ public final class UITests extends AbstractUITest {
 			buttonPanel = null;
 			layout = null;
 		}
-		
+
 	} // BusyPanelTest
 }

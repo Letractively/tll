@@ -5,24 +5,28 @@
  */
 package com.tll.client.ui.field;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.tll.client.convert.IConverter;
-import com.tll.common.util.ObjectUtil;
-import com.tll.common.util.StringUtil;
+import com.tll.client.convert.ToStringConverter;
+import com.tll.client.validate.StringLengthValidator;
 
 /**
  * PasswordField
- * @param <B> The bound type
  * @author jpk
  */
-public final class PasswordField<B> extends AbstractField<B, String> implements IHasMaxLength {
+public final class PasswordField extends AbstractField<String> implements IHasMaxLength {
 
-	private final PasswordTextBox tb;
-	private String old;
+	/**
+	 * Impl
+	 * @author jpk
+	 */
+	static final class Impl extends PasswordTextBox implements IEditable<String> {
+
+	}
+
+	private final Impl tb;
 
 	/**
 	 * Constructor
@@ -31,21 +35,19 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 	 * @param lblText
 	 * @param helpText
 	 * @param visibleLength
-	 * @param converter
 	 */
-	PasswordField(String name, String propName, String lblText, String helpText, int visibleLength,
-			IConverter<String, B> converter) {
+	PasswordField(String name, String propName, String lblText, String helpText, int visibleLength) {
 		super(name, propName, lblText, helpText);
-		tb = new PasswordTextBox();
+		tb = new Impl();
 		setVisibleLen(visibleLength);
-		setConverter(converter);
-		// tb.addFocusListener(this);
-		tb.addChangeHandler(this);
+		tb.addValueChangeHandler(this);
+		tb.addBlurHandler(this);
+		setConverter(ToStringConverter.INSTANCE);
 		addHandler(new KeyPressHandler() {
 
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				if(event.getCharCode() == 'e') { // TODO fix for enter key!
+				if(event.getCharCode() == KeyCodes.KEY_ENTER) {
 					setFocus(false);
 					setFocus(true);
 				}
@@ -67,6 +69,12 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 
 	public void setMaxLen(int maxLen) {
 		tb.setMaxLength(maxLen < 0 ? 256 : maxLen);
+		if(maxLen == -1) {
+			removeValidator(StringLengthValidator.class);
+		}
+		else {
+			addValidator(new StringLengthValidator(0, maxLen));
+		}
 	}
 
 	public String getText() {
@@ -78,35 +86,7 @@ public final class PasswordField<B> extends AbstractField<B, String> implements 
 	}
 
 	@Override
-	protected FocusWidget getEditable() {
+	public IEditable<String> getEditable() {
 		return tb;
-	}
-
-	public String getValue() {
-		final String t = tb.getText();
-		return StringUtil.isEmpty(t) ? null : t;
-	}
-
-	@Override
-	protected void setNativeValue(String nativeValue) {
-		final String old = getValue();
-		setText(nativeValue);
-		final String newval = getValue();
-		if(!ObjectUtil.equals(old, newval)) {
-			changeSupport.firePropertyChange(PROPERTY_VALUE, old, newval);
-		}
-	}
-
-	@Override
-	protected void doSetValue(B value) {
-		setNativeValue(getConverter().convert(value));
-	}
-
-	@Override
-	public void onChange(ChangeEvent event) {
-		super.onChange(event);
-		changeSupport.firePropertyChange(PROPERTY_VALUE, old, getValue());
-		old = getValue();
-		fireChangeListeners();
 	}
 }

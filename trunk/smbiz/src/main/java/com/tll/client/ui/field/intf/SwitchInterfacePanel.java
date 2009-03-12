@@ -10,15 +10,13 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
 /**
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
- * @param <M>
  */
-public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInterfacePanel<FlowPanel, M> {
+public final class SwitchInterfacePanel extends AbstractInterfacePanel<FlowPanel> {
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
@@ -28,14 +26,14 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 			cmpsr.setCanvas(canvas);
 
 			// first row
-			cmpsr.addField(fg.getFieldByName("intfName"));
-			cmpsr.addField(fg.getFieldByName("intfCode"));
-			cmpsr.addField(fg.getFieldByName("intfDescription"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfName"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
 
 			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetAlignment();
 
 			cmpsr.newRow();
@@ -51,16 +49,20 @@ public final class SwitchInterfacePanel<M extends IBindable> extends AbstractInt
 	public SwitchInterfacePanel() {
 		super();
 		initWidget(canvas);
-		setRenderer(new SwitchInterfaceFieldsRenderer());
 	}
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
-		FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
+		final FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
 
 		// the switch option
 		fg.addField("options[0]", (new OptionFieldProvider()).getFieldGroup());
 
 		return fg;
+	}
+
+	@Override
+	public IFieldRenderer<FlowPanel> getRenderer() {
+		return new SwitchInterfaceFieldsRenderer();
 	}
 }

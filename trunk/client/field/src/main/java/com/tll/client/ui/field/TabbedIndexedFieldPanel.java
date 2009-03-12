@@ -21,25 +21,22 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.common.bind.IBindable;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
  * a {@link TabPanel} to show the indexed field panels.
  * @param <I> the index field panel type
- * @param <M> the model type
  * @author jpk
  */
-public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Widget, M>, M extends IBindable> extends
-		IndexedFieldPanel<I, M> implements BeforeSelectionHandler<Integer>, SelectionHandler<Integer> {
+public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
+		implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**
 	 * ImageBundle
@@ -92,7 +89,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		 */
 		public static final String DELETE_BUTTON = "delbtn";
 	}
-
+	
 	/**
 	 * EmptyWidget - Displayed in place of the tab panel when no index field
 	 * panels exist.
@@ -135,6 +132,11 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
 
 	/**
+	 * Token to indicate whether the index was added via the UI.
+	 */
+	private static final String UI_ADD = "uiadd";
+
+	/**
 	 * The composite wrapped panel holding the tab widget.
 	 */
 	private final FlowPanel pnl = new FlowPanel();
@@ -154,24 +156,31 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	 */
 	private final boolean enableAdd, enableDelete;
 
-	private int lastSelectedTabIndex = -1;
-
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
 	
-	private final MsgPopupRegistry registry = new MsgPopupRegistry();
-
+	//private int lastSelectedTabIndex = -1;
+	
 	/**
 	 * Constructor
 	 * @param name The collective name
+	 * @param indexedPropertyName The name of the indexed property relative to a
+	 *        parent root model.
 	 * @param enableAdd Allow tabs to be added?
 	 * @param enableDelete Allow tabs to be marked as deleted?
 	 */
-	public TabbedIndexedFieldPanel(String name, boolean enableAdd, boolean enableDelete) {
-		super(name);
+	public TabbedIndexedFieldPanel(String name, String indexedPropertyName, boolean enableAdd, boolean enableDelete) {
+		super(name, indexedPropertyName);
 
 		this.enableAdd = enableAdd;
 		this.enableDelete = enableDelete;
 
+		if(enableAdd) {
+			// add trailing *add* tab
+			final Image imgAdd = imageBundle.add().createImage();
+			imgAdd.setTitle("Add " + getIndexTypeName());
+			tabPanel.add(new SimplePanel(), imgAdd);
+		}
+		
 		// listen to tab events
 		tabPanel.addBeforeSelectionHandler(this);
 		tabPanel.addSelectionHandler(this);
@@ -183,6 +192,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 		pnl.add(emptyWidget);
 
 		pnl.setStylePrimaryName(Styles.ROOT);
+		
 		initWidget(pnl);
 	}
 
@@ -192,35 +202,34 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	protected abstract String getIndexTypeName();
 
 	/**
-	 * Provides the tab label text for the given index field panel.
-	 * @param indexFieldPanel
-	 * @return label text
+	 * @param index
+	 * @return A <em>unique</em> name for an index.
 	 */
-	protected abstract String getTabLabelText(I indexFieldPanel);
+	protected abstract String getInstanceName(I index);
 
 	/**
 	 * Responsible for creating a single {@link Widget} that is placed in the UI
 	 * tab of the {@link TabPanel}.
-	 * @param indexFieldPanel
-	 * @param isNew Is this a newly added index field panel?
+	 * @param index The index ref
+	 * @param isUiAdd Are we adding a new index via the UI?
 	 * @return The {@link Widget} to be used for the tab in the {@link TabPanel}
 	 *         at the index assoc. with the given index field panel.
 	 */
-	private Widget getTabWidget(I indexFieldPanel, boolean isNew) {
+	private Widget getTabWidget(I index, boolean isUiAdd) {
 
-		final String labelText = isNew ? ("-New " + getIndexTypeName() + "-") : getTabLabelText(indexFieldPanel);
+		final String labelText = isUiAdd ? ("-New " + getIndexTypeName() + "-") : getInstanceName(index);
 
-		if(enableDelete || isNew) {
+		if(enableDelete || isUiAdd) {
 			final ToggleButton btnDeleteTgl =
 					new ToggleButton(imageBundle.delete().createImage(), imageBundle.undo().createImage());
 			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
 			btnDeleteTgl.setTitle("Delete " + labelText);
-			btnDeleteTgl.getElement().setPropertyBoolean("new", isNew);
+			btnDeleteTgl.getElement().setPropertyBoolean(UI_ADD, isUiAdd);
 			btnDeleteTgl.addClickHandler(new ClickHandler() {
 
 				public void onClick(ClickEvent event) {
-					if(event.getNativeEvent().getTarget().getPropertyBoolean("new")) {
-						remove(tabPanel.getTabBar().getSelectedTab());
+					if(event.getNativeEvent().getTarget().getPropertyBoolean(UI_ADD)) {
+						remove(tabPanel.getTabBar().getSelectedTab(), true);
 					}
 					else {
 						markDeleted(tabPanel.getTabBar().getSelectedTab(), btnDeleteTgl.isDown());
@@ -237,109 +246,64 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<? extends Wid
 	}
 
 	@Override
-	protected I add() {
-		final I indexFieldPanel = super.add();
+	protected void addUi(I index, boolean isUiAdd) {
 		final int insertIndex = tabPanel.getWidgetCount() == 0 ? 0 : tabPanel.getWidgetCount() - 1;
-		final Widget tw = getTabWidget(indexFieldPanel, true);
-		tabPanel.insert(indexFieldPanel, tw, insertIndex);
+		final Widget tw = getTabWidget(index, isUiAdd);
+		tabPanel.insert(index, tw, insertIndex);
 		tabWidgets.add(tw);
-		// auto-select the added tab
-		DeferredCommand.addCommand(new Command() {
+		tabPanel.setVisible(true);
+		emptyWidget.setVisible(false);
+		if(isUiAdd) {
+			// auto-select the added tab
+			DeferredCommand.addCommand(new Command() {
 
-			public void execute() {
-				tabPanel.selectTab(insertIndex);
-			}
-		});
-		return indexFieldPanel;
-	}
-
-	@Override
-	protected I remove(int index) throws IndexOutOfBoundsException {
-		final I removed = super.remove(index);
-		if(removed != null) {
-			// remove the tab
-			if(!tabPanel.remove(index)) {
-				// shouldn't happen
-				throw new IllegalStateException();
-			}
-			tabWidgets.remove(index);
-			if(tabPanel.getWidgetCount() == 0 || (enableAdd && tabPanel.getWidgetCount() == 1)) {
-				tabPanel.setVisible(false);
-				emptyWidget.setVisible(true);
-			}
-			else {
-				tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
-			}
+				public void execute() {
+					tabPanel.selectTab(insertIndex);
+				}
+			});
 		}
-		return removed;
 	}
 
 	@Override
-	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		super.markDeleted(index, deleted);
-		((WidgetAndLabel) tabWidgets.get(index)).getTheWidget().setTitle(
-				(deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
-	}
-
-	@Override
-	public void clear() {
-		super.clear();
-		tabPanel.clear();
-		tabWidgets.clear();
-	}
-
-	@Override
-	protected final void draw() {
-		assert tabPanel.getWidgetCount() == 0;
-
+	protected void removeUi(int index, boolean isUiRemove) throws IndexOutOfBoundsException {
+		// remove the tab
+		if(!tabPanel.remove(index)) {
+			// shouldn't happen
+			throw new IllegalStateException();
+		}
+		tabWidgets.remove(index);
 		if(size() == 0) {
 			tabPanel.setVisible(false);
 			emptyWidget.setVisible(true);
 		}
 		else {
-			// add the *existing* index field panels to the tab panel
-			for(final Index<I> i : indexPanels) {
-				final Widget tw = getTabWidget(i.fp, false);
-				tabWidgets.add(tw);
-				if(enableDelete) {
-					((WidgetAndLabel) tw).getTheWidget().setTitle("Delete " + getIndexTypeName());
-				}
-				tabPanel.add(i.fp, getTabWidget(i.fp, false));
-			}
+			if(isUiRemove) tabPanel.selectTab(index - 1 < 0 ? 0 : index - 1);
 		}
-		if(enableAdd) {
-			// add trailing *add* tab
-			final PushButton pb = new PushButton(imageBundle.add().createImage());
-			pb.setTitle("Add " + getIndexTypeName());
-			pb.addClickHandler(new ClickHandler() {
-
-				public void onClick(ClickEvent event) {
-					add();
-				}
-			});
-			tabPanel.add(new SimplePanel(), pb);
-		}
-	}
-
-	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-		assert event.getSource() == tabPanel;
-		if(lastSelectedTabIndex != -1) {
-			// hide msgs on last tab
-			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).hideMsgs();
-		}
-	}
-
-	public void onSelection(SelectionEvent<Integer> event) {
-		// show msgs on selected tab
-		if(lastSelectedTabIndex != -1) {
-			registry.getOperator(tabPanel.getWidget(lastSelectedTabIndex), true).showMsgs();
-		}
-		lastSelectedTabIndex = event.getSelectedItem();
 	}
 
 	@Override
-	protected void onAttach() {
-		super.onAttach();
+	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
+		((WidgetAndLabel) tabWidgets.get(index)).getTheWidget().setTitle(
+				(deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
+		super.markDeleted(index, deleted);
+	}
+
+	@Override
+	public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+		assert event.getSource() == tabPanel;
+		if(enableAdd && (event.getItem().intValue() == tabPanel.getTabBar().getTabCount() - 1)) {
+			add();
+		}
+	}
+
+	@Override
+	public void onSelection(SelectionEvent<Integer> event) {
+		//lastSelectedTabIndex = event.getSelectedItem();
+	}
+
+	@Override
+	protected void onLoad() {
+		super.onLoad();
 		if(tabPanel.getWidgetCount() > 0 && tabPanel.getTabBar().getSelectedTab() == -1) {
 			tabPanel.selectTab(0);
 		}

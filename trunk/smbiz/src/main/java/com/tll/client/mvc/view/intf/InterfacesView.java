@@ -28,7 +28,7 @@ import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
-import com.tll.client.ui.edit.IEditListener;
+import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.intf.AbstractInterfacePanel;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
@@ -77,7 +77,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		 * assigned to manage the edit for the asociated interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IEditListener {
+		private final class InterfaceStack implements IEditHandler {
 
 			// private final int stackIndex;
 			private final RefKey intfRef;
@@ -94,8 +94,9 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				editPanel = new EditPanel(resolveInterfacePanel(intfRef.getType()), false, true);
-				editPanel.addEditListener(this);
+				// TODO add global msg panel ref
+				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel.addEditHandler(this);
 				editPanel.setVisible(false); // hide initially
 
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
@@ -105,13 +106,13 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel<? extends Widget, Model> resolveInterfacePanel(IEntityType intfType) {
+			private AbstractInterfacePanel<? extends Widget> resolveInterfacePanel(IEntityType intfType) {
 				final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, intfType);
 				if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
-					return new MultiOptionInterfacePanel<Model>();
+					return new MultiOptionInterfacePanel();
 				}
 				else if(SmbizEntityType.INTERFACE_SWITCH == set) {
-					return new SwitchInterfacePanel<Model>();
+					return new SwitchInterfacePanel();
 				}
 				else {
 						throw new IllegalArgumentException();
@@ -120,21 +121,21 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					ModelChangeManager.instance().loadModel(editPanel, intfRef, null, auxDataRequest);
+					ModelChangeManager.get().loadModel(editPanel, intfRef, null, auxDataRequest);
 				}
 			}
 
-			public void onEditEvent(EditEvent event) {
+			public void onEdit(EditEvent event) {
 				if(event.getOp().isSave()) {
-					ModelChangeManager.instance().persistModel(editPanel, model, null);
+					ModelChangeManager.get().persistModel(editPanel, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					ModelChangeManager.instance().deleteModel(editPanel, model.getRefKey(), null);
+					ModelChangeManager.get().deleteModel(editPanel, model.getRefKey(), null);
 				}
 			}
 
 			void handleModelChangeError(ModelChangeEvent event) {
-				editPanel.applyErrorMsgs(event.getStatus().getFieldMsgs());
+				editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
 			}
 
 			void handleModelChangeSuccess(ModelChangeEvent event) {

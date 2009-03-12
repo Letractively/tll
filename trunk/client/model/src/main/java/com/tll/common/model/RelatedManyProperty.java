@@ -100,7 +100,8 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			final Object old = list;
 			list = new ArrayList<Model>(clc.size());
 			list.addAll(clc);
-			getChangeSupport().firePropertyChange(propertyName, old, list);
+			// IMPT: refer to the value agrument as the new value to avoid spurious re-firings of property change events
+			getChangeSupport().firePropertyChange(propertyName, old, value);
 		}
 		else {
 			throw new IllegalArgumentException("The value must be a collection of Model instances");
@@ -135,11 +136,11 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 	}
 
 	@Override
-	public void setProperty(String propPath, Object value) throws PropertyPathException, Exception {
+	public void setProperty(String propPath, Object value) throws PropertyPathException, IllegalArgumentException {
 		final PropertyPath pp = new PropertyPath(propPath);
 		if(pp.isIndexed()) {
 			if(value != null && value instanceof Model == false) {
-				throw new Exception("The value must be a Model instance");
+				throw new IllegalArgumentException("The value must be a Model instance");
 			}
 
 			final Model m = (Model) value;

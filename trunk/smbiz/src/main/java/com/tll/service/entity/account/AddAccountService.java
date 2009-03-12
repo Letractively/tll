@@ -8,7 +8,6 @@ import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
-import com.tll.ApplicationException;
 import com.tll.model.Account;
 import com.tll.model.Customer;
 import com.tll.model.CustomerAccount;
@@ -45,18 +44,17 @@ public class AddAccountService {
 	 * @param account
 	 * @param accountInterfaceOptions may be null
 	 * @param users may be null
+	 * @return the added account
 	 * @throws EntityExistsException when the account already exists (by business
 	 *         key)
-	 * @throws ApplicationException when an exception occures adding the related
-	 *         entities
 	 */
 	private Account addAccount(Account account, Collection<InterfaceOptionAccount> accountInterfaceOptions,
 			Collection<User> users) throws EntityExistsException {
 
-		IAccountService accountService = serviceFactory.instance(IAccountService.class);
-		IPaymentInfoService piService = serviceFactory.instance(IPaymentInfoService.class);
-		IInterfaceOptionAccountService ioaService = serviceFactory.instance(IInterfaceOptionAccountService.class);
-		IUserService userService = serviceFactory.instance(IUserService.class);
+		final IAccountService accountService = serviceFactory.instance(IAccountService.class);
+		final IPaymentInfoService piService = serviceFactory.instance(IPaymentInfoService.class);
+		final IInterfaceOptionAccountService ioaService = serviceFactory.instance(IInterfaceOptionAccountService.class);
+		final IUserService userService = serviceFactory.instance(IUserService.class);
 
 		// create payment info
 		if(account.getPaymentInfo() != null && account.getPaymentInfo().isNew() && account.getPersistPymntInfo()) {
@@ -64,7 +62,7 @@ public class AddAccountService {
 		}
 
 		// create account
-		Account persistedAccount = accountService.persist(account);
+		final Account persistedAccount = accountService.persist(account);
 
 		// add the account interface options
 		ioaService.persistAll(accountInterfaceOptions);
@@ -98,13 +96,13 @@ public class AddAccountService {
 			Collection<User> users) throws InvalidStateException, EntityExistsException {
 
 		// add Customer first
-		Customer customer = customerAccount.getCustomer();
+		final Customer customer = customerAccount.getCustomer();
 		if(customer.isNew()) {
 			addAccount(customer, accountInterfaceOptions, users);
 		}
 
 		// add CustomerAccount now
-		ICustomerAccountService caService = serviceFactory.instance(ICustomerAccountService.class);
+		final ICustomerAccountService caService = serviceFactory.instance(ICustomerAccountService.class);
 		caService.persist(customerAccount);
 	}
 }

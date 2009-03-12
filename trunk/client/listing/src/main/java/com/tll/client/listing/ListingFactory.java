@@ -88,7 +88,7 @@ public abstract class ListingFactory {
 	 * @param config
 	 * @param listingWidget
 	 * @param operator
-	 * @return
+	 * @return the assembled listing widget
 	 */
 	private static <R> ListingWidget<R> assemble(IListingConfig<R> config, ListingWidget<R> listingWidget,
 			IListingOperator<R> operator) {

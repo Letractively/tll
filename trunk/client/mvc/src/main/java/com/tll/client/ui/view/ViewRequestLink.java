@@ -50,7 +50,7 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickHandl
 	public void onClick(ClickEvent event) {
 		if(event.getSource() == this) {
 			assert viewRequest != null;
-			ViewManager.instance().dispatch(viewRequest);
+			ViewManager.get().dispatch(viewRequest);
 		}
 	}
 

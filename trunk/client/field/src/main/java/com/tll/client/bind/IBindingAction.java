@@ -1,30 +1,38 @@
 package com.tll.client.bind;
 
-import com.tll.common.bind.IBindable;
+import com.tll.client.ui.field.IFieldBoundWidget;
 
 /**
- * IBindingAction - "Controls" a given component participating in a binding.
- * <p>
- * <em><b>IMPT NOTE: </b>This code was originally derived from the <a href="http://gwittir.googlecode.com/">gwittir</a> project.</em>
+ * IBindingAction - Defines a very generalized binding action. The operations
+ * performed upon {@link #execute()} are implmentation dependent.
  * @author jpk
  */
 public interface IBindingAction extends IAction {
+	
+	/**
+	 * Sets the given widget to this binding action.
+	 * @param widget the widget to set
+	 */
+	void set(IFieldBoundWidget widget);
 
 	/**
-	 * Sets the bindable.
-	 * @param <B> The {@link IBindable} type.
-	 * @param bindable The boundWidget to set
+	 * Establishes the primary (non-indexed) bindings. <br>
+	 * NOTE: A bound widget must be set.
+	 * @param widget The widget to bind
 	 */
-	<B extends IBindable> void setBindable(B bindable);
+	void bind(IFieldBoundWidget widget);
 
 	/**
-	 * Establishes the bindings. A prior call to {@link #setBindable(IBindable)}
-	 * is required.
+	 * Unbinds the currently bound widget performing necessary clean up.
+	 * @param widget The widget to unbind
 	 */
-	void bind();
+	void unbind(IFieldBoundWidget widget);
 
 	/**
-	 * Unbinds what is currently bound performing necessary clean up.
+	 * Clears the reference that was set via {@link #set(IFieldBoundWidget)}.
+	 * {@link #set(IFieldBoundWidget)} may subsequently be called after this
+	 * method is called.
+	 * @param widget
 	 */
-	void unbind();
+	void unset(IFieldBoundWidget widget);
 }

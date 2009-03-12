@@ -1,82 +1,42 @@
 /**
  * The Logic Lab
- * @author jpk
- * Apr 13, 2008
+ * @author jpk Apr 13, 2008
  */
 package com.tll.client.validate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 
 /**
- * ValidationException
+ * ValidationException - The one and only validation exception type.
  * @author jpk
  */
 @SuppressWarnings("serial")
-public class ValidationException extends Exception {
+public final class ValidationException extends Exception {
 
-	private final List<Msg> errors;
-
-	//private final Map<Widget, List<Msg>> sourcedErrors;
+	/**
+	 * The sole error.
+	 */
+	private final IError error;
 
 	/**
 	 * Constructor
 	 * @param error
 	 */
-	public ValidationException(Msg error) {
-		super();
-		errors = new ArrayList<Msg>(1);
-		errors.add(error);
-		//sourcedErrors = null;
+	public ValidationException(IError error) {
+		this.error = error;
 	}
 
 	/**
-	 * Constructor
-	 * @param errors
+	 * Constructor - Creates a simple scalar (error message only) error.
+	 * @param error the error message
 	 */
-	public ValidationException(List<Msg> errors) {
-		super();
-		this.errors = errors;
-		//sourcedErrors = null;
+	public ValidationException(final String error) {
+		this.error = new Error(error);
 	}
 
 	/**
-	 * Constructor
-	 * @param error
+	 * @return the sole error.
 	 */
-	public ValidationException(String error) {
-		this(new Msg(error, MsgLevel.ERROR));
+	public IError getError() {
+		return error;
 	}
-
-	/**
-	 * Constructor - Use when this exception contains error messages for
-	 * <em>more than one</em> target.
-	 * @param sourcedErrors Map of sourced error messages keyed by the source.
-	 */
-	public ValidationException(Map<Widget, List<Msg>> sourcedErrors) {
-		super();
-		this.errors = null;
-		//this.sourcedErrors = sourcedErrors;
-	}
-
-	/**
-	 * @return The error messages.
-	 */
-	public List<Msg> getErrors() {
-		return errors;
-	}
-
-	/**
-	 * @return The error messages for multiple sources.
-	 */
-	/*
-	public Map<Widget, List<Msg>> getSourcedErrors() {
-		return sourcedErrors;
-	}
-	*/
 }

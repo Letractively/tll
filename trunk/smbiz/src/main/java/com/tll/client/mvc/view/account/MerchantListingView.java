@@ -162,7 +162,7 @@ public final class MerchantListingView extends ListingView {
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Customer Listing") == 0) {
-						ViewManager.instance().dispatch(
+						ViewManager.get().dispatch(
 								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowRef(rowIndex),
 										ispRef));
 					}
