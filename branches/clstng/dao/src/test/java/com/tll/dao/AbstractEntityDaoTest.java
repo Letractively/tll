@@ -39,8 +39,9 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
-import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
+import com.tll.mock.di.MockEntityFactoryModule;
+import com.tll.mock.model.MockEntityFactory;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
@@ -52,7 +53,6 @@ import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.model.mock.MockEntityFactory;
 import com.tll.util.EnumUtil;
 
 /**

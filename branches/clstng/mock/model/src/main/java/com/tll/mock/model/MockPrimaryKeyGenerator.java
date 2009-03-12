@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.model.mock;
+package com.tll.mock.model;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.di;
+package com.tll.mock.di;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -9,8 +9,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.model.mock.MockEntityFactory;
-import com.tll.model.mock.MockEntityFactory.MockEntityBeanFactory;
+import com.tll.di.GModule;
+import com.tll.mock.model.MockEntityFactory;
+import com.tll.mock.model.MockEntityFactory.MockEntityBeanFactory;
 
 /**
  * MockEntityFactoryModule - Use for providing a {@link MockEntityFactory}

@@ -6,10 +6,10 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.mock.model.EntityGraph;
+import com.tll.mock.model.IEntityGraphBuilder;
+import com.tll.mock.model.MockPrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
-import com.tll.model.mock.EntityGraph;
-import com.tll.model.mock.IEntityGraphBuilder;
-import com.tll.model.mock.MockPrimaryKeyGenerator;
 
 /**
  * MockDaoModule

@@ -33,6 +33,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
+import com.tll.mock.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;
@@ -43,7 +44,6 @@ import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.NonUniqueBusinessKeyException;
 import com.tll.model.key.PrimaryKey;
-import com.tll.model.mock.EntityGraph;
 import com.tll.util.CommonUtil;
 import com.tll.util.DateRange;
 

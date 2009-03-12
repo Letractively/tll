@@ -5,12 +5,12 @@ package com.tll.dao;
 
 import org.testng.Assert;
 
+import com.tll.mock.model.MockEntityFactory;
 import com.tll.model.Account;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
 import com.tll.model.ProductGeneral;
 import com.tll.model.ProductInventory;
-import com.tll.model.mock.MockEntityFactory;
 
 /**
  * ProductInventoryDaoTestHandler

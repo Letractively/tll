@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 31, 2009
  */
-package com.tll.model.mock;
+package com.tll.mock.model;
 
 /**
  * IEntityGraphBuilder - Responsible for building {@link EntityGraph} instances.

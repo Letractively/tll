@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 31, 2009
  */
-package com.tll.model.mock;
+package com.tll.mock.model;
 
 import java.util.Date;
 import java.util.Set;
