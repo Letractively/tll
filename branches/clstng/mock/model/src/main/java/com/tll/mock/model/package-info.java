@@ -10,11 +10,12 @@
   }
 )
 
-package com.tll.model;
+package com.tll.mock.model;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-// TODO figure out how to reference the original package-info asset in the tll-model module!
+import com.tll.model.EncryptedObjectType;
+

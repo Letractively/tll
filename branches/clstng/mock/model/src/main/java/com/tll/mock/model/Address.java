@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.mock.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

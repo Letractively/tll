@@ -8,12 +8,12 @@ package com.tll.dao;
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.mock.model.Account;
+import com.tll.mock.model.AccountAddress;
+import com.tll.mock.model.Address;
+import com.tll.mock.model.Currency;
 import com.tll.mock.model.MockEntityFactory;
-import com.tll.model.Account;
-import com.tll.model.AccountAddress;
-import com.tll.model.Address;
-import com.tll.model.Currency;
-import com.tll.model.NestedEntity;
+import com.tll.mock.model.NestedEntity;
 
 
 /**

@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Nov 15, 2007
  */
-package com.tll.model.mock;
+package com.tll.mock.model;
 
 import java.util.Set;
 
@@ -10,13 +10,6 @@ import org.apache.commons.lang.math.RandomUtils;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.mock.model.AbstractEntityGraphBuilder;
-import com.tll.mock.model.MockEntityFactory;
-import com.tll.model.Account;
-import com.tll.model.AccountAddress;
-import com.tll.model.Address;
-import com.tll.model.Currency;
-import com.tll.model.NestedEntity;
 
 /**
  * EntityGraph
@@ -41,7 +34,7 @@ public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
 			stubRudimentaryEntities();
 			stubAccounts();
 		}
-		catch(Exception e) {
+		catch(final Exception e) {
 			throw new SystemError("Unable to stub entity graph: " + e.getMessage(), e);
 		}
 	}
@@ -58,7 +51,7 @@ public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = add(type, false);
+		final A a = add(type, false);
 
 		if(num > 0) {
 			a.setName(a.getName() + " " + Integer.toString(num));
@@ -69,11 +62,11 @@ public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		a.setNestedEntity(getNthEntity(NestedEntity.class, 1));
 
 		// account addresses upto 5
-		int numAddresses = RandomUtils.nextInt(5);
+		final int numAddresses = RandomUtils.nextInt(5);
 		if(numAddresses > 0) {
 			int ai = 0;
-			Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
-			for(AccountAddress aa : set) {
+			final Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
+			for(final AccountAddress aa : set) {
 				aa.setAccount(a);
 				aa.setAddress(getNthEntity(Address.class, ++ai));
 			}

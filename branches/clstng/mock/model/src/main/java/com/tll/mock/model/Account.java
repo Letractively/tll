@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.mock.model;
 
 import java.util.Collection;
 import java.util.Date;
@@ -22,6 +22,10 @@ import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
+import com.tll.model.IChildEntity;
+import com.tll.model.IEntity;
+import com.tll.model.INamedEntity;
+import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.AtLeastOne;

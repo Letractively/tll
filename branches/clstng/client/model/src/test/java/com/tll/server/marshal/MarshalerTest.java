@@ -23,14 +23,14 @@ import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
 import com.tll.di.ModelModule;
 import com.tll.mock.di.MockEntityFactoryModule;
+import com.tll.mock.model.Account;
 import com.tll.mock.model.EntityGraph;
+import com.tll.mock.model.FieldEnum;
 import com.tll.mock.model.MockEntityFactory;
-import com.tll.model.Account;
-import com.tll.model.FieldEnum;
+import com.tll.mock.model.MockEntityGraphBuilder;
+import com.tll.mock.model.NestedEntity;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
-import com.tll.model.NestedEntity;
-import com.tll.model.mock.MockEntityGraphBuilder;
 
 /**
  * EntityMarshallerTest

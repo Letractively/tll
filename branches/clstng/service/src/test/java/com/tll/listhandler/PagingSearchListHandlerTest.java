@@ -35,8 +35,8 @@ import com.tll.di.EntityServiceModule;
 import com.tll.di.ModelModule;
 import com.tll.di.TransactionModule;
 import com.tll.mock.di.MockEntityFactoryModule;
+import com.tll.mock.model.Address;
 import com.tll.mock.model.MockEntityFactory;
-import com.tll.model.Address;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.TestEntityService;
 
