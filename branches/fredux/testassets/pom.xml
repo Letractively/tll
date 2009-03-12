@@ -17,6 +17,7 @@
   
   <modules>
     <module>test-persistence-unit</module>
+    <module>test-service-layer</module>
   </modules>
   
 </project>
