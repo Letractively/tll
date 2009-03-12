@@ -686,6 +686,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>mock-model</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
