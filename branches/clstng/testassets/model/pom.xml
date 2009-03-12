@@ -4,15 +4,13 @@
   <parent>
     <artifactId>tll-testassets</artifactId>
     <groupId>com.tll</groupId>
-    <version>1</version>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
   
   <groupId>com.tll</groupId>
-  <artifactId>test-service-layer</artifactId>
-  <packaging>pom</packaging>
-  <name>test-service-layer</name>
+  <artifactId>mock-model</artifactId>
+  <name>mock-model</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Simple service layer that extends the test-persistence-unit module.</description>
   
   <build>
   </build>

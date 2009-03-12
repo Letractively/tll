@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-testassets</artifactId>
-  <name>tll-testassets</name>
-  <version>1</version>
-  <description>Holds projects that install test assets to aid in testing.</description>
+  <artifactId>tll-mock</artifactId>
+  <name>tll-mock</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Contains mock constructs to aid in testing or otherwise.</description>
   <packaging>pom</packaging>
   
   <parent>
@@ -16,8 +16,9 @@
   </parent>
   
   <modules>
-    <module>test-persistence-unit</module>
-    <module>test-service-layer</module>
+    <module>model</module>
+    <module>persistence-unit</module>
+    <module>service-layer</module>
   </modules>
   
 </project>

@@ -20,7 +20,7 @@ import com.tll.model.NestedEntity;
  * EntityGraph
  * @author jpk
  */
-public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
+public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	private static final int numAccounts = 3;
 
@@ -29,7 +29,7 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	 * @param mep
 	 */
 	@Inject
-	public EntityGraphBuilder(MockEntityFactory mep) {
+	public MockEntityGraphBuilder(MockEntityFactory mep) {
 		super(mep);
 	}
 
