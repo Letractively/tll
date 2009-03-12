@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.tll</groupId>
     <artifactId>tll</artifactId>
-    <version>1</version>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.tll</groupId>
@@ -31,7 +31,7 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>

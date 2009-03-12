@@ -29,8 +29,8 @@ import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.NestedEntity;
 import com.tll.model.mock.EntityGraph;
-import com.tll.model.mock.EntityGraphBuilder;
 import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.mock.MockEntityGraphBuilder;
 
 /**
  * EntityMarshallerTest
@@ -87,7 +87,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
+		final MockEntityGraphBuilder entityGraphBuilder = new MockEntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Marshaler marshaler = getMarshaler();
 		

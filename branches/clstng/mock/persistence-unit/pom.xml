@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>mock-persistence-unit</artifactId>
   <name>mock-persistence-unit</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <packaging>jar</packaging>
   <description>Simple JPA persistence unit to aid in testing.</description>
 
@@ -92,12 +92,17 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>mock-model</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
   </dependencies>

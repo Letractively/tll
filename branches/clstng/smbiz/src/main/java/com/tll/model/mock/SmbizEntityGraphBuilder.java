@@ -37,10 +37,10 @@ import com.tll.model.Visitor;
 import com.tll.util.EnumUtil;
 
 /**
- * EntityGraphBuilder - Builds an {@link EntityGraphBuilder} instance.
+ * SmbizEntityGraphBuilder - Builds an {@link SmbizEntityGraphBuilder} instance.
  * @author jpk
  */
-public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
+public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	private static final int numIsps = 3;
 	private static final int numMerchants = numIsps * numIsps;
@@ -51,7 +51,7 @@ public final class EntityGraphBuilder extends AbstractEntityGraphBuilder {
 	 * @param mep
 	 */
 	@Inject
-	public EntityGraphBuilder(MockEntityFactory mep) {
+	public SmbizEntityGraphBuilder(MockEntityFactory mep) {
 		super(mep);
 	}
 

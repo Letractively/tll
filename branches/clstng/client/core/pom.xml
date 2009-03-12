@@ -11,7 +11,7 @@
   <groupId>com.tll</groupId>
   <artifactId>client-core</artifactId>
   <name>client-core</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <description>Houses core client and server assets for use by all other client modules.</description>
 
   <!-- 
@@ -43,12 +43,12 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>

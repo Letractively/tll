@@ -2,18 +2,18 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
   <groupId>com.tll</groupId>
   <artifactId>tll-client</artifactId>
   <packaging>pom</packaging>
   <name>tll-client</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <description>Contains client modules.</description>
-  
-  <parent>
-    <groupId>com.tll</groupId>
-    <artifactId>tll</artifactId>
-    <version>1</version>
-  </parent>
   
   <properties>
     <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
