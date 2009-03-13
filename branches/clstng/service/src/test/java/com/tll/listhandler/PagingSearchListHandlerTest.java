@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Sep 6, 2007
+ * @author jpk Sep 6, 2007
  */
 package com.tll.listhandler;
 
@@ -14,6 +13,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -36,9 +36,10 @@ import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.TransactionModule;
 import com.tll.model.Address;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
+import com.tll.service.entity.EntityService;
 import com.tll.service.entity.IEntityService;
-import com.tll.service.entity.TestEntityService;
 
 /**
  * PagingSearchListHandlerTest
@@ -48,12 +49,34 @@ import com.tll.service.entity.TestEntityService;
 public class PagingSearchListHandlerTest extends DbTest {
 
 	/**
+	 * TestEntityService
+	 * @author jpk
+	 */
+	static final class TestEntityService extends EntityService<Address> {
+
+		/**
+		 * Constructor
+		 * @param dao
+		 * @param entityAssembler
+		 */
+		@Inject
+		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
+			super(dao, entityAssembler);
+		}
+
+		@Override
+		public Class<Address> getEntityClass() {
+			return Address.class;
+		}
+	}
+
+	/**
 	 * The number of listing elements for which to test.
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
 	private DbShell db;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -115,11 +138,11 @@ public class PagingSearchListHandlerTest extends DbTest {
 	protected final IEntityService<Address> getTestEntityService() {
 		return injector.getInstance(Key.get(new TypeLiteral<IEntityService<Address>>() {}));
 	}
-	
+
 	protected final MockEntityFactory getMockEntityFactory() {
 		return injector.getInstance(MockEntityFactory.class);
 	}
-	
+
 	protected final void stubListElements() {
 		// stub the list elements
 		startNewTransaction();

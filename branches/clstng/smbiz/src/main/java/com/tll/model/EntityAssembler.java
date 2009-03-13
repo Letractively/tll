@@ -1,45 +1,11 @@
-package com.tll.service.entity;
+package com.tll.model;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.model.Account;
-import com.tll.model.AccountAddress;
-import com.tll.model.AccountHistory;
-import com.tll.model.Address;
-import com.tll.model.AppProperty;
-import com.tll.model.Authority;
-import com.tll.model.Currency;
-import com.tll.model.Customer;
-import com.tll.model.CustomerAccount;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityProvider;
-import com.tll.model.InterfaceMulti;
-import com.tll.model.InterfaceOption;
-import com.tll.model.InterfaceOptionAccount;
-import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.InterfaceSingle;
-import com.tll.model.InterfaceSwitch;
-import com.tll.model.Isp;
-import com.tll.model.Merchant;
-import com.tll.model.Order;
-import com.tll.model.OrderItem;
-import com.tll.model.OrderItemTrans;
-import com.tll.model.OrderTrans;
-import com.tll.model.PaymentData;
-import com.tll.model.PaymentInfo;
-import com.tll.model.PaymentTrans;
-import com.tll.model.ProdCat;
-import com.tll.model.ProductCategory;
-import com.tll.model.ProductGeneral;
-import com.tll.model.ProductInventory;
-import com.tll.model.SalesTax;
-import com.tll.model.ShipBoundCost;
-import com.tll.model.ShipMode;
-import com.tll.model.SiteCode;
-import com.tll.model.User;
-import com.tll.model.Visitor;
-import com.tll.service.entity.IEntityAssembler;
 
 /**
  * EntityAssembler - Decorator around the {@link IEntityFactory} with additional

@@ -8,7 +8,7 @@ package com.tll.di;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.service.entity.IEntityAssembler;
+import com.tll.model.IEntityAssembler;
 
 
 /**
@@ -23,7 +23,7 @@ public class EntityServiceModule extends GModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		ENTITY_ASSEMBLER_CLASSNAME("service.entityAssembler.classname");
+		ENTITY_ASSEMBLER_CLASSNAME("entityAssembler.classname");
 
 		private final String key;
 
@@ -53,7 +53,7 @@ public class EntityServiceModule extends GModule {
 		try {
 			clz = (Class<IEntityAssembler>) Class.forName(cn);
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new IllegalStateException("No entity assembler found for name: " + cn);
 		}
 		bind(IEntityAssembler.class).to(clz).in(Scopes.SINGLETON);

@@ -3,10 +3,8 @@
  * @author jpk
  * Jan 23, 2009
  */
-package com.tll.service.entity;
+package com.tll.model;
 
-import com.tll.model.IEntity;
-import com.tll.model.IEntityProvider;
 
 /**
  * IEntityAssembler - Entity assembly definition.
