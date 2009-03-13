@@ -10,10 +10,10 @@ import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.SelectNamedQueries;
-import com.tll.mock.model.MockEntityFactory;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
+import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler

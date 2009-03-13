@@ -8,8 +8,7 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.mock.model.AbstractEntityGraphBuilder;
-import com.tll.mock.model.MockEntityFactory;
+import com.tll.model.AbstractEntityGraphBuilder;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.AccountHistory;
@@ -29,6 +28,7 @@ import com.tll.model.InterfaceSingle;
 import com.tll.model.InterfaceSwitch;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
 import com.tll.model.ProductCategory;
 import com.tll.model.ProductGeneral;
@@ -68,7 +68,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 			stubUsers();
 		}
-		catch(Exception e) {
+		catch(final Exception e) {
 			throw new SystemError("Unable to stub entity graph: " + e.getMessage());
 		}
 	}
@@ -99,7 +99,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private <A extends Account> A stubAccount(Class<A> type, int num) throws Exception {
-		A a = add(type, false);
+		final A a = add(type, false);
 
 		if(num > 0) {
 			a.setName(a.getName() + " " + Integer.toString(num));
@@ -110,11 +110,11 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		a.setPaymentInfo(getRandomEntity(PaymentInfo.class));
 
 		// account addresses upto 5
-		int numAddresses = randomInt(6);
+		final int numAddresses = randomInt(6);
 		if(numAddresses > 0) {
 			int ai = 0;
-			Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
-			for(AccountAddress aa : set) {
+			final Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
+			for(final AccountAddress aa : set) {
 				aa.setAccount(a);
 				aa.setAddress(getNthEntity(Address.class, ++ai));
 				aa.setType(EnumUtil.fromOrdinal(AddressType.class, randomInt(AddressType.values().length)));
@@ -122,21 +122,21 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		}
 		
 		// create a random number of histories for this account upto 5
-		int numHistories = randomInt(6);
+		final int numHistories = randomInt(6);
 		if(numHistories > 0) {
 			for(int i = 0; i < numHistories; i++) {
-				AccountHistory ah = add(AccountHistory.class, true);
+				final AccountHistory ah = add(AccountHistory.class, true);
 				ah.setAccount(a);
 				makeUnique(ah);
 			}
 		}
 
 		// create a product set for this account upto 5
-		int numProducts = randomInt(6);
+		final int numProducts = randomInt(6);
 		if(numProducts > 0) {
 			for(int i = 0; i < numProducts; i++) {
-				ProductInventory pi = add(ProductInventory.class, true);
-				ProductGeneral pg = generateEntity(ProductGeneral.class, true);
+				final ProductInventory pi = add(ProductInventory.class, true);
+				final ProductGeneral pg = generateEntity(ProductGeneral.class, true);
 				pi.setProductGeneral(pg);
 				pi.setAccount(a);
 				makeUnique(pi);
@@ -144,10 +144,10 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		}
 
 		// create product categories for these account products upto 5
-		int numCategories = randomInt(6);
+		final int numCategories = randomInt(6);
 		if(numCategories > 0) {
 			for(int i = 0; i < numCategories; i++) {
-				ProductCategory pc = add(ProductCategory.class, true);
+				final ProductCategory pc = add(ProductCategory.class, true);
 				pc.setAccount(a);
 				makeUnique(pc);
 			}
@@ -156,10 +156,10 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		// TODO bind products to categories
 
 		// create some sales taxes upto 5
-		int numSalesTaxes = randomInt(6);
+		final int numSalesTaxes = randomInt(6);
 		if(numSalesTaxes > 0) {
 			for(int i = 0; i < numSalesTaxes; i++) {
-				SalesTax st = add(SalesTax.class, true);
+				final SalesTax st = add(SalesTax.class, true);
 				st.setAccount(a);
 				makeUnique(st);
 			}
@@ -170,33 +170,33 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	private void stubAccounts() throws Exception {
 		// asp
-		Asp asp = stubAccount(Asp.class, 0);
+		final Asp asp = stubAccount(Asp.class, 0);
 		asp.setName(Asp.ASP_NAME);
 
 		// isps
-		Isp[] isps = new Isp[numIsps];
+		final Isp[] isps = new Isp[numIsps];
 		for(int i = 0; i < numIsps; i++) {
-			Isp isp = stubAccount(Isp.class, i + 1);
+			final Isp isp = stubAccount(Isp.class, i + 1);
 			isp.setParent(asp);
 			isps[i] = isp;
 		}
 
 		// merchants
-		Merchant[] merchants = new Merchant[numMerchants];
+		final Merchant[] merchants = new Merchant[numMerchants];
 		for(int i = 0; i < numMerchants; i++) {
-			Merchant m = stubAccount(Merchant.class, i + 1);
-			int ispIndex = i / numIsps;
+			final Merchant m = stubAccount(Merchant.class, i + 1);
+			final int ispIndex = i / numIsps;
 			m.setParent(isps[ispIndex]);
 			merchants[i] = m;
 		}
 
 		// customers
-		Customer[] customers = new Customer[numCustomers];
+		final Customer[] customers = new Customer[numCustomers];
 		for(int i = 0; i < numCustomers; i++) {
-			Customer c = stubAccount(Customer.class, i + 1);
+			final Customer c = stubAccount(Customer.class, i + 1);
 
 			// create customer account binder entity
-			CustomerAccount ca = add(CustomerAccount.class, false);
+			final CustomerAccount ca = add(CustomerAccount.class, false);
 			Account parent;
 			ca.setCustomer(c);
 			if(i < 2) {
@@ -204,28 +204,28 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 				parent = asp;
 			}
 			else if(i < (2 + 2 * numIsps)) {
-				int ispIndex = i / (2 * numIsps); // TODO verify the math
-				Isp isp = isps[ispIndex];
+				final int ispIndex = i / (2 * numIsps); // TODO verify the math
+				final Isp isp = isps[ispIndex];
 				parent = isp;
 				ca.setAccount(isp);
 				customers[i] = c;
 			}
 			else {
-				int merchantIndex = i / (2 * numMerchants); // TODO verify the math
-				Merchant merchant = merchants[merchantIndex];
+				final int merchantIndex = i / (2 * numMerchants); // TODO verify the math
+				final Merchant merchant = merchants[merchantIndex];
 				parent = merchant;
 				ca.setAccount(merchant);
 			}
 			
 			// create initial visitor record
-			Visitor v = add(Visitor.class, true);
+			final Visitor v = add(Visitor.class, true);
 			v.setAccount(parent);
 			ca.setInitialVisitorRecord(v);
 		}
 	}
 
 	private static InterfaceOption findInterfaceOption(String ioCode, Set<InterfaceOption> options) {
-		for(InterfaceOption io : options) {
+		for(final InterfaceOption io : options) {
 			if(ioCode.equals(io.getCode())) {
 				return io;
 			}
@@ -235,7 +235,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	private static InterfaceOptionParameterDefinition findParameterDefinition(String pdCode,
 			Set<InterfaceOptionParameterDefinition> params) {
-		for(InterfaceOptionParameterDefinition pd : params) {
+		for(final InterfaceOptionParameterDefinition pd : params) {
 			if(pdCode.equals(pd.getCode())) {
 				return pd;
 			}
@@ -245,18 +245,18 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	@SuppressWarnings("unchecked")
 	private void stubInterfaces() throws Exception {
-		Set<Interface> intfs = (Set<Interface>) getNonNullEntitySet(Interface.class);
+		final Set<Interface> intfs = (Set<Interface>) getNonNullEntitySet(Interface.class);
 		intfs.addAll(addAll(InterfaceSingle.class));
 		intfs.addAll(addAll(InterfaceSwitch.class));
 		intfs.addAll(addAll(InterfaceMulti.class));
 
-		Set<InterfaceOption> ios = addAll(InterfaceOption.class);
+		final Set<InterfaceOption> ios = addAll(InterfaceOption.class);
 
-		Set<InterfaceOptionParameterDefinition> pds = addAll(InterfaceOptionParameterDefinition.class);
+		final Set<InterfaceOptionParameterDefinition> pds = addAll(InterfaceOptionParameterDefinition.class);
 
-		for(Interface intf : intfs) {
+		for(final Interface intf : intfs) {
 			if(Interface.CODE_CROSS_SELL.equals(intf.getCode())) {
-				InterfaceOption io = findInterfaceOption("crosssell-switch", ios);
+				final InterfaceOption io = findInterfaceOption("crosssell-switch", ios);
 				if(io != null) {
 					intf.addOption(io);
 				}
@@ -290,13 +290,13 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 				}
 			}
 			else if(Interface.CODE_SALES_TAX.equals(intf.getCode())) {
-				InterfaceOption io = findInterfaceOption("native_salestax", ios);
+				final InterfaceOption io = findInterfaceOption("native_salestax", ios);
 				if(io != null) {
 					intf.addOption(io);
 				}
 			}
 			else if(Interface.CODE_SHIP_METHOD.equals(intf.getCode())) {
-				InterfaceOption io = findInterfaceOption("native_shipmethod", ios);
+				final InterfaceOption io = findInterfaceOption("native_shipmethod", ios);
 				if(io != null) {
 					intf.addOption(io);
 				}
@@ -305,7 +305,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 	}
 
 	private void stubUsers() throws Exception {
-		User u = add(User.class, false);
+		final User u = add(User.class, false);
 		u.addAuthority(getRandomEntity(Authority.class));
 		u.setAccount(getNthEntity(Asp.class, 1));
 		u.setAddress(getRandomEntity(Address.class));

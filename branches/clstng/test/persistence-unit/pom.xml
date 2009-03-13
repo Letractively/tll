@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>tll-mock</artifactId>
+    <artifactId>tll-testassets</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>mock-persistence-unit</artifactId>
-  <name>mock-persistence-unit</name>
+  <artifactId>test-persistence-unit</artifactId>
+  <name>test-persistence-unit</name>
   <version>${project.parent.version}</version>
   <packaging>jar</packaging>
   <description>Simple JPA persistence unit to aid in testing.</description>

@@ -17,10 +17,10 @@ import com.tll.dao.IEntityDao;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.EntityServiceModule;
+import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.TransactionModule;
-import com.tll.mock.di.MockEntityFactoryModule;
-import com.tll.mock.model.MockEntityFactory;
+import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractEntityServiceTest - Base class for all entity service related testing

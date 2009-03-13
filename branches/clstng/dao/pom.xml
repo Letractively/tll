@@ -234,7 +234,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>mock-persistence-unit</artifactId>
+      <artifactId>test-persistence-unit</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

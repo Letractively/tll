@@ -9,8 +9,8 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-testasssets</artifactId>
-  <name>tll-testasssets</name>
+  <artifactId>tll-testassets</artifactId>
+  <name>tll-testassets</name>
   <version>${project.parent.version}</version>
   <description>Contains test assets to aid in testing.</description>
   
