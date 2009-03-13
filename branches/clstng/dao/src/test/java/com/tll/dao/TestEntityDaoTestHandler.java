@@ -8,12 +8,12 @@ package com.tll.dao;
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.mock.model.Account;
-import com.tll.mock.model.AccountAddress;
-import com.tll.mock.model.Address;
-import com.tll.mock.model.Currency;
-import com.tll.mock.model.MockEntityFactory;
-import com.tll.mock.model.NestedEntity;
+import com.tll.model.Account;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
+import com.tll.model.Currency;
+import com.tll.model.MockEntityFactory;
+import com.tll.model.NestedEntity;
 
 
 /**
@@ -103,8 +103,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 		e.setNestedEntity(nestedEntity);
 		e.setParent(parent);
 
-		Address address1 = create(Address.class, true);
-		Address address2 = create(Address.class, true);
+		final Address address1 = create(Address.class, true);
+		final Address address2 = create(Address.class, true);
 		
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);

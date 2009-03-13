@@ -33,7 +33,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumnBeanComparator;
 import com.tll.dao.Sorting;
-import com.tll.mock.model.EntityGraph;
+import com.tll.model.EntityGraph;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
 import com.tll.model.IScalar;

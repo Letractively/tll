@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>mock-model</artifactId>
+      <artifactId>tll-mock</artifactId>
       <version>${project.version}</version>
     </dependency>
 

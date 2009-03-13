@@ -6,10 +6,10 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
-import com.tll.mock.model.EntityGraph;
-import com.tll.mock.model.IEntityGraphBuilder;
-import com.tll.mock.model.MockPrimaryKeyGenerator;
+import com.tll.model.EntityGraph;
+import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.key.IPrimaryKeyGenerator;
+import com.tll.model.key.MockPrimaryKeyGenerator;
 
 /**
  * MockDaoModule
@@ -58,10 +58,10 @@ public class MockDaoModule extends GModule {
 			throw new IllegalStateException("No entity graph builder class name specified in the configuration");
 		}
 		try {
-			Class<? extends IEntityGraphBuilder> clz = (Class<? extends IEntityGraphBuilder>) Class.forName(egbcn);
+			final Class<? extends IEntityGraphBuilder> clz = (Class<? extends IEntityGraphBuilder>) Class.forName(egbcn);
 			bind(IEntityGraphBuilder.class).to(clz).in(Scopes.SINGLETON);
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new IllegalStateException("No entity graph builder found for name: " + egbcn);
 		}
 
