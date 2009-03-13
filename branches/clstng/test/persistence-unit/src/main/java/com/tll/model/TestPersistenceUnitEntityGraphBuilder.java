@@ -12,10 +12,10 @@ import com.google.inject.Inject;
 import com.tll.SystemError;
 
 /**
- * EntityGraph
+ * TestPersistenceUnitEntityGraphBuilder
  * @author jpk
  */
-public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
+public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityGraphBuilder {
 
 	private static final int numAccounts = 3;
 
@@ -24,7 +24,7 @@ public final class MockEntityGraphBuilder extends AbstractEntityGraphBuilder {
 	 * @param mep
 	 */
 	@Inject
-	public MockEntityGraphBuilder(MockEntityFactory mep) {
+	public TestPersistenceUnitEntityGraphBuilder(MockEntityFactory mep) {
 		super(mep);
 	}
 

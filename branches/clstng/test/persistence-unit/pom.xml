@@ -4,8 +4,9 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>tll-testassets</artifactId>
+    <artifactId>tll</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <groupId>com.tll</groupId>

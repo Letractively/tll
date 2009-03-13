@@ -173,6 +173,12 @@
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- for mocked entities (in memory object graph) -->
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.google.code.guice</groupId>

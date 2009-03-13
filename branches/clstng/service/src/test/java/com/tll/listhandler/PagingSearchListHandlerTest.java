@@ -32,11 +32,11 @@ import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.EntityServiceModule;
+import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.TransactionModule;
-import com.tll.mock.di.MockEntityFactoryModule;
-import com.tll.mock.model.Address;
-import com.tll.mock.model.MockEntityFactory;
+import com.tll.model.Address;
+import com.tll.model.MockEntityFactory;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.TestEntityService;
 
@@ -123,7 +123,7 @@ public class PagingSearchListHandlerTest extends DbTest {
 	protected final void stubListElements() {
 		// stub the list elements
 		startNewTransaction();
-		Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
+		final Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
 		setComplete();
 		endTransaction();
@@ -135,14 +135,14 @@ public class PagingSearchListHandlerTest extends DbTest {
 
 		final IEntityService<Address> dataProvider = getTestEntityService();
 
-		List<Address> elements = dataProvider.loadAll();
+		final List<Address> elements = dataProvider.loadAll();
 		assert elements != null && elements.size() > 0 : "No elements exist - test can't run";
 		assert elements.size() >= 10 : "At least 10 list elements must be present for this test";
 		final int pageSize = 3;
 
-		Criteria<Address> criteria = new Criteria<Address>(Address.class);
-		Sorting sorting = new Sorting(new SortColumn("emailAddress"));
-		IListHandler<SearchResult<Address>> listHandler =
+		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
+		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));
+		final IListHandler<SearchResult<Address>> listHandler =
 				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
 
 		List<SearchResult<Address>> list;
@@ -156,11 +156,11 @@ public class PagingSearchListHandlerTest extends DbTest {
 		list = listHandler.getElements(pageSize * 2, pageSize, sorting);
 		assert (list != null && list.size() == pageSize) : "getElements() size mismatch";
 
-		List<SearchResult<Address>> alist = listHandler.getElements(0, elements.size(), sorting);
+		final List<SearchResult<Address>> alist = listHandler.getElements(0, elements.size(), sorting);
 		assert alist.size() == elements.size();
 
 		for(int i = 0; i < elements.size(); i++) {
-			Address element = alist.get(i).getEntity();
+			final Address element = alist.get(i).getEntity();
 			assert element != null : "Empty element in list";
 		}
 	}

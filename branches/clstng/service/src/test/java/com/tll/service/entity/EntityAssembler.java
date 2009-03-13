@@ -2,14 +2,13 @@ package com.tll.service.entity;
 
 import com.google.inject.Inject;
 import com.tll.SystemError;
-import com.tll.mock.model.Account;
-import com.tll.mock.model.AccountAddress;
-import com.tll.mock.model.Address;
-import com.tll.mock.model.NestedEntity;
+import com.tll.model.Account;
+import com.tll.model.AccountAddress;
+import com.tll.model.Address;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityProvider;
-import com.tll.service.entity.IEntityAssembler;
+import com.tll.model.NestedEntity;
 
 /**
  * EntityAssembler - Decorator around the {@link IEntityFactory} with additional
@@ -45,7 +44,7 @@ public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
 	public <E extends IEntity> E assembleEntity(Class<E> entityType, IEntityProvider entityProvider, boolean generate) {
 		E e = null;
 		if(AccountAddress.class.equals(entityType)) {
-			AccountAddress ae = createEntity(AccountAddress.class, generate);
+			final AccountAddress ae = createEntity(AccountAddress.class, generate);
 			if(entityProvider != null) {
 				ae.setAccount(entityProvider.getEntityByType(Account.class));
 			}
@@ -57,18 +56,18 @@ public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
 			e = (E) ae;
 		}
 		else if(Address.class.equals(entityType)) {
-			Address ae = createEntity(Address.class, generate);
+			final Address ae = createEntity(Address.class, generate);
 			e = (E) ae;
 		}
 		else if(Account.class.equals(entityType)) {
-			Account ae = createEntity(Account.class, generate);
+			final Account ae = createEntity(Account.class, generate);
 			if(entityProvider != null) {
 				ae.setParent(entityProvider.getEntityByType(Account.class));
 			}
 			e = (E) ae;
 		}
 		else if(NestedEntity.class.equals(entityType)) {
-			NestedEntity ae = createEntity(NestedEntity.class, generate);
+			final NestedEntity ae = createEntity(NestedEntity.class, generate);
 			e = (E) ae;
 		}
 

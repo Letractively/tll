@@ -30,19 +30,30 @@
     </dependency>
 
     <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>antlr</groupId>
+          <artifactId>antlr</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-collections</groupId>
+          <artifactId>commons-collections</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>dom4j</groupId>
+          <artifactId>dom4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -51,6 +62,16 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>dom4j</groupId>
+          <artifactId>dom4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -58,33 +79,19 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>aopalliance</groupId>
-          <artifactId>aopalliance</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    
-    <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
     </dependency>
 
-    <!-- for MockEntityFactoryModule only --> 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

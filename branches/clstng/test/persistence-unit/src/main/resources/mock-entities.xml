@@ -25,7 +25,7 @@
   
   <bean name="entityBase" class="com.tll.model.EntityBase" abstract="true" />
 
-	<bean name="Currency" class="com.tll.mock.model.Currency" parent="entityBase" scope="prototype">
+	<bean name="Currency" class="com.tll.model.Currency" parent="entityBase" scope="prototype">
 		<property name="name">
 			<value>dollar</value>
 		</property>
@@ -40,7 +40,7 @@
 		</property>
 	</bean>
 
-	<bean name="Address" class="com.tll.mock.model.Address" parent="entityBase" scope="prototype">
+	<bean name="Address" class="com.tll.model.Address" parent="entityBase" scope="prototype">
 		<property name="address1">
 			<value>address line 1</value>
 		</property>
@@ -79,12 +79,12 @@
 		</property>
 	</bean>
 
-	<bean name="NestedEntity" class="com.tll.mock.model.NestedEntity" parent="entityBase" scope="prototype">
+	<bean name="NestedEntity" class="com.tll.model.NestedEntity" parent="entityBase" scope="prototype">
 		<property name="name">
 			<value>nested entity</value>
 		</property>
     <property name="nestedData">
-		  <bean class="com.tll.mock.model.NestedData">
+		  <bean class="com.tll.model.NestedData">
 		    <property name="nested1">
 		      <value>nested 1</value>
 		    </property>
@@ -95,7 +95,7 @@
     </property>
 	</bean>
 	
-	<bean name="Account" class="com.tll.mock.model.Account" parent="entityBase" scope="prototype">
+	<bean name="Account" class="com.tll.model.Account" parent="entityBase" scope="prototype">
     <property name="name">
       <value>asp</value>
     </property>
@@ -110,7 +110,7 @@
 		</property>
 	</bean>
 
-	<bean name="AccountAddress" class="com.tll.mock.model.AccountAddress" parent="entityBase" scope="prototype">
+	<bean name="AccountAddress" class="com.tll.model.AccountAddress" parent="entityBase" scope="prototype">
 		<property name="name">
 			<value>home</value>
 		</property>

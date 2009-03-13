@@ -16,7 +16,7 @@
 
   <build>
     <plugins>
-      
+
       <!-- We weave Spring's @Transactional aspect into the code at compile time. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -64,7 +64,7 @@
       <artifactId>transactions-jta</artifactId>
       <version>${atomikos.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>ejb3-persistence</artifactId>
@@ -73,7 +73,7 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
@@ -105,6 +105,12 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-beans</artifactId>
         </exclusion>
+        <!-- needed for aspectj compile time weave 
+        <exclusion>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjrt</artifactId>
+        </exclusion>
+        -->
       </exclusions>
     </dependency>
 
@@ -117,6 +123,20 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>oro</groupId>
+          <artifactId>oro</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-validator</groupId>
+          <artifactId>commons-validator</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-user</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -127,11 +147,55 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-jdbc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sf.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.atomikos</groupId>
+          <artifactId>atomikos-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.atomikos</groupId>
+          <artifactId>transactions-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.atomikos</groupId>
+          <artifactId>transactions</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.atomikos</groupId>
+          <artifactId>transactions-hibernate3</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -140,13 +204,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-c3p0</artifactId>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-c3p0</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -158,21 +227,21 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>test-persistence-unit</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-dao</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>mock-model</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>mock-persistence-unit</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

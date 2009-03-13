@@ -29,7 +29,7 @@ import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
 import com.tll.model.MockEntityFactory;
-import com.tll.model.MockEntityGraphBuilder;
+import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 import com.tll.model.NestedEntity;
 
 /**
@@ -87,7 +87,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final MockEntityGraphBuilder entityGraphBuilder = new MockEntityGraphBuilder(getMockEntityFactory());
+		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder = new TestPersistenceUnitEntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Marshaler marshaler = getMarshaler();
 		

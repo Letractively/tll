@@ -43,12 +43,13 @@
   </properties>
 
   <modules>
-    <module>testassets</module>
     <module>core</module>
     <module>config</module>
     <module>mail</module>
     <module>refdata</module>
     <module>model</module>
+    <module>mock</module>
+    <module>test/persistence-unit</module>
     <module>dao</module>
     <module>service</module>
     <module>servlet</module>
