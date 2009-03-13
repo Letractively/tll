@@ -8,11 +8,11 @@ import com.tll.model.IEntityFactory;
 import com.tll.model.IEntityProvider;
 
 /**
- * EntityAssembler - Decorator around the {@link IEntityFactory} with additional
+ * TestPersistenceUnitEntityAssembler - Decorator around the {@link IEntityFactory} with additional
  * build functionality specific to the entity type.
  * @author jpk
  */
-public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
+public final class TestPersistenceUnitEntityAssembler implements IEntityFactory, IEntityAssembler {
 
 	/**
 	 * The decorated entity factory.
@@ -24,7 +24,7 @@ public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
 	 * @param entityFactory
 	 */
 	@Inject
-	public EntityAssembler(IEntityFactory entityFactory) {
+	public TestPersistenceUnitEntityAssembler(IEntityFactory entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}
