@@ -12,10 +12,10 @@ import com.tll.model.IEntityAssembler;
 
 
 /**
- * EntityServiceModule
+ * EntityAssemblerModule
  * @author jpk
  */
-public class EntityServiceModule extends GModule {
+public class EntityAssemblerModule extends GModule {
 
 	/**
 	 * ConfigKeys - Configuration property keys for the model module.

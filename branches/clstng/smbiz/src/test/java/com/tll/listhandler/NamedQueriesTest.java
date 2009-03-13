@@ -30,7 +30,7 @@ import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.di.DaoModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.EntityServiceModule;
+import com.tll.di.EntityAssemblerModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
@@ -117,7 +117,7 @@ public class NamedQueriesTest extends DbTest {
 		}
 		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), getDaoMode().toString());
 		modules.add(new DaoModule());
-		modules.add(new EntityServiceModule());
+		modules.add(new EntityAssemblerModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 
