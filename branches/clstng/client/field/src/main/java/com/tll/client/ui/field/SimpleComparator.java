@@ -8,7 +8,7 @@ package com.tll.client.ui.field;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import com.tll.common.util.ObjectUtil;
+import com.tll.util.ObjectUtil;
 
 /**
  * SimpleComparator

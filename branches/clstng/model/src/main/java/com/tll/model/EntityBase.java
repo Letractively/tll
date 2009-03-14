@@ -171,7 +171,7 @@ public abstract class EntityBase implements IEntity {
 
 	@Override
 	public String typeName() {
-		return StringUtil.formatCamelCase(entityClass().getSimpleName());
+		return StringUtil.camelCaseToPresentation(entityClass().getSimpleName());
 	}
 
 	@Id

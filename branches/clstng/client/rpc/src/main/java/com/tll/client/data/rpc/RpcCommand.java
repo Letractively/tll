@@ -5,6 +5,7 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
@@ -20,13 +21,12 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  * @param <P> payload type
  */
-public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, ISourcesRpcEvents {
+public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, IHasRpcHandlers<P> {
 
 	/**
-	 * The RPC listeners. This serves as a generic way to issue notification on
-	 * RPC return.
+	 * The widget that will serve as the rpc event source.
 	 */
-	private RpcListenerCollection rpcListeners;
+	protected final Widget sourcingWidget;
 
 	/**
 	 * The declared ref is necessary in order to chain rpc commands.
@@ -35,28 +35,11 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 	/**
 	 * Constructor
+	 * @param sourcingWidget the required source for the ensuing rpc event
 	 */
-	public RpcCommand() {
-		super();
-	}
-
-	/**
-	 * @return The sourcing Widget which must <em>not</em> return
-	 *         <code>null</code>.
-	 */
-	protected abstract Widget getSourcingWidget();
-
-	public void addRpcListener(IRpcListener listener) {
-		if(rpcListeners == null) {
-			rpcListeners = new RpcListenerCollection();
-		}
-		rpcListeners.add(listener);
-	}
-
-	public void removeRpcListener(IRpcListener listener) {
-		if(rpcListeners != null) {
-			rpcListeners.remove(listener);
-		}
+	protected RpcCommand(Widget sourcingWidget) {
+		if(sourcingWidget == null) throw new IllegalArgumentException();
+		this.sourcingWidget = sourcingWidget;
 	}
 
 	protected AsyncCallback<P> getAsyncCallback() {
@@ -70,7 +53,6 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	/**
 	 * Adjusts the internal RPC counter and is reponsible for notifying the UI of
 	 * the RPC status.
-	 * @param sending
 	 */
 	/*
 	static void rpc(boolean sending) {
@@ -87,6 +69,13 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	}
 	*/
 	
+	@Override
+	public HandlerRegistration addRpcHandler(IRpcHandler<P> handler) {
+		//return sourcingWidget.
+		// TODO
+		return null;
+	}
+
 	/**
 	 * Does the actual RPC execution.
 	 */
@@ -96,10 +85,8 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 		//rpc(true);
 		try {
 			doExecute();
-			// fire RPC send event
-			if(rpcListeners != null) {
-				rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget()));
-			}
+			// fire an RPC send event
+			sourcingWidget.fireEvent(new RpcEvent<P>());
 		}
 		catch(final Throwable t) {
 			//rpc(false);
@@ -126,12 +113,10 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	protected void handleSuccess(P result) {
 
 		// fire RPC event
-		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), result));
-		}
+		sourcingWidget.fireEvent(new RpcEvent<P>(result));
 
 		// fire status event
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), result.getStatus()));
+		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
 	}
 
 	/**
@@ -142,15 +127,13 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 		GWT.log("Error in rpc payload retrieval", caught);
 
 		// fire RPC event
-		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), caught));
-		}
+		sourcingWidget.fireEvent(new RpcEvent<P>(caught));
 
 		// fire status event
 		String msg = caught.getMessage();
 		if(msg == null) msg = "An unknown RPC error occurred";
 		final Status status = new Status(msg, MsgLevel.ERROR);
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), status));
+		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
 	}
 
 }

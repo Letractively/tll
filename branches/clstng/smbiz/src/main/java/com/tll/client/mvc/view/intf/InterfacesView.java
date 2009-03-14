@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.data.rpc.ListingCommand;
 import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
@@ -159,7 +159,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 		}// InterfaceStack
 
-		private final ListingCommand<InterfaceSearch> listingCommand;
+		private final IListingOperator<Model> listHandler;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -177,19 +177,19 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery("interface.summaryList");
 			final Sorting defaultSorting = new Sorting("name");
-			listingCommand =
-					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
+			listHandler =
+					ListingFactory.createRemoteOperator(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
-			listingCommand.addListingListener(this);
+			listHandler.addListingListener(this);
 		}
 
 		void refreshData() {
 			initialized = false;
-			listingCommand.refresh();
+			listHandler.refresh();
 		}
 
 		void clearData() {
-			listingCommand.clear();
+			listHandler.clear();
 		}
 
 		/**

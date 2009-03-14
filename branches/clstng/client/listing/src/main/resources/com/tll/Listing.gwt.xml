@@ -10,6 +10,8 @@
   
   <source path="listhandler">
     <include name="ListHandlerType.java" />
+    <include name="IListHandler.java" />
+    <include name="EmptyListException.java" />
   </source>
   
   <stylesheet src="css/tableview.css" />

@@ -11,12 +11,11 @@
   <context-param>
     <param-name>di.modules</param-name>
     <param-value>
-      com.tll.di.RefDataModule
-      com.tll.di.ModelModule
-      com.tll.mock.di.MockEntityFactoryModule
-      com.tll.di.DaoModule
-      com.tll.di.TransactionModule
-      com.tll.di.EntityAssemblerModule
+      com.tll.di.RefDataModule,
+      com.tll.di.ModelModule,
+      com.tll.di.MockEntityFactoryModule,
+      com.tll.di.MockDaoModule,
+      com.tll.di.EntityAssemblerModule,
       com.tll.di.EntityServiceFactoryModule
     </param-value>
   </context-param>
@@ -45,15 +44,6 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <filter>
-    <filter-name>OpenEntityManagerInViewFilter</filter-name>
-    <filter-class>com.tll.server.filter.OpenEntityManagerInViewFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>OpenEntityManagerInViewFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  
   <filter>
     <filter-name>WebClientCacheFilter</filter-name>
     <filter-class>com.tll.server.filter.WebClientCacheFilter</filter-class>

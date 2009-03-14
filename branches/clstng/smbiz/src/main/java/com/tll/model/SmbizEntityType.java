@@ -66,7 +66,7 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	}
 
 	public String getEntityClassName() {
-		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToJavaClassNotation(name());
+		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToCamelCase(name(), true);
 	}
 
 	public String getPresentationName() {

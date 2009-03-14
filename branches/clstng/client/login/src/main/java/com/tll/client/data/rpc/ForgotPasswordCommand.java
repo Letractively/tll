@@ -21,7 +21,6 @@ public final class ForgotPasswordCommand extends RpcCommand<Payload> {
 		svc = (IForgotPasswordServiceAsync) GWT.create(IForgotPasswordService.class);
 	}
 
-	private final Widget sourcingWidget;
 	private final String emailAddress;
 
 	/**
@@ -30,14 +29,8 @@ public final class ForgotPasswordCommand extends RpcCommand<Payload> {
 	 * @param emailAddress
 	 */
 	public ForgotPasswordCommand(Widget sourcingWidget, String emailAddress) {
-		super();
-		this.sourcingWidget = sourcingWidget;
+		super(sourcingWidget);
 		this.emailAddress = emailAddress;
-	}
-
-	@Override
-	protected Widget getSourcingWidget() {
-		return sourcingWidget;
 	}
 
 	@Override

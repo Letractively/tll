@@ -3,7 +3,7 @@
  * @author jpk
  * Jan 7, 2009
  */
-package com.tll.common.util;
+package com.tll.util;
 
 /**
  * ObjectUtil

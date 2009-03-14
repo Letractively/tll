@@ -29,7 +29,7 @@ import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * ListingNavBar - Toolbar impl for listing navigation.

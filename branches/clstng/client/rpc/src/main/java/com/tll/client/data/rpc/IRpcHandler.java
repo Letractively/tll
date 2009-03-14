@@ -5,14 +5,15 @@
  */
 package com.tll.client.data.rpc;
 
-import java.util.EventListener;
-
+import com.google.gwt.event.shared.EventHandler;
+import com.tll.common.data.Payload;
 
 /**
- * IRpcListener - Listens to RPC related events.
+ * IRpcHandler - Listens to RPC related events.
  * @author jpk
+ * @param <P> the payload type
  */
-public interface IRpcListener extends EventListener {
+public interface IRpcHandler<P extends Payload> extends EventHandler {
 
 	/**
 	 * Fired when an RPC event occurrs.
@@ -21,5 +22,5 @@ public interface IRpcListener extends EventListener {
 	 * successfull or not.
 	 * @param event The rpc event
 	 */
-	void onRpcEvent(RpcEvent event);
+	void onRpcEvent(RpcEvent<P> event);
 }

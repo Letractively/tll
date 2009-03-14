@@ -5,9 +5,9 @@
  */
 package com.tll.common.model;
 
-import com.tll.common.util.ObjectUtil;
 import com.tll.criteria.IQueryParam;
 import com.tll.model.schema.PropertyMetadata;
+import com.tll.util.ObjectUtil;
 
 /**
  * AbstractPropertyValue

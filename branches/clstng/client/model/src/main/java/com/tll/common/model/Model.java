@@ -14,10 +14,10 @@ import java.util.Set;
 import com.tll.IMarshalable;
 import com.tll.common.bind.IModel;
 import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.util.StringUtil;
 
 /**
  * Model - Encapsulates a set of {@link IModelProperty}s. This construct serves

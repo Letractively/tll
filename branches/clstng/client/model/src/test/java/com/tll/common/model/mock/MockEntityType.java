@@ -6,7 +6,7 @@ package com.tll.common.model.mock;
 
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * MockEntityType

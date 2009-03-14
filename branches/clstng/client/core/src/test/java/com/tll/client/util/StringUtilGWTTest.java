@@ -8,7 +8,7 @@ package com.tll.client.util;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * FormatGWTTest - Tests {@link Fmt}.

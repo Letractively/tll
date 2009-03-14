@@ -5,7 +5,7 @@
  */
 package com.tll.common.model;
 
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * PropertyPath - Encapsulates a property path String providing convenience

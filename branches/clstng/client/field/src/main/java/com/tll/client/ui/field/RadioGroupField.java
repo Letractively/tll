@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.tll.client.ui.IWidgetRenderer;
 import com.tll.client.ui.VerticalRenderer;
-import com.tll.common.util.ObjectUtil;
+import com.tll.util.ObjectUtil;
 
 /**
  * RadioGroupField

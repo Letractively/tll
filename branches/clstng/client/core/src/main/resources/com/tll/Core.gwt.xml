@@ -16,6 +16,8 @@
   </source>
   
   <source path="util">
+    <include name="StringUtil.java" />
+    <include name="ObjectUtil.java" />
     <include name="DateRange.java" />
     <include name="FNum.java" />
     <include name="DataPoint.java" />

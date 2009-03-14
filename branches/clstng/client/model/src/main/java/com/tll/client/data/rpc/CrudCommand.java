@@ -8,11 +8,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.rpc.ICrudService;
@@ -43,7 +43,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 
 	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
 
-	private final Widget sourcingWidget;
 	private CrudOp crudOp;
 	private EntityRequest entityRequest;
 
@@ -52,13 +51,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * @param sourcingWidget
 	 */
 	public CrudCommand(Widget sourcingWidget) {
-		super();
-		this.sourcingWidget = sourcingWidget;
-	}
-
-	@Override
-	protected Widget getSourcingWidget() {
-		return sourcingWidget;
+		super(sourcingWidget);
 	}
 
 	/**

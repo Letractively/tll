@@ -7,7 +7,7 @@ package com.tll.client;
 
 import java.util.Collection;
 
-import com.tll.common.util.ObjectUtil;
+import com.tll.util.ObjectUtil;
 
 
 /**
