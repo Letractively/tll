@@ -13,7 +13,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R> the row type
  */
-public interface IListingOperator<R> extends ISourcesListingEvents<R> {
+public interface IListingOperator<R> {
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

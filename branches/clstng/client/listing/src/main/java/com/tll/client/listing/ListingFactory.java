@@ -23,7 +23,7 @@ import com.tll.listhandler.ListHandlerType;
 public abstract class ListingFactory {
 
 	/**
-	 * Assembles a listing from data provided by an {@link IDataProvider}.
+	 * Assembles a listing from data provided by an {@link IListHandler}.
 	 * @param <R>
 	 * @param sourcingWidget The Widget that will be passed in dispatched
 	 *        {@link ListingEvent}s.

@@ -21,11 +21,6 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	protected final Widget sourcingWidget;
 
 	/**
-	 * The listing event listeners.
-	 */
-	protected final ListingListenerCollection<R> listeners = new ListingListenerCollection<R>();
-
-	/**
 	 * The current list index offset.
 	 */
 	protected int offset = 0;
@@ -48,14 +43,6 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		this.sourcingWidget = sourcingWidget;
 	}
 
-	public final void addListingListener(IListingListener<R> listener) {
-		listeners.add(listener);
-	}
-
-	public final void removeListingListener(IListingListener<R> listener) {
-		listeners.remove(listener);
-	}
-	
 	private void fetch(int offset, Sorting sorting) {
 		doFetch(offset, sorting);
 		listingGenerated = true;
@@ -92,11 +79,11 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	}
 
 	public void lastPage() {
-		if(!listingGenerated) {
-			final int pageSize = getPageSize();
-			final int numPages = PagingUtil.numPages(listSize, pageSize);
-			final int offset = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
-			if(this.offset != offset) fetch(offset, sorting);
+		final int pageSize = getPageSize();
+		final int numPages = PagingUtil.numPages(listSize, pageSize);
+		final int offset = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
+		if(!listingGenerated || this.offset != offset) {
+			fetch(offset, sorting);
 		}
 	}
 

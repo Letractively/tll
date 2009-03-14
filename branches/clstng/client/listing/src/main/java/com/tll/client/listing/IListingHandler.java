@@ -5,15 +5,15 @@
  */
 package com.tll.client.listing;
 
-import java.util.EventListener;
+import com.google.gwt.event.shared.EventHandler;
 
 
 /**
- * IListingListener - Listens to listing related events.
+ * IListingHandler - Listens to listing related events.
  * @param <R> The row data type
  * @author jpk
  */
-public interface IListingListener<R> extends EventListener {
+public interface IListingHandler<R> extends EventHandler {
 
 	/**
 	 * Fired when a listing related RPC call returns to client.

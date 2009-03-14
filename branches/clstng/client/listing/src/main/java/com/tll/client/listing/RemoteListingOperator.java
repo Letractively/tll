@@ -138,7 +138,7 @@ public final class RemoteListingOperator<S extends ISearch, R extends IMarshalab
 			// reset
 			listingRequest = null;
 			// fire the listing event
-			listeners.fireListingEvent(new ListingEvent<R>(sourcingWidget, op, result, listingDef.getPageSize()));
+			sourcingWidget.fireEvent(new ListingEvent<R>(op, result, listingDef.getPageSize()));
 		}
 	}
 }

@@ -58,7 +58,7 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 	private ListingEvent<R> assembleListingEvent(List<R> pageElements, ListingOp listingOp) {
 		final int listSize = pageElements == null ? 0 : pageElements.size();
 		final R[] array = pageElements == null ? null : (R[]) pageElements.toArray();
-		return new ListingEvent<R>(sourcingWidget, true, null, ListingOp.REFRESH, listSize, array, offset, sorting,
+		return new ListingEvent<R>(true, null, ListingOp.REFRESH, listSize, array, offset, sorting,
 				pageSize);
 	}
 	
@@ -93,37 +93,37 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 	@Override
 	public void display() {
 		super.display();
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override
 	public void firstPage() {
 		super.firstPage();
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override
 	public void lastPage() {
 		super.lastPage();
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override
 	public void nextPage() {
 		super.nextPage();
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override
 	public void previousPage() {
 		super.previousPage();
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override
 	public void gotoPage(int pageNum) {
 		super.gotoPage(pageNum);
-		listeners.fireListingEvent(assembleListingEvent(current, ListingOp.FETCH));
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
 	@Override

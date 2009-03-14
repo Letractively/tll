@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingEvent;
@@ -35,7 +35,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R>
  */
-public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingListener<R> {
+public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingHandler<R> {
 	
 	/**
 	 * The listing table specific image bundle.

@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingEvent;
@@ -25,7 +25,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <R> The row data type.
  * @author jpk
  */
-public abstract class ListingWidget<R> extends Composite implements Focusable, KeyDownHandler, IListingListener<R> {
+public abstract class ListingWidget<R> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -129,7 +129,8 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 		if(operator != null) {
 			this.table.setListingOperator(operator);
 			if(navBar != null) navBar.setListingOperator(operator);
-			operator.addListingListener(this);
+			//operator.addListingHandler(this);
+			addHandler(this, ListingEvent.getType());
 		}
 	}
 

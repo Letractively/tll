@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.Position;
@@ -37,7 +37,7 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHandler, ChangeHandler,
-		IListingListener<R> {
+		IListingHandler<R> {
 
 	/**
 	 * The listing nav bar specific image bundle.

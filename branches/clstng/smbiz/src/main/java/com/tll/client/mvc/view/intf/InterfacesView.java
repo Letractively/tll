@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
@@ -70,7 +70,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
 	 */
-	private static final class InterfacesStack extends StackPanel implements IListingListener<Model> {
+	private static final class InterfacesStack extends StackPanel implements IListingHandler<Model> {
 
 		/**
 		 * InterfaceStack - Binding between a stack index and an {@link EditPanel}
@@ -180,7 +180,8 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			listHandler =
 					ListingFactory.createRemoteOperator(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
-			listHandler.addListingListener(this);
+			//listHandler.addListingHandler(this);
+			addHandler(this, ListingEvent.getType());
 		}
 
 		void refreshData() {

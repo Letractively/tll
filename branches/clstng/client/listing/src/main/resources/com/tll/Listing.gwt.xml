@@ -12,6 +12,7 @@
     <include name="ListHandlerType.java" />
     <include name="IListHandler.java" />
     <include name="EmptyListException.java" />
+    <include name="ListHandlerException.java" />
   </source>
   
   <stylesheet src="css/tableview.css" />
