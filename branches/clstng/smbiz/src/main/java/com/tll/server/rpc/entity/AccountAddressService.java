@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.AccountAddress;
@@ -30,7 +30,7 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 
 	@Override
 	protected void handleLoadOptions(MEntityContext context, AccountAddress e, EntityOptions options,
-			Map<String, RefKey> refs) throws SystemError {
+			Map<String, ModelKey> refs) throws SystemError {
 		// no-op
 	}
 

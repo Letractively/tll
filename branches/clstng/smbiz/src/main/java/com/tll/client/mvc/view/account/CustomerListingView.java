@@ -18,7 +18,7 @@ import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;
@@ -54,7 +54,7 @@ public final class CustomerListingView extends ListingView {
 		 * @param ispRef The Isp ref
 		 * @return {@link ViewRequestEvent}
 		 */
-		public CustomerListingViewRequest newViewRequest(Widget source, RefKey mercRef, RefKey ispRef) {
+		public CustomerListingViewRequest newViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
 			return new CustomerListingViewRequest(source, mercRef, ispRef);
 		}
 
@@ -70,12 +70,12 @@ public final class CustomerListingView extends ListingView {
 		/**
 		 * The grand-parent Isp ref.
 		 */
-		private final RefKey ispRef;
+		private final ModelKey ispRef;
 
 		/**
 		 * The parent Merchant ref.
 		 */
-		private final RefKey mercRef;
+		private final ModelKey mercRef;
 
 		/**
 		 * Constructor
@@ -83,7 +83,7 @@ public final class CustomerListingView extends ListingView {
 		 * @param mercRef The parent merchant ref
 		 * @param ispRef
 		 */
-		CustomerListingViewRequest(Widget source, RefKey mercRef, RefKey ispRef) {
+		CustomerListingViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
 			super(source, klas);
 			assert mercRef != null && ispRef != null;
 			this.mercRef = mercRef;
@@ -97,9 +97,9 @@ public final class CustomerListingView extends ListingView {
 
 	}
 
-	private RefKey ispRef;
+	private ModelKey ispRef;
 
-	private RefKey mercRef;
+	private ModelKey mercRef;
 
 	/**
 	 * The link to the parent merchant listing view.
@@ -185,7 +185,8 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.CUSTOMER.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createRemoteListingWidget(this, config, SmbizEntityType.CUSTOMER.toString()
+				+ "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

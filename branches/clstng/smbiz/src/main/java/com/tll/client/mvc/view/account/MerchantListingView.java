@@ -21,7 +21,7 @@ import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;
@@ -56,7 +56,7 @@ public final class MerchantListingView extends ListingView {
 		 * @param ispRef The Isp ref
 		 * @return MerchantListingViewRequest
 		 */
-		public MerchantListingViewRequest newViewRequest(Widget source, RefKey ispRef) {
+		public MerchantListingViewRequest newViewRequest(Widget source, ModelKey ispRef) {
 			return new MerchantListingViewRequest(source, ispRef);
 		}
 
@@ -72,14 +72,14 @@ public final class MerchantListingView extends ListingView {
 		/**
 		 * The parent Isp ref.
 		 */
-		private final RefKey ispRef;
+		private final ModelKey ispRef;
 
 		/**
 		 * Constructor
 		 * @param source
 		 * @param ispRef The required parent isp ref
 		 */
-		MerchantListingViewRequest(Widget source, RefKey ispRef) {
+		MerchantListingViewRequest(Widget source, ModelKey ispRef) {
 			super(source, klas);
 
 			assert ispRef != null;
@@ -95,7 +95,7 @@ public final class MerchantListingView extends ListingView {
 	/**
 	 * Ref of the parent ISP
 	 */
-	private RefKey ispRef;
+	private ModelKey ispRef;
 
 	/**
 	 * The link to the parent isp listing view.
@@ -113,7 +113,7 @@ public final class MerchantListingView extends ListingView {
 	@Override
 	public void doInitialization(ViewRequestEvent viewRequest) {
 		assert viewRequest instanceof MerchantListingViewRequest;
-		MerchantListingViewRequest r = (MerchantListingViewRequest) viewRequest;
+		final MerchantListingViewRequest r = (MerchantListingViewRequest) viewRequest;
 
 		assert r.ispRef != null && r.ispRef.isSet();
 		ispRef = r.ispRef;
@@ -131,11 +131,11 @@ public final class MerchantListingView extends ListingView {
 
 			private final Column[] columns =
 					new Column[] {
-						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "m"),
-						new Column("Created", Model.DATE_CREATED_PROPERTY, "m", GlobalFormat.DATE),
-						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "m", GlobalFormat.DATE),
-						new Column("Status", "status", "m"), new Column("Billing Model", "billingModel", "m"),
-						new Column("Billing Cycle", "billingCycle", "m"), new Column("Store Name", "storeName", "m") };
+						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "rowData"),
+						new Column("Created", Model.DATE_CREATED_PROPERTY, "rowData", GlobalFormat.DATE),
+						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "rowData", GlobalFormat.DATE),
+						new Column("Status", "status", "rowData"), new Column("Billing Model", "billingModel", "rowData"),
+						new Column("Billing Cycle", "billingCycle", "rowData"), new Column("Store Name", "storeName", "rowData") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -163,7 +163,7 @@ public final class MerchantListingView extends ListingView {
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Customer Listing") == 0) {
 						ViewManager.get().dispatch(
-								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowRef(rowIndex),
+								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowKey(rowIndex),
 										ispRef));
 					}
 				}
@@ -197,7 +197,8 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.MERCHANT.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createRemoteListingWidget(this, config, SmbizEntityType.MERCHANT.toString()
+				+ "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

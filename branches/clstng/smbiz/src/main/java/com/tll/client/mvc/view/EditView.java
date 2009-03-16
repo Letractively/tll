@@ -14,7 +14,7 @@ import com.tll.client.ui.field.FieldPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * EditView - Dedicated base class for AbstractView impls whose sole purpose is
@@ -27,7 +27,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	 * The model reference used to subsequently fetch the actual model subject to
 	 * editing if necessary.
 	 */
-	private RefKey modelRef;
+	private ModelKey modelRef;
 
 	/**
 	 * The model subject to editing.
@@ -68,7 +68,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
-		String s = modelRef.getType().getPresentationName();
+		String s = modelRef.getEntityType().getPresentationName();
 		if(modelRef.getName() != null) {
 			s += " " + modelRef.getName();
 		}
@@ -80,7 +80,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 		String s = modelRef.getName();
 		if(s == null) {
 			// fallback to the entity type
-			s = modelRef.getType().getPresentationName();
+			s = modelRef.getEntityType().getPresentationName();
 		}
 		return "Edit " + s;
 	}
@@ -90,7 +90,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 		return new EditViewRequest(this, getViewClass(), modelRef);
 	}
 
-	private void setModelRef(RefKey modelRef) {
+	private void setModelRef(ModelKey modelRef) {
 		if(modelRef == null || !modelRef.isSet()) {
 			throw new IllegalArgumentException("Invalid model ref specified");
 		}
@@ -103,7 +103,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 		final EditViewRequest r = (EditViewRequest) viewRequest;
 		model = r.getModel();
 		if(model == null) {
-			setModelRef(r.getModelRef());
+			setModelRef(r.getModelKey());
 		}
 		else {
 			setModelRef(model.getRefKey());

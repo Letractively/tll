@@ -19,8 +19,8 @@ import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.bind.IModel;
 import com.tll.common.bind.IPropertyChangeListener;
+import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 
 /**
@@ -78,7 +78,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		}
 	}
 	
-	private final BindableWidgetAdapter<Collection<IModel>> adapter;
+	private final BindableWidgetAdapter<Collection<Model>> adapter;
 
 	/**
 	 * The indexed property name identifying the related many model collection in
@@ -96,7 +96,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 * re-bind or not. This avoids spurious re-binds when property change events
 	 * fire!
 	 */
-	private transient Collection<IModel> value;
+	private transient Collection<Model> value;
 
 	/**
 	 * Constructor
@@ -109,7 +109,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 *        model collection during binding
 	 */
 	public IndexedFieldPanel(String fieldGroupName, String indexedPropertyName) {
-		adapter = new BindableWidgetAdapter<Collection<IModel>>(this);
+		adapter = new BindableWidgetAdapter<Collection<Model>>(this);
 		setFieldGroup(new FieldGroup(fieldGroupName));
 		this.indexedPropertyName = indexedPropertyName;
 	}
@@ -120,9 +120,9 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	public final Collection<IModel> getValue() {
+	public final Collection<Model> getValue() {
 		if(value == null) {
-			value = new ArrayList<IModel>(indexPanels.size());
+			value = new ArrayList<Model>(indexPanels.size());
 			// update the model collection!
 			for(final Index<I> index : indexPanels) {
 				try {
@@ -138,14 +138,14 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	public final void setValue(Collection<IModel> value) {
+	public final void setValue(Collection<Model> value) {
 		if(this.value != value) {
 			this.value = null;
 			clearIndexed();
 			// we don't want auto-transfer of data!!
 			//changeSupport.firePropertyChange(IBindableWidget.PROPERTY_VALUE, old, this.value);
 			if(value != null) {
-				for(final IModel m : value) {
+				for(final Model m : value) {
 					add(m, false);
 				}
 			}
@@ -156,7 +156,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 * @return A prototype model used to bind to a newly added indexed field
 	 *         panel.
 	 */
-	protected abstract IModel createPrototypeModel();
+	protected abstract Model createPrototypeModel();
 
 	/**
 	 * Factory method to obtain a new index field panel instance.
@@ -187,7 +187,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 *         the underlying field group or has the same name as an existing
 	 *         field in the underlying group.
 	 */
-	private void add(IModel model, boolean isUiAdd) throws IllegalArgumentException {
+	private void add(Model model, boolean isUiAdd) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
 	
 		final I ip = createIndexPanel();
@@ -299,18 +299,18 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	public void setValue(Collection<IModel> value, boolean fireEvents) {
+	public void setValue(Collection<Model> value, boolean fireEvents) {
 		// default is to not support this method
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public final IConverter<Collection<IModel>, Object> getConverter() {
+	public final IConverter<Collection<Model>, Object> getConverter() {
 		return adapter.getConverter();
 	}
 
 	@Override
-	public final void setConverter(IConverter<Collection<IModel>, Object> converter) {
+	public final void setConverter(IConverter<Collection<Model>, Object> converter) {
 		adapter.setConverter(converter);
 	}
 
@@ -345,7 +345,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<IModel>> handler) {
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Collection<Model>> handler) {
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 

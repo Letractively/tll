@@ -6,7 +6,7 @@
 package com.tll.client.ui.field;
 
 import com.tll.client.bind.IBindingAction;
-import com.tll.common.bind.IHasModel;
+import com.tll.common.model.IHasModel;
 
 /**
  * IFieldBoundWidget

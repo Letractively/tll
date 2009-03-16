@@ -33,9 +33,9 @@ public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> 
 		ERROR;
 	}
 	
-	private final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<P>> etype =
-			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<P>>();
-
+	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>> TYPE =
+			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>>();
+	
 	private final Type type;
 
 	/**
@@ -82,9 +82,10 @@ public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> 
 		handler.onRpcEvent(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<P>> getAssociatedType() {
-		return etype;
+		return (com.google.gwt.event.shared.GwtEvent.Type) TYPE;
 	}
 
 	public Type getType() {

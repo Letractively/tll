@@ -74,7 +74,7 @@ public class UserPanel extends FlowFieldPanel {
 		Model parentAccount;
 		try {
 			parentAccount = accountModel.relatedOne("account").getModel();
-			RefKey par = parentAccount == null ? null : parentAccount.getRefKey();
+			ModelRef par = parentAccount == null ? null : parentAccount.getRefKey();
 			lnkAccount.setText(par.getName());
 			lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
 		}

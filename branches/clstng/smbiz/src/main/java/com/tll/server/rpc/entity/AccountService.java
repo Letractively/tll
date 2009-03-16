@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.ICriteria;
@@ -31,9 +31,9 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 	@Override
 	protected void handleLoadOptions(MEntityContext context, Account e, EntityOptions entityOptions,
-			Map<String, RefKey> refs) throws SystemError {
+			Map<String, ModelKey> refs) throws SystemError {
 
-		IEntityServiceFactory entityServiceFactory = context.getEntityServiceFactory();
+		final IEntityServiceFactory entityServiceFactory = context.getEntityServiceFactory();
 
 		// THIS is taken care of via open session in view filter and auto-proxy
 		// loading in hibernate
@@ -66,10 +66,10 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 		// load parent account ref?
 		if(entityOptions.isRelatedRefRequested(SmbizEntityType.ACCOUNT) && e.getParent() != null) {
-			PrimaryKey<Account> pk = new PrimaryKey<Account>(Account.class, e.getParent().getId());
-			IAccountService svc = entityServiceFactory.instance(IAccountService.class);
-			Account parent = svc.load(pk);
-			RefKey er = new RefKey(SmbizEntityType.ACCOUNT, parent.getId(), parent.getName());
+			final PrimaryKey<Account> pk = new PrimaryKey<Account>(Account.class, e.getParent().getId());
+			final IAccountService svc = entityServiceFactory.instance(IAccountService.class);
+			final Account parent = svc.load(pk);
+			final ModelKey er = new ModelKey(SmbizEntityType.ACCOUNT, parent.getId(), parent.getName());
 			refs.put("parent", er);
 		}
 	}
@@ -97,13 +97,13 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 		criteria.getPrimaryGroup().addCriterion("name", search.getName(), Comparator.EQUALS, false);
 
 		// parent account ref
-		RefKey par = search.getParentAccountRef();
+		final ModelKey par = search.getParentAccountRef();
 		if(par != null) {
 			criteria.getPrimaryGroup().addCriterion("parent", new PrimaryKey<Account>(Account.class, par.getId()));
 		}
 
 		// status
-		String status = search.getStatus();
+		final String status = search.getStatus();
 		if(status != null) {
 			criteria.getPrimaryGroup().addCriterion("status", EnumUtil.fromString(AccountStatus.class, status));
 		}

@@ -4,8 +4,7 @@
  */
 package com.tll.common.search;
 
-import com.tll.common.model.RefKey;
-import com.tll.common.search.NamedTimeStampEntitySearch;
+import com.tll.common.model.ModelKey;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.SmbizEntityType;
 
@@ -15,7 +14,7 @@ import com.tll.model.SmbizEntityType;
  */
 public final class AccountSearch extends NamedTimeStampEntitySearch {
 
-	private RefKey parentAccountRef;
+	private ModelKey parentAccountRef;
 	private String status;
 
 	/**
@@ -42,11 +41,11 @@ public final class AccountSearch extends NamedTimeStampEntitySearch {
 		super(businessKeyName, SmbizEntityType.ACCOUNT);
 	}
 
-	public final RefKey getParentAccountRef() {
+	public final ModelKey getParentAccountRef() {
 		return parentAccountRef;
 	}
 
-	public final void setParentAccountRef(RefKey parentAccountRef) {
+	public final void setParentAccountRef(ModelKey parentAccountRef) {
 		this.parentAccountRef = parentAccountRef;
 	}
 

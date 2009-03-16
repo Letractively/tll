@@ -43,4 +43,10 @@ public interface IBusinessKey<E extends IEntity> extends IBusinessKeyDefinition<
 	 * @param value
 	 */
 	void setPropertyValue(int index, Object value);
+
+	/**
+	 * Clear the state of this key resetting all defining properties to their
+	 * default values.
+	 */
+	void clear();
 }

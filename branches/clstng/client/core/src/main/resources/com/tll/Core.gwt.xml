@@ -24,6 +24,10 @@
     <include name="DataPoint.java" />
   </source>
   
+  <source path="key">
+    <include name="IKey.java" />
+  </source>
+  
   <public path="public" />
 
 </module>

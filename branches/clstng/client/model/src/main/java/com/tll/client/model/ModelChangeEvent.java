@@ -8,7 +8,7 @@ import java.util.EventObject;
 
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * ModelChangeEvent - Used to dissemminate model changes.
@@ -27,7 +27,7 @@ public final class ModelChangeEvent extends EventObject {
 
 	private final ModelChangeOp change;
 	private final Model model;
-	private final RefKey modelRef;
+	private final ModelKey modelRef;
 
 	private final Status status;
 
@@ -53,7 +53,7 @@ public final class ModelChangeEvent extends EventObject {
 	 * @param modelRef
 	 * @param status
 	 */
-	public ModelChangeEvent(Object source, ModelChangeOp change, RefKey modelRef, Status status) {
+	public ModelChangeEvent(Object source, ModelChangeOp change, ModelKey modelRef, Status status) {
 		super(source);
 		this.change = change;
 		this.model = null;
@@ -79,7 +79,7 @@ public final class ModelChangeEvent extends EventObject {
 		return model;
 	}
 
-	public RefKey getModelRef() {
+	public ModelKey getModelRef() {
 		return modelRef == null ? (model == null ? null : model.getRefKey()) : modelRef;
 	}
 
@@ -90,7 +90,7 @@ public final class ModelChangeEvent extends EventObject {
 	@Override
 	public String toString() {
 		String s = change.toString();
-		RefKey rk = getModelRef();
+		final ModelKey rk = getModelRef();
 		if(rk != null) {
 			s += " [ " + rk.toString() + " ]";
 		}

@@ -19,7 +19,6 @@ import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.bind.IModel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.AddressType;
@@ -99,7 +98,7 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		}
 
 		@Override
-		protected IModel createPrototypeModel() {
+		protected Model createPrototypeModel() {
 			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 

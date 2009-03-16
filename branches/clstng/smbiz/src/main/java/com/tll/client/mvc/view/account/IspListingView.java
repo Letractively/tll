@@ -130,7 +130,7 @@ public final class IspListingView extends ListingView {
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Merchant Listing") == 0) {
 						ViewManager.get().dispatch(
-								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowRef(rowIndex)));
+								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowKey(rowIndex)));
 					}
 				}
 			};
@@ -157,7 +157,8 @@ public final class IspListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.ISP.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createRemoteListingWidget(this, config,
+				SmbizEntityType.ISP.toString() + "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

@@ -47,10 +47,6 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 		return getBusinessKeyName();
 	}
 
-	public String getTypeName() {
-		return "Business Key";
-	}
-
 	/**
 	 * @return The field names
 	 */
@@ -66,7 +62,7 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 
 	private int propertyIndex(String propertyName) {
 		for(int i = 0; i < propertyNames.length; ++i) {
-			String fname = propertyNames[i];
+			final String fname = propertyNames[i];
 			if(fname != null && fname.equals(propertyName)) return i;
 		}
 		return -1;
@@ -99,7 +95,7 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 
 	@Override
 	public boolean isSet() {
-		for(Object obj : propertyValues) {
+		for(final Object obj : propertyValues) {
 			if(obj == null) return false;
 		}
 		return true;
@@ -133,6 +129,6 @@ final class BusinessKey<E extends IEntity> extends AbstractEntityKey<E> implemen
 
 	@Override
 	public String toString() {
-		return getTypeName() + " " + getBusinessKeyName();
+		return getBusinessKeyName();
 	}
 }

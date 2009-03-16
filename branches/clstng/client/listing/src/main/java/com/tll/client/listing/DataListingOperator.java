@@ -65,7 +65,7 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 	@Override
 	protected void doFetch(int offset, Sorting sorting) {
 		try {
-			current = dataProvider.getElements(0, pageSize, sorting);
+			current = dataProvider.getElements(offset, pageSize, sorting);
 		}
 		catch(final EmptyListException e) {
 			throw new IllegalStateException(e);

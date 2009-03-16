@@ -19,7 +19,7 @@ import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.ICrudServiceAsync;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 
 /**
@@ -71,7 +71,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * Sets the state of this command for loading an entity by primary key.
 	 * @param entityRef
 	 */
-	public final void load(RefKey entityRef) {
+	public final void load(ModelKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
@@ -132,7 +132,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * Sets the state of this command for purging an entity.
 	 * @param entityRef The ref of the entity to be purged.
 	 */
-	public final void purge(RefKey entityRef) {
+	public final void purge(ModelKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}

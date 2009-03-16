@@ -10,18 +10,18 @@ import java.util.List;
 
 import com.tll.client.listing.IListingConfig;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
- * ModelListingTable
+ * ModelListingTable - A table whose rows are identifiable by a key.
  * @author jpk
  */
 public final class ModelListingTable extends ListingTable<Model> {
 
 	/**
-	 * {@link RefKey}s for each listing element row.
+	 * {@link ModelKey}s for each listing element row.
 	 */
-	protected final List<RefKey> rowRefs = new ArrayList<RefKey>();
+	protected final List<ModelKey> rowKeys = new ArrayList<ModelKey>();
 
 	/**
 	 * Constructor
@@ -34,43 +34,43 @@ public final class ModelListingTable extends ListingTable<Model> {
 	/**
 	 * Get the row ref for a given row.
 	 * @param row 0-based table row num (considers the header row).
-	 * @return RefKey
+	 * @return ModelKey
 	 */
-	RefKey getRowRef(int row) {
-		return rowRefs.get(row - 1);
+	ModelKey getRowKey(int row) {
+		return rowKeys.get(row - 1);
 	}
 
 	/**
-	 * Get the row index given a {@link RefKey}.
-	 * @param rowRef The RefKey for which to find the associated row index.
-	 * @return The row index or <code>-1</code> if no row matching the given ref
-	 *         key is present in the table.
+	 * Get the row index given a {@link ModelKey}.
+	 * @param rowKey The row key for which to find the associated row index.
+	 * @return The resolved row index or <code>-1</code> if no row matching the
+	 *         given row key is present in the table.
 	 */
-	int getRowIndex(RefKey rowRef) {
-		return rowRefs.indexOf(rowRef) + 1; // account for header row
+	int getRowIndex(ModelKey rowKey) {
+		return rowKeys.indexOf(rowKey) + 1; // account for header row
 	}
 
 	@Override
 	protected void setRowData(int rowIndex, int rowNum, Model rowData, boolean overwriteOnNull) {
 		super.setRowData(rowIndex, rowNum, rowData, overwriteOnNull);
-		rowRefs.add(rowData.getRefKey());
+		rowKeys.add(rowData.getRefKey());
 	}
 
 	@Override
 	int addRow(Model rowData) {
-		rowRefs.add(rowData.getRefKey());
+		rowKeys.add(rowData.getRefKey());
 		return super.addRow(rowData);
 	}
 
 	@Override
 	void updateRow(int rowIndex, Model rowData) {
-		rowRefs.set(rowIndex - 1, rowData.getRefKey());
+		rowKeys.set(rowIndex - 1, rowData.getRefKey());
 		super.updateRow(rowIndex, rowData);
 	}
 
 	@Override
 	void deleteRow(int rowIndex) {
-		rowRefs.remove(rowIndex - 1);
+		rowKeys.remove(rowIndex - 1);
 		super.deleteRow(rowIndex);
 	}
 }

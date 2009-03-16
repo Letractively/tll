@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.UserSearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.User;
@@ -31,7 +31,8 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 
 	@Override
 	protected void handleLoadOptions(MEntityContext contexxt, User e, EntityOptions options,
-			Map<String, RefKey> refs) throws SystemError {
+			Map<String, ModelKey> refs)
+			throws SystemError {
 	}
 
 	@Override

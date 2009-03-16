@@ -36,7 +36,7 @@ import com.tll.client.ui.field.intf.SwitchInterfacePanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
@@ -80,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		private final class InterfaceStack implements IEditHandler {
 
 			// private final int stackIndex;
-			private final RefKey intfRef;
+			private final ModelKey intfRef;
 			private Model model; // the interface model
 			private final EditPanel editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
@@ -89,13 +89,13 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			 * Constructor
 			 * @param intfRef
 			 */
-			public InterfaceStack(/*int stackIndex, */RefKey intfRef) {
+			public InterfaceStack(/*int stackIndex, */ModelKey intfRef) {
 				super();
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
 				// TODO add global msg panel ref
-				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getEntityType()), false, true);
 				editPanel.addEditHandler(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -229,7 +229,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 			for(int i = 0; i < intfs.length; i++) {
 				final Model data = intfs[i];
-				final RefKey ref = data.getRefKey();
+				final ModelKey ref = data.getRefKey();
 				assert ref != null && ref.isSet();
 				final InterfaceStack ir = new InterfaceStack(ref);
 				list.add(ir);
@@ -315,7 +315,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getType());
+		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getEntityType());
 		return event.getSource() == this || (event.getModelRef() != null && set.isInterfaceType());
 	}
 

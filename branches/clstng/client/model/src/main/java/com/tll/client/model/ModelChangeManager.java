@@ -15,7 +15,7 @@ import com.tll.common.data.EntityOptions;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * ModelChangeManager - Acts as a mediator centralizing app-wide handling of
@@ -72,7 +72,7 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 		adr = AuxDataCache.instance().filterRequest(adr);
 		if(adr == null) return false;
 		final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-		adc.addRpcHandler(this);
+		//adc.addRpcHandler(this);
 		adc.execute();
 		return true;
 	}
@@ -93,7 +93,7 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 			final AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
 			final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-			adc.addRpcHandler(this);
+			//adc.addRpcHandler(this);
 			adc.execute();
 			return true;
 		}
@@ -105,13 +105,13 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * Handles the fetching of a model given a model ref. A subsequent model
 	 * change event is anticipated.
 	 * @param sourcingWidget
-	 * @param modelRef The reference of the model to fetch
+	 * @param entityKey The reference of the entity to fetch
 	 * @param entityOptions
 	 * @param adr
 	 */
-	public void loadModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions, AuxDataRequest adr) {
+	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
 		final CrudCommand cmd = createCrudCommand(sourcingWidget);
-		cmd.load(modelRef);
+		cmd.load(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.setAuxDataRequest(AuxDataCache.instance().filterRequest(adr));
 		cmd.execute();
@@ -140,12 +140,12 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * Commits a model delete firing a model change event to subscribed listeners
 	 * upon a successful delete.
 	 * @param sourcingWidget
-	 * @param modelRef The model to delete
+	 * @param entityKey The key of the entity to delete
 	 * @param entityOptions
 	 */
-	public void deleteModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions) {
+	public void deleteModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions) {
 		final CrudCommand cmd = createCrudCommand(sourcingWidget);
-		cmd.purge(modelRef);
+		cmd.purge(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.execute();
 	}

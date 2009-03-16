@@ -14,7 +14,6 @@ import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
-import com.tll.common.bind.IModel;
 import com.tll.common.model.Model;
 import com.tll.model.SmbizEntityType;
 
@@ -105,7 +104,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<Flow
 		}
 
 		@Override
-		protected IModel createPrototypeModel() {
+		protected Model createPrototypeModel() {
 			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
 		}
 

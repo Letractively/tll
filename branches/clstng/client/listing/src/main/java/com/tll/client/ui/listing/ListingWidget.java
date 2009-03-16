@@ -22,10 +22,14 @@ import com.tll.client.listing.ListingEvent;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
- * @param <R> The row data type.
  * @author jpk
+ * @param <R> The row data type.
+ * @param <T> the table widget type
+ * @param <O> the listing operator type
  */
-public abstract class ListingWidget<R> extends Composite implements Focusable, KeyDownHandler, IListingHandler<R> {
+public class ListingWidget<R, T extends ListingTable<R>, O extends IListingOperator<R>> extends Composite implements
+		Focusable,
+		KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -52,7 +56,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	/**
 	 * The listing table.
 	 */
-	protected final ListingTable<R> table;
+	protected final T table;
 
 	/**
 	 * The listing navigation bar.
@@ -72,7 +76,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	/**
 	 * The listing operator
 	 */
-	private IListingOperator<R> operator;
+	private O operator;
 
 	/**
 	 * The optional row popup.
@@ -84,7 +88,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	 * @param config The listing configuration
 	 * @param table {@link ListingTable} implementation
 	 */
-	protected ListingWidget(IListingConfig<R> config, ListingTable<R> table) {
+	public ListingWidget(IListingConfig<R> config, T table) {
 		super();
 		final FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
@@ -124,7 +128,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	 * performing listing ops.
 	 * @param operator The listing operator
 	 */
-	public final void setOperator(IListingOperator<R> operator) {
+	public final void setOperator(O operator) {
 		this.operator = operator;
 		if(operator != null) {
 			this.table.setListingOperator(operator);
@@ -132,6 +136,10 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 			//operator.addListingHandler(this);
 			addHandler(this, ListingEvent.getType());
 		}
+	}
+	
+	protected final O getOperator() {
+		return operator;
 	}
 
 	public final void clear() {

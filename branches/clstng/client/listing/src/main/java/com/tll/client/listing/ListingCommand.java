@@ -2,12 +2,13 @@
  * The Logic Lab
  * @author jpk Aug 30, 2007
  */
-package com.tll.client.data.rpc;
+package com.tll.client.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IMarshalable;
+import com.tll.client.data.rpc.RpcCommand;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.data.rpc.IListingService;

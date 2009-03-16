@@ -6,15 +6,12 @@
 package com.tll.client.listing;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.IMarshalable;
-import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.data.rpc.RpcEvent;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.ListingPayload.ListingStatus;
+import com.tll.common.model.Model;
 import com.tll.common.search.ISearch;
 import com.tll.dao.Sorting;
 
@@ -22,11 +19,8 @@ import com.tll.dao.Sorting;
  * RemoteListingOperator
  * @author jpk
  * @param <S> the search type
- * @param <R> the row element type
  */
-public final class RemoteListingOperator<S extends ISearch, R extends IMarshalable> extends
-		AbstractListingOperator<R>
-		implements IRpcHandler<ListingPayload<R>> {
+public final class RemoteListingOperator<S extends ISearch> extends AbstractListingOperator<Model> {
 
 	/**
 	 * The unique name that identifies the listing this command targets on the
@@ -59,8 +53,7 @@ public final class RemoteListingOperator<S extends ISearch, R extends IMarshalab
 
 	private void execute() {
 		assert listingRequest != null;
-		final ListingCommand<S, R> cmd = new ListingCommand<S, R>(sourcingWidget, listingRequest);
-		cmd.addRpcHandler(this);
+		final ListingCommand<S, Model> cmd = new ListingCommand<S, Model>(sourcingWidget, listingRequest);
 		cmd.execute();
 	}
 
@@ -116,15 +109,17 @@ public final class RemoteListingOperator<S extends ISearch, R extends IMarshalab
 		clear(true);
 	}
 
-	@Override
-	public void onRpcEvent(RpcEvent<ListingPayload<R>> event) {
-		assert listingRequest != null;
-		final ListingPayload<R> result = event.getPayload();
-		assert result.getListingName() != null && listingName != null && result.getListingName().equals(listingName);
+	/**
+	 * Callback method to handle the dissemination of remote listing data via this
+	 * operator.
+	 * @param payload the listing payload
+	 */
+	public void handleRpcPayload(ListingPayload<Model> payload) {
+		assert payload.getListingName() != null && listingName != null && payload.getListingName().equals(listingName);
 
 		final ListingOp op = listingRequest.getListingOp();
 
-		listingGenerated = result.getListingStatus() == ListingStatus.CACHED;
+		listingGenerated = payload.getListingStatus() == ListingStatus.CACHED;
 
 		if(!listingGenerated && op.isQuery()) {
 			// we need to re-create the listing on the server - the cache has expired
@@ -132,13 +127,13 @@ public final class RemoteListingOperator<S extends ISearch, R extends IMarshalab
 		}
 		else {
 			// update client-side listing state
-			offset = result.getOffset();
-			sorting = result.getSorting();
-			listSize = result.getListSize();
+			offset = payload.getOffset();
+			sorting = payload.getSorting();
+			listSize = payload.getListSize();
 			// reset
 			listingRequest = null;
 			// fire the listing event
-			sourcingWidget.fireEvent(new ListingEvent<R>(op, result, listingDef.getPageSize()));
+			sourcingWidget.fireEvent(new ListingEvent<Model>(op, payload, listingDef.getPageSize()));
 		}
 	}
 }

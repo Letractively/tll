@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.IBindingAction;
 import com.tll.common.bind.IBindable;
-import com.tll.common.bind.IModel;
+import com.tll.common.model.Model;
 
 /**
  * FieldPanel - Common base class for {@link Panel}s that display {@link IField}
@@ -30,7 +30,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	/**
 	 * The optional model.
 	 */
-	private IModel model;
+	private Model model;
 
 	/**
 	 * The optional action.
@@ -65,12 +65,12 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
-	public final IModel getModel() {
+	public final Model getModel() {
 		return model;
 	}
 
 	@Override
-	public void setModel(IModel model) {
+	public void setModel(Model model) {
 		// don't spuriously re-apply the same model instance!
 		if(this.model != null && model == this.model) {
 			return;

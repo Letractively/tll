@@ -6,15 +6,19 @@
 package com.tll.client.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IListingOperator;
+import com.tll.client.model.IModelChangeListener;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * ModelListingWidget - Listing Widget dedicated to handling Model type data.
  * @author jpk
+ * @param <O> the listing operator type
  */
-public final class ModelListingWidget extends ListingWidget<Model> {
+public class ModelListingWidget<O extends IListingOperator<Model>> extends ListingWidget<Model, ModelListingTable, O>
+		implements IModelChangeListener {
 
 	/**
 	 * Constructor
@@ -27,20 +31,20 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 	/**
 	 * Get the row ref for a given row.
 	 * @param row 0-based table row num (considers the header row).
-	 * @return RefKey
+	 * @return ModelKey
 	 */
-	public RefKey getRowRef(int row) {
-		return ((ModelListingTable) table).getRowRef(row);
+	public ModelKey getRowKey(int row) {
+		return table.getRowKey(row);
 	}
 
 	/**
-	 * Get the row index given a {@link RefKey}.
-	 * @param rowRef The RefKey for which to find the associated row index.
+	 * Get the row index given a {@link ModelKey}.
+	 * @param rowKey The ModelKey for which to find the associated row index.
 	 * @return The row index or <code>-1</code> if no row matching the given ref
 	 *         key is present in the table.
 	 */
-	public int getRowIndex(RefKey rowRef) {
-		return ((ModelListingTable) table).getRowIndex(rowRef);
+	public int getRowIndex(ModelKey rowKey) {
+		return table.getRowIndex(rowKey);
 	}
 
 	/**
@@ -49,14 +53,14 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 	 * NOTE: This method is <em>not</em> automatically invoked.
 	 * @param event
 	 */
-	public void handleModelChange(ModelChangeEvent event) {
+	public void onModelChangeEvent(ModelChangeEvent event) {
 		switch(event.getChangeOp()) {
 			case ADDED:
 				addRow(event.getModel());
 				break;
 			case UPDATED: {
-				RefKey modelRef = event.getModel().getRefKey();
-				int rowIndex = getRowIndex(modelRef);
+				final ModelKey modelRef = event.getModel().getRefKey();
+				final int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					// TODO determine how to handle named query specific model data!!
@@ -65,8 +69,8 @@ public final class ModelListingWidget extends ListingWidget<Model> {
 				break;
 			}
 			case DELETED: {
-				RefKey modelRef = event.getModelRef();
-				int rowIndex = getRowIndex(modelRef);
+				final ModelKey modelRef = event.getModelRef();
+				final int rowIndex = getRowIndex(modelRef);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
 					markRowDeleted(rowIndex, true);

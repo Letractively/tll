@@ -3,7 +3,7 @@
  * @author jpk
  * @since Mar 10, 2009
  */
-package com.tll.common.bind;
+package com.tll.common.model;
 
 
 /**
@@ -15,11 +15,11 @@ public interface IHasModel {
 	/**
 	 * @return the model.
 	 */
-	IModel getModel();
+	Model getModel();
 
 	/**
 	 * Set the model.
 	 * @param model
 	 */
-	void setModel(IModel model);
+	void setModel(Model model);
 }

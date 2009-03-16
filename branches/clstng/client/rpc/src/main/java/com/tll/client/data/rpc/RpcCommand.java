@@ -5,7 +5,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
@@ -21,7 +20,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  * @param <P> payload type
  */
-public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, IHasRpcHandlers<P> {
+public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*, IHasRpcHandlers<P>*/{
 
 	/**
 	 * The widget that will serve as the rpc event source.
@@ -48,32 +47,6 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 
 	public void setAsyncCallback(AsyncCallback<P> callback) {
 		this.callback = callback;
-	}
-
-	/**
-	 * Adjusts the internal RPC counter and is reponsible for notifying the UI of
-	 * the RPC status.
-	 */
-	/*
-	static void rpc(boolean sending) {
-		if(sending) {
-			rpcCounter++;
-			UI.darkenBusyPanel();
-			UI.busy();
-		}
-		else {
-			--rpcCounter;
-			UI.unbusy();
-			UI.lightenBusyPanel();
-		}
-	}
-	*/
-	
-	@Override
-	public HandlerRegistration addRpcHandler(IRpcHandler<P> handler) {
-		//return sourcingWidget.
-		// TODO
-		return null;
 	}
 
 	/**

@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.di.DaoModule;
@@ -92,7 +92,7 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
 			Assert.assertEquals(model.getEntityType().getEntityClassName().equals(e.entityClass().getName()),
 					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
-			final RefKey refKey = model.getRefKey();
+			final ModelKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";
 

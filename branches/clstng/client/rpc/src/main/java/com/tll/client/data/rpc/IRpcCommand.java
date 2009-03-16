@@ -13,6 +13,5 @@ import com.tll.common.data.Payload;
  * @author jpk
  * @param <P> the payload type
  */
-public interface IRpcCommand<P extends Payload> extends Command, AsyncCallback<P> {
-
+interface IRpcCommand<P extends Payload> extends Command, AsyncCallback<P> {
 }
