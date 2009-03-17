@@ -5,12 +5,18 @@
  */
 package com.tll.client.listing;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.IMarshalable;
+import com.tll.client.data.rpc.RpcCommand;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.data.ListingPayload.ListingStatus;
+import com.tll.common.data.rpc.IListingService;
+import com.tll.common.data.rpc.IListingServiceAsync;
 import com.tll.common.model.Model;
 import com.tll.common.search.ISearch;
 import com.tll.dao.Sorting;
@@ -20,8 +26,68 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <S> the search type
  */
+@SuppressWarnings("unchecked")
 public final class RemoteListingOperator<S extends ISearch> extends AbstractListingOperator<Model> {
 
+	private static final IListingServiceAsync<ISearch, IMarshalable> svc;
+	static {
+		svc = (IListingServiceAsync) GWT.create(IListingService.class);
+	}
+
+	/**
+	 * ListingCommand
+	 * @author jpk
+	 */
+	@SuppressWarnings("synthetic-access")
+	class ListingCommand extends RpcCommand<ListingPayload<Model>> {
+
+		/**
+		 * Constructor
+		 * @param sourcingWidget
+		 */
+		public ListingCommand(Widget sourcingWidget) {
+			super(sourcingWidget);
+		}
+
+		@Override
+		protected void doExecute() {
+			if(listingRequest == null) {
+				throw new IllegalStateException("No listing command set!");
+			}
+			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
+		}
+
+		@Override
+		protected void handleFailure(Throwable caught) {
+			super.handleFailure(caught);
+		}
+
+		@Override
+		protected void handleSuccess(ListingPayload<Model> payload) {
+			super.handleSuccess(payload);
+			assert payload.getListingName() != null && listingName != null && payload.getListingName().equals(listingName);
+
+			final ListingOp op = listingRequest.getListingOp();
+
+			listingGenerated = payload.getListingStatus() == ListingStatus.CACHED;
+
+			if(!listingGenerated && op.isQuery()) {
+				// we need to re-create the listing on the server - the cache has expired
+				fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+			}
+			else {
+				// update client-side listing state
+				offset = payload.getOffset();
+				sorting = payload.getSorting();
+				listSize = payload.getListSize();
+				// reset
+				listingRequest = null;
+				// fire the listing event
+				sourcingWidget.fireEvent(new ListingEvent<Model>(op, payload, listingDef.getPageSize()));
+			}
+		}
+	}
+	
 	/**
 	 * The unique name that identifies the listing this command targets on the
 	 * server.
@@ -37,15 +103,12 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget the required widget that will serve as the rpc event
-	 *        source
 	 * @param listingName the identifying listing name for client and server. this
 	 *        name <em>must</em> be unique among the others that are presently
 	 *        cached server side.
 	 * @param listingDef the remote listing definition
 	 */
-	public RemoteListingOperator(Widget sourcingWidget, String listingName, RemoteListingDefinition<S> listingDef) {
-		super(sourcingWidget);
+	public RemoteListingOperator(String listingName, RemoteListingDefinition<S> listingDef) {
 		if(listingName == null || listingDef == null) throw new IllegalArgumentException();
 		this.listingName = listingName;
 		this.listingDef = listingDef;
@@ -53,7 +116,7 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 
 	private void execute() {
 		assert listingRequest != null;
-		final ListingCommand<S, Model> cmd = new ListingCommand<S, Model>(sourcingWidget, listingRequest);
+		final ListingCommand cmd = new ListingCommand(sourcingWidget);
 		cmd.execute();
 	}
 
@@ -107,33 +170,5 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 
 	public void clear() {
 		clear(true);
-	}
-
-	/**
-	 * Callback method to handle the dissemination of remote listing data via this
-	 * operator.
-	 * @param payload the listing payload
-	 */
-	public void handleRpcPayload(ListingPayload<Model> payload) {
-		assert payload.getListingName() != null && listingName != null && payload.getListingName().equals(listingName);
-
-		final ListingOp op = listingRequest.getListingOp();
-
-		listingGenerated = payload.getListingStatus() == ListingStatus.CACHED;
-
-		if(!listingGenerated && op.isQuery()) {
-			// we need to re-create the listing on the server - the cache has expired
-			fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
-		}
-		else {
-			// update client-side listing state
-			offset = payload.getOffset();
-			sorting = payload.getSorting();
-			listSize = payload.getListSize();
-			// reset
-			listingRequest = null;
-			// fire the listing event
-			sourcingWidget.fireEvent(new ListingEvent<Model>(op, payload, listingDef.getPageSize()));
-		}
 	}
 }

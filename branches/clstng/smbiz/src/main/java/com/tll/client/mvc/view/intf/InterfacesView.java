@@ -178,7 +178,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			criteria.setNamedQuery("interface.summaryList");
 			final Sorting defaultSorting = new Sorting("name");
 			listHandler =
-					ListingFactory.createRemoteOperator(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
+					ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
 			//listHandler.addListingHandler(this);
 			addHandler(this, ListingEvent.getType());

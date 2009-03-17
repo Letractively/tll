@@ -8,11 +8,11 @@ import com.tll.listhandler.IListHandler;
 import com.tll.listhandler.ListHandlerException;
 
 /**
- * The {@link IListingHandler} implementation.
+ * ListingHandler - Cachable listing construct.
  * @author jpk
  * @param <R> The row data type.
  */
-public final class ListingHandler<R> implements IListingHandler<R> {
+public final class ListingHandler<R> {
 
 	private final int pageSize;
 	private final String listingName;
@@ -63,17 +63,14 @@ public final class ListingHandler<R> implements IListingHandler<R> {
 		return listingName;
 	}
 
-	@Override
 	public List<R> getElements() {
 		return page;
 	}
 
-	@Override
 	public int getOffset() {
 		return offset;
 	}
 
-	@Override
 	public int getPageSize() {
 		return pageSize;
 	}
@@ -82,12 +79,10 @@ public final class ListingHandler<R> implements IListingHandler<R> {
 		return listHandler.size();
 	}
 
-	@Override
 	public Sorting getSorting() {
 		return sorting;
 	}
 
-	@Override
 	public void query(int offset, Sorting sorting, boolean force) throws EmptyListException, IndexOutOfBoundsException,
 			ListingException {
 
@@ -108,7 +103,7 @@ public final class ListingHandler<R> implements IListingHandler<R> {
 		try {
 			page = listHandler.getElements(offset, pageSize, sorting);
 		}
-		catch(ListHandlerException e) {
+		catch(final ListHandlerException e) {
 			throw new ListingException(listingName, e.getMessage());
 		}
 

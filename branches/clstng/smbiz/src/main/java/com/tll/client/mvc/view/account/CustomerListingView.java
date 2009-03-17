@@ -185,9 +185,9 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createRemoteListingWidget(this, config, SmbizEntityType.CUSTOMER.toString()
+		setListingWidget(ListingFactory.createRemoteListingWidget(config, SmbizEntityType.CUSTOMER.toString()
 				+ "_LISTING",
-				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
 	}
 
 	@Override

@@ -7,7 +7,6 @@ package com.tll.client.listing;
 
 import java.util.List;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
@@ -36,13 +35,11 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget
 	 * @param pageSize
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(Widget sourcingWidget, int pageSize, IListHandler<R> dataProvider, Sorting sorting) {
-		super(sourcingWidget);
+	public DataListingOperator(int pageSize, IListHandler<R> dataProvider, Sorting sorting) {
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;

@@ -23,7 +23,7 @@ import com.tll.common.msg.Msg.MsgLevel;
 public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*, IHasRpcHandlers<P>*/{
 
 	/**
-	 * The widget that will serve as the rpc event source.
+	 * The optional widget that will serve as the rpc event source.
 	 */
 	protected final Widget sourcingWidget;
 
@@ -34,18 +34,25 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*,
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget the required source for the ensuing rpc event
+	 */
+	public RpcCommand() {
+		this(null);
+	}
+
+	/**
+	 * Constructor
+	 * @param sourcingWidget If non-<code>null</code>, {@link RpcEvent}s will fire
+	 *        on this widget.
 	 */
 	protected RpcCommand(Widget sourcingWidget) {
-		if(sourcingWidget == null) throw new IllegalArgumentException();
 		this.sourcingWidget = sourcingWidget;
 	}
 
-	protected AsyncCallback<P> getAsyncCallback() {
+	protected final AsyncCallback<P> getAsyncCallback() {
 		return callback;
 	}
 
-	public void setAsyncCallback(AsyncCallback<P> callback) {
+	public final void setAsyncCallback(AsyncCallback<P> callback) {
 		this.callback = callback;
 	}
 
@@ -59,7 +66,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*,
 		try {
 			doExecute();
 			// fire an RPC send event
-			sourcingWidget.fireEvent(new RpcEvent<P>());
+			if(sourcingWidget != null) sourcingWidget.fireEvent(new RpcEvent<P>());
 		}
 		catch(final Throwable t) {
 			//rpc(false);
@@ -84,12 +91,12 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*,
 	 * @param result
 	 */
 	protected void handleSuccess(P result) {
-
-		// fire RPC event
-		sourcingWidget.fireEvent(new RpcEvent<P>(result));
-
-		// fire status event
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
+		if(sourcingWidget != null) {
+			// fire RPC event
+			sourcingWidget.fireEvent(new RpcEvent<P>(result));
+			// fire status event
+			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
+		}
 	}
 
 	/**
@@ -99,14 +106,16 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*,
 	protected void handleFailure(Throwable caught) {
 		GWT.log("Error in rpc payload retrieval", caught);
 
-		// fire RPC event
-		sourcingWidget.fireEvent(new RpcEvent<P>(caught));
+		if(sourcingWidget != null) {
+			// fire RPC event
+			sourcingWidget.fireEvent(new RpcEvent<P>(caught));
 
-		// fire status event
-		String msg = caught.getMessage();
-		if(msg == null) msg = "An unknown RPC error occurred";
-		final Status status = new Status(msg, MsgLevel.ERROR);
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
+			// fire status event
+			String msg = caught.getMessage();
+			if(msg == null) msg = "An unknown RPC error occurred";
+			final Status status = new Status(msg, MsgLevel.ERROR);
+			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
+		}
 	}
 
 }

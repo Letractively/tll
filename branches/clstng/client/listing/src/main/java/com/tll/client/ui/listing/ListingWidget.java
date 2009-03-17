@@ -25,11 +25,9 @@ import com.tll.client.listing.ListingEvent;
  * @author jpk
  * @param <R> The row data type.
  * @param <T> the table widget type
- * @param <O> the listing operator type
  */
-public class ListingWidget<R, T extends ListingTable<R>, O extends IListingOperator<R>> extends Composite implements
-		Focusable,
-		KeyDownHandler, IListingHandler<R> {
+public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
+		Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -76,7 +74,7 @@ public class ListingWidget<R, T extends ListingTable<R>, O extends IListingOpera
 	/**
 	 * The listing operator
 	 */
-	private O operator;
+	private IListingOperator<R> operator;
 
 	/**
 	 * The optional row popup.
@@ -128,17 +126,17 @@ public class ListingWidget<R, T extends ListingTable<R>, O extends IListingOpera
 	 * performing listing ops.
 	 * @param operator The listing operator
 	 */
-	public final void setOperator(O operator) {
+	public final void setOperator(IListingOperator<R> operator) {
+		if(operator == null) throw new IllegalArgumentException();
+		if(this.operator != null) throw new IllegalStateException();
 		this.operator = operator;
-		if(operator != null) {
-			this.table.setListingOperator(operator);
-			if(navBar != null) navBar.setListingOperator(operator);
-			//operator.addListingHandler(this);
-			addHandler(this, ListingEvent.getType());
-		}
+		operator.setSourcingWidget(this);
+		this.table.setListingOperator(operator);
+		if(navBar != null) navBar.setListingOperator(operator);
+		addHandler(this, ListingEvent.getType());
 	}
-	
-	protected final O getOperator() {
+
+	protected final IListingOperator<R> getOperator() {
 		return operator;
 	}
 

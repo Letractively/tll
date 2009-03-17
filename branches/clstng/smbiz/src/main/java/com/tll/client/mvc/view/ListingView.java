@@ -60,14 +60,14 @@ public abstract class ListingView extends AbstractView {
 	/**
 	 * The listing widget.
 	 */
-	protected ModelListingWidget<?> listingWidget;
+	protected ModelListingWidget listingWidget;
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
 	 * associated with it.
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
-	protected final void setListingWidget(ModelListingWidget<?> listingWidget) {
+	protected final void setListingWidget(ModelListingWidget listingWidget) {
 		this.listingWidget = listingWidget;
 		addWidget(listingWidget);
 	}

@@ -18,7 +18,7 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	/**
 	 * The Widget that will be passed in dispatched {@link ListingEvent}s.
 	 */
-	protected final Widget sourcingWidget;
+	protected Widget sourcingWidget;
 
 	/**
 	 * The current list index offset.
@@ -37,9 +37,16 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget
 	 */
-	public AbstractListingOperator(Widget sourcingWidget) {
+	public AbstractListingOperator() {
+	}
+
+	/**
+	 * Sets the source of rpc events
+	 * @param sourcingWidget the optional widget that will serve as the rpc event
+	 *        source
+	 */
+	public final void setSourcingWidget(Widget sourcingWidget) {
 		this.sourcingWidget = sourcingWidget;
 	}
 

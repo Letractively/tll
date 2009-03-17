@@ -157,9 +157,9 @@ public final class IspListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createRemoteListingWidget(this, config,
+		setListingWidget(ListingFactory.createRemoteListingWidget(config,
 				SmbizEntityType.ISP.toString() + "_LISTING",
-				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
 	}
 
 	@Override

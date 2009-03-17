@@ -197,9 +197,9 @@ public final class MerchantListingView extends ListingView {
 
 		};
 
-		setListingWidget(ListingFactory.createRemoteListingWidget(this, config, SmbizEntityType.MERCHANT.toString()
+		setListingWidget(ListingFactory.createRemoteListingWidget(config, SmbizEntityType.MERCHANT.toString()
 				+ "_LISTING",
-				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
 	}
 
 	@Override

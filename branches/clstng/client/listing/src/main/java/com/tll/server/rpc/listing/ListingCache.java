@@ -25,8 +25,8 @@ public final class ListingCache {
 	 * @return listing handler
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> IListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
-		return (IListingHandler) WebCache.retrieveWithCacheKeys(request, listingName, IListingHandler.class);
+	public static <T> ListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
+		return (ListingHandler) WebCache.retrieveWithCacheKeys(request, listingName, ListingHandler.class);
 	}
 
 	/**
@@ -37,8 +37,8 @@ public final class ListingCache {
 	 * @param handler
 	 * @return the cache key under which the handler is stored.
 	 */
-	public static <T> String storeHandler(HttpServletRequest request, String listingName, IListingHandler<T> handler) {
-		return WebCache.storePageScopeWithCacheKeys(request, listingName, IListingHandler.class, handler);
+	public static <T> String storeHandler(HttpServletRequest request, String listingName, ListingHandler<T> handler) {
+		return WebCache.storePageScopeWithCacheKeys(request, listingName, ListingHandler.class, handler);
 	}
 
 	/**
@@ -49,8 +49,8 @@ public final class ListingCache {
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> IListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
-		return (IListingHandler) WebCache.clearWithCacheKeys(request, listingName, IListingHandler.class);
+	public static <T> ListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
+		return (ListingHandler) WebCache.clearWithCacheKeys(request, listingName, ListingHandler.class);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class ListingCache {
 	 * @param retainState
 	 */
 	public static void clearAll(HttpServletRequest request, boolean retainState) {
-		WebCache.clearAllCacheKeysHavingCacheClass(request, IListingHandler.class);
+		WebCache.clearAllCacheKeysHavingCacheClass(request, ListingHandler.class);
 		if(!retainState) {
 			WebCache.clearAllCacheKeysHavingCacheClass(request, ListingState.class);
 		}

@@ -4,7 +4,6 @@
  */
 package com.tll.common.search;
 
-import com.tll.common.search.EntitySearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.SmbizEntityType;
 
@@ -42,7 +41,8 @@ public class AddressSearch extends EntitySearch {
 	@Override
 	public void clear() {
 		super.clear();
-
+		address1 = null;
+		postalCode = null;
 	}
 
 	public String getAddress1() {

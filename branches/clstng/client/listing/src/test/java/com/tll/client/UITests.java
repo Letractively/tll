@@ -2,6 +2,19 @@ package com.tll.client;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.listing.Column;
+import com.tll.client.listing.IAddRowDelegate;
+import com.tll.client.listing.IListingConfig;
+import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
+import com.tll.client.listing.ListingFactory;
+import com.tll.client.ui.listing.RemoteListingWidget;
+import com.tll.common.model.Model;
+import com.tll.common.model.mock.MockEntityType;
+import com.tll.common.search.EntitySearch;
+import com.tll.criteria.CriteriaType;
+import com.tll.dao.Sorting;
+import com.tll.listhandler.ListHandlerType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -16,23 +29,135 @@ public final class UITests extends AbstractUITest {
 
 	@Override
 	protected UITestCase[] getTestCases() {
-		return new UITestCase[] { new ListingWidgetTest() };
+		return new UITestCase[] { new RemoteListingWidgetTest() };
 	}
 
-	static final class ListingWidgetTest extends DefaultUITestCase {
+	static final Sorting defaultSorting = new Sorting("lastName");
+
+	/**
+	 * The test listing config.
+	 */
+	static final IListingConfig<Model> config = new IListingConfig<Model>() {
+
+		private final Column[] cols =
+				new Column[] {
+					new Column("First Name", "firstName"), new Column("Last Name", "lastName"), new Column("MI", "mi"),
+					new Column("City", "city"), new Column("Zip", "postalCode") };
 		
-		//ListingFactory.
+		@Override
+		public boolean isSortable() {
+			return true;
+		}
+
+		@Override
+		public boolean isShowRefreshBtn() {
+			return true;
+		}
+
+		@Override
+		public boolean isShowNavBar() {
+			return true;
+		}
+
+		@Override
+		public boolean isIgnoreCaseWhenSorting() {
+			return true;
+		}
+
+		@Override
+		public IRowOptionsDelegate getRowOptionsHandler() {
+			return null;
+		}
+
+		@Override
+		public int getPageSize() {
+			return 5;
+		}
+
+		@Override
+		public String getListingElementName() {
+			return "Address";
+		}
+
+		@Override
+		public Sorting getDefaultSorting() {
+			return defaultSorting;
+		}
+
+		@Override
+		public Column[] getColumns() {
+			return cols;
+		}
+
+		@Override
+		public ITableCellRenderer<Model> getCellRenderer() {
+			return IListingConfig.MODEL_CELL_RENDERER;
+		}
+
+		@Override
+		public String getCaption() {
+			return "Addresses";
+		}
+
+		@Override
+		public IAddRowDelegate getAddRowHandler() {
+			return null;
+		}
+	};
+
+	/**
+	 * AddressSearch
+	 * @author jpk
+	 */
+	static final class AddressSearch extends EntitySearch {
+
+		private String address1, postalCode;
 
 		/**
 		 * Constructor
 		 */
-		public ListingWidgetTest() {
+		public AddressSearch() {
+			super(CriteriaType.ENTITY, MockEntityType.ADDRESS);
+		}
+
+		public String getAddress1() {
+			return address1;
+		}
+
+		public void setAddress1(String address1) {
+			this.address1 = address1;
+		}
+
+		public String getPostalCode() {
+			return postalCode;
+		}
+
+		public void setPostalCode(String postalCode) {
+			this.postalCode = postalCode;
+		}
+	}
+
+	/**
+	 * RemoteListingWidgetTest
+	 * @author jpk
+	 */
+	static final class RemoteListingWidgetTest extends DefaultUITestCase {
+
+		RemoteListingWidget lw;
+
+		/**
+		 * Constructor
+		 */
+		public RemoteListingWidgetTest() {
 			super("Listing Test", "Tests the core listing widget functionality");
 		}
 
 		@Override
 		protected Widget getContext() {
-			return null;
+			lw =
+					ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new AddressSearch(),
+							defaultSorting);
+			return lw;
 		}
 
 		@Override

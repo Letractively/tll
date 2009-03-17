@@ -17,7 +17,6 @@ import com.tll.client.ui.option.Option;
  * the implementation.
  * @author jpk
  */
-// TODO move to ui.listing package
 public abstract class AbstractRowOptions implements IRowOptionsDelegate {
 
 	private static final String EDIT_OPTION_PREFIX = "Edit ";

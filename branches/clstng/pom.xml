@@ -52,6 +52,7 @@
     <module>test/persistence-unit</module>
     <module>dao</module>
     <module>service</module>
+    <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
     <!-- TODO temp <module>client</module> -->
