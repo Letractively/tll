@@ -10,9 +10,7 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.model.Model;
-import com.tll.common.model.mock.MockEntityType;
-import com.tll.common.search.EntitySearch;
-import com.tll.criteria.CriteriaType;
+import com.tll.common.search.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 
@@ -106,38 +104,6 @@ public final class UITests extends AbstractUITest {
 	};
 
 	/**
-	 * AddressSearch
-	 * @author jpk
-	 */
-	static final class AddressSearch extends EntitySearch {
-
-		private String address1, postalCode;
-
-		/**
-		 * Constructor
-		 */
-		public AddressSearch() {
-			super(CriteriaType.ENTITY, MockEntityType.ADDRESS);
-		}
-
-		public String getAddress1() {
-			return address1;
-		}
-
-		public void setAddress1(String address1) {
-			this.address1 = address1;
-		}
-
-		public String getPostalCode() {
-			return postalCode;
-		}
-
-		public void setPostalCode(String postalCode) {
-			this.postalCode = postalCode;
-		}
-	}
-
-	/**
 	 * RemoteListingWidgetTest
 	 * @author jpk
 	 */
@@ -155,7 +121,7 @@ public final class UITests extends AbstractUITest {
 		@Override
 		protected Widget getContext() {
 			lw =
-					ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new AddressSearch(),
+					ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
 							defaultSorting);
 			return lw;
 		}

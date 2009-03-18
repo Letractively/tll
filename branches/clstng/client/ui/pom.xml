@@ -13,7 +13,7 @@
   <name>client-ui</name>
   <version>${project.parent.version}</version>
   <description>Houses common client ui widgets and supporting ui related functionality.</description>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -72,17 +72,19 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
+      <classifier>client</classifier>
     </dependency>
 
     <dependency>
@@ -95,14 +97,7 @@
       <artifactId>gwt-log</artifactId>
       <scope>provided</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-      <scope>test</scope>
-    </dependency>
+
   </dependencies>
 
 </project>

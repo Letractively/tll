@@ -8,6 +8,7 @@ package com.tll.dao;
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
+import com.tll.criteria.TestSelectNamedQueries;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;
@@ -22,42 +23,6 @@ import com.tll.model.NestedEntity;
  */
 public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Account> {
 	
-	private static enum SelectNamedQueries implements ISelectNamedQueryDef {
-		ACCOUNT_LISTING("account.testScalarQuery", Account.class, true, true);
-
-		private final String queryName;
-		private final Class<?> entityType;
-		private final boolean scalar;
-		private final boolean supportsPaging;
-
-		private SelectNamedQueries(String queryName, Class<?> entityType, boolean scalar, boolean supportsPaging) {
-			this.queryName = queryName;
-			this.entityType = entityType;
-			this.scalar = scalar;
-			this.supportsPaging = supportsPaging;
-		}
-
-		public String getQueryName() {
-			return queryName;
-		}
-
-		public Class<?> getEntityType() {
-			return entityType;
-		}
-
-		public boolean isScalar() {
-			return scalar;
-		}
-
-		public boolean isSupportsPaging() {
-			return supportsPaging;
-		}
-
-		@Override
-		public String toString() {
-			return queryName;
-		}
-	}
 	// dependent entities
 	NestedEntity nestedEntity;
 	Currency currency;
@@ -137,7 +102,8 @@ public class TestEntityDaoTestHandler extends AbstractEntityDaoTestHandler<Accou
 
 	@Override
 	public ISelectNamedQueryDef[] getQueriesToTest() {
-		return SelectNamedQueries.values();
+		//return TestSelectNamedQueries.values();
+		return new ISelectNamedQueryDef[] { TestSelectNamedQueries.ACCOUNT_LISTING };
 	}
 
 	@Override

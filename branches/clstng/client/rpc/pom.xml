@@ -14,31 +14,6 @@
   <version>${project.parent.version}</version>
   <description>Houses core RPC enabling classes for tll GWT based apps.</description>
 
-  <build>
-    <plugins>
-      <!-- 
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-3</version>
-        <executions>
-          <execution>
-            <id>gwt-module-assembly</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/gwt-module.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-    </plugins>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -82,7 +57,9 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
+      <classifier>client</classifier>
     </dependency>
+
   </dependencies>
 
 </project>

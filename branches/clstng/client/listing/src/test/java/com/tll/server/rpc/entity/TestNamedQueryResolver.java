@@ -6,31 +6,18 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.SelectNamedQueries;
+import com.tll.criteria.TestSelectNamedQueries;
 
 
 /**
- * NamedQueryResolver
+ * TestNamedQueryResolver
  * @author jpk
  */
-public class NamedQueryResolver implements INamedQueryResolver {
+public class TestNamedQueryResolver implements INamedQueryResolver {
 	
-	private static final NamedQueryResolver instance = new NamedQueryResolver();
-
-	public static final NamedQueryResolver instance() {
-		return instance;
-	}
-
-	/**
-	 * Constructor
-	 */
-	private NamedQueryResolver() {
-		super();
-	}
-
 	@Override
 	public ISelectNamedQueryDef resolveNamedQuery(String queryName) throws IllegalArgumentException {
-		for(SelectNamedQueries snq : SelectNamedQueries.values()) {
+		for(final TestSelectNamedQueries snq : TestSelectNamedQueries.values()) {
 			if(snq.getQueryName().equals(queryName)) {
 				return snq;
 			}

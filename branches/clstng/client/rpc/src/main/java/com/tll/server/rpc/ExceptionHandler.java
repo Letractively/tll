@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailSendException;
 
 import com.google.inject.Inject;
@@ -25,6 +27,8 @@ import com.tll.mail.NameEmail;
  * @author jpk
  */
 public class ExceptionHandler {
+	
+	private static final Log log = LogFactory.getLog(ExceptionHandler.class);
 
 	/**
 	 * ConfigKeys - Configuration property keys for the exception handler.
@@ -98,23 +102,30 @@ public class ExceptionHandler {
 			}
 		}
 		if(emailException) {
-			final Map<String, Object> data = new HashMap<String, Object>();
-			data.put("header", "Exception Notification (" + t.getClass().getSimpleName() + ")");
-			data.put("datetime", sdf.format(new Date()));
-			data.put("error", emsg);
-			final StackTraceElement ste =
-					(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
-			data.put("trace", ste == null ? "[NO STACK TRACE]" : ste.toString());
-			try {
-				final String onErrorEmail = Config.instance().getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
-				final String onErrorName = Config.instance().getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
-				final NameEmail ne = new NameEmail(onErrorName, onErrorEmail);
-				mailManager.sendEmail(mailManager.buildTextTemplateContext(mailManager.buildAppSenderMailRouting(ne),
-						"exception-notification", data));
+			if(mailManager == null) {
+				log.warn("Can't email exception because no email manager specified.");
 			}
-			catch(final MailSendException mse) {
-				status.addMsg("Unable to send exception notification email: " + mse.getMessage(), MsgLevel.ERROR,
-						MsgAttr.NODISPLAY.flag);
+			else {
+				final Map<String, Object> data = new HashMap<String, Object>();
+				data.put("header", "Exception Notification (" + t.getClass().getSimpleName() + ")");
+				synchronized (this) {
+					data.put("datetime", sdf.format(new Date()));
+				}
+				data.put("error", emsg);
+				final StackTraceElement ste =
+						(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
+				data.put("trace", ste == null ? "[NO STACK TRACE]" : ste.toString());
+				try {
+					final String onErrorEmail = Config.instance().getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
+					final String onErrorName = Config.instance().getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
+					final NameEmail ne = new NameEmail(onErrorName, onErrorEmail);
+					mailManager.sendEmail(mailManager.buildTextTemplateContext(mailManager.buildAppSenderMailRouting(ne),
+							"exception-notification", data));
+				}
+				catch(final MailSendException mse) {
+					status.addMsg("Unable to send exception notification email: " + mse.getMessage(), MsgLevel.ERROR,
+							MsgAttr.NODISPLAY.flag);
+				}
 			}
 		}
 	}

@@ -20,17 +20,16 @@ import com.tll.model.Interface;
  */
 public class SmbizMEntityServiceImplResolver implements IMEntityServiceImplResolver {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Class<? extends IMEntityServiceImpl<? extends IEntity, ISearch>> resolveMEntityServiceImpl(
+	public Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> resolveMEntityServiceImpl(
 			Class<? extends IEntity> entityClass) throws IllegalArgumentException {
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 
 		if(Account.class.isAssignableFrom(rootEntityClass)) {
-			return (Class<? extends IMEntityServiceImpl<? extends IEntity, ISearch>>) AccountService.class;
+			return AccountService.class;
 		}
 		else if(Address.class.isAssignableFrom(rootEntityClass)) {
-			return (Class<? extends IMEntityServiceImpl<? extends IEntity, ISearch>>) AddressService.class;
+			return AddressService.class;
 		}
 		else if(Authority.class.isAssignableFrom(rootEntityClass)) {
 			return AuthorityService.class;

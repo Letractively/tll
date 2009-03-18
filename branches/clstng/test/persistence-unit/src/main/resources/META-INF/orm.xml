@@ -6,6 +6,23 @@
   http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
   version="1.0">
 
+  <named-query name="address.testScalarQuery">
+    <query>
+    <![CDATA[
+    select
+      a.id as id,
+      a.firstName as firstName,
+      a.lastName as lastName,
+      a.address1 as address1,
+      a.postalCode as postalCode
+    from
+      Address a
+    order by lastName
+    ]]>
+    </query>
+  </named-query>
+  <named-query name="address.testScalarQuery.count"><query><![CDATA[select count(id) from Address]]></query></named-query>
+  
   <named-query name="account.testScalarQuery">
     <query>
     <![CDATA[

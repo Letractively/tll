@@ -63,14 +63,23 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 				EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
 
 		final RefData refdata = injector.getInstance(RefData.class);
-		final MailManager mailManager = injector.getInstance(MailManager.class);
 		
+		// the mail manager is optional
+		MailManager mailManager;
+		try {
+			mailManager = injector.getInstance(MailManager.class);
+		}
+		catch(final Exception e) {
+			mailManager = null;
+			log.warn("No mail manager will be employed.");
+		}
+
 		final Marshaler marshaler = injector.getInstance(Marshaler.class);
 		final EntityManagerFactory entityManagerFactory =
 				daoMode == DaoMode.ORM ? injector.getInstance(EntityManagerFactory.class) : null;
 		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
-		final ExceptionHandler exceptionHandler = injector.getInstance(ExceptionHandler.class);
+		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager);
 		
 		String cn;
 
@@ -86,13 +95,13 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			nqr = (INamedQueryResolver) Class.forName(cn).newInstance();
 
 		}
-		catch(InstantiationException e) {
+		catch(final InstantiationException e) {
 			throw new Error(e.getMessage(), e);
 		}
-		catch(IllegalAccessException e) {
+		catch(final IllegalAccessException e) {
 			throw new Error(e.getMessage(), e);
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new Error(e.getMessage(), e);
 		}
 
@@ -102,7 +111,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
-		MEntityContext c =
+		final MEntityContext c =
 				(MEntityContext) servletContext.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
 		if(c != null) {
 			final EntityManagerFactory emf = c.getEntityManagerFactory();

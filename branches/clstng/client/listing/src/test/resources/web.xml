@@ -11,11 +11,11 @@
   <context-param>
     <param-name>di.modules</param-name>
     <param-value>
-      com.tll.di.RefDataModule,
-      com.tll.di.ModelModule,
-      com.tll.di.MockEntityFactoryModule,
-      com.tll.di.MockDaoModule,
-      com.tll.di.EntityAssemblerModule,
+      com.tll.di.RefDataModule
+      com.tll.di.ModelModule
+      com.tll.di.MockEntityFactoryModule
+      com.tll.di.MockDaoModule
+      com.tll.di.EntityAssemblerModule
       com.tll.di.EntityServiceFactoryModule
     </param-value>
   </context-param>
