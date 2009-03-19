@@ -19,8 +19,7 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
-import com.tll.DbTest;
-import com.tll.config.Config;
+import com.tll.AbstractDbTest;
 import com.tll.criteria.Criteria;
 import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
@@ -28,10 +27,10 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
 import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.EntityAssemblerModule;
+import com.tll.di.OrmDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.TransactionModule;
@@ -46,7 +45,7 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 @Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends DbTest {
+public class PagingSearchListHandlerTest extends AbstractDbTest {
 
 	/**
 	 * TestEntityService
@@ -118,8 +117,8 @@ public class PagingSearchListHandlerTest extends DbTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
-		modules.add(new DaoModule());
+		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
+		modules.add(new OrmDaoModule());
 		modules.add(new TransactionModule());
 		modules.add(new EntityAssemblerModule());
 		modules.add(new Module() {

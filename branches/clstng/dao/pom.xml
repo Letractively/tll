@@ -50,13 +50,17 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
+          <!-- tweak to include additional test assets -->
           <execution>
             <id>test-assets</id>
             <configuration>
-              <excludes>
-                <exclude>**/SimpleEntityDaoTest.class</exclude>
-                <exclude>**/TestEntityDaoTestHandler.class</exclude>
-              </excludes>
+              <includes>
+                <include>**/Abstract*Test*</include>
+                <include>**/*Test*Util*</include>
+                <include>**/mock/**</include>
+                <include>**/IEntityDaoTestHandler.class</include>
+                <include>**/DaoMode.class</include>
+              </includes>
             </configuration>
           </execution>
         </executions>

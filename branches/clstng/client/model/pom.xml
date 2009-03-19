@@ -17,6 +17,29 @@
   <build>
     <plugins>
       
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <!-- tweak test-assets execution to additionally include the ModelViewer class -->
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/Abstract*Test*</include>
+                <include>**/*Test*Util*</include>
+                <include>**/mock/**</include>
+                <include>**/ModelViewer*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <!-- override client test default which invokes only GWTTest derived tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

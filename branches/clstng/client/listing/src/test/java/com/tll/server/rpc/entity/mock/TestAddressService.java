@@ -3,14 +3,14 @@
  * @author jpk
  * Feb 21, 2008
  */
-package com.tll.server.rpc.entity;
+package com.tll.server.rpc.entity.mock;
 
 import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.ModelKey;
-import com.tll.common.search.TestAddressSearch;
+import com.tll.common.search.mock.TestAddressSearch;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Address;
@@ -18,6 +18,8 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.IBusinessKey;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.server.rpc.entity.MEntityContext;
+import com.tll.server.rpc.entity.MEntityServiceImpl;
 
 /**
  * TestAddressService

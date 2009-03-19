@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.tll.config.Config;
-import com.tll.di.SecurityModule.ConfigKeys;
 import com.tll.server.SecurityMode;
 import com.tll.util.EnumUtil;
 
@@ -45,7 +44,8 @@ public class HttpSessionContextIntegrationFilter extends AbstractSecurityFilter 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		final SecurityMode securityMode =
-				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
+				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
+						SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 		log.debug("HttpSessionContextIntegrationFilter (SecurityMode: " + securityMode + ") filtering..");
 		if(securityMode == SecurityMode.ACEGI) {
 			wrapped.doFilter(request, response, chain);

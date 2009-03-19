@@ -28,7 +28,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.tll.DbTest;
+import com.tll.AbstractDbTest;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
@@ -36,9 +36,10 @@ import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
+import com.tll.di.OrmDaoModule;
+import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
@@ -62,7 +63,7 @@ import com.tll.util.EnumUtil;
 @Test(groups = { "dao" })
 @SuppressWarnings( {
 	"synthetic-access", "unused" })
-public abstract class AbstractEntityDaoTest extends DbTest {
+public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 
 	/**
 	 * EntityDaoTestDecorator - Decorates {@link IEntityDao} to:
@@ -269,7 +270,14 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		modules.add(new DaoModule());
+		if(getDaoMode().isDatastore()) {
+			// orm
+			modules.add(new OrmDaoModule());
+		}
+		else {
+			// mock
+			modules.add(new MockDaoModule());
+		}
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -455,7 +463,7 @@ public abstract class AbstractEntityDaoTest extends DbTest {
 	 * @return The sought entity direct from the datastore.
 	 */
 	private IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
-		return DbTest.getEntityFromDb(dao, key);
+		return AbstractDbTest.getEntityFromDb(dao, key);
 	}
 	
 	/**

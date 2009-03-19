@@ -1,6 +1,7 @@
-package com.tll.common.search;
+package com.tll.common.search.mock;
 
 import com.tll.common.model.mock.MockEntityType;
+import com.tll.common.search.EntitySearch;
 import com.tll.criteria.CriteriaType;
 
 /**

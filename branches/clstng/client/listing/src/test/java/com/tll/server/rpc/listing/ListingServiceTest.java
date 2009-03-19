@@ -7,7 +7,7 @@ package com.tll.server.rpc.listing;
 
 import org.testng.annotations.Test;
 
-import com.tll.DbTest;
+import com.tll.AbstractDbTest;
 
 /**
  * ListingServiceTest - Tests the {@link ListingService}.
@@ -15,7 +15,7 @@ import com.tll.DbTest;
  */
 @Test(groups = {
 	"server", "listing" })
-public class ListingServiceTest extends DbTest {
+public class ListingServiceTest extends AbstractDbTest {
 	
 	public void test() {
 		// TODO impl

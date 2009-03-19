@@ -3,8 +3,9 @@
  * @author jpk
  * @since Mar 17, 2009
  */
-package com.tll.criteria;
+package com.tll.criteria.mock;
 
+import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.Account;
 import com.tll.model.Address;
 

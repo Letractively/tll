@@ -10,7 +10,7 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.model.Model;
-import com.tll.common.search.TestAddressSearch;
+import com.tll.common.search.mock.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
 

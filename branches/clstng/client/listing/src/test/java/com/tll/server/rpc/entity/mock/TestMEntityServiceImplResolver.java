@@ -2,12 +2,14 @@
  * The Logic Lab
  * @author jpk Feb 11, 2009
  */
-package com.tll.server.rpc.entity;
+package com.tll.server.rpc.entity.mock;
 
 import com.tll.common.search.ISearch;
 import com.tll.model.Address;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
+import com.tll.server.rpc.entity.IMEntityServiceImpl;
+import com.tll.server.rpc.entity.IMEntityServiceImplResolver;
 
 /**
  * TestMEntityServiceImplResolver

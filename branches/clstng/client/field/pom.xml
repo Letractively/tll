@@ -18,62 +18,6 @@
     <plugins>
 
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>com.tll</groupId>
-            <artifactId>gwt-test-war-dir-assembly</artifactId>
-            <version>1.0-SNAPSHOT</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>generate-gwt-war-dir</id>
-            <goals>
-              <goal>directory-single</goal>
-            </goals>
-            <phase>process-test-classes</phase>
-            <configuration>
-              <finalName>war</finalName>
-              <outputDirectory>target</outputDirectory>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>gwt-test-war-dir.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>gwt-compile</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
-                <property name="gwt.compile.modules" value="com.tll.UITests" />
-                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
-                <property name="gwt.shell.startupUrl" value="UITests.html" />
-                <echo message="test classpath: ${gwt.compile.classpath}" />
-                <ant antfile="${basedir}/../build-gwt.xml">
-                  <!-- <target name="compile" /> -->
-                  <target name="build-shell-exec-file" />
-                  <target name="build-shell-debug-exec-file" />
-                </ant>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

@@ -16,7 +16,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -24,17 +23,16 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DaoModule;
 import com.tll.di.DbShellModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
 /**
- * DbTest - Test that supports raw transactions having an accessible
+ * AbstractDbTest - Test that supports raw transactions having an accessible
  * <code>daoMode</code> member property.
  * @author jpk
  */
-public abstract class DbTest extends AbstractInjectedTest {
+public abstract class AbstractDbTest extends AbstractInjectedTest {
 
 	/**
 	 * Retrieves the entity from the db given a {@link PrimaryKey}.
@@ -110,7 +108,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	/**
 	 * Constructor
 	 */
-	public DbTest() {
+	public AbstractDbTest() {
 		this(null, false, false);
 	}
 
@@ -118,9 +116,9 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 * Constructor
 	 * @param createDbShell
 	 * @param adHocTransactions
-	 * @see #DbTest(DaoMode, boolean, boolean)
+	 * @see #AbstractDbTest(DaoMode, boolean, boolean)
 	 */
-	protected DbTest(boolean createDbShell, boolean adHocTransactions) {
+	protected AbstractDbTest(boolean createDbShell, boolean adHocTransactions) {
 		this(null, createDbShell, adHocTransactions);
 	}
 
@@ -134,7 +132,7 @@ public abstract class DbTest extends AbstractInjectedTest {
 	 *        support as this test depends on them when the <code>daoMode</code>
 	 *        equals {@link DaoMode#ORM}.
 	 */
-	protected DbTest(DaoMode daoMode, boolean createDbShell, boolean adHocTransactions) {
+	protected AbstractDbTest(DaoMode daoMode, boolean createDbShell, boolean adHocTransactions) {
 		super();
 		setDaoMode(daoMode);
 		this.createDbShell = createDbShell;
@@ -170,10 +168,12 @@ public abstract class DbTest extends AbstractInjectedTest {
 		if(this.daoMode != null || injector != null) {
 			throw new IllegalStateException("The DAO mode has already been set.");
 		}
+		/*
 		if(daoMode != null) {
 			// update the config
 			Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
 		}
+		*/
 		this.daoMode = daoMode;
 	}
 

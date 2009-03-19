@@ -8,7 +8,7 @@ package com.tll.dao;
 import org.testng.Assert;
 
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.TestSelectNamedQueries;
+import com.tll.criteria.mock.TestSelectNamedQueries;
 import com.tll.model.Account;
 import com.tll.model.AccountAddress;
 import com.tll.model.Address;

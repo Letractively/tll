@@ -3,10 +3,11 @@
  * @author jpk
  * Feb 10, 2009
  */
-package com.tll.server.rpc.entity;
+package com.tll.server.rpc.entity.mock;
 
 import com.tll.criteria.ISelectNamedQueryDef;
-import com.tll.criteria.TestSelectNamedQueries;
+import com.tll.criteria.mock.TestSelectNamedQueries;
+import com.tll.server.rpc.entity.INamedQueryResolver;
 
 
 /**

@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Nov 15, 2007
  */
-package com.tll.model.mock;
+package com.tll.model;
 
 import java.util.Set;
 

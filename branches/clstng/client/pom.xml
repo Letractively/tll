@@ -99,15 +99,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <!-- 
-          sadly, we need to explicitly callout javax as an exclusion 
-          since it creeps in somehow for some client modules. 
-        -->
-        <configuration>
-          <excludes>
-            <exclude>javax/**</exclude>
-          </excludes>
-        </configuration>
         <executions>
           <!-- server side only jar for client modules -->
           <execution>
@@ -123,8 +114,6 @@
                 <exclude>**/*.gwt.xml</exclude>
                 <exclude>**/client/**</exclude>
                 <exclude>**/public/**</exclude>
-                <!-- again, this sucks to have to have to ref javax as an exclusion - maven shit -->
-                <exclude>**/javax/**</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -140,10 +129,6 @@
               <excludes>
                 <exclude>**/*UITests*</exclude>
               </excludes>
-              <includes>
-                <include>**/*Test*</include>
-                <include>**/mock/**</include>
-              </includes>
             </configuration>
           </execution>
         </executions>
@@ -151,7 +136,14 @@
 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-3</version>
+        <!-- <version>2.2-beta-3</version> -->
+        <dependencies>
+          <dependency>
+            <groupId>com.tll</groupId>
+            <artifactId>gwt-test-war-dir-assembly</artifactId>
+            <version>1.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
         
         <!-- it is expected each client module have a gwt jar assembly descriptor! -->
         <executions>
@@ -162,22 +154,76 @@
               <goal>single</goal>
             </goals>
             <configuration>
+              <!-- 
+                sadly, i don't yet know how to turn off this hook at the tll/client level!!
+                so we make it fail quietly. HACKO FACKO MAVENO SUCKO 
+              -->
+              <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
               <descriptors>
                 <descriptor>src/main/assembly/client-jar.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
+
+          <!-- generate the gwt war dir for testing -->
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
-
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-processing</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+                <property name="gwt.compile.modules" value="com.tll.UITests" />
+                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
+                <property name="gwt.shell.startupUrl" value="UITests.html" />
+                <echo message="test classpath: ${gwt.compile.classpath}" />
+                <ant antfile="${basedir}/../build-gwt.xml">
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
+          <!-- 
+            tweak compile deps analyze routine to not fail on warning since 
+            we sometimes spuriously add tll-*sources.jars as compile time deps 
+            which are needed for building the client gwt jar.
+          -->
           <execution>
             <id>analyze-compile-deps</id>
             <configuration>
-              <failOnWarning>true</failOnWarning>
+              <failOnWarning>false</failOnWarning>
               <ignoreNonCompile>true</ignoreNonCompile>
             </configuration>
           </execution>

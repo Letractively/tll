@@ -108,8 +108,7 @@
         </configuration>
 
         <!--
-        Retain the test classes only and not the test resources so we don't 
-        pollute the test classpath for dependent modules.
+          By default, retain extendable base test classes, test utilities and mock test assets.
         -->
         <executions>
           <execution>
@@ -120,7 +119,8 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/*Test*</include>
+                <include>**/Abstract*Test*</include>
+                <include>**/*Test*Util*</include>
                 <include>**/mock/**</include>
               </includes>
             </configuration>
