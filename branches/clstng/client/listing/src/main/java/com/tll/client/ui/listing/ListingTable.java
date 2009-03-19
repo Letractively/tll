@@ -128,6 +128,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addClickHandler(this);
+		addHandler(this, KeyDownEvent.getType());
 		initialize(config);
 	}
 
@@ -244,7 +245,6 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			if(imgSortDir == null) {
 				imgSortDir = new Image();
 				imgSortDir.addClickHandler(this);
-				imgSortDir.setStyleName(Styles.SORT);
 			}
 
 			// insert the sort dir arrow image
@@ -254,6 +254,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			else {
 				imageBundle.sort_desc().applyTo(imgSortDir);
 			}
+			imgSortDir.setStyleName(Styles.SORT);
 			imgSortDir.setTitle(reverseTitle);
 			pnl.insert(imgSortDir, 0);
 		}
@@ -287,7 +288,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			final boolean isRowCntCol = Column.ROW_COUNT_COLUMN == col;
 			if(isRowCntCol) {
 				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
-				getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
+				//getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
 			}
 			if(config.isSortable()) {
 				if(isRowCntCol) {
