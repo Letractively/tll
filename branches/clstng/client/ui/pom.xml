@@ -61,7 +61,6 @@
                 <property name="gwt.shell.startupUrl" value="UITests.html" />
                 <echo message="test classpath: ${gwt.compile.classpath}" />
                 <ant antfile="${basedir}/../build-gwt.xml">
-                  <!-- <target name="compile" /> -->
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
                 </ant>
@@ -84,7 +83,6 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
 
     <dependency>

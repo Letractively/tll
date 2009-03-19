@@ -166,19 +166,11 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-rpc</artifactId>
       <version>${project.version}</version>
-      <classifier>server</classifier>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-rpc</artifactId>
-      <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
     
     <dependency>

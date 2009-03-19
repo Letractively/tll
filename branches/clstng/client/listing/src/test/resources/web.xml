@@ -36,14 +36,14 @@
   </listener>
   
   <filter>
-    <filter-name>CacheManagerFilter</filter-name>
-    <filter-class>com.tll.server.filter.CacheManagerFilter</filter-class>
+    <filter-name>MockSessionFilter</filter-name>
+    <filter-class>com.tll.server.filter.MockSessionFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>CacheManagerFilter</filter-name>
+    <filter-name>MockSessionFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-
+  
   <filter>
     <filter-name>WebClientCacheFilter</filter-name>
     <filter-class>com.tll.server.filter.WebClientCacheFilter</filter-class>
@@ -68,7 +68,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ListingService</servlet-name>
-    <url-pattern>/rpc/listing</url-pattern>
+    <url-pattern>/uitests/rpc/listing</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -77,7 +77,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>CrudService</servlet-name>
-    <url-pattern>/rpc/crud</url-pattern>
+    <url-pattern>/uitests/rpc/crud</url-pattern>
   </servlet-mapping>
   
 </web-app>

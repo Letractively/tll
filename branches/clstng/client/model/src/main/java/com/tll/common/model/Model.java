@@ -60,7 +60,7 @@ public final class Model implements IMarshalable, IBindable, IPropertyMetadataPr
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private final /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The entity type.

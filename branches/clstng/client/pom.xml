@@ -100,20 +100,35 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <!-- 
-          tweak stock jar packaging to only include server side assets
-          and rely on the client-jar assembly descriptor to package up a client jar. 
+          sadly, we need to explicitly callout javax as an exclusion 
+          since it creeps in somehow for some client modules. 
         -->
         <configuration>
-          <classifier>server</classifier>
           <excludes>
-            <exclude>**/*.java</exclude>
-            <exclude>**/*.gwt.xml</exclude>
-            <exclude>**/client/**</exclude>
-            <exclude>**/public/**</exclude>
-            <exclude>**/javax/**</exclude>
+            <exclude>javax/**</exclude>
           </excludes>
         </configuration>
         <executions>
+          <!-- server side only jar for client modules -->
+          <execution>
+            <id>server-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>server</classifier>
+              <excludes>
+                <exclude>**/*.java</exclude>
+                <exclude>**/*.gwt.xml</exclude>
+                <exclude>**/client/**</exclude>
+                <exclude>**/public/**</exclude>
+                <!-- again, this sucks to have to have to ref javax as an exclusion - maven shit -->
+                <exclude>**/javax/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          
           <!-- tweak test-assets execution to exclude project specific gwt ui test assests -->
           <execution>
             <id>test-assets</id>
@@ -159,15 +174,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          
-          <!-- 
-          since we are now separating client/server code into their separate jars for client modules, 
-          we unfortunately can't rely on maven's dependency analysis. 
-          -->
           <execution>
             <id>analyze-compile-deps</id>
             <configuration>
-              <failOnWarning>false</failOnWarning>
+              <failOnWarning>true</failOnWarning>
               <ignoreNonCompile>true</ignoreNonCompile>
             </configuration>
           </execution>
@@ -199,12 +209,14 @@
       <scope>provided</scope>
     </dependency>
     <!-- 
+      this gwt-servlet dependency is spurious for some client modules but it serves as a way to singly 
+      delcare this dependency which the gwt war dir assembly routine depends. 
+    -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <scope>runtime</scope>
     </dependency>
-    -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>

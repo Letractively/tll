@@ -248,19 +248,18 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
-		if(pageSize > 0) {
-			if(sender == btnPageFirst) {
-				listingOperator.firstPage();
-			}
-			else if(sender == btnPagePrev) {
-				listingOperator.previousPage();
-			}
-			else if(sender == btnPageNext) {
-				listingOperator.nextPage();
-			}
-			else if(sender == btnPageLast) {
-				listingOperator.lastPage();
-			}
+		((Focusable) sender).setFocus(false);
+		if(sender == btnPageFirst) {
+			listingOperator.firstPage();
+		}
+		else if(sender == btnPagePrev) {
+			listingOperator.previousPage();
+		}
+		else if(sender == btnPageNext) {
+			listingOperator.nextPage();
+		}
+		else if(sender == btnPageLast) {
+			listingOperator.lastPage();
 		}
 		else if(sender == btnRefresh) {
 			listingOperator.refresh();
@@ -269,7 +268,6 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			assert addRowDelegate != null;
 			addRowDelegate.handleAddRow();
 		}
-		((Focusable) sender).setFocus(false);
 	}
 
 	public void onKeyUp(KeyUpEvent event) {

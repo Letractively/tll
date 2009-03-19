@@ -57,7 +57,6 @@
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
 
   </dependencies>
