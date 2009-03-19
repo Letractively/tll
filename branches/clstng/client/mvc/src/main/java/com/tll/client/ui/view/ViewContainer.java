@@ -119,7 +119,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 
 		final int type = event.getTypeInt();
 		final NativeEvent ne = event.getNativeEvent();
-		final Element target = ne.getTarget();
+		final Element target = Element.as(ne.getCurrentEventTarget());
 		final boolean eventTargetsPopup = getElement().isOrHasChild(target);
 
 		switch(type) {
