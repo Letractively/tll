@@ -8,7 +8,10 @@ import com.tll.client.App;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.PropertyBoundCellRenderer;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
@@ -131,11 +134,13 @@ public final class MerchantListingView extends ListingView {
 
 			private final Column[] columns =
 					new Column[] {
-						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "rowData"),
-						new Column("Created", Model.DATE_CREATED_PROPERTY, "rowData", GlobalFormat.DATE),
-						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "rowData", GlobalFormat.DATE),
-						new Column("Status", "status", "rowData"), new Column("Billing Model", "billingModel", "rowData"),
-						new Column("Billing Cycle", "billingCycle", "rowData"), new Column("Store Name", "storeName", "rowData") };
+						Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "rowData"),
+						new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "rowData"),
+						new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "rowData"),
+						new PropertyBoundColumn("Status", "status", "rowData"),
+						new PropertyBoundColumn("Billing Model", "billingModel", "rowData"),
+						new PropertyBoundColumn("Billing Cycle", "billingCycle", "rowData"),
+						new PropertyBoundColumn("Store Name", "storeName", "rowData") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -195,11 +200,15 @@ public final class MerchantListingView extends ListingView {
 				return null;
 			}
 
+			@Override
+			public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+				return PropertyBoundCellRenderer.get();
+			}
 		};
 
 		setListingWidget(ListingFactory.createRemoteListingWidget(config, SmbizEntityType.MERCHANT.toString()
 				+ "_LISTING",
-				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

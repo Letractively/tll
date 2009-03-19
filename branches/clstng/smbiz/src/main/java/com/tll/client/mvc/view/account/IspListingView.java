@@ -8,7 +8,10 @@ import com.tll.client.App;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.PropertyBoundCellRenderer;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
@@ -98,11 +101,12 @@ public final class IspListingView extends ListingView {
 
 			private final Column[] columns =
 					new Column[] {
-						new Column("#", Column.ROW_COUNT_COL_PROP, "i"), new Column("Name", Model.NAME_PROPERTY, "i"),
-						new Column("Created", Model.DATE_CREATED_PROPERTY, "i", GlobalFormat.DATE),
-						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "i", GlobalFormat.DATE),
-						new Column("Status", "status", "i"), new Column("Billing Model", "billingModel", "i"),
-						new Column("Billing Cycle", "billingCycle", "i") };
+						Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "i"),
+						new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "i"),
+						new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "i"),
+						new PropertyBoundColumn("Status", "status", "i"),
+						new PropertyBoundColumn("Billing Model", "billingModel", "i"),
+						new PropertyBoundColumn("Billing Cycle", "billingCycle", "i") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -155,11 +159,16 @@ public final class IspListingView extends ListingView {
 				// TODO
 				return null;
 			}
+
+			@Override
+			public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+				return PropertyBoundCellRenderer.get();
+			}
 		};
 
 		setListingWidget(ListingFactory.createRemoteListingWidget(config,
 				SmbizEntityType.ISP.toString() + "_LISTING",
-				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

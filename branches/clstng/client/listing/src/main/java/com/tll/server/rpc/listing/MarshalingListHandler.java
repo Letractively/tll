@@ -14,11 +14,12 @@ import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 
 /**
- * MarshalingListHandler - {@link IMarshalingListHandler} implementation
+ * MarshalingListHandler - Transforms {@link SearchResult}s to {@link Model}s
+ * for use in client side list handling.
  * @author jpk
- * @param <E>
+ * @param <E> the entity type
  */
-public class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> implements IMarshalingListHandler<E> {
+public final class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> {
 
 	private final Marshaler marshaler;
 	private final MarshalOptions marshalOptions;
@@ -47,7 +48,7 @@ public class MarshalingListHandler<E extends IEntity> extends DecoratedListHandl
 	 * @return The transformed {@link Model}
 	 * @throws IllegalStateException When a transform related error occurrs.
 	 */
-	protected Model transform(Model model) {
+	private Model transform(Model model) {
 		if(propKeys == null) {
 			return model;
 		}

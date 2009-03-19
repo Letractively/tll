@@ -166,7 +166,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// transform to marshaling list handler
-						final IMarshalingListHandler<E> marshalingListHandler =
+						final MarshalingListHandler<E> marshalingListHandler =
 								new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
 										mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
 

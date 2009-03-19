@@ -171,7 +171,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	protected void doExecute() {
 		switch(crudOp) {
 			case FETCH_PROTOTYPE:
-				svc.getEmptyEntity((EntityPrototypeRequest) entityRequest, getAsyncCallback());
+				svc.prototype((EntityPrototypeRequest) entityRequest, getAsyncCallback());
 				break;
 
 			case LOAD:

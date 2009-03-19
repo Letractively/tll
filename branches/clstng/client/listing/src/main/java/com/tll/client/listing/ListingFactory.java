@@ -42,16 +42,13 @@ public abstract class ListingFactory {
 	 * @param listHandlerType The remote list handler type
 	 * @param searchCriteria The search criteria that generates the remote
 	 *        listing.
+	 * @param propKeys optional array of OGNL property names that filter the
+	 *        results on the server.
 	 * @param initialSorting The initial sorting directive
 	 * @return A new {@link ModelListingWidget}.
 	 */
 	public static <S extends ISearch> RemoteListingWidget createRemoteListingWidget(IListingConfig<Model> config,
-			String listingName, ListHandlerType listHandlerType, S searchCriteria, Sorting initialSorting) {
-		final Column[] cols = config.getColumns();
-		final String propKeys[] = new String[cols.length];
-		for(int i = 0; i < propKeys.length; i++) {
-			propKeys[i] = cols[i].getPropertyName();
-		}
+			String listingName, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, Sorting initialSorting) {
 		final RemoteListingOperator<S> lo =
 				createRemoteOperator(listingName, listHandlerType, searchCriteria, propKeys, config.getPageSize(),
 						initialSorting);

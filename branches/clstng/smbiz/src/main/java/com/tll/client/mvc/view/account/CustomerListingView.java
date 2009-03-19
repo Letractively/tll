@@ -7,7 +7,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.PropertyBoundCellRenderer;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ShowViewRequest;
@@ -136,13 +139,18 @@ public final class CustomerListingView extends ListingView {
 
 			private final String listingElementName = SmbizEntityType.CUSTOMER.getName();
 
+			private final PropertyBoundColumn cName = new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "c");
+			private final PropertyBoundColumn cDCreated =
+					new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "ca");
+			private final PropertyBoundColumn cDModified =
+					new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "ca");
+			private final PropertyBoundColumn cStatus = new PropertyBoundColumn("Status", "status", "ca");
+			private final PropertyBoundColumn cBillingModel = new PropertyBoundColumn("Billing Model", "billingModel", "ca");
+			private final PropertyBoundColumn cBillingCycle = new PropertyBoundColumn("Billing Cycle", "billingCycle", "ca");
+			
 			private final Column[] columns =
 					new Column[] {
-						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "c"),
-						new Column("Created", Model.DATE_CREATED_PROPERTY, "ca", GlobalFormat.DATE),
-						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "ca", GlobalFormat.DATE),
-						new Column("Status", "status", "ca"), new Column("Billing Model", "billingModel", "ca"),
-						new Column("Billing Cycle", "billingCycle", "ca") };
+				Column.ROW_COUNT_COLUMN, cName, cDCreated, cDModified, cStatus, cBillingModel, cBillingCycle };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -175,6 +183,11 @@ public final class CustomerListingView extends ListingView {
 				return columns;
 			}
 
+			@Override
+			public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+				return PropertyBoundCellRenderer.get();
+			}
+			
 			public IRowOptionsDelegate getRowOptionsHandler() {
 				return rowOps;
 			}
@@ -187,7 +200,7 @@ public final class CustomerListingView extends ListingView {
 
 		setListingWidget(ListingFactory.createRemoteListingWidget(config, SmbizEntityType.CUSTOMER.toString()
 				+ "_LISTING",
-				ListHandlerType.PAGE, criteria, config.getDefaultSorting()));
+				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 
 	@Override

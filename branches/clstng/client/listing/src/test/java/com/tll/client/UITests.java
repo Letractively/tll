@@ -8,6 +8,8 @@ import com.tll.client.listing.IListingConfig;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.ModelPropertyFormatter;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.model.Model;
 import com.tll.common.search.mock.TestAddressSearch;
@@ -37,10 +39,40 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final IListingConfig<Model> config = new IListingConfig<Model>() {
 
-		private final Column[] cols =
-				new Column[] {
-					new Column("First Name", "firstName"), new Column("Last Name", "lastName"), new Column("MI", "mi"),
-					new Column("City", "city"), new Column("Zip", "postalCode") };
+		PropertyBoundColumn cName = new PropertyBoundColumn("Name", "lastName");
+		PropertyBoundColumn cAddress = new PropertyBoundColumn("Address", "address1");
+		PropertyBoundColumn cCity = new PropertyBoundColumn("City", "city");
+
+		private final Column[] cols = new Column[] {
+			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
+	
+		private final ITableCellRenderer<Model, Column> cellRenderer = new ITableCellRenderer<Model, Column>() {
+
+			@Override
+			public String getCellValue(Model rowData, Column column) {
+				if(column == cName) {
+					final StringBuilder sb = new StringBuilder();
+					sb.append(ModelPropertyFormatter.pformat(rowData, "firstName", null));
+					sb.append(" ");
+					sb.append(ModelPropertyFormatter.pformat(rowData, "lastName", null));
+					return sb.toString();
+				}
+				else if(column == cAddress) {
+					final StringBuilder sb = new StringBuilder();
+					sb.append(ModelPropertyFormatter.pformat(rowData, "address1", null));
+					final String a2 = ModelPropertyFormatter.pformat(rowData, "address2", null);
+					if(a2 != null) {
+						sb.append(" ");
+						sb.append(a2);
+					}
+					return sb.toString();
+				}
+				else if(column == cCity) {
+					return ModelPropertyFormatter.pformat(rowData, "city", null);
+				}
+				throw new IllegalStateException("Un-resolvable column: " + column);
+			}
+		};
 		
 		@Override
 		public boolean isSortable() {
@@ -88,8 +120,8 @@ public final class UITests extends AbstractUITest {
 		}
 
 		@Override
-		public ITableCellRenderer<Model> getCellRenderer() {
-			return IListingConfig.MODEL_CELL_RENDERER;
+		public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+			return cellRenderer;
 		}
 
 		@Override
@@ -122,7 +154,7 @@ public final class UITests extends AbstractUITest {
 		protected Widget getContext() {
 			lw =
 					ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
-							defaultSorting);
+							null, defaultSorting);
 			return lw;
 		}
 

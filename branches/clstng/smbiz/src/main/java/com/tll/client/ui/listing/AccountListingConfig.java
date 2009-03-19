@@ -6,7 +6,6 @@
 package com.tll.client.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.ITableCellRenderer;
 import com.tll.common.model.Model;
 
 /**
@@ -21,10 +20,6 @@ public abstract class AccountListingConfig implements IListingConfig<Model> {
 
 	public final String getCaption() {
 		return null;
-	}
-
-	public final ITableCellRenderer<Model> getCellRenderer() {
-		return IListingConfig.MODEL_CELL_RENDERER;
 	}
 
 	public int getPageSize() {

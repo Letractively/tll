@@ -17,8 +17,6 @@ public interface IListingConfig<R> {
 
 	public static final int DEFAULT_PAGE_SIZE = 25;
 
-	public static final ModelCellRenderer MODEL_CELL_RENDERER = new ModelCellRenderer();
-
 	/**
 	 * @return A presentation worthy name for the row type.
 	 */
@@ -73,7 +71,7 @@ public interface IListingConfig<R> {
 	 * @return The table cell transformer responsible for rendering cell values
 	 *         from the backing listing data.
 	 */
-	ITableCellRenderer<R> getCellRenderer();
+	ITableCellRenderer<R, ? extends Column> getCellRenderer();
 
 	/**
 	 * Optional add row handler. This is usually used in conjunction w/ the
