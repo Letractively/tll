@@ -28,8 +28,6 @@ public final class SchemaInfo implements ISchemaInfo {
 
 	private static final int maxLenInt = (new Integer(Integer.MAX_VALUE).toString()).length();
 	private static final int maxLenLong = (new Long(Long.MAX_VALUE).toString()).length();
-	private static final int maxLenFloat = (new Float(Float.MAX_VALUE).toString()).length();
-	private static final int maxLenDouble = (new Double(Double.MAX_VALUE).toString()).length();
 
 	/**
 	 * key: entity class val: serviceMap of FieldData objects keyed by the field
@@ -211,7 +209,7 @@ public final class SchemaInfo implements ISchemaInfo {
 			final Length aLength = m.getAnnotation(Length.class);
 			int maxlen = aLength != null ? aLength.max() : -1;
 
-			if(rt.equals(String.class)) {
+			if(rt == String.class) {
 				maxlen = maxlen == -1 ? 255 : maxlen;
 				fd = new PropertyMetadata(PropertyType.STRING, managed, required, maxlen);
 			}
@@ -219,30 +217,28 @@ public final class SchemaInfo implements ISchemaInfo {
 				maxlen = maxlen == -1 ? 255 : maxlen;
 				fd = new PropertyMetadata(PropertyType.ENUM, managed, required, maxlen);
 			}
-			else if(int.class.equals(rt) || Integer.class.equals(rt)) {
+			else if(int.class == rt || Integer.class == rt) {
 				maxlen = maxlen == -1 ? maxLenInt : maxlen;
 				fd = new PropertyMetadata(PropertyType.INT, managed, required, maxlen);
 			}
-			else if(boolean.class.equals(rt) || Boolean.class.equals(rt)) {
+			else if(boolean.class == rt || Boolean.class == rt) {
 				maxlen = maxlen == -1 ? 5 : maxlen;
 				fd = new PropertyMetadata(PropertyType.BOOL, managed, required, maxlen);
 			}
-			else if(float.class.equals(rt) || Float.class.equals(rt)) {
-				maxlen = maxlen == -1 ? maxLenFloat : maxlen;
+			else if(float.class == rt || Float.class == rt) {
 				fd = new PropertyMetadata(PropertyType.FLOAT, managed, required, maxlen);
 			}
-			else if(double.class.equals(rt) || Double.class.equals(rt)) {
-				maxlen = maxlen == -1 ? maxLenDouble : maxlen;
+			else if(double.class == rt || Double.class == rt) {
 				fd = new PropertyMetadata(PropertyType.DOUBLE, managed, required, maxlen);
 			}
-			else if(long.class.equals(rt) || Long.class.equals(rt)) {
+			else if(long.class == rt || Long.class == rt) {
 				maxlen = maxlen == -1 ? maxLenLong : maxlen;
 				fd = new PropertyMetadata(PropertyType.LONG, managed, required, maxlen);
 			}
-			else if(char.class.equals(rt) || Character.class.equals(rt)) {
+			else if(char.class == rt || Character.class == rt) {
 				fd = new PropertyMetadata(PropertyType.CHAR, managed, required, 1);
 			}
-			else if(Date.class.equals(rt)) {
+			else if(Date.class == rt) {
 				fd = new PropertyMetadata(PropertyType.DATE, managed, required, 30);
 			}
 

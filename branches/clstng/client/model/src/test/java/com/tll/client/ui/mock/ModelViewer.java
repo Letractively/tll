@@ -84,7 +84,7 @@ public class ModelViewer extends Composite {
 			}
 		}
 		catch(final PropertyPathException e) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unable to add model props: " + e.getMessage(), e);
 		}
 		
 		root.setState(true);

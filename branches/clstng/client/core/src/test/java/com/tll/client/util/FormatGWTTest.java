@@ -22,8 +22,13 @@ public class FormatGWTTest extends GWTTestCase {
 		return "com.tll.Core";
 	}
 
+	public void testDecimalFormatting() {
+		final String s = Fmt.decimal(2.22d);
+		Assert.assertTrue(s != null && "2.22".equals(s));
+	}
+
 	public void testCurrencyFormatting() {
-		final String s = Fmt.currency(2.22f);
+		final String s = Fmt.currency(2.22d);
 		Assert.assertTrue(s != null && s.length() > 3 && s.startsWith("US$"));
 	}
 

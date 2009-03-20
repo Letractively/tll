@@ -92,6 +92,7 @@ public class MockFieldGroupProviders {
 			// ad hoc props to verify types
 			fg.addField(fcheckbox("adrsBoolean", "boolean", "Boolean", "Boolean"));
 			fg.addField(ftext("adrsFloat", "float", "Float", "Float", 5));
+			fg.addField(ftext("adrsDouble", "double", "Double", "Double", 5));
 		}
 
 	}

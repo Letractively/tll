@@ -66,8 +66,6 @@ public class MarshalerTest extends AbstractInjectedTest {
 		super.addModules(modules);
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
-		//final DaoModule daoModule = new DaoModule();
 		modules.add(new MockDaoModule());
 	}
 

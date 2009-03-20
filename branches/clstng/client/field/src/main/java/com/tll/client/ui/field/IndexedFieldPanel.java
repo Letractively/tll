@@ -198,7 +198,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		// its root field group is expected to contain this panel's field group as a child
 		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
 		if(!indexPanels.add(index)) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unable to add index: " + ip);
 		}
 	
 		index.setFieldGroupName(size());
@@ -231,7 +231,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	
 		remove.binding.unbind(remove.fieldPanel);
 		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}
 		remove = null;
 	

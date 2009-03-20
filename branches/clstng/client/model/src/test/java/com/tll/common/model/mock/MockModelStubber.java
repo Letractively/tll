@@ -12,8 +12,8 @@ import java.util.Set;
 import com.tll.common.model.BooleanPropertyValue;
 import com.tll.common.model.CharacterPropertyValue;
 import com.tll.common.model.DatePropertyValue;
+import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.EnumPropertyValue;
-import com.tll.common.model.FloatPropertyValue;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.RelatedManyProperty;
@@ -191,7 +191,10 @@ public class MockModelStubber {
 				Boolean.TRUE));
 
 		// test float prop types..
-		address.set(new FloatPropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), 33.33f));
+		address.set(new DoublePropertyValue("float", new PropertyMetadata(PropertyType.FLOAT, false, true, 8), 33.33d));
+		
+		// test double prop types..
+		address.set(new DoublePropertyValue("double", new PropertyMetadata(PropertyType.DOUBLE, false, true, 8), 44.44d));
 		
 		return address;
 	}
@@ -204,7 +207,7 @@ public class MockModelStubber {
 		final Model m = stubModel(MockEntityType.CURRENCY, null, false);
 		m.set(new StringPropertyValue("iso4217", new PropertyMetadata(PropertyType.STRING, false, true, 8), "usd"));
 		m.set(new StringPropertyValue("symbol", new PropertyMetadata(PropertyType.STRING, false, true, 8), "$"));
-		m.set(new FloatPropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.FLOAT, false, true, -1), 1f));
+		m.set(new DoublePropertyValue("usdExchangeRage", new PropertyMetadata(PropertyType.DOUBLE, false, true, -1), 1d));
 		return m;
 	}
 

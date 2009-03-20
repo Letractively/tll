@@ -270,7 +270,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		// remove the tab
 		if(!tabPanel.remove(index)) {
 			// shouldn't happen
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unable to remove tab panel at index: " + index);
 		}
 		tabWidgets.remove(index);
 		if(size() == 0) {

@@ -21,13 +21,13 @@ public class StringLengthValidator implements IValidator {
 	public static Object validate(Object value, int min, int max) throws ValidationException {
 		final int len = (value == null ? 0 : value.toString().length());
 		if(min == -1 && max != -1) {
-			if(len > max) throw new ValidationException("Value cannot exceed " + max + " characters.");
+			if(len > max) throw new ValidationException("Max value length is " + max + " characters.");
 		}
 		else if(min != -1 && max == -1) {
-			if(len < min) throw new ValidationException("Value must be at least " + min + " characters.");
+			if(len < min) throw new ValidationException("Min value length is " + min + " characters.");
 		}
 		else if((len < min) || (len > max)) {
-			throw new ValidationException("Value must be at least " + min + "and no more than " + max + " characters.");
+			throw new ValidationException("Value length must be between " + min + " - " + max + " characters.");
 		}
 		return value;
 	}
@@ -38,7 +38,7 @@ public class StringLengthValidator implements IValidator {
 	 * @param maxCharacters
 	 */
 	public StringLengthValidator(int minCharacters, int maxCharacters) {
-		if(minCharacters < 0 || maxCharacters < minCharacters) {
+		if(maxCharacters <= minCharacters) {
 			throw new IllegalArgumentException("Invalid min/max lengths");
 		}
 		this.min = minCharacters;

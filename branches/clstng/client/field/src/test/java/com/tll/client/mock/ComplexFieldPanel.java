@@ -119,6 +119,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
 							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
+							cmpsr.addField(fg.getFieldWidgetByName("adrsDouble"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
