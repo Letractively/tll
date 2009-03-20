@@ -1,0 +1,20 @@
+<module>
+  <inherits name="com.tll.Model" />
+  
+  <!-- non client package sources -->
+  <source path="dao">
+    <include name="Sorting.java" />
+    <include name="SortDir.java" />
+    <include name="SortColumn.java" />
+  </source>
+  
+  <source path="listhandler">
+    <include name="ListHandlerType.java" />
+    <include name="IListHandler.java" />
+    <include name="EmptyListException.java" />
+    <include name="ListHandlerException.java" />
+  </source>
+  
+  <stylesheet src="css/tableview.css" />
+
+</module>
