@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Injector;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
-import com.tll.dao.DaoMode;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
@@ -22,7 +21,6 @@ import com.tll.server.IBootstrapHandler;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.ExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
-import com.tll.util.EnumUtil;
 
 /**
  * MEntityServiceBootstrapper
@@ -59,18 +57,35 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
-		final DaoMode daoMode =
-				EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
+		//final DaoMode daoMode =
+			//	EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
 
 		final RefData refdata = injector.getInstance(RefData.class);
-		final MailManager mailManager = injector.getInstance(MailManager.class);
 		
+		// the mail manager is optional
+		MailManager mailManager;
+		try {
+			mailManager = injector.getInstance(MailManager.class);
+		}
+		catch(final Exception e) {
+			mailManager = null;
+			log.warn("No mail manager will be employed.");
+		}
+
 		final Marshaler marshaler = injector.getInstance(Marshaler.class);
-		final EntityManagerFactory entityManagerFactory =
-				daoMode == DaoMode.ORM ? injector.getInstance(EntityManagerFactory.class) : null;
+		
+		// NOTE: we support the case where an em factory is not provided
+		EntityManagerFactory entityManagerFactory;
+		try {
+			entityManagerFactory = injector.getInstance(EntityManagerFactory.class);
+		}
+		catch(final Exception e) {
+			entityManagerFactory = null;
+		}
+		
 		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
-		final ExceptionHandler exceptionHandler = injector.getInstance(ExceptionHandler.class);
+		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager);
 		
 		String cn;
 
@@ -86,23 +101,23 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			nqr = (INamedQueryResolver) Class.forName(cn).newInstance();
 
 		}
-		catch(InstantiationException e) {
+		catch(final InstantiationException e) {
 			throw new Error(e.getMessage(), e);
 		}
-		catch(IllegalAccessException e) {
+		catch(final IllegalAccessException e) {
 			throw new Error(e.getMessage(), e);
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new Error(e.getMessage(), e);
 		}
 
-		servletContext.setAttribute(MEntityContext.SERVLET_CONTEXT_KEY, new MEntityContext(daoMode, refdata,
+		servletContext.setAttribute(MEntityContext.SERVLET_CONTEXT_KEY, new MEntityContext(refdata,
 				mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory, sr, nqr, exceptionHandler));
 	}
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
-		MEntityContext c =
+		final MEntityContext c =
 				(MEntityContext) servletContext.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
 		if(c != null) {
 			final EntityManagerFactory emf = c.getEntityManagerFactory();

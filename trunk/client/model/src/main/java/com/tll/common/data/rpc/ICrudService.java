@@ -7,14 +7,13 @@ package com.tll.common.data.rpc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
-import com.tll.common.model.RefKey;
 
 /**
  * ICrudService
@@ -32,7 +31,7 @@ public interface ICrudService extends RemoteService {
 
 	/**
 	 * Loads an existing entity.
-	 * @param request The {@link EntityRequest} specifying an {@link RefKey}, an
+	 * @param request The {@link EntityRequest} specifying an entity key, an
 	 *        optional {@link EntityOptions} and an optional
 	 *        {@link AuxDataRequest}.
 	 * @return EntityPayload
@@ -49,8 +48,8 @@ public interface ICrudService extends RemoteService {
 
 	/**
 	 * Purges an entity.
-	 * @param request The {@link EntityRequest} specifying the {@link RefKey} to
-	 *        be purged.
+	 * @param request The {@link EntityRequest} specifying the key of the entity
+	 *        to be purged.
 	 * @return EntityPayload
 	 */
 	EntityPayload purge(EntityPurgeRequest request);

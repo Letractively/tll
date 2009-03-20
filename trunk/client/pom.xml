@@ -2,6 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
   <groupId>com.tll</groupId>
   <artifactId>tll-client</artifactId>
   <packaging>pom</packaging>
@@ -9,27 +15,24 @@
   <version>0.0.1-SNAPSHOT</version>
   <description>Contains client modules.</description>
   
-  <parent>
-    <groupId>com.tll</groupId>
-    <artifactId>tll</artifactId>
-    <version>1</version>
-  </parent>
-  
   <properties>
     <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
   </properties>
 
   <modules>
+    <module>gwt-test-war-dir-assembly</module>
     <module>core</module>
     <module>ui</module>
     <module>cache</module>
     <module>rpc</module>
     <module>model</module>
     <module>listing</module>
-    <module>mvc</module>
     <module>field</module>
+    <!-- TODO temp comment 
+    <module>mvc</module>
     <module>login</module>
+    -->
   </modules>
   
   <build>
@@ -80,8 +83,60 @@
         </configuration>
       </plugin>
   
+      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>-Xms128m -Xmx512m -ea</argLine>
+          <includes>
+            <include>**/*GWTTest.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <!-- server side only jar for client modules -->
+          <execution>
+            <id>server-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>server</classifier>
+              <excludes>
+                <exclude>**/*.java</exclude>
+                <exclude>**/*.gwt.xml</exclude>
+                <exclude>**/client/**</exclude>
+                <exclude>**/public/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          
+          <!-- tweak test-assets execution to exclude project specific gwt ui test assests -->
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*UITests*</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <!-- <version>2.2-beta-3</version> -->
         <dependencies>
           <dependency>
             <groupId>com.tll</groupId>
@@ -89,7 +144,28 @@
             <version>1.0-SNAPSHOT</version>
           </dependency>
         </dependencies>
+        
+        <!-- it is expected each client module have a gwt jar assembly descriptor! -->
         <executions>
+          <execution>
+            <id>client-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <!-- 
+                sadly, i don't yet know how to turn off this hook at the parent pom level!!
+                so we make it fail quietly. HACKO FACKO MAVENO SUCKO 
+              -->
+              <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+              <descriptors>
+                <descriptor>src/main/assembly/client-jar.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+
+          <!-- generate the gwt war dir for testing -->
           <execution>
             <id>generate-gwt-war-dir</id>
             <goals>
@@ -107,75 +183,26 @@
           </execution>
         </executions>
       </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
+          <!-- 
+            tweak compile deps analyze routine to not fail on warning since 
+            we sometimes spuriously add tll-*sources.jars as compile time deps 
+            which are needed for building the client gwt jar.
+          -->
           <execution>
-            <id>gwt-compile</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
+            <id>analyze-compile-deps</id>
             <configuration>
-              <tasks>
-                <property name="gwt.compile.classpath" refid="maven.test.classpath" />
-                <property name="gwt.compile.modules" value="com.tll.UITests" />
-                <property name="gwt.shell.entryModule" value="com.tll.UITests" />
-                <property name="gwt.shell.startupUrl" value="UITests.html" />
-                <echo message="test classpath: ${gwt.compile.classpath}" />
-                <ant antfile="${basedir}/../build-gwt.xml">
-                  <!-- <target name="compile" /> -->
-                  <target name="build-shell-exec-file" />
-                  <target name="build-shell-debug-exec-file" />
-                </ant>
-              </tasks>
+              <failOnWarning>false</failOnWarning>
+              <ignoreNonCompile>true</ignoreNonCompile>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
-      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-          <argLine>-Xms128m -Xmx512m -ea</argLine>
-          <includes>
-            <include>**/*GWTTest.java</include>
-          </includes>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-
-        <!--
-        override to exclude project specific gwt ui test assests
-        -->
-        <executions>
-          <execution>
-            <id>test-assets</id>
-            <phase>package</phase>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>**/*UITests*</exclude>
-              </excludes>
-              <includes>
-                <include>**/*Test*</include>
-                <include>**/mock/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
+    
     </plugins>
   </build>
   
@@ -200,6 +227,10 @@
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- 
+      this gwt-servlet dependency is spurious for some client modules but it serves as a way to singly 
+      delcare this dependency which the gwt war dir assembly routine depends. 
+    -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>

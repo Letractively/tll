@@ -16,7 +16,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
-import com.tll.di.SecurityModule.ConfigKeys;
 import com.tll.util.EnumUtil;
 
 /**
@@ -31,7 +30,8 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
 		final SecurityMode securityMode =
-				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(ConfigKeys.SECURITY_MODE_PARAM.getKey()));
+				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
+						SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey()));
 
 		AuthenticationManager authenticationManager = null;
 		AccessDecisionManager httpRequesetAccessDecisionManager = null;

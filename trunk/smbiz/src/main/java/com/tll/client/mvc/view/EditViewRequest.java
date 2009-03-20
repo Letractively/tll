@@ -2,7 +2,7 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * EditViewRequest
@@ -23,7 +23,7 @@ public final class EditViewRequest extends ShowViewRequest {
 	 * The entity ref. May be <code>null</code> in which case, {@link #model} is
 	 * expected to be non-<code>null</code>.
 	 */
-	private final RefKey modelRef;
+	private final ModelKey modelRef;
 
 	/**
 	 * Constructor - Use when only an entity ref is available. This implies a
@@ -32,7 +32,7 @@ public final class EditViewRequest extends ShowViewRequest {
 	 * @param viewClass
 	 * @param modelRef
 	 */
-	public EditViewRequest(Widget source, ViewClass viewClass, RefKey modelRef) {
+	public EditViewRequest(Widget source, ViewClass viewClass, ModelKey modelRef) {
 		super(source, viewClass);
 		assert modelRef != null;
 		this.modelRef = modelRef;
@@ -68,7 +68,7 @@ public final class EditViewRequest extends ShowViewRequest {
 	/**
 	 * @return The entity ref.
 	 */
-	public RefKey getModelRef() {
+	public ModelKey getModelKey() {
 		return modelRef;
 	}
 }

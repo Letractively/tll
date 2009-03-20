@@ -88,28 +88,13 @@ public abstract class Fmt {
 					return date((Date) value, GlobalFormat.TIMESTAMP);
 
 				case CURRENCY:
-					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), GlobalFormat.CURRENCY);
-					}
-					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), GlobalFormat.CURRENCY);
-					}
+					return decimal(((Double) value).doubleValue(), GlobalFormat.CURRENCY);
 
 				case PERCENT:
-					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), GlobalFormat.PERCENT);
-					}
-					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), GlobalFormat.PERCENT);
-					}
+					return decimal(((Double) value).doubleValue(), GlobalFormat.PERCENT);
 
 				case DECIMAL:
-					if(value instanceof Double) {
-						return decimal(((Double) value).doubleValue(), GlobalFormat.DECIMAL);
-					}
-					else if(value instanceof Float) {
-						return decimal(((Float) value).doubleValue(), GlobalFormat.DECIMAL);
-					}
+					return decimal(((Double) value).doubleValue(), GlobalFormat.DECIMAL);
 
 				case BOOL_TRUEFALSE:
 					return bool(((Boolean) value).booleanValue(), GlobalFormat.BOOL_TRUEFALSE);
@@ -141,6 +126,15 @@ public abstract class Fmt {
 	 */
 	private static String decimal(double decimal, GlobalFormat format) {
 		return decimalFormatBindings.get(format).format(decimal);
+	}
+
+	/**
+	 * Formats a decimal to a local dependant decimal formatted String.
+	 * @param decimal
+	 * @return A decimal formatted String.
+	 */
+	public static String decimal(double decimal) {
+		return decimalFormatBindings.get(GlobalFormat.DECIMAL).format(decimal);
 	}
 
 	/**

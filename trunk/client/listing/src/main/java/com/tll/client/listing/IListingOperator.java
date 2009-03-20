@@ -5,6 +5,7 @@
  */
 package com.tll.client.listing;
 
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.dao.Sorting;
 
 /**
@@ -13,7 +14,13 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R> the row type
  */
-public interface IListingOperator<R> extends ISourcesListingEvents<R> {
+public interface IListingOperator<R> {
+	
+	/**
+	 * Sets the widget that will source listing/rpc events.
+	 * @param widget
+	 */
+	void setSourcingWidget(Widget widget);
 
 	/**
 	 * Acquires or re-acquires the listing data resetting the listing state then

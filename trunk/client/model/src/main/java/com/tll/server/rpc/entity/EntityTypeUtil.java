@@ -24,7 +24,7 @@ public abstract class EntityTypeUtil {
 	 * @return A new {@link IEntityType} instance
 	 */
 	public static IEntityType getEntityType(Class<? extends IEntity> entityClass) {
-		return new MutableEntityType(entityClass.getName(), StringUtil.formatCamelCase(entityClass.getSimpleName()));
+		return new MutableEntityType(entityClass.getName(), StringUtil.camelCaseToPresentation(entityClass.getSimpleName()));
 	}
 
 	/**
@@ -43,7 +43,7 @@ public abstract class EntityTypeUtil {
 			}
 			return (Class<? extends IEntity>) clz;
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new IllegalArgumentException("Can't resolve the entity type's entity class name: "
 					+ entityType.getEntityClassName());
 		}

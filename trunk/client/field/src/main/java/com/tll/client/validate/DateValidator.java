@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * DateValidator

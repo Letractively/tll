@@ -31,7 +31,7 @@ import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.IErrorHandler;
-import com.tll.common.bind.IModel;
+import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -175,7 +175,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * cleared.
 	 * @param model The model to set
 	 */
-	public void setModel(IModel model) {
+	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
 		modelDescriptor = model == null ? null : model.descriptor();
 		fieldPanel.setModel(model);

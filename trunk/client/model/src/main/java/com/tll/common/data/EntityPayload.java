@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * EntityPayload - To transport a single entity instance and any supporting data
@@ -23,12 +23,12 @@ public final class EntityPayload extends AuxDataPayload {
 	 */
 	private Model entity;
 
-	private RefKey entityRef;
+	private ModelKey entityRef;
 
 	/**
 	 * Map of related one entity refs keyed by property name.
 	 */
-	private Map<String, RefKey> relatedOneRefs;
+	private Map<String, ModelKey> relatedOneRefs;
 
 	/**
 	 * Constructor
@@ -63,23 +63,23 @@ public final class EntityPayload extends AuxDataPayload {
 		this.entity = entityGroup;
 	}
 
-	public RefKey getEntityRef() {
+	public ModelKey getEntityRef() {
 		return entityRef;
 	}
 
-	public void setEntityRef(RefKey entityRef) {
+	public void setEntityRef(ModelKey entityRef) {
 		this.entityRef = entityRef;
 	}
 
-	public void setRelatedOneRef(String propName, RefKey ref) {
+	public void setRelatedOneRef(String propName, ModelKey ref) {
 		if(relatedOneRefs == null) {
-			relatedOneRefs = new HashMap<String, RefKey>();
+			relatedOneRefs = new HashMap<String, ModelKey>();
 		}
 		relatedOneRefs.put(propName, ref);
 	}
 
-	public RefKey getRelatedOneRef(String propName) {
-		return relatedOneRefs == null ? null : (RefKey) relatedOneRefs.get(propName);
+	public ModelKey getRelatedOneRef(String propName) {
+		return relatedOneRefs == null ? null : (ModelKey) relatedOneRefs.get(propName);
 	}
 
 }

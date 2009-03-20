@@ -40,7 +40,7 @@ public abstract class AbstractModelProperty implements IModelProperty {
 	protected AbstractModelProperty(String propertyName) {
 		super();
 		/* we can't check for this due to RPC constraints.
-		if(StringUtil.isEmpty(propertyName)) {
+		if(KStringUtil.isEmpty(propertyName)) {
 			throw new IllegalArgumentException("A property name must be specified");
 		}
 		*/

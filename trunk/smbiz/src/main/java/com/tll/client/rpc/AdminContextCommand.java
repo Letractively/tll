@@ -31,7 +31,6 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	}
 
 	private final ListenerCollection adminContextListeners = new ListenerCollection();
-	private final Widget sourcingWidget;
 	private ChangeType changeType;
 
 	/**
@@ -39,13 +38,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	 * @param sourcingWidget
 	 */
 	public AdminContextCommand(Widget sourcingWidget) {
-		super();
-		this.sourcingWidget = sourcingWidget;
-	}
-
-	@Override
-	protected Widget getSourcingWidget() {
-		return sourcingWidget;
+		super(sourcingWidget);
 	}
 
 	public void setChangeType(ChangeType changeType) {
@@ -64,7 +57,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	private static class ListenerCollection extends ArrayList<IAdminContextListener> {
 
 		public void fire(AdminContext adminContext, ChangeType changeType) {
-			for(IAdminContextListener listener : this) {
+			for(final IAdminContextListener listener : this) {
 				listener.onAdminContextChange(adminContext, changeType);
 			}
 		}
@@ -81,7 +74,7 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 	@Override
 	protected void handleSuccess(AdminContextPayload result) {
 		super.handleSuccess(result);
-		AdminContext ac = result.getAdminContext();
+		final AdminContext ac = result.getAdminContext();
 		adminContextListeners.fire(ac, changeType);
 		changeType = null; // reset;
 	}

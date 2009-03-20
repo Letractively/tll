@@ -40,11 +40,6 @@ public final class PrimaryKey<E extends IEntity> extends AbstractEntityKey<E> {
 		setId(id);
 	}
 
-	@Override
-	public String getTypeName() {
-		return "Primary Key";
-	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}

@@ -13,7 +13,7 @@ import com.google.gwt.junit.client.GWTTestCase;
 import com.tll.client.ui.VerticalRenderer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * FieldGWTTest - Tests the core {@link IField} methods for the {@link IField}

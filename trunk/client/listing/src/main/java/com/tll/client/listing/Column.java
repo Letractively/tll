@@ -7,12 +7,9 @@ import com.tll.client.util.GlobalFormat;
  * columns and the table cell formatting in a client-side listing.
  * @author jpk
  */
-public final class Column {
-
-	/**
-	 * Unique token to indictate this column is for row counting.
-	 */
-	public static final String ROW_COUNT_COL_PROP = "__rc";
+public class Column {
+	
+	public static final Column ROW_COUNT_COLUMN = new Column("#");
 
 	/**
 	 * The UI presentable column name.
@@ -25,52 +22,23 @@ public final class Column {
 	private final GlobalFormat format;
 
 	/**
-	 * The OGNL compliant property name this column "points" to.
-	 */
-	private final String propertyName;
-
-	/**
-	 * The data-store specific parent alias mainly called on when a [remote] named
-	 * query is involved in fetching listing data as this is when aliasing is
-	 * necessary for query column disambiguation.
-	 */
-	private final String parentAlias;
-
-	/**
 	 * Constructor
-	 * @param name The presentation column name.
-	 * @param propertyName The underlying property name of this column
+	 * @param name
 	 */
-	public Column(String name, String propertyName) {
-		this(name, propertyName, null, null);
+	public Column(String name) {
+		this(name, null);
 	}
 
 	/**
 	 * Constructor
 	 * @param name The presentation column name.
-	 * @param propertyName The underlying property name of this column
-	 * @param parentAlias The parent alias (usu. used when data fetching is driven
-	 *        by named queries)
+	 * @param format the format to employ for the cells in this column.
 	 */
-	public Column(String name, String propertyName, String parentAlias) {
-		this(name, propertyName, parentAlias, null);
-	}
-
-	/**
-	 * Constructor
-	 * @param name The presentation column name.
-	 * @param propertyName The underlying property name of this column
-	 * @param parentAlias The parent alias (usu. used when data fetching is driven
-	 *        by named queries)
-	 * @param format The column display format
-	 */
-	public Column(String name, String propertyName, String parentAlias, GlobalFormat format) {
+	public Column(String name, GlobalFormat format) {
 		this.name = name;
-		this.propertyName = propertyName;
-		this.parentAlias = parentAlias;
 		this.format = format;
 	}
-
+	
 	/**
 	 * @return the name
 	 */
@@ -83,20 +51,6 @@ public final class Column {
 	 */
 	public GlobalFormat getFormat() {
 		return format;
-	}
-
-	/**
-	 * @return the propertyName
-	 */
-	public String getPropertyName() {
-		return propertyName;
-	}
-
-	/**
-	 * @return the parentAlias
-	 */
-	public String getParentAlias() {
-		return parentAlias;
 	}
 
 	@Override

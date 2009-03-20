@@ -1,6 +1,5 @@
 package com.tll.listhandler;
 
-
 /**
  * EmptyListException
  * @author jpk

@@ -6,15 +6,16 @@ import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.data.rpc.CrudEvent;
 import com.tll.client.data.rpc.ICrudListener;
-import com.tll.client.data.rpc.IRpcListener;
+import com.tll.client.data.rpc.IRpcHandler;
 import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
+import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * ModelChangeManager - Acts as a mediator centralizing app-wide handling of
@@ -26,7 +27,7 @@ import com.tll.common.model.RefKey;
  * and no "naked" {@link CrudCommand}s should exist in the app.
  * @author jpk
  */
-public final class ModelChangeManager implements IRpcListener, ICrudListener, ISourcesModelChangeEvents {
+public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, ICrudListener, ISourcesModelChangeEvents {
 
 	private static ModelChangeManager instance = new ModelChangeManager();
 
@@ -51,7 +52,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	}
 
 	private CrudCommand createCrudCommand(Widget sourcingWidget) {
-		CrudCommand cmd = new CrudCommand(sourcingWidget);
+		final CrudCommand cmd = new CrudCommand(sourcingWidget);
 		cmd.addCrudListener(this);
 		return cmd;
 	}
@@ -71,7 +72,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 		adr = AuxDataCache.instance().filterRequest(adr);
 		if(adr == null) return false;
 		final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-		adc.addRpcListener(this);
+		//adc.addRpcHandler(this);
 		adc.execute();
 		return true;
 	}
@@ -89,10 +90,10 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 */
 	public boolean fetchModelPrototype(Widget sourcingWidget, IEntityType entityType) {
 		if(!AuxDataCache.instance().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
-			AuxDataRequest adr = new AuxDataRequest();
+			final AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
 			final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-			adc.addRpcListener(this);
+			//adc.addRpcHandler(this);
 			adc.execute();
 			return true;
 		}
@@ -104,13 +105,13 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * Handles the fetching of a model given a model ref. A subsequent model
 	 * change event is anticipated.
 	 * @param sourcingWidget
-	 * @param modelRef The reference of the model to fetch
+	 * @param entityKey The reference of the entity to fetch
 	 * @param entityOptions
 	 * @param adr
 	 */
-	public void loadModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions, AuxDataRequest adr) {
-		CrudCommand cmd = createCrudCommand(sourcingWidget);
-		cmd.load(modelRef);
+	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
+		final CrudCommand cmd = createCrudCommand(sourcingWidget);
+		cmd.load(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.setAuxDataRequest(AuxDataCache.instance().filterRequest(adr));
 		cmd.execute();
@@ -124,7 +125,7 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * @param entityOptions
 	 */
 	public void persistModel(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
-		CrudCommand cmd = createCrudCommand(sourcingWidget);
+		final CrudCommand cmd = createCrudCommand(sourcingWidget);
 		if(model.isNew()) {
 			cmd.add(model);
 		}
@@ -139,19 +140,19 @@ public final class ModelChangeManager implements IRpcListener, ICrudListener, IS
 	 * Commits a model delete firing a model change event to subscribed listeners
 	 * upon a successful delete.
 	 * @param sourcingWidget
-	 * @param modelRef The model to delete
+	 * @param entityKey The key of the entity to delete
 	 * @param entityOptions
 	 */
-	public void deleteModel(Widget sourcingWidget, RefKey modelRef, EntityOptions entityOptions) {
-		CrudCommand cmd = createCrudCommand(sourcingWidget);
-		cmd.purge(modelRef);
+	public void deleteModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions) {
+		final CrudCommand cmd = createCrudCommand(sourcingWidget);
+		cmd.purge(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.execute();
 	}
 
-	public void onRpcEvent(RpcEvent event) {
+	public void onRpcEvent(RpcEvent<AuxDataPayload> event) {
 		if(!event.getPayload().hasErrors()) {
-			ModelChangeEvent mce = new ModelChangeEvent(event.getSource(), ModelChangeOp.AUXDATA_READY, (Model) null, null);
+			final ModelChangeEvent mce = new ModelChangeEvent(event.getSource(), ModelChangeOp.AUXDATA_READY, (Model) null, null);
 			listeners.fireOnModelChange(mce);
 		}
 	}

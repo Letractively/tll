@@ -8,7 +8,7 @@ package com.tll.dao;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
-import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.MockEntityFactory;
 
 /**
  * IEntityDaoTestHandler - Encapsulates entity lifecycle behavior for testing

@@ -70,7 +70,7 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 			removeValidator(StringLengthValidator.class);
 		}
 		else {
-			addValidator(new StringLengthValidator(0, maxLen));
+			addValidator(new StringLengthValidator(-1, maxLen));
 		}
 	}
 

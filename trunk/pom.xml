@@ -6,7 +6,7 @@
   <artifactId>tll</artifactId>
   <packaging>pom</packaging>
   <name>tll</name>
-  <version>1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <description>The tll super pom.</description>
   <url>http://tll.googlecode.com</url>
   <inceptionYear>2005</inceptionYear>
@@ -43,14 +43,16 @@
   </properties>
 
   <modules>
-    <module>testassets</module>
     <module>core</module>
     <module>config</module>
     <module>mail</module>
     <module>refdata</module>
     <module>model</module>
+    <module>mock</module>
+    <module>test/persistence-unit</module>
     <module>dao</module>
     <module>service</module>
+    <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
     <!-- TODO temp <module>client</module> -->
@@ -106,8 +108,7 @@
         </configuration>
 
         <!--
-        Retain the test classes only and not the test resources so we don't 
-        pollute the test classpath for dependent modules.
+          By default, retain extendable base test classes, test utilities and mock test assets.
         -->
         <executions>
           <execution>
@@ -118,7 +119,8 @@
             </goals>
             <configuration>
               <includes>
-                <include>**/*Test*</include>
+                <include>**/Abstract*Test*</include>
+                <include>**/*Test*Util*</include>
                 <include>**/mock/**</include>
               </includes>
             </configuration>
@@ -333,7 +335,7 @@
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0-beta3</version>
         <exclusions>
           <exclusion>
             <groupId>net.sf.jsr107cache</groupId>
@@ -476,7 +478,7 @@
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
       </dependency>
 
       <!-- GWT -->

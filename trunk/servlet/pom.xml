@@ -2,15 +2,15 @@
   <modelVersion>4.0.0</modelVersion>
  
   <parent>
-    <artifactId>tll</artifactId>
     <groupId>com.tll</groupId>
-    <version>1</version>
+    <artifactId>tll</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>com.tll</groupId>
   <artifactId>tll-servlet</artifactId>
   <name>tll-servlet</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <description>Houses common servlet routines.</description>
   
   <dependencies>
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>

@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Feb 9, 2009 Feb 9, 2009
+ * @author jpk Feb 9, 2009 Feb 9, 2009
  */
 
 package com.tll.dao.jdbc;
@@ -61,24 +60,24 @@ public final class DbShellBuilder {
 	 * @see #getDbShell(Config, URL, URL, URL)
 	 */
 	public static DbShell getDbShell(Config config) throws Exception {
-		String dbSchemaPath = config.getString(ConfigKeys.DB_RESOURCE_SCHEMA.getKey());
-		String dbDataStubPath = config.getString(ConfigKeys.DB_RESOURCE_STUB.getKey());
-		String dbDataDeletePath = config.getString(ConfigKeys.DB_RESOURCE_DELETE.getKey());
-		
+		final String dbSchemaPath = config.getString(ConfigKeys.DB_RESOURCE_SCHEMA.getKey());
+		final String dbDataStubPath = config.getString(ConfigKeys.DB_RESOURCE_STUB.getKey());
+		final String dbDataDeletePath = config.getString(ConfigKeys.DB_RESOURCE_DELETE.getKey());
+
 		final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL schema = cl.getResource(dbSchemaPath);
+		final URL schema = cl.getResource(dbSchemaPath);
 		if(schema == null) {
 			throw new Exception("Can't resolve db schema resource from path: " + dbSchemaPath);
 		}
-		URL stub = cl.getResource(dbDataStubPath);
+		final URL stub = cl.getResource(dbDataStubPath);
 		if(stub == null) {
 			throw new Exception("Can't resolve db stub resource from path: " + dbDataStubPath);
 		}
-		URL delete = cl.getResource(dbDataDeletePath);
+		final URL delete = cl.getResource(dbDataDeletePath);
 		if(delete == null) {
 			throw new Exception("Can't resolve db delete resource from path: " + dbDataDeletePath);
 		}
-		
+
 		return getDbShell(config, schema, stub, delete);
 	}
 
@@ -93,14 +92,13 @@ public final class DbShellBuilder {
 	 * @throws Exception Upon error during build
 	 */
 	public static DbShell getDbShell(Config config, URL schemaDef, URL stubDef, URL deleteDef) throws Exception {
-		String rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT.getKey());
-		String dbName = config.getString(ConfigKeys.DB_NAME.getKey());
-		String urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX.getKey());
-		String username = config.getString(ConfigKeys.DB_USERNAME.getKey());
-		String password = config.getString(ConfigKeys.DB_PASSWORD.getKey());
-		
+		final String rootDbName = config.getString(ConfigKeys.DB_NAME_ROOT.getKey());
+		final String dbName = config.getString(ConfigKeys.DB_NAME.getKey());
+		final String urlPrefix = config.getString(ConfigKeys.DB_URL_PREFIX.getKey());
+		final String username = config.getString(ConfigKeys.DB_USERNAME.getKey());
+		final String password = config.getString(ConfigKeys.DB_PASSWORD.getKey());
+
 		return new DbShell(rootDbName, dbName, urlPrefix, username, password, schemaDef, stubDef, deleteDef,
-				DbDialectHandlerBuilder
-				.getDbDialectHandler(config));
+				DbDialectHandlerBuilder.getDbDialectHandler(config));
 	}
 }

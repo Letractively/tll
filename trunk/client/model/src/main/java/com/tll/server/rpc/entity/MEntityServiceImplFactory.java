@@ -36,8 +36,12 @@ public final class MEntityServiceImplFactory {
 			final IMEntityServiceImplResolver resolver) {
 		Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> svcType;
 		IMEntityServiceImpl<? extends IEntity, ? extends ISearch> svc;
-		
-		svcType = resolver.resolveMEntityServiceImpl(entityClass);
+		try {
+			svcType = resolver.resolveMEntityServiceImpl(entityClass);
+		}
+		catch(final IllegalArgumentException e) {
+			throw new SystemError("Can't resolve mEntity service impl class for entity: " + entityClass.getName());
+		}
 		svc = map.get(svcType);
 		if(svc == null) {
 			try {

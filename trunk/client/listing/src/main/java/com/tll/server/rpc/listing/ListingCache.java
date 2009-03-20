@@ -7,7 +7,9 @@ package com.tll.server.rpc.listing;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.tll.server.cache.WebCache;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Dedicated cache implementation for table view processing. Stores, retrieves
@@ -16,7 +18,31 @@ import com.tll.server.cache.WebCache;
  * @author jpk
  */
 public final class ListingCache {
+	
+	private static final String LIST_HANDLER_CACHE_NAME = "ListHandlerCache";
 
+	private static final String LISTING_STATE_CACHE_NAME = "ListingStateCache";
+	
+	/**
+	 * Generates the hash that is http session and listing name dependent.
+	 * @param request
+	 * @param listingName
+	 * @return the corresponding hash key for the given listing name in the given
+	 *         http session.
+	 */
+	private static String key(HttpServletRequest request, String listingName) {
+		return Integer.toString(request.getSession(false).getId().hashCode() ^ listingName.hashCode()).intern();
+	}
+	
+	private static Cache handlerCache() {
+		return CacheManager.getInstance().getCache(LIST_HANDLER_CACHE_NAME);
+	}
+
+	private static Cache stateCache() {
+		return CacheManager.getInstance().getCache(LISTING_STATE_CACHE_NAME);
+	}
+	
+	
 	/**
 	 * Retrieves the cached handler by table view name.
 	 * @param <T>
@@ -25,8 +51,9 @@ public final class ListingCache {
 	 * @return listing handler
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> IListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
-		return (IListingHandler) WebCache.retrieveWithCacheKeys(request, listingName, IListingHandler.class);
+	public static <T> ListingHandler<T> getHandler(HttpServletRequest request, String listingName) {
+		final Element e = handlerCache().get(key(request, listingName));
+		return e == null ? null : (ListingHandler) e.getObjectValue();
 	}
 
 	/**
@@ -37,8 +64,10 @@ public final class ListingCache {
 	 * @param handler
 	 * @return the cache key under which the handler is stored.
 	 */
-	public static <T> String storeHandler(HttpServletRequest request, String listingName, IListingHandler<T> handler) {
-		return WebCache.storePageScopeWithCacheKeys(request, listingName, IListingHandler.class, handler);
+	public static <T> String storeHandler(HttpServletRequest request, String listingName, ListingHandler<T> handler) {
+		final String key = key(request, listingName);
+		handlerCache().put(new Element(key, handler));
+		return key;
 	}
 
 	/**
@@ -49,8 +78,15 @@ public final class ListingCache {
 	 * @return the cleared handler. May be <code>null</code>.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> IListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
-		return (IListingHandler) WebCache.clearWithCacheKeys(request, listingName, IListingHandler.class);
+	public static <T> ListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
+		final String key = key(request, listingName);
+		final Cache c = handlerCache();
+		final Element e = c.get(key);
+		final ListingHandler<T> handler = e == null ? null : (ListingHandler<T>) e.getObjectValue();
+		if(handler != null) {
+			c.remove(key);
+		}
+		return handler;
 	}
 
 	/**
@@ -60,7 +96,8 @@ public final class ListingCache {
 	 * @return the cached listing state or null if not found.
 	 */
 	public static ListingState getState(HttpServletRequest request, String listingName) {
-		return (ListingState) WebCache.retrieveWithCacheKeys(request, listingName, ListingState.class);
+		final Element e = stateCache().get(key(request, listingName));
+		return e == null ? null : (ListingState) e.getObjectValue();
 	}
 
 	/**
@@ -71,7 +108,9 @@ public final class ListingCache {
 	 * @return The cache key
 	 */
 	public static String storeState(HttpServletRequest request, String listingName, ListingState state) {
-		return WebCache.storeSessionScopeWithCacheKeys(request, listingName, ListingState.class, state);
+		final String key = key(request, listingName);
+		stateCache().put(new Element(key, state));
+		return key;
 	}
 
 	/**
@@ -82,7 +121,14 @@ public final class ListingCache {
 	 * @return the cleared table mode state. May be <code>null</code>.
 	 */
 	public static ListingState clearState(HttpServletRequest request, String listingName) {
-		return (ListingState) WebCache.clearWithCacheKeys(request, listingName, ListingState.class);
+		final String key = key(request, listingName);
+		final Cache c = stateCache();
+		final Element e = c.get(key);
+		final ListingState state = e == null ? null : (ListingState) e.getObjectValue();
+		if(state != null) {
+			c.remove(key);
+		}
+		return state;
 	}
 
 	/**
@@ -92,9 +138,9 @@ public final class ListingCache {
 	 * @param retainState
 	 */
 	public static void clearAll(HttpServletRequest request, boolean retainState) {
-		WebCache.clearAllCacheKeysHavingCacheClass(request, IListingHandler.class);
+		handlerCache().removeAll();
 		if(!retainState) {
-			WebCache.clearAllCacheKeysHavingCacheClass(request, ListingState.class);
+			stateCache().removeAll();
 		}
 	}
 

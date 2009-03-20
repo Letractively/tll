@@ -384,15 +384,18 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 *         not.
 	 */
 	public boolean removeField(IField field) {
-		if(field == null || field == this) return false;
-		for(final IField fld : fields) {
-			if(fld == field) {
-				final boolean b = fields.remove(field);
-				assert b == true;
-				return b;
-			}
-			else if(fld instanceof FieldGroup) {
-				return ((FieldGroup) fld).removeField(field);
+		if(field != null && !(field == this)) {
+			for(final IField fld : fields) {
+				if(fld == field) {
+					final boolean b = fields.remove(field);
+					assert b == true;
+					return b;
+				}
+				else if(fld instanceof FieldGroup) {
+					if(((FieldGroup) fld).removeField(field)) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -607,12 +610,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		if(getClass() != obj.getClass()) return false;
 		final FieldGroup other = (FieldGroup) obj;
 		assert name != null;
-		if(!name.equals(other.name)) return false;
-		return true;
+		return name.equals(other.name);
 	}
 
 	@Override
 	public int hashCode() {
+		assert name != null;
 		return 37 + name.hashCode();
 	}
 

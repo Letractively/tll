@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
@@ -228,7 +229,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 			btnDeleteTgl.addClickHandler(new ClickHandler() {
 
 				public void onClick(ClickEvent event) {
-					if(event.getNativeEvent().getTarget().getPropertyBoolean(UI_ADD)) {
+					if(Element.as(event.getNativeEvent().getEventTarget()).getPropertyBoolean(UI_ADD)) {
 						remove(tabPanel.getTabBar().getSelectedTab(), true);
 					}
 					else {
@@ -269,7 +270,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		// remove the tab
 		if(!tabPanel.remove(index)) {
 			// shouldn't happen
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unable to remove tab panel at index: " + index);
 		}
 		tabWidgets.remove(index);
 		if(size() == 0) {

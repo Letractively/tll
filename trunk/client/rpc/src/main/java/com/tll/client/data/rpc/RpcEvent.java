@@ -1,22 +1,23 @@
 /**
  * The Logic Lab
- * @author jpk
- * Feb 23, 2008
+ * @author jpk Feb 23, 2008
  */
 package com.tll.client.data.rpc;
 
-import java.util.EventObject;
-
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.Payload;
 
 /**
  * RpcEvent
  * @author jpk
+ * @param <P> the payload type
  */
-@SuppressWarnings("serial")
-public final class RpcEvent extends EventObject {
-	
+public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> {
+
+	/**
+	 * Type
+	 * @author jpk
+	 */
 	public static enum Type {
 		/**
 		 * An RPC command was just sent.
@@ -31,13 +32,16 @@ public final class RpcEvent extends EventObject {
 		 */
 		ERROR;
 	}
-
+	
+	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>> TYPE =
+			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>>();
+	
 	private final Type type;
 
 	/**
 	 * The RPC payload.
 	 */
-	private final Payload payload;
+	private final P payload;
 
 	/**
 	 * The RPC error.
@@ -46,10 +50,8 @@ public final class RpcEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for RPC send calls.
-	 * @param source
 	 */
-	public RpcEvent(Widget source) {
-		super(source);
+	public RpcEvent() {
 		this.type = Type.SENT;
 		this.payload = null;
 		this.error = null;
@@ -57,11 +59,9 @@ public final class RpcEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for successful RPC retrievals.
-	 * @param source
 	 * @param payload The payload
 	 */
-	public RpcEvent(Widget source, Payload payload) {
-		super(source);
+	public RpcEvent(P payload) {
 		this.type = Type.RECEIVED;
 		this.payload = payload;
 		this.error = null;
@@ -69,24 +69,33 @@ public final class RpcEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for un-successful RPC calls.
-	 * @param source
 	 * @param error The RPC error
 	 */
-	public RpcEvent(Widget source, Throwable error) {
-		super(source);
+	public RpcEvent(Throwable error) {
 		this.type = Type.ERROR;
 		this.payload = null;
 		this.error = error;
 	}
-	
+
+	@Override
+	protected void dispatch(IRpcHandler<P> handler) {
+		handler.onRpcEvent(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<P>> getAssociatedType() {
+		return (com.google.gwt.event.shared.GwtEvent.Type) TYPE;
+	}
+
 	public Type getType() {
 		return type;
 	}
 
-	public Payload getPayload() {
+	public P getPayload() {
 		return payload;
 	}
-	
+
 	public Throwable getError() {
 		return error;
 	}

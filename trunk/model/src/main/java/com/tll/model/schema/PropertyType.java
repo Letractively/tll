@@ -45,7 +45,8 @@ public enum PropertyType {
 	 * {@link #VALUE_TYPES} corres. to non-collection and non-relational types
 	 */
 	private static final int VALUE_TYPES =
-			STRING.flag | CHAR.flag | ENUM.flag | BOOL.flag | INT.flag | LONG.flag | FLOAT.flag | DATE.flag | STRING_MAP.flag;
+			STRING.flag | CHAR.flag | ENUM.flag | BOOL.flag | INT.flag | LONG.flag | FLOAT.flag | DOUBLE.flag | DATE.flag
+					| STRING_MAP.flag;
 
 	/**
 	 * {@link #RELATIONAL_TYPES} corres. to those types that represent a relation

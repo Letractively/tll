@@ -19,6 +19,7 @@ import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
+import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.BooleanValidator;
 import com.tll.client.validate.CharacterValidator;
@@ -34,10 +35,10 @@ import com.tll.client.validate.ValidationException;
 import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
-import com.tll.common.util.ObjectUtil;
-import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
+import com.tll.util.ObjectUtil;
+import com.tll.util.StringUtil;
 
 /**
  * AbstractField - Base class for non-group {@link IField}s.
@@ -423,6 +424,8 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 				((IHasMaxLength) this).setMaxLen(maxlen);
 			}
 
+			final GlobalFormat format = (this instanceof IHasFormat) ? ((IHasFormat) this).getFormat() : null;
+			
 			// set the type coercion validator
 			switch(metadata.getPropertyType()) {
 				case STRING:
@@ -434,28 +437,18 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 					addValidator(BooleanValidator.INSTANCE);
 					break;
 				
-				case DATE: {
-					GlobalFormat format = null;
-					if(this instanceof IHasFormat) {
-						 format = ((IHasFormat) this).getFormat();
-					}
+				case DATE:
 					addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
 					break;
-				}
 				
 				case INT:
 					addValidator(IntegerValidator.INSTANCE);
 					break;
 				
 				case FLOAT:
-				case DOUBLE: {
-					GlobalFormat format = null;
-					if(this instanceof IHasFormat) {
-						format = ((IHasFormat) this).getFormat();
-					}
-					addValidator(DecimalValidator.get(format == null ? GlobalFormat.DECIMAL : format));
+				case DOUBLE:
+					addValidator(new DecimalValidator(Fmt.getDecimalFormat(format == null ? GlobalFormat.DECIMAL : format)));
 					break;
-				}
 				
 				case CHAR:
 					addValidator(CharacterValidator.INSTANCE);
@@ -515,16 +508,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			valid = false;
 			throw e;
 		}
-		/*
-		finally {
-			if(!valid && isAttached()) {
-				trackHover(true);
-			}
-			else if(valid) {
-				trackHover(false);
-			}
-		}
-		*/
 		
 		return value;
 	}
@@ -587,7 +570,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 
 		if(!enabled || readOnly) {
 			// remove all msgs, edit and validation styling
-			//resolveError();
+			resolveError();
 			removeStyleName(Styles.DIRTY);
 		}
 		else if(enabled && !readOnly) {

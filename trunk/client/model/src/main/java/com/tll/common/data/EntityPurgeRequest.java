@@ -6,7 +6,7 @@
 package com.tll.common.data;
 
 import com.tll.common.model.IEntityType;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 
 /**
  * EntityPurgeRequest
@@ -14,7 +14,7 @@ import com.tll.common.model.RefKey;
  */
 public class EntityPurgeRequest extends EntityRequest {
 
-	private RefKey entityRef;
+	private ModelKey entityRef;
 
 	/**
 	 * Constructor
@@ -27,7 +27,7 @@ public class EntityPurgeRequest extends EntityRequest {
 	 * Constructor
 	 * @param entityRef
 	 */
-	public EntityPurgeRequest(RefKey entityRef) {
+	public EntityPurgeRequest(ModelKey entityRef) {
 		super();
 		assert entityRef != null;
 		this.entityRef = entityRef;
@@ -35,13 +35,13 @@ public class EntityPurgeRequest extends EntityRequest {
 
 	@Override
 	public IEntityType getEntityType() {
-		return entityRef.getType();
+		return entityRef.getEntityType();
 	}
 
 	/**
 	 * @return the entityRef
 	 */
-	public RefKey getEntityRef() {
+	public ModelKey getEntityRef() {
 		return entityRef;
 	}
 

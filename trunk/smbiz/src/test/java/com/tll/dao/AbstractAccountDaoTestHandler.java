@@ -10,8 +10,8 @@ import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Asp;
 import com.tll.model.Currency;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.PaymentInfo;
-import com.tll.model.mock.MockEntityFactory;
 
 /**
  * AbstractAccountDaoTestHandler
@@ -50,8 +50,8 @@ public abstract class AbstractAccountDaoTestHandler<A extends Account> extends A
 		e.setPaymentInfo(paymentInfo);
 		e.setParent(parent);
 
-		Address address1 = create(Address.class, true);
-		Address address2 = create(Address.class, true);
+		final Address address1 = create(Address.class, true);
+		final Address address2 = create(Address.class, true);
 		
 		final AccountAddress aa1 = create(AccountAddress.class, true);
 		final AccountAddress aa2 = create(AccountAddress.class, true);

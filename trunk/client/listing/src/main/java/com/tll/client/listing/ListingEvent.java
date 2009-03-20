@@ -4,9 +4,7 @@
  */
 package com.tll.client.listing;
 
-import java.util.EventObject;
-
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingPayload.ListingStatus;
@@ -18,9 +16,14 @@ import com.tll.dao.Sorting;
  * @param <R> The row data type
  * @author jpk
  */
-@SuppressWarnings("serial")
-public final class ListingEvent<R> extends EventObject {
+public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
+	private static final Type<IListingHandler<?>> TYPE = new Type<IListingHandler<?>>();
+
+	public static Type<IListingHandler<?>> getType() {
+		return TYPE;
+	}
+	
 	private final boolean success;
 	private final String listingName;
 	private final ListingOp listingOp;
@@ -41,14 +44,12 @@ public final class ListingEvent<R> extends EventObject {
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param listingOp
 	 * @param listingPayload
 	 * @param pageSize
 	 */
 	@SuppressWarnings("unchecked")
-	public ListingEvent(Widget source, ListingOp listingOp, ListingPayload listingPayload, int pageSize) {
-		super(source);
+	public ListingEvent(ListingOp listingOp, ListingPayload listingPayload, int pageSize) {
 		if(listingOp == null || listingPayload == null) throw new IllegalArgumentException();
 		this.success = !listingPayload.hasErrors();
 		this.listingOp = listingOp;
@@ -63,7 +64,6 @@ public final class ListingEvent<R> extends EventObject {
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param success
 	 * @param listingName
 	 * @param listingOp
@@ -73,9 +73,8 @@ public final class ListingEvent<R> extends EventObject {
 	 * @param sorting
 	 * @param pageSize
 	 */
-	public ListingEvent(Widget source, boolean success, String listingName, ListingOp listingOp, int listSize,
+	public ListingEvent(boolean success, String listingName, ListingOp listingOp, int listSize,
 			R[] pageElements, int offset, Sorting sorting, int pageSize) {
-		super(source);
 		this.success = success;
 		this.listingName = listingName;
 		this.listingOp = listingOp;
@@ -90,6 +89,17 @@ public final class ListingEvent<R> extends EventObject {
 	private void setCalculated(int pageSize) {
 		pageNum = Math.round(offset / pageSize + 0.5f) - 1;
 		numPages = (listSize % pageSize == 0) ? (int) (listSize / pageSize) : Math.round(listSize / pageSize + 0.5f);
+	}
+
+	@Override
+	protected void dispatch(IListingHandler<R> handler) {
+		handler.onListingEvent(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Type<IListingHandler<R>> getAssociatedType() {
+		return (Type) TYPE;
 	}
 
 	public boolean isSuccess() {

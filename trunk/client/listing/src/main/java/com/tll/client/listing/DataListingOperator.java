@@ -5,9 +5,13 @@
  */
 package com.tll.client.listing;
 
-import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
+
 import com.tll.common.data.ListingOp;
 import com.tll.dao.Sorting;
+import com.tll.listhandler.EmptyListException;
+import com.tll.listhandler.IListHandler;
+import com.tll.listhandler.ListHandlerException;
 
 /**
  * DataListingOperator - {@link IListingOperator} based on an existing
@@ -15,72 +19,30 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R>
  */
-// TODO implemenet sorting!!!
-public class DataListingOperator<R> implements IListingOperator<R> {
-
-	/**
-	 * The listing event listeners.
-	 */
-	private final ListingListenerCollection<R> listeners = new ListingListenerCollection<R>();
-
-	/**
-	 * The Widget that will be passed in dispatched {@link ListingEvent}s.
-	 */
-	private final Widget sourcingWidget;
+public class DataListingOperator<R> extends AbstractListingOperator<R> {
 
 	/**
 	 * The data provider.
 	 */
-	private final IDataProvider<R> dataProvider;
-
+	private final IListHandler<R> dataProvider;
+	
 	private final int pageSize;
-
-	private int offset = 0;
-
-	// TODO make private when sorting is implemented
-	/*private*/Sorting sorting;
-
-	private final int numPages = -1;
-
-	private final int pageNum = -1;
+	
+	/**
+	 * The current chunk of listing data.
+	 */
+	private transient List<R> current;
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget
 	 * @param pageSize
 	 * @param dataProvider
 	 * @param sorting
 	 */
-	public DataListingOperator(Widget sourcingWidget, int pageSize, IDataProvider<R> dataProvider, Sorting sorting) {
-		super();
-		this.sourcingWidget = sourcingWidget;
+	public DataListingOperator(int pageSize, IListHandler<R> dataProvider, Sorting sorting) {
 		this.pageSize = pageSize;
 		this.dataProvider = dataProvider;
 		this.sorting = sorting;
-	}
-
-	public void addListingListener(IListingListener<R> listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListingListener(IListingListener<R> listener) {
-		listeners.remove(listener);
-	}
-
-	/**
-	 * Extracts a sub-array from the dataProvider
-	 * @param startIndex 0-based inclusive
-	 * @param endIndex 0-based EXCLUSIVE
-	 * @return Array of data list elements
-	 */
-	@SuppressWarnings("unchecked")
-	private R[] subArray(int startIndex, int endIndex) {
-		final R[] data = dataProvider.getData();
-		Object[] array = new Object[endIndex - startIndex];
-		for(int i = startIndex; i < endIndex; i++) {
-			array[i] = data[i];
-		}
-		return (R[]) array;
 	}
 
 	/**
@@ -89,54 +51,84 @@ public class DataListingOperator<R> implements IListingOperator<R> {
 	 * @param listingOp
 	 * @return A new ListingEvent
 	 */
-	private ListingEvent<R> assembleListingEvent(R[] pageElements, ListingOp listingOp) {
-		final int listSize = pageElements == null ? 0 : pageElements.length;
-		return new ListingEvent<R>(sourcingWidget, true, null, ListingOp.REFRESH, listSize, pageElements, offset, sorting,
+	@SuppressWarnings("unchecked")
+	private ListingEvent<R> assembleListingEvent(List<R> pageElements, ListingOp listingOp) {
+		final int listSize = pageElements == null ? 0 : pageElements.size();
+		final R[] array = pageElements == null ? null : (R[]) pageElements.toArray();
+		return new ListingEvent<R>(true, null, ListingOp.REFRESH, listSize, array, offset, sorting,
 				pageSize);
 	}
+	
+	@Override
+	protected void doFetch(int offset, Sorting sorting) {
+		try {
+			current = dataProvider.getElements(offset, pageSize, sorting);
+		}
+		catch(final EmptyListException e) {
+			throw new IllegalStateException(e);
+		}
+		catch(final IndexOutOfBoundsException e) {
+			throw new IllegalStateException(e);
+		}
+		catch(final ListHandlerException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
+	@Override
+	protected int getPageSize() {
+		return pageSize;
+	}
+
+	@Override
 	public void refresh() {
-		listeners.fireListingEvent(assembleListingEvent(dataProvider.getData(), ListingOp.REFRESH));
+		// not refreshable since we have a non-changing collection of elements in memory only 
+		// so just goto first page
+		firstPage();
 	}
 
+	@Override
 	public void display() {
-		listeners.fireListingEvent(assembleListingEvent(dataProvider.getData(), ListingOp.FETCH));
+		super.display();
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void firstPage() {
-		if(pageNum != 0) {
-			listeners.fireListingEvent(assembleListingEvent(subArray(0, pageSize - 1), ListingOp.FETCH));
-		}
+		super.firstPage();
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void lastPage() {
-		if(pageNum == numPages - 1) {
-			listeners.fireListingEvent(assembleListingEvent(subArray(0, numPages - 1), ListingOp.FETCH));
-		}
+		super.lastPage();
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void nextPage() {
-		// TODO impl
-		throw new UnsupportedOperationException();
+		super.nextPage();
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void previousPage() {
-		// TODO impl
-		throw new UnsupportedOperationException();
+		super.previousPage();
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void gotoPage(int pageNum) {
-		if(this.pageNum != pageNum) {
-
-			listeners.fireListingEvent(assembleListingEvent(subArray(0, pageSize - 1), ListingOp.FETCH));
-		}
+		super.gotoPage(pageNum);
+		sourcingWidget.fireEvent(assembleListingEvent(current, ListingOp.FETCH));
 	}
 
+	@Override
 	public void sort(Sorting sorting) {
-		// TODO impl
-		throw new UnsupportedOperationException();
+		super.sort(sorting);
 	}
 
+	@Override
 	public void clear() {
 		offset = 0;
 		sorting = null;

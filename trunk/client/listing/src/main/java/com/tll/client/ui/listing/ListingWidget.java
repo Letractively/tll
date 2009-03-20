@@ -15,17 +15,19 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.listing.ListingEvent;
 
 /**
  * ListingWidget - Base class for all listing {@link Widget}s in the app.
- * @param <R> The row data type.
  * @author jpk
+ * @param <R> The row data type.
+ * @param <T> the table widget type
  */
-public abstract class ListingWidget<R> extends Composite implements Focusable, KeyDownHandler, IListingListener<R> {
+public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
+		Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -52,7 +54,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	/**
 	 * The listing table.
 	 */
-	protected final ListingTable<R> table;
+	protected final T table;
 
 	/**
 	 * The listing navigation bar.
@@ -84,7 +86,7 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	 * @param config The listing configuration
 	 * @param table {@link ListingTable} implementation
 	 */
-	protected ListingWidget(IListingConfig<R> config, ListingTable<R> table) {
+	public ListingWidget(IListingConfig<R> config, T table) {
 		super();
 		final FlowPanel tableViewPanel = new FlowPanel();
 		tableViewPanel.setStylePrimaryName(Styles.TABLE_VIEW);
@@ -125,12 +127,17 @@ public abstract class ListingWidget<R> extends Composite implements Focusable, K
 	 * @param operator The listing operator
 	 */
 	public final void setOperator(IListingOperator<R> operator) {
+		if(operator == null) throw new IllegalArgumentException();
+		if(this.operator != null) throw new IllegalStateException();
 		this.operator = operator;
-		if(operator != null) {
-			this.table.setListingOperator(operator);
-			if(navBar != null) navBar.setListingOperator(operator);
-			operator.addListingListener(this);
-		}
+		operator.setSourcingWidget(this);
+		this.table.setListingOperator(operator);
+		if(navBar != null) navBar.setListingOperator(operator);
+		addHandler(this, ListingEvent.getType());
+	}
+
+	protected final IListingOperator<R> getOperator() {
+		return operator;
 	}
 
 	public final void clear() {

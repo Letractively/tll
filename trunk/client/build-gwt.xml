@@ -4,6 +4,7 @@
 	These properties must be present in the ant context to run the compile target:
 		1) gwt.compile.classpath
 		2) gwt.compile.modules
+		3) gwt.compile.style
 		
   These properties must be present in the ant context to run the shell and shell-debug target:
 		1) gwt.shell.startupUrl
@@ -69,7 +70,7 @@
 			<arg value="-war" />
 			<arg value="target/war" />
 			<arg value="-style" />
-			<arg value="OBF" />
+			<arg value="${gwt.compile.style}" />
 			<arg value="-logLevel" />
 			<arg value="INFO" />
 			<arg value="${gwt.compile.modules}" />

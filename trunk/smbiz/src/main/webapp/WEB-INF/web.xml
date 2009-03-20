@@ -19,10 +19,10 @@
       com.tll.di.MailModule
       com.tll.di.RefDataModule
       com.tll.di.ModelModule
-      com.tll.di.MockEntityFactoryModule
+      com.tll.mock.di.MockEntityFactoryModule
       com.tll.di.DaoModule
       com.tll.di.TransactionModule
-      com.tll.di.EntityServiceModule
+      com.tll.di.EntityAssemblerModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.SecurityModule
     </param-value>

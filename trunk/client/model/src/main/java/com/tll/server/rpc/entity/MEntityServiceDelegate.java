@@ -115,11 +115,7 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	public EntityPayload prototype(final EntityPrototypeRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
-					resolveEntityServiceImpl(request.getEntityType(), payload);
-			if(impl != null) {
-				impl.prototype(getMEntityContext(), request, payload);
-			}
+			resolveEntityServiceImpl(request.getEntityType(), payload).prototype(getMEntityContext(), request, payload);
 		}
 		return payload;
 	}
@@ -128,11 +124,7 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	public EntityPayload load(final EntityLoadRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
-					resolveEntityServiceImpl(request.getEntityType(), payload);
-			if(impl != null) {
-				impl.load(getMEntityContext(), request, payload);
-			}
+			resolveEntityServiceImpl(request.getEntityType(), payload).load(getMEntityContext(), request, payload);
 		}
 		return payload;
 	}
@@ -141,11 +133,7 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	public EntityPayload persist(final EntityPersistRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
-					resolveEntityServiceImpl(request.getEntityType(), payload);
-			if(impl != null) {
-				impl.persist(getMEntityContext(), request, payload);
-			}
+			resolveEntityServiceImpl(request.getEntityType(), payload).persist(getMEntityContext(), request, payload);
 		}
 		return payload;
 	}
@@ -154,11 +142,7 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	public EntityPayload purge(final EntityPurgeRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			final IMEntityServiceImpl<? extends IEntity, ? extends ISearch> impl =
-					resolveEntityServiceImpl(request.getEntityType(), payload);
-			if(impl != null) {
-				impl.purge(getMEntityContext(), request, payload);
-			}
+			resolveEntityServiceImpl(request.getEntityType(), payload).purge(getMEntityContext(), request, payload);
 		}
 		return payload;
 	}

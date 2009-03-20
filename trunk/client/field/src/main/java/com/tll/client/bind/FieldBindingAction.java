@@ -14,7 +14,7 @@ import com.tll.client.validate.Error;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.client.validate.IErrorHandler.Attrib;
-import com.tll.common.bind.IModel;
+import com.tll.common.model.Model;
 
 /**
  * FieldBindingAction - Action that binds fields to model properties enabling
@@ -25,7 +25,7 @@ public final class FieldBindingAction implements IBindingAction {
 
 	/**
 	 * Generalized binding creation routine to bind a {@link FieldGroup} instance
-	 * to an {@link IModel} instance.
+	 * to an {@link Model} instance.
 	 * <p>
 	 * All {@link IFieldWidget}s are extracted from the given field group and
 	 * bound to the corresponding model properties with the sole exception that
@@ -35,7 +35,7 @@ public final class FieldBindingAction implements IBindingAction {
 	 * @param errorHandler
 	 * @return the created {@link Binding}.
 	 */
-	public static Binding createBinding(FieldGroup group, IModel model, IErrorHandler errorHandler) {
+	public static Binding createBinding(FieldGroup group, Model model, IErrorHandler errorHandler) {
 		final Binding b = new Binding();
 		group.setErrorHandler(errorHandler);
 		// create bindings for all provided field widgets in the root field group
@@ -61,7 +61,7 @@ public final class FieldBindingAction implements IBindingAction {
 	/**
 	 * The [root] model.
 	 */
-	private IModel model;
+	private Model model;
 
 	/**
 	 * The sole binding.

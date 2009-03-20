@@ -6,11 +6,9 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.SmbizAdmin;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.common.AdminContext;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.SmbizEntityType;
@@ -43,12 +41,12 @@ public class IspMain extends MainView {
 	public IspMain() {
 		super();
 
-		AdminContext ac = SmbizAdmin.getAdminContext();
+		final AdminContext ac = SmbizAdmin.getAdminContext();
 		assert ac != null;
-		RefKey userAccountRef = ac.getUserAccount().getRefKey();
+		final ModelKey userAccountRef = ac.getUserAccount().getRefKey();
 		assert userAccountRef != null && userAccountRef.isSet();
 
-		AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
+		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
 		as.setParentAccountRef(userAccountRef);
 
 		addWidget(links);

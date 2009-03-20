@@ -13,7 +13,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.impl.FieldLabelImpl;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * FieldLabel - the field label of an {@link AbstractField} impl.

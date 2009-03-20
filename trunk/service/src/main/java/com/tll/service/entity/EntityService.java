@@ -20,6 +20,7 @@ import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.model.IEntity;
+import com.tll.model.IEntityAssembler;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.validate.EntityValidatorFactory;

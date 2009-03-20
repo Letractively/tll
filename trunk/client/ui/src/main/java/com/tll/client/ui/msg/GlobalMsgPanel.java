@@ -44,7 +44,7 @@ public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 				return i;
 			}
 		}
-		throw new IllegalStateException();
+		throw new IllegalStateException("Unable to resolve msg level index for: " + level);
 	}
 
 	/**

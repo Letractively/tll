@@ -25,7 +25,7 @@ public class AuthorityEditor extends PropertyEditorSupport {
 	}
 
 	protected String formatText(String text) {
-		return StringUtil.formatEnumValue(StringUtils.replace(text, "ROLE_", ""));
+		return StringUtil.enumStyleToPresentation(StringUtils.replace(text, "ROLE_", ""));
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class AuthorityEditor extends PropertyEditorSupport {
 	@Override
 	public void setAsText(String text) throws IllegalArgumentException {
 		if(text == null || text.length() < 1) throw new IllegalArgumentException("No authority specified");
-		for(Authority a : masterAuthorities) {
+		for(final Authority a : masterAuthorities) {
 			if(text.equals(formatText(a.getAuthority()))) {
 				setValue(a);
 				return;

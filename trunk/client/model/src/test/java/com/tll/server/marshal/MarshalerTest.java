@@ -18,19 +18,17 @@ import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
-import com.tll.config.Config;
-import com.tll.dao.DaoMode;
-import com.tll.di.DaoModule;
+import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.Account;
+import com.tll.model.EntityGraph;
 import com.tll.model.FieldEnum;
 import com.tll.model.IEntity;
 import com.tll.model.IScalar;
+import com.tll.model.MockEntityFactory;
 import com.tll.model.NestedEntity;
-import com.tll.model.mock.EntityGraph;
-import com.tll.model.mock.EntityGraphBuilder;
-import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 
 /**
  * EntityMarshallerTest
@@ -68,9 +66,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 		super.addModules(modules);
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
-		final DaoModule daoModule = new DaoModule();
-		modules.add(daoModule);
+		modules.add(new MockDaoModule());
 	}
 
 	private Marshaler getMarshaler() {
@@ -87,7 +83,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 	 */
 	@Test
 	public void testCircularEntity() throws Exception {
-		final EntityGraphBuilder entityGraphBuilder = new EntityGraphBuilder(getMockEntityFactory());
+		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder = new TestPersistenceUnitEntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Marshaler marshaler = getMarshaler();
 		

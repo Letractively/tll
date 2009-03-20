@@ -26,7 +26,7 @@ import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldWidget;
-import com.tll.client.ui.field.ModelViewer;
+import com.tll.client.ui.mock.ModelViewer;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;

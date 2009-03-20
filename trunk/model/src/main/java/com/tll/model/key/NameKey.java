@@ -53,11 +53,6 @@ public class NameKey<N extends INamedEntity> extends AbstractEntityKey<N> {
 		setNameProperty(propertyName);
 	}
 
-	@Override
-	public String getTypeName() {
-		return "Name key";
-	}
-
 	public String getName() {
 		return name;
 	}

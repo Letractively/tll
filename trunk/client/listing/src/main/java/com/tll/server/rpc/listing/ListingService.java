@@ -43,8 +43,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * @param <S> the search type
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet
-		implements
+public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
 		IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
@@ -58,7 +57,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 	public ListingPayload<Model> process(final ListingRequest<S> listingRequest) {
 		final Status status = new Status();
 
-		IListingHandler<Model> handler = null;
+		ListingHandler<Model> handler = null;
 
 		if(listingRequest == null) {
 			status.addMsg("No listing command specified.", MsgLevel.ERROR);
@@ -167,17 +166,9 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						}
 
 						// transform to marshaling list handler
-						final IMarshalingListHandler<E> marshalingListHandler;
-						if(listingDef.getPropKeys() != null) {
-							marshalingListHandler =
-									new PropKeyListHandler<E>(context.getMarshaler(), mEntitySvc.getMarshalOptions(context), listingDef
-											.getPropKeys());
-						}
-						else {
-							marshalingListHandler =
-									new MarshalingListHandler<E>(context.getMarshaler(), mEntitySvc.getMarshalOptions(context));
-						}
-						marshalingListHandler.setWrappedHandler(listHandler);
+						final MarshalingListHandler<E> marshalingListHandler =
+								new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
+										mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());

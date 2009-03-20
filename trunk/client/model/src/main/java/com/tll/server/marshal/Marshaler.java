@@ -24,8 +24,8 @@ import com.tll.SystemError;
 import com.tll.common.model.BooleanPropertyValue;
 import com.tll.common.model.CharacterPropertyValue;
 import com.tll.common.model.DatePropertyValue;
+import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.EnumPropertyValue;
-import com.tll.common.model.FloatPropertyValue;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.IntPropertyValue;
@@ -176,37 +176,41 @@ public final class Marshaler {
 			final PropertyMetadata pdata) {
 		IModelProperty prop = null;
 
-		if(String.class.isAssignableFrom(ptype)) {
+		if(String.class == ptype) {
 			prop = new StringPropertyValue(pname, pdata, (String) obj);
 		}
 
-		else if(Date.class.isAssignableFrom(ptype)) {
+		else if(Date.class == ptype) {
 			final Date d = obj == null ? null : new Date(((Date) obj).getTime());
 			prop = new DatePropertyValue(pname, pdata, d);
 		}
 
-		else if(Enum.class.isAssignableFrom(ptype)) {
+		else if(ptype.isEnum()) {
 			prop = new EnumPropertyValue(pname, pdata, obj == null ? null : (Enum<?>) obj);
 		}
 
-		else if(Long.class.isAssignableFrom(ptype) || long.class.isAssignableFrom(ptype)) {
+		else if(long.class == ptype || Long.class == ptype) {
 			prop = new LongPropertyValue(pname, pdata, (Long) obj);
 		}
 
-		else if(Integer.class.isAssignableFrom(ptype) || int.class.isAssignableFrom(ptype)) {
+		else if(int.class == ptype || Integer.class == ptype) {
 			prop = new IntPropertyValue(pname, pdata, (Integer) obj);
 		}
 
-		else if(Character.class.isAssignableFrom(ptype) || char.class.isAssignableFrom(ptype)) {
+		else if(char.class == ptype || Character.class == ptype) {
 			prop = new CharacterPropertyValue(pname, pdata, (Character) obj);
 		}
 
-		else if(Boolean.class.isAssignableFrom(ptype) || boolean.class.isAssignableFrom(ptype)) {
+		else if(boolean.class == ptype || Boolean.class == ptype) {
 			prop = new BooleanPropertyValue(pname, pdata, (Boolean) obj);
 		}
 
-		else if(Float.class.isAssignableFrom(ptype) || float.class.isAssignableFrom(ptype)) {
-			prop = new FloatPropertyValue(pname, pdata, (Float) obj);
+		else if(double.class == ptype || Double.class == ptype) {
+			prop = new DoublePropertyValue(pname, pdata, (Double) obj);
+		}
+
+		else if(float.class == ptype || Float.class == ptype) {
+			prop = new DoublePropertyValue(pname, pdata, ((Float) obj).doubleValue());
 		}
 
 		return prop;
@@ -464,13 +468,16 @@ public final class Marshaler {
 				case LONG:
 				case INT:
 				case BOOL:
-				case FLOAT:
+				case DOUBLE:
 				case DATE:
 				case CHAR:
 				case ENUM:
 					val = pval;
 					break;
 
+				case FLOAT:
+					val = ((Double) pval).floatValue();
+				
 				case RELATED_ONE: {
 					final Model rltdOne = (Model) pval;
 					final IEntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();

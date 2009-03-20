@@ -24,8 +24,6 @@ public final class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 		svc = (IAuxDataServiceAsync) GWT.create(IAuxDataService.class);
 	}
 
-	private final Widget sourcingWidget;
-
 	private final AuxDataRequest auxDataRequest;
 
 	/**
@@ -34,14 +32,8 @@ public final class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 	 * @param auxDataRequest
 	 */
 	public AuxDataCommand(Widget sourcingWidget, AuxDataRequest auxDataRequest) {
-		super();
-		this.sourcingWidget = sourcingWidget;
+		super(sourcingWidget);
 		this.auxDataRequest = auxDataRequest;
-	}
-
-	@Override
-	protected Widget getSourcingWidget() {
-		return sourcingWidget;
 	}
 
 	@Override

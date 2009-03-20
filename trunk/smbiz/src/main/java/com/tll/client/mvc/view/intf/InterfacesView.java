@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
-import com.tll.client.data.rpc.ListingCommand;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
+import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
@@ -36,7 +36,7 @@ import com.tll.client.ui.field.intf.SwitchInterfacePanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
@@ -70,7 +70,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 	 * loading of stack {@link Widget}s.
 	 * @author jpk
 	 */
-	private static final class InterfacesStack extends StackPanel implements IListingListener<Model> {
+	private static final class InterfacesStack extends StackPanel implements IListingHandler<Model> {
 
 		/**
 		 * InterfaceStack - Binding between a stack index and an {@link EditPanel}
@@ -80,7 +80,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		private final class InterfaceStack implements IEditHandler {
 
 			// private final int stackIndex;
-			private final RefKey intfRef;
+			private final ModelKey intfRef;
 			private Model model; // the interface model
 			private final EditPanel editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
@@ -89,13 +89,13 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			 * Constructor
 			 * @param intfRef
 			 */
-			public InterfaceStack(/*int stackIndex, */RefKey intfRef) {
+			public InterfaceStack(/*int stackIndex, */ModelKey intfRef) {
 				super();
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
 				// TODO add global msg panel ref
-				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getType()), false, true);
+				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getEntityType()), false, true);
 				editPanel.addEditHandler(this);
 				editPanel.setVisible(false); // hide initially
 
@@ -159,7 +159,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 		}// InterfaceStack
 
-		private final ListingCommand<InterfaceSearch> listingCommand;
+		private final IListingOperator<Model> listHandler;
 
 		/**
 		 * Map of {@link InterfaceStack}s keyed by the stack index.
@@ -177,19 +177,20 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 			final InterfaceSearch criteria = new InterfaceSearch(CriteriaType.SCALAR_NAMED_QUERY);
 			criteria.setNamedQuery("interface.summaryList");
 			final Sorting defaultSorting = new Sorting("name");
-			listingCommand =
-					ListingFactory.createListingCommand(this, listingName, ListHandlerType.COLLECTION, criteria, null, -1,
+			listHandler =
+					ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
-			listingCommand.addListingListener(this);
+			//listHandler.addListingHandler(this);
+			addHandler(this, ListingEvent.getType());
 		}
 
 		void refreshData() {
 			initialized = false;
-			listingCommand.refresh();
+			listHandler.refresh();
 		}
 
 		void clearData() {
-			listingCommand.clear();
+			listHandler.clear();
 		}
 
 		/**
@@ -228,7 +229,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 			for(int i = 0; i < intfs.length; i++) {
 				final Model data = intfs[i];
-				final RefKey ref = data.getRefKey();
+				final ModelKey ref = data.getRefKey();
 				assert ref != null && ref.isSet();
 				final InterfaceStack ir = new InterfaceStack(ref);
 				list.add(ir);
@@ -314,7 +315,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getType());
+		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getEntityType());
 		return event.getSource() == this || (event.getModelRef() != null && set.isInterfaceType());
 	}
 

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AddressSearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Address;
@@ -33,7 +33,8 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 
 	@Override
 	protected void handleLoadOptions(MEntityContext context, Address e, EntityOptions options,
-			Map<String, RefKey> refs) throws SystemError {
+			Map<String, ModelKey> refs)
+			throws SystemError {
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class AddressService extends MEntityServiceImpl<Address, AddressSearch> {
 		try {
 			bk = BusinessKeyFactory.create(Address.class, search.getBusinessKeyName());
 		}
-		catch(BusinessKeyNotDefinedException e) {
+		catch(final BusinessKeyNotDefinedException e) {
 			throw new SystemError("No business keys defined for Address entity");
 		}
 		bk.setPropertyValue("address1", search.getAddress1());

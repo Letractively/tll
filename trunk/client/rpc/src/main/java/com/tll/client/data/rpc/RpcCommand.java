@@ -20,13 +20,12 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  * @param <P> payload type
  */
-public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, ISourcesRpcEvents {
+public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*, IHasRpcHandlers<P>*/{
 
 	/**
-	 * The RPC listeners. This serves as a generic way to issue notification on
-	 * RPC return.
+	 * The optional widget that will serve as the rpc event source.
 	 */
-	private RpcListenerCollection rpcListeners;
+	protected final Widget sourcingWidget;
 
 	/**
 	 * The declared ref is necessary in order to chain rpc commands.
@@ -37,56 +36,26 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	 * Constructor
 	 */
 	public RpcCommand() {
-		super();
+		this(null);
 	}
 
 	/**
-	 * @return The sourcing Widget which must <em>not</em> return
-	 *         <code>null</code>.
+	 * Constructor
+	 * @param sourcingWidget If non-<code>null</code>, {@link RpcEvent}s will fire
+	 *        on this widget.
 	 */
-	protected abstract Widget getSourcingWidget();
-
-	public void addRpcListener(IRpcListener listener) {
-		if(rpcListeners == null) {
-			rpcListeners = new RpcListenerCollection();
-		}
-		rpcListeners.add(listener);
+	protected RpcCommand(Widget sourcingWidget) {
+		this.sourcingWidget = sourcingWidget;
 	}
 
-	public void removeRpcListener(IRpcListener listener) {
-		if(rpcListeners != null) {
-			rpcListeners.remove(listener);
-		}
-	}
-
-	protected AsyncCallback<P> getAsyncCallback() {
+	protected final AsyncCallback<P> getAsyncCallback() {
 		return callback;
 	}
 
-	public void setAsyncCallback(AsyncCallback<P> callback) {
+	public final void setAsyncCallback(AsyncCallback<P> callback) {
 		this.callback = callback;
 	}
 
-	/**
-	 * Adjusts the internal RPC counter and is reponsible for notifying the UI of
-	 * the RPC status.
-	 * @param sending
-	 */
-	/*
-	static void rpc(boolean sending) {
-		if(sending) {
-			rpcCounter++;
-			UI.darkenBusyPanel();
-			UI.busy();
-		}
-		else {
-			--rpcCounter;
-			UI.unbusy();
-			UI.lightenBusyPanel();
-		}
-	}
-	*/
-	
 	/**
 	 * Does the actual RPC execution.
 	 */
@@ -96,10 +65,8 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 		//rpc(true);
 		try {
 			doExecute();
-			// fire RPC send event
-			if(rpcListeners != null) {
-				rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget()));
-			}
+			// fire an RPC send event
+			if(sourcingWidget != null) sourcingWidget.fireEvent(new RpcEvent<P>());
 		}
 		catch(final Throwable t) {
 			//rpc(false);
@@ -124,14 +91,12 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	 * @param result
 	 */
 	protected void handleSuccess(P result) {
-
-		// fire RPC event
-		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), result));
+		if(sourcingWidget != null) {
+			// fire RPC event
+			sourcingWidget.fireEvent(new RpcEvent<P>(result));
+			// fire status event
+			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
 		}
-
-		// fire status event
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), result.getStatus()));
 	}
 
 	/**
@@ -141,16 +106,16 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>, I
 	protected void handleFailure(Throwable caught) {
 		GWT.log("Error in rpc payload retrieval", caught);
 
-		// fire RPC event
-		if(rpcListeners != null) {
-			rpcListeners.fireRpcEvent(new RpcEvent(getSourcingWidget(), caught));
-		}
+		if(sourcingWidget != null) {
+			// fire RPC event
+			sourcingWidget.fireEvent(new RpcEvent<P>(caught));
 
-		// fire status event
-		String msg = caught.getMessage();
-		if(msg == null) msg = "An unknown RPC error occurred";
-		final Status status = new Status(msg, MsgLevel.ERROR);
-		StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(getSourcingWidget(), status));
+			// fire status event
+			String msg = caught.getMessage();
+			if(msg == null) msg = "An unknown RPC error occurred";
+			final Status status = new Status(msg, MsgLevel.ERROR);
+			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
+		}
 	}
 
 }

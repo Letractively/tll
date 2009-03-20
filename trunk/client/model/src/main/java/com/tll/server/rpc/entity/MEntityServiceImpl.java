@@ -22,7 +22,7 @@ import com.tll.common.data.EntityPersistRequest;
 import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
@@ -48,13 +48,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Loads additional entity properties.
 	 * @param e
 	 * @param options
-	 * @param refs The map to place related entity references ({@link RefKey}) if
-	 *        they are reuested in <code>options</code>.
+	 * @param refs The map to place related entity references ({@link ModelKey})
+	 *        if they are reuested in <code>options</code>.
 	 * @param context The request context.
 	 * @throws SystemError When any error occurrs.
 	 */
 	protected abstract void handleLoadOptions(MEntityContext context, E e, EntityOptions options,
-			Map<String, RefKey> refs) throws SystemError;
+			Map<String, ModelKey> refs) throws SystemError;
 
 	/**
 	 * Handles persist options specified in options.
@@ -129,7 +129,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			}
 
 			// optional loading
-			final Map<String, RefKey> refs = new HashMap<String, RefKey>();
+			final Map<String, ModelKey> refs = new HashMap<String, ModelKey>();
 			if(request.entityOptions != null) {
 				handleLoadOptions(context, e, request.entityOptions, refs);
 			}
@@ -208,7 +208,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final IEntityService<E> svc =
 					context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final RefKey entityRef = request.getEntityRef();
+			final ModelKey entityRef = request.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}

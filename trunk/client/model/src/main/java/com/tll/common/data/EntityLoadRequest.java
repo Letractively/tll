@@ -6,7 +6,7 @@
 package com.tll.common.data;
 
 import com.tll.common.model.IEntityType;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 
 /**
@@ -15,7 +15,7 @@ import com.tll.common.search.ISearch;
  */
 public class EntityLoadRequest extends EntityRequest {
 
-	private RefKey entityRef;
+	private ModelKey entityRef;
 
 	private ISearch search;
 
@@ -34,7 +34,7 @@ public class EntityLoadRequest extends EntityRequest {
 	 * Constructor - Use for loading by primary key.
 	 * @param entityRef
 	 */
-	public EntityLoadRequest(RefKey entityRef) {
+	public EntityLoadRequest(ModelKey entityRef) {
 		super();
 		this.entityRef = entityRef;
 	}
@@ -46,7 +46,7 @@ public class EntityLoadRequest extends EntityRequest {
 	 */
 	public EntityLoadRequest(IEntityType entityType, String name) {
 		super();
-		this.entityRef = new RefKey(entityType, null, name);
+		this.entityRef = new ModelKey(entityType, null, name);
 		this.loadByName = true;
 	}
 
@@ -62,7 +62,7 @@ public class EntityLoadRequest extends EntityRequest {
 
 	@Override
 	public IEntityType getEntityType() {
-		return loadByBusinessKey ? search.getEntityType() : entityRef.getType();
+		return loadByBusinessKey ? search.getEntityType() : entityRef.getEntityType();
 	}
 
 	public boolean isLoadByName() {
@@ -76,7 +76,7 @@ public class EntityLoadRequest extends EntityRequest {
 	/**
 	 * @return the entityRef
 	 */
-	public RefKey getEntityRef() {
+	public ModelKey getEntityRef() {
 		return entityRef;
 	}
 

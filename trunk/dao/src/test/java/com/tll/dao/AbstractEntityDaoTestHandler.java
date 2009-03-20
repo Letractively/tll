@@ -13,7 +13,7 @@ import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.INamedEntity;
-import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractEntityDaoTestHandler

@@ -21,10 +21,11 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingEvent;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.ui.SimpleHyperLink;
 import com.tll.dao.SortColumn;
 import com.tll.dao.SortDir;
@@ -35,7 +36,7 @@ import com.tll.dao.Sorting;
  * @author jpk
  * @param <R>
  */
-public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingListener<R> {
+public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingHandler<R> {
 	
 	/**
 	 * The listing table specific image bundle.
@@ -78,7 +79,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 	protected boolean ignoreCaseWhenSorting;
 
-	protected ITableCellRenderer<R> cellRenderer;
+	protected ITableCellRenderer<R, Column> cellRenderer;
 
 	protected IListingOperator<R> listingOperator;
 
@@ -127,6 +128,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		super();
 		sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT);
 		addClickHandler(this);
+		addHandler(this, KeyDownEvent.getType());
 		initialize(config);
 	}
 
@@ -147,7 +149,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		int rn = -1;
 		final Column[] columns = config.getColumns();
 		for(int i = 0; i < columns.length; i++) {
-			if(Column.ROW_COUNT_COL_PROP.equals(columns[i].getPropertyName())) {
+			if(Column.ROW_COUNT_COLUMN == columns[i]) {
 				rn = i;
 				break;
 			}
@@ -179,7 +181,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	private int resolveColumnIndex(String colProp) {
 		for(int i = 0; i < columns.length; i++) {
 			final Column c = columns[i];
-			if(c.getPropertyName().equals(colProp)) {
+			if((c instanceof PropertyBoundColumn) && ((PropertyBoundColumn) c).getPropertyName().equals(colProp)) {
 				return i;
 			}
 		}
@@ -213,7 +215,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		private final SimpleHyperLink lnk;
 
-		private final Column column;
+		private final PropertyBoundColumn column;
 
 		private SortDir direction;
 
@@ -221,7 +223,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		 * Constructor
 		 * @param column
 		 */
-		public SortLink(Column column) {
+		public SortLink(PropertyBoundColumn column) {
 			lnk = new SimpleHyperLink(column.getName(), this);
 			pnl.add(lnk);
 			initWidget(pnl);
@@ -243,7 +245,6 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			if(imgSortDir == null) {
 				imgSortDir = new Image();
 				imgSortDir.addClickHandler(this);
-				imgSortDir.setStyleName(Styles.SORT);
 			}
 
 			// insert the sort dir arrow image
@@ -253,6 +254,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			else {
 				imageBundle.sort_desc().applyTo(imgSortDir);
 			}
+			imgSortDir.setStyleName(Styles.SORT);
 			imgSortDir.setTitle(reverseTitle);
 			pnl.insert(imgSortDir, 0);
 		}
@@ -267,7 +269,8 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		public void onClick(ClickEvent event) {
 			if(event.getSource() == lnk) {
 				final SortColumn sc =
-						new SortColumn(column.getPropertyName(), direction == SortDir.ASC ? SortDir.DESC : SortDir.ASC,
+						new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
+								: SortDir.ASC,
 								ignoreCaseWhenSorting);
 				listingOperator.sort(new Sorting(sc));
 			}
@@ -282,18 +285,18 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		for(int c = 0; c < columns.length; c++) {
 			final Column col = columns[c];
-			final boolean isRowCntCol = Column.ROW_COUNT_COL_PROP.equals(col.getPropertyName());
+			final boolean isRowCntCol = Column.ROW_COUNT_COLUMN == col;
 			if(isRowCntCol) {
 				getCellFormatter().addStyleName(0, c, Styles.COUNT_COL);
-				getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
+				//getColumnFormatter().addStyleName(c, Styles.COUNT_COL);
 			}
 			if(config.isSortable()) {
 				if(isRowCntCol) {
 					setWidget(0, c, new Label("#"));
 				}
-				else {
+				else if(col instanceof PropertyBoundColumn) {
 					assert sortlinks != null;
-					final SortLink sl = new SortLink(col);
+					final SortLink sl = new SortLink((PropertyBoundColumn) col);
 					sortlinks[c] = sl;
 					setWidget(0, c, sl);
 				}
@@ -319,7 +322,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		}
 
 		for(int c = 0; c < columns.length; c++) {
-			if(Column.ROW_COUNT_COL_PROP.equals(columns[c].getPropertyName())) {
+			if(Column.ROW_COUNT_COLUMN == columns[c]) {
 				if(rowNum > -1) {
 					getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 					setText(rowIndex, c, Integer.toString(rowNum));

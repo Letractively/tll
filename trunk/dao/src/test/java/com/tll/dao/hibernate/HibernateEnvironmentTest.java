@@ -15,12 +15,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Stage;
-import com.tll.config.Config;
-import com.tll.dao.DaoMode;
 import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DaoModule;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
+import com.tll.di.OrmDaoModule;
 
 /**
  * HibernateEnvironmentTest - Verifies hibernate loads error free
@@ -33,7 +31,7 @@ public class HibernateEnvironmentTest {
 	
 	@BeforeClass
 	public void init() {
-		Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
+		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
 		db = i.getInstance(DbShell.class);
 		db.create();
 	}
@@ -48,10 +46,9 @@ public class HibernateEnvironmentTest {
 	 * Verifies the loading of the Hibernate environment.
 	 */
 	public void test() {
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
-		Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DaoModule());
-		Provider<EntityManager> emp = i.getProvider(EntityManager.class);
-		EntityManager em = emp.get();
+		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new OrmDaoModule());
+		final Provider<EntityManager> emp = i.getProvider(EntityManager.class);
+		final EntityManager em = emp.get();
 		assert em != null;
 	}
 }

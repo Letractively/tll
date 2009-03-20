@@ -7,7 +7,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
+import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.listing.PropertyBoundCellRenderer;
+import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ShowViewRequest;
@@ -18,7 +21,7 @@ import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.SortColumn;
@@ -54,7 +57,7 @@ public final class CustomerListingView extends ListingView {
 		 * @param ispRef The Isp ref
 		 * @return {@link ViewRequestEvent}
 		 */
-		public CustomerListingViewRequest newViewRequest(Widget source, RefKey mercRef, RefKey ispRef) {
+		public CustomerListingViewRequest newViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
 			return new CustomerListingViewRequest(source, mercRef, ispRef);
 		}
 
@@ -70,12 +73,12 @@ public final class CustomerListingView extends ListingView {
 		/**
 		 * The grand-parent Isp ref.
 		 */
-		private final RefKey ispRef;
+		private final ModelKey ispRef;
 
 		/**
 		 * The parent Merchant ref.
 		 */
-		private final RefKey mercRef;
+		private final ModelKey mercRef;
 
 		/**
 		 * Constructor
@@ -83,7 +86,7 @@ public final class CustomerListingView extends ListingView {
 		 * @param mercRef The parent merchant ref
 		 * @param ispRef
 		 */
-		CustomerListingViewRequest(Widget source, RefKey mercRef, RefKey ispRef) {
+		CustomerListingViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
 			super(source, klas);
 			assert mercRef != null && ispRef != null;
 			this.mercRef = mercRef;
@@ -97,9 +100,9 @@ public final class CustomerListingView extends ListingView {
 
 	}
 
-	private RefKey ispRef;
+	private ModelKey ispRef;
 
-	private RefKey mercRef;
+	private ModelKey mercRef;
 
 	/**
 	 * The link to the parent merchant listing view.
@@ -136,13 +139,18 @@ public final class CustomerListingView extends ListingView {
 
 			private final String listingElementName = SmbizEntityType.CUSTOMER.getName();
 
+			private final PropertyBoundColumn cName = new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "c");
+			private final PropertyBoundColumn cDCreated =
+					new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "ca");
+			private final PropertyBoundColumn cDModified =
+					new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "ca");
+			private final PropertyBoundColumn cStatus = new PropertyBoundColumn("Status", "status", "ca");
+			private final PropertyBoundColumn cBillingModel = new PropertyBoundColumn("Billing Model", "billingModel", "ca");
+			private final PropertyBoundColumn cBillingCycle = new PropertyBoundColumn("Billing Cycle", "billingCycle", "ca");
+			
 			private final Column[] columns =
 					new Column[] {
-						new Column("#", Column.ROW_COUNT_COL_PROP, null), new Column("Name", Model.NAME_PROPERTY, "c"),
-						new Column("Created", Model.DATE_CREATED_PROPERTY, "ca", GlobalFormat.DATE),
-						new Column("Modified", Model.DATE_MODIFIED_PROPERTY, "ca", GlobalFormat.DATE),
-						new Column("Status", "status", "ca"), new Column("Billing Model", "billingModel", "ca"),
-						new Column("Billing Cycle", "billingCycle", "ca") };
+				Column.ROW_COUNT_COLUMN, cName, cDCreated, cDModified, cStatus, cBillingModel, cBillingCycle };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
@@ -175,6 +183,11 @@ public final class CustomerListingView extends ListingView {
 				return columns;
 			}
 
+			@Override
+			public ITableCellRenderer<Model, ? extends Column> getCellRenderer() {
+				return PropertyBoundCellRenderer.get();
+			}
+			
 			public IRowOptionsDelegate getRowOptionsHandler() {
 				return rowOps;
 			}
@@ -185,7 +198,8 @@ public final class CustomerListingView extends ListingView {
 			}
 		};
 
-		setListingWidget(ListingFactory.createListingWidget(this, config, SmbizEntityType.CUSTOMER.toString() + "_LISTING",
+		setListingWidget(ListingFactory.createRemoteListingWidget(config, SmbizEntityType.CUSTOMER.toString()
+				+ "_LISTING",
 				ListHandlerType.PAGE, criteria, null, config.getDefaultSorting()));
 	}
 

@@ -8,18 +8,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
+import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.common.data.rpc.ICrudServiceAsync;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 
 /**
@@ -43,7 +43,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 
 	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
 
-	private final Widget sourcingWidget;
 	private CrudOp crudOp;
 	private EntityRequest entityRequest;
 
@@ -52,13 +51,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * @param sourcingWidget
 	 */
 	public CrudCommand(Widget sourcingWidget) {
-		super();
-		this.sourcingWidget = sourcingWidget;
-	}
-
-	@Override
-	protected Widget getSourcingWidget() {
-		return sourcingWidget;
+		super(sourcingWidget);
 	}
 
 	/**
@@ -78,7 +71,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * Sets the state of this command for loading an entity by primary key.
 	 * @param entityRef
 	 */
-	public final void load(RefKey entityRef) {
+	public final void load(ModelKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
@@ -139,7 +132,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 * Sets the state of this command for purging an entity.
 	 * @param entityRef The ref of the entity to be purged.
 	 */
-	public final void purge(RefKey entityRef) {
+	public final void purge(ModelKey entityRef) {
 		if(entityRef == null || !entityRef.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
@@ -178,7 +171,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	protected void doExecute() {
 		switch(crudOp) {
 			case FETCH_PROTOTYPE:
-				svc.getEmptyEntity((EntityPrototypeRequest) entityRequest, getAsyncCallback());
+				svc.prototype((EntityPrototypeRequest) entityRequest, getAsyncCallback());
 				break;
 
 			case LOAD:

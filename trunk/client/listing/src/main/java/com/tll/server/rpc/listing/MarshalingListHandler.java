@@ -5,31 +5,39 @@
 package com.tll.server.rpc.listing;
 
 import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 import com.tll.dao.SearchResult;
 import com.tll.listhandler.DecoratedListHandler;
+import com.tll.listhandler.IListHandler;
 import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 
 /**
- * MarshalingListHandler - {@link IMarshalingListHandler} implementation
+ * MarshalingListHandler - Transforms {@link SearchResult}s to {@link Model}s
+ * for use in client side list handling.
  * @author jpk
- * @param <E>
+ * @param <E> the entity type
  */
-public class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> implements IMarshalingListHandler<E> {
+public final class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> {
 
-	protected final Marshaler marshaler;
-	protected final MarshalOptions marshalOptions;
+	private final Marshaler marshaler;
+	private final MarshalOptions marshalOptions;
+	private final String[] propKeys;
 
 	/**
 	 * Constructor
+	 * @param listHandler
 	 * @param marshaler
 	 * @param marshalOptions
+	 * @param propKeys
 	 */
-	public MarshalingListHandler(Marshaler marshaler, MarshalOptions marshalOptions) {
-		super();
+	public MarshalingListHandler(IListHandler<SearchResult<E>> listHandler, Marshaler marshaler,
+			MarshalOptions marshalOptions, String[] propKeys) {
+		super(listHandler);
 		this.marshaler = marshaler;
 		this.marshalOptions = marshalOptions;
+		this.propKeys = propKeys;
 	}
 
 	/**
@@ -40,8 +48,21 @@ public class MarshalingListHandler<E extends IEntity> extends DecoratedListHandl
 	 * @return The transformed {@link Model}
 	 * @throws IllegalStateException When a transform related error occurrs.
 	 */
-	protected Model transform(Model model) {
-		return model;
+	private Model transform(Model model) {
+		if(propKeys == null) {
+			return model;
+		}
+		final int numCols = propKeys.length;
+		final Model xgrp = new Model(model.getEntityType());
+		for(int i = 0; i < numCols; i++) {
+			try {
+				xgrp.set(model.getModelProperty(propKeys[i]));
+			}
+			catch(final PropertyPathException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return xgrp;
 	}
 
 	public final Model getDecoratedElement(SearchResult<E> element) {

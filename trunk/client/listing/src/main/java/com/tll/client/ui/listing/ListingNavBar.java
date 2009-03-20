@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.listing.IListingListener;
+import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.ui.Position;
@@ -29,7 +29,7 @@ import com.tll.client.ui.Toolbar;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * ListingNavBar - Toolbar impl for listing navigation.
@@ -37,7 +37,7 @@ import com.tll.common.util.StringUtil;
  * @author jpk
  */
 public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHandler, ChangeHandler,
-		IListingListener<R> {
+		IListingHandler<R> {
 
 	/**
 	 * The listing nav bar specific image bundle.
@@ -248,19 +248,18 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 
 	public void onClick(ClickEvent event) {
 		final Object sender = event.getSource();
-		if(pageSize > 0) {
-			if(sender == btnPageFirst) {
-				listingOperator.firstPage();
-			}
-			else if(sender == btnPagePrev) {
-				listingOperator.previousPage();
-			}
-			else if(sender == btnPageNext) {
-				listingOperator.nextPage();
-			}
-			else if(sender == btnPageLast) {
-				listingOperator.lastPage();
-			}
+		((Focusable) sender).setFocus(false);
+		if(sender == btnPageFirst) {
+			listingOperator.firstPage();
+		}
+		else if(sender == btnPagePrev) {
+			listingOperator.previousPage();
+		}
+		else if(sender == btnPageNext) {
+			listingOperator.nextPage();
+		}
+		else if(sender == btnPageLast) {
+			listingOperator.lastPage();
 		}
 		else if(sender == btnRefresh) {
 			listingOperator.refresh();
@@ -269,7 +268,6 @@ public class ListingNavBar<R> extends Toolbar implements ClickHandler, KeyUpHand
 			assert addRowDelegate != null;
 			addRowDelegate.handleAddRow();
 		}
-		((Focusable) sender).setFocus(false);
 	}
 
 	public void onKeyUp(KeyUpEvent event) {

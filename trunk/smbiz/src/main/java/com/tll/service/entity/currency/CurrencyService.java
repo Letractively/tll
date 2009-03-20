@@ -10,7 +10,7 @@ import com.tll.criteria.Criteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.IEntityDao;
 import com.tll.model.Currency;
-import com.tll.service.entity.IEntityAssembler;
+import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 
 /**

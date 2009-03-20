@@ -11,7 +11,7 @@ import com.tll.model.Isp;
 import com.tll.model.Merchant;
 
 /**
- * SelectNamedQueries - Enumeration of the system defined data retrieval based
+ * TestSelectNamedQueries - Enumeration of the system defined data retrieval based
  * named queries.
  * @author jpk
  */

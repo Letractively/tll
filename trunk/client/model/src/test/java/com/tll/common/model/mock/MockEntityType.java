@@ -6,7 +6,7 @@ package com.tll.common.model.mock;
 
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
-import com.tll.common.util.StringUtil;
+import com.tll.util.StringUtil;
 
 /**
  * MockEntityType
@@ -21,7 +21,7 @@ public enum MockEntityType implements IEntityType, INameValueProvider<String> {
 	CURRENCY("Currency");
 
 	//private static final String MODEL_PACKAGE_NAME = MockEntityType.class.getPackage().getName();
-	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
+	private static final String MODEL_PACKAGE_NAME = "com.tll.model.";
 
 	private String name;
 

@@ -16,8 +16,6 @@ import org.testng.annotations.Test;
 
 import com.tll.config.Config;
 import com.tll.dao.DaoMode;
-import com.tll.di.DaoModule;
-import com.tll.di.SecurityModule;
 import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.util.EnumUtil;
 
@@ -39,12 +37,12 @@ public class BootstrapperTest {
 
 		// handle the dao mode
 		final DaoMode daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		Config.instance().setProperty(DaoMode.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
 		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
 		final SecurityMode securityMode = EnumUtil.fromString(SecurityMode.class, securityModeStr);
-		Config.instance().setProperty(SecurityModule.ConfigKeys.SECURITY_MODE_PARAM.getKey(), securityMode.toString());
+		Config.instance().setProperty(SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey(), securityMode.toString());
 		log.debug("SecurityMode: " + securityMode);
 	}
 
@@ -58,7 +56,7 @@ public class BootstrapperTest {
 				+ "com.tll.di.MockEntityFactoryModule \r\n" 
 				+ "com.tll.di.DaoModule \r\n"
 				+ "com.tll.di.TransactionModule \r\n"
-				+ "com.tll.di.EntityServiceModule \r\n" 
+				+ "com.tll.di.EntityAssemblerModule \r\n" 
 				+ "com.tll.di.EntityServiceFactoryModule \r\n" 
 				+ "com.tll.di.SecurityModule \r\n");
 		

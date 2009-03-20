@@ -13,7 +13,7 @@ import com.tll.criteria.SelectNamedQueries;
 import com.tll.model.Interface;
 import com.tll.model.InterfaceOption;
 import com.tll.model.InterfaceOptionParameterDefinition;
-import com.tll.model.mock.MockEntityFactory;
+import com.tll.model.MockEntityFactory;
 
 /**
  * AbstractInterfaceDaoTestHandler

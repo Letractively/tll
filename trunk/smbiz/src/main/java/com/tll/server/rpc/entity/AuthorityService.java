@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.model.RefKey;
+import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Authority;
@@ -31,7 +31,7 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 
 	@Override
 	protected void handleLoadOptions(MEntityContext context, Authority e, EntityOptions options,
-			Map<String, RefKey> refs) throws SystemError {
+			Map<String, ModelKey> refs) throws SystemError {
 	}
 
 	@Override

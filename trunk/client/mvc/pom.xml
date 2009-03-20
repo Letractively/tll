@@ -11,8 +11,11 @@
   <groupId>com.tll</groupId>
   <artifactId>client-mvc</artifactId>
   <name>client-mvc</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <description>Client side MVC framework.</description>
+  
+  <build>
+  </build>
   
   <dependencies>
     <dependency>
@@ -23,17 +26,17 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

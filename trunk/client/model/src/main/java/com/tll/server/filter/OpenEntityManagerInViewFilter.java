@@ -23,12 +23,15 @@ import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.tll.dao.DaoMode;
 import com.tll.server.rpc.entity.MEntityContext;
 
 /**
  * OpenEntityManagerInViewFilter - Re-dux of Spring's version but w/o its
  * application context stuff.
+ * <p>
+ * NOTE: The impl supports the case where there is no specified
+ * {@link EntityManagerFactory} which, presumably, implies we are operating in
+ * "mock" mode. In this case, this filter is a pass through doing nothing.
  * @author jpk
  */
 public class OpenEntityManagerInViewFilter implements Filter {
@@ -41,11 +44,7 @@ public class OpenEntityManagerInViewFilter implements Filter {
 	public void init(FilterConfig config) /*throws ServletException*/{
 		final MEntityContext context =
 				(MEntityContext) config.getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
-		if(context.getDaoMode() == DaoMode.ORM) {
-			if((emf = context.getEntityManagerFactory()) == null) {
-				throw new Error("Can't obtain entity manager factory reference.");
-			}
-		}
+			emf = context.getEntityManagerFactory();
 	}
 
 	@Override
@@ -93,6 +92,7 @@ public class OpenEntityManagerInViewFilter implements Filter {
 			}
 		}
 		else {
+			// pass through (no-op)
 			chain.doFilter(request, response);
 		}
 	}

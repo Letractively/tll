@@ -16,8 +16,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
-import com.tll.DbTest;
-import com.tll.config.Config;
+import com.tll.AbstractDbTest;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
@@ -28,9 +27,10 @@ import com.tll.dao.DaoMode;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
-import com.tll.di.DaoModule;
+import com.tll.di.EntityAssemblerModule;
 import com.tll.di.EntityServiceFactoryModule;
-import com.tll.di.EntityServiceModule;
+import com.tll.di.OrmDaoModule;
+import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
@@ -44,7 +44,7 @@ import com.tll.util.EnumUtil;
  */
 @Test(groups = {
 	"listhandler", "namedqueries" })
-public class NamedQueriesTest extends DbTest {
+public class NamedQueriesTest extends AbstractDbTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
 			new HashMap<SelectNamedQueries, SortColumn>();
@@ -114,10 +114,13 @@ public class NamedQueriesTest extends DbTest {
 		modules.add(new ModelModule());
 		if(getDaoMode() == DaoMode.MOCK) {
 			modules.add(new MockEntityFactoryModule());
+			modules.add(new MockDaoModule());
 		}
-		Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), getDaoMode().toString());
-		modules.add(new DaoModule());
-		modules.add(new EntityServiceModule());
+		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), getDaoMode().toString());
+		else {
+			modules.add(new OrmDaoModule());
+		}
+		modules.add(new EntityAssemblerModule());
 		modules.add(new EntityServiceFactoryModule());
 	}
 

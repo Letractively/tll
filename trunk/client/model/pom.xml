@@ -11,11 +11,34 @@
   <groupId>com.tll</groupId>
   <artifactId>client-model</artifactId>
   <name>client-model</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.parent.version}</version>
   <description>Contains client and server classes supporting the tll client-side Model construct.</description>
   
   <build>
     <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <!-- tweak test-assets execution to additionally include the ModelViewer class -->
+          <execution>
+            <id>test-assets</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/Abstract*Test*</include>
+                <include>**/*Test*Util*</include>
+                <include>**/mock/**</include>
+                <include>**/ModelViewer*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       
       <!-- override client test default which invokes only GWTTest derived tests -->
       <plugin>
@@ -101,95 +124,96 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-mail</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-refdata</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-refdata</artifactId>
+      <version>${project.version}</version>
+      <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao</artifactId>
+      <version>${project.version}</version>
+      <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-rpc</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-refdata</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>test-persistence-unit</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

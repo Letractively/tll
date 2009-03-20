@@ -11,20 +11,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.tll.IDescriptorProvider;
 import com.tll.IMarshalable;
-import com.tll.common.bind.IModel;
+import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
-import com.tll.common.util.StringUtil;
 import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.util.StringUtil;
 
 /**
  * Model - Encapsulates a set of {@link IModelProperty}s. This construct serves
  * to represent an entity instance object graph on the client.
  * @author jpk
  */
-public final class Model implements IMarshalable, IModel, IPropertyMetadataProvider, Iterable<IModelProperty> {
+public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider,
+		IDescriptorProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -146,26 +148,12 @@ public final class Model implements IMarshalable, IModel, IPropertyMetadataProvi
 	}
 
 	/**
-	 * Provides the <em>unique</em> {@link RefKey} for this model/entity instance.
+	 * Provides the <em>unique</em> {@link ModelKey} for this model/entity
+	 * instance.
 	 * @return the ref key for this model
 	 */
-	public RefKey getRefKey() {
-		Integer id = null;
-		final IModelProperty pvId = get(ID_PROPERTY);
-		if(pvId != null && pvId.getType() == PropertyType.INT) {
-			id = ((IntPropertyValue) pvId).getInteger();
-		}
-
-		String name = null;
-		final IModelProperty pvName = get(NAME_PROPERTY);
-		if(pvName != null && pvName.getType() == PropertyType.STRING) {
-			name = ((StringPropertyValue) pvName).getString();
-		}
-
-		// NOTE: we don't enforce/check id validity here as we may be a copy or a
-		// cleared model!
-		assert /*(id != null) && */(entityType != null);
-		return new RefKey(entityType, id, name);
+	public ModelKey getRefKey() {
+		return new ModelKey(entityType, getId(), getName());
 	}
 
 	/**

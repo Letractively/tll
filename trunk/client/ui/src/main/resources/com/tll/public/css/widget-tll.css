@@ -11,13 +11,15 @@
 
 /* WidgetAndLabel */
 .wal {
-  
+  white-space: nowrap;
 }
 
 .wal .widget {
+  display: inline-table;
 }
 
 .wal .label {
+  display: inline-table;
 }
 
 /* TabbedIndexedFieldPanel */

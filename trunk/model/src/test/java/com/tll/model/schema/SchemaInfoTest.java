@@ -3,6 +3,7 @@
  */
 package com.tll.model.schema;
 
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.validator.Length;
@@ -37,128 +40,80 @@ public class SchemaInfoTest {
 		C;
 	}
 
-	static class TestData {
+	static class AllTypesEntity {
 
-		private TestEnum ccType;
+		private TestEnum enm;
+		private String string;
+		private int integer;
+		private double dbl;
+		private float flot;
+		private char character;
+		private long lng;
+		private Date date;
 
-		private String ccNum;
-
-		private String ccCvv2;
-
-		private int ccExpMonth;
-
-		private int ccExpYear;
-
-		private String ccName;
-
-		private String ccAddress1;
-
-		private String ccAddress2;
-
-		private String ccCity;
-
-		private String ccState;
-
-		private String ccZip;
-
-		private String ccCountry;
-
-		public TestEnum getCcType() {
-			return ccType;
+		public TestEnum getEnm() {
+			return enm;
 		}
 
-		public void setCcType(TestEnum ccType) {
-			this.ccType = ccType;
+		public void setEnm(TestEnum enm) {
+			this.enm = enm;
 		}
 
-		public String getCcNum() {
-			return ccNum;
+		public String getString() {
+			return string;
 		}
 
-		public void setCcNum(String ccNum) {
-			this.ccNum = ccNum;
+		public void setString(String string) {
+			this.string = string;
 		}
 
-		public String getCcCvv2() {
-			return ccCvv2;
+		public int getInteger() {
+			return integer;
 		}
 
-		public void setCcCvv2(String ccCvv2) {
-			this.ccCvv2 = ccCvv2;
+		public void setInteger(int integer) {
+			this.integer = integer;
 		}
 
-		public int getCcExpMonth() {
-			return ccExpMonth;
+		public double getDbl() {
+			return dbl;
 		}
 
-		public void setCcExpMonth(int ccExpMonth) {
-			this.ccExpMonth = ccExpMonth;
+		public void setDbl(double dbl) {
+			this.dbl = dbl;
 		}
 
-		public int getCcExpYear() {
-			return ccExpYear;
+		public float getFlot() {
+			return flot;
 		}
 
-		public void setCcExpYear(int ccExpYear) {
-			this.ccExpYear = ccExpYear;
+		public void setFlot(float flot) {
+			this.flot = flot;
 		}
 
-		public String getCcName() {
-			return ccName;
+		public char getCharacter() {
+			return character;
 		}
 
-		public void setCcName(String ccName) {
-			this.ccName = ccName;
+		public void setCharacter(char character) {
+			this.character = character;
 		}
 
-		public String getCcAddress1() {
-			return ccAddress1;
+		public long getLng() {
+			return lng;
 		}
 
-		public void setCcAddress1(String ccAddress1) {
-			this.ccAddress1 = ccAddress1;
+		public void setLng(long lng) {
+			this.lng = lng;
 		}
 
-		public String getCcAddress2() {
-			return ccAddress2;
+		public Date getDate() {
+			return date;
 		}
 
-		public void setCcAddress2(String ccAddress2) {
-			this.ccAddress2 = ccAddress2;
+		public void setDate(Date date) {
+			this.date = date;
 		}
-
-		public String getCcCity() {
-			return ccCity;
-		}
-
-		public void setCcCity(String ccCity) {
-			this.ccCity = ccCity;
-		}
-
-		public String getCcState() {
-			return ccState;
-		}
-
-		public void setCcState(String ccState) {
-			this.ccState = ccState;
-		}
-
-		public String getCcZip() {
-			return ccZip;
-		}
-
-		public void setCcZip(String ccZip) {
-			this.ccZip = ccZip;
-		}
-
-		public String getCcCountry() {
-			return ccCountry;
-		}
-
-		public void setCcCountry(String ccCountry) {
-			this.ccCountry = ccCountry;
-		}
-
 	}
 
 	/**
@@ -170,9 +125,11 @@ public class SchemaInfoTest {
 		private static final long serialVersionUID = -8237732782824087760L;
 		public static final int MAXLEN_NAME = 64;
 
-		private transient TestData testData;
+		private AllTypesEntity relatedOne;
 
-		private Set<TestEntity> related = new LinkedHashSet<TestEntity>();
+		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
+
+		private transient AllTypesEntity nested;
 
 		public Class<? extends IEntity> entityClass() {
 			return TestEntity.class;
@@ -188,25 +145,35 @@ public class SchemaInfoTest {
 		@Column(name = "data")
 		@NotNull
 		@Nested
-		public TestData getTestData() {
-			return testData;
+		public AllTypesEntity getNested() {
+			return nested;
 		}
 
-		public void setTestData(TestData testData) {
-			this.testData = testData;
+		public void setNested(AllTypesEntity testData) {
+			this.nested = testData;
+		}
+
+		@ManyToOne(fetch = FetchType.LAZY)
+		@JoinColumn(name = "related_one")
+		public AllTypesEntity getRelatedOne() {
+			return relatedOne;
+		}
+
+		public void setRelatedOne(AllTypesEntity relatedOne) {
+			this.relatedOne = relatedOne;
 		}
 
 		@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "account")
 		@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-		@AtLeastOne(type = "related")
-		@BusinessKeyUniqueness(type = "related")
+		@AtLeastOne(type = "relatedMany")
+		@BusinessKeyUniqueness(type = "relatedMany")
 		@Valid
-		public Set<TestEntity> getRelated() {
-			return related;
+		public Set<TestEntity> getRelatedMany() {
+			return relatedMany;
 		}
 
-		public void setRelated(Set<TestEntity> related) {
-			this.related = related;
+		public void setRelatedMany(Set<TestEntity> related) {
+			this.relatedMany = related;
 		}
 
 		@Override

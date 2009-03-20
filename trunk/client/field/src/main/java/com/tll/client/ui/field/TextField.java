@@ -89,7 +89,7 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 			removeValidator(StringLengthValidator.class);
 		}
 		else {
-			addValidator(new StringLengthValidator(0, maxLen));
+			addValidator(new StringLengthValidator(-1, maxLen));
 		}
 	}
 

@@ -5,9 +5,9 @@
  */
 package com.tll.common.model;
 
-import com.tll.common.util.ObjectUtil;
 import com.tll.criteria.IQueryParam;
 import com.tll.model.schema.PropertyMetadata;
+import com.tll.util.ObjectUtil;
 
 /**
  * AbstractPropertyValue
@@ -69,8 +69,29 @@ public abstract class AbstractPropertyValue extends AbstractModelProperty implem
 	}
 
 	@Override
+	public final boolean equals(Object obj) {
+		if(this == obj) return true;
+		if(!super.equals(obj)) return false;
+		if(getClass() != obj.getClass()) return false;
+		final AbstractPropertyValue other = (AbstractPropertyValue) obj;
+		final Object v = getValue();
+		if(v == null) {
+			if(other.getValue() != null) return false;
+		}
+		else if(!v.equals(other.getValue())) return false;
+		return true;
+	}
+
+	@Override
+	public final int hashCode() {
+		final int result = super.hashCode();
+		final Object v = getValue();
+		return 31 * result + ((v == null) ? 0 : v.hashCode());
+	}
+
+	@Override
 	public final String toString() {
-		String pn = propertyName;
+		final String pn = propertyName;
 		return pn + "=" + (getValue() == null ? "<UNSET>" : getValue().toString());
 	}
 }

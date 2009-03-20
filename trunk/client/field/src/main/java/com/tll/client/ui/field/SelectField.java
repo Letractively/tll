@@ -13,7 +13,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
-import com.tll.common.util.ObjectUtil;
+import com.tll.util.ObjectUtil;
 
 /**
  * SelectField - Single select list box.
