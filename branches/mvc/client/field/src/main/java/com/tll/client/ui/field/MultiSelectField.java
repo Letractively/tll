@@ -176,7 +176,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 				sb.append(lb.getValue(i));
 			}
 		}
-		return sb.substring(1);
+		return sb.length() == 0 ? "" : sb.substring(1);
 	}
 
 	public void setText(String text) {

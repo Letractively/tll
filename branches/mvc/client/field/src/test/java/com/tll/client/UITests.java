@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mock.ComplexFieldPanel;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
@@ -56,7 +57,7 @@ public final class UITests extends AbstractUITest {
 	 * event handling for all defined field widget types.
 	 * @author jpk
 	 */
-	static final class FieldWidgetTest extends UITestCase {
+	static final class FieldWidgetTest extends DefaultUITestCase {
 		
 		enum TestEnum {
 			ENUM_1,
@@ -69,21 +70,19 @@ public final class UITests extends AbstractUITest {
 			ENUM_8;
 		}
 
-		HorizontalPanel layout;
+		HorizontalPanel context;
 		FlowPanel pfields;
 		ValueChangeDisplay vcd;
 		FieldGroup group;
+		Button[] testActions;
 
-		@Override
-		public String getName() {
-			return "Field widget test";
+		/**
+		 * Constructor
+		 */
+		public FieldWidgetTest() {
+			super("Field widget test", "Renders all defined field widgets verifying their operation");
 		}
 
-		@Override
-		public String getDescription() {
-			return "Renders all defined field widgets verifying their operation";
-		}
-		
 		static class ValueChangeDisplay extends Composite {
 
 			final VerticalPanel outer = new VerticalPanel();
@@ -265,19 +264,54 @@ public final class UITests extends AbstractUITest {
 		}
 
 		@Override
-		public void load() {
-			layout = new HorizontalPanel();
-			layout.setSpacing(7);
-			layout.setBorderWidth(1);
-			layout.getElement().getStyle().setProperty("margin", "1em");
-			layout.getElement().getStyle().setProperty("border", "1px solid gray");
+		protected Widget getContext() {
+			return context;
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return testActions;
+		}
+		
+		private void stubTestActions() {
+			assert testActions == null;
+			testActions = new Button[] {
+				new Button("enable/disable", new ClickHandler() {
+				
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setEnabled(!group.isEnabled());
+					}
+				}),
+				new Button("editable/read-only", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setReadOnly(!group.isReadOnly());
+					}
+				}),
+				new Button("visible/not visible", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						group.setVisible(!group.isVisible());
+					}
+				})
+			};
+		}
+
+		@Override
+		public void init() {
+			context = new HorizontalPanel();
+			context.setSpacing(7);
+			context.setBorderWidth(1);
+			context.getElement().getStyle().setProperty("margin", "1em");
+			context.getElement().getStyle().setProperty("border", "1px solid gray");
 
 			pfields = new FlowPanel();
 			vcd = new ValueChangeDisplay();
-			layout.add(pfields);
-			layout.add(vcd);
-
-			RootPanel.get().add(layout);
+			context.add(pfields);
+			context.add(vcd);
 
 			final GridFieldComposer composer = new GridFieldComposer();
 			composer.setCanvas(pfields);
@@ -285,15 +319,17 @@ public final class UITests extends AbstractUITest {
 			for(final IFieldWidget<?> f : group.getFieldWidgets(null)) {
 				composer.addField(f);
 			}
+			
+			stubTestActions();
 		}
 
 		@Override
-		public void unload() {
-			layout.removeFromParent();
+		public void teardown() {
+			testActions = null;
 			group = null;
 			vcd = null;
 			pfields = null;
-			layout = null;
+			context = null;
 		}
 
 	} // FieldWidgetTest

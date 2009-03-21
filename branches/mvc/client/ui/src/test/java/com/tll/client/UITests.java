@@ -642,7 +642,7 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel layout;
 		VerticalPanel buttonPanel;
 		FlowPanel context;
-		BusyPanel busyPanel = new BusyPanel(true, null, 20);
+		BusyPanel busyPanel;
 
 		@Override
 		public String getName() {
@@ -659,7 +659,7 @@ public final class UITests extends AbstractUITest {
 			context.setSize("200px", "200px");
 			context.getElement().getStyle().setProperty("border", "1px solid gray");
 			context.getElement().getStyle().setProperty("padding", "10px");
-
+			busyPanel = new BusyPanel(true, null, 20);
 		}
 
 		private void stubTestButtons() {

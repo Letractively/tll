@@ -112,8 +112,8 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	 */
 	static abstract class DefaultUITestCase extends UITestCase {
 		
-		final String name, desc;
-		DefaultTestLayout layout;
+		private final String name, desc;
+		private DefaultTestLayout layout;
 
 		/**
 		 * Constructor
@@ -165,6 +165,7 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		@Override
 		public final void load() {
 			layout = new DefaultTestLayout();
+			init();
 			layout.setContext(getContext());
 			RootPanel.get().add(layout);
 			final Button[] actions = getTestActions();
@@ -173,7 +174,6 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 					layout.addTestAction(action);
 				}
 			}
-			init();
 		}
 
 		@Override

@@ -29,7 +29,7 @@
             </goals>
             <configuration>
               <tasks>
-                <property name="gwt.compile.style" value="OBF" />
+                <property name="gwt.compile.style" value="PRETTY" />
                 <property name="gwt.compile.classpath" refid="maven.test.classpath" />
                 <property name="gwt.compile.modules" value="com.tll.UITests" />
                 <property name="gwt.shell.entryModule" value="com.tll.UITests" />
@@ -38,6 +38,7 @@
                 <ant antfile="${basedir}/../build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
+                  <target name="compile" />
                 </ant>
               </tasks>
             </configuration>

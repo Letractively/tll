@@ -4,14 +4,11 @@
   <!--  un-comment to go international (commenting out means quicker compile) -->
   <!-- <inherits name="com.google.gwt.i18n.I18N" /> -->
 
-  <inherits name='com.google.gwt.widgetideas.GlassPanel' />
-
-  <!-- gwt-log support, default level `DEBUG` -->
-  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
-  
   <!-- css reset (based on YUI) -->
   <stylesheet src="css/reset.css" />
 
+  <!-- <inherits name="com.google.gwt.user.theme.standard.Standard" /> -->
+  
   <stylesheet src="css/base.css" />
   <stylesheet src="css/widget-gwt.css" />
   <stylesheet src="css/widget-tll.css" />
@@ -21,4 +18,8 @@
   <stylesheet src="css/toolbar.css" />
   <stylesheet src="css/status.css" />
 
+  <!-- gwt-log support, default level `DEBUG` -->
+  <inherits name="com.allen_sauer.gwt.log.gwt-log-DEBUG" />
+  
+  <inherits name='com.google.gwt.widgetideas.GlassPanel' />
 </module>

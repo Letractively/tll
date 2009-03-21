@@ -37,7 +37,7 @@
     </executions>
   </plugin>
 -->
-<project name="gwt-build" default="compile" basedir=".">
+<project name="gwt-build" default="build-shell-debug-exec-file" basedir=".">
 	
 	<path id="gwt.compile.classpath">
 		<pathelement path="${gwt.compile.classpath}"/>
