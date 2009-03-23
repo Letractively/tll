@@ -72,23 +72,22 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(EntityPayload result) {
 			super.handleSuccess(result);
-			ModelChangeEvent mce = null;
 			switch(crudOp) {
 				case LOAD:
-					mce = new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus());
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
 					break;
 				case ADD:
-					mce = new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus());
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
 					break;
 				case UPDATE:
-					mce = new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus());
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
 					break;
 				case PURGE:
-					mce = new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result.getStatus());
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
+							.getStatus()));
 					break;
-			}
-			if(mce != null) {
-				sourcingWidget.fireEvent(mce);
+				default:
+					throw new IllegalStateException();
 			}
 		}
 

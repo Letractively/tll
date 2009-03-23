@@ -16,7 +16,7 @@ import com.tll.refdata.RefDataType;
  * AuxDataRequest - Way to request "auxiliary" data when issuing an RPC call.
  * @author jpk
  */
-public class AuxDataRequest implements IMarshalable {
+public final class AuxDataRequest implements IMarshalable {
 
 	public enum AuxDataType {
 		REFDATA,

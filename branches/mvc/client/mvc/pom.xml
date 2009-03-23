@@ -51,20 +51,28 @@
   
   <dependencies>
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator-glasspanel</artifactId>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

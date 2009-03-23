@@ -86,7 +86,6 @@
     <dependency>
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
-      <version>2.5.3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -97,25 +96,20 @@
     
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
       <version>${project.version}</version>
-      <classifier>client</classifier>
     </dependency>
     
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>client</classifier>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
