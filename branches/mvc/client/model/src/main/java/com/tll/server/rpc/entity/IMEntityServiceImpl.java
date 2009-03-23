@@ -3,7 +3,6 @@ package com.tll.server.rpc.entity;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
@@ -18,15 +17,6 @@ import com.tll.server.marshal.MarshalOptions;
  * @param <S> The search type
  */
 public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
-
-	/**
-	 * Get an empty prototypical entity of a particular type.
-	 * @param context Guaranteed non-<code>null</code>
-	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityPrototypeRequest}
-	 * @param payload The payload to get filled
-	 */
-	void prototype(MEntityContext context, EntityPrototypeRequest request, EntityPayload payload);
 
 	/**
 	 * Loads an entity.

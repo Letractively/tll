@@ -44,11 +44,9 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
-			if(!result.hasErrors()) {
-				final ModelChangeEvent mce =
-						new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, null);
-				sourcingWidget.fireEvent(mce);
-			}
+			//if(!result.hasErrors()) {
+			sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, null));
+			//}
 		}
 
 		@Override

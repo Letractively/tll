@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 
 /**
@@ -18,8 +17,6 @@ import com.tll.common.data.EntityPurgeRequest;
  * @author jpk
  */
 public interface ICrudServiceAsync {
-
-	void prototype(EntityPrototypeRequest request, AsyncCallback<EntityPayload> callback);
 
 	void load(EntityLoadRequest request, AsyncCallback<EntityPayload> callback);
 

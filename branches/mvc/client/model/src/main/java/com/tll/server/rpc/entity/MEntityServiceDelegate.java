@@ -11,7 +11,6 @@ import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.Payload;
@@ -107,15 +106,6 @@ public class MEntityServiceDelegate extends RpcServlet implements
 				getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), re, null, true);
 				throw re;
 			}
-		}
-		return payload;
-	}
-
-	@Override
-	public EntityPayload prototype(final EntityPrototypeRequest request) {
-		final EntityPayload payload = new EntityPayload();
-		if(validateEntityRequest(request, payload)) {
-			resolveEntityServiceImpl(request.getEntityType(), payload).prototype(getMEntityContext(), request, payload);
 		}
 		return payload;
 	}
