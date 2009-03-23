@@ -25,6 +25,14 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 	 */
 	static final class Impl extends TextBox implements IEditable<String> {
 
+		/**
+		 * Constructor
+		 */
+		public Impl() {
+			super();
+			addStyleName(Styles.TBOX);
+		}
+
 	}
 
 	private final Impl tb;
@@ -91,6 +99,12 @@ public final class TextField extends AbstractField<String> implements IHasMaxLen
 		else {
 			addValidator(new StringLengthValidator(-1, maxLen));
 		}
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		tb.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 
 	public String getText() {

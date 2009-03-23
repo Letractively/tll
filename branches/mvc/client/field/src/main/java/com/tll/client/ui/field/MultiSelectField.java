@@ -34,6 +34,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		 */
 		public Impl() {
 			super(true);
+			addStyleName(Styles.TBOX);
 			addChangeHandler(this);
 		}
 
@@ -183,4 +184,9 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void setEnabled(boolean enabled) {
+		lb.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
 }

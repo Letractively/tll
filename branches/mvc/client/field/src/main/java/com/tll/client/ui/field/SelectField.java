@@ -33,6 +33,7 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		 */
 		public Impl() {
 			super(false);
+			addStyleName(Styles.TBOX);
 			addChangeHandler(this);
 		}
 
@@ -99,6 +100,12 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 		setData(data);
 	}
 	
+	@Override
+	public void setEnabled(boolean enabled) {
+		lb.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
+
 	@Override
 	public void setData(Map<V, String> data) {
 		super.setData(data);

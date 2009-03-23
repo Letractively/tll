@@ -154,7 +154,6 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		// set the help text
 		setHelpText(helpText);
 
-		// TODO is this style setting necessary?
 		pnl.setStyleName(Styles.FIELD);
 
 		initWidget(pnl);
@@ -256,13 +255,14 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * @param labelText The label text. If <code>null</code>, the label will be
 	 *        removed.
 	 */
-	public final void setLabelText(String labelText) {
-		if(fldLbl == null) {
-			fldLbl = new FieldLabel();
-			fldLbl.setFor(domId);
-			//fldLbl.addClickHandler(this);
+	public void setLabelText(String labelText) {
+		if(labelText != null) {
+			if(fldLbl == null) {
+				fldLbl = new FieldLabel();
+				fldLbl.setFor(domId);
+			}
+			fldLbl.setText(labelText);
 		}
-		fldLbl.setText(labelText == null ? "" : labelText);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		return required;
 	}
 
-	public void setRequired(boolean required) {
+	public final void setRequired(boolean required) {
 		// show/hide the field label required indicator
 		if(fldLbl != null) {
 			fldLbl.setRequired(readOnly ? false : required);
@@ -345,7 +345,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * visibility to the field and label containers.
 	 */
 	@Override
-	public void setVisible(boolean visible) {
+	public final void setVisible(boolean visible) {
 		super.setVisible(visible);
 
 		if(fldLbl != null) {
@@ -512,7 +512,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		return value;
 	}
 
-	protected void draw() {
+	private void draw() {
 
 		Widget formWidget;
 
@@ -552,7 +552,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		formWidget.setVisible(!readOnly);
 
 		// apply disabled property
-		formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
+		//formWidget.getElement().setPropertyBoolean(Styles.DISABLED, !enabled);
 
 		// resolve the containers
 		final Widget fldContainer = container == null ? this : container;
@@ -580,23 +580,23 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 
 	@Override
-	public int getTabIndex() {
+	public final int getTabIndex() {
 		return getEditable().getTabIndex();
 	}
 
 	@Override
-	public void setAccessKey(char key) {
+	public final void setTabIndex(int index) {
+		if(!readOnly) getEditable().setTabIndex(index);
+	}
+
+	@Override
+	public final void setAccessKey(char key) {
 		if(!readOnly) getEditable().setAccessKey(key);
 	}
 
 	@Override
-	public void setFocus(boolean focused) {
+	public final void setFocus(boolean focused) {
 		if(!readOnly) getEditable().setFocus(focused);
-	}
-
-	@Override
-	public void setTabIndex(int index) {
-		if(!readOnly) getEditable().setTabIndex(index);
 	}
 
 	@Override
@@ -675,7 +675,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(obj == null) return false;
 		if(getClass() != obj.getClass()) return false;

@@ -1,5 +1,6 @@
 package com.tll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -23,12 +24,15 @@ import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
+import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.client.ui.mock.ModelViewer;
 import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
@@ -58,7 +62,7 @@ public final class UITests extends AbstractUITest {
 	 * @author jpk
 	 */
 	static final class FieldWidgetTest extends DefaultUITestCase {
-		
+
 		enum TestEnum {
 			ENUM_1,
 			ENUM_2,
@@ -73,6 +77,7 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel context;
 		FlowPanel pfields;
 		ValueChangeDisplay vcd;
+		MsgPopupRegistry mregistry;
 		FieldGroup group;
 		Button[] testActions;
 
@@ -136,10 +141,10 @@ public final class UITests extends AbstractUITest {
 				events.add(new Label(getRowString(event), false));
 			}
 		}
-		
+
 		private void generateFields() {
 			group = new FieldGroup("group");
-			
+
 			final Map<String, String> data = new LinkedHashMap<String, String>();
 			data.put("valueA", "Key1");
 			data.put("valueB", "Key2");
@@ -151,14 +156,16 @@ public final class UITests extends AbstractUITest {
 			data.put("valueH", "Key8");
 			data.put("valueI", "Key9");
 			data.put("valueJ", "Key10");
-			
+
 			IFieldWidget<String> sfw;
 			IFieldWidget<Boolean> bfw;
 			IFieldWidget<Date> dfw;
 			IFieldWidget<TestEnum> efw;
 			IFieldWidget<Collection<String>> cfw;
-			
+
 			sfw = FieldFactory.ftext("ftext", "ftext", "TextField", "TextField", 8);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -169,6 +176,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw = FieldFactory.ftextarea("ftextarea", "ftextarea", "Textarea", "Textarea", 5, 10);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -179,6 +188,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw = FieldFactory.fpassword("fpassword", "fpassword", "Password", "Password", 8);
+			sfw.setValue("ival");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -189,6 +200,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			dfw = FieldFactory.fdate("fdate", "fdate", "DateField", "DateField", GlobalFormat.DATE);
+			dfw.setValue(new Date());
+			dfw.setRequired(true);
 			group.addField(dfw);
 			dfw.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
@@ -199,6 +212,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			bfw = FieldFactory.fcheckbox("fcheckbox", "fcheckbox", "Checkbox", "Checkbox");
+			bfw.setValue(Boolean.TRUE);
+			bfw.setRequired(true);
 			group.addField(bfw);
 			bfw.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -209,6 +224,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw = FieldFactory.fselect("fselect", "fselect", "Select", "Select", data);
+			sfw.setValue("valueC");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -219,6 +236,12 @@ public final class UITests extends AbstractUITest {
 			});
 
 			cfw = FieldFactory.fmultiselect("fmultiselect", "fmultiselect", "Multi-select", "Multi-select", data);
+			final ArrayList<String> ival = new ArrayList<String>();
+			ival.add("valueA");
+			ival.add("valueE");
+			ival.add("valueJ");
+			cfw.setValue(ival);
+			cfw.setRequired(true);
 			group.addField(cfw);
 			cfw.addValueChangeHandler(new ValueChangeHandler<Collection<String>>() {
 
@@ -229,8 +252,10 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw =
-					FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data,
-							new GridRenderer(3));
+					FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data, new GridRenderer(
+							3, GridStyles.GRID));
+			sfw.setValue("valueB");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -241,6 +266,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw = FieldFactory.fsuggest("fsuggest", "fsuggest", "Suggest", "Suggest", data);
+			sfw.setValue("valueB");
+			sfw.setRequired(true);
 			group.addField(sfw);
 			sfw.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -249,10 +276,12 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
-			
+
 			efw =
 					FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
-							new GridRenderer(3));
+							new GridRenderer(3, GridStyles.GRID));
+			efw.setValue(TestEnum.ENUM_7);
+			efw.setRequired(true);
 			group.addField(efw);
 			efw.addValueChangeHandler(new ValueChangeHandler<TestEnum>() {
 
@@ -261,6 +290,10 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
+			
+			// set error handler for all fields to test error handling
+			mregistry = new MsgPopupRegistry();
+			group.setErrorHandler(new FieldErrorHandler(mregistry));
 		}
 
 		@Override
@@ -272,32 +305,29 @@ public final class UITests extends AbstractUITest {
 		protected Button[] getTestActions() {
 			return testActions;
 		}
-		
+
 		private void stubTestActions() {
 			assert testActions == null;
 			testActions = new Button[] {
 				new Button("enable/disable", new ClickHandler() {
-				
+
 					@Override
 					public void onClick(ClickEvent event) {
 						group.setEnabled(!group.isEnabled());
 					}
-				}),
-				new Button("editable/read-only", new ClickHandler() {
-					
+				}), new Button("editable/read-only", new ClickHandler() {
+
 					@Override
 					public void onClick(ClickEvent event) {
 						group.setReadOnly(!group.isReadOnly());
 					}
-				}),
-				new Button("visible/not visible", new ClickHandler() {
-					
+				}), new Button("visible/not visible", new ClickHandler() {
+
 					@Override
 					public void onClick(ClickEvent event) {
 						group.setVisible(!group.isVisible());
 					}
-				})
-			};
+				}) };
 		}
 
 		@Override
@@ -319,7 +349,7 @@ public final class UITests extends AbstractUITest {
 			for(final IFieldWidget<?> f : group.getFieldWidgets(null)) {
 				composer.addField(f);
 			}
-			
+
 			stubTestActions();
 		}
 
@@ -327,6 +357,8 @@ public final class UITests extends AbstractUITest {
 		public void teardown() {
 			testActions = null;
 			group = null;
+			mregistry.clear();
+			mregistry = null;
 			vcd = null;
 			pfields = null;
 			context = null;
@@ -347,7 +379,6 @@ public final class UITests extends AbstractUITest {
 		EditPanel ep;
 		ModelViewer mv;
 		Model m;
-		
 
 		@Override
 		public String getName() {
@@ -365,7 +396,7 @@ public final class UITests extends AbstractUITest {
 			layout.setSpacing(7);
 			layout.setBorderWidth(1);
 			layout.getElement().getStyle().setProperty("margin", "1em");
-			
+
 			gmp = new GlobalMsgPanel();
 
 			mv = new ModelViewer();
@@ -388,12 +419,12 @@ public final class UITests extends AbstractUITest {
 			context.getElement().getStyle().setProperty("margin", "5px");
 			context.add(gmp);
 			context.add(ep);
-			
+
 			layout.add(context);
 			layout.add(mv);
 
 			RootPanel.get().add(layout);
-			
+
 			m = MockModelStubber.create(ModelType.COMPLEX);
 			ep.setModel(m);
 			mv.setModel(m);

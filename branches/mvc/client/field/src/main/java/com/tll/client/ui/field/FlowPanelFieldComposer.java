@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.Br;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following
@@ -93,9 +94,13 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");
 			fp = (FlowPanel) last.getParent();
-			//fp.add(new Br()); // this is too much space
 		}
-		if(fldLbl != null) fp.add(fldLbl);
+		if(fldLbl != null) {
+			fp.add(fldLbl);
+		}
+		else {
+			fp.add(new Br()); // this is too much space
+		}
 		fp.add(w);
 		getCurrentRow().add(fp);
 		last = w;

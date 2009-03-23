@@ -10,7 +10,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import com.google.gwt.junit.client.GWTTestCase;
-import com.tll.client.ui.VerticalRenderer;
+import com.tll.client.ui.GridRenderer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.ValidationException;
 import com.tll.util.StringUtil;
@@ -155,7 +155,7 @@ public class FieldGWTTest extends GWTTestCase {
 		data.put("s2", "S2");
 		data.put("s3", "S3");
 		final RadioGroupField<String> f =
-				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data, VerticalRenderer.INSTANCE);
+				FieldFactory.fradiogroup(PROP_NAME, PROP_NAME, LABEL_TEXT, HELP_TEXT, data, new GridRenderer(1, null));
 		validateFieldCommon(f);
 
 		// TODO finish

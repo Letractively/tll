@@ -1,14 +1,25 @@
 @CHARSET "ISO-8859-1";
 
-.fld input, .fld select, .fld textarea {
-	padding: 0;
-	margin: 0 1px 0 0;
-}
-
-.fld .lbl, label {
+label {
 	color: blue;
 	cursor: pointer;
+	cursor: hand;
 	white-space: nowrap;
+}
+
+.fld {
+}
+
+.fld .tbox {
+	padding: 0;
+	margin: 0 1px 0 0;
+	border: 1px solid gray;
+}
+
+/* checkbox and radio specific label styling */
+.cbrb label {
+  margin-left: 2px;
+  margin-top: -0.1em;
 }
 
 label .rqd {
@@ -17,12 +28,12 @@ label .rqd {
 }
 
 .error input, .error select, .error textarea {
-	border: 1px solid red !important;
-	background-color: #FFFFCC;
+	border-color: red !important;
+	background-color: #FFDFDF;
 }
 
 .dirty input, .dirty select, .dirty textarea {
-	border: 1px solid #007BBF !important;
+	border-color: #007BBF !important;
 	background-color: #DFF4FF;
 }
 
@@ -31,13 +42,33 @@ label .rqd {
 	display: inline;
 }
 
-/* field container style for FlowPanelFieldComposer */
+/* radio field grid styling (GridRenderer grid style) */
+.fradioGrid {
+}
+
+.fradioGrid td {
+  padding: 2px;
+}
+
+/* FlowPanelFieldComposer styles */
 .fldc {
   margin: 1px;
 }
 
-/* field row for FlowPanelFieldComposer */
 .frow {
-  margin-bottom: .5em;
+  margin-top: .2em;
+  margin-bottom: .2em;
   width: 100%;
+}
+
+/* GridFieldComposer styles */
+.fgrid {
+}
+
+.fgrid .cell-lbl {
+  vertical-align: top;
+}
+
+.fgrid .cell-fld {
+  padding: 2px;
 }
