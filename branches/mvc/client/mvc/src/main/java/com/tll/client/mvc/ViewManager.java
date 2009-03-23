@@ -11,14 +11,15 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.mvc.view.ISourcesViewEvents;
+import com.tll.client.mvc.view.IHasViewChangeHandlers;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.IViewRequest;
-import com.tll.client.mvc.view.ViewChangedEvent;
+import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.ui.view.ViewContainer;
 
@@ -28,7 +29,21 @@ import com.tll.client.ui.view.ViewContainer;
  * controller. View history is also managed here.
  * @author jpk
  */
-public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler<String> {
+public final class ViewManager implements ValueChangeHandler<String>, IHasViewChangeHandlers {
+	
+	/**
+	 * ViewChangeHandlers
+	 * @author jpk
+	 */
+	@SuppressWarnings("serial")
+	static final class ViewChangeHandlers extends ArrayList<IViewChangeHandler> {
+
+		public void fireEvent(ViewChangeEvent event) {
+			for(final IViewChangeHandler handler : this) {
+				handler.onViewChange(event);
+			}
+		}
+	}
 
 	/**
 	 * The default number of views to cache.
@@ -71,12 +86,9 @@ public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler
 	 */
 	private ViewContainer currentViewContainer;
 
-	/**
-	 * The view listener collection.
-	 */
-	private final ViewEventListenerCollection viewListeners = new ViewEventListenerCollection();
-
 	private final List<IController> controllers = new ArrayList<IController>();
+	
+	private final ViewChangeHandlers viewChangeHandlers = new ViewChangeHandlers();
 
 	/**
 	 * The view request that is pending.
@@ -109,14 +121,6 @@ public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler
 		controllers.add(new PinPopViewController());
 	}
 
-	public void addViewEventListener(IViewChangeHandler listener) {
-		viewListeners.add(listener);
-	}
-
-	public void removeViewEventListener(IViewChangeHandler listener) {
-		viewListeners.remove(listener);
-	}
-
 	/**
 	 * Must be called once by the app on startup.
 	 * @param parentViewPanel The Panel that is the parent of the pinned view
@@ -125,6 +129,23 @@ public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler
 	public void initialize(Panel parentViewPanel) {
 		if(parentViewPanel == null) throw new IllegalArgumentException("A parent view panel must be specified.");
 		this.parentViewPanel = parentViewPanel;
+	}
+
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event.getAssociatedType() == ViewChangeEvent.getType()) {
+			viewChangeHandlers.fireEvent((ViewChangeEvent) event);
+		}
+	}
+
+	@Override
+	public void addViewChangeHandler(IViewChangeHandler handler) {
+		viewChangeHandlers.add(handler);
+	}
+
+	@Override
+	public void removeViewChangeHandler(IViewChangeHandler handler) {
+		viewChangeHandlers.remove(handler);
 	}
 
 	/**
@@ -191,7 +212,7 @@ public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler
 		if(initialViewContainer == null) initialViewContainer = vc;
 
 		// fire view changed event
-		viewListeners.fireOnViewChanged(new ViewChangedEvent(vc));
+		viewChangeHandlers.fireEvent(new ViewChangeEvent());
 	}
 
 	/**
@@ -231,7 +252,7 @@ public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler
 		// fire view changed event
 		// NOTE: this is necessary to ensure the view history panel is properly
 		// updated
-		viewListeners.fireOnViewChanged(new ViewChangedEvent(vc));
+		viewChangeHandlers.fireEvent(new ViewChangeEvent());
 
 		return newestPinned.getView();
 	}

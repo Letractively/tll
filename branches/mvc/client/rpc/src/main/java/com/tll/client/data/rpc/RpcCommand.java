@@ -95,7 +95,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 			// fire RPC event
 			sourcingWidget.fireEvent(new RpcEvent<P>(result));
 			// fire status event
-			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, result.getStatus()));
+			StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
 		}
 	}
 
@@ -114,7 +114,7 @@ public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 			String msg = caught.getMessage();
 			if(msg == null) msg = "An unknown RPC error occurred";
 			final Status status = new Status(msg, MsgLevel.ERROR);
-			StatusEventDispatcher.instance().fireStatusEvent(new StatusEvent(sourcingWidget, status));
+			StatusEventDispatcher.get().fireEvent(new StatusEvent(status));
 		}
 	}
 

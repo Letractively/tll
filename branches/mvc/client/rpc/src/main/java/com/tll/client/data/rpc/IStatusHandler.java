@@ -5,14 +5,14 @@
  */
 package com.tll.client.data.rpc;
 
-import java.util.EventListener;
+import com.google.gwt.event.shared.EventHandler;
 
 
 /**
- * IStatusListener
+ * IStatusHandler
  * @author jpk
  */
-public interface IStatusListener extends EventListener {
+public interface IStatusHandler extends EventHandler {
 
 	/**
 	 * Fired when a status related event occurrs.

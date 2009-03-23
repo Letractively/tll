@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.App;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
-import com.tll.client.data.rpc.IStatusListener;
+import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
@@ -342,7 +342,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	 * Center - A {@link SimplePanel} designed to contain the current pinned view.
 	 * @author jpk
 	 */
-	private final class Center extends FlowPanel implements IStatusListener {
+	private final class Center extends FlowPanel implements IStatusHandler {
 
 		public Center() {
 			super();
@@ -352,7 +352,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		@Override
 		protected void onLoad() {
 			super.onLoad();
-			StatusEventDispatcher.instance().addStatusListener(this);
+			StatusEventDispatcher.get().addStatusHandler(this);
 			ViewManager.get().initialize(this);
 			// set the main model change listener so views see all model change events
 			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
@@ -363,7 +363,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			super.onUnload();
 			//ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
 			ViewManager.get().clear();
-			StatusEventDispatcher.instance().removeStatusListener(this);
+			StatusEventDispatcher.get().removeStatusHandler(this);
 			//MsgManager.get().clear();
 		}
 

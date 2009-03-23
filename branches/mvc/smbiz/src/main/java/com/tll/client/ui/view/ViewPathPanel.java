@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
-import com.tll.client.mvc.view.ViewChangedEvent;
+import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
 
@@ -56,7 +56,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 		initWidget(container);
 	}
 
-	public void onCurrentViewChanged(ViewChangedEvent event) {
+	public void onViewChange(ViewChangeEvent event) {
 		ulPanel.clear();
 		final IViewRef[] viewPath = ViewManager.get().getViewPath();
 		if(viewPath != null && viewPath.length > 0) {
@@ -82,12 +82,12 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.get().addViewEventListener(this);
+		ViewManager.get().addViewChangeHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.get().removeViewEventListener(this);
+		ViewManager.get().removeViewChangeHandler(this);
 	}
 }

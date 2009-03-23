@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
-import com.tll.client.mvc.view.ViewChangedEvent;
+import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.ui.HtmlListPanel;
 
 /**
@@ -52,7 +52,7 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 		initWidget(container);
 	}
 
-	public void onCurrentViewChanged(ViewChangedEvent event) {
+	public void onViewChange(ViewChangeEvent event) {
 		// NOTE: rebuild the ulPanel (it's MUCH easier than trying to remove/insert)
 		ulPanel.clear();
 
@@ -69,13 +69,13 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		ViewManager.get().addViewEventListener(this);
+		ViewManager.get().addViewChangeHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		ViewManager.get().removeViewEventListener(this);
+		ViewManager.get().removeViewChangeHandler(this);
 	}
 
 }
