@@ -138,7 +138,7 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	}
 
 	@Override
-	public final void setValue(Collection<Model> value) {
+	public void setValue(Collection<Model> value) {
 		if(this.value != value) {
 			this.value = null;
 			clearIndexed();
@@ -150,6 +150,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setValue(Collection<Model> value, boolean fireEvents) {
+		// default is to not support this method
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -296,12 +302,6 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 */
 	protected final int size() {
 		return indexPanels.size();
-	}
-
-	@Override
-	public void setValue(Collection<Model> value, boolean fireEvents) {
-		// default is to not support this method
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

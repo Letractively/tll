@@ -6,6 +6,7 @@
 package com.tll.client.ui.field;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.WidgetAndLabel;
+import com.tll.common.model.Model;
 
 /**
  * TabbedIndexedFieldPanel - {@link IndexedFieldPanel} implementation employing
@@ -300,6 +302,15 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	@Override
 	public void onSelection(SelectionEvent<Integer> event) {
 		//lastSelectedTabIndex = event.getSelectedItem();
+	}
+
+	@Override
+	public final void setValue(Collection<Model> value) {
+		super.setValue(value);
+		// auto-select first tab
+		if(size() > 0) {
+			tabPanel.selectTab(0);
+		}
 	}
 
 	@Override

@@ -18,8 +18,7 @@ label {
 
 /* checkbox and radio specific label styling */
 .cbrb label {
-  margin-left: 2px;
-  margin-top: -0.1em;
+  margin-left: 4px;
 }
 
 label .rqd {
@@ -47,7 +46,7 @@ label .rqd {
 }
 
 .fradioGrid td {
-  padding: 2px;
+  padding: 0 2px;
 }
 
 /* FlowPanelFieldComposer styles */

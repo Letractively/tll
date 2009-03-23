@@ -474,10 +474,9 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	}
 	
 	private void resolveError() {
-		if(!valid && errorHandler != null) {
+		if(errorHandler != null) {
 			errorHandler.resolveError(this);
 		}
-		valid = true;
 	}
 
 	private void handleError(IError error) {

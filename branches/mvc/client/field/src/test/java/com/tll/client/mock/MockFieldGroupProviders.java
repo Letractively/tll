@@ -13,6 +13,7 @@ import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.AddressType;
@@ -109,7 +110,7 @@ public class MockFieldGroupProviders {
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
 			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class, new GridRenderer(-1,
-					null)));
+					GridStyles.GRID)));
 			fg.addField(fcreditcard("ccNum", "paymentData_ccNum", "Num", null, 15));
 			fg.addField(ftext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
 			fg.addField(ftext("ccExpMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));
