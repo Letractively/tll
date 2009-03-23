@@ -17,7 +17,7 @@ import com.tll.common.data.rpc.IAuxDataServiceAsync;
  * AuxDataCommand
  * @author jpk
  */
-public final class AuxDataCommand extends RpcCommand<AuxDataPayload> {
+public class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 
 	private static final IAuxDataServiceAsync svc;
 	static {

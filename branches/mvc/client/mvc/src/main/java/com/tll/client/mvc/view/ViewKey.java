@@ -86,7 +86,7 @@ public final class ViewKey {
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == this) return true;
-		if(obj instanceof ViewKey == false) return false;
+		if(obj.getClass() != getClass()) return false;
 		final ViewKey that = (ViewKey) obj;
 		return that.viewClass.equals(this.viewClass) && that.viewId == viewId;
 	}

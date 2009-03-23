@@ -4,25 +4,22 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * UnloadViewRequest
  * @author jpk
  */
-@SuppressWarnings("serial")
 public final class UnloadViewRequest extends ViewOpRequest {
 
 	private final boolean removeFromCache;
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param viewKey
 	 * @param removeFromCache Remove the view from the view cache?
 	 */
-	public UnloadViewRequest(Widget source, ViewKey viewKey, boolean removeFromCache) {
-		super(source, viewKey);
+	public UnloadViewRequest(ViewKey viewKey, boolean removeFromCache) {
+		super(viewKey);
 		this.removeFromCache = removeFromCache;
 	}
 

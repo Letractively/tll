@@ -4,7 +4,7 @@
  */
 package com.tll.client.mvc;
 
-import com.tll.client.mvc.view.ViewRequestEvent;
+import com.tll.client.mvc.view.IViewRequest;
 
 /**
  * IController - Responsible for obtaining a valid view "handle" from a supplied view
@@ -17,10 +17,10 @@ interface IController {
 	 * @param request The view request event
 	 * @return true/false
 	 */
-	boolean canHandle(ViewRequestEvent request);
+	boolean canHandle(IViewRequest request);
 
 	/**
 	 * @param request
 	 */
-	void handle(ViewRequestEvent request);
+	void handle(IViewRequest request);
 }

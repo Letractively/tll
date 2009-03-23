@@ -5,13 +5,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.mvc.view.AbstractView;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
-import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewOptions;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.common.model.IEntityType;
 import com.tll.model.SmbizEntityType;
 
@@ -58,7 +51,7 @@ public abstract class MainView extends AbstractView {
 	}
 
 	@Override
-	public final void doInitialization(ViewRequestEvent viewRequest) {
+	public final void doInitialization(IViewRequest viewRequest) {
 		// no-op
 	}
 
@@ -69,12 +62,6 @@ public abstract class MainView extends AbstractView {
 
 	@Override
 	public final ShowViewRequest newViewRequest() {
-		return new StaticViewRequest(this, getViewClass());
-	}
-
-	@Override
-	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		// currently no model info displayed on main pages
-		return false;
+		return new StaticViewRequest(getViewClass());
 	}
 }

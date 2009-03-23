@@ -3,7 +3,6 @@
  */
 package com.tll.client.mvc.view.account;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
@@ -12,10 +11,10 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.GlobalFormat;
@@ -50,15 +49,14 @@ public final class CustomerListingView extends ListingView {
 		}
 
 		/**
-		 * Factory method used to generate a {@link ViewRequestEvent} for
+		 * Factory method used to generate a {@link IViewRequest} for
 		 * {@link CustomerListingView} instances.
-		 * @param source
 		 * @param mercRef The Merchant ref
 		 * @param ispRef The Isp ref
-		 * @return {@link ViewRequestEvent}
+		 * @return {@link IViewRequest}
 		 */
-		public CustomerListingViewRequest newViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
-			return new CustomerListingViewRequest(source, mercRef, ispRef);
+		public CustomerListingViewRequest newViewRequest(ModelKey mercRef, ModelKey ispRef) {
+			return new CustomerListingViewRequest(mercRef, ispRef);
 		}
 
 	}
@@ -67,7 +65,6 @@ public final class CustomerListingView extends ListingView {
 	 * CustomerListingViewRequest - CustomerListingView specific view request.
 	 * @author jpk
 	 */
-	@SuppressWarnings("serial")
 	public static final class CustomerListingViewRequest extends ShowViewRequest {
 
 		/**
@@ -82,12 +79,11 @@ public final class CustomerListingView extends ListingView {
 
 		/**
 		 * Constructor
-		 * @param source
 		 * @param mercRef The parent merchant ref
 		 * @param ispRef
 		 */
-		CustomerListingViewRequest(Widget source, ModelKey mercRef, ModelKey ispRef) {
-			super(source, klas);
+		CustomerListingViewRequest(ModelKey mercRef, ModelKey ispRef) {
+			super(klas);
 			assert mercRef != null && ispRef != null;
 			this.mercRef = mercRef;
 			this.ispRef = ispRef;
@@ -118,7 +114,7 @@ public final class CustomerListingView extends ListingView {
 	}
 
 	@Override
-	public void doInitialization(ViewRequestEvent viewRequest) {
+	public void doInitialization(IViewRequest viewRequest) {
 		assert viewRequest instanceof CustomerListingViewRequest;
 		final CustomerListingViewRequest r = (CustomerListingViewRequest) viewRequest;
 
@@ -128,7 +124,7 @@ public final class CustomerListingView extends ListingView {
 		assert r.mercRef != null && r.mercRef.isSet();
 		mercRef = r.mercRef;
 
-		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(this, r.ispRef));
+		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(r.ispRef));
 		mercListingLink.setText(mercRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);
@@ -153,11 +149,6 @@ public final class CustomerListingView extends ListingView {
 				Column.ROW_COUNT_COLUMN, cName, cDCreated, cDModified, cStatus, cBillingModel, cBillingCycle };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
-
-				@Override
-				protected Widget getSourcingWidget() {
-					return CustomerListingView.this;
-				}
 
 				@Override
 				protected ViewClass getEditViewClass() {
@@ -221,6 +212,6 @@ public final class CustomerListingView extends ListingView {
 
 	@Override
 	public ShowViewRequest newViewRequest() {
-		return klas.newViewRequest(this, mercRef, ispRef);
+		return klas.newViewRequest(mercRef, ispRef);
 	}
 }

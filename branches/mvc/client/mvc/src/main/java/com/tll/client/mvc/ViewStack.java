@@ -51,7 +51,7 @@ final class ViewStack {
 	}
 
 	/**
-	 * @return The cache size
+	 * @return The number of cached views.
 	 */
 	public int cacheSize() {
 		return cache.size();

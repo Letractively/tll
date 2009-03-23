@@ -7,8 +7,8 @@ package com.tll.client.ui.view;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.SimpleHyperLink;
 
 /**
@@ -20,7 +20,7 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickHandl
 	/**
 	 * The sourcing view request.
 	 */
-	private ViewRequestEvent viewRequest;
+	private IViewRequest viewRequest;
 
 	/**
 	 * Constructor - Default constructor. The view request property <em>must</em>
@@ -36,14 +36,14 @@ public final class ViewRequestLink extends SimpleHyperLink implements ClickHandl
 	 * @param longViewName
 	 * @param viewRequest
 	 */
-	public ViewRequestLink(String shortViewName, String longViewName, ViewRequestEvent viewRequest) {
+	public ViewRequestLink(String shortViewName, String longViewName, IViewRequest viewRequest) {
 		super(shortViewName);
 		setTitle(longViewName);
 		setViewRequest(viewRequest);
 		addClickHandler(this);
 	}
 
-	public void setViewRequest(ViewRequestEvent viewRequest) {
+	public void setViewRequest(IViewRequest viewRequest) {
 		this.viewRequest = viewRequest;
 	}
 

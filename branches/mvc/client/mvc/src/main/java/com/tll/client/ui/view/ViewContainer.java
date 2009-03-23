@@ -380,12 +380,12 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 		// pop the view
 		if(sender == toolbar.btnPop) {
 			final boolean popped = isPopped();
-			ViewManager.get().dispatch(new PinPopViewRequest(this, view.getViewKey(), !popped));
+			ViewManager.get().dispatch(new PinPopViewRequest(view.getViewKey(), !popped));
 		}
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			ViewManager.get().dispatch(new UnloadViewRequest(this, view.getViewKey(), true));
+			ViewManager.get().dispatch(new UnloadViewRequest(view.getViewKey(), true));
 		}
 
 		// minimize/mazimize the view

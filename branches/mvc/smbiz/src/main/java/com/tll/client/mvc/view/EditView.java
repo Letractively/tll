@@ -21,7 +21,7 @@ import com.tll.common.model.ModelKey;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView implements IEditHandler {
+public abstract class EditView extends AbstractModelAwareView implements IEditHandler {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -87,7 +87,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 
 	@Override
 	public final ShowViewRequest newViewRequest() {
-		return new EditViewRequest(this, getViewClass(), modelRef);
+		return new EditViewRequest(getViewClass(), modelRef);
 	}
 
 	private void setModelRef(ModelKey modelRef) {
@@ -98,7 +98,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	}
 
 	@Override
-	protected final void doInitialization(ViewRequestEvent viewRequest) {
+	protected final void doInitialization(IViewRequest viewRequest) {
 		assert viewRequest instanceof EditViewRequest;
 		final EditViewRequest r = (EditViewRequest) viewRequest;
 		model = r.getModel();
@@ -135,7 +135,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	public final void onEdit(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), false));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
@@ -181,7 +181,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 				break;
 
 			case DELETED:
-				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), true));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true));
 				break;
 		}
 	}

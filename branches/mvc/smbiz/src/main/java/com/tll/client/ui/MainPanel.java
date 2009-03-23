@@ -32,7 +32,6 @@ import com.tll.client.data.rpc.IStatusListener;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewRequest;
 import com.tll.client.mvc.view.StaticViewRequest;
@@ -147,7 +146,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// set the initial view based on the user's account type
 			ViewManager.get().dispatch(
-					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
+					new StaticViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
@@ -305,7 +304,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentUser(Model user) {
 			this.vlUsername.setText(user.asString("emailAddress"));
-			this.vlUsername.setViewRequest(new EditViewRequest(this, UserEditView.klas, user));
+			this.vlUsername.setViewRequest(new EditViewRequest(UserEditView.klas, user));
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			String dm;
 			try {
@@ -356,13 +355,13 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			StatusEventDispatcher.instance().addStatusListener(this);
 			ViewManager.get().initialize(this);
 			// set the main model change listener so views see all model change events
-			ModelChangeManager.get().addModelChangeListener(ViewManager.get());
+			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
-			ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
+			//ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
 			ViewManager.get().clear();
 			StatusEventDispatcher.instance().removeStatusListener(this);
 			//MsgManager.get().clear();

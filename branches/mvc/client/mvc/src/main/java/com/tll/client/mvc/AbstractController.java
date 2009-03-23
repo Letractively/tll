@@ -8,9 +8,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.mvc.view.AbstractView;
 import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.UI;
 import com.tll.client.ui.view.ViewContainer;
 
@@ -28,7 +28,7 @@ public abstract class AbstractController implements IController {
 	 * @return Either a cached or fresh {@link AbstractView} instance that is
 	 *         never <code>null</code>.
 	 */
-	protected static final IView resolveView(ViewRequestEvent viewRequest) {
+	protected static final IView resolveView(IViewRequest viewRequest) {
 		assert viewRequest != null;
 		final ViewKey viewKey = viewRequest.getViewKey();
 		assert viewKey != null;
@@ -72,7 +72,7 @@ public abstract class AbstractController implements IController {
 	 * view initialization.
 	 * @param request
 	 */
-	public void handle(ViewRequestEvent request) {
+	public void handle(IViewRequest request) {
 		onViewReady(resolveView(request));
 	}
 }

@@ -1,6 +1,5 @@
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
@@ -8,7 +7,6 @@ import com.tll.common.model.ModelKey;
  * EditViewRequest
  * @author jpk
  */
-@SuppressWarnings("serial")
 public final class EditViewRequest extends ShowViewRequest {
 
 	/**
@@ -28,12 +26,11 @@ public final class EditViewRequest extends ShowViewRequest {
 	/**
 	 * Constructor - Use when only an entity ref is available. This implies a
 	 * server request for the referred entity.
-	 * @param source
 	 * @param viewClass
 	 * @param modelRef
 	 */
-	public EditViewRequest(Widget source, ViewClass viewClass, ModelKey modelRef) {
-		super(source, viewClass);
+	public EditViewRequest(ViewClass viewClass, ModelKey modelRef) {
+		super(viewClass);
 		assert modelRef != null;
 		this.modelRef = modelRef;
 		this.model = null;
@@ -42,12 +39,11 @@ public final class EditViewRequest extends ShowViewRequest {
 	/**
 	 * Constructor - Use when the entity group is available thus avoiding a server
 	 * request.
-	 * @param source
 	 * @param viewClass
 	 * @param model
 	 */
-	public EditViewRequest(Widget source, ViewClass viewClass, Model model) {
-		super(source, viewClass);
+	public EditViewRequest(ViewClass viewClass, Model model) {
+		super(viewClass);
 		this.modelRef = null;
 		assert model != null;
 		this.model = model;

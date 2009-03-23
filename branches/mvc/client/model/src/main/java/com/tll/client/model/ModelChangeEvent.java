@@ -4,8 +4,7 @@
  */
 package com.tll.client.model;
 
-import java.util.EventObject;
-
+import com.google.gwt.event.shared.GwtEvent;
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -14,9 +13,17 @@ import com.tll.common.model.ModelKey;
  * ModelChangeEvent - Used to dissemminate model changes.
  * @author jpk
  */
-@SuppressWarnings("serial")
-public final class ModelChangeEvent extends EventObject {
+public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 
+	/**
+	 * The event type.
+	 */
+	public static final Type<IModelChangeHandler> TYPE = new Type<IModelChangeHandler>();
+
+	/**
+	 * ModelChangeOp
+	 * @author jpk
+	 */
 	public static enum ModelChangeOp {
 		AUXDATA_READY,
 		LOADED,
@@ -33,13 +40,11 @@ public final class ModelChangeEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for add and update model change events.
-	 * @param source
 	 * @param change
 	 * @param model
 	 * @param status
 	 */
-	public ModelChangeEvent(Object source, ModelChangeOp change, Model model, Status status) {
-		super(source);
+	public ModelChangeEvent(ModelChangeOp change, Model model, Status status) {
 		this.change = change;
 		this.model = model;
 		this.modelRef = null;
@@ -48,13 +53,11 @@ public final class ModelChangeEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for delete model change events.
-	 * @param source
 	 * @param change
 	 * @param modelRef
 	 * @param status
 	 */
-	public ModelChangeEvent(Object source, ModelChangeOp change, ModelKey modelRef, Status status) {
-		super(source);
+	public ModelChangeEvent(ModelChangeOp change, ModelKey modelRef, Status status) {
 		this.change = change;
 		this.model = null;
 		this.modelRef = modelRef;
@@ -63,11 +66,10 @@ public final class ModelChangeEvent extends EventObject {
 
 	/**
 	 * Constructor - Use for {@link ModelChangeOp#AUXDATA_READY} events.
-	 * @param source
 	 * @param change Expected to be a {@link ModelChangeOp#AUXDATA_READY} event
 	 */
-	public ModelChangeEvent(Object source, ModelChangeOp change) {
-		this(source, change, (Model) null, null);
+	public ModelChangeEvent(ModelChangeOp change) {
+		this(change, (Model) null, null);
 
 	}
 
@@ -85,6 +87,16 @@ public final class ModelChangeEvent extends EventObject {
 
 	public Status getStatus() {
 		return status;
+	}
+
+	@Override
+	protected void dispatch(IModelChangeHandler handler) {
+		handler.onModelChangeEvent(this);
+	}
+
+	@Override
+	public Type<IModelChangeHandler> getAssociatedType() {
+		return TYPE;
 	}
 
 	@Override

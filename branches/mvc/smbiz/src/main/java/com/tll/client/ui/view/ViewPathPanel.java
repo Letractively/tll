@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewEventListener;
+import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.ui.HtmlListPanel;
@@ -17,7 +17,7 @@ import com.tll.client.ui.P;
  * ViewPathPanel - Renders the current view path.
  * @author jpk
  */
-public class ViewPathPanel extends Composite implements IViewEventListener {
+public class ViewPathPanel extends Composite implements IViewChangeHandler {
 
 	/**
 	 * Styles - (viewpath.css, hnav.css)

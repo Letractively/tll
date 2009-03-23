@@ -5,24 +5,21 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * ViewOpRequest
  * @author jpk
  */
-@SuppressWarnings("serial")
-public abstract class ViewOpRequest extends ViewRequestEvent {
+public abstract class ViewOpRequest extends AbstractViewRequest {
 
 	private final ViewKey viewKey;
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param viewKey
 	 */
-	public ViewOpRequest(Widget source, ViewKey viewKey) {
-		super(source);
+	public ViewOpRequest(ViewKey viewKey) {
+		super();
 		this.viewKey = viewKey;
 	}
 

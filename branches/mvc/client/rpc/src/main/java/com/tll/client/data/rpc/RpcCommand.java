@@ -20,7 +20,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * @author jpk
  * @param <P> payload type
  */
-public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P>/*, IHasRpcHandlers<P>*/{
+public abstract class RpcCommand<P extends Payload> implements IRpcCommand<P> {
 
 	/**
 	 * The optional widget that will serve as the rpc event source.

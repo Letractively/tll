@@ -48,8 +48,8 @@ public class AspMain extends MainView {
 		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
-		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
-		links.append(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));
+		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest()));
+		links.append(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(InterfacesView.klas)));
 		links.append(new Hyperlink("Site Summary", "siteSmry"));
 		addWidget(links);
 

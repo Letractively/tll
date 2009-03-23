@@ -5,14 +5,12 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * ShowViewRequest
  * @author jpk
  */
-@SuppressWarnings("serial")
-public abstract class ShowViewRequest extends ViewRequestEvent implements IViewRef {
+public abstract class ShowViewRequest extends AbstractViewRequest implements IViewRef {
 
 	/**
 	 * The view class.
@@ -28,11 +26,9 @@ public abstract class ShowViewRequest extends ViewRequestEvent implements IViewR
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param viewClass
 	 */
-	public ShowViewRequest(Widget source, ViewClass viewClass) {
-		super(source);
+	public ShowViewRequest(ViewClass viewClass) {
 		this.viewClass = viewClass;
 	}
 

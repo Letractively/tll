@@ -4,8 +4,8 @@
  */
 package com.tll.client.mvc;
 
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewRequestEvent;
 
 /**
  * ShowViewController
@@ -13,7 +13,7 @@ import com.tll.client.mvc.view.ViewRequestEvent;
  */
 class ShowViewController extends AbstractController {
 
-	public boolean canHandle(ViewRequestEvent request) {
+	public boolean canHandle(IViewRequest request) {
 		return request instanceof ShowViewRequest;
 	}
 

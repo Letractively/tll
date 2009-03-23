@@ -5,23 +5,20 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * StaticViewRequest - Show view request for views that are static. I.eThe {@link ViewKey} is
  * resolvable at compile time.
  * @author jpk
  */
-@SuppressWarnings("serial")
 public final class StaticViewRequest extends ShowViewRequest {
 
 	/**
 	 * Constructor
-	 * @param source
 	 * @param viewClass
 	 */
-	public StaticViewRequest(Widget source, ViewClass viewClass) {
-		super(source, viewClass);
+	public StaticViewRequest(ViewClass viewClass) {
+		super(viewClass);
 	}
 
 	@Override

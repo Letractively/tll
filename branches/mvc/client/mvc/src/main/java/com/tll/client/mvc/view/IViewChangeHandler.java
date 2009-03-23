@@ -5,17 +5,17 @@
  */
 package com.tll.client.mvc.view;
 
-import java.util.EventListener;
+import com.google.gwt.event.shared.EventHandler;
 
 
 /**
- * IViewEventListener - Listens for {@link AbstractView} related events.
+ * IViewChangeHandler - Handles {@link ViewChangedEvent}s.
  * @author jpk
  */
-public interface IViewEventListener extends EventListener {
+public interface IViewChangeHandler extends EventHandler {
 
 	/**
-	 * Fired when a view related event occurrs.
+	 * Fired when a view change event occurrs.
 	 * @param event The event
 	 */
 	void onCurrentViewChanged(ViewChangedEvent event);

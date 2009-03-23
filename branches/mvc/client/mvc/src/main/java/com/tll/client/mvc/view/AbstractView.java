@@ -8,7 +8,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.ModelChangeEvent;
 
 /**
  * AbstractView - Base view class for all defined views in the app.
@@ -59,7 +58,7 @@ public abstract class AbstractView extends Composite implements IView {
 	protected abstract ShowViewRequest newViewRequest();
 
 	public final ShowViewRequest getViewRequest() {
-		ShowViewRequest r = newViewRequest();
+		final ShowViewRequest r = newViewRequest();
 		r.setLongViewName(getLongViewName());
 		r.setShortViewName(getShortViewName());
 		return r;
@@ -86,7 +85,7 @@ public abstract class AbstractView extends Composite implements IView {
 		return null;
 	}
 
-	public final void initialize(ViewRequestEvent viewRequest) {
+	public final void initialize(IViewRequest viewRequest) {
 		assert viewRequest != null;
 		// set the view key
 		this.viewKey = viewRequest.getViewKey();
@@ -104,7 +103,7 @@ public abstract class AbstractView extends Composite implements IView {
 	 * Performs impl specific initialization just after the ViewKey has been set.
 	 * @param viewRequest The non-<code>null</code> view request.
 	 */
-	protected abstract void doInitialization(ViewRequestEvent viewRequest);
+	protected abstract void doInitialization(IViewRequest viewRequest);
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before
@@ -121,43 +120,6 @@ public abstract class AbstractView extends Composite implements IView {
 	 * before this view looses reference-ability
 	 */
 	protected abstract void doDestroy();
-
-	/**
-	 * Must be implemented by concrete views.
-	 * @param event
-	 * @return true/false
-	 */
-	protected abstract boolean shouldHandleModelChangeEvent(ModelChangeEvent event);
-
-	/**
-	 * Handles model change errors. Sub-classes should override as necessary.
-	 * @param event The {@link ModelChangeEvent}
-	 */
-	protected void handleModelChangeError(ModelChangeEvent event) {
-		// base impl no-op
-	}
-
-	/**
-	 * Handles successful model changes. Sub-classes should override as necessary.
-	 * @param event The {@link ModelChangeEvent}
-	 */
-	protected void handleModelChangeSuccess(ModelChangeEvent event) {
-		// base impl no-op
-	}
-
-	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(shouldHandleModelChangeEvent(event)) {
-			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
-			// errors?
-			if(event.getStatus().hasErrors()) {
-				handleModelChangeError(event);
-				return;
-			}
-
-			// ahh success
-			handleModelChangeSuccess(event);
-		}
-	}
 
 	@Override
 	public final String toString() {

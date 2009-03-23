@@ -18,23 +18,23 @@ public interface ISourcesViewEvents {
 	 * Adds a listener.
 	 * @param listener
 	 */
-	void addViewEventListener(IViewEventListener listener);
+	void addViewEventListener(IViewChangeHandler listener);
 
 	/**
 	 * Removes a listener.
 	 * @param listener
 	 */
-	void removeViewEventListener(IViewEventListener listener);
+	void removeViewEventListener(IViewChangeHandler listener);
 
 	/**
 	 * ViewEventListenerCollection definition.
 	 * @author jpk
 	 */
 	@SuppressWarnings("serial")
-	public static final class ViewEventListenerCollection extends ArrayList<IViewEventListener> {
+	public static final class ViewEventListenerCollection extends ArrayList<IViewChangeHandler> {
 
 		public void fireOnViewChanged(ViewChangedEvent event) {
-			for(IViewEventListener listener : this) {
+			for(IViewChangeHandler listener : this) {
 				listener.onCurrentViewChanged(event);
 			}
 		}

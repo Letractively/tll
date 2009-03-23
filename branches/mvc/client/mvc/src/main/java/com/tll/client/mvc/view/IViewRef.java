@@ -28,8 +28,8 @@ public interface IViewRef {
 		 *         view.
 		 */
 		public static Widget getViewLink(IViewRef viewRef) {
-			if(viewRef instanceof ViewRequestEvent) {
-				return new ViewRequestLink(viewRef.getShortViewName(), viewRef.getLongViewName(), (ViewRequestEvent) viewRef);
+			if(viewRef instanceof IViewRequest) {
+				return new ViewRequestLink(viewRef.getShortViewName(), viewRef.getLongViewName(), (IViewRequest) viewRef);
 			}
 			Hyperlink link = new Hyperlink(viewRef.getShortViewName(), viewRef.getViewKey().getViewKeyHistoryToken());
 			link.setTitle(viewRef.getLongViewName());

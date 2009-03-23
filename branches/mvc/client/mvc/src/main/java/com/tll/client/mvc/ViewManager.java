@@ -13,15 +13,13 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.model.IModelChangeListener;
-import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.ISourcesViewEvents;
 import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.IViewEventListener;
+import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
@@ -30,7 +28,7 @@ import com.tll.client.ui.view.ViewContainer;
  * controller. View history is also managed here.
  * @author jpk
  */
-public final class ViewManager implements ISourcesViewEvents, IModelChangeListener, ValueChangeHandler<String> {
+public final class ViewManager implements ISourcesViewEvents, ValueChangeHandler<String> {
 
 	/**
 	 * The default number of views to cache.
@@ -88,14 +86,14 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * <p>
 	 * <strong>AbstractView request procedure:</strong>
 	 * <ol>
-	 * <li>Dispatch a view request via {@link #dispatch(ViewRequestEvent)}.
+	 * <li>Dispatch a view request via {@link #dispatch(IViewRequest)}.
 	 * <li>Temporarily cache the view request in {@link #pendingViewRequest}.
 	 * <li>Invoke {@link History#newItem(String)}
 	 * <li>Re-acquire the view request held in {@link #pendingViewRequest}.
 	 * <li>Dispatch normally
 	 * </ol>
 	 */
-	private ViewRequestEvent pendingViewRequest;
+	private IViewRequest pendingViewRequest;
 
 	/**
 	 * Constructor
@@ -111,11 +109,11 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		controllers.add(new PinPopViewController());
 	}
 
-	public void addViewEventListener(IViewEventListener listener) {
+	public void addViewEventListener(IViewChangeHandler listener) {
 		viewListeners.add(listener);
 	}
 
-	public void removeViewEventListener(IViewEventListener listener) {
+	public void removeViewEventListener(IViewChangeHandler listener) {
 		viewListeners.remove(listener);
 	}
 
@@ -282,28 +280,6 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	}
 
 	/**
-	 * Locates a cached view given the view widget or child view widget.
-	 * @param child
-	 * @return The found {@link IView} or <code>null</code> if not present in the
-	 *         view cache.
-	 */
-	/*
-	ViewContainer findView(Widget child) {
-		Iterator itr = cache.cacheIterator(0);
-		if(itr != null) {
-			final Element elem = child.getElement();
-			while(itr.hasNext()) {
-				ViewContainer vc = (ViewContainer) itr.next();
-				if(DOM.isOrHasChild(vc.getElement(), elem)) {
-					return vc;
-				}
-			}
-		}
-		return null;
-	}
-	*/
-
-	/**
 	 * Locates a cached view given a view key.
 	 * @param viewKey The view key
 	 * @return The found {@link IView} or <code>null</code> if not present in the
@@ -328,7 +304,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * @return The found {@link IView} or <code>null</code> if not present in the
 	 *         view cache.
 	 */
-	ViewContainer findView(int viewKeyHash) {
+	private ViewContainer findView(int viewKeyHash) {
 		final Iterator<ViewContainer> itr = cache.cacheIterator(0);
 		if(itr != null) {
 			while(itr.hasNext()) {
@@ -340,6 +316,17 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @return Array of the currently cached views.
+	 */
+	public IView[] getCachedViews() {
+		final ArrayList<IView> list = new ArrayList<IView>(cache.cacheSize());
+		for(final Iterator<ViewContainer> itr = cache.cacheIterator(0); itr.hasNext();) {
+			list.add(itr.next().getView());
+		}
+		return list.toArray(new IView[list.size()]);
 	}
 
 	/**
@@ -459,15 +446,6 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		return true;
 	}
 
-	public void onModelChangeEvent(ModelChangeEvent event) {
-		// pass the event to all cached views
-		final Iterator<ViewContainer> itr = cache.cacheIterator(0);
-		while(itr.hasNext()) {
-			final IView view = itr.next().getView();
-			view.onModelChangeEvent(event);
-		}
-	}
-
 	/**
 	 * Dispatches the view request event to the appropriate controller for the
 	 * ultimate purpose of changing the current view.
@@ -475,7 +453,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 	 * @throws IllegalStateException When no supporting controller can be found
 	 *         for the given view requset.
 	 */
-	public void dispatch(ViewRequestEvent request) {
+	public void dispatch(IViewRequest request) {
 		assert request != null : "A view request must be set";
 
 		if(pendingViewRequest == null) {
@@ -501,7 +479,7 @@ public final class ViewManager implements ISourcesViewEvents, IModelChangeListen
 		}
 	}
 
-	private void doDispatch(ViewRequestEvent request) {
+	private void doDispatch(IViewRequest request) {
 		// do actual disptach
 		for(final IController c : controllers) {
 			if(c.canHandle(request)) {

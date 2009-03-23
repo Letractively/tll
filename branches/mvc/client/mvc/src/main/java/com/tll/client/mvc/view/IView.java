@@ -6,13 +6,12 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.IModelChangeListener;
 
 /**
  * IView - Runtime view definition defining a view's life-cycle.
  * @author jpk
  */
-public interface IView extends IViewRef, IModelChangeListener {
+public interface IView extends IViewRef {
 
 	/**
 	 * Styles - (view.css)
@@ -32,13 +31,13 @@ public interface IView extends IViewRef, IModelChangeListener {
 	Widget getViewWidget();
 
 	/**
-	 * Provision for generating a {@link ViewRequestEvent} that "points" to this
+	 * Provision for generating a {@link IViewRequest} that "points" to this
 	 * particular AbstractView implementation.
 	 * <p>
 	 * The purponse for this method, among others, is to have the ability to
 	 * "re-constitute" any particular AbstractView at any time during the app's
 	 * loaded life-cycle.
-	 * @return New and configured {@link ViewRequestEvent} instance.
+	 * @return New and configured {@link IViewRequest} instance.
 	 */
 	ShowViewRequest getViewRequest();
 
@@ -49,15 +48,15 @@ public interface IView extends IViewRef, IModelChangeListener {
 	ViewOptions getOptions();
 
 	/**
-	 * Initializes the view with the runtime dependant {@link ViewRequestEvent}.
+	 * Initializes the view with the runtime dependant {@link IViewRequest}.
 	 * @param viewRequest The view request responsible for the instantiation of
 	 *        this view. May NOT be <code>null</code>.
 	 */
-	void initialize(ViewRequestEvent viewRequest);
+	void initialize(IViewRequest viewRequest);
 
 	/**
 	 * Refreshes the contents of the view. This method also serves to populate the
-	 * UI. A call to {@link #initialize(ViewRequestEvent)} is required before this
+	 * UI. A call to {@link #initialize(IViewRequest)} is required before this
 	 * method may be called.
 	 */
 	void refresh();

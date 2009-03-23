@@ -4,23 +4,13 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 
 /**
- * ViewRequestEvent - Encapsulates <em>all</em> necessary properties to freshly instantiate a
+ * AbstractViewRequest - Encapsulates <em>all</em> necessary properties to freshly instantiate a
  * <em>particular</em> view at runtime.
  * @author jpk
  */
-@SuppressWarnings("serial")
-public abstract class ViewRequestEvent extends ViewEvent {
-
-	/**
-	 * Constructor - Use when the view key is not yet known.
-	 * @param source
-	 */
-	protected ViewRequestEvent(Widget source) {
-		super(source);
-	}
+public abstract class AbstractViewRequest implements IViewRequest {
 
 	/**
 	 * @return The view key
@@ -41,7 +31,7 @@ public abstract class ViewRequestEvent extends ViewEvent {
 	@Override
 	public final String toString() {
 		String s = super.toString();
-		ViewKey viewKey = getViewKey();
+		final ViewKey viewKey = getViewKey();
 		if(viewKey != null) {
 			s += viewKey.toString();
 		}

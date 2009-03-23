@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewEventListener;
+import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewChangedEvent;
 import com.tll.client.ui.HtmlListPanel;
@@ -18,7 +18,7 @@ import com.tll.client.ui.HtmlListPanel;
  * view cache that are NOT in the popped state.
  * @author jpk
  */
-public final class RecentViewsPanel extends Composite implements IViewEventListener {
+public final class RecentViewsPanel extends Composite implements IViewChangeHandler {
 
 	/**
 	 * Styles

@@ -6,9 +6,9 @@ package com.tll.client.mvc;
 
 import com.google.gwt.user.client.History;
 import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
 import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
@@ -17,12 +17,12 @@ import com.tll.client.ui.view.ViewContainer;
  */
 class UnloadViewController extends AbstractController {
 
-	public boolean canHandle(ViewRequestEvent request) {
+	public boolean canHandle(IViewRequest request) {
 		return request instanceof UnloadViewRequest;
 	}
 
 	@Override
-	public void handle(ViewRequestEvent request) {
+	public void handle(IViewRequest request) {
 		UnloadViewRequest r = (UnloadViewRequest) request;
 
 		final ViewKey viewKey = r.getViewKey();

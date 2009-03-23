@@ -5,14 +5,13 @@
  */
 package com.tll.client.model;
 
-import java.util.EventListener;
-
+import com.google.gwt.event.shared.EventHandler;
 
 /**
- * IModelChangeListener - Event listener for model change related events.
+ * IModelChangeHandler - Event handler for model change events.
  * @author jpk
  */
-public interface IModelChangeListener extends EventListener {
+public interface IModelChangeHandler extends EventHandler {
 
 	/**
 	 * Fired when a model change related event occurs.
