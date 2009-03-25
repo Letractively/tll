@@ -11,10 +11,10 @@ import com.tll.client.mvc.ViewManager;
 /**
  * AbstractModelAwareView - Base view class for all defined views in the app.
  * @author jpk
- * @param <R>
+ * @param <I> the view initializer type
  */
-public abstract class AbstractModelAwareView<R extends IViewKeyProvider> extends AbstractView<R> implements
-		IModelAwareView<R> {
+public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
+		IModelAwareView<I> {
 
 	/**
 	 * Constructor

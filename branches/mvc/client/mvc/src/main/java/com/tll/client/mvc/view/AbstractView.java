@@ -12,14 +12,14 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * AbstractView - Base view class for all defined views in the app.
  * @author jpk
- * @param <R>
+ * @param <I> the view initializer type
  */
-public abstract class AbstractView<R extends IViewKeyProvider> extends Composite implements IView<R> {
+public abstract class AbstractView<I extends IViewInitializer> extends Composite implements IView<I> {
 
 	/**
 	 * The view key uniquely indentifying the view at runtime.
 	 */
-	private IViewKey viewKey;
+	private ViewKey viewKey;
 
 	/**
 	 * The wrapped Widget
@@ -44,11 +44,7 @@ public abstract class AbstractView<R extends IViewKeyProvider> extends Composite
 	 */
 	protected abstract ViewClass getViewClass();
 
-	public final ViewOptions getOptions() {
-		return getViewClass().getViewOptions();
-	}
-
-	public final IViewKey getViewKey() {
+	public final ViewKey getViewKey() {
 		return viewKey;
 	}
 
@@ -73,7 +69,7 @@ public abstract class AbstractView<R extends IViewKeyProvider> extends Composite
 		return null;
 	}
 
-	public final void initialize(R initializer) {
+	public final void initialize(I initializer) {
 		if(initializer == null || initializer.getViewKey() == null)
 			throw new IllegalArgumentException("Null or invalid view initializer.");
 		viewKey = initializer.getViewKey();
@@ -90,7 +86,7 @@ public abstract class AbstractView<R extends IViewKeyProvider> extends Composite
 	 * Performs impl specific initialization just after the ViewKey has been set.
 	 * @param viewRequest The non-<code>null</code> view request.
 	 */
-	protected abstract void doInitialization(R viewRequest);
+	protected abstract void doInitialization(I viewRequest);
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before

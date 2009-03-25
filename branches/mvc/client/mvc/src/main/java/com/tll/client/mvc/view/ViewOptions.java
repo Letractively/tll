@@ -11,6 +11,11 @@ package com.tll.client.mvc.view;
  */
 public class ViewOptions {
 
+	/**
+	 * The default view options.
+	 */
+	public static final ViewOptions DEFAULT_VIEW_OPTIONS = new ViewOptions(true, true, true, true, false);
+
 	private boolean closable;
 	private boolean minimizable;
 	private boolean refreshable;

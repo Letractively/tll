@@ -4,8 +4,6 @@
  */
 package com.tll.client.mvc;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
 
@@ -23,6 +21,8 @@ class UnloadViewController implements IController {
 	public void handle(IViewRequest request) {
 		final UnloadViewRequest r = (UnloadViewRequest) request;
 
+		ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
+		/*
 		// unload the view (deferring it to ensure we are clear of the history "pump" since we subsequently fire a view change event)...
 		DeferredCommand.addCommand(new Command() {
 
@@ -30,5 +30,6 @@ class UnloadViewController implements IController {
 				ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
 			}
 		});
+		*/
 	}
 }

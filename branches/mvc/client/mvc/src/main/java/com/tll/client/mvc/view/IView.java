@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * IView - Runtime view definition defining a view's life-cycle.
  * @author jpk
- * @param <R> the view key provider type
+ * @param <I> the view initializer type
  */
-public interface IView<R extends IViewKeyProvider> extends IViewRef {
+public interface IView<I extends IViewInitializer> {
 
 	/**
 	 * Styles - (view.css)
@@ -26,27 +26,31 @@ public interface IView<R extends IViewKeyProvider> extends IViewRef {
 	}
 
 	/**
+	 * @return The short view name.
+	 */
+	String getShortViewName();
+
+	/**
+	 * @return The long view name.
+	 */
+	String getLongViewName();
+
+	/**
 	 * @return The Widget used in the UI that represents this view.
 	 */
 	Widget getViewWidget();
 
 	/**
-	 * The view options that define how the view appears.
-	 * @return view options
-	 */
-	ViewOptions getOptions();
-
-	/**
 	 * Initializes the view enabling it to be uniquely identifiable at runtime.
 	 * @param initializer The view key provider responsible for providing the view
-	 *        the ability to provide a {@link IViewKey} which is essential for
+	 *        the ability to provide a {@link ViewKey} which is essential for
 	 *        uniquely identifying views at runtime.
 	 */
-	void initialize(R initializer);
+	void initialize(I initializer);
 
 	/**
 	 * Refreshes the contents of the view. This method also serves to populate the
-	 * UI. A call to {@link #initialize(IViewKeyProvider)} is required before this
+	 * UI. A call to {@link #initialize(IViewInitializer)} is required before this
 	 * method may be called.
 	 */
 	void refresh();

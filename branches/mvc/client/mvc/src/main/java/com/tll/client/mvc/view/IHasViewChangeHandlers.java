@@ -5,14 +5,13 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.event.shared.HasHandlers;
 
 
 /**
  * IHasViewChangeHandlers
  * @author jpk
  */
-public interface IHasViewChangeHandlers extends HasHandlers {
+public interface IHasViewChangeHandlers {
 
 	/**
 	 * Adds a handler.

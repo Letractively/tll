@@ -13,7 +13,7 @@ import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.AccountListingConfig;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
@@ -30,7 +30,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class CustomerListingView extends ListingView<CustomerListingViewRequest> {
+public final class CustomerListingView extends ListingView<CustomerListingViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -51,7 +51,7 @@ public final class CustomerListingView extends ListingView<CustomerListingViewRe
 	/**
 	 * The link to the parent merchant listing view.
 	 */
-	private final ViewRequestLink mercListingLink = new ViewRequestLink();
+	private final ViewLink mercListingLink = new ViewLink();
 
 	/**
 	 * Constructor
@@ -62,11 +62,11 @@ public final class CustomerListingView extends ListingView<CustomerListingViewRe
 	}
 
 	@Override
-	public void doInitialization(CustomerListingViewRequest r) {
+	public void doInitialization(CustomerListingViewInitializer r) {
 		assert r.mercRef != null && r.mercRef.isSet();
 		mercRef = r.mercRef;
 
-		mercListingLink.setViewKey(new MerchantListingViewRequest(r.getMerchantParentRef()).getViewKey());
+		mercListingLink.setViewInitializer(new MerchantListingViewInitializer(r.getMerchantParentRef()));
 		mercListingLink.setText(mercRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);

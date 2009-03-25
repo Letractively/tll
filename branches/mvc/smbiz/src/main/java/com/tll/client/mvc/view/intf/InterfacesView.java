@@ -21,7 +21,7 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.AbstractModelAwareView;
-import com.tll.client.mvc.view.IViewKeyProvider;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -45,7 +45,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public class InterfacesView extends AbstractModelAwareView<IViewKeyProvider> implements ClickHandler {
+public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer> implements ClickHandler {
 
 	public static final Class klas = new Class();
 
@@ -286,7 +286,7 @@ public class InterfacesView extends AbstractModelAwareView<IViewKeyProvider> imp
 	}
 
 	@Override
-	public void doInitialization(IViewKeyProvider initializer) {
+	public void doInitialization(StaticViewInitializer initializer) {
 		// no-op
 	}
 

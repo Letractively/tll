@@ -10,7 +10,12 @@ package com.tll.client.mvc.view;
  * controllers.
  * @author jpk
  */
-public interface IViewRequest extends IViewKeyProvider {
+public interface IViewRequest {
+
+	/**
+	 * @return the view key.
+	 */
+	ViewKey getViewKey();
 	
 	/**
 	 * @return <code>true</code> if history should be updated with a view token, <code>false</code>

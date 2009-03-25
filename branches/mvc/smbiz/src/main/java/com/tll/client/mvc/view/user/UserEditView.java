@@ -7,7 +7,6 @@ package com.tll.client.mvc.view.user;
 
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.model.SmbizEntityType;
@@ -23,7 +22,7 @@ public class UserEditView extends EditView {
 
 	public static final class Class extends ViewClass {
 
-		private static final ViewOptions viewOptions = new ViewOptions(true, true, true, true, true);
+		//private static final ViewOptions viewOptions = new ViewOptions(true, true, true, true, true);
 
 		private Class() {
 			super("userEdit");
@@ -34,11 +33,12 @@ public class UserEditView extends EditView {
 			return new UserEditView();
 		}
 
+		/*
 		@Override
 		public ViewOptions getViewOptions() {
 			return viewOptions;
 		}
-
+		*/
 	}
 	
 	/**

@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewA;
 import com.tll.client.mvc.view.ViewB;
 import com.tll.client.mvc.view.ViewC;
@@ -65,7 +65,7 @@ public final class UITests extends AbstractUITest {
 			viewContainer.add(new Label("This is line 3"));
 			context.add(viewContainer);
 			
-			ViewManager.initialize(viewContainer, 3);
+			ViewManager.initialize(viewContainer, 3, 3);
 		}
 
 		@Override
@@ -88,35 +88,35 @@ public final class UITests extends AbstractUITest {
 				
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new StaticViewRequest(ViewA.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(ViewA.klas));
 					}
 				}),
 				new Button("View B", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new StaticViewRequest(ViewB.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(ViewB.klas));
 					}
 				}),
 				new Button("View C", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new StaticViewRequest(ViewC.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(ViewC.klas));
 					}
 				}),
 				new Button("View D", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new StaticViewRequest(ViewD.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(ViewD.klas));
 					}
 				}),
 				new Button("View E", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new StaticViewRequest(ViewE.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(ViewE.klas));
 					}
 				})
 			};

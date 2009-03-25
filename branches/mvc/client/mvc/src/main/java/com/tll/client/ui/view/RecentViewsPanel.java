@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewChangeHandler;
-import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewChangeEvent;
+import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.HtmlListPanel;
 
 /**
@@ -56,13 +56,13 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 		// NOTE: rebuild the ulPanel (it's MUCH easier than trying to remove/insert)
 		ulPanel.clear();
 
-		final IViewRef[] refs = ViewManager.get().getRecentViews();
+		final ViewRef[] refs = ViewManager.get().getRecentViews();
 		final int count = refs.length;
 
 		// re-build the recent view list
 		// NOTE: ending at 1 before last element (skip the current view)
 		for(int i = 0; i < count - 1; i++) {
-			ulPanel.append(new ViewRequestLink(refs[i]));
+			ulPanel.append(new ViewLink(refs[i]));
 		}
 	}
 

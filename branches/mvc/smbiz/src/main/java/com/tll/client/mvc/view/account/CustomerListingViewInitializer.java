@@ -1,15 +1,13 @@
 package com.tll.client.mvc.view.account;
 
-import com.tll.client.mvc.view.IViewKey;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.mvc.view.AbstractDynamicViewInitializer;
 import com.tll.common.model.ModelKey;
 
 /**
- * CustomerListingViewRequest - CustomerListingView specific view request.
+ * CustomerListingViewInitializer - CustomerListingView specific view request.
  * @author jpk
  */
-public final class CustomerListingViewRequest extends ShowViewRequest {
+public final class CustomerListingViewInitializer extends AbstractDynamicViewInitializer {
 
 	final ModelKey merchantParentRef;
 
@@ -23,14 +21,15 @@ public final class CustomerListingViewRequest extends ShowViewRequest {
 	 * @param mercRef The parent merchant ref
 	 * @param merchantParentRef
 	 */
-	CustomerListingViewRequest(ModelKey mercRef, ModelKey merchantParentRef) {
+	CustomerListingViewInitializer(ModelKey mercRef, ModelKey merchantParentRef) {
+		super(CustomerListingView.klas);
 		this.mercRef = mercRef;
 		this.merchantParentRef = merchantParentRef;
 	}
 
 	@Override
-	public IViewKey getViewKey() {
-		return new ViewKey(CustomerListingView.klas, mercRef.hashCode());
+	protected int getViewId() {
+		return mercRef.hashCode();
 	}
 
 	public ModelKey getMerchantParentRef() {

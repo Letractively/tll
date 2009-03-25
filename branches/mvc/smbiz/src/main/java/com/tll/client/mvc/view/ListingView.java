@@ -14,9 +14,9 @@ import com.tll.client.ui.listing.ModelListingWidget;
 /**
  * ListingView - View dedicated to a single listing.
  * @author jpk
- * @param <R>
+ * @param <I> the view initializer type
  */
-public abstract class ListingView<R extends IViewKeyProvider> extends AbstractModelAwareView<R> {
+public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
 
 	/**
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
@@ -36,7 +36,7 @@ public abstract class ListingView<R extends IViewKeyProvider> extends AbstractMo
 		@Override
 		protected void doEditRow(int rowIndex) {
 			ViewManager.get().dispatch(
-					new EditViewRequest(getEditViewClass(), listingWidget.getRowKey(rowIndex)));
+					new ShowViewRequest(new EditViewInitializer(getEditViewClass(), listingWidget.getRowKey(rowIndex))));
 		}
 
 		/**

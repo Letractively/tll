@@ -4,18 +4,11 @@
  */
 package com.tll.client.mvc.view;
 
-
 /**
- * AbstractViewRequest - Encapsulates <em>all</em> necessary properties to freshly instantiate a
- * <em>particular</em> view at runtime.
+ * AbstractViewRequest - common base class for all {@link IViewRequest} types.
  * @author jpk
  */
 public abstract class AbstractViewRequest implements IViewRequest {
-
-	/**
-	 * @return The view key
-	 */
-	public abstract IViewKey getViewKey();
 
 	/**
 	 * @return <code>true</code> if history should be updated with a view token,
@@ -30,7 +23,7 @@ public abstract class AbstractViewRequest implements IViewRequest {
 	@Override
 	public final String toString() {
 		String s = "";
-		final IViewKey viewKey = getViewKey();
+		final ViewKey viewKey = getViewKey();
 		if(viewKey != null) {
 			s += viewKey.toString();
 		}

@@ -28,11 +28,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.IViewKey;
-import com.tll.client.mvc.view.IViewKeyProvider;
 import com.tll.client.mvc.view.IViewState;
 import com.tll.client.mvc.view.PinPopViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
+import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.DragEvent;
 import com.tll.client.ui.IDragHandler;
 import com.tll.client.ui.IHasDragHandlers;
@@ -43,9 +43,8 @@ import com.tll.client.ui.DragEvent.DragMode;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class ViewContainer extends SimplePanel implements IViewKeyProvider, MouseDownHandler, MouseMoveHandler,
-		MouseUpHandler,
-		IHasDragHandlers, ClickHandler, NativePreviewHandler {
+public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler,
+		MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -73,12 +72,18 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 	 */
 	private final IView<?> view;
 
+	/**
+	 * The view initializer.
+	 */
+	//private final IViewInitializer init;
+	private final ViewKey key;
+	
 	private final ViewToolbar toolbar;
 
 	private final MyVerticalPanel mainLayout = new MyVerticalPanel();
 
 	private boolean mouseIsDown, dragging;
-	
+
 	private int dragOffsetX, dragOffsetY;
 
 	private HandlerRegistration hrEventPreview, hrMouseDown, hrMouseMove, hrMouseUp;
@@ -107,13 +112,16 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 
 	/**
 	 * Constructor
-	 * @param view The view to set
+	 * @param view The view def
+	 * @param options The view display options
+	 * @param key The view key
 	 */
-	public ViewContainer(IView<?> view) {
+	public ViewContainer(IView<?> view, ViewOptions options, ViewKey key) {
 		super();
-		assert view != null;
+		if(view == null || key == null) throw new IllegalArgumentException();
 		this.view = view;
-		toolbar = new ViewToolbar(view.getLongViewName(), view.getOptions(), this);
+		this.key = key;
+		toolbar = new ViewToolbar(view.getLongViewName(), options, this);
 		mainLayout.add(toolbar);
 		mainLayout.add(view.getViewWidget());
 		mainLayout.setStylePrimaryName(Styles.VIEW_CONTAINER);
@@ -177,9 +185,8 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 		return view;
 	}
 
-	@Override
-	public IViewKey getViewKey() {
-		return view.getViewKey();
+	public ViewKey getViewKey() {
+		return key;
 	}
 
 	public IViewState getViewState() {
@@ -236,11 +243,12 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 
 	public void onMouseMove(MouseMoveEvent event) {
 		final int dc = getHandlerCount(DragEvent.TYPE);
+		final boolean fireDrag = (dc > 0);
 		if(mouseIsDown) {
 			if(!dragging) {
 				dragging = true;
 				//Log.debug("onMouseMove() - drag start..");
-				if(dc > 0) fireEvent(new DragEvent(DragMode.START, dragOffsetX, dragOffsetY));
+				if(fireDrag) fireEvent(new DragEvent(DragMode.START, dragOffsetX, dragOffsetY));
 			}
 
 			final int x = event.getClientX(), y = event.getClientY();
@@ -252,10 +260,9 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 			if(ny < 0) ny = 0;
 			//Log.debug("onMouseMove() - x:" + x + ",y:" + y + " | nx:" + nx + ",ny:" + ny);
 
-			final boolean fireDrag = /*(dc > 0)*/true;
 			final int bx = fireDrag ? getAbsoluteLeft() : 0;
 			final int by = fireDrag ? getAbsoluteTop() : 0;
-			
+
 			final Style es = getElement().getStyle();
 			es.setPropertyPx("left", nx);
 			es.setPropertyPx("top", ny);
@@ -414,12 +421,12 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 		// pop the view
 		if(sender == toolbar.btnPop) {
 			final boolean popped = isPopped();
-			ViewManager.get().dispatch(new PinPopViewRequest(view.getViewKey(), !popped));
+			ViewManager.get().dispatch(new PinPopViewRequest(key, !popped));
 		}
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			ViewManager.get().dispatch(new UnloadViewRequest(view.getViewKey(), true));
+			ViewManager.get().dispatch(new UnloadViewRequest(key, true));
 		}
 
 		// minimize/mazimize the view
@@ -438,12 +445,8 @@ public final class ViewContainer extends SimplePanel implements IViewKeyProvider
 		}
 	}
 
-	public void onDestroy() {
-		view.onDestroy();
-	}
-
 	@Override
 	public String toString() {
-		return view.toString();
+		return "ViewContainer [" + view.toString() + "]";
 	}
 }

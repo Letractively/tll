@@ -6,37 +6,36 @@
 package com.tll.client.mvc.view;
 
 /**
- * ViewRef - Stand-alone {@link IViewRef} implementation.
+ * ViewRef - A Stand-alone ref to a view at runtime able to reconstitute the
+ * view to which it refers. This differs from {@link ViewKey} in that we retain
+ * the {@link IViewInitializer} which is necessary for view initialization.
  * @author jpk
  */
-public final class ViewRef implements IViewRef {
+public final class ViewRef { 
 
-	private final IViewKey viewKey;
+	private final IViewInitializer init;
 	private final String shortViewName, longViewName;
 
 	/**
 	 * Constructor
-	 * @param viewKey
+	 * @param init the view initializer
 	 * @param shortViewName
 	 * @param longViewName
 	 */
-	public ViewRef(IViewKey viewKey, String shortViewName, String longViewName) {
-		this.viewKey = viewKey;
+	public ViewRef(IViewInitializer init, String shortViewName, String longViewName) {
+		this.init = init;
 		this.shortViewName = shortViewName;
 		this.longViewName = longViewName;
 	}
 
-	@Override
-	public IViewKey getViewKey() {
-		return viewKey;
+	public IViewInitializer getViewInitializer() {
+		return init;
 	}
 
-	@Override
 	public String getShortViewName() {
 		return shortViewName;
 	}
 
-	@Override
 	public String getLongViewName() {
 		return longViewName;
 	}

@@ -8,7 +8,7 @@ package com.tll.client.mvc.view;
  * ViewRef - Uniquely identifies {@link IView}s at runtime.
  * @author jpk
  */
-public class ViewKey implements IViewKey {
+public class ViewKey {
 
 	/**
 	 * The ViewClass which may never be <code>null</code>.
@@ -44,16 +44,20 @@ public class ViewKey implements IViewKey {
 		this.viewId = viewId;
 	}
 
+	/**
+	 * @return The view class - the "compile time" component of the view key.
+	 */
 	public ViewClass getViewClass() {
 		return viewClass;
 	}
 
 	/**
-	 * Uniquely identifies a view at runtime. AbstractView ids should be based on
-	 * the unique view type related properties specific to the view
-	 * implementation.
-	 * @return int representing the unique view id. If <code>0</code>, the view id
-	 *         is "un-defined" which is supported (E.g.: "static" views).
+	 * The "runtime" or dynamic component of the view key. Non-zero view ids imply
+	 * the view is <em>dynamic</em> meaning its identifiability is only
+	 * ascertainable at runtime.
+	 * @return the unique view id. If <code>0</code>, the view to which this key
+	 *         refers is considered "static". If non-zero, the view is said to be
+	 *         dynamic.
 	 */
 	public int getViewId() {
 		return viewId;

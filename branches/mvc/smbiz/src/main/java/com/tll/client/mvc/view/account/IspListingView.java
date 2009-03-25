@@ -13,6 +13,8 @@ import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ListingView;
+import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
@@ -30,7 +32,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class IspListingView extends ListingView<IspListingViewRequest> {
+public final class IspListingView extends ListingView<StaticViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -59,7 +61,7 @@ public final class IspListingView extends ListingView<IspListingViewRequest> {
 	}
 
 	@Override
-	protected void doInitialization(IspListingViewRequest viewRequest) {
+	protected void doInitialization(StaticViewInitializer init) {
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		criteria.setNamedQuery("account.ispList");
@@ -97,7 +99,8 @@ public final class IspListingView extends ListingView<IspListingViewRequest> {
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Merchant Listing") == 0) {
-						ViewManager.get().dispatch(new MerchantListingViewRequest(listingWidget.getRowKey(rowIndex)));
+						ViewManager.get().dispatch(
+								new ShowViewRequest(new MerchantListingViewInitializer(listingWidget.getRowKey(rowIndex))));
 					}
 				}
 			};

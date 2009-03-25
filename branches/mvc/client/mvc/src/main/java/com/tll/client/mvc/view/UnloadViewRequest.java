@@ -18,7 +18,7 @@ public final class UnloadViewRequest extends ViewOpRequest {
 	 * @param viewKey
 	 * @param removeFromCache Remove the view from the view cache?
 	 */
-	public UnloadViewRequest(IViewKey viewKey, boolean removeFromCache) {
+	public UnloadViewRequest(ViewKey viewKey, boolean removeFromCache) {
 		super(viewKey);
 		this.removeFromCache = removeFromCache;
 	}

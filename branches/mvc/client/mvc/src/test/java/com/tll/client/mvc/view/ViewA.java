@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
  * ViewA
  * @author jpk
  */
-public class ViewA extends AbstractView<StaticViewRequest> {
+public class ViewA extends AbstractView<StaticViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -31,7 +31,7 @@ public class ViewA extends AbstractView<StaticViewRequest> {
 	}
 
 	@Override
-	protected void doInitialization(StaticViewRequest viewRequest) {
+	protected void doInitialization(StaticViewInitializer initializer) {
 		addWidget(new Label("This is view A"));
 	}
 

@@ -21,15 +21,6 @@ public abstract class ViewClass {
 	private static final List<ViewClass> classes = new ArrayList<ViewClass>();
 
 	/**
-	 * The default view options
-	 */
-	protected static final ViewOptions dfltViewOptions;
-
-	static {
-		dfltViewOptions = new ViewOptions(true, true, true, true, false);
-	}
-
-	/**
 	 * Add a view class
 	 * @param vclass The view class
 	 */
@@ -79,14 +70,7 @@ public abstract class ViewClass {
 	public final String getName() {
 		return name;
 	}
-
-	/**
-	 * @return The defined view options for this view.
-	 */
-	public ViewOptions getViewOptions() {
-		return dfltViewOptions;
-	}
-
+	
 	/**
 	 * @return New instance of the view this class defines.
 	 */

@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.IViewChangeHandler;
-import com.tll.client.mvc.view.IViewRef;
 import com.tll.client.mvc.view.ViewChangeEvent;
+import com.tll.client.mvc.view.ViewRef;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.P;
 
@@ -41,7 +41,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	private final FlowPanel container = new FlowPanel();
 
 	/**
-	 * Panel containing the {@link ViewRequestLink}s.
+	 * Panel containing the {@link ViewLink}s.
 	 */
 	private final HtmlListPanel ulPanel = new HtmlListPanel(false);
 
@@ -58,12 +58,12 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 
 	public void onViewChange(ViewChangeEvent event) {
 		ulPanel.clear();
-		final IViewRef[] viewPath = ViewManager.get().getViewPath();
+		final ViewRef[] viewPath = ViewManager.get().getViewPath();
 		if(viewPath != null && viewPath.length > 0) {
 			final int count = viewPath.length;
 			for(int i = 0; i < count; i++) {
 				// add view link
-				ulPanel.append(new ViewRequestLink(viewPath[i]));
+				ulPanel.append(new ViewLink(viewPath[i]));
 
 				// add spacer
 				final P p = new P();

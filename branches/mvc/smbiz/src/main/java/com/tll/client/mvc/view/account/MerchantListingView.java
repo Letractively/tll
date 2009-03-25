@@ -13,10 +13,12 @@ import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ListingView;
+import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
@@ -33,7 +35,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class MerchantListingView extends ListingView<MerchantListingViewRequest> {
+public final class MerchantListingView extends ListingView<MerchantListingViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -57,7 +59,7 @@ public final class MerchantListingView extends ListingView<MerchantListingViewRe
 	/**
 	 * The link to the parent isp listing view.
 	 */
-	private final ViewRequestLink ispListingLink = new ViewRequestLink();
+	private final ViewLink ispListingLink = new ViewLink();
 
 	/**
 	 * Constructor
@@ -68,11 +70,11 @@ public final class MerchantListingView extends ListingView<MerchantListingViewRe
 	}
 
 	@Override
-	public void doInitialization(MerchantListingViewRequest r) {
+	public void doInitialization(MerchantListingViewInitializer r) {
 		assert r.ispRef != null && r.ispRef.isSet();
 		ispRef = r.ispRef;
 
-		ispListingLink.setViewKey(new IspListingViewRequest().getViewKey());
+		ispListingLink.setViewInitializer(new StaticViewInitializer(IspListingView.klas));
 		ispListingLink.setText(ispRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
@@ -113,7 +115,8 @@ public final class MerchantListingView extends ListingView<MerchantListingViewRe
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Customer Listing") == 0) {
-						ViewManager.get().dispatch(new CustomerListingViewRequest(listingWidget.getRowKey(rowIndex), ispRef));
+						ViewManager.get().dispatch(
+								new ShowViewRequest(new CustomerListingViewInitializer(listingWidget.getRowKey(rowIndex), ispRef)));
 					}
 				}
 			};

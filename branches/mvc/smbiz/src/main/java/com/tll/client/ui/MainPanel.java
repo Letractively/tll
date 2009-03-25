@@ -33,15 +33,15 @@ import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.EditViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.EditViewInitializer;
+import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.AdminContext;
@@ -146,7 +146,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// set the initial view based on the user's account type
 			ViewManager.get().dispatch(
-					new StaticViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
+					new ShowViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
@@ -178,7 +178,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		FormPanel frmLogout;
 		Button btnLogoff;
-		ViewRequestLink vlUsername;
+		ViewLink vlUsername;
 		Label lblUserDateCreated;
 		Label lblUserAccount;
 
@@ -201,7 +201,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			Label lbl;
 
 			// current user...
-			vlUsername = new ViewRequestLink();
+			vlUsername = new ViewLink();
 			lblUserDateCreated = new Label();
 			lblUserAccount = new Label();
 
@@ -304,7 +304,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentUser(Model user) {
 			this.vlUsername.setText(user.asString("emailAddress"));
-			this.vlUsername.setViewKey(new EditViewRequest(UserEditView.klas, user).getViewKey());
+			this.vlUsername.setViewInitializer(new EditViewInitializer(UserEditView.klas, user));
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			String dm;
 			try {
@@ -325,7 +325,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void clearCurrentUser() {
 			this.vlUsername.setText(null);
-			this.vlUsername.setViewKey(null);
+			this.vlUsername.setViewInitializer(null);
 			this.lblUserDateCreated.setText(null);
 			this.lblUserAccount.setText(null);
 		}
@@ -353,7 +353,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onLoad() {
 			super.onLoad();
 			StatusEventDispatcher.get().addStatusHandler(this);
-			ViewManager.initialize(this, 4);
+			ViewManager.initialize(this, 4, 6);
 			// set the main model change listener so views see all model change events
 			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}

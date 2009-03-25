@@ -7,8 +7,7 @@ package com.tll.client.mvc;
 import com.tll.client.mvc.view.IViewRequest;
 
 /**
- * IController - Responsible for obtaining a valid view "handle" from a supplied view
- * request event.
+ * IController - Responsible for handling a view request of a particular type.
  * @author jpk
  */
 interface IController {

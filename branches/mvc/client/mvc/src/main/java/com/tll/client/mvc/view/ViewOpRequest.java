@@ -12,19 +12,19 @@ package com.tll.client.mvc.view;
  */
 public abstract class ViewOpRequest extends AbstractViewRequest {
 
-	private final IViewKey viewKey;
+	private final ViewKey viewKey;
 
 	/**
 	 * Constructor
 	 * @param viewKey
 	 */
-	public ViewOpRequest(IViewKey viewKey) {
+	public ViewOpRequest(ViewKey viewKey) {
 		super();
 		this.viewKey = viewKey;
 	}
 
 	@Override
-	public IViewKey getViewKey() {
+	public ViewKey getViewKey() {
 		return viewKey;
 	}
 

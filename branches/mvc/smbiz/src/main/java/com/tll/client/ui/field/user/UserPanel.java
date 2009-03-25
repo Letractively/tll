@@ -11,7 +11,7 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.Model;
 
 /**
@@ -37,7 +37,7 @@ public class UserPanel extends FlowFieldPanel {
 			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
 
 			// parent account ref link
-			lnkAccount = new ViewRequestLink();
+			lnkAccount = new ViewLink();
 			cmpsr.addWidget("Account", lnkAccount);
 
 			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
@@ -55,7 +55,7 @@ public class UserPanel extends FlowFieldPanel {
 
 	}
 
-	private ViewRequestLink lnkAccount;
+	private ViewLink lnkAccount;
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
@@ -76,7 +76,7 @@ public class UserPanel extends FlowFieldPanel {
 			parentAccount = accountModel.relatedOne("account").getModel();
 			ModelRef par = parentAccount == null ? null : parentAccount.getRefKey();
 			lnkAccount.setText(par.getName());
-			lnkAccount.setViewRequest(new EditViewRequest(this, AccountEditView.klas, par));
+			lnkAccount.setViewRequest(new EditViewInitializer(this, AccountEditView.klas, par));
 		}
 		catch(PropertyPathException e) {
 			lnkAccount.setText("-");
