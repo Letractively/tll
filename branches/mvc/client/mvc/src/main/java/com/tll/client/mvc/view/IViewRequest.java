@@ -7,16 +7,11 @@ package com.tll.client.mvc.view;
 
 /**
  * IViewRequest - Definition for a view request that is handled by the mvc
- * sub-system.
+ * controllers.
  * @author jpk
  */
-public interface IViewRequest {
-
-	/**
-	 * @return The view key.
-	 */
-	ViewKey getViewKey();
-
+public interface IViewRequest extends IViewKeyProvider {
+	
 	/**
 	 * @return <code>true</code> if history should be updated with a view token, <code>false</code>
 	 *         if history is NOT to be updated.
@@ -25,5 +20,4 @@ public interface IViewRequest {
 	 *         <code>false</code>.
 	 */
 	boolean addHistory();
-
 }

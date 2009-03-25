@@ -31,10 +31,17 @@ public class SimpleHyperLink extends Widget implements HasText, HasHTML, HasClic
 		public static final String SIMPLE = "tll-SimpleHyperLink";
 	}
 	
+	/**
+	 * Constructor
+	 */
 	public SimpleHyperLink() {
 		this(null, null);
 	}
 
+	/**
+	 * Constructor
+	 * @param text
+	 */
 	public SimpleHyperLink(String text) {
 		this(text, null);
 	}

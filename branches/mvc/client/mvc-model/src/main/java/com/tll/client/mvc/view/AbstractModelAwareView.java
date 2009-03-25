@@ -11,8 +11,10 @@ import com.tll.client.mvc.ViewManager;
 /**
  * AbstractModelAwareView - Base view class for all defined views in the app.
  * @author jpk
+ * @param <R>
  */
-public abstract class AbstractModelAwareView extends AbstractView implements IModelAwareView {
+public abstract class AbstractModelAwareView<R extends IViewKeyProvider> extends AbstractView<R> implements
+		IModelAwareView<R> {
 
 	/**
 	 * Constructor
@@ -56,8 +58,8 @@ public abstract class AbstractModelAwareView extends AbstractView implements IMo
 			}
 		}
 		// now dispatch to the other cached views
-		final IView[] cachedViews = ViewManager.get().getCachedViews();
-		for(final IView cv : cachedViews) {
+		final IView<?>[] cachedViews = ViewManager.get().getCachedViews();
+		for(final IView<?> cv : cachedViews) {
 			if(cv != this) cv.getViewWidget().fireEvent(event);
 		}
 	}

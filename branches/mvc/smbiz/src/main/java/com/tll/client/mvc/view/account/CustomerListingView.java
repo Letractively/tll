@@ -10,10 +10,7 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.ListingView;
-import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.view.ViewRequestLink;
@@ -33,7 +30,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class CustomerListingView extends ListingView {
+public final class CustomerListingView extends ListingView<CustomerListingViewRequest> {
 
 	public static final Class klas = new Class();
 
@@ -44,59 +41,10 @@ public final class CustomerListingView extends ListingView {
 		}
 
 		@Override
-		public IView newView() {
+		public CustomerListingView newView() {
 			return new CustomerListingView();
 		}
-
-		/**
-		 * Factory method used to generate a {@link IViewRequest} for
-		 * {@link CustomerListingView} instances.
-		 * @param mercRef The Merchant ref
-		 * @param ispRef The Isp ref
-		 * @return {@link IViewRequest}
-		 */
-		public CustomerListingViewRequest newViewRequest(ModelKey mercRef, ModelKey ispRef) {
-			return new CustomerListingViewRequest(mercRef, ispRef);
-		}
-
 	}
-
-	/**
-	 * CustomerListingViewRequest - CustomerListingView specific view request.
-	 * @author jpk
-	 */
-	public static final class CustomerListingViewRequest extends ShowViewRequest {
-
-		/**
-		 * The grand-parent Isp ref.
-		 */
-		private final ModelKey ispRef;
-
-		/**
-		 * The parent Merchant ref.
-		 */
-		private final ModelKey mercRef;
-
-		/**
-		 * Constructor
-		 * @param mercRef The parent merchant ref
-		 * @param ispRef
-		 */
-		CustomerListingViewRequest(ModelKey mercRef, ModelKey ispRef) {
-			super(klas);
-			assert mercRef != null && ispRef != null;
-			this.mercRef = mercRef;
-			this.ispRef = ispRef;
-		}
-
-		@Override
-		protected int getViewId() {
-			return klas.hashCode() + 7 * ispRef.hashCode() + 19 * mercRef.hashCode();
-		}
-
-	}
-
-	private ModelKey ispRef;
 
 	private ModelKey mercRef;
 
@@ -114,17 +62,11 @@ public final class CustomerListingView extends ListingView {
 	}
 
 	@Override
-	public void doInitialization(IViewRequest viewRequest) {
-		assert viewRequest instanceof CustomerListingViewRequest;
-		final CustomerListingViewRequest r = (CustomerListingViewRequest) viewRequest;
-
-		assert r.ispRef != null && r.ispRef.isSet();
-		ispRef = r.ispRef;
-
+	public void doInitialization(CustomerListingViewRequest r) {
 		assert r.mercRef != null && r.mercRef.isSet();
 		mercRef = r.mercRef;
 
-		mercListingLink.setViewRequest(MerchantListingView.klas.newViewRequest(r.ispRef));
+		mercListingLink.setViewKey(new MerchantListingViewRequest(r.getMerchantParentRef()).getViewKey());
 		mercListingLink.setText(mercRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);
@@ -206,12 +148,7 @@ public final class CustomerListingView extends ListingView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
-	}
-
-	@Override
-	public ShowViewRequest newViewRequest() {
-		return klas.newViewRequest(mercRef, ispRef);
 	}
 }

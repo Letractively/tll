@@ -19,7 +19,7 @@ public final class PinPopViewRequest extends ViewOpRequest {
 	 * @param pop <code>true</code> when requesting to pop the current view,
 	 *        <code>false<code> when requesting to pin a popped view.
 	 */
-	public PinPopViewRequest(ViewKey viewKey, boolean pop) {
+	public PinPopViewRequest(IViewKey viewKey, boolean pop) {
 		super(viewKey);
 		this.pop = pop;
 	}

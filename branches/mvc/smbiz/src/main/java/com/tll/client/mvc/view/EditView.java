@@ -21,7 +21,7 @@ import com.tll.common.model.ModelKey;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractModelAwareView implements IEditHandler {
+public abstract class EditView extends AbstractModelAwareView<EditViewRequest> implements IEditHandler {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -85,11 +85,6 @@ public abstract class EditView extends AbstractModelAwareView implements IEditHa
 		return "Edit " + s;
 	}
 
-	@Override
-	public final ShowViewRequest newViewRequest() {
-		return new EditViewRequest(getViewClass(), modelRef);
-	}
-
 	private void setModelRef(ModelKey modelRef) {
 		if(modelRef == null || !modelRef.isSet()) {
 			throw new IllegalArgumentException("Invalid model ref specified");
@@ -98,12 +93,10 @@ public abstract class EditView extends AbstractModelAwareView implements IEditHa
 	}
 
 	@Override
-	protected final void doInitialization(IViewRequest viewRequest) {
-		assert viewRequest instanceof EditViewRequest;
-		final EditViewRequest r = (EditViewRequest) viewRequest;
-		model = r.getModel();
+	protected final void doInitialization(EditViewRequest viewRequest) {
+		model = viewRequest.getModel();
 		if(model == null) {
-			setModelRef(r.getModelKey());
+			setModelRef(viewRequest.getModelKey());
 		}
 		else {
 			setModelRef(model.getRefKey());

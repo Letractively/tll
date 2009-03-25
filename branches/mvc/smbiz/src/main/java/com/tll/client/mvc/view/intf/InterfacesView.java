@@ -21,10 +21,7 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.AbstractModelAwareView;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.IViewRequest;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.IViewKeyProvider;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -48,7 +45,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public class InterfacesView extends AbstractModelAwareView implements ClickHandler {
+public class InterfacesView extends AbstractModelAwareView<IViewKeyProvider> implements ClickHandler {
 
 	public static final Class klas = new Class();
 
@@ -59,7 +56,7 @@ public class InterfacesView extends AbstractModelAwareView implements ClickHandl
 		}
 
 		@Override
-		public IView newView() {
+		public InterfacesView newView() {
 			return new InterfacesView();
 		}
 
@@ -275,7 +272,7 @@ public class InterfacesView extends AbstractModelAwareView implements ClickHandl
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 
@@ -289,7 +286,7 @@ public class InterfacesView extends AbstractModelAwareView implements ClickHandl
 	}
 
 	@Override
-	public void doInitialization(IViewRequest viewRequest) {
+	public void doInitialization(IViewKeyProvider initializer) {
 		// no-op
 	}
 
@@ -300,11 +297,6 @@ public class InterfacesView extends AbstractModelAwareView implements ClickHandl
 	@Override
 	protected void doDestroy() {
 		intfStack.clearData();
-	}
-
-	@Override
-	public ShowViewRequest newViewRequest() {
-		return new StaticViewRequest(klas);
 	}
 
 	public void onClick(ClickEvent event) {

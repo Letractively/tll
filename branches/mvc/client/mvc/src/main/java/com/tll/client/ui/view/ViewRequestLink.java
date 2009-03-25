@@ -7,54 +7,66 @@ package com.tll.client.ui.view;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IViewRequest;
-import com.tll.client.mvc.view.ViewKey;
+import com.tll.client.mvc.view.IViewKey;
+import com.tll.client.mvc.view.IViewRef;
+import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.ui.SimpleHyperLink;
 
 /**
  * ViewRequestLink - Link that delegates a view request to the mvc dispatcher.
  * @author jpk
  */
-public final class ViewRequestLink extends SimpleHyperLink implements ClickHandler {
+public final class ViewRequestLink extends SimpleHyperLink {
 
 	/**
-	 * The sourcing view request.
+	 * The view key.
 	 */
-	private IViewRequest viewRequest;
+	private IViewKey viewKey;
 
 	/**
-	 * Constructor - Default constructor. The view request property <em>must</em>
-	 * be set prior to an onclick event.
+	 * Constructor
 	 */
 	public ViewRequestLink() {
-		this(null, null, null);
+		super();
 	}
-
+	
 	/**
 	 * Constructor
 	 * @param shortViewName
 	 * @param longViewName
-	 * @param viewRequest
+	 * @param viewKey
 	 */
-	public ViewRequestLink(String shortViewName, String longViewName, IViewRequest viewRequest) {
-		super(shortViewName);
+	public ViewRequestLink(String shortViewName, String longViewName, IViewKey viewKey) {
+		setText(shortViewName);
 		setTitle(longViewName);
-		setViewRequest(viewRequest);
-		addClickHandler(this);
+		setViewKey(viewKey);
+		addClickHandler(new ClickHandler() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void onClick(ClickEvent event) {
+				if(ViewRequestLink.this.viewKey == null) throw new IllegalStateException();
+				ViewManager.get().dispatch(new ShowViewRequest() {
+				
+					@Override
+					public IViewKey getViewKey() {
+						return ViewRequestLink.this.viewKey;
+					}
+				});
+			}
+		});
 	}
 
-	public void setViewRequest(IViewRequest viewRequest) {
-		this.viewRequest = viewRequest;
+	/**
+	 * Constructor
+	 * @param viewRef the view ref
+	 */
+	public ViewRequestLink(IViewRef viewRef) {
+		this(viewRef.getShortViewName(), viewRef.getLongViewName(), viewRef.getViewKey());
 	}
 
-	public void onClick(ClickEvent event) {
-		if(event.getSource() == this) {
-			assert viewRequest != null;
-			ViewManager.get().dispatch(viewRequest);
-		}
-	}
-
-	public ViewKey getViewKey() {
-		return viewRequest == null ? null : viewRequest.getViewKey();
+	public void setViewKey(final IViewKey viewKey) {
+		if(viewKey == null) throw new IllegalArgumentException();
+		this.viewKey = viewKey;
 	}
 }

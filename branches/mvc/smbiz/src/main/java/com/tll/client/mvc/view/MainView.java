@@ -12,7 +12,7 @@ import com.tll.model.SmbizEntityType;
  * MainView - The root view base class for all account types.
  * @author jpk
  */
-public abstract class MainView extends AbstractView {
+public abstract class MainView extends AbstractView<IViewKeyProvider> {
 
 	/**
 	 * MainViewClass - Base class for all main view classes.
@@ -51,17 +51,12 @@ public abstract class MainView extends AbstractView {
 	}
 
 	@Override
-	public final void doInitialization(IViewRequest viewRequest) {
+	public final void doInitialization(IViewKeyProvider viewRequest) {
 		// no-op
 	}
 
 	@Override
 	protected void doDestroy() {
 		// no-op
-	}
-
-	@Override
-	public final ShowViewRequest newViewRequest() {
-		return new StaticViewRequest(getViewClass());
 	}
 }

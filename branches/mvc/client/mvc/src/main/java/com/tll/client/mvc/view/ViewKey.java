@@ -4,36 +4,11 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.user.client.History;
-
 /**
  * ViewRef - Uniquely identifies {@link IView}s at runtime.
  * @author jpk
  */
-public final class ViewKey {
-
-	/**
-	 * Used to dis-ambiguate {@link History} tokens. I.e. whether the history
-	 * token passed to the {@link History} {@link ValueChangeEvent} method is a
-	 * call for a view.
-	 */
-	private static final String VIEW_TOKEN_PREFIX = "v";
-	private static final int VIEW_TOKEN_PREFIX_LENGTH = 1;
-
-	/**
-	 * Extracts the view key hash from the given history token. <code>-1</code>
-	 * is returned if the historyToken is <em>not</em> view related.
-	 * @param historyToken The possibly view related history token
-	 * @return Extracted hash of the associated {@link ViewKey} or <code>-1</code>
-	 *         if the history token is not a view history token.
-	 */
-	public static int extractViewKeyHash(String historyToken) {
-		if(historyToken == null || !historyToken.startsWith(ViewKey.VIEW_TOKEN_PREFIX)) {
-			return -1;
-		}
-		return Integer.parseInt(historyToken.substring(VIEW_TOKEN_PREFIX_LENGTH));
-	}
+public class ViewKey implements IViewKey {
 
 	/**
 	 * The ViewClass which may never be <code>null</code>.
@@ -43,7 +18,17 @@ public final class ViewKey {
 	/**
 	 * The runtime unique view id for the associated ViewClass.
 	 */
-	private final int viewId;
+	private int viewId;
+
+	/**
+	 * Constructor
+	 * @param viewClass
+	 */
+	public ViewKey(ViewClass viewClass) {
+		super();
+		this.viewClass = viewClass;
+		this.viewId = 0;
+	}
 
 	/**
 	 * Constructor
@@ -67,20 +52,15 @@ public final class ViewKey {
 	 * Uniquely identifies a view at runtime. AbstractView ids should be based on
 	 * the unique view type related properties specific to the view
 	 * implementation.
-	 * @return int representing the unique view id. If <code>0</code>, the view
-	 *         id is "un-defined" which is supported (E.g.: "static" views).
+	 * @return int representing the unique view id. If <code>0</code>, the view id
+	 *         is "un-defined" which is supported (E.g.: "static" views).
 	 */
 	public int getViewId() {
 		return viewId;
 	}
 
-	/**
-	 * Provides a String wise token suitable for use as browser history event
-	 * identifier.
-	 * @return History token equivalent for the given view key.
-	 */
-	public String getViewKeyHistoryToken() {
-		return VIEW_TOKEN_PREFIX + hashCode();
+	public void setViewId(int viewId) {
+		this.viewId = viewId;
 	}
 
 	@Override
@@ -98,6 +78,6 @@ public final class ViewKey {
 
 	@Override
 	public String toString() {
-		return "view Class: " + viewClass.toString() + ", view id: " + getViewId();
+		return "view Class: " + viewClass + ", view id: " + getViewId();
 	}
 }

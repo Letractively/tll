@@ -24,7 +24,7 @@ public class CustomerMain extends MainView {
 		}
 
 		@Override
-		public IView newView() {
+		public CustomerMain newView() {
 			return new CustomerMain();
 		}
 	}
@@ -49,7 +49,7 @@ public class CustomerMain extends MainView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 }

@@ -5,7 +5,6 @@
 package com.tll.client.mvc.view.account;
 
 import com.tll.client.mvc.view.EditView;
-import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.field.account.AccountPanel;
 import com.tll.common.data.AuxDataRequest;
@@ -32,7 +31,7 @@ public class AccountEditView extends EditView {
 		}
 
 		@Override
-		public IView newView() {
+		public AccountEditView newView() {
 			return new AccountEditView();
 		}
 

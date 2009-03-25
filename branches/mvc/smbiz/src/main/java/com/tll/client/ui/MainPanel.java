@@ -304,7 +304,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentUser(Model user) {
 			this.vlUsername.setText(user.asString("emailAddress"));
-			this.vlUsername.setViewRequest(new EditViewRequest(UserEditView.klas, user));
+			this.vlUsername.setViewKey(new EditViewRequest(UserEditView.klas, user).getViewKey());
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			String dm;
 			try {
@@ -325,7 +325,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void clearCurrentUser() {
 			this.vlUsername.setText(null);
-			this.vlUsername.setViewRequest(null);
+			this.vlUsername.setViewKey(null);
 			this.lblUserDateCreated.setText(null);
 			this.lblUserAccount.setText(null);
 		}
@@ -353,7 +353,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onLoad() {
 			super.onLoad();
 			StatusEventDispatcher.get().addStatusHandler(this);
-			ViewManager.get().initialize(this);
+			ViewManager.initialize(this, 4);
 			// set the main model change listener so views see all model change events
 			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}
@@ -362,7 +362,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onUnload() {
 			super.onUnload();
 			//ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
-			ViewManager.get().clear();
+			ViewManager.shutdown();
 			StatusEventDispatcher.get().removeStatusHandler(this);
 			//MsgManager.get().clear();
 		}

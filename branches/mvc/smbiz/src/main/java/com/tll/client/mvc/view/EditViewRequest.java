@@ -9,6 +9,8 @@ import com.tll.common.model.ModelKey;
  */
 public final class EditViewRequest extends ShowViewRequest {
 
+	private final ViewClass viewClass;
+
 	/**
 	 * The entity model. May be <code>null</code> in which case,
 	 * {@link #modelRef} is expected to be non-<code>null</code>.
@@ -30,8 +32,7 @@ public final class EditViewRequest extends ShowViewRequest {
 	 * @param modelRef
 	 */
 	public EditViewRequest(ViewClass viewClass, ModelKey modelRef) {
-		super(viewClass);
-		assert modelRef != null;
+		this.viewClass = viewClass;
 		this.modelRef = modelRef;
 		this.model = null;
 	}
@@ -43,15 +44,15 @@ public final class EditViewRequest extends ShowViewRequest {
 	 * @param model
 	 */
 	public EditViewRequest(ViewClass viewClass, Model model) {
-		super(viewClass);
+		this.viewClass = viewClass;
 		this.modelRef = null;
-		assert model != null;
 		this.model = model;
 	}
 
 	@Override
-	protected int getViewId() {
-		return model == null ? modelRef.hashCode() : model.getRefKey().hashCode();
+	public IViewKey getViewKey() {
+		final int vid = model == null ? modelRef.hashCode() : model.getRefKey().hashCode();
+		return new ViewKey(viewClass, vid);
 	}
 
 	/**

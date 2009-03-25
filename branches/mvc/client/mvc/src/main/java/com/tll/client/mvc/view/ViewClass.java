@@ -51,7 +51,7 @@ public abstract class ViewClass {
 	 */
 	public static final ViewClass findClassByViewName(String viewName) {
 		if(viewName != null) {
-			for(ViewClass vc : classes) {
+			for(final ViewClass vc : classes) {
 				if(viewName.equals(vc.name)) return vc;
 			}
 		}
@@ -90,7 +90,7 @@ public abstract class ViewClass {
 	/**
 	 * @return New instance of the view this class defines.
 	 */
-	public abstract IView newView();
+	public abstract IView<?> newView();
 
 	@Override
 	public final boolean equals(Object obj) {

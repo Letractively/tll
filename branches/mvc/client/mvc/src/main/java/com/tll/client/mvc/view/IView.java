@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * May 10, 2008
+ * @author jpk May 10, 2008
  */
 package com.tll.client.mvc.view;
 
@@ -10,8 +9,9 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * IView - Runtime view definition defining a view's life-cycle.
  * @author jpk
+ * @param <R> the view key provider type
  */
-public interface IView extends IViewRef {
+public interface IView<R extends IViewKeyProvider> extends IViewRef {
 
 	/**
 	 * Styles - (view.css)
@@ -31,32 +31,22 @@ public interface IView extends IViewRef {
 	Widget getViewWidget();
 
 	/**
-	 * Provision for generating a {@link IViewRequest} that "points" to this
-	 * particular AbstractView implementation.
-	 * <p>
-	 * The purponse for this method, among others, is to have the ability to
-	 * "re-constitute" any particular AbstractView at any time during the app's
-	 * loaded life-cycle.
-	 * @return New and configured {@link IViewRequest} instance.
-	 */
-	ShowViewRequest getViewRequest();
-
-	/**
 	 * The view options that define how the view appears.
 	 * @return view options
 	 */
 	ViewOptions getOptions();
 
 	/**
-	 * Initializes the view with the runtime dependant {@link IViewRequest}.
-	 * @param viewRequest The view request responsible for the instantiation of
-	 *        this view. May NOT be <code>null</code>.
+	 * Initializes the view enabling it to be uniquely identifiable at runtime.
+	 * @param initializer The view key provider responsible for providing the view
+	 *        the ability to provide a {@link IViewKey} which is essential for
+	 *        uniquely identifying views at runtime.
 	 */
-	void initialize(IViewRequest viewRequest);
+	void initialize(R initializer);
 
 	/**
 	 * Refreshes the contents of the view. This method also serves to populate the
-	 * UI. A call to {@link #initialize(IViewRequest)} is required before this
+	 * UI. A call to {@link #initialize(IViewKeyProvider)} is required before this
 	 * method may be called.
 	 */
 	void refresh();

@@ -5,42 +5,11 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.view.ViewRequestLink;
-
 /**
- * IViewRef - Generic ref to a AbstractView at runtime.
+ * IViewRef - A view key provider with embellishing short and long view names.
  * @author jpk
  */
-public interface IViewRef {
-
-	/**
-	 * Tools - view utility methods.
-	 * @author jpk
-	 */
-	public static final class Tools {
-
-		/**
-		 * Generates a link to the view the given {@link IViewRef} references.
-		 * @param viewRef The view ref for which a view link is generated
-		 * @return A clickable Widget that invokes the display of the referenced
-		 *         view.
-		 */
-		public static Widget getViewLink(IViewRef viewRef) {
-			if(viewRef instanceof IViewRequest) {
-				return new ViewRequestLink(viewRef.getShortViewName(), viewRef.getLongViewName(), (IViewRequest) viewRef);
-			}
-			Hyperlink link = new Hyperlink(viewRef.getShortViewName(), viewRef.getViewKey().getViewKeyHistoryToken());
-			link.setTitle(viewRef.getLongViewName());
-			return link;
-		}
-	}
-
-	/**
-	 * @return The {@link AbstractView}'s key
-	 */
-	ViewKey getViewKey();
+public interface IViewRef extends IViewKeyProvider {
 
 	/**
 	 * @return The short view name.

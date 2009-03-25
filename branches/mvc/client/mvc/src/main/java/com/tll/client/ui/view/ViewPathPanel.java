@@ -63,7 +63,7 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 			final int count = viewPath.length;
 			for(int i = 0; i < count; i++) {
 				// add view link
-				ulPanel.append(IViewRef.Tools.getViewLink(viewPath[i]));
+				ulPanel.append(new ViewRequestLink(viewPath[i]));
 
 				// add spacer
 				final P p = new P();

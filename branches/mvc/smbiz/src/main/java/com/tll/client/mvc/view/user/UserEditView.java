@@ -6,7 +6,6 @@
 package com.tll.client.mvc.view.user;
 
 import com.tll.client.mvc.view.EditView;
-import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
@@ -31,7 +30,7 @@ public class UserEditView extends EditView {
 		}
 
 		@Override
-		public IView newView() {
+		public UserEditView newView() {
 			return new UserEditView();
 		}
 
@@ -50,7 +49,7 @@ public class UserEditView extends EditView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 

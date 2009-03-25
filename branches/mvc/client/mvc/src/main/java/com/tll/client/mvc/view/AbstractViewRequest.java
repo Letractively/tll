@@ -15,14 +15,13 @@ public abstract class AbstractViewRequest implements IViewRequest {
 	/**
 	 * @return The view key
 	 */
-	public abstract ViewKey getViewKey();
+	public abstract IViewKey getViewKey();
 
 	/**
-	 * @return <code>true</code> if history should be updated with a view token, <code>false</code>
-	 *         if history is NOT to be updated.
+	 * @return <code>true</code> if history should be updated with a view token,
+	 *         <code>false</code> if history is NOT to be updated.
 	 *         <p>
-	 *         Default returns <code>true</code>. There are few cases when this needs to be
-	 *         <code>false</code>.
+	 *         Default returns <code>true</code>. Concrete impls may override.
 	 */
 	public boolean addHistory() {
 		return true;
@@ -30,8 +29,8 @@ public abstract class AbstractViewRequest implements IViewRequest {
 
 	@Override
 	public final String toString() {
-		String s = super.toString();
-		final ViewKey viewKey = getViewKey();
+		String s = "";
+		final IViewKey viewKey = getViewKey();
 		if(viewKey != null) {
 			s += viewKey.toString();
 		}

@@ -308,7 +308,8 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 					}
 				}
 				
-				throw new IllegalStateException("Unhandled history state: " + historyToken);
+				// this is fallacious since we're depriving other history handlers from processing!
+				//throw new IllegalStateException("Unhandled history state: " + historyToken);
 			}
 
 		});

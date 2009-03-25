@@ -14,8 +14,9 @@ import com.tll.client.ui.listing.ModelListingWidget;
 /**
  * ListingView - View dedicated to a single listing.
  * @author jpk
+ * @param <R>
  */
-public abstract class ListingView extends AbstractModelAwareView {
+public abstract class ListingView<R extends IViewKeyProvider> extends AbstractModelAwareView<R> {
 
 	/**
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections

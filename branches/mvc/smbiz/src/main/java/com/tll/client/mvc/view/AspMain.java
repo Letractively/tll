@@ -6,7 +6,7 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.view.account.IspListingView;
+import com.tll.client.mvc.view.account.IspListingViewRequest;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.view.ViewRequestLink;
@@ -29,7 +29,7 @@ public class AspMain extends MainView {
 		}
 
 		@Override
-		public IView newView() {
+		public AspMain newView() {
 			return new AspMain();
 		}
 	}
@@ -48,8 +48,8 @@ public class AspMain extends MainView {
 		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
-		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest()));
-		links.append(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(InterfacesView.klas)));
+		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", new IspListingViewRequest().getViewKey()));
+		links.append(new ViewRequestLink("Interfaces", "Interfaces", new ViewKey(InterfacesView.klas)));
 		links.append(new Hyperlink("Site Summary", "siteSmry"));
 		addWidget(links);
 
@@ -92,7 +92,7 @@ public class AspMain extends MainView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 }

@@ -12,13 +12,14 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * AbstractView - Base view class for all defined views in the app.
  * @author jpk
+ * @param <R>
  */
-public abstract class AbstractView extends Composite implements IView {
+public abstract class AbstractView<R extends IViewKeyProvider> extends Composite implements IView<R> {
 
 	/**
 	 * The view key uniquely indentifying the view at runtime.
 	 */
-	private ViewKey viewKey;
+	private IViewKey viewKey;
 
 	/**
 	 * The wrapped Widget
@@ -47,21 +48,8 @@ public abstract class AbstractView extends Composite implements IView {
 		return getViewClass().getViewOptions();
 	}
 
-	public final ViewKey getViewKey() {
+	public final IViewKey getViewKey() {
 		return viewKey;
-	}
-
-	/**
-	 * Factory method employed by {@link #getViewRequest()}.
-	 * @return New ViewRequest instance specific to the implementation.
-	 */
-	protected abstract ShowViewRequest newViewRequest();
-
-	public final ShowViewRequest getViewRequest() {
-		final ShowViewRequest r = newViewRequest();
-		r.setLongViewName(getLongViewName());
-		r.setShortViewName(getShortViewName());
-		return r;
 	}
 
 	public String getShortViewName() {
@@ -85,25 +73,24 @@ public abstract class AbstractView extends Composite implements IView {
 		return null;
 	}
 
-	public final void initialize(IViewRequest viewRequest) {
-		assert viewRequest != null;
-		// set the view key
-		this.viewKey = viewRequest.getViewKey();
-		assert viewKey != null;
+	public final void initialize(R initializer) {
+		if(initializer == null || initializer.getViewKey() == null)
+			throw new IllegalArgumentException("Null or invalid view initializer.");
+		viewKey = initializer.getViewKey();
 		// add view specific style to the view's widget
 		if(getViewStyle() != null) {
 			addStyleName(getViewStyle());
 		}
 
 		// do impl specific initialization
-		doInitialization(viewRequest);
+		doInitialization(initializer);
 	}
 
 	/**
 	 * Performs impl specific initialization just after the ViewKey has been set.
 	 * @param viewRequest The non-<code>null</code> view request.
 	 */
-	protected abstract void doInitialization(IViewRequest viewRequest);
+	protected abstract void doInitialization(R viewRequest);
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before

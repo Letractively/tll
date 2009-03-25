@@ -62,7 +62,7 @@ public final class RecentViewsPanel extends Composite implements IViewChangeHand
 		// re-build the recent view list
 		// NOTE: ending at 1 before last element (skip the current view)
 		for(int i = 0; i < count - 1; i++) {
-			ulPanel.append(IViewRef.Tools.getViewLink(refs[i]));
+			ulPanel.append(new ViewRequestLink(refs[i]));
 		}
 	}
 

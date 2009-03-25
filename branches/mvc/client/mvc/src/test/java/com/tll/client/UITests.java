@@ -1,7 +1,21 @@
 package com.tll.client;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.mvc.ViewManager;
+import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.ViewA;
+import com.tll.client.mvc.view.ViewB;
+import com.tll.client.mvc.view.ViewC;
+import com.tll.client.mvc.view.ViewD;
+import com.tll.client.mvc.view.ViewE;
+import com.tll.client.ui.view.RecentViewsPanel;
+import com.tll.client.ui.view.ViewPathPanel;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -25,6 +39,9 @@ public final class UITests extends AbstractUITest {
 	 * @author jpk
 	 */
 	static final class MvcTest extends DefaultUITestCase {
+		
+		VerticalPanel context;
+		FlowPanel viewContainer;
 
 		/**
 		 * Constructor
@@ -34,13 +51,75 @@ public final class UITests extends AbstractUITest {
 		}
 
 		@Override
+		protected void init() {
+			
+			context = new VerticalPanel();
+			context.setBorderWidth(2);
+			context.setSpacing(4);
+			context.add(new ViewPathPanel());
+			context.add(new RecentViewsPanel());
+			
+			viewContainer = new FlowPanel();
+			viewContainer.add(new Label("This is line 1"));
+			viewContainer.add(new Label("This is line 2"));
+			viewContainer.add(new Label("This is line 3"));
+			context.add(viewContainer);
+			
+			ViewManager.initialize(viewContainer, 3);
+		}
+
+		@Override
+		protected void teardown() {
+			ViewManager.shutdown();
+			viewContainer.removeFromParent();
+			viewContainer = null;
+			context = null;
+		}
+
+		@Override
 		protected Widget getContext() {
-			return null;
+			return context;
 		}
 
 		@Override
 		protected Button[] getTestActions() {
-			return null;
+			return new Button[] {
+				new Button("View A", new ClickHandler() {
+				
+					@Override
+					public void onClick(ClickEvent event) {
+						ViewManager.get().dispatch(new StaticViewRequest(ViewA.klas));
+					}
+				}),
+				new Button("View B", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						ViewManager.get().dispatch(new StaticViewRequest(ViewB.klas));
+					}
+				}),
+				new Button("View C", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						ViewManager.get().dispatch(new StaticViewRequest(ViewC.klas));
+					}
+				}),
+				new Button("View D", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						ViewManager.get().dispatch(new StaticViewRequest(ViewD.klas));
+					}
+				}),
+				new Button("View E", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						ViewManager.get().dispatch(new StaticViewRequest(ViewE.klas));
+					}
+				})
+			};
 		}
 	} // MvcTest
 

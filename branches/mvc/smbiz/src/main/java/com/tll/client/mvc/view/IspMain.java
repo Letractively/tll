@@ -28,7 +28,7 @@ public class IspMain extends MainView {
 		}
 
 		@Override
-		public IView newView() {
+		public IspMain newView() {
 			return new IspMain();
 		}
 	}
@@ -61,7 +61,7 @@ public class IspMain extends MainView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 }
