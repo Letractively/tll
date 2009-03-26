@@ -35,7 +35,7 @@ final class ViewCache {
 	 * queue of views in order of newest cached (head) to oldest cached (tail)
 	 * bounded by a set capacity.
 	 */
-	private final ArrayList<ViewAndInit> queue;
+	private final ArrayList<CView> queue;
 
 	/**
 	 * Unbounded distinct list of refs to visited views whose order is dictated by
@@ -50,7 +50,7 @@ final class ViewCache {
 	 */
 	ViewCache(int capacity) {
 		this.capacity = capacity;
-		this.queue = new ArrayList<ViewAndInit>(capacity);
+		this.queue = new ArrayList<CView>(capacity);
 		this.stack = new ArrayList<ViewRef>();
 	}
 
@@ -71,7 +71,7 @@ final class ViewCache {
 	 * @return The removed cache element or <code>null</code> if the queue cache
 	 *         is not yet at capacity.
 	 */
-	ViewAndInit cache(ViewAndInit e) {
+	CView cache(CView e) {
 		assert e != null;
 		final ViewKey key = e.getViewKey();
 
@@ -100,7 +100,7 @@ final class ViewCache {
 			stack.add(0, new ViewRef(e.init, e.options, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName()));
 		}
 
-		ViewAndInit expired = null;
+		CView expired = null;
 
 		// queue capacity check
 		if(queue.size() > capacity) {
@@ -117,7 +117,7 @@ final class ViewCache {
 	 * @param key the key of the element to remove
 	 * @return The removed element.
 	 */
-	ViewAndInit remove(ViewKey key) {
+	CView remove(ViewKey key) {
 		return removeAt(searchQueue(key));
 	}
 
@@ -127,7 +127,7 @@ final class ViewCache {
 	 * @param index the index at which to remove the element
 	 * @return The removed element.
 	 */
-	ViewAndInit removeAt(int index) {
+	CView removeAt(int index) {
 		return queue.remove(index);
 	}
 
@@ -173,9 +173,9 @@ final class ViewCache {
 	 * @param key the view key
 	 * @return the matching element or <code>null</code> if not present.
 	 */
-	ViewAndInit peekQueue(ViewKey key) {
+	CView peekQueue(ViewKey key) {
 		for(int i = 0; i < queue.size(); i++) {
-			final ViewAndInit e = queue.get(i);
+			final CView e = queue.get(i);
 			if(key.equals(e.getViewKey())) return e;
 		}
 		return null;
@@ -196,7 +196,7 @@ final class ViewCache {
 	/**
 	 * @return A newly created queue cache element iterator from newest to oldest.
 	 */
-	Iterator<ViewAndInit> queueIterator() {
+	Iterator<CView> queueIterator() {
 		return queue.size() == 0 ? null : queue.listIterator(0);
 	}
 

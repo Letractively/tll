@@ -7,11 +7,11 @@ import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
- * ViewAndInit - Simple encapsulation of a view and its initializer ensuring
+ * CView - Simple encapsulation of a view and its initializer ensuring
  * that the view key in the view equals that in the initializer.
  * @author jpk
  */
-final class ViewAndInit extends AbstractViewKeyProvider {
+final class CView extends AbstractViewKeyProvider {
 
 	final ViewContainer vc;
 	final IViewInitializer init;
@@ -23,7 +23,7 @@ final class ViewAndInit extends AbstractViewKeyProvider {
 	 * @param init
 	 * @param options
 	 */
-	public ViewAndInit(ViewContainer vc, IViewInitializer init, ViewOptions options) {
+	public CView(ViewContainer vc, IViewInitializer init, ViewOptions options) {
 		if(vc == null || init == null || options == null) throw new IllegalArgumentException("Null view and/or init.");
 		if(!vc.getViewKey().equals(init.getViewKey())) {
 			throw new IllegalArgumentException("Un-equal view keys");
@@ -39,6 +39,6 @@ final class ViewAndInit extends AbstractViewKeyProvider {
 
 	@Override
 	public String toString() {
-		return "ViewAndInit[" + init.getViewKey() + "]";
+		return "CView[" + init.getViewKey() + "]";
 	}
 }
