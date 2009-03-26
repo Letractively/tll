@@ -8,7 +8,7 @@ package com.tll.client.mvc.view;
  * AbstractViewRequest - common base class for all {@link IViewRequest} types.
  * @author jpk
  */
-public abstract class AbstractViewRequest implements IViewRequest {
+public abstract class AbstractViewRequest extends AbstractViewKeyProvider implements IViewRequest {
 
 	/**
 	 * @return <code>true</code> if history should be updated with a view token,

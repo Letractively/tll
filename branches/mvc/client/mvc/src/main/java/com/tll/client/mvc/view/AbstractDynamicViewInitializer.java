@@ -10,7 +10,7 @@ package com.tll.client.mvc.view;
  * initializers.
  * @author jpk
  */
-public abstract class AbstractDynamicViewInitializer implements IViewInitializer {
+public abstract class AbstractDynamicViewInitializer extends AbstractViewKeyProvider implements IViewInitializer {
 	
 	private final ViewClass viewClass;
 

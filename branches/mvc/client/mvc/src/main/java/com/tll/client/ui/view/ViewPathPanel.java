@@ -34,6 +34,8 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 	 * Spacer HTML.
 	 */
 	private static final String SPACER_HTML = "&raquo;";
+	
+	private final int capacity;
 
 	/**
 	 * The topmost (parent) ulPanel of this {@link Widget}.
@@ -47,9 +49,10 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 
 	/**
 	 * Constructor
+	 * @param capacity the max number of view links to display
 	 */
-	public ViewPathPanel() {
-		super();
+	public ViewPathPanel(int capacity) {
+		this.capacity = capacity;
 		container.addStyleName(Styles.HNAV);
 		container.addStyleName(Styles.VIEWPATH);
 		container.add(ulPanel);
@@ -58,10 +61,10 @@ public class ViewPathPanel extends Composite implements IViewChangeHandler {
 
 	public void onViewChange(ViewChangeEvent event) {
 		ulPanel.clear();
-		final ViewRef[] viewPath = ViewManager.get().getViewPath();
+		final ViewRef[] viewPath = ViewManager.get().getViewRefs(capacity, false, true);
 		if(viewPath != null && viewPath.length > 0) {
 			final int count = viewPath.length;
-			for(int i = 0; i < count; i++) {
+			for(int i = count - 1; i >= 0; i--) {
 				// add view link
 				ulPanel.append(new ViewLink(viewPath[i]));
 

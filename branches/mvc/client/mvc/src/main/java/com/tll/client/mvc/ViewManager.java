@@ -15,7 +15,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
-import com.tll.client.mvc.ViewCache.ViewAndInit;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewChangeHandler;
@@ -25,6 +24,7 @@ import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRef;
+import com.tll.client.ui.UI;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
@@ -47,6 +47,15 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				handler.onViewChange(event);
 			}
 		}
+	}
+
+	/**
+	 * Creates a {@link ViewRef} given a {@link ViewAndInit}.
+	 * @param e the view
+	 * @return Newly created {@link ViewRef}.
+	 */
+	private static ViewRef ref(ViewAndInit e) {
+		return new ViewRef(e.init, e.options, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName());
 	}
 
 	/**
@@ -86,16 +95,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Must be called once by the app on startup.
 	 * @param parentViewPanel The Panel that is the parent of the pinned view
 	 *        container. Must not be <code>null</code>.
-	 * @param primaryCacheCapacity The limit of the number of views to hold in
-	 *        memory.
-	 * @param secondaryCacheCapacity The limit of the the number of
-	 *        {@link ViewRef}s to hold in memory which is filled when views
-	 *        "expire" from the primary cache.
+	 * @param cacheCapacity The limit of the number of views to hold in memory.
 	 */
-	public static void initialize(Panel parentViewPanel, int primaryCacheCapacity, int secondaryCacheCapacity) {
-		instance = new ViewManager(parentViewPanel, primaryCacheCapacity, secondaryCacheCapacity);
+	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
+		instance = new ViewManager(parentViewPanel, cacheCapacity);
 	}
-	
+
 	/**
 	 * Clears and nullifies the singleton instance.
 	 */
@@ -121,24 +126,24 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	private final Panel parentViewPanel;
 
 	/**
-	 * The cache of visited views.
-	 * <p>
-	 * NOTE: The first view in the cache stack is considered the current view.
+	 * The view cache.
 	 */
 	private final ViewCache cache;
 
 	/**
-	 * The first cached view.
+	 * The first and currently pinned view.
 	 */
-	private ViewAndInit initialView;
+	private ViewAndInit initial, current;
 
 	/**
-	 * The currently pinned ViewContainer.
+	 * The controllers to handle view requests.
 	 */
-	private ViewContainer currentViewContainer;
-
 	private final List<IController> controllers = new ArrayList<IController>();
 
+	/**
+	 * The collection of view change listeners that are notified when the current
+	 * view changes.
+	 */
 	private final ViewChangeHandlers viewChangeHandlers = new ViewChangeHandlers();
 
 	/**
@@ -161,13 +166,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	/**
 	 * Constructor
 	 * @param parentPanel The panel that will contained pinned views.
-	 * @param primaryCacheCapacity
-	 * @param secondaryCacheCapacity
-	 * @see ViewManager#initialize(Panel, int, int)
+	 * @param cacheCapacity
+	 * @see ViewManager#initialize(Panel, int)
 	 */
-	private ViewManager(Panel parentPanel, int primaryCacheCapacity, int secondaryCacheCapacity) {
+	private ViewManager(Panel parentPanel, int cacheCapacity) {
 		parentViewPanel = parentPanel;
-		cache = new ViewCache(primaryCacheCapacity, secondaryCacheCapacity);
+		cache = new ViewCache(cacheCapacity);
 		History.addValueChangeHandler(this);
 
 		// add supported controllers
@@ -189,8 +193,10 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
-	 * @param init The view initializer
-	 * @param options The view options
+	 * @param init The view initializer employed only when the view is not present
+	 *        in the view cache
+	 * @param options The view options employed only when the view is not present
+	 *        in the view cache
 	 */
 	@SuppressWarnings("unchecked")
 	void setCurrentView(IViewInitializer init, ViewOptions options) {
@@ -199,7 +205,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 		ViewAndInit e;
 
-		final int cacheIndex = cache.searchPrimary(key);
+		final int cacheIndex = cache.searchQueue(key);
 
 		if(cacheIndex != -1) {
 			// existing cached view
@@ -207,18 +213,20 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			assert e != null;
 		}
 		else {
+			UI.busy();
+			Log.debug("Creating and initializing view: " + key + " ..");
 			// non-cached view
 			final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
 			// initialize the view
 			view.initialize(init);
 			// load the view
 			view.refresh();
-			
-			e = new ViewAndInit(new ViewContainer(view, options, key), init);
+
+			e = new ViewAndInit(new ViewContainer(view, options, key), init, options);
 		}
-		
-		setCurrentView(e, ((cacheIndex == -1) && (options != null && options
-				.isInitiallyPopped())));
+
+		// NOTE: only show as popped if not currently in cache
+		setCurrentView(e, ((cacheIndex == -1) && (options != null && options.isInitiallyPopped())));
 	}
 
 	/**
@@ -227,11 +235,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param showPopped show popped or pinned?
 	 */
 	private void setCurrentView(ViewAndInit e, boolean showPopped) {
-		// determine whether to show pinned or popped
-		// only show as popped if not currently in cache
-		
 		final ViewContainer vc = e.vc;
-		assert vc != null;
 
 		// set the view
 		if(showPopped) {
@@ -239,18 +243,28 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			vc.pop(parentViewPanel);
 		}
 		else {
-			// remove current pinned view
-			if(currentViewContainer != null) {
-				parentViewPanel.remove(currentViewContainer);
+			final boolean sameView = (current != null && current.equals(e));
+			final boolean pndgIsPopped = e.vc.isPopped();
+			final boolean crntIsPopped = current != null && current.vc.isPopped();
+
+			final boolean rmvCrnt = current != null && ((!sameView && !crntIsPopped) || (sameView && pndgIsPopped));
+			final boolean pinPndg = (rmvCrnt || (sameView && crntIsPopped) || !sameView || !e.vc.isAttached());
+
+			if(rmvCrnt) {
+				// remove current pinned view
+				current.vc.removeFromParent();
 			}
-			vc.pin(parentViewPanel);
-			currentViewContainer = vc;
+			if(pinPndg) {
+				// pin the view and set as current
+				vc.pin(parentViewPanel);
+			}
+			current = e;
 		}
 
 		// add the view to the cache
-		ViewAndInit old = cache.cache(vc, e.init);
+		ViewAndInit old = cache.cache(e);
 		if(old != null) {
-			assert old != e && !old.vc.getViewKey().equals(vc.getViewKey());
+			assert old != e && !old.getViewKey().equals(e.getViewKey());
 			Log.debug("Destroying view - " + old.vc.getView().toString() + "..");
 			// view life-cycle destroy
 			old.vc.getView().onDestroy();
@@ -258,7 +272,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		}
 
 		// set the initial view if not set
-		if(initialView == null) initialView = e;
+		if(initial == null) initial = e;
 
 		// fire view changed event
 		fireViewChangeEvent();
@@ -274,6 +288,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			@Override
 			public void execute() {
 				viewChangeHandlers.fireEvent(new ViewChangeEvent());
+				UI.unbusy();
 			}
 		});
 	}
@@ -287,7 +302,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	void unloadView(ViewKey key, boolean removeFromCache) {
 		final ViewAndInit e = findView(key);
 		if(e == null) return;
-		
+
 		// unload the given view
 		e.vc.close();
 
@@ -295,22 +310,14 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// remove the view from cache
 			cache.remove(key);
 		}
-		/*
-		else {
-			// demote the view
-			cache.moveToLast(vc);
-		}
-		*/
-		
-		// fire view changed event
-		// NOTE: this is necessary to ensure the view history panel is properly
-		// updated
-		//viewChangeHandlers.fireEvent(new ViewChangeEvent());
 
 		// find the newest pinned view excluding the one to be unloaded
-		final ViewContainer newestPinned = findFirstView(false, key);
-		if(newestPinned != null) {
-			History.newItem(generateViewKeyHistoryToken(newestPinned.getViewKey()));
+		ViewAndInit pendingCurrent = findFirstView(e);
+		if(pendingCurrent == null && e != initial) {
+			pendingCurrent = initial;
+		}
+		if(pendingCurrent != null) {
+			History.newItem(generateViewKeyHistoryToken(pendingCurrent.getViewKey()));
 		}
 	}
 
@@ -319,8 +326,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public void clear() {
 		Log.debug("Clearing view cache..");
-		if(cache.primarySize() > 0) {
-			for(final Iterator<ViewAndInit> itr = cache.primaryIterator(); itr.hasNext();) {
+		if(cache.size() > 0) {
+			for(final Iterator<ViewAndInit> itr = cache.queueIterator(); itr.hasNext();) {
 				final ViewAndInit e = itr.next();
 				e.vc.close();
 				e.vc.getView().onDestroy();
@@ -331,23 +338,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	/**
-	 * Generic find view method returning the first found match in the view cache
-	 * starting at the given index.
-	 * @param popped Is desired view popped?
-	 * @param exclude The view key of a view to exclude from the search. May be
+	 * Generic find view method returning the first found match in the view cache.
+	 * @param exclude The view to exclude from the search. May be
 	 *        <code>null</code>.
-	 * @return The first found matching view or <code>null</code> if no match
-	 *         found.
+	 * @return The first found view or <code>null</code> if no match found.
 	 */
-	private ViewContainer findFirstView(boolean popped, ViewKey exclude) {
-		final Iterator<ViewAndInit> itr = cache.primaryIterator();
+	private ViewAndInit findFirstView(ViewAndInit exclude) {
+		final Iterator<ViewAndInit> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				final ViewAndInit e = itr.next();
-				if(exclude == null || !exclude.equals(e.vc.getViewKey())) {
-					if(e.vc.isPopped() == popped) {
-						return e.vc;
-					}
+				if(exclude == null || exclude != e) {
+					return e;
 				}
 			}
 		}
@@ -361,18 +363,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         view cache.
 	 */
 	private ViewAndInit findView(ViewKey key) {
-		final Iterator<ViewAndInit> itr = cache.primaryIterator();
+		final Iterator<ViewAndInit> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				final ViewAndInit e = itr.next();
-				if(e.vc.getViewKey().equals(key)) {
+				if(e.getViewKey().equals(key)) {
 					return e;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Locates a cached view given a view key hash.
 	 * @param viewKeyHash
@@ -380,11 +382,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         view cache.
 	 */
 	private ViewAndInit findView(int viewKeyHash) {
-		final Iterator<ViewAndInit> itr = cache.primaryIterator();
+		final Iterator<ViewAndInit> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				final ViewAndInit e = itr.next();
-				final int hc = e.vc.getViewKey().hashCode();
+				final int hc = e.getViewKey().hashCode();
 				if(hc == viewKeyHash) {
 					return e;
 				}
@@ -394,109 +396,108 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	/**
-	 * @return Never <code>null</code> array of the currently cached views which
-	 *         may be empty indicating there are no cached views.
+	 * Resolves a view key hash to the associated view ref held in the view cache.
+	 * <p>
+	 * <b>NOTE:</b> we could throw an exception here since we are retaining view
+	 * refs for *all* visited views and, therefore, we expect to be able to
+	 * resolve any view key hash to a view ref but we account for possibility the
+	 * user may have manually changed the view key hash in the query string or
+	 * equivalent.
+	 * @param viewKeyHash
+	 * @return The found view ref or <code>null</code> if not found.
+	 */
+	private ViewRef findViewRef(int viewKeyHash) {
+		// try visited view ref cache
+		final Iterator<ViewRef> vitr = cache.visitedRefIterator();
+		if(vitr != null) {
+			while(vitr.hasNext()) {
+				final ViewRef r = vitr.next();
+				final int hc = r.getViewKey().hashCode();
+				if(hc == viewKeyHash) {
+					return r;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return Never <code>null</code> array of the currently cached views from
+	 *         most recently visited (head) to oldest (tail) which may be empty
+	 *         indicating there are currently no cached views.
 	 */
 	public IView<?>[] getCachedViews() {
-		if(cache.primarySize() == 0) {
+		if(cache.size() == 0) {
 			return new IView[] {};
 		}
-		final ArrayList<IView<?>> list = new ArrayList<IView<?>>(cache.primarySize());
-		for(final Iterator<ViewAndInit> itr = cache.primaryIterator(); itr.hasNext();) {
+		final ArrayList<IView<?>> list = new ArrayList<IView<?>>(cache.size());
+		for(final Iterator<ViewAndInit> itr = cache.queueIterator(); itr.hasNext();) {
 			list.add(itr.next().vc.getView());
 		}
 		return list.toArray(new IView[list.size()]);
 	}
 
 	/**
-	 * Provides an array of all cached views that are NOT in the popped state from
-	 * oldest to newest.
-	 * @return Array of never <code>null</code> {@link ViewRef}s which may be
-	 *         empty.
+	 * Provides an array of the cached views as stand-alone references in "cache"
+	 * order (head is newest).
+	 * @param capacity the maximum number of view refs to provide in the returned
+	 *        array. <code>-1</code> indicates un-bounded in which case the
+	 *        capacity is that of the number of distinct views visited.
+	 * @param includePopped Included views that are currently popped?
+	 * @param includeFirst Include the first cached view? <br>
+	 *        NOTE: This view is <em>always</em> retained.
+	 * @return A newly created never <code>null</code> array of view references.
 	 */
-	public ViewRef[] getRecentViews() {
-		final List<ViewAndInit> list = new ArrayList<ViewAndInit>();
-		if(cache.primarySize() == 0) {
-			return new ViewRef[] {};
-		}
-		for(final Iterator<ViewAndInit> itr = cache.primaryIterator(); itr.hasNext();) {
-			final ViewAndInit e = itr.next();
-			if(!e.vc.isPopped()) {
-				list.add(e);
-			}
-		}
-		final int cnt = list.size();
-		final ViewRef[] array = new ViewRef[cnt];
-		int i = cnt;
-		for(final Iterator<ViewAndInit> itr = list.iterator(); itr.hasNext();) {
-			final ViewAndInit e = itr.next();
-			array[--i] =
-					new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName());
-		}
-		return array;
-	}
+	public ViewRef[] getViewRefs(int capacity, boolean includePopped, boolean includeFirst) {
 
-	/**
-	 * Provides an array of {@link ViewRef}s representing the current "view
-	 * path". The view path is a list of visited views beginning from the
-	 * initially viewed view ending one before the current pinned view with a
-	 * subset of visited views in between. Determining the views in between the
-	 * initial and current view follows this logic:
-	 * <ol>
-	 * <li>TODO
-	 * </ol>
-	 * @return Array of {@link ViewRef}s representing the current view path.
-	 */
-	public ViewRef[] getViewPath() {
-		assert initialView != null;
+		if(initial == null) return new ViewRef[0];
 
-		if(cache.primarySize() < 2) return null;
+		if(capacity == -1) capacity = cache.numVisited();
 
-		final List<ViewRef> list = new ArrayList<ViewRef>(cache.getPrimaryCapacity());
+		int count = 0;
 
-		// spew out primary view cache
-		for(final Iterator<ViewAndInit> itr = cache.primaryIterator(); itr.hasNext();) {
-			final ViewAndInit e = itr.next();
-			if(e != initialView && e.vc != currentViewContainer && !e.vc.isPopped()) {
-				if(list.size() == cache.getSecondaryCapacity()) break;
-				list.add(0, new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView()
-						.getLongViewName()));
-			}
-		}
+		final ArrayList<ViewRef> plist = new ArrayList<ViewRef>();
 
-		// fill up to max allowed view path elements with secondary cache entries
-		if(list.size() < cache.getSecondaryCapacity()) {
-			final Iterator<ViewRef> itr = cache.secondaryIterator();
-			if(itr != null) {
-				while(itr.hasNext() && list.size() <= cache.getSecondaryCapacity()) {
-					final ViewRef ref = itr.next();
-					if(!ref.getViewInitializer().getViewKey().equals(currentViewContainer.getViewKey())) {
-						list.add(0, ref);
+		final Iterator<ViewRef> ritr = cache.visitedRefIterator();
+		if(ritr != null) {
+			while(ritr.hasNext() && count < capacity) {
+				ViewRef r = ritr.next();
+				if(!includePopped) {
+					final ViewAndInit e = cache.peekQueue(r.getViewKey());
+					if(e != null && e.vc.isPopped()) {
+						r = null;
 					}
+				}
+				if(r != null) {
+					plist.add(r);
+					count++;
 				}
 			}
 		}
 
-		// ensure initial view is present
-		/*
-		if(currentViewContainer != initialView) {
-			boolean exists = false;
-			for(final Iterator<ViewRef> itr = list.iterator(); itr.hasNext();) {
-				final ViewRef ref = itr.next();
-				if(ref.getViewKey().equals(initialView.getViewKey())) {
-					exists = true;
+		// include the initial view if called for and not already in list
+		if(includeFirst && initial != null) {
+			// verify not already present
+			int initialIndex = -1;
+			for(int i = 0; i < plist.size(); i++) {
+				if(initial.compareTo(plist.get(i)) == 0) {
+					initialIndex = i;
 					break;
 				}
 			}
-			if(!exists) {
-				list.add(0, initialView.getView());
-				if(list.size() > MAX_VIEW_PATH_ELEMENTS) {
-					list.remove(list.size() - 1);
-				}
+			if(initialIndex == -1) {
+				plist.add(ref(initial));
+				++count;
 			}
 		}
-		*/
-		return list.toArray(new ViewRef[list.size()]);
+
+		// trim plist if necessary
+		int psize = plist.size();
+		while(psize > capacity) {
+			plist.remove(--psize);
+		}
+
+		return plist.toArray(new ViewRef[plist.size()]);
 	}
 
 	/**
@@ -505,13 +506,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * subsequent pinned view through the browser history system.
 	 */
 	void popCurrentView() {
-		if(currentViewContainer != null) {
-			assert !currentViewContainer.isPopped();
+		if(current != null) {
+			assert !current.vc.isPopped();
 
 			// pop the view
-			currentViewContainer.pop(parentViewPanel);
+			current.vc.pop(parentViewPanel);
 
-			final ViewContainer nextCurrent = findFirstView(false, currentViewContainer.getViewKey());
+			final ViewAndInit nextCurrent = findFirstView(current);
 			final ViewKey vk = nextCurrent == null ? null : nextCurrent.getViewKey();
 			if(vk != null) {
 				History.newItem(generateViewKeyHistoryToken(vk));
@@ -532,14 +533,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	/**
-	 * Dispatches the view request event to the appropriate controller for the
-	 * ultimate purpose of changing the current view.
-	 * @param request The view request event
-	 * @throws IllegalStateException When no supporting controller can be found
-	 *         for the given view requset.
+	 * Dispatches the view request event to the appropriate controller.
+	 * @param request The view request
 	 */
 	public void dispatch(IViewRequest request) {
-		assert request != null : "A view request must be set";
+		if(request == null) throw new IllegalArgumentException("No view request specified.");
 
 		if(pendingViewRequest == null) {
 			if(request.addHistory()) {
@@ -594,8 +592,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				ViewAndInit e = findView(viewKeyHash);
 				if(e == null) {
 					// probably the user is clicking the back button a number of times beyond the cache capacity
-					// resort to the first shown view
-					e = initialView;
+					// resort to the visited view ref cache
+					final ViewRef r = findViewRef(viewKeyHash);
+					if(r == null) {
+						Log.warn("Un-resolved view hash: " + viewKeyHash);
+					}
+					else {
+						setCurrentView(r.getViewInitializer(), r.getOptions());
+						return;
+					}
+					// this should only happen when the user mucks with the view key hash in the query string
+					// resort to the initial view
+					e = initial;
 				}
 				if(e != null) {
 					setCurrentView(e, false);

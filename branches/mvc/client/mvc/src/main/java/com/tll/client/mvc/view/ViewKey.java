@@ -82,6 +82,6 @@ public class ViewKey {
 
 	@Override
 	public String toString() {
-		return "view Class: " + viewClass + ", view id: " + getViewId();
+		return "view Class: " + viewClass + ", hash: " + hashCode();
 	}
 }

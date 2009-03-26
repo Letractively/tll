@@ -40,8 +40,8 @@ import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.view.RecentViewsPanel;
-import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.ui.view.ViewLink;
+import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.AdminContext;
@@ -92,7 +92,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 	private final DockPanel dockPanel = new DockPanel();
 	private final Header header = new Header();
-	private final ViewPathPanel viewpath = new ViewPathPanel();
+	private final ViewPathPanel viewpath = new ViewPathPanel(4);
 	private final RightNav rightNav = new RightNav();
 	private final Footer footer = new Footer();
 	private final Center center = new Center();
@@ -262,7 +262,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// view history...
 			dpViewHistory = new DisclosurePanel("Recent Views", false);
-			viewHistoryPanel = new RecentViewsPanel();
+			viewHistoryPanel = new RecentViewsPanel(3);
 			simplePanel = new SimplePanel();
 			simplePanel.add(viewHistoryPanel);
 			dpViewHistory.add(simplePanel);
@@ -353,7 +353,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onLoad() {
 			super.onLoad();
 			StatusEventDispatcher.get().addStatusHandler(this);
-			ViewManager.initialize(this, 4, 6);
+			ViewManager.initialize(this, 4);
 			// set the main model change listener so views see all model change events
 			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}

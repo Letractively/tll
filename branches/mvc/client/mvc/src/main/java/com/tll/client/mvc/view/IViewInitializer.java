@@ -6,13 +6,9 @@
 package com.tll.client.mvc.view;
 
 /**
- * IViewInitializer - The runtime compliment to instantiated {@link IView}s.
+ * IViewInitializer - The runtime compliment to instantiated {@link IView}s
+ * responsible for initializing {@link IView}s.
  * @author jpk
  */
-public interface IViewInitializer {
-
-	/**
-	 * @return the view key.
-	 */
-	ViewKey getViewKey();
+public interface IViewInitializer extends IViewKeyProvider {
 }

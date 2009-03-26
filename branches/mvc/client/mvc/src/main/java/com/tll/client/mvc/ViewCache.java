@@ -4,236 +4,206 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.tll.client.mvc.view.IViewInitializer;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewRef;
-import com.tll.client.ui.view.ViewContainer;
 
 /**
- * ViewCache - Manages two lists:
- * <ul>
- * <li>Distinct LIFO collection of cached {@link ViewContainer}s limited by a
- * specified primaryCapacity.</li>
- * <li>Distinct list of {@link ViewRef}s representing <em>all</em> secondary
- * views relative to the app's life-cycle in chronological order.</li>
+ * ViewCache - A cache container for views that are managed by the mvc
+ * framework.
+ * <p>
+ * This cache does two things:
+ * <ol>
+ * <li>Manage a bounded queue of views that are dom attach ready whose capacity
+ * is provided upon instantiation of this cache.
+ * <li>Manage a stack of distinct view refs where each ref represents a
+ * "pointer" to a view that was or is viewed. Therefore, the max size of this
+ * stack is the number of defined views in the app.
+ * </ol>
+ * <p>
+ * Both lists are orderd according to the order in which views are visited where
+ * the list head contains the most recently visited.
  * @author jpk
  */
 final class ViewCache {
 
 	/**
-	 * ViewAndInit - Simple encapsulation of a view and its initializer.
-	 * @author jpk
+	 * The maximum number of views to cache at any given time.
 	 */
-	static class ViewAndInit {
-
-		ViewContainer vc;
-		IViewInitializer init;
-
-		/**
-		 * Constructor
-		 * @param vc
-		 * @param init
-		 */
-		public ViewAndInit(ViewContainer vc, IViewInitializer init) {
-			super();
-			this.vc = vc;
-			this.init = init;
-		}
-	}
+	private final int capacity;
 
 	/**
-	 * The maximum number of elements to hold in the primary cache.
+	 * queue of views in order of newest cached (head) to oldest cached (tail)
+	 * bounded by a set capacity.
 	 */
-	private final int primaryCapacity;
+	private final ArrayList<ViewAndInit> queue;
 
 	/**
-	 * The maximum number of elements to hold in the secondary primary.
+	 * Unbounded distinct list of refs to visited views whose order is dictated by
+	 * the view visitation order.
 	 */
-	private final int secondaryCapacity;
-
-	/**
-	 * list of views in order of newest cached (head) to oldest cached (tail).
-	 */
-	private final ArrayList<ViewAndInit> primary;
-
-	/**
-	 * list of view refs filled when primary cache elements expire in order of
-	 * newest cached (head) to oldest cached (tail).
-	 * <p>
-	 * This is a distinct list of view key providers as compared to the primary
-	 * cache elements.
-	 */
-	private final ArrayList<ViewRef> secondary;
+	private final ArrayList<ViewRef> stack;
 
 	/**
 	 * Constructor
-	 * @param primaryCapacity The max number of primary cache elements to store at
-	 *        any given time
-	 * @param secondaryCapacity The max number of secondary cache elements to
-	 *        store at any given time
+	 * @param capacity The max number of queue cache elements to store at any
+	 *        given time
 	 */
-	ViewCache(int primaryCapacity, int secondaryCapacity) {
-		this.primaryCapacity = primaryCapacity;
-		this.secondaryCapacity = secondaryCapacity;
-		this.primary = new ArrayList<ViewAndInit>(primaryCapacity);
-		this.secondary = new ArrayList<ViewRef>(secondaryCapacity);
-	}
-
-	int getPrimaryCapacity() {
-		return primaryCapacity;
-	}
-
-	int getSecondaryCapacity() {
-		return secondaryCapacity;
+	ViewCache(int capacity) {
+		this.capacity = capacity;
+		this.queue = new ArrayList<ViewAndInit>(capacity);
+		this.stack = new ArrayList<ViewRef>();
 	}
 
 	/**
-	 * Caches views.
+	 * @return The max number of cachable views at a single point in time.
+	 */
+	int getCapacity() {
+		return capacity;
+	}
+
+	/**
+	 * Caches the given view.
 	 * <p>
-	 * Sets the given primary element returning the "expired" primary element if
-	 * the primary cache is at capacity prior to calling this method or
-	 * <code>null</code> if the primary cache was not at capacity. The expired
-	 * primary element is added to the secondary cache before it is returned.
-	 * @param viewContainer the element to cache
-	 * @param init the view initializer
-	 * @return The removed cache element or <code>null</code> if the primary cache
+	 * Sets the given view at the head of the view cache queue returning the
+	 * "expired" view if the view cache is at capacity prior to calling this
+	 * method or <code>null</code> if the view cache was not at capacity.
+	 * @param e the view and its initializer to cache
+	 * @return The removed cache element or <code>null</code> if the queue cache
 	 *         is not yet at capacity.
 	 */
-	ViewAndInit cache(ViewContainer viewContainer, IViewInitializer init) {
-		assert viewContainer != null;
-		final ViewKey key = viewContainer.getViewKey();
-		assert key != null;
+	ViewAndInit cache(ViewAndInit e) {
+		assert e != null;
+		final ViewKey key = e.getViewKey();
 
-		// add to primary removing from secondary if present
-		final int pindex = searchPrimary(key);
-		if(pindex >= 0) {
-			Log.debug("ViewCache.set() - removing OLD primary cache entry: " + key);
-			primary.remove(pindex);
+		// add to queue removing it first if present to maintain desired ordering
+		Log.debug("ViewCache.cache() - caching queue entry: " + key);
+		final int qindex = searchQueue(key);
+		if(qindex >= 0) {
+			//Log.debug("ViewCache.set() - removing OLD queue cache entry: " + key);
+			queue.remove(qindex);
 		}
 		// insert at head
-		primary.add(0, new ViewAndInit(viewContainer, init));
+		queue.add(0, e);
 
-		// ensure not in secondary
-		final int sindex = searchSecondary(key);
+		// post to stack
+		final int sindex = searchStack(key);
 		if(sindex >= 0) {
-			Log.debug("ViewCache.set() - removing secondary cache entry: " + key);
-			// remove at tail
-			secondary.remove(sindex);
+			// in stack already - move it to head if elsewhere
+			if(sindex > 0) {
+				Log.debug("ViewCache.cache() - moving existing stack entry to head: " + key);
+				stack.add(0, stack.remove(sindex));
+			}
+		}
+		else {
+			// not in stack - add it at head
+			Log.debug("ViewCache.cache() - adding view to stack: " + key);
+			stack.add(0, new ViewRef(e.init, e.options, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName()));
 		}
 
 		ViewAndInit expired = null;
 
-		// primary capacity check
-		if(primary.size() > primaryCapacity) {
-			expired = primary.remove(primary.size() - 1);
-			// demote expired to secondary cache
-			Log.debug("ViewCache.set() - demoting expired view '" + key + "' from primary to secondary cache..");
-			// insert at head
-			secondary.add(0, new ViewRef(expired.init, expired.vc.getView().getShortViewName(), expired.vc.getView()
-					.getLongViewName()));
-			// secondary capacity check
-			if(secondary.size() > secondaryCapacity) {
-				// remove at tail
-				// NOTE: we don't need to handle any life-cycle clean up for secondary cache elements
-				secondary.remove(secondary.size() - 1);
-			}
+		// queue capacity check
+		if(queue.size() > capacity) {
+			expired = queue.remove(queue.size() - 1);
+			assert queue.size() == capacity;
 		}
 
-		return expired == null ? null : expired;
+		return expired;
 	}
 
 	/**
-	 * Remove a primary primary element.
+	 * Remove a view from cache. <br>
+	 * NOTE: the visited stack is un-affected.
 	 * @param key the key of the element to remove
 	 * @return The removed element.
 	 */
 	ViewAndInit remove(ViewKey key) {
-		return removeAt(searchPrimary(key));
+		return removeAt(searchQueue(key));
 	}
 
 	/**
-	 * Removes a primary primary element at the given index.
-	 * @param index the index at which to remove the primary element
+	 * Removes a view from cache at the given index. <br>
+	 * NOTE: the visited stack is un-affected.
+	 * @param index the index at which to remove the element
 	 * @return The removed element.
 	 */
 	ViewAndInit removeAt(int index) {
-		return primary.remove(index);
+		return queue.remove(index);
 	}
 
 	/**
-	 * Moves a cached {@link ViewContainer}'s position in the primary list to the
-	 * last position thus making it the "oldest" entry.
-	 * @param viewContainer The element moved to the last list position
+	 * @return The number currently cached views in the queue.
 	 */
-	/*
-	void moveToLast(ViewContainer viewContainer) {
-		assert viewContainer != null;
-		final int index = primary.indexOf(viewContainer);
-		assert index >= 0;
-		primary.remove(index);
-		primary.add(viewContainer);
+	int size() {
+		return queue.size();
 	}
-	*/
 
 	/**
-	 * @return The number of primary cache elements.
+	 * @return The number of distinct visited views - i.e.: the size of the
+	 *         visisted stack.
 	 */
-	int primarySize() {
-		return primary.size();
+	int numVisited() {
+		return stack.size();
 	}
 
 	/**
-	 * @return The number of secondary cache elements.
-	 */
-	int secondarySize() {
-		return secondary.size();
-	}
-
-	/**
-	 * Clears out all cached elements in the primary and secondary caches.
+	 * Clears out <em>all</em> cached elements in the queue and stack lists
+	 * effectively setting its state to that of instantiation.
 	 */
 	void clear() {
-		primary.clear();
-		secondary.clear();
+		queue.clear();
+		stack.clear();
 	}
 
 	/**
-	 * Searches the primary cache.
+	 * Searches the view queue.
 	 * @param key The view key
 	 * @return The matching cache list index or <code>-1</code> if not present.
 	 */
-	int searchPrimary(ViewKey key) {
-		for(int i = 0; i < primary.size(); i++) {
-			if(key.equals(primary.get(i).vc.getViewKey())) return i;
+	int searchQueue(ViewKey key) {
+		for(int i = 0; i < queue.size(); i++) {
+			if(key.equals(queue.get(i).getViewKey())) return i;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Same as {@link #searchQueue(ViewKey)} but returns the element rather than
+	 * its index.
+	 * @param key the view key
+	 * @return the matching element or <code>null</code> if not present.
+	 */
+	ViewAndInit peekQueue(ViewKey key) {
+		for(int i = 0; i < queue.size(); i++) {
+			final ViewAndInit e = queue.get(i);
+			if(key.equals(e.getViewKey())) return e;
+		}
+		return null;
+	}
+
+	/**
+	 * Searches the visited view ref stack.
+	 * @param key The view key
+	 * @return The matching cache list index or <code>-1</code> if not present.
+	 */
+	private int searchStack(ViewKey key) {
+		for(int i = 0; i < stack.size(); i++) {
+			if(stack.get(i).getViewInitializer().getViewKey().equals(key)) return i;
 		}
 		return -1;
 	}
 
 	/**
-	 * Searches the secondary cache.
-	 * @param key The view key
-	 * @return The matching cache list index or <code>-1</code> if not present.
+	 * @return A newly created queue cache element iterator from newest to oldest.
 	 */
-	private int searchSecondary(ViewKey key) {
-		for(int i = 0; i < secondary.size(); i++) {
-			if(secondary.get(i).getViewInitializer().getViewKey().equals(key)) return i;
-		}
-		return -1;
+	Iterator<ViewAndInit> queueIterator() {
+		return queue.size() == 0 ? null : queue.listIterator(0);
 	}
 
 	/**
-	 * @return A newly created primary cache element iterator from newest to
-	 *         oldest.
+	 * @return A newly created stack cache element iterator from newest to oldest.
 	 */
-	Iterator<ViewAndInit> primaryIterator() {
-		return primary.size() == 0 ? null : primary.listIterator(0);
-	}
-
-	/**
-	 * @return A newly created secondary cache element iterator from newest to
-	 *         oldest.
-	 */
-	Iterator<ViewRef> secondaryIterator() {
-		return secondary.size() == 0 ? null : secondary.listIterator(0);
+	Iterator<ViewRef> visitedRefIterator() {
+		return stack.size() == 0 ? null : stack.listIterator(0);
 	}
 }

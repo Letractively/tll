@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewA;
-import com.tll.client.mvc.view.ViewB;
+import com.tll.client.mvc.view.ViewAInit;
+import com.tll.client.mvc.view.ViewBInit;
 import com.tll.client.mvc.view.ViewC;
 import com.tll.client.mvc.view.ViewD;
 import com.tll.client.mvc.view.ViewE;
@@ -56,8 +56,8 @@ public final class UITests extends AbstractUITest {
 			context = new VerticalPanel();
 			context.setBorderWidth(2);
 			context.setSpacing(4);
-			context.add(new ViewPathPanel());
-			context.add(new RecentViewsPanel());
+			context.add(new ViewPathPanel(4));
+			context.add(new RecentViewsPanel(3));
 			
 			viewContainer = new FlowPanel();
 			viewContainer.add(new Label("This is line 1"));
@@ -65,15 +65,15 @@ public final class UITests extends AbstractUITest {
 			viewContainer.add(new Label("This is line 3"));
 			context.add(viewContainer);
 			
-			ViewManager.initialize(viewContainer, 3, 3);
+			ViewManager.initialize(viewContainer, 3);
 		}
 
 		@Override
 		protected void teardown() {
-			ViewManager.shutdown();
-			viewContainer.removeFromParent();
-			viewContainer = null;
+			context.removeFromParent();
 			context = null;
+			viewContainer = null;
+			ViewManager.shutdown();
 		}
 
 		@Override
@@ -88,14 +88,14 @@ public final class UITests extends AbstractUITest {
 				
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new ShowViewRequest(ViewA.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(new ViewAInit()));
 					}
 				}),
 				new Button("View B", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						ViewManager.get().dispatch(new ShowViewRequest(ViewB.klas));
+						ViewManager.get().dispatch(new ShowViewRequest(new ViewBInit()));
 					}
 				}),
 				new Button("View C", new ClickHandler() {

@@ -229,7 +229,7 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class OptionsPopupTest extends UITestCase {
 
-		FocusPanel contextArea = new FocusPanel();
+		FocusPanel contextArea;
 		OptionsPopup popup;
 
 		@Override
@@ -249,6 +249,7 @@ public final class UITests extends AbstractUITest {
 				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
 				new Option("Option 5") });
 
+			contextArea = new FocusPanel();
 			contextArea.setSize("200px", "200px");
 			contextArea.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");

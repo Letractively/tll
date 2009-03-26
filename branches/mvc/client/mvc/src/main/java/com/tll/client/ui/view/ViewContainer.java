@@ -72,10 +72,6 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 	 */
 	private final IView<?> view;
 
-	/**
-	 * The view initializer.
-	 */
-	//private final IViewInitializer init;
 	private final ViewKey key;
 	
 	private final ViewToolbar toolbar;

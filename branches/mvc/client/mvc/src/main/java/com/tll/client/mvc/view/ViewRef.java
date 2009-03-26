@@ -11,19 +11,23 @@ package com.tll.client.mvc.view;
  * the {@link IViewInitializer} which is necessary for view initialization.
  * @author jpk
  */
-public final class ViewRef { 
+public final class ViewRef extends AbstractViewKeyProvider {
 
 	private final IViewInitializer init;
+	private final ViewOptions options;
 	private final String shortViewName, longViewName;
 
 	/**
 	 * Constructor
 	 * @param init the view initializer
+	 * @param options the view options
 	 * @param shortViewName
 	 * @param longViewName
 	 */
-	public ViewRef(IViewInitializer init, String shortViewName, String longViewName) {
+	public ViewRef(IViewInitializer init, ViewOptions options, String shortViewName, String longViewName) {
+		if(init == null || options == null) throw new IllegalArgumentException();
 		this.init = init;
+		this.options = options;
 		this.shortViewName = shortViewName;
 		this.longViewName = longViewName;
 	}
@@ -32,11 +36,20 @@ public final class ViewRef {
 		return init;
 	}
 
+	public ViewOptions getOptions() {
+		return options;
+	}
+
 	public String getShortViewName() {
 		return shortViewName;
 	}
 
 	public String getLongViewName() {
 		return longViewName;
+	}
+
+	@Override
+	public ViewKey getViewKey() {
+		return init.getViewKey();
 	}
 }
