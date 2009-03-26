@@ -204,29 +204,34 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		Log.debug("Setting current view: '" + key + "' ..");
 
 		ViewAndInit e;
-
 		final int cacheIndex = cache.searchQueue(key);
+		final boolean showPopped = ((cacheIndex == -1) && (options != null && options.isInitiallyPopped()));
 
 		if(cacheIndex != -1) {
 			// existing cached view
 			e = cache.removeAt(cacheIndex);
 			assert e != null;
+			setCurrentView(e, showPopped);
 		}
 		else {
+			// busy-ize the ui since view initialization may take some time
 			UI.busy();
-			Log.debug("Creating and initializing view: " + key + " ..");
-			// non-cached view
-			final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
-			// initialize the view
-			view.initialize(init);
-			// load the view
-			view.refresh();
+			try {
+				Log.debug("Creating and initializing view: " + key + " ..");
+				// non-cached view
+				final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
+				// initialize the view
+				view.initialize(init);
+				// load the view
+				view.refresh();
 
-			e = new ViewAndInit(new ViewContainer(view, options, key), init, options);
+				e = new ViewAndInit(new ViewContainer(view, options, key), init, options);
+				setCurrentView(e, showPopped);
+			}
+			finally {
+				UI.unbusy();
+			}
 		}
-
-		// NOTE: only show as popped if not currently in cache
-		setCurrentView(e, ((cacheIndex == -1) && (options != null && options.isInitiallyPopped())));
 	}
 
 	/**
@@ -288,7 +293,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			@Override
 			public void execute() {
 				viewChangeHandlers.fireEvent(new ViewChangeEvent());
-				UI.unbusy();
 			}
 		});
 	}
@@ -440,6 +444,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	/**
 	 * Provides an array of the cached views as stand-alone references in "cache"
 	 * order (head is newest).
+	 * <p>
+	 * <b>IMPT:</b> The current view is <em>not</em> included.
 	 * @param capacity the maximum number of view refs to provide in the returned
 	 *        array. <code>-1</code> indicates un-bounded in which case the
 	 *        capacity is that of the number of distinct views visited.
@@ -449,8 +455,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return A newly created never <code>null</code> array of view references.
 	 */
 	public ViewRef[] getViewRefs(int capacity, boolean includePopped, boolean includeFirst) {
-
 		if(initial == null) return new ViewRef[0];
+		assert current != null;
 
 		if(capacity == -1) capacity = cache.numVisited();
 
@@ -462,7 +468,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		if(ritr != null) {
 			while(ritr.hasNext() && count < capacity) {
 				ViewRef r = ritr.next();
-				if(!includePopped) {
+				if(current.compareTo(r) == 0) {
+					// don't include the current view
+					r = null;
+				}
+				else if(!includePopped) {
 					final ViewAndInit e = cache.peekQueue(r.getViewKey());
 					if(e != null && e.vc.isPopped()) {
 						r = null;
@@ -474,9 +484,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				}
 			}
 		}
+		assert count <= capacity;
 
-		// include the initial view if called for and not already in list
-		if(includeFirst && initial != null) {
+		// include the initial view if called for and not already in list and not
+		// the current view
+		if(includeFirst && !initial.equals(current)) {
 			// verify not already present
 			int initialIndex = -1;
 			for(int i = 0; i < plist.size(); i++) {
@@ -486,15 +498,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				}
 			}
 			if(initialIndex == -1) {
+				if(count == capacity) {
+					plist.remove(plist.size() - 1);
+				}
 				plist.add(ref(initial));
-				++count;
 			}
-		}
-
-		// trim plist if necessary
-		int psize = plist.size();
-		while(psize > capacity) {
-			plist.remove(--psize);
 		}
 
 		return plist.toArray(new ViewRef[plist.size()]);
