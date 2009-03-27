@@ -4,10 +4,15 @@
   
 }
 
+/* 
+this is problematic - 
+so for now we accept multiple msgs of differing msg levels to 
+appear stacked rather than horizontally spaced.
 .msg .msg {
   float: left;
   margin-right: 5px;
 }
+*/
 
 .msg ul {
   margin: 1px;
