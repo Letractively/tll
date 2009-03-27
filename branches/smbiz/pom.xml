@@ -25,11 +25,14 @@
   </developers>
 
   <scm>
-    <connection>http://tll.googlecode.com/svn</connection>
-    <developerConnection>https:/tll.googlecode.com/svn/</developerConnection>
+    <connection>scm:svn:http://tll.googlecode.com/svn/trunk</connection>
+    <developerConnection>scm:svn:https://jopaki@tll.googlecode.com/svn/trunk</developerConnection>
+    <url>http://tll.googlecode.com</url>
   </scm>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     <mode>dev</mode>
     <environment>dev</environment>
 
@@ -72,6 +75,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jdepend-maven-plugin</artifactId>
+          <version>2.0-beta-2</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -199,9 +212,38 @@
       </plugin>
       -->
       
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>com.tll</groupId>
+            <artifactId>build-tools</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      
     </plugins>
 
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>tll/checkstyle.xml</configLocation>
+          <!-- <headerLocation>whizbang/LICENSE.txt</headerLocation> -->
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <!-- dev (global) profile -->
