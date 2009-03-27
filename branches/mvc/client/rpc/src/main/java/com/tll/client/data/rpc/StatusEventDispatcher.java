@@ -56,7 +56,7 @@ public final class StatusEventDispatcher implements IHasStatusHandlers {
 	}
 
 	public void fireEvent(GwtEvent<?> event) {
-		if(event.getAssociatedType() == StatusEvent.getType()) {
+		if(event.getAssociatedType() == StatusEvent.TYPE) {
 			listeners.fire((StatusEvent) event);
 		}
 	}

@@ -18,11 +18,7 @@ import com.tll.dao.Sorting;
  */
 public final class ListingEvent<R> extends GwtEvent<IListingHandler<R>> {
 
-	private static final Type<IListingHandler<?>> TYPE = new Type<IListingHandler<?>>();
-
-	public static Type<IListingHandler<?>> getType() {
-		return TYPE;
-	}
+	public static final Type<IListingHandler<?>> TYPE = new Type<IListingHandler<?>>();
 	
 	private final boolean success;
 	private final String listingName;

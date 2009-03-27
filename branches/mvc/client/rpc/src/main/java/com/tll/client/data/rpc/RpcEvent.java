@@ -14,6 +14,9 @@ import com.tll.common.data.Payload;
  */
 public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> {
 
+	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>> TYPE =
+			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>>();
+
 	/**
 	 * Type
 	 * @author jpk
@@ -32,9 +35,6 @@ public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> 
 		 */
 		ERROR;
 	}
-	
-	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>> TYPE =
-			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>>();
 	
 	private final Type type;
 

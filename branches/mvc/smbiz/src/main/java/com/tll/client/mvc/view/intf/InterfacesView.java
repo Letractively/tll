@@ -178,7 +178,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 					ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
 			//listHandler.addListingHandler(this);
-			addHandler(this, ListingEvent.getType());
+			addHandler(this, ListingEvent.TYPE);
 		}
 
 		void refreshData() {

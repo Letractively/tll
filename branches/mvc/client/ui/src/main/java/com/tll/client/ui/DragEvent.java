@@ -12,6 +12,8 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public class DragEvent extends GwtEvent<IDragHandler> {
 
+	public static final Type<IDragHandler> TYPE = new Type<IDragHandler>();
+	
 	public static enum DragMode {
 		/**
 		 * Dragging starts.
@@ -29,8 +31,6 @@ public class DragEvent extends GwtEvent<IDragHandler> {
 		END;
 	}
 
-	public static final Type<IDragHandler> TYPE = new Type<IDragHandler>();
-	
 	public final DragMode dragMode;
 	public final int deltaX, deltaY;
 

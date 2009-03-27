@@ -12,12 +12,8 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public final class ViewChangeEvent extends GwtEvent<IViewChangeHandler> {
 
-	private static final Type<IViewChangeHandler> TYPE = new Type<IViewChangeHandler>();
+	public static final Type<IViewChangeHandler> TYPE = new Type<IViewChangeHandler>();
 	
-	public static Type<IViewChangeHandler> getType() {
-		return TYPE;
-	}
-
 	/**
 	 * Constructor
 	 */

@@ -14,11 +14,7 @@ import com.tll.common.data.Status;
  */
 public class StatusEvent extends GwtEvent<IStatusHandler> {
 
-	private static final Type<IStatusHandler> TYPE = new Type<IStatusHandler>();
-	
-	public static final Type<IStatusHandler> getType() {
-		return TYPE;
-	}
+	public static final Type<IStatusHandler> TYPE = new Type<IStatusHandler>();
 
 	private final Status status;
 
