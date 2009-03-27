@@ -14,7 +14,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.tll.config.Config;
 import com.tll.dao.DaoMode;
 import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.util.EnumUtil;
@@ -30,40 +29,45 @@ public class BootstrapperTest {
 	
 	private static final Log log = LogFactory.getLog(BootstrapperTest.class);
 	
+	private DaoMode daoMode;
+	private boolean employSecurity;
+	
 	@BeforeTest(alwaysRun = true)
 	@Parameters(value = {
-		"daoMode", "securityMode" })
-	public void beforeTest(String daoModeStr, String securityModeStr) {
+		"daoMode", "employSecurity" })
+	public void beforeTest(String daoModeStr, String employSecurity) {
 
 		// handle the dao mode
-		final DaoMode daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
-		Config.instance().setProperty(DaoMode.ConfigKeys.DAO_MODE_PARAM.getKey(), daoMode.toString());
+		this.daoMode = EnumUtil.fromString(DaoMode.class, daoModeStr);
 		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
-		final SecurityMode securityMode = EnumUtil.fromString(SecurityMode.class, securityModeStr);
-		Config.instance().setProperty(SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey(), securityMode.toString());
-		log.debug("SecurityMode: " + securityMode);
+		this.employSecurity = Boolean.valueOf(employSecurity).booleanValue();
+		log.debug("Employ security: " + this.employSecurity);
 	}
 
 	private ServletContext getMockServletContext() {
+		assert daoMode != null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("com.tll.di.VelocityModule\r\n");
+		sb.append("com.tll.di.MailModule\r\n");
+		sb.append("com.tll.di.RefDataModule\r\n");
+		sb.append("com.tll.di.ModelModule\r\n");
+		sb.append("com.tll.di.MockEntityFactoryModule\r\n");
+		sb.append(daoMode == DaoMode.ORM ? "com.tll.di.OrmDaoModule\r\n" : "com.tll.di.MockDaoModule\r\n");
+		sb.append("com.tll.di.EntityAssemblerModule\r\n");
+		sb.append("com.tll.di.EntityServiceFactoryModule\r\n");
+		if(employSecurity) sb.append("com.tll.di.AcegiModule\r\n");
+
 		final MockServletContext context = new MockServletContext();
-		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, 
-				"com.tll.di.VelocityModule \r\n"
-				+ "com.tll.di.MailModule \r\n" 
-				+ "com.tll.di.RefDataModule \r\n"
-				+ "com.tll.di.ModelModule \r\n"
-				+ "com.tll.di.MockEntityFactoryModule \r\n" 
-				+ "com.tll.di.DaoModule \r\n"
-				+ "com.tll.di.TransactionModule \r\n"
-				+ "com.tll.di.EntityAssemblerModule \r\n" 
-				+ "com.tll.di.EntityServiceFactoryModule \r\n" 
-				+ "com.tll.di.SecurityModule \r\n");
+		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, sb.toString());
 		
-		context.addInitParameter(Bootstrapper.DEPENDENCY_HANDLER_CLASS_NAMES, 
-	      "com.tll.server.rpc.entity.MEntityServiceBootstrapper \r\n" +
-	      "com.tll.server.SecurityContextBootstrapper \r\n" +
-	      "com.tll.server.AppContextBootstrapper \r\n");
+		sb.setLength(0);
+		sb.append("com.tll.server.rpc.entity.MEntityServiceBootstrapper\r\n");
+		if(employSecurity) sb.append("com.tll.server.SecurityContextBootstrapper\r\n");
+		sb.append("com.tll.server.AppContextBootstrapper\r\n");
+		context.addInitParameter(Bootstrapper.DEPENDENCY_HANDLER_CLASS_NAMES, sb.toString());
 
 		return context;
 	}
@@ -79,6 +83,6 @@ public class BootstrapperTest {
 		final AppContext ac = (AppContext) context.getAttribute(AppContext.SERVLET_CONTEXT_KEY);
 		Assert.assertNotNull(mec);
 		Assert.assertNotNull(ac);
-		Assert.assertNotNull(sc);
+		if(employSecurity) Assert.assertNotNull(sc);
 	}
 }

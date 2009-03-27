@@ -22,26 +22,18 @@ public class SecurityContext {
 	 */
 	public static final String SERVLET_CONTEXT_KEY = SecurityContext.class.getName();
 	
-	private final SecurityMode securityMode;
 	private final AuthenticationManager authenticationManager;
 	private final AccessDecisionManager httpRequestAccessDecisionManager;
 
 	/**
 	 * Constructor
-	 * @param securityMode
 	 * @param authenticationManager
 	 * @param httpRequestAccessDecisionManager
 	 */
-	public SecurityContext(SecurityMode securityMode, AuthenticationManager authenticationManager,
+	public SecurityContext(AuthenticationManager authenticationManager,
 			AccessDecisionManager httpRequestAccessDecisionManager) {
-		super();
-		this.securityMode = securityMode;
 		this.authenticationManager = authenticationManager;
 		this.httpRequestAccessDecisionManager = httpRequestAccessDecisionManager;
-	}
-
-	public SecurityMode getSecurityMode() {
-		return securityMode;
 	}
 
 	public AuthenticationManager getAuthenticationManager() {

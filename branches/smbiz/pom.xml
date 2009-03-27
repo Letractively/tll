@@ -33,9 +33,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <mode>dev</mode>
-    <environment>dev</environment>
-
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
     <gwtVersion>0.0.0</gwtVersion>
@@ -69,7 +66,7 @@
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
-          <version>1.0-rc-4</version>
+          <version>1.0-rc-5</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -246,13 +243,29 @@
   </reporting>
 
   <profiles>
+
+    <!--
+      there are two global profiles for development and production: dev and prod respectively.
+      These profiles declare the following properties:
+      - debug (true/false)
+      - mode ("dev" or "prod") 
+    -->
+
     <!-- dev (global) profile -->
     <profile>
       <id>dev</id>
+      <properties>
+        <debug>true</debug>
+        <mode>dev</mode>
+      </properties>
     </profile>
     <!-- prod (global) profile -->
     <profile>
       <id>prod</id>
+      <properties>
+        <debug>false</debug>
+        <mode>prod</mode>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -546,6 +559,21 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junitVersion}</version>
+      </dependency>
+      <dependency>
+      	<groupId>dom4j</groupId>
+      	<artifactId>dom4j</artifactId>
+      	<version>1.6.1</version>
+      </dependency>
+      <dependency>
+      	<groupId>javassist</groupId>
+      	<artifactId>javassist</artifactId>
+      	<version>3.4.GA</version>
+      </dependency>
+      <dependency>
+      	<groupId>antlr</groupId>
+      	<artifactId>antlr</artifactId>
+      	<version>2.7.6</version>
       </dependency>
 
     </dependencies>

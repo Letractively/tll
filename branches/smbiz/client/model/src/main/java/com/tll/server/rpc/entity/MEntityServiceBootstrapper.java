@@ -57,9 +57,6 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
-		//final DaoMode daoMode =
-			//	EnumUtil.fromString(DaoMode.class, Config.instance().getString(ConfigKeys.DAO_MODE_PARAM.getKey()));
-
 		final RefData refdata = injector.getInstance(RefData.class);
 		
 		// the mail manager is optional

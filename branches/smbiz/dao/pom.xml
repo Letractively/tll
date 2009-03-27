@@ -59,7 +59,7 @@
                 <include>**/*Test*Util*</include>
                 <include>**/mock/**</include>
                 <include>**/IEntityDaoTestHandler.class</include>
-                <include>**/DaoMode.class</include>
+                <include>**/DaoMode*.class</include>
               </includes>
             </configuration>
           </execution>
@@ -189,6 +189,21 @@
       <artifactId>guice</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>

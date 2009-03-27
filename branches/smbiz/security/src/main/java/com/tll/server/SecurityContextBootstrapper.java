@@ -15,8 +15,6 @@ import org.springframework.security.AuthenticationManager;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.tll.config.Config;
-import com.tll.util.EnumUtil;
 
 /**
  * SecurityContextBootstrapper - Sets the {@link SecurityContext} in the
@@ -29,22 +27,16 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
-		final SecurityMode securityMode =
-				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
-						SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey()));
-
 		AuthenticationManager authenticationManager = null;
 		AccessDecisionManager httpRequesetAccessDecisionManager = null;
 
-		if(securityMode == SecurityMode.ACEGI) {
-			authenticationManager = injector.getInstance(AuthenticationManager.class);
-			httpRequesetAccessDecisionManager =
-					injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
-		}
+		authenticationManager = injector.getInstance(AuthenticationManager.class);
+		httpRequesetAccessDecisionManager =
+				injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
 
-		log.info("Setting security context (SecurityMode: " + securityMode + ")..");
-		servletContext.setAttribute(SecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(securityMode,
-				authenticationManager, httpRequesetAccessDecisionManager));
+		log.debug("Setting security context..");
+		servletContext.setAttribute(SecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(authenticationManager,
+				httpRequesetAccessDecisionManager));
 	}
 
 	@Override

@@ -11,14 +11,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.tll.config.Config;
-import com.tll.server.SecurityMode;
-import com.tll.util.EnumUtil;
 
 /**
  * HttpSessionContextIntegrationFilter
@@ -43,17 +38,6 @@ public class HttpSessionContextIntegrationFilter extends AbstractSecurityFilter 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-		final SecurityMode securityMode =
-				EnumUtil.fromString(SecurityMode.class, Config.instance().getString(
-						SecurityMode.ConfigKeys.SECURITY_MODE_PARAM.getKey()));
-		log.debug("HttpSessionContextIntegrationFilter (SecurityMode: " + securityMode + ") filtering..");
-		if(securityMode == SecurityMode.ACEGI) {
-			wrapped.doFilter(request, response, chain);
-		}
-		else {
-			// force session creation
-			((HttpServletRequest) request).getSession(true);
-			chain.doFilter(request, response);
-		}
+		wrapped.doFilter(request, response, chain);
 	}
 }

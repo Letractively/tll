@@ -25,7 +25,7 @@ import com.tll.model.MockEntityFactory;
 import com.tll.util.CommonUtil;
 
 /**
- * EntityMarshallerTest
+ * SmbizMarshallerTest - Tests the marshaling of the smbiz defined entities.
  * @author jpk
  */
 @Test(groups = {
@@ -51,8 +51,6 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 		super.addModules(modules);
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.MOCK.toString());
-		//final DaoModule daoModule = new DaoModule();
 		modules.add(new MockDaoModule());
 	}
 
@@ -88,7 +86,7 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 			final Model model = marshaler.marshalEntity(e, MarshalOptions.UNCONSTRAINED_MARSHALING);
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
-			Assert.assertEquals(model.getEntityType().getEntityClassName().equals(e.entityClass().getName()),
+			Assert.assertEquals(model.getEntityType().getEntityClassName(), e.entityClass().getName(),
 					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
 			final ModelKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";

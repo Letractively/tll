@@ -20,7 +20,7 @@
 
     <filters>
       <filter>src/main/resources/config-root.properties</filter>
-      <filter>src/main/resources/config-${environment}.properties</filter>
+      <filter>src/main/resources/config-${mode}.properties</filter>
     </filters>
     <resources>
       <resource>
@@ -138,7 +138,7 @@
                 ant.mkdir(dir: dir)
                 
                 File fBaseConfig = new File(project.basedir.toString() + '/src/main/resources/config-root.properties')
-                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${project.environment}.properties')
+                File fProfileConfig = new File(project.basedir.toString() + '/src/main/resources/config-${mode}.properties')
                 
                 def config = com.tll.config.Config.instance()
                 config.loadProperties(fBaseConfig.toURI().toURL(), true, false)
@@ -180,16 +180,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!--
-            NOTE: we have to specify at least one test file otherwise maven resorts to dynamic class finding of unit
-            tests!
-          -->
           <suiteXmlFiles>
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile> -->
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile> -->
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile> -->
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-client-model.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
@@ -219,20 +214,9 @@
     <profile>
       <id>dev</id>
       <properties>
-        <!-- <debug>true</debug> -->
-        <db.dao.mode>MOCK</db.dao.mode>
-        <security.mode>NONE</security.mode>
         <gwt.compile.target>com.tll.WorkingModule</gwt.compile.target>
         <gwt.run.target>com.tll.WorkingModule/SmbizAdmin.html</gwt.run.target>
       </properties>
-      <!-- 
-      <activation>
-        <property>
-          <name>mode</name>
-          <value>dev</value>
-        </property>
-      </activation>
-      -->
       <build>
         <plugins>
           <plugin>
@@ -251,7 +235,7 @@
                 </goals>
                 <configuration>
                   <source><![CDATA[
-                    if(project.properties['db.dao.mode'] == 'ORM') {
+                    if(properties['env.tll.db.dao.mode'] == 'ORM') {
                       File f = new File(project.basedir.toString() + '/target/classes/config.properties')
                       def config = com.tll.config.Config.instance()
                       config.loadProperties(f.toURI().toURL(), true, true)
@@ -279,18 +263,9 @@
     <profile>
       <id>prod</id>
       <properties>
-        <!-- <debug>false</debug> -->
-        <db.dao.mode>ORM</db.dao.mode>
-        <security.mode>ACEGI</security.mode>
         <gwt.compile.target>com.tll.SmbizAdminApp</gwt.compile.target>
         <gwt.run.target>com.tll.SmbizAdminApp/SmbizAdmin.html</gwt.run.target>
       </properties>
-      <activation>
-        <property>
-          <name>mode</name>
-          <value>prod</value>
-        </property>
-      </activation>
       <build>
         <plugins>
           <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
