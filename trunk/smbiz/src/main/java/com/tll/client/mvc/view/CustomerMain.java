@@ -6,7 +6,7 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.model.SmbizEntityType;
 
 /**
@@ -24,7 +24,7 @@ public class CustomerMain extends MainView {
 		}
 
 		@Override
-		public IView newView() {
+		public CustomerMain newView() {
 			return new CustomerMain();
 		}
 	}
@@ -36,7 +36,7 @@ public class CustomerMain extends MainView {
 	 */
 	public CustomerMain() {
 		super();
-		links.append(new ViewRequestLink("Customer Listing", "Customer Listing", null));
+		links.append(new ViewLink("Customer Listing", "Customer Listing", null));
 		addWidget(links);
 	}
 
@@ -49,7 +49,7 @@ public class CustomerMain extends MainView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 }

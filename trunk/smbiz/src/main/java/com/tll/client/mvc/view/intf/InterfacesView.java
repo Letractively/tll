@@ -20,12 +20,9 @@ import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
-import com.tll.client.mvc.view.AbstractView;
-import com.tll.client.mvc.view.IView;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.AbstractModelAwareView;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
@@ -48,7 +45,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public class InterfacesView extends AbstractView implements ClickHandler {
+public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer> implements ClickHandler {
 
 	public static final Class klas = new Class();
 
@@ -59,7 +56,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 		}
 
 		@Override
-		public IView newView() {
+		public InterfacesView newView() {
 			return new InterfacesView();
 		}
 
@@ -181,7 +178,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 					ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 							defaultSorting);
 			//listHandler.addListingHandler(this);
-			addHandler(this, ListingEvent.getType());
+			addHandler(this, ListingEvent.TYPE);
 		}
 
 		void refreshData() {
@@ -275,7 +272,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 
@@ -289,7 +286,7 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 	}
 
 	@Override
-	public void doInitialization(ViewRequestEvent viewRequest) {
+	public void doInitialization(StaticViewInitializer initializer) {
 		// no-op
 	}
 
@@ -300,11 +297,6 @@ public class InterfacesView extends AbstractView implements ClickHandler {
 	@Override
 	protected void doDestroy() {
 		intfStack.clearData();
-	}
-
-	@Override
-	public ShowViewRequest newViewRequest() {
-		return new StaticViewRequest(this, klas);
 	}
 
 	public void onClick(ClickEvent event) {

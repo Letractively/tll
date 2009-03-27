@@ -31,7 +31,7 @@ public abstract class Msgs {
 	public static void post(Msg msg, Widget w) {
 		final MsgPopup mp = new MsgPopup(w);
 		mp.addMsg(msg);
-		mp.show();
+		mp.showMsgs(true);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public abstract class Msgs {
 	public static void post(Iterable<Msg> msgs, Widget w) {
 		final MsgPopup mp = new MsgPopup(w);
 		mp.addMsgs(msgs);
-		mp.show();
+		mp.showMsgs(true);
 	}
 
 	/**

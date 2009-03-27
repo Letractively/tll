@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.model.SmbizEntityType;
@@ -29,15 +29,12 @@ public class AspMain extends MainView {
 		}
 
 		@Override
-		public IView newView() {
+		public AspMain newView() {
 			return new AspMain();
 		}
 	}
 
 	private final HtmlListPanel links = new HtmlListPanel(false);
-
-	// TODO temp debug
-	// private final FlowPanel eventsLegend = new FlowPanel();
 
 	/**
 	 * Constructor
@@ -48,39 +45,10 @@ public class AspMain extends MainView {
 		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
-		links.append(new ViewRequestLink("Isp Listing", "Isp Listing", IspListingView.klas.newViewRequest(this)));
-		links.append(new ViewRequestLink("Interfaces", "Interfaces", new StaticViewRequest(this, InterfacesView.klas)));
+		links.append(new ViewLink("Isp Listing", "Isp Listing", new StaticViewInitializer(IspListingView.klas)));
+		links.append(new ViewLink("Interfaces", "Interfaces", new StaticViewInitializer(InterfacesView.klas)));
 		links.append(new Hyperlink("Site Summary", "siteSmry"));
 		addWidget(links);
-
-		/*
-		eventsLegend.add(new Label("BUTTON_LEFT: " + Event.BUTTON_LEFT));
-		eventsLegend.add(new Label("BUTTON_MIDDLE: " + Event.BUTTON_MIDDLE));
-		eventsLegend.add(new Label("BUTTON_RIGHT: " + Event.BUTTON_RIGHT));
-		eventsLegend.add(new Label("ONCHANGE: " + Event.ONBLUR));
-		eventsLegend.add(new Label("ONCHANGE: " + Event.ONCHANGE));
-		eventsLegend.add(new Label("ONCLICK: " + Event.ONCLICK));
-		eventsLegend.add(new Label("ONDBLCLICK: " + Event.ONDBLCLICK));
-		eventsLegend.add(new Label("ONERROR: " + Event.ONERROR));
-		eventsLegend.add(new Label("ONFOCUS: " + Event.ONFOCUS));
-		eventsLegend.add(new Label("ONKEYDOWN: " + Event.ONKEYDOWN));
-		eventsLegend.add(new Label("ONKEYPRESS: " + Event.ONKEYPRESS));
-		eventsLegend.add(new Label("ONKEYUP: " + Event.ONKEYUP));
-		eventsLegend.add(new Label("ONLOAD: " + Event.ONLOAD));
-		eventsLegend.add(new Label("LOSECAPTURE: " + Event.ONLOSECAPTURE));
-		eventsLegend.add(new Label("ONMOUSEDOWN: " + Event.ONMOUSEDOWN));
-		eventsLegend.add(new Label("ONMOUSEMOVE: " + Event.ONMOUSEMOVE));
-		eventsLegend.add(new Label("ONMOUSEOUT: " + Event.ONMOUSEOUT));
-		eventsLegend.add(new Label("ONMOUSEOVER: " + Event.ONMOUSEOVER));
-		eventsLegend.add(new Label("ONMOUSEUP: " + Event.ONMOUSEUP));
-		eventsLegend.add(new Label("ONMOUSEWHEEL: " + Event.ONMOUSEWHEEL));
-		eventsLegend.add(new Label("ONSCROLL: " + Event.ONSCROLL));
-		eventsLegend.add(new Label("FOCUSEVENTS: " + Event.FOCUSEVENTS));
-		eventsLegend.add(new Label("KEYEVENTS: " + Event.KEYEVENTS));
-		eventsLegend.add(new Label("MOUSEEVENTS: " + Event.MOUSEEVENTS));
-		eventsLegend.add(new Label("UNDEFINED: " + Event.UNDEFINED));
-		addWidget(eventsLegend);
-		*/
 	}
 
 	public String getLongViewName() {
@@ -92,7 +60,7 @@ public class AspMain extends MainView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 }

@@ -3,7 +3,6 @@
  */
 package com.tll.client.mvc.view.account;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -13,14 +12,13 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
-import com.tll.client.ui.view.ViewRequestLink;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
@@ -37,7 +35,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class MerchantListingView extends ListingView {
+public final class MerchantListingView extends ListingView<MerchantListingViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -48,50 +46,8 @@ public final class MerchantListingView extends ListingView {
 		}
 
 		@Override
-		public IView newView() {
+		public MerchantListingView newView() {
 			return new MerchantListingView();
-		}
-
-		/**
-		 * Factory method used to generate a {@link ViewRequestEvent} for
-		 * {@link MerchantListingView} instances.
-		 * @param source
-		 * @param ispRef The Isp ref
-		 * @return MerchantListingViewRequest
-		 */
-		public MerchantListingViewRequest newViewRequest(Widget source, ModelKey ispRef) {
-			return new MerchantListingViewRequest(source, ispRef);
-		}
-
-	}
-
-	/**
-	 * MerchantListingViewRequest - MerchantListingView specific view request.
-	 * @author jpk
-	 */
-	@SuppressWarnings("serial")
-	public static final class MerchantListingViewRequest extends ShowViewRequest {
-
-		/**
-		 * The parent Isp ref.
-		 */
-		private final ModelKey ispRef;
-
-		/**
-		 * Constructor
-		 * @param source
-		 * @param ispRef The required parent isp ref
-		 */
-		MerchantListingViewRequest(Widget source, ModelKey ispRef) {
-			super(source, klas);
-
-			assert ispRef != null;
-			this.ispRef = ispRef;
-		}
-
-		@Override
-		protected int getViewId() {
-			return klas.hashCode() + 7 * ispRef.hashCode();
 		}
 	}
 
@@ -103,7 +59,7 @@ public final class MerchantListingView extends ListingView {
 	/**
 	 * The link to the parent isp listing view.
 	 */
-	private final ViewRequestLink ispListingLink = new ViewRequestLink();
+	private final ViewLink ispListingLink = new ViewLink();
 
 	/**
 	 * Constructor
@@ -114,14 +70,11 @@ public final class MerchantListingView extends ListingView {
 	}
 
 	@Override
-	public void doInitialization(ViewRequestEvent viewRequest) {
-		assert viewRequest instanceof MerchantListingViewRequest;
-		final MerchantListingViewRequest r = (MerchantListingViewRequest) viewRequest;
-
+	public void doInitialization(MerchantListingViewInitializer r) {
 		assert r.ispRef != null && r.ispRef.isSet();
 		ispRef = r.ispRef;
 
-		ispListingLink.setViewRequest(IspListingView.klas.newViewRequest(this));
+		ispListingLink.setViewInitializer(new StaticViewInitializer(IspListingView.klas));
 		ispListingLink.setText(ispRef.getName());
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);
@@ -150,11 +103,6 @@ public final class MerchantListingView extends ListingView {
 				}
 
 				@Override
-				protected Widget getSourcingWidget() {
-					return MerchantListingView.this;
-				}
-
-				@Override
 				protected ViewClass getEditViewClass() {
 					return AccountEditView.klas;
 				}
@@ -168,8 +116,7 @@ public final class MerchantListingView extends ListingView {
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Customer Listing") == 0) {
 						ViewManager.get().dispatch(
-								CustomerListingView.klas.newViewRequest(MerchantListingView.this, listingWidget.getRowKey(rowIndex),
-										ispRef));
+								new ShowViewRequest(new CustomerListingViewInitializer(listingWidget.getRowKey(rowIndex), ispRef)));
 					}
 				}
 			};
@@ -212,7 +159,7 @@ public final class MerchantListingView extends ListingView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 
@@ -225,10 +172,5 @@ public final class MerchantListingView extends ListingView {
 	public String getLongViewName() {
 		assert ispRef != null;
 		return "Merchant Listing for " + ispRef.descriptor();
-	}
-
-	@Override
-	public ShowViewRequest newViewRequest() {
-		return klas.newViewRequest(this, ispRef);
 	}
 }

@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.Br;
-import com.tll.client.ui.field.IFieldWidget.Styles;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following
@@ -25,6 +24,23 @@ import com.tll.client.ui.field.IFieldWidget.Styles;
  * @author jpk
  */
 public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
+
+	/**
+	 * Styles - (field.css)
+	 * @author jpk
+	 */
+	static final class Styles {
+
+		/**
+		 * Style for wrapping divs containing a field and label.
+		 */
+		public static final String FIELD_CONTAINER = "fldc";
+		
+		/**
+		 * Style applied to each row of fields.
+		 */
+		public static final String FIELD_ROW = "frow";
+	}
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
@@ -48,7 +64,6 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		// reset state
 		if(vp == null) {
 			vp = new VerticalPanel();
-			vp.setStyleName(Styles.FIELD);
 		}
 		else {
 			vp.clear();
@@ -64,6 +79,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 	private HorizontalPanel getCurrentRow() {
 		if(currentRow == null) {
 			currentRow = new HorizontalPanel();
+			currentRow.setStyleName(Styles.FIELD_ROW);
 			vp.add(currentRow);
 		}
 		return currentRow;
@@ -73,14 +89,18 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
-			// fp.setStyleName(IField.STYLE_FIELD);
+			fp.setStyleName(Styles.FIELD_CONTAINER);
 		}
 		else {
 			if(last == null) throw new IllegalStateException("Empty row");
 			fp = (FlowPanel) last.getParent();
-			fp.add(new Br());
 		}
-		if(fldLbl != null) fp.add(fldLbl);
+		if(fldLbl != null) {
+			fp.add(fldLbl);
+		}
+		else {
+			fp.add(new Br()); // this is too much space
+		}
 		fp.add(w);
 		getCurrentRow().add(fp);
 		last = w;

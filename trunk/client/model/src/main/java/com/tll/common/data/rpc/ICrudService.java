@@ -11,7 +11,6 @@ import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 
@@ -21,13 +20,6 @@ import com.tll.common.data.EntityRequest;
  */
 @RemoteServiceRelativePath(value = "rpc/crud")
 public interface ICrudService extends RemoteService {
-
-	/**
-	 * Generates an empty entity of the desired type.
-	 * @param request The {@link EntityRequest} specifying the entity type.
-	 * @return EntityPayload
-	 */
-	EntityPayload prototype(EntityPrototypeRequest request);
 
 	/**
 	 * Loads an existing entity.

@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.tll.client.data.rpc.IStatusListener;
+import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.common.data.Status;
@@ -19,7 +19,7 @@ import com.tll.common.msg.Msg;
  * Status object.
  * @author jpk
  */
-public class StatusDisplay extends Composite implements IStatusListener {
+public class StatusDisplay extends Composite implements IStatusHandler {
 
 	/**
 	 * Styles - (status.css)
@@ -93,13 +93,13 @@ public class StatusDisplay extends Composite implements IStatusListener {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		StatusEventDispatcher.instance().addStatusListener(this);
+		StatusEventDispatcher.get().addStatusHandler(this);
 	}
 
 	@Override
 	protected void onUnload() {
 		super.onUnload();
-		StatusEventDispatcher.instance().removeStatusListener(this);
+		StatusEventDispatcher.get().removeStatusHandler(this);
 	}
 
 }

@@ -19,7 +19,6 @@ import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -65,26 +64,6 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 */
 	protected abstract void handlePersistOptions(MEntityContext context, E e, EntityOptions options)
 			throws SystemError;
-
-	public final void prototype(final MEntityContext context, final EntityPrototypeRequest request,
-			final EntityPayload payload) {
-		try {
-			final IEntity e =
-					context.getEntityFactory().createEntity(
-							EntityTypeUtil.getEntityClass(request.getEntityType()),
-							request.isGenerate());
-			final Model group =
-					context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
-			payload.setEntity(group);
-		}
-		catch(final SystemError se) {
-			context.getExceptionHandler().handleException(payload.getStatus(), se, se.getMessage(), true);
-		}
-		catch(final RuntimeException re) {
-			context.getExceptionHandler().handleException(payload.getStatus(), re, re.getMessage(), true);
-			throw re;
-		}
-	}
 
 	/**
 	 * Does the core entity loading.

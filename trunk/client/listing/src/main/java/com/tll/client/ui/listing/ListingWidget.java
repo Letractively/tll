@@ -133,7 +133,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 		operator.setSourcingWidget(this);
 		this.table.setListingOperator(operator);
 		if(navBar != null) navBar.setListingOperator(operator);
-		addHandler(this, ListingEvent.getType());
+		addHandler(this, ListingEvent.TYPE);
 	}
 
 	protected final IListingOperator<R> getOperator() {

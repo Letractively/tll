@@ -194,55 +194,6 @@
         </configuration>
       </plugin>
 
-      <!-- GWT-Maven plugin -->
-      <!--
-        mvn com.totsp.gwt:maven-googlewebtoolkit2-plugin:gwt (shell invocation) mvn
-        com.totsp.gwt:maven-googlewebtoolkit2-plugin:debug (shell invocation w/ jvm debug hook) mvn
-        com.totsp.gwt:maven-googlewebtoolkit2-plugin:test (run GWTTestCase derived unit tests)
-      -->
-      <plugin>
-        <groupId>com.totsp.gwt</groupId>
-        <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
-        <version>2.0-beta26</version>
-        <configuration>
-          <gwtVersion>${gwtVersion}</gwtVersion>
-          <logLevel>INFO</logLevel>
-          <enableAssertions>true</enableAssertions>
-          <resourcesOnPath>false</resourcesOnPath>
-          <extraJvmArgs>-Xmx512M -Xms128M</extraJvmArgs>
-          <noServer>false</noServer>
-          <port>8888</port>
-          <tomcat>${pom.basedir}/target/tomcat</tomcat>
-          <webXml>${pom.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
-          <webXmlServletPathAsIs>true</webXmlServletPathAsIs>
-          <compileTargets>
-            <value>${gwt.compile.target}</value>
-          </compileTargets>
-          <runTarget>${gwt.run.target}</runTarget>
-        </configuration>
-        <executions>
-          <execution>
-            <id>gwt-compile</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>compile</goal>
-              <!-- <goal>i18n</goal> -->
-            </goals>
-          </execution>
-          <execution>
-            <id>gwt-test</id>
-            <!-- <phase>test</phase> -->
-            <goals>
-              <goal>test</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!--
-        If you want to use the target/web.xml file mergewebxml produces, tell the war plugin to use it. Also, exclude
-        what you want from the final artifact here.
-      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -258,6 +209,7 @@
           </warSourceExcludes>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
@@ -589,6 +541,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-mvc-model</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-field</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
@@ -623,6 +580,18 @@
       <classifier>${platform}</classifier>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-incubator</artifactId>
+      <version>1.5-Dec_28</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+      <version>2.5.3</version>
+      <scope>provided</scope>
+    </dependency>
     
     <dependency>
       <groupId>com.atomikos</groupId>
@@ -639,17 +608,6 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-incubator</artifactId>
-      <version>1.5-Dec_28</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gwt-log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <version>2.5.3</version>
     </dependency>
 
     <dependency>

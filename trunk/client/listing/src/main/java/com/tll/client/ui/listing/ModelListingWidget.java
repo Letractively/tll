@@ -6,7 +6,7 @@
 package com.tll.client.ui.listing;
 
 import com.tll.client.listing.IListingConfig;
-import com.tll.client.model.IModelChangeListener;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
@@ -16,7 +16,7 @@ import com.tll.common.model.ModelKey;
  * @author jpk
  */
 public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
-		implements IModelChangeListener {
+		implements IModelChangeHandler {
 
 	/**
 	 * Constructor

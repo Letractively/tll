@@ -34,6 +34,7 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 		 */
 		public Impl() {
 			super(true);
+			addStyleName(Styles.TBOX);
 			addChangeHandler(this);
 		}
 
@@ -176,11 +177,16 @@ public final class MultiSelectField<V> extends AbstractCollectionDataField<V> {
 				sb.append(lb.getValue(i));
 			}
 		}
-		return sb.substring(1);
+		return sb.length() == 0 ? "" : sb.substring(1);
 	}
 
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void setEnabled(boolean enabled) {
+		lb.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
 }

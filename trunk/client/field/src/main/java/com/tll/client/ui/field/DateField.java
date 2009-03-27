@@ -34,6 +34,14 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 */
 	static final class Impl extends DateBox implements IEditable<Date> {
 
+		/**
+		 * Constructor
+		 */
+		public Impl() {
+			super();
+			getTextBox().addStyleName(Styles.TBOX);
+		}
+
 		@Override
 		public HandlerRegistration addBlurHandler(BlurHandler handler) {
 			return addDomHandler(handler, BlurEvent.getType());
@@ -117,5 +125,11 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 
 	public void setText(String text) {
 		dbox.getTextBox().setText(text);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		dbox.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 }

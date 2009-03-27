@@ -21,7 +21,7 @@ import com.tll.common.model.ModelKey;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractView implements IEditHandler {
+public abstract class EditView extends AbstractModelAwareView<EditViewInitializer> implements IEditHandler {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -85,11 +85,6 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 		return "Edit " + s;
 	}
 
-	@Override
-	public final ShowViewRequest newViewRequest() {
-		return new EditViewRequest(this, getViewClass(), modelRef);
-	}
-
 	private void setModelRef(ModelKey modelRef) {
 		if(modelRef == null || !modelRef.isSet()) {
 			throw new IllegalArgumentException("Invalid model ref specified");
@@ -98,12 +93,10 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 	}
 
 	@Override
-	protected final void doInitialization(ViewRequestEvent viewRequest) {
-		assert viewRequest instanceof EditViewRequest;
-		final EditViewRequest r = (EditViewRequest) viewRequest;
-		model = r.getModel();
+	protected final void doInitialization(EditViewInitializer viewRequest) {
+		model = viewRequest.getModel();
 		if(model == null) {
-			setModelRef(r.getModelKey());
+			setModelRef(viewRequest.getModelKey());
 		}
 		else {
 			setModelRef(model.getRefKey());
@@ -128,14 +121,13 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 
 	@Override
 	protected void doDestroy() {
-		// no-op
 		editPanel.setModel(null); // forces clean-up of bindings and listeners
 	}
 
 	public final void onEdit(EditEvent event) {
 		switch(event.getOp()) {
 			case CANCEL:
-				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), false));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
@@ -181,7 +173,7 @@ public abstract class EditView extends AbstractView implements IEditHandler {
 				break;
 
 			case DELETED:
-				ViewManager.get().dispatch(new UnloadViewRequest(this, getViewKey(), true));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true));
 				break;
 		}
 	}

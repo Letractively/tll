@@ -26,40 +26,6 @@ import com.tll.common.model.mock.MockModelStubber;
 public class ComplexFieldPanel extends FlowFieldPanel {
 
 	/**
-	 * RelatedOnePanel
-	 * @author jpk
-	 */
-	class RelatedOnePanel extends FlowFieldPanel {
-
-		@Override
-		protected FieldGroup generateFieldGroup() {
-			return new MockFieldGroupProviders.PaymentInfoFieldsProvider().getFieldGroup();
-		}
-
-		@Override
-		public IFieldRenderer<FlowPanel> getRenderer() {
-			return new IFieldRenderer<FlowPanel>() {
-
-				@Override
-				public void render(FlowPanel panel, FieldGroup fg) {
-					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(panel);
-
-					cmpsr.addField(fg.getFieldWidgetByName("ccType"));
-
-					cmpsr.addField(fg.getFieldWidgetByName("ccNum"));
-					cmpsr.addField(fg.getFieldWidgetByName("ccCvv2"));
-					cmpsr.addField(fg.getFieldWidgetByName("ccExpMonth"));
-					cmpsr.addField(fg.getFieldWidgetByName("ccExpYear"));
-
-					cmpsr.newRow();
-					cmpsr.addField(fg.getFieldWidgetByName("ccName"));
-				}
-			};
-		}
-	} // RelatedOnePanel
-
-	/**
 	 * IndexFieldPanel
 	 * @author jpk
 	 */
@@ -176,8 +142,6 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 	} // IndexedFieldPanel
 
-	final RelatedOnePanel relatedOnePanel;
-
 	final IndexedFieldPanel indexedPanel;
 
 	/**
@@ -185,7 +149,6 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 	 */
 	public ComplexFieldPanel() {
 		super();
-		relatedOnePanel = new RelatedOnePanel();
 		indexedPanel = new IndexedFieldPanel();
 	}
 
@@ -217,7 +180,15 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 				// related one panel
 				cmpsr.newRow();
-				cmpsr.addWidget(relatedOnePanel);
+				cmpsr.addField(fg.getFieldWidgetByName("ccType"));
+
+				cmpsr.addField(fg.getFieldWidgetByName("ccNum"));
+				cmpsr.addField(fg.getFieldWidgetByName("ccCvv2"));
+				cmpsr.addField(fg.getFieldWidgetByName("ccExpMonth"));
+				cmpsr.addField(fg.getFieldWidgetByName("ccExpYear"));
+
+				cmpsr.newRow();
+				cmpsr.addField(fg.getFieldWidgetByName("ccName"));
 
 				// related many (indexed) panel
 				cmpsr.newRow();
@@ -233,7 +204,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 			public FieldGroup getFieldGroup() {
 				final FieldGroup fg = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
-				fg.addField("paymentInfo", relatedOnePanel.getFieldGroup());
+				fg.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
 				fg.addField("addresses", indexedPanel.getFieldGroup());
 				return fg;
 			}

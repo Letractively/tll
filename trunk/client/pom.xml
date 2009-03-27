@@ -23,16 +23,15 @@
   <modules>
     <module>gwt-test-war-dir-assembly</module>
     <module>core</module>
-    <module>ui</module>
     <module>cache</module>
+    <module>ui</module>
+    <module>mvc</module>
     <module>rpc</module>
     <module>model</module>
+    <module>mvc-model</module>
     <module>listing</module>
     <module>field</module>
-    <!-- TODO temp comment 
-    <module>mvc</module>
     <module>login</module>
-    -->
   </modules>
   
   <build>

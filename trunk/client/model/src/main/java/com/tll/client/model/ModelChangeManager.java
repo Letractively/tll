@@ -4,14 +4,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.rpc.AuxDataCommand;
 import com.tll.client.data.rpc.CrudCommand;
-import com.tll.client.data.rpc.CrudEvent;
-import com.tll.client.data.rpc.ICrudListener;
-import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
+import com.tll.common.data.EntityPayload;
 import com.tll.common.data.AuxDataRequest.AuxDataType;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
@@ -27,7 +24,79 @@ import com.tll.common.model.ModelKey;
  * and no "naked" {@link CrudCommand}s should exist in the app.
  * @author jpk
  */
-public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, ICrudListener, ISourcesModelChangeEvents {
+public final class ModelChangeManager {
+
+	/**
+	 * ModelChangeAuxDataCommand
+	 * @author jpk
+	 */
+	final class ModelChangeAuxDataCommand extends AuxDataCommand {
+
+		/**
+		 * Constructor
+		 * @param sourcingWidget
+		 * @param auxDataRequest
+		 */
+		public ModelChangeAuxDataCommand(Widget sourcingWidget, AuxDataRequest auxDataRequest) {
+			super(sourcingWidget, auxDataRequest);
+		}
+
+		@Override
+		protected void handleSuccess(AuxDataPayload result) {
+			super.handleSuccess(result);
+			//if(!result.hasErrors()) {
+			sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, null));
+			//}
+		}
+
+		@Override
+		protected void handleFailure(Throwable caught) {
+			super.handleFailure(caught);
+		}
+	}
+
+	/**
+	 * ModelChangeCrudCommand
+	 * @author jpk
+	 */
+	final class ModelChangeCrudCommand extends CrudCommand {
+
+		/**
+		 * Constructor
+		 * @param sourcingWidget
+		 */
+		public ModelChangeCrudCommand(Widget sourcingWidget) {
+			super(sourcingWidget);
+		}
+
+		@Override
+		protected void handleSuccess(EntityPayload result) {
+			super.handleSuccess(result);
+			switch(crudOp) {
+				case LOAD:
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
+					break;
+				case ADD:
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
+					break;
+				case UPDATE:
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
+					break;
+				case PURGE:
+					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
+							.getStatus()));
+					break;
+				default:
+					throw new IllegalStateException();
+			}
+		}
+
+		@Override
+		protected void handleFailure(Throwable caught) {
+			super.handleFailure(caught);
+		}
+
+	}
 
 	private static ModelChangeManager instance = new ModelChangeManager();
 
@@ -39,22 +108,6 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * Constructor
 	 */
 	private ModelChangeManager() {
-	}
-
-	private final ModelChangeListenerCollection listeners = new ModelChangeListenerCollection();
-
-	public void addModelChangeListener(IModelChangeListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeModelChangeListener(IModelChangeListener listener) {
-		listeners.remove(listener);
-	}
-
-	private CrudCommand createCrudCommand(Widget sourcingWidget) {
-		final CrudCommand cmd = new CrudCommand(sourcingWidget);
-		cmd.addCrudListener(this);
-		return cmd;
 	}
 
 	/**
@@ -71,8 +124,7 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 		// do we need any aux data from the server?
 		adr = AuxDataCache.instance().filterRequest(adr);
 		if(adr == null) return false;
-		final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-		//adc.addRpcHandler(this);
+		final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
 		adc.execute();
 		return true;
 	}
@@ -92,12 +144,11 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 		if(!AuxDataCache.instance().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
 			final AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
-			final AuxDataCommand adc = new AuxDataCommand(sourcingWidget, adr);
-			//adc.addRpcHandler(this);
+			final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
 			adc.execute();
 			return true;
 		}
-		listeners.fireOnModelChange(new ModelChangeEvent(sourcingWidget, ModelChangeOp.AUXDATA_READY));
+		sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY));
 		return false;
 	}
 
@@ -110,7 +161,7 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * @param adr
 	 */
 	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
-		final CrudCommand cmd = createCrudCommand(sourcingWidget);
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
 		cmd.load(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.setAuxDataRequest(AuxDataCache.instance().filterRequest(adr));
@@ -125,7 +176,7 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * @param entityOptions
 	 */
 	public void persistModel(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
-		final CrudCommand cmd = createCrudCommand(sourcingWidget);
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
 		if(model.isNew()) {
 			cmd.add(model);
 		}
@@ -144,52 +195,9 @@ public final class ModelChangeManager implements IRpcHandler<AuxDataPayload>, IC
 	 * @param entityOptions
 	 */
 	public void deleteModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions) {
-		final CrudCommand cmd = createCrudCommand(sourcingWidget);
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
 		cmd.purge(entityKey);
 		cmd.setEntityOptions(entityOptions);
 		cmd.execute();
-	}
-
-	public void onRpcEvent(RpcEvent<AuxDataPayload> event) {
-		if(!event.getPayload().hasErrors()) {
-			final ModelChangeEvent mce = new ModelChangeEvent(event.getSource(), ModelChangeOp.AUXDATA_READY, (Model) null, null);
-			listeners.fireOnModelChange(mce);
-		}
-	}
-
-	public void onCrudEvent(CrudEvent event) {
-
-		ModelChangeEvent mce = null;
-
-		switch(event.getCrudOp()) {
-
-			case LOAD:
-				mce =
-						new ModelChangeEvent(event.getSource(), ModelChangeOp.LOADED, event.getPayload().getEntity(), event
-								.getPayload().getStatus());
-				break;
-
-			case ADD:
-				mce =
-						new ModelChangeEvent(event.getSource(), ModelChangeOp.ADDED, event.getPayload().getEntity(), event
-								.getPayload().getStatus());
-				break;
-
-			case UPDATE:
-				mce =
-						new ModelChangeEvent(event.getSource(), ModelChangeOp.UPDATED, event.getPayload().getEntity(), event
-								.getPayload().getStatus());
-				break;
-
-			case PURGE:
-				mce =
-						new ModelChangeEvent(event.getSource(), ModelChangeOp.DELETED, event.getPayload().getEntityRef(), event
-								.getPayload().getStatus());
-				break;
-		}
-
-		if(mce != null) {
-			listeners.fireOnModelChange(mce);
-		}
 	}
 }

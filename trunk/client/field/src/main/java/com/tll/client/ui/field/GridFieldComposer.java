@@ -8,7 +8,6 @@ package com.tll.client.ui.field;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.field.IFieldWidget.Styles;
 
 /**
  * GridFieldComposer - Lays out fields in a vertical style having the following
@@ -20,6 +19,22 @@ import com.tll.client.ui.field.IFieldWidget.Styles;
  * @author jpk
  */
 public class GridFieldComposer implements IFieldComposer {
+
+	/**
+	 * Styles - (field.css)
+	 * @author jpk
+	 */
+	static final class Styles {
+
+		/**
+		 * Style applied to the grid containing the fields.
+		 */
+		public static final String FIELD_GRID = "fgrid";
+		
+		public static final String CELL_LABEL = "cell-lbl";
+
+		public static final String CELL_FIELD = "cell-fld";
+	}
 
 	/**
 	 * The root canvas panel for this field canvas implementation.
@@ -39,7 +54,7 @@ public class GridFieldComposer implements IFieldComposer {
 		// clear state
 		if(grid == null) {
 			grid = new Grid(0, 2);
-			grid.addStyleName(Styles.FIELD);
+			grid.addStyleName(Styles.FIELD_GRID);
 		}
 		else {
 			grid.clear();
@@ -52,8 +67,12 @@ public class GridFieldComposer implements IFieldComposer {
 
 	private void add(FieldLabel fldLbl, Widget w) {
 		grid.resizeRows(++rowIndex + 1);
-		if(fldLbl != null) grid.setWidget(rowIndex, 0, fldLbl);
+		if(fldLbl != null) {
+			grid.getCellFormatter().setStyleName(rowIndex, 0, Styles.CELL_LABEL);
+			grid.setWidget(rowIndex, 0, fldLbl);
+		}
 		grid.setWidget(rowIndex, 1, w);
+		grid.getCellFormatter().setStyleName(rowIndex, 1, Styles.CELL_FIELD);
 	}
 
 	/**

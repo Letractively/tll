@@ -5,13 +5,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.mvc.view.AbstractView;
-import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
-import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewOptions;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.common.model.IEntityType;
 import com.tll.model.SmbizEntityType;
 
@@ -19,7 +12,7 @@ import com.tll.model.SmbizEntityType;
  * MainView - The root view base class for all account types.
  * @author jpk
  */
-public abstract class MainView extends AbstractView {
+public abstract class MainView extends AbstractView<StaticViewInitializer> {
 
 	/**
 	 * MainViewClass - Base class for all main view classes.
@@ -27,7 +20,7 @@ public abstract class MainView extends AbstractView {
 	 */
 	public static abstract class MainViewClass extends ViewClass {
 
-		private static final ViewOptions viewOptions = new ViewOptions(false, false, false, false, false);
+		//private static final ViewOptions viewOptions = new ViewOptions(false, false, false, false, false);
 
 		/**
 		 * Provides the view class for the root view based on the account type.
@@ -47,10 +40,12 @@ public abstract class MainView extends AbstractView {
 			super(getMainViewName(accountType));
 		}
 
+		/*
 		@Override
 		public final ViewOptions getViewOptions() {
 			return viewOptions;
 		}
+		*/
 	}
 
 	public final void refresh() {
@@ -58,23 +53,12 @@ public abstract class MainView extends AbstractView {
 	}
 
 	@Override
-	public final void doInitialization(ViewRequestEvent viewRequest) {
+	public final void doInitialization(StaticViewInitializer init) {
 		// no-op
 	}
 
 	@Override
 	protected void doDestroy() {
 		// no-op
-	}
-
-	@Override
-	public final ShowViewRequest newViewRequest() {
-		return new StaticViewRequest(this, getViewClass());
-	}
-
-	@Override
-	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		// currently no model info displayed on main pages
-		return false;
 	}
 }

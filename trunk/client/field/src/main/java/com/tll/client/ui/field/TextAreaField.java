@@ -20,6 +20,14 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 	 */
 	static final class Impl extends TextArea implements IEditable<String> {
 
+		/**
+		 * Constructor
+		 */
+		public Impl() {
+			super();
+			addStyleName(Styles.TBOX);
+		}
+
 	}
 
 	int maxLen = -1;
@@ -80,6 +88,12 @@ public class TextAreaField extends AbstractField<String> implements IHasMaxLengt
 
 	public void setText(String text) {
 		ta.setText(text);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		ta.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 
 	@Override

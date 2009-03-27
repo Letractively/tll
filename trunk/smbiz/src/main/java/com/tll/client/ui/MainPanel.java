@@ -28,21 +28,20 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.App;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
-import com.tll.client.data.rpc.IStatusListener;
+import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.EditViewRequest;
-import com.tll.client.mvc.view.StaticViewRequest;
+import com.tll.client.mvc.view.EditViewInitializer;
+import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.view.RecentViewsPanel;
+import com.tll.client.ui.view.ViewLink;
 import com.tll.client.ui.view.ViewPathPanel;
-import com.tll.client.ui.view.ViewRequestLink;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.AdminContext;
@@ -93,7 +92,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 	private final DockPanel dockPanel = new DockPanel();
 	private final Header header = new Header();
-	private final ViewPathPanel viewpath = new ViewPathPanel();
+	private final ViewPathPanel viewpath = new ViewPathPanel(4);
 	private final RightNav rightNav = new RightNav();
 	private final Footer footer = new Footer();
 	private final Center center = new Center();
@@ -147,7 +146,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// set the initial view based on the user's account type
 			ViewManager.get().dispatch(
-					new StaticViewRequest(this, MainViewClass.getMainViewClass(account.getEntityType())));
+					new ShowViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
 		}
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
@@ -179,7 +178,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		FormPanel frmLogout;
 		Button btnLogoff;
-		ViewRequestLink vlUsername;
+		ViewLink vlUsername;
 		Label lblUserDateCreated;
 		Label lblUserAccount;
 
@@ -202,7 +201,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			Label lbl;
 
 			// current user...
-			vlUsername = new ViewRequestLink();
+			vlUsername = new ViewLink();
 			lblUserDateCreated = new Label();
 			lblUserAccount = new Label();
 
@@ -263,7 +262,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// view history...
 			dpViewHistory = new DisclosurePanel("Recent Views", false);
-			viewHistoryPanel = new RecentViewsPanel();
+			viewHistoryPanel = new RecentViewsPanel(3);
 			simplePanel = new SimplePanel();
 			simplePanel.add(viewHistoryPanel);
 			dpViewHistory.add(simplePanel);
@@ -305,7 +304,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void setCurrentUser(Model user) {
 			this.vlUsername.setText(user.asString("emailAddress"));
-			this.vlUsername.setViewRequest(new EditViewRequest(this, UserEditView.klas, user));
+			this.vlUsername.setViewInitializer(new EditViewInitializer(UserEditView.klas, user));
 			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			String dm;
 			try {
@@ -326,7 +325,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 		private void clearCurrentUser() {
 			this.vlUsername.setText(null);
-			this.vlUsername.setViewRequest(null);
+			this.vlUsername.setViewInitializer(null);
 			this.lblUserDateCreated.setText(null);
 			this.lblUserAccount.setText(null);
 		}
@@ -343,7 +342,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	 * Center - A {@link SimplePanel} designed to contain the current pinned view.
 	 * @author jpk
 	 */
-	private final class Center extends FlowPanel implements IStatusListener {
+	private final class Center extends FlowPanel implements IStatusHandler {
 
 		public Center() {
 			super();
@@ -353,18 +352,18 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		@Override
 		protected void onLoad() {
 			super.onLoad();
-			StatusEventDispatcher.instance().addStatusListener(this);
-			ViewManager.get().initialize(this);
+			StatusEventDispatcher.get().addStatusHandler(this);
+			ViewManager.initialize(this, 4);
 			// set the main model change listener so views see all model change events
-			ModelChangeManager.get().addModelChangeListener(ViewManager.get());
+			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
-			ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
-			ViewManager.get().clear();
-			StatusEventDispatcher.instance().removeStatusListener(this);
+			//ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
+			ViewManager.shutdown();
+			StatusEventDispatcher.get().removeStatusHandler(this);
 			//MsgManager.get().clear();
 		}
 

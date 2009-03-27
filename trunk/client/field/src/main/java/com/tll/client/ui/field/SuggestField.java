@@ -38,6 +38,7 @@ public final class SuggestField extends AbstractDataField<String, String> {
 		 */
 		public Impl() {
 			super(new MultiWordSuggestOracle());
+			addStyleName(Styles.TBOX);
 		}
 
 		@Override
@@ -50,6 +51,28 @@ public final class SuggestField extends AbstractDataField<String, String> {
 				// ok
 			}
 			return s;
+		}
+
+		/**
+		 * Resolves the "show" value for the given value. If a corresponding data
+		 * token exists for the given value, it is used as the show value.
+		 * Otherwise, the given value will be the show value.
+		 * @param value the value
+		 * @return the "show" value for the given value.
+		 */
+		private String resolveShowValue(String value) {
+			final String tkn = getToken(value);
+			return tkn == null ? value : tkn;
+		}
+
+		@Override
+		public void setValue(String newValue) {
+			super.setValue(resolveShowValue(newValue));
+		}
+
+		@Override
+		public void setValue(String value, boolean fireEvents) {
+			super.setValue(resolveShowValue(value), fireEvents);
 		}
 
 		MultiWordSuggestOracle getOracle() {
@@ -111,6 +134,12 @@ public final class SuggestField extends AbstractDataField<String, String> {
 				oracle.add(s);
 			}
 		}
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		sb.getTextBox().setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 
 	@Override

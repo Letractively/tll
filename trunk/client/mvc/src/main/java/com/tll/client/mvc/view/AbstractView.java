@@ -8,13 +8,13 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.model.ModelChangeEvent;
 
 /**
  * AbstractView - Base view class for all defined views in the app.
  * @author jpk
+ * @param <I> the view initializer type
  */
-public abstract class AbstractView extends Composite implements IView {
+public abstract class AbstractView<I extends IViewInitializer> extends Composite implements IView<I> {
 
 	/**
 	 * The view key uniquely indentifying the view at runtime.
@@ -44,25 +44,8 @@ public abstract class AbstractView extends Composite implements IView {
 	 */
 	protected abstract ViewClass getViewClass();
 
-	public final ViewOptions getOptions() {
-		return getViewClass().getViewOptions();
-	}
-
 	public final ViewKey getViewKey() {
 		return viewKey;
-	}
-
-	/**
-	 * Factory method employed by {@link #getViewRequest()}.
-	 * @return New ViewRequest instance specific to the implementation.
-	 */
-	protected abstract ShowViewRequest newViewRequest();
-
-	public final ShowViewRequest getViewRequest() {
-		ShowViewRequest r = newViewRequest();
-		r.setLongViewName(getLongViewName());
-		r.setShortViewName(getShortViewName());
-		return r;
 	}
 
 	public String getShortViewName() {
@@ -86,25 +69,24 @@ public abstract class AbstractView extends Composite implements IView {
 		return null;
 	}
 
-	public final void initialize(ViewRequestEvent viewRequest) {
-		assert viewRequest != null;
-		// set the view key
-		this.viewKey = viewRequest.getViewKey();
-		assert viewKey != null;
+	public final void initialize(I initializer) {
+		if(initializer == null || initializer.getViewKey() == null)
+			throw new IllegalArgumentException("Null or invalid view initializer.");
+		viewKey = initializer.getViewKey();
 		// add view specific style to the view's widget
 		if(getViewStyle() != null) {
 			addStyleName(getViewStyle());
 		}
 
 		// do impl specific initialization
-		doInitialization(viewRequest);
+		doInitialization(initializer);
 	}
 
 	/**
 	 * Performs impl specific initialization just after the ViewKey has been set.
 	 * @param viewRequest The non-<code>null</code> view request.
 	 */
-	protected abstract void doInitialization(ViewRequestEvent viewRequest);
+	protected abstract void doInitialization(I viewRequest);
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before
@@ -121,43 +103,6 @@ public abstract class AbstractView extends Composite implements IView {
 	 * before this view looses reference-ability
 	 */
 	protected abstract void doDestroy();
-
-	/**
-	 * Must be implemented by concrete views.
-	 * @param event
-	 * @return true/false
-	 */
-	protected abstract boolean shouldHandleModelChangeEvent(ModelChangeEvent event);
-
-	/**
-	 * Handles model change errors. Sub-classes should override as necessary.
-	 * @param event The {@link ModelChangeEvent}
-	 */
-	protected void handleModelChangeError(ModelChangeEvent event) {
-		// base impl no-op
-	}
-
-	/**
-	 * Handles successful model changes. Sub-classes should override as necessary.
-	 * @param event The {@link ModelChangeEvent}
-	 */
-	protected void handleModelChangeSuccess(ModelChangeEvent event) {
-		// base impl no-op
-	}
-
-	public final void onModelChangeEvent(ModelChangeEvent event) {
-		if(shouldHandleModelChangeEvent(event)) {
-			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
-			// errors?
-			if(event.getStatus().hasErrors()) {
-				handleModelChangeError(event);
-				return;
-			}
-
-			// ahh success
-			handleModelChangeSuccess(event);
-		}
-	}
 
 	@Override
 	public final String toString() {

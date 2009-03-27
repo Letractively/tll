@@ -24,6 +24,14 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 	 */
 	static final class Impl extends PasswordTextBox implements IEditable<String> {
 
+		/**
+		 * Constructor
+		 */
+		public Impl() {
+			super();
+			addStyleName(Styles.TBOX);
+		}
+
 	}
 
 	private final Impl tb;
@@ -83,6 +91,12 @@ public final class PasswordField extends AbstractField<String> implements IHasMa
 
 	public void setText(String text) {
 		tb.setText(text);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		tb.setEnabled(enabled);
+		super.setEnabled(enabled);
 	}
 
 	@Override

@@ -112,8 +112,8 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 	 */
 	static abstract class DefaultUITestCase extends UITestCase {
 		
-		final String name, desc;
-		DefaultTestLayout layout;
+		private final String name, desc;
+		private DefaultTestLayout layout;
 
 		/**
 		 * Constructor
@@ -165,22 +165,22 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 		@Override
 		public final void load() {
 			layout = new DefaultTestLayout();
-			layout.setContext(getContext());
 			RootPanel.get().add(layout);
+			init();
+			layout.setContext(getContext());
 			final Button[] actions = getTestActions();
 			if(actions != null) {
 				for(final Button action : actions) {
 					layout.addTestAction(action);
 				}
 			}
-			init();
 		}
 
 		@Override
 		public final void unload() {
-			teardown();
 			layout.removeFromParent();
 			layout = null;
+			teardown();
 		}
 		
 	} // DefaultUITestCase
@@ -300,15 +300,20 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 				
 				for(final UITestCase test : tests) {
 					if(historyToken.equals(test.getHistoryToken())) {
-						assert current == null;
-						current = test;
-						toggleViewState(true);
-						test.load();
+						if(current != test) {
+							if(current != null) {
+								current.unload();
+							}
+							current = test;
+							toggleViewState(true);
+							test.load();
+						}
 						return;
 					}
 				}
 				
-				throw new IllegalStateException("Unhandled history state: " + historyToken);
+				// this is fallacious since we're depriving other history handlers from processing!
+				//throw new IllegalStateException("Unhandled history state: " + historyToken);
 			}
 
 		});

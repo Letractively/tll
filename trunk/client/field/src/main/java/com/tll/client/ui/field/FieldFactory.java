@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.convert.EnumToDataMapConverter;
-import com.tll.client.ui.IWidgetRenderer;
+import com.tll.client.ui.GridRenderer;
 import com.tll.client.util.GlobalFormat;
 import com.tll.client.validate.CreditCardValidator;
 import com.tll.client.validate.DateValidator;
@@ -169,11 +169,11 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText The on hover tool tip text
 	 * @param data name/value pairs where the map is keyed by the name
-	 * @param renderer renders the radio buttons
+	 * @param renderer renders the radio buttons in a grid
 	 * @return new field
 	 */
 	public static final <V> RadioGroupField<V> fradiogroup(String name, String propName, String labelText,
-			String helpText, Map<V, String> data, IWidgetRenderer renderer) {
+			String helpText, Map<V, String> data, GridRenderer renderer) {
 		return new RadioGroupField<V>(name, propName, labelText, helpText, renderer, data);
 	}
 
@@ -243,14 +243,14 @@ public abstract class FieldFactory {
 	 * @param labelText
 	 * @param helpText
 	 * @param type
-	 * @param renderer renders the radio buttons
+	 * @param renderer renders the radio buttons in a grid
 	 * @return radio group field containing radio buttons each corresponding the
 	 *         an enumeration.
 	 */
 	@SuppressWarnings("unchecked")
 	public static final <E extends Enum<E>> RadioGroupField<E> fenumradio(String name, String propName, String labelText,
 			String helpText,
-			final Class<E> type, IWidgetRenderer renderer) {
+			final Class<E> type, GridRenderer renderer) {
 		final RadioGroupField<E> f =
 				fradiogroup(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE
 						.convert(type), renderer);

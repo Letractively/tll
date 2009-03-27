@@ -4,43 +4,32 @@
  */
 package com.tll.client.mvc;
 
-import com.google.gwt.user.client.History;
-import com.tll.client.mvc.view.IView;
+import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.UnloadViewRequest;
-import com.tll.client.mvc.view.ViewKey;
-import com.tll.client.mvc.view.ViewRequestEvent;
-import com.tll.client.ui.view.ViewContainer;
 
 /**
  * UnloadViewController - Handles {@link UnloadViewRequest}s.
  * @author jpk
  */
-class UnloadViewController extends AbstractController {
+class UnloadViewController implements IController {
 
-	public boolean canHandle(ViewRequestEvent request) {
+	public boolean canHandle(IViewRequest request) {
 		return request instanceof UnloadViewRequest;
 	}
 
 	@Override
-	public void handle(ViewRequestEvent request) {
-		UnloadViewRequest r = (UnloadViewRequest) request;
+	public void handle(IViewRequest request) {
+		final UnloadViewRequest r = (UnloadViewRequest) request;
 
-		final ViewKey viewKey = r.getViewKey();
-		assert viewKey != null;
+		ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
+		/*
+		// unload the view (deferring it to ensure we are clear of the history "pump" since we subsequently fire a view change event)...
+		DeferredCommand.addCommand(new Command() {
 
-		// get the view to be unloaded
-		ViewContainer viewToUnload = ViewManager.get().findView(viewKey);
-		if(viewToUnload == null) {
-			throw new IllegalArgumentException("Unable to resolve existing view for unloading");
-		}
-
-		// unload the view
-		IView newestPinned = ViewManager.get().unloadView(viewToUnload, r.isRemoveFromCache());
-		if(newestPinned != null) {
-			// Dispatcher.instance().dispatch(new SimpleViewRequest(r.getWidget(),
-			// newestPinned.getViewKey()));
-			History.newItem(newestPinned.getViewKey().getViewKeyHistoryToken());
-		}
+			public void execute() {
+				ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
+			}
+		});
+		*/
 	}
-
 }

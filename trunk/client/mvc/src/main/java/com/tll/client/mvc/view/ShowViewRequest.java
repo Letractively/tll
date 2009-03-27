@@ -1,75 +1,82 @@
 /**
  * The Logic Lab
  * @author jpk
- * Apr 5, 2008
+ * @since Mar 24, 2009
  */
 package com.tll.client.mvc.view;
-
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * ShowViewRequest
  * @author jpk
  */
-@SuppressWarnings("serial")
-public abstract class ShowViewRequest extends ViewRequestEvent implements IViewRef {
+public final class ShowViewRequest extends AbstractViewRequest {
 
 	/**
-	 * The view class.
+	 * The view options.
 	 */
-	private final ViewClass viewClass;
+	private final ViewOptions options;
 
 	/**
-	 * The ViewKey. May <em>not</em> be known at instantiation for certain impls.
+	 * The view initializer responsible for providing the {@link ViewKey}.
 	 */
-	private ViewKey viewKey;
-
-	private String shortViewName, longViewName;
+	private final IViewInitializer init;
 
 	/**
-	 * Constructor
-	 * @param source
+	 * Constructor - Use for dynamic views that will have default view options.
+	 * @param init
+	 */
+	public ShowViewRequest(IViewInitializer init) {
+		this(ViewOptions.DEFAULT_VIEW_OPTIONS, init);
+	}
+
+	/**
+	 * Constructor - Use for dynamic views.
+	 * @param options
+	 * @param init
+	 */
+	public ShowViewRequest(ViewOptions options, IViewInitializer init) {
+		this.options = options;
+		this.init = init;
+	}
+
+	/**
+	 * Constructor - Use for static views that will have default view options.
 	 * @param viewClass
 	 */
-	public ShowViewRequest(Widget source, ViewClass viewClass) {
-		super(source);
-		this.viewClass = viewClass;
+	public ShowViewRequest(ViewClass viewClass) {
+		this(ViewOptions.DEFAULT_VIEW_OPTIONS, new StaticViewInitializer(viewClass));
 	}
 
 	/**
-	 * @return The view type specific unique id for the requested view. Used in lazily generating the
-	 *         ViewKey.
+	 * Constructor - Used for static views.
+	 * @param options
+	 * @param viewClass
 	 */
-	protected abstract int getViewId();
+	public ShowViewRequest(ViewOptions options, ViewClass viewClass) {
+		this(options, new StaticViewInitializer(viewClass));
+	}
 
-	/**
-	 * @return The runtime dependent key that uniquely identifies a particular view. Should never
-	 *         return <code>null</code>.
-	 */
 	@Override
-	public final ViewKey getViewKey() {
-		if(viewKey == null) {
-			if(viewClass != null) {
-				viewKey = new ViewKey(viewClass, getViewId());
-			}
-		}
-		return viewKey;
+	public final boolean addHistory() {
+		return true;
 	}
 
-	public String getShortViewName() {
-		return shortViewName;
+	/**
+	 * @return The view initializer.
+	 */
+	public IViewInitializer getViewInitializer() {
+		return init;
 	}
 
-	public void setShortViewName(String shortViewName) {
-		this.shortViewName = shortViewName;
+	/**
+	 * @return The view options.
+	 */
+	public ViewOptions getOptions() {
+		return options;
 	}
 
-	public String getLongViewName() {
-		return longViewName;
+	@Override
+	public ViewKey getViewKey() {
+		return init.getViewKey();
 	}
-
-	public void setLongViewName(String longViewName) {
-		this.longViewName = longViewName;
-	}
-
 }

@@ -12,7 +12,6 @@ import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPrototypeRequest;
 import com.tll.common.data.EntityPurgeRequest;
 import com.tll.common.data.EntityRequest;
 import com.tll.common.data.rpc.ICrudService;
@@ -26,10 +25,9 @@ import com.tll.common.search.ISearch;
  * CrudCommand - Issues CRUD commands to the server.
  * @author jpk
  */
-public final class CrudCommand extends RpcCommand<EntityPayload> implements ISourcesCrudEvents {
+public class CrudCommand extends RpcCommand<EntityPayload> {
 
 	public enum CrudOp {
-		FETCH_PROTOTYPE,
 		LOAD,
 		ADD,
 		UPDATE,
@@ -41,9 +39,7 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 		svc = (ICrudServiceAsync) GWT.create(ICrudService.class);
 	}
 
-	private final CrudListenerCollection crudListeners = new CrudListenerCollection();
-
-	private CrudOp crudOp;
+	protected CrudOp crudOp;
 	private EntityRequest entityRequest;
 
 	/**
@@ -52,19 +48,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	 */
 	public CrudCommand(Widget sourcingWidget) {
 		super(sourcingWidget);
-	}
-
-	/**
-	 * Sets the state of this command for receiving an empty entity.
-	 * @param entityType
-	 * @param generate
-	 */
-	public final void fetchPrototype(IEntityType entityType, boolean generate) {
-		if(entityType == null) {
-			throw new IllegalArgumentException("An entity type must be specified.");
-		}
-		entityRequest = new EntityPrototypeRequest(entityType, generate);
-		crudOp = CrudOp.FETCH_PROTOTYPE;
 	}
 
 	/**
@@ -140,14 +123,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 		crudOp = CrudOp.PURGE;
 	}
 
-	public final void addCrudListener(ICrudListener listener) {
-		crudListeners.add(listener);
-	}
-
-	public final void removeCrudListener(ICrudListener listener) {
-		crudListeners.remove(listener);
-	}
-
 	private void clear() {
 		crudOp = null;
 		entityRequest = null;
@@ -170,10 +145,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 	@Override
 	protected void doExecute() {
 		switch(crudOp) {
-			case FETCH_PROTOTYPE:
-				svc.prototype((EntityPrototypeRequest) entityRequest, getAsyncCallback());
-				break;
-
 			case LOAD:
 				svc.load((EntityLoadRequest) entityRequest, getAsyncCallback());
 				break;
@@ -198,8 +169,6 @@ public final class CrudCommand extends RpcCommand<EntityPayload> implements ISou
 
 		// cache aux data
 		AuxDataCache.instance().cache(result);
-
-		crudListeners.fireCrudEvent(new CrudEvent(sourcingWidget, crudOp, entityRequest, result));
 
 		clear();
 	}

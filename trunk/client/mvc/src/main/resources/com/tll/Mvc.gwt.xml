@@ -1,7 +1,7 @@
 <module>
-  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.UI" />
   
-  <stylesheet src="css/viewpath.css" />
   <stylesheet src="css/view.css" />
+  <stylesheet src="css/viewpath.css" />
   
 </module>

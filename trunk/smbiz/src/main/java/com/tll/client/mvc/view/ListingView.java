@@ -5,7 +5,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
@@ -15,21 +14,15 @@ import com.tll.client.ui.listing.ModelListingWidget;
 /**
  * ListingView - View dedicated to a single listing.
  * @author jpk
+ * @param <I> the view initializer type
  */
-public abstract class ListingView extends AbstractView {
+public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
 
 	/**
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
 	 * @author jpk
 	 */
 	protected abstract class ModelChangingRowOpDelegate extends AbstractRowOptions {
-
-		/**
-		 * Provides the necessary sourcing widget enabling the sourcing of potential
-		 * events that are driven by option selections.
-		 * @return A non-<code>null</code> Widget ref
-		 */
-		protected abstract Widget getSourcingWidget();
 
 		/**
 		 * @return The class of the view to display for editing listing rows.
@@ -43,7 +36,7 @@ public abstract class ListingView extends AbstractView {
 		@Override
 		protected void doEditRow(int rowIndex) {
 			ViewManager.get().dispatch(
-					new EditViewRequest(getSourcingWidget(), getEditViewClass(), listingWidget.getRowKey(rowIndex)));
+					new ShowViewRequest(new EditViewInitializer(getEditViewClass(), listingWidget.getRowKey(rowIndex))));
 		}
 
 		/**

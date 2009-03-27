@@ -25,6 +25,7 @@ import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
@@ -47,8 +48,79 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
+			new MsgsText(), new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
 			new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
+	}
+	
+	static final class MsgsText extends DefaultUITestCase {
+		
+		static final Msg m1 = new Msg("This is message 1", MsgLevel.INFO);
+		static final Msg m2 = new Msg("This is message 2", MsgLevel.WARN);
+		static final Msg m3 = new Msg("This is message 3", MsgLevel.ERROR);
+		static final ArrayList<Msg> mlist;
+		
+		static {
+			mlist = new ArrayList<Msg>();
+			mlist.add(m1);
+			mlist.add(m2);
+			mlist.add(m3);
+		}
+		
+		FlowPanel pnl;
+		Label lblA, lblB;
+		
+		/**
+		 * Constructor
+		 */
+		public MsgsText() {
+			super("Msgs", "Tests the static methods in the Msgs class");
+		}
+
+		@Override
+		protected void init() {
+			pnl = new FlowPanel();
+			lblA = new Label("Label A");
+			lblB = new Label("Label B");
+			pnl.add(lblA);
+			pnl.add(lblB);
+		}
+
+		@Override
+		protected void teardown() {
+			pnl = null;
+		}
+
+		@Override
+		protected Widget getContext() {
+			return pnl;
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return new Button[] {
+				new Button("Post single on Label A", new ClickHandler() {
+				
+					@Override
+					public void onClick(ClickEvent event) {
+						Msgs.post(m1, lblA);
+					}
+				}),
+				new Button("Post multiple on Label A", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						Msgs.post(mlist, lblA);
+					}
+				}),
+				new Button("Post timed single on Label A", new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						Msgs.post(m1, lblA, Position.BOTTOM, 1000, true);
+					}
+				}),
+			};
+		}
 	}
 
 	/**
@@ -229,7 +301,7 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class OptionsPopupTest extends UITestCase {
 
-		FocusPanel contextArea = new FocusPanel();
+		FocusPanel contextArea;
 		OptionsPopup popup;
 
 		@Override
@@ -249,6 +321,7 @@ public final class UITests extends AbstractUITest {
 				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
 				new Option("Option 5") });
 
+			contextArea = new FocusPanel();
 			contextArea.setSize("200px", "200px");
 			contextArea.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
@@ -642,7 +715,7 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel layout;
 		VerticalPanel buttonPanel;
 		FlowPanel context;
-		BusyPanel busyPanel = new BusyPanel(true, null, 20);
+		BusyPanel busyPanel;
 
 		@Override
 		public String getName() {
@@ -659,7 +732,7 @@ public final class UITests extends AbstractUITest {
 			context.setSize("200px", "200px");
 			context.getElement().getStyle().setProperty("border", "1px solid gray");
 			context.getElement().getStyle().setProperty("padding", "10px");
-
+			busyPanel = new BusyPanel(true, null, 20);
 		}
 
 		private void stubTestButtons() {

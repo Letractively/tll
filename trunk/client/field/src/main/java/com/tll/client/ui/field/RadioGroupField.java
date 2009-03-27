@@ -15,8 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.tll.client.ui.IWidgetRenderer;
-import com.tll.client.ui.VerticalRenderer;
+import com.tll.client.ui.GridRenderer;
 import com.tll.util.ObjectUtil;
 
 /**
@@ -71,10 +70,22 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		}
 	}
 	
+  /**
+	 * GridStyles
+	 * @author jpk
+	 */
+  public static final class GridStyles {
+
+		/**
+		 * Style applied to the radio grid renderer.
+		 */
+		public static final String GRID = "fradioGrid";
+	}
+	
 	/**
 	 * The default radio button renderer.
 	 */
-	private static final IWidgetRenderer DEFAULT_RENDERER = VerticalRenderer.INSTANCE;
+	private static final GridRenderer DEFAULT_RENDERER = new GridRenderer(1, GridStyles.GRID);
 
 	private final Impl fp = new Impl();
 
@@ -87,7 +98,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	/**
 	 * The radio button renderer.
 	 */
-	private final IWidgetRenderer renderer;
+	private final GridRenderer renderer;
 
 	/**
 	 * Constructor
@@ -98,12 +109,20 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	 * @param renderer the render to employ for rendering the radio buttons
 	 * @param data
 	 */
-	RadioGroupField(String name, String propName, String labelText, String helpText, IWidgetRenderer renderer,
+	RadioGroupField(String name, String propName, String labelText, String helpText, GridRenderer renderer,
 			Map<V, String> data) {
 		super(name, propName, labelText, helpText);
 		this.renderer = renderer == null ? DEFAULT_RENDERER : renderer;
 		fp.addValueChangeHandler(this);
 		setData(data);
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		for(final RadioButton rb : radioButtons) {
+			rb.setEnabled(enabled);
+		}
+		super.setEnabled(enabled);
 	}
 
 	private void render() {
@@ -115,7 +134,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	private RadioButton create(String name) {
 		final RadioButton rb = new RadioButton("rg_" + getDomId(), name);
 		rb.setFormValue(name);
-		rb.setStyleName(Styles.LABEL);
+		rb.addStyleName(Styles.CBRB);
 		rb.addClickHandler(new ClickHandler() {
 
 			@SuppressWarnings("synthetic-access")

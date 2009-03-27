@@ -38,7 +38,6 @@ public final class FieldLabel extends Widget implements HasText, HasClickHandler
 	public FieldLabel(String text, String fldId, boolean required) {
 		setElement(DOM.createLabel());
 		this.required = required;
-		setStyleName(IFieldWidget.Styles.LABEL);
 		setText(text);
 		if(fldId != null) {
 			setFor(fldId);

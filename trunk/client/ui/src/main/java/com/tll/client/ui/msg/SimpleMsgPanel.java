@@ -95,7 +95,9 @@ public class SimpleMsgPanel extends Composite {
 				// NOTE: since this is a clipped image, the width/height should be known
 				mlp.insert(new ImageContainer(Util.getMsgLevelImage(level)), 0);
 			}
-			mlp.getWidget(0).setVisible(show);
+			if(mlp.getWidgetCount() == 2) {
+				mlp.getWidget(0).setVisible(show);
+			}
 		}
 	}
 

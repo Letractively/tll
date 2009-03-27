@@ -3,7 +3,6 @@
  */
 package com.tll.client.mvc.view.account;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.App;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
@@ -13,11 +12,10 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.PropertyBoundCellRenderer;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
-import com.tll.client.mvc.view.ViewRequestEvent;
 import com.tll.client.ui.listing.AccountListingConfig;
 import com.tll.client.ui.option.Option;
 import com.tll.client.util.GlobalFormat;
@@ -34,7 +32,7 @@ import com.tll.model.SmbizEntityType;
  * @author jpk
  */
 @SuppressWarnings("synthetic-access")
-public final class IspListingView extends ListingView {
+public final class IspListingView extends ListingView<StaticViewInitializer> {
 
 	public static final Class klas = new Class();
 
@@ -45,36 +43,9 @@ public final class IspListingView extends ListingView {
 		}
 
 		@Override
-		public IView newView() {
+		public IspListingView newView() {
 			return new IspListingView();
 		}
-
-		public IspListingViewRequest newViewRequest(Widget source) {
-			return new IspListingViewRequest(this, source);
-		}
-	}
-
-	/**
-	 * IspListingViewRequest
-	 * @author jpk
-	 */
-	@SuppressWarnings("serial")
-	public static final class IspListingViewRequest extends ShowViewRequest {
-
-		/**
-		 * Constructor
-		 * @param viewClass
-		 * @param source
-		 */
-		IspListingViewRequest(Class viewClass, Widget source) {
-			super(source, viewClass);
-		}
-
-		@Override
-		protected int getViewId() {
-			return klas.hashCode();
-		}
-
 	}
 
 	/**
@@ -85,12 +56,12 @@ public final class IspListingView extends ListingView {
 	}
 
 	@Override
-	protected ViewClass getViewClass() {
+	protected Class getViewClass() {
 		return klas;
 	}
 
 	@Override
-	protected void doInitialization(ViewRequestEvent viewRequest) {
+	protected void doInitialization(StaticViewInitializer init) {
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		criteria.setNamedQuery("account.ispList");
@@ -116,11 +87,6 @@ public final class IspListingView extends ListingView {
 				}
 
 				@Override
-				protected Widget getSourcingWidget() {
-					return IspListingView.this;
-				}
-
-				@Override
 				protected ViewClass getEditViewClass() {
 					return AccountEditView.klas;
 				}
@@ -134,7 +100,7 @@ public final class IspListingView extends ListingView {
 				protected void handleRowOp(String optionText, int rowIndex) {
 					if(optionText.indexOf("Merchant Listing") == 0) {
 						ViewManager.get().dispatch(
-								MerchantListingView.klas.newViewRequest(IspListingView.this, listingWidget.getRowKey(rowIndex)));
+								new ShowViewRequest(new MerchantListingViewInitializer(listingWidget.getRowKey(rowIndex))));
 					}
 				}
 			};
@@ -174,10 +140,5 @@ public final class IspListingView extends ListingView {
 	@Override
 	public String getLongViewName() {
 		return "Isp Listing";
-	}
-
-	@Override
-	public ShowViewRequest newViewRequest() {
-		return klas.newViewRequest(this);
 	}
 }

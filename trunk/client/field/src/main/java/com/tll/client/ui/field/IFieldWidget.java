@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Feb 27, 2009
+ * @author jpk Feb 27, 2009
  */
 package com.tll.client.ui.field;
 
@@ -33,9 +32,15 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 		public static final String FIELD = "fld";
 
 		/**
-		 * Style for field labels.
+		 * Style indicating a form input element of: input[type="text"],
+		 * input[type="password"], select, textarea.
 		 */
-		public static final String LABEL = "lbl";
+		public static final String TBOX = "tbox";
+
+		/**
+		 * Specific field style applied to checkboxes and radio buttons.
+		 */
+		public static final String CBRB = "cbrb";
 
 		/**
 		 * Style indicating a field's requiredness.
@@ -60,20 +65,31 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 	} // Styles
 
 	/**
-	 * @return the editable interface.
-	 */
-	IEditable<?> getEditable();
-
-	/**
 	 * Sets the property name for this field.
 	 * @param propName The property name
 	 */
 	void setPropertyName(String propName);
 
 	/**
+	 * @return the editable interface.
+	 */
+	IEditable<?> getEditable();
+
+	/**
 	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
 	 */
 	FieldLabel getFieldLabel();
+	
+	/**
+	 * @return The label text.
+	 */
+	String getLabelText();
+
+	/**
+	 * Sets the label text.
+	 * @param text the label text
+	 */
+	void setLabelText(String text);
 
 	/**
 	 * Sets the ancestor Widget that contains this field.
@@ -87,24 +103,8 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 	 */
 	void setFieldLabelContainer(Widget fieldLabelContainer);
 
-	
 	/**
 	 * @return the current validity state.
 	 */
 	boolean isValid();
-
-	/**
-	 * This property is a generalized switch. When a field widget is on, it is
-	 * available in the ui for full life-cycle interaction. When off, it is not
-	 * visible in the ui and does <em>not</em> participate in any field related
-	 * life-cycles. In other words, it serves as only as a reference when off.
-	 * @return <code>true</code> if the field widget is on.
-	 */
-	//boolean isOn();
-
-	/**
-	 * Turn the field widget on or off.
-	 * @param on
-	 */
-	//void turnOn(boolean on);
 }

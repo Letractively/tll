@@ -1,7 +1,6 @@
 /**
  * The Logic Lab
- * @author jpk
- * Feb 12, 2009
+ * @author jpk Feb 12, 2009
  */
 package com.tll.client.mock;
 
@@ -11,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.ui.HorizontalRenderer;
+import com.tll.client.ui.GridRenderer;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
+import com.tll.client.ui.field.RadioGroupField.GridStyles;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.AccountStatus;
 import com.tll.common.model.mock.AddressType;
@@ -22,13 +22,12 @@ import com.tll.common.model.mock.MockEntityType;
 import com.tll.common.model.mock.MockModelStubber;
 import com.tll.refdata.RefDataType;
 
-
 /**
  * MockFieldGroupProviders
  * @author jpk
  */
 public class MockFieldGroupProviders {
-	
+
 	/**
 	 * AbstractMockFieldGroupProvider
 	 * @author jpk
@@ -88,7 +87,7 @@ public class MockFieldGroupProviders {
 			fg.addField(frefdata("adrsProvince", "province", "State/Province", "State/Province", RefDataType.US_STATES));
 			//fg.addField(fstext("adrsPostalCode", "postalCode", "Zip", "Zip", 20));
 			fg.addField(frefdata("adrsCountry", "country", "Country", "Country", RefDataType.ISO_COUNTRY_CODES));
-			
+
 			// ad hoc props to verify types
 			fg.addField(fcheckbox("adrsBoolean", "boolean", "Boolean", "Boolean"));
 			fg.addField(ftext("adrsFloat", "float", "Float", "Float", 5));
@@ -110,8 +109,8 @@ public class MockFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class,
-					HorizontalRenderer.INSTANCE));
+			fg.addField(fenumradio("ccType", "paymentData_ccType", "Type", "Type", CreditCardType.class, new GridRenderer(-1,
+					GridStyles.GRID)));
 			fg.addField(fcreditcard("ccNum", "paymentData_ccNum", "Num", null, 15));
 			fg.addField(ftext("ccCvv2", "paymentData_ccCvv2", "CVV2", "CVV2", 4));
 			fg.addField(ftext("ccExpMonth", "paymentData_ccExpMonth", "Exp Month", "Expiration Month", 2));
@@ -126,7 +125,7 @@ public class MockFieldGroupProviders {
 		}
 
 	}
-	
+
 	/**
 	 * AccountAddressFieldsProvider
 	 * @author jpk
@@ -172,7 +171,7 @@ public class MockFieldGroupProviders {
 			fg.addField(fdate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
 			fg
 					.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
-					"PersistPayment Info?"));
+							"PersistPayment Info?"));
 		}
 	}
 }

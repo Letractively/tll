@@ -72,7 +72,7 @@ public class BusyPanel extends GlassPanel {
 	/**
 	 * The default throbber image ref.
 	 */
-	private static final String DEFAULT_THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
+	public static final String DEFAULT_THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
 
 	/**
 	 * Constructor
@@ -81,7 +81,9 @@ public class BusyPanel extends GlassPanel {
 	 * @param opacity the opacity from 0 to 100
 	 */
 	public BusyPanel(boolean autoHide, String color, int opacity) {
-		this(autoHide, color, opacity, new Image(DEFAULT_THROBBER_URL));
+		super(autoHide);
+		setColor(color);
+		setOpacity(opacity);
 	}
 
 	/**
@@ -92,12 +94,10 @@ public class BusyPanel extends GlassPanel {
 	 * @param throbImage Optional throbber image centered under the panel
 	 */
 	public BusyPanel(boolean autoHide, String color, int opacity, Image throbImage) {
-		super(autoHide);
+		this(autoHide, color, opacity);
 		if(throbImage != null) {
 			setWidget(new ThrobbingPanel(throbImage));
 		}
-		setColor(color);
-		setOpacity(opacity);
 	}
 
 	/**
