@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tll-client</artifactId>
+    <groupId>com.tll</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>com.tll</groupId>
+  <artifactId>client-mvc-model</artifactId>
+  <name>client-mvc-model</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Provides model change event support to IViews.</description>
+  
+  <build>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-mvc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>

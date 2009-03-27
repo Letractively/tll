@@ -1,0 +1,15 @@
+<module>
+  <inherits name="com.tll.Core" />
+  <inherits name="com.tll.UI" />
+  <inherits name="com.tll.Field" />
+  <inherits name="com.tll.Listing" />
+  <inherits name="com.tll.Login" />
+  
+  <source>
+    <include name="model/SmbizEntityType.java" />
+    <include name="model/AccountStatus.java" />
+    <include name="model/AddressType.java" />
+    <include name="model/CreditCardType.java" />
+  </source>
+
+</module>
