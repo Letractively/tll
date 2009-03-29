@@ -16,8 +16,6 @@
   <description>Contains client modules.</description>
   
   <properties>
-    <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
-    <gwtLogVersion>2.5.3</gwtLogVersion>
   </properties>
 
   <modules>
@@ -207,16 +205,6 @@
   
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>com.google.code.gwt-log</groupId>
-        <artifactId>gwt-log</artifactId>
-        <version>${gwtLogVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gwt-incubator</groupId>
-        <artifactId>gwt-incubator-glasspanel</artifactId>
-        <version>${gwtIncubatorGlassPanelVersion}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

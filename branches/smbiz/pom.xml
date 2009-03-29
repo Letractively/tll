@@ -35,9 +35,13 @@
 
     <aspectjVersion>1.6.3</aspectjVersion>
     <springVersion>2.5.6</springVersion>
-    <gwtVersion>0.0.0</gwtVersion>
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    
+    <gwtVersion>0.0.0</gwtVersion>
+    <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
+    <gwtLogVersion>2.5.3</gwtLogVersion>
+    
     <junitVersion>4.5</junitVersion>
     <testNGVersion>5.8</testNGVersion>
   </properties>
@@ -63,6 +67,11 @@
     
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
@@ -546,6 +555,16 @@
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt-servlet</artifactId>
         <version>${gwtVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gwt-log</groupId>
+        <artifactId>gwt-log</artifactId>
+        <version>${gwtLogVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.gwt-incubator</groupId>
+        <artifactId>gwt-incubator-glasspanel</artifactId>
+        <version>${gwtIncubatorGlassPanelVersion}</version>
       </dependency>
 
       <dependency>

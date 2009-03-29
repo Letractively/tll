@@ -13,9 +13,6 @@ delete from customer_account;
 delete from account_address;
 delete from account_history;
 
-delete from acl_permission;
-delete from acl_object_identity;
-
 delete from authority;
 delete from user;
 delete from user_authority;

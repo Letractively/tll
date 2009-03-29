@@ -52,7 +52,7 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 		final boolean debug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
 		final String environment = Config.instance().getString(ConfigKeys.ENVIRONMENT_PARAM.getKey());
 		final AppContext c = new AppContext(debug, environment);
-		servletContext.setAttribute(AppContext.SERVLET_CONTEXT_KEY, c);
+		servletContext.setAttribute(AppContext.KEY, c);
 	}
 
 	@Override

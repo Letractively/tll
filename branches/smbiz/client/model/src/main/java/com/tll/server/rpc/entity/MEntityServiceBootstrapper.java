@@ -108,14 +108,14 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			throw new Error(e.getMessage(), e);
 		}
 
-		servletContext.setAttribute(MEntityContext.SERVLET_CONTEXT_KEY, new MEntityContext(refdata,
+		servletContext.setAttribute(MEntityContext.KEY, new MEntityContext(refdata,
 				mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory, sr, nqr, exceptionHandler));
 	}
 
 	@Override
 	public void shutdown(ServletContext servletContext) {
 		final MEntityContext c =
-				(MEntityContext) servletContext.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+				(MEntityContext) servletContext.getAttribute(MEntityContext.KEY);
 		if(c != null) {
 			final EntityManagerFactory emf = c.getEntityManagerFactory();
 			if(emf != null) {

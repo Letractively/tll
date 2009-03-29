@@ -13,10 +13,8 @@ import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.server.AppContext;
 import com.tll.server.RequestContext;
-import com.tll.server.filter.SmbizAuthenticationProcessingFilter;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.entity.MEntityContext;
 
 /**
@@ -29,12 +27,12 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 	
 	public AdminContextPayload getAdminContext() {
 		final RequestContext rc = getRequestContext();
-		final MEntityContext mec = (MEntityContext) rc.getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
-		final AppContext ac = (AppContext) rc.getServletContext().getAttribute(AppContext.SERVLET_CONTEXT_KEY);
+		final MEntityContext mec = (MEntityContext) rc.getServletContext().getAttribute(MEntityContext.KEY);
+		final AppContext ac = (AppContext) rc.getServletContext().getAttribute(AppContext.KEY);
 		
 		final com.tll.server.AdminContext sac =
 				(com.tll.server.AdminContext) rc.getSession().getAttribute(
-						SmbizAuthenticationProcessingFilter.SA_ADMIN_CONTEXT);
+						com.tll.server.AdminContext.KEY);
 		assert sac != null;
 
 		final Marshaler entityMarshaller = mec.getMarshaler();

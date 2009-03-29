@@ -1,35 +1,15 @@
 package com.tll.client;
 
 /**
- * Interface to represent the constants contained in resource bundle:
- * 	'C:/development/tll/smbiz/target/classes/com/tll/client/Constants.properties'.
+ * Constants
+ * @author jpk
  */
 public interface Constants extends com.google.gwt.i18n.client.Constants {
-  
-  /**
-   * Translated "0.9.0-SNAPSHOT".
-   * 
-   * @return translated "0.9.0-SNAPSHOT"
-   */
-  @DefaultStringValue("0.9.0-SNAPSHOT")
+
+	/**
+	 * @return the application version.
+	 */
+	@DefaultStringValue("0.0.0")
   @Key("appVersion")
   String appVersion();
-
-  /**
-   * Translated "true".
-   * 
-   * @return translated "true"
-   */
-  @DefaultStringValue("true")
-  @Key("debug")
-  String debug();
-
-  /**
-   * Translated "dev".
-   * 
-   * @return translated "dev"
-   */
-  @DefaultStringValue("dev")
-  @Key("environment")
-  String environment();
 }

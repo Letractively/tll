@@ -54,17 +54,6 @@ public abstract class AuthenticationProcessingFilter extends AbstractSecurityFil
 	private final Wrapped wrapped = new Wrapped();
 
 	/**
-	 * Does non-Acegi filtering.
-	 * @param request
-	 * @param response
-	 * @param chain
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	protected abstract void doFilterNonAcegi(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException;
-
-	/**
 	 * Invoked upon successful authentication.
 	 * @param request
 	 * @param response

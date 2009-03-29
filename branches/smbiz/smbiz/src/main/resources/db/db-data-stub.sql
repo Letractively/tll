@@ -62,12 +62,6 @@ insert into user_authority
 values
 (1,1);
 
-INSERT INTO acl_object_identity (id, object_identity, parent_object) VALUES 
-(1, 'com.tll.model.Asp:1', null);
-
-INSERT INTO acl_permission (id, acl_object_identity, recipient, mask) VALUES 
-(1, 1, 'ROLE_ADMINISTRATOR', 1);
-
 insert into visitor
 (id,date_created,date_last_modified,remote_host,remote_addr,remote_user,mc,aid)
 values

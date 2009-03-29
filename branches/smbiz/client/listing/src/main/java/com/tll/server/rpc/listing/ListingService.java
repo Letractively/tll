@@ -79,7 +79,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 			final HttpServletRequest request = getRequestContext().getRequest();
 			final MEntityContext context =
-					(MEntityContext) getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+					(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
 			assert request != null;
 
 			Integer offset = listingRequest.getOffset();

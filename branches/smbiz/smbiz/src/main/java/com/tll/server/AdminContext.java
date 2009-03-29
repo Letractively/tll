@@ -9,10 +9,15 @@ import com.tll.model.Account;
 import com.tll.model.User;
 
 /**
- * AdminContext
+ * AdminContext - Value object intended for session scoped smbiz admin context.
  * @author jpk
  */
 public final class AdminContext {
+
+	/**
+	 * A unique token to serve as a pointer to an instance of this type.
+	 */
+	public static final String KEY = AdminContext.class.getName();
 
 	/**
 	 * The logged in user.

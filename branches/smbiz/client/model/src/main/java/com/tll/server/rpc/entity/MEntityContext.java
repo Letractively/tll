@@ -24,7 +24,7 @@ public class MEntityContext {
 	 * The key identifying the {@link MEntityContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String SERVLET_CONTEXT_KEY = MEntityContext.class.getName();
+	public static final String KEY = MEntityContext.class.getName();
 
 	private final RefData refData;
 	private final MailManager mailManager;

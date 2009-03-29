@@ -33,7 +33,7 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	private static final long serialVersionUID = 5017008307371980402L;
 	
 	private MEntityContext getMEntityContext() {
-		return (MEntityContext) getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+		return (MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
 	}
 
 	/**

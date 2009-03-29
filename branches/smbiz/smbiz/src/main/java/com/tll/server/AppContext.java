@@ -16,7 +16,7 @@ public class AppContext {
 	 * The key identifying the sole {@link AppContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String SERVLET_CONTEXT_KEY = AppContext.class.getName();
+	public static final String KEY = AppContext.class.getName();
 
 	private final boolean debug;
 	private final String environment;

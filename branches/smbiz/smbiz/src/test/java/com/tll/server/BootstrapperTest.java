@@ -78,9 +78,9 @@ public class BootstrapperTest {
 		final ServletContextEvent event = new ServletContextEvent(context);
 		final Bootstrapper bootstraper = new Bootstrapper();
 		bootstraper.contextInitialized(event);
-		final MEntityContext mec = (MEntityContext) context.getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+		final MEntityContext mec = (MEntityContext) context.getAttribute(MEntityContext.KEY);
 		final SecurityContext sc = (SecurityContext) context.getAttribute(SecurityContext.SERVLET_CONTEXT_KEY);
-		final AppContext ac = (AppContext) context.getAttribute(AppContext.SERVLET_CONTEXT_KEY);
+		final AppContext ac = (AppContext) context.getAttribute(AppContext.KEY);
 		Assert.assertNotNull(mec);
 		Assert.assertNotNull(ac);
 		if(employSecurity) Assert.assertNotNull(sc);

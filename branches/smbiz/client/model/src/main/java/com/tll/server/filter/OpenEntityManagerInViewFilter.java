@@ -43,7 +43,7 @@ public class OpenEntityManagerInViewFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) /*throws ServletException*/{
 		final MEntityContext context =
-				(MEntityContext) config.getServletContext().getAttribute(MEntityContext.SERVLET_CONTEXT_KEY);
+				(MEntityContext) config.getServletContext().getAttribute(MEntityContext.KEY);
 			emf = context.getEntityManagerFactory();
 	}
 

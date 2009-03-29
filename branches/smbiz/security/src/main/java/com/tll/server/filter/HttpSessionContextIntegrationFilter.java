@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * HttpSessionContextIntegrationFilter
  * @author jpk
  */
-public class HttpSessionContextIntegrationFilter extends AbstractSecurityFilter {
+public final class HttpSessionContextIntegrationFilter extends AbstractSecurityFilter {
 
 	protected static final Log log = LogFactory.getLog(HttpSessionContextIntegrationFilter.class);
 	
