@@ -165,12 +165,12 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
       <classifier>sources</classifier>
     </dependency>
@@ -196,6 +196,12 @@
       <version>${project.version}</version>
     </dependency>
     
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>

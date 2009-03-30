@@ -19,9 +19,9 @@ import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
-import com.tll.AbstractDbTest;
+import com.tll.AbstractInjectedTest;
+import com.tll.DbTestSupport;
 import com.tll.criteria.Criteria;
-import com.tll.dao.DaoMode;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
@@ -30,9 +30,9 @@ import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
 import com.tll.di.EntityAssemblerModule;
-import com.tll.di.OrmDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
+import com.tll.di.OrmDaoModule;
 import com.tll.di.TransactionModule;
 import com.tll.model.Address;
 import com.tll.model.IEntityAssembler;
@@ -45,7 +45,9 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 @Test(groups = "listhandler")
-public class PagingSearchListHandlerTest extends AbstractDbTest {
+public class PagingSearchListHandlerTest extends AbstractInjectedTest {
+
+	private final DbTestSupport dbSupport = new DbTestSupport();
 
 	/**
 	 * TestEntityService
@@ -80,7 +82,7 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 	 * Constructor
 	 */
 	public PagingSearchListHandlerTest() {
-		super(DaoMode.ORM, true, false);
+		super();
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -117,7 +119,6 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 		super.addModules(modules);
-		//Config.instance().setProperty(DaoModule.ConfigKeys.DAO_MODE_PARAM.getKey(), DaoMode.ORM.toString());
 		modules.add(new OrmDaoModule());
 		modules.add(new TransactionModule());
 		modules.add(new EntityAssemblerModule());
@@ -144,11 +145,11 @@ public class PagingSearchListHandlerTest extends AbstractDbTest {
 
 	protected final void stubListElements() {
 		// stub the list elements
-		startNewTransaction();
+		dbSupport.startNewTransaction();
 		final Set<Address> elements = getMockEntityFactory().getNEntityCopies(Address.class, NUM_LIST_ELEMENTS, true);
 		getEntityDao().persistAll(elements);
-		setComplete();
-		endTransaction();
+		dbSupport.setComplete();
+		dbSupport.endTransaction();
 	}
 
 	@Test

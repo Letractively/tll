@@ -17,11 +17,9 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NonUniqueResultException;
 
-import org.hibernate.QueryException;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -256,8 +254,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	}
 	
 	@BeforeClass(alwaysRun = true)
-	@Parameters(value = "daoMode")
-	public final void onBeforeClass(String daoModeStr) {
+	public final void onBeforeClass() {
 		beforeClass();
 	}
 
@@ -304,14 +301,6 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * handler.
 	 */
 	private void beforeEntityType() {
-		// mock dao mode only - retain the number of entities before any testing
-		// happens for this entity type
-		/*
-		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
-			numEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
-		}
-		*/
-		
 		// stub dependent entities for test entities of the current entity type
 		startNewTransaction();
 		try {
@@ -503,7 +492,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			catch(final NonUniqueResultException ex) {
 				// ok
 			}
-			catch(final QueryException ex) {
+			catch(final/*QueryException*/Exception ex) {
 				// ok - this means the INamedEntity doesn't have the getName() method
 				// mapped to "name" which is possible in some cases where we impl
 				// INamedEntity but map INamedEntity.getName() to another ORM property

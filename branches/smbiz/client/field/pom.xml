@@ -79,7 +79,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     
