@@ -9,8 +9,8 @@
   </parent>
   
   <groupId>com.tll</groupId>
-  <artifactId>dao</artifactId>
-  <name>dao</name>
+  <artifactId>tll-dao</artifactId>
+  <name>tll-dao</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Houses the dao api and respective implementation modules.</description>
   <packaging>pom</packaging>
