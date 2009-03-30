@@ -24,22 +24,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Stage;
-import com.tll.AbstractDbTest;
+import com.tll.AbstractInjectedTest;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.IQueryParam;
 import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.criteria.InvalidCriteriaException;
-import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DbDialectModule;
-import com.tll.di.DbShellModule;
-import com.tll.di.OrmDaoModule;
-import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
@@ -54,16 +46,13 @@ import com.tll.model.key.BusinessKeyUtil;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
-import com.tll.util.EnumUtil;
 
 /**
  * AbstractEntityDaoTest
  * @author jpk
  */
 @Test(groups = { "dao" })
-@SuppressWarnings( {
-	"synthetic-access", "unused" })
-public abstract class AbstractEntityDaoTest extends AbstractDbTest {
+public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 	/**
 	 * EntityDaoTestDecorator - Decorates {@link IEntityDao} to:
@@ -75,7 +64,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * </ol>
 	 * @author jpk
 	 */
-	private final class EntityDaoTestDecorator implements IEntityDao {
+	protected final class EntityDaoTestDecorator implements IEntityDao {
 
 		private IEntityDao rawDao;
 
@@ -244,20 +233,15 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	private final Stack<PrimaryKey<IEntity>> testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
 
 	/**
-	 * Used to validate the entity graph when testing under MOCK dao mode.
-	 */
-	private int numEntities;
-
-	/**
 	 * The test dao.
 	 */
-	private final EntityDaoTestDecorator dao = new EntityDaoTestDecorator();
+	protected final EntityDaoTestDecorator dao = new EntityDaoTestDecorator();
 
 	/**
 	 * Constructor
 	 */
 	public AbstractEntityDaoTest() {
-		super(false, true);
+		super();
 	}
 
 	/**
@@ -266,24 +250,14 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	protected abstract IEntityDaoTestHandler<?>[] getDaoTestHandlers();
 
 	@Override
-	protected final void addModules(List<Module> modules) {
+	protected void addModules(List<Module> modules) {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
-		super.addModules(modules);
-		if(getDaoMode().isDatastore()) {
-			// orm
-			modules.add(new OrmDaoModule());
-		}
-		else {
-			// mock
-			modules.add(new MockDaoModule());
-		}
 	}
-
+	
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = "daoMode")
 	public final void onBeforeClass(String daoModeStr) {
-		setDaoMode(EnumUtil.fromString(DaoMode.class, daoModeStr));
 		beforeClass();
 	}
 
@@ -291,9 +265,11 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	public final void onAfterClass() {
 		afterClass();
 	}
+	
+	protected abstract void doBeforeClass();
 
 	@Override
-	protected void beforeClass() {
+	protected final void beforeClass() {
 
 		// get the dao test handlers
 		entityHandlers = getDaoTestHandlers();
@@ -301,14 +277,8 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
 
-		if(getDaoMode() == DaoMode.ORM) {
-			// create a db shell to ensure db exists and stubbed
-			final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
-			final DbShell dbShell = i.getInstance(DbShell.class);
-			dbShell.create();
-			dbShell.clear();
-		}
-
+		doBeforeClass();
+		
 		// build the injector
 		buildInjector();
 		assert injector != null;
@@ -320,6 +290,14 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	protected void afterClass() {
 		super.afterClass();
 	}
+	
+	protected abstract void startNewTransaction();
+
+	protected abstract void setComplete();
+
+	protected abstract void endTransaction();
+
+	protected abstract boolean isTransStarted();
 
 	/**
 	 * Run before dao test methods are invoked for a particular entity dao test
@@ -328,9 +306,11 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	private void beforeEntityType() {
 		// mock dao mode only - retain the number of entities before any testing
 		// happens for this entity type
+		/*
 		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
 			numEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 		}
+		*/
 		
 		// stub dependent entities for test entities of the current entity type
 		startNewTransaction();
@@ -361,10 +341,12 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 		// mock dao mode only - verify the number of entities in the mock dao's
 		// object graph matches the retained number prior to testing for the current
 		// entity type
+		/*
 		if(dao.getRawDao() instanceof com.tll.dao.mock.EntityDao) {
 			final int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 			Assert.assertEquals(afterNumEntities, numEntities, entityHandler + " dao test handler didn't clean up properly!");
 		}
+		*/
 	}
 
 	@Override
@@ -407,7 +389,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	/**
 	 * @return The injected {@link IEntityFactory}
 	 */
-	private IEntityFactory getEntityFactory() {
+	protected final IEntityFactory getEntityFactory() {
 		return injector.getInstance(IEntityFactory.class);
 	}
 
@@ -417,7 +399,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * {@link #addModules(List)}.
 	 * @return The injected {@link MockEntityFactory}
 	 */
-	private MockEntityFactory getMockEntityFactory() {
+	protected final MockEntityFactory getMockEntityFactory() {
 		return injector.getInstance(MockEntityFactory.class);
 	}
 
@@ -428,7 +410,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> E getTestEntity() throws Exception {
+	<E extends IEntity> E getTestEntity() throws Exception {
 		// logger.debug("Creating test entity..");
 		final E e = (E) getMockEntityFactory().getEntityCopy(entityHandler.entityClass(), false);
 		entityHandler.assembleTestEntity(e);
@@ -462,9 +444,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * @param key The primary key
 	 * @return The sought entity direct from the datastore.
 	 */
-	private IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
-		return AbstractDbTest.getEntityFromDb(dao, key);
-	}
+	protected abstract IEntity getEntityFromDb(PrimaryKey<IEntity> key);
 	
 	/**
 	 * Run the dao test for all given entity types.
@@ -496,14 +476,14 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	// ***TESTS***
 
 	@SuppressWarnings("unchecked")
-	private void daoFindByName() throws Exception {
+	final void daoFindByName() throws Exception {
 		IEntity e = getTestEntity();
 
 		// create
 		e = dao.persist(e);
 		setComplete();
 		endTransaction();
-		final Integer persistentId = e.getId();
+		// final Integer persistentId = e.getId();
 
 		// retrieve by name key if applicable..
 		if(INamedEntity.class.isAssignableFrom(entityHandler.entityClass())) {
@@ -540,7 +520,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * Test CRUD and find ops
 	 * @throws Exception
 	 */
-	private void daoCRUDAndFind() throws Exception {
+	final void daoCRUDAndFind() throws Exception {
 		IEntity e = getTestEntity();
 		Assert.assertTrue(e.isNew(), "The created test entity is not new and should be");
 		
@@ -613,7 +593,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * tests the load all method
 	 * @throws Exception
 	 */
-	private void daoLoadAll() throws Exception {
+	final void daoLoadAll() throws Exception {
 		final List<IEntity> list = dao.loadAll(entityHandler.entityClass());
 		endTransaction();
 		Assert.assertNotNull(list, "loadAll returned null");
@@ -624,7 +604,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private void daoFindEntities() throws Exception {
+	final void daoFindEntities() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
@@ -643,7 +623,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * Tests the find by ids method
 	 * @throws Exception
 	 */
-	private void daoFindByIds() throws Exception {
+	final void daoFindByIds() throws Exception {
 		IEntity e = getTestEntity();
 		e = dao.persist(e);
 		setComplete();
@@ -662,7 +642,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * Tests id-based list handler related methods
 	 * @throws Exception
 	 */
-	private void daoGetIdsAndEntities() throws Exception {
+	final void daoGetIdsAndEntities() throws Exception {
 		if(!entityHandler.supportsPaging()) {
 			logger.info("Not testing Id List Handler support for entity type: " + entityHandler.entityClass());
 			return;
@@ -697,7 +677,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * Tests page-based list handler related methods
 	 * @throws Exception
 	 */
-	private void daoPage() throws Exception {
+	final void daoPage() throws Exception {
 		if(!entityHandler.supportsPaging()) {
 			logger.info("Not testing daoPage for: " + entityHandler.entityClass());
 			return;
@@ -738,7 +718,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 	 * Tests for the proper throwing of {@link EntityExistsException} in the dao.
 	 * @throws Exception
 	 */
-	private void daoDuplicationException() throws Exception {
+	final void daoDuplicationException() throws Exception {
 		// IMPT: don't test run this dao test if there are no business keys defined
 		// for the current entity type!!
 		if(!BusinessKeyFactory.hasBusinessKeys(entityHandler.entityClass())) {
@@ -764,7 +744,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 		}
 	}
 
-	private void daoPurgeNewEntity() throws Exception {
+	final void daoPurgeNewEntity() throws Exception {
 		IEntity e = getTestEntity();
 		final PrimaryKey<IEntity> pk = new PrimaryKey<IEntity>(e);
 		dao.purge(e);
@@ -777,7 +757,7 @@ public abstract class AbstractEntityDaoTest extends AbstractDbTest {
 		}
 	}
 	
-	private void daoTestSelectNamedQueries() throws Exception {
+	final void daoTestSelectNamedQueries() throws Exception {
 		final ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
 		if(queryDefs == null) return;
 		for(final ISelectNamedQueryDef qdef : queryDefs) {

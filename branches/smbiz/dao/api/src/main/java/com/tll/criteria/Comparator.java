@@ -1,9 +1,7 @@
 package com.tll.criteria;
 
-
 /**
- * Enumeration class that defines the comparators that can be used to specify a
- * criterion.
+ * Comparator - Enumarates comparators that can be used to specify a criterion.
  * @author jpk
  */
 public enum Comparator {

@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="tll-dao-tests">
-  
+<suite name="tll-dao-orm-tests">
+
   <test name="hibernate-tests" annotations="JDK">
     <groups>
       <run>
@@ -11,9 +11,8 @@
       <package name="com.tll.dao.hibernate" />
     </packages>
   </test>
-  
+
   <test name="orm-dao-tests" annotations="JDK">
-    <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
         <include name="dao" />
@@ -23,17 +22,5 @@
       <package name="com.tll.dao" />
     </packages>
   </test>
-  
-  <test name="mock-dao-tests" annotations="JDK">
-    <parameter name="daoMode" value="MOCK" />
-    <groups>
-      <run>
-        <include name="dao" />
-      </run>
-    </groups>
-    <packages>
-      <package name="com.tll.dao" />
-    </packages>
-  </test>
-  
+
 </suite>

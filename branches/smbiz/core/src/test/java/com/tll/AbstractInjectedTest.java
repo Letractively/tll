@@ -70,8 +70,6 @@ public abstract class AbstractInjectedTest {
 	 * @param modules
 	 */
 	protected void addModules(List<Module> modules) {
-		// modules.add(new MockEntitiesModule());
-		// base impl no-op
 	}
 
 	/**
