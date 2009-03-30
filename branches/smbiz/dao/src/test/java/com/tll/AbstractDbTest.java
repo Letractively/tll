@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.SystemException;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -16,6 +17,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
@@ -149,6 +151,19 @@ public abstract class AbstractDbTest extends AbstractInjectedTest {
 
 				@Override
 				public void configure(Binder binder) {
+					final com.atomikos.icatch.jta.UserTransactionManager tm =
+							new com.atomikos.icatch.jta.UserTransactionManager();
+
+					// set the transaction timeout
+					final int timeout = Config.instance().getInt("db.transaction.timeout");
+					try {
+						tm.setTransactionTimeout(timeout);
+						logger.info("Set JTA transaction timeout to: " + timeout);
+					}
+					catch(final SystemException e) {
+						throw new IllegalArgumentException(e.getMessage());
+					}
+			
 					// PlatformTransactionManager
 					binder.bind(PlatformTransactionManager.class).toInstance(
 							new JtaTransactionManager(new com.atomikos.icatch.jta.UserTransactionImp()));

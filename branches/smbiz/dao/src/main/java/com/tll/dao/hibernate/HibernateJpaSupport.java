@@ -5,20 +5,36 @@ import javax.persistence.EntityManager;
 import org.hibernate.Session;
 
 import com.google.inject.Provider;
-import com.tll.dao.JpaSupport;
 
 /**
  * JpaSupport - JPA support to DAO implementations.
  * @author jpk
  */
-public abstract class HibernateJpaSupport extends JpaSupport {
+public abstract class HibernateJpaSupport {
+
+	/**
+	 * The {@link EntityManager} provider.
+	 * <p>
+	 * <strong>NOTE: </strong>To ensure thread safety, do <em>not</em> publish
+	 * this member.
+	 */
+	protected final Provider<EntityManager> emPrvdr;
 
 	/**
 	 * Constructor
 	 * @param emPrvdr
 	 */
-	protected HibernateJpaSupport(Provider<EntityManager> emPrvdr) {
-		super(emPrvdr);
+	public HibernateJpaSupport(Provider<EntityManager> emPrvdr) {
+		this.emPrvdr = emPrvdr;
+	}
+
+	/**
+	 * Obtains a <em><b>new</b></em> {@link EntityManager} instance each time this
+	 * method is called!
+	 * @return A newly created {@link EntityManager}.
+	 */
+	protected final EntityManager getEntityManager() {
+		return emPrvdr.get();
 	}
 
 	/**
