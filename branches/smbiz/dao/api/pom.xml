@@ -4,15 +4,15 @@
 
   <parent>
     <groupId>com.tll</groupId>
-    <artifactId>tll</artifactId>
+    <artifactId>tll-dao</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-dao</artifactId>
-  <name>tll-dao</name>
+  <artifactId>tll-dao-api</artifactId>
+  <name>tll-dao-api</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>DAO abstraction layer.</description>
+  <description>DAO API</description>
   
   <build>
     <plugins>
