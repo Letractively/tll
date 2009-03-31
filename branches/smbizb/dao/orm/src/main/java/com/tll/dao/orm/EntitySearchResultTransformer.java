@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 10, 2008
  */
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 
 /**

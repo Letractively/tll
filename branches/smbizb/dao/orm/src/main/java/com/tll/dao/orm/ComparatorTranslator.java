@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import java.util.Collection;
 

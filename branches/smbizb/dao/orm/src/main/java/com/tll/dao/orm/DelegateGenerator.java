@@ -1,4 +1,4 @@
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import java.io.Serializable;
 import java.util.Properties;

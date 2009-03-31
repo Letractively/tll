@@ -1,4 +1,4 @@
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -6,7 +6,7 @@ import javax.persistence.Query;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.dao.ISiteStatisticsDao;
-import com.tll.dao.hibernate.HibernateJpaSupport;
+import com.tll.dao.orm.HibernateJpaSupport;
 
 /**
  * @author jpk

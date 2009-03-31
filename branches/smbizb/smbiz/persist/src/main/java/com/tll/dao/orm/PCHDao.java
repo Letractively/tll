@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.tll.dao.IPCHDao;
-import com.tll.dao.hibernate.HibernateJpaSupport;
+import com.tll.dao.orm.HibernateJpaSupport;
 
 /**
  * PCHDao

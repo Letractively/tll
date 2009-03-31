@@ -1,7 +1,7 @@
 /*
  * The Logic Lab 
  */
-package com.tll.dao.hibernate.event;
+package com.tll.dao.orm.event;
 
 import java.io.Serializable;
 

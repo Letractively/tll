@@ -1,4 +1,4 @@
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import javax.persistence.EntityManager;
 

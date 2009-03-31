@@ -3,7 +3,7 @@
  * @author jpk
  * Mar 7, 2008
  */
-package com.tll.dao.hibernate;
+package com.tll.dao.orm;
 
 import java.util.ArrayList;
 import java.util.HashSet;

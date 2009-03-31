@@ -11,7 +11,7 @@ import com.google.inject.Scopes;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
-import com.tll.dao.hibernate.PrimaryKeyGenerator;
+import com.tll.dao.orm.PrimaryKeyGenerator;
 import com.tll.model.key.IPrimaryKeyGenerator;
 
 /**
@@ -79,7 +79,7 @@ public class OrmDaoModule extends CompositeModule {
 			bind(IPrimaryKeyGenerator.class).to(PrimaryKeyGenerator.class).in(Scopes.SINGLETON);
 
 			// IEntityDao
-			bind(IEntityDao.class).to(com.tll.dao.hibernate.EntityDao.class).in(Scopes.SINGLETON);
+			bind(IEntityDao.class).to(com.tll.dao.orm.EntityDao.class).in(Scopes.SINGLETON);
 		}
 	}
 
