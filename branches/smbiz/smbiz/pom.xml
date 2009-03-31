@@ -14,7 +14,7 @@
   <version>0.9.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <description>The smbiz app</description>
-
+  
   <build>
     <finalName>smbiz</finalName>
 
@@ -118,8 +118,22 @@
                   <version>${project.parent.version}</version>
                 </element>
                 <element>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-jdbc</artifactId>
+                </element>
+                <element>
                   <groupId>com.tll</groupId>
-                  <artifactId>tll-dao</artifactId>
+                  <artifactId>tll-dao-api</artifactId>
+                  <version>${project.parent.version}</version>
+                </element>
+                <element>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-dao-orm</artifactId>
+                  <version>${project.parent.version}</version>
+                </element>
+                <element>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-dao-mock</artifactId>
                   <version>${project.parent.version}</version>
                 </element>
               </classpath>
@@ -168,6 +182,20 @@
   </build>
 
   <profiles>
+  
+    <!-- dao mode profiles -->
+    <profile>
+      <id>mock</id>
+      <properties>
+        <daoMode>mock</daoMode>
+      </properties>
+    </profile>
+    <profile>
+      <id>orm</id>
+      <properties>
+        <daoMode>orm</daoMode>
+      </properties>
+    </profile>
 
     <!-- smbiz dev profile -->
     <profile>
@@ -275,8 +303,9 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-${daoMode}</artifactId>
       <version>${project.parent.version}</version>
+      <classifier>all</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -392,7 +421,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.parent.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
@@ -523,9 +552,29 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao</artifactId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.parent.version}</version>
       <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-mock</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-orm</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-mock</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

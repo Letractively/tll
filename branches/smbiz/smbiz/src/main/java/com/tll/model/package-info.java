@@ -16,4 +16,4 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import com.tll.dao.hibernate.type.EncryptedObjectType;
+

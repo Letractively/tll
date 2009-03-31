@@ -158,14 +158,17 @@
       <version>${project.version}</version>
       <classifier>sources</classifier>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-mock</artifactId>
       <version>${project.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
+      <artifactId>tll-dao-mock</artifactId>
+      <classifier>all</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>

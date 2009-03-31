@@ -3,13 +3,15 @@
  * @author jpk
  * Jan 28, 2009
  */
-package com.tll.dao;
+package com.tll.dao.orm;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 import org.testng.annotations.Test;
 
+import com.tll.dao.AbstractOrmEntityDaoTest;
+import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.util.CommonUtil;
 
 /**
@@ -17,7 +19,7 @@ import com.tll.util.CommonUtil;
  * @author jpk
  */
 @Test(groups = "dao")
-public class EntityDaoTest extends AbstractEntityDaoTest {
+public class EntityDaoTest extends AbstractOrmEntityDaoTest {
 
 	@Override
 	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
