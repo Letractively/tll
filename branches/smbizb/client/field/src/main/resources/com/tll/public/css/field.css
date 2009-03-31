@@ -1,0 +1,73 @@
+@CHARSET "ISO-8859-1";
+
+label {
+	color: blue;
+	cursor: pointer;
+	cursor: hand;
+	white-space: nowrap;
+}
+
+.fld {
+}
+
+.fld .tbox {
+	padding: 0;
+	margin: 0 1px 0 0;
+	border: 1px solid gray;
+}
+
+/* checkbox and radio specific label styling */
+.cbrb label {
+  margin-left: 4px;
+}
+
+label .rqd {
+	color: red;
+	font-size: 14px;
+}
+
+.error input, .error select, .error textarea {
+	border-color: red !important;
+	background-color: #FFDFDF;
+}
+
+.dirty input, .dirty select, .dirty textarea {
+	border-color: #007BBF !important;
+	background-color: #DFF4FF;
+}
+
+.fld .icon {
+	cursor: pointer;
+	display: inline;
+}
+
+/* radio field grid styling (GridRenderer grid style) */
+.fradioGrid {
+}
+
+.fradioGrid td {
+  padding: 0 2px;
+}
+
+/* FlowPanelFieldComposer styles */
+.fldc {
+  margin: 1px;
+}
+
+.frow {
+  margin-top: .2em;
+  margin-bottom: .2em;
+  width: 100%;
+}
+
+/* GridFieldComposer styles */
+.fgrid {
+}
+
+.fgrid .cell-lbl {
+  vertical-align: top;
+}
+
+.fgrid .cell-fld {
+  padding: 2px;
+}
