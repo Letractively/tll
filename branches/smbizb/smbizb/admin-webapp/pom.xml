@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>smbizb</artifactId>
+    <groupId>com.tll</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>smbiz-admin-webapp</artifactId>
+  <name>smbiz-admin-webapp</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>The smbiz administration console.</description>
+  <packaging>war</packaging>
+
+  <build>
+  </build>
+
+  <dependencies>
+  </dependencies>
+
+</project>
