@@ -10,7 +10,6 @@ import java.io.FilenameFilter;
 
 import org.testng.annotations.Test;
 
-import com.tll.dao.AbstractOrmEntityDaoTest;
 import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.util.CommonUtil;
 
@@ -30,7 +29,7 @@ public class EntityDaoTest extends AbstractOrmEntityDaoTest {
 		*/
 		try {
 			Class<?>[] handlerTypes =
-					CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, new FilenameFilter() {
+					CommonUtil.getClasses("com.tll.dao.mock", IEntityDaoTestHandler.class, true, null, new FilenameFilter() {
 
 						@Override
 						public boolean accept(File dir, String name) {

@@ -4,7 +4,7 @@
  * Copywright - 2005 - All rights reserved.
  * 
  */
-package com.tll.dao;
+package com.tll.dao.orm;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.DbTestSupport;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.OrmDaoModule;
 import com.tll.model.IEntity;

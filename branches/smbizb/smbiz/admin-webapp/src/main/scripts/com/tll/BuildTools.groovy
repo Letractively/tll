@@ -7,7 +7,7 @@
 package com.tll;
 
 import com.tll.config.Config;
-import com.tll.dao.jdbc.DbShellBuilder;
+import com.tll.dao.mock.jdbc.DbShellBuilder;
 
 /**
  * BuildTools - Utility class for project building.

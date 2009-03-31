@@ -3,7 +3,10 @@
  * @author jpk
  * Jan 28, 2009
  */
-package com.tll.dao;
+package com.tll.dao.orm;
+
+import com.tll.dao.IEntityDaoTestHandler;
+import com.tll.dao.TestEntityDaoTestHandler;
 
 
 

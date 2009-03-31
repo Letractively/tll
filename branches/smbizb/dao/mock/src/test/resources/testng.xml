@@ -8,7 +8,7 @@
       </run>
     </groups>
     <packages>
-      <package name="com.tll.dao" />
+      <package name="com.tll.dao.mock" />
     </packages>
   </test>
 

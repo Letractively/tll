@@ -1,4 +1,4 @@
-package com.tll.dao;
+package com.tll.dao.mock;
 
 
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
+import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.di.MockDaoModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
