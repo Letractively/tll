@@ -9,9 +9,9 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>smbizb</artifactId>
+  <artifactId>smbiz</artifactId>
   <packaging>pom</packaging>
-  <name>smbizb</name>
+  <name>smbiz</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>The smbiz project.</description>
 
