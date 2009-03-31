@@ -1,17 +1,245 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <artifactId>smbizb</artifactId>
     <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>com.tll</groupId>
   <artifactId>smbiz-persist</artifactId>
   <name>smbiz-persist</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Persistence for smbiz.</description>
+
+  <build>
+    <filters>
+      <filter>src/main/resources/config.properties</filter>
+      <filter>src/main/resources/config-${mode}.properties</filter>
+    </filters>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources/db</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+      </resource>
+      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
+      <resource>
+        <directory>src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
+    </resources>
+
+    <plugins>
+      <!-- direct unit test invocations to the testng.xml file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <profiles>
+
+    <!-- dev profile -->
+    <profile>
+      <id>dev</id>
+      <properties>
+      </properties>
+    </profile>
+
+    <!-- production profile -->
+    <profile>
+      <id>prod</id>
+      <properties>
+      </properties>
+      <build>
+        <plugins>
+          <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <version>1.1</version>
+            <configuration>
+              <source>1.6</source>
+              <target>1.6</target>
+              <weaveDependencies>
+                <weaveDependency>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-service</artifactId>
+                </weaveDependency>
+              </weaveDependencies>
+              <aspectLibraries>
+                <aspectLibrary>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-aspects</artifactId>
+                </aspectLibrary>
+              </aspectLibraries>
+            </configuration>
+            <executions>
+              <execution>
+                <id>aspectj-weave</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>ejb3-persistence</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>smbiz-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-orm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-mock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-service</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-login</artifactId>
+      <classifier>server</classifier>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-orm</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-mock</artifactId>
+      <classifier>tests</classifier>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <classifier>jdk15</classifier>
+      <version>${testNGVersion}</version>
+    </dependency>
+
+  </dependencies>
+
+  <!--
+    <profiles> <profile> <id>mock</id> <properties> <daoMode>mock</daoMode> </properties> </profile> <profile>
+    <id>orm</id> <properties> <daoMode>orm</daoMode> </properties> </profile> </profiles>
+  -->
 
 </project>

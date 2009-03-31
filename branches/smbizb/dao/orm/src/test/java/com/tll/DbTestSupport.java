@@ -29,13 +29,10 @@ import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
 
 /**
- * DbTestSupport - Test that supports raw transactions having an accessible
- * <code>daoMode</code> member property.
+ * DbTestSupport - Enables db interaction as well as transaction support.
  * @author jpk
  */
 public final class DbTestSupport {
-
-	private static final Log logger = LogFactory.getLog(DbTestSupport.class);
 
 	/**
 	 * Retrieves the entity from the db given a {@link PrimaryKey}.
@@ -74,6 +71,13 @@ public final class DbTestSupport {
 		}
 	}
 
+	private static final Log logger = LogFactory.getLog(DbTestSupport.class);
+	
+	/**
+	 * The default transaction timeout in miliseconds.
+	 */
+	private static final int DEFAULT_TRANS_TIMEOUT_MILIS = 30000;
+
 	/**
 	 * The {@link DbShell}.
 	 */
@@ -82,7 +86,7 @@ public final class DbTestSupport {
 	/**
 	 * The trans manager.
 	 */
-	private final PlatformTransactionManager tm;
+	private PlatformTransactionManager tm;
 
 	/**
 	 * Used to check if a transaction is in progress only when using Spring
@@ -103,23 +107,29 @@ public final class DbTestSupport {
 	private boolean transCompleteFlag = false;
 
 	/**
-	 * Constructor
+	 * @return The lazily instantiated db level trans manager.
 	 */
-	public DbTestSupport() {
-		final UserTransactionManager tm = new UserTransactionManager();
+	private PlatformTransactionManager getTransMgr() {
+		if(tm == null) {
+			final UserTransactionManager tm = new UserTransactionManager();
 
-		// set the transaction timeout
-		final int timeout = Config.instance().getInt("db.transaction.timeout");
-		try {
-			tm.setTransactionTimeout(timeout);
-			logger.info("Set JTA transaction timeout to: " + timeout);
-		}
-		catch(final SystemException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+			// set the transaction timeout
+			final int timeout = Config.instance().getInt("db.transaction.timeout", DEFAULT_TRANS_TIMEOUT_MILIS);
+			if(timeout <= 0) {
+				throw new IllegalStateException("Invalid trans timeout: " + timeout);
+			}
+			try {
+				tm.setTransactionTimeout(timeout);
+				logger.info("Set JTA transaction timeout to: " + timeout);
+			}
+			catch(final SystemException e) {
+				throw new IllegalArgumentException(e.getMessage());
+			}
 
-		// PlatformTransactionManager
-		this.tm = new JtaTransactionManager(new com.atomikos.icatch.jta.UserTransactionImp());
+			// PlatformTransactionManager
+			this.tm = new JtaTransactionManager(new com.atomikos.icatch.jta.UserTransactionImp());
+		}
+		return tm;
 	}
 
 	/**
@@ -132,7 +142,7 @@ public final class DbTestSupport {
 		}
 		return dbShell;
 	}
-
+	
 	/**
 	 * Starts a new db transaction.
 	 * @throws IllegalStateException When a transaction is already started.
@@ -143,7 +153,7 @@ public final class DbTestSupport {
 		}
 		final DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		transStatus = tm.getTransaction(def);
+		transStatus = getTransMgr().getTransaction(def);
 		transStarted = true;
 	}
 
@@ -171,11 +181,11 @@ public final class DbTestSupport {
 			throw new IllegalStateException("No transaction in progress");
 		}
 		if(transCompleteFlag) {
-			tm.commit(transStatus);
+			getTransMgr().commit(transStatus);
 			transCompleteFlag = false;
 		}
 		else {
-			tm.rollback(transStatus);
+			getTransMgr().rollback(transStatus);
 		}
 		transStarted = false;
 		transStatus = null;

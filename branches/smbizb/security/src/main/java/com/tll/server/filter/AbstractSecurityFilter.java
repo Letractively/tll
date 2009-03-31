@@ -31,7 +31,7 @@ public abstract class AbstractSecurityFilter implements Filter {
 		final HttpSession session = ((HttpServletRequest) request).getSession(false);
 		final SecurityContext sc =
 				session == null ? null : (SecurityContext) session.getServletContext().getAttribute(
-						SecurityContext.SERVLET_CONTEXT_KEY);
+						SecurityContext.KEY);
 		if(sc == null) {
 			throw new ServletException("Unable to obtain the security context from the request");
 		}
@@ -47,7 +47,7 @@ public abstract class AbstractSecurityFilter implements Filter {
 	protected final SecurityContext getSecurityContext(FilterConfig config) throws ServletException {
 		assert config != null;
 		final SecurityContext sc =
-				(SecurityContext) config.getServletContext().getAttribute(SecurityContext.SERVLET_CONTEXT_KEY);
+				(SecurityContext) config.getServletContext().getAttribute(SecurityContext.KEY);
 		if(sc == null) {
 			throw new ServletException("Unable to obtain the security context from the filter configuration.");
 		}

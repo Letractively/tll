@@ -18,8 +18,7 @@
   <modules>
     <module>model</module>
     <module>persist</module>
-    <module>webapp</module>
-    <module>model</module>
+    <module>admin-webapp</module>
   </modules>
 
 </project>

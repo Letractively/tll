@@ -20,8 +20,8 @@ import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
 import com.tll.model.ChangeUserCredentialsFailedException;
+import com.tll.model.IUserRef;
 import com.tll.service.IForgotPasswordHandler;
-import com.tll.service.IForgotPasswordHandler.IUserRef;
 import com.tll.util.StringUtil;
 
 /**

@@ -35,7 +35,7 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 				injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
 
 		log.debug("Setting security context..");
-		servletContext.setAttribute(SecurityContext.SERVLET_CONTEXT_KEY, new SecurityContext(authenticationManager,
+		servletContext.setAttribute(SecurityContext.KEY, new SecurityContext(authenticationManager,
 				httpRequesetAccessDecisionManager));
 	}
 

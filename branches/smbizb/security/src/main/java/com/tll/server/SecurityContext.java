@@ -20,7 +20,7 @@ public class SecurityContext {
 	 * The key identifying the sole {@link SecurityContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String SERVLET_CONTEXT_KEY = SecurityContext.class.getName();
+	public static final String KEY = SecurityContext.class.getName();
 	
 	private final AuthenticationManager authenticationManager;
 	private final AccessDecisionManager httpRequestAccessDecisionManager;

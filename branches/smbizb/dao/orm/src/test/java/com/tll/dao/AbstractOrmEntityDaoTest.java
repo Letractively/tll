@@ -10,14 +10,9 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Stage;
 import com.tll.DbTestSupport;
 import com.tll.dao.jdbc.DbShell;
-import com.tll.di.DbDialectModule;
-import com.tll.di.DbShellModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
@@ -49,8 +44,7 @@ public abstract class AbstractOrmEntityDaoTest extends AbstractEntityDaoTest {
 	@Override
 	protected final void doBeforeClass() {
 		// create a db shell to ensure db exists and stubbed
-		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
-		final DbShell dbShell = i.getInstance(DbShell.class);
+		final DbShell dbShell = dbSupport.getDbShell();
 		dbShell.create();
 		dbShell.clear();
 	}

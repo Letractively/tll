@@ -8,6 +8,7 @@ package com.tll.service;
 import javax.persistence.EntityNotFoundException;
 
 import com.tll.model.ChangeUserCredentialsFailedException;
+import com.tll.model.IUserRef;
 
 /**
  * IForgotPasswordService - Contract for resetting and providing a user's
@@ -15,19 +16,6 @@ import com.tll.model.ChangeUserCredentialsFailedException;
  * @author jpk
  */
 public interface IForgotPasswordHandler {
-
-	/**
-	 * UserRef - Simple def to hold needed user data for resetting the password.
-	 * @author jpk
-	 */
-	public interface IUserRef {
-
-		Integer getId();
-
-		String getUsername();
-
-		String getEmailAddress();
-	}
 
 	/**
 	 * Get a user by the username.

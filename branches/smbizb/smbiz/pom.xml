@@ -183,20 +183,6 @@
 
   <profiles>
   
-    <!-- dao mode profiles -->
-    <profile>
-      <id>mock</id>
-      <properties>
-        <daoMode>mock</daoMode>
-      </properties>
-    </profile>
-    <profile>
-      <id>orm</id>
-      <properties>
-        <daoMode>orm</daoMode>
-      </properties>
-    </profile>
-
     <!-- smbiz dev profile -->
     <profile>
       <id>dev</id>
