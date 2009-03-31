@@ -4,8 +4,6 @@
  */
 package com.tll.client.mvc;
 
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.mvc.view.IViewRequest;
 import com.tll.client.mvc.view.PinPopViewRequest;
 
@@ -28,12 +26,7 @@ class PinPopViewController implements IController {
 		}
 		else {
 			// pin the view (deferring it to ensure we are clear of the history "pump" since we subsequently fire a view change event)...
-			DeferredCommand.addCommand(new Command() {
-
-				public void execute() {
-					ViewManager.get().pinPoppedView(r.getViewKey());
-				}
-			});
+			ViewManager.get().pinPoppedView(r.getViewKey());
 		}
 	}
 

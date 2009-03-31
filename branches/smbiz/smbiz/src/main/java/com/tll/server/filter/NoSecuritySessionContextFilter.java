@@ -18,12 +18,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.tll.config.Config;
-import com.tll.config.IConfigKey;
+import sun.security.krb5.Config;
+
 import com.tll.model.User;
 import com.tll.server.AdminContext;
 import com.tll.server.AppContext;
-import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.service.entity.user.IUserService;
 
 /**
@@ -92,6 +91,9 @@ public final class NoSecuritySessionContextFilter implements Filter {
 					throw new ServletException("Unable to obtain the app context");
 				}
 				final MEntityContext mec = (MEntityContext) sc.getAttribute(MEntityContext.KEY);
+				if(mec == null) {
+					throw new ServletException("Unable to obtain the MEntity context");
+				}
 				final IUserService userService = mec.getEntityServiceFactory().instance(IUserService.class);
 				final User user = (User) userService.loadUserByUsername(defaultUserEmail);
 				final AdminContext ac = new AdminContext();

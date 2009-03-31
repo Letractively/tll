@@ -34,6 +34,9 @@
       <artifactId>persistence-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!--
+      Unfortunately, we depend on hibernate-core to support com.tll.model.EncryptedObjectType.  
+    -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>

@@ -20,16 +20,6 @@ class UnloadViewController implements IController {
 	@Override
 	public void handle(IViewRequest request) {
 		final UnloadViewRequest r = (UnloadViewRequest) request;
-
 		ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
-		/*
-		// unload the view (deferring it to ensure we are clear of the history "pump" since we subsequently fire a view change event)...
-		DeferredCommand.addCommand(new Command() {
-
-			public void execute() {
-				ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
-			}
-		});
-		*/
 	}
 }

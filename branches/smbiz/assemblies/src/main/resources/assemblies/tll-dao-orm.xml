@@ -17,7 +17,6 @@
 
     <!-- 
       merge in the tll-dao-api classes
-      as well as tll-mock! 
     -->
     <dependencySet>
       <outputDirectory>/</outputDirectory>
@@ -25,7 +24,6 @@
       <useProjectArtifact>true</useProjectArtifact>
       <includes>
         <include>com.tll:tll-dao-api</include>
-        <include>com.tll:tll-mock</include>
       </includes>
     </dependencySet>
 

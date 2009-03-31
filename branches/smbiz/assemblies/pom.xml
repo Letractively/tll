@@ -14,7 +14,7 @@
   <artifactId>tll-assemblies</artifactId>
   <name>tll-assemblies</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Houses all tll assemblies.</description>
+  <description>Houses common assemblies available to all tll projects.</description>
 
   <build>
     <plugins>

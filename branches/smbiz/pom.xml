@@ -47,6 +47,7 @@
   </properties>
 
   <modules>
+    <module>assemblies</module>
     <module>core</module>
     <module>config</module>
     <module>mail</module>
@@ -59,8 +60,10 @@
     <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
-    <!-- TODO temp <module>client</module> -->
-    <!-- TODO temp (or not?) don't aggregate smbiz module <module>smbiz</module> -->
+    <!-- TODO temp comment 
+    <module>client</module> 
+    <module>smbiz</module> 
+    -->
   </modules>
 
   <build>

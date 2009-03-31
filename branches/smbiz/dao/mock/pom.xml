@@ -27,6 +27,13 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>com.tll</groupId>
+            <artifactId>tll-assemblies</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <id>jar</id>
@@ -36,7 +43,7 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/main/assembly/all.xml</descriptor>
+                <descriptor>tll-dao-mock.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
