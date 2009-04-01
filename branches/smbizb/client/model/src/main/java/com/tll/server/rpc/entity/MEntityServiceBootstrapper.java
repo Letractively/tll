@@ -34,9 +34,8 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		DAO_MODE_PARAM("db.dao.mode"),
-		MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME("mEntityServiceImplResolverClassName"),
-		NAMED_QUERY_RESOLVER_CLASSNAME("namedQueryResolverClassName");
+		MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME("server.mEntityServiceImplResolver.classname"),
+		NAMED_QUERY_RESOLVER_CLASSNAME("server.namedQueryResolver.classname");
 
 		private final String key;
 

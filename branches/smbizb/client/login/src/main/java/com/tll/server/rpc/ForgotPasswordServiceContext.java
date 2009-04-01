@@ -17,7 +17,7 @@ import com.tll.service.IForgotPasswordHandler;
  */
 public class ForgotPasswordServiceContext {
 	
-	public static final String SERVLET_CONTEXT_KEY = ForgotPasswordServiceContext.class.getName();
+	public static final String KEY = ForgotPasswordServiceContext.class.getName();
 
 	private final IForgotPasswordHandler handler;
 	private final MailManager mailManager;

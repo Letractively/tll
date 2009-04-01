@@ -39,8 +39,8 @@ public class AcegiModule extends GModule {
 	 */
 	private static enum ConfigKeys implements IConfigKey {
 
-		APP_NAME("app.name"),
-		USER_DETAILS_SERVICE_CLASSNAME("security.acegi.userDetailsService.classname");
+		APP_NAME("server.app.name"),
+		USER_DETAILS_SERVICE_CLASSNAME("server.security.userDetailsService.classname");
 
 		private final String key;
 

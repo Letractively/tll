@@ -300,66 +300,6 @@
 
   <profiles>
 
-    <!--
-      there are two global profiles for development and production: dev and prod respectively.
-      These profiles declare the following properties:
-      - debug (true/false)
-      - mode ("dev" or "prod") 
-    -->
-
-    <!-- dev (global) profile -->
-    <profile>
-      <id>dev</id>
-      <properties>
-        <debug>true</debug>
-        <mode>dev</mode>
-      </properties>
-    </profile>
-    <!-- prod (global) profile -->
-    <profile>
-      <id>prod</id>
-      <properties>
-        <debug>false</debug>
-        <mode>prod</mode>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-              <debug>false</debug>
-              <optimize>true</optimize>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    
-    <!--
-      dao mode profiles: orm and mock.
-      
-      **TODO** move to smbiz and trigger by env variable 
-      rather than in settings.xml which applies globally 
-      (to other projects which is spurious and gives warnings).
-    -->
-
-    <!-- orm dao mode (global) profile -->
-    <profile>
-      <id>orm</id>
-      <properties>
-        <daoMode>orm</daoMode>
-      </properties>
-    </profile>
-
-    <!-- mock dao mode (global) profile -->
-    <profile>
-      <id>mock</id>
-      <properties>
-        <daoMode>mock</daoMode>
-      </properties>
-    </profile>
-    
     <!-- GWT unpacking profiles -->
     <profile>
       <id>gwt-dev-windows</id>
@@ -394,6 +334,7 @@
         </os>
       </activation>
     </profile>
+
   </profiles>
 
   <dependencyManagement>

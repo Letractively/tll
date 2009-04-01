@@ -109,6 +109,7 @@
                 </element>
               </classpath>
               <scriptpath>
+                <element>${project.basedir}/../../build-tools/src/main/scripts</element>
                 <element>${project.basedir}/src/main/scripts</element>
               </scriptpath>
               <source><![CDATA[
@@ -149,15 +150,61 @@
     </plugins>
 
   </build>
+  
+  <profiles>
+  
+    <!-- security mode profiles -->
+    <profile>
+      <id>security</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <securityMode>acegi</securityMode>
+      </properties>
+    </profile>
+    <profile>
+      <id>nosecurity</id>
+      <properties>
+        <securityMode>none</securityMode>
+      </properties>
+    </profile>
+  </profiles>
 
   <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.guice</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-refdata</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -167,26 +214,46 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-security</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>smbiz-model</artifactId>
+      <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>smbiz-persist</artifactId>
+      <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mvc</artifactId>
+      <artifactId>tll-service</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-servlet</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-security</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-rpc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
@@ -212,6 +279,11 @@
       <artifactId>client-field</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-login</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
@@ -225,8 +297,22 @@
     </dependency>
 
     <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <classifier>jdk15</classifier>
+      <version>${testNGVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-core</artifactId>
+      <classifier>testassets</classifier>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     

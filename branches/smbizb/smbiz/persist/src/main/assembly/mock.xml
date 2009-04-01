@@ -1,0 +1,21 @@
+<assembly>
+  <id>mock</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/*.java</exclude>
+        <exclude>**/orm/**</exclude>
+        <exclude>transactions.properties</exclude>
+        <exclude>**/db-*</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+
+</assembly>

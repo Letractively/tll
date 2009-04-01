@@ -35,7 +35,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 	
 	private ForgotPasswordServiceContext getContext() {
 		return (ForgotPasswordServiceContext) getThreadLocalRequest().getSession(false).getServletContext().getAttribute(
-				ForgotPasswordServiceContext.SERVLET_CONTEXT_KEY);
+				ForgotPasswordServiceContext.KEY);
 	}
 
 	public Payload requestPassword(final String emailAddress) {

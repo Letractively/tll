@@ -7,7 +7,8 @@
 package com.tll;
 
 import com.tll.config.Config;
-import com.tll.dao.mock.jdbc.DbShellBuilder;
+import com.tll.ConfigProcessor;
+import com.tll.dao.jdbc.DbShellBuilder;
 
 /**
  * BuildTools - Utility class for project building.
@@ -91,7 +92,7 @@ public final class BuildTools {
 	/**
 	 * The dao mode and security mode tokens obtained from the loaded config.
 	 */
-	private String daoMode, secMode;
+	private String daoMode, securityMode;
 	
 	/**
 	 * The generated di map containing:
@@ -121,34 +122,41 @@ public final class BuildTools {
 		// load the config
 		String mode = project.properties.mode;
 		String baseDir = project.basedir.toString() + "/src/main/resources";
-		this.config = ConfigProcessor.process(baseDir, mode, 'local')
+		this.config = ConfigProcessor.merge(baseDir, mode, 'local')
 		
 		// retain the dao mode and security mode
-		this.daoMode = config.getString('db.dao.mode')
-		this.secMode = config.getString('security.mode')
-		println "dao mode: ${daoMode}, security mode: ${secMode}"
+		this.daoMode = project.properties.daoMode
+		if(daoMode == null) {
+			throw new IllegalStateException('No dao mode found.')
+		}
+		println "daoMode: ${daoMode}"
+		this.securityMode = project.properties.securityMode
+		if(securityMode == null) {
+			throw new IllegalStateException('No security mode found.')
+		}
+		println "securityMode: ${securityMode}"
 
 		// generate the di map
 		int flags = 0;
 		switch(daoMode) {
-			case 'ORM':
+			case 'orm':
 				flags = flags | FLAG_ORM;
 				break;
-			case 'MOCK':
+			case 'mock':
 				flags = flags | FLAG_MOCK;
 				break;
 			default:
 				throw new IllegalStateException('Unhandled dao mode: ' + daoMode)
 		}
-		switch(secMode) {
-			case 'ACEGI':
+		switch(securityMode) {
+			case 'acegi':
 				flags = flags | FLAG_SECURITY_ACEGI;
 				break;
-			case 'NONE':
+			case 'none':
 				flags = flags | FLAG_SECURITY_NONE;
 				break;
 			default:
-				throw new IllegalStateException('Unhandled security mode: ' + secMode)
+				throw new IllegalStateException('Unhandled security mode: ' + securityMode)
 		}
 		def sb = new StringBuilder(1024)
 		DI_MODULES_ALL.each { elm ->
@@ -185,24 +193,24 @@ public final class BuildTools {
 		String s = sbuf.toString()
 		
 		// security/no security filtering
-		if(secMode == 'ACEGI') {
+		if(securityMode == 'acegi') {
 			// remove regex_security_none
 			s = s.replaceAll(regex_security_none, '')
 			println 'NO SECURITY section filtered out'
 		}
-		else if(secMode == 'NONE') {
+		else if(securityMode == 'none') {
 			// remove regex_security_acegi
 			s = s.replaceAll(regex_security_acegi, '')
 			println 'ACEGI SECURITY section filtered out'
 		}
 		
 		// dao orm/mock filtering
-		if(daoMode == 'ORM') {
+		if(daoMode == 'orm') {
 			// remove mock
 			s = s.replaceAll(regex_db_mock, '')
 			println 'MOCK DAO section filtered out'
 		}
-		else if(daoMode == 'MOCK') {
+		else if(daoMode == 'mock') {
 			// remove orm
 			s = s.replaceAll(regex_db_orm, '')
 			println 'ORM DAO section filtered out'
@@ -246,15 +254,17 @@ public final class BuildTools {
 	    // create aggregated config.properties file..
 	    println 'Creating aggregated config.properties file..'
 		String tgtDir = project.build.outputDirectory.toString()
-	    config.saveAsPropFile(new File(tgtDir + '/config.properties'))
-	    println 'config.properties file created'
+		// add debug config property
+		config.addProperty('debug', project.properties.debug)
+	    config.saveAsPropFile(new File(tgtDir, Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME))
+	    println Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME + ' created'
 	}
 
 	/**
 	 * Stubs the app test db.
 	 */
 	private void stubTestDbIfNecessary() {
-		if(config.getString('db.dao.mode') == 'ORM') {
+		if(config.getString('db.dao.mode') == 'orm') {
 			String tgtDir = project.build.outputDirectory.toString()
 			File fSchema = new File(tgtDir, config.getString('db.resource.schema'))
 			File fStub = new File(tgtDir, config.getString('db.resource.stub'))
