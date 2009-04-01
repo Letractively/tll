@@ -1,0 +1,23 @@
+<!--
+Creates a jar containing server-side only assets for use by client projects. 
+-->
+<assembly>
+  <id>server</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <excludes>
+        <exclude>**/*.java</exclude>
+        <exclude>**/*.gwt.xml</exclude>
+        <exclude>**/client/**</exclude>
+        <exclude>**/public/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+
+</assembly>

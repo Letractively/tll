@@ -46,6 +46,31 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+
+        <executions>
+
+          <!-- generate the gwt war dir for testing -->
+          <execution>
+            <id>generate-gwt-war-dir</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <finalName>war</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>gwt-test-war-dir.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
   
@@ -71,7 +96,7 @@
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
   </dependencies>

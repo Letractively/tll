@@ -212,7 +212,7 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -231,7 +231,7 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -244,7 +244,7 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-orm</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -17,29 +17,6 @@
   <build>
     <plugins>
       
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <!-- tweak test-assets execution to additionally include the ModelViewer class -->
-          <execution>
-            <id>test-assets</id>
-            <phase>package</phase>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>**/Abstract*Test*</include>
-                <include>**/*Test*Util*</include>
-                <include>**/mock/**</include>
-                <include>**/ModelViewer*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      
       <!-- override client test default which invokes only GWTTest derived tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -52,7 +29,26 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
-      
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>client-server-jar.xml</descriptor>
+                <descriptor>test-assets.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -207,14 +203,14 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

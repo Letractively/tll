@@ -169,28 +169,28 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-orm</artifactId>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-mock</artifactId>
-      <classifier>tests</classifier>
+      <classifier>testassets</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

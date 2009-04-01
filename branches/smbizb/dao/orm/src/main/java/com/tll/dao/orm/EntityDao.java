@@ -116,7 +116,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 * @param propPath
 	 * @throws InvalidCriteriaException
 	 */
-	private static final void applyAliasIfNecessary(DetachedCriteria dc, String propPath) throws InvalidCriteriaException {
+	private static void applyAliasIfNecessary(DetachedCriteria dc, String propPath) throws InvalidCriteriaException {
 		// if this is a foreign key property, final join to entity table is not
 		// necessary
 		if(propPath.endsWith("." + IEntity.PK_FIELDNAME)) {

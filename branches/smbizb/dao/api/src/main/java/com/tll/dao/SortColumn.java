@@ -75,7 +75,7 @@ public class SortColumn implements IMarshalable, IPropertyNameProvider {
 	 * @param direction
 	 */
 	public SortColumn(String propertyName, String parentAlias, SortDir direction) {
-		this(propertyName, null, direction, DEFAULT_IGNORE_CASE);
+		this(propertyName, parentAlias, direction, DEFAULT_IGNORE_CASE);
 	}
 
 	/**

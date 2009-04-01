@@ -47,7 +47,13 @@
   </properties>
 
   <modules>
-    <module>assemblies</module>
+    <!--
+      Modules:
+       - build-tools 
+       - assemblies (tll-assemblies) 
+      must be installed separately and before hand 
+      since they are referenced as dependencies in this root build file 
+    -->
     <module>core</module>
     <module>config</module>
     <module>mail</module>
@@ -72,6 +78,26 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.0.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>2.1</version>
         </plugin>
@@ -84,6 +110,13 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.2-beta-3</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-assemblies</artifactId>
+              <version>1</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -94,6 +127,11 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jdepend-maven-plugin</artifactId>
           <version>2.0-beta-2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>2.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -122,32 +160,19 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <!-- doesn't work for some reason
+            <mainfest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <classpathMavenRepositoryLayout>true</classpathMavenRepositoryLayout>
+            </mainfest>
+            -->
             <manifestEntries>
-              <mode>dev</mode>
+              <mode>${mode}</mode>
               <url>${pom.url}</url>
             </manifestEntries>
           </archive>
         </configuration>
-
-        <!--
-          By default, retain extendable base test classes, test utilities and mock test assets.
-        -->
-        <executions>
-          <execution>
-            <id>test-assets</id>
-            <phase>package</phase>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>**/Abstract*Test*</include>
-                <include>**/*Test*Util*</include>
-                <include>**/mock/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       
       <plugin>
@@ -232,7 +257,7 @@
           </dependency>
         </dependencies>
       </plugin>
-      
+
     </plugins>
 
   </build>
@@ -250,6 +275,25 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <linkXref>true</linkXref>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>1.6</targetJdk>
+          <!-- 
+          <excludes>
+            <exclude>**/*Bean.java</exclude>
+            <exclude>**/generated/*.java</exclude>
+          </excludes>
+          <excludeRoots>
+            <excludeRoot>target/generated-sources/stubs</excludeRoot>
+          </excludeRoots>
+          -->
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -294,6 +338,10 @@
     
     <!--
       dao mode profiles: orm and mock.
+      
+      **TODO** move to smbiz and trigger by env variable 
+      rather than in settings.xml which applies globally 
+      (to other projects which is spurious and gives warnings).
     -->
 
     <!-- orm dao mode (global) profile -->
@@ -353,13 +401,14 @@
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
-        <version>[1.2.13,)</version>
+        <version>1.2.14</version>
       </dependency>
       <dependency>
-        <groupId>c3p0</groupId>
-        <artifactId>c3p0</artifactId>
-        <version>[0.9.1,)</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.5.2</version>
       </dependency>
+
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
@@ -395,7 +444,6 @@
         <artifactId>oro</artifactId>
         <version>2.0.8</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity</artifactId>
@@ -403,20 +451,56 @@
       </dependency>
 
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.5.2</version>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>1.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.4.GA</version>
+      </dependency>
+      <dependency>
+        <groupId>antlr</groupId>
+        <artifactId>antlr</artifactId>
+        <version>2.7.6</version>
+      </dependency>
+      <dependency>
+        <groupId>c3p0</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.1</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>${aspectjVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aspectjVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>aopalliance</groupId>
+        <artifactId>aopalliance</artifactId>
+        <version>1.0</version>
       </dependency>
 
       <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.5</version>
+      </dependency>
+      <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.1</version>
+        <version>[1.4.1,)</version>
       </dependency>
       <dependency>
         <groupId>javax.activation</groupId>
         <artifactId>activation</artifactId>
-        <version>1.1</version>
+        <version>[1.1,)</version>
       </dependency>
       <dependency>
         <groupId>javax.persistence</groupId>
@@ -427,6 +511,12 @@
         <groupId>javax.transaction</groupId>
         <artifactId>jta</artifactId>
         <version>1.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>backport-util-concurrent</groupId>
+        <artifactId>backport-util-concurrent</artifactId>
+        <version>3.1</version>
       </dependency>
 
       <dependency>
@@ -447,6 +537,7 @@
         <version>${mysqlConnectorVersion}</version>
       </dependency>
 
+      <!-- hibernate -->
       <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-core</artifactId>
@@ -478,6 +569,7 @@
         <version>3.1.0.GA</version>
       </dependency>
 
+      <!-- spring -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
@@ -511,7 +603,7 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-support</artifactId>
-        <version>2.0.8</version><!-- no 2.5.6 version exists at central repo -->
+        <version>[2.0.8,)</version><!-- no 2.5.6 version exists at central repo -->
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -550,34 +642,6 @@
         <version>1.0</version>
       </dependency>
 
-      <dependency>
-        <groupId>backport-util-concurrent</groupId>
-        <artifactId>backport-util-concurrent</artifactId>
-        <version>3.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>aopalliance</groupId>
-        <artifactId>aopalliance</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjrt</artifactId>
-        <version>${aspectjVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.aspectj</groupId>
-        <artifactId>aspectjweaver</artifactId>
-        <version>${aspectjVersion}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version>
-      </dependency>
-
       <!-- GWT -->
       <dependency>
         <groupId>com.google.gwt</groupId>
@@ -606,26 +670,10 @@
         <version>${testNGVersion}</version>
         <classifier>jdk15</classifier>
       </dependency>
-
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junitVersion}</version>
-      </dependency>
-      <dependency>
-      	<groupId>dom4j</groupId>
-      	<artifactId>dom4j</artifactId>
-      	<version>1.6.1</version>
-      </dependency>
-      <dependency>
-      	<groupId>javassist</groupId>
-      	<artifactId>javassist</artifactId>
-      	<version>3.4.GA</version>
-      </dependency>
-      <dependency>
-      	<groupId>antlr</groupId>
-      	<artifactId>antlr</artifactId>
-      	<version>2.7.6</version>
       </dependency>
 
     </dependencies>
