@@ -1,41 +1,31 @@
 /**
  * The Logic Lab
  * @author jpk
- * Jan 28, 2009
+ * Mar 31, 2009
  */
-package com.tll.dao.orm;
+package com.tll.dao;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
-import org.testng.annotations.Test;
-
-import com.tll.dao.IEntityDaoTestHandler;
 import com.tll.util.CommonUtil;
 
+
 /**
- * EntityDaoTest
+ * DaoHandlersProvider
  * @author jpk
  */
-@Test(groups = "dao")
-public class EntityDaoTest extends AbstractOrmEntityDaoTest {
+public abstract class DaoHandlersProvider {
 
-	@Override
-	protected IEntityDaoTestHandler<?>[] getDaoTestHandlers() {
-		/*
-		return new IEntityDaoTestHandler<?>[] {
-			new InterfaceSingleDaoTestHandler()
-		};
-		*/
+	/**
+	 * @return All defined dao test handlers.
+	 */
+	public static IEntityDaoTestHandler<?>[] getHandlers() {
 		try {
-			Class<?>[] handlerTypes =
-					CommonUtil.getClasses("com.tll.dao.mock", IEntityDaoTestHandler.class, true, null, new FilenameFilter() {
+			Class<?>[] handlerTypes = CommonUtil.getClasses("com.tll.dao", IEntityDaoTestHandler.class, true, null, null/*new FilenameFilter() {
 
-						@Override
-						public boolean accept(File dir, String name) {
-							return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("test-classes") > 0;
-						}
-					});
+									@Override
+									public boolean accept(File dir, String name) {
+										return dir.getPath().indexOf("smbiz") > 0 && dir.getPath().indexOf("test-classes") > 0;
+									}
+								}*/);
 
 			IEntityDaoTestHandler<?>[] arr = new IEntityDaoTestHandler[handlerTypes.length];
 			int i = 0;
@@ -55,5 +45,4 @@ public class EntityDaoTest extends AbstractOrmEntityDaoTest {
 			throw new IllegalStateException("Unable to access an entity dao test handler: " + e.getMessage(), e);
 		}
 	}
-
 }

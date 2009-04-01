@@ -118,28 +118,10 @@ public final class BuildTools {
 	 * Init routing called by constructor.
 	 */
 	private void init() {
-		/*
-		 * Generate the build config ingesting the following files:
-		 *  - config.properties
-		 *  - config-{mode}.properties
-		 *  - config-local.properties
-		 */
+		// load the config
 		String mode = project.properties.mode;
 		String baseDir = project.basedir.toString() + "/src/main/resources";
-		println "Loading config (mode: ${mode}).."
-		File fBaseConfig = new File(baseDir, "config.properties")
-		File fProfileConfig = new File(baseDir, "config-${mode}.properties")
-		File fLocalConfig = new File(baseDir, "config-local.properties")
-		this.config = Config.instance()
-		if(fBaseConfig.isFile()) {
-			this.config.loadProperties(fBaseConfig.toURI().toURL(), true, false)
-		}
-		if(fBaseConfig.isFile()) {
-			this.config.loadProperties(fProfileConfig.toURI().toURL(), true, true)
-		}
-		if(fLocalConfig.isFile()) {
-			this.config.loadProperties(fLocalConfig.toURI().toURL(), true, true)
-		}
+		this.config = ConfigProcessor.process(baseDir, mode, 'local')
 		
 		// retain the dao mode and security mode
 		this.daoMode = config.getString('db.dao.mode')

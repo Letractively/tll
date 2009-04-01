@@ -4,7 +4,7 @@
   }
 )
 
-@GenericGenerator(name="entity", strategy="com.tll.dao.hibernate.DelegateGenerator",
+@GenericGenerator(name = "entity", strategy = "com.tll.dao.orm.DelegateGenerator",
   parameters = {
     @Parameter(name="delegate", value="hilo")
   }

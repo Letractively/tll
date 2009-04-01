@@ -292,6 +292,26 @@
       </build>
     </profile>
     
+    <!--
+      dao mode profiles: orm and mock.
+    -->
+
+    <!-- orm dao mode (global) profile -->
+    <profile>
+      <id>orm</id>
+      <properties>
+        <daoMode>orm</daoMode>
+      </properties>
+    </profile>
+
+    <!-- mock dao mode (global) profile -->
+    <profile>
+      <id>mock</id>
+      <properties>
+        <daoMode>mock</daoMode>
+      </properties>
+    </profile>
+    
     <!-- GWT unpacking profiles -->
     <profile>
       <id>gwt-dev-windows</id>

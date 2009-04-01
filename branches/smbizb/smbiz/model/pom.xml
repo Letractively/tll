@@ -1,20 +1,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <artifactId>smbiz</artifactId>
     <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>com.tll</groupId>
   <artifactId>smbiz-model</artifactId>
   <name>smbiz-model</name>
   <version>0.0.1-SNAPSHOT</version>
-  
+
   <build>
+    <filters>
+      <filter>src/main/resources/config.properties</filter>
+      <filter>src/main/resources/config-${mode}.properties</filter>
+    </filters>
     <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
+      </resource>
+      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
+      <resource>
+        <directory>src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
+      </resource>
       <!-- Source files needed for GWT compile -->
       <resource>
         <directory>src/main/java</directory>
@@ -25,8 +49,78 @@
         </includes>
       </resource>
     </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <configuration>
+          <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
+          <source>println 'config'</source>
+        </configuration>
+        <executions>
+          <execution>
+            <id>process-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <classpath>
+                <element>
+                  <groupId>commons-lang</groupId>
+                  <artifactId>commons-lang</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-configuration</groupId>
+                  <artifactId>commons-configuration</artifactId>
+                </element>
+                <element>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-config</artifactId>
+                  <version>${project.parent.version}</version>
+                </element>
+              </classpath>
+              <scriptpath>
+                <element>${project.basedir}/../../build-tools/src/main/scripts</element>
+              </scriptpath>
+              <source><![CDATA[
+                String sd = project.basedir.toString() + '/src/main/resources'
+                String td = project.build.outputDirectory.toString()
+                com.tll.ConfigProcessor.processAndSave(sd, td, project.properties.mode)
+              ]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <!--
+            combine api and impl jars: 1. api and impl combined 2. api and impl combined w/ mock support types
+          -->
+          <execution>
+            <id>api-impl-aggregations</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/api-impl-orm-aggregate.xml</descriptor>
+                <descriptor>src/main/assembly/api-impl-mock-aggregate.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -89,6 +183,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

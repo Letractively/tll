@@ -1,10 +1,11 @@
+TODO: re-name to package-info.java
 @TypeDefs(
   {
     @TypeDef(name="encobj", typeClass = EncryptedObjectType.class)
   }
 )
 
-@GenericGenerator(name="entity", strategy="com.tll.dao.hibernate.DelegateGenerator",
+@GenericGenerator(name = "entity", strategy = "com.tll.dao.orm.DelegateGenerator",
   parameters = {
     @Parameter(name="delegate", value="hilo")
   }

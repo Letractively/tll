@@ -15,21 +15,9 @@
   <description>Persistence for smbiz.</description>
 
   <build>
-    <filters>
-      <filter>src/main/resources/config.properties</filter>
-      <filter>src/main/resources/config-${mode}.properties</filter>
-    </filters>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
-        <excludes>
-          <exclude>config*.properties</exclude>
-        </excludes>
       </resource>
       <resource>
         <directory>src/main/resources/db</directory>
@@ -37,15 +25,6 @@
         <includes>
           <include>*.*</include>
         </includes>
-      </resource>
-      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
-      <resource>
-        <directory>src/main/resources/META-INF</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <targetPath>META-INF</targetPath>
       </resource>
     </resources>
 
@@ -62,6 +41,7 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+
     </plugins>
 
   </build>
@@ -71,15 +51,11 @@
     <!-- dev profile -->
     <profile>
       <id>dev</id>
-      <properties>
-      </properties>
     </profile>
 
     <!-- production profile -->
     <profile>
       <id>prod</id>
-      <properties>
-      </properties>
       <build>
         <plugins>
           <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
@@ -155,16 +131,12 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>smbiz-model</artifactId>
+      <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -194,12 +166,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-mock</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -236,10 +202,5 @@
     </dependency>
 
   </dependencies>
-
-  <!--
-    <profiles> <profile> <id>mock</id> <properties> <daoMode>mock</daoMode> </properties> </profile> <profile>
-    <id>orm</id> <properties> <daoMode>orm</daoMode> </properties> </profile> </profiles>
-  -->
 
 </project>

@@ -1,0 +1,37 @@
+<assembly>
+  <id>orm</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/*.java</exclude>
+        <exclude>**/SmbizEntityGraphBuilder*</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+
+  <!-- groupId:artifactId:type:classifier -->
+  <dependencySets>
+    
+    <!-- NOTE: we only need gwt-servlet! -->
+    <dependencySet>
+      <scope>runtime</scope>
+      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <includes>
+        <include>com.tll:tll-model</include>
+      </includes>
+    </dependencySet>
+    
+  </dependencySets>
+
+</assembly>

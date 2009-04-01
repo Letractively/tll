@@ -2,19 +2,17 @@
 <suite name="smbiz-dao-tests">
   
   <test name="orm-dao-tests" annotations="JDK">
-    <parameter name="daoMode" value="ORM" />
     <groups>
       <run>
         <include name="dao" />
       </run>
     </groups>
     <packages>
-      <package name="com.tll.dao.mock" />
+      <package name="com.tll.dao.orm" />
     </packages>
   </test>
   
   <test name="mock-dao-tests" annotations="JDK">
-    <parameter name="daoMode" value="MOCK" />
     <groups>
       <run>
         <include name="dao" />
