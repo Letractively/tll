@@ -34,7 +34,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
           </suiteXmlFiles>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>smbiz-model</artifactId>
-      <classifier>${daoMode}</classifier>
+      <!-- <classifier>${daoMode}</classifier> -->
       <version>${project.version}</version>
     </dependency>
     <dependency>

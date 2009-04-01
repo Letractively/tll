@@ -23,7 +23,8 @@ public abstract class ResourceProcessor{
 		String td = project.build.outputDirectory.toString()
 		File tcfg = new File(td, Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME)
 	    Config cfg = ConfigProcessor.merge(project.basedir.toString() + '/src/main/resources', project.properties.mode)
-		cfg.saveAsPropFile(tcfg, 'model.', 'model.')
+		//cfg.saveAsPropFile(tcfg, 'model.', 'model.')
+		cfg.saveAsPropFile(tcfg)
 	}
 
 }

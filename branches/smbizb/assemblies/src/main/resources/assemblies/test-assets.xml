@@ -15,13 +15,14 @@ is applied to allowing dependent projects to extend them.
       <!-- exclude concrete tests that test util related! -->
       <excludes>
         <exclude>**/*UtilTest*</exclude>
+        <exclude>**/SimpleEntityDaoTest*</exclude><!-- hack -->
       </excludes>
       <includes>
         <include>**/I*</include><!-- include interfaces -->
         <include>**/Abstract*Test*</include>
         <include>**/*Util*</include>
         <include>**/*Support*</include>
-        <include>**/mock/**</include>
+        <include>**/mock/**</include><!-- TODO: maybe change this dir to testassets to avoid unwanted test assets under mock dirs -->
         <include>**/TestEntityDaoTestHandler*</include><!-- hack -->
       </includes>
       <outputDirectory>/</outputDirectory>
