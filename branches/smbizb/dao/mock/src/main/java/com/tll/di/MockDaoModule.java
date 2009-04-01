@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.tll.config.Config;
-import com.tll.config.IConfigKey;
 import com.tll.dao.IEntityDao;
+import com.tll.di.MockEntityFactoryModule.ConfigKeys;
 import com.tll.model.EntityGraph;
 import com.tll.model.IEntityGraphBuilder;
 import com.tll.model.key.IPrimaryKeyGenerator;
@@ -16,29 +16,6 @@ import com.tll.model.key.MockPrimaryKeyGenerator;
  * @author jpk
  */
 public class MockDaoModule extends GModule {
-
-	/**
-	 * ConfigKeys - Configuration property keys for the dao module.
-	 * @author jpk
-	 */
-	public static enum ConfigKeys implements IConfigKey {
-
-		ENTITY_GRAPH_BUILDER_CLASSNAME("db.dao.entityGraphBuilder.classname");
-
-		private final String key;
-
-		/**
-		 * Constructor
-		 * @param key
-		 */
-		private ConfigKeys(String key) {
-			this.key = key;
-		}
-
-		public String getKey() {
-			return key;
-		}
-	}
 
 	/**
 	 * Constructor

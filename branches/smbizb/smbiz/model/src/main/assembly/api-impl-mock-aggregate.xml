@@ -11,14 +11,13 @@
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>**/*.java</exclude>
+        <exclude>**/META-INF/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
 
   <!-- groupId:artifactId:type:classifier -->
   <dependencySets>
-    
-    <!-- NOTE: we only need gwt-servlet! -->
     <dependencySet>
       <scope>runtime</scope>
       <unpack>true</unpack>
@@ -31,7 +30,6 @@
         <include>com.tll:tll-mock</include>
       </includes>
     </dependencySet>
-    
   </dependencySets>
 
 </assembly>

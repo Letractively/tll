@@ -12,6 +12,7 @@
       <excludes>
         <exclude>**/*.java</exclude>
         <exclude>**/SmbizEntityGraphBuilder*</exclude>
+        <exclude>mock-entities.xml</exclude>
       </excludes>
     </fileSet>
   </fileSets>

@@ -16,17 +16,17 @@ import com.tll.config.Config;
 public class ConfigProcessor{
 
 	/**
-	 * Process one or more config property files returning a single Config instance. 
+	 * Merges one or more config property files returning a single Config instance. 
 	 * @param baseDir the dir in which the config property file(s) reside
 	 * @param modifiers one or more optional config file name modifiers 
 	 * 	  	  where, if specified, means: a config property file of name convention:
 	 *        config-{modifier}.properties
 	 * @return the config instance
 	 */
-	public static Config process(String baseDir, String... modifiers) {
+	public static Config merge(String baseDir, String... modifiers) {
 		if(baseDir == null) throw new IllegalArgumentException('No base dir specified.')
 		 
-		println "Processing config files in dir: ${baseDir} .."
+		println "Merging config files in dir: ${baseDir} .."
 		Config cfg = Config.instance();
 		String fn
 		File f
@@ -54,8 +54,8 @@ public class ConfigProcessor{
 		return cfg;
 	}
 	 
-	public static void processAndSave(String baseDir, String tgtDir, String... modifiers) {
-		Config cfg = process(baseDir, modifiers)
+	public static void mergeAndSave(String baseDir, String tgtDir, String... modifiers) {
+		Config cfg = merge(baseDir, modifiers)
 		println "Saving merged config.properties file to dir: ${tgtDir}"
     	cfg.saveAsPropFile(new File(tgtDir, Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME))
 	}

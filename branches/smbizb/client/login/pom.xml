@@ -36,6 +36,11 @@
   
   <dependencies>
     <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-mail</artifactId>
       <version>${project.version}</version>

@@ -25,7 +25,15 @@ public class MockEntityFactoryModule extends GModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		MOCK_ENTITIES_FILENAME("model.mock.entities.filename");
+		/**
+		 * The xml file containing the entity prototype definitions.
+		 */
+		MOCK_ENTITIES_FILENAME("model.mockEntities.filename"),
+
+		/**
+		 * The complimenting entity object graph builder.
+		 */
+		ENTITY_GRAPH_BUILDER_CLASSNAME("model.entityGraphBuilder.classname");
 
 		private final String key;
 
@@ -45,7 +53,7 @@ public class MockEntityFactoryModule extends GModule {
 	@Override
 	protected void configure() {
 		final String mef = Config.instance().getString(ConfigKeys.MOCK_ENTITIES_FILENAME.getKey());
-		final ClassPathXmlApplicationContext sac = new ClassPathXmlApplicationContext(mef/*"mock-entities.xml"*/);
+		final ClassPathXmlApplicationContext sac = new ClassPathXmlApplicationContext(mef);
 		bind(ListableBeanFactory.class).annotatedWith(MockEntityBeanFactory.class).toInstance(sac);
 		bind(MockEntityFactory.class).in(Scopes.SINGLETON);
 	}

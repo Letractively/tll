@@ -21,7 +21,6 @@
       </resource>
       <resource>
         <directory>src/main/resources/db</directory>
-        <filtering>false</filtering>
         <includes>
           <include>*.*</include>
         </includes>
@@ -35,7 +34,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
+            <!-- <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile> -->
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
           </suiteXmlFiles>

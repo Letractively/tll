@@ -23,7 +23,7 @@ public class EntityAssemblerModule extends GModule {
 	 */
 	public static enum ConfigKeys implements IConfigKey {
 
-		ENTITY_ASSEMBLER_CLASSNAME("entityAssembler.classname");
+		ENTITY_ASSEMBLER_CLASSNAME("model.entityAssembler.classname");
 
 		private final String key;
 
