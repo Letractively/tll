@@ -1,22 +1,17 @@
 #labels Featured,Phase-Requirements
 Lists the necessary local environment and IDE settings for building and deploying _tll_ projects.
 
-*NOTE:* 
-_THIS WIKI NEEDS TO BE UPDATED BASED ON THE RECENT MIGRATION TO MAVEN.
-CONSIDER THIS WIKI DEPRECATED!_
-
 =Required Software=
 The following software is required:
 || *Name* || *Version* ||
 || [http://java.sun.com/javase/downloads/index.jsp jdk] || 1.6.0_11+ ||
-|| [http://www.eclipse.org/ eclipse] || 3.4.1+||
-|| [http://maven.apache.org/ maven] || 2.0.9+||
-|| [http://groovy.codehaus.org/ groovy] || 1.5.7+ ||
+|| [http://www.eclipse.org/ eclipse] || 3.4.2+||
+|| [http://maven.apache.org/ maven] || 2.1.0+||
 || [http://ant.apache.org/ ant] || 1.7.1+ ||
-|| [http://gant.codehaus.org/ gant] || 1.5.0+ ||
+|| [http://groovy.codehaus.org/ groovy] || 1.6+ ||
 || [http://subversion.tigris.org/ subversion client] || 1.5.4+ ||
 || [http://www.eclipse.org/aspectj/downloads.php AspectJ] || 1.6.3+ ||
-|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.5.3+ ||
+|| [http://code.google.com/p/google-web-toolkit/ GWT] || 1.6 RC2+ ||
 || [http://tomcat.apache.org/ Tomcat] || 6.0.18+ ||
 
 =environment=
@@ -28,14 +23,10 @@ The following software is required:
 || ASPECTJ_HOME || Points to the root AspectJ install dir. ||
 || GROOVY_HOME || Points to the root groovy install dir. ||
 || ANT_HOME || Points to the root Ant install dir. ||
-|| GANT_HOME || Points to the root Gant install dir. ||
-|| SUBVERSION_HOME || Points to the root Subversion Client install dir. ||
 || GWT_HOME || Points to the root GWT _install_ dir. (Used for building GWT from source.) ||
 || GWT_TOOLS || Points to the root GWT Tools dir. (Used for building GWT from source.)||
 || TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
 || TLL_TOOLS || Points to the local working copy dir of tll tools root dir ('http://tll.googlecode.com/svn/tools'). ||
-|| tll.config.machine.name || The tll configuration system property machine name. ||
-|| tll.config.user.name || The tll configuration system property user name. ||
 
   * Add the following paths to the system path:
  {{{
@@ -44,14 +35,13 @@ The following software is required:
 {ASPECTJ_HOME/bin
 {GROOVY_HOME}/bin
 {ANT_HOME}/bin
-{GANT_HOME}/bin
-{SUBVERSION_HOME}
 {GWT_HOME}
 }}}
 
   * Append these global ignores to the installed SVN config file:
  {{{
-global-ignores = build classes bin dist Desktop.ini *.log local.properties *.tmp .metadata www www-test .gwt-cache .gwt-tmp test-output tomcat Constants.properties local.config.properties
+global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy dist Desktop.ini *.log *.tmp target .metadata .gwt-tmp test-output tomcat Constants.properties config-local.properties
+
 }}}
 
   * Establish local working copies of the root tll project dir and tll tools dir:
@@ -60,33 +50,20 @@ svn checkout http://tll.googlecode.com/svn/trunk/ {TLL_ROOT}
 svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 }}}
 
-  * Add the following to the {{{{GANT_HOME}/conf/gant-starter.conf}}} file:
+  * Install the tll build-tools project into the local maven repository first.  From the tll/build-tools dir:
  {{{
-    # for tll projects
-    load ./config
+mvn install
 }}}
 
- This adds the stated path to gant's CLASSPATH. We are leveraging the fact that a config dir exists for all tll project root dirs containing the project configuration files.
-
-  * Build the tll libraries by invoking {{{gant dist}}} from a command line in the following in the listed order:
+  * Install tll assemblies into the local maven repository next.  From the tll/assemblies dir:
  {{{
-{TLL_ROOT}/core/
-{TLL_ROOT}/config/
-{TLL_ROOT}/util/
-{TLL_ROOT}/mail/
+mvn install
 }}}
 
-  * Copy the following libs to the {{{{user.home}/.groovy/lib/}}} dir:
+  * Now install all tll projects into the local maven repository from the local tll root dir:
  {{{
-{TLL_ROOT}/tools/lib/commons-lang.jar
-{TLL_ROOT}/tools/lib/commons-logging.jar
-{TLL_ROOT}/tools/lib/commons-collections.jar
-{TLL_ROOT}/tools/lib/commons-configuration.jar
-{TLL_ROOT}/config/dist/tll-config.jar
-{ASPECTJ_HOME}/bin/aspectjtools.jar
+mvn install
 }}}
-
- These copied jars will now be automatically loaded in all subsequent groovy invocations.  This enables {{{com.tll.config.Config}}} instances to be declared in a gant context which is required for all tll projects except for the config project itself.
 
 ----
 =eclipse=
@@ -111,38 +88,11 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || gwt_host_webroot || {TLL_ROOT}/smbiz/smbiz-client/tomcat/webapps/ROOT ||
 
 ==Add Ons==
-|| subversive || [http://download.eclipse.org/technology/subversive/0.7/update-site/ http://download.eclipse.org/technology/subversive/0.7/update-site/] ||
-|| subversive connectors || [http://www.polarion.org/projects/subversive/download/integrations/update-site/ http://www.polarion.org/projects/subversive/download/integrations/update-site/] ||
-|| subversive connectors 2 || [http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/ http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/] ||
+|| subclipse || [http://subclipse.tigris.org/update_1.6.x http://subclipse.tigris.org/update_1.6.x] ||
 || m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
+|| Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev_1.6/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] ||
+|| Aptana || [http://update.aptana.com/update/studio/3.4 http://update.aptana.com/update/studio/3.4] ||
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
-
-----
-=smbiz project configuration=
-  * In the {{{{TLL_ROOT}/smbiz/config}}} dir, create the necessary config override files with the following names:
-
-|| *Name* || *Required?* ||
-|| {{{ {tll.config.machine.name}.{tll.config.user.name}.config.properties }}} || Yes ||
-|| {{{ local.config.properties }}} || No ||
-
- These files must declare, at a minimum, all properties contained in {{{{TLL_ROOT}/smbiz/config/config.properties}}} whose value is "UNSPECIFIED".
-
- Example:
- {{{
-environment dev
-debug true
-
-mail.host.primary mail.domain.com
-mail.dflt_user_email testemail@domain.com
-}}}
-
-----
-=misc=
-
-To create a GWT junit test case quickly, invoke the command:
- {{{
-{TLL_ROOT}/smbiz/client>junitcreator -junit {TLL_ROOT}/tools/lib/junit.jar -module com.tll.Smbiz -eclipse smbiz-client {full.path.testclassname}
-}}}
