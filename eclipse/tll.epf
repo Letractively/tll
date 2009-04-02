@@ -1,4 +1,4 @@
-#Thu Apr 02 06:58:29 PDT 2009
+#Thu Apr 02 07:27:54 PDT 2009
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/file\:_C\:_Documents\ and\ Settings_jpk_.eclipse_org.eclipse.platform_3.4.0_1642638943_p2_org.eclipse.equinox.p2.core_cache_/provider=
 /instance/org.eclipse.jdt.ui/cleanup.make_parameters_final=true
 /instance/org.eclipse.wst.html.core/indentationSize=2
@@ -88,7 +88,7 @@
 /instance/org.eclipse.mylyn.bugzilla.ui//org.eclipse.mylyn.bugzilla.values.target\:https\://bugs.eclipse.org/bugs\:Hyades=---\!1.0.0\!1.0.1\!1.0.2\!1.0.3\!1.0.4\!1.1.0\!1.2.0\!1.2.1\!1.3.0\!3.0 M8\!3.0 M9\!3.0 M10\!3.0.1\!3.0.1.1\!3.0.1.2\!3.0.2\!3.1 i1\!3.1 i2\!3.2\!3.2 i1\!3.2 i2\!3.3\!3.3 i1\!3.3 i2\!3.3 i3\!3.3.0.2\!4.0\!4.0 i1\!4.0 i2\!4.0 i3\!4.0 i4\!4.1\!4.2\!future\!
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/file\:_C\:_development_eclipse_configuration_org.eclipse.osgi_bundles_61_data_listener_622318947/version=1.0.0
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/http\:__download.eclipse.org_modeling_gmf_updates_releases/enabled=false
-/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=all_standard_tags
+/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=return_tag
 /instance/org.eclipse.jdt.ui/cleanup.remove_unused_imports=true
 /configuration/org.eclipse.equinox.p2.metadata.repository/repositories/http\:__www.polarion.org_projects_subversive_download_integrations_update-site_/enabled=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.tabulation.size=2
@@ -822,7 +822,7 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_ellipsis=do not insert
 /instance/org.eclipse.core.resources/encoding=UTF-8
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_between_empty_parens_in_method_declaration=do not insert
-/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.undocumentedEmptyBlock=warning
+/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.undocumentedEmptyBlock=ignore
 /instance/org.eclipse.mylyn.bugzilla.ui//org.eclipse.mylyn.bugzilla.values.component\:https\://bugs.eclipse.org/bugs\:AJDT=Core\!Doc\!UI\!
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_new_line_in_empty_annotation_declaration=insert
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/http\:__dist.codehaus.org_groovy_distributions_updateDev/name=file\:/C\:/source/GROOVY_ECLIPSE_1_5_7_20081120_2330/GroovySite/ - artifacts
@@ -884,7 +884,6 @@
 /configuration/org.eclipse.equinox.p2.metadata.repository/repositories/http\:__download.eclipse.org_technology_dltk_updates_/isSystem=false
 /instance/org.eclipse.jdt.ui/sp_cleanup.always_use_parentheses_in_expressions=false
 /instance/org.eclipse.ant.ui/problem_security=warning
-/instance/org.eclipse.jdt.ui/LexicalSortingAction.isChecked=true
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/file\:_C\:_Documents\ and\ Settings_jpk_.eclipse_org.eclipse.platform_3.4.0_1642638943_/description=
 /instance/org.eclipse.jst.jsp.core/org.eclipse.jst.jsp.core.taglib.TaglibIndex=DIRTY
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.codeComplete.visibilityCheck=enabled
@@ -1035,7 +1034,6 @@
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/http\:__m2eclipse.sonatype.org_update/version=1.0.0
 /instance/org.eclipse.jdt.ui/semanticHighlighting.class.color=64,0,128
 \!/=
-/instance/org.eclipse.jdt.ui/MemberFilterActionGroup.org.eclipse.jdt.ui.JavaOutlinePage.1=true
 /instance/org.eclipse.jdt.ui/cleanup.qualify_static_field_accesses_with_declaring_class=false
 /instance/org.eclipse.mylyn.bugzilla.ui//org.eclipse.mylyn.bugzilla.values.version\:https\://bugs.eclipse.org/bugs\:TPTP\ Line\ Coverage=4.0\!4.0.1\!4.0.1.3\!4.0.2\!4.1\!4.2\!4.2.1\!4.2.1.1\!4.2.2\!4.3\!4.3.1\!4.4\!4.4.0.1\!4.4.0.2\!4.4.1\!4.5\!future\!unspecified\!
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_between_empty_parens_in_enum_constant=do not insert
@@ -1572,7 +1570,7 @@ file_export_version=3.0
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/http\:__download.eclipse.org_dsdp_dd_updates/url=http\://download.eclipse.org/dsdp/dd/updates
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionWhenOverriding=enabled
 /instance/org.eclipse.mylyn.bugzilla.ui//org.eclipse.mylyn.bugzilla.values.version\:https\://bugs.eclipse.org/bugs\:EMFT=-\!0.5\!0.7\!0.7.1\!0.8\!1.0\!1.0.1\!1.0.2\!1.1\!2.0\!Future\!unspecified\!
-/instance/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1229779159328">\r\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n<vm id\="1229779159328" javadocURL\="http\://java.sun.com/javase/6/docs/api/" name\="jdk1.6.0_11" path\="C\:\\development\\Java\\jdk1.6.0_11"/>\r\n</vmType>\r\n</vmSettings>\r\n
+/instance/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1229779159328" defaultVMConnector\="">\r\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n<vm id\="1229779159328" javadocURL\="http\://java.sun.com/javase/6/docs/api/" name\="jdk1.6.0_11" path\="C\:\\development\\Java\\jdk1.6.0_11"/>\r\n</vmType>\r\n</vmSettings>\r\n
 /instance/org.eclipse.team.svn.ui/history.Merge_FirstUrl=aHR0cHM6Ly90bGwuZ29vZ2xlY29kZS5jb20vc3ZuL2JyYW5jaGVzL2ZsZC1tb2RlbC1yZWR1eC9zbWJpei9jbGllbnQvc3JjL2NvbS90bGwvY2xpZW50L3ZhbGlkYXRlL0RhdGVWYWxpZGF0b3IuamF2YQ\=\=
 /configuration/org.eclipse.equinox.p2.artifact.repository/repositories/http\:__download.eclipse.org_modeling_emft_updates_/isSystem=false
 /instance/org.eclipse.mylyn.bugzilla.ui//org.eclipse.mylyn.bugzilla.values.target\:https\://bugs.eclipse.org/bugs\:ECF=---\!1.0.0\!1.0.1\!1.0.2\!1.1.0\!1.2.0\!2.0.0M1\!
