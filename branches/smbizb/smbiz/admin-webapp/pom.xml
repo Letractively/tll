@@ -48,6 +48,8 @@
     </resources>
 
     <plugins>
+      
+      <!-- TODO temp
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -59,7 +61,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
+          NOTE: m2eclipse will fail the build if there is no valid source arg param!
           <source>println 'config'</source>
         </configuration>
         <executions>
@@ -119,22 +121,62 @@
           </execution>
         </executions>
       </plugin>
+      -->
       
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <skip>true</skip><!-- TODO temp -->
           <suiteXmlFiles>
             <suiteXmlFile>${basedir}/src/test/resources/test-server.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <!-- 
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>tll-server</finalName>
+              <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/tll-aggregate-server.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          -->
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <configuration>
+              <finalName>tll-server</finalName>
+              <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archiveBaseDirectory>false</archiveBaseDirectory>
+              <descriptors>
+                <descriptor>src/main/assembly/non-tll-server.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
+          <warName>smbiz-admin</warName>
           <webXml>target/war/WEB-INF/web.xml</webXml>
           <warSourceExcludes>
             .gwt-tmp/**,
@@ -214,6 +256,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>smbiz-model</artifactId>
       <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
@@ -226,11 +273,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -238,6 +280,7 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-security</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -296,26 +339,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <classifier>jdk15</classifier>
-      <version>${testNGVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <classifier>testassets</classifier>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    
   </dependencies>
 
 </project>
