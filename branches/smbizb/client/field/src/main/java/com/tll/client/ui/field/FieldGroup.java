@@ -254,12 +254,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Recursively searches for a field having the given name.
-	 * @param name
+	 * @param nme
 	 * @return The found field or <code>null</code> if no field exists with the
 	 *         given name.
 	 */
-	public IField getFieldByName(String name) {
-		return findByName(name, this);
+	public IField getFieldByName(String nme) {
+		return findByName(nme, this);
 	}
 
 	/**
@@ -273,12 +273,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Recursively searches for a field widget having the given name.
-	 * @param name
+	 * @param nme
 	 * @return The found field widget or <code>null</code> if no field widget
 	 *         exists with the given name.
 	 */
-	public IFieldWidget<?> getFieldWidgetByName(String name) {
-		final IField f = findByName(name, this);
+	public IFieldWidget<?> getFieldWidgetByName(String nme) {
+		final IField f = findByName(nme, this);
 		return f instanceof IFieldWidget ? (IFieldWidget<?>) f : null;
 	}
 
@@ -323,11 +323,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Adds multiple fields to this group.
-	 * @param fields The fields to add
+	 * @param flds The fields to add
 	 */
-	public void addFields(Iterable<IField> fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(Iterable<IField> flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(fld);
 			}
 		}
@@ -335,11 +335,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 
 	/**
 	 * Adds an array of fields to this group.
-	 * @param fields The array of fields to add
+	 * @param flds The array of fields to add
 	 */
-	public void addFields(IField[] fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(IField[] flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(fld);
 			}
 		}
@@ -350,11 +350,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param parentPropPath Pre-pended to the each field's property name before
 	 *        the fields are added. May be <code>null</code> in which case the
 	 *        fields' property names remain un-altered.
-	 * @param fields The fields to add
+	 * @param flds The fields to add
 	 */
-	public void addFields(String parentPropPath, Iterable<IField> fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(String parentPropPath, Iterable<IField> flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -365,11 +365,11 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	 * @param parentPropPath Pre-pended to the each field's property name before
 	 *        the fields are added. May be <code>null</code> in which case the
 	 *        fields' property names remain un-altered.
-	 * @param fields The fields to add
+	 * @param flds The fields to add
 	 */
-	public void addFields(String parentPropPath, IField[] fields) {
-		if(fields != null) {
-			for(final IField fld : fields) {
+	public void addFields(String parentPropPath, IField[] flds) {
+		if(flds != null) {
+			for(final IField fld : flds) {
 				addField(parentPropPath, fld);
 			}
 		}
@@ -501,12 +501,12 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		return fields.size();
 	}
 
-	public void addValidator(IValidator validator) {
-		if(validator != null) {
+	public void addValidator(IValidator vldtr) {
+		if(vldtr != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
 			}
-			this.validator.add(validator);
+			this.validator.add(vldtr);
 		}
 	}
 

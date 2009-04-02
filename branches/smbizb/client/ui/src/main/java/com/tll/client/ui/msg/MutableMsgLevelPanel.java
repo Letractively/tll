@@ -166,12 +166,12 @@ public class MutableMsgLevelPanel extends Composite {
 		}
 
 		// cache it (a null ref is ok as we want to query un-ref'd messages too)
-		List<Widget> list = entries.get(ref);
-		if(list == null) {
-			list = new ArrayList<Widget>();
-			entries.put(ref, list);
+		List<Widget> l = entries.get(ref);
+		if(l == null) {
+			l = new ArrayList<Widget>();
+			entries.put(ref, l);
 		}
-		list.add(liw);
+		l.add(liw);
 		
 		return liw;
 	}

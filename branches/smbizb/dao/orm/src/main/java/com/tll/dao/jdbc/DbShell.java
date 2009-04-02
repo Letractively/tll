@@ -42,6 +42,54 @@ public final class DbShell {
 	private static final char SQL_COMMAND_DELIM_CHAR = ';';
 
 	/**
+	 * Generic execution of SQL commands for the given data source.
+	 * @param theDataSource
+	 * @param sql The SQL command to be executed
+	 * @throws DataAccessException
+	 */
+	private static void executeSql(DataSource theDataSource, String sql) throws DataAccessException {
+		final ShellImpl shell = new ShellImpl(theDataSource);
+		final JdbcTemplate jdbc = shell.getJdbcTemplate();
+		jdbc.execute(sql);
+	}
+
+	/**
+	 * Executes sql/ddl commands held in the given resource against the given data
+	 * source.
+	 * @param dataSource
+	 * @param url The sql/ddl resource to load and invoke
+	 */
+	private static void executeDbCommandsFromResource(DataSource dataSource, URL url) {
+		String s;
+		try {
+			s = IOUtils.toString(url.openStream());
+		}
+		catch(final IOException e) {
+			throw new SystemError("Unable to read sql/ddl resource: " + e.getMessage(), e);
+		}
+	
+		// remove comments
+		final String[] lines = s.split(NL);
+		final StringBuffer sb = new StringBuffer();
+		for(final String line : lines) {
+			final String tline = line.trim();
+			if(!tline.startsWith(SQL_LINE_COMMENT_PREFIX)) {
+				sb.append(tline);
+				sb.append(' ');
+			}
+		}
+	
+		if(log.isDebugEnabled()) {
+			log.debug("Executing SQL/DDL commands: " + url.getPath() + "...");
+		}
+		final String[] sqls = StringUtils.split(sb.toString(), SQL_COMMAND_DELIM_CHAR);
+		for(final String sql : sqls) {
+			final String cmd = StringUtils.trim(sql);
+			if(!cmd.isEmpty()) executeSql(dataSource, sql);
+		}
+	}
+
+	/**
 	 * The name of the db
 	 */
 	private final String dbName;
@@ -93,17 +141,17 @@ public final class DbShell {
 			IDbDialectHandler exceptionTranslator) {
 		super();
 
-		String rootUrl = urlPrefix + '/' + rootDbName;
-		String url = urlPrefix + '/' + dbName;
+		final String rootUrl = urlPrefix + '/' + rootDbName;
+		final String url = urlPrefix + '/' + dbName;
 
 		this.rootDataSource = new SingleConnectionDataSource(rootUrl, username, password, false);
 		this.dataSource = new SingleConnectionDataSource(url, username, password, false);
 		this.dbName = dbName;
-		
+
 		this.dbSchemaResource = dbSchemaResource;
 		this.dbStubResource = dbStubResource;
 		this.dbDelResource = dbDelResource;
-		
+
 		this.exceptionTranslator = exceptionTranslator;
 
 		if(log.isInfoEnabled()) {
@@ -130,54 +178,6 @@ public final class DbShell {
 	}
 
 	/**
-	 * Generic execution of SQL commands for the given data source.
-	 * @param dataSource
-	 * @param sql The SQL command to be executed
-	 * @throws DataAccessException
-	 */
-	private void executeSql(DataSource dataSource, String sql) throws DataAccessException {
-		ShellImpl shell = new ShellImpl(dataSource);
-		JdbcTemplate jdbc = shell.getJdbcTemplate();
-		jdbc.execute(sql);
-	}
-
-	/**
-	 * Executes sql/ddl commands held in the given resource against the given data
-	 * source.
-	 * @param dataSource
-	 * @param url The sql/ddl resource to load and invoke
-	 */
-	private void executeDbCommandsFromResource(DataSource dataSource, URL url) {
-		String s;
-		try {
-			s = IOUtils.toString(url.openStream());
-		}
-		catch(IOException e) {
-			throw new SystemError("Unable to read sql/ddl resource: " + e.getMessage(), e);
-		}
-
-		// remove comments
-		String[] lines = s.split(NL);
-		StringBuffer sb = new StringBuffer();
-		for(String line : lines) {
-			String tline = line.trim();
-			if(!tline.startsWith(SQL_LINE_COMMENT_PREFIX)) {
-				sb.append(tline);
-				sb.append(' ');
-			}
-		}
-
-		if(log.isDebugEnabled()) {
-			log.debug("Executing SQL/DDL commands: " + url.getPath() + "...");
-		}
-		String[] sqls = StringUtils.split(sb.toString(), SQL_COMMAND_DELIM_CHAR);
-		for(String sql : sqls) {
-			String cmd = StringUtils.trim(sql);
-			if(!cmd.isEmpty()) executeSql(dataSource, sql);
-		}
-	}
-
-	/**
 	 * Creates the database. If the db already exists, nothing happens.
 	 * @return <code>true</code> if the db was actually created as a result of
 	 *         calling this method and <code>false<code> if the db already exists.
@@ -189,7 +189,7 @@ public final class DbShell {
 			executeSql(rootDataSource, "create database " + dbName);
 			if(log.isInfoEnabled()) log.info(dbName + " database created.");
 		}
-		catch(DataAccessException dae) {
+		catch(final DataAccessException dae) {
 			if(!exceptionTranslator.isCreateAlreadyExist(dae)) {
 				throw dae;
 			}
@@ -215,7 +215,7 @@ public final class DbShell {
 			if(log.isInfoEnabled()) log.info(dbName + " database dropped.");
 			return true;
 		}
-		catch(DataAccessException dae) {
+		catch(final DataAccessException dae) {
 			if(!exceptionTranslator.isDropNonExistant(dae)) {
 				throw dae;
 			}
@@ -236,7 +236,7 @@ public final class DbShell {
 			if(log.isInfoEnabled()) log.info(dbName + " database cleared.");
 			return true;
 		}
-		catch(DataAccessException dae) {
+		catch(final DataAccessException dae) {
 			if(!exceptionTranslator.isDropNonExistant(dae)) {
 				throw dae;
 			}
@@ -257,7 +257,7 @@ public final class DbShell {
 			if(log.isInfoEnabled()) log.info(dbName + " database stubbed.");
 			return true;
 		}
-		catch(DataAccessException dae) {
+		catch(final DataAccessException dae) {
 			if(!exceptionTranslator.isUnknownDatabase(dae)) {
 				throw dae;
 			}

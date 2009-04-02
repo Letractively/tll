@@ -398,13 +398,13 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 		}
 	}
 
-	public final void addValidator(IValidator validator) {
-		if(validator != null) {
+	public final void addValidator(IValidator vldtr) {
+		if(vldtr != null) {
 			if(this.validator == null) {
 				this.validator = new CompositeValidator();
 			}
-			this.validator.remove(validator.getClass());
-			this.validator.add(validator);
+			this.validator.remove(vldtr.getClass());
+			this.validator.add(vldtr);
 		}
 	}
 

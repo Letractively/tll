@@ -123,14 +123,14 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	/**
 	 * Fetches listing data sending the listing definition in case it isn't cached
 	 * server-side.
-	 * @param offset The listing index offset
-	 * @param sorting The sorting directive
+	 * @param ofst The listing index offset
+	 * @param srtg The sorting directive
 	 * @param refresh Force the listing to be re-queried on the server if it is
 	 *        cached?
 	 */
-	private void fetch(int offset, Sorting sorting, boolean refresh) {
+	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, offset, sorting);
+				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
 		execute();
 	}
 
@@ -141,12 +141,12 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	 * listing definition will be issued. This is intended to save on network
 	 * bandwidth as the case when the server-side listing cache is expired is
 	 * assumed to not occur frequently.
-	 * @param offset The listing index offset
-	 * @param sorting The sorting directive
+	 * @param ofst The listing index offset
+	 * @param srtg The sorting directive
 	 */
 	@Override
-	protected void doFetch(int offset, Sorting sorting) {
-		listingRequest = new ListingRequest<S>(listingName, offset, sorting);
+	protected void doFetch(int ofst, Sorting srtg) {
+		listingRequest = new ListingRequest<S>(listingName, ofst, srtg);
 		execute();
 	}
 

@@ -33,14 +33,14 @@ public class BootstrapperTest {
 	@BeforeTest(alwaysRun = true)
 	@Parameters(value = {
 		"daoMode", "employSecurity" })
-	public void beforeTest(String daoModeStr, String employSecurity) {
+	public void beforeTest(String daoModeStr, String useSecurity) {
 
 		// handle the dao mode
 		this.daoMode = daoModeStr;
 		log.debug("DaoMode: " + daoMode);
 
 		// handle security mode
-		this.employSecurity = Boolean.valueOf(employSecurity).booleanValue();
+		this.employSecurity = Boolean.valueOf(useSecurity).booleanValue();
 		log.debug("Employ security: " + this.employSecurity);
 	}
 

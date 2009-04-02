@@ -41,15 +41,15 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 	}
 
 	@Override
-	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
 
 		assert this.sorting != null;
 
 		// if sorting differs, re-execute search
-		if(sorting != null && !sorting.equals(this.sorting) || (sorting == null && this.sorting != null)) {
+		if(sort != null && !sort.equals(this.sorting) || (sort == null && this.sorting != null)) {
 			try {
-				ids = dataProvider.getIds(criteria, sorting);
+				ids = dataProvider.getIds(criteria, sort);
 			}
 			catch(final InvalidCriteriaException e) {
 				throw new ListHandlerException(e.getMessage());
@@ -68,7 +68,7 @@ public final class IdListHandler<E extends IEntity> extends SearchListHandler<E>
 
 		final List<Integer> subids = ids.subList(offset, ei);
 
-		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sorting);
+		final List<E> list = dataProvider.getEntitiesFromIds(criteria.getEntityClass(), subids, sort);
 		if(list == null || list.size() != subids.size()) {
 			throw new ListHandlerException("id and entity count mismatch");
 		}

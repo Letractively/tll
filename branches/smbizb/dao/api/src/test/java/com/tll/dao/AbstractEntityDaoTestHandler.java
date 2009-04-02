@@ -24,8 +24,9 @@ public abstract class AbstractEntityDaoTestHandler<E extends IEntity> implements
 
 	private IEntityDao entityDao;
 	private MockEntityFactory mockEntityFactory;
-	
+
 	@Override
+	@SuppressWarnings("hiding")
 	public void init(IEntityDao entityDao, MockEntityFactory mockEntityFactory) {
 		this.entityDao = entityDao;
 		this.mockEntityFactory = mockEntityFactory;

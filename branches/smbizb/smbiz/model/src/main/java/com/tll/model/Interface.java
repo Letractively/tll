@@ -265,8 +265,8 @@ public abstract class Interface extends NamedTimeStampEntity {
 	}
 
 	@Transient
-	public InterfaceOption getOption(String name) {
-		return findNamedEntityInCollection(options, name);
+	public InterfaceOption getOption(String nme) {
+		return findNamedEntityInCollection(options, nme);
 	}
 
 	@Transient

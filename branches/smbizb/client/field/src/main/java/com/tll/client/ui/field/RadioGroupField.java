@@ -141,9 +141,9 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 			@Override
 			public void onClick(ClickEvent event) {
 				assert event.getSource() instanceof RadioButton;
-				final RadioButton rb = (RadioButton) event.getSource();
+				final RadioButton radio = (RadioButton) event.getSource();
 				// fire a value change event..
-				ValueChangeEvent.fire(fp, getDataValue(rb.getFormValue()));
+				ValueChangeEvent.fire(fp, getDataValue(radio.getFormValue()));
 			}
 		});
 		rb.addBlurHandler(this);

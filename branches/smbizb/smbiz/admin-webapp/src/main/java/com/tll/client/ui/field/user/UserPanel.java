@@ -23,9 +23,9 @@ public class UserPanel extends FlowFieldPanel {
 	class UserFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
 		@SuppressWarnings("synthetic-access")
-		public void render(FlowPanel panel, FieldGroup fg) {
+		public void render(FlowPanel pnl, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(panel);
+			cmpsr.setCanvas(pnl);
 
 			// first row
 			cmpsr.addField(fg.getFieldWidgetByName("userName"));

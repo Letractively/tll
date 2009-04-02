@@ -147,9 +147,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		this.ignoreCaseWhenSorting = config.isIgnoreCaseWhenSorting();
 
 		int rn = -1;
-		final Column[] columns = config.getColumns();
-		for(int i = 0; i < columns.length; i++) {
-			if(Column.ROW_COUNT_COLUMN == columns[i]) {
+		final Column[] clmns = config.getColumns();
+		for(int i = 0; i < clmns.length; i++) {
+			if(Column.ROW_COUNT_COLUMN == clmns[i]) {
 				rn = i;
 				break;
 			}
@@ -157,7 +157,7 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		rowNumColIndex = rn;
 
 		if(config.isSortable()) {
-			sortlinks = new ListingTable.SortLink[columns.length];
+			sortlinks = new ListingTable.SortLink[clmns.length];
 		}
 
 		setStyleName(Styles.TABLE);
@@ -520,10 +520,10 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	 *        <code>false</code>)?
 	 */
 	private void updateRowsBelow(int rowIndex, boolean add) {
-		final int numRows = getDOMRowCount();
+		final int nrows = getDOMRowCount();
 		int newPageRowNum = getPageRowNum(rowIndex) + (add ? +1 : -1);
-		if(rowIndex > 0 && rowIndex <= numRows - 1) {
-			for(int i = rowIndex; i < numRows; i++) {
+		if(rowIndex > 0 && rowIndex <= nrows - 1) {
+			for(int i = rowIndex; i < nrows; i++) {
 
 				// update the row num col text (if showing)
 				if(rowNumColIndex >= 0) {

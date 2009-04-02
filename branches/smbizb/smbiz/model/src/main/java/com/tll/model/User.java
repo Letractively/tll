@@ -176,8 +176,8 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	}
 
 	@Transient
-	public Authority getAuthority(String name) {
-		return findNamedEntityInCollection(authorities, name);
+	public Authority getAuthority(String nme) {
+		return findNamedEntityInCollection(authorities, nme);
 	}
 
 	@Transient

@@ -274,8 +274,8 @@ public abstract class Account extends NamedTimeStampEntity implements IChildEnti
 	}
 
 	@Transient
-	public AccountAddress getAccountAddress(String name) {
-		return findNamedEntityInCollection(this.addresses, name);
+	public AccountAddress getAccountAddress(String nme) {
+		return findNamedEntityInCollection(this.addresses, nme);
 	}
 
 	@Transient

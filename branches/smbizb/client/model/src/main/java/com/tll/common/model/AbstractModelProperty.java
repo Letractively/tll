@@ -73,16 +73,16 @@ public abstract class AbstractModelProperty implements IModelProperty {
 		getChangeSupport().addPropertyChangeListener(listener);
 	}
 
-	public final void addPropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		getChangeSupport().addPropertyChangeListener(propertyName, listener);
+	public final void addPropertyChangeListener(String propName, IPropertyChangeListener listener) {
+		getChangeSupport().addPropertyChangeListener(propName, listener);
 	}
 
 	public final void removePropertyChangeListener(IPropertyChangeListener listener) {
 		getChangeSupport().removePropertyChangeListener(listener);
 	}
 
-	public final void removePropertyChangeListener(String propertyName, IPropertyChangeListener listener) {
-		getChangeSupport().removePropertyChangeListener(propertyName, listener);
+	public final void removePropertyChangeListener(String propName, IPropertyChangeListener listener) {
+		getChangeSupport().removePropertyChangeListener(propName, listener);
 	}
 
 	@Override

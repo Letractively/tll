@@ -201,8 +201,8 @@ public class InterfaceOption extends InterfaceOptionBase {
 	}
 
 	@Transient
-	public InterfaceOptionParameterDefinition getParameter(String name) {
-		return findNamedEntityInCollection(parameters, name);
+	public InterfaceOptionParameterDefinition getParameter(String nme) {
+		return findNamedEntityInCollection(parameters, nme);
 	}
 
 	@Transient

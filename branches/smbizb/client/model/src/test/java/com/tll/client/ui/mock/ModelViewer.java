@@ -59,10 +59,10 @@ public class ModelViewer extends Composite {
 	
 	/**
 	 * Fills the tree with the given model properties.
-	 * @param model
+	 * @param amodel
 	 */
-	private void fillTree(Model model) {
-		assert model != null;
+	private void fillTree(Model amodel) {
+		assert amodel != null;
 
 		// clear out tree
 		tree.clear();
@@ -70,7 +70,7 @@ public class ModelViewer extends Composite {
 		// add model ref root tree item
 		final TreeItem root;
 		try {
-			root = new TreeItem(getModelRefHtml((IModelRefProperty) model.getModelProperty(null)));
+			root = new TreeItem(getModelRefHtml((IModelRefProperty) amodel.getModelProperty(null)));
 		}
 		catch(final PropertyPathException e) {
 			throw new Error(e);
@@ -79,7 +79,7 @@ public class ModelViewer extends Composite {
 
 		// add model props..
 		try {
-			for(final IModelProperty prop : model) {
+			for(final IModelProperty prop : amodel) {
 				addProp(prop, root, new VisitedStack());
 			}
 		}

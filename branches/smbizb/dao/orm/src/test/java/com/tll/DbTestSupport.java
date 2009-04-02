@@ -111,7 +111,7 @@ public final class DbTestSupport {
 	 */
 	private PlatformTransactionManager getTransMgr() {
 		if(tm == null) {
-			final UserTransactionManager tm = new UserTransactionManager();
+			final UserTransactionManager jtaTm = new UserTransactionManager();
 
 			// set the transaction timeout
 			final int timeout = Config.instance().getInt("db.transaction.timeout", DEFAULT_TRANS_TIMEOUT_MILIS);
@@ -119,7 +119,7 @@ public final class DbTestSupport {
 				throw new IllegalStateException("Invalid trans timeout: " + timeout);
 			}
 			try {
-				tm.setTransactionTimeout(timeout);
+				jtaTm.setTransactionTimeout(timeout);
 				logger.info("Set JTA transaction timeout to: " + timeout);
 			}
 			catch(final SystemException e) {

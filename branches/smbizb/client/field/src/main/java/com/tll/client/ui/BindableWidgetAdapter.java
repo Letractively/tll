@@ -86,8 +86,8 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 		if(!IBindableWidget.PROPERTY_VALUE.equals(propPath)) {
 			throw new MalformedPropPathException(propPath);
 		}
-		final IConverter<V, Object> converter = getConverter();
-		if(converter == null) {
+		final IConverter<V, Object> cvrtr = getConverter();
+		if(cvrtr == null) {
 			// attempt to cast
 			try {
 				setValue((V) value);
@@ -98,7 +98,7 @@ public final class BindableWidgetAdapter<V> implements IBindableWidget<V> {
 		}
 		else {
 			// employ the provided converter
-			setValue(converter.convert(value));
+			setValue(cvrtr.convert(value));
 		}
 	}
 

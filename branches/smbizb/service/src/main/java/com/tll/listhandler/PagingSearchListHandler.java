@@ -36,11 +36,11 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 		return ListHandlerType.PAGE;
 	}
 
-	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
 
 		try {
-			page = dataProvider.getPage(criteria, sorting, offset, pageSize);
+			page = dataProvider.getPage(criteria, sort, offset, pageSize);
 			if(page.getResultCount() < 1) {
 				throw new EmptyListException("No matching page results found.");
 			}

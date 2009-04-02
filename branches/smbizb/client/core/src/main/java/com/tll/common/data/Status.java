@@ -73,15 +73,15 @@ public final class Status implements IMarshalable {
 		return list;
 	}
 
-	public void addMsgs(List<Msg> msgs) {
-		if(msgs == null || msgs.size() < 1) {
+	public void addMsgs(List<Msg> messages) {
+		if(messages == null || messages.size() < 1) {
 			return;
 		}
 		if(this.msgs == null) {
 			this.msgs = new ArrayList<Msg>();
 		}
-		this.msgs.addAll(msgs);
-		for(final Msg msg : msgs) {
+		this.msgs.addAll(messages);
+		for(final Msg msg : messages) {
 			if(msg.getLevel().isError()) {
 				this.errors = true;
 				break;

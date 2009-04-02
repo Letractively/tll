@@ -46,26 +46,26 @@ public class CollectionListHandler<T> extends AbstractListHandler<T> {
 		return rows == null ? 0 : rows.size();
 	}
 
-	void sort(Sorting sorting) throws ListHandlerException {
-		if(sorting == null || sorting.size() < 1) {
+	void sort(Sorting sort) throws ListHandlerException {
+		if(sort == null || sort.size() < 1) {
 			throw new ListHandlerException("No sorting specified.");
 		}
 		if(size() > 1) {
 			try {
-				Collections.sort(this.rows, new SortColumnBeanComparator<T>(sorting.getPrimarySortColumn()));
+				Collections.sort(this.rows, new SortColumnBeanComparator<T>(sort.getPrimarySortColumn()));
 			}
 			catch(final RuntimeException e) {
 				throw new ListHandlerException("Unable to sort list: " + e.getMessage(), e);
 			}
 		}
-		this.sorting = sorting;
+		this.sorting = sort;
 	}
 
-	public List<T> getElements(int offset, int pageSize, Sorting sorting) throws IndexOutOfBoundsException,
+	public List<T> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
 			EmptyListException, ListHandlerException {
 		if(size() < 1) throw new EmptyListException("No collection list elements exist");
-		if(sorting != null && !sorting.equals(this.sorting)) {
-			sort(sorting);
+		if(sort != null && !sort.equals(this.sorting)) {
+			sort(sort);
 		}
 		return rows.subList(offset, offset + pageSize);
 	}

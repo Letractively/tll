@@ -92,8 +92,8 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	}
 
 	@Override
-	public void showMsgs(Position position, int milliDuration, boolean showMsgLevelImages) {
-		setPosition(position);
+	public void showMsgs(Position desiredPosition, int milliDuration, boolean showMsgLevelImages) {
+		setPosition(desiredPosition);
 		setDuration(milliDuration);
 		msgPanel.setShowMsgLevelImages(showMsgLevelImages);
 		showMsgs(true);

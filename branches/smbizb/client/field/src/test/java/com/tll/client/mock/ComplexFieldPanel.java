@@ -40,9 +40,9 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		public IFieldRenderer<FlowPanel> getRenderer() {
 			return new IFieldRenderer<FlowPanel>() {
 
-				public void render(FlowPanel panel, FieldGroup fg) {
+				public void render(FlowPanel pnl, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(panel);
+					cmpsr.setCanvas(pnl);
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidgetByName("type"));
@@ -54,16 +54,16 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 					(new IFieldRenderer<FlowPanel>() {
 
 						@Override
-						public void render(FlowPanel widget, FieldGroup fg) {
-							final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-							cmpsr.setCanvas(widget);
+						public void render(FlowPanel widget, FieldGroup fgroup) {
+							final FlowPanelFieldComposer c = new FlowPanelFieldComposer();
+							c.setCanvas(widget);
 
-							cmpsr.addField(fg.getFieldWidgetByName("adrsEmailAddress"));
+							c.addField(fgroup.getFieldWidgetByName("adrsEmailAddress"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldWidgetByName("adrsFirstName"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsMi"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsLastName"));
+							c.newRow();
+							c.addField(fgroup.getFieldWidgetByName("adrsFirstName"));
+							c.addField(fgroup.getFieldWidgetByName("adrsMi"));
+							c.addField(fgroup.getFieldWidgetByName("adrsLastName"));
 
 							//cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAttn"));
@@ -75,17 +75,17 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 							//cmpsr.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsAddress2"));
 
-							cmpsr.newRow();
-							cmpsr.addField(fg.getFieldWidgetByName("adrsCity"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsProvince"));
+							c.newRow();
+							c.addField(fgroup.getFieldWidgetByName("adrsCity"));
+							c.addField(fgroup.getFieldWidgetByName("adrsProvince"));
 
-							cmpsr.newRow();
+							c.newRow();
 							//cmpsr.addField(fg.getFieldWidgetByName("adrsPostalCode"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsCountry"));
+							c.addField(fgroup.getFieldWidgetByName("adrsCountry"));
 
-							cmpsr.addField(fg.getFieldWidgetByName("adrsBoolean"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsFloat"));
-							cmpsr.addField(fg.getFieldWidgetByName("adrsDouble"));
+							c.addField(fgroup.getFieldWidgetByName("adrsBoolean"));
+							c.addField(fgroup.getFieldWidgetByName("adrsFloat"));
+							c.addField(fgroup.getFieldWidgetByName("adrsDouble"));
 						}
 					}).render(fp, (FieldGroup) fg.getFieldByName("address"));
 					cmpsr.addWidget(fp);
@@ -203,10 +203,10 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		final FieldGroup fg = (new IFieldGroupProvider() {
 
 			public FieldGroup getFieldGroup() {
-				final FieldGroup fg = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
-				fg.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
-				fg.addField("addresses", indexedPanel.getFieldGroup());
-				return fg;
+				final FieldGroup fgroup = (new MockFieldGroupProviders.AccountFieldsProvider()).getFieldGroup();
+				fgroup.addField("paymentInfo", (new MockFieldGroupProviders.PaymentInfoFieldsProvider()).getFieldGroup());
+				fgroup.addField("addresses", indexedPanel.getFieldGroup());
+				return fgroup;
 			}
 		}).getFieldGroup();
 

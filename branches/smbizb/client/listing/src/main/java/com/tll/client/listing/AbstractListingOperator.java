@@ -50,17 +50,17 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		this.sourcingWidget = sourcingWidget;
 	}
 
-	private void fetch(int offset, Sorting sorting) {
-		doFetch(offset, sorting);
+	private void fetch(int ofst, Sorting srtg) {
+		doFetch(ofst, srtg);
 		listingGenerated = true;
 	}
 
 	/**
 	 * Responsible for fetching the data.
-	 * @param offset
-	 * @param sorting
+	 * @param ofst
+	 * @param srtg
 	 */
-	protected abstract void doFetch(int offset, Sorting sorting);
+	protected abstract void doFetch(int ofst, Sorting srtg);
 
 	protected abstract int getPageSize();
 
@@ -70,9 +70,9 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 		fetch(offset, sorting);
 	}
 
-	public void sort(Sorting sorting) {
-		if(!listingGenerated || (this.sorting != null && !this.sorting.equals(sorting))) {
-			fetch(offset, sorting);
+	public void sort(Sorting srtg) {
+		if(!listingGenerated || (this.sorting != null && !this.sorting.equals(srtg))) {
+			fetch(offset, srtg);
 		}
 	}
 
@@ -81,26 +81,26 @@ public abstract class AbstractListingOperator<R> implements IListingOperator<R> 
 	}
 
 	public void gotoPage(int pageNum) {
-		final int offset = PagingUtil.listIndexFromPageNum(pageNum, getPageSize());
-		if(!listingGenerated || this.offset != offset) fetch(offset, sorting);
+		final int ofst = PagingUtil.listIndexFromPageNum(pageNum, getPageSize());
+		if(!listingGenerated || this.offset != ofst) fetch(ofst, sorting);
 	}
 
 	public void lastPage() {
 		final int pageSize = getPageSize();
 		final int numPages = PagingUtil.numPages(listSize, pageSize);
-		final int offset = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
-		if(!listingGenerated || this.offset != offset) {
-			fetch(offset, sorting);
+		final int ofst = PagingUtil.listIndexFromPageNum(numPages - 1, pageSize);
+		if(!listingGenerated || this.offset != ofst) {
+			fetch(ofst, sorting);
 		}
 	}
 
 	public void nextPage() {
-		final int offset = this.offset + getPageSize();
-		if(offset < listSize) fetch(offset, sorting);
+		final int ofst = this.offset + getPageSize();
+		if(ofst < listSize) fetch(ofst, sorting);
 	}
 
 	public void previousPage() {
-		final int offset = this.offset - getPageSize();
-		if(offset >= 0) fetch(offset, sorting);
+		final int ofst = this.offset - getPageSize();
+		if(ofst >= 0) fetch(ofst, sorting);
 	}
 }

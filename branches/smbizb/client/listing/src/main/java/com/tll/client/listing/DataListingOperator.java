@@ -53,16 +53,16 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 	 */
 	@SuppressWarnings("unchecked")
 	private ListingEvent<R> assembleListingEvent(List<R> pageElements, ListingOp listingOp) {
-		final int listSize = pageElements == null ? 0 : pageElements.size();
+		final int sz = pageElements == null ? 0 : pageElements.size();
 		final R[] array = pageElements == null ? null : (R[]) pageElements.toArray();
-		return new ListingEvent<R>(true, null, ListingOp.REFRESH, listSize, array, offset, sorting,
+		return new ListingEvent<R>(true, null, ListingOp.REFRESH, sz, array, offset, sorting,
 				pageSize);
 	}
 	
 	@Override
-	protected void doFetch(int offset, Sorting sorting) {
+	protected void doFetch(int ofst, Sorting srtg) {
 		try {
-			current = dataProvider.getElements(offset, pageSize, sorting);
+			current = dataProvider.getElements(ofst, pageSize, srtg);
 		}
 		catch(final EmptyListException e) {
 			throw new IllegalStateException(e);
@@ -124,8 +124,8 @@ public class DataListingOperator<R> extends AbstractListingOperator<R> {
 	}
 
 	@Override
-	public void sort(Sorting sorting) {
-		super.sort(sorting);
+	public void sort(Sorting srtg) {
+		super.sort(srtg);
 	}
 
 	@Override

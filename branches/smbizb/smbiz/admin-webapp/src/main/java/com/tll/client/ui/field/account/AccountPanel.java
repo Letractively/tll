@@ -131,10 +131,10 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		final FieldGroup fg = (new IFieldGroupProvider() {
 
 			public FieldGroup getFieldGroup() {
-				final FieldGroup fg = (new AccountFieldsProvider()).getFieldGroup();
-				fg.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
-				fg.addField("addresses", addressesPanel.getFieldGroup());
-				return fg;
+				final FieldGroup fgroup = (new AccountFieldsProvider()).getFieldGroup();
+				fgroup.addField("paymentInfo", paymentInfoPanel.getFieldGroup());
+				fgroup.addField("addresses", addressesPanel.getFieldGroup());
+				return fgroup;
 			}
 		}).getFieldGroup();
 
