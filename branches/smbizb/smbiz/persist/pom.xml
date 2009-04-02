@@ -15,9 +15,30 @@
   <description>Persistence for smbiz.</description>
 
   <build>
+    <filters>
+      <filter>src/main/resources/config.properties</filter>
+      <filter>src/main/resources/config-${mode}.properties</filter>
+    </filters>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
+        <excludes>
+          <exclude>config*.properties</exclude>
+        </excludes>
+      </resource>
+      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
+      <resource>
+        <directory>src/main/resources/META-INF</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>*.*</include>
+        </includes>
+        <targetPath>META-INF</targetPath>
       </resource>
       <resource>
         <directory>src/main/resources/db</directory>
@@ -28,6 +49,86 @@
     </resources>
 
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <configuration>
+          <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
+          <source>println 'config'</source>
+        </configuration>
+        <executions>
+          <execution>
+            <id>process-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <classpath>
+                <element>
+                  <groupId>commons-lang</groupId>
+                  <artifactId>commons-lang</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+                </element>
+                <element>
+                  <groupId>commons-configuration</groupId>
+                  <artifactId>commons-configuration</artifactId>
+                </element>
+                <element>
+                  <groupId>com.tll</groupId>
+                  <artifactId>tll-config</artifactId>
+                  <version>${project.parent.version}</version>
+                </element>
+              </classpath>
+              <scriptpath>
+                <element>${project.basedir}/../../build-tools/src/main/scripts</element>
+                <element>${project.basedir}/src/main/scripts</element>
+              </scriptpath>
+              <source><![CDATA[com.tll.ResourceProcessor.process(project)]]></source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 
+        Compile Time Weave @Transactional aspects irregardless of mock/orm profile
+        as we are profile agnostic and build jars for both.
+        NOTE: this weaving doesn't adversly affect debugging when in mock mode.
+              We are still able to do line level debugging. 
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <weaveDependencies>
+            <weaveDependency>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-service</artifactId>
+            </weaveDependency>
+          </weaveDependencies>
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-aspects</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+        </configuration>
+        <executions>
+          <execution>
+            <id>aspectj-weave</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- direct unit test invocations to the testng.xml file -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -67,57 +168,6 @@
 
   </build>
 
-  <profiles>
-
-    <!-- dev profile -->
-    <profile>
-      <id>dev</id>
-    </profile>
-
-    <!-- production profile -->
-    <profile>
-      <id>prod</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <!-- Weave Spring's @Transactional aspect into the code at compile time. -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>aspectj-maven-plugin</artifactId>
-            <version>1.1</version>
-            <configuration>
-              <source>1.6</source>
-              <target>1.6</target>
-              <weaveDependencies>
-                <weaveDependency>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-service</artifactId>
-                </weaveDependency>
-              </weaveDependencies>
-              <aspectLibraries>
-                <aspectLibrary>
-                  <groupId>org.springframework</groupId>
-                  <artifactId>spring-aspects</artifactId>
-                </aspectLibrary>
-              </aspectLibraries>
-            </configuration>
-            <executions>
-              <execution>
-                <id>aspectj-weave</id>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-  </profiles>
-
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -142,10 +192,34 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-context</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>spring-core</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>spring-context</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>spring-support</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.code.guice</groupId>
@@ -232,6 +306,29 @@
       <artifactId>testng</artifactId>
       <classifier>jdk15</classifier>
       <version>${testNGVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.tll</groupId>
+    	<artifactId>tll-config</artifactId>
+    	<version>${project.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.aspectj</groupId>
+    	<artifactId>aspectjweaver</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>com.atomikos</groupId>
+    	<artifactId>transactions-jta</artifactId>
+    	<version>${atomikos.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring-aspects</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>javax.transaction</groupId>
+    	<artifactId>jta</artifactId>
     </dependency>
 
   </dependencies>

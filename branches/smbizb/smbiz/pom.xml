@@ -38,6 +38,7 @@
         <mode>dev</mode>
       </properties>
     </profile>
+
     <!-- prod (global) profile -->
     <profile>
       <id>prod</id>
@@ -62,14 +63,6 @@
       </build>
     </profile>
     
-    <!--
-      dao mode profiles: orm and mock.
-      
-      **TODO** move to smbiz and trigger by env variable 
-      rather than in settings.xml which applies globally 
-      (to other projects which is spurious and gives warnings).
-    -->
-
     <!-- orm dao mode (global) profile -->
     <profile>
       <id>orm</id>

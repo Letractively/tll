@@ -14,6 +14,7 @@
         <exclude>**/orm/**</exclude>
         <exclude>transactions.properties</exclude>
         <exclude>**/db-*</exclude>
+        <exclude>**/META-INF/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>

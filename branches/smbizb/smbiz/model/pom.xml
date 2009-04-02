@@ -14,30 +14,9 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <build>
-    <filters>
-      <filter>src/main/resources/config.properties</filter>
-      <filter>src/main/resources/config-${mode}.properties</filter>
-    </filters>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
-        <excludes>
-          <exclude>config*.properties</exclude>
-        </excludes>
-      </resource>
-      <!-- turn on resource filtering (variable interpolation) for the classes/META-INF dir -->
-      <resource>
-        <directory>src/main/resources/META-INF</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>*.*</include>
-        </includes>
-        <targetPath>META-INF</targetPath>
       </resource>
       <!-- Source files needed for GWT compile -->
       <resource>
@@ -51,49 +30,6 @@
     </resources>
 
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.groovy.maven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <configuration>
-          <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
-          <source>println 'config'</source>
-        </configuration>
-        <executions>
-          <execution>
-            <id>process-resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>execute</goal>
-            </goals>
-            <configuration>
-              <classpath>
-                <element>
-                  <groupId>commons-lang</groupId>
-                  <artifactId>commons-lang</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-logging</groupId>
-                  <artifactId>commons-logging</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-configuration</groupId>
-                  <artifactId>commons-configuration</artifactId>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-config</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-              </classpath>
-              <scriptpath>
-                <element>${project.basedir}/../../build-tools/src/main/scripts</element>
-                <element>${project.basedir}/src/main/scripts</element>
-              </scriptpath>
-              <source><![CDATA[com.tll.ResourceProcessor.process(project)]]></source>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>

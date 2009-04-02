@@ -11,6 +11,7 @@
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>**/*.java</exclude>
+        <exclude>**/*.txt</exclude>
         <exclude>**/SmbizEntityGraphBuilder*</exclude>
         <exclude>mock-entities.xml</exclude>
       </excludes>
