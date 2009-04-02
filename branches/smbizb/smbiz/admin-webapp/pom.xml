@@ -13,7 +13,7 @@
   <name>smbiz-admin-webapp</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>The smbiz administration console.</description>
-  <!-- <packaging>war</packaging> -->
+  <packaging>war</packaging>
 
   <build>
     <finalName>smbiz</finalName>
