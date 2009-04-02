@@ -92,6 +92,7 @@ The following _Preferences -> Run/Debug -> *String Substitutions*_ are required:
 || m2eclipse || [http://m2eclipse.sonatype.org/update/ http://m2eclipse.sonatype.org/update/] ||
 || TestNG || [http://beust.com/eclipse http://beust.com/eclipse] ||
 || Groovy || [http://dist.groovy.codehaus.org/distributions/updateDev_1.6/ http://dist.groovy.codehaus.org/distributions/updateDev_1.6/] ||
+|| Aptana (HTML and CSS editing plugins only!) || [http://update.aptana.com/update/studio/3.4 http://update.aptana.com/update/studio/3.4] ||
 
 ==Preferences==
 Import the tll eclipse preferences files.  These files are located under:  [http://tll.googlecode.com/svn/eclipse eclipse].
