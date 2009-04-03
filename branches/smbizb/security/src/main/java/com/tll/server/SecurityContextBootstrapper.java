@@ -15,6 +15,7 @@ import org.springframework.security.AuthenticationManager;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.tll.di.AcegiModule;
 
 /**
  * SecurityContextBootstrapper - Sets the {@link SecurityContext} in the
@@ -22,7 +23,7 @@ import com.google.inject.name.Names;
  * @author jpk
  */
 public class SecurityContextBootstrapper implements IBootstrapHandler {
-	
+
 	private static final Log log = LogFactory.getLog(SecurityContextBootstrapper.class);
 
 	@Override
@@ -32,7 +33,7 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 
 		authenticationManager = injector.getInstance(AuthenticationManager.class);
 		httpRequesetAccessDecisionManager =
-				injector.getInstance(Key.get(AccessDecisionManager.class, Names.named("httpRequestAccessDecisionManager")));
+			injector.getInstance(Key.get(AccessDecisionManager.class, Names.named(AcegiModule.ADM_HTTP_REQUEST)));
 
 		log.debug("Setting security context..");
 		servletContext.setAttribute(SecurityContext.KEY, new SecurityContext(authenticationManager,

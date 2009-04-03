@@ -34,7 +34,16 @@ import com.tll.config.IConfigKey;
 public class AcegiModule extends GModule {
 
 	/**
+	 * The http request flavored {@link AccessDecisionManager} token used to
+	 * extract such an instance from the dependency injection context.
+	 */
+	public static final String ADM_HTTP_REQUEST = "httpRequestAccessDecisionManager";
+
+	/**
 	 * ConfigKeys - Config keys for the Acegi module.
+	 * <p>
+	 * <em>NOTE: </em>This module depends on a {@link UserCache} binding in the
+	 * dependency injection context.
 	 * @author jpk
 	 */
 	private static enum ConfigKeys implements IConfigKey {
@@ -72,10 +81,10 @@ public class AcegiModule extends GModule {
 			throw new IllegalStateException("No user details service class name specified in the configuration");
 		}
 		try {
-			Class<? extends UserDetailsService> clz = (Class<? extends UserDetailsService>) Class.forName(cn);
+			final Class<? extends UserDetailsService> clz = (Class<? extends UserDetailsService>) Class.forName(cn);
 			bind(UserDetailsService.class).to(clz).in(Scopes.SINGLETON);
 		}
-		catch(ClassNotFoundException e) {
+		catch(final ClassNotFoundException e) {
 			throw new IllegalStateException("No user details service found for name: " + cn);
 		}
 
@@ -154,8 +163,8 @@ public class AcegiModule extends GModule {
 		// RoleVoter
 		bind(RoleVoter.class).in(Scopes.SINGLETON);
 
-		// AccessDecisionManager (httpRequestAccessDecisionManager)
-		bind(AccessDecisionManager.class).annotatedWith(Names.named("httpRequestAccessDecisionManager")).toProvider(
+		// AccessDecisionManager (ADM_HTTP_REQUEST)
+		bind(AccessDecisionManager.class).annotatedWith(Names.named(ADM_HTTP_REQUEST)).toProvider(
 				new Provider<AccessDecisionManager>() {
 
 					@Inject

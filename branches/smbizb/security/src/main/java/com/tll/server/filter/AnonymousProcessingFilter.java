@@ -24,11 +24,12 @@ import org.springframework.security.userdetails.memory.UserAttributeEditor;
 public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 
 	protected static final Log log = LogFactory.getLog(AnonymousProcessingFilter.class);
-	
+
 	/**
 	 * The wrapped {@link AnonymousAuthenticationProvider}.
 	 */
-	private org.springframework.security.providers.anonymous.AnonymousProcessingFilter wrapped;
+	private final org.springframework.security.providers.anonymous.AnonymousProcessingFilter wrapped =
+			new org.springframework.security.providers.anonymous.AnonymousProcessingFilter();
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -51,7 +52,7 @@ public class AnonymousProcessingFilter extends AbstractSecurityFilter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	ServletException {
 		log.debug("AnonymousProcessingFilter filtering..");
 		wrapped.doFilter(request, response, chain);
 	}
