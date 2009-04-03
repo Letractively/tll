@@ -1,15 +1,11 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.di;
 
-import java.util.Properties;
-
-import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.google.inject.Provider;
-import com.tll.config.Config;
 
 /**
  * VelocityModule
@@ -33,8 +29,7 @@ public class VelocityModule extends GModule {
 
 			public VelocityEngine get() {
 				try {
-					final Properties vps = ConfigurationConverter.getProperties(Config.instance().subset("velocity"));
-					final VelocityEngine ve = new VelocityEngine(vps);
+					final VelocityEngine ve = new VelocityEngine();
 					ve.init();
 					return ve;
 				}
