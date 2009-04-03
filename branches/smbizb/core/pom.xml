@@ -69,10 +69,10 @@
       <artifactId>guice</artifactId>
     </dependency>
     
-    <!-- gwt-user is only needed to satisfy the IMarshalable interface -->
+    <!-- gwt-servlet is only needed to satisfy the IMarshalable interface -->
     <dependency>
       <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
+      <artifactId>gwt-servlet</artifactId>
     </dependency>
     
     <dependency>
