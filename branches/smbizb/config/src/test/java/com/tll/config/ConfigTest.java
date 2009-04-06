@@ -81,6 +81,7 @@ public class ConfigTest {
 	 */
 	public void testInterpolation() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		Iterator<?> itr = config.getKeys();
@@ -100,6 +101,7 @@ public class ConfigTest {
 	 */
 	public void testAllAsMap() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		Map<String, String> map = config.asMap(null, null);
@@ -118,6 +120,7 @@ public class ConfigTest {
 	 */
 	public void testNestedAsMap() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
@@ -142,6 +145,7 @@ public class ConfigTest {
 	 */
 	public void testSaveAllToFile() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
@@ -173,6 +177,7 @@ public class ConfigTest {
 	 */
 	public void testSaveSubsetToFile() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
@@ -198,7 +203,9 @@ public class ConfigTest {
 	 */
 	public void testIntraConfigFileVariableInterpolation() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
+
 		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
 		config.loadProperties(config2, true, false);
 
@@ -213,6 +220,7 @@ public class ConfigTest {
 	 */
 	public void testConfigFiltering() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
 
 		// create a filter to extract only those keys beginning with: 'props.simple'
@@ -243,11 +251,23 @@ public class ConfigTest {
 	 */
 	public void testConfigFileOverriding() throws Exception {
 		Config config = Config.instance();
+		config.clear();
 		config.load();
+
 		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
 		config.loadProperties(config2, true, true);
 
 		String pv = config.getString("props.simple.propB");
 		assert "val2-overridden".equals(pv);
+	}
+
+	public void testLoadAll() throws Exception {
+		Config config = Config.instance();
+		config.clear();
+		config.loadAll();
+
+		for(String key : keys) {
+			assert config.getProperty(key) != null;
+		}
 	}
 }

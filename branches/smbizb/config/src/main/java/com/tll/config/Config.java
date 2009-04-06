@@ -1,9 +1,11 @@
 package com.tll.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,10 +65,23 @@ public final class Config implements Configuration {
 	/**
 	 * Attempts to load properties from {@link #DEFAULT_FILE_NAME} at the root of
 	 * the classpath with <em>NO</em> delimeter parsing.
-	 * @see #load(boolean, boolean)
+	 * @see #load(boolean, boolean, String)
 	 */
 	public void load() {
-		load(true, false);
+		load(true, false, DEFAULT_FILE_NAME);
+	}
+
+	/**
+	 * Loads all found config property resources named:
+	 * {@link Config#DEFAULT_FILE_NAME} at the root of the classpath.
+	 * @throws IOException When an io related error occurs.
+	 */
+	public void loadAll() throws IOException {
+		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(DEFAULT_FILE_NAME);
+		while(urls != null && urls.hasMoreElements()) {
+			URL url = urls.nextElement();
+			loadProperties(url, true, true);
+		}
 	}
 
 	/**
@@ -75,10 +90,11 @@ public final class Config implements Configuration {
 	 * @param disableDelimeterParsing
 	 * @param merge Replace existing properties with those of the same name at the
 	 *        given url?
+	 * @param configResourceName the name of the config property resource
 	 * @see #loadProperties(URL, boolean, boolean)
 	 */
-	public void load(boolean disableDelimeterParsing, boolean merge) {
-		loadProperties((Thread.currentThread().getContextClassLoader()).getResource(DEFAULT_FILE_NAME),
+	public void load(boolean disableDelimeterParsing, boolean merge, String configResourceName) {
+		loadProperties((Thread.currentThread().getContextClassLoader()).getResource(configResourceName),
 				disableDelimeterParsing, merge);
 	}
 
