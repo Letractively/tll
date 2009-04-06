@@ -131,6 +131,11 @@ public final class Bootstrapper implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		final ServletContext servletContext = event.getServletContext();
 
+		// load the config
+		// NOTE: this is presumed to be the first contact point with the config
+		// instance!
+		Config.instance().load();
+
 		final boolean debug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
 
 		// create the dependency injector

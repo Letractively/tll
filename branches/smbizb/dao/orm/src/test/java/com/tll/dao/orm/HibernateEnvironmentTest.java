@@ -15,6 +15,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Stage;
+import com.tll.config.Config;
 import com.tll.dao.jdbc.DbShell;
 import com.tll.di.DbDialectModule;
 import com.tll.di.DbShellModule;
@@ -26,11 +27,12 @@ import com.tll.di.OrmDaoModule;
  */
 @Test(groups = "dao.hibernate")
 public class HibernateEnvironmentTest {
-	
+
 	private DbShell db;
-	
+
 	@BeforeClass
 	public void init() {
+		Config.instance().load();
 		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
 		db = i.getInstance(DbShell.class);
 		db.create();

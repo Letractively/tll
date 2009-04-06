@@ -56,6 +56,9 @@ public class MailSenderTest {
 
 	@BeforeClass(groups = "mail")
 	protected void onSetUp() throws Exception {
+		// first load the config
+		Config.instance().load();
+
 		Injector injector = Guice.createInjector(new MailModule(), new VelocityModule());
 		mailManager = injector.getInstance(MailManager.class);
 		Assert.assertNotNull(mailManager, "Unable to obtain the MailManager bean from the application context.");

@@ -134,6 +134,12 @@
   	</dependency>
 
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
       <scope>test</scope>

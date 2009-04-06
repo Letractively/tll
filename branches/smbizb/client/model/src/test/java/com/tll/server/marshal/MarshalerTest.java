@@ -18,6 +18,7 @@ import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.IModelProperty;
 import com.tll.common.model.Model;
+import com.tll.config.Config;
 import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
@@ -36,7 +37,7 @@ import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
  */
 @Test(groups = {
 	"server", "client-model" })
-public class MarshalerTest extends AbstractInjectedTest {
+	public class MarshalerTest extends AbstractInjectedTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
@@ -59,6 +60,12 @@ public class MarshalerTest extends AbstractInjectedTest {
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
+	}
+
+	@Override
+	protected void beforeClass() {
+		Config.instance().load();
+		super.beforeClass();
 	}
 
 	@Override
@@ -86,7 +93,7 @@ public class MarshalerTest extends AbstractInjectedTest {
 		final TestPersistenceUnitEntityGraphBuilder entityGraphBuilder = new TestPersistenceUnitEntityGraphBuilder(getMockEntityFactory());
 		final EntityGraph entityGraph = entityGraphBuilder.buildEntityGraph();
 		final Marshaler marshaler = getMarshaler();
-		
+
 		// wire up a circular entity
 		final Collection<Account> accounts = entityGraph.getEntitiesByType(Account.class);
 		// NOTE: we expect 3 of them per test-persistence-unit jar

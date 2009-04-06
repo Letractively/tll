@@ -6,12 +6,9 @@ package com.tll.server.filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 
 import com.tll.model.User;
 import com.tll.server.AdminContext;
@@ -22,8 +19,6 @@ import com.tll.server.AdminContext;
  */
 public final class SmbizAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 	
-	private static final Log log = LogFactory.getLog(SmbizAuthenticationProcessingFilter.class);
-
 	@Override
 	protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			Authentication authResult) /*throws IOException*/{

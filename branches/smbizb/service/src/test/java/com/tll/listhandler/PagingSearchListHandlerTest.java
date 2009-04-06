@@ -21,6 +21,7 @@ import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.tll.AbstractInjectedTest;
 import com.tll.DbTestSupport;
+import com.tll.config.Config;
 import com.tll.criteria.Criteria;
 import com.tll.dao.IEntityDao;
 import com.tll.dao.SearchResult;
@@ -97,6 +98,8 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	@Override
 	protected void beforeClass() {
+		// load the config
+		Config.instance().load();
 		// create the db
 		db = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule()).getInstance(DbShell.class);
 		db.create();
@@ -166,7 +169,7 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 		final Criteria<Address> criteria = new Criteria<Address>(Address.class);
 		final Sorting sorting = new Sorting(new SortColumn("emailAddress"));
 		final IListHandler<SearchResult<Address>> listHandler =
-				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
+			ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
 
 		List<SearchResult<Address>> list;
 

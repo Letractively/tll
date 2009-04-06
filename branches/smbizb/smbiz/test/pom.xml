@@ -15,6 +15,21 @@
   <description>Dedicated project for testing smbiz.</description>
 
   <build>
+    <plugins>
+      <!-- direct unit test invocations to the testng.xml file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>

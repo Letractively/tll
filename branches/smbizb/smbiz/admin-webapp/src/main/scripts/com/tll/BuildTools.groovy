@@ -256,8 +256,8 @@ public final class BuildTools {
 		String tgtDir = project.build.outputDirectory.toString()
 		// add debug config property
 		config.addProperty('debug', project.properties.debug)
-	    config.saveAsPropFile(new File(tgtDir, Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME))
-	    println Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME + ' created'
+	    config.saveAsPropFile(new File(tgtDir, Config.DEFAULT_FILE_NAME))
+	    println Config.DEFAULT_FILE_NAME + ' created'
 	}
 
 	/**

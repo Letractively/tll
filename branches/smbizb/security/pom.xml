@@ -79,7 +79,7 @@
     
     <dependency><!-- needed for DataAccessException -->
       <groupId>org.springframework</groupId>
-      <artifactId>spring-jdbc</artifactId>
+      <artifactId>spring-tx</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency><!-- needed for mock http types -->

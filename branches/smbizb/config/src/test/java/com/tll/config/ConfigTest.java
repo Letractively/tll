@@ -61,12 +61,13 @@ public class ConfigTest {
 	}
 
 	/**
-	 * Verify Config instance is able to load w/o Exception.
+	 * Verify Config default loading.
 	 * @throws Exception
 	 */
-	public void testBasicLoading() throws Exception {
+	public void testDefaultLoading() throws Exception {
 		try {
 			Config config = Config.instance();
+			config.load();
 			assert !config.isEmpty() : "Config instance is empty";
 		}
 		catch(Throwable t) {
@@ -80,6 +81,7 @@ public class ConfigTest {
 	 */
 	public void testInterpolation() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Iterator<?> itr = config.getKeys();
 		while(itr.hasNext()) {
@@ -98,6 +100,7 @@ public class ConfigTest {
 	 */
 	public void testAllAsMap() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Map<String, String> map = config.asMap(null, null);
 		assert map != null;
@@ -115,6 +118,7 @@ public class ConfigTest {
 	 */
 	public void testNestedAsMap() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
 		assert map != null;
@@ -138,6 +142,7 @@ public class ConfigTest {
 	 */
 	public void testSaveAllToFile() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, null, null);
@@ -168,6 +173,7 @@ public class ConfigTest {
 	 */
 	public void testSaveSubsetToFile() throws Exception {
 		Config config = Config.instance();
+		config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
@@ -202,25 +208,32 @@ public class ConfigTest {
 	}
 
 	/**
-	 * Tests filtering of config props via a {@link IConfigKeyProvider}.
+	 * Tests filtering of config props via a {@link IConfigFilter}.
 	 * @throws Exception
 	 */
-	public void testConfigKeyProviding() throws Exception {
+	public void testConfigFiltering() throws Exception {
 		Config config = Config.instance();
 		config.load();
 
-		Map<String, String> map = config.asMap(new IConfigKeyProvider() {
+		// create a filter to extract only those keys beginning with: 'props.simple'
+		IConfigFilter filter = new IConfigFilter() {
 
-			public String[] getConfigKeys() {
-				return new String[] {
-					"props.simple.propA",
-					"props.simple.propB" };
+			@Override
+			public boolean accept(String keyName) {
+				return keyName.startsWith("props.simple");
 			}
-
-		});
-		assert map != null && map.size() == 2 : "Unable to obtain properly sized prop mak from an IConfigKeyProvider instance";
-		assert map.get("props.simple.propA") != null;
-		assert map.get("props.simple.propB") != null;
+		};
+		Config filtered = config.filter(filter);
+		assert filtered != null && !filtered.isEmpty() : "Unable to obtain non-empty filtered config instance";
+		assert filtered.getProperty("props.simple.propA") != null;
+		assert filtered.getProperty("props.simple.propB") != null;
+		int num = 0;
+		for(Iterator<String> itr = filtered.getKeys(); itr.hasNext();) {
+			String key = itr.next();
+			assert key != null && key.startsWith("props.simple") : "Encountered invalid filtered key";
+			num++;
+		}
+		assert num == 2 : "Invalid number of filtered keys.";
 	}
 
 	/**

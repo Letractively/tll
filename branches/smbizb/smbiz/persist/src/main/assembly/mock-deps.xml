@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
+  http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+  <!-- Aggregates mock dependencies into a single archive excluding the project assets. -->
+
+  <id>mock-deps</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  
+  <fileSets>
+    <fileSet>
+      <directory>target/${project.build.finalName}-mock-deps</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>smbiz-model*</exclude>
+        <exclude>tll-service*</exclude>
+        <!-- exclude service layer transaction related deps -->
+        <exclude>transactions*</exclude>
+        <exclude>atomikos*</exclude>
+        <exclude>aspectj*</exclude>
+        <exclude>spring-aspects*</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+
+</assembly>

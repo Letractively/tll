@@ -7,6 +7,7 @@
 package com.tll;
 
 import com.tll.config.Config;
+import com.tll.config.IConfigFilter;
 
 /**
  * ConfigProcessor - 
@@ -20,8 +21,8 @@ public class ConfigProcessor{
 	 * @param baseDir the dir in which the config property file(s) reside
 	 * @param modifiers one or more optional config file name modifiers 
 	 * 	  	  where, if specified, means: a config property file of name convention:
-	 *        config-{modifier}.properties
-	 * @return the config instance
+	 *        config-{modifier}.properties will be loaded and merged with the base config 
+	 * @return the merged config instance
 	 */
 	public static Config merge(String baseDir, String... modifiers) {
 		if(baseDir == null) throw new IllegalArgumentException('No base dir specified.')
@@ -32,7 +33,7 @@ public class ConfigProcessor{
 		File f
 	
 		// load root config file
-		fn = Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME
+		fn = Config.DEFAULT_FILE_NAME
 		f = new File(baseDir, fn)
 		if(f.isFile()) {
 			println "Loading root config properties: ${fn}" 
@@ -54,9 +55,23 @@ public class ConfigProcessor{
 		return cfg;
 	}
 	 
-	public static void mergeAndSave(String baseDir, String tgtDir, String... modifiers) {
+	/**
+	 * Merges multiple config property files, 
+	 * optionally filters out config properties 
+	 * then save resultant config to disk.
+	 * @param baseDir
+	 * @param tgtDir
+	 * @param filter the optional config filter. May be <code>null</code>.
+	 * @param modifiers optional modifier tokens for loading additional config property files
+	 */
+	public static void mergeAndSave(String baseDir, String tgtDir, IConfigFilter filter, String... modifiers) {
 		Config cfg = merge(baseDir, modifiers)
+		if(filter != null) {
+			// filter first
+			cfg = cfg.filter(filter)
+			println 'config filtered'
+		}
 		println "Saving merged config.properties file to dir: ${tgtDir}"
-    	cfg.saveAsPropFile(new File(tgtDir, Config.DEFAULT_CONFIG_PROPERTIES_FILE_NAME))
+		cfg.saveAsPropFile(new File(tgtDir, Config.DEFAULT_FILE_NAME))
 	}
 }

@@ -123,18 +123,6 @@
       </plugin>
       -->
       
-      <!-- direct unit test invocations to the testng.xml file -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skip>true</skip><!-- TODO temp -->
-          <suiteXmlFiles>
-            <suiteXmlFile>${basedir}/src/test/resources/test-server.xml</suiteXmlFile>
-          </suiteXmlFiles>
-        </configuration>
-      </plugin>
-      
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -229,6 +217,12 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.code.guice</groupId>
@@ -270,6 +264,14 @@
       <artifactId>smbiz-persist</artifactId>
       <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>smbiz-persist</artifactId>
+      <classifier>${daoMode}-deps</classifier>
+      <version>${project.version}</version>
+      <type>zip</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>

@@ -15,15 +15,34 @@
 
   <!-- groupId:artifactId:type:classifier -->
   <dependencySets>
+    <!-- unpack non-tll jars from smbiz-persist transitive deps -->
+    <dependencySet>
+      <scope>runtime</scope>
+      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <includes>
+        <include>com.tll:smbiz-persist:zip:${daoMode}-deps</include>
+      </includes>
+      <unpackOptions>
+        <!-- exclude tll deps -->
+        <excludes>
+          <exclude>com.tll:*</exclude>
+        </excludes>
+      </unpackOptions>
+    </dependencySet>
     <dependencySet>
       <scope>runtime</scope>
       <outputDirectory>/</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <!-- exclude tll deps -->
       <excludes>
         <exclude>com.tll:*</exclude>
-        <exclude>*gwt-user*</exclude>
+        <exclude>*gwt-servlet*</exclude>
         <exclude>*testng*</exclude>
         <exclude>*junit*</exclude>
       </excludes>

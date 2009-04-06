@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
+import com.tll.config.Config;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.Criteria;
 import com.tll.criteria.ICriteria;
@@ -111,7 +112,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 		@Override
 		public <R extends IEntity> List<R> findEntities(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
+		throws InvalidCriteriaException {
 			return rawDao.findEntities(criteria, sorting);
 		}
 
@@ -127,7 +128,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 		@Override
 		public <R extends IEntity> List<Integer> getIds(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
+		throws InvalidCriteriaException {
 			return rawDao.getIds(criteria, sorting);
 		}
 
@@ -138,7 +139,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 
 		@Override
 		public <R extends IEntity> List<SearchResult<R>> find(ICriteria<R> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
+		throws InvalidCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
@@ -252,7 +253,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule());
 	}
-	
+
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
 		beforeClass();
@@ -262,7 +263,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	public final void onAfterClass() {
 		afterClass();
 	}
-	
+
 	protected abstract void doBeforeClass();
 
 	@Override
@@ -274,8 +275,11 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
 
+		// load the config
+		Config.instance().load();
+
 		doBeforeClass();
-		
+
 		// build the injector
 		buildInjector();
 		assert injector != null;
@@ -287,7 +291,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	protected void afterClass() {
 		super.afterClass();
 	}
-	
+
 	protected abstract void startNewTransaction();
 
 	protected abstract void setComplete();
@@ -326,7 +330,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		finally {
 			endTransaction();
 		}
-		
+
 		// mock dao mode only - verify the number of entities in the mock dao's
 		// object graph matches the retained number prior to testing for the current
 		// entity type
@@ -335,7 +339,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			final int afterNumEntities = ((com.tll.dao.mock.EntityDao) dao.getRawDao()).getEntityGraph().size();
 			Assert.assertEquals(afterNumEntities, numEntities, entityHandler + " dao test handler didn't clean up properly!");
 		}
-		*/
+		 */
 	}
 
 	@Override
@@ -348,12 +352,12 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	@Override
 	protected final void afterMethod() {
 		super.afterMethod();
-		
+
 		// kill an open transaction
 		if(isTransStarted()) {
 			endTransaction();
 		}
-		
+
 		// teardown test entities..
 		if(testEntityRefStack.size() > 0) {
 			for(final PrimaryKey<IEntity> pk : testEntityRefStack) {
@@ -426,7 +430,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Retrieves an entity from the datastore ensuring a db hit as opposed to
 	 * potentially retrieving it from the loaded persistence context.
@@ -434,7 +438,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * @return The sought entity direct from the datastore.
 	 */
 	protected abstract IEntity getEntityFromDb(PrimaryKey<IEntity> key);
-	
+
 	/**
 	 * Run the dao test for all given entity types.
 	 * @throws Exception
@@ -446,7 +450,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		for(final IEntityDaoTestHandler<?> handler : entityHandlers) {
 			handler.init(dao, getMockEntityFactory());
 			entityHandler = (IEntityDaoTestHandler<IEntity>) handler;
-			
+
 			logger.debug("Testing entity dao for entity type: " + handler.entityClass() + "...");
 			beforeEntityType();
 			// run all tests
@@ -512,7 +516,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	final void daoCRUDAndFind() throws Exception {
 		IEntity e = getTestEntity();
 		Assert.assertTrue(e.isNew(), "The created test entity is not new and should be");
-		
+
 		Integer persistentId = null;
 
 		// create
@@ -526,9 +530,9 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		if(e instanceof ITimeStampEntity) {
 			// verify time stamp
 			Assert.assertNotNull(((ITimeStampEntity) e).getDateCreated(),
-					"Created time stamp entity does not have a create date");
+			"Created time stamp entity does not have a create date");
 			Assert.assertNotNull(((ITimeStampEntity) e).getDateModified(),
-					"Created time stamp entity does not have a modify date");
+			"Created time stamp entity does not have a modify date");
 		}
 
 		// retrieve
@@ -557,7 +561,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			final ITimeStampEntity tse = (ITimeStampEntity) e;
 			Assert.assertTrue(tse.getDateModified() != null && tse.getDateCreated() != null
 					&& tse.getDateModified().getTime() >= tse.getDateCreated().getTime(),
-					"Updated time stamp entity does not an updated modify date");
+			"Updated time stamp entity does not an updated modify date");
 		}
 
 		// purge (delete)
@@ -565,7 +569,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		dao.purge(e);
 		setComplete();
 		endTransaction();
-		
+
 		// verify purge
 		startNewTransaction();
 		try {
@@ -687,19 +691,19 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		startNewTransaction();
 		IPageResult<SearchResult<IEntity>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
-				"Empty or invalid number of initial page elements");
+		"Empty or invalid number of initial page elements");
 		endTransaction();
 
 		startNewTransaction();
 		page = dao.getPage(crit, simpleIdSorting, 2, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
-				"Empty or invalid number of subsequent page elements");
+		"Empty or invalid number of subsequent page elements");
 		endTransaction();
 
 		startNewTransaction();
 		page = dao.getPage(crit, simpleIdSorting, 4, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 1,
-				"Empty or invalid number of last page elements");
+		"Empty or invalid number of last page elements");
 		endTransaction();
 	}
 
@@ -745,7 +749,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			// expected
 		}
 	}
-	
+
 	final void daoTestSelectNamedQueries() throws Exception {
 		final ISelectNamedQueryDef[] queryDefs = entityHandler.getQueriesToTest();
 		if(queryDefs == null) return;

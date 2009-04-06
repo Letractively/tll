@@ -26,7 +26,7 @@
         <includes>
           <include>*.*</include>
         </includes>
-        <!-- don't copy any config-*.properties files!  They are merged explicitly. -->
+        <!-- don't copy any config prop files as they are managed independently. -->
         <excludes>
           <exclude>config*.properties</exclude>
         </excludes>
@@ -42,6 +42,7 @@
       </resource>
       <resource>
         <directory>src/main/resources/db</directory>
+        <filtering>false</filtering>
         <includes>
           <include>*.*</include>
         </includes>
@@ -92,13 +93,13 @@
           </execution>
         </executions>
       </plugin>
-
+      
       <!-- 
         Compile Time Weave @Transactional aspects irregardless of mock/orm profile
         as we are profile agnostic and build jars for both.
         NOTE: this weaving doesn't adversly affect debugging when in mock mode.
-              We are still able to do line level debugging. 
-      -->
+              We are still able to do line level debugging.
+      --> 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
@@ -129,27 +130,37 @@
         </executions>
       </plugin>
 
-      <!-- direct unit test invocations to the testng.xml file -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-dao.xml</suiteXmlFile>
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-namedqueries.xml</suiteXmlFile>
-            <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
-          </suiteXmlFiles>
-        </configuration>
-      </plugin>
-
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <!--
-            create a mock and orm specific jar
-          -->
           <execution>
-            <id>orm/mock jars</id>
+            <id>prep-deps</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/orm-deps-prep.xml</descriptor>
+                <descriptor>src/main/assembly/mock-deps-prep.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>package-deps</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/orm-deps.xml</descriptor>
+                <descriptor>src/main/assembly/mock-deps.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>dao-mode-jars</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -163,7 +174,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
 
   </build>

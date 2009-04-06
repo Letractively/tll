@@ -21,6 +21,7 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
+import com.tll.config.Config;
 
 
 /**
@@ -31,6 +32,9 @@ import com.google.inject.name.Names;
 public class AcegiModuleTest {
 
 	public void testAcegiModuleLoad() throws Exception {
+		// first load the config
+		Config.instance().load();
+
 		final Injector i = Guice.createInjector(new Module() {
 
 			@Override
@@ -74,7 +78,7 @@ public class AcegiModuleTest {
 
 		// AccessDecisionManager (ADM_HTTP_REQUEST)
 		final AccessDecisionManager adm =
-				i.getInstance(Key.get(AccessDecisionManager.class, Names.named(AcegiModule.ADM_HTTP_REQUEST)));
+			i.getInstance(Key.get(AccessDecisionManager.class, Names.named(AcegiModule.ADM_HTTP_REQUEST)));
 		assert adm != null : "Unable to obtain AccessDecisionManager (ADM_HTTP_REQUEST)";
 	}
 }
