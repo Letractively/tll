@@ -27,7 +27,7 @@ Ensure the following environment variables exist:
 || TLL_ROOT || The root dir of the local working copy of the tll source tree ('http://tll.googlecode.com/svn/trunk'). ||
 || TLL_TOOLS || Points to the local working copy dir of tll tools root dir ('http://tll.googlecode.com/svn/tools'). ||
 
-  # Add the following paths to the system path:
+  * Add the following paths to the system path:
  {{{
 {JAVA_HOME}/bin
 {M2_HOME}/bin
@@ -40,7 +40,6 @@ Ensure the following environment variables exist:
   * Append these global ignores to the installed SVN config file:
  {{{
 global-ignores = war debug.bat shell.bat .metadata build classes bin bin-groovy dist Desktop.ini *.log *.tmp target .metadata .gwt-tmp test-output tomcat Constants.properties config-local.properties
-
 }}}
 
   * Establish local working copies of the root tll project dir and tll tools dir:
@@ -54,12 +53,7 @@ svn checkout http://tll.googlecode.com/svn/tools/ {TLL_TOOLS}
 mvn install
 }}}
 
-  * Install {{{ {TLL_ROOT}/assemblies}}} into the local maven repository:
- {{{
-mvn install
-}}}
-
-  * Install {{{ {TLL_ROOT} }}} tll projects into the local maven repository:
+  * Install {{{ {TLL_ROOT} }}} project (including all tll child projects) into the local maven repository:
  {{{
 mvn install
 }}}
