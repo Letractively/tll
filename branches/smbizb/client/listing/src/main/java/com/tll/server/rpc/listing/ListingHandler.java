@@ -56,11 +56,7 @@ public final class ListingHandler<R> {
 
 		this.listHandler = listHandler;
 		this.listingName = listingName;
-		this.pageSize = pageSize == -1 ? listHandler.size() : pageSize;
-	}
-
-	public String getListingName() {
-		return listingName;
+		this.pageSize = pageSize;
 	}
 
 	public List<R> getElements() {
@@ -69,10 +65,6 @@ public final class ListingHandler<R> {
 
 	public int getOffset() {
 		return offset;
-	}
-
-	public int getPageSize() {
-		return pageSize;
 	}
 
 	public int size() {
@@ -84,7 +76,7 @@ public final class ListingHandler<R> {
 	}
 
 	public void query(int ofst, Sorting srtg, boolean force) throws EmptyListException, IndexOutOfBoundsException,
-			ListingException {
+	ListingException {
 
 		if(!force && listHandler.size() < 1) {
 			throw new EmptyListException("No list elements exist");
@@ -100,8 +92,9 @@ public final class ListingHandler<R> {
 		}
 
 		// query
+		final int psize = pageSize == -1 ? listHandler.size() : pageSize;
 		try {
-			page = listHandler.getElements(ofst, pageSize, srtg);
+			page = listHandler.getElements(ofst, psize, srtg);
 		}
 		catch(final ListHandlerException e) {
 			throw new ListingException(listingName, e.getMessage());
