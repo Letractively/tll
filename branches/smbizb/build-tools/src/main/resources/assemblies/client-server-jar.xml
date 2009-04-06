@@ -21,6 +21,7 @@
         <exclude>**/*.java</exclude>
         <exclude>**/*.gwt.xml</exclude>
         <exclude>**/client/**</exclude>
+        <exclude>**/common/**/*Async*</exclude>
         <exclude>**/public/**</exclude>
       </excludes>
     </fileSet>

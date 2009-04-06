@@ -50,7 +50,6 @@
     <!--
       Modules:
        - build-tools 
-       - assemblies (tll-assemblies) 
       must be installed separately and before hand 
       since they are referenced as dependencies in this root build file 
     -->
@@ -113,7 +112,7 @@
           <dependencies>
             <dependency>
               <groupId>com.tll</groupId>
-              <artifactId>tll-assemblies</artifactId>
+              <artifactId>build-tools</artifactId>
               <version>1</version>
             </dependency>
           </dependencies>
@@ -253,7 +252,7 @@
           <dependency>
             <groupId>com.tll</groupId>
             <artifactId>build-tools</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1</version>
           </dependency>
         </dependencies>
       </plugin>

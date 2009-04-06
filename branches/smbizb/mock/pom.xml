@@ -63,7 +63,7 @@
         </exclusion>
         <exclusion>
           <groupId>com.google.gwt</groupId>
-          <artifactId>gwt-user</artifactId>
+          <artifactId>gwt-servlet</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

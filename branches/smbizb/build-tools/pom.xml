@@ -5,7 +5,7 @@
   <groupId>com.tll</groupId>
   <artifactId>build-tools</artifactId>
   <name>build-tools</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1</version>
   <description>Houses tools for building projects.</description>
   <packaging>jar</packaging>
 

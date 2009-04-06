@@ -126,8 +126,26 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <!-- 
+          <!-- identify all transitive deps minus those needed for smbiz-persist -->
           <execution>
+            <id>deps</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <configuration>
+              <finalName>tll-server</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>true</appendAssemblyId>
+              <archiveBaseDirectory>false</archiveBaseDirectory>
+              <descriptors>
+                <descriptor>src/main/assembly/server-libs.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <!-- aggregate tll server deps -->
+          <execution>
+            <id>tll-server</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>single</goal>
@@ -136,24 +154,9 @@
               <finalName>tll-server</finalName>
               <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
               <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>src/main/assembly/tll-aggregate-server.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          -->
-          <execution>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>directory-single</goal>
-            </goals>
-            <configuration>
-              <finalName>tll-server</finalName>
-              <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
-              <appendAssemblyId>false</appendAssemblyId>
               <archiveBaseDirectory>false</archiveBaseDirectory>
               <descriptors>
-                <descriptor>src/main/assembly/non-tll-server.xml</descriptor>
+                <descriptor>src/main/assembly/tll-server.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
@@ -207,10 +210,6 @@
       <artifactId>commons-logging</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
     </dependency>
@@ -221,6 +220,10 @@
       	<exclusion>
       		<artifactId>spring-aop</artifactId>
       		<groupId>org.springframework</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>aopalliance</artifactId>
+      		<groupId>aopalliance</groupId>
       	</exclusion>
       </exclusions>
     </dependency>
@@ -246,6 +249,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -282,7 +290,6 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-security</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
