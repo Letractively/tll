@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.service.entity;
 
@@ -23,20 +23,13 @@ import com.tll.service.entity.user.UserService;
 @Test(groups = "service.entity")
 public class UserServiceTest extends AccountRelatedServiceTest {
 
-	/**
-	 * Constructor
-	 */
-	public UserServiceTest() {
-		super();
-	}
-
 	private void stubAuthorities() {
 		final IEntityDao dao = getEntityDao();
 		getDbSupport().startNewTransaction();
 		getDbSupport().setComplete();
 		try {
-			for(AuthorityRoles role : AuthorityRoles.values()) {
-				Authority a = getMockEntityFactory().getEntityCopy(Authority.class, false);
+			for(final AuthorityRoles role : AuthorityRoles.values()) {
+				final Authority a = getMockEntityFactory().getEntityCopy(Authority.class, false);
 				a.setAuthority(role.toString());
 				dao.persist(a);
 			}
@@ -54,12 +47,12 @@ public class UserServiceTest extends AccountRelatedServiceTest {
 		final String[][] args = new String[][] {
 			{
 				"superuser", "abc123" }, {
-				"jopaki@gmail.com", "bleamin" } };
+					"jopaki@gmail.com", "bleamin" } };
 		for(final String[] arg : args) {
 			System.out.println(arg[0] + ": " + UserService.encodePassword(arg[1], arg[0]));
 		}
 	}
-	
+
 	@Test
 	public void testUserCreate() throws Exception {
 		Account account = null;

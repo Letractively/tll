@@ -6,7 +6,7 @@
 package com.tll.util;
 
 /**
- * ObjectUtil
+ * ObjectUtil - {@link Object} utility methods.
  * @author jpk
  */
 public final class ObjectUtil {

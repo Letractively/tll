@@ -17,8 +17,8 @@ import com.tll.model.key.PrimaryKey;
  */
 @Test(groups = {
 	"dao", "mock" })
-public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
-	
+	public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
+
 	/**
 	 * Constructor
 	 */
@@ -29,7 +29,7 @@ public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new MockDaoModule());
+		modules.add(new MockDaoModule(config));
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public abstract class AbstractMockEntityDaoTest extends AbstractEntityDaoTest {
 
 	@Override
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
-		 return dao.load(key);
+		return dao.load(key);
 	}
 
 	@Override

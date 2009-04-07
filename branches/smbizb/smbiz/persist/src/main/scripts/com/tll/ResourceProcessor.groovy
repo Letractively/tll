@@ -6,6 +6,7 @@
 package com.tll
 
 import com.tll.config.Config;
+import com.tll.config.ConfigRef;
 import com.tll.config.IConfigFilter;
 import com.tll.ConfigProcessor;
 
@@ -37,9 +38,9 @@ public abstract class ResourceProcessor{
 	    Config cfg = ConfigProcessor.merge(project.basedir.toString() + '/src/main/resources', project.properties.mode)
 	    
 	    // create orm config prop file
-		cfg.filter(new OrmConfigFilter()).saveAsPropFile(new File(od + '/orm', Config.DEFAULT_FILE_NAME))
+		cfg.filter(new OrmConfigFilter()).saveAsPropFile(new File(od + '/orm', ConfigRef.DEFAULT_NAME))
 	    
 	    // create mock config prop file
-    	cfg.filter(new MockConfigFilter()).saveAsPropFile(new File(od + '/mock', Config.DEFAULT_FILE_NAME))
+    	cfg.filter(new MockConfigFilter()).saveAsPropFile(new File(od + '/mock', ConfigRef.DEFAULT_NAME))
 	}
 }

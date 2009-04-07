@@ -48,8 +48,6 @@ import com.tll.service.entity.IEntityService;
 @Test(groups = "listhandler")
 public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
-	private final DbTestSupport dbSupport = new DbTestSupport();
-
 	/**
 	 * TestEntityService
 	 * @author jpk
@@ -77,6 +75,10 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	 */
 	private static final int NUM_LIST_ELEMENTS = 100;
 
+	private final Config config;
+
+	private final DbTestSupport dbSupport;
+
 	private DbShell db;
 
 	/**
@@ -84,6 +86,8 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	 */
 	public PagingSearchListHandlerTest() {
 		super();
+		config = Config.load();
+		dbSupport = new DbTestSupport(config);
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -98,10 +102,10 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	@Override
 	protected void beforeClass() {
-		// load the config
-		Config.instance().load();
 		// create the db
-		db = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule()).getInstance(DbShell.class);
+		db =
+			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new DbShellModule(config))
+			.getInstance(DbShell.class);
 		db.create();
 		db.clear();
 
@@ -120,11 +124,12 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new MockEntityFactoryModule(config));
 		super.addModules(modules);
-		modules.add(new OrmDaoModule());
-		modules.add(new TransactionModule());
-		modules.add(new EntityAssemblerModule());
+		modules.add(new DbDialectModule(config));
+		modules.add(new OrmDaoModule(config));
+		modules.add(new TransactionModule(config));
+		modules.add(new EntityAssemblerModule(config));
 		modules.add(new Module() {
 
 			@Override

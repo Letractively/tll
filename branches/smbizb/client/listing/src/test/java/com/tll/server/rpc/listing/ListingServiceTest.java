@@ -15,8 +15,8 @@ import com.tll.AbstractInjectedTest;
  */
 @Test(groups = {
 	"server", "listing" })
-public class ListingServiceTest extends AbstractInjectedTest {
-	
+	public class ListingServiceTest extends AbstractInjectedTest {
+
 	public void test() {
 		// TODO impl
 	}

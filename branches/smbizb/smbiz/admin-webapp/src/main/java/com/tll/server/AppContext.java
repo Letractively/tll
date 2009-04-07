@@ -20,16 +20,19 @@ public class AppContext {
 
 	private final boolean debug;
 	private final String environment;
+	private final String dfltUserEmail;
 
 	/**
 	 * Constructor
 	 * @param debug
 	 * @param environment
+	 * @param dfltUserEmail
 	 */
-	public AppContext(boolean debug, String environment) {
+	public AppContext(boolean debug, String environment, String dfltUserEmail) {
 		super();
 		this.debug = debug;
 		this.environment = environment;
+		this.dfltUserEmail = dfltUserEmail;
 	}
 
 	/**
@@ -44,5 +47,12 @@ public class AppContext {
 	 */
 	public String getEnvironment() {
 		return environment;
+	}
+
+	/**
+	 * @return the dfltUserEmail
+	 */
+	public String getDfltUserEmail() {
+		return dfltUserEmail;
 	}
 }

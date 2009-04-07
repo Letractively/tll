@@ -17,6 +17,7 @@ import com.google.inject.Module;
 import com.tll.AbstractInjectedTest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.config.Config;
 import com.tll.di.MockDaoModule;
 import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
@@ -30,16 +31,11 @@ import com.tll.util.CommonUtil;
  */
 @Test(groups = {
 	"server", "client-model" })
-public class SmbizMarshalerTest extends AbstractInjectedTest {
+	public class SmbizMarshalerTest extends AbstractInjectedTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();
 
-	/**
-	 * Constructor
-	 */
-	public SmbizMarshalerTest() {
-		super();
-	}
+	private Config config;
 
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
@@ -47,11 +43,17 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 	}
 
 	@Override
+	protected void beforeClass() {
+		config = Config.load();
+		super.beforeClass();
+	}
+
+	@Override
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
-		modules.add(new MockDaoModule());
+		modules.add(new MockEntityFactoryModule(config));
+		modules.add(new MockDaoModule(config));
 	}
 
 	private Marshaler getMarshaler() {
@@ -71,15 +73,15 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 		final Marshaler marshaler = getMarshaler();
 		assert marshaler != null;
 		final Class<? extends IEntity>[] entityClasses =
-				CommonUtil.getClasses("com.tll.model", IEntity.class, true, null, new FilenameFilter() {
+			CommonUtil.getClasses("com.tll.model", IEntity.class, true, null, new FilenameFilter() {
 
-					@Override
-					public boolean accept(File dir, String name) {
-						// we only want the actual smbiz model classes!
-						return (dir.getPath().indexOf("smbiz") > 0) && (dir.getPath().indexOf("classes") > 0)
-								&& (dir.getPath().indexOf("test") < 0);
-					}
-				});
+				@Override
+				public boolean accept(File dir, String name) {
+					// we only want the actual smbiz model classes!
+					return (dir.getPath().indexOf("smbiz") > 0) && (dir.getPath().indexOf("classes") > 0)
+					&& (dir.getPath().indexOf("test") < 0);
+				}
+			});
 		for(final Class<? extends IEntity> entityClass : entityClasses) {
 			final IEntity e = getMockEntityFactory().getEntityCopy(entityClass, false);
 			Assert.assertNotNull(e);
@@ -87,7 +89,7 @@ public class SmbizMarshalerTest extends AbstractInjectedTest {
 
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
 			Assert.assertEquals(model.getEntityType().getEntityClassName(), e.entityClass().getName(),
-					"The marshaled entity model's ref type did not match the sourcing entities' entity type");
+			"The marshaled entity model's ref type did not match the sourcing entities' entity type");
 			final ModelKey refKey = model.getRefKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";

@@ -31,11 +31,6 @@
     
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
     </dependency>

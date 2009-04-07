@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll;
 
@@ -72,11 +72,16 @@ public final class DbTestSupport {
 	}
 
 	private static final Log logger = LogFactory.getLog(DbTestSupport.class);
-	
+
 	/**
 	 * The default transaction timeout in miliseconds.
 	 */
 	private static final int DEFAULT_TRANS_TIMEOUT_MILIS = 30000;
+
+	/**
+	 * The config instance to employ.
+	 */
+	private final Config config;
 
 	/**
 	 * The {@link DbShell}.
@@ -107,6 +112,16 @@ public final class DbTestSupport {
 	private boolean transCompleteFlag = false;
 
 	/**
+	 * Constructor
+	 * @param config
+	 */
+	public DbTestSupport(Config config) {
+		super();
+		if(config == null) throw new IllegalArgumentException("Null config.");
+		this.config = config;
+	}
+
+	/**
 	 * @return The lazily instantiated db level trans manager.
 	 */
 	private PlatformTransactionManager getTransMgr() {
@@ -114,7 +129,7 @@ public final class DbTestSupport {
 			final UserTransactionManager jtaTm = new UserTransactionManager();
 
 			// set the transaction timeout
-			final int timeout = Config.instance().getInt("db.transaction.timeout", DEFAULT_TRANS_TIMEOUT_MILIS);
+			final int timeout = config.getInt("db.transaction.timeout", DEFAULT_TRANS_TIMEOUT_MILIS);
 			if(timeout <= 0) {
 				throw new IllegalStateException("Invalid trans timeout: " + timeout);
 			}
@@ -138,11 +153,11 @@ public final class DbTestSupport {
 	 */
 	public DbShell getDbShell() {
 		if(dbShell == null) {
-			dbShell = Guice.createInjector(new DbShellModule()).getInstance(DbShell.class);
+			dbShell = Guice.createInjector(new DbShellModule(config)).getInstance(DbShell.class);
 		}
 		return dbShell;
 	}
-	
+
 	/**
 	 * Starts a new db transaction.
 	 * @throws IllegalStateException When a transaction is already started.

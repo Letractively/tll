@@ -54,8 +54,8 @@ public class DbDialectHandlerBuilder {
 	 * @throws IllegalArgumentException When the db type name is not recognized.
 	 */
 	public static Class<? extends IDbDialectHandler> getDbDialectHandlerTypeFromDbType(Config config)
-			throws IllegalArgumentException {
-		String dbType = Config.instance().getString(ConfigKeys.DB_TYPE.getKey());
+	throws IllegalArgumentException {
+		final String dbType = config.getString(ConfigKeys.DB_TYPE.getKey());
 		if(DB_TYPE_MYSQL.equals(dbType)) {
 			return MySqlDialectHandler.class;
 		}

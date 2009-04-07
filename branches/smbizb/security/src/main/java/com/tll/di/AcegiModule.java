@@ -5,6 +5,8 @@ package com.tll.di;
 
 import java.util.Arrays;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.AccessDecisionManager;
 import org.springframework.security.AuthenticationManager;
 import org.springframework.security.providers.ProviderManager;
@@ -20,18 +22,25 @@ import org.springframework.security.vote.AccessDecisionVoter;
 import org.springframework.security.vote.AffirmativeBased;
 import org.springframework.security.vote.RoleVoter;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
+import com.tll.config.IConfigAware;
 import com.tll.config.IConfigKey;
 
 /**
  * AcegiModule - Acegi flavored security implementation wiring.
+ * <p>
+ * <em>NOTE: </em>This module depends on a {@link UserCache} binding in the
+ * dependency injection context.
  * @author jpk
  */
-public class AcegiModule extends GModule {
+public class AcegiModule extends AbstractModule implements IConfigAware {
+
+	private static final Log log = LogFactory.getLog(AcegiModule.class);
 
 	/**
 	 * The http request flavored {@link AccessDecisionManager} token used to
@@ -41,9 +50,6 @@ public class AcegiModule extends GModule {
 
 	/**
 	 * ConfigKeys - Config keys for the Acegi module.
-	 * <p>
-	 * <em>NOTE: </em>This module depends on a {@link UserCache} binding in the
-	 * dependency injection context.
 	 * @author jpk
 	 */
 	private static enum ConfigKeys implements IConfigKey {
@@ -63,30 +69,58 @@ public class AcegiModule extends GModule {
 		}
 	}
 
+	Config config;
+
 	/**
 	 * Constructor
 	 */
 	public AcegiModule() {
 		super();
-		log.info("Employing Acegi Security");
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Constructor
+	 * @param config
+	 */
+	public AcegiModule(Config config) {
+		super();
+		setConfig(config);
+	}
+
+	@Override
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
 	@Override
 	protected void configure() {
+		if(config == null) throw new IllegalStateException("No config instance specified.");
+		log.info("Employing Acegi Security");
 
 		// UserDetailsService
-		final String cn = Config.instance().getString(ConfigKeys.USER_DETAILS_SERVICE_CLASSNAME.getKey());
-		if(cn == null) {
-			throw new IllegalStateException("No user details service class name specified in the configuration");
-		}
-		try {
-			final Class<? extends UserDetailsService> clz = (Class<? extends UserDetailsService>) Class.forName(cn);
-			bind(UserDetailsService.class).to(clz).in(Scopes.SINGLETON);
-		}
-		catch(final ClassNotFoundException e) {
-			throw new IllegalStateException("No user details service found for name: " + cn);
-		}
+		bind(UserDetailsService.class).toProvider(new Provider<UserDetailsService>() {
+
+			@Override
+			public UserDetailsService get() {
+				final String cn = config.getString(ConfigKeys.USER_DETAILS_SERVICE_CLASSNAME.getKey());
+				if(cn == null) {
+					throw new IllegalStateException("No user details service class name specified in the configuration");
+				}
+				try {
+					return (UserDetailsService) Class.forName(cn).newInstance();
+				}
+				catch(final ClassNotFoundException e) {
+					throw new IllegalStateException("No user details service found for name: " + cn);
+				}
+				catch(final InstantiationException e) {
+					throw new IllegalStateException("Unable to instantiate for name: " + cn);
+				}
+				catch(final IllegalAccessException e) {
+					throw new IllegalStateException("Unable to access for name: " + cn);
+				}
+			}
+		}).in(Scopes.SINGLETON);
+
 
 		// SaltSource
 		bind(SaltSource.class).toProvider(new Provider<SaltSource>() {
@@ -131,7 +165,7 @@ public class AcegiModule extends GModule {
 
 			public AnonymousAuthenticationProvider get() {
 				final AnonymousAuthenticationProvider aap = new AnonymousAuthenticationProvider();
-				aap.setKey(Config.instance().getString(ConfigKeys.APP_NAME.getKey()));
+				aap.setKey(config.getString(ConfigKeys.APP_NAME.getKey()));
 				return aap;
 			}
 

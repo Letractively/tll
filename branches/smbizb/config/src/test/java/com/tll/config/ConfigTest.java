@@ -2,7 +2,6 @@ package com.tll.config;
 
 import java.io.File;
 import java.io.FileReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -66,8 +65,7 @@ public class ConfigTest {
 	 */
 	public void testDefaultLoading() throws Exception {
 		try {
-			Config config = Config.instance();
-			config.load();
+			Config config = Config.load();
 			assert !config.isEmpty() : "Config instance is empty";
 		}
 		catch(Throwable t) {
@@ -80,9 +78,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testInterpolation() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		Iterator<?> itr = config.getKeys();
 		while(itr.hasNext()) {
@@ -100,9 +96,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testAllAsMap() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		Map<String, String> map = config.asMap(null, null);
 		assert map != null;
@@ -119,9 +113,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testNestedAsMap() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		Map<String, String> map = config.asMap("simple", "simple.");
 		assert map != null;
@@ -144,9 +136,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testSaveAllToFile() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, null, null);
@@ -176,9 +166,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testSaveSubsetToFile() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		File f = stubTestConfigOutputPropsFile();
 		config.saveAsPropFile(f, "props.commas", "props.commas.");
@@ -202,13 +190,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testIntraConfigFileVariableInterpolation() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
-
-		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
-		config.loadProperties(config2, true, false);
-
+		Config config = Config.load(new ConfigRef(), new ConfigRef("config2.properties"));
 		String pv = config.getString("props.simple.propA");
 		String iipv = config.getString("props.intrainterpolated.propA");
 		assert iipv != null && iipv.equals(pv);
@@ -219,9 +201,7 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testConfigFiltering() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
+		Config config = Config.load();
 
 		// create a filter to extract only those keys beginning with: 'props.simple'
 		IConfigFilter filter = new IConfigFilter() {
@@ -250,21 +230,13 @@ public class ConfigTest {
 	 * @throws Exception
 	 */
 	public void testConfigFileOverriding() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.load();
-
-		URL config2 = Thread.currentThread().getContextClassLoader().getResource("config2.properties");
-		config.loadProperties(config2, true, true);
-
+		Config config = Config.load(new ConfigRef(), new ConfigRef("config2.properties"));
 		String pv = config.getString("props.simple.propB");
 		assert "val2-overridden".equals(pv);
 	}
 
 	public void testLoadAll() throws Exception {
-		Config config = Config.instance();
-		config.clear();
-		config.loadAll();
+		Config config = Config.load(new ConfigRef(true));
 
 		for(String key : keys) {
 			assert config.getProperty(key) != null;

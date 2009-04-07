@@ -14,6 +14,7 @@ import com.google.inject.Module;
 import com.tll.DbTestSupport;
 import com.tll.dao.AbstractEntityDaoTest;
 import com.tll.dao.jdbc.DbShell;
+import com.tll.di.DbDialectModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.model.IEntity;
 import com.tll.model.key.PrimaryKey;
@@ -24,8 +25,8 @@ import com.tll.model.key.PrimaryKey;
  */
 @Test(groups = {
 	"dao", "orm" })
-public abstract class AbstractOrmEntityDaoTest extends AbstractEntityDaoTest {
-	
+	public abstract class AbstractOrmEntityDaoTest extends AbstractEntityDaoTest {
+
 	private final DbTestSupport dbSupport;
 
 	/**
@@ -33,13 +34,15 @@ public abstract class AbstractOrmEntityDaoTest extends AbstractEntityDaoTest {
 	 */
 	public AbstractOrmEntityDaoTest() {
 		super();
-		dbSupport = new DbTestSupport();
+		assert this.config != null;
+		dbSupport = new DbTestSupport(config);
 	}
 
 	@Override
 	protected final void addModules(List<Module> modules) {
 		super.addModules(modules);
-		modules.add(new OrmDaoModule());
+		modules.add(new DbDialectModule(config));
+		modules.add(new OrmDaoModule(config));
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public abstract class AbstractOrmEntityDaoTest extends AbstractEntityDaoTest {
 
 	@Override
 	protected final IEntity getEntityFromDb(PrimaryKey<IEntity> key) {
-		 return DbTestSupport.getEntityFromDb(dao, key);
+		return DbTestSupport.getEntityFromDb(dao, key);
 	}
 
 	@Override

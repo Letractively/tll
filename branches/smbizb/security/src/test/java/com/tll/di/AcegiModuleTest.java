@@ -23,7 +23,6 @@ import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import com.tll.config.Config;
 
-
 /**
  * AcegiModuleTest
  * @author jpk
@@ -32,9 +31,7 @@ import com.tll.config.Config;
 public class AcegiModuleTest {
 
 	public void testAcegiModuleLoad() throws Exception {
-		// first load the config
-		Config.instance().load();
-
+		final Config config = Config.load();
 		final Injector i = Guice.createInjector(new Module() {
 
 			@Override
@@ -62,7 +59,7 @@ public class AcegiModuleTest {
 
 				}).in(Scopes.SINGLETON);
 			}
-		}, new AcegiModule());
+		}, new AcegiModule(config));
 
 		// verify dao auth provider
 		final DaoAuthenticationProvider p = i.getInstance(DaoAuthenticationProvider.class);

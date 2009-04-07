@@ -216,6 +216,16 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	protected static final Sorting simpleIdSorting = new Sorting(new SortColumn(IEntity.PK_FIELDNAME));
 
 	/**
+	 * The config to employ.
+	 */
+	protected final Config config;
+
+	/**
+	 * The test dao.
+	 */
+	protected final EntityDaoTestDecorator dao;
+
+	/**
 	 * The entity handlers subject to testing.
 	 */
 	private IEntityDaoTestHandler<?>[] entityHandlers;
@@ -229,18 +239,16 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	 * Stack of test entity pks that are retained for proper datastore cleanup at
 	 * the completion of dao testing for a particular entity type.
 	 */
-	private final Stack<PrimaryKey<IEntity>> testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
-
-	/**
-	 * The test dao.
-	 */
-	protected final EntityDaoTestDecorator dao = new EntityDaoTestDecorator();
+	private final Stack<PrimaryKey<IEntity>> testEntityRefStack;
 
 	/**
 	 * Constructor
 	 */
 	public AbstractEntityDaoTest() {
 		super();
+		config = Config.load();
+		dao = new EntityDaoTestDecorator();
+		testEntityRefStack = new Stack<PrimaryKey<IEntity>>();
 	}
 
 	/**
@@ -251,7 +259,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 	@Override
 	protected void addModules(List<Module> modules) {
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
+		modules.add(new MockEntityFactoryModule(config));
 	}
 
 	@BeforeClass(alwaysRun = true)
@@ -274,9 +282,6 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		if(entityHandlers == null || entityHandlers.length < 1) {
 			throw new IllegalStateException("No entity dao handlers specified");
 		}
-
-		// load the config
-		Config.instance().load();
 
 		doBeforeClass();
 

@@ -18,17 +18,10 @@ import com.tll.refdata.RefData;
 public class RefDataModule extends AbstractModule {
 
 	protected static final Log log = LogFactory.getLog(RefDataModule.class);
-	
-	/**
-	 * Constructor
-	 */
-	public RefDataModule() {
-		super();
-		log.info("Employing App ref data module");
-	}
 
 	@Override
 	protected void configure() {
+		log.info("Employing App ref data module");
 
 		// RefData
 		bind(RefData.class).toInstance(new RefData());

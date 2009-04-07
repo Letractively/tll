@@ -49,7 +49,6 @@
 
     <plugins>
       
-      <!-- TODO temp
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -61,7 +60,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          NOTE: m2eclipse will fail the build if there is no valid source arg param!
+          <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
           <source>println 'config'</source>
         </configuration>
         <executions>
@@ -121,12 +120,12 @@
           </execution>
         </executions>
       </plugin>
-      -->
       
+      <!-- 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <!-- identify all transitive deps minus those needed for smbiz-persist -->
+          identify all transitive deps minus those needed for smbiz-persist
           <execution>
             <id>deps</id>
             <phase>prepare-package</phase>
@@ -143,7 +142,7 @@
               </descriptors>
             </configuration>
           </execution>
-          <!-- aggregate tll server deps -->
+          aggregate tll server deps
           <execution>
             <id>tll-server</id>
             <phase>prepare-package</phase>
@@ -162,6 +161,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -273,6 +273,7 @@
       <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>smbiz-persist</artifactId>
@@ -281,6 +282,7 @@
       <type>zip</type>
       <scope>runtime</scope>
     </dependency>
+    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>

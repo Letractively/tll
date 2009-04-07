@@ -15,6 +15,7 @@ import com.google.inject.Injector;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.mail.MailManager;
+import com.tll.mail.NameEmail;
 import com.tll.model.IEntityFactory;
 import com.tll.refdata.RefData;
 import com.tll.server.IBootstrapHandler;
@@ -35,7 +36,9 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 	public static enum ConfigKeys implements IConfigKey {
 
 		MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME("server.mEntityServiceImplResolver.classname"),
-		NAMED_QUERY_RESOLVER_CLASSNAME("server.namedQueryResolver.classname");
+		NAMED_QUERY_RESOLVER_CLASSNAME("server.namedQueryResolver.classname"),
+		ONERROR_SEND_EMAIL("mail.onerror.ToAddress"),
+		ONERROR_SEND_NAME("mail.onerror.ToName");
 
 		private final String key;
 
@@ -51,13 +54,13 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			return key;
 		}
 	}
-	
+
 	private static final Log log = LogFactory.getLog(MEntityServiceBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
 		final RefData refdata = injector.getInstance(RefData.class);
-		
+
 		// the mail manager is optional
 		MailManager mailManager;
 		try {
@@ -69,7 +72,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 		}
 
 		final Marshaler marshaler = injector.getInstance(Marshaler.class);
-		
+
 		// NOTE: we support the case where an em factory is not provided
 		EntityManagerFactory entityManagerFactory;
 		try {
@@ -78,22 +81,27 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 		catch(final Exception e) {
 			entityManagerFactory = null;
 		}
-		
+
+		final Config config = injector.getInstance(Config.class);
+
+		final String onErrorName = config.getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
+		final String onErrorEmail = config.getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
+		final NameEmail email = new NameEmail(onErrorName, onErrorEmail);
+		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager, email);
 		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
-		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager);
-		
+
 		String cn;
 
 		IMEntityServiceImplResolver sr;
 		final INamedQueryResolver nqr;
 		try {
 			// instantiate the mentity service resolver
-			cn = Config.instance().getString(ConfigKeys.MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME.getKey());
+			cn = config.getString(ConfigKeys.MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME.getKey());
 			sr = (IMEntityServiceImplResolver) Class.forName(cn).newInstance();
 
 			// instantiate the named query resolver
-			cn = Config.instance().getString(ConfigKeys.NAMED_QUERY_RESOLVER_CLASSNAME.getKey());
+			cn = config.getString(ConfigKeys.NAMED_QUERY_RESOLVER_CLASSNAME.getKey());
 			nqr = (INamedQueryResolver) Class.forName(cn).newInstance();
 
 		}
@@ -114,7 +122,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 	@Override
 	public void shutdown(ServletContext servletContext) {
 		final MEntityContext c =
-				(MEntityContext) servletContext.getAttribute(MEntityContext.KEY);
+			(MEntityContext) servletContext.getAttribute(MEntityContext.KEY);
 		if(c != null) {
 			final EntityManagerFactory emf = c.getEntityManagerFactory();
 			if(emf != null) {

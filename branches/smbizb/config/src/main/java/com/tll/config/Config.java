@@ -1,11 +1,10 @@
 package com.tll.config;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,20 +31,29 @@ public final class Config implements Configuration {
 	private static final Log log = LogFactory.getLog(Config.class);
 
 	/**
-	 * The default config properties file name.
+	 * The default loading routine where a classpath resource named:
+	 * {@link ConfigRef#DEFAULT_NAME} is sought.
+	 * @return New {@link Config} instance.
 	 */
-	public static final String DEFAULT_FILE_NAME = "config.properties";
+	public static Config load() {
+		return load(new ConfigRef());
+	}
 
 	/**
-	 * The config instance
+	 * Loads config resources returning a new {@link Config} instance.
+	 * @param refs The required resource refs defining what and how to load
+	 * @return New {@link Config} instance
 	 */
-	private static final Config instance = new Config();
-
-	/**
-	 * @return The {@link Config} instance.
-	 */
-	public static final Config instance() {
-		return instance;
+	public static Config load(ConfigRef... refs) {
+		if(refs == null || refs.length < 1) throw new IllegalArgumentException("No config refs specified.");
+		Config c = new Config();
+		for(ConfigRef ref : refs) {
+			Collection<URL> urls = ref.getUrls();
+			for(URL url : urls) {
+				c.loadProperties(url, ref.disableDelimeterParsing, true);
+			}
+		}
+		return c;
 	}
 
 	/**
@@ -55,47 +63,10 @@ public final class Config implements Configuration {
 
 	/**
 	 * Constructor
-	 * @throws RuntimeException When the configuration is not successfully loaded.
 	 */
 	private Config() {
 		super();
 		root = new CombinedConfiguration();
-	}
-
-	/**
-	 * Attempts to load properties from {@link #DEFAULT_FILE_NAME} at the root of
-	 * the classpath with <em>NO</em> delimeter parsing.
-	 * @see #load(boolean, boolean, String)
-	 */
-	public void load() {
-		load(true, false, DEFAULT_FILE_NAME);
-	}
-
-	/**
-	 * Loads all found config property resources named:
-	 * {@link Config#DEFAULT_FILE_NAME} at the root of the classpath.
-	 * @throws IOException When an io related error occurs.
-	 */
-	public void loadAll() throws IOException {
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(DEFAULT_FILE_NAME);
-		while(urls != null && urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			loadProperties(url, true, true);
-		}
-	}
-
-	/**
-	 * Attempts to load properties from {@link #DEFAULT_FILE_NAME} at the root of
-	 * the classpath.
-	 * @param disableDelimeterParsing
-	 * @param merge Replace existing properties with those of the same name at the
-	 *        given url?
-	 * @param configResourceName the name of the config property resource
-	 * @see #loadProperties(URL, boolean, boolean)
-	 */
-	public void load(boolean disableDelimeterParsing, boolean merge, String configResourceName) {
-		loadProperties((Thread.currentThread().getContextClassLoader()).getResource(configResourceName),
-				disableDelimeterParsing, merge);
 	}
 
 	/**
@@ -108,7 +79,7 @@ public final class Config implements Configuration {
 	 * @see CombinedConfiguration#append(Configuration)
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadProperties(URL url, boolean disableDelimeterParsing, boolean merge) {
+	private void loadProperties(URL url, boolean disableDelimeterParsing, boolean merge) {
 		PropertiesConfiguration props;
 
 		// load the required base props
@@ -122,6 +93,7 @@ public final class Config implements Configuration {
 		}
 
 		if(merge) {
+			root.setDelimiterParsingDisabled(disableDelimeterParsing);
 			for(Iterator<String> itr = props.getKeys(); itr.hasNext();) {
 				String key = itr.next();
 				root.setProperty(key, props.getProperty(key));

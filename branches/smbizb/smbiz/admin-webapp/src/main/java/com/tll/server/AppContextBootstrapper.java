@@ -27,7 +27,8 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 	public static enum ConfigKeys implements IConfigKey {
 
 		ENVIRONMENT_PARAM("environment"),
-		DEBUG_PARAM("debug");
+		DEBUG_PARAM("debug"),
+		USER_DEFAULT_EMAIL_PARAM("mail.dflt_user_email");
 
 		private final String key;
 
@@ -43,15 +44,17 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 			return key;
 		}
 	}
-	
+
 	private static final Log log = LogFactory.getLog(AppContextBootstrapper.class);
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext) {
 		log.debug("Bootstrapping the app context..");
-		final boolean debug = Config.instance().getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
-		final String environment = Config.instance().getString(ConfigKeys.ENVIRONMENT_PARAM.getKey());
-		final AppContext c = new AppContext(debug, environment);
+		final Config cfg = injector.getInstance(Config.class);
+		final boolean debug = cfg.getBoolean(ConfigKeys.DEBUG_PARAM.getKey());
+		final String environment = cfg.getString(ConfigKeys.ENVIRONMENT_PARAM.getKey());
+		final String dfltUserEmail = cfg.getString(ConfigKeys.USER_DEFAULT_EMAIL_PARAM.getKey());
+		final AppContext c = new AppContext(debug, environment, dfltUserEmail);
 		servletContext.setAttribute(AppContext.KEY, c);
 	}
 

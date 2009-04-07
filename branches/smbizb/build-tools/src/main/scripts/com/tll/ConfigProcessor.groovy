@@ -7,6 +7,7 @@
 package com.tll;
 
 import com.tll.config.Config;
+import com.tll.config.ConfigRef;
 import com.tll.config.IConfigFilter;
 
 /**
@@ -28,31 +29,24 @@ public class ConfigProcessor{
 		if(baseDir == null) throw new IllegalArgumentException('No base dir specified.')
 		 
 		println "Merging config files in dir: ${baseDir} .."
-		Config cfg = Config.instance();
-		String fn
-		File f
+		URL url;
+		def refs = [];
 	
-		// load root config file
-		fn = Config.DEFAULT_FILE_NAME
-		f = new File(baseDir, fn)
-		if(f.isFile()) {
-			println "Loading root config properties: ${fn}" 
-			cfg.loadProperties(f.toURI().toURL(), true, false)
-		}
+		// root config file
+		url = new File(baseDir, ConfigRef.DEFAULT_NAME).toURI().toURL()
+		refs.add(new ConfigRef(url))
 		 
-		// load overriding config prop files
+		// overriding config files
 		if(modifiers != null) {
 			modifiers.each { mod -> 
-				fn = "config-${mod}.properties";
-				f = new File(baseDir, fn)
-				if(f.isFile()) {
-					println "Loading config properties: ${fn}" 
-					cfg.loadProperties(f.toURI().toURL(), true, true)
-				}
+				url = new File(baseDir, "config-${mod}.properties").toURI().toURL()
+				refs.add(new ConfigRef(url))
 			}
 		}
 
-		return cfg;
+		ConfigRef[] arr = refs.toArray(new ConfigRef[refs.size()]);
+		Config c = Config.load(arr);
+		return c;
 	}
 	 
 	/**
@@ -72,6 +66,6 @@ public class ConfigProcessor{
 			println 'config filtered'
 		}
 		println "Saving merged config.properties file to dir: ${tgtDir}"
-		cfg.saveAsPropFile(new File(tgtDir, Config.DEFAULT_FILE_NAME))
+		cfg.saveAsPropFile(new File(tgtDir, ConfigRef.DEFAULT_NAME))
 	}
 }

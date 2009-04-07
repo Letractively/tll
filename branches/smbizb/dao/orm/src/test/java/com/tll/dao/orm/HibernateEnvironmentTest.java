@@ -28,12 +28,14 @@ import com.tll.di.OrmDaoModule;
 @Test(groups = "dao.hibernate")
 public class HibernateEnvironmentTest {
 
+	private Config config;
 	private DbShell db;
 
 	@BeforeClass
 	public void init() {
-		Config.instance().load();
-		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(), new DbShellModule());
+		config = Config.load();
+		final Injector i =
+			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new DbShellModule(config));
 		db = i.getInstance(DbShell.class);
 		db.create();
 	}
@@ -48,7 +50,8 @@ public class HibernateEnvironmentTest {
 	 * Verifies the loading of the Hibernate environment.
 	 */
 	public void test() {
-		final Injector i = Guice.createInjector(Stage.DEVELOPMENT, new OrmDaoModule());
+		final Injector i =
+			Guice.createInjector(Stage.DEVELOPMENT, new DbDialectModule(config), new OrmDaoModule(config));
 		final Provider<EntityManager> emp = i.getProvider(EntityManager.class);
 		final EntityManager em = emp.get();
 		assert em != null;

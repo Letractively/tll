@@ -13,12 +13,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailSendException;
 
-import com.google.inject.Inject;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.config.Config;
-import com.tll.config.IConfigKey;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
 
@@ -27,43 +24,22 @@ import com.tll.mail.NameEmail;
  * @author jpk
  */
 public class ExceptionHandler {
-	
+
 	private static final Log log = LogFactory.getLog(ExceptionHandler.class);
 
-	/**
-	 * ConfigKeys - Configuration property keys for the exception handler.
-	 * @author jpk
-	 */
-	public static enum ConfigKeys implements IConfigKey {
-
-		ONERROR_SEND_EMAIL("mail.onerror.ToAddress"),
-		ONERROR_SEND_NAME("mail.onerror.ToName");
-
-		private final String key;
-
-		/**
-		 * Constructor
-		 * @param key
-		 */
-		private ConfigKeys(String key) {
-			this.key = key;
-		}
-
-		public String getKey() {
-			return key;
-		}
-	}
-	
 	private final MailManager mailManager;
+
+	private final NameEmail onErrorEmail;
 
 	/**
 	 * Constructor
 	 * @param mailManager
+	 * @param onErrorEmail
 	 */
-	@Inject
-	public ExceptionHandler(MailManager mailManager) {
+	public ExceptionHandler(MailManager mailManager, NameEmail onErrorEmail) {
 		super();
 		this.mailManager = mailManager;
+		this.onErrorEmail = onErrorEmail;
 	}
 
 	/**
@@ -113,13 +89,11 @@ public class ExceptionHandler {
 				}
 				data.put("error", emsg);
 				final StackTraceElement ste =
-						(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
+					(t.getStackTrace() == null || t.getStackTrace().length < 1) ? null : t.getStackTrace()[0];
 				data.put("trace", ste == null ? "[NO STACK TRACE]" : ste.toString());
 				try {
-					final String onErrorEmail = Config.instance().getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
-					final String onErrorName = Config.instance().getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
-					final NameEmail ne = new NameEmail(onErrorName, onErrorEmail);
-					mailManager.sendEmail(mailManager.buildTextTemplateContext(mailManager.buildAppSenderMailRouting(ne),
+					mailManager.sendEmail(mailManager.buildTextTemplateContext(mailManager
+							.buildAppSenderMailRouting(onErrorEmail),
 							"exception-notification", data));
 				}
 				catch(final MailSendException mse) {

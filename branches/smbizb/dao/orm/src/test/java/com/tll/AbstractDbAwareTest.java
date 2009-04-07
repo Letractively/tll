@@ -5,6 +5,7 @@
  */
 package com.tll;
 
+import com.tll.config.Config;
 import com.tll.dao.jdbc.DbShell;
 
 /**
@@ -14,7 +15,18 @@ import com.tll.dao.jdbc.DbShell;
  */
 public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 
+	private Config config;
 	private DbTestSupport dbSupport;
+
+	/**
+	 * @return the config
+	 */
+	protected final Config getConfig() {
+		if(config == null) {
+			config = Config.load();
+		}
+		return config;
+	}
 
 	/**
 	 * @return The db support helper object that provides a {@link DbShell} and
@@ -22,7 +34,7 @@ public abstract class AbstractDbAwareTest extends AbstractInjectedTest {
 	 */
 	protected final DbTestSupport getDbSupport() {
 		if(dbSupport == null) {
-			dbSupport = new DbTestSupport();
+			dbSupport = new DbTestSupport(getConfig());
 		}
 		return dbSupport;
 	}

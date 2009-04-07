@@ -26,6 +26,7 @@ import com.tll.criteria.SelectNamedQueries;
 import com.tll.dao.SearchResult;
 import com.tll.dao.SortColumn;
 import com.tll.dao.Sorting;
+import com.tll.di.DbDialectModule;
 import com.tll.di.EntityAssemblerModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.MockDaoModule;
@@ -42,13 +43,13 @@ import com.tll.service.entity.IEntityServiceFactory;
  */
 @Test(groups = {
 	"listhandler", "namedqueries" })
-public class NamedQueriesTest extends AbstractDbAwareTest {
+	public class NamedQueriesTest extends AbstractDbAwareTest {
 
 	private static final Map<SelectNamedQueries, SortColumn> querySortBindings =
-			new HashMap<SelectNamedQueries, SortColumn>();
+		new HashMap<SelectNamedQueries, SortColumn>();
 
 	private static final Map<SelectNamedQueries, List<IQueryParam>> queryParamsBindings =
-			new HashMap<SelectNamedQueries, List<IQueryParam>>();
+		new HashMap<SelectNamedQueries, List<IQueryParam>>();
 
 	static {
 		for(final SelectNamedQueries nq : SelectNamedQueries.values()) {
@@ -76,22 +77,15 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 					querySortBindings.put(nq, new SortColumn("code", "intf"));
 					queryParamsBindings.put(nq, null);
 					break;
-				
-				// warn of unhandled defined named queries!
+
+					// warn of unhandled defined named queries!
 				default:
 					throw new IllegalStateException("Unhandled named query: " + nq);
 			}
 		}
 	}
-	
-	private boolean mock;
 
-	/**
-	 * Constructor
-	 */
-	public NamedQueriesTest() {
-		super();
-	}
+	private boolean mock;
 
 	@BeforeClass(alwaysRun = true)
 	@Parameters(value = "mock")
@@ -113,13 +107,14 @@ public class NamedQueriesTest extends AbstractDbAwareTest {
 		super.addModules(modules);
 		modules.add(new ModelModule());
 		if(mock) {
-			modules.add(new MockEntityFactoryModule());
-			modules.add(new MockDaoModule());
+			modules.add(new MockEntityFactoryModule(getConfig()));
+			modules.add(new MockDaoModule(getConfig()));
 		}
 		else {
-			modules.add(new OrmDaoModule());
+			modules.add(new DbDialectModule(getConfig()));
+			modules.add(new OrmDaoModule(getConfig()));
 		}
-		modules.add(new EntityAssemblerModule());
+		modules.add(new EntityAssemblerModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 	}
 

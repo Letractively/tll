@@ -5,8 +5,7 @@
 package com.tll.util;
 
 /**
- * StringUtil - String formatting specific utility methods in the JavaScript
- * domain.
+ * StringUtil - {@link String} utility methods.
  * @author jpk
  */
 public abstract class StringUtil {

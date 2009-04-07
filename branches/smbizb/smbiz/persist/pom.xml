@@ -99,7 +99,8 @@
         as we are profile agnostic and build jars for both.
         NOTE: this weaving doesn't adversly affect debugging when in mock mode.
               We are still able to do line level debugging.
-      --> 
+        ALSO NOTE: the weaving brings in tll-service *.class files into the local build classes dir!!
+      -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>

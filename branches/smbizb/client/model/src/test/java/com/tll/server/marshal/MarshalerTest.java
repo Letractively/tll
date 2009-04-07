@@ -50,12 +50,7 @@ import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 		tupleMap.put("boolean", new Boolean(true));
 	}
 
-	/**
-	 * Constructor
-	 */
-	public MarshalerTest() {
-		super();
-	}
+	private Config config;
 
 	@BeforeClass(alwaysRun = true)
 	public final void onBeforeClass() {
@@ -64,7 +59,7 @@ import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 
 	@Override
 	protected void beforeClass() {
-		Config.instance().load();
+		config = Config.load();
 		super.beforeClass();
 	}
 
@@ -72,8 +67,8 @@ import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
-		modules.add(new MockDaoModule());
+		modules.add(new MockEntityFactoryModule(config));
+		modules.add(new MockDaoModule(config));
 	}
 
 	private Marshaler getMarshaler() {

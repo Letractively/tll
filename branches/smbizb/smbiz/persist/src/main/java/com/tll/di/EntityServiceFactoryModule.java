@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.di;
 
@@ -9,9 +9,12 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.providers.dao.UserCache;
 import org.springframework.security.providers.dao.cache.EhCacheBasedUserCache;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
@@ -64,20 +67,15 @@ import com.tll.service.entity.visitor.VisitorService;
  * EntityServiceFactoryModule
  * @author jpk
  */
-public class EntityServiceFactoryModule extends GModule {
+public class EntityServiceFactoryModule extends AbstractModule {
+
+	static final Log log = LogFactory.getLog(EntityServiceFactoryModule.class);
 
 	public static final String USER_DETAILS_CACHE_NAME = "acegiUserDetailsCache";
 
-	/**
-	 * Constructor
-	 */
-	public EntityServiceFactoryModule() {
-		super();
-		log.info("Employing Entity service module");
-	}
-
 	@Override
 	protected void configure() {
+		log.info("Employing Entity service module");
 		bind(IAuthorityService.class).to(AuthorityService.class).in(Scopes.SINGLETON);
 		bind(IAccountService.class).to(AccountService.class).in(Scopes.SINGLETON);
 		bind(ICustomerAccountService.class).to(CustomerAccountService.class).in(Scopes.SINGLETON);
@@ -157,7 +155,7 @@ public class EntityServiceFactoryModule extends GModule {
 
 			public IEntityServiceFactory get() {
 				final Map<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>> map =
-						new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
+					new HashMap<Class<? extends IEntityService<? extends IEntity>>, IEntityService<? extends IEntity>>();
 
 				map.put(IAuthorityService.class, auths);
 				map.put(IAccountService.class, accs);

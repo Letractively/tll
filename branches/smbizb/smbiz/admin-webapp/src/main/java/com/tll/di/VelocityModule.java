@@ -3,15 +3,20 @@
  */
 package com.tll.di;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 
 /**
  * VelocityModule
  * @author jpk
  */
-public class VelocityModule extends GModule {
+public class VelocityModule extends AbstractModule {
+
+	static final Log log = LogFactory.getLog(VelocityModule.class);
 
 	/**
 	 * Constructor

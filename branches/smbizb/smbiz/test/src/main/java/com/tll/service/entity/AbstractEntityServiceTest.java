@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.service.entity;
 
@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.tll.AbstractDbAwareTest;
 import com.tll.dao.IEntityDao;
+import com.tll.di.DbDialectModule;
 import com.tll.di.EntityAssemblerModule;
 import com.tll.di.EntityServiceFactoryModule;
 import com.tll.di.MockEntityFactoryModule;
@@ -38,10 +39,11 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	protected void addModules(List<Module> modules) {
 		super.addModules(modules);
 		modules.add(new ModelModule());
-		modules.add(new MockEntityFactoryModule());
-		modules.add(new OrmDaoModule());
-		modules.add(new TransactionModule());
-		modules.add(new EntityAssemblerModule());
+		modules.add(new MockEntityFactoryModule(getConfig()));
+		modules.add(new DbDialectModule(getConfig()));
+		modules.add(new OrmDaoModule(getConfig()));
+		modules.add(new TransactionModule(getConfig()));
+		modules.add(new EntityAssemblerModule(getConfig()));
 		modules.add(new EntityServiceFactoryModule());
 	}
 
@@ -75,7 +77,7 @@ public abstract class AbstractEntityServiceTest extends AbstractDbAwareTest {
 	protected final MockEntityFactory getMockEntityFactory() {
 		return injector.getInstance(MockEntityFactory.class);
 	}
-	
+
 	protected final IEntityServiceFactory getEntityServiceFactory() {
 		return injector.getInstance(IEntityServiceFactory.class);
 	}
