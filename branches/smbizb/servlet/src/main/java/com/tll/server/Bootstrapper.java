@@ -106,8 +106,6 @@ public final class Bootstrapper implements ServletContextListener {
 		return Guice.createInjector(stage, modules);
 	}
 
-	private Config config;
-
 	private List<IBootstrapHandler> handlers;
 
 	/**
@@ -143,8 +141,9 @@ public final class Bootstrapper implements ServletContextListener {
 		// load *all* found config properties
 		// NOTE: this is presumed to be the first contact point with the config
 		// instance!
+		final Config config;
 		try {
-			this.config = Config.load(new ConfigRef(true));
+			config = Config.load(new ConfigRef(true));
 		}
 		catch(final IllegalArgumentException e) {
 			throw new Error("Unable to load config: " + e.getMessage(), e);

@@ -52,6 +52,7 @@ public final class BuildTools {
 	                              ['com.tll.di.ModelModule', FLAG_ALL],
 	                              ['com.tll.di.MockEntityFactoryModule', FLAG_MOCK],
 	                              ['com.tll.di.EntityAssemblerModule', FLAG_ALL],
+	                              ['com.tll.di.DbDialectModule', FLAG_ORM],
 	                              ['com.tll.di.OrmDaoModule', FLAG_ORM],
 	                              ['com.tll.di.MockDaoModule', FLAG_MOCK],
 	                              ['com.tll.di.TransactionModule', FLAG_ORM],

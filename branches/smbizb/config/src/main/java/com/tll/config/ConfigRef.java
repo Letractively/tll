@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 /**
  * ConfigRef - Serves as a pointer to a classpath resource holding eligible
@@ -149,13 +148,5 @@ public final class ConfigRef {
 		urls = new ArrayList<URL>(1);
 		urls.add(resource);
 		this.disableDelimeterParsing = disableDelimeterParsing;
-	}
-
-	/**
-	 * @return The resolved list of {@link URL}s that point to particular
-	 *         resources for this instance.
-	 */
-	public List<URL> getUrls() {
-		return urls;
 	}
 }

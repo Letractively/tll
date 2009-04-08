@@ -48,7 +48,7 @@ public final class Config implements Configuration {
 		if(refs == null || refs.length < 1) throw new IllegalArgumentException("No config refs specified.");
 		Config c = new Config();
 		for(ConfigRef ref : refs) {
-			Collection<URL> urls = ref.getUrls();
+			Collection<URL> urls = ref.urls;
 			for(URL url : urls) {
 				c.loadProperties(url, ref.disableDelimeterParsing, true);
 			}
