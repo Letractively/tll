@@ -90,7 +90,7 @@ import com.tll.util.CommonUtil;
 			assert model.getEntityType() != null : "The marshaled entity model's ref type was found null";
 			Assert.assertEquals(model.getEntityType().getEntityClassName(), e.entityClass().getName(),
 			"The marshaled entity model's ref type did not match the sourcing entities' entity type");
-			final ModelKey refKey = model.getRefKey();
+			final ModelKey refKey = model.getKey();
 			assert refKey != null : "The marshaled entity model's ref key was found null";
 			assert refKey.isSet() : "The marshaled entity model's ref key was found un-set";
 

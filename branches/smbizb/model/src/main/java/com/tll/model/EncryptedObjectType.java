@@ -13,8 +13,7 @@ import org.hibernate.usertype.UserType;
 import com.tll.util.CryptoUtil;
 
 /**
- * Implementation of Hibernate <CODE>IUserType</CODE> that encrypts and
- * decrypts strings using the <CODE>CrytoUtil</CODE> class.
+ * EncryptedObjectType - Encrypts/decrypts {@link Serializable} objects.
  * @author jpk
  */
 public class EncryptedObjectType implements UserType {

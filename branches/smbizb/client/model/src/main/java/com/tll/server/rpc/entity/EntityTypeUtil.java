@@ -18,8 +18,8 @@ import com.tll.util.StringUtil;
 public abstract class EntityTypeUtil {
 
 	/**
-	 * Factory method for creting an {@link IEntityType} instance given and entity
-	 * class.
+	 * Factory method for creating an {@link IEntityType} instance given and
+	 * entity class.
 	 * @param entityClass The entity class
 	 * @return A new {@link IEntityType} instance
 	 */

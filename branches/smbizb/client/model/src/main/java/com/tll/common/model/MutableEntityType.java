@@ -4,9 +4,8 @@
  */
 package com.tll.common.model;
 
-
 /**
- * MutableEntityType
+ * MutableEntityType - {@link IEntityType} impl supporting mutable properties.
  * @author jpk
  */
 public final class MutableEntityType implements IEntityType {
@@ -37,10 +36,11 @@ public final class MutableEntityType implements IEntityType {
 	}
 
 	/**
-	 * Set the unqualified entity class name (no package name).
+	 * Set the fully qualified entity class name.
 	 * @param entityClassName
 	 */
 	public void setEntityClassName(String entityClassName) {
+		if(entityClassName == null) throw new IllegalArgumentException("Null entity class name");
 		this.entityClassName = entityClassName;
 	}
 
@@ -53,6 +53,7 @@ public final class MutableEntityType implements IEntityType {
 	 * @param presentationName
 	 */
 	protected void setPresentationName(String presentationName) {
+		if(presentationName == null) throw new IllegalArgumentException("Null presentation name");
 		this.presentationName = presentationName;
 	}
 }

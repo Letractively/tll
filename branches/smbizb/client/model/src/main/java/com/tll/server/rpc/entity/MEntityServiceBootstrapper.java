@@ -58,7 +58,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 	private static final Log log = LogFactory.getLog(MEntityServiceBootstrapper.class);
 
 	@Override
-	public void startup(Injector injector, ServletContext servletContext) {
+	public void startup(Injector injector, ServletContext servletContext, Config config) {
 		final RefData refdata = injector.getInstance(RefData.class);
 
 		// the mail manager is optional
@@ -81,8 +81,6 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 		catch(final Exception e) {
 			entityManagerFactory = null;
 		}
-
-		final Config config = injector.getInstance(Config.class);
 
 		final String onErrorName = config.getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
 		final String onErrorEmail = config.getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());

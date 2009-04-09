@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.Injector;
+import com.tll.config.Config;
 import com.tll.mail.MailManager;
 import com.tll.server.IBootstrapHandler;
 import com.tll.service.IForgotPasswordHandler;
@@ -24,7 +25,7 @@ public class ForgotPasswordServiceBootstrapper implements IBootstrapHandler {
 	private static final Log log = LogFactory.getLog(ForgotPasswordServiceBootstrapper.class);
 
 	@Override
-	public void startup(Injector injector, ServletContext servletContext) {
+	public void startup(Injector injector, ServletContext servletContext, Config config) {
 		log.debug("Creating the ForgotPasswordServiceContext...");
 		final MailManager mailManager = injector.getInstance(MailManager.class);
 		final ExceptionHandler exceptionHandler = injector.getInstance(ExceptionHandler.class);

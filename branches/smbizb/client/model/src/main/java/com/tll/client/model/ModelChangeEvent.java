@@ -34,7 +34,7 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 
 	private final ModelChangeOp change;
 	private final Model model;
-	private final ModelKey modelRef;
+	private final ModelKey modelKey;
 
 	private final Status status;
 
@@ -47,20 +47,20 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	public ModelChangeEvent(ModelChangeOp change, Model model, Status status) {
 		this.change = change;
 		this.model = model;
-		this.modelRef = null;
+		this.modelKey = null;
 		this.status = status;
 	}
 
 	/**
 	 * Constructor - Use for delete model change events.
 	 * @param change
-	 * @param modelRef
+	 * @param modelKey
 	 * @param status
 	 */
-	public ModelChangeEvent(ModelChangeOp change, ModelKey modelRef, Status status) {
+	public ModelChangeEvent(ModelChangeOp change, ModelKey modelKey, Status status) {
 		this.change = change;
 		this.model = null;
-		this.modelRef = modelRef;
+		this.modelKey = modelKey;
 		this.status = status;
 	}
 
@@ -81,8 +81,11 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 		return model;
 	}
 
-	public ModelKey getModelRef() {
-		return modelRef == null ? (model == null ? null : model.getRefKey()) : modelRef;
+	public ModelKey getModelKey() {
+		// NOTE: it is expected that the model's provided key
+		// is the exact same in terms of equals() and hashCode()
+		// behavior as the provided standalone model key!
+		return modelKey == null ? (model == null ? null : model.getKey()) : modelKey;
 	}
 
 	public Status getStatus() {
@@ -102,7 +105,7 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	@Override
 	public String toString() {
 		String s = change.toString();
-		final ModelKey rk = getModelRef();
+		final ModelKey rk = getModelKey();
 		if(rk != null) {
 			s += " [ " + rk.toString() + " ]";
 		}

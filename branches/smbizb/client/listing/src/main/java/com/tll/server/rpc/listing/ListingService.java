@@ -44,7 +44,7 @@ import com.tll.server.rpc.entity.MEntityServiceImplFactory;
  * @author jpk
  */
 public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
-		IListingService<S, Model> {
+IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
 
@@ -79,7 +79,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 			final HttpServletRequest request = getRequestContext().getRequest();
 			final MEntityContext context =
-					(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
+				(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
 			assert request != null;
 
 			Integer offset = listingRequest.getOffset();
@@ -105,6 +105,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 			handler = ListingCache.getHandler(request, listingName);
 			listingStatus = (handler == null ? ListingStatus.NOT_CACHED : ListingStatus.CACHED);
+			if(log.isDebugEnabled()) log.debug("Listing status: " + listingStatus);
 
 			try {
 				// acquire the listing handler
@@ -122,8 +123,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 						// resolve the entity class and corres. marshaling entity service
 						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
 						final IMEntityServiceImpl<E, S> mEntitySvc =
-								(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass, context
-										.getServiceResolver());
+							(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass, context
+									.getServiceResolver());
 
 						// translate client side criteria to server side criteria
 						final ICriteria<E> criteria;
@@ -137,7 +138,7 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 						// resolve the listing handler data provider
 						final IListHandlerDataProvider<E> dataProvider =
-								context.getEntityServiceFactory().instanceByEntityType(entityClass);
+							context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();
@@ -167,8 +168,8 @@ public final class ListingService<E extends IEntity, S extends ISearch> extends 
 
 						// transform to marshaling list handler
 						final MarshalingListHandler<E> marshalingListHandler =
-								new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
-										mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
+							new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
+									mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());

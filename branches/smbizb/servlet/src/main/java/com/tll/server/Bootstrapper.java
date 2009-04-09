@@ -160,7 +160,7 @@ public final class Bootstrapper implements ServletContextListener {
 		// start 'em up
 		if(handlers != null) {
 			for(final IBootstrapHandler handler : handlers) {
-				handler.startup(injector, servletContext);
+				handler.startup(injector, servletContext, config);
 			}
 		}
 	}
