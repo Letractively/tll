@@ -22,7 +22,7 @@
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
-        <!-- <exclude>com.tll:tll-dao-mock</exclude> we don't actually ref tll-dao-mock -->
+        <exclude>com.tll:tll-dao-mock</exclude>
         <exclude>com.tll:tll-mock</exclude>
       </excludes>
     </dependencySet>

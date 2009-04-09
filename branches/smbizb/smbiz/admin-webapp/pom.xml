@@ -13,7 +13,6 @@
   <name>smbiz-admin-webapp</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>The smbiz administration console.</description>
-  <packaging>war</packaging>
 
   <build>
     <finalName>smbiz</finalName>
@@ -23,6 +22,7 @@
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <includes>
+          <include>com/tll/**</include>
           <include>*.*</include>
         </includes>
         <!-- don't copy any config-*.properties files. This is done programmatically. -->
@@ -50,6 +50,31 @@
     <plugins>
       
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <!-- 
+            Identify all transitive deps minus those needed for smbiz-persist. 
+          -->
+          <execution>
+            <id>deps</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <configuration>
+              <finalName>server-libs</finalName>
+              <outputDirectory>target</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <archiveBaseDirectory>false</archiveBaseDirectory>
+              <descriptors>
+                <descriptor>src/main/assembly/server-libs.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <dependencies>
@@ -65,8 +90,8 @@
         </configuration>
         <executions>
           <execution>
-            <id>process-resources</id>
-            <phase>process-resources</phase>
+            <id>build-war-dir</id>
+            <phase>package</phase>
             <goals>
               <goal>execute</goal>
             </goals>
@@ -114,70 +139,66 @@
                 <element>${project.basedir}/src/main/scripts</element>
               </scriptpath>
               <source><![CDATA[
-                com.tll.BuildTools.process(project, ant);
+                //com.tll.BuildTools.process(project, ant);
+                println 'temp disabled'
               ]]></source>
             </configuration>
           </execution>
         </executions>
       </plugin>
       
-      <!-- 
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          identify all transitive deps minus those needed for smbiz-persist
           <execution>
-            <id>deps</id>
-            <phase>prepare-package</phase>
+            <id>build-gwt-classpath</id>
+            <phase>process-resources</phase>
             <goals>
-              <goal>directory-single</goal>
+              <goal>build-classpath</goal>
             </goals>
             <configuration>
-              <finalName>tll-server</finalName>
-              <outputDirectory>target</outputDirectory>
-              <appendAssemblyId>true</appendAssemblyId>
-              <archiveBaseDirectory>false</archiveBaseDirectory>
-              <descriptors>
-                <descriptor>src/main/assembly/server-libs.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-          aggregate tll server deps
-          <execution>
-            <id>tll-server</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <finalName>tll-server</finalName>
-              <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
-              <appendAssemblyId>false</appendAssemblyId>
-              <archiveBaseDirectory>false</archiveBaseDirectory>
-              <descriptors>
-                <descriptor>src/main/assembly/tll-server.xml</descriptor>
-              </descriptors>
+              <includeGroupIds>
+                com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
+              </includeGroupIds>
+              <excludeArtifactIds>
+                gwt-servlet,tll-config,tll-mail,tll-security,tll-servlet,tll-mock,tll-dao-orm,tll-dao-mock,smbiz-persist
+              </excludeArtifactIds>
+              <excludeTypes>zip</excludeTypes>
+              <outputFile>target/gwt-cp.txt</outputFile>
             </configuration>
           </execution>
         </executions>
       </plugin>
-      -->
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <warName>smbiz-admin</warName>
-          <webXml>target/war/WEB-INF/web.xml</webXml>
-          <warSourceExcludes>
-            .gwt-tmp/**,
-            **/*.gwt.xml,
-            **/*.java,
-            WEB-INF/classes/**/client/**,
-            WEB-INF/classes/**/common/**/*Async.class,
-            WEB-INF/classes/**/public/**,
-          </warSourceExcludes>
-        </configuration>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-compile</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="gwt.compile.style" value="PRETTY" />
+                <loadfile property="gcp" srcFile="target/gwt-cp.txt"/>
+                <property name="gwt.compile.classpath" value="./target/classes;${gcp}"/>
+                <property name="gwt.compile.modules" value="com.tll.SmbizAdminApp" />
+                <property name="gwt.shell.entryModule" value="com.tll.WorkingModule" />
+                <property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
+                <echo message="classpath: ${gwt.compile.classpath}" />
+                <ant antfile="${basedir}/../../client/build-gwt.xml">
+                  <target name="build-shell-exec-file" />
+                  <target name="build-shell-debug-exec-file" />
+                  <target name="compile" />
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
@@ -195,12 +216,70 @@
       <properties>
         <securityMode>acegi</securityMode>
       </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <!-- 
+                Aggregate all dependent tll client-* jars 
+                into a single jar containing only server-side assets. 
+              -->
+              <execution>
+                <id>tll-server</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <finalName>tll-server</finalName>
+                  <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <archiveBaseDirectory>false</archiveBaseDirectory>
+                  <descriptors>
+                    <descriptor>src/main/assembly/tll-server.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>nosecurity</id>
       <properties>
         <securityMode>none</securityMode>
       </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <!-- 
+                Aggregate all dependent tll client-* jars 
+                into a single jar containing only server-side assets. 
+              -->
+              <execution>
+                <id>tll-server</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <finalName>tll-server</finalName>
+                  <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+                  <appendAssemblyId>false</appendAssemblyId>
+                  <archiveBaseDirectory>false</archiveBaseDirectory>
+                  <descriptors>
+                    <descriptor>src/main/assembly/tll-server-nosecurity.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
@@ -230,10 +309,6 @@
     <dependency>
       <groupId>com.google.code.guice</groupId>
       <artifactId>guice</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
     </dependency>
 
     <dependency>
@@ -273,7 +348,6 @@
       <classifier>${daoMode}</classifier>
       <version>${project.version}</version>
     </dependency>
-    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>smbiz-persist</artifactId>
@@ -282,7 +356,6 @@
       <type>zip</type>
       <scope>runtime</scope>
     </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-servlet</artifactId>
@@ -339,6 +412,26 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}-libs</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
       <artifactId>gwt-incubator-glasspanel</artifactId>

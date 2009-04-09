@@ -1,12 +1,12 @@
 <module>
   <inherits name="com.tll.Core" />
   
-  <source path="model">
-    <include name="schema/PropertyType.java" />
-    <include name="schema/ISchemaProperty.java" />
-    <include name="schema/AbstractSchemaProperty.java" />
-    <include name="schema/PropertyMetadata.java" />
-    <include name="schema/IPropertyMetadataProvider.java" />
+  <source path="model/schema">
+    <include name="PropertyType.java" />
+    <include name="ISchemaProperty.java" />
+    <include name="AbstractSchemaProperty.java" />
+    <include name="PropertyMetadata.java" />
+    <include name="IPropertyMetadataProvider.java" />
   </source>
   
   <source path="criteria">

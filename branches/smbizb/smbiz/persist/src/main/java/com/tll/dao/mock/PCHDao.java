@@ -8,7 +8,9 @@ package com.tll.dao.mock;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.inject.Inject;
 import com.tll.dao.IPCHDao;
+import com.tll.model.EntityGraph;
 
 
 /**
@@ -16,7 +18,16 @@ import com.tll.dao.IPCHDao;
  * TODO implement
  * @author jpk
  */
-public class PCHDao implements IPCHDao {
+public class PCHDao extends EntityDao implements IPCHDao {
+
+	/**
+	 * Constructor
+	 * @param entityGraph
+	 */
+	@Inject
+	public PCHDao(EntityGraph entityGraph) {
+		super(entityGraph);
+	}
 
 	public void assign(int parentId, int childId) {
 	}

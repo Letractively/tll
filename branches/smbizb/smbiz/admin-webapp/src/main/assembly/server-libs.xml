@@ -4,20 +4,16 @@
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
   <!--
-  Aggregates transitive non-tll dependencies that are server bound into a single jar. 
+    Aggregates all server-side dependencies into a target directory.
   -->
 
   <id>server-libs</id>
   <includeBaseDirectory>false</includeBaseDirectory>
-  <formats>
-    <format>zip</format>
-  </formats>
 
   <!-- groupId:artifactId:type:classifier -->
   <dependencySets>
-    
+
     <!-- unpack smbiz-persist deps -->
-    <!-- 
     <dependencySet>
       <scope>runtime</scope>
       <unpack>true</unpack>
@@ -29,8 +25,7 @@
         <include>com.tll:smbiz-persist:zip:${daoMode}-deps</include>
       </includes>
     </dependencySet>
-    -->
-    
+
     <!-- identify all deps not a part of smbiz-persist -->
     <dependencySet>
       <scope>runtime</scope>
@@ -38,16 +33,32 @@
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
-      <!-- exclude smbiz-model and smbiz-persist deps -->
+      <!--
+        Exclude smbiz-model and smbiz-persist deps since we have 
+        already aggregated these deps by way of smbiz-persist.
+      -->
       <excludes>
-        <exclude>com.tll:smbiz-model*</exclude>
-        <exclude>com.tll:smbiz-persist*</exclude>
-        <exclude>com.tll:tll-model*</exclude>
-        <exclude>com.tll:tll-dao*</exclude>
+        <exclude>*smbiz-model*</exclude>
+        <exclude>*smbiz-persist*</exclude>
+        <exclude>*tll-model*</exclude>
+        <exclude>*tll-dao*</exclude>
         <exclude>*sources*</exclude>
-        <exclude>*gwt-user*</exclude>
       </excludes>
     </dependencySet>
+
+    <!-- get smbiz-model and smbiz-persist -->
+    <dependencySet>
+      <scope>runtime</scope>
+      <unpack>false</unpack>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <includes>
+        <include>com.tll:smbiz-*:jar:*</include>
+      </includes>
+    </dependencySet>
+
   </dependencySets>
 
 </assembly>

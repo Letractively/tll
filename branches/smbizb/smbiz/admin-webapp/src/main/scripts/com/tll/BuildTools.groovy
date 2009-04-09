@@ -7,6 +7,7 @@
 package com.tll;
 
 import com.tll.config.Config;
+import com.tll.config.ConfigRef;
 import com.tll.ConfigProcessor;
 import com.tll.dao.jdbc.DbShellBuilder;
 
@@ -23,10 +24,13 @@ public final class BuildTools {
 	 */
 	public static void process(def project, def ant) {
 		BuildTools b = new BuildTools(project, ant);
-		b.generateWebXml();
-		b.generateGwtConstantsFile();
+		b.copyClasses();
 		b.saveConfig()
-		b.stubTestDbIfNecessary()
+		b.generateGwtConstantsFile();
+		b.copyLibs();
+		b.generateWebXml();
+		b.copyWebResources();
+		b.stubDbIfNecessary()
 	}
 	
 	static final int FLAG_ALL = 0;
@@ -86,14 +90,19 @@ public final class BuildTools {
 	private def project, ant;
 	
 	/**
+	 * The project base directory.
+	 */
+	private String basedir;
+		
+	/**
 	 * The generated Config instance employed for the build.
 	 */
 	private Config config;
 	
 	/**
-	 * The dao mode and security mode tokens obtained from the loaded config.
+	 * The dao mode and security mode flags.
 	 */
-	private String daoMode, securityMode;
+	private boolean isMock, isSecurity;
 	
 	/**
 	 * The generated di map containing:
@@ -120,22 +129,27 @@ public final class BuildTools {
 	 * Init routing called by constructor.
 	 */
 	private void init() {
+		this.basedir = project.basedir.toString()
 		// load the config
 		String mode = project.properties.mode;
-		String baseDir = project.basedir.toString() + "/src/main/resources";
-		this.config = ConfigProcessor.merge(baseDir, mode, 'local')
+		String dir = basedir + "/src/main/resources";
+		this.config = ConfigProcessor.merge(dir, mode, 'local')
 		
-		// retain the dao mode and security mode
-		this.daoMode = project.properties.daoMode
+		// retain the dao mode
+		String daoMode = project.properties.daoMode
 		if(daoMode == null) {
 			throw new IllegalStateException('No dao mode found.')
 		}
 		println "daoMode: ${daoMode}"
-		this.securityMode = project.properties.securityMode
+		this.isMock = (daoMode == 'mock')
+		
+		// retain the security mode
+		String securityMode = project.properties.securityMode
 		if(securityMode == null) {
 			throw new IllegalStateException('No security mode found.')
 		}
 		println "securityMode: ${securityMode}"
+		this.isSecurity = (securityMode == 'acegi')
 
 		// generate the di map
 		int flags = 0;
@@ -163,7 +177,7 @@ public final class BuildTools {
 		DI_MODULES_ALL.each { elm ->
 			int flag = elm[1]
 			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
-				println "-Module: ${elm[0]} will be employed"
+				println "-Module: ${elm[0]}"
 				sb.append(NL)
 				sb.append(elm[0])
 			}
@@ -173,12 +187,82 @@ public final class BuildTools {
 		DI_HANDLERS_ALL.each { elm ->
 			int flag = elm[1]
 			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
-				println "-Bootstrapper: ${elm[0]} will be employed"
+				println "-Bootstrapper: ${elm[0]}"
 				sb.append(NL)
 				sb.append(elm[0])
 			}
 		}
 		diMap.put('di.handlers', sb.toString())
+	}
+	
+	/**
+	 * Copies the project build output to the target war classes dir.
+	 */
+	private void copyClasses() {
+		println 'Copying classes..'
+		String sdir = basedir + '/target/classes'
+		String tdir = basedir + '/target/war/WEB-INF/classes'
+		ant.mkdir(dir: tdir)
+		if(isSecurity) {
+			// security
+			ant.copy(todir: tdir) {
+				fileset(dir: sdir) {
+					exclude(name: '**/*.java')
+					exclude(name: '**/*.gwt.xml')
+					exclude(name: '**/client/**')
+					exclude(name: '**/common/**/*Async*')
+					exclude(name: '**/public/**')
+					exclude(name: '**/NoSecuritySessionContextFilter*')
+				}
+			}
+		}
+		else {
+			// no security
+			ant.copy(todir: tdir) {
+				fileset(dir: sdir) {
+					exclude(name: '**/*.java')
+					exclude(name: '**/*.gwt.xml')
+					exclude(name: '**/client/**')
+					exclude(name: '**/common/**/*Async*')
+					exclude(name: '**/public/**')
+					exclude(name: '**/SmbizAuthenticationProcessingFilter*')
+				}
+				
+			}
+		}
+		println 'classes copied'
+	}
+	
+	/**
+	 * Copies the server side libs into the target war lib dir.
+	 */
+	private void copyLibs() {
+		println 'Copying libs..'
+		String sdir = basedir + '/target/server-libs'
+		String tdir = basedir + '/target/war/WEB-INF/lib'
+		ant.mkdir(dir: tdir)
+		ant.copy(todir: tdir) {
+			fileset(dir: sdir) {
+				exclude(name: 'tll-*')
+				exclude(name: 'client-*')
+			}
+		}		
+		println 'libs copied'
+	}
+	
+	/**
+	 * Copies web resources held in the src/main/webapp dir.
+	 */
+	private void copyWebResources() {
+		println 'Copying web resources..'
+		String sdir = basedir + '/src/main/webapp'
+		String tdir = basedir + '/target/war'
+		ant.copy(todir: tdir) {
+			fileset(dir: sdir) {
+				exclude(name: 'WEB-INF/**')
+			}
+		}
+		println 'web resources copied'
 	}
 	 
 	/**
@@ -187,31 +271,31 @@ public final class BuildTools {
 	private void generateWebXml() {
 		println 'Generating web.xml..'
 		StringBuilder sbuf = new StringBuilder(3000)
-		new File(project.basedir.toString() + '/src/main/webapp/WEB-INF', 'web.xml').eachLine{ line ->
+		new File(basedir + '/src/main/webapp/WEB-INF', 'web.xml').eachLine{ line ->
 			sbuf.append(rplProps(line, diMap))
 		    sbuf.append(NL)
 		}
 		String s = sbuf.toString()
 		
 		// security/no security filtering
-		if(securityMode == 'acegi') {
+		if(isSecurity) {
 			// remove regex_security_none
 			s = s.replaceAll(regex_security_none, '')
 			println 'NO SECURITY section filtered out'
 		}
-		else if(securityMode == 'none') {
+		else {
 			// remove regex_security_acegi
 			s = s.replaceAll(regex_security_acegi, '')
 			println 'ACEGI SECURITY section filtered out'
 		}
 		
 		// dao orm/mock filtering
-		if(daoMode == 'orm') {
+		if(!isMock) {
 			// remove mock
 			s = s.replaceAll(regex_db_mock, '')
 			println 'MOCK DAO section filtered out'
 		}
-		else if(daoMode == 'mock') {
+		else {
 			// remove orm
 			s = s.replaceAll(regex_db_orm, '')
 			println 'ORM DAO section filtered out'
@@ -245,7 +329,7 @@ public final class BuildTools {
 	      sbuf.append(NL)
 	    }
 	    f.write(sbuf.toString())
-	    println 'GWT Constants.properties file created'
+	    println f.getPath() + ' created'
 	}
 	
 	/**
@@ -254,18 +338,19 @@ public final class BuildTools {
 	private void saveConfig() {
 	    // create aggregated config.properties file..
 	    println 'Creating aggregated config.properties file..'
-		String tgtDir = project.build.outputDirectory.toString()
+		String tgtDir = basedir + '/target/war/WEB-INF/classes'
 		// add debug config property
 		config.addProperty('debug', project.properties.debug)
-	    config.saveAsPropFile(new File(tgtDir, Config.DEFAULT_FILE_NAME))
-	    println Config.DEFAULT_FILE_NAME + ' created'
+		File f = new File(tgtDir, ConfigRef.DEFAULT_NAME)
+	    config.saveAsPropFile(f)
+	    println f.getPath() + ' created'
 	}
 
 	/**
-	 * Stubs the app test db.
+	 * Stubs the app db if it doesn't exist.
 	 */
-	private void stubTestDbIfNecessary() {
-		if(config.getString('db.dao.mode') == 'orm') {
+	private void stubDbIfNecessary() {
+		if(!isMock) {
 			String tgtDir = project.build.outputDirectory.toString()
 			File fSchema = new File(tgtDir, config.getString('db.resource.schema'))
 			File fStub = new File(tgtDir, config.getString('db.resource.stub'))
@@ -273,9 +358,9 @@ public final class BuildTools {
 			def shell = DbShellBuilder.getDbShell(config, 
 			  fSchema.toURI().toURL(), fStub.toURI().toURL(), fDelete.toURI().toURL());
 			if(shell.create()) {
-			  println('Stubbing test db..')
+			  println('Stubbing db..')
 			  shell.stub();
-			  println('Test db stubbed..')
+			  println('db stubbed')
 			}
 		}
     }

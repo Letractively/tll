@@ -48,10 +48,10 @@ import com.tll.util.CommonUtil;
 import com.tll.util.DateRange;
 
 /**
- * Base mock dao class.
+ * EntityDao - MOCK dao impl.
  * @author jpk
  */
-public final class EntityDao implements IEntityDao {
+public class EntityDao implements IEntityDao {
 
 	// private static final Log log = LogFactory.getLog(EntityDao.class);
 
@@ -184,7 +184,7 @@ public final class EntityDao implements IEntityDao {
 				else if(criterionValue instanceof String) {
 					// assume comma-delimited string
 					final Object[] arr =
-							ObjectUtils.toObjectArray(StringUtils.commaDelimitedListToStringArray((String) checkValue));
+						ObjectUtils.toObjectArray(StringUtils.commaDelimitedListToStringArray((String) checkValue));
 					return ObjectUtils.containsElement(arr, checkValue);
 				}
 				return false;
@@ -211,7 +211,7 @@ public final class EntityDao implements IEntityDao {
 		}
 		this.entityGraph = entityGraph;
 	}
-	
+
 	/**
 	 * Used for testing purposes.
 	 * @return The entity graph.
@@ -239,7 +239,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> List<E> findEntities(final ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -264,7 +264,7 @@ public final class EntityDao implements IEntityDao {
 					for(final ICriterion ctn : pg) {
 						if(ctn.isGroup()) {
 							throw new InvalidCriteriaException(
-									"Mock dao implementations are only able to handle a single criterion entityGroup.");
+							"Mock dao implementations are only able to handle a single criterion entityGroup.");
 						}
 						if(ctn.isSet()) {
 							final Collection<E> clc = entityGraph.getEntitiesByType(criteria.getEntityClass());
@@ -299,7 +299,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> List<SearchResult<E>> find(final ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -436,7 +436,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> E persist(final E entity) {
-		
+
 		// validate the version
 		if(!entityGraph.contains(new PrimaryKey<E>(entity))) {
 			if(entity.getVersion() != null) {
@@ -447,7 +447,7 @@ public final class EntityDao implements IEntityDao {
 			// remove old
 			entityGraph.removeEntity(entity);
 		}
-		
+
 		// attempt to persist
 		try {
 			entityGraph.setEntity(entity);
@@ -458,7 +458,7 @@ public final class EntityDao implements IEntityDao {
 		catch(final NonUniqueBusinessKeyException e) {
 			throw new EntityExistsException("Non-unique entity " + entity.descriptor() + ": " + e.getMessage(), e);
 		}
-		
+
 		// set date created/modified
 		if(entity instanceof ITimeStampEntity) {
 			final Date now = new Date();
@@ -467,7 +467,7 @@ public final class EntityDao implements IEntityDao {
 			}
 			((ITimeStampEntity) entity).setDateModified(now);
 		}
-		
+
 		// increment version
 		Integer version = entity.getVersion();
 		if(version == null) {
@@ -477,7 +477,7 @@ public final class EntityDao implements IEntityDao {
 			version++;
 		}
 		entity.setVersion(version);
-		
+
 		return entity;
 	}
 
@@ -519,7 +519,7 @@ public final class EntityDao implements IEntityDao {
 	}
 
 	public <E extends IEntity> List<Integer> getIds(final ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		final List<SearchResult<E>> list = find(criteria, sorting);
 		if(list == null) {
 			return null;

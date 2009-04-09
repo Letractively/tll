@@ -10,22 +10,23 @@ import javax.persistence.EntityManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.IPCHDao;
-import com.tll.dao.orm.HibernateJpaSupport;
 
 /**
  * PCHDao
  * @author jpk
  */
-public class PCHDao extends HibernateJpaSupport implements IPCHDao {
+public class PCHDao extends EntityDao implements IPCHDao {
 
 	/**
 	 * Constructor
 	 * @param emPrvdr
+	 * @param dbDialectHandler
 	 */
 	@Inject
-	public PCHDao(Provider<EntityManager> emPrvdr) {
-		super(emPrvdr);
+	public PCHDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler) {
+		super(emPrvdr, dbDialectHandler);
 	}
 
 	public List<Integer> getPath(int categoryId) {

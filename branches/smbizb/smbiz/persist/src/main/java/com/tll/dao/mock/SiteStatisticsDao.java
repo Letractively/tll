@@ -5,7 +5,9 @@
  */
 package com.tll.dao.mock;
 
+import com.google.inject.Inject;
 import com.tll.dao.ISiteStatisticsDao;
+import com.tll.model.EntityGraph;
 
 
 /**
@@ -13,7 +15,16 @@ import com.tll.dao.ISiteStatisticsDao;
  * TODO implement
  * @author jpk
  */
-public class SiteStatisticsDao implements ISiteStatisticsDao {
+public class SiteStatisticsDao extends EntityDao implements ISiteStatisticsDao {
+
+	/**
+	 * Constructor
+	 * @param entityGraph
+	 */
+	@Inject
+	public SiteStatisticsDao(EntityGraph entityGraph) {
+		super(entityGraph);
+	}
 
 	public int numAddresses() {
 		return 0;

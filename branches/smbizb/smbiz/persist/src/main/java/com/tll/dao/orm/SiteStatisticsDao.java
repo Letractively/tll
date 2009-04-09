@@ -5,21 +5,22 @@ import javax.persistence.Query;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tll.dao.IDbDialectHandler;
 import com.tll.dao.ISiteStatisticsDao;
-import com.tll.dao.orm.HibernateJpaSupport;
 
 /**
  * @author jpk
  */
-public class SiteStatisticsDao extends HibernateJpaSupport implements ISiteStatisticsDao {
+public class SiteStatisticsDao extends EntityDao implements ISiteStatisticsDao {
 
 	/**
 	 * Constructor
 	 * @param emPrvdr
+	 * @param dbDialectHandler
 	 */
 	@Inject
-	public SiteStatisticsDao(Provider<EntityManager> emPrvdr) {
-		super(emPrvdr);
+	public SiteStatisticsDao(Provider<EntityManager> emPrvdr, IDbDialectHandler dbDialectHandler) {
+		super(emPrvdr, dbDialectHandler);
 	}
 
 	public int numIsps() {

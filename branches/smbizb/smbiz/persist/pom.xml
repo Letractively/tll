@@ -271,6 +271,11 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -279,13 +284,11 @@
       <artifactId>tll-dao-orm</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- we don't actually reference the mock dao impl
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-mock</artifactId>
       <version>${project.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>

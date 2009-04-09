@@ -55,7 +55,7 @@ import com.tll.util.CollectionUtil;
  * EntityDao - Hibernate dao implementation.
  * @author jpk
  */
-public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
+public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	/**
 	 * Used for transforming entity results into a native friendly handle.
@@ -208,7 +208,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		em.flush();
 		return merged;
 	}
-	
+
 	private <E extends IEntity> E persistInternal(E entity, boolean flush, EntityManager em) {
 		try {
 			final E merged = em.merge(entity);
@@ -247,7 +247,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<E> findEntities(ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -272,7 +272,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
 		}
@@ -281,7 +281,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		}
 		return (List<SearchResult<E>>) processCriteria(criteria, sorting, !criteria.getCriteriaType().isQuery(), criteria
 				.getCriteriaType().isScalar() ? (new ScalarSearchResultTransformer(criteria.getEntityClass()))
-				: ENTITY_RESULT_TRANSFORMER);
+						: ENTITY_RESULT_TRANSFORMER);
 	}
 
 	/**
@@ -340,15 +340,15 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	 */
 	private org.hibernate.Query assembleQuery(EntityManager em, String queryName,
 			Collection<IQueryParam> queryParams, Sorting sorting, ResultTransformer resultTransformer, boolean cacheable)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(queryName == null) {
 			throw new InvalidCriteriaException("No query name specified.");
 		}
-		
+
 		final Session session = getSession(em);
-		
+
 		org.hibernate.Query hbmQ = session.getNamedQuery(queryName);
-		
+
 		// apply sorting (if specified)
 		if(sorting != null) {
 			final StringBuilder sb = new StringBuilder(hbmQ.getQueryString());
@@ -368,13 +368,13 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				hbmQ.setParameter(queryParam.getPropertyName(), queryParam.getValue());
 			}
 		}
-		
+
 		if(resultTransformer != null) {
 			hbmQ.setResultTransformer(resultTransformer);
 		}
-		
+
 		hbmQ.setCacheable(cacheable);
-		
+
 		return hbmQ;
 	}
 
@@ -499,7 +499,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 
 	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<Integer> getIds(ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException {
+	throws InvalidCriteriaException {
 		if(criteria.getCriteriaType().isQuery()) {
 			throw new InvalidCriteriaException("Ids are not supplied for direct queries!");
 		}
@@ -575,7 +575,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				assert count != null;
 				totalCount = count.intValue();
 				final org.hibernate.Query q =
-						assembleQuery(em, queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
+					assembleQuery(em, queryName, criteria.getQueryParams(), sorting, ENTITY_RESULT_TRANSFORMER, true);
 				rlist = q.setFirstResult(offset).setMaxResults(pageSize).list();
 				break;
 			}
@@ -587,7 +587,7 @@ public final class EntityDao extends HibernateJpaSupport implements IEntityDao {
 				final String queryName = snq.getQueryName();
 				final String countQueryName = snq.getQueryName() + ".count";
 				final org.hibernate.Query cq =
-						assembleQuery(em, countQueryName, criteria.getQueryParams(), null, null, false);
+					assembleQuery(em, countQueryName, criteria.getQueryParams(), null, null, false);
 				final Long count = (Long) cq.uniqueResult();
 				assert count != null;
 				totalCount = count.intValue();

@@ -29,6 +29,7 @@ public class ConfigProcessor{
 		if(baseDir == null) throw new IllegalArgumentException('No base dir specified.')
 		 
 		println "Merging config files in dir: ${baseDir} .."
+		File f;
 		URL url;
 		def refs = [];
 	
@@ -39,8 +40,11 @@ public class ConfigProcessor{
 		// overriding config files
 		if(modifiers != null) {
 			modifiers.each { mod -> 
-				url = new File(baseDir, "config-${mod}.properties").toURI().toURL()
-				refs.add(new ConfigRef(url))
+				f = new File(baseDir, "config-${mod}.properties")
+				if(f.isFile()) {
+					url = f.toURI().toURL()
+					refs.add(new ConfigRef(url))
+				}
 			}
 		}
 
