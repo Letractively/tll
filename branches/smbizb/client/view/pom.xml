@@ -9,10 +9,10 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>client-mvc</artifactId>
-  <name>client-mvc</name>
+  <artifactId>client-view</artifactId>
+  <name>client-view</name>
   <version>${project.parent.version}</version>
-  <description>Client side MVC framework.</description>
+  <description>Client side view management and caching.</description>
   
   <build>
     <plugins>

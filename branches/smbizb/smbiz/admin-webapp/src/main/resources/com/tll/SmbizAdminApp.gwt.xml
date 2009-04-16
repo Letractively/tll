@@ -1,4 +1,4 @@
-<module>
+<module rename-to="smbizAdmin">
   <inherits name="com.allen_sauer.gwt.log.gwt-log-OFF" />
   <inherits name="com.tll.Smbiz" />
 

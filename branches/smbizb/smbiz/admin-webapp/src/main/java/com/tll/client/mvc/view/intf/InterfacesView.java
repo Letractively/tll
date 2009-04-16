@@ -112,7 +112,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 					return new SwitchInterfacePanel();
 				}
 				else {
-						throw new IllegalArgumentException();
+					throw new IllegalArgumentException();
 				}
 			}
 
@@ -127,7 +127,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 					ModelChangeManager.get().persistModel(editPanel, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					ModelChangeManager.get().deleteModel(editPanel, model.getRefKey(), null);
+					ModelChangeManager.get().deleteModel(editPanel, model.getKey(), null);
 				}
 			}
 
@@ -175,8 +175,8 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 			criteria.setNamedQuery("interface.summaryList");
 			final Sorting defaultSorting = new Sorting("name");
 			listHandler =
-					ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
-							defaultSorting);
+				ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
+						defaultSorting);
 			//listHandler.addListingHandler(this);
 			addHandler(this, ListingEvent.TYPE);
 		}
@@ -203,7 +203,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 			final int i = type.indexOf('-');
 			if(i > 0) type = type.substring(0, i);
 			return "<p class=\"" + Style.FLOAT_LEFT + "\"><span class=\"" + Style.BOLD + "\">" + name + " </span> (" + type
-					+ ") </p><p class=\"" + Style.SMALL_ITALIC + " " + Style.FLOAT_RIGHT + "\">" + desc + "</p>";
+			+ ") </p><p class=\"" + Style.SMALL_ITALIC + " " + Style.FLOAT_RIGHT + "\">" + desc + "</p>";
 		}
 
 		@Override
@@ -226,7 +226,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 
 			for(int i = 0; i < intfs.length; i++) {
 				final Model data = intfs[i];
-				final ModelKey ref = data.getRefKey();
+				final ModelKey ref = data.getKey();
 				assert ref != null && ref.isSet();
 				final InterfaceStack ir = new InterfaceStack(ref);
 				list.add(ir);
@@ -307,8 +307,8 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelRef().getEntityType());
-		return event.getSource() == this || (event.getModelRef() != null && set.isInterfaceType());
+		final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, event.getModelKey().getEntityType());
+		return event.getSource() == this || (event.getModelKey() != null && set.isInterfaceType());
 	}
 
 	@Override

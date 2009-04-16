@@ -48,12 +48,11 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 	private static final Log log = LogFactory.getLog(AppContextBootstrapper.class);
 
 	@Override
-	public void startup(Injector injector, ServletContext servletContext) {
+	public void startup(Injector injector, ServletContext servletContext, Config config) {
 		log.debug("Bootstrapping the app context..");
-		final Config cfg = injector.getInstance(Config.class);
-		final boolean debug = cfg.getBoolean(ConfigKeys.DEBUG.getKey());
-		final String environment = cfg.getString(ConfigKeys.ENVIRONMENT.getKey());
-		final String dfltUserEmail = cfg.getString(ConfigKeys.NOSECURITY_USER_EMAIL.getKey());
+		final boolean debug = config.getBoolean(ConfigKeys.DEBUG.getKey());
+		final String environment = config.getString(ConfigKeys.ENVIRONMENT.getKey());
+		final String dfltUserEmail = config.getString(ConfigKeys.NOSECURITY_USER_EMAIL.getKey());
 		final AppContext c = new AppContext(debug, environment, dfltUserEmail);
 		servletContext.setAttribute(AppContext.KEY, c);
 	}

@@ -7,14 +7,16 @@ package com.tll.client.mvc.view;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.ViewManager;
+import com.tll.common.model.Model;
 
 /**
- * AbstractModelAwareView - Base view class for all defined views in the app.
+ * AbstractModelAwareView - Base view class for views that are {@link Model}
+ * aware.
  * @author jpk
  * @param <I> the view initializer type
  */
 public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
-		IModelAwareView<I> {
+IModelAwareView<I> {
 
 	/**
 	 * Constructor

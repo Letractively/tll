@@ -49,7 +49,7 @@ public final class EditViewInitializer extends AbstractDynamicViewInitializer {
 
 	@Override
 	protected int getViewId() {
-		return model == null ? modelRef.hashCode() : model.getRefKey().hashCode();
+		return model == null ? modelRef.hashCode() : model.getKey().hashCode();
 	}
 
 	/**

@@ -38,7 +38,7 @@
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
     
-    <gwtVersion>0.0.0</gwtVersion>
+    <gwtVersion>1.6.4</gwtVersion>
     <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
     

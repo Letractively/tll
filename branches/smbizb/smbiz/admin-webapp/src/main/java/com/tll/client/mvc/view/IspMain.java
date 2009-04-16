@@ -43,7 +43,7 @@ public class IspMain extends MainView {
 
 		final AdminContext ac = SmbizAdmin.getAdminContext();
 		assert ac != null;
-		final ModelKey userAccountRef = ac.getUserAccount().getRefKey();
+		final ModelKey userAccountRef = ac.getUserAccount().getKey();
 		assert userAccountRef != null && userAccountRef.isSet();
 
 		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.MERCHANT);

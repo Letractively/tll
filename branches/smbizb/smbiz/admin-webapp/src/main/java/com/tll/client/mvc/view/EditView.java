@@ -27,7 +27,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	 * The model reference used to subsequently fetch the actual model subject to
 	 * editing if necessary.
 	 */
-	private ModelKey modelRef;
+	private ModelKey modelKey;
 
 	/**
 	 * The model subject to editing.
@@ -68,19 +68,19 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
-		String s = modelRef.getEntityType().getPresentationName();
-		if(modelRef.getName() != null) {
-			s += " " + modelRef.getName();
+		String s = modelKey.getEntityType().getPresentationName();
+		if(modelKey.getName() != null) {
+			s += " " + modelKey.getName();
 		}
 		return "Edit " + s;
 	}
 
 	@Override
 	public String getShortViewName() {
-		String s = modelRef.getName();
+		String s = modelKey.getName();
 		if(s == null) {
 			// fallback to the entity type
-			s = modelRef.getEntityType().getPresentationName();
+			s = modelKey.getEntityType().getPresentationName();
 		}
 		return "Edit " + s;
 	}
@@ -89,7 +89,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		if(modelRef == null || !modelRef.isSet()) {
 			throw new IllegalArgumentException("Invalid model ref specified");
 		}
-		this.modelRef = modelRef;
+		this.modelKey = modelRef;
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 			setModelRef(viewRequest.getModelKey());
 		}
 		else {
-			setModelRef(model.getRefKey());
+			setModelRef(model.getKey());
 		}
 	}
 
@@ -112,7 +112,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			ModelChangeManager.get().loadModel(this, modelRef, entityOptions, getNeededAuxData());
+			ModelChangeManager.get().loadModel(this, modelKey, entityOptions, getNeededAuxData());
 		}
 		else if(!ModelChangeManager.get().fetchAuxData(this, getNeededAuxData())) {
 			editPanel.setModel(model);
@@ -135,7 +135,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					ModelChangeManager.get().deleteModel(this, modelRef, entityOptions);
+					ModelChangeManager.get().deleteModel(this, modelKey, entityOptions);
 				}
 				break;
 		}
@@ -143,7 +143,8 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 
 	@Override
 	protected final boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		if((event.getSource() == this) || (event.getModelRef() != null && event.getModelRef().equals(modelRef))) {
+		final ModelKey mkey = event.getModelKey();
+		if((event.getSource() == this) || (mkey != null && mkey.equals(modelKey))) {
 			return true;
 		}
 		return false;

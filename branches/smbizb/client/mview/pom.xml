@@ -9,8 +9,8 @@
   </parent>
   
   <groupId>com.tll</groupId>
-  <artifactId>client-mvc-model</artifactId>
-  <name>client-mvc-model</name>
+  <artifactId>client-mview</artifactId>
+  <name>client-mview</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>Provides model change event support to IViews.</description>
   
@@ -30,7 +30,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mvc</artifactId>
+      <artifactId>client-view</artifactId>
       <version>${project.version}</version>
     </dependency>
 
