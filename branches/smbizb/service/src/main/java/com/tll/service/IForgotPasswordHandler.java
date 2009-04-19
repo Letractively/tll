@@ -7,7 +7,6 @@ package com.tll.service;
 
 import javax.persistence.EntityNotFoundException;
 
-import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.IUserRef;
 
 /**
