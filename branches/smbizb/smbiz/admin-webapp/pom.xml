@@ -13,6 +13,7 @@
   <name>smbiz-admin-webapp</name>
   <version>0.0.1-SNAPSHOT</version>
   <description>The smbiz administration console.</description>
+  <packaging>pom</packaging>
 
   <build>
     <finalName>smbiz</finalName>
@@ -139,8 +140,8 @@
                 <element>${project.basedir}/src/main/scripts</element>
               </scriptpath>
               <source><![CDATA[
-                //com.tll.BuildTools.process(project, ant);
-                println 'temp disabled'
+                com.tll.BuildTools.process(project, ant);
+                //println 'temp disabled'
               ]]></source>
             </configuration>
           </execution>
@@ -174,7 +175,33 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
+        <!-- 
+        <dependencies>
+          <dependency>
+            <groupId>com.google.code.jarjar</groupId>
+            <artifactId>jarjar</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+        -->
         <executions>
+          <!-- 
+          <execution>
+            <id>tll-server-jar</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="lib/jarjar.jar" />
+                <jarjar jarfile="dist/example.jar">
+                  <fileset dir="build/main" />
+                </jarjar>
+              </tasks>
+            </configuration>
+          </execution>
+          -->
           <execution>
             <id>gwt-compile</id>
             <phase>process-classes</phase>
@@ -193,7 +220,7 @@
                 <ant antfile="${basedir}/../../client/build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <target name="compile" />
+                  <!-- <target name="compile" /> -->
                 </ant>
               </tasks>
             </configuration>
@@ -218,13 +245,12 @@
       </properties>
       <build>
         <plugins>
+          <!-- 
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
-              <!-- 
                 Aggregate all dependent tll client-* jars 
                 into a single jar containing only server-side assets. 
-              -->
               <execution>
                 <id>tll-server</id>
                 <phase>prepare-package</phase>
@@ -243,6 +269,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
         </plugins>
       </build>
     </profile>
@@ -253,13 +280,12 @@
       </properties>
       <build>
         <plugins>
+          <!-- 
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
-              <!-- 
                 Aggregate all dependent tll client-* jars 
                 into a single jar containing only server-side assets. 
-              -->
               <execution>
                 <id>tll-server</id>
                 <phase>prepare-package</phase>
@@ -278,6 +304,7 @@
               </execution>
             </executions>
           </plugin>
+          -->
         </plugins>
       </build>
     </profile>
@@ -330,11 +357,13 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-model</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -393,12 +422,12 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mvc</artifactId>
+      <artifactId>client-view</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mvc-model</artifactId>
+      <artifactId>client-mview</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

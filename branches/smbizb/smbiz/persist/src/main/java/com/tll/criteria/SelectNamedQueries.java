@@ -11,8 +11,7 @@ import com.tll.model.Isp;
 import com.tll.model.Merchant;
 
 /**
- * TestSelectNamedQueries - Enumeration of the system defined data retrieval based
- * named queries.
+ * SelectNamedQueries - Enumeration of the select named queries in orm.xml.
  * @author jpk
  */
 public enum SelectNamedQueries implements ISelectNamedQueryDef {
