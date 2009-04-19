@@ -12,7 +12,7 @@ import com.tll.model.IEntityProvider;
  * build functionality specific to the entity type.
  * @author jpk
  */
-public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
+public final class SmbizEntityAssembler implements IEntityFactory, IEntityAssembler {
 
 	/**
 	 * The decorated entity factory.
@@ -24,7 +24,7 @@ public final class EntityAssembler implements IEntityFactory, IEntityAssembler {
 	 * @param entityFactory
 	 */
 	@Inject
-	public EntityAssembler(IEntityFactory entityFactory) {
+	public SmbizEntityAssembler(IEntityFactory entityFactory) {
 		super();
 		this.entityFactory = entityFactory;
 	}

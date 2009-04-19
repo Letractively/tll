@@ -33,19 +33,16 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <!--
-            combine api and impl jars: 1. api and impl combined 2. api and impl combined w/ mock support types
-          -->
           <execution>
-            <id>api-impl-aggregations</id>
+            <id>mock-orm-jars</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/main/assembly/api-impl-orm-aggregate.xml</descriptor>
-                <descriptor>src/main/assembly/api-impl-mock-aggregate.xml</descriptor>
+                <descriptor>src/main/assembly/orm.xml</descriptor>
+                <descriptor>src/main/assembly/mock.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
