@@ -19,8 +19,8 @@ import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.mail.IMailContext;
 import com.tll.mail.MailManager;
 import com.tll.mail.MailRouting;
-import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.IUserRef;
+import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.IForgotPasswordHandler;
 import com.tll.util.StringUtil;
 
@@ -32,7 +32,7 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 
 	private static final long serialVersionUID = 1144692563596509841L;
 	private static final String EMAIL_TEMPLATE_NAME = "forgot-password";
-	
+
 	private ForgotPasswordServiceContext getContext() {
 		return (ForgotPasswordServiceContext) getThreadLocalRequest().getSession(false).getServletContext().getAttribute(
 				ForgotPasswordServiceContext.KEY);

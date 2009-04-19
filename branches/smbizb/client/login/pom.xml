@@ -93,6 +93,11 @@
     	<version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>ejb3-persistence</artifactId>
     </dependency>

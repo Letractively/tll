@@ -9,8 +9,8 @@ import org.hibernate.validator.InvalidStateException;
 import org.springframework.security.userdetails.UserDetailsService;
 
 import com.tll.model.Account;
-import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.User;
+import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.IForgotPasswordHandler;
 import com.tll.service.entity.INamedEntityService;
 
@@ -30,7 +30,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @throws EntityExistsException
 	 */
 	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
-			EntityExistsException;
+	EntityExistsException;
 
 	/**
 	 * @param userId
@@ -39,7 +39,7 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @throws ChangeUserCredentialsFailedException
 	 */
 	public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
-			throws ChangeUserCredentialsFailedException;
+	throws ChangeUserCredentialsFailedException;
 
 	/**
 	 * @param username
@@ -48,5 +48,5 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @throws ChangeUserCredentialsFailedException When the operation fails
 	 */
 	void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
-			throws ChangeUserCredentialsFailedException;
+	throws ChangeUserCredentialsFailedException;
 }

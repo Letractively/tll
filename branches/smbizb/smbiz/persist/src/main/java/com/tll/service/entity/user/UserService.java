@@ -32,7 +32,6 @@ import com.tll.dao.IEntityDao;
 import com.tll.model.Account;
 import com.tll.model.Authority;
 import com.tll.model.AuthorityRoles;
-import com.tll.model.ChangeUserCredentialsFailedException;
 import com.tll.model.EntityCache;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
@@ -41,6 +40,7 @@ import com.tll.model.User;
 import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.model.schema.PropertyType;
+import com.tll.service.ChangeUserCredentialsFailedException;
 import com.tll.service.entity.NamedEntityService;
 
 /**
@@ -71,7 +71,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * @throws IllegalArgumentException
 	 */
 	public static boolean isPasswordValid(String rawPasswordToCheck, String encPassword, Object salt)
-			throws IllegalArgumentException {
+	throws IllegalArgumentException {
 		if(StringUtils.isEmpty(rawPasswordToCheck)) throw new IllegalArgumentException("Empty raw password specified");
 		if(StringUtils.isEmpty(encPassword)) throw new IllegalArgumentException("Empty encoded password specified");
 		return passwordEncoder.isPasswordValid(encPassword, rawPasswordToCheck, salt);
@@ -101,7 +101,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional
 	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
-			EntityExistsException {
+	EntityExistsException {
 		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account), true);
 
 		String encPassword = null;
@@ -111,7 +111,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 		catch(final IllegalArgumentException iae) {
 			// TODO verify this is cool
 			final InvalidValue[] ivs =
-					new InvalidValue[] { new InvalidValue("Invalid password", User.class, "password", password, null) };
+				new InvalidValue[] { new InvalidValue("Invalid password", User.class, "password", password, null) };
 			throw new InvalidStateException(ivs);
 		}
 
@@ -161,7 +161,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	private User findByEmail(String emailAddress) throws EntityNotFoundException {
 		User user;
 		try {
-			Criteria<User> criteria = new Criteria<User>(User.class);
+			final Criteria<User> criteria = new Criteria<User>(User.class);
 			criteria.getPrimaryGroup().addCriterion("emailAddress", emailAddress, false);
 			user = dao.findEntity(criteria);
 		}
@@ -197,8 +197,8 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-	public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
-			throws ChangeUserCredentialsFailedException {
+		public void setCredentialsById(Integer userId, String newUsername, String newRawPassword)
+	throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the old username
@@ -227,12 +227,12 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-	public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
-			throws ChangeUserCredentialsFailedException {
+		public void setCredentialsByUsername(String username, String newUsername, String newRawPassword)
+	throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user
-			Criteria<User> criteria = new Criteria<User>(User.class);
+			final Criteria<User> criteria = new Criteria<User>(User.class);
 			criteria.getPrimaryGroup().addCriterion("emailAddress", username, false);
 			final User user = dao.findEntity(criteria);
 
@@ -256,7 +256,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 
 	@Transactional(rollbackFor = {
 		ChangeUserCredentialsFailedException.class, RuntimeException.class })
-	public String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException {
+		public String resetPassword(Integer userId) throws ChangeUserCredentialsFailedException {
 
 		try {
 			// get the user
@@ -303,7 +303,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			}
 			else {
 				final UsernamePasswordAuthenticationToken token =
-						new UsernamePasswordAuthenticationToken(newUsername, newPassword);
+					new UsernamePasswordAuthenticationToken(newUsername, newPassword);
 				token.setDetails(authentication.getDetails());
 				SecurityContextHolder.getContext().setAuthentication(token);
 			}
