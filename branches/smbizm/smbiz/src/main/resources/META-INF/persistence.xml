@@ -7,11 +7,9 @@
   
   <persistence-unit name="${db.name}" transaction-type="JTA">
   
-    <description>${app.name} persistence unit.</description>
+    <description>smbiz persistence unit.</description>
     
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    
-    <jar-file>smbiz-model.jar</jar-file>
     
     <properties>
       <property name="hibernate.archive.autodetection" value="class" />
