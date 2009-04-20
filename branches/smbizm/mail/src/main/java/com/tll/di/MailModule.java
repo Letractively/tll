@@ -59,7 +59,10 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 		SECONDARY_HOST_USERNAME("mail.host.secondary.username"),
 		SECONDARY_HOST_PASSWORD("mail.host.secondary.password"),
 		NUM_SEND_RETRIES("mail.numberOfSendRetries"),
-		SEND_RETRY_DELAY_MILIS("mail.sendRetryDelayMilis");
+		SEND_RETRY_DELAY_MILIS("mail.sendRetryDelayMilis"),
+		TEMPLATE_PATH("mail.template.baseTemplatePath"),
+		TEMPLATE_SUFFIX_TEXT("mail.template.textTemplateSuffix"),
+		TEMPLATE_SUFFIX_HTML("mail.template.htmlTemplateSuffix");
 
 		private final String key;
 
@@ -71,6 +74,39 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 		public String getKey() {
 			return key;
 		}
+	}
+
+	/**
+	 * MailTemplatePath annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplatePath {
+	}
+
+	/**
+	 * MailTemplateSuffixText annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplateSuffixText {
+	}
+
+	/**
+	 * MailTemplateSuffixHtml annotation
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target( {
+		ElementType.FIELD,
+		ElementType.PARAMETER })
+	@BindingAnnotation
+	public @interface MailTemplateSuffixHtml {
 	}
 
 	/**
@@ -181,6 +217,14 @@ public final class MailModule extends AbstractModule implements IConfigAware {
 				return impl;
 			}
 		}).in(Scopes.SINGLETON);
+
+		// bind template config props
+		final String tmpPath = config.getString(ConfigKeys.TEMPLATE_PATH.getKey());
+		final String tmpSfxTxt = config.getString(ConfigKeys.TEMPLATE_SUFFIX_TEXT.getKey());
+		final String tmpSfxHtm = config.getString(ConfigKeys.TEMPLATE_SUFFIX_HTML.getKey());
+		bindConstant().annotatedWith(MailTemplatePath.class).to(tmpPath);
+		bindConstant().annotatedWith(MailTemplateSuffixText.class).to(tmpSfxTxt);
+		bindConstant().annotatedWith(MailTemplateSuffixHtml.class).to(tmpSfxHtm);
 
 		// IMailSender
 		bind(IMailSender.class).toProvider(new Provider<IMailSender>() {

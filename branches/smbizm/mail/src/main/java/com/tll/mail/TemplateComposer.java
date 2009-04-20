@@ -14,7 +14,9 @@ import org.springframework.mail.MailPreparationException;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import com.tll.di.MailModule.MailTemplatePath;
+import com.tll.di.MailModule.MailTemplateSuffixHtml;
+import com.tll.di.MailModule.MailTemplateSuffixText;
 
 /**
  * Composes email mime messages from a templated mail context.
@@ -40,10 +42,8 @@ public class TemplateComposer extends AbstractComposer<TemplatedMailContext> {
 	 * @param velocityEngine
 	 */
 	@Inject
-	public TemplateComposer(@Named("mail.template.baseTemplatePath")
-	String baseTemplatePath, @Named("mail.template.textTemplateSuffix")
-	String textTemplateSuffix, @Named("mail.template.htmlTemplateSuffix")
-	String htmlTemplateSuffix, VelocityEngine velocityEngine) {
+	public TemplateComposer(@MailTemplatePath String baseTemplatePath, @MailTemplateSuffixText String textTemplateSuffix,
+			@MailTemplateSuffixHtml String htmlTemplateSuffix, VelocityEngine velocityEngine) {
 		super();
 		this.baseTemplatePath = baseTemplatePath;
 		this.textTemplateSuffix = textTemplateSuffix;

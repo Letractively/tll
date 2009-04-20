@@ -20,8 +20,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!-- skip tests for now since we can't obtain a legit mail host! -->
-          <skipTests>true</skipTests>
+          <suiteXmlFiles>
+            <suiteXmlFile>${pom.basedir}/src/test/resources/testng-mail.xml</suiteXmlFile>
+          </suiteXmlFiles>
         </configuration>
       </plugin>
     </plugins>

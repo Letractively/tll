@@ -19,7 +19,9 @@ import com.tll.di.MailModule;
  * {@link IMailSender} test.
  * @author jpk
  */
-@Test(groups = "mail")
+@Test(groups = {
+	"mail",
+	"send" })
 public class MailSenderTest {
 
 	/**
