@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 
+  http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+  <!-- Culls orm relevant project assets into a single jar archive including those in tll-service. -->
+  
+  <id>orm</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>jar</format>
+  </formats>
+  
+  <fileSets>
+    <fileSet>
+      <directory>target/classes</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>**/*.java</exclude>
+        <exclude>**/mock/**</exclude>
+        <exclude>mock/**</exclude>
+        <exclude>orm/**</exclude>
+        <exclude>builddef.lst</exclude>
+        <exclude>META-INF/aop.xml</exclude><!-- this creeps its way into the target dir even though its only present in tll-service jar. -->
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>target/classes/orm</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+
+  <!-- groupId:artifactId:type:classifier -->
+  <!-- merge in tll-service -->
+  <!-- NOTE: this is done via AspectJ compile time weaving!! 
+  <dependencySets>
+    
+    <dependencySet>
+      <scope>runtime</scope>
+      <unpack>true</unpack>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <includes>
+        <include>com.tll:tll-service</include>
+      </includes>
+      <unpackOptions>
+        <excludes>
+          <exclude>**/*.java</exclude>
+          <exclude>**/mock/**</exclude>
+          <exclude>builddef.lst</exclude>
+        </excludes>
+      </unpackOptions>
+    </dependencySet>
+  </dependencySets>
+  -->
+</assembly>

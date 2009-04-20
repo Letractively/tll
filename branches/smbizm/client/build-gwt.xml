@@ -1,0 +1,89 @@
+<!--
+	Intended for global use by all client projects.
+	
+	These properties must be present in the ant context to run the compile target:
+		1) gwt.compile.classpath
+		2) gwt.compile.modules
+		3) gwt.compile.style
+		
+  These properties must be present in the ant context to run the shell and shell-debug target:
+		1) gwt.shell.startupUrl
+		2) gwt.shell.entryModule
+	
+	http://code.google.com/docreader/#p=google-web-toolkit-doc-1-6&s=google-web-toolkit-doc-1-6&t=ReleaseNotes_1_6_UpgradeGuide
+	
+	E.g.:
+	
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <executions>
+      <execution>
+        <id>gwt-compile</id>
+        <phase>process-test-classes</phase>
+        <goals>
+          <goal>run</goal>
+        </goals>
+        <configuration>
+          <tasks>
+            <property name="gwt.compile.classpath" refid="maven.test.classpath" />
+            <property name="gwt.compile.modules" value="com.tll.UITests" />
+            <ant antfile="${basedir}/../build-gwt.xml">
+              <target name="compile" />
+            </ant>
+          </tasks>
+        </configuration>
+      </execution>
+    </executions>
+  </plugin>
+-->
+<project name="gwt-build" default="build-shell-debug-exec-file" basedir=".">
+	
+	<path id="gwt.compile.classpath">
+		<pathelement path="${gwt.compile.classpath}"/>
+	</path>
+	
+	<!--
+   [java] Google Web Toolkit 0.0.0
+   [java] Compiler [-logLevel level] [-treeLogger] [-workDir dir] [-gen dir] [-style style] [-ea] [-validateOnly] [-localWorkers count] [-war dir] [-extra dir] module[s]
+
+   [java] where
+   [java]   -logLevel      The level of logging detail: ERROR, WARN, INFO, TRACE, DEBUG, SPAM, or ALL
+   [java]   -treeLogger    Logs output in a graphical tree view
+   [java]   -workDir       The compiler work directory (must be writeable; defaults to a system temp dir)
+   [java]   -gen           The directory into which generated files will be written for review
+   [java]   -style         Script output style: OBF[USCATED], PRETTY, or DETAILED (defaults to OBF)
+   [java]   -ea            Debugging: causes the compiled output to check assert statements.
+   [java]   -validateOnly  Validate all source code, but do not compile
+   [java]   -localWorkers  Specifies the number of local workers to use whe compiling permutations
+   [java]   -war           The war directory to write output files into (defaults to war)
+   [java]   -extra         The directory into which extra, non-deployed files will be written
+   [java] and
+   [java]   module[s]      Specifies the name(s) of the module(s) to compile
+	-->
+	<target name="compile" description="Invokes the GWT compiler.">
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+			<classpath refid="gwt.compile.classpath" />
+			<jvmarg value="-Xms128m" />
+			<jvmarg value="-Xmx768m" />
+			<jvmarg value="-Xss1024k" />
+			<jvmarg value="-ea" />
+			<arg value="-war" />
+			<arg value="target/war" />
+			<arg value="-style" />
+			<arg value="${gwt.compile.style}" />
+			<arg value="-logLevel" />
+			<arg value="INFO" />
+			<arg value="${gwt.compile.modules}" />
+		</java>
+	</target>
+	
+	<target name="build-shell-exec-file" description="Builds a batch file to invoke the gwt shell.">
+		<echo file="shell.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+	</target>
+
+	<target name="build-shell-debug-exec-file" description="Builds a batch file to invoke the gwt shell with a jvm debug hook at port 8000.">
+		<echo file="debug.bat" message="java -Xss1024k -Xms128m -Xmx512m -ea -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Djava.compiler=NONE -cp ${gwt.compile.classpath} com.google.gwt.dev.HostedMode -war target/war -style ${gwt.compile.style} -logLevel INFO -startupUrl ${gwt.shell.startupUrl} ${gwt.shell.entryModule}" />
+	</target>
+
+</project>

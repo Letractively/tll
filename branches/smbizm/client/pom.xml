@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.tll</groupId>
+    <artifactId>tll</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>com.tll</groupId>
+  <artifactId>tll-client</artifactId>
+  <packaging>pom</packaging>
+  <name>tll-client</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>Contains client modules.</description>
+  
+  <properties>
+  </properties>
+
+  <modules>
+    <module>core</module>
+    <module>cache</module>
+    <module>ui</module>
+    <module>view</module>
+    <module>rpc</module>
+    <module>model</module>
+    <module>mview</module>
+    <module>listing</module>
+    <module>field</module>
+    <module>login</module>
+  </modules>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+        </includes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/client/**</include>
+          <include>**/common/**</include>
+        </includes>
+      </testResource>
+    </testResources>
+    
+    <plugins>
+
+      <!--
+        currently, gwt surefire driven GWTTest derived tests create these project dirs 
+        which should be removed during the clean phase.
+      -->
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.gwt-tmp</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>tomcat</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+  
+      <!-- tweak surefire to run JUnit tests extending GWTTestCase -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>-Xms128m -Xmx512m -ea</argLine>
+          <includes>
+            <include>**/*GWTTest.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <!-- 
+            tweak compile deps analyze routine to not fail on warning since 
+            we sometimes spuriously add tll-*sources.jars as compile time deps 
+            which are needed for building the client gwt jar.
+          -->
+          <execution>
+            <id>analyze-compile-deps</id>
+            <configuration>
+              <failOnWarning>false</failOnWarning>
+              <ignoreNonCompile>true</ignoreNonCompile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    
+    </plugins>
+  </build>
+  
+  <dependencyManagement>
+    <dependencies>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- 
+      this gwt-servlet dependency is spurious for some client modules but it serves as a way to singly 
+      delcare this dependency which the gwt war dir assembly routine depends. 
+    -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}-libs</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+</project>

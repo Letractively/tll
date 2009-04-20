@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="smbiz-servicelayer-tests">
+  
+  <test name="entity-service-tests" annotations="JDK">
+    <groups>
+      <run>
+        <include name="service.entity" />
+      </run>
+    </groups>
+    <packages>
+      <package name="com.tll.service.*" />
+    </packages>
+  </test>
+
+</suite>

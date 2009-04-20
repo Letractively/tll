@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tll</artifactId>
+    <groupId>com.tll</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.tll</groupId>
+  <artifactId>smbiz</artifactId>
+  <packaging>pom</packaging>
+  <name>smbiz</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <description>The smbiz project.</description>
+
+  <modules>
+    <module>model</module>
+    <module>persist</module>
+    <module>admin-webapp</module>
+  </modules>
+  
+  <profiles>
+
+    <!--
+      there are two global profiles for development and production: dev and prod respectively.
+      These profiles declare the following properties:
+      - debug (true/false)
+      - mode ("dev" or "prod") 
+    -->
+
+    <!-- dev (global) profile -->
+    <profile>
+      <id>dev</id>
+      <properties>
+        <debug>true</debug>
+        <mode>dev</mode>
+      </properties>
+    </profile>
+
+    <!-- prod (global) profile -->
+    <profile>
+      <id>prod</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <debug>false</debug>
+        <mode>prod</mode>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <debug>false</debug>
+              <optimize>true</optimize>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <!-- orm dao mode (global) profile -->
+    <profile>
+      <id>orm</id>
+      <properties>
+        <daoMode>orm</daoMode>
+      </properties>
+    </profile>
+
+    <!-- mock dao mode (global) profile -->
+    <profile>
+      <id>mock</id>
+      <properties>
+        <daoMode>mock</daoMode>
+      </properties>
+    </profile>
+    
+  </profiles>
+</project>
