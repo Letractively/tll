@@ -24,12 +24,10 @@ public final class BuildTools {
 	 */
 	public static void process(def project, def ant) {
 		BuildTools b = new BuildTools(project, ant);
-		b.copyClasses();
 		b.saveConfig()
 		b.generateGwtConstantsFile();
-		b.copyLibs();
 		b.generateWebXml();
-		b.copyWebResources();
+		b.copyWebappResources();
 		b.stubDbIfNecessary()
 	}
 	
@@ -196,75 +194,21 @@ public final class BuildTools {
 	}
 	
 	/**
-	 * Copies the project build output to the target war classes dir.
+	 * Copies webapp resources to the target war dir.
 	 */
-	private void copyClasses() {
-		println 'Copying classes..'
-		String sdir = basedir + '/target/classes'
-		String tdir = basedir + '/target/war/WEB-INF/classes'
-		ant.mkdir(dir: tdir)
-		if(isSecurity) {
-			// security
-			ant.copy(todir: tdir) {
-				fileset(dir: sdir) {
-					exclude(name: '**/*.java')
-					exclude(name: '**/*.gwt.xml')
-					exclude(name: '**/client/**')
-					exclude(name: '**/common/**/*Async*')
-					exclude(name: '**/public/**')
-					exclude(name: '**/NoSecuritySessionContextFilter*')
-				}
-			}
-		}
-		else {
-			// no security
-			ant.copy(todir: tdir) {
-				fileset(dir: sdir) {
-					exclude(name: '**/*.java')
-					exclude(name: '**/*.gwt.xml')
-					exclude(name: '**/client/**')
-					exclude(name: '**/common/**/*Async*')
-					exclude(name: '**/public/**')
-					exclude(name: '**/SmbizAuthenticationProcessingFilter*')
-				}
-				
-			}
-		}
-		println 'classes copied'
-	}
-	
-	/**
-	 * Copies the server side libs into the target war lib dir.
-	 */
-	private void copyLibs() {
-		println 'Copying libs..'
-		String sdir = basedir + '/target/server-libs'
-		String tdir = basedir + '/target/war/WEB-INF/lib'
-		ant.mkdir(dir: tdir)
-		ant.copy(todir: tdir) {
-			fileset(dir: sdir) {
-				exclude(name: 'tll-*')
-				exclude(name: 'client-*')
-			}
-		}		
-		println 'libs copied'
-	}
-	
-	/**
-	 * Copies web resources held in the src/main/webapp dir.
-	 */
-	private void copyWebResources() {
-		println 'Copying web resources..'
+	private void copyWebappResources() {
+		println 'Copying webapp resources..'
 		String sdir = basedir + '/src/main/webapp'
 		String tdir = basedir + '/target/war'
+		ant.mkdir(dir: tdir)
 		ant.copy(todir: tdir) {
 			fileset(dir: sdir) {
-				exclude(name: 'WEB-INF/**')
+				exclude(name: '**/web.xml')
 			}
 		}
-		println 'web resources copied'
+		println 'webapp resources copied.'
 	}
-	 
+	
 	/**
 	 * Generates the web.xml file based on the configuration/project state.
 	 */

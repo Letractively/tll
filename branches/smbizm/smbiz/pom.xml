@@ -27,7 +27,9 @@
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <includes>
+          <include>**/public/**</include>
           <include>*.*</include>
+          <include>**/*.gwt.xml</include>
         </includes>
         <!-- don't copy any config prop files as they are managed independently. -->
         <excludes>
@@ -125,8 +127,8 @@
         </configuration>
         <executions>
           <execution>
-            <id>build-war-dir</id>
-            <phase>package</phase>
+            <id>war-resources</id>
+            <phase>process-resources</phase>
             <goals>
               <goal>execute</goal>
             </goals>
@@ -170,7 +172,7 @@
                 </element>
               </classpath>
               <scriptpath>
-                <element>${project.basedir}/../../build-tools/src/main/scripts</element>
+                <element>${project.basedir}/../build-tools/src/main/scripts</element>
                 <element>${project.basedir}/src/main/scripts</element>
               </scriptpath>
               <source><![CDATA[
@@ -195,16 +197,15 @@
             <configuration>
               <tasks>
                 <property name="gwt.compile.style" value="PRETTY" />
-                <loadfile property="gcp" srcFile="target/gwt-cp.txt"/>
-                <property name="gwt.compile.classpath" value="./target/classes;${gcp}"/>
+                <property name="gwt.compile.classpath" refid="maven.compile.classpath" />
                 <property name="gwt.compile.modules" value="com.tll.SmbizAdminApp" />
                 <property name="gwt.shell.entryModule" value="com.tll.WorkingModule" />
                 <property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
                 <echo message="classpath: ${gwt.compile.classpath}" />
-                <ant antfile="${basedir}/../../client/build-gwt.xml">
+                <ant antfile="${basedir}/../client/build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <!-- <target name="compile" /> -->
+                  <target name="compile" />
                 </ant>
               </tasks>
             </configuration>
@@ -223,6 +224,22 @@
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-service.xml</suiteXmlFile>
             <suiteXmlFile>${pom.basedir}/src/test/resources/test-server.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webXml>target/web.xml</webXml>
+          <warSourceExcludes>
+            .gwt-tmp/**,
+            **/*.gwt.xml,
+            **/*.java,
+            WEB-INF/classes/**/client/**,
+            WEB-INF/classes/**/common/**/*Async.class,
+            WEB-INF/classes/**/public/**,
+          </warSourceExcludes>
         </configuration>
       </plugin>
 

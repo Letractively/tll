@@ -105,6 +105,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	public MainPanel() {
 		super();
 
+		ViewManager.initialize(center, 4);
+
 		dockPanel.add(header, DockPanel.NORTH);
 		dockPanel.add(viewpath, DockPanel.NORTH);
 		dockPanel.add(footer, DockPanel.SOUTH);
@@ -353,18 +355,12 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		protected void onLoad() {
 			super.onLoad();
 			StatusEventDispatcher.get().addStatusHandler(this);
-			ViewManager.initialize(this, 4);
-			// set the main model change listener so views see all model change events
-			//ModelChangeManager.get().addModelChangeListener(ViewManager.get());
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
-			//ModelChangeManager.get().removeModelChangeListener(ViewManager.get());
-			ViewManager.shutdown();
 			StatusEventDispatcher.get().removeStatusHandler(this);
-			//MsgManager.get().clear();
 		}
 
 		public void onStatusEvent(StatusEvent event) {
@@ -389,6 +385,12 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			add(new HTML("<p>&copy; 2009 The Logic Lab - smbiz v" + App.constants.appVersion() + "</p>"));
 		}
 
+	}
+
+	@Override
+	protected void onUnload() {
+		super.onUnload();
+		ViewManager.shutdown();
 	}
 
 }

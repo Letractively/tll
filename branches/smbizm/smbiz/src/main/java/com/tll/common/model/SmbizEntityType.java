@@ -1,7 +1,6 @@
 package com.tll.common.model;
 
 import com.tll.INameValueProvider;
-import com.tll.common.model.IEntityType;
 import com.tll.util.StringUtil;
 
 /**
@@ -46,7 +45,7 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	SHIP_BOUND_COST("Ship Bound Cost"),
 	SHIP_MODE("Ship Mode"),
 	SITE_CODE("Site Code");
-	
+
 	//private static final String MODEL_PACKAGE_NAME = SmbizEntityType.class.getPackage().getName();
 	// above won't GWT compile
 	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
@@ -66,7 +65,7 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	}
 
 	public String getEntityClassName() {
-		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToCamelCase(name(), true);
+		return MODEL_PACKAGE_NAME + '.' + StringUtil.enumStyleToCamelCase(name(), true);
 	}
 
 	public String getPresentationName() {
@@ -79,12 +78,12 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 
 	public boolean isAccountType() {
 		return ACCOUNT.equals(this) || ASP.equals(this) || ISP.equals(this) || MERCHANT.equals(this)
-				|| CUSTOMER.equals(this);
+		|| CUSTOMER.equals(this);
 	}
 
 	public boolean isInterfaceType() {
 		return INTERFACE.equals(this) || INTERFACE_MULTI.equals(this) || INTERFACE_SINGLE.equals(this)
-				|| INTERFACE_SWITCH.equals(this);
+		|| INTERFACE_SWITCH.equals(this);
 	}
 
 	/**

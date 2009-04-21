@@ -202,20 +202,12 @@
 
 	<!-- GWT RPC Servlets -->
   <servlet>
-    <servlet-name>CrudService</servlet-name>
+    <servlet-name>CrudAuxDataService</servlet-name>
     <servlet-class>com.tll.server.rpc.entity.MEntityServiceDelegate</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>CrudService</servlet-name>
+    <servlet-name>CrudAuxDataService</servlet-name>
     <url-pattern>/rpc/crud</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>AuxDataService</servlet-name>
-    <servlet-class>com.tll.server.rpc.AuxDataService</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AuxDataService</servlet-name>
     <url-pattern>/rpc/aux</url-pattern>
   </servlet-mapping>
   
