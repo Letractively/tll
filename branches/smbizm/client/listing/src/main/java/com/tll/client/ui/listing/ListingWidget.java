@@ -27,7 +27,7 @@ import com.tll.client.listing.ListingEvent;
  * @param <T> the table widget type
  */
 public class ListingWidget<R, T extends ListingTable<R>> extends Composite implements
-		Focusable, KeyDownHandler, IListingHandler<R> {
+Focusable, KeyDownHandler, IListingHandler<R> {
 
 	/**
 	 * Styles - (tableview.css)
@@ -154,8 +154,7 @@ public class ListingWidget<R, T extends ListingTable<R>> extends Composite imple
 	 */
 	public final void setRowOptionsDelegate(IRowOptionsDelegate rowOptionsDelegate) {
 		if(rowPopup == null) {
-			rowPopup = new RowContextPopup(table);
-			focusPanel.addMouseDownHandler(rowPopup);
+			rowPopup = new RowContextPopup(2000, table);
 		}
 		rowPopup.setDelegate(rowOptionsDelegate);
 	}

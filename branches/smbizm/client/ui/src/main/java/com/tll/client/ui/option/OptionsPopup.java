@@ -87,9 +87,6 @@ IOptionHandler, IHasOptionHandlers {
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		optionsPanel.addOptionHandler(this);
-		addDomHandler(this, MouseDownEvent.getType());
-		addDomHandler(this, MouseOverEvent.getType());
-		addDomHandler(this, MouseOutEvent.getType());
 		setWidget(optionsPanel);
 	}
 
@@ -122,17 +119,26 @@ IOptionHandler, IHasOptionHandlers {
 		}
 	}
 
-	public void onMouseDown(final MouseDownEvent event) {
+	/**
+	 * Show the popup at the given coordinates.
+	 * @param x the x coord w/o offset
+	 * @param y the y coord w/o offset
+	 */
+	protected final void showAt(final int x, final int y) {
 		if(timer != null) timer.cancel();
 		setPopupPositionAndShow(new PositionCallback() {
 
 			@SuppressWarnings("synthetic-access")
 			@Override
 			public void setPosition(int offsetWidth, int offsetHeight) {
-				setPopupPosition(event.getClientX() + offsetX, event.getClientY() + offsetY);
+				setPopupPosition(x + offsetX, y + offsetY);
 			}
 		});
 		if(timer != null) timer.schedule(duration);
+	}
+
+	public void onMouseDown(final MouseDownEvent event) {
+		showAt(event.getClientX(), event.getClientY());
 	}
 
 	@Override

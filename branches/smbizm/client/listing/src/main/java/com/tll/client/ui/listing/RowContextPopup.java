@@ -1,5 +1,6 @@
 package com.tll.client.ui.listing;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -15,13 +16,11 @@ import com.tll.client.ui.option.OptionsPopup;
  */
 public final class RowContextPopup extends OptionsPopup implements ClickHandler {
 
-	private static final int SHOW_DURATION = 2000; // 2s
-
 	/**
 	 * The bound {@link IRowOptionsDelegate}
 	 */
 	private IRowOptionsDelegate rowOpDelegate;
-	
+
 	/**
 	 * The needed table ref.
 	 */
@@ -37,8 +36,20 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	 * @param table The table ref
 	 */
 	public RowContextPopup(HTMLTable table) {
-		super(SHOW_DURATION);
+		this(DFLT_DURATION, table);
+	}
+
+	/**
+	 * Constructor
+	 * @param duration the time in mili-seconds to show the popup or
+	 *        <code>-1</code> meaning it is shown indefinitely.
+	 * @param table The table ref
+	 */
+	public RowContextPopup(int duration, HTMLTable table) {
+		super(duration);
+		if(table == null) throw new IllegalArgumentException("Null table ref");
 		this.table = table;
+		this.table.addClickHandler(this);
 	}
 
 	/**
@@ -48,12 +59,6 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	public void setDelegate(IRowOptionsDelegate rowOpDelegate) {
 		if(rowOpDelegate == null) throw new IllegalArgumentException("A row op delegate must be specified");
 		this.rowOpDelegate = rowOpDelegate;
-	}
-
-	private void showAtRow(int row) {
-		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
-		setOptions(rowOpDelegate.getOptions(row));
-		super.show();
 	}
 
 	public void onClick(ClickEvent event) {
@@ -67,15 +72,14 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 		if(row < 1) return;
 
 		if(row != this.rowIndex) {
-			hide();
-			showAtRow(row);
+			this.rowIndex = row;
+			setOptions(rowOpDelegate.getOptions(row));
 		}
-		else if(isShowing())
-			hide();
-		else
-			showAtRow(row);
 
-		this.rowIndex = row;
+		if(!isShowing()) {
+			final NativeEvent ne = event.getNativeEvent();
+			showAt(ne.getClientX(), ne.getClientY());
+		}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.tll.client;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.listing.Column;
@@ -11,6 +12,7 @@ import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.ModelPropertyFormatter;
 import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.ui.listing.RemoteListingWidget;
+import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
 import com.tll.common.search.mock.TestAddressSearch;
 import com.tll.dao.Sorting;
@@ -43,9 +45,12 @@ public final class UITests extends AbstractUITest {
 		PropertyBoundColumn cAddress = new PropertyBoundColumn("Address", "address1");
 		PropertyBoundColumn cCity = new PropertyBoundColumn("City", "city");
 
+		final Option[] options = new Option[] {
+			new Option("Option 1"), new Option("Option 2"), new Option("Option 3") };
+
 		private final Column[] cols = new Column[] {
 			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
-	
+
 		private final ITableCellRenderer<Model, Column> cellRenderer = new ITableCellRenderer<Model, Column>() {
 
 			@Override
@@ -73,7 +78,7 @@ public final class UITests extends AbstractUITest {
 				throw new IllegalStateException("Un-resolvable column: " + column);
 			}
 		};
-		
+
 		@Override
 		public boolean isSortable() {
 			return true;
@@ -92,11 +97,6 @@ public final class UITests extends AbstractUITest {
 		@Override
 		public boolean isIgnoreCaseWhenSorting() {
 			return true;
-		}
-
-		@Override
-		public IRowOptionsDelegate getRowOptionsHandler() {
-			return null;
 		}
 
 		@Override
@@ -130,8 +130,30 @@ public final class UITests extends AbstractUITest {
 		}
 
 		@Override
+		public IRowOptionsDelegate getRowOptionsHandler() {
+			return new IRowOptionsDelegate() {
+
+				@Override
+				public void handleOptionSelection(String optionText, int rowIndex) {
+					Window.alert("Row " + rowIndex + " was selected: " + optionText);
+				}
+
+				@Override
+				public Option[] getOptions(int rowIndex) {
+					return options;
+				}
+			};
+		}
+
+		@Override
 		public IAddRowDelegate getAddRowHandler() {
-			return null;
+			return new IAddRowDelegate() {
+
+				@Override
+				public void handleAddRow() {
+					Window.alert("Add new Row");
+				}
+			};
 		}
 	};
 
@@ -153,8 +175,8 @@ public final class UITests extends AbstractUITest {
 		@Override
 		protected Widget getContext() {
 			lw =
-					ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
-							null, defaultSorting);
+				ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
+						null, defaultSorting);
 			return lw;
 		}
 
