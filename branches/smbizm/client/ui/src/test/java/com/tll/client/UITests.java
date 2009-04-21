@@ -49,26 +49,26 @@ public final class UITests extends AbstractUITest {
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
 			new MsgsText(), new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
-			new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
+			new OptionsPopupTest2(), new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
 	}
-	
+
 	static final class MsgsText extends DefaultUITestCase {
-		
+
 		static final Msg m1 = new Msg("This is message 1", MsgLevel.INFO);
 		static final Msg m2 = new Msg("This is message 2", MsgLevel.WARN);
 		static final Msg m3 = new Msg("This is message 3", MsgLevel.ERROR);
 		static final ArrayList<Msg> mlist;
-		
+
 		static {
 			mlist = new ArrayList<Msg>();
 			mlist.add(m1);
 			mlist.add(m2);
 			mlist.add(m3);
 		}
-		
+
 		FlowPanel pnl;
 		Label lblA, lblB;
-		
+
 		/**
 		 * Constructor
 		 */
@@ -99,21 +99,21 @@ public final class UITests extends AbstractUITest {
 		protected Button[] getTestActions() {
 			return new Button[] {
 				new Button("Post single on Label A", new ClickHandler() {
-				
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA);
 					}
 				}),
 				new Button("Post multiple on Label A", new ClickHandler() {
-					
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(mlist, lblA);
 					}
 				}),
 				new Button("Post timed single on Label A", new ClickHandler() {
-					
+
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA, Position.BOTTOM, 1000, true);
@@ -296,7 +296,7 @@ public final class UITests extends AbstractUITest {
 	}
 
 	/**
-	 * OptionsPanelTest
+	 * OptionsPopupTest
 	 * @author jpk
 	 */
 	static final class OptionsPopupTest extends UITestCase {
@@ -306,12 +306,12 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public String getDescription() {
-			return "Tests the OptionsPopup panel.";
+			return "Tests the OptionsPopup panel with a hide duration.";
 		}
 
 		@Override
 		public String getName() {
-			return "OptionsPopup";
+			return "OptionsPopup - hide duration";
 		}
 
 		@Override
@@ -329,16 +329,6 @@ public final class UITests extends AbstractUITest {
 			// IMPT: this enables the popup to be positioned at the mouse click location!
 			contextArea.addMouseDownHandler(popup);
 
-			contextArea.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					if(!popup.isShowing()) {
-						popup.show();
-					}
-				}
-			});
-
 			RootPanel.get().add(contextArea);
 		}
 
@@ -349,6 +339,52 @@ public final class UITests extends AbstractUITest {
 			popup = null;
 		}
 	} // OptionsPopupTest
+
+	/**
+	 * OptionsPopupTest
+	 * @author jpk
+	 */
+	static final class OptionsPopupTest2 extends UITestCase {
+
+		FocusPanel contextArea;
+		OptionsPopup popup;
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPopup panel with NO hide duration.";
+		}
+
+		@Override
+		public String getName() {
+			return "OptionsPopup - Indefite";
+		}
+
+		@Override
+		public void load() {
+			popup = new OptionsPopup();
+			popup.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5") });
+
+			contextArea = new FocusPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			// IMPT: this enables the popup to be positioned at the mouse click
+			// location!
+			contextArea.addMouseDownHandler(popup);
+
+			RootPanel.get().add(contextArea);
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			popup = null;
+		}
+	} // OptionsPopupTest2
 
 	/**
 	 * GlobalMsgPanelTest
@@ -378,7 +414,7 @@ public final class UITests extends AbstractUITest {
 			}
 			return list;
 		}
-		
+
 		GlobalMsgPanel gmp;
 		HorizontalPanel refWidgetPanel;
 		IWidgetRef refTextBox1, refTextBox2, refLabel;
@@ -425,10 +461,10 @@ public final class UITests extends AbstractUITest {
 			refWidgetPanel.removeFromParent();
 			refWidgetPanel = null;
 		}
-		
+
 		@Override
 		protected Button[] getTestActions() {
-			return new Button[] { 
+			return new Button[] {
 				new Button("Clear all Messages", new ClickHandler() {
 
 					@Override
@@ -659,7 +695,7 @@ public final class UITests extends AbstractUITest {
 					nestedContext.setVisible(false);
 					operator.showMsgs(true);
 					Window
-							.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
+					.alert("No message popup should appear even though showMsgs() was called because the nestedContext's visibliity was just set to false.");
 
 					nestedContext.setVisible(true);
 					operator.showMsgs(true);
