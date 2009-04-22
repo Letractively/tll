@@ -133,6 +133,17 @@ public final class BuildTools {
 		String dir = basedir + "/src/main/resources";
 		this.config = ConfigProcessor.merge(dir, mode, 'local')
 		
+		// add build specific 'debug' property
+		config.addProperty('debug', project.properties.debug)
+		
+		// require that debug and environment config props exist
+		if(config.getString('debug') == null) {
+			throw new IllegalStateException("No debug property present.")
+		}
+		if(config.getString('environment') == null) {
+			throw new IllegalStateException("No environment property present.")
+		}
+	
 		// retain the dao mode
 		String daoMode = project.properties.daoMode
 		if(daoMode == null) {
@@ -283,8 +294,6 @@ public final class BuildTools {
 	    // create aggregated config.properties file..
 	    println 'Creating aggregated config.properties file..'
 		String tgtDir = basedir + '/target/war/WEB-INF/classes'
-		// add debug config property
-		config.addProperty('debug', project.properties.debug)
 		File f = new File(tgtDir, ConfigRef.DEFAULT_NAME)
 	    config.saveAsPropFile(f)
 	    println f.getPath() + ' created'

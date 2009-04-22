@@ -64,13 +64,13 @@ public final class AuxDataCache {
 	 */
 	public AuxDataRequest filterRequest(AuxDataRequest adr) {
 		if(adr == null) return null;
-		AuxDataRequest sadr = new AuxDataRequest();
+		final AuxDataRequest sadr = new AuxDataRequest();
 
 		// ref data
-		Iterator<RefDataType> rdi = adr.getRefDataRequests();
+		final Iterator<RefDataType> rdi = adr.getRefDataRequests();
 		if(rdi != null) {
 			while(rdi.hasNext()) {
-				RefDataType rdt = rdi.next();
+				final RefDataType rdt = rdi.next();
 				if(!isCached(AuxDataType.REFDATA, rdt)) {
 					sadr.requestAppRefData(rdt);
 				}
@@ -81,7 +81,7 @@ public final class AuxDataCache {
 		Iterator<IEntityType> ets = adr.getEntityRequests();
 		if(ets != null) {
 			while(ets.hasNext()) {
-				IEntityType et = ets.next();
+				final IEntityType et = ets.next();
 				if(!isCached(AuxDataType.ENTITY, et)) {
 					sadr.requestEntityList(et);
 				}
@@ -92,7 +92,7 @@ public final class AuxDataCache {
 		ets = adr.getEntityPrototypeRequests();
 		if(ets != null) {
 			while(ets.hasNext()) {
-				IEntityType et = ets.next();
+				final IEntityType et = ets.next();
 				if(!isCached(AuxDataType.ENTITY_PROTOTYPE, et)) {
 					sadr.requestEntityPrototype(et);
 				}
@@ -130,25 +130,25 @@ public final class AuxDataCache {
 	public void cache(AuxDataPayload payload) {
 
 		// ref data maps
-		Map<RefDataType, Map<String, String>> map = payload.getRefDataMaps();
+		final Map<RefDataType, Map<String, String>> map = payload.getRefDataMaps();
 		if(map != null) {
-			for(RefDataType key : map.keySet()) {
+			for(final RefDataType key : map.keySet()) {
 				cacheRefDataMap(key, map.get(key));
 			}
 		}
 
 		// entity lists
-		Map<IEntityType, List<Model>> egm = payload.getEntityGroupMap();
+		final Map<IEntityType, List<Model>> egm = payload.getEntityGroupMap();
 		if(egm != null) {
-			for(IEntityType et : egm.keySet()) {
+			for(final IEntityType et : egm.keySet()) {
 				cacheEntityList(et, egm.get(et));
 			}
 		}
 
 		// entity prototypes
-		Set<Model> eps = payload.getEntityPrototypes();
+		final Set<Model> eps = payload.getEntityPrototypes();
 		if(eps != null) {
-			for(Model p : eps) {
+			for(final Model p : eps) {
 				cacheEntityPrototype(p);
 			}
 		}
@@ -170,9 +170,9 @@ public final class AuxDataCache {
 	 *         type.
 	 */
 	public Model getEntityPrototype(IEntityType entityType) {
-		if(entityPrototypes != null) {
-			for(Model p : entityPrototypes) {
-				if(p.getEntityType() == entityType) {
+		if(entityPrototypes != null && entityType != null) {
+			for(final Model p : entityPrototypes) {
+				if(p.getEntityType().getEntityClassName().equals(entityType.getEntityClassName())) {
 					return p.copy(true); // IMPT: provide a distinct instance
 				}
 			}
@@ -181,16 +181,18 @@ public final class AuxDataCache {
 	}
 
 	public boolean isCached(AuxDataType type, Object obj) {
+		if(obj == null) return false;
 		switch(type) {
 			case REFDATA:
 				return refDataMaps == null ? false : refDataMaps.containsKey(obj);
 			case ENTITY:
 				return entityMap == null ? false : entityMap.containsKey(obj);
 			case ENTITY_PROTOTYPE: {
-				if(entityPrototypes == null) return false;
-				assert obj instanceof IEntityType;
-				for(Model p : entityPrototypes) {
-					if(p.getEntityType() == obj) return true;
+				if(entityPrototypes != null) {
+					final IEntityType et = (IEntityType) obj;
+					for(final Model p : entityPrototypes) {
+						if(et.getEntityClassName().equals(p.getEntityType().getEntityClassName())) return true;
+					}
 				}
 				return false;
 			}

@@ -44,9 +44,7 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
-			//if(!result.hasErrors()) {
-			sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, null));
-			//}
+			sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
 		}
 
 		@Override

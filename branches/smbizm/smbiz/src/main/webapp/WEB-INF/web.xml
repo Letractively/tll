@@ -64,11 +64,11 @@
     <filter-class>com.tll.server.filter.SmbizAuthenticationProcessingFilter</filter-class>
     <init-param>
       <param-name>authenticationFailureUrl</param-name>
-      <param-value>/adminLogin?login_error=1</param-value>
+      <param-value>/smbizAdmin/adminLogin?login_error=1</param-value>
     </init-param>
     <init-param>
       <param-name>defaultTargetUrl</param-name>
-      <param-value>/adminLogin</param-value>
+      <param-value>/smbizAdmin/adminLogin</param-value>
     </init-param>
   </filter>
   <filter-mapping>
@@ -98,11 +98,11 @@
     <filter-class>com.tll.server.filter.ExceptionTranslationFilter</filter-class>
     <init-param>
       <param-name>errorPage</param-name>
-      <param-value>/admin/errorHandler/</param-value>
+      <param-value>/smbizAdmin/errorHandler/</param-value>
     </init-param>
     <init-param>
       <param-name>loginFormUrl</param-name>
-      <param-value>/adminLogin</param-value>
+      <param-value>/smbizAdmin/adminLogin</param-value>
     </init-param>
     <init-param>
       <param-name>forceHttps</param-name>
@@ -142,7 +142,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LoginServlet</servlet-name>
-    <url-pattern>/adminLogin</url-pattern>
+    <url-pattern>/smbizAdmin/adminLogin</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -151,7 +151,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LogoutServlet</servlet-name>
-    <url-pattern>/adminLogout</url-pattern>
+    <url-pattern>/smbizAdmin/adminLogout</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -160,7 +160,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ErrorHandlerServlet</servlet-name>
-    <url-pattern>/admin/errorHandler/</url-pattern>
+    <url-pattern>/smbizAdmin/errorHandler/</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -169,7 +169,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ForgotPasswordService</servlet-name>
-    <url-pattern>/rpc/adminForgotPassword</url-pattern>
+    <url-pattern>/smbizAdmin/rpc/adminForgotPassword</url-pattern>
   </servlet-mapping>
   <!-- END SECURITY ACEGI -->
   
@@ -181,9 +181,6 @@
   <filter-mapping>
     <filter-name>OpenEntityManagerInViewFilter</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>OpenEntityManagerInViewFilter</filter-name>
     <url-pattern>/adminLogin/*</url-pattern>
   </filter-mapping>
   <!-- END DB ORM -->
@@ -207,8 +204,8 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>CrudAuxDataService</servlet-name>
-    <url-pattern>/rpc/crud</url-pattern>
-    <url-pattern>/rpc/aux</url-pattern>
+    <url-pattern>/smbizAdmin/rpc/crud</url-pattern>
+    <url-pattern>/smbizAdmin/rpc/aux</url-pattern>
   </servlet-mapping>
   
 	<servlet>
@@ -217,7 +214,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ListingService</servlet-name>
-		<url-pattern>/rpc/listing</url-pattern>
+		<url-pattern>/smbizAdmin/rpc/listing</url-pattern>
 	</servlet-mapping>
 	
   <servlet>
@@ -226,7 +223,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>AdminContextService</servlet-name>
-    <url-pattern>/rpc/adminContext</url-pattern>
+    <url-pattern>/smbizAdmin/rpc/adminContext</url-pattern>
   </servlet-mapping>
   <!-- END GWT RPC Servlets -->
   

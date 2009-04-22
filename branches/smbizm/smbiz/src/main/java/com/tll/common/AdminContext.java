@@ -54,9 +54,7 @@ public final class AdminContext implements IMarshalable {
 	public AdminContext(boolean debug, String environment, Model user, Model account) {
 		super();
 		this.debug = debug;
-		assert environment != null;
 		this.environment = environment;
-		assert user != null;
 		this.user = user;
 		this.account = account;
 	}

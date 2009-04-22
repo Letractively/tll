@@ -11,6 +11,7 @@ import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
@@ -44,6 +45,8 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	 */
 	private final EditPanel editPanel;
 
+	private final GlobalMsgPanel gmp;
+
 	/**
 	 * Constructor
 	 * @param fieldPanel The required field panel
@@ -52,12 +55,14 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
 
-		// TODO add global msg panel ref
-		editPanel = new EditPanel(null, fieldPanel, true, false);
+		gmp = new GlobalMsgPanel();
+
+		editPanel = new EditPanel(gmp, fieldPanel, true, false);
 		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;
 
+		addWidget(gmp);
 		addWidget(editPanel);
 	}
 

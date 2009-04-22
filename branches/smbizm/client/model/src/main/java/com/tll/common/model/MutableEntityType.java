@@ -6,6 +6,9 @@ package com.tll.common.model;
 
 /**
  * MutableEntityType - {@link IEntityType} impl supporting mutable properties.
+ * <p>
+ * <em>WARNING:</em> do not attempt to employ equals()/hashCode() since we have
+ * multiple {@link IEntityType} impl types!
  * @author jpk
  */
 public final class MutableEntityType implements IEntityType {
@@ -55,5 +58,10 @@ public final class MutableEntityType implements IEntityType {
 	protected void setPresentationName(String presentationName) {
 		if(presentationName == null) throw new IllegalArgumentException("Null presentation name");
 		this.presentationName = presentationName;
+	}
+
+	@Override
+	public String toString() {
+		return getPresentationName();
 	}
 }

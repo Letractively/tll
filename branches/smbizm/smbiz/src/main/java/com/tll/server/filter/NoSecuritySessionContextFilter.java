@@ -72,6 +72,7 @@ public final class NoSecuritySessionContextFilter implements Filter {
 				ac.setUser(user);
 				ac.setAccount(user.getAccount());
 				session.setAttribute(AdminContext.KEY, ac);
+				log.info("Server-side admin context created and stored in the servlet context");
 			}
 		}
 		finally {

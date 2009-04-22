@@ -123,11 +123,6 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 		crudOp = CrudOp.PURGE;
 	}
 
-	private void clear() {
-		crudOp = null;
-		entityRequest = null;
-	}
-
 	public final void setEntityOptions(EntityOptions options) {
 		if(entityRequest == null) {
 			throw new IllegalStateException("No entity request specified");
@@ -165,11 +160,8 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 
 	@Override
 	protected void handleSuccess(EntityPayload result) {
-		super.handleSuccess(result);
-
-		// cache aux data
+		// cache aux data first
 		AuxDataCache.instance().cache(result);
-
-		clear();
+		super.handleSuccess(result);
 	}
 }

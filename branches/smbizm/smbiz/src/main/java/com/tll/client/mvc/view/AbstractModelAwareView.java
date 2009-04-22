@@ -18,10 +18,13 @@ import com.tll.common.model.Model;
 public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
 IModelAwareView<I> {
 
+	private boolean eventFlag;
+
 	/**
 	 * Constructor
 	 */
 	public AbstractModelAwareView() {
+		addHandler(this, ModelChangeEvent.TYPE);
 	}
 
 	/**
@@ -59,10 +62,14 @@ IModelAwareView<I> {
 				handleModelChangeSuccess(event);
 			}
 		}
-		// now dispatch to the other cached views
-		final IView<?>[] cachedViews = ViewManager.get().getCachedViews();
-		for(final IView<?> cv : cachedViews) {
-			if(cv != this) cv.getViewWidget().fireEvent(event);
+		if(!eventFlag) {
+			eventFlag = true;
+			// now dispatch to the other cached views
+			final IView<?>[] cachedViews = ViewManager.get().getCachedViews();
+			for(final IView<?> cv : cachedViews) {
+				if(cv != this) cv.getViewWidget().fireEvent(event);
+			}
+			eventFlag = false;
 		}
 	}
 }
