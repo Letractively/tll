@@ -8,7 +8,6 @@ package com.tll.server.rpc.entity;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityPayload;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.common.search.ISearch;
 import com.tll.model.INamedEntity;
 import com.tll.model.key.NameKey;
 import com.tll.service.entity.INamedEntityService;
@@ -17,9 +16,8 @@ import com.tll.service.entity.INamedEntityService;
  * MNamedEntityServiceImpl
  * @author jpk
  * @param <N>
- * @param <S>
  */
-public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends ISearch> extends MEntityServiceImpl<N, S> {
+public abstract class MNamedEntityServiceImpl<N extends INamedEntity> extends MEntityServiceImpl<N> {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -35,8 +33,8 @@ public abstract class MNamedEntityServiceImpl<N extends INamedEntity, S extends 
 			}
 			final Class<N> entityClass = (Class<N>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final INamedEntityService<N> namedEntityService =
-					(INamedEntityService<N>) context.getEntityServiceFactory().instanceByEntityType(
-							entityClass);
+				(INamedEntityService<N>) context.getEntityServiceFactory().instanceByEntityType(
+						entityClass);
 			return namedEntityService.load(new NameKey<N>(entityClass, name));
 		}
 

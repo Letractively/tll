@@ -39,9 +39,8 @@ import com.tll.service.entity.IEntityService;
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
  * @author jpk
  * @param <E>
- * @param <S>
  */
-public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> implements IMEntityServiceImpl<E, S> {
+public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityServiceImpl<E> {
 
 	/**
 	 * Loads additional entity properties.
@@ -63,7 +62,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @throws SystemError When any error occurrs.
 	 */
 	protected abstract void handlePersistOptions(MEntityContext context, E e, EntityOptions options)
-			throws SystemError;
+	throws SystemError;
 
 	/**
 	 * Does the core entity loading.
@@ -75,15 +74,15 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	@SuppressWarnings("unchecked")
 	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request,
 			final EntityPayload payload) {
-		
+
 		// core entity loading
 		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 		final IEntityService<E> svc =
-				context.getEntityServiceFactory().instanceByEntityType(entityClass);
+			context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 		if(request.isLoadByBusinessKey()) {
 			// load by business key
-			final S search = (S) request.getSearch();
+			final ISearch search = request.getSearch();
 			if(search == null) {
 				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
 				return null;
@@ -115,17 +114,12 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 			// marshal the loaded entity
 			final Model group =
-					context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
+				context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
 			payload.setEntity(group);
 
 			// set any entity refs
 			for(final String propName : refs.keySet()) {
 				payload.setRelatedOneRef(propName, refs.get(propName));
-			}
-
-			// load any requested auxiliary
-			if(request.auxDataRequest != null) {
-				AuxDataHandler.getAuxData(context, request.auxDataRequest, payload);
 			}
 		}
 		catch(final EntityNotFoundException e) {
@@ -149,7 +143,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 			final Model entity = request.getEntity();
 			E e = context.getMarshaler().unmarshalEntity(entityClass, entity);
 			final IEntityService<E> svc =
-					context.getEntityServiceFactory().instanceByEntityType(entityClass);
+				context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			e = svc.persist(e);
 
 			// handle persist options
@@ -157,7 +151,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 
 			// marshall
 			final Model group =
-					context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
+				context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
 			payload.setEntity(group);
 
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
@@ -186,7 +180,7 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 		try {
 			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final IEntityService<E> svc =
-					context.getEntityServiceFactory().instanceByEntityType(entityClass);
+				context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final ModelKey entityRef = request.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
@@ -214,8 +208,10 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * Translates {@link ISearch} to {@link IBusinessKey}s.
 	 * @param search The search to translate
 	 * @return Translated {@link IBusinessKey}
+	 * @throws IllegalArgumentException When the <code>search</code> parameter is
+	 *         unsupported.
 	 */
-	protected abstract IBusinessKey<E> handleBusinessKeyTranslation(S search);
+	protected abstract IBusinessKey<E> handleBusinessKeyTranslation(ISearch search) throws IllegalArgumentException;
 
 	/**
 	 * Handles the entity specific search to criteria translation.
@@ -225,13 +221,13 @@ public abstract class MEntityServiceImpl<E extends IEntity, S extends ISearch> i
 	 * @throws IllegalArgumentException When the <code>search</code> parameter is
 	 *         unsupported.
 	 */
-	protected abstract void handleSearchTranslation(MEntityContext context, S search,
+	protected abstract void handleSearchTranslation(MEntityContext context, ISearch search,
 			ICriteria<E> criteria)
-			throws IllegalArgumentException;
+	throws IllegalArgumentException;
 
 	@SuppressWarnings("unchecked")
-	public final ICriteria<E> translate(final MEntityContext context, final S search)
-			throws IllegalArgumentException {
+	public final ICriteria<E> translate(final MEntityContext context, final ISearch search)
+	throws IllegalArgumentException {
 		final CriteriaType criteriaType = search.getCriteriaType();
 		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
 		Criteria<E> criteria;

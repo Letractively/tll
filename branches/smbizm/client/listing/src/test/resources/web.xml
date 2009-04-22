@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
-  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
 
   <display-name>Listing Test</display-name>
   <description>Tests for the client-listing module.</description>
@@ -72,12 +72,13 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>CrudService</servlet-name>
-    <servlet-class>com.tll.server.rpc.entity.MEntityServiceDelegate</servlet-class>
+    <servlet-name>CrudAuxDataService</servlet-name>
+    <servlet-class>com.tll.server.rpc.entity.CrudAuxDataService</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>CrudService</servlet-name>
+    <servlet-name>CrudAuxDataService</servlet-name>
     <url-pattern>/uitests/rpc/crud</url-pattern>
+    <url-pattern>/uitests/rpc/aux</url-pattern>
   </servlet-mapping>
   
 </web-app>

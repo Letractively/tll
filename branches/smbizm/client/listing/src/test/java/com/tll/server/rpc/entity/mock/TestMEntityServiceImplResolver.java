@@ -4,7 +4,6 @@
  */
 package com.tll.server.rpc.entity.mock;
 
-import com.tll.common.search.ISearch;
 import com.tll.model.Address;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
@@ -18,7 +17,7 @@ import com.tll.server.rpc.entity.IMEntityServiceImplResolver;
 public class TestMEntityServiceImplResolver implements IMEntityServiceImplResolver {
 
 	@Override
-	public Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> resolveMEntityServiceImpl(
+	public Class<? extends IMEntityServiceImpl<? extends IEntity>> resolveMEntityServiceImpl(
 			Class<? extends IEntity> entityClass) throws IllegalArgumentException {
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 

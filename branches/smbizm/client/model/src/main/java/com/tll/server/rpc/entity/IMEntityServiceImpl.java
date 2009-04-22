@@ -10,13 +10,11 @@ import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
 
 /**
- * IMEntityServiceImpl - Server side support for the RPC {@link IMEntityService}
- * implementation delegate.
+ * IMEntityServiceImpl - Server side entity crud support.
  * @author jpk
  * @param <E> The "root" entity type
- * @param <S> The search type
  */
-public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
+public interface IMEntityServiceImpl<E extends IEntity> {
 
 	/**
 	 * Loads an entity.
@@ -52,7 +50,7 @@ public interface IMEntityServiceImpl<E extends IEntity, S extends ISearch> {
 	 * @return Translated search {@link ICriteria}.
 	 * @throws IllegalArgumentException
 	 */
-	ICriteria<E> translate(MEntityContext context, S search) throws IllegalArgumentException;
+	ICriteria<E> translate(MEntityContext context, ISearch search) throws IllegalArgumentException;
 
 	/**
 	 * Gets the entity type specific marshaling options.

@@ -5,7 +5,6 @@
  */
 package com.tll.server.rpc.entity;
 
-import com.tll.common.search.ISearch;
 import com.tll.model.IEntity;
 
 
@@ -22,6 +21,6 @@ public interface IMEntityServiceImplResolver {
 	 * @throws IllegalArgumentException When the given entity class can't be
 	 *         resolved to a service impl type
 	 */
-	Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> resolveMEntityServiceImpl(
+	Class<? extends IMEntityServiceImpl<? extends IEntity>> resolveMEntityServiceImpl(
 			Class<? extends IEntity> entityClass) throws IllegalArgumentException;
 }

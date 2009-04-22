@@ -4,6 +4,8 @@
  */
 package com.tll.server.rpc.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
@@ -15,16 +17,19 @@ import com.tll.server.rpc.ExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
- * MEntityServiceContext
+ * MEntityContext - Servlet context scoped data object holding needed types for
+ * processing mentity related server side routines.
  * @author jpk
  */
-public class MEntityContext {
+public final class MEntityContext implements Serializable {
+
+	private static final long serialVersionUID = 7366163949288867262L;
 
 	/**
 	 * The key identifying the {@link MEntityContext} in the
 	 * {@link ServletContext}.
 	 */
-	public static final String KEY = MEntityContext.class.getName();
+	public static final String KEY = Long.toString(serialVersionUID);
 
 	private final RefData refData;
 	private final MailManager mailManager;
@@ -32,7 +37,6 @@ public class MEntityContext {
 	private final EntityManagerFactory entityManagerFactory;
 	private final IEntityFactory entityFactory;
 	private final IEntityServiceFactory entityServiceFactory;
-	private final IMEntityServiceImplResolver mEntityServiceImplResolver;
 	private final INamedQueryResolver namedQueryResolver;
 	private final ExceptionHandler exceptionHandler;
 
@@ -44,14 +48,12 @@ public class MEntityContext {
 	 * @param entityManagerFactory
 	 * @param entityFactory
 	 * @param entityServiceFactory
-	 * @param mEntityServiceImplResolver
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
 	public MEntityContext(RefData refData, MailManager mailManager, Marshaler marshaler,
 			EntityManagerFactory entityManagerFactory, IEntityFactory entityFactory,
-			IEntityServiceFactory entityServiceFactory, IMEntityServiceImplResolver mEntityServiceImplResolver,
-			INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
+			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
@@ -59,7 +61,6 @@ public class MEntityContext {
 		this.entityManagerFactory = entityManagerFactory;
 		this.entityFactory = entityFactory;
 		this.entityServiceFactory = entityServiceFactory;
-		this.mEntityServiceImplResolver = mEntityServiceImplResolver;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
 	}
@@ -86,10 +87,6 @@ public class MEntityContext {
 
 	public Marshaler getMarshaler() {
 		return marshaler;
-	}
-
-	public IMEntityServiceImplResolver getServiceResolver() {
-		return mEntityServiceImplResolver;
 	}
 
 	public INamedQueryResolver getQueryResolver() {

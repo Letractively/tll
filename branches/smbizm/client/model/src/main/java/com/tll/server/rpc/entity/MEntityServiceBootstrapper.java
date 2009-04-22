@@ -59,6 +59,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 	@Override
 	public void startup(Injector injector, ServletContext servletContext, Config config) {
+		log.info("Bootstrapping MEntity services..");
 		final RefData refdata = injector.getInstance(RefData.class);
 
 		// the mail manager is optional
@@ -91,16 +92,16 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 		String cn;
 
-		IMEntityServiceImplResolver sr;
-		final INamedQueryResolver nqr;
+		IMEntityServiceImplResolver serviceResolver;
+		final INamedQueryResolver namedQueryResolver;
 		try {
 			// instantiate the mentity service resolver
 			cn = config.getString(ConfigKeys.MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME.getKey());
-			sr = (IMEntityServiceImplResolver) Class.forName(cn).newInstance();
+			serviceResolver = (IMEntityServiceImplResolver) Class.forName(cn).newInstance();
 
 			// instantiate the named query resolver
 			cn = config.getString(ConfigKeys.NAMED_QUERY_RESOLVER_CLASSNAME.getKey());
-			nqr = (INamedQueryResolver) Class.forName(cn).newInstance();
+			namedQueryResolver = (INamedQueryResolver) Class.forName(cn).newInstance();
 
 		}
 		catch(final InstantiationException e) {
@@ -113,8 +114,17 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			throw new Error(e.getMessage(), e);
 		}
 
-		servletContext.setAttribute(MEntityContext.KEY, new MEntityContext(refdata,
-				mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory, sr, nqr, exceptionHandler));
+		// create and store the sole context
+		final MEntityContext context =
+			new MEntityContext(refdata, mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory,
+					namedQueryResolver, exceptionHandler);
+		servletContext.setAttribute(MEntityContext.KEY, context);
+
+		// create and store the sole delegate
+		final MEntityServiceDelegate delegate = new MEntityServiceDelegate(context, serviceResolver);
+		servletContext.setAttribute(MEntityServiceDelegate.KEY, delegate);
+
+		log.info("MEntity services bootstrapped.");
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import java.util.Map;
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.ModelKey;
+import com.tll.common.search.ISearch;
 import com.tll.common.search.mock.TestAddressSearch;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.ICriteria;
@@ -25,7 +26,7 @@ import com.tll.server.rpc.entity.MEntityServiceImpl;
  * TestAddressService
  * @author jpk
  */
-public class TestAddressService extends MEntityServiceImpl<Address, TestAddressSearch> {
+public class TestAddressService extends MEntityServiceImpl<Address> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
@@ -37,32 +38,34 @@ public class TestAddressService extends MEntityServiceImpl<Address, TestAddressS
 	@Override
 	protected void handleLoadOptions(MEntityContext context, Address e, EntityOptions options,
 			Map<String, ModelKey> refs)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
 	protected void handlePersistOptions(MEntityContext context, Address e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
-	protected IBusinessKey<Address> handleBusinessKeyTranslation(TestAddressSearch search) {
+	protected IBusinessKey<Address> handleBusinessKeyTranslation(ISearch search) {
+		final TestAddressSearch tas = (TestAddressSearch) search;
 		IBusinessKey<Address> bk;
 		try {
-			bk = BusinessKeyFactory.create(Address.class, search.getBusinessKeyName());
+			bk = BusinessKeyFactory.create(Address.class, tas.getBusinessKeyName());
 		}
 		catch(final BusinessKeyNotDefinedException e) {
 			throw new SystemError("No business keys defined for Address entity");
 		}
-		bk.setPropertyValue("address1", search.getAddress1());
-		bk.setPropertyValue("postalCode", search.getPostalCode());
+		bk.setPropertyValue("address1", tas.getAddress1());
+		bk.setPropertyValue("postalCode", tas.getPostalCode());
 		return bk;
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, TestAddressSearch search,
+	protected void handleSearchTranslation(MEntityContext context, ISearch search,
 			ICriteria<Address> criteria) throws IllegalArgumentException {
-		criteria.getPrimaryGroup().addCriterion("address1", search.getAddress1(), Comparator.EQUALS, false);
-		criteria.getPrimaryGroup().addCriterion("postalCode", search.getPostalCode(), Comparator.EQUALS, false);
+		final TestAddressSearch tas = (TestAddressSearch) search;
+		criteria.getPrimaryGroup().addCriterion("address1", tas.getAddress1(), Comparator.EQUALS, false);
+		criteria.getPrimaryGroup().addCriterion("postalCode", tas.getPostalCode(), Comparator.EQUALS, false);
 	}
 }

@@ -33,9 +33,8 @@ import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.server.rpc.entity.EntityTypeUtil;
-import com.tll.server.rpc.entity.IMEntityServiceImpl;
 import com.tll.server.rpc.entity.MEntityContext;
-import com.tll.server.rpc.entity.MEntityServiceImplFactory;
+import com.tll.server.rpc.entity.MEntityServiceDelegate;
 
 /**
  * ListingService - Handles client listing requests.
@@ -80,7 +79,11 @@ IListingService<S, Model> {
 			final HttpServletRequest request = getRequestContext().getRequest();
 			final MEntityContext context =
 				(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
-			assert request != null;
+			final MEntityServiceDelegate delegate =
+				(MEntityServiceDelegate) getServletContext().getAttribute(MEntityServiceDelegate.KEY);
+			if(context == null || delegate == null) {
+				throw new IllegalStateException("Unable to obtain the mentity context and/or the mentity service delegate");
+			}
 
 			Integer offset = listingRequest.getOffset();
 			Sorting sorting = listingRequest.getSorting();
@@ -122,14 +125,11 @@ IListingService<S, Model> {
 
 						// resolve the entity class and corres. marshaling entity service
 						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
-						final IMEntityServiceImpl<E, S> mEntitySvc =
-							(IMEntityServiceImpl<E, S>) MEntityServiceImplFactory.instance(entityClass, context
-									.getServiceResolver());
 
 						// translate client side criteria to server side criteria
 						final ICriteria<E> criteria;
 						try {
-							criteria = mEntitySvc.translate(context, search);
+							criteria = (ICriteria<E>) delegate.translate(search);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -169,7 +169,9 @@ IListingService<S, Model> {
 						// transform to marshaling list handler
 						final MarshalingListHandler<E> marshalingListHandler =
 							new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
-									mEntitySvc.getMarshalOptions(context), listingDef.getPropKeys());
+									delegate.getMarshalOptions(search
+										.getEntityType()),
+									listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());

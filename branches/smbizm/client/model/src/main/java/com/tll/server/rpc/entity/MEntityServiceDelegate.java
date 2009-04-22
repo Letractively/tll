@@ -5,6 +5,9 @@
  */
 package com.tll.server.rpc.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.tll.SystemError;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
@@ -20,20 +23,41 @@ import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
-import com.tll.server.rpc.RpcServlet;
+import com.tll.server.marshal.MarshalOptions;
 
 /**
- * MEntityServiceDelegate - Front line rpc servlet that routes entity related
- * rpc requests.
+ * MEntityServiceDelegate - Server side handling of core marshaled entity
+ * routines.
  * @author jpk
  */
-public class MEntityServiceDelegate extends RpcServlet implements
-		IMEntityService<IEntity, ISearch> {
+public final class MEntityServiceDelegate {
 
 	private static final long serialVersionUID = 5017008307371980402L;
-	
-	private MEntityContext getMEntityContext() {
-		return (MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
+
+	/**
+	 * Publicly available unique token.
+	 */
+	public static final String KEY = Long.toString(serialVersionUID);
+
+	/**
+	 * The cache of implementations.
+	 */
+	private static final Map<Class<? extends IMEntityServiceImpl<? extends IEntity>>, IMEntityServiceImpl<? extends IEntity>> map =
+		new HashMap<Class<? extends IMEntityServiceImpl<? extends IEntity>>, IMEntityServiceImpl<? extends IEntity>>();
+
+	private final MEntityContext context;
+
+	private final IMEntityServiceImplResolver resolver;
+
+	/**
+	 * Constructor
+	 * @param context
+	 * @param resolver
+	 */
+	public MEntityServiceDelegate(MEntityContext context, IMEntityServiceImplResolver resolver) {
+		super();
+		this.context = context;
+		this.resolver = resolver;
 	}
 
 	/**
@@ -70,83 +94,136 @@ public class MEntityServiceDelegate extends RpcServlet implements
 	}
 
 	/**
-	 * Resolves the appropriate {@link IMEntityServiceImpl} class for the given
-	 * entity type.
+	 * Resolves the appropriate {@link IMEntityServiceImpl} implementation
+	 * instance for the given entity type.
 	 * @param entityType the entity type
-	 * @param payload The {@link EntityPayload}
+	 * @param status The status object that is filled with the generated erroro
+	 *        msg(s)
 	 * @return The associated {@link IMEntityServiceImpl} impl instance or
 	 *         <code>null</code> when unable to resolve in which case, the
 	 *         {@link EntityPayload}'s {@link Status} is updated with an error
 	 *         message.
 	 */
-	private IMEntityServiceImpl<? extends IEntity, ? extends ISearch> resolveEntityServiceImpl(
-			final IEntityType entityType, final EntityPayload payload) {
+	private IMEntityServiceImpl<? extends IEntity> resolveImpl(
+			final IEntityType entityType, final Status status) {
 		try {
-			return MEntityServiceImplFactory.instance(EntityTypeUtil.getEntityClass(entityType), getMEntityContext()
-					.getServiceResolver());
+			final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(entityType);
+			IMEntityServiceImpl<? extends IEntity> svc;
+			Class<? extends IMEntityServiceImpl<? extends IEntity>> svcType;
+			try {
+				svcType = resolver.resolveMEntityServiceImpl(entityClass);
+			}
+			catch(final IllegalArgumentException e) {
+				throw new SystemError("Can't resolve mEntity service impl class for entity: " + entityClass.getName());
+			}
+			svc = map.get(svcType);
+			if(svc == null) {
+				try {
+					svc = svcType.newInstance();
+				}
+				catch(final InstantiationException e) {
+					throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityClass, e);
+				}
+				catch(final IllegalAccessException e) {
+					throw new SystemError("Unable to access MEntityService class for entity type: " + entityClass, e);
+				}
+				map.put(svcType, svc);
+			}
+			return svc;
 		}
 		catch(final SystemError se) {
-			getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), se, se.getMessage(), true);
-			// return null;
+			if(status != null) {
+				context.getExceptionHandler().handleException(status, se, se.getMessage(), true);
+			}
 			throw se;
 		}
 	}
 
-	@Override
+	/**
+	 * Handles an aux data request.
+	 * @param request
+	 * @return the resultant payload
+	 */
 	public AuxDataPayload handleAuxDataRequest(final AuxDataRequest request) {
 		final AuxDataPayload payload = new AuxDataPayload();
 		if(validateAuxDataRequest(request, payload)) {
 			try {
-				AuxDataHandler.getAuxData(getMEntityContext(), request, payload);
+				AuxDataHandler.getAuxData(context, this, request, payload);
 			}
 			catch(final SystemError se) {
-				getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), se, null, true);
+				context.getExceptionHandler().handleException(payload.getStatus(), se, null, true);
 			}
 			catch(final RuntimeException re) {
-				getMEntityContext().getExceptionHandler().handleException(payload.getStatus(), re, null, true);
+				context.getExceptionHandler().handleException(payload.getStatus(), re, null, true);
 				throw re;
 			}
 		}
 		return payload;
 	}
 
-	@Override
+	/**
+	 * Loads an entity
+	 * @param request
+	 * @return the resultant payload
+	 */
 	public EntityPayload load(final EntityLoadRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveEntityServiceImpl(request.getEntityType(), payload).load(getMEntityContext(), request, payload);
+			resolveImpl(request.getEntityType(), payload.getStatus()).load(context, request, payload);
+		}
+		// load any requested auxiliary
+		if(request.auxDataRequest != null) {
+			AuxDataHandler.getAuxData(context, this, request.auxDataRequest, payload);
 		}
 		return payload;
 	}
 
-	@Override
+	/**
+	 * Persists an entity.
+	 * @param request
+	 * @return the resultant payload
+	 */
 	public EntityPayload persist(final EntityPersistRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveEntityServiceImpl(request.getEntityType(), payload).persist(getMEntityContext(), request, payload);
+			resolveImpl(request.getEntityType(), payload.getStatus()).persist(context, request, payload);
 		}
 		return payload;
 	}
 
-	@Override
+	/**
+	 * Purges an entity.
+	 * @param request
+	 * @return the resultant payload
+	 */
 	public EntityPayload purge(final EntityPurgeRequest request) {
 		final EntityPayload payload = new EntityPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveEntityServiceImpl(request.getEntityType(), payload).purge(getMEntityContext(), request, payload);
+			resolveImpl(request.getEntityType(), payload.getStatus()).purge(context, request, payload);
 		}
 		return payload;
 	}
 
-	@Override
+	/**
+	 * Provides the entity type specific marshal options.
+	 * @param entityType
+	 * @return the applicable options
+	 */
+	public MarshalOptions getMarshalOptions(IEntityType entityType) {
+		return resolveImpl(entityType, null).getMarshalOptions(context);
+	}
+
+	/**
+	 * Translates client-side search criteria to server-side search criteria.
+	 * @param search the client side search instance
+	 * @return Newly created server side criteria instance
+	 * @throws IllegalArgumentException
+	 * @throws SystemError
+	 */
 	public ICriteria<? extends IEntity> translate(final ISearch search) throws IllegalArgumentException, SystemError {
 		if(search == null) {
 			throw new IllegalArgumentException("Null search argument.");
 		}
-		final MEntityContext context = getMEntityContext();
-		final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(search.getEntityType());
-		return MEntityServiceImplFactory.instance(entityClass, context.getServiceResolver())
-				.translate(
-				getMEntityContext(),
-				search);
+		return resolveImpl(search.getEntityType(), null).translate(context, search);
 	}
 }

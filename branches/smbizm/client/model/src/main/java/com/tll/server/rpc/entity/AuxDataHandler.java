@@ -20,7 +20,6 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
 import com.tll.refdata.RefDataType;
-import com.tll.server.marshal.MarshalOptions;
 import com.tll.service.entity.IEntityService;
 
 /**
@@ -32,20 +31,22 @@ public abstract class AuxDataHandler {
 	/**
 	 * Provides auxiliary data.
 	 * @param context
+	 * @param delegate
 	 * @param auxDataRequest
 	 * @param payload
 	 */
-	public static void getAuxData(MEntityContext context, final AuxDataRequest auxDataRequest,
+	public static void getAuxData(MEntityContext context, MEntityServiceDelegate delegate,
+			final AuxDataRequest auxDataRequest,
 			final AuxDataPayload payload) {
 
 		Map<RefDataType, Map<String, String>> appRefDataMap = null;
 		Map<IEntityType, List<Model>> entityMap = null;
 		Set<Model> entityPrototypes = null;
-		
+
 		// app ref data
-		Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
+		final Iterator<RefDataType> adritr = auxDataRequest.getRefDataRequests();
 		while(adritr != null && adritr.hasNext()) {
-			RefDataType rdt = adritr.next();
+			final RefDataType rdt = adritr.next();
 			final Map<String, String> map = context.getRefData().getRefData(rdt);
 			if(map == null) {
 				payload.getStatus().addMsg("Unable to find app ref data: " + rdt.getName(), MsgLevel.ERROR);
@@ -61,10 +62,10 @@ public abstract class AuxDataHandler {
 		// entity collection
 		Iterator<IEntityType> etitr = auxDataRequest.getEntityRequests();
 		while(etitr != null && etitr.hasNext()) {
-			IEntityType et = etitr.next();
+			final IEntityType et = etitr.next();
 			final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(et);
 			final IEntityService<? extends IEntity> svc =
-					context.getEntityServiceFactory().instanceByEntityType(entityClass);
+				context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final List<? extends IEntity> list = svc.loadAll();
 			if(list == null || list.size() < 1) {
 				payload.getStatus().addMsg("Unable to obtain " + et.getPresentationName() + " entities for aux data.",
@@ -74,7 +75,7 @@ public abstract class AuxDataHandler {
 				final List<Model> elist = new ArrayList<Model>(list.size());
 				for(final IEntity e : list) {
 					final Model group =
-							context.getMarshaler().marshalEntity(e, MarshalOptions.NON_RELATIONAL);
+						context.getMarshaler().marshalEntity(e, delegate.getMarshalOptions(et));
 					elist.add(group);
 				}
 				if(entityMap == null) {
@@ -87,10 +88,10 @@ public abstract class AuxDataHandler {
 		// entity prototypes
 		etitr = auxDataRequest.getEntityPrototypeRequests();
 		while(etitr != null && etitr.hasNext()) {
-			IEntityType et = etitr.next();
+			final IEntityType et = etitr.next();
 			final IEntity e =
-					context.getEntityFactory().createEntity(EntityTypeUtil.getEntityClass(et), false);
-			final Model model = context.getMarshaler().marshalEntity(e, MarshalOptions.NO_REFERENCES);
+				context.getEntityFactory().createEntity(EntityTypeUtil.getEntityClass(et), false);
+			final Model model = context.getMarshaler().marshalEntity(e, delegate.getMarshalOptions(et));
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();
 			}
