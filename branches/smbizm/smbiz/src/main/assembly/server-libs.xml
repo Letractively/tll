@@ -31,7 +31,7 @@
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
-        <!-- even though we don't need the client-* jars, we need their transitive deps!!! -->
+        <!-- even though we don't need the client-* jars, we need their server-side transitive deps!!! -->
         <!-- <exclude>com.tll:client-*</exclude> -->
         <exclude>com.tll:*sources*</exclude>
         <exclude>com.google.gwt:*</exclude>

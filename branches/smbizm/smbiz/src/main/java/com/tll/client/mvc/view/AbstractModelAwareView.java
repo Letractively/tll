@@ -6,7 +6,6 @@ package com.tll.client.mvc.view;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.mvc.ViewManager;
 import com.tll.common.model.Model;
 
 /**
@@ -62,6 +61,7 @@ IModelAwareView<I> {
 				handleModelChangeSuccess(event);
 			}
 		}
+		/* TODO temp disable
 		if(!eventFlag) {
 			eventFlag = true;
 			// now dispatch to the other cached views
@@ -71,5 +71,6 @@ IModelAwareView<I> {
 			}
 			eventFlag = false;
 		}
+		 */
 	}
 }
