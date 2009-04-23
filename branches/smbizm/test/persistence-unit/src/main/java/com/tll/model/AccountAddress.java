@@ -8,11 +8,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -25,7 +25,7 @@ import com.tll.model.schema.BusinessObject;
 @Entity
 @Table(name = "account_address")
 @BusinessObject(businessKeys = {
-	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }), 
+	@BusinessKeyDef(name = "Account Id and Address Id", properties = { "account.id", "address.id" }),
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME })
 })
 public class AccountAddress extends NamedTimeStampEntity implements IChildEntity<Account> {
@@ -70,10 +70,10 @@ public class AccountAddress extends NamedTimeStampEntity implements IChildEntity
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
 		CascadeType.MERGE, CascadeType.PERSIST })
-	@JoinColumn(name = "address_id")
-	@NotNull
-	@Valid
-	public Address getAddress() {
+		@JoinColumn(name = "address_id")
+		@NotNull
+		@Valid
+		public Address getAddress() {
 		return address;
 	}
 

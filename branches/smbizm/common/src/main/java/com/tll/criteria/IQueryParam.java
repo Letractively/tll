@@ -1,6 +1,7 @@
 package com.tll.criteria;
 
 import com.tll.IMarshalable;
+import com.tll.model.schema.IPropertyNameProvider;
 import com.tll.model.schema.PropertyType;
 
 /**

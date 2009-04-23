@@ -64,10 +64,10 @@
       </exclusions>
     </dependency>
     
-    <!-- gwt-servlet is only needed to satisfy the IMarshalable interface -->
     <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-servlet</artifactId>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
     </dependency>
     
     <dependency>

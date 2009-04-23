@@ -27,7 +27,6 @@ public final class PropertyMetadata extends AbstractSchemaProperty {
 	 * @param managed Is the proeprty managed?
 	 * @param required I.e. not nullable?
 	 * @param maxLen The max allowed String-wise length
-	 * @see Managed
 	 */
 	public PropertyMetadata(final PropertyType propertyType, final boolean managed, final boolean required,
 			final int maxLen) {

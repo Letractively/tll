@@ -10,7 +10,7 @@ import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasHelpText;
 import com.tll.client.validate.IValidator;
 import com.tll.common.msg.Msg.MsgLevel;
-import com.tll.criteria.IPropertyNameProvider;
+import com.tll.model.schema.IPropertyNameProvider;
 
 /**
  * IFieldWidget - A physical non-group field capable of display in the ui.

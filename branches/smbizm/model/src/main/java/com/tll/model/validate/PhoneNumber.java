@@ -10,13 +10,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.ValidatorClass;
+import javax.validation.Constraint;
 
 /**
  * PhoneNumber - Indicates the annotatee is a phone number.
  * @author jpk
  */
-@ValidatorClass(PhoneNumberValidator.class)
+@Constraint(validatedBy = PhoneNumberValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -34,4 +34,6 @@ public @interface PhoneNumber {
 	String countryPropertyName() default "country";
 
 	String message() default "{validator.phone_number}";
+
+	Class<?>[] groups() default {};
 }

@@ -9,7 +9,6 @@
     </groups>
     <packages>
       <package name="com.tll.common.*" />
-      <package name="com.tll.server.*" />
     </packages>
   </test>
   

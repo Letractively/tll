@@ -76,6 +76,11 @@
 
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -113,10 +118,6 @@
         <exclusion>
           <groupId>com.google.code.guice</groupId>
           <artifactId>guice</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.hibernate</groupId>

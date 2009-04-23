@@ -10,19 +10,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.ValidatorClass;
+import javax.validation.Constraint;
+
 
 /**
  * AtLeastOne - Signifies "at least one" requirement.
  * @author jpk
  */
-@ValidatorClass(AtLeastOneValidator.class)
+@Constraint(validatedBy = AtLeastOneValidator.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AtLeastOne {
 
-	String type();
-
 	String message() default "{validator.at_least_one}";
+
+	Class<?>[] groups() default {};
+
+	String type();
 }

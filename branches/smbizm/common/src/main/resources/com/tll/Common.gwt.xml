@@ -1,0 +1,62 @@
+<module>
+  <inherits name="com.google.gwt.user.User" />
+
+  <!-- shared (client/server) source path -->
+  <source path="common" />
+
+  <!-- non client package sources -->
+  <source path=""><!-- (i.e. the current dir) -->
+    <include name="IProvider.java" />
+    <include name="INameValueProvider.java" />
+    <include name="IDescriptorProvider.java" />
+    <include name="IMarshalable.java" />
+    <include name="ApplicationException.java" />
+  </source>
+
+  <source path="util">
+    <include name="StringUtil.java" />
+    <include name="ObjectUtil.java" />
+    <include name="DateRange.java" />
+    <include name="FNum.java" />
+    <include name="DataPoint.java" />
+  </source>
+
+  <source path="key">
+    <include name="IKey.java" />
+  </source>
+
+  <source path="model/schema">
+    <include name="PropertyType.java" />
+    <include name="ISchemaProperty.java" />
+    <include name="AbstractSchemaProperty.java" />
+    <include name="PropertyMetadata.java" />
+    <include name="IPropertyMetadataProvider.java" />
+    <include name="IPropertyNameProvider.java" />
+  </source>
+  
+  <source path="criteria">
+    <include name="CriteriaType.java" />
+    <include name="IQueryParam.java" />
+  </source>
+  
+  <source path="refdata">
+    <include name="RefDataType.java" />
+  </source>
+
+  <!-- non client package sources -->
+  <source path="dao">
+    <include name="Sorting.java" />
+    <include name="SortDir.java" />
+    <include name="SortColumn.java" />
+  </source>
+  
+  <source path="listhandler">
+    <include name="ListHandlerType.java" />
+    <include name="IListHandler.java" />
+    <include name="EmptyListException.java" />
+    <include name="ListHandlerException.java" />
+  </source>
+  
+  <public path="public" />
+
+</module>

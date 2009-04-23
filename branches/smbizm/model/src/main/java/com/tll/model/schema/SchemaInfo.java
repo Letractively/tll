@@ -13,12 +13,12 @@ import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.IEntity;
 
@@ -35,10 +35,10 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * the parentAccount entity class.
 	 */
 	private final Map<Class<? extends IEntity>, Map<String, ISchemaProperty>> schemaMap =
-			new HashMap<Class<? extends IEntity>, Map<String, ISchemaProperty>>();
+		new HashMap<Class<? extends IEntity>, Map<String, ISchemaProperty>>();
 
 	public Map<String, ISchemaProperty> getAllSchemaProperties(final Class<? extends IEntity> entityClass)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		if(!schemaMap.containsKey(entityClass)) {
 			// load it
 			load(entityClass);
@@ -52,7 +52,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	public PropertyMetadata getPropertyMetadata(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(sp.getPropertyType().isRelational()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
@@ -62,7 +62,7 @@ public final class SchemaInfo implements ISchemaInfo {
 	}
 
 	public RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
 		if(!sp.getPropertyType().isRelational()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not relational.");
@@ -77,14 +77,14 @@ public final class SchemaInfo implements ISchemaInfo {
 	 * @throws SchemaInfoException
 	 */
 	private ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
-			throws SchemaInfoException {
+	throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
 
 		if(!schemaMap.containsKey(entityClass)) {
 			load(entityClass);
 		}
-		
+
 		final Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
 
 		if(!classMap.containsKey(propertyName))
@@ -203,8 +203,8 @@ public final class SchemaInfo implements ISchemaInfo {
 			final boolean managed = (m.getAnnotation(Managed.class) != null);
 
 			final boolean required =
-					m.getAnnotation(NotNull.class) != null || m.getAnnotation(NotEmpty.class) != null
-							|| (c == null ? false : !c.nullable());
+				m.getAnnotation(NotNull.class) != null || m.getAnnotation(NotEmpty.class) != null
+				|| (c == null ? false : !c.nullable());
 
 			final Length aLength = m.getAnnotation(Length.class);
 			int maxlen = aLength != null ? aLength.max() : -1;
@@ -260,7 +260,7 @@ public final class SchemaInfo implements ISchemaInfo {
 		final OneToMany otm = m.getAnnotation(OneToMany.class);
 		if(otm != null) {
 			final Class<? extends IEntity> rmec =
-					(Class<? extends IEntity>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
+				(Class<? extends IEntity>) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0];
 			cascades = otm.cascade();
 			return new RelationInfo(rmec, PropertyType.RELATED_MANY, (cascades == null || cascades.length == 0));
 		}

@@ -5,9 +5,11 @@
  */
 package com.tll.model.validate;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.oro.text.perl.Perl5Util;
-import org.hibernate.validator.Validator;
 
 import com.tll.util.ValidationUtil;
 
@@ -15,22 +17,15 @@ import com.tll.util.ValidationUtil;
  * SSNValidator - Validates artifacts annotated with {@link SSN}.
  * @author jpk
  */
-public class SSNValidator implements Validator<SSN>/*, PropertyConstraint*/{
+public class SSNValidator implements ConstraintValidator<SSN, String> {
 
 	public void initialize(SSN parameters) {
 		// no-op
 	}
 
-	public boolean isValid(Object value) {
+	public boolean isValid(String value, ConstraintValidatorContext context) {
 		if(value == null) return true;
-		if(value instanceof String == false) return false;
-		String s = (String) value;
-		return (s.length() < 9) ? false : (new Perl5Util()).match(ValidationUtil.SSN_REGEXP, StringUtils.strip(s));
+		return (value.length() < 9) ? false : (new Perl5Util()).match(ValidationUtil.SSN_REGEXP, StringUtils.strip(value));
 	}
 
-	/*
-	public void apply(Property property) {
-		// no-op
-	}
-	*/
 }

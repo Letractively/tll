@@ -11,17 +11,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.ValidatorClass;
+import javax.validation.Constraint;
 
 /**
  * SSN - Indicates the annotatee is a social security number.
  * @author jpk
  */
-@ValidatorClass(SSNValidator.class)
+@Constraint(validatedBy = SSNValidator.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SSN {
 
 	String message() default "{validator.ssn}";
+
+	Class<?>[] groups() default {};
 }

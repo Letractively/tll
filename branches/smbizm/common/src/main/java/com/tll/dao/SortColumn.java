@@ -1,7 +1,7 @@
 package com.tll.dao;
 
 import com.tll.IMarshalable;
-import com.tll.criteria.IPropertyNameProvider;
+import com.tll.model.schema.IPropertyNameProvider;
 
 /**
  * Represents a sort directive for a single "column".

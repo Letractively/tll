@@ -7,6 +7,8 @@ package com.tll.listhandler;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.ValidatorFactory;
+
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -35,6 +37,7 @@ import com.tll.di.MockEntityFactoryModule;
 import com.tll.di.ModelModule;
 import com.tll.di.OrmDaoModule;
 import com.tll.di.TransactionModule;
+import com.tll.di.ValidationModule;
 import com.tll.model.Address;
 import com.tll.model.IEntityAssembler;
 import com.tll.model.MockEntityFactory;
@@ -58,10 +61,11 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 		 * Constructor
 		 * @param dao
 		 * @param entityAssembler
+		 * @param vfactory
 		 */
 		@Inject
-		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler) {
-			super(dao, entityAssembler);
+		public TestEntityService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+			super(dao, entityAssembler, vfactory);
 		}
 
 		@Override
@@ -123,6 +127,7 @@ public class PagingSearchListHandlerTest extends AbstractInjectedTest {
 
 	@Override
 	protected void addModules(List<Module> modules) {
+		modules.add(new ValidationModule());
 		modules.add(new ModelModule());
 		modules.add(new MockEntityFactoryModule(config));
 		super.addModules(modules);

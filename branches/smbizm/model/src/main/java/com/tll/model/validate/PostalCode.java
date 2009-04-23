@@ -10,13 +10,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.ValidatorClass;
+import javax.validation.Constraint;
 
 /**
  * PostalCode - Indicates the annotatee is a postal code (zip code for US).
  * @author jpk
  */
-@ValidatorClass(PostalCodeValidator.class)
+@Constraint(validatedBy = PostalCodeValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -35,4 +35,5 @@ public @interface PostalCode {
 
 	String message() default "{validator.postal_code}";
 
+	Class<?>[] groups() default {};
 }

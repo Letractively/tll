@@ -1,4 +1,4 @@
-package com.tll.model;
+package com.tll.dao.orm;
 
 import java.io.Serializable;
 import java.security.GeneralSecurityException;

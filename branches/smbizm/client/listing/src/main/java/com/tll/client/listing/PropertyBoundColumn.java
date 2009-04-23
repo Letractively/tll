@@ -6,7 +6,7 @@
 package com.tll.client.listing;
 
 import com.tll.client.util.GlobalFormat;
-import com.tll.criteria.IPropertyNameProvider;
+import com.tll.model.schema.IPropertyNameProvider;
 
 /**
  * PropertyBoundColumn - A table column with a bound property name.

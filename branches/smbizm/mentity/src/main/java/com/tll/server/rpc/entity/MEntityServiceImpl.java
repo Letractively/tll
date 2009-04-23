@@ -10,9 +10,8 @@ import java.util.Map;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-
-import org.hibernate.validator.InvalidStateException;
-import org.hibernate.validator.InvalidValue;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import com.tll.SystemError;
 import com.tll.common.data.EntityLoadRequest;
@@ -159,8 +158,8 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		catch(final EntityExistsException e) {
 			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
 		}
-		catch(final InvalidStateException ise) {
-			for(final InvalidValue iv : ise.getInvalidValues()) {
+		catch(final ConstraintViolationException ise) {
+			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
 				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag, iv.getPropertyPath());
 
 			}
