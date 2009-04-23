@@ -7,13 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
-
-import com.tll.model.EntityBase;
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -23,9 +19,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "order_item_trans")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Order Item Id and Order Trans Id", properties = { "orderItem.id", "orderTrans.id" }))
-public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
+	public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTrans>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -2106851598169919247L;
 
@@ -61,7 +57,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 	 * @return Returns the amount.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Range(min = 0L, max = 99999L)
+	@Size(min = 0, max = 99999)
 	public float getAmount() {
 		return amount;
 	}
@@ -120,7 +116,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		try {
 			return getOrderItem().getOrder().getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -130,7 +126,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		try {
 			return getOrderItem().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}
@@ -139,7 +135,7 @@ public class OrderItemTrans extends EntityBase implements IChildEntity<OrderTran
 		try {
 			return getOrderTrans().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

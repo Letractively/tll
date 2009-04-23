@@ -1,5 +1,7 @@
 package com.tll.service.entity.ship;
 
+import javax.validation.ValidatorFactory;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -19,10 +21,11 @@ public class ShipModeService extends NamedEntityService<ShipMode> implements ISh
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public ShipModeService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public ShipModeService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override

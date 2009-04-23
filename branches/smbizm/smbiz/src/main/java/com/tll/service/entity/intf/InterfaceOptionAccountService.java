@@ -1,5 +1,7 @@
 package com.tll.service.entity.intf;
 
+import javax.validation.ValidatorFactory;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -14,16 +16,17 @@ import com.tll.service.entity.EntityService;
  */
 @Transactional
 public class InterfaceOptionAccountService extends EntityService<InterfaceOptionAccount> implements
-		IInterfaceOptionAccountService {
+IInterfaceOptionAccountService {
 
 	/**
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public InterfaceOptionAccountService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public InterfaceOptionAccountService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override

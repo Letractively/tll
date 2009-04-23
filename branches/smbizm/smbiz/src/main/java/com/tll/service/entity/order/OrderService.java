@@ -1,5 +1,7 @@
 package com.tll.service.entity.order;
 
+import javax.validation.ValidatorFactory;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -19,10 +21,11 @@ public class OrderService extends EntityService<Order> implements IOrderService 
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public OrderService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public OrderService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override

@@ -11,15 +11,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
-import org.hibernate.validator.Valid;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -29,9 +26,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "ioa")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Option Id and Account Id", properties = { "option.id", "account.id" }))
-public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+	public class InterfaceOptionAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 1185305612828685906L;
 
@@ -111,7 +108,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	 */
 	@Column(name = "set_up_price", precision = 8, scale = 2)
 	@NotNull
-	@Range(min = 1L, max = 999999L)
+	@Size(min = 1, max = 999999)
 	public float getSetUpPrice() {
 		return setUpPrice;
 	}
@@ -128,7 +125,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	 */
 	@Column(name = "monthly_price", precision = 8, scale = 2)
 	@NotNull
-	@Range(min = 1L, max = 999999L)
+	@Size(min = 1, max = 999999)
 	public float getMonthlyPrice() {
 		return monthlyPrice;
 	}
@@ -145,7 +142,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 	 */
 	@Column(name = "annual_price", precision = 8, scale = 2)
 	@NotNull
-	@Range(min = 1L, max = 999999L)
+	@Size(min = 1, max = 999999)
 	public float getAnnualPrice() {
 		return annualPrice;
 	}
@@ -215,7 +212,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -225,7 +222,7 @@ public class InterfaceOptionAccount extends TimeStampEntity implements IChildEnt
 		try {
 			return getOption().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

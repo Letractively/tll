@@ -4,12 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.validator.Email;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.EntityBase;
-import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 import com.tll.model.validate.PhoneNumber;
@@ -24,10 +21,10 @@ import com.tll.model.validate.PostalCode;
 @PhoneNumbers(value = {
 	@PhoneNumber(phonePropertyName = "phone"),
 	@PhoneNumber(phonePropertyName = "fax") })
-@PostalCode()
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Address 1 and Postal Code", properties = {"address1", "postalCode" }))
-public class Address extends EntityBase {
+	@PostalCode()
+	@BusinessObject(businessKeys =
+		@BusinessKeyDef(name = "Address 1 and Postal Code", properties = {"address1", "postalCode" }))
+		public class Address extends EntityBase {
 
 	private static final long serialVersionUID = 69385466934038047L;
 
@@ -168,7 +165,7 @@ public class Address extends EntityBase {
 	 */
 	@Column(name = "email_address")
 	@NotEmpty
-	@Email
+	// @Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
 	public String getEmailAddress() {
 		return emailAddress;

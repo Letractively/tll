@@ -1,7 +1,9 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.service.entity.app;
+
+import javax.validation.ValidatorFactory;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +24,11 @@ public class AppPropertyService extends NamedEntityService<AppProperty> implemen
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public AppPropertyService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public AppPropertyService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override

@@ -13,10 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
 
 /**
  * The order entity
@@ -27,10 +27,10 @@ import org.hibernate.validator.Valid;
 // We can't guarantee this with enough certainity! So we won't have any bks for
 // orders then.
 /*
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Date Created, Account Id and Customer Id", 
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Date Created, Account Id and Customer Id",
 			properties = { "dateCreated", "account.id", "customer.id" }))
-*/
+ */
 public class Order extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8038786314177749578L;
@@ -339,7 +339,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -349,7 +349,7 @@ public class Order extends TimeStampEntity implements IChildEntity<Account>, IAc
 		try {
 			return getCustomer().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

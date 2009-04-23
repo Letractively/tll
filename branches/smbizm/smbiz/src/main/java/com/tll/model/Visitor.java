@@ -7,14 +7,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -24,10 +21,10 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "visitor")
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host", 
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id, Date Created, Remote Host",
 			properties = { "account.id", "dateCreated", "remoteHost" }))
-public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+			public class Visitor extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 3466539674112418212L;
 
@@ -146,7 +143,7 @@ public class Visitor extends TimeStampEntity implements IChildEntity<Account>, I
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}

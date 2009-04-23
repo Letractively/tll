@@ -12,12 +12,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -112,7 +109,7 @@ public class SiteCode extends NamedTimeStampEntity implements IChildEntity<Accou
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}

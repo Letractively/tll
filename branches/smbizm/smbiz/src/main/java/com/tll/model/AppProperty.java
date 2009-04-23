@@ -4,11 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IEntity;
-import com.tll.model.NamedEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 

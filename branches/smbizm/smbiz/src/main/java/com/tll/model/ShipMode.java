@@ -7,16 +7,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.INamedEntity;
-import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -26,9 +22,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "ship_mode")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id and Name", properties = { "account.id", INamedEntity.NAME }))
-public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+	public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8602635055012335230L;
 
@@ -91,7 +87,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 	 * @return Returns the surcharge.
 	 */
 	@Column(precision = 8, scale = 2)
-	@Range(min = 0, max = 999999)
+	@Size(min = 0, max = 999999)
 	public float getSurcharge() {
 		return surcharge;
 	}
@@ -132,7 +128,7 @@ public class ShipMode extends NamedTimeStampEntity implements IChildEntity<Accou
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}

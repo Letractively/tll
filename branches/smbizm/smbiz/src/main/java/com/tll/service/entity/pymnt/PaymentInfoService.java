@@ -1,5 +1,7 @@
 package com.tll.service.entity.pymnt;
 
+import javax.validation.ValidatorFactory;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -19,10 +21,11 @@ public class PaymentInfoService extends NamedEntityService<PaymentInfo> implemen
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public PaymentInfoService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public PaymentInfoService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override

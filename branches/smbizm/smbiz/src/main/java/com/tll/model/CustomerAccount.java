@@ -7,13 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
-
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -25,7 +21,7 @@ import com.tll.model.schema.BusinessObject;
 @Table(name = "customer_account")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Customer Id and Account Id", properties = {
 	"customer.id", "account.id" }))
-public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+	public class CustomerAccount extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 7262902363821073379L;
 
@@ -139,7 +135,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -149,7 +145,7 @@ public class CustomerAccount extends TimeStampEntity implements IChildEntity<Acc
 		try {
 			return getCustomer().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

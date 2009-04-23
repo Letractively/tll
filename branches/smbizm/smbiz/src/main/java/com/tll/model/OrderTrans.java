@@ -12,15 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -30,10 +27,10 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "order_trans")
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Order Id, Date Created and Username", 
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Order Id, Date Created and Username",
 			properties = { "order.id", "dateCreated", "username" }))
-public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
+			public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 8026809773722347843L;
 
@@ -86,7 +83,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	}
 
 	@Column(name = "item_total", precision = 7, scale = 2)
-	@Range(min = 0L, max = 99999L)
+	@Size(min = 0, max = 99999)
 	public float getItemTotal() {
 		return itemTotal;
 	}
@@ -157,7 +154,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	}
 
 	@Column(name = "sales_tax", precision = 7, scale = 2)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getSalesTax() {
 		return salesTax;
 	}
@@ -167,7 +164,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	}
 
 	@Column(name = "ship_cost", precision = 7, scale = 2)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getShipCost() {
 		return shipCost;
 	}
@@ -207,7 +204,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 	}
 
 	@Column(precision = 7, scale = 2)
-	@Range(min = 0L, max = 9999999L)
+	@Size(min = 0, max = 9999999)
 	public float getTotal() {
 		return total;
 	}
@@ -265,7 +262,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		try {
 			return getOrder().getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -275,7 +272,7 @@ public class OrderTrans extends TimeStampEntity implements IChildEntity<Order>, 
 		try {
 			return getOrder().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

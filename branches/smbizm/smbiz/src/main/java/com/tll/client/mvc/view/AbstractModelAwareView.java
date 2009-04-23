@@ -17,7 +17,7 @@ import com.tll.common.model.Model;
 public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
 IModelAwareView<I> {
 
-	private boolean eventFlag;
+	// private boolean eventFlag;
 
 	/**
 	 * Constructor

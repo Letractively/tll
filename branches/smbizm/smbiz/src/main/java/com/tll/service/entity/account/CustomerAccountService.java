@@ -3,8 +3,9 @@ package com.tll.service.entity.account;
 import java.util.Collection;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidatorFactory;
 
-import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -28,10 +29,11 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public CustomerAccountService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public CustomerAccountService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override
@@ -42,12 +44,12 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 	@Override
 	public void deleteAll(Collection<CustomerAccount> entities) {
 		if(entities != null && entities.size() > 0) {
-			for(CustomerAccount e : entities) {
+			for(final CustomerAccount e : entities) {
 				delete(e);
 			}
 		}
 		if(entities != null && entities.size() > 0) {
-			for(CustomerAccount e : entities) {
+			for(final CustomerAccount e : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_DELETED, e));
 			}
 		}
@@ -55,9 +57,9 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 
 	@Override
 	public Collection<CustomerAccount> persistAll(Collection<CustomerAccount> entities) {
-		Collection<CustomerAccount> pec = super.persistAll(entities);
+		final Collection<CustomerAccount> pec = super.persistAll(entities);
 		if(pec != null && pec.size() > 0) {
-			for(CustomerAccount e : pec) {
+			for(final CustomerAccount e : pec) {
 				if(e.isNew()) {
 					addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.CUSTOMER_ACCOUNT_ADDED, e));
 				}
@@ -67,8 +69,8 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 	}
 
 	@Override
-	public CustomerAccount persist(CustomerAccount entity) throws EntityExistsException, InvalidStateException {
-		CustomerAccount pe = super.persist(entity);
+	public CustomerAccount persist(CustomerAccount entity) throws EntityExistsException, ConstraintViolationException {
+		final CustomerAccount pe = super.persist(entity);
 		if(pe != null) {
 			if(entity.isNew()) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.CUSTOMER_ACCOUNT_ADDED, pe));
@@ -81,7 +83,7 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 	public void purgeAll(Collection<CustomerAccount> entities) {
 		super.purgeAll(entities);
 		if(entities != null && entities.size() > 0) {
-			for(CustomerAccount e : entities) {
+			for(final CustomerAccount e : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.CUSTOMER_ACCOUNT_PURGED, e));
 			}
 		}
@@ -110,33 +112,33 @@ public class CustomerAccountService extends EntityService<CustomerAccount> imple
 			// add customer account
 			case CUSTOMER_ACCOUNT_ADDED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-								.getAccount()), true);
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+							.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " bound");
 				dao.persist(ah);
 
 				ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-								.getAccount()), true);
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+							.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("bound to account: " + context.getCustomerAccount().getAccount().descriptor());
 				dao.persist(ah);
 				break;
 			}
 
-				// purge customer account
+			// purge customer account
 			case CUSTOMER_ACCOUNT_PURGED: {
 				AccountHistory ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-								.getAccount()), true);
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+							.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getCustomer().getStatus());
 				ah.setNotes(context.getCustomerAccount().getCustomer().descriptor() + " un-bound (removed)");
 				dao.persist(ah);
 
 				ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
-								.getAccount()), true);
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getCustomerAccount()
+							.getAccount()), true);
 				ah.setStatus(context.getCustomerAccount().getAccount().getStatus());
 				ah.setNotes("un-bound from account: " + context.getCustomerAccount().getAccount().descriptor());
 				dao.persist(ah);

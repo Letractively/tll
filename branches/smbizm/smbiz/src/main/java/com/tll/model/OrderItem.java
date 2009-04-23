@@ -13,15 +13,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.NamedTimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -31,9 +28,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "order_item")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Order Id and SKU", properties = { "order.id", "sku" }))
-public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
+	public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Order>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 5728694308136658158L;
 
@@ -159,7 +156,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	 * @return Returns the price.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Range(min = 0L, max = 99999L)
+	@Size(min = 0, max = 99999)
 	public float getPrice() {
 		return price;
 	}
@@ -175,7 +172,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	 * @return Returns the qty.
 	 */
 	@Column
-	@Range(min = 0, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public int getQty() {
 		return qty;
 	}
@@ -208,7 +205,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 	 * @return Returns the weight.
 	 */
 	@Column(precision = 8, scale = 3)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getWeight() {
 		return weight;
 	}
@@ -279,7 +276,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		try {
 			return getOrder().getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -289,7 +286,7 @@ public class OrderItem extends NamedTimeStampEntity implements IChildEntity<Orde
 		try {
 			return getOrder().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

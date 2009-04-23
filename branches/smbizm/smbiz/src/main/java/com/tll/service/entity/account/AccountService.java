@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidatorFactory;
 
-import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -54,7 +55,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		}
 
 		public List<SearchResult<AccountHistory>> find(ICriteria<AccountHistory> criteria, Sorting sorting)
-				throws InvalidCriteriaException {
+		throws InvalidCriteriaException {
 			return dao.find(criteria, sorting);
 		}
 
@@ -77,10 +78,11 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public AccountService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public AccountService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override
@@ -91,12 +93,12 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	@Override
 	public void deleteAll(Collection<Account> entities) {
 		if(entities != null && entities.size() > 0) {
-			for(Account e : entities) {
+			for(final Account e : entities) {
 				delete(e);
 			}
 		}
 		if(entities != null && entities.size() > 0) {
-			for(Account a : entities) {
+			for(final Account a : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_DELETED, a));
 			}
 		}
@@ -104,10 +106,10 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 
 	@Override
 	public Collection<Account> persistAll(Collection<Account> entities) {
-		Collection<Account> pec = super.persistAll(entities);
+		final Collection<Account> pec = super.persistAll(entities);
 		if(pec != null && pec.size() > 0) {
-			for(Account a : pec) {
-				AccountHistoryOp op = a.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
+			for(final Account a : pec) {
+				final AccountHistoryOp op = a.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
 				addHistoryRecord(new AccountHistoryContext(op, a));
 			}
 		}
@@ -115,7 +117,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
-	public Account persist(Account entity) throws EntityExistsException, InvalidStateException {
+	public Account persist(Account entity) throws EntityExistsException, ConstraintViolationException {
 
 		// handle payment info
 		if(entity.getPaymentInfo() != null) {
@@ -129,14 +131,14 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			}
 		}
 
-		Account pe = super.persist(entity);
+		final Account pe = super.persist(entity);
 
 		// handle account history
 		if(pe != null) {
-			AccountHistoryOp op = entity.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
+			final AccountHistoryOp op = entity.isNew() ? AccountHistoryOp.ACCOUNT_ADDED : AccountHistoryOp.ACCOUNT_UPDATED;
 			addHistoryRecord(new AccountHistoryContext(op, pe));
 		}
-		
+
 		return pe;
 	}
 
@@ -144,7 +146,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	public void purgeAll(Collection<Account> entities) {
 		super.purgeAll(entities);
 		if(entities != null && entities.size() > 0) {
-			for(Account a : entities) {
+			for(final Account a : entities) {
 				addHistoryRecord(new AccountHistoryContext(AccountHistoryOp.ACCOUNT_PURGED, a));
 			}
 		}
@@ -171,28 +173,28 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		switch(context.getOp()) {
 			// add account
 			case ACCOUNT_ADDED: {
-				AccountHistory ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+				final AccountHistory ah =
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setNotes(context.getAccount().typeName() + " created");
 				ah.setStatus(AccountStatus.NEW);
 				dao.persist(ah);
 				break;
 			}
-				// delete account
+			// delete account
 			case ACCOUNT_DELETED: {
-				AccountHistory ah =
-						entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
+				final AccountHistory ah =
+					entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(context.getAccount()), true);
 				ah.setStatus(AccountStatus.DELETED);
 				ah.setNotes(context.getAccount().typeName() + " marked as DELETED");
 				dao.persist(ah);
 				break;
 			}
-				// purge account
+			// purge account
 			case ACCOUNT_PURGED: {
 				// add history record to parentAccount
-				Account parent = context.getAccount().getParent();
+				final Account parent = context.getAccount().getParent();
 				if(parent != null) {
-					AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
+					final AccountHistory ah = entityAssembler.assembleEntity(AccountHistory.class, new EntityCache(parent), true);
 					ah.setStatus(AccountStatus.DELETED);
 					ah.setNotes("Child account: " + context.getAccount().typeName() + "'" + context.getAccount().descriptor()
 							+ "' DELETED");
@@ -204,7 +206,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 		}// switch
 
 	}
-	
+
 	@Override
 	public IListHandlerDataProvider<AccountHistory> getAccountHistoryDataProvider() {
 		return new AccountHistoryDataProvider(dao);

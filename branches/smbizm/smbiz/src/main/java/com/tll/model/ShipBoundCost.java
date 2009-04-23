@@ -7,13 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
-
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -24,10 +20,10 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "ship_bound_cost")
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound", 
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Ship Mode Id, Lower Bound and Upper Bound",
 			properties = { "shipMode.id", "lbound", "ubound" }))
-public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipMode>, IAccountRelatedEntity {
+			public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipMode>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -5074831489410804639L;
 
@@ -64,7 +60,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	 * @return Returns the cost.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getCost() {
 		return cost;
 	}
@@ -80,7 +76,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	 * @return Returns the lBound.
 	 */
 	@Column(name = "l_bound", precision = 6, scale = 0)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getLbound() {
 		return lbound;
 	}
@@ -96,7 +92,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 	 * @return Returns the uBound.
 	 */
 	@Column(name = "u_bound", precision = 6, scale = 0)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getUbound() {
 		return ubound;
 	}
@@ -121,7 +117,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		try {
 			return getShipMode().getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -131,7 +127,7 @@ public class ShipBoundCost extends TimeStampEntity implements IChildEntity<ShipM
 		try {
 			return getShipMode().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

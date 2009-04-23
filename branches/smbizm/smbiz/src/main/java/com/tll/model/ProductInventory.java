@@ -8,15 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -26,9 +23,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "product_inventory")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Account Id and SKU", properties = { "account.id", "sku" }))
-public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+	public class ProductInventory extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = 6472483051056869008L;
 
@@ -101,7 +98,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(name = "inv_committed")
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public int getInvCommitted() {
 		return invCommitted;
 	}
@@ -118,7 +115,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(name = "inv_in_stock")
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public int getInvInStock() {
 		return invInStock;
 	}
@@ -135,7 +132,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(name = "inv_reorder_level")
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public int getInvReorderLevel() {
 		return invReorderLevel;
 	}
@@ -186,7 +183,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(name = "retail_price", precision = 7, scale = 2)
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getRetailPrice() {
 		return retailPrice;
 	}
@@ -203,7 +200,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(name = "sales_price", precision = 7, scale = 2)
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getSalesPrice() {
 		return salesPrice;
 	}
@@ -253,7 +250,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 	 */
 	@Column(precision = 7, scale = 3)
 	@NotNull
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getWeight() {
 		return weight;
 	}
@@ -278,7 +275,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -288,7 +285,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		try {
 			return getProductGeneral().getD1();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}
@@ -297,7 +294,7 @@ public class ProductInventory extends TimeStampEntity implements IChildEntity<Ac
 		try {
 			return getProductGeneral().getD2();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

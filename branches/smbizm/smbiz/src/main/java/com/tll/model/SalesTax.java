@@ -7,15 +7,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -25,10 +22,10 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "sales_tax")
-@BusinessObject(businessKeys = 
-	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code", 
+@BusinessObject(businessKeys =
+	@BusinessKeyDef(name = "Account Id, Province, Country and Postal Code",
 			properties = { "account.id", "province", "county", "postalCode" }))
-public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
+			public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8285702989304183918L;
 
@@ -106,7 +103,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 	 */
 	@Column(precision = 7, scale = 3)
 	@NotNull
-	@Range(min = 0L, max = 1L)
+	@Size(min = 0, max = 1)
 	public float getTax() {
 		return tax;
 	}
@@ -148,7 +145,7 @@ public class SalesTax extends TimeStampEntity implements IChildEntity<Account>, 
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}

@@ -3,8 +3,8 @@ package com.tll.service.entity.account;
 import java.util.Collection;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ConstraintViolationException;
 
-import org.hibernate.validator.InvalidStateException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.inject.Inject;
@@ -75,25 +75,25 @@ public class AddAccountService {
 
 	@Transactional
 	public void addIsp(Isp isp, Collection<InterfaceOptionAccount> accountInterfaceOptions, Collection<User> users)
-			throws InvalidStateException, EntityExistsException {
+	throws ConstraintViolationException, EntityExistsException {
 		addAccount(isp, accountInterfaceOptions, users);
 	}
 
 	@Transactional
 	public void addMerchant(Merchant merchant, Collection<InterfaceOptionAccount> accountInterfaceOptions,
-			Collection<User> users) throws InvalidStateException, EntityExistsException {
+			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
 		addAccount(merchant, accountInterfaceOptions, users);
 	}
 
 	@Transactional
 	public void addCustomer(Customer customer, Collection<InterfaceOptionAccount> accountInterfaceOptions,
-			Collection<User> users) throws InvalidStateException, EntityExistsException {
+			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
 		addAccount(customer, accountInterfaceOptions, users);
 	}
 
 	@Transactional
 	public void addCustomer(CustomerAccount customerAccount, Collection<InterfaceOptionAccount> accountInterfaceOptions,
-			Collection<User> users) throws InvalidStateException, EntityExistsException {
+			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
 
 		// add Customer first
 		final Customer customer = customerAccount.getCustomer();

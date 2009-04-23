@@ -1,5 +1,4 @@
 <module>
-  <inherits name="com.google.gwt.user.User" />
 
   <!-- shared (client/server) source path -->
   <source path="common" />

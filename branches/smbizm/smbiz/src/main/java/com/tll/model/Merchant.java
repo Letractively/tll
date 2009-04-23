@@ -4,10 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-
-import com.tll.model.IEntity;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
 /**
  * The merchant entity

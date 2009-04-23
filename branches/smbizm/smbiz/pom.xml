@@ -179,8 +179,8 @@
                 <element>${project.basedir}/src/main/scripts</element>
               </scriptpath>
               <source><![CDATA[
-                //com.tll.BuildTools.process(project, ant);
-                println 'temp disabled'
+                com.tll.BuildTools.process(project, ant);
+                //println 'temp disabled'
               ]]></source>
             </configuration>
           </execution>
@@ -191,7 +191,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
-          <!-- 
           <execution>
             <id>server-libs</id>
             <goals>
@@ -207,7 +206,6 @@
               </descriptors>
             </configuration>
           </execution>
-          -->
           <execution>
             <id>tll-client-server</id>
             <goals>
@@ -454,6 +452,11 @@
     </dependency>
 
     <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>ejb3-persistence</artifactId>
     </dependency>
@@ -515,12 +518,12 @@
 
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
+      <artifactId>tll-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-refdata</artifactId>
+      <artifactId>tll-core</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -582,6 +585,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-rpc</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-mentity</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

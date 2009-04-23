@@ -49,17 +49,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
@@ -80,6 +69,16 @@
       <artifactId>guice</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
@@ -105,6 +104,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-mock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-dao-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -2,197 +2,198 @@ package com.tll.model;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.CreditCardNumber;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.Range;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validation.constraints.Length;
 
 
 public class PaymentData implements Serializable {
-  private static final long serialVersionUID = 4794589680528322269L;
-  
-  // bank related
-  public static final int MAXLEN_BANK_ACCOUNT_NO = 64;
-  public static final int MAXLEN_BANK_NAME = 128;
-  public static final int MAXLEN_BANK_ROUTING_NUM = 32;
-  
-  // cc related
-  public static final int MAXLEN_CC_NUM = 20;
-  public static final int MAXLEN_CC_CVV2 = 8;
-  public static final int MAXLEN_CC_NAME = 128;
-  public static final int MAXLEN_CC_ADDRESS1 = 128;
-  public static final int MAXLEN_CC_ADDRESS2 = 128;
-  public static final int MAXLEN_CC_CITY = 128;
-  public static final int MAXLEN_CC_STATE = 128;
-  public static final int MAXLEN_CC_ZIP = 15;
-  public static final int MAXLEN_CC_COUNTRY = 128;
-  public static final int MAXLEN_CC_EXP_MONTH = 2;
-  public static final int MAXLEN_CC_EXP_YEAR = 4;
+	private static final long serialVersionUID = 4794589680528322269L;
 
-  private String bankAccountNo;
+	// bank related
+	public static final int MAXLEN_BANK_ACCOUNT_NO = 64;
+	public static final int MAXLEN_BANK_NAME = 128;
+	public static final int MAXLEN_BANK_ROUTING_NUM = 32;
 
-  private String bankName;
+	// cc related
+	public static final int MAXLEN_CC_NUM = 20;
+	public static final int MAXLEN_CC_CVV2 = 8;
+	public static final int MAXLEN_CC_NAME = 128;
+	public static final int MAXLEN_CC_ADDRESS1 = 128;
+	public static final int MAXLEN_CC_ADDRESS2 = 128;
+	public static final int MAXLEN_CC_CITY = 128;
+	public static final int MAXLEN_CC_STATE = 128;
+	public static final int MAXLEN_CC_ZIP = 15;
+	public static final int MAXLEN_CC_COUNTRY = 128;
+	public static final int MAXLEN_CC_EXP_MONTH = 2;
+	public static final int MAXLEN_CC_EXP_YEAR = 4;
 
-  private String bankRoutingNo;
+	private String bankAccountNo;
 
-  private CreditCardType ccType;
+	private String bankName;
 
-  private String ccNum;
+	private String bankRoutingNo;
 
-  private String ccCvv2;
+	private CreditCardType ccType;
 
-  private int ccExpMonth;
+	private String ccNum;
 
-  private int ccExpYear;
+	private String ccCvv2;
 
-  private String ccName;
+	private int ccExpMonth;
 
-  private String ccAddress1;
+	private int ccExpYear;
 
-  private String ccAddress2;
+	private String ccName;
 
-  private String ccCity;
+	private String ccAddress1;
 
-  private String ccState;
+	private String ccAddress2;
 
-  private String ccZip;
+	private String ccCity;
 
-  private String ccCountry;
+	private String ccState;
 
-  public PaymentData() {
-    super();
-  }
+	private String ccZip;
 
-  @Length(max=MAXLEN_CC_ADDRESS1)
-  public String getCcAddress1() {
-    return ccAddress1;
-  }
+	private String ccCountry;
 
-  public void setCcAddress1(String ccAddress1) {
-    this.ccAddress1 = ccAddress1;
-  }
+	public PaymentData() {
+		super();
+	}
 
-  @Length(max=MAXLEN_CC_ADDRESS2)
-  public String getCcAddress2() {
-    return ccAddress2;
-  }
+	@Length(max=MAXLEN_CC_ADDRESS1)
+	public String getCcAddress1() {
+		return ccAddress1;
+	}
 
-  public void setCcAddress2(String ccAddress2) {
-    this.ccAddress2 = ccAddress2;
-  }
+	public void setCcAddress1(String ccAddress1) {
+		this.ccAddress1 = ccAddress1;
+	}
 
-  @Length(max=MAXLEN_CC_CITY)
-  public String getCcCity() {
-    return ccCity;
-  }
+	@Length(max=MAXLEN_CC_ADDRESS2)
+	public String getCcAddress2() {
+		return ccAddress2;
+	}
 
-  public void setCcCity(String ccCity) {
-    this.ccCity = ccCity;
-  }
+	public void setCcAddress2(String ccAddress2) {
+		this.ccAddress2 = ccAddress2;
+	}
 
-  @Length(max=MAXLEN_CC_COUNTRY)
-  public String getCcCountry() {
-    return ccCountry;
-  }
+	@Length(max=MAXLEN_CC_CITY)
+	public String getCcCity() {
+		return ccCity;
+	}
 
-  public void setCcCountry(String ccCountry) {
-    this.ccCountry = ccCountry;
-  }
+	public void setCcCity(String ccCity) {
+		this.ccCity = ccCity;
+	}
 
-  @Length(max=MAXLEN_CC_STATE)
-  public String getCcState() {
-    return ccState;
-  }
+	@Length(max=MAXLEN_CC_COUNTRY)
+	public String getCcCountry() {
+		return ccCountry;
+	}
 
-  public void setCcState(String ccState) {
-    this.ccState = ccState;
-  }
+	public void setCcCountry(String ccCountry) {
+		this.ccCountry = ccCountry;
+	}
 
-  @Length(max=MAXLEN_CC_ZIP)
-  public String getCcZip() {
-    return ccZip;
-  }
+	@Length(max=MAXLEN_CC_STATE)
+	public String getCcState() {
+		return ccState;
+	}
 
-  public void setCcZip(String ccZip) {
-    this.ccZip = ccZip;
-  }
+	public void setCcState(String ccState) {
+		this.ccState = ccState;
+	}
 
-  @Length(max=MAXLEN_BANK_ACCOUNT_NO)
-  public String getBankAccountNo() {
-    return bankAccountNo;
-  }
+	@Length(max=MAXLEN_CC_ZIP)
+	public String getCcZip() {
+		return ccZip;
+	}
 
-  public void setBankAccountNo(String bankAccountNo) {
-    this.bankAccountNo = bankAccountNo;
-  }
+	public void setCcZip(String ccZip) {
+		this.ccZip = ccZip;
+	}
 
-  @Length(max=MAXLEN_BANK_NAME)
-  public String getBankName() {
-    return bankName;
-  }
+	@Length(max=MAXLEN_BANK_ACCOUNT_NO)
+	public String getBankAccountNo() {
+		return bankAccountNo;
+	}
 
-  public void setBankName(String bankName) {
-    this.bankName = bankName;
-  }
+	public void setBankAccountNo(String bankAccountNo) {
+		this.bankAccountNo = bankAccountNo;
+	}
 
-  @Length(max=MAXLEN_BANK_ROUTING_NUM)
-  public String getBankRoutingNo() {
-    return bankRoutingNo;
-  }
+	@Length(max=MAXLEN_BANK_NAME)
+	public String getBankName() {
+		return bankName;
+	}
 
-  public void setBankRoutingNo(String bankRoutingNo) {
-    this.bankRoutingNo = bankRoutingNo;
-  }
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
 
-  @Length(max=MAXLEN_CC_CVV2)
-  public String getCcCvv2() {
-    return ccCvv2;
-  }
+	@Length(max=MAXLEN_BANK_ROUTING_NUM)
+	public String getBankRoutingNo() {
+		return bankRoutingNo;
+	}
 
-  public void setCcCvv2(String ccCvv2) {
-    this.ccCvv2 = ccCvv2;
-  }
+	public void setBankRoutingNo(String bankRoutingNo) {
+		this.bankRoutingNo = bankRoutingNo;
+	}
 
-  @Range(min=1, max=12)
-  public int getCcExpMonth() {
-    return ccExpMonth;
-  }
+	@Length(max=MAXLEN_CC_CVV2)
+	public String getCcCvv2() {
+		return ccCvv2;
+	}
 
-  public void setCcExpMonth(int ccExpMonth) {
-    this.ccExpMonth = ccExpMonth;
-  }
+	public void setCcCvv2(String ccCvv2) {
+		this.ccCvv2 = ccCvv2;
+	}
 
-  @Range(min=2000, max=2020)
-  public int getCcExpYear() {
-    return ccExpYear;
-  }
+	@Size(min = 1, max = 12)
+	public int getCcExpMonth() {
+		return ccExpMonth;
+	}
 
-  public void setCcExpYear(int ccExpYear) {
-    this.ccExpYear = ccExpYear;
-  }
+	public void setCcExpMonth(int ccExpMonth) {
+		this.ccExpMonth = ccExpMonth;
+	}
 
-  @Length(max=MAXLEN_CC_NAME)
-  public String getCcName() {
-    return ccName;
-  }
+	@Size(min = 2000, max = 2020)
+	public int getCcExpYear() {
+		return ccExpYear;
+	}
 
-  public void setCcName(String ccName) {
-    this.ccName = ccName;
-  }
+	public void setCcExpYear(int ccExpYear) {
+		this.ccExpYear = ccExpYear;
+	}
 
-  @CreditCardNumber @Length(max=MAXLEN_CC_NUM)
-  public String getCcNum() {
-    return ccNum;
-  }
+	@Length(max=MAXLEN_CC_NAME)
+	public String getCcName() {
+		return ccName;
+	}
 
-  public void setCcNum(String ccNum) {
-    this.ccNum = ccNum;
-  }
+	public void setCcName(String ccName) {
+		this.ccName = ccName;
+	}
 
-  public CreditCardType getCcType() {
-    return ccType;
-  }
+	// @CreditCardNumber
+	@Length(max = MAXLEN_CC_NUM)
+	public String getCcNum() {
+		return ccNum;
+	}
 
-  public void setCcType(CreditCardType ccType) {
-    this.ccType = ccType;
-  }
+	public void setCcNum(String ccNum) {
+		this.ccNum = ccNum;
+	}
+
+	public CreditCardType getCcType() {
+		return ccType;
+	}
+
+	public void setCcType(CreditCardType ccType) {
+		this.ccType = ccType;
+	}
 }

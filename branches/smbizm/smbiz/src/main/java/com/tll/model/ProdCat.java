@@ -7,12 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.NotNull;
-
-import com.tll.model.EntityBase;
-import com.tll.model.IChildEntity;
-import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -22,9 +18,9 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "prod_cat")
-@BusinessObject(businessKeys = 
+@BusinessObject(businessKeys =
 	@BusinessKeyDef(name = "Product Id and Category Id", properties = { "product.id", "category.id" }))
-public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
+	public class ProdCat extends EntityBase implements IChildEntity<ProductInventory>, IAccountRelatedEntity {
 
 	private static final long serialVersionUID = -8353863817821839414L;
 
@@ -101,7 +97,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		try {
 			return getProduct().getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}
@@ -111,7 +107,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		try {
 			return getProduct().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}
@@ -120,7 +116,7 @@ public class ProdCat extends EntityBase implements IChildEntity<ProductInventory
 		try {
 			return getCategory().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			return null;
 		}
 	}

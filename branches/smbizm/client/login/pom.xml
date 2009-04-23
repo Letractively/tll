@@ -54,6 +54,16 @@
 
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>tll-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-mail</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -87,16 +97,7 @@
       <artifactId>client-rpc</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-    	<groupId>com.tll</groupId>
-    	<artifactId>tll-core</artifactId>
-    	<version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+
     <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>ejb3-persistence</artifactId>

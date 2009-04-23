@@ -8,10 +8,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-
-import com.tll.model.NamedTimeStampEntity;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
 /**
  * Base class for interface options and interface option parameter definition

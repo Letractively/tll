@@ -4,8 +4,8 @@
 package com.tll.service.entity.user;
 
 import javax.persistence.EntityExistsException;
+import javax.validation.ValidationException;
 
-import org.hibernate.validator.InvalidStateException;
 import org.springframework.security.userdetails.UserDetailsService;
 
 import com.tll.model.Account;
@@ -26,10 +26,10 @@ public interface IUserService extends INamedEntityService<User>, UserDetailsServ
 	 * @param emailAddress
 	 * @param password
 	 * @return the created user
-	 * @throws InvalidStateException
+	 * @throws ValidationException
 	 * @throws EntityExistsException
 	 */
-	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
+	public User create(Account account, String emailAddress, String password) throws ValidationException,
 	EntityExistsException;
 
 	/**

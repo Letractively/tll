@@ -7,8 +7,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 
 import com.tll.model.schema.BusinessKeyDef;
@@ -69,7 +69,7 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 		}
 
 		if(obj instanceof GrantedAuthority && this.role != null) {
-			GrantedAuthority attr = (GrantedAuthority) obj;
+			final GrantedAuthority attr = (GrantedAuthority) obj;
 			return this.role.equals(attr.getAuthority());
 		}
 
@@ -79,7 +79,7 @@ public class Authority extends EntityBase implements INamedEntity, GrantedAuthor
 	@Override
 	public int compareTo(Object o) {
 		if(o != null && o instanceof GrantedAuthority) {
-			String rhsRole = ((GrantedAuthority) o).getAuthority();
+			final String rhsRole = ((GrantedAuthority) o).getAuthority();
 			if(rhsRole == null) {
 				return -1;
 			}

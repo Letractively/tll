@@ -40,15 +40,8 @@
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
+      <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-      <!-- <scope>provided</scope> -->
     </dependency>
   </dependencies>
 

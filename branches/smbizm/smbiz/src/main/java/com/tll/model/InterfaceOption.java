@@ -12,13 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Digits;
-import org.hibernate.validator.Min;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
-
-import com.tll.model.IEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -48,7 +46,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	protected float baseAnnualPrice = 0f;
 
 	protected Set<InterfaceOptionParameterDefinition> parameters =
-			new LinkedHashSet<InterfaceOptionParameterDefinition>();
+		new LinkedHashSet<InterfaceOptionParameterDefinition>();
 
 	public Class<? extends IEntity> entityClass() {
 		return InterfaceOption.class;
@@ -73,7 +71,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the setUpCost.
 	 */
 	@Column(name = "set_up_cost", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getSetUpCost() {
@@ -91,7 +89,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the monthlyCost.
 	 */
 	@Column(name = "monthly_cost", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getMonthlyCost() {
@@ -109,7 +107,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the annualCost.
 	 */
 	@Column(name = "annual_cost", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getAnnualCost() {
@@ -127,7 +125,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the baseAnnualPrice.
 	 */
 	@Column(name = "base_annual_price", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getBaseAnnualPrice() {
@@ -145,7 +143,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the baseMonthlyPrice.
 	 */
 	@Column(name = "base_monthly_price", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getBaseMonthlyPrice() {
@@ -163,7 +161,7 @@ public class InterfaceOption extends InterfaceOptionBase {
 	 * @return Returns the baseSetupPrice.
 	 */
 	@Column(name = "base_setup_price", nullable = false, precision = 8, scale = 2)
-	@Digits(integerDigits = 6, fractionalDigits = 2)
+	@Digits(integer = 6, fraction = 2)
 	@NotNull
 	@Min(value = 0)
 	public float getBaseSetupPrice() {

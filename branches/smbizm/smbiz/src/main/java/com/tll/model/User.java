@@ -20,12 +20,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.Email;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
@@ -40,7 +39,7 @@ import com.tll.model.schema.BusinessObject;
 @Table(name = "user")
 @BusinessObject(businessKeys = @BusinessKeyDef(name = "Email Address", properties = { "emailAddress" }))
 public class User extends NamedTimeStampEntity implements UserDetails, IChildEntity<Account>, IAccountRelatedEntity,
-		IUserRef {
+IUserRef {
 
 	private static final long serialVersionUID = -6126885590318834318L;
 
@@ -78,7 +77,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 
 	@Column(name = "email_address", updatable = false, unique = true)
 	@NotEmpty
-	@Email
+	// @Email
 	@Length(max = MAXLEN_EMAIL_ADDRESS)
 	public String getEmailAddress() {
 		return emailAddress;
@@ -155,9 +154,9 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 */
 	@Transient
 	public boolean inRole(String role) {
-		Set<Authority> as = getAuthoritys();
+		final Set<Authority> as = getAuthoritys();
 		if(as == null) return false;
-		for(Authority a : as) {
+		for(final Authority a : as) {
 			if(a.equals(role)) return true;
 		}
 		return false;
@@ -227,8 +226,8 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 	 */
 	@ManyToOne(fetch = FetchType.EAGER, cascade = {
 		CascadeType.MERGE, CascadeType.PERSIST })
-	@JoinColumn(name = "adr_id")
-	public Address getAddress() {
+		@JoinColumn(name = "adr_id")
+		public Address getAddress() {
 		return address;
 	}
 
@@ -252,7 +251,7 @@ public class User extends NamedTimeStampEntity implements UserDetails, IChildEnt
 		try {
 			return getAccount().getId();
 		}
-		catch(NullPointerException npe) {
+		catch(final NullPointerException npe) {
 			LOG.warn("Unable to provide related account id due to a NULL nested entity");
 			return null;
 		}

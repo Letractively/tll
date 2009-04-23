@@ -101,6 +101,11 @@
     
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>tll-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>tll-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -116,20 +121,8 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-dao-api</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>tll-service</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>

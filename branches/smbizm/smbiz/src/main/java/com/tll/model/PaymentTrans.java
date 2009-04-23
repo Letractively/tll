@@ -7,14 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Range;
+import org.hibernate.validation.constraints.Length;
+import org.hibernate.validation.constraints.NotEmpty;
 
-import com.tll.model.IEntity;
-import com.tll.model.TimeStampEntity;
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
 
@@ -24,10 +22,10 @@ import com.tll.model.schema.BusinessObject;
  */
 @Entity
 @Table(name = "payment_trans")
-@BusinessObject(businessKeys = { 
-	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type", 
+@BusinessObject(businessKeys = {
+	@BusinessKeyDef(name = "Pay Trans Date, Payment Op and Pay Type",
 			properties = { "payTransDate", "payOp", "payType" }),
-	@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
+			@BusinessKeyDef(name = "Refnum", properties = { "refNum" })
 })
 public class PaymentTrans extends TimeStampEntity {
 
@@ -65,7 +63,7 @@ public class PaymentTrans extends TimeStampEntity {
 	 * @return Returns the amount.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Range(min = 0L, max = 999999L)
+	@Size(min = 0, max = 999999)
 	public float getAmount() {
 		return amount;
 	}

@@ -1,6 +1,7 @@
 package com.tll.service.entity.currency;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidatorFactory;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +25,11 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 */
 	@Inject
-	public CurrencyService(IEntityDao dao, IEntityAssembler entityAssembler) {
-		super(dao, entityAssembler);
+	public CurrencyService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory) {
+		super(dao, entityAssembler, vfactory);
 	}
 
 	@Override
@@ -37,11 +39,11 @@ public class CurrencyService extends NamedEntityService<Currency> implements ICu
 
 	public Currency loadByIso4217(String iso4217) throws EntityNotFoundException {
 		try {
-			Criteria<Currency> criteria = new Criteria<Currency>(Currency.class);
+			final Criteria<Currency> criteria = new Criteria<Currency>(Currency.class);
 			criteria.getPrimaryGroup().addCriterion("iso4217", iso4217, false);
 			return dao.findEntity(criteria);
 		}
-		catch(InvalidCriteriaException e) {
+		catch(final InvalidCriteriaException e) {
 			throw new SystemError("Unexpected invalid criteria exception occurred");
 		}
 	}

@@ -5,11 +5,11 @@ import java.util.Date;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ValidationException;
+import javax.validation.ValidatorFactory;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.InvalidStateException;
-import org.hibernate.validator.InvalidValue;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContext;
@@ -85,11 +85,12 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	 * Constructor
 	 * @param dao
 	 * @param entityAssembler
+	 * @param vfactory
 	 * @param userCache
 	 */
 	@Inject
-	public UserService(IEntityDao dao, IEntityAssembler entityAssembler, UserCache userCache) {
-		super(dao, entityAssembler);
+	public UserService(IEntityDao dao, IEntityAssembler entityAssembler, ValidatorFactory vfactory, UserCache userCache) {
+		super(dao, entityAssembler, vfactory);
 		// this.aclProviderManager = aclProviderManager;
 		this.userCache = userCache;
 	}
@@ -100,7 +101,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 	}
 
 	@Transactional
-	public User create(Account account, String emailAddress, String password) throws InvalidStateException,
+	public User create(Account account, String emailAddress, String password) throws ValidationException,
 	EntityExistsException {
 		final User user = entityAssembler.assembleEntity(User.class, new EntityCache(account), true);
 
@@ -109,10 +110,7 @@ public class UserService extends NamedEntityService<User> implements IUserServic
 			encPassword = encodePassword(password, emailAddress);
 		}
 		catch(final IllegalArgumentException iae) {
-			// TODO verify this is cool
-			final InvalidValue[] ivs =
-				new InvalidValue[] { new InvalidValue("Invalid password", User.class, "password", password, null) };
-			throw new InvalidStateException(ivs);
+			throw new ValidationException("Invalid password");
 		}
 
 		user.setEmailAddress(emailAddress);
