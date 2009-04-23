@@ -37,7 +37,6 @@ import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
 import com.tll.common.model.Model;
 import com.tll.common.model.mock.MockModelStubber;
-import com.tll.common.model.mock.MockModelStubber.ModelType;
 
 /**
  * UI Tests - GWT module for the sole purpose of verifying the DOM/Style of
@@ -252,8 +251,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			sfw =
-					FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data, new GridRenderer(
-							3, GridStyles.GRID));
+				FieldFactory.fradiogroup("fradiogroup", "fradiogroup", "Radio Group", "Radio Group", data, new GridRenderer(
+						3, GridStyles.GRID));
 			sfw.setValue("valueB");
 			sfw.setRequired(true);
 			group.addField(sfw);
@@ -278,8 +277,8 @@ public final class UITests extends AbstractUITest {
 			});
 
 			efw =
-					FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
-							new GridRenderer(3, GridStyles.GRID));
+				FieldFactory.fenumradio("fenumradio", "fenumradio", "Enum Radio", "Enum Radio", TestEnum.class,
+						new GridRenderer(3, GridStyles.GRID));
 			efw.setValue(TestEnum.ENUM_7);
 			efw.setRequired(true);
 			group.addField(efw);
@@ -290,7 +289,7 @@ public final class UITests extends AbstractUITest {
 					vcd.addRow(event);
 				}
 			});
-			
+
 			// set error handler for all fields to test error handling
 			mregistry = new MsgPopupRegistry();
 			group.setErrorHandler(new FieldErrorHandler(mregistry));
@@ -425,7 +424,7 @@ public final class UITests extends AbstractUITest {
 
 			RootPanel.get().add(layout);
 
-			m = MockModelStubber.create(ModelType.COMPLEX);
+			m = MockModelStubber.stubAccount(false);
 			ep.setModel(m);
 			mv.setModel(m);
 		}

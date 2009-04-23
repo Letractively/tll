@@ -64,7 +64,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		 */
 		public static final String PORTAL = "portal";
 	}
-	
+
 	/**
 	 * The composite's target widget
 	 */
@@ -79,7 +79,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 * Contains the actual edit fields.
 	 */
 	private final FieldPanel<? extends Widget> fieldPanel;
-	
+
 	private final FieldBindingAction editAction;
 
 	/**
@@ -88,9 +88,9 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
-	
+
 	private String modelDescriptor;
-	
+
 	private final IMsgDisplay msgDisplay;
 
 	/**
@@ -108,13 +108,13 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
-		
+
 		if(msgDisplay == null) throw new IllegalArgumentException("A global message panel must be specified.");
 		this.msgDisplay = msgDisplay;
-		
+
 		final IErrorHandler eh =
-				new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
-						new MsgPopupRegistry()));
+			new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
+					new MsgPopupRegistry()));
 		editAction = new FieldBindingAction(eh);
 
 		portal.setStyleName(Styles.PORTAL);
@@ -180,7 +180,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		modelDescriptor = model == null ? null : model.descriptor();
 		fieldPanel.setModel(model);
 		if(model != null) {
-			assert isAttached() == true;
+			// assert isAttached() == true;
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {

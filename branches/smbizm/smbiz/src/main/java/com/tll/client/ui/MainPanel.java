@@ -105,8 +105,6 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	public MainPanel() {
 		super();
 
-		ViewManager.initialize(center, 4);
-
 		dockPanel.add(header, DockPanel.NORTH);
 		dockPanel.add(viewpath, DockPanel.NORTH);
 		dockPanel.add(footer, DockPanel.SOUTH);
@@ -388,8 +386,14 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	}
 
 	@Override
-	protected void onUnload() {
-		super.onUnload();
+	protected void onAttach() {
+		ViewManager.initialize(center, 4);
+		super.onAttach();
+	}
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
 		ViewManager.shutdown();
 	}
 

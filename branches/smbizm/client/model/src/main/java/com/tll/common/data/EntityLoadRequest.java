@@ -24,6 +24,11 @@ public class EntityLoadRequest extends EntityRequest {
 	private boolean loadByBusinessKey;
 
 	/**
+	 * The aux data request. May be <code>null</code>.
+	 */
+	private AuxDataRequest auxDataRequest;
+
+	/**
 	 * Constructor
 	 */
 	public EntityLoadRequest() {
@@ -87,4 +92,17 @@ public class EntityLoadRequest extends EntityRequest {
 		return search;
 	}
 
+	/**
+	 * @return the auxDataRequest
+	 */
+	public AuxDataRequest getAuxDataRequest() {
+		return auxDataRequest;
+	}
+
+	/**
+	 * @param auxDataRequest the auxDataRequest to set
+	 */
+	public void setAuxDataRequest(AuxDataRequest auxDataRequest) {
+		this.auxDataRequest = auxDataRequest;
+	}
 }

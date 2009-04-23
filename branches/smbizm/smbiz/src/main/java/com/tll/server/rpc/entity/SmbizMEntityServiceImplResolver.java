@@ -5,8 +5,8 @@
  */
 package com.tll.server.rpc.entity;
 
-import com.tll.common.search.ISearch;
 import com.tll.model.Account;
+import com.tll.model.AccountAddress;
 import com.tll.model.Address;
 import com.tll.model.Authority;
 import com.tll.model.EntityUtil;
@@ -21,7 +21,7 @@ import com.tll.model.Interface;
 public class SmbizMEntityServiceImplResolver implements IMEntityServiceImplResolver {
 
 	@Override
-	public Class<? extends IMEntityServiceImpl<? extends IEntity, ? extends ISearch>> resolveMEntityServiceImpl(
+	public Class<? extends IMEntityServiceImpl<? extends IEntity>> resolveMEntityServiceImpl(
 			Class<? extends IEntity> entityClass) throws IllegalArgumentException {
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 
@@ -30,6 +30,9 @@ public class SmbizMEntityServiceImplResolver implements IMEntityServiceImplResol
 		}
 		else if(Address.class.isAssignableFrom(rootEntityClass)) {
 			return AddressService.class;
+		}
+		else if(AccountAddress.class.isAssignableFrom(rootEntityClass)) {
+			return AccountAddressService.class;
 		}
 		else if(Authority.class.isAssignableFrom(rootEntityClass)) {
 			return AuthorityService.class;

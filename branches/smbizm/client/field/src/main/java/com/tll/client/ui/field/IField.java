@@ -99,4 +99,12 @@ public interface IField extends HasName, IWidgetRef, IHasErrorHandler {
 	 * @throws ValidationException When invalid
 	 */
 	void validate() throws ValidationException;
+
+	/**
+	 * Perform "incremental" validation during editing?
+	 * <p>
+	 * This usu. translates to validating each field when it loses focus.
+	 * @param validate Validate or not?
+	 */
+	void validateIncrementally(boolean validate);
 }

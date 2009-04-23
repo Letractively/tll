@@ -11,6 +11,7 @@ import com.tll.common.data.EntityOptions;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.AccountSearch;
+import com.tll.common.search.ISearch;
 import com.tll.criteria.Comparator;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Account;
@@ -21,7 +22,8 @@ import com.tll.server.marshal.MarshalOptions;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.util.EnumUtil;
-public class AccountService extends MNamedEntityServiceImpl<Account, AccountSearch> {
+
+public class AccountService extends MNamedEntityServiceImpl<Account> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
 
@@ -54,7 +56,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 				throw new SystemError(t.getMessage(), t);
 			}
 		}
-		
+
 		// load payment info?
 		if(entityOptions.isRelatedRequested(IEntityType.PAYMENT_INFO) && e.getPaymentInfo() != null) {
 			IPaymentInfoService pis = entityServiceFactory.instance(IPaymentInfoService.class);
@@ -62,7 +64,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 			PaymentInfo pi = pis.load(pk);
 			e.setPaymentInfo(pi);
 		}
-		*/
+		 */
 
 		// load parent account ref?
 		if(entityOptions.isRelatedRefRequested(SmbizEntityType.ACCOUNT) && e.getParent() != null) {
@@ -76,36 +78,43 @@ public class AccountService extends MNamedEntityServiceImpl<Account, AccountSear
 
 	@Override
 	protected void handlePersistOptions(MEntityContext context, Account e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 		// no-op
 	}
 
 	@Override
-	protected IBusinessKey<Account> handleBusinessKeyTranslation(AccountSearch search) {
+	protected IBusinessKey<Account> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, AccountSearch search,
+	protected void handleSearchTranslation(MEntityContext context, ISearch search,
 			ICriteria<Account> criteria) {
 
-		// date ranges
-		criteria.getPrimaryGroup().addCriterion("dateCreated", search.getDateCreatedRange());
-		criteria.getPrimaryGroup().addCriterion("dateModified", search.getDateModifiedRange());
+		if(search instanceof AccountSearch) {
+			final AccountSearch as = (AccountSearch) search;
 
-		// name
-		criteria.getPrimaryGroup().addCriterion("name", search.getName(), Comparator.EQUALS, false);
+			// date ranges
+			criteria.getPrimaryGroup().addCriterion("dateCreated", as.getDateCreatedRange());
+			criteria.getPrimaryGroup().addCriterion("dateModified", as.getDateModifiedRange());
 
-		// parent account ref
-		final ModelKey par = search.getParentAccountRef();
-		if(par != null) {
-			criteria.getPrimaryGroup().addCriterion("parent", new PrimaryKey<Account>(Account.class, par.getId()));
+			// name
+			criteria.getPrimaryGroup().addCriterion("name", as.getName(), Comparator.EQUALS, false);
+
+			// parent account ref
+			final ModelKey par = as.getParentAccountRef();
+			if(par != null) {
+				criteria.getPrimaryGroup().addCriterion("parent", new PrimaryKey<Account>(Account.class, par.getId()));
+			}
+
+			// status
+			final String status = as.getStatus();
+			if(status != null) {
+				criteria.getPrimaryGroup().addCriterion("status", EnumUtil.fromString(AccountStatus.class, status));
+			}
 		}
-
-		// status
-		final String status = search.getStatus();
-		if(status != null) {
-			criteria.getPrimaryGroup().addCriterion("status", EnumUtil.fromString(AccountStatus.class, status));
+		else {
+			throw new IllegalArgumentException("Unhandled account search type");
 		}
 	}
 }

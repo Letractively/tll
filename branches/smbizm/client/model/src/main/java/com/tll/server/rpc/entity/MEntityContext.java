@@ -10,7 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 
 import com.tll.mail.MailManager;
-import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityAssembler;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.ExceptionHandler;
@@ -35,7 +35,7 @@ public final class MEntityContext implements Serializable {
 	private final MailManager mailManager;
 	private final Marshaler marshaler;
 	private final EntityManagerFactory entityManagerFactory;
-	private final IEntityFactory entityFactory;
+	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
 	private final INamedQueryResolver namedQueryResolver;
 	private final ExceptionHandler exceptionHandler;
@@ -46,20 +46,20 @@ public final class MEntityContext implements Serializable {
 	 * @param mailManager
 	 * @param marshaler
 	 * @param entityManagerFactory
-	 * @param entityFactory
+	 * @param entityAssembler
 	 * @param entityServiceFactory
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
 	public MEntityContext(RefData refData, MailManager mailManager, Marshaler marshaler,
-			EntityManagerFactory entityManagerFactory, IEntityFactory entityFactory,
+			EntityManagerFactory entityManagerFactory, IEntityAssembler entityAssembler,
 			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
 		this.marshaler = marshaler;
 		this.entityManagerFactory = entityManagerFactory;
-		this.entityFactory = entityFactory;
+		this.entityAssembler = entityAssembler;
 		this.entityServiceFactory = entityServiceFactory;
 		this.namedQueryResolver = namedQueryResolver;
 		this.exceptionHandler = exceptionHandler;
@@ -73,8 +73,8 @@ public final class MEntityContext implements Serializable {
 		return refData;
 	}
 
-	public IEntityFactory getEntityFactory() {
-		return entityFactory;
+	public IEntityAssembler getEntityAssembler() {
+		return entityAssembler;
 	}
 
 	public EntityManagerFactory getEntityManagerFactory() {

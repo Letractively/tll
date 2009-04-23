@@ -20,7 +20,7 @@ import com.tll.server.marshal.MarshalOptions;
  * InterfaceService
  * @author jpk
  */
-public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch> {
+public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
 
 	private static final MarshalOptions marshalOptions = MarshalOptions.UNCONSTRAINED_MARSHALING;
 
@@ -36,7 +36,7 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 
 	@Override
 	protected void handlePersistOptions(MEntityContext context, Interface e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface, ISearch
 
 	@Override
 	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Interface> criteria)
-			throws IllegalArgumentException {
+	throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 }

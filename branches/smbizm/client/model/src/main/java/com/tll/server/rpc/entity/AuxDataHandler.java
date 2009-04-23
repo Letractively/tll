@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.tll.SystemError;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
@@ -20,6 +21,7 @@ import com.tll.common.model.Model;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.model.IEntity;
 import com.tll.refdata.RefDataType;
+import com.tll.server.marshal.MarshalOptions;
 import com.tll.service.entity.IEntityService;
 
 /**
@@ -27,6 +29,25 @@ import com.tll.service.entity.IEntityService;
  * @author jpk
  */
 public abstract class AuxDataHandler {
+
+	/**
+	 * Attempts to resolve marshaling options from the mentity svc delegate
+	 * falling back on the provided defaults.
+	 * @param delegate
+	 * @param entityType
+	 * @param fallback Used when no mentity svc is resolved from the given entity
+	 *        type
+	 * @return Never-<code>null</code> instance.
+	 */
+	private static MarshalOptions getMarshalOptions(MEntityServiceDelegate delegate, IEntityType entityType,
+			MarshalOptions fallback) {
+		try {
+			return delegate.getMarshalOptions(entityType);
+		}
+		catch(final SystemError e) {
+			return fallback;
+		}
+	}
 
 	/**
 	 * Provides auxiliary data.
@@ -61,27 +82,29 @@ public abstract class AuxDataHandler {
 
 		// entity collection
 		Iterator<IEntityType> etitr = auxDataRequest.getEntityRequests();
-		while(etitr != null && etitr.hasNext()) {
-			final IEntityType et = etitr.next();
-			final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(et);
-			final IEntityService<? extends IEntity> svc =
-				context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final List<? extends IEntity> list = svc.loadAll();
-			if(list == null || list.size() < 1) {
-				payload.getStatus().addMsg("Unable to obtain " + et.getPresentationName() + " entities for aux data.",
-						MsgLevel.ERROR);
-			}
-			else {
-				final List<Model> elist = new ArrayList<Model>(list.size());
-				for(final IEntity e : list) {
-					final Model group =
-						context.getMarshaler().marshalEntity(e, delegate.getMarshalOptions(et));
-					elist.add(group);
+		if(etitr != null) {
+			while(etitr.hasNext()) {
+				final IEntityType et = etitr.next();
+				final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(et);
+				final IEntityService<? extends IEntity> svc =
+					context.getEntityServiceFactory().instanceByEntityType(entityClass);
+				final List<? extends IEntity> list = svc.loadAll();
+				if(list == null || list.size() < 1) {
+					payload.getStatus().addMsg("Unable to obtain " + et.getPresentationName() + " entities for aux data.",
+							MsgLevel.ERROR);
 				}
-				if(entityMap == null) {
-					entityMap = new HashMap<IEntityType, List<Model>>();
+				else {
+					final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
+					final List<Model> elist = new ArrayList<Model>(list.size());
+					for(final IEntity e : list) {
+						final Model group = context.getMarshaler().marshalEntity(e, mo);
+						elist.add(group);
+					}
+					if(entityMap == null) {
+						entityMap = new HashMap<IEntityType, List<Model>>();
+					}
+					entityMap.put(et, elist);
 				}
-				entityMap.put(et, elist);
 			}
 		}
 
@@ -90,8 +113,9 @@ public abstract class AuxDataHandler {
 		while(etitr != null && etitr.hasNext()) {
 			final IEntityType et = etitr.next();
 			final IEntity e =
-				context.getEntityFactory().createEntity(EntityTypeUtil.getEntityClass(et), false);
-			final Model model = context.getMarshaler().marshalEntity(e, delegate.getMarshalOptions(et));
+				context.getEntityAssembler().assembleEntity(EntityTypeUtil.getEntityClass(et), null, false);
+			final MarshalOptions mo = getMarshalOptions(delegate, et, MarshalOptions.NO_REFERENCES);
+			final Model model = context.getMarshaler().marshalEntity(e, mo);
 			if(entityPrototypes == null) {
 				entityPrototypes = new HashSet<Model>();
 			}

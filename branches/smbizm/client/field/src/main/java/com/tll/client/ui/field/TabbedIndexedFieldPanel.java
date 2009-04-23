@@ -39,7 +39,7 @@ import com.tll.common.model.Model;
  * @author jpk
  */
 public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends IndexedFieldPanel<FlowPanel, I>
-		implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
+implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	/**
 	 * ImageBundle
@@ -92,7 +92,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		 */
 		public static final String DELETE_BUTTON = "delbtn";
 	}
-	
+
 	/**
 	 * EmptyWidget - Displayed in place of the tab panel when no index field
 	 * panels exist.
@@ -160,9 +160,9 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	private final boolean enableAdd, enableDelete;
 
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
-	
+
 	//private int lastSelectedTabIndex = -1;
-	
+
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -177,13 +177,14 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		this.enableAdd = enableAdd;
 		this.enableDelete = enableDelete;
 
+		tabPanel.setVisible(false);
 		if(enableAdd) {
 			// add trailing *add* tab
 			final Image imgAdd = imageBundle.add().createImage();
 			imgAdd.setTitle("Add " + getIndexTypeName());
 			tabPanel.add(new SimplePanel(), imgAdd);
 		}
-		
+
 		// listen to tab events
 		tabPanel.addBeforeSelectionHandler(this);
 		tabPanel.addSelectionHandler(this);
@@ -191,11 +192,10 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 		pnl.add(tabPanel);
 
 		emptyWidget = new EmptyWidget();
-		emptyWidget.setVisible(false);
 		pnl.add(emptyWidget);
 
 		pnl.setStylePrimaryName(Styles.ROOT);
-		
+
 		initWidget(pnl);
 	}
 
@@ -224,7 +224,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 
 		if(enableDelete || isUiAdd) {
 			final ToggleButton btnDeleteTgl =
-					new ToggleButton(imageBundle.delete().createImage(), imageBundle.undo().createImage());
+				new ToggleButton(imageBundle.delete().createImage(), imageBundle.undo().createImage());
 			btnDeleteTgl.addStyleName(Styles.DELETE_BUTTON);
 			btnDeleteTgl.setTitle("Delete " + labelText);
 			btnDeleteTgl.getElement().setPropertyBoolean(UI_ADD, isUiAdd);
@@ -269,13 +269,16 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 
 	@Override
 	protected void removeUi(int index, boolean isUiRemove) throws IndexOutOfBoundsException {
+		assert size() > 0;
 		// remove the tab
 		if(!tabPanel.remove(index)) {
 			// shouldn't happen
 			throw new IllegalStateException("Unable to remove tab panel at index: " + index);
 		}
 		tabWidgets.remove(index);
-		if(size() == 0) {
+		// NOTE: we check against size-1 since index removal removes from the ui
+		// first
+		if((size() - 1) == 0) {
 			tabPanel.setVisible(false);
 			emptyWidget.setVisible(true);
 		}
@@ -316,7 +319,7 @@ public abstract class TabbedIndexedFieldPanel<I extends FieldPanel<?>> extends I
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		if(tabPanel.getWidgetCount() > 0 && tabPanel.getTabBar().getSelectedTab() == -1) {
+		if(size() > 0 && tabPanel.getTabBar().getSelectedTab() == -1) {
 			tabPanel.selectTab(0);
 		}
 	}

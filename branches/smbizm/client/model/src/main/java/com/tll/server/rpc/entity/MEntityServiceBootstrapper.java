@@ -16,7 +16,7 @@ import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
-import com.tll.model.IEntityFactory;
+import com.tll.model.IEntityAssembler;
 import com.tll.refdata.RefData;
 import com.tll.server.IBootstrapHandler;
 import com.tll.server.marshal.Marshaler;
@@ -87,7 +87,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 		final String onErrorEmail = config.getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
 		final NameEmail email = new NameEmail(onErrorName, onErrorEmail);
 		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager, email);
-		final IEntityFactory entityFactory = injector.getInstance(IEntityFactory.class);
+		final IEntityAssembler entityAssembler = injector.getInstance(IEntityAssembler.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
 
 		String cn;
@@ -116,7 +116,8 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 		// create and store the sole context
 		final MEntityContext context =
-			new MEntityContext(refdata, mailManager, marshaler, entityManagerFactory, entityFactory, entityServiceFactory,
+			new MEntityContext(refdata, mailManager, marshaler, entityManagerFactory, entityAssembler,
+						entityServiceFactory,
 					namedQueryResolver, exceptionHandler);
 		servletContext.setAttribute(MEntityContext.KEY, context);
 

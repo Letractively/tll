@@ -172,8 +172,8 @@ public final class MEntityServiceDelegate {
 			resolveImpl(request.getEntityType(), payload.getStatus()).load(context, request, payload);
 		}
 		// load any requested auxiliary
-		if(request.auxDataRequest != null) {
-			AuxDataHandler.getAuxData(context, this, request.auxDataRequest, payload);
+		if(request.getAuxDataRequest() != null) {
+			AuxDataHandler.getAuxData(context, this, request.getAuxDataRequest(), payload);
 		}
 		return payload;
 	}

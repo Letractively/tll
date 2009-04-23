@@ -10,7 +10,7 @@ import java.util.Map;
 import com.tll.SystemError;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.ModelKey;
-import com.tll.common.search.UserSearch;
+import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.User;
 import com.tll.model.key.IBusinessKey;
@@ -20,7 +20,7 @@ import com.tll.server.marshal.MarshalOptions;
  * UserService
  * @author jpk
  */
-public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
+public class UserService extends MNamedEntityServiceImpl<User> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 1);
 
@@ -32,23 +32,23 @@ public class UserService extends MNamedEntityServiceImpl<User, UserSearch> {
 	@Override
 	protected void handleLoadOptions(MEntityContext contexxt, User e, EntityOptions options,
 			Map<String, ModelKey> refs)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
 	protected void handlePersistOptions(MEntityContext contexxt, User e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
-	protected IBusinessKey<User> handleBusinessKeyTranslation(UserSearch search) {
+	protected IBusinessKey<User> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext contexxt, UserSearch search,
+	protected void handleSearchTranslation(MEntityContext contexxt, ISearch search,
 			ICriteria<User> criteria)
-			throws IllegalArgumentException {
+	throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 }

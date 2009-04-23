@@ -79,13 +79,15 @@
         as we are profile agnostic and build jars for both.
         NOTE: this weaving doesn't adversly affect debugging when in mock mode.
               We are still able to do line level debugging.
-        ALSO NOTE: the weaving brings in tll-service *.class files into the local build classes dir!!
+        ALSO NOTE: the weaving brings in tll-service *.class/*.java files into the local build classes dir!!
       -->
+      <!-- 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
         <version>1.1</version>
         <configuration>
+          <showWeaveInfo>true</showWeaveInfo>
           <source>1.6</source>
           <target>1.6</target>
           <weaveDependencies>
@@ -110,7 +112,8 @@
           </execution>
         </executions>
       </plugin>
-
+      -->
+      
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -186,6 +189,68 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>server-libs</id>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <finalName>server-libs</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <outputDirectory>target</outputDirectory>
+              <descriptors>
+                <descriptor>src/main/assembly/server-libs.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tll-client-server</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <finalName>tll-cserver</finalName>
+              <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/tll-client-server.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>gwt-shell-cp</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <includeGroupIds>
+                log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
+              </includeGroupIds>
+              <excludeArtifactIds>
+                gwt-servlet
+              </excludeArtifactIds>
+              <excludeTypes>zip</excludeTypes>
+              <outputFile>target/gwt-cp.txt</outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
@@ -197,7 +262,8 @@
             <configuration>
               <tasks>
                 <property name="gwt.compile.style" value="PRETTY" />
-                <property name="gwt.compile.classpath" refid="maven.compile.classpath" />
+                <loadfile property="gcp" srcFile="target/gwt-cp.txt"/>
+                <property name="gwt.compile.classpath" value="./target/classes;${gcp}"/>
                 <property name="gwt.compile.modules" value="com.tll.SmbizAdminApp" />
                 <property name="gwt.shell.entryModule" value="com.tll.WorkingModule" />
                 <property name="gwt.shell.startupUrl" value="SmbizAdmin.html" />
@@ -207,6 +273,11 @@
                   <target name="build-shell-debug-exec-file" />
                   <!-- <target name="compile" /> -->
                 </ant>
+
+                <!-- copy over the necessary server jars -->
+                <copy todir="target/war/WEB-INF/lib">
+                  <fileset dir="target/server-libs" excludes="client-*" />
+                </copy>
               </tasks>
             </configuration>
           </execution>
@@ -323,6 +394,46 @@
   </profiles>
 
   <dependencies>
+    <!-- 
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}-libs</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <version>${gwtVersion}</version>
+      <classifier>${platform}</classifier>
+      <!-- <scope>provided</scope> -->
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator-glasspanel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
@@ -394,10 +505,6 @@
       <artifactId>transactions-jta</artifactId>
       <version>${atomikos.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.code.guice</groupId>
-      <artifactId>guice</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>com.google.code.guice</groupId>
@@ -448,6 +555,7 @@
       <groupId>com.tll</groupId>
       <artifactId>tll-service</artifactId>
       <version>${project.parent.version}</version>
+      <!-- <scope>provided</scope> --><!-- since we aspectj weave this in -->
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
@@ -498,37 +606,6 @@
       <groupId>com.tll</groupId>
       <artifactId>client-login</artifactId>
       <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <version>${gwtVersion}</version>
-      <classifier>${platform}-libs</classifier>
-      <type>zip</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <version>${gwtVersion}</version>
-      <classifier>${platform}</classifier>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gwt-log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

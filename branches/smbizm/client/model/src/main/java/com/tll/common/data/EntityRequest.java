@@ -22,11 +22,6 @@ public abstract class EntityRequest implements IMarshalable {
 	public EntityOptions entityOptions;
 
 	/**
-	 * The aux data request. May be <code>null</code>.
-	 */
-	public AuxDataRequest auxDataRequest;
-
-	/**
 	 * Constructor
 	 */
 	public EntityRequest() {

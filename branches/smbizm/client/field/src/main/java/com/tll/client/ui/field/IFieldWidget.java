@@ -18,7 +18,7 @@ import com.tll.criteria.IPropertyNameProvider;
  * @author jpk
  */
 public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNameProvider, HasText, IHasHelpText,
-		IValidator {
+IValidator {
 
 	/**
 	 * Styles - (field.css)
@@ -79,7 +79,7 @@ public interface IFieldWidget<V> extends IField, IBindableWidget<V>, IPropertyNa
 	 * @return The associated {@link FieldLabel} which may be <code>null</code>.
 	 */
 	FieldLabel getFieldLabel();
-	
+
 	/**
 	 * @return The label text.
 	 */

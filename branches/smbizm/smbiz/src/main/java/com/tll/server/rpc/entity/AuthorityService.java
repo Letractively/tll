@@ -20,7 +20,7 @@ import com.tll.server.marshal.MarshalOptions;
  * AuthorityService
  * @author jpk
  */
-public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch> {
+public class AuthorityService extends MNamedEntityServiceImpl<Authority> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
@@ -36,7 +36,7 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 
 	@Override
 	protected void handlePersistOptions(MEntityContext context, Authority e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class AuthorityService extends MNamedEntityServiceImpl<Authority, ISearch
 
 	@Override
 	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Authority> criteria)
-			throws IllegalArgumentException {
+	throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}
 }

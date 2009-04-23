@@ -53,12 +53,15 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 	/**
 	 * Sets the state of this command for loading an entity by primary key.
 	 * @param entityRef
+	 * @param auxDataRequest optional aux data request
 	 */
-	public final void load(ModelKey entityRef) {
+	public final void load(ModelKey entityRef, AuxDataRequest auxDataRequest) {
 		if(entityRef == null || !entityRef.isSet()) {
 			throw new IllegalArgumentException("A set entity reference must be specified.");
 		}
-		entityRequest = new EntityLoadRequest(entityRef);
+		final EntityLoadRequest elr = new EntityLoadRequest(entityRef);
+		elr.setAuxDataRequest(auxDataRequest);
+		this.entityRequest = elr;
 		crudOp = CrudOp.LOAD;
 	}
 
@@ -128,13 +131,6 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 			throw new IllegalStateException("No entity request specified");
 		}
 		entityRequest.entityOptions = options;
-	}
-
-	public final void setAuxDataRequest(AuxDataRequest auxDataRequest) {
-		if(entityRequest == null) {
-			throw new IllegalStateException("No entity request specified");
-		}
-		entityRequest.auxDataRequest = auxDataRequest;
 	}
 
 	@Override

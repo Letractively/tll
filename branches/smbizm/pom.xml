@@ -37,6 +37,7 @@
     <springVersion>2.5.6</springVersion>
     <atomikos.version>3.5.1</atomikos.version>
     <mysqlConnectorVersion>5.1.6</mysqlConnectorVersion>
+    <slfVersion>1.5.2</slfVersion>
     
     <gwtVersion>1.6.4</gwtVersion>
     <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
@@ -345,8 +346,13 @@
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slfVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.5.2</version>
+        <version>${slfVersion}</version>
       </dependency>
 
       <dependency>

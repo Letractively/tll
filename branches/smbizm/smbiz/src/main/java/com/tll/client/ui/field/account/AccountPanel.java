@@ -13,28 +13,30 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldGroupProvider;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.model.AccountStatus;
 import com.tll.model.AddressType;
 
 /**
  * AccountPanel
  * @author jpk
  */
-public class AccountPanel extends FieldPanel<FlowPanel> {
+public class AccountPanel extends FlowFieldPanel {
 
 	/**
 	 * AccountAddressPanel
 	 * @author jpk
 	 */
-	static final class AccountAddressPanel extends FieldPanel<FlowPanel> {
+	static final class AccountAddressPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -45,9 +47,9 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 		public IFieldRenderer<FlowPanel> getRenderer() {
 			return new IFieldRenderer<FlowPanel>() {
 
-				public void render(FlowPanel panel, FieldGroup fg) {
+				public void render(FlowPanel pnl, FieldGroup fg) {
 					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-					cmpsr.setCanvas(panel);
+					cmpsr.setCanvas(pnl);
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidgetByName("type"));
@@ -109,21 +111,11 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 
 	} // AddressesPanel
 
-	private final FlowPanel panel = new FlowPanel();
-
 	protected final DisclosurePanel dpPaymentInfo = new DisclosurePanel("Payment Info", false);
 	protected final PaymentInfoPanel paymentInfoPanel = new PaymentInfoPanel();
 
 	protected final DisclosurePanel dpAddresses = new DisclosurePanel("Addresses", false);
 	protected final AddressesPanel addressesPanel = new AddressesPanel();
-
-	/**
-	 * Constructor
-	 */
-	public AccountPanel() {
-		super();
-		initWidget(panel);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -143,18 +135,20 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 
 		fg.getFieldWidget("parent.name").setReadOnly(true);
 
-		((IFieldWidget<String>) fg.getFieldWidget("status")).addValueChangeHandler(new ValueChangeHandler<String>() {
+		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
+		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
-			public void onValueChange(ValueChangeEvent<String> event) {
-				final String s = event.getValue().toLowerCase();
-				final boolean closed = "closed".equals(s);
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountStatus> event) {
+				final boolean closed = event.getValue() == AccountStatus.CLOSED;
 				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
 				f.setVisible(closed);
 				f.setRequired(closed);
 			}
 		});
 
-		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo")).addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
+		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				paymentInfoPanel.getFieldGroup().setEnabled(event.getValue());
@@ -206,5 +200,10 @@ public class AccountPanel extends FieldPanel<FlowPanel> {
 				cmpsr.addWidget(dpPaymentInfo);
 			}
 		};
+	}
+
+	@Override
+	public IIndexedFieldBoundWidget[] getIndexedChildren() {
+		return new IIndexedFieldBoundWidget[] { addressesPanel };
 	}
 }

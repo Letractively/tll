@@ -20,7 +20,7 @@ import com.tll.server.marshal.MarshalOptions;
  * AccountAddressService
  * @author jpk
  */
-public final class AccountAddressService extends MNamedEntityServiceImpl<AccountAddress, ISearch> {
+public final class AccountAddressService extends MNamedEntityServiceImpl<AccountAddress> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 1);
 
@@ -36,7 +36,7 @@ public final class AccountAddressService extends MNamedEntityServiceImpl<Account
 
 	@Override
 	protected void handlePersistOptions(MEntityContext context, AccountAddress e, EntityOptions options)
-			throws SystemError {
+	throws SystemError {
 		// no-op
 	}
 

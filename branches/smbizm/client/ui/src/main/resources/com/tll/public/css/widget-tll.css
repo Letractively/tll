@@ -15,11 +15,11 @@
 }
 
 .wal .widget {
-  display: inline-table;
+  display: inline-block;
 }
 
 .wal .label {
-  display: inline-table;
+  display: inline-block;
 }
 
 /* TabbedIndexedFieldPanel */

@@ -40,7 +40,7 @@ import com.tll.common.model.PropertyPathException;
  * @author jpk
  */
 public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?>> extends FieldPanel<W> implements
-		IIndexedFieldBoundWidget {
+IIndexedFieldBoundWidget {
 
 	/**
 	 * Index - Wrapper class for each field panel at an index encapsulating the
@@ -72,12 +72,12 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 		private String getIndexTypeName() {
 			return fieldPanel.getModel().getEntityType().getPresentationName();
 		}
-		
+
 		public void setFieldGroupName(int index) {
 			fieldPanel.getFieldGroup().setName(getIndexTypeName() + " - " + index);
 		}
 	}
-	
+
 	private final BindableWidgetAdapter<Collection<Model>> adapter;
 
 	/**
@@ -195,27 +195,31 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	 */
 	private void add(Model model, boolean isUiAdd) throws IllegalArgumentException {
 		Log.debug("IndexedFieldPanel.add() - START");
-	
+
 		final I ip = createIndexPanel();
 		ip.setModel(model);
-		
-		// NOTE: we *don't* specify and error handler for this index field panel's binding actions
-		// as this is handled by the parent binding action since 
+
+		// NOTE: we *don't* specify an error handler for this index field panel's
+		// binding actions
+		// as this is handled by the parent binding action since
 		// its root field group is expected to contain this panel's field group as a child
 		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
 		if(!indexPanels.add(index)) {
 			throw new IllegalStateException("Unable to add index: " + ip);
 		}
-	
+
+		// don't do incremental validation when adding via the ui
+		ip.getFieldGroup().validateIncrementally(!isUiAdd);
+
 		index.setFieldGroupName(size());
 		getFieldGroup().addField(ip.getFieldGroup());
-	
+
 		index.binding.set(index.fieldPanel);
 		index.binding.bind(index.fieldPanel);
-	
+
 		// propagate the error handler from parent field group to this index field group
 		ip.getFieldGroup().setErrorHandler(getFieldGroup().getErrorHandler());
-	
+
 		// add in the ui
 		addUi(ip, isUiAdd);
 	}
@@ -230,17 +234,17 @@ public abstract class IndexedFieldPanel<W extends Widget, I extends FieldPanel<?
 	protected final void remove(int index, boolean isUiRemove) throws IndexOutOfBoundsException {
 		// remove from the ui first
 		removeUi(index, isUiRemove);
-	
+
 		final boolean rebuildNames = index < indexPanels.size() - 1;
 		Index<I> remove = indexPanels.remove(index);
 		assert remove != null;
-	
+
 		remove.binding.unbind(remove.fieldPanel);
 		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
 			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}
 		remove = null;
-	
+
 		// re-set remaining field group names if necessary
 		if(rebuildNames) {
 			for(int i = 0; i < indexPanels.size(); i++) {

@@ -160,9 +160,8 @@ public final class ModelChangeManager {
 	 */
 	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
 		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
-		cmd.load(entityKey);
+		cmd.load(entityKey, AuxDataCache.instance().filterRequest(adr));
 		cmd.setEntityOptions(entityOptions);
-		cmd.setAuxDataRequest(AuxDataCache.instance().filterRequest(adr));
 		cmd.execute();
 	}
 

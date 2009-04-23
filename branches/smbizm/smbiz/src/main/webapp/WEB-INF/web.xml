@@ -200,7 +200,7 @@
 	<!-- GWT RPC Servlets -->
   <servlet>
     <servlet-name>CrudAuxDataService</servlet-name>
-    <servlet-class>com.tll.server.rpc.entity.MEntityServiceDelegate</servlet-class>
+    <servlet-class>com.tll.server.rpc.entity.CrudAuxDataService</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>CrudAuxDataService</servlet-name>

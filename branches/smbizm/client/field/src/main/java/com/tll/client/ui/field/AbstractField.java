@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
-import com.tll.client.ui.IBindableWidget;
 import com.tll.client.ui.IHasFormat;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
@@ -45,8 +44,8 @@ import com.tll.util.StringUtil;
  * @param <V> the value type
  * @author jpk
  */
-public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>, IBindableWidget<V>,
-		ValueChangeHandler<V>, Focusable, BlurHandler {
+public abstract class AbstractField<V> extends Composite implements IFieldWidget<V>,
+ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	/**
 	 * Reflects the number of instantiated {@link AbstractField}s. This is
@@ -59,7 +58,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	private static int fieldCounter = 0;
 
 	private static final String dfltReadOnlyEmptyValue = "-";
-	
+
 	private final BindableWidgetAdapter<V> adapter;
 
 	/**
@@ -127,10 +126,15 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	 * Flag to indicate whether or not the initial value is set.
 	 */
 	private boolean initialValueSet;
-	
+
 	private IErrorHandler errorHandler;
-	
+
 	private boolean valid = true;
+
+	/**
+	 * The incremental validation flag.
+	 */
+	private boolean incrValFlag = true;
 
 	/**
 	 * Constructor
@@ -245,7 +249,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	public final FieldLabel getFieldLabel() {
 		return fldLbl;
 	}
-	
+
 	public String getLabelText() {
 		return fldLbl == null ? "" : fldLbl.getText();
 	}
@@ -330,7 +334,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			removeValidator(NotEmptyValidator.class);
 		}
 	}
-	
+
 	public final boolean isEnabled() {
 		return enabled;
 	}
@@ -376,7 +380,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			if(isAttached()) draw();
 		}
 	}
-	
+
 	/**
 	 * Obtains the editable form control Widget.
 	 * @return The form control Widget
@@ -425,35 +429,35 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			}
 
 			final GlobalFormat format = (this instanceof IHasFormat) ? ((IHasFormat) this).getFormat() : null;
-			
+
 			// set the type coercion validator
 			switch(metadata.getPropertyType()) {
 				case STRING:
 				case ENUM:
 					// no type coercion validator needed
 					break;
-				
+
 				case BOOL:
 					addValidator(BooleanValidator.INSTANCE);
 					break;
-				
+
 				case DATE:
 					addValidator(DateValidator.get(format == null ? GlobalFormat.DATE : format));
 					break;
-				
+
 				case INT:
 					addValidator(IntegerValidator.INSTANCE);
 					break;
-				
+
 				case FLOAT:
 				case DOUBLE:
 					addValidator(new DecimalValidator(Fmt.getDecimalFormat(format == null ? GlobalFormat.DECIMAL : format)));
 					break;
-				
+
 				case CHAR:
 					addValidator(CharacterValidator.INSTANCE);
 					break;
-				
+
 				case LONG:
 					// TODO handle - intentional fall through
 				case STRING_MAP:
@@ -472,7 +476,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	public final boolean isValid() {
 		return valid;
 	}
-	
+
 	private void resolveError() {
 		if(errorHandler != null) {
 			errorHandler.resolveError(this);
@@ -495,7 +499,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			throw e;
 		}
 	}
-	
+
 	public final Object validate(Object value) throws ValidationException {
 		try {
 			if(validator != null) {
@@ -507,7 +511,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			valid = false;
 			throw e;
 		}
-		
+
 		return value;
 	}
 
@@ -600,15 +604,17 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 
 	@Override
 	public void onBlur(BlurEvent event) {
-		try {
-			validate();
-			dirtyCheck();
-		}
-		catch(final ValidationException e) {
-			// ok
+		if(incrValFlag) {
+			try {
+				validate();
+				dirtyCheck();
+			}
+			catch(final ValidationException e) {
+				// ok
+			}
 		}
 	}
-	
+
 	@Override
 	public final void onValueChange(ValueChangeEvent<V> event) {
 		assert event.getSource() == getEditable();
@@ -620,7 +626,7 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 			//changeSupport.firePropertyChange(PROPERTY_VALUE, old, oldValue);
 		}
 	}
-	
+
 	@Override
 	public final V getValue() {
 		return getEditable().getValue();
@@ -656,6 +662,11 @@ public abstract class AbstractField<V> extends Composite implements IFieldWidget
 	@Override
 	public final void setErrorHandler(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
+	}
+
+	@Override
+	public final void validateIncrementally(boolean validate) {
+		this.incrValFlag = validate;
 	}
 
 	@Override
