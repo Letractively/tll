@@ -49,6 +49,7 @@ public final class BuildTools {
 	// target web.xml based on the loaded config state 
 	static final def DI_MODULES_ALL = [
 	                              ['com.tll.di.VelocityModule', FLAG_ALL],
+	                              ['com.tll.di.ValidationModule', FLAG_ALL],
 	                              ['com.tll.di.MailModule', FLAG_ALL],
 	                              ['com.tll.di.RefDataModule', FLAG_ALL],
 	                              ['com.tll.di.ModelModule', FLAG_ALL],

@@ -49,7 +49,6 @@ public final class NoSecuritySessionContextFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 	throws IOException, ServletException {
-		log.debug("Creating mock admin context from default user email specified in config..");
 		try {
 			final HttpServletRequest hsr = (HttpServletRequest) request;
 			HttpSession session = hsr.getSession(false);
@@ -68,6 +67,7 @@ public final class NoSecuritySessionContextFilter implements Filter {
 				}
 				final IUserService userService = mec.getEntityServiceFactory().instance(IUserService.class);
 				final User user = (User) userService.loadUserByUsername(appContext.getDfltUserEmail());
+				log.debug("Creating mock admin context from default user email specified in config..");
 				final AdminContext ac = new AdminContext();
 				ac.setUser(user);
 				ac.setAccount(user.getAccount());

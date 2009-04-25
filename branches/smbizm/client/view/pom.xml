@@ -73,11 +73,21 @@
 
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
       <version>${project.version}</version>
     </dependency>
 

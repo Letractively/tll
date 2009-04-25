@@ -15,7 +15,7 @@
 
   <!-- groupId:artifactId:type:classifier -->
   <dependencySets>
-    
+
     <dependencySet>
       <scope>runtime</scope>
       <unpack>true</unpack>
@@ -23,11 +23,18 @@
       <useProjectArtifact>false</useProjectArtifact>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <useTransitiveFiltering>false</useTransitiveFiltering>
+      <excludes>
+        <exclude>com.tll:tll-dao-mock</exclude>
+        <exclude>com.tll:tll-mock</exclude>
+      </excludes>
       <includes>
-        <include>com.tll:client-*</include>
+        <include>com.tll:*</include>
       </includes>
       <unpackOptions>
         <excludes>
+          <exclude>**/builddef.lst</exclude>
+          <exclude>**/*.ddl</exclude>
+          <exclude>**/*.sql</exclude>
           <exclude>**/*.java</exclude>
           <exclude>**/*.gwt.xml</exclude>
           <exclude>**/client/**</exclude>
@@ -36,7 +43,7 @@
         </excludes>
       </unpackOptions>
     </dependencySet>
-    
+
   </dependencySets>
 
 </assembly>

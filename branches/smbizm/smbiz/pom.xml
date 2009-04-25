@@ -81,7 +81,6 @@
               We are still able to do line level debugging.
         ALSO NOTE: the weaving brings in tll-service *.class/*.java files into the local build classes dir!!
       -->
-      <!-- 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
@@ -112,7 +111,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
       
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
@@ -207,17 +205,17 @@
             </configuration>
           </execution>
           <execution>
-            <id>tll-client-server</id>
+            <id>tll-server-aggregate</id>
             <goals>
               <goal>single</goal>
             </goals>
             <phase>process-classes</phase>
             <configuration>
-              <finalName>tll-cserver</finalName>
+              <finalName>tll-server</finalName>
               <outputDirectory>target/war/WEB-INF/lib</outputDirectory>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>src/main/assembly/tll-client-server.xml</descriptor>
+                <descriptor>src/main/assembly/tll-server-${daoMode}.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
@@ -240,7 +238,7 @@
                 log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
               <excludeArtifactIds>
-                gwt-servlet
+                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-orm,tll-dao-mock,tll-mail,tll-mentity,tll-mock,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
               <excludeTypes>zip</excludeTypes>
               <outputFile>target/gwt-cp.txt</outputFile>
@@ -274,9 +272,9 @@
                   <!-- <target name="compile" /> -->
                 </ant>
 
-                <!-- copy over the necessary server jars -->
+                <!-- copy over the necessary non-tll server jars -->
                 <copy todir="target/war/WEB-INF/lib">
-                  <fileset dir="target/server-libs" excludes="client-*" />
+                  <fileset dir="target/server-libs" excludes="client-*,tll-*" />
                 </copy>
               </tasks>
             </configuration>
@@ -442,6 +440,11 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
+    <dependency><!-- for some reason, this transitive dep is not included!! -->
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
@@ -490,6 +493,10 @@
         <exclusion>
           <groupId>org.springframework</groupId>
           <artifactId>spring-aop</artifactId>
+        </exclusion>
+        <exclusion>
+        	<artifactId>aopalliance</artifactId>
+        	<groupId>aopalliance</groupId>
         </exclusion>
       </exclusions>
     </dependency>

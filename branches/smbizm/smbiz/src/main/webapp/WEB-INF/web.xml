@@ -37,7 +37,16 @@
   <listener>
     <listener-class>com.tll.server.Bootstrapper</listener-class>
   </listener>
-  
+
+  <servlet>
+    <servlet-name>remoteLoggerServiceImpl</servlet-name>
+    <servlet-class>com.allen_sauer.gwt.log.server.RemoteLoggerServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>remoteLoggerServiceImpl</servlet-name>
+    <url-pattern>/smbizAdmin/gwt-log</url-pattern>
+  </servlet-mapping>
+
   <!-- START NO SECURITY -->
   <filter>
     <filter-name>NoSecuritySessionContextFilter</filter-name>

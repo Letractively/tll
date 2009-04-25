@@ -56,7 +56,8 @@ public final class SelectField<V> extends AbstractDataField<V, V> {
 				// NOTE: we start from index of 1 since the first index is always
 				// stubbed as empty
 				for(int i = 1; i < getItemCount(); i++) {
-					if(value.equals(getDataValue(getValue(i)))) {
+					final V dv = getDataValue(getValue(i));
+					if(value.equals(dv)) {
 						setSelectedIndex(i);
 						return;
 					}

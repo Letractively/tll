@@ -4,7 +4,7 @@
   http://maven.apache.org/xsd/assembly-1.1.0.xsd">
 
   <!--
-    Aggregates server side deps except com.tll:client-* libs which is done separately. 
+    Aggregates server side deps into a single directory. 
   -->
 
   <id>server-libs</id>
@@ -33,10 +33,9 @@
       <excludes>
         <!-- even though we don't need the client-* jars, we need their server-side transitive deps!!! -->
         <!-- <exclude>com.tll:client-*</exclude> -->
-        <exclude>com.tll:*sources*</exclude>
         <exclude>com.google.gwt:*</exclude>
         <exclude>com.google.code.gwt-incubator:*</exclude>
-        <exclude>com.google.code.gwt-log:*</exclude>
+        <!-- <exclude>com.google.code.gwt-log:*</exclude> need for log servlet -->
         <exclude>com.tll:tll-dao-mock</exclude>
         <exclude>com.tll:tll-dao-orm</exclude>
       </excludes>

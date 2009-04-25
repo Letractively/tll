@@ -1,5 +1,8 @@
 package com.tll.client.model;
 
+import java.util.ArrayList;
+
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.data.rpc.AuxDataCommand;
@@ -24,7 +27,40 @@ import com.tll.common.model.ModelKey;
  * and no "naked" {@link CrudCommand}s should exist in the app.
  * @author jpk
  */
-public final class ModelChangeManager {
+public final class ModelChangeManager implements IHasModelChangeHandlers {
+
+	/**
+	 * ModelChangeCollection
+	 * @author jpk
+	 */
+	@SuppressWarnings("serial")
+	static final class ModelChangeCollection extends ArrayList<IModelChangeHandler> {
+
+		void fire(ModelChangeEvent event) {
+			for(final IModelChangeHandler h : this) {
+				h.onModelChangeEvent(event);
+			}
+		}
+	}
+
+	final ModelChangeCollection modelHandlers = new ModelChangeCollection();
+
+	@Override
+	public void addModelChangeHandler(IModelChangeHandler handler) {
+		modelHandlers.add(handler);
+	}
+
+	@Override
+	public void removeModelChangeHandler(IModelChangeHandler handler) {
+		modelHandlers.remove(handler);
+	}
+
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event.getAssociatedType() == ModelChangeEvent.TYPE) {
+			modelHandlers.fire((ModelChangeEvent) event);
+		}
+	}
 
 	/**
 	 * ModelChangeAuxDataCommand
@@ -44,7 +80,7 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
-			sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
+			modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
 		}
 
 		@Override
@@ -72,16 +108,16 @@ public final class ModelChangeManager {
 			super.handleSuccess(result);
 			switch(crudOp) {
 				case LOAD:
-					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
+					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
 					break;
 				case ADD:
-					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
+					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
 					break;
 				case UPDATE:
-					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
+					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
 					break;
 				case PURGE:
-					sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
+					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
 							.getStatus()));
 					break;
 				default:

@@ -9,10 +9,10 @@
   </parent>
 
   <groupId>com.tll</groupId>
-  <artifactId>tll-mentity</artifactId>
-  <name>tll-mentity</name>
+  <artifactId>client-mentity</artifactId>
+  <name>client-mentity</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Server side impl of the declared RPC services in the client-model module.</description>
+  <description>Bi-directional client/server entity CRUD and marshaling capability via GWT RPC.</description>
 
   <build>
   </build>

@@ -15,7 +15,11 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
+import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
+import com.tll.client.mvc.view.IModelAwareView;
 import com.tll.client.mvc.view.IView;
 import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.IViewInitializer;
@@ -33,7 +37,7 @@ import com.tll.client.ui.view.ViewContainer;
  * controller. View history is also managed here.
  * @author jpk
  */
-public final class ViewManager implements ValueChangeHandler<String>, IHasViewChangeHandlers {
+public final class ViewManager implements ValueChangeHandler<String>, IHasViewChangeHandlers, IModelChangeHandler {
 
 	/**
 	 * ViewChangeHandlers
@@ -99,6 +103,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
+		ModelChangeManager.get().addModelChangeHandler(instance);
 	}
 
 	/**
@@ -106,6 +111,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void shutdown() {
 		if(instance != null) {
+			ModelChangeManager.get().removeModelChangeHandler(instance);
 			instance.clear();
 			instance = null;
 		}
@@ -619,6 +625,17 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				else {
 					Log.debug("Un-resolvable view hash: " + viewKeyHash + ". No action performed.");
 				}
+			}
+		}
+	}
+
+	@Override
+	public void onModelChangeEvent(ModelChangeEvent event) {
+		// apply the model change to the currently cached views
+		for(final Iterator<CView> itr = cache.queueIterator(); itr.hasNext();) {
+			final IView<?> view = itr.next().vc.getView();
+			if(view instanceof IModelAwareView) {
+				((IModelAwareView<?>) view).onModelChangeEvent(event);
 			}
 		}
 	}

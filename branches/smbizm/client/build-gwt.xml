@@ -74,6 +74,8 @@
 			<arg value="${gwt.compile.style}" />
 			<arg value="-logLevel" />
 			<arg value="INFO" />
+			<arg value="-workDir" />
+			<arg value="target/gwtc" />
 			<arg value="${gwt.compile.modules}" />
 		</java>
 	</target>

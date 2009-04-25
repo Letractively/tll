@@ -5,7 +5,10 @@
 package com.tll.client.mvc.view;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.ui.UI;
+import com.tll.common.data.EntityPayload;
 import com.tll.common.model.Model;
 
 /**
@@ -17,13 +20,24 @@ import com.tll.common.model.Model;
 public abstract class AbstractModelAwareView<I extends IViewInitializer> extends AbstractView<I> implements
 IModelAwareView<I> {
 
-	// private boolean eventFlag;
-
 	/**
 	 * Constructor
 	 */
 	public AbstractModelAwareView() {
 		addHandler(this, ModelChangeEvent.TYPE);
+	}
+
+	@Override
+	public final void onRpcEvent(RpcEvent<EntityPayload> event) {
+		switch(event.getType()) {
+			case SENT:
+				UI.busy();
+				break;
+			case ERROR:
+			case RECEIVED:
+				UI.unbusy();
+				break;
+		}
 	}
 
 	/**
@@ -49,6 +63,7 @@ IModelAwareView<I> {
 		// base impl no-op
 	}
 
+	@Override
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		if(shouldHandleModelChangeEvent(event)) {
 			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
@@ -61,16 +76,5 @@ IModelAwareView<I> {
 				handleModelChangeSuccess(event);
 			}
 		}
-		/* TODO temp disable
-		if(!eventFlag) {
-			eventFlag = true;
-			// now dispatch to the other cached views
-			final IView<?>[] cachedViews = ViewManager.get().getCachedViews();
-			for(final IView<?> cv : cachedViews) {
-				if(cv != this) cv.getViewWidget().fireEvent(event);
-			}
-			eventFlag = false;
-		}
-		 */
 	}
 }
