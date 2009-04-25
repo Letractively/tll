@@ -16,8 +16,8 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.model.IModelChangeHandler;
+import com.tll.client.model.ModelChangeDispatcher;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
 import com.tll.client.mvc.view.IModelAwareView;
 import com.tll.client.mvc.view.IView;
@@ -103,7 +103,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
-		ModelChangeManager.get().addModelChangeHandler(instance);
+		ModelChangeDispatcher.get().addModelChangeHandler(instance);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void shutdown() {
 		if(instance != null) {
-			ModelChangeManager.get().removeModelChangeHandler(instance);
+			ModelChangeDispatcher.get().removeModelChangeHandler(instance);
 			instance.clear();
 			instance = null;
 		}

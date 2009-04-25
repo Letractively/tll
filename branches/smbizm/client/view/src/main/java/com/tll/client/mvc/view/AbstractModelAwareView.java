@@ -5,10 +5,7 @@
 package com.tll.client.mvc.view;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.ui.UI;
-import com.tll.common.data.EntityPayload;
 import com.tll.common.model.Model;
 
 /**
@@ -27,6 +24,7 @@ IModelAwareView<I> {
 		addHandler(this, ModelChangeEvent.TYPE);
 	}
 
+	/*
 	@Override
 	public final void onRpcEvent(RpcEvent<EntityPayload> event) {
 		switch(event.getType()) {
@@ -39,6 +37,7 @@ IModelAwareView<I> {
 				break;
 		}
 	}
+	 */
 
 	/**
 	 * Must be implemented by concrete views.

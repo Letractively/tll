@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>tll</artifactId>
+    <artifactId>tll-client</artifactId>
     <groupId>com.tll</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>

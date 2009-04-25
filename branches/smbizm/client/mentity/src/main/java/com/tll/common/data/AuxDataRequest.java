@@ -18,12 +18,6 @@ import com.tll.refdata.RefDataType;
  */
 public final class AuxDataRequest implements IMarshalable {
 
-	public enum AuxDataType {
-		REFDATA,
-		ENTITY,
-		ENTITY_PROTOTYPE;
-	}
-
 	private Set<RefDataType> refData;
 
 	private Set<IEntityType> entityTypes;

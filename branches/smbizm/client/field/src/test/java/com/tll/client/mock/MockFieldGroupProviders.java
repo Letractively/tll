@@ -45,17 +45,17 @@ public class MockFieldGroupProviders {
 				// set needed aux data cache
 				final List<Model> list = new ArrayList<Model>();
 				list.add(MockModelStubber.stubCurrency());
-				AuxDataCache.instance().cacheEntityList(MockEntityType.CURRENCY, list);
+				AuxDataCache.get().cacheEntityList(MockEntityType.CURRENCY, list);
 
 				final Map<String, String> cc = new HashMap<String, String>();
 				cc.put("us", "United States");
 				cc.put("br", "Brazil");
-				AuxDataCache.instance().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
+				AuxDataCache.get().cacheRefDataMap(RefDataType.ISO_COUNTRY_CODES, cc);
 
 				final Map<String, String> st = new HashMap<String, String>();
 				st.put("MI", "Michigan");
 				st.put("CA", "California");
-				AuxDataCache.instance().cacheRefDataMap(RefDataType.US_STATES, st);
+				AuxDataCache.get().cacheRefDataMap(RefDataType.US_STATES, st);
 
 				auxDataInitialized = true;
 			}

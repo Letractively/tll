@@ -126,7 +126,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-mentity</artifactId>
+      <artifactId>client-mentity</artifactId>
       <version>${project.version}</version>
     </dependency>
     
@@ -191,6 +191,12 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-mock</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-mentity</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

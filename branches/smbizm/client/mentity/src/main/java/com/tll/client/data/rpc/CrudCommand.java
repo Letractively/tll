@@ -6,7 +6,6 @@ package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
@@ -157,7 +156,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 	@Override
 	protected void handleSuccess(EntityPayload result) {
 		// cache aux data first
-		AuxDataCache.instance().cache(result);
+		AuxDataCacheHelper.cache(result);
 		super.handleSuccess(result);
 	}
 }

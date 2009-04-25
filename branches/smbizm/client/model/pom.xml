@@ -13,10 +13,10 @@
   <name>client-model</name>
   <version>${project.parent.version}</version>
   <description>Contains client and server classes supporting the tll client-side Model construct.</description>
-  
+
   <build>
     <plugins>
-      
+
       <!-- override client test default which invokes only GWTTest derived tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -63,12 +63,7 @@
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-rpc</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
+
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>

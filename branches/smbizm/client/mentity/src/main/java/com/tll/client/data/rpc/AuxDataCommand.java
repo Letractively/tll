@@ -7,7 +7,6 @@ package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.rpc.IAuxDataService;
@@ -44,7 +43,7 @@ public class AuxDataCommand extends RpcCommand<AuxDataPayload> {
 	@Override
 	protected void handleSuccess(AuxDataPayload result) {
 		// cache the results
-		AuxDataCache.instance().cache(result);
+		AuxDataCacheHelper.cache(result);
 		super.handleSuccess(result);
 	}
 

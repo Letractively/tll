@@ -1,66 +1,25 @@
-package com.tll.client.model;
+package com.tll.client.data.rpc;
 
-import java.util.ArrayList;
-
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
-import com.tll.client.data.rpc.AuxDataCommand;
-import com.tll.client.data.rpc.CrudCommand;
+import com.tll.client.model.ModelChangeDispatcher;
+import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeEvent.ModelChangeOp;
+import com.tll.common.cache.AuxDataType;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.data.EntityPayload;
-import com.tll.common.data.AuxDataRequest.AuxDataType;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
 /**
- * ModelChangeManager - Acts as a mediator centralizing app-wide handling of
- * model change events ensuring the model changes are fully disseminated
- * throughout the app thus keeping all open views in sync with the underlying
- * model.
- * <p>
- * Consequently, <em>all</em> model change (CRUD ops) should be directed here
- * and no "naked" {@link CrudCommand}s should exist in the app.
+ * ModelChangeManager - Issues RPC requests for model CRUD and aux data related
+ * requests in a centralized manner.
  * @author jpk
  */
-public final class ModelChangeManager implements IHasModelChangeHandlers {
-
-	/**
-	 * ModelChangeCollection
-	 * @author jpk
-	 */
-	@SuppressWarnings("serial")
-	static final class ModelChangeCollection extends ArrayList<IModelChangeHandler> {
-
-		void fire(ModelChangeEvent event) {
-			for(final IModelChangeHandler h : this) {
-				h.onModelChangeEvent(event);
-			}
-		}
-	}
-
-	final ModelChangeCollection modelHandlers = new ModelChangeCollection();
-
-	@Override
-	public void addModelChangeHandler(IModelChangeHandler handler) {
-		modelHandlers.add(handler);
-	}
-
-	@Override
-	public void removeModelChangeHandler(IModelChangeHandler handler) {
-		modelHandlers.remove(handler);
-	}
-
-	@Override
-	public void fireEvent(GwtEvent<?> event) {
-		if(event.getAssociatedType() == ModelChangeEvent.TYPE) {
-			modelHandlers.fire((ModelChangeEvent) event);
-		}
-	}
+public final class ModelChangeManager {
 
 	/**
 	 * ModelChangeAuxDataCommand
@@ -80,7 +39,8 @@ public final class ModelChangeManager implements IHasModelChangeHandlers {
 		@Override
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
-			modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
+			ModelChangeDispatcher.get().fireEvent(
+					new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
 		}
 
 		@Override
@@ -108,20 +68,24 @@ public final class ModelChangeManager implements IHasModelChangeHandlers {
 			super.handleSuccess(result);
 			switch(crudOp) {
 				case LOAD:
-					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
+					ModelChangeDispatcher.get().fireEvent(
+							new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
 					break;
 				case ADD:
-					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
+					ModelChangeDispatcher.get().fireEvent(
+							new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
 					break;
 				case UPDATE:
-					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
+					ModelChangeDispatcher.get().fireEvent(
+							new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
 					break;
 				case PURGE:
-					modelHandlers.fire(new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
-							.getStatus()));
+					ModelChangeDispatcher.get().fireEvent(
+							new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
+									.getStatus()));
 					break;
 				default:
-					throw new IllegalStateException();
+					throw new IllegalStateException("Unhandled crud op: " + crudOp);
 			}
 		}
 
@@ -156,7 +120,7 @@ public final class ModelChangeManager implements IHasModelChangeHandlers {
 	 */
 	public boolean fetchAuxData(Widget sourcingWidget, AuxDataRequest adr) {
 		// do we need any aux data from the server?
-		adr = AuxDataCache.instance().filterRequest(adr);
+		adr = AuxDataCacheHelper.filterRequest(adr);
 		if(adr == null) return false;
 		final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
 		adc.execute();
@@ -175,7 +139,7 @@ public final class ModelChangeManager implements IHasModelChangeHandlers {
 	 *         on the client.
 	 */
 	public boolean fetchModelPrototype(Widget sourcingWidget, IEntityType entityType) {
-		if(!AuxDataCache.instance().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
+		if(!AuxDataCache.get().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
 			final AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
 			final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
@@ -196,7 +160,7 @@ public final class ModelChangeManager implements IHasModelChangeHandlers {
 	 */
 	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
 		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
-		cmd.load(entityKey, AuxDataCache.instance().filterRequest(adr));
+		cmd.load(entityKey, AuxDataCacheHelper.filterRequest(adr));
 		cmd.setEntityOptions(entityOptions);
 		cmd.execute();
 	}

@@ -271,7 +271,7 @@ public abstract class FieldFactory {
 	 */
 	public static final SuggestField frefdata(String name, String propName, String labelText, String helpText,
 			RefDataType refDataType) {
-		return fsuggest(name, propName, labelText, helpText, AuxDataCache.instance().getRefDataMap(refDataType));
+		return fsuggest(name, propName, labelText, helpText, AuxDataCache.get().getRefDataMap(refDataType));
 	}
 
 	/**
