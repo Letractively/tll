@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -57,7 +56,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the amount.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Size(min = 0, max = 99999)
+	// @Size(min = 0, max = 99999)
 	public float getAmount() {
 		return amount;
 	}

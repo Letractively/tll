@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -103,7 +102,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(precision = 7, scale = 3)
 	@NotNull
-	@Size(min = 0, max = 1)
+	// @Size(min = 0, max = 1)
 	public float getTax() {
 		return tax;
 	}

@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -83,7 +82,7 @@ import com.tll.model.schema.BusinessObject;
 	}
 
 	@Column(name = "item_total", precision = 7, scale = 2)
-	@Size(min = 0, max = 99999)
+	// @Size(min = 0, max = 99999)
 	public float getItemTotal() {
 		return itemTotal;
 	}
@@ -154,7 +153,7 @@ import com.tll.model.schema.BusinessObject;
 	}
 
 	@Column(name = "sales_tax", precision = 7, scale = 2)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getSalesTax() {
 		return salesTax;
 	}
@@ -164,7 +163,7 @@ import com.tll.model.schema.BusinessObject;
 	}
 
 	@Column(name = "ship_cost", precision = 7, scale = 2)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getShipCost() {
 		return shipCost;
 	}
@@ -204,7 +203,7 @@ import com.tll.model.schema.BusinessObject;
 	}
 
 	@Column(precision = 7, scale = 2)
-	@Size(min = 0, max = 9999999)
+	// @Size(min = 0, max = 9999999)
 	public float getTotal() {
 		return total;
 	}

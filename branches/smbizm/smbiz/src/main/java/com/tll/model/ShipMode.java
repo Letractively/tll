@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -87,7 +86,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the surcharge.
 	 */
 	@Column(precision = 8, scale = 2)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getSurcharge() {
 		return surcharge;
 	}

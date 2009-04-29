@@ -29,11 +29,10 @@ import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorHandlerDelegate;
-import com.tll.client.validate.Errors;
 import com.tll.client.validate.IErrorHandler;
+import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
-import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditPanel - Composite panel targeting a {@link FlowPanel} whose children
@@ -89,9 +88,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
-	private String modelDescriptor;
-
-	private final IMsgDisplay msgDisplay;
+	private final IErrorHandler errorHandler;
 
 	/**
 	 * Constructor
@@ -110,12 +107,11 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		this.fieldPanel = fieldPanel;
 
 		if(msgDisplay == null) throw new IllegalArgumentException("A global message panel must be specified.");
-		this.msgDisplay = msgDisplay;
 
-		final IErrorHandler eh =
+		this.errorHandler =
 			new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
 					new MsgPopupRegistry()));
-		editAction = new FieldBindingAction(eh);
+		editAction = new FieldBindingAction(errorHandler);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -177,7 +173,6 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void setModel(Model model) {
 		Log.debug("EditPanel.setModel() - START");
-		modelDescriptor = model == null ? null : model.descriptor();
 		fieldPanel.setModel(model);
 		if(model != null) {
 			// assert isAttached() == true;
@@ -189,7 +184,6 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 				portal.add(fieldPanel);
 			}
 		}
-		msgDisplay.clear();
 		Log.debug("EditPanel.setModel() - END");
 	}
 
@@ -200,11 +194,10 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
-		final Errors errors = new Errors();
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
-			if(fw == null) throw new IllegalStateException("Unable to find field of property name: " + msg.getRefToken());
-			errors.add(new Error(msg.getMsg()), fw);
+			final int attribs = fw == null ? Attrib.GLOBAL.flag() : Attrib.GLOBAL.flag() | Attrib.LOCAL.flag();
+			errorHandler.handleError(fw, new Error(msg.getMsg()), attribs);
 		}
 	}
 
@@ -214,9 +207,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 			try {
 				Log.debug("EditPanel - Saving..");
 				fieldPanel.getAction().execute();
-				msgDisplay.add(new Msg(modelDescriptor + (isAdd() ? " Added" : " Updated"), MsgLevel.INFO));
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
-				Log.debug("EditPanel - Saving complete.");
 			}
 			catch(final Exception e) {
 				String emsg = e.getMessage();
@@ -242,7 +233,6 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	protected void onLoad() {
 		Log.debug("EditPanel.onLoad()..");
 		super.onLoad();
-		msgDisplay.clear();
 		if(btnCancel != null) {
 			DeferredCommand.addCommand(new FocusCommand(btnCancel, true));
 		}

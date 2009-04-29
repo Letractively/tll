@@ -13,17 +13,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.inject.Inject;
-import com.tll.di.ExceptionHandlerModule.OnErrorEmail;
+import com.tll.di.EmailExceptionHandlerModule.OnErrorEmail;
 import com.tll.mail.MailManager;
 import com.tll.mail.NameEmail;
 
 /**
- * ExceptionHandler - Emails exception notification emails.
+ * EmailExceptionHandler - Emails exception notification emails.
  * @author jpk
  */
-public class ExceptionHandler implements IExceptionHandler {
+public class EmailExceptionHandler implements IExceptionHandler {
 
-	private static final Log log = LogFactory.getLog(ExceptionHandler.class);
+	private static final Log log = LogFactory.getLog(EmailExceptionHandler.class);
 
 	private final MailManager mailManager;
 
@@ -35,7 +35,7 @@ public class ExceptionHandler implements IExceptionHandler {
 	 * @param onErrorEmail
 	 */
 	@Inject
-	public ExceptionHandler(MailManager mailManager, @OnErrorEmail NameEmail onErrorEmail) {
+	public EmailExceptionHandler(MailManager mailManager, @OnErrorEmail NameEmail onErrorEmail) {
 		super();
 		this.mailManager = mailManager;
 		this.onErrorEmail = onErrorEmail;

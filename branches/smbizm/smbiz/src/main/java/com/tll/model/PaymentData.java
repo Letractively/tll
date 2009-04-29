@@ -2,7 +2,8 @@ package com.tll.model;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import org.hibernate.validation.constraints.Length;
 
@@ -152,7 +153,8 @@ public class PaymentData implements Serializable {
 		this.ccCvv2 = ccCvv2;
 	}
 
-	@Size(min = 1, max = 12)
+	@Min(value = 1)
+	@Max(value = 12)
 	public int getCcExpMonth() {
 		return ccExpMonth;
 	}
@@ -161,7 +163,8 @@ public class PaymentData implements Serializable {
 		this.ccExpMonth = ccExpMonth;
 	}
 
-	@Size(min = 2000, max = 2020)
+	@Min(value = 2000)
+	@Max(value = 2020)
 	public int getCcExpYear() {
 		return ccExpYear;
 	}

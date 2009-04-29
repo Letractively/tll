@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -94,7 +93,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "usd_exchange_rate", precision = 8, scale = 4)
 	@NotNull
-	@Size(min = 0, max = 9999)
+	// @Size(min = 0, max = 9999)
 	public float getUsdExchangeRate() {
 		return usdExchangeRate;
 	}

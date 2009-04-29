@@ -9,8 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 
@@ -98,7 +99,8 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "inv_committed")
 	@NotNull
-	@Size(min = 0, max = 999999)
+	@Min(value = 0)
+	@Max(value = 999999)
 	public int getInvCommitted() {
 		return invCommitted;
 	}
@@ -115,7 +117,8 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "inv_in_stock")
 	@NotNull
-	@Size(min = 0, max = 999999)
+	@Min(value = 0)
+	@Max(value = 999999)
 	public int getInvInStock() {
 		return invInStock;
 	}
@@ -132,7 +135,8 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "inv_reorder_level")
 	@NotNull
-	@Size(min = 0, max = 999999)
+	@Min(value = 0)
+	@Max(value = 999999)
 	public int getInvReorderLevel() {
 		return invReorderLevel;
 	}
@@ -183,7 +187,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "retail_price", precision = 7, scale = 2)
 	@NotNull
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getRetailPrice() {
 		return retailPrice;
 	}
@@ -200,7 +204,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "sales_price", precision = 7, scale = 2)
 	@NotNull
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getSalesPrice() {
 		return salesPrice;
 	}
@@ -250,7 +254,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(precision = 7, scale = 3)
 	@NotNull
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getWeight() {
 		return weight;
 	}

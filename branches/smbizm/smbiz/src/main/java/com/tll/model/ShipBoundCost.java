@@ -8,7 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.tll.model.schema.BusinessKeyDef;
 import com.tll.model.schema.BusinessObject;
@@ -60,7 +59,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the cost.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getCost() {
 		return cost;
 	}
@@ -76,7 +75,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the lBound.
 	 */
 	@Column(name = "l_bound", precision = 6, scale = 0)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getLbound() {
 		return lbound;
 	}
@@ -92,7 +91,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the uBound.
 	 */
 	@Column(name = "u_bound", precision = 6, scale = 0)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getUbound() {
 		return ubound;
 	}

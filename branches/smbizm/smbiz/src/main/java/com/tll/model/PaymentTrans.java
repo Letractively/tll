@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -63,7 +62,7 @@ public class PaymentTrans extends TimeStampEntity {
 	 * @return Returns the amount.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getAmount() {
 		return amount;
 	}

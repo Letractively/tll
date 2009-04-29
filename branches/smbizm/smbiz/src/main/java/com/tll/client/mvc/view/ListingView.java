@@ -82,9 +82,9 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 
 	@Override
 	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		// TODO fix this - this will fail when invoking edit commands from a listing
-		// and a subsequent edit view is rendered!!!
-		return event.getSource() == this;
+		// we don't know if the listing contains a corres. row so we simply defer to
+		// the listing widget
+		return true;
 	}
 
 	public String getLongViewName() {

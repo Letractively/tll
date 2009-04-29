@@ -13,7 +13,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CollectionOfElements;
 
@@ -108,7 +107,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "set_up_price", precision = 8, scale = 2)
 	@NotNull
-	@Size(min = 1, max = 999999)
+	// @Size(min = 1, max = 999999)
 	public float getSetUpPrice() {
 		return setUpPrice;
 	}
@@ -125,7 +124,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "monthly_price", precision = 8, scale = 2)
 	@NotNull
-	@Size(min = 1, max = 999999)
+	// @Size(min = 1, max = 999999)
 	public float getMonthlyPrice() {
 		return monthlyPrice;
 	}
@@ -142,7 +141,7 @@ import com.tll.model.schema.BusinessObject;
 	 */
 	@Column(name = "annual_price", precision = 8, scale = 2)
 	@NotNull
-	@Size(min = 1, max = 999999)
+	// @Size(min = 1, max = 999999)
 	public float getAnnualPrice() {
 		return annualPrice;
 	}

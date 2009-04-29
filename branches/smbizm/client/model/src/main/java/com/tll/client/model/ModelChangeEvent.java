@@ -39,38 +39,17 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	private final Status status;
 
 	/**
-	 * Constructor - Use for add and update model change events.
+	 * Constructor
 	 * @param change
 	 * @param model
-	 * @param status
-	 */
-	public ModelChangeEvent(ModelChangeOp change, Model model, Status status) {
-		this.change = change;
-		this.model = model;
-		this.modelKey = null;
-		this.status = status;
-	}
-
-	/**
-	 * Constructor - Use for delete model change events.
-	 * @param change
 	 * @param modelKey
 	 * @param status
 	 */
-	public ModelChangeEvent(ModelChangeOp change, ModelKey modelKey, Status status) {
+	public ModelChangeEvent(ModelChangeOp change, Model model, ModelKey modelKey, Status status) {
 		this.change = change;
-		this.model = null;
+		this.model = model;
 		this.modelKey = modelKey;
 		this.status = status;
-	}
-
-	/**
-	 * Constructor - Use for {@link ModelChangeOp#AUXDATA_READY} events.
-	 * @param change Expected to be a {@link ModelChangeOp#AUXDATA_READY} event
-	 */
-	public ModelChangeEvent(ModelChangeOp change) {
-		this(change, (Model) null, null);
-
 	}
 
 	public ModelChangeOp getChangeOp() {
@@ -82,10 +61,7 @@ public final class ModelChangeEvent extends GwtEvent<IModelChangeHandler> {
 	}
 
 	public ModelKey getModelKey() {
-		// NOTE: it is expected that the model's provided key
-		// is the exact same in terms of equals() and hashCode()
-		// behavior as the provided standalone model key!
-		return modelKey == null ? (model == null ? null : model.getKey()) : modelKey;
+		return model == null ? modelKey : model.getKey();
 	}
 
 	public Status getStatus() {

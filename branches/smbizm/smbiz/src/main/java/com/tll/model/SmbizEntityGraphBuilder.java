@@ -87,12 +87,12 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 			int ai = 0;
 			final Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);
 			for(final AccountAddress aa : set) {
-				aa.setAccount(a);
 				aa.setAddress(getNthEntity(Address.class, ++ai));
 				aa.setType(EnumUtil.fromOrdinal(AddressType.class, randomInt(AddressType.values().length)));
+				a.addAccountAddress(aa);
 			}
 		}
-		
+
 		// create a random number of histories for this account upto 5
 		final int numHistories = randomInt(6);
 		if(numHistories > 0) {
@@ -188,7 +188,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 				parent = merchant;
 				ca.setAccount(merchant);
 			}
-			
+
 			// create initial visitor record
 			final Visitor v = add(Visitor.class, true);
 			v.setAccount(parent);

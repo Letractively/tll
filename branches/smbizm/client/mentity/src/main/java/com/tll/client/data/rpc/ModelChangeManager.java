@@ -38,7 +38,7 @@ public final class ModelChangeManager {
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
 			ModelChangeDispatcher.get().fireEvent(
-					new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, (Model) null, result.getStatus()));
+					new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null, null, result.getStatus()));
 		}
 
 		@Override
@@ -53,30 +53,30 @@ public final class ModelChangeManager {
 	 */
 	final class ModelChangeCrudCommand extends CrudCommand {
 
+		ModelKey requestKey;
+
 		@Override
 		protected void handleSuccess(EntityPayload result) {
 			super.handleSuccess(result);
+			ModelChangeOp mop = null;
 			switch(crudOp) {
 				case LOAD:
-					ModelChangeDispatcher.get().fireEvent(
-							new ModelChangeEvent(ModelChangeOp.LOADED, result.getEntity(), result.getStatus()));
+					mop = ModelChangeOp.LOADED;
 					break;
 				case ADD:
-					ModelChangeDispatcher.get().fireEvent(
-							new ModelChangeEvent(ModelChangeOp.ADDED, result.getEntity(), result.getStatus()));
+					mop = ModelChangeOp.ADDED;
 					break;
 				case UPDATE:
-					ModelChangeDispatcher.get().fireEvent(
-							new ModelChangeEvent(ModelChangeOp.UPDATED, result.getEntity(), result.getStatus()));
+					mop = ModelChangeOp.UPDATED;
 					break;
 				case PURGE:
-					ModelChangeDispatcher.get().fireEvent(
-							new ModelChangeEvent(ModelChangeOp.DELETED, result.getEntityRef(), result
-									.getStatus()));
+					mop = ModelChangeOp.DELETED;
 					break;
 				default:
 					throw new IllegalStateException("Unhandled crud op: " + crudOp);
 			}
+			ModelChangeDispatcher.get().fireEvent(
+					new ModelChangeEvent(mop, result.getEntity(), requestKey, result.getStatus()));
 		}
 
 		@Override
@@ -129,7 +129,7 @@ public final class ModelChangeManager {
 			adr.requestEntityPrototype(entityType);
 			return new ModelChangeAuxDataCommand(adr);
 		}
-		ModelChangeDispatcher.get().fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY));
+		ModelChangeDispatcher.get().fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null, null, null));
 		return null;
 	}
 
@@ -145,6 +145,7 @@ public final class ModelChangeManager {
 		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand();
 		cmd.load(entityKey, AuxDataCacheHelper.filterRequest(adr));
 		cmd.setEntityOptions(entityOptions);
+		cmd.requestKey = entityKey;
 		return cmd;
 	}
 
@@ -164,6 +165,7 @@ public final class ModelChangeManager {
 			cmd.update(model);
 		}
 		cmd.setEntityOptions(entityOptions);
+		cmd.requestKey = model.getKey();
 		return cmd;
 	}
 
@@ -178,6 +180,7 @@ public final class ModelChangeManager {
 		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand();
 		cmd.purge(entityKey);
 		cmd.setEntityOptions(entityOptions);
+		cmd.requestKey = entityKey;
 		return cmd;
 	}
 }

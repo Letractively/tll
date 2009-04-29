@@ -38,7 +38,7 @@ class CrudCommand extends RpcCommand<EntityPayload> {
 	}
 
 	protected CrudOp crudOp;
-	private EntityRequest entityRequest;
+	protected EntityRequest entityRequest;
 
 	/**
 	 * Sets the state of this command for loading an entity by primary key.

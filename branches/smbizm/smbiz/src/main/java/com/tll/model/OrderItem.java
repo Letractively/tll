@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
@@ -156,7 +155,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the price.
 	 */
 	@Column(precision = 7, scale = 2)
-	@Size(min = 0, max = 99999)
+	// @Size(min = 0, max = 99999)
 	public float getPrice() {
 		return price;
 	}
@@ -172,7 +171,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the qty.
 	 */
 	@Column
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public int getQty() {
 		return qty;
 	}
@@ -205,7 +204,7 @@ import com.tll.model.schema.BusinessObject;
 	 * @return Returns the weight.
 	 */
 	@Column(precision = 8, scale = 3)
-	@Size(min = 0, max = 999999)
+	// @Size(min = 0, max = 999999)
 	public float getWeight() {
 		return weight;
 	}

@@ -18,6 +18,8 @@ import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
+import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * EditView - Dedicated base class for AbstractView impls whose sole purpose is
@@ -174,11 +176,13 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
+		gmp.clear();
 		editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
 	}
 
 	@Override
 	protected void handleModelChangeSuccess(ModelChangeEvent event) {
+		gmp.clear();
 		switch(event.getChangeOp()) {
 
 			case LOADED:
@@ -191,8 +195,15 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 				return;
 
 			case ADDED:
+				model = event.getModel();
+				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO));
+				editPanel.setModel(model);
+				break;
+
 			case UPDATED:
-				doRefresh();
+				model = event.getModel();
+				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO));
+				editPanel.setModel(model);
 				break;
 
 			case DELETED:
