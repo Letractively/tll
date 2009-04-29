@@ -22,7 +22,7 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	/**
 	 * Map of app available currencies.
 	 */
-	private static Map<String, String> currencyMap;
+	private static Map<Integer, String> currencyMap;
 
 	/**
 	 * Creates a new {@link SelectField} of app recognized currencies.
@@ -32,7 +32,7 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	 * @param helpText
 	 * @return select field containing the app currencies
 	 */
-	protected static final SelectField<String> fcurrencies(String name, String propName, String labelText,
+	protected static final SelectField<Integer> fcurrencies(String name, String propName, String labelText,
 			String helpText) {
 		return fselect(name, propName, labelText, helpText, getCurrencyDataMap());
 	}
@@ -42,18 +42,18 @@ public abstract class CurrencyAwareFieldGroupProvider extends AbstractFieldGroup
 	 * @return Map of the the system currency ids keyed by the data store currency
 	 *         id.
 	 */
-	protected static Map<String, String> getCurrencyDataMap() {
+	protected static Map<Integer, String> getCurrencyDataMap() {
 		if(currencyMap == null) {
-			final List<Model> currencies = AuxDataCache.instance().getEntityList(SmbizEntityType.CURRENCY);
+			final List<Model> currencies = AuxDataCache.get().getEntityList(SmbizEntityType.CURRENCY);
 			if(currencies == null) return null;
-			currencyMap = new HashMap<String, String>();
+			currencyMap = new HashMap<Integer, String>();
 			final StringBuilder sb = new StringBuilder();
 			for(final Model e : currencies) {
 				sb.setLength(0);
 				sb.append(e.asString("symbol"));
 				sb.append(" - ");
 				sb.append(e.getName());
-				currencyMap.put(Integer.toString(e.getId()), sb.toString());
+				currencyMap.put(e.getId(), sb.toString());
 			}
 			return currencyMap;
 		}

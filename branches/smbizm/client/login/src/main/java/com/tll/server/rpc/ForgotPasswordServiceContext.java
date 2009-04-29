@@ -21,7 +21,7 @@ public class ForgotPasswordServiceContext {
 
 	private final IForgotPasswordHandler handler;
 	private final MailManager mailManager;
-	private final ExceptionHandler exceptionHandler;
+	private final IExceptionHandler exceptionHandler;
 
 	/**
 	 * Constructor
@@ -30,7 +30,7 @@ public class ForgotPasswordServiceContext {
 	 * @param exceptionHandler
 	 */
 	public ForgotPasswordServiceContext(IForgotPasswordHandler handler, MailManager mailManager,
-			ExceptionHandler exceptionHandler) {
+			IExceptionHandler exceptionHandler) {
 		super();
 		this.handler = handler;
 		this.mailManager = mailManager;
@@ -54,7 +54,7 @@ public class ForgotPasswordServiceContext {
 	/**
 	 * @return the exceptionHandler
 	 */
-	protected ExceptionHandler getExceptionHandler() {
+	protected IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
 

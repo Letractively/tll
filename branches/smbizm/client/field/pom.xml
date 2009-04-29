@@ -50,7 +50,7 @@
                 <ant antfile="${basedir}/../build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <target name="compile" />
+                  <!-- <target name="compile" /> -->
                 </ant>
               </tasks>
             </configuration>
@@ -104,14 +104,13 @@
     <dependency>
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
+      <artifactId>gwt-incubator</artifactId>
     </dependency>
-    
+    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>

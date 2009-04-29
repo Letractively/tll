@@ -62,13 +62,16 @@ public class ForgotPasswordService extends RpcServlet implements IForgotPassword
 				status.addMsg("Password reminder email was sent.", MsgLevel.INFO);
 			}
 			catch(final EntityNotFoundException nfe) {
-				context.getExceptionHandler().handleException(p.getStatus(), nfe, nfe.getMessage(), false);
+				exceptionToStatus(nfe, status);
+				context.getExceptionHandler().handleException(nfe);
 			}
 			catch(final ChangeUserCredentialsFailedException e) {
-				context.getExceptionHandler().handleException(p.getStatus(), e, e.getMessage(), false);
+				exceptionToStatus(e, status);
+				context.getExceptionHandler().handleException(e);
 			}
 			catch(final MailSendException mse) {
-				context.getExceptionHandler().handleException(p.getStatus(), mse, mse.getMessage(), true);
+				exceptionToStatus(mse, status);
+				context.getExceptionHandler().handleException(mse);
 			}
 		}
 

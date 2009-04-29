@@ -28,7 +28,6 @@ import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.mvc.view.ViewKey;
 import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.mvc.view.ViewRef;
-import com.tll.client.ui.UI;
 import com.tll.client.ui.view.ViewContainer;
 
 /**
@@ -196,6 +195,10 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		viewChangeHandlers.remove(handler);
 	}
 
+	public Panel getParentViewPanel() {
+		return parentViewPanel;
+	}
+
 	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
@@ -220,23 +223,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			setCurrentView(e, showPopped);
 		}
 		else {
-			// busy-ize the ui since view initialization may take some time
-			UI.busy();
-			try {
-				Log.debug("Creating and initializing view: " + key + " ..");
-				// non-cached view
-				final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
-				// initialize the view
-				view.initialize(init);
-				// load the view
-				view.refresh();
+			Log.debug("Creating and initializing view: " + key + " ..");
+			// non-cached view
+			final IView<IViewInitializer> view = (IView<IViewInitializer>) key.getViewClass().newView();
 
-				e = new CView(new ViewContainer(view, options, key), init, options);
-				setCurrentView(e, showPopped);
-			}
-			finally {
-				UI.unbusy();
-			}
+			// initialize the view
+			view.initialize(init);
+
+			e = new CView(new ViewContainer(view, options, key), init, options);
+			setCurrentView(e, showPopped);
+
+			// load the view
+			view.refresh();
 		}
 	}
 

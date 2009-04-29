@@ -106,7 +106,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		if(mainPanel == null) {
 			mainPanel = new MainPanel();
 			if(acc == null) {
-				acc = new AdminContextCommand(mainPanel);
+				acc = new AdminContextCommand();
 				acc.addAdminContextListener(this);
 				acc.addAdminContextListener(mainPanel);
 			}

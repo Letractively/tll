@@ -189,6 +189,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 				portal.add(fieldPanel);
 			}
 		}
+		msgDisplay.clear();
 		Log.debug("EditPanel.setModel() - END");
 	}
 
@@ -241,7 +242,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	protected void onLoad() {
 		Log.debug("EditPanel.onLoad()..");
 		super.onLoad();
-		// portal.addScrollListener(MsgManager.instance);
+		msgDisplay.clear();
 		if(btnCancel != null) {
 			DeferredCommand.addCommand(new FocusCommand(btnCancel, true));
 		}
@@ -251,6 +252,5 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	protected void onUnload() {
 		Log.debug("EditPanel.onUnload()..");
 		super.onUnload();
-		// portal.removeScrollListener(MsgManager.instance);
 	}
 }

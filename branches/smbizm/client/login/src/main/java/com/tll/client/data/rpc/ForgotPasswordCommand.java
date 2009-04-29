@@ -5,7 +5,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
 import com.tll.common.data.rpc.IForgotPasswordService;
 import com.tll.common.data.rpc.IForgotPasswordServiceAsync;
@@ -25,11 +24,10 @@ public final class ForgotPasswordCommand extends RpcCommand<Payload> {
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget
 	 * @param emailAddress
 	 */
-	public ForgotPasswordCommand(Widget sourcingWidget, String emailAddress) {
-		super(sourcingWidget);
+	public ForgotPasswordCommand(String emailAddress) {
+		super();
 		this.emailAddress = emailAddress;
 	}
 

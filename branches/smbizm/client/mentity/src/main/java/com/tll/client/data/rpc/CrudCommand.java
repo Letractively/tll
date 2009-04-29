@@ -5,7 +5,6 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
@@ -24,7 +23,7 @@ import com.tll.common.search.ISearch;
  * CrudCommand - Issues CRUD commands to the server.
  * @author jpk
  */
-public class CrudCommand extends RpcCommand<EntityPayload> {
+class CrudCommand extends RpcCommand<EntityPayload> {
 
 	public enum CrudOp {
 		LOAD,
@@ -40,14 +39,6 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 
 	protected CrudOp crudOp;
 	private EntityRequest entityRequest;
-
-	/**
-	 * Constructor
-	 * @param sourcingWidget
-	 */
-	public CrudCommand(Widget sourcingWidget) {
-		super(sourcingWidget);
-	}
 
 	/**
 	 * Sets the state of this command for loading an entity by primary key.

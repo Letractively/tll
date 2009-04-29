@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.IBindingAction;
+import com.tll.client.bind.FieldBindingAction;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
@@ -35,7 +35,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	/**
 	 * The optional action.
 	 */
-	private IBindingAction action;
+	private FieldBindingAction action;
 
 	private boolean drawn;
 
@@ -46,6 +46,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		super();
 	}
 
+	@Override
 	public final FieldGroup getFieldGroup() {
 		if(group == null) {
 			Log.debug(toString() + ".generateFieldGroup()..");
@@ -54,6 +55,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		return group;
 	}
 
+	@Override
 	public final void setFieldGroup(FieldGroup fields) {
 		if(fields == null) {
 			throw new IllegalArgumentException("A field group must be specified");
@@ -75,38 +77,38 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 		if(this.model != null && model == this.model) {
 			return;
 		}
-		Log.debug("AbstractBindableWidget.setModel() - START");
+		Log.debug("FieldPanel.setModel() - START");
 
 		final IBindable old = this.model;
 
 		if(old != null) {
-			Log.debug("AbstractBindableWidget - unbinding existing action..");
+			Log.debug("FieldPanel - unbinding existing action..");
 			action.unset(this);
 		}
 
 		this.model = model;
 
 		// apply property metadata
-		getFieldGroup().applyPropertyMetadata(model);
+		if(model != null) {
+			getFieldGroup().applyPropertyMetadata(model);
+		}
 
-		if(action != null) {
+		if(action != null && model != null) {
+			Log.debug("FieldPanel - settinng/binding action..");
 			action.set(this);
-			if(isAttached() && (model != null)) {
-				Log.debug("AbstractBindableWidget - re-binding existing action..");
-				action.bind(this);
-			}
+			action.bind(this);
 		}
 		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
 		//changeSupport.firePropertyChange(PropertyChangeType.MODEL.prop(), old, model);
 	}
 
 	@Override
-	public final IBindingAction getAction() {
+	public final FieldBindingAction getAction() {
 		return action;
 	}
 
 	@Override
-	public final void setAction(IBindingAction action) {
+	public final void setAction(FieldBindingAction action) {
 		this.action = action;
 	}
 

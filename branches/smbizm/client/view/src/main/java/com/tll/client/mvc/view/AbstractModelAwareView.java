@@ -24,21 +24,6 @@ IModelAwareView<I> {
 		addHandler(this, ModelChangeEvent.TYPE);
 	}
 
-	/*
-	@Override
-	public final void onRpcEvent(RpcEvent<EntityPayload> event) {
-		switch(event.getType()) {
-			case SENT:
-				UI.busy();
-				break;
-			case ERROR:
-			case RECEIVED:
-				UI.unbusy();
-				break;
-		}
-	}
-	 */
-
 	/**
 	 * Must be implemented by concrete views.
 	 * @param event

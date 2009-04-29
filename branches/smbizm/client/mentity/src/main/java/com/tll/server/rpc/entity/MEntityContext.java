@@ -13,7 +13,7 @@ import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.ExceptionHandler;
+import com.tll.server.rpc.IExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
@@ -38,7 +38,7 @@ public final class MEntityContext implements Serializable {
 	private final IEntityAssembler entityAssembler;
 	private final IEntityServiceFactory entityServiceFactory;
 	private final INamedQueryResolver namedQueryResolver;
-	private final ExceptionHandler exceptionHandler;
+	private final IExceptionHandler exceptionHandler;
 
 	/**
 	 * Constructor
@@ -53,7 +53,7 @@ public final class MEntityContext implements Serializable {
 	 */
 	public MEntityContext(RefData refData, MailManager mailManager, Marshaler marshaler,
 			EntityManagerFactory entityManagerFactory, IEntityAssembler entityAssembler,
-			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver, ExceptionHandler exceptionHandler) {
+			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver, IExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
@@ -93,7 +93,7 @@ public final class MEntityContext implements Serializable {
 		return namedQueryResolver;
 	}
 
-	public ExceptionHandler getExceptionHandler() {
+	public IExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
 }

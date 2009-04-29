@@ -11,7 +11,7 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.ModelPropertyFormatter;
 import com.tll.client.listing.PropertyBoundColumn;
-import com.tll.client.ui.listing.RemoteListingWidget;
+import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
 import com.tll.common.search.mock.TestAddressSearch;
@@ -163,7 +163,7 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class RemoteListingWidgetTest extends DefaultUITestCase {
 
-		RemoteListingWidget lw;
+		ModelListingWidget lw;
 
 		/**
 		 * Constructor

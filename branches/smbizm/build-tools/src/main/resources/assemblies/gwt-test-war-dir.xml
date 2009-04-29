@@ -38,15 +38,17 @@
   <!-- groupId:artifactId:type:classifier -->
   <dependencySets>
     
-    <!-- NOTE: we only need gwt-servlet! -->
     <dependencySet>
       <scope>runtime</scope>
       <outputDirectory>/WEB-INF/lib</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
-      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <includes>
         <include>com.google.gwt:gwt-servlet</include>
+        <include>org.hibernate:hibernate-validator</include>
+        <include>org.slf4j:slf4j-api</include>
+        <include>org.slf4j:slf4j-log4j12</include>
       </includes>
     </dependencySet>
     

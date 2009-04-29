@@ -52,6 +52,7 @@ public final class BuildTools {
 	                              ['com.tll.di.ValidationModule', FLAG_ALL],
 	                              ['com.tll.di.MailModule', FLAG_ALL],
 	                              ['com.tll.di.RefDataModule', FLAG_ALL],
+	                              ['com.tll.di.ExceptionHandlerModule', FLAG_ALL],
 	                              ['com.tll.di.ModelModule', FLAG_ALL],
 	                              ['com.tll.di.MockEntityFactoryModule', FLAG_MOCK],
 	                              ['com.tll.di.EntityAssemblerModule', FLAG_ALL],

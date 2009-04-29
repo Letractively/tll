@@ -5,17 +5,15 @@
 package com.tll.client.data.rpc;
 
 import com.google.gwt.event.shared.GwtEvent;
-import com.tll.common.data.Payload;
 
 /**
- * RpcEvent
+ * RpcEvent - Conveys RPC send/recv/error events without additional info.
  * @author jpk
- * @param <P> the payload type
  */
-public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> {
+public final class RpcEvent extends GwtEvent<IRpcHandler> {
 
-	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>> TYPE =
-			new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<?>>();
+	public static final com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler> TYPE =
+		new com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler>();
 
 	/**
 	 * Type
@@ -31,72 +29,36 @@ public final class RpcEvent<P extends Payload> extends GwtEvent<IRpcHandler<P>> 
 		 */
 		RECEIVED,
 		/**
-		 * An RPC error occcurred.
+		 * An error occurred while trying to send the rpc request.
+		 */
+		SEND_ERROR,
+		/**
+		 * An RPC processing related error occurred.
 		 */
 		ERROR;
 	}
-	
+
 	private final Type type;
 
 	/**
-	 * The RPC payload.
-	 */
-	private final P payload;
-
-	/**
-	 * The RPC error.
-	 */
-	private final Throwable error;
-
-	/**
 	 * Constructor - Use for RPC send calls.
+	 * @param type
 	 */
-	public RpcEvent() {
-		this.type = Type.SENT;
-		this.payload = null;
-		this.error = null;
-	}
-
-	/**
-	 * Constructor - Use for successful RPC retrievals.
-	 * @param payload The payload
-	 */
-	public RpcEvent(P payload) {
-		this.type = Type.RECEIVED;
-		this.payload = payload;
-		this.error = null;
-	}
-
-	/**
-	 * Constructor - Use for un-successful RPC calls.
-	 * @param error The RPC error
-	 */
-	public RpcEvent(Throwable error) {
-		this.type = Type.ERROR;
-		this.payload = null;
-		this.error = error;
+	public RpcEvent(Type type) {
+		this.type = type;
 	}
 
 	@Override
-	protected void dispatch(IRpcHandler<P> handler) {
+	protected void dispatch(IRpcHandler handler) {
 		handler.onRpcEvent(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler<P>> getAssociatedType() {
-		return (com.google.gwt.event.shared.GwtEvent.Type) TYPE;
+	public com.google.gwt.event.shared.GwtEvent.Type<IRpcHandler> getAssociatedType() {
+		return TYPE;
 	}
 
 	public Type getType() {
 		return type;
-	}
-
-	public P getPayload() {
-		return payload;
-	}
-
-	public Throwable getError() {
-		return error;
 	}
 }

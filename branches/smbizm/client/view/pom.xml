@@ -75,11 +75,13 @@
   </build>
 
   <dependencies>
+    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
@@ -99,14 +101,14 @@
     <dependency>
       <groupId>com.google.code.gwt-log</groupId>
       <artifactId>gwt-log</artifactId>
-      <scope>provided</scope>
     </dependency>
+    <!--
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
+      <artifactId>gwt-incubator</artifactId>
     </dependency>
-    
+    -->
+
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-ui</artifactId>

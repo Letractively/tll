@@ -8,7 +8,6 @@ package com.tll.client.rpc;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.data.rpc.RpcCommand;
 import com.tll.client.rpc.IAdminContextListener.ChangeType;
@@ -35,10 +34,9 @@ public final class AdminContextCommand extends RpcCommand<AdminContextPayload> i
 
 	/**
 	 * Constructor
-	 * @param sourcingWidget
 	 */
-	public AdminContextCommand(Widget sourcingWidget) {
-		super(sourcingWidget);
+	public AdminContextCommand() {
+		super();
 	}
 
 	public void setChangeType(ChangeType changeType) {

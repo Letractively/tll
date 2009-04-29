@@ -81,6 +81,7 @@
               We are still able to do line level debugging.
         ALSO NOTE: the weaving brings in tll-service *.class/*.java files into the local build classes dir!!
       -->
+      <!--  
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
@@ -111,6 +112,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
       
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
@@ -238,7 +240,7 @@
                 log4j,commons-logging,org.slf4j,com.tll,com.google.gwt,com.google.code.gwt-incubator,com.google.code.gwt-log
               </includeGroupIds>
               <excludeArtifactIds>
-                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-orm,tll-dao-mock,tll-mail,tll-mentity,tll-mock,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
+                gwt-servlet,tll-config,tll-core,tll-dao-api,tll-dao-orm,tll-dao-mock,tll-mail,tll-mock,tll-model,tll-refdata,tll-security,tll-service,tll-servlet
               </excludeArtifactIds>
               <excludeTypes>zip</excludeTypes>
               <outputFile>target/gwt-cp.txt</outputFile>
@@ -269,7 +271,7 @@
                 <ant antfile="${basedir}/../client/build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <!-- <target name="compile" /> -->
+                  <target name="compile" />
                 </ant>
 
                 <!-- copy over the necessary non-tll server jars -->
@@ -420,7 +422,7 @@
     </dependency>
     <dependency>
       <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
+      <artifactId>gwt-incubator</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.code.gwt-log</groupId>
@@ -591,17 +593,17 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
+      <artifactId>client-model</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
       <artifactId>client-rpc</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>tll-mentity</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-model</artifactId>
+      <artifactId>client-mentity</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

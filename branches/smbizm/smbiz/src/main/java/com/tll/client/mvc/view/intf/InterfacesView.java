@@ -14,15 +14,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.Style;
+import com.tll.client.data.rpc.IRpcCommand;
+import com.tll.client.data.rpc.ModelChangeManager;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.AbstractModelAwareView;
 import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
@@ -118,16 +120,23 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					ModelChangeManager.get().loadModel(editPanel, intfRef, null, auxDataRequest);
+					final IRpcCommand cmd = ModelChangeManager.get().loadModel(intfRef, null, auxDataRequest);
+					cmd.addRpcHandler(new RpcUiHandler(InterfacesStack.this));
+					cmd.execute();
 				}
 			}
 
 			public void onEdit(EditEvent event) {
+				IRpcCommand cmd = null;
 				if(event.getOp().isSave()) {
-					ModelChangeManager.get().persistModel(editPanel, model, null);
+					cmd = ModelChangeManager.get().persistModel(model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					ModelChangeManager.get().deleteModel(editPanel, model.getKey(), null);
+					cmd = ModelChangeManager.get().deleteModel(model.getKey(), null);
+				}
+				if(cmd != null) {
+					cmd.addRpcHandler(new RpcUiHandler(InterfacesStack.this));
+					cmd.execute();
 				}
 			}
 

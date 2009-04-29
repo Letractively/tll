@@ -101,7 +101,7 @@ public class AccountPanel extends FlowFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
+			return AuxDataCache.get().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override

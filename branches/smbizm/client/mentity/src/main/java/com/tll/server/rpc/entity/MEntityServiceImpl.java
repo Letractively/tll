@@ -32,6 +32,7 @@ import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.server.rpc.RpcServlet;
 import com.tll.service.entity.IEntityService;
 
 /**
@@ -122,13 +123,14 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			}
 		}
 		catch(final EntityNotFoundException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final SystemError e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
+			throw e;
 		}
 		catch(final RuntimeException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 	}
@@ -156,19 +158,19 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
 		}
 		catch(final EntityExistsException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final ConstraintViolationException ise) {
 			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
 				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag, iv.getPropertyPath());
-
 			}
 		}
 		catch(final SystemError e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
+			throw e;
 		}
 		catch(final RuntimeException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 	}
@@ -192,13 +194,14 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			payload.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
 		}
 		catch(final EntityNotFoundException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), false);
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final SystemError e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
+			throw e;
 		}
 		catch(final RuntimeException e) {
-			context.getExceptionHandler().handleException(payload.getStatus(), e, e.getMessage(), true);
+			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 	}

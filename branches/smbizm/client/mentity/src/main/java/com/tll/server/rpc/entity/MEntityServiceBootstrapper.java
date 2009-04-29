@@ -15,12 +15,11 @@ import com.google.inject.Injector;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.mail.MailManager;
-import com.tll.mail.NameEmail;
 import com.tll.model.IEntityAssembler;
 import com.tll.refdata.RefData;
 import com.tll.server.IBootstrapHandler;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.ExceptionHandler;
+import com.tll.server.rpc.IExceptionHandler;
 import com.tll.service.entity.IEntityServiceFactory;
 
 /**
@@ -36,9 +35,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 	public static enum ConfigKeys implements IConfigKey {
 
 		MENTITY_SERVICE_IMPL_RESOLVER_CLASSNAME("server.mEntityServiceImplResolver.classname"),
-		NAMED_QUERY_RESOLVER_CLASSNAME("server.namedQueryResolver.classname"),
-		ONERROR_SEND_EMAIL("mail.onerror.ToAddress"),
-		ONERROR_SEND_NAME("mail.onerror.ToName");
+		NAMED_QUERY_RESOLVER_CLASSNAME("server.namedQueryResolver.classname");
 
 		private final String key;
 
@@ -83,10 +80,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			entityManagerFactory = null;
 		}
 
-		final String onErrorName = config.getString(ConfigKeys.ONERROR_SEND_NAME.getKey());
-		final String onErrorEmail = config.getString(ConfigKeys.ONERROR_SEND_EMAIL.getKey());
-		final NameEmail email = new NameEmail(onErrorName, onErrorEmail);
-		final ExceptionHandler exceptionHandler = new ExceptionHandler(mailManager, email);
+		final IExceptionHandler exceptionHandler = injector.getInstance(IExceptionHandler.class);
 		final IEntityAssembler entityAssembler = injector.getInstance(IEntityAssembler.class);
 		final IEntityServiceFactory entityServiceFactory = injector.getInstance(IEntityServiceFactory.class);
 
@@ -117,7 +111,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 		// create and store the sole context
 		final MEntityContext context =
 			new MEntityContext(refdata, mailManager, marshaler, entityManagerFactory, entityAssembler,
-						entityServiceFactory,
+					entityServiceFactory,
 					namedQueryResolver, exceptionHandler);
 		servletContext.setAttribute(MEntityContext.KEY, context);
 

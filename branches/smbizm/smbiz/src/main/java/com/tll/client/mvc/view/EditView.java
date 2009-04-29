@@ -4,9 +4,11 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.client.data.rpc.IRpcCommand;
+import com.tll.client.data.rpc.ModelChangeManager;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
@@ -108,6 +110,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		}
 	}
 
+	@Override
 	public final void refresh() {
 		model = null;
 		doRefresh();
@@ -117,10 +120,19 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			ModelChangeManager.get().loadModel(this, modelKey, entityOptions, getNeededAuxData());
+			final IRpcCommand cmd = ModelChangeManager.get().loadModel(modelKey, entityOptions, getNeededAuxData());
+			cmd.addRpcHandler(new RpcUiHandler(ViewManager.get().getParentViewPanel()));
+			cmd.execute();
 		}
-		else if(!ModelChangeManager.get().fetchAuxData(this, getNeededAuxData())) {
-			editPanel.setModel(model);
+		else {
+			final IRpcCommand cmd = ModelChangeManager.get().fetchAuxData(getNeededAuxData());
+			if(cmd == null) {
+				editPanel.setModel(model);
+			}
+			else {
+				cmd.addRpcHandler(new RpcUiHandler(getViewWidget()));
+				cmd.execute();
+			}
 		}
 	}
 
@@ -130,19 +142,24 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	}
 
 	public final void onEdit(EditEvent event) {
+		IRpcCommand cmd = null;
 		switch(event.getOp()) {
 			case CANCEL:
 				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false));
 				break;
 			case ADD:
 			case UPDATE:
-				ModelChangeManager.get().persistModel(this, model, entityOptions);
+				cmd = ModelChangeManager.get().persistModel(model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					ModelChangeManager.get().deleteModel(this, modelKey, entityOptions);
+					cmd = ModelChangeManager.get().deleteModel(modelKey, entityOptions);
 				}
 				break;
+		}
+		if(cmd != null) {
+			cmd.addRpcHandler(new RpcUiHandler(getViewWidget()));
+			cmd.execute();
 		}
 	}
 

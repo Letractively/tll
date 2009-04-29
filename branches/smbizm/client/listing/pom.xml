@@ -100,6 +100,17 @@
     </dependency>
     
     <dependency>
+      <groupId>com.google.code.gwt-log</groupId>
+      <artifactId>gwt-log</artifactId>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>com.google.code.gwt-incubator</groupId>
+      <artifactId>gwt-incubator</artifactId>
+    </dependency>
+    -->
+
+    <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
@@ -126,24 +137,6 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mentity</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.google.code.gwt-log</groupId>
-      <artifactId>gwt-log</artifactId>
-      <version>2.5.3</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gwt-incubator</groupId>
-      <artifactId>gwt-incubator-glasspanel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -160,6 +153,11 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tll</groupId>
+      <artifactId>client-mentity</artifactId>
       <version>${project.version}</version>
     </dependency>
     
@@ -191,12 +189,6 @@
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-dao-mock</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.tll</groupId>
-      <artifactId>client-mentity</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -27,7 +27,7 @@ import com.tll.client.data.rpc.IUserSessionListener;
  * @author jpk
  */
 public class LoginDialog extends Dialog implements SubmitHandler, SubmitCompleteHandler, ClickHandler,
-		ISourcesUserSessionEvents {
+ISourcesUserSessionEvents {
 
 	private final Label lblStatusMsg;
 	private final FormPanel form;
@@ -122,7 +122,8 @@ public class LoginDialog extends Dialog implements SubmitHandler, SubmitComplete
 					return;
 				}
 
-				final ForgotPasswordCommand fpc = new ForgotPasswordCommand(this, emailAddress);
+				final ForgotPasswordCommand fpc = new ForgotPasswordCommand(emailAddress);
+				fpc.addRpcHandler(new RpcUiHandler(this));
 				fpc.execute();
 			}
 		}

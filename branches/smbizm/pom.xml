@@ -30,14 +30,16 @@
     <url>http://tll.googlecode.com</url>
   </scm>
   
+  <!-- 
   <repositories>
-    <!-- for hibernate validator -->
+    for hibernate validator
     <repository>
       <id>jboss</id>
       <url>http://repository.jboss.com/maven2/</url>
     </repository>
   </repositories>
-
+  -->
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -48,7 +50,7 @@
     <slfVersion>1.5.2</slfVersion>
     
     <gwtVersion>1.6.4</gwtVersion>
-    <gwtIncubatorGlassPanelVersion>1.5.729</gwtIncubatorGlassPanelVersion>
+    <gwtIncubatorVersion>1.6</gwtIncubatorVersion>
     <gwtLogVersion>2.5.3</gwtLogVersion>
     
     <junitVersion>4.5</junitVersion>
@@ -62,6 +64,7 @@
       must be installed separately and before hand 
       since they are referenced as dependencies in this root build file 
     -->
+    <module>common</module>
     <module>core</module>
     <module>config</module>
     <module>mail</module>
@@ -74,10 +77,8 @@
     <module>test/service-layer</module>
     <module>servlet</module>
     <module>security</module>
-    <!-- TODO temp comment 
     <module>client</module> 
     <module>smbiz</module> 
-    -->
   </modules>
 
   <build>
@@ -180,6 +181,9 @@
               <url>${pom.url}</url>
             </manifestEntries>
           </archive>
+          <excludes>
+            <exclude>javax/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
       
@@ -619,8 +623,8 @@
       </dependency>
       <dependency>
         <groupId>com.google.code.gwt-incubator</groupId>
-        <artifactId>gwt-incubator-glasspanel</artifactId>
-        <version>${gwtIncubatorGlassPanelVersion}</version>
+        <artifactId>gwt-incubator</artifactId>
+        <version>${gwtIncubatorVersion}</version>
       </dependency>
 
       <dependency>

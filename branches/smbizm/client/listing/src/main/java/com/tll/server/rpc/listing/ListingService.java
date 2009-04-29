@@ -170,8 +170,8 @@ IListingService<S, Model> {
 						final MarshalingListHandler<E> marshalingListHandler =
 							new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
 									delegate.getMarshalOptions(search
-										.getEntityType()),
-									listingDef.getPropKeys());
+											.getEntityType()),
+											listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
@@ -197,10 +197,11 @@ IListingService<S, Model> {
 				}
 			}
 			catch(final ListingException e) {
-				context.getExceptionHandler().handleException(status, e, null, false);
+				exceptionToStatus(e, status);
+				context.getExceptionHandler().handleException(e);
 			}
 			catch(final RuntimeException re) {
-				context.getExceptionHandler().handleException(status, re, null, true);
+				context.getExceptionHandler().handleException(re);
 				throw re;
 			}
 

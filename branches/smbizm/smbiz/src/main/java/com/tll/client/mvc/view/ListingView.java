@@ -5,10 +5,12 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.client.data.rpc.IRpcCommand;
+import com.tll.client.data.rpc.ModelChangeManager;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
+import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
@@ -45,7 +47,9 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ModelChangeManager.get().deleteModel(ListingView.this, listingWidget.getRowKey(rowIndex), null);
+			final IRpcCommand cmd = ModelChangeManager.get().deleteModel(listingWidget.getRowKey(rowIndex), null);
+			cmd.addRpcHandler(new RpcUiHandler(listingWidget));
+			cmd.execute();
 		}
 
 	}

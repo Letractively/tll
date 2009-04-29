@@ -21,7 +21,27 @@ import com.tll.common.model.Model;
  * bi-directional communication between the two.
  * @author jpk
  */
-public final class FieldBindingAction implements IBindingAction {
+public final class FieldBindingAction {
+
+	/**
+	 * Creates a model/field binding on a particular property. If the binding
+	 * can't be created due to a binding exception, <code>null</code> is
+	 * returnred.
+	 * @param model
+	 * @param modelProp
+	 * @param fw
+	 * @param eh
+	 */
+	static Binding createBinding(Model model, String modelProp, IFieldWidget<?> fw, IErrorHandler eh) {
+		try {
+			return new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
+					eh);
+		}
+		catch(final RuntimeException e) {
+			Log.warn("Skipping binding for property: " + modelProp);
+			return null;
+		}
+	}
 
 	/**
 	 * Generalized binding creation routine to bind a {@link FieldGroup} instance
@@ -35,15 +55,16 @@ public final class FieldBindingAction implements IBindingAction {
 	 * @param errorHandler
 	 * @return the created {@link Binding}.
 	 */
-	public static Binding createBinding(FieldGroup group, Model model, IErrorHandler errorHandler) {
+	static Binding createBinding(FieldGroup group, Model model, IErrorHandler errorHandler) {
 		final Binding b = new Binding();
 		group.setErrorHandler(errorHandler);
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
 			Log.debug("Binding field group: " + group + " to model [" + model + "]." + fw.getPropertyName());
-			b.getChildren().add(
-					new Binding(model, fw.getPropertyName(), null, null, null, fw, IBindableWidget.PROPERTY_VALUE, null, fw,
-							errorHandler));
+			final Binding cb = createBinding(model, fw.getPropertyName(), fw, errorHandler);
+			if(cb != null) {
+				b.getChildren().add(cb);
+			}
 		}
 		return b;
 	}
@@ -88,7 +109,6 @@ public final class FieldBindingAction implements IBindingAction {
 	 * @throws ValidationException When the operation fails
 	 * @throws IllegalStateException When the action state is invalid.
 	 */
-	@Override
 	public void execute() throws IllegalStateException, ValidationException {
 		ensureSet();
 
@@ -120,7 +140,6 @@ public final class FieldBindingAction implements IBindingAction {
 		}
 	}
 
-	@Override
 	public void set(IFieldBoundWidget widget) {
 		if(rootGroup == null) {
 			Log.debug("FieldBindingAction.set(): " + widget);
@@ -130,7 +149,6 @@ public final class FieldBindingAction implements IBindingAction {
 		}
 	}
 
-	@Override
 	public void bind(IFieldBoundWidget widget) {
 		ensureSet();
 		// we only allow binding of the set root field group
@@ -138,7 +156,7 @@ public final class FieldBindingAction implements IBindingAction {
 			throw new IllegalArgumentException("Can only bind the field group of the set widget.");
 		}
 		bind(createBinding(rootGroup, model, errorHandler));
-		
+
 		// bind the indexed
 		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
 		if(indexedWidgets != null) {
@@ -152,12 +170,11 @@ public final class FieldBindingAction implements IBindingAction {
 		}
 	}
 
-	@Override
 	public void unbind(IFieldBoundWidget widget) {
 		if(widget == null || widget.getFieldGroup() != rootGroup) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		// undind the indexed
 		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
 		if(indexedWidgets != null) {
@@ -166,12 +183,11 @@ public final class FieldBindingAction implements IBindingAction {
 				iw.clearIndexed();
 			}
 		}
-		
+
 		binding.unbind();
 		binding.getChildren().clear();
 	}
 
-	@Override
 	public void unset(IFieldBoundWidget widget) {
 		unbind(widget);
 		rootGroup.clearValue();

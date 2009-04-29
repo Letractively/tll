@@ -28,7 +28,7 @@ public class ForgotPasswordServiceBootstrapper implements IBootstrapHandler {
 	public void startup(Injector injector, ServletContext servletContext, Config config) {
 		log.debug("Creating the ForgotPasswordServiceContext...");
 		final MailManager mailManager = injector.getInstance(MailManager.class);
-		final ExceptionHandler exceptionHandler = injector.getInstance(ExceptionHandler.class);
+		final IExceptionHandler exceptionHandler = injector.getInstance(IExceptionHandler.class);
 		final IForgotPasswordHandler handler = injector.getInstance(IForgotPasswordHandler.class);
 		servletContext.setAttribute(ForgotPasswordServiceContext.KEY, new ForgotPasswordServiceContext(
 				handler, mailManager, exceptionHandler));

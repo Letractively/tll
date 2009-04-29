@@ -6,6 +6,7 @@ import java.util.Arrays;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -751,6 +752,7 @@ public final class UITests extends AbstractUITest {
 		HorizontalPanel layout;
 		VerticalPanel buttonPanel;
 		FlowPanel context;
+		AbsolutePanel localOverlay;
 		BusyPanel busyPanel;
 
 		@Override
@@ -768,7 +770,7 @@ public final class UITests extends AbstractUITest {
 			context.setSize("200px", "200px");
 			context.getElement().getStyle().setProperty("border", "1px solid gray");
 			context.getElement().getStyle().setProperty("padding", "10px");
-			busyPanel = new BusyPanel(true, null, 20);
+			busyPanel = new BusyPanel(true);
 		}
 
 		private void stubTestButtons() {
@@ -778,7 +780,11 @@ public final class UITests extends AbstractUITest {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					BusyPanel.getAbsoluteOverlay(context).add(busyPanel, 0, 0);
+					if(localOverlay != null) {
+						RootPanel.get().remove(localOverlay);
+					}
+					localOverlay = BusyPanel.getAbsoluteOverlay(context);
+					localOverlay.add(busyPanel, 0, 0);
 				}
 			}));
 			buttonPanel.add(new Button("Test Global", new ClickHandler() {
@@ -795,6 +801,9 @@ public final class UITests extends AbstractUITest {
 			stubContext();
 			stubTestButtons();
 			layout = new HorizontalPanel();
+			// realize scrolling for testing purposes
+			layout.setWidth("1000px");
+			layout.setHeight("1000px");
 			layout.add(buttonPanel);
 			layout.add(context);
 			layout.getElement().getStyle().setProperty("margin", "1em");

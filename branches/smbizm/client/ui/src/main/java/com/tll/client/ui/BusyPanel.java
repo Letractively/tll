@@ -57,6 +57,11 @@ public class BusyPanel extends GlassPanel {
 	}
 
 	/**
+	 * The default throbber image ref.
+	 */
+	static final String THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
+
+	/**
 	 * Creates an {@link AbsolutePanel} that overlays the given widget and is
 	 * added to the {@link RootPanel}.
 	 * @param w The target widget
@@ -70,38 +75,16 @@ public class BusyPanel extends GlassPanel {
 	}
 
 	/**
-	 * The default throbber image ref.
-	 */
-	public static final String DEFAULT_THROBBER_URL = GWT.getModuleBaseURL() + "/images/throbber.gif";
-
-	/**
-	 * Constructor
+	 * Constructor - Overlays the entire root panel
 	 * @param autoHide
-	 * @param color
-	 * @param opacity the opacity from 0 to 100
 	 */
-	public BusyPanel(boolean autoHide, String color, int opacity) {
+	public BusyPanel(boolean autoHide) {
 		super(autoHide);
-		setColor(color);
-		setOpacity(opacity);
+		setThrobImage(new Image(THROBBER_URL));
 	}
 
 	/**
-	 * Constructor
-	 * @param autoHide
-	 * @param color
-	 * @param opacity the opacity from 0 to 100
-	 * @param throbImage Optional throbber image centered under the panel
-	 */
-	public BusyPanel(boolean autoHide, String color, int opacity, Image throbImage) {
-		this(autoHide, color, opacity);
-		if(throbImage != null) {
-			setWidget(new ThrobbingPanel(throbImage));
-		}
-	}
-
-	/**
-	 * Sets the color.
+	 * Sets the background color of the panel.
 	 * @param color
 	 */
 	public void setColor(String color) {
@@ -109,7 +92,7 @@ public class BusyPanel extends GlassPanel {
 	}
 
 	/**
-	 * Set the opacity from 0 to 100
+	 * Set the opacity from 0 (invisible) to 100 (opaque).
 	 * @param opacity
 	 */
 	public void setOpacity(int opacity) {
@@ -118,4 +101,13 @@ public class BusyPanel extends GlassPanel {
 		DOM.setStyleAttribute(elm, "opacity", Float.toString(opacity / 100f));
 	}
 
+	/**
+	 * Sets the throb image.
+	 * @param image
+	 */
+	public void setThrobImage(Image image) {
+		if(image != null) {
+			setWidget(new ThrobbingPanel(image));
+		}
+	}
 }

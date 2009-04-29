@@ -1,6 +1,5 @@
 package com.tll.client.data.rpc;
 
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.model.ModelChangeDispatcher;
 import com.tll.client.model.ModelChangeEvent;
@@ -29,11 +28,10 @@ public final class ModelChangeManager {
 
 		/**
 		 * Constructor
-		 * @param sourcingWidget
 		 * @param auxDataRequest
 		 */
-		public ModelChangeAuxDataCommand(Widget sourcingWidget, AuxDataRequest auxDataRequest) {
-			super(sourcingWidget, auxDataRequest);
+		public ModelChangeAuxDataCommand(AuxDataRequest auxDataRequest) {
+			super(auxDataRequest);
 		}
 
 		@Override
@@ -54,14 +52,6 @@ public final class ModelChangeManager {
 	 * @author jpk
 	 */
 	final class ModelChangeCrudCommand extends CrudCommand {
-
-		/**
-		 * Constructor
-		 * @param sourcingWidget
-		 */
-		public ModelChangeCrudCommand(Widget sourcingWidget) {
-			super(sourcingWidget);
-		}
 
 		@Override
 		protected void handleSuccess(EntityPayload result) {
@@ -112,19 +102,15 @@ public final class ModelChangeManager {
 	 * Handles the fetching of needed auxiliary data. A subsequent model change
 	 * event is anticipated if aux data is found needed (<code>true</code> is
 	 * returned).
-	 * @param sourcingWidget
-	 * @param adr
-	 * @return <code>true</code> only if aux data is actually needed and
-	 *         <code>false</code> when no aux data is needed. I.e.: it is already
-	 *         cached on the client.
+	 * @param adr the aux data request
+	 * @return A new {@link IRpcCommand} instance only if aux data is actually
+	 *         needed and <code>null</code> when no aux data is needed. I.e.: it
+	 *         is already cached on the client.
 	 */
-	public boolean fetchAuxData(Widget sourcingWidget, AuxDataRequest adr) {
+	public IRpcCommand fetchAuxData(AuxDataRequest adr) {
 		// do we need any aux data from the server?
 		adr = AuxDataCacheHelper.filterRequest(adr);
-		if(adr == null) return false;
-		final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
-		adc.execute();
-		return true;
+		return adr == null ? null : new ModelChangeAuxDataCommand(adr);
 	}
 
 	/**
@@ -132,48 +118,45 @@ public final class ModelChangeManager {
 	 * subsequent model change event is anticipated. Used preliminarily for adding
 	 * entities. A subsequent model change event is anticipated if aux data is
 	 * found needed (<code>true</code> is returned).
-	 * @param sourcingWidget
 	 * @param entityType The entity type of the model entity to fetch
-	 * @return <code>true</code> if the model prototype must be fetched from the
-	 *         server and <code>false</code> when the prototype is already cached
-	 *         on the client.
+	 * @return A new {@link IRpcCommand} instance if the model prototype must be
+	 *         fetched from the server and <code>null</code> when the prototype is
+	 *         already cached on the client.
 	 */
-	public boolean fetchModelPrototype(Widget sourcingWidget, IEntityType entityType) {
+	public IRpcCommand fetchModelPrototype(IEntityType entityType) {
 		if(!AuxDataCache.get().isCached(AuxDataType.ENTITY_PROTOTYPE, entityType)) {
 			final AuxDataRequest adr = new AuxDataRequest();
 			adr.requestEntityPrototype(entityType);
-			final ModelChangeAuxDataCommand adc = new ModelChangeAuxDataCommand(sourcingWidget, adr);
-			adc.execute();
-			return true;
+			return new ModelChangeAuxDataCommand(adr);
 		}
-		sourcingWidget.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY));
-		return false;
+		ModelChangeDispatcher.get().fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY));
+		return null;
 	}
 
 	/**
 	 * Handles the fetching of a model given a model ref. A subsequent model
 	 * change event is anticipated.
-	 * @param sourcingWidget
 	 * @param entityKey The reference of the entity to fetch
 	 * @param entityOptions
 	 * @param adr
+	 * @return the rpc command ready for execution
 	 */
-	public void loadModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
-		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
+	public IRpcCommand loadModel(ModelKey entityKey, EntityOptions entityOptions, AuxDataRequest adr) {
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand();
 		cmd.load(entityKey, AuxDataCacheHelper.filterRequest(adr));
 		cmd.setEntityOptions(entityOptions);
-		cmd.execute();
+		return cmd;
 	}
 
 	/**
 	 * Handles model persisting (adding and updating) firing an appropriate model
 	 * change event. A subsequent model change event is anticipated.
-	 * @param sourcingWidget
 	 * @param model The model to persist
 	 * @param entityOptions
+	 * @return the rpc command ready for execution
 	 */
-	public void persistModel(Widget sourcingWidget, Model model, EntityOptions entityOptions) {
-		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
+	public IRpcCommand persistModel(Model model, EntityOptions entityOptions) {
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand();
 		if(model.isNew()) {
 			cmd.add(model);
 		}
@@ -181,20 +164,20 @@ public final class ModelChangeManager {
 			cmd.update(model);
 		}
 		cmd.setEntityOptions(entityOptions);
-		cmd.execute();
+		return cmd;
 	}
 
 	/**
 	 * Commits a model delete firing a model change event to subscribed listeners
 	 * upon a successful delete.
-	 * @param sourcingWidget
 	 * @param entityKey The key of the entity to delete
 	 * @param entityOptions
+	 * @return the rpc command ready for execution
 	 */
-	public void deleteModel(Widget sourcingWidget, ModelKey entityKey, EntityOptions entityOptions) {
-		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(sourcingWidget);
+	public IRpcCommand deleteModel(ModelKey entityKey, EntityOptions entityOptions) {
+		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand();
 		cmd.purge(entityKey);
 		cmd.setEntityOptions(entityOptions);
-		cmd.execute();
+		return cmd;
 	}
 }

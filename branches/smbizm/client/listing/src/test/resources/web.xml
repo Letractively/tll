@@ -12,6 +12,7 @@
     <param-name>di.modules</param-name>
     <param-value>
       com.tll.di.RefDataModule
+      com.tll.di.ValidationModule
       com.tll.di.ModelModule
       com.tll.di.MockEntityFactoryModule
       com.tll.di.MockDaoModule

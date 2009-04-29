@@ -7,9 +7,9 @@ package com.tll.client.listing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 import com.tll.IMarshalable;
 import com.tll.client.data.rpc.RpcCommand;
+import com.tll.client.ui.RpcUiHandler;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -40,14 +40,6 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	 */
 	@SuppressWarnings("synthetic-access")
 	class ListingCommand extends RpcCommand<ListingPayload<Model>> {
-
-		/**
-		 * Constructor
-		 * @param sourcingWidget
-		 */
-		public ListingCommand(Widget sourcingWidget) {
-			super(sourcingWidget);
-		}
 
 		@Override
 		protected void doExecute() {
@@ -87,7 +79,7 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 			}
 		}
 	}
-	
+
 	/**
 	 * The unique name that identifies the listing this command targets on the
 	 * server.
@@ -116,7 +108,8 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 
 	private void execute() {
 		assert listingRequest != null;
-		final ListingCommand cmd = new ListingCommand(sourcingWidget);
+		final ListingCommand cmd = new ListingCommand();
+		cmd.addRpcHandler(new RpcUiHandler(sourcingWidget));
 		cmd.execute();
 	}
 
@@ -130,7 +123,7 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	 */
 	private void fetch(int ofst, Sorting srtg, boolean refresh) {
 		this.listingRequest =
-				new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
+			new ListingRequest<S>(listingName, listingDef, refresh ? ListingOp.REFRESH : ListingOp.FETCH, ofst, srtg);
 		execute();
 	}
 

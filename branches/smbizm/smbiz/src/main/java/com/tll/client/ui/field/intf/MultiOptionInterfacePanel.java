@@ -105,7 +105,7 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<Flow
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.instance().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
+			return AuxDataCache.get().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
 		}
 
 		@Override

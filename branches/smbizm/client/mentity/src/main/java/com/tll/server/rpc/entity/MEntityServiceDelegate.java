@@ -24,6 +24,7 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.server.rpc.RpcServlet;
 
 /**
  * MEntityServiceDelegate - Server side handling of core marshaled entity
@@ -133,8 +134,9 @@ public final class MEntityServiceDelegate {
 		}
 		catch(final SystemError se) {
 			if(status != null) {
-				context.getExceptionHandler().handleException(status, se, se.getMessage(), true);
+				RpcServlet.exceptionToStatus(se, status);
 			}
+			context.getExceptionHandler().handleException(se);
 			throw se;
 		}
 	}
@@ -151,10 +153,12 @@ public final class MEntityServiceDelegate {
 				AuxDataHandler.getAuxData(context, this, request, payload);
 			}
 			catch(final SystemError se) {
-				context.getExceptionHandler().handleException(payload.getStatus(), se, null, true);
+				RpcServlet.exceptionToStatus(se, payload.getStatus());
+				context.getExceptionHandler().handleException(se);
 			}
 			catch(final RuntimeException re) {
-				context.getExceptionHandler().handleException(payload.getStatus(), re, null, true);
+				RpcServlet.exceptionToStatus(re, payload.getStatus());
+				context.getExceptionHandler().handleException(re);
 				throw re;
 			}
 		}
