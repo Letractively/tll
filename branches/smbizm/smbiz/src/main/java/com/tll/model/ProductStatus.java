@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Product Status
  * @author jpk
  */
-public enum ProductStatus implements INameValueProvider<String> {
+public enum ProductStatus implements INameValueProvider<String>, IMarshalable {
 	A("Active"),
 	I("Inactive");
 

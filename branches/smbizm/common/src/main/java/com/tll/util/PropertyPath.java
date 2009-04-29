@@ -3,9 +3,8 @@
  * @author jpk
  * Feb 16, 2008
  */
-package com.tll.common.model;
+package com.tll.util;
 
-import com.tll.util.StringUtil;
 
 /**
  * PropertyPath - Encapsulates a property path String providing convenience
@@ -84,7 +83,7 @@ public final class PropertyPath {
 	public static String deIndex(String indexedPropName) {
 		if(indexedPropName != null && indexedPropName.length() > 0
 				&& indexedPropName.charAt(indexedPropName.length() - 1) == RIGHT_INDEX_CHAR) {
-			int si = indexedPropName.indexOf(LEFT_INDEX_CHAR);
+			final int si = indexedPropName.indexOf(LEFT_INDEX_CHAR);
 			if(si > 0) return indexedPropName.substring(0, si);
 		}
 		return indexedPropName;
@@ -106,24 +105,23 @@ public final class PropertyPath {
 	 * @param path The single node property path
 	 * @return The resolved index or <code>-1</code> if the given prop is not
 	 *         indexed.
-	 * @throws MalformedPropPathException When the index is non numeric or
-	 *         negative.
+	 * @throws IllegalArgumentException When the index is non numeric or negative.
 	 */
-	private static int resolveIndex(String path) throws MalformedPropPathException {
+	private static int resolveIndex(String path) throws IllegalArgumentException {
 		if(path == null) return -1;
-		int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = path.indexOf(RIGHT_INDEX_CHAR);
+		final int bi = path.indexOf(LEFT_INDEX_CHAR), ebi = path.indexOf(RIGHT_INDEX_CHAR);
 		if(bi > 0) {
 			// indexed property prop name
 			final String sindx = path.substring(bi + 1, ebi);
 			try {
 				final int rmIndx = Integer.parseInt(sindx);
 				if(rmIndx < 0) {
-					throw new MalformedPropPathException("Negative index in property path: " + path);
+					throw new IllegalArgumentException("Negative index in property path: " + path);
 				}
 				return rmIndx;
 			}
-			catch(NumberFormatException nfe) {
-				throw new MalformedPropPathException("Invalid index '" + sindx + "' in property path: " + path);
+			catch(final NumberFormatException nfe) {
+				throw new IllegalArgumentException("Invalid index '" + sindx + "' in property path: " + path);
 			}
 		}
 		return -1;
@@ -244,10 +242,9 @@ public final class PropertyPath {
 	 * E.g.: "indexable[3]" returns 3.
 	 * @return The resolved numeric index or <code>-1</code> if this property path
 	 *         empty or is not indexed.
-	 * @throws MalformedPropPathException When the index is non-numeric or
-	 *         negative.
+	 * @throws IllegalArgumentException When the index is non-numeric or negative.
 	 */
-	public int index() throws MalformedPropPathException {
+	public int index() throws IllegalArgumentException {
 		return buf == null ? -1 : indexAt(len - 1);
 	}
 
@@ -272,7 +269,7 @@ public final class PropertyPath {
 		if(buf == null) return null;
 		if(nodeIndex < 0 || nodeIndex > len - 1) throw new ArrayIndexOutOfBoundsException();
 		int cni = 0;
-		StringBuilder sub = new StringBuilder();
+		final StringBuilder sub = new StringBuilder();
 		for(int i = 0; i < buf.length(); ++i) {
 			if(buf.charAt(i) == '.') {
 				if(cni == nodeIndex) {
@@ -301,6 +298,32 @@ public final class PropertyPath {
 	 */
 	public String last() {
 		return buf == null ? null : pathAt(depth() - 1);
+	}
+
+	/**
+	 * Trims the property path by the given number of nodes from the end of the
+	 * path returning an ancestral path.
+	 * @param n The number of nodes to trim from the end of the path
+	 * @return An ancestral path token or <code>null</code> if the given number of
+	 *         nodes is incompatible with the currently held path.
+	 */
+	public String trim(int n) {
+		final int indx = bufIndex(depth() - n);
+		final String s = indx <= 0 ? null : buf.substring(0, indx - 1);
+		return s;
+	}
+
+	/**
+	 * Clips the property path by the given number of nodes from the
+	 * <em>start</em> of the path returning a child path.
+	 * @param n The number of nodes to trim from the start of the path
+	 * @return A child path token or <code>null</code> if the given number of
+	 *         nodes is incompatible with the currently held path.
+	 */
+	public String clip(int n) {
+		final int indx = bufIndex(n);
+		final String s = indx <= 0 ? null : buf.substring(indx);
+		return s;
 	}
 
 	/**
@@ -335,10 +358,9 @@ public final class PropertyPath {
 	 * @param nodeIndex The node index (depth into the property path).
 	 * @return The resolved numeric index or <code>-1</code> if the property is
 	 *         not indexed at the given node index.
-	 * @throws MalformedPropPathException When the index is non-numeric or
-	 *         negative.
+	 * @throws IllegalArgumentException When the index is non-numeric or negative.
 	 */
-	public int indexAt(int nodeIndex) throws MalformedPropPathException {
+	public int indexAt(int nodeIndex) throws IllegalArgumentException {
 		return buf == null ? -1 : resolveIndex(pathAt(nodeIndex));
 	}
 
@@ -434,7 +456,7 @@ public final class PropertyPath {
 	public boolean replaceAt(int nodeIndex, String prop) {
 		if(buf == null || nodeIndex > len - 1) return false;
 		assert buf != null && len >= 0;
-		int i = bufIndex(nodeIndex);
+		final int i = bufIndex(nodeIndex);
 		if(i == -1) return false;
 		int j;
 		if(nodeIndex == len - 1) {

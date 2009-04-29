@@ -5,6 +5,7 @@
  */
 package com.tll.common.model.mock;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 
@@ -12,7 +13,7 @@ import com.tll.INameValueProvider;
  * AddressType
  * @author jpk
  */
-public enum AddressType implements INameValueProvider<String> {
+public enum AddressType implements INameValueProvider<String>, IMarshalable {
 	HOME("Home"),
 	WORK("Work"),
 	CONTACT("Contact");

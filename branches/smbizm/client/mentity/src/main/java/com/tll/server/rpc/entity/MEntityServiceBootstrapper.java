@@ -16,6 +16,7 @@ import com.tll.config.Config;
 import com.tll.config.IConfigKey;
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.schema.ISchemaInfo;
 import com.tll.refdata.RefData;
 import com.tll.server.IBootstrapHandler;
 import com.tll.server.marshal.Marshaler;
@@ -69,6 +70,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 			log.warn("No mail manager will be employed.");
 		}
 
+		final ISchemaInfo schemaInfo = injector.getInstance(ISchemaInfo.class);
 		final Marshaler marshaler = injector.getInstance(Marshaler.class);
 
 		// NOTE: we support the case where an em factory is not provided
@@ -110,7 +112,7 @@ public class MEntityServiceBootstrapper implements IBootstrapHandler {
 
 		// create and store the sole context
 		final MEntityContext context =
-			new MEntityContext(refdata, mailManager, marshaler, entityManagerFactory, entityAssembler,
+			new MEntityContext(refdata, mailManager, schemaInfo, marshaler, entityManagerFactory, entityAssembler,
 					entityServiceFactory,
 					namedQueryResolver, exceptionHandler);
 		servletContext.setAttribute(MEntityContext.KEY, context);

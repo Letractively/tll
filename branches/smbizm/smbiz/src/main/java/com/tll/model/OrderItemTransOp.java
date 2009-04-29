@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Order Item Trans Op
  * @author jpk
  */
-public enum OrderItemTransOp implements INameValueProvider<String> {
+public enum OrderItemTransOp implements INameValueProvider<String>, IMarshalable {
 	A("Add Item"),
 	U("Update Item Quantity"),
 	C("Commit Item"),

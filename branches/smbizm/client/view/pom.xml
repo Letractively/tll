@@ -75,13 +75,11 @@
   </build>
 
   <dependencies>
-    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>

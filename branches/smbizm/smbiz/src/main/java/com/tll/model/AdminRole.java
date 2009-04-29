@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * The Admin role
  * @author jpk
  */
-public enum AdminRole implements INameValueProvider<String> {
+public enum AdminRole implements INameValueProvider<String>, IMarshalable {
 	ROLE_ASP("The Asp role - all powerful."),
 	ROLE_ISP("The Isp role"),
 	ROLE_MERCHANT("The Merchant role"),

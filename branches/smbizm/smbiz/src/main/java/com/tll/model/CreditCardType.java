@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Credit card types.
  * @author jpk
  */
-public enum CreditCardType implements INameValueProvider<String> {
+public enum CreditCardType implements INameValueProvider<String>, IMarshalable {
 	VISA("Visa"),
 	MC("Master Card");
 

@@ -16,6 +16,7 @@
     <include name="StringUtil.java" />
     <include name="ObjectUtil.java" />
     <include name="DateRange.java" />
+    <include name="PropertyPath.java" />
     <include name="FNum.java" />
     <include name="DataPoint.java" />
   </source>

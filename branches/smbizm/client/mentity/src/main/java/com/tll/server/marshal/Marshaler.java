@@ -41,7 +41,6 @@ import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.schema.ISchemaInfo;
-import com.tll.model.schema.Nested;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
@@ -143,17 +142,6 @@ public final class Marshaler {
 	}
 
 	/**
-	 * Does the given {@link PropertyDescriptor} have the {@link Nested}
-	 * annotation?
-	 * @param pd the property descriptor
-	 * @return true/false
-	 */
-	private boolean isNestedProperty(final PropertyDescriptor pd) {
-		final Method m = pd.getReadMethod();
-		return m == null ? false : m.getAnnotation(Nested.class) != null;
-	}
-
-	/**
 	 * Determines if recursion should drill down another level.
 	 * @param depth The current hierarchical depth
 	 * @param maxDepth The max allowed hierarchical depth
@@ -172,7 +160,7 @@ public final class Marshaler {
 	 * @return new IModelProperty instance or <code>null</code> if the given
 	 *         property type does NOT corres. to a rudimentary property value.
 	 */
-	private IModelProperty createModelProperty(final Class<?> ptype, final String pname, final Object obj,
+	private IModelProperty createValueProperty(final Class<?> ptype, final String pname, final Object obj,
 			final PropertyMetadata pdata) {
 		IModelProperty prop = null;
 
@@ -234,7 +222,7 @@ public final class Marshaler {
 			final IScalar scalar = searchResult.getScalar();
 			if(scalar == null) {
 				throw new IllegalArgumentException(
-						"Neither an entity nor scalar was resolvable from the search result argument");
+				"Neither an entity nor scalar was resolvable from the search result argument");
 			}
 			model = marshalScalar(scalar, options);
 		}
@@ -308,25 +296,25 @@ public final class Marshaler {
 
 			final PropertyMetadata pdata = generatePropertyData(entityClass, pname);
 
-			IModelProperty prop = createModelProperty(ptype, pname, obj, pdata);
+			IModelProperty prop = createValueProperty(ptype, pname, obj, pdata);
 
 			if(prop == null) {
 				// related one
 				if(IEntity.class.isAssignableFrom(ptype)) {
-					final RelationInfo ri = getRelationInfo(entityClass, pname);
+					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
 					final boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						final IEntity e = (IEntity) obj;
 						final Model ngrp = e == null ? null : marshalEntity(e, options, depth + 1, visited);
 						final IEntityType etype =
-								ri.getRelatedType() == null ? null : EntityTypeUtil.getEntityType(ri.getRelatedType());
+							ri.getRelatedType() == null ? null : EntityTypeUtil.getEntityType(ri.getRelatedType());
 						prop = new RelatedOneProperty(etype, pname, reference, ngrp);
 					}
 				}
 
 				// related many collection
 				else if(Collection.class.isAssignableFrom(ptype)) {
-					final RelationInfo ri = getRelationInfo(entityClass, pname);
+					final RelationInfo ri = schemaInfo.getRelationInfo(entityClass, pname);
 					final boolean reference = ri.isReference();
 					if(shouldMarshalRelation(reference, depth, options)) {
 						List<Model> list = null;
@@ -339,7 +327,7 @@ public final class Marshaler {
 							}
 						}
 						prop =
-								new RelatedManyProperty(EntityTypeUtil.getEntityType(ri.getRelatedType()), pname, reference, list);
+							new RelatedManyProperty(EntityTypeUtil.getEntityType(ri.getRelatedType()), pname, reference, list);
 					}
 				}
 
@@ -349,14 +337,14 @@ public final class Marshaler {
 				}
 
 				// nested property?
-				else if(isNestedProperty(pd)) {
+				else if(schemaInfo.getSchemaProperty(entityClass, pname).getPropertyType().isNested()) {
 					final BeanWrapperImpl bw2 = new BeanWrapperImpl(obj);
 					for(final PropertyDescriptor pd2 : bw2.getPropertyDescriptors()) {
 						if(bw2.isWritableProperty(pd2.getName()) && isMarshalableProperty(pd2)) {
 							try {
 								final Object oval = bw2.getPropertyValue(pd2.getName());
 								if(oval != null) {
-									model.set(createModelProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
+									model.set(createValueProperty(pd2.getPropertyType(), (pname + "_" + pd2.getName()), oval,
 											generatePropertyData(source.entityClass(), (pname + "." + pd2.getName()))));
 								}
 							}
@@ -397,7 +385,7 @@ public final class Marshaler {
 			final Object obj = tupleMap.get(pname);
 			// NOTE: if we have a null tuple value, then default the type to String!
 			final Class<?> ptype = obj == null ? String.class : obj.getClass();
-			final IModelProperty prop = createModelProperty(ptype, pname, obj, null);
+			final IModelProperty prop = createValueProperty(ptype, pname, obj, null);
 			if(prop != null) {
 				model.set(prop);
 			}
@@ -477,15 +465,20 @@ public final class Marshaler {
 
 				case FLOAT:
 					val = ((Double) pval).floatValue();
-				
+
 				case RELATED_ONE: {
 					final Model rltdOne = (Model) pval;
 					final IEntityType entityType = rltdOne == null ? null : rltdOne.getEntityType();
 					final IEntity toOne =
-							(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil
-									.getEntityClass(entityType), rltdOne, visited));
+						(rltdOne == null || rltdOne.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil
+								.getEntityClass(entityType), rltdOne, visited));
 					val = toOne;
 				}
+				break;
+
+				case NESTED:
+					// no-op since we have the property path extended via '_'
+					// and this is handled below
 					break;
 
 				case RELATED_MANY: {
@@ -507,8 +500,8 @@ public final class Marshaler {
 							final Model model = (Model) obj;
 							final IEntityType entityType = model.getEntityType();
 							final IEntity clcEntity =
-									model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.getEntityClass(entityType), model,
-											visited);
+								model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.getEntityClass(entityType), model,
+										visited);
 							if(clcEntity instanceof IChildEntity) {
 								((IChildEntity) clcEntity).setParent(e);
 							}
@@ -519,7 +512,7 @@ public final class Marshaler {
 					}
 					val = clc;
 				}
-					break;
+				break;
 
 				case STRING_MAP:
 					val = pval;
@@ -567,19 +560,6 @@ public final class Marshaler {
 		catch(final SchemaInfoException e) {
 			return null;
 		}
-	}
-
-	/**
-	 * Gets relational info for a given entity property that is expected to be
-	 * relational
-	 * @param entityClass
-	 * @param propName
-	 * @return true/false
-	 * @throws SchemaInfoException When the prop name is not resolvable to a model
-	 *         relation.
-	 */
-	private RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propName) {
-		return schemaInfo.getRelationInfo(entityClass, propName);
 	}
 
 	/**

@@ -18,7 +18,7 @@ import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.IndexedPropertyChangeEvent;
 import com.tll.common.bind.PropertyChangeEvent;
-import com.tll.common.model.PropertyPath;
+import com.tll.util.PropertyPath;
 
 /**
  * Binding - This class represents a DataBinding between two objects. It also

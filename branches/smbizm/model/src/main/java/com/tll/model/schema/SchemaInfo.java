@@ -1,12 +1,12 @@
 package com.tll.model.schema;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +21,7 @@ import org.hibernate.validation.constraints.Length;
 import org.hibernate.validation.constraints.NotEmpty;
 
 import com.tll.model.IEntity;
+import com.tll.util.PropertyPath;
 
 public final class SchemaInfo implements ISchemaInfo {
 
@@ -37,30 +38,18 @@ public final class SchemaInfo implements ISchemaInfo {
 	private final Map<Class<? extends IEntity>, Map<String, ISchemaProperty>> schemaMap =
 		new HashMap<Class<? extends IEntity>, Map<String, ISchemaProperty>>();
 
-	public Map<String, ISchemaProperty> getAllSchemaProperties(final Class<? extends IEntity> entityClass)
-	throws SchemaInfoException {
-		if(!schemaMap.containsKey(entityClass)) {
-			// load it
-			load(entityClass);
-		}
-		return schemaMap.get(entityClass);
-	}
-
-	public String[] getSchemaPropertyNames(final Class<? extends IEntity> entityClass) throws SchemaInfoException {
-		final Set<String> set = schemaMap.get(entityClass).keySet();
-		return set.toArray(new String[set.size()]);
-	}
-
+	@Override
 	public PropertyMetadata getPropertyMetadata(final Class<? extends IEntity> entityClass, final String propertyName)
 	throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
-		if(sp.getPropertyType().isRelational()) {
+		if(!sp.getPropertyType().isValue()) {
 			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName()
-					+ " is not non-relational.");
+					+ " is not a value type property.");
 		}
 		return (PropertyMetadata) sp;
 	}
 
+	@Override
 	public RelationInfo getRelationInfo(final Class<? extends IEntity> entityClass, final String propertyName)
 	throws SchemaInfoException {
 		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
@@ -70,13 +59,18 @@ public final class SchemaInfo implements ISchemaInfo {
 		return (RelationInfo) sp;
 	}
 
-	/**
-	 * @param entityClass
-	 * @param propertyName
-	 * @return the schema property ref
-	 * @throws SchemaInfoException
-	 */
-	private ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
+	@Override
+	public NestedInfo getNestedInfo(final Class<? extends IEntity> entityClass, final String propertyName)
+	throws SchemaInfoException {
+		final ISchemaProperty sp = getSchemaProperty(entityClass, propertyName);
+		if(!sp.getPropertyType().isNested()) {
+			throw new SchemaInfoException(propertyName + " for entity type " + entityClass.getName() + " is not nested.");
+		}
+		return (NestedInfo) sp;
+	}
+
+	@Override
+	public ISchemaProperty getSchemaProperty(final Class<? extends IEntity> entityClass, final String propertyName)
 	throws SchemaInfoException {
 		if(propertyName == null || propertyName.length() < 1)
 			throw new IllegalArgumentException("Unable to retreive schema property: no property name specified");
@@ -85,12 +79,32 @@ public final class SchemaInfo implements ISchemaInfo {
 			load(entityClass);
 		}
 
-		final Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
+		Map<String, ISchemaProperty> classMap = schemaMap.get(entityClass);
 
-		if(!classMap.containsKey(propertyName))
-			throw new SchemaInfoException("No field descriptor not found for field: '" + propertyName + "' of class '"
-					+ entityClass.getName() + "'");
+		if(!classMap.containsKey(propertyName)) {
 
+			final PropertyPath p = new PropertyPath(propertyName);
+			if(p.depth() > 1) {
+				// attempt to resolve the given path to a relational property and a
+				// localized path
+				ISchemaProperty sp;
+				for(int i = 0; i < p.depth(); i++) {
+					sp = classMap.get(p.pathAt(i));
+					if(sp == null || !sp.getPropertyType().isRelational()) break;
+					final RelationInfo ri = (RelationInfo) sp;
+					if(!schemaMap.containsKey(ri.getRelatedType())) {
+						load(ri.getRelatedType());
+					}
+					classMap = schemaMap.get(ri.getRelatedType());
+					final String np = p.clip(i + 1);
+					sp = classMap.get(np);
+					if(sp != null) return sp;
+				}
+			}
+
+			throw new SchemaInfoException("Property: '" + propertyName + "' of class '" + entityClass.getName()
+					+ "' doesn't exist.");
+		}
 		return classMap.get(propertyName);
 	}
 
@@ -122,14 +136,13 @@ public final class SchemaInfo implements ISchemaInfo {
 				propName = getPropertyNameFromAccessorMethodName(method.getName());
 				fullPropName = parentPropName == null ? propName : parentPropName + '.' + propName;
 
-				if(method.getAnnotation(Nested.class) != null) {
-					// nested value object
-					iterateMethods(propName, method.getReturnType(), map);
-				}
-
 				final ISchemaProperty sp = toSchemaProperty(propName, method);
 				if(sp != null) {
 					map.put(fullPropName, sp);
+					// handle nested
+					if(sp.getPropertyType().isNested()) {
+						iterateMethods(propName, method.getReturnType(), map);
+					}
 				}
 			}
 		}
@@ -193,8 +206,14 @@ public final class SchemaInfo implements ISchemaInfo {
 		final Class<?> rt = m.getReturnType();
 		assert rt != null : "The return type is null";
 
+		final boolean nested = (m.getAnnotation(Nested.class) != null);
+
+		// nested
+		if(nested) {
+			return new NestedInfo((Class<? extends Serializable>) rt);
+		}
 		// non-relational...
-		if(isNonRelational(m)) {
+		else if(isNonRelational(m)) {
 
 			PropertyMetadata fd = null;
 

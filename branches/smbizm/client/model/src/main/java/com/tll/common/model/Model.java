@@ -18,6 +18,7 @@ import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.model.schema.IPropertyMetadataProvider;
 import com.tll.model.schema.PropertyMetadata;
 import com.tll.model.schema.PropertyType;
+import com.tll.util.PropertyPath;
 import com.tll.util.StringUtil;
 
 /**
@@ -426,7 +427,13 @@ IDescriptorProvider, Iterable<IModelProperty> {
 		final int len = pp.depth();
 		for(int i = 0; i < len; i++) {
 			final String pname = pp.nameAt(i);
-			final int index = pp.indexAt(i);
+			final int index;
+			try {
+				index = pp.indexAt(i);
+			}
+			catch(final IllegalArgumentException e) {
+				throw new MalformedPropPathException(e.getMessage());
+			}
 			final boolean indexed = (index >= 0);
 			final boolean atEnd = (i == len - 1);
 

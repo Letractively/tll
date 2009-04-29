@@ -39,14 +39,19 @@ public enum PropertyType {
 	 * {@link #INDEXED} corres. to an element referenced by index within a related
 	 * many relation
 	 */
-	INDEXED(1 << 12);
+	INDEXED(1 << 12),
+
+	/**
+	 * {@link #NESTED} corres. to a nested element.
+	 */
+	NESTED(1 << 13);
 
 	/**
 	 * {@link #VALUE_TYPES} corres. to non-collection and non-relational types
 	 */
 	private static final int VALUE_TYPES =
-			STRING.flag | CHAR.flag | ENUM.flag | BOOL.flag | INT.flag | LONG.flag | FLOAT.flag | DOUBLE.flag | DATE.flag
-					| STRING_MAP.flag;
+		STRING.flag | CHAR.flag | ENUM.flag | BOOL.flag | INT.flag | LONG.flag | FLOAT.flag | DOUBLE.flag | DATE.flag
+		| STRING_MAP.flag;
 
 	/**
 	 * {@link #RELATIONAL_TYPES} corres. to those types that represent a relation
@@ -54,10 +59,9 @@ public enum PropertyType {
 	private static final int RELATIONAL_TYPES = RELATED_ONE.flag | RELATED_MANY.flag;
 
 	/**
-	 * {@link #MODEL_TYPES} corres. to relational types that map to a single model
-	 * ref.
+	 * {@link #MODEL_TYPES} corres. to types that map to a single model ref.
 	 */
-	private static final int MODEL_TYPES = RELATED_ONE.flag | INDEXED.flag;
+	private static final int MODEL_TYPES = RELATED_ONE.flag | INDEXED.flag | NESTED.flag;
 
 	/**
 	 * Types able to format correctly on their own
@@ -87,5 +91,9 @@ public enum PropertyType {
 
 	public boolean isSelfFormatting() {
 		return ((flag & SELF_FORMATTING_TYPES) == flag);
+	}
+
+	public boolean isNested() {
+		return ((flag & NESTED.flag) == flag);
 	}
 }

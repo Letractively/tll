@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Ship Mode Type
  * @author jpk
  */
-public enum ShipModeType implements INameValueProvider<String> {
+public enum ShipModeType implements INameValueProvider<String>, IMarshalable {
 	USPS("United States Postal Service"),
 	UPS("UPS"),
 	FEDEX("Federal Express");

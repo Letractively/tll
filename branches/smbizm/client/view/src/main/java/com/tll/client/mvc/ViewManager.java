@@ -138,7 +138,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	/**
 	 * The first and currently pinned view.
 	 */
-	private CView initial, current;
+	private CView initial, current, pendingUnload;
 
 	/**
 	 * The controllers to handle view requests.
@@ -280,6 +280,13 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			old = null;
 		}
 
+		// unload pending cview
+		if(pendingUnload != null) {
+			Log.debug("Destroying pending unload view- " + pendingUnload.vc.getView().toString() + "..");
+			pendingUnload.vc.getView().onDestroy();
+			pendingUnload = null;
+		}
+
 		// set the initial view if not set
 		if(initial == null) initial = e;
 
@@ -315,6 +322,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		e.vc.close();
 
 		if(removeFromCache) {
+			pendingUnload = e;
 			// remove the view from cache
 			cache.remove(key);
 		}

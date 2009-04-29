@@ -5,12 +5,13 @@
  */
 package com.tll.model;
 
+import com.tll.IMarshalable;
 
 /**
  * AuthorityRoles
  * @author jpk
  */
-public enum AuthorityRoles {
+public enum AuthorityRoles implements IMarshalable {
 	ROLE_ADMINISTRATOR,
 	ROLE_USER,
 	ROLE_ANONYMOUS;

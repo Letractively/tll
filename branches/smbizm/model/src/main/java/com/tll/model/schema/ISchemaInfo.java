@@ -1,7 +1,5 @@
 package com.tll.model.schema;
 
-import java.util.Map;
-
 import com.tll.model.IEntity;
 
 /**
@@ -11,19 +9,14 @@ import com.tll.model.IEntity;
 public interface ISchemaInfo {
 
 	/**
-	 * Provides schema info for a particular entity type.
-	 * @param entityClass The entity type
-	 * @return serviceMap of field descriptor keyed by field names
-	 * @throws SchemaInfoException if invalid entity class specified
+	 * Provides the schema info for the given property for a given entity type.
+	 * @param entityClass the entity type
+	 * @param propertyName the property name
+	 * @return the corres. schema property type
+	 * @throws SchemaInfoException When the given property doesn't exist
 	 */
-	Map<String, ISchemaProperty> getAllSchemaProperties(Class<? extends IEntity> entityClass) throws SchemaInfoException;
-
-	/**
-	 * @param entityClass The entity type
-	 * @return array of field names for the given entity class
-	 * @throws SchemaInfoException
-	 */
-	String[] getSchemaPropertyNames(Class<? extends IEntity> entityClass) throws SchemaInfoException;
+	ISchemaProperty getSchemaProperty(Class<? extends IEntity> entityClass, String propertyName)
+			throws SchemaInfoException;
 
 	/**
 	 * Retrieves the {@link PropertyMetadata} for the given entity property name.
@@ -31,7 +24,7 @@ public interface ISchemaInfo {
 	 * @param propertyName The entity property name
 	 * @return {@link PropertyMetadata} assoc. with the given property
 	 * @throws SchemaInfoException When the property is not found for the given
-	 *         entity type
+	 *         entity type or is not a value type property.
 	 */
 	PropertyMetadata getPropertyMetadata(Class<? extends IEntity> entityClass, String propertyName) throws SchemaInfoException;
 
@@ -41,7 +34,17 @@ public interface ISchemaInfo {
 	 * @param propertyName The entity property name
 	 * @return the field descriptor assoc. with the given field
 	 * @throws SchemaInfoException When the property is not found for the given
-	 *         entity type
+	 *         entity type or is not relational.
 	 */
 	RelationInfo getRelationInfo(Class<? extends IEntity> entityClass, String propertyName) throws SchemaInfoException;
+
+	/**
+	 * Retrieves the {@link NestedInfo} for the given entity property name.
+	 * @param entityClass The entity type
+	 * @param propertyName The entity property name
+	 * @return the field descriptor assoc. with the given field
+	 * @throws SchemaInfoException When the property is not found for the given
+	 *         entity type or is not of nested type.
+	 */
+	NestedInfo getNestedInfo(Class<? extends IEntity> entityClass, String propertyName) throws SchemaInfoException;
 }

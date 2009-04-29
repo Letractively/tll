@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Order Item Status
  * @author jpk
  */
-public enum OrderItemStatus implements INameValueProvider<String> {
+public enum OrderItemStatus implements INameValueProvider<String>, IMarshalable {
 	N("none"),
 	O("Ordered"),
 	C("Committed"),

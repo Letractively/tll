@@ -27,6 +27,7 @@ public final class BuildTools {
 		b.saveConfig()
 		b.generateGwtConstantsFile();
 		b.generateWebXml();
+		b.copyClasspathResources();
 		b.copyWebappResources();
 		b.stubDbIfNecessary()
 	}
@@ -205,6 +206,27 @@ public final class BuildTools {
 			}
 		}
 		diMap.put('di.handlers', sb.toString())
+	}
+	
+	/**
+	 * Copies server-side classpath related resources to the target war dir.
+	 */
+	private void copyClasspathResources() {
+		println 'Copying cp resources..'
+		String sdir = basedir + '/target/classes'
+		String tdir = basedir + '/target/war/WEB-INF/classes'
+		ant.mkdir(dir: tdir)
+		ant.copy(todir: tdir) {
+			fileset(dir: sdir) {
+				exclude(name: '**/*.sql')
+				exclude(name: '**/*.ddl')
+				exclude(name: '**/public/**')
+				exclude(name: '**/*.gwt.xml')
+				exclude(name: '**/*.java')
+				exclude(name: '**/client/**')
+			}
+		}
+		println 'cp resources copied.'
 	}
 	
 	/**

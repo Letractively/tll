@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Payment Item Status
  * @author jpk
  */
-public enum PaymentItemStatus implements INameValueProvider<String> {
+public enum PaymentItemStatus implements INameValueProvider<String>, IMarshalable {
 	N("None"),
 	A("Authorized"),
 	S("Sold"),

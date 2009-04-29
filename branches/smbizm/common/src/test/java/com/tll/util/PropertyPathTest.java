@@ -3,16 +3,17 @@
  * @author jpk
  * Jun 4, 2008
  */
-package com.tll.common.model;
+package com.tll.util;
 
 import org.testng.annotations.Test;
+
 
 
 /**
  * PropertyPathTest - Test the public methods for {@link PropertyPath}.
  * @author jpk
  */
-@Test(groups = "client-model")
+@Test(groups = "common")
 public class PropertyPathTest {
 
 	public void test() throws Exception {
@@ -65,7 +66,7 @@ public class PropertyPathTest {
 		try {
 			pp.indexAt(0);
 		}
-		catch(final MalformedPropPathException e) {
+		catch(final IllegalArgumentException e) {
 			// expected
 		}
 
@@ -119,5 +120,24 @@ public class PropertyPathTest {
 		assert pp.setParentPropertyPath("parent1.parent2") == true;
 		assert "parent1.parent2.pathB".equals(pp.toString());
 
+		// test trim();
+		pp.parse("pathA.pathB.pathC.pathD");
+		assert "pathA.pathB.pathC".equals(pp.trim(1));
+		assert "pathA.pathB".equals(pp.trim(2));
+		assert "pathA".equals(pp.trim(3));
+		assert null == pp.trim(4);
+		assert null == pp.trim(5);
+		assert null == pp.trim(0);
+		assert null == pp.trim(-1);
+
+		// test clip();
+		pp.parse("pathA.pathB.pathC.pathD");
+		assert "pathB.pathC.pathD".equals(pp.clip(1));
+		assert "pathC.pathD".equals(pp.clip(2));
+		assert "pathD".equals(pp.clip(3));
+		assert null == pp.clip(4);
+		assert null == pp.clip(5);
+		assert null == pp.clip(0);
+		assert null == pp.clip(-1);
 	}
 }

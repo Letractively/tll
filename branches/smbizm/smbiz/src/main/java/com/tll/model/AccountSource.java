@@ -1,12 +1,13 @@
 package com.tll.model;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 
 /**
  * Account source enumeration.
  * @author jpk
  */
-public enum AccountSource implements INameValueProvider<String> {
+public enum AccountSource implements INameValueProvider<String>, IMarshalable {
 	ADMIN("Admin"),
 	STOREFRONT("Storefront");
 

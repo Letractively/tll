@@ -15,6 +15,18 @@
   <description>Bi-directional client/server entity CRUD and marshaling capability via GWT RPC.</description>
 
   <build>
+    <plugins>
+      <!-- direct unit test invocations to the testng.xml file -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>

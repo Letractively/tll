@@ -4,6 +4,7 @@
  */
 package com.tll.common.model.mock;
 
+import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
 import com.tll.util.StringUtil;
@@ -12,7 +13,7 @@ import com.tll.util.StringUtil;
  * MockEntityType
  * @author jpk
  */
-public enum MockEntityType implements IEntityType, INameValueProvider<String> {
+public enum MockEntityType implements IEntityType, INameValueProvider<String>, IMarshalable {
 
 	ACCOUNT("Account"),
 	ACCOUNT_ADDRESS("Account Address"),

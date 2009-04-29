@@ -196,8 +196,18 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		final FieldGroup root = fieldPanel.getFieldGroup();
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
-			final int attribs = fw == null ? Attrib.GLOBAL.flag() : Attrib.GLOBAL.flag() | Attrib.LOCAL.flag();
-			errorHandler.handleError(fw, new Error(msg.getMsg()), attribs);
+			final int attribs = (fw == null ? Attrib.GLOBAL.flag() : (Attrib.GLOBAL.flag() | Attrib.LOCAL.flag()));
+			String emsg;
+			if(fw != null) {
+				// turn off incremental validation for this field since this is a server
+				// sourced error and we want it to stick
+				fw.validateIncrementally(false);
+				emsg = msg.getMsg();
+			}
+			else {
+				emsg = msg.getRefToken() + ": " + msg.getMsg();
+			}
+			errorHandler.handleError(fw, new Error(emsg), attribs);
 		}
 	}
 

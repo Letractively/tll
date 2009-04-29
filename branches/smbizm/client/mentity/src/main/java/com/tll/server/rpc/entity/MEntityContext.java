@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 
 import com.tll.mail.MailManager;
 import com.tll.model.IEntityAssembler;
+import com.tll.model.schema.ISchemaInfo;
 import com.tll.refdata.RefData;
 import com.tll.server.marshal.Marshaler;
 import com.tll.server.rpc.IExceptionHandler;
@@ -33,6 +34,7 @@ public final class MEntityContext implements Serializable {
 
 	private final RefData refData;
 	private final MailManager mailManager;
+	private final ISchemaInfo schemaInfo;
 	private final Marshaler marshaler;
 	private final EntityManagerFactory entityManagerFactory;
 	private final IEntityAssembler entityAssembler;
@@ -44,6 +46,7 @@ public final class MEntityContext implements Serializable {
 	 * Constructor
 	 * @param refData
 	 * @param mailManager
+	 * @param schemaInfo
 	 * @param marshaler
 	 * @param entityManagerFactory
 	 * @param entityAssembler
@@ -51,12 +54,14 @@ public final class MEntityContext implements Serializable {
 	 * @param namedQueryResolver
 	 * @param exceptionHandler
 	 */
-	public MEntityContext(RefData refData, MailManager mailManager, Marshaler marshaler,
+	public MEntityContext(RefData refData, MailManager mailManager, ISchemaInfo schemaInfo, Marshaler marshaler,
 			EntityManagerFactory entityManagerFactory, IEntityAssembler entityAssembler,
-			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver, IExceptionHandler exceptionHandler) {
+			IEntityServiceFactory entityServiceFactory, INamedQueryResolver namedQueryResolver,
+			IExceptionHandler exceptionHandler) {
 		super();
 		this.refData = refData;
 		this.mailManager = mailManager;
+		this.schemaInfo = schemaInfo;
 		this.marshaler = marshaler;
 		this.entityManagerFactory = entityManagerFactory;
 		this.entityAssembler = entityAssembler;
@@ -83,6 +88,10 @@ public final class MEntityContext implements Serializable {
 
 	public MailManager getMailManager() {
 		return mailManager;
+	}
+
+	public ISchemaInfo getSchemaInfo() {
+		return schemaInfo;
 	}
 
 	public Marshaler getMarshaler() {

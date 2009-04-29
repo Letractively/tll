@@ -32,8 +32,11 @@ import com.tll.criteria.ISelectNamedQueryDef;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
+import com.tll.model.schema.ISchemaInfo;
+import com.tll.model.schema.ISchemaProperty;
 import com.tll.server.rpc.RpcServlet;
 import com.tll.service.entity.IEntityService;
+import com.tll.util.PropertyPath;
 
 /**
  * MEntityServiceImpl - Provides base methods for CRUD ops on entities.
@@ -41,6 +44,29 @@ import com.tll.service.entity.IEntityService;
  * @param <E>
  */
 public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityServiceImpl<E> {
+
+	/**
+	 * Client-izes the given property path (need to account for possible nested).
+	 * <p>
+	 * It is assumed nested entities are only 1-level deep
+	 * @param <T> the entity type
+	 * @param schemaInfo
+	 * @param entityClass
+	 * @param path
+	 * @return the clientized path
+	 */
+	protected static final <T extends IEntity> String clientizePropertyPath(ISchemaInfo schemaInfo, Class<T> entityClass,
+			String path) {
+		final PropertyPath p = new PropertyPath(path);
+		if(p.depth() > 2) {
+			final String ppp = p.trim(1);
+			final ISchemaProperty sp = schemaInfo.getSchemaProperty(entityClass, ppp);
+			if(sp.getPropertyType().isNested()) {
+				path = ppp + '_' + p.last();
+			}
+		}
+		return path;
+	}
 
 	/**
 	 * Loads additional entity properties.
@@ -61,8 +87,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * @param context The request context.
 	 * @throws SystemError When any error occurrs.
 	 */
-	protected abstract void handlePersistOptions(MEntityContext context, E e, EntityOptions options)
-	throws SystemError;
+	protected abstract void handlePersistOptions(MEntityContext context, E e, EntityOptions options) throws SystemError;
 
 	/**
 	 * Does the core entity loading.
@@ -72,13 +97,11 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * @return The loaded {@link IEntity}
 	 */
 	@SuppressWarnings("unchecked")
-	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request,
-			final EntityPayload payload) {
+	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request, final EntityPayload payload) {
 
 		// core entity loading
 		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
-		final IEntityService<E> svc =
-			context.getEntityServiceFactory().instanceByEntityType(entityClass);
+		final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
 
 		if(request.isLoadByBusinessKey()) {
 			// load by business key
@@ -98,8 +121,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		return svc.load(new PrimaryKey(entityClass, id));
 	}
 
-	public final void load(final MEntityContext context, final EntityLoadRequest request,
-			final EntityPayload payload) {
+	public final void load(final MEntityContext context, final EntityLoadRequest request, final EntityPayload payload) {
 		try {
 			final E e = coreLoad(context, request, payload);
 			if(e == null) {
@@ -113,8 +135,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			}
 
 			// marshal the loaded entity
-			final Model group =
-				context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
+			final Model group = context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
 			payload.setEntity(group);
 
 			// set any entity refs
@@ -138,22 +159,21 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	@SuppressWarnings("unchecked")
 	public final void persist(final MEntityContext context, final EntityPersistRequest request,
 			final EntityPayload payload) {
+		Class<E> entityClass = null;
 		try {
 			// core persist
-			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
-			final Model entity = request.getEntity();
-			E e = context.getMarshaler().unmarshalEntity(entityClass, entity);
-			final IEntityService<E> svc =
-				context.getEntityServiceFactory().instanceByEntityType(entityClass);
+			entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
+			Model model = request.getEntity();
+			E e = context.getMarshaler().unmarshalEntity(entityClass, model);
+			final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			e = svc.persist(e);
 
 			// handle persist options
 			handlePersistOptions(context, e, request.entityOptions);
 
 			// marshall
-			final Model group =
-				context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
-			payload.setEntity(group);
+			model = context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
+			payload.setEntity(model);
 
 			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
 		}
@@ -162,7 +182,8 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		}
 		catch(final ConstraintViolationException ise) {
 			for(final ConstraintViolation iv : ise.getConstraintViolations()) {
-				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag, iv.getPropertyPath());
+				payload.getStatus().addMsg(iv.getMessage(), MsgLevel.ERROR, MsgAttr.FIELD.flag,
+						clientizePropertyPath(context.getSchemaInfo(), entityClass, iv.getPropertyPath()));
 			}
 		}
 		catch(final SystemError e) {
@@ -176,12 +197,10 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void purge(final MEntityContext context, final EntityPurgeRequest request,
-			final EntityPayload payload) {
+	public final void purge(final MEntityContext context, final EntityPurgeRequest request, final EntityPayload payload) {
 		try {
 			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
-			final IEntityService<E> svc =
-				context.getEntityServiceFactory().instanceByEntityType(entityClass);
+			final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final ModelKey entityRef = request.getEntityRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
@@ -223,8 +242,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * @throws IllegalArgumentException When the <code>search</code> parameter is
 	 *         unsupported.
 	 */
-	protected abstract void handleSearchTranslation(MEntityContext context, ISearch search,
-			ICriteria<E> criteria)
+	protected abstract void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<E> criteria)
 	throws IllegalArgumentException;
 
 	@SuppressWarnings("unchecked")

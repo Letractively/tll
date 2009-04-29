@@ -131,7 +131,7 @@
         <executions>
           <execution>
             <id>war-resources</id>
-            <phase>process-resources</phase>
+            <phase>process-classes</phase>
             <goals>
               <goal>execute</goal>
             </goals>

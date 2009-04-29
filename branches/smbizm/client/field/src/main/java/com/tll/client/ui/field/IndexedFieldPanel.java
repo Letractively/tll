@@ -215,7 +215,7 @@ IIndexedFieldBoundWidget {
 		getFieldGroup().addField(ip.getFieldGroup());
 
 		index.binding.set(index.fieldPanel);
-		index.binding.bind(index.fieldPanel);
+		index.binding.bind();
 
 		// propagate the error handler from parent field group to this index field group
 		ip.getFieldGroup().setErrorHandler(getFieldGroup().getErrorHandler());
@@ -239,7 +239,7 @@ IIndexedFieldBoundWidget {
 		Index<I> remove = indexPanels.remove(index);
 		assert remove != null;
 
-		remove.binding.unbind(remove.fieldPanel);
+		remove.binding.unbind();
 		if(!getFieldGroup().removeField(remove.fieldPanel.getFieldGroup())) {
 			throw new IllegalStateException("Unable to remove index field group: " + remove.fieldPanel.getFieldGroup());
 		}

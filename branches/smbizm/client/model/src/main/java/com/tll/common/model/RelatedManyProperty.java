@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 
 import com.tll.common.bind.PropertyChangeEvent;
 import com.tll.model.schema.PropertyType;
+import com.tll.util.PropertyPath;
 
 /**
  * RelatedManyProperty
@@ -146,7 +147,13 @@ public final class RelatedManyProperty extends AbstractRelationalProperty implem
 			final Model m = (Model) value;
 			Model old = null;
 
-			final int index = pp.index();
+			final int index;
+			try {
+				index = pp.index();
+			}
+			catch(final IllegalArgumentException e) {
+				throw new MalformedPropPathException(e.getMessage());
+			}
 			final int size = size();
 
 			if(index == size) {

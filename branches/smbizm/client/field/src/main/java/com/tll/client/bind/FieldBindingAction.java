@@ -75,19 +75,16 @@ public final class FieldBindingAction {
 	private final IErrorHandler errorHandler;
 
 	/**
-	 * The root field group.
+	 * The field bound widget.
 	 */
-	private FieldGroup rootGroup;
-
-	/**
-	 * The [root] model.
-	 */
-	private Model model;
+	private IFieldBoundWidget widget;
 
 	/**
 	 * The sole binding.
 	 */
 	private final Binding binding = new Binding();
+
+	private boolean bound;
 
 	/**
 	 * Constructor
@@ -115,7 +112,7 @@ public final class FieldBindingAction {
 		if(errorHandler != null) errorHandler.clear();
 		try {
 			// validate
-			rootGroup.validate();
+			widget.getFieldGroup().validate();
 
 			// update the model
 			binding.setLeft();
@@ -141,66 +138,81 @@ public final class FieldBindingAction {
 	}
 
 	public void set(IFieldBoundWidget widget) {
-		if(rootGroup == null) {
-			Log.debug("FieldBindingAction.set(): " + widget);
-			rootGroup = widget.getFieldGroup();
-			model = widget.getModel();
-			ensureSet();
+		if(widget == null) {
+			throw new IllegalArgumentException("Null widget");
 		}
+		if(this.widget == widget) {
+			return;
+		}
+		if(widget.getFieldGroup() == null) {
+			throw new IllegalArgumentException("No field group");
+		}
+		if(widget.getModel() == null) {
+			throw new IllegalArgumentException("No model");
+		}
+		if(this.widget != null) {
+			unset();
+		}
+		Log.debug("Setting: " + widget);
+		this.widget = widget;
 	}
 
-	public void bind(IFieldBoundWidget widget) {
+	public void bind() {
 		ensureSet();
+		if(bound) return;
+		Log.debug("Binding: " + widget);
 		// we only allow binding of the set root field group
-		if(widget.getFieldGroup() != rootGroup) {
-			throw new IllegalArgumentException("Can only bind the field group of the set widget.");
-		}
-		bind(createBinding(rootGroup, model, errorHandler));
+		bind(createBinding(widget.getFieldGroup(), widget.getModel(), errorHandler));
 
 		// bind the indexed
 		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
 		if(indexedWidgets != null) {
 			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-				Log.debug("Binding: " + iw);
+				Log.debug("Binding indexed: " + iw);
 				// add binding to the many value collection only
-				bind(new Binding(model, iw.getIndexedPropertyName(), null, null, null, iw, IBindableWidget.PROPERTY_VALUE,
+				bind(new Binding(widget.getModel(), iw.getIndexedPropertyName(), null, null, null, iw,
+						IBindableWidget.PROPERTY_VALUE,
 						null, null, null));
 
 			}
 		}
+		bound = true;
 	}
 
-	public void unbind(IFieldBoundWidget widget) {
-		if(widget == null || widget.getFieldGroup() != rootGroup) {
-			throw new IllegalArgumentException();
-		}
-
-		// undind the indexed
-		final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
-		if(indexedWidgets != null) {
-			for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
-				Log.debug("Un-binding: " + iw);
-				iw.clearIndexed();
+	public void unbind() {
+		if(bound) {
+			Log.debug("Un-binding: " + widget);
+			// unbind indexed first
+			final IIndexedFieldBoundWidget[] indexedWidgets = widget.getIndexedChildren();
+			if(indexedWidgets != null) {
+				for(final IIndexedFieldBoundWidget iw : indexedWidgets) {
+					Log.debug("Un-binding indexed: " + iw);
+					iw.clearIndexed();
+				}
 			}
-		}
 
-		binding.unbind();
-		binding.getChildren().clear();
+			binding.unbind();
+			binding.getChildren().clear();
+			bound = false;
+		}
 	}
 
-	public void unset(IFieldBoundWidget widget) {
-		unbind(widget);
-		rootGroup.clearValue();
-		rootGroup = null;
-		model = null;
+	public void unset() {
+		if(isSet()) {
+			Log.debug("Un-setting: " + widget);
+			unbind();
+			widget.getFieldGroup().clearValue();
+			widget = null;
+		}
+	}
+
+	public boolean isSet() {
+		return widget != null;
 	}
 
 	private void ensureSet() throws IllegalStateException {
-		if(rootGroup == null) {
-			throw new IllegalStateException("Not root field group set.");
-		}
-		if(model == null) {
-			throw new IllegalStateException("Not model set.");
+		if(widget == null) {
+			throw new IllegalStateException("Not field bound widget set.");
 		}
 	}
 

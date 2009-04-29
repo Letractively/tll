@@ -36,7 +36,7 @@ import com.tll.model.TestPersistenceUnitEntityGraphBuilder;
  * @author jpk
  */
 @Test(groups = {
-	"server", "client-model" })
+	"server", "client-mentity" })
 	public class MarshalerTest extends AbstractInjectedTest {
 
 	protected static final Map<String, Object> tupleMap = new HashMap<String, Object>();

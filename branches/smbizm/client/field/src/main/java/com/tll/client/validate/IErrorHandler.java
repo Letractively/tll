@@ -35,7 +35,7 @@ public interface IErrorHandler {
 		private Attrib(int flag) {
 			this.flag = flag;
 		}
-		
+
 		public int flag() {
 			return flag;
 		}
@@ -45,14 +45,14 @@ public interface IErrorHandler {
 		}
 
 		public static boolean isGlobal(int flags) {
-			return ((flags & GLOBAL.flag) == flags);
+			return ((flags & GLOBAL.flag) == GLOBAL.flag);
 		}
 
 		public static boolean isLocal(int flags) {
-			return ((flags & LOCAL.flag) == flags);
+			return ((flags & LOCAL.flag) == LOCAL.flag);
 		}
 	}
-	
+
 	/**
 	 * Handles a validation error.
 	 * @param source the error source
@@ -72,7 +72,7 @@ public interface IErrorHandler {
 	 * @param source
 	 */
 	void resolveError(IWidgetRef source);
-	
+
 	/**
 	 * Life-cycle provision to clear out <em>all</em> errors and internal state.
 	 */

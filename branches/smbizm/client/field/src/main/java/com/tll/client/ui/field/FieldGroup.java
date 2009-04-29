@@ -17,8 +17,8 @@ import com.tll.client.validate.Errors;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.common.model.PropertyPath;
 import com.tll.model.schema.IPropertyMetadataProvider;
+import com.tll.util.PropertyPath;
 
 /**
  * FieldGroup - A group of {@link IField}s which may in turn be nested
