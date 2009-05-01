@@ -6,7 +6,7 @@
 package com.tll.client.ui;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,7 +43,7 @@ public class WidgetAndLabel extends Composite {
 	/**
 	 * Contains the {@link Widget} and {@link Label}.
 	 */
-	private final FlowPanel pnl = new FlowPanel();
+	private final HorizontalPanel pnl = new HorizontalPanel();
 
 	/**
 	 * The {@link Widget}.
@@ -62,7 +62,7 @@ public class WidgetAndLabel extends Composite {
 	 */
 	public WidgetAndLabel(Widget widget, String labelText) {
 		super();
-		pnl.setStyleName(Styles.WAL);
+		pnl.addStyleName(Styles.WAL);
 		label.setStyleName(Styles.LABEL);
 		initWidget(pnl);
 		setTheWidget(widget);

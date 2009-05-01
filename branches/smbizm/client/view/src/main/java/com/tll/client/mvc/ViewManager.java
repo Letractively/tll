@@ -339,8 +339,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		if(pendingCurrent == null && e != initial) {
 			pendingCurrent = initial;
 		}
-		if(pendingCurrent == null) throw new IllegalStateException("Can't resolve a pending view");
-		if(pendingCurrent != current) {
+		if(pendingCurrent != null && pendingCurrent != current) {
 			History.newItem(generateViewKeyHistoryToken(pendingCurrent.getViewKey()));
 		}
 		else {

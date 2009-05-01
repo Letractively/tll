@@ -1,8 +1,8 @@
 package com.tll.client;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IListingConfig;
@@ -11,9 +11,10 @@ import com.tll.client.listing.ITableCellRenderer;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.listing.ModelPropertyFormatter;
 import com.tll.client.listing.PropertyBoundColumn;
+import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
-import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
+import com.tll.common.model.mock.MockModelStubber;
 import com.tll.common.search.mock.TestAddressSearch;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.ListHandlerType;
@@ -36,17 +37,64 @@ public final class UITests extends AbstractUITest {
 
 	static final Sorting defaultSorting = new Sorting("lastName");
 
+	static final class TestRowOptions extends AbstractRowOptions {
+
+		ListingWidget<Model, ?> listing;
+		Model address;
+
+		/**
+		 * Constructor
+		 */
+		public TestRowOptions() {
+			super();
+			address = MockModelStubber.stubAddress(1);
+		}
+
+		public void setListing(ListingWidget<Model, ?> listing) {
+			this.listing = listing;
+		}
+
+		@Override
+		protected void doDeleteRow(int rowIndex) {
+			listing.markRowDeleted(rowIndex, true);
+		}
+
+		@Override
+		protected void doEditRow(int rowIndex) {
+			listing.updateRow(rowIndex, address);
+		}
+
+		@Override
+		protected String getListingElementName() {
+			return "Addresses";
+		}
+	}
+
+	static final class TestAddRowDelegate implements IAddRowDelegate {
+
+		ListingWidget<Model, ?> listing;
+
+		public void setListing(ListingWidget<Model, ?> listing) {
+			this.listing = listing;
+		}
+
+		@Override
+		public void handleAddRow() {
+			listing.addRow(MockModelStubber.stubAddress(1));
+		}
+
+	}
+
 	/**
 	 * The test listing config.
 	 */
-	static final IListingConfig<Model> config = new IListingConfig<Model>() {
+	static final class TestConfig implements IListingConfig<Model> {
 
 		PropertyBoundColumn cName = new PropertyBoundColumn("Name", "lastName");
 		PropertyBoundColumn cAddress = new PropertyBoundColumn("Address", "address1");
 		PropertyBoundColumn cCity = new PropertyBoundColumn("City", "city");
-
-		final Option[] options = new Option[] {
-			new Option("Option 1"), new Option("Option 2"), new Option("Option 3") };
+		TestRowOptions rowOptions = new TestRowOptions();
+		TestAddRowDelegate addRowDelegate = new TestAddRowDelegate();
 
 		private final Column[] cols = new Column[] {
 			Column.ROW_COUNT_COLUMN, cName, cAddress, cCity };
@@ -131,31 +179,14 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public IRowOptionsDelegate getRowOptionsHandler() {
-			return new IRowOptionsDelegate() {
-
-				@Override
-				public void handleOptionSelection(String optionText, int rowIndex) {
-					Window.alert("Row " + rowIndex + " was selected: " + optionText);
-				}
-
-				@Override
-				public Option[] getOptions(int rowIndex) {
-					return options;
-				}
-			};
+			return rowOptions;
 		}
 
 		@Override
 		public IAddRowDelegate getAddRowHandler() {
-			return new IAddRowDelegate() {
-
-				@Override
-				public void handleAddRow() {
-					Window.alert("Add new Row");
-				}
-			};
+			return addRowDelegate;
 		}
-	};
+	} // TestConfig
 
 	/**
 	 * RemoteListingWidgetTest
@@ -163,6 +194,7 @@ public final class UITests extends AbstractUITest {
 	 */
 	static final class RemoteListingWidgetTest extends DefaultUITestCase {
 
+		TestConfig config;
 		ModelListingWidget lw;
 
 		/**
@@ -174,9 +206,12 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		protected Widget getContext() {
+			config = new TestConfig();
 			lw =
 				ListingFactory.createRemoteListingWidget(config, "addresses", ListHandlerType.PAGE, new TestAddressSearch(),
 						null, defaultSorting);
+			config.rowOptions.setListing(lw);
+			config.addRowDelegate.setListing(lw);
 			return lw;
 		}
 

@@ -71,15 +71,17 @@
 
 .tableView tr.deleted {
 	background-color: #FFDFE3 !important;
+	color: maroon;
+	text-decoration: line-through;
 }
 
 .tableView tr.actv {
-	background-color: #EAEAEA !important;
+	background-color: #EAEAEA;
 	cursor: pointer;
 }
 
 .tableView tr.crnt {
-	background-color: #DFDFDF !important;
+	background-color: #DFDFDF;
 	cursor: pointer;
 }
 

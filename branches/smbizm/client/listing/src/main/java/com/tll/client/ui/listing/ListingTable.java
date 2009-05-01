@@ -323,9 +323,12 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 
 		for(int c = 0; c < columns.length; c++) {
 			if(Column.ROW_COUNT_COLUMN == columns[c]) {
+				getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 				if(rowNum > -1) {
-					getCellFormatter().addStyleName(rowIndex, c, Styles.COUNT_COL);
 					setText(rowIndex, c, Integer.toString(rowNum));
+				}
+				else {
+					setText(rowIndex, c, "*");
 				}
 			}
 			else {

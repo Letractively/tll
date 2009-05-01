@@ -12,6 +12,7 @@ import com.tll.model.Authority;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.Interface;
+import com.tll.model.User;
 
 
 /**
@@ -25,7 +26,10 @@ public class SmbizMEntityServiceImplResolver implements IMEntityServiceImplResol
 			Class<? extends IEntity> entityClass) throws IllegalArgumentException {
 		final Class<? extends IEntity> rootEntityClass = EntityUtil.getRootEntityClass(entityClass);
 
-		if(Account.class.isAssignableFrom(rootEntityClass)) {
+		if(User.class.isAssignableFrom(rootEntityClass)) {
+			return UserService.class;
+		}
+		else if(Account.class.isAssignableFrom(rootEntityClass)) {
 			return AccountService.class;
 		}
 		else if(Address.class.isAssignableFrom(rootEntityClass)) {

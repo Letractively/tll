@@ -1,25 +1,16 @@
 @CHARSET "ISO-8859-1";
 
-.msg {
-  
+.cmsg {
 }
 
-/* 
-this is problematic - 
-so for now we accept multiple msgs of differing msg levels to 
-appear stacked rather than horizontally spaced.
-.msg .msg {
-  float: left;
-  margin-right: 5px;
+.cmsg .msg {
 }
-*/
 
 .msg ul {
   margin: 1px;
 }
 
 .msg .ic {
-  float: left;
   margin: 2px;
 }
 
@@ -92,4 +83,8 @@ appear stacked rather than horizontally spaced.
   margin: 2px;
   padding-left: 2px;
   padding-right: 2px;
+}
+
+.gmsg .ic {
+	float:left;
 }

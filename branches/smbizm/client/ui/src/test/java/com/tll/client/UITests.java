@@ -24,6 +24,7 @@ import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
+import com.tll.client.ui.WidgetAndLabel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgLevelImageBundle;
@@ -53,17 +54,9 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new MsgsText(),
-			new MsgPopupRegistryTest(),
-			new GlobalMsgPanelTest(),
-			new BusyPanelTest(),
-			new DialogTest(),
-			new OptionsPanelTest(),
-			new OptionsPopupTest(),
-			new OptionsPopupTest2(),
-			new PushButtonStyleTest(),
-			new ToolbarStyleTest(),
-		};
+			new MsgsText(), new MsgPopupRegistryTest(), new GlobalMsgPanelTest(), new BusyPanelTest(), new DialogTest(),
+			new OptionsPanelTest(), new OptionsPopupTest(), new OptionsPopupTest2(), new PushButtonStyleTest(),
+			new ToolbarStyleTest(), new WidgetAndLabelTest(), };
 	}
 
 	static final class MsgsText extends DefaultUITestCase {
@@ -93,6 +86,7 @@ public final class UITests extends AbstractUITest {
 		@Override
 		protected void init() {
 			pnl = new FlowPanel();
+			RootPanel.get().getElement().getStyle().setProperty("backgroundColor", "silver");
 			lblA = new Label("Label A");
 			lblB = new Label("Label B");
 			pnl.add(lblA);
@@ -118,22 +112,19 @@ public final class UITests extends AbstractUITest {
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA);
 					}
-				}),
-				new Button("Post multiple on Label A", new ClickHandler() {
+				}), new Button("Post multiple on Label A", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(mlist, lblA);
 					}
-				}),
-				new Button("Post timed single on Label A", new ClickHandler() {
+				}), new Button("Post timed single on Label A", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						Msgs.post(m1, lblA, Position.BOTTOM, 1000, true);
 					}
-				}),
-			};
+				}), };
 		}
 	}
 
@@ -466,64 +457,55 @@ public final class UITests extends AbstractUITest {
 					public void onClick(ClickEvent event) {
 						gmp.clear();
 					}
-				}),
-				new Button("Clear Fatal Messages", new ClickHandler() {
+				}), new Button("Clear Fatal Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.clear(MsgLevel.FATAL);
 					}
-				}),
-				new Button("Clear Error Messages", new ClickHandler() {
+				}), new Button("Clear Error Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.clear(MsgLevel.ERROR);
 					}
-				}),
-				new Button("Clear Warn Messages", new ClickHandler() {
+				}), new Button("Clear Warn Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.clear(MsgLevel.WARN);
 					}
-				}),
-				new Button("Clear Info Messages", new ClickHandler() {
+				}), new Button("Clear Info Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.clear(MsgLevel.INFO);
 					}
-				}),
-				new Button("Remove Text Box 1 Messages", new ClickHandler() {
+				}), new Button("Remove Text Box 1 Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.remove(refTextBox1);
 					}
-				}),
-				new Button("Remove Text Box 2 Messages", new ClickHandler() {
+				}), new Button("Remove Text Box 2 Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.remove(refTextBox2);
 					}
-				}),
-				new Button("Remove Label Messages", new ClickHandler() {
+				}), new Button("Remove Label Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.remove(refLabel);
 					}
-				}),
-				new Button("Remove Un-sourced Messages", new ClickHandler() {
+				}), new Button("Remove Un-sourced Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
 						gmp.removeUnsourced();
 					}
-				}),
-				new Button("Add Fatal Messages", new ClickHandler() {
+				}), new Button("Add Fatal Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
@@ -531,8 +513,7 @@ public final class UITests extends AbstractUITest {
 						gmp.add(refTextBox2, stubMsgs(MsgLevel.FATAL, 1));
 						gmp.add(refLabel, stubMsgs(MsgLevel.FATAL, 1));
 					}
-				}),
-				new Button("Add Error Messages", new ClickHandler() {
+				}), new Button("Add Error Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
@@ -540,8 +521,7 @@ public final class UITests extends AbstractUITest {
 						gmp.add(refTextBox2, stubMsgs(MsgLevel.ERROR, 1));
 						gmp.add(refLabel, stubMsgs(MsgLevel.ERROR, 1));
 					}
-				}),
-				new Button("Add Warn Messages", new ClickHandler() {
+				}), new Button("Add Warn Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
@@ -549,8 +529,7 @@ public final class UITests extends AbstractUITest {
 						gmp.add(refTextBox2, stubMsgs(MsgLevel.WARN, 1));
 						gmp.add(refLabel, stubMsgs(MsgLevel.WARN, 1));
 					}
-				}),
-				new Button("Add Info Messages", new ClickHandler() {
+				}), new Button("Add Info Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
@@ -558,8 +537,7 @@ public final class UITests extends AbstractUITest {
 						gmp.add(refTextBox2, stubMsgs(MsgLevel.INFO, 1));
 						gmp.add(refLabel, stubMsgs(MsgLevel.INFO, 1));
 					}
-				}),
-				new Button("Add Un-sourced Messages", new ClickHandler() {
+				}), new Button("Add Un-sourced Messages", new ClickHandler() {
 
 					@Override
 					public void onClick(ClickEvent event) {
@@ -568,8 +546,7 @@ public final class UITests extends AbstractUITest {
 						gmp.add(stubMsgs(MsgLevel.ERROR, 1));
 						gmp.add(stubMsgs(MsgLevel.FATAL, 1));
 					}
-				})
-			};
+				}) };
 		}
 	} // GlobalMsgPanelTest
 
@@ -776,7 +753,8 @@ public final class UITests extends AbstractUITest {
 			contextArea.getElement().getStyle().setProperty("margin", "1em");
 			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
 
-			// IMPT: this enables the popup to be positioned at the mouse click location!
+			// IMPT: this enables the popup to be positioned at the mouse click
+			// location!
 			contextArea.addMouseDownHandler(popup);
 
 			RootPanel.get().add(contextArea);
@@ -938,4 +916,38 @@ public final class UITests extends AbstractUITest {
 			tb = null;
 		}
 	} // ToolbarStyleTest
+
+	/**
+	 * WidgetAndLabelTest
+	 * @author jpk
+	 */
+	static final class WidgetAndLabelTest extends DefaultUITestCase {
+
+		WidgetAndLabel wal;
+
+		/**
+		 * Constructor
+		 */
+		public WidgetAndLabelTest() {
+			super("WidgetAndLabel Test", "Tests the styling for the WidgetAndLabel widget.");
+		}
+
+		@Override
+		protected void init() {
+			final PushButton pb = new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage());
+			wal = new WidgetAndLabel(pb, "This is a warning");
+		}
+
+		@Override
+		protected void teardown() {
+			wal.removeFromParent();
+			wal = null;
+		}
+
+		@Override
+		protected Widget getContext() {
+			return wal;
+		}
+
+	} // WidgetAndLabelTest
 }

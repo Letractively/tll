@@ -38,7 +38,7 @@
                 <ant antfile="${basedir}/../build-gwt.xml">
                   <target name="build-shell-exec-file" />
                   <target name="build-shell-debug-exec-file" />
-                  <target name="compile" />
+                  <!-- <target name="compile" /> -->
                 </ant>
               </tasks>
             </configuration>
@@ -75,11 +75,13 @@
   </build>
 
   <dependencies>
+    <!-- 
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>tll-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>com.tll</groupId>
       <artifactId>client-core</artifactId>

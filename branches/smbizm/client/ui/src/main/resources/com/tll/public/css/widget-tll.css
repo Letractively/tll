@@ -10,16 +10,18 @@
 }
 
 /* WidgetAndLabel */
-.wal {
+.wal td {
+	vertical-align: middle !important;
+}
+.wal * {
   white-space: nowrap;
 }
 
 .wal .widget {
-  display: inline-block;
+	margin-right: 4px;
 }
 
 .wal .label {
-  display: inline-block;
 }
 
 /* TabbedIndexedFieldPanel */

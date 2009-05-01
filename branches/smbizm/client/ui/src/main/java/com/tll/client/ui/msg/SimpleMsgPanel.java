@@ -6,7 +6,7 @@
 package com.tll.client.ui.msg;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.tll.client.ui.HtmlListPanel;
 import com.tll.client.ui.ImageContainer;
 import com.tll.client.ui.P;
@@ -27,10 +27,14 @@ public class SimpleMsgPanel extends Composite {
 	static class Styles {
 
 		/**
+		 * Style applied to the containing div.
+		 */
+		public static final String CMSG = "cmsg";
+
+		/**
 		 * Style applied to to widgets containing messages.
 		 */
 		public static final String MSG = "msg";
-
 	}
 
 	/**
@@ -42,22 +46,23 @@ public class SimpleMsgPanel extends Composite {
 	/**
 	 * Contains sub-panels categorized my {@link MsgLevel}.
 	 */
-	private final FlowPanel container = new FlowPanel();
+	private final HorizontalPanel container = new HorizontalPanel();
 
 	/**
 	 * Constructor
 	 */
 	public SimpleMsgPanel() {
 		super();
-		container.setStyleName(Styles.MSG);
+		container.setStyleName(Styles.CMSG);
+		container.addStyleName(Styles.MSG);
 		initWidget(container);
 	}
-	
+
 	public void clear() {
 		container.clear();
 	}
-	
-	private HtmlListPanel extract(FlowPanel msgLevelPanel) {
+
+	private HtmlListPanel extract(HorizontalPanel msgLevelPanel) {
 		return (HtmlListPanel) ((msgLevelPanel.getWidgetCount() == 2) ? msgLevelPanel.getWidget(1) : msgLevelPanel
 				.getWidget(0));
 	}
@@ -69,7 +74,7 @@ public class SimpleMsgPanel extends Composite {
 	public void addMsg(Msg msg) {
 		extract(getMsgLevelPanel(msg.getLevel(), true)).append(new P(msg.getMsg()));
 	}
-	
+
 	/**
 	 * Adds multiple {@link Msg}s to this panel.
 	 * <p>
@@ -86,9 +91,9 @@ public class SimpleMsgPanel extends Composite {
 	}
 
 	public void setShowMsgLevelImages(boolean show) {
-		FlowPanel mlp;
+		HorizontalPanel mlp;
 		for(final Object o : container) {
-			mlp = (FlowPanel) o;
+			mlp = (HorizontalPanel) o;
 			if(show && mlp.getWidgetCount() == 1) {
 				// no image so create it
 				final MsgLevel level = MsgLevel.values()[mlp.getElement().getPropertyInt(ELEM_PROP_MSG_LEVEL)];
@@ -108,17 +113,17 @@ public class SimpleMsgPanel extends Composite {
 	 * @param createIfAbsent
 	 * @return the associated message panel or <code>null<code>
 	 */
-	private FlowPanel getMsgLevelPanel(MsgLevel level, boolean createIfAbsent) {
-		FlowPanel mlp;
+	private HorizontalPanel getMsgLevelPanel(MsgLevel level, boolean createIfAbsent) {
+		HorizontalPanel mlp;
 		for(final Object o : container) {
-			mlp = (FlowPanel) o;
+			mlp = (HorizontalPanel) o;
 			final int i = mlp.getElement().getPropertyInt(ELEM_PROP_MSG_LEVEL);
 			if(level.ordinal() == i) return mlp;
 		}
 		if(!createIfAbsent) return null;
 		// stub the msg level panel
 		// (child widget FORMAT: [{msg level img}]{ul html list of msg texts})
-		mlp = new FlowPanel();
+		mlp = new HorizontalPanel();
 		mlp.addStyleName(Styles.MSG);
 		mlp.addStyleName(level.getName().toLowerCase());
 		mlp.getElement().setPropertyInt(ELEM_PROP_MSG_LEVEL, level.ordinal());

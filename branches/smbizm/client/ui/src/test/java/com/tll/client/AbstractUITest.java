@@ -144,9 +144,13 @@ public abstract class AbstractUITest implements EntryPoint, ValueChangeHandler<S
 
 		/**
 		 * @return Array of {@link Button}s that when clicked, performs a test
-		 *         action on the context.
+		 *         action on the context. May return <code>null</code> in which case
+		 *         there will be no test buttons.
 		 */
-		protected abstract Button[] getTestActions();
+		protected Button[] getTestActions() {
+			// base impl no test buttons
+			return null;
+		}
 
 		/**
 		 * Override to do specific test context initialization operations.

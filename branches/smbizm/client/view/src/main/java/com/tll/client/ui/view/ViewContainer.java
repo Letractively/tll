@@ -84,7 +84,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	private HandlerRegistration hrEventPreview, hrMouseDown, hrMouseMove, hrMouseUp;
 
-	private com.google.gwt.user.client.Element dragTarget;
+	private final com.google.gwt.user.client.Element dragTarget;
 
 	/**
 	 * MyVerticalPanel - Simple extension of VerticalPanel to get at td and tr
@@ -118,6 +118,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		this.view = view;
 		this.key = key;
 		toolbar = new ViewToolbar(view.getLongViewName(), options, this);
+		dragTarget = toolbar.viewTitle.getElement();
 		mainLayout.add(toolbar);
 		mainLayout.add(view.getViewWidget());
 		mainLayout.setStylePrimaryName(Styles.VIEW_CONTAINER);
@@ -140,8 +141,8 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 				// We need to preventDefault() on mouseDown events (outside of the
 				// DialogBox content) to keep text from being selected when it
 				// is dragged.
-				if(eventTargetsPopup) {
-					//Log.debug("ViewContainer.onPreviewNativeEvent() - preventing default..");
+				if(target.isOrHasChild(dragTarget)) {
+					// Log.debug("ViewContainer.onPreviewNativeEvent() - preventing default..");
 					ne.preventDefault();
 				}
 			case Event.ONMOUSEUP:
@@ -216,7 +217,6 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		if(mouseIsDown) {
 			Log.debug("ending dragging..");
 			DOM.releaseCapture(dragTarget);
-			dragTarget = null;
 			mouseIsDown = dragging = false;
 			dragOffsetX = dragOffsetY = -1;
 		}
@@ -225,7 +225,6 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	public void onMouseDown(MouseDownEvent event) {
 		if(isPopped()) {
 			endDrag();
-			dragTarget = ((Widget) event.getSource()).getElement();
 			DOM.setCapture(dragTarget);
 			Log.debug("set drag target: " + dragTarget.getInnerText());
 
