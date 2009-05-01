@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -25,6 +26,7 @@ import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
+import com.tll.client.ui.msg.MsgLevelImageBundle;
 import com.tll.client.ui.msg.MsgPopupRegistry;
 import com.tll.client.ui.msg.Msgs;
 import com.tll.client.ui.option.IOptionHandler;
@@ -32,6 +34,8 @@ import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.option.OptionsPopup;
+import com.tll.client.ui.toolbar.Toolbar;
+import com.tll.client.ui.toolbar.ToolbarImageBundle;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgLevel;
 
@@ -49,8 +53,17 @@ public final class UITests extends AbstractUITest {
 	@Override
 	protected UITestCase[] getTestCases() {
 		return new UITestCase[] {
-			new MsgsText(), new BusyPanelTest(), new DialogTest(), new OptionsPanelTest(), new OptionsPopupTest(),
-			new OptionsPopupTest2(), new MsgPopupRegistryTest(), new GlobalMsgPanelTest() };
+			new MsgsText(),
+			new MsgPopupRegistryTest(),
+			new GlobalMsgPanelTest(),
+			new BusyPanelTest(),
+			new DialogTest(),
+			new OptionsPanelTest(),
+			new OptionsPopupTest(),
+			new OptionsPopupTest2(),
+			new PushButtonStyleTest(),
+			new ToolbarStyleTest(),
+		};
 	}
 
 	static final class MsgsText extends DefaultUITestCase {
@@ -123,461 +136,6 @@ public final class UITests extends AbstractUITest {
 			};
 		}
 	}
-
-	/**
-	 * DialogTest
-	 * @author jpk
-	 */
-	static final class DialogTest extends UITestCase {
-
-		VerticalPanel vp;
-		Dialog dlg;
-		Button btnShow, btnShowOverlay, btnHide;
-
-		@Override
-		public String getName() {
-			return "Dialog";
-		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the Dialog widget.";
-		}
-
-		@Override
-		public void unload() {
-			if(vp != null) {
-				vp.removeFromParent();
-				if(dlg != null) {
-					dlg.hide();
-					dlg = null;
-				}
-			}
-		}
-
-		void buildDialog(boolean showOverlay) {
-			btnHide = new Button("Hide", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					dlg.hide();
-					dlg = null;
-				}
-			});
-
-			final SimplePanel p = new SimplePanel();
-			p.setWidth("300px");
-			p.setHeight("300px");
-			p.add(btnHide);
-
-			dlg = new Dialog(btnShow, showOverlay);
-			dlg.setText("A Dialog");
-			dlg.setWidget(p);
-		}
-
-		@Override
-		public void load() {
-			vp = new VerticalPanel();
-			RootPanel.get().add(vp);
-
-			btnShow = new Button("Show", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					buildDialog(false);
-					dlg.center();
-				}
-			});
-			vp.add(btnShow);
-
-			btnShowOverlay = new Button("Show with Overlay", new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					buildDialog(true);
-					dlg.center();
-				}
-			});
-			vp.add(btnShowOverlay);
-		}
-
-	} // DialogTest
-
-	/**
-	 * OptionsPanelTest
-	 * @author jpk
-	 */
-	static final class OptionsPanelTest extends UITestCase {
-
-		/**
-		 * OptionEventIndicator - Indicates Option events visually as they occur.
-		 */
-		class OptionEventIndicator extends Composite implements IOptionHandler {
-
-			FlowPanel fp = new FlowPanel();
-			VerticalPanel vp = new VerticalPanel();
-			ScrollPanel sp = new ScrollPanel(vp);
-			Button btnClear = new Button("Clear");
-
-			/**
-			 * Constructor
-			 */
-			public OptionEventIndicator() {
-				super();
-
-				sp.setWidth("200px");
-				sp.setHeight("200px");
-
-				btnClear.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						vp.clear();
-					}
-				});
-
-				fp.add(sp);
-				fp.add(btnClear);
-
-				initWidget(fp);
-			}
-
-			@Override
-			public void onOptionEvent(OptionEvent event) {
-				vp.insert(new Label(event.toDebugString()), 0);
-			}
-
-		} // OptionEventIndicator
-
-		SimplePanel optionPnlWrapper;
-		OptionsPanel op;
-		HorizontalPanel hp;
-		OptionEventIndicator indicator;
-
-		@Override
-		public String getName() {
-			return "OptionsPanel";
-		}
-
-		@Override
-		public String getDescription() {
-			return "Tests the OptionsPanel functionality and event handling.";
-		}
-
-		@Override
-		public void unload() {
-			RootPanel.get().remove(hp);
-		}
-
-		@Override
-		public void load() {
-			optionPnlWrapper = new SimplePanel();
-
-			op = new OptionsPanel();
-			op.setOptions(new Option[] {
-				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
-				new Option("Option 5"), new Option("Option 6"), new Option("Option 7"), new Option("Option 8"),
-				new Option("Option 9"), new Option("Option 10"), new Option("Option 11"), new Option("Option 12") });
-
-			optionPnlWrapper.setWidth("200px");
-			optionPnlWrapper.setHeight("200px");
-			optionPnlWrapper.setWidget(op);
-
-			hp = new HorizontalPanel();
-			hp.setSpacing(10);
-			hp.getElement().getStyle().setProperty("padding", "1em");
-			hp.add(optionPnlWrapper);
-
-			indicator = new OptionEventIndicator();
-			op.addOptionHandler(indicator);
-			hp.add(indicator);
-
-			RootPanel.get().add(hp);
-		}
-	}
-
-	/**
-	 * OptionsPopupTest
-	 * @author jpk
-	 */
-	static final class OptionsPopupTest extends UITestCase {
-
-		FocusPanel contextArea;
-		OptionsPopup popup;
-
-		@Override
-		public String getDescription() {
-			return "Tests the OptionsPopup panel with a hide duration.";
-		}
-
-		@Override
-		public String getName() {
-			return "OptionsPopup - hide duration";
-		}
-
-		@Override
-		public void load() {
-			popup = new OptionsPopup(2000);
-			popup.setOptions(new Option[] {
-				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
-				new Option("Option 5") });
-
-			contextArea = new FocusPanel();
-			contextArea.setSize("200px", "200px");
-			contextArea.getElement().getStyle().setProperty("margin", "1em");
-			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
-
-			// IMPT: this enables the popup to be positioned at the mouse click location!
-			contextArea.addMouseDownHandler(popup);
-
-			RootPanel.get().add(contextArea);
-		}
-
-		@Override
-		public void unload() {
-			RootPanel.get().remove(contextArea);
-			contextArea = null;
-			popup = null;
-		}
-	} // OptionsPopupTest
-
-	/**
-	 * OptionsPopupTest
-	 * @author jpk
-	 */
-	static final class OptionsPopupTest2 extends UITestCase {
-
-		FocusPanel contextArea;
-		OptionsPopup popup;
-
-		@Override
-		public String getDescription() {
-			return "Tests the OptionsPopup panel with NO hide duration.";
-		}
-
-		@Override
-		public String getName() {
-			return "OptionsPopup - Indefite";
-		}
-
-		@Override
-		public void load() {
-			popup = new OptionsPopup();
-			popup.setOptions(new Option[] {
-				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
-				new Option("Option 5") });
-
-			contextArea = new FocusPanel();
-			contextArea.setSize("200px", "200px");
-			contextArea.getElement().getStyle().setProperty("margin", "1em");
-			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
-
-			// IMPT: this enables the popup to be positioned at the mouse click
-			// location!
-			contextArea.addMouseDownHandler(popup);
-
-			RootPanel.get().add(contextArea);
-		}
-
-		@Override
-		public void unload() {
-			RootPanel.get().remove(contextArea);
-			contextArea = null;
-			popup = null;
-		}
-	} // OptionsPopupTest2
-
-	/**
-	 * GlobalMsgPanelTest
-	 * @author jpk
-	 */
-	static final class GlobalMsgPanelTest extends DefaultUITestCase {
-
-		static IWidgetRef createRef(final Widget w, final String descriptor) {
-			return new IWidgetRef() {
-
-				@Override
-				public Widget getWidget() {
-					return w;
-				}
-
-				@Override
-				public String descriptor() {
-					return descriptor;
-				}
-			};
-		}
-
-		static Iterable<Msg> stubMsgs(MsgLevel level, int num) {
-			final ArrayList<Msg> list = new ArrayList<Msg>(num);
-			for(int i = 0; i < num; i++) {
-				list.add(new Msg("This is " + level.getName() + " message #" + Integer.toString(i + 1), level));
-			}
-			return list;
-		}
-
-		GlobalMsgPanel gmp;
-		HorizontalPanel refWidgetPanel;
-		IWidgetRef refTextBox1, refTextBox2, refLabel;
-
-		/**
-		 * Constructor
-		 */
-		public GlobalMsgPanelTest() {
-			super("GlobalMsgPanel", "Verifies the GlobalMsgPanel layout and its operations.");
-		}
-
-		@Override
-		protected Widget getContext() {
-			if(gmp == null) {
-				gmp = new GlobalMsgPanel();
-			}
-			return gmp;
-		}
-
-		@Override
-		protected void init() {
-			refWidgetPanel = new HorizontalPanel();
-			refWidgetPanel.getElement().getStyle().setProperty("margin", "1em");
-			refWidgetPanel.setSpacing(5);
-
-			TextBox tb = new TextBox();
-			tb.setValue("Text Box 1");
-			refTextBox1 = createRef(tb, "Text Box 1");
-			refWidgetPanel.add(refTextBox1.getWidget());
-
-			tb = new TextBox();
-			tb.setValue("Text Box 2");
-			refTextBox2 = createRef(tb, "Text Box 2");
-			refWidgetPanel.add(refTextBox2.getWidget());
-
-			refLabel = createRef(new Label("Label"), "Label");
-			refWidgetPanel.add(refLabel.getWidget());
-
-			RootPanel.get().add(refWidgetPanel);
-		}
-
-		@Override
-		protected void teardown() {
-			refWidgetPanel.removeFromParent();
-			refWidgetPanel = null;
-		}
-
-		@Override
-		protected Button[] getTestActions() {
-			return new Button[] {
-				new Button("Clear all Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear();
-					}
-				}),
-				new Button("Clear Fatal Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.FATAL);
-					}
-				}),
-				new Button("Clear Error Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.ERROR);
-					}
-				}),
-				new Button("Clear Warn Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.WARN);
-					}
-				}),
-				new Button("Clear Info Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.clear(MsgLevel.INFO);
-					}
-				}),
-				new Button("Remove Text Box 1 Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refTextBox1);
-					}
-				}),
-				new Button("Remove Text Box 2 Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refTextBox2);
-					}
-				}),
-				new Button("Remove Label Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.remove(refLabel);
-					}
-				}),
-				new Button("Remove Un-sourced Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.removeUnsourced();
-					}
-				}),
-				new Button("Add Fatal Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.FATAL, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.FATAL, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.FATAL, 1));
-					}
-				}),
-				new Button("Add Error Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.ERROR, 1));
-					}
-				}),
-				new Button("Add Warn Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.WARN, 1));
-					}
-				}),
-				new Button("Add Info Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(refTextBox1, stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(refTextBox2, stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(refLabel, stubMsgs(MsgLevel.INFO, 1));
-					}
-				}),
-				new Button("Add Un-sourced Messages", new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						gmp.add(stubMsgs(MsgLevel.INFO, 1));
-						gmp.add(stubMsgs(MsgLevel.WARN, 1));
-						gmp.add(stubMsgs(MsgLevel.ERROR, 1));
-						gmp.add(stubMsgs(MsgLevel.FATAL, 1));
-					}
-				})
-			};
-		}
-	} // GlobalMsgPanelTest
 
 	/**
 	 * MsgPopupRegistryTest
@@ -822,4 +380,562 @@ public final class UITests extends AbstractUITest {
 		}
 
 	} // BusyPanelTest
+
+	/**
+	 * GlobalMsgPanelTest
+	 * @author jpk
+	 */
+	static final class GlobalMsgPanelTest extends DefaultUITestCase {
+
+		static IWidgetRef createRef(final Widget w, final String descriptor) {
+			return new IWidgetRef() {
+
+				@Override
+				public Widget getWidget() {
+					return w;
+				}
+
+				@Override
+				public String descriptor() {
+					return descriptor;
+				}
+			};
+		}
+
+		static Iterable<Msg> stubMsgs(MsgLevel level, int num) {
+			final ArrayList<Msg> list = new ArrayList<Msg>(num);
+			for(int i = 0; i < num; i++) {
+				list.add(new Msg("This is " + level.getName() + " message #" + Integer.toString(i + 1), level));
+			}
+			return list;
+		}
+
+		GlobalMsgPanel gmp;
+		HorizontalPanel refWidgetPanel;
+		IWidgetRef refTextBox1, refTextBox2, refLabel;
+
+		/**
+		 * Constructor
+		 */
+		public GlobalMsgPanelTest() {
+			super("GlobalMsgPanel", "Verifies the GlobalMsgPanel layout and its operations.");
+		}
+
+		@Override
+		protected Widget getContext() {
+			if(gmp == null) {
+				gmp = new GlobalMsgPanel();
+			}
+			return gmp;
+		}
+
+		@Override
+		protected void init() {
+			refWidgetPanel = new HorizontalPanel();
+			refWidgetPanel.getElement().getStyle().setProperty("margin", "1em");
+			refWidgetPanel.setSpacing(5);
+
+			TextBox tb = new TextBox();
+			tb.setValue("Text Box 1");
+			refTextBox1 = createRef(tb, "Text Box 1");
+			refWidgetPanel.add(refTextBox1.getWidget());
+
+			tb = new TextBox();
+			tb.setValue("Text Box 2");
+			refTextBox2 = createRef(tb, "Text Box 2");
+			refWidgetPanel.add(refTextBox2.getWidget());
+
+			refLabel = createRef(new Label("Label"), "Label");
+			refWidgetPanel.add(refLabel.getWidget());
+
+			RootPanel.get().add(refWidgetPanel);
+		}
+
+		@Override
+		protected void teardown() {
+			refWidgetPanel.removeFromParent();
+			refWidgetPanel = null;
+		}
+
+		@Override
+		protected Button[] getTestActions() {
+			return new Button[] {
+				new Button("Clear all Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear();
+					}
+				}),
+				new Button("Clear Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.FATAL);
+					}
+				}),
+				new Button("Clear Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.ERROR);
+					}
+				}),
+				new Button("Clear Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.WARN);
+					}
+				}),
+				new Button("Clear Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.clear(MsgLevel.INFO);
+					}
+				}),
+				new Button("Remove Text Box 1 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refTextBox1);
+					}
+				}),
+				new Button("Remove Text Box 2 Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refTextBox2);
+					}
+				}),
+				new Button("Remove Label Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.remove(refLabel);
+					}
+				}),
+				new Button("Remove Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.removeUnsourced();
+					}
+				}),
+				new Button("Add Fatal Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.FATAL, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.FATAL, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.FATAL, 1));
+					}
+				}),
+				new Button("Add Error Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.ERROR, 1));
+					}
+				}),
+				new Button("Add Warn Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.WARN, 1));
+					}
+				}),
+				new Button("Add Info Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(refTextBox1, stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(refTextBox2, stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(refLabel, stubMsgs(MsgLevel.INFO, 1));
+					}
+				}),
+				new Button("Add Un-sourced Messages", new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						gmp.add(stubMsgs(MsgLevel.INFO, 1));
+						gmp.add(stubMsgs(MsgLevel.WARN, 1));
+						gmp.add(stubMsgs(MsgLevel.ERROR, 1));
+						gmp.add(stubMsgs(MsgLevel.FATAL, 1));
+					}
+				})
+			};
+		}
+	} // GlobalMsgPanelTest
+
+	/**
+	 * DialogTest
+	 * @author jpk
+	 */
+	static final class DialogTest extends UITestCase {
+
+		VerticalPanel vp;
+		Dialog dlg;
+		Button btnShow, btnShowOverlay, btnHide;
+
+		@Override
+		public String getName() {
+			return "Dialog";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the Dialog widget.";
+		}
+
+		@Override
+		public void unload() {
+			if(vp != null) {
+				vp.removeFromParent();
+				if(dlg != null) {
+					dlg.hide();
+					dlg = null;
+				}
+			}
+		}
+
+		void buildDialog(boolean showOverlay) {
+			btnHide = new Button("Hide", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					dlg.hide();
+					dlg = null;
+				}
+			});
+
+			final SimplePanel p = new SimplePanel();
+			p.setWidth("300px");
+			p.setHeight("300px");
+			p.add(btnHide);
+
+			dlg = new Dialog(btnShow, showOverlay);
+			dlg.setText("A Dialog");
+			dlg.setWidget(p);
+		}
+
+		@Override
+		public void load() {
+			vp = new VerticalPanel();
+			RootPanel.get().add(vp);
+
+			btnShow = new Button("Show", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					buildDialog(false);
+					dlg.center();
+				}
+			});
+			vp.add(btnShow);
+
+			btnShowOverlay = new Button("Show with Overlay", new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					buildDialog(true);
+					dlg.center();
+				}
+			});
+			vp.add(btnShowOverlay);
+		}
+
+	} // DialogTest
+
+	/**
+	 * OptionsPanelTest
+	 * @author jpk
+	 */
+	static final class OptionsPanelTest extends UITestCase {
+
+		/**
+		 * OptionEventIndicator - Indicates Option events visually as they occur.
+		 */
+		class OptionEventIndicator extends Composite implements IOptionHandler {
+
+			FlowPanel fp = new FlowPanel();
+			VerticalPanel vp = new VerticalPanel();
+			ScrollPanel sp = new ScrollPanel(vp);
+			Button btnClear = new Button("Clear");
+
+			/**
+			 * Constructor
+			 */
+			public OptionEventIndicator() {
+				super();
+
+				sp.setWidth("200px");
+				sp.setHeight("200px");
+
+				btnClear.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						vp.clear();
+					}
+				});
+
+				fp.add(sp);
+				fp.add(btnClear);
+
+				initWidget(fp);
+			}
+
+			@Override
+			public void onOptionEvent(OptionEvent event) {
+				vp.insert(new Label(event.toDebugString()), 0);
+			}
+
+		} // OptionEventIndicator
+
+		SimplePanel optionPnlWrapper;
+		OptionsPanel op;
+		HorizontalPanel hp;
+		OptionEventIndicator indicator;
+
+		@Override
+		public String getName() {
+			return "OptionsPanel";
+		}
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPanel functionality and event handling.";
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(hp);
+		}
+
+		@Override
+		public void load() {
+			optionPnlWrapper = new SimplePanel();
+
+			op = new OptionsPanel();
+			op.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5"), new Option("Option 6"), new Option("Option 7"), new Option("Option 8"),
+				new Option("Option 9"), new Option("Option 10"), new Option("Option 11"), new Option("Option 12") });
+
+			optionPnlWrapper.setWidth("200px");
+			optionPnlWrapper.setHeight("200px");
+			optionPnlWrapper.setWidget(op);
+
+			hp = new HorizontalPanel();
+			hp.setSpacing(10);
+			hp.getElement().getStyle().setProperty("padding", "1em");
+			hp.add(optionPnlWrapper);
+
+			indicator = new OptionEventIndicator();
+			op.addOptionHandler(indicator);
+			hp.add(indicator);
+
+			RootPanel.get().add(hp);
+		}
+	}
+
+	/**
+	 * OptionsPopupTest
+	 * @author jpk
+	 */
+	static final class OptionsPopupTest extends UITestCase {
+
+		FocusPanel contextArea;
+		OptionsPopup popup;
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPopup panel with a hide duration.";
+		}
+
+		@Override
+		public String getName() {
+			return "OptionsPopup - hide duration";
+		}
+
+		@Override
+		public void load() {
+			popup = new OptionsPopup(2000);
+			popup.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5") });
+
+			contextArea = new FocusPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			// IMPT: this enables the popup to be positioned at the mouse click location!
+			contextArea.addMouseDownHandler(popup);
+
+			RootPanel.get().add(contextArea);
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			popup = null;
+		}
+	} // OptionsPopupTest
+
+	/**
+	 * OptionsPopupTest
+	 * @author jpk
+	 */
+	static final class OptionsPopupTest2 extends UITestCase {
+
+		FocusPanel contextArea;
+		OptionsPopup popup;
+
+		@Override
+		public String getDescription() {
+			return "Tests the OptionsPopup panel with NO hide duration.";
+		}
+
+		@Override
+		public String getName() {
+			return "OptionsPopup - Indefinite";
+		}
+
+		@Override
+		public void load() {
+			popup = new OptionsPopup();
+			popup.setOptions(new Option[] {
+				new Option("Option 1"), new Option("Option 2"), new Option("Option 3"), new Option("Option 4"),
+				new Option("Option 5") });
+
+			contextArea = new FocusPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+
+			// IMPT: this enables the popup to be positioned at the mouse click
+			// location!
+			contextArea.addMouseDownHandler(popup);
+
+			RootPanel.get().add(contextArea);
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			popup = null;
+		}
+	} // OptionsPopupTest2
+
+	/**
+	 * PushButtonStyleTest
+	 * @author jpk
+	 */
+	static final class PushButtonStyleTest extends UITestCase {
+
+		FlowPanel contextArea;
+		PushButton b1, b2, b3;
+
+		@Override
+		public String getDescription() {
+			return "Tests the PushButton styling.";
+		}
+
+		@Override
+		public String getName() {
+			return "PushButton CSS Styling Test";
+		}
+
+		@Override
+		public void load() {
+			contextArea = new FlowPanel();
+			contextArea.setSize("200px", "200px");
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+			contextArea.getElement().getStyle().setProperty("padding", "1em");
+			RootPanel.get().add(contextArea);
+
+			b1 = new PushButton("Push Button 1");
+			b1.getElement().getStyle().setProperty("margin", "1em");
+			b2 = new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage());
+			b2.getElement().getStyle().setProperty("margin", "1em");
+			b3 = new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage());
+			b3.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.add(b1);
+			contextArea.add(b2);
+			contextArea.add(b3);
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			b1 = b2 = b3 = null;
+		}
+	} // PushButtonStyleTest
+
+	/**
+	 * ToolbarStyleTest
+	 * @author jpk
+	 */
+	static final class ToolbarStyleTest extends UITestCase {
+
+		FlowPanel contextArea;
+		Toolbar tb;
+
+		@Override
+		public String getDescription() {
+			return "Tests the Toolbar styling.";
+		}
+
+		@Override
+		public String getName() {
+			return "Toolbar Styling Test";
+		}
+
+		@Override
+		public void load() {
+			contextArea = new FlowPanel();
+			contextArea.getElement().getStyle().setProperty("margin", "1em");
+			contextArea.getElement().getStyle().setProperty("border", "1px solid gray");
+			contextArea.getElement().getStyle().setProperty("padding", "3em");
+			RootPanel.get().add(contextArea);
+
+			tb = new Toolbar();
+			contextArea.add(tb);
+
+			// add contents to the the toolbar
+			final PushButton pb = new PushButton(MsgLevelImageBundle.INSTANCE.info().createImage());
+			pb.setEnabled(false);
+			tb.addButton(pb, "Info");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.error().createImage()), "Error");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.addButton(new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage()), "Warn");
+			tb.add(ToolbarImageBundle.INSTANCE.split().createImage());
+			final Label lbl = new Label("This is a label");
+			lbl.setWidth("100%");
+			tb.add(lbl);
+
+			tb.add(new PushButton(MsgLevelImageBundle.INSTANCE.fatal().createImage()));
+		}
+
+		@Override
+		public void unload() {
+			RootPanel.get().remove(contextArea);
+			contextArea = null;
+			tb = null;
+		}
+	} // ToolbarStyleTest
 }

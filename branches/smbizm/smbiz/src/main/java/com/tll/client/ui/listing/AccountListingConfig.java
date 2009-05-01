@@ -31,7 +31,7 @@ public abstract class AccountListingConfig implements IListingConfig<Model> {
 	}
 
 	public final boolean isShowRefreshBtn() {
-		return true;
+		return false;
 	}
 
 	public final boolean isSortable() {

@@ -18,6 +18,7 @@
       com.tll.di.MockDaoModule
       com.tll.di.EntityAssemblerModule
       com.tll.di.EntityServiceFactoryModule
+      com.tll.di.LogExceptionHandlerModule
     </param-value>
   </context-param>
   

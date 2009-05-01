@@ -5,6 +5,8 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.common.model.ModelKey;
+
 
 /**
  * ViewAInit
@@ -12,15 +14,19 @@ package com.tll.client.mvc.view;
  */
 public class ViewBInit extends AbstractDynamicViewInitializer {
 
+	private final ModelKey mk;
+
 	/**
 	 * Constructor
+	 * @param mk
 	 */
-	public ViewBInit() {
+	public ViewBInit(ModelKey mk) {
 		super(ViewB.klas);
+		this.mk = mk;
 	}
 
 	@Override
 	protected int getViewId() {
-		return "ViewB".hashCode();
+		return mk.hashCode();
 	}
 }

@@ -44,7 +44,7 @@ public final class TestPersistenceUnitEntityGraphBuilder extends AbstractEntityG
 		add(Currency.class, false);
 
 		// addresses
-		addN(Address.class, true, 10);
+		addN(Address.class, true, 100);
 
 		// nested entities
 		add(NestedEntity.class, false);

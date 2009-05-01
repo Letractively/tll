@@ -11,16 +11,19 @@ package com.tll.client.mvc.view;
  */
 public final class UnloadViewRequest extends ViewOpRequest {
 
-	private final boolean removeFromCache;
+	private final boolean destroy;
+	private final boolean erradicate;
 
 	/**
 	 * Constructor
 	 * @param viewKey
-	 * @param removeFromCache Remove the view from the view cache?
+	 * @param destroy Destroy the view?
+	 * @param erradicate Permanantly remove from cache?
 	 */
-	public UnloadViewRequest(ViewKey viewKey, boolean removeFromCache) {
+	public UnloadViewRequest(ViewKey viewKey, boolean destroy, boolean erradicate) {
 		super(viewKey);
-		this.removeFromCache = removeFromCache;
+		this.destroy = destroy;
+		this.erradicate = erradicate;
 	}
 
 	@Override
@@ -29,12 +32,20 @@ public final class UnloadViewRequest extends ViewOpRequest {
 	}
 
 	/**
-	 * Remove the view from view cache? Subsequent view requests will have to
-	 * completely re-load the view.
+	 * Remove the view from queue of current views? Subsequent view requests will
+	 * have to completely re-load the view.
 	 * @return true/false
 	 */
-	public boolean isRemoveFromCache() {
-		return removeFromCache;
+	public boolean isDestroy() {
+		return destroy;
+	}
+
+	/**
+	 * Remove the view from the view cache entirely?
+	 * @return the erradicate
+	 */
+	public boolean isErradicate() {
+		return erradicate;
 	}
 
 }

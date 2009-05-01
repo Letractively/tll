@@ -19,6 +19,6 @@ class ShowViewController implements IController {
 
 	public void handle(IViewRequest request) {
 		final ShowViewRequest r = (ShowViewRequest) request;
-		ViewManager.get().setCurrentView(r.getViewInitializer(), r.getOptions());
+		ViewManager.get().setCurrentView(r.getViewInitializer());
 	}
 }

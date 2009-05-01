@@ -147,7 +147,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		IRpcCommand cmd = null;
 		switch(event.getOp()) {
 			case CANCEL:
-				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
 				break;
 			case ADD:
 			case UPDATE:
@@ -207,7 +207,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 				break;
 
 			case DELETED:
-				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true));
+				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true, true));
 				break;
 		}
 	}

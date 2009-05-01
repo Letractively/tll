@@ -53,8 +53,9 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 
 	public static final class Class extends ViewClass {
 
-		private Class() {
-			super("interfacesView");
+		@Override
+		public String getName() {
+			return "interfacesView";
 		}
 
 		@Override

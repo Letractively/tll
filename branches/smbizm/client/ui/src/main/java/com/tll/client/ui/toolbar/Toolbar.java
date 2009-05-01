@@ -2,7 +2,7 @@
  * The Logic Lab
  * @author jpk Jan 7, 2008
  */
-package com.tll.client.ui;
+package com.tll.client.ui.toolbar;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ButtonBase;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Refer to <code>toolbar.css</code> toolbar Style styles.
  * @author jpk
  */
-public abstract class Toolbar extends Composite {
+public class Toolbar extends Composite {
 
 	/**
 	 * Styles - (toolbar.css)
@@ -33,13 +33,13 @@ public abstract class Toolbar extends Composite {
 		/**
 		 * Style for a toolbar separator widget.
 		 */
-		public static final String TOOLBAR_SEPARATOR = "separator";
+		public static final String SPLIT = "separator";
 		/**
-		 * Style for a toolbar separator widget.
+		 * Style for a toolbar button.
 		 */
 		public static final String BUTTON = "button";
 	}
-	
+
 	// private final FlowPanel pnl = new FlowPanel();
 	private final HorizontalPanel pnl = new HorizontalPanel();
 
@@ -70,6 +70,7 @@ public abstract class Toolbar extends Composite {
 	 * @param title Optional title text shown on hover. May be <code>null</code>.
 	 */
 	public final void addButton(ButtonBase b, String title) {
+		b.setStylePrimaryName(Styles.BUTTON);
 		pnl.add(b);
 		buttonize(b, title);
 	}
@@ -81,7 +82,7 @@ public abstract class Toolbar extends Composite {
 	 */
 	public final void show(Widget w) {
 		if(pnl.getWidgetIndex(w) < 0) return;
-		Element td = w.getElement().getParentElement();
+		final Element td = w.getElement().getParentElement();
 		td.getStyle().setProperty("display", "");
 	}
 
@@ -92,7 +93,7 @@ public abstract class Toolbar extends Composite {
 	 */
 	public final void hide(Widget w) {
 		if(pnl.getWidgetIndex(w) < 0) return;
-		Element td = w.getElement().getParentElement();
+		final Element td = w.getElement().getParentElement();
 		td.getStyle().setProperty("display", "none");
 	}
 

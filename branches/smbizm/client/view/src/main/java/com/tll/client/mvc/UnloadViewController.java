@@ -20,6 +20,6 @@ class UnloadViewController implements IController {
 	@Override
 	public void handle(IViewRequest request) {
 		final UnloadViewRequest r = (UnloadViewRequest) request;
-		ViewManager.get().unloadView(r.getViewKey(), r.isRemoveFromCache());
+		ViewManager.get().unloadView(r.getViewKey(), r.isDestroy(), r.isErradicate());
 	}
 }

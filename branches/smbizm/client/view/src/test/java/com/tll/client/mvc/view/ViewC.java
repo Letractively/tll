@@ -17,11 +17,9 @@ public class ViewC extends AbstractView<StaticViewInitializer> {
 
 	public static final class Class extends ViewClass {
 
-		/**
-		 * Constructor
-		 */
-		public Class() {
-			super("ViewC");
+		@Override
+		public String getName() {
+			return "ViewC";
 		}
 
 		@Override
@@ -43,7 +41,7 @@ public class ViewC extends AbstractView<StaticViewInitializer> {
 	protected ViewClass getViewClass() {
 		return klas;
 	}
-	
+
 	@Override
 	public void refresh() {
 	}

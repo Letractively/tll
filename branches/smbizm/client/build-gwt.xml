@@ -70,6 +70,8 @@
 			<jvmarg value="-ea" />
 			<arg value="-war" />
 			<arg value="target/war" />
+			<arg value="-localWorkers" />
+			<arg value="4" />
 			<arg value="-style" />
 			<arg value="${gwt.compile.style}" />
 			<arg value="-logLevel" />

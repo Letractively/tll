@@ -16,7 +16,6 @@ import com.tll.refdata.RefDataType;
  * AccountEditView - Base AbstractView for editing accounts.
  * @author jpk
  */
-@SuppressWarnings("synthetic-access")
 public class AccountEditView extends EditView {
 
 	/**
@@ -26,8 +25,9 @@ public class AccountEditView extends EditView {
 
 	public static final class Class extends ViewClass {
 
-		private Class() {
-			super("accountEdit");
+		@Override
+		public String getName() {
+			return "accountEdit";
 		}
 
 		@Override

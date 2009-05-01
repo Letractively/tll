@@ -20,6 +20,17 @@ import com.tll.client.ui.listing.ModelListingWidget;
  */
 public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
 
+	protected static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
+
+	protected static abstract class AbstractListingViewClass extends ViewClass {
+
+		@Override
+		public ViewOptions getViewOptions() {
+			return VIEW_OPTIONS;
+		}
+
+	}
+
 	/**
 	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
 	 * @author jpk

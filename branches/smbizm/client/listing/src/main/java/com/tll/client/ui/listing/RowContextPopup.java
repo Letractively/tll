@@ -3,7 +3,6 @@ package com.tll.client.ui.listing;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.tll.client.listing.IRowOptionsDelegate;
 import com.tll.client.ui.option.Option;
@@ -24,7 +23,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	/**
 	 * The needed table ref.
 	 */
-	private final HTMLTable table;
+	private final ListingTable<?> table;
 
 	/**
 	 * The row index for this row context.
@@ -35,7 +34,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	 * Constructor
 	 * @param table The table ref
 	 */
-	public RowContextPopup(HTMLTable table) {
+	public RowContextPopup(ListingTable<?> table) {
 		this(DFLT_DURATION, table);
 	}
 
@@ -45,7 +44,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	 *        <code>-1</code> meaning it is shown indefinitely.
 	 * @param table The table ref
 	 */
-	public RowContextPopup(int duration, HTMLTable table) {
+	public RowContextPopup(int duration, ListingTable<?> table) {
 		super(duration);
 		if(table == null) throw new IllegalArgumentException("Null table ref");
 		this.table = table;
@@ -62,14 +61,11 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	}
 
 	public void onClick(ClickEvent event) {
-		// assert sender == table.getTableWidget();
-
-		// TODO account for deleted rows!!!
 		final Cell cell = table.getCellForEvent(event);
 		final int row = cell.getRowIndex();
 
-		// account for header row
-		if(row < 1) return;
+		// account for header row and deleted rows
+		if(row < 1 || table.isRowMarkedDeleted(row)) return;
 
 		if(row != this.rowIndex) {
 			this.rowIndex = row;

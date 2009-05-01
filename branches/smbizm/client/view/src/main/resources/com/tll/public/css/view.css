@@ -2,7 +2,6 @@
 
 .viewToolbar {
 	width: 100%;
-	background-color: silver;
 }
 
 .viewToolbar .viewTitle {
@@ -13,8 +12,13 @@
 	font-weight: bold;
 }
 
-.viewToolbar td.button {
-	padding: 2px !important;
+.viewToolbar .button-up-hovering {
+  border: 1px solid #EAEAEA;
+	background-color: #EAEAEA;
+}
+.viewToolbar .button-up-disabled {
+  border: 1px solid #EAEAEA;
+  cursor: default;
 }
 
 .viewContainer {

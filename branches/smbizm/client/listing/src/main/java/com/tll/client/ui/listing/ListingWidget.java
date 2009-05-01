@@ -194,6 +194,10 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 		table.markRowDeleted(rowIndex, markDeleted);
 	}
 
+	public final boolean isRowMarkedDeleted(int rowIndex) {
+		return table.isRowMarkedDeleted(rowIndex);
+	}
+
 	public final int getTabIndex() {
 		return focusPanel.getTabIndex();
 	}

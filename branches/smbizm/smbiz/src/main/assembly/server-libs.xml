@@ -31,11 +31,8 @@
       <useTransitiveDependencies>true</useTransitiveDependencies>
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
-        <!-- even though we don't need the client-* jars, we need their server-side transitive deps!!! -->
-        <!-- <exclude>com.tll:client-*</exclude> -->
         <exclude>com.google.gwt:*</exclude>
         <exclude>com.google.code.gwt-incubator:*</exclude>
-        <!-- <exclude>com.google.code.gwt-log:*</exclude> need for log servlet -->
         <exclude>com.tll:tll-dao-mock</exclude>
         <exclude>com.tll:tll-dao-orm</exclude>
       </excludes>

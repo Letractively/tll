@@ -25,9 +25,9 @@ public abstract class ViewClass {
 	 * @param vclass The view class
 	 */
 	public static void addClass(ViewClass vclass) {
-		assert vclass != null && vclass.name != null;
-		if(findClassByViewName(vclass.name) != null) {
-			throw new IllegalArgumentException("AbstractView name: " + vclass.name
+		assert vclass != null && vclass.getName() != null;
+		if(findClassByViewName(vclass.getName()) != null) {
+			throw new IllegalArgumentException("AbstractView name: " + vclass.getName()
 					+ " already exists in one of the existing view classes");
 		}
 		classes.add(vclass);
@@ -43,34 +43,25 @@ public abstract class ViewClass {
 	public static final ViewClass findClassByViewName(String viewName) {
 		if(viewName != null) {
 			for(final ViewClass vc : classes) {
-				if(viewName.equals(vc.name)) return vc;
+				if(viewName.equals(vc.getName())) return vc;
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * The view name.
-	 */
-	private final String name;
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	public ViewClass(String name) {
-		super();
-		assert name != null;
-		this.name = name;
-	}
-
-	/**
 	 * @return the name of the view
 	 */
-	public final String getName() {
-		return name;
+	public abstract String getName();
+
+	/**
+	 * May be overridden.
+	 * @return The default view options for the associated view.
+	 */
+	public ViewOptions getViewOptions() {
+		return ViewOptions.DEFAULT_VIEW_OPTIONS;
 	}
-	
+
 	/**
 	 * @return New instance of the view this class defines.
 	 */
@@ -80,16 +71,16 @@ public abstract class ViewClass {
 	public final boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(obj instanceof ViewClass == false) return false;
-		return this.name.equals(((ViewClass) obj).name);
+		return this.getName().equals(((ViewClass) obj).getName());
 	}
 
 	@Override
 	public final int hashCode() {
-		return name.hashCode();
+		return getName().hashCode();
 	}
 
 	@Override
 	public final String toString() {
-		return name;
+		return getName();
 	}
 }

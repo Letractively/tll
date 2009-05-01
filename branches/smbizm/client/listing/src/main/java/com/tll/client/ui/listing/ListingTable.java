@@ -37,12 +37,12 @@ import com.tll.dao.Sorting;
  * @param <R>
  */
 public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandler, IListingHandler<R> {
-	
+
 	/**
 	 * The listing table specific image bundle.
 	 */
 	private static final ListingTableImageBundle imageBundle =
-			(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
+		(ListingTableImageBundle) GWT.create(ListingTableImageBundle.class);
 
 	/**
 	 * Styles - (tableview.css)
@@ -269,9 +269,9 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 		public void onClick(ClickEvent event) {
 			if(event.getSource() == lnk) {
 				final SortColumn sc =
-						new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
-								: SortDir.ASC,
-								ignoreCaseWhenSorting);
+					new SortColumn(column.getPropertyName(), column.getParentAlias(), direction == SortDir.ASC ? SortDir.DESC
+							: SortDir.ASC,
+							ignoreCaseWhenSorting);
 				listingOperator.sort(new Sorting(sc));
 			}
 		}
@@ -504,6 +504,11 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 			getRowFormatter().addStyleName(rowIndex, Styles.DELETED);
 		else
 			getRowFormatter().removeStyleName(rowIndex, Styles.DELETED);
+	}
+
+	public boolean isRowMarkedDeleted(int rowIndex) {
+		final String sn = getRowFormatter().getStyleName(rowIndex);
+		return sn == null ? false : sn.indexOf(Styles.DELETED) >= 0;
 	}
 
 	private int getPageRowNum(int rowIndex) {

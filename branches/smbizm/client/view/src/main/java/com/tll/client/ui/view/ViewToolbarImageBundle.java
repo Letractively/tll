@@ -10,13 +10,6 @@ import com.google.gwt.user.client.ui.ImageBundle;
 public interface ViewToolbarImageBundle extends ImageBundle {
 
 	/**
-	 * split
-	 * @return the image prototype
-	 */
-	@Resource(value = "com/tll/public/images/split.gif")
-	AbstractImagePrototype split();
-
-	/**
 	 * arrow_sm_right
 	 * @return the image prototype
 	 */

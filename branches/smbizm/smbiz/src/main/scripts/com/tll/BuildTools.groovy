@@ -107,13 +107,6 @@ public final class BuildTools {
 	private boolean isMock, isSecurity;
 	
 	/**
-	 * The generated di map containing:
-	 * 1. Key 'di.modules': the resolved do module refs
-	 * 2. Key 'di.handlers': the resolved di handler refs
-	 */
-	private Map diMap = [:];
-	
-	/**
 	 * Constructor
 	 * @param project the maven project ref
 	 * @param ant the maven ant ref
@@ -163,49 +156,6 @@ public final class BuildTools {
 		}
 		println "securityMode: ${securityMode}"
 		this.isSecurity = (securityMode == 'acegi')
-
-		// generate the di map
-		int flags = 0;
-		switch(daoMode) {
-			case 'orm':
-				flags = flags | FLAG_ORM;
-				break;
-			case 'mock':
-				flags = flags | FLAG_MOCK;
-				break;
-			default:
-				throw new IllegalStateException('Unhandled dao mode: ' + daoMode)
-		}
-		switch(securityMode) {
-			case 'acegi':
-				flags = flags | FLAG_SECURITY_ACEGI;
-				break;
-			case 'none':
-				flags = flags | FLAG_SECURITY_NONE;
-				break;
-			default:
-				throw new IllegalStateException('Unhandled security mode: ' + securityMode)
-		}
-		def sb = new StringBuilder(1024)
-		DI_MODULES_ALL.each { elm ->
-			int flag = elm[1]
-			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
-				println "-Module: ${elm[0]}"
-				sb.append(NL)
-				sb.append(elm[0])
-			}
-		}
-		diMap.put('di.modules', sb.toString())
-		sb.setLength(0)
-		DI_HANDLERS_ALL.each { elm ->
-			int flag = elm[1]
-			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
-				println "-Bootstrapper: ${elm[0]}"
-				sb.append(NL)
-				sb.append(elm[0])
-			}
-		}
-		diMap.put('di.handlers', sb.toString())
 	}
 	
 	/**
@@ -250,6 +200,31 @@ public final class BuildTools {
 	 */
 	private void generateWebXml() {
 		println 'Generating web.xml..'
+		// generate the di map
+		Map diMap = [:];
+		int flags = 0;
+		flags = flags | (isMock? FLAG_MOCK : FLAG_ORM);
+		flags = flags | (isSecurity? FLAG_SECURITY_ACEGI : FLAG_SECURITY_NONE);
+		def sb = new StringBuilder(1024)
+		DI_MODULES_ALL.each { elm ->
+			int flag = elm[1]
+			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
+				println "-Module: ${elm[0]}"
+				sb.append(NL)
+				sb.append(elm[0])
+			}
+		}
+		diMap.put('di.modules', sb.toString())
+		sb.setLength(0)
+		DI_HANDLERS_ALL.each { elm ->
+			int flag = elm[1]
+			if(flag == FLAG_ALL || ((flag & flags) == flag)) {
+				println "-Bootstrapper: ${elm[0]}"
+				sb.append(NL)
+				sb.append(elm[0])
+			}
+		}
+		diMap.put('di.handlers', sb.toString())
 		StringBuilder sbuf = new StringBuilder(3000)
 		new File(basedir + '/src/main/webapp/WEB-INF', 'web.xml').eachLine{ line ->
 			sbuf.append(rplProps(line, diMap))

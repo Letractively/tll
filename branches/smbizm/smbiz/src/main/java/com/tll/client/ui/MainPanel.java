@@ -88,6 +88,10 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		 */
 		public static final String FOOTER = "sb-Footer";
 
+		/**
+		 * Style for the footer panel.
+		 */
+		public static final String DISCLOSURE_PANEL = "sb-dp";
 	} // Styles
 
 	private final DockPanel dockPanel = new DockPanel();
@@ -257,11 +261,13 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			simplePanel.add(g);
 
 			dpCrntAccount = new DisclosurePanel("Current Account", true);
+			dpCrntAccount.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			dpCrntAccount.add(simplePanel);
 			add(dpCrntAccount);
 
 			// view history...
 			dpViewHistory = new DisclosurePanel("Recent Views", false);
+			dpViewHistory.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			viewHistoryPanel = new RecentViewsPanel(3);
 			simplePanel = new SimplePanel();
 			simplePanel.add(viewHistoryPanel);
@@ -274,6 +280,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			simplePanel.add(statusDisplay);
 
 			dpStatusDisplay = new DisclosurePanel("Status History", false);
+			dpStatusDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
 			DOM.setElementAttribute(dpStatusDisplay.getElement(), "id", "dpStatusDisplay");
 			dpStatusDisplay.add(simplePanel);
 			add(dpStatusDisplay);

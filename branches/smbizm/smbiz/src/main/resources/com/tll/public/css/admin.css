@@ -95,17 +95,17 @@ a:active {
 	margin-bottom: 1em;
 }
 
-.sb-RightNav .gwt-DisclosurePanel {
+.sb-RightNav .sb-dp {
 	margin-bottom: 1em;
 	width: 100%;
 }
-.sb-RightNav .gwt-DisclosurePanel .content {
+.sb-RightNav .sb-dp .content {
 	border:2px solid silver;
 	border-top-width: 0;
 	width: 100%;
 }
 
-.sb-RightNav .gwt-DisclosurePanel .content table {
+.sb-RightNav .sb-dp .content table {
 	width: 100%;
 }
 
@@ -125,13 +125,38 @@ a:active {
 	width: 100%;
 }
 
+.sb-dp .header {
+	background-color: silver;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sb-dp .header * {
+	color: white;
+	white-space: nowrap;
+}
+
+.sb-dp .header {
+	padding: 1px;
+}
+.sb-dp .content {
+	padding: 2px;
+}
+
+.sb-dp-open {
+	
+}
+
+.sb-dp-closed {
+}
+
 /* view css theme */
 .view {
 	min-height: 300px;
 	/*border: 1px solid brown;*/ /*debug*/
 }
-.viewToolbar {
-	background-color: #C0C0C0;
+.viewContainer-popped .view {
+	min-height: 10px;
 }
 
 /* tableview.css theme */

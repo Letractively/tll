@@ -50,7 +50,7 @@ a, a:visited, a:hover {
   margin: 0;
   padding: 2px 3px;
   text-decoration: none;
-  font-size: small;
+  /*font-size: small;*/
   cursor: pointer;
   cursor: hand;
   background: url("images/hborder.png") repeat-x 0px -27px;

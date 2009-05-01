@@ -14,30 +14,23 @@ package com.tll.client.mvc.view;
 public final class ViewRef extends AbstractViewKeyProvider {
 
 	private final IViewInitializer init;
-	private final ViewOptions options;
 	private final String shortViewName, longViewName;
 
 	/**
 	 * Constructor
 	 * @param init the view initializer
-	 * @param options the view options
 	 * @param shortViewName
 	 * @param longViewName
 	 */
-	public ViewRef(IViewInitializer init, ViewOptions options, String shortViewName, String longViewName) {
-		if(init == null || options == null) throw new IllegalArgumentException();
+	public ViewRef(IViewInitializer init, String shortViewName, String longViewName) {
+		if(init == null) throw new IllegalArgumentException("Null view initializer.");
 		this.init = init;
-		this.options = options;
 		this.shortViewName = shortViewName;
 		this.longViewName = longViewName;
 	}
 
 	public IViewInitializer getViewInitializer() {
 		return init;
-	}
-
-	public ViewOptions getOptions() {
-		return options;
 	}
 
 	public String getShortViewName() {

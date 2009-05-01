@@ -17,11 +17,9 @@ public class ViewB extends AbstractView<ViewBInit> {
 
 	public static final class Class extends ViewClass {
 
-		/**
-		 * Constructor
-		 */
-		public Class() {
-			super("ViewB");
+		@Override
+		public String getName() {
+			return "ViewB";
 		}
 
 		@Override

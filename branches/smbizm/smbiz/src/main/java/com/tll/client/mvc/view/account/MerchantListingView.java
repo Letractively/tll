@@ -39,10 +39,11 @@ public final class MerchantListingView extends ListingView<MerchantListingViewIn
 
 	public static final Class klas = new Class();
 
-	public static final class Class extends ViewClass {
+	public static final class Class extends AbstractListingViewClass {
 
-		private Class() {
-			super("MerchantListingView");
+		@Override
+		public String getName() {
+			return "MerchantListingView";
 		}
 
 		@Override
@@ -86,14 +87,14 @@ public final class MerchantListingView extends ListingView<MerchantListingViewIn
 			private final String listingElementName = SmbizEntityType.MERCHANT.getName();
 
 			private final Column[] columns =
-					new Column[] {
-						Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "rowData"),
-						new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "rowData"),
-						new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "rowData"),
-						new PropertyBoundColumn("Status", "status", "rowData"),
-						new PropertyBoundColumn("Billing Model", "billingModel", "rowData"),
-						new PropertyBoundColumn("Billing Cycle", "billingCycle", "rowData"),
-						new PropertyBoundColumn("Store Name", "storeName", "rowData") };
+				new Column[] {
+				Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "rowData"),
+				new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "rowData"),
+				new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "rowData"),
+				new PropertyBoundColumn("Status", "status", "rowData"),
+				new PropertyBoundColumn("Billing Model", "billingModel", "rowData"),
+				new PropertyBoundColumn("Billing Cycle", "billingCycle", "rowData"),
+				new PropertyBoundColumn("Store Name", "storeName", "rowData") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 

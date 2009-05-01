@@ -1,9 +1,6 @@
 <module>
   <inherits name="com.tll.Core" />
   
-  <!--  un-comment to go international (commenting out means quicker compile) -->
-  <!-- <inherits name="com.google.gwt.i18n.I18N" /> -->
-
   <!-- css reset (based on YUI) -->
   <stylesheet src="css/reset.css" />
 

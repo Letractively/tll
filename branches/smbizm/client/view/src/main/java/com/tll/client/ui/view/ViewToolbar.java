@@ -17,24 +17,23 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.tll.client.mvc.view.ViewOptions;
-import com.tll.client.ui.Toolbar;
+import com.tll.client.ui.toolbar.Toolbar;
 
 /**
  * ViewToolbar - A UI toolbar for user management of views.
  * @author jpk
  */
 public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMouseMoveHandlers, HasMouseUpHandlers {
-	
+
 	/**
 	 * Styles - (view.css)
 	 * @author jpk
 	 */
 	protected static class Styles {
-
 		public static final String VIEW_TOOLBAR = "viewToolbar";
 		public static final String VIEW_TITLE = "viewTitle";
 	} // Styles
-	
+
 	private static final ViewToolbarImageBundle imageBundle = GWT.create(ViewToolbarImageBundle.class);
 
 	static final String TITLE_MINIMIZE = "Minimize";
@@ -45,10 +44,8 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 	static final String TITLE_PIN = "Pin";
 
 	final Label viewTitle;
-	final ToggleButton btnMinimize;
-	final ToggleButton btnPop;
-	final PushButton btnClose;
-	final PushButton btnRefresh;
+	final ToggleButton btnMinimize, btnPop;
+	final PushButton btnClose, btnRefresh;
 
 	/**
 	 * Constructor
@@ -67,9 +64,9 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 		btnPop =
 				viewOptions.isPopable() ? new ToggleButton(imageBundle.external().createImage(), imageBundle.permalink()
 						.createImage(), clickHandler) : null;
+
 		btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickHandler) : null;
-		btnRefresh =
-				viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickHandler) : null;
+		btnRefresh = viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickHandler) : null;
 
 		addStyleName(Styles.VIEW_TOOLBAR);
 		viewTitle.setStyleName(Styles.VIEW_TITLE);

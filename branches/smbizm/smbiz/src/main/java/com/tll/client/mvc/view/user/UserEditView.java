@@ -7,6 +7,7 @@ package com.tll.client.mvc.view.user;
 
 import com.tll.client.mvc.view.EditView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.field.user.UserPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.SmbizEntityType;
@@ -15,17 +16,17 @@ import com.tll.common.model.SmbizEntityType;
  * UserEditView
  * @author jpk
  */
-@SuppressWarnings("synthetic-access")
 public class UserEditView extends EditView {
 
 	public static final Class klas = new Class();
 
 	public static final class Class extends ViewClass {
 
-		//private static final ViewOptions viewOptions = new ViewOptions(true, true, true, true, true);
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, true, true, true, true);
 
-		private Class() {
-			super("userEdit");
+		@Override
+		public String getName() {
+			return "userEdit";
 		}
 
 		@Override
@@ -33,14 +34,12 @@ public class UserEditView extends EditView {
 			return new UserEditView();
 		}
 
-		/*
 		@Override
 		public ViewOptions getViewOptions() {
-			return viewOptions;
+			return VIEW_OPTIONS;
 		}
-		*/
 	}
-	
+
 	/**
 	 * Constructor
 	 */

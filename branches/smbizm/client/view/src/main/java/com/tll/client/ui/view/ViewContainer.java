@@ -44,7 +44,7 @@ import com.tll.client.ui.DragEvent.DragMode;
  */
 @SuppressWarnings("synthetic-access")
 public final class ViewContainer extends SimplePanel implements MouseDownHandler, MouseMoveHandler,
-		MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
+MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 	/**
 	 * Styles - (view.css)
@@ -73,7 +73,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 	private final IView<?> view;
 
 	private final ViewKey key;
-	
+
 	private final ViewToolbar toolbar;
 
 	private final MyVerticalPanel mainLayout = new MyVerticalPanel();
@@ -164,7 +164,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 			String msg = "t:" + type + " tg?:" + eventTargetsPopup + " rvl:" + rval;
 			StatusDisplay.log(new Msg(msg, Msg.LEVEL_INFO));
 		}
-		*/
+		 */
 
 		// NOTE: we dis-allow UI interaction with content NOT contained w/in this
 		// view container!
@@ -422,7 +422,7 @@ public final class ViewContainer extends SimplePanel implements MouseDownHandler
 
 		// close the view
 		else if(sender == toolbar.btnClose) {
-			ViewManager.get().dispatch(new UnloadViewRequest(key, true));
+			ViewManager.get().dispatch(new UnloadViewRequest(key, true, false));
 		}
 
 		// minimize/mazimize the view

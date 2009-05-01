@@ -97,7 +97,7 @@ final class ViewCache {
 		else {
 			// not in stack - add it at head
 			Log.debug("ViewCache.cache() - adding view to stack: " + key);
-			stack.add(0, new ViewRef(e.init, e.options, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName()));
+			stack.add(0, new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName()));
 		}
 
 		CView expired = null;
@@ -113,12 +113,18 @@ final class ViewCache {
 
 	/**
 	 * Remove a view from cache. <br>
-	 * NOTE: the visited stack is un-affected.
 	 * @param key the key of the element to remove
-	 * @return The removed element.
 	 */
-	CView remove(ViewKey key) {
-		return removeAt(searchQueue(key));
+	void remove(ViewKey key) {
+		removeAt(searchQueue(key));
+	}
+
+	/**
+	 * Removes a view from the view stack.
+	 * @param key the key of the element to remove
+	 */
+	void removeFromStack(ViewKey key) {
+		stack.remove(searchStack(key));
 	}
 
 	/**
@@ -166,7 +172,7 @@ final class ViewCache {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Same as {@link #searchQueue(ViewKey)} but returns the element rather than
 	 * its index.

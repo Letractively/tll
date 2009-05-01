@@ -29,6 +29,15 @@ public final class ViewLink extends SimpleHyperLink {
 	 */
 	public ViewLink() {
 		super();
+		addClickHandler(new ClickHandler() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void onClick(ClickEvent event) {
+				if(ViewLink.this.init == null) throw new IllegalStateException();
+				ViewManager.get().dispatch(new ShowViewRequest(ViewLink.this.init));
+			}
+		});
 	}
 
 	/**
@@ -47,18 +56,10 @@ public final class ViewLink extends SimpleHyperLink {
 	 * @param init
 	 */
 	public ViewLink(String shortViewName, String longViewName, IViewInitializer init) {
+		this();
 		setText(shortViewName);
 		setTitle(longViewName);
 		setViewInitializer(init);
-		addClickHandler(new ClickHandler() {
-
-			@SuppressWarnings("synthetic-access")
-			@Override
-			public void onClick(ClickEvent event) {
-				if(ViewLink.this.init == null) throw new IllegalStateException();
-				ViewManager.get().dispatch(new ShowViewRequest(ViewLink.this.init));
-			}
-		});
 	}
 
 	/**

@@ -20,7 +20,9 @@ public abstract class MainView extends AbstractView<StaticViewInitializer> {
 	 */
 	public static abstract class MainViewClass extends ViewClass {
 
-		//private static final ViewOptions viewOptions = new ViewOptions(false, false, false, false, false);
+		private static final ViewOptions VIEW_OPTIONS = new ViewOptions(false, false, false, false, false);
+
+		private final String name;
 
 		/**
 		 * Provides the view class for the root view based on the account type.
@@ -36,16 +38,23 @@ public abstract class MainView extends AbstractView<StaticViewInitializer> {
 			return set.getValue() + "_MAIN";
 		}
 
+		/**
+		 * Constructor
+		 * @param accountType
+		 */
 		protected MainViewClass(IEntityType accountType) {
-			super(getMainViewName(accountType));
+			this.name = getMainViewName(accountType);
 		}
 
-		/*
+		@Override
+		public final String getName() {
+			return name;
+		}
+
 		@Override
 		public final ViewOptions getViewOptions() {
-			return viewOptions;
+			return VIEW_OPTIONS;
 		}
-		*/
 	}
 
 	public final void refresh() {

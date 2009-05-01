@@ -34,6 +34,10 @@ import com.tll.client.ui.view.ViewContainer;
  * ViewManager - Singleton managing view life-cycles and view caching. Also
  * serves as an MVC dispatcher dispatching view requests to the appropriate view
  * controller. View history is also managed here.
+ * <p>
+ * <b>NOTE:</b> we use the double type rather than the int type when dealing
+ * with view key hash codes to avoid js exceptions when parsing history view
+ * tokens in script mode!
  * @author jpk
  */
 public final class ViewManager implements ValueChangeHandler<String>, IHasViewChangeHandlers, IModelChangeHandler {
@@ -58,7 +62,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return Newly created {@link ViewRef}.
 	 */
 	private static ViewRef ref(CView e) {
-		return new ViewRef(e.init, e.options, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName());
+		return new ViewRef(e.init, e.vc.getView().getShortViewName(), e.vc.getView().getLongViewName());
 	}
 
 	/**
@@ -74,7 +78,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return the complimenting history token.
 	 */
 	private static String generateViewKeyHistoryToken(ViewKey key) {
-		return VIEW_TOKEN_PREFIX + Integer.toString(key.hashCode());
+		return VIEW_TOKEN_PREFIX + Double.toString(key.hashCode());
 	}
 
 	/**
@@ -85,11 +89,11 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         if the history token is not a view history token.
 	 */
 	@SuppressWarnings("null")
-	private static int extractViewKeyHash(String historyToken) {
+	private static double extractViewKeyHash(String historyToken) {
 		final int len = historyToken == null ? 0 : historyToken.length();
 		if(len < 2) return -1;
 		if(historyToken.charAt(0) != VIEW_TOKEN_PREFIX) return -1;
-		return Integer.parseInt(historyToken.substring(1));
+		return Double.parseDouble(historyToken.substring(1));
 	}
 
 	private static ViewManager instance;
@@ -204,17 +208,16 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * view.
 	 * @param init The view initializer employed only when the view is not present
 	 *        in the view cache
-	 * @param options The view options employed only when the view is not present
-	 *        in the view cache
 	 */
 	@SuppressWarnings("unchecked")
-	void setCurrentView(IViewInitializer init, ViewOptions options) {
+	void setCurrentView(IViewInitializer init) {
 		final ViewKey key = init.getViewKey();
 		Log.debug("Setting current view: '" + key + "' ..");
 
 		CView e;
+		final ViewOptions options = init.getViewKey().getViewClass().getViewOptions();
 		final int cacheIndex = cache.searchQueue(key);
-		final boolean showPopped = ((cacheIndex == -1) && (options != null && options.isInitiallyPopped()));
+		final boolean showPopped = ((cacheIndex == -1) && options.isInitiallyPopped());
 
 		if(cacheIndex != -1) {
 			// existing cached view
@@ -230,7 +233,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			// initialize the view
 			view.initialize(init);
 
-			e = new CView(new ViewContainer(view, options, key), init, options);
+			e = new CView(new ViewContainer(view, options, key), init);
 			setCurrentView(e, showPopped);
 
 			// load the view
@@ -312,19 +315,23 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * Unloads the given view optionally removing it from the view cache then
 	 * updates the current pinned view routing through the history system.
 	 * @param key The view key of the view to unload
-	 * @param removeFromCache Remove the view from the view cache?
+	 * @param destroy Remove the view from the queue of current views?
+	 * @param erradicate Physically remove the view from cache entirely?
 	 */
-	void unloadView(ViewKey key, boolean removeFromCache) {
+	void unloadView(ViewKey key, boolean destroy, boolean erradicate) {
 		final CView e = findView(key);
 		if(e == null) return;
 
 		// unload the given view
 		e.vc.close();
 
-		if(removeFromCache) {
+		if(destroy) {
 			pendingUnload = e;
 			// remove the view from cache
 			cache.remove(key);
+		}
+		if(erradicate) {
+			cache.removeFromStack(key);
 		}
 
 		// find the newest pinned view excluding the one to be unloaded
@@ -332,8 +339,18 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		if(pendingCurrent == null && e != initial) {
 			pendingCurrent = initial;
 		}
-		if(pendingCurrent != null) {
+		if(pendingCurrent == null) throw new IllegalStateException("Can't resolve a pending view");
+		if(pendingCurrent != current) {
 			History.newItem(generateViewKeyHistoryToken(pendingCurrent.getViewKey()));
+		}
+		else {
+			// we're unloading a view that isn't current but we still need to notify
+			// our view listeners so they remain in sync
+			if(pendingUnload != null) {
+				pendingUnload.vc.getView().onDestroy();
+				pendingUnload = null;
+			}
+			fireViewChangeEvent();
 		}
 	}
 
@@ -397,12 +414,12 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @return The found {@link IView} or <code>null</code> if not present in the
 	 *         view cache.
 	 */
-	private CView findView(int viewKeyHash) {
+	private CView findView(double viewKeyHash) {
 		final Iterator<CView> itr = cache.queueIterator();
 		if(itr != null) {
 			while(itr.hasNext()) {
 				final CView e = itr.next();
-				final int hc = e.getViewKey().hashCode();
+				final double hc = e.getViewKey().hashCode();
 				if(hc == viewKeyHash) {
 					return e;
 				}
@@ -422,7 +439,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 * @param viewKeyHash
 	 * @return The found view ref or <code>null</code> if not found.
 	 */
-	private ViewRef findViewRef(int viewKeyHash) {
+	private ViewRef findViewRef(double viewKeyHash) {
 		// try visited view ref cache
 		final Iterator<ViewRef> vitr = cache.visitedRefIterator();
 		if(vitr != null) {
@@ -563,8 +580,9 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 			if(request.addHistory()) {
 				// history routing required
 				assert request.getViewKey() != null : "Unable to add history: No view key specified.";
-				final int hash = extractViewKeyHash(History.getToken());
-				if(hash != -1 && request.getViewKey().hashCode() == hash) {
+				final double hash = extractViewKeyHash(History.getToken());
+				final double vkhash = request.getViewKey().hashCode();
+				if(hash != -1 && vkhash == hash) {
 					doDispatch(request);
 				}
 				else {
@@ -600,7 +618,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	public void onValueChange(ValueChangeEvent<String> event) {
-		final int viewKeyHash = extractViewKeyHash(event.getValue());
+		final double viewKeyHash = extractViewKeyHash(event.getValue());
 		if(viewKeyHash != -1) {
 			Log.debug("Handling view history token: " + viewKeyHash + "..");
 			if(pendingViewRequest != null) {
@@ -618,7 +636,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 						Log.warn("Un-resolved view hash: " + viewKeyHash);
 					}
 					else {
-						setCurrentView(r.getViewInitializer(), r.getOptions());
+						setCurrentView(r.getViewInitializer());
 						return;
 					}
 					// this should only happen when the user mucks with the view key hash in the query string

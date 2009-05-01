@@ -36,10 +36,11 @@ public final class IspListingView extends ListingView<StaticViewInitializer> {
 
 	public static final Class klas = new Class();
 
-	public static final class Class extends ViewClass {
+	public static final class Class extends AbstractListingViewClass {
 
-		private Class() {
-			super("IspListingView");
+		@Override
+		public String getName() {
+			return "IspListingView";
 		}
 
 		@Override
@@ -71,13 +72,13 @@ public final class IspListingView extends ListingView<StaticViewInitializer> {
 			private final String listingElementName = SmbizEntityType.ISP.getName();
 
 			private final Column[] columns =
-					new Column[] {
-						Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "i"),
-						new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "i"),
-						new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "i"),
-						new PropertyBoundColumn("Status", "status", "i"),
-						new PropertyBoundColumn("Billing Model", "billingModel", "i"),
-						new PropertyBoundColumn("Billing Cycle", "billingCycle", "i") };
+				new Column[] {
+				Column.ROW_COUNT_COLUMN, new PropertyBoundColumn("Name", Model.NAME_PROPERTY, "i"),
+				new PropertyBoundColumn("Created", GlobalFormat.DATE, Model.DATE_CREATED_PROPERTY, "i"),
+				new PropertyBoundColumn("Modified", GlobalFormat.DATE, Model.DATE_MODIFIED_PROPERTY, "i"),
+				new PropertyBoundColumn("Status", "status", "i"),
+				new PropertyBoundColumn("Billing Model", "billingModel", "i"),
+				new PropertyBoundColumn("Billing Cycle", "billingCycle", "i") };
 
 			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
 
