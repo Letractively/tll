@@ -20,17 +20,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
-import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.IMsgDisplay;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorHandlerDelegate;
-import com.tll.client.validate.IErrorHandler;
-import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
 
@@ -88,30 +84,23 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 
 	private final Button btnSave, btnDelete, btnReset, btnCancel;
 
-	private final IErrorHandler errorHandler;
-
 	/**
 	 * Constructor
-	 * @param msgDisplay Optional message display employed for providing field
-	 *        validation feedback
+	 * @param globalMsgDisplay Optional global message display employed for
+	 *        providing field validation feedback
 	 * @param fieldPanel The required {@link FieldPanel}
 	 * @param showCancelBtn Show the cancel button? Causes a cancel edit event
 	 *        when clicked.
 	 * @param showDeleteBtn Show the delete button? Causes a delete edit event
 	 *        when clicked.
 	 */
-	public EditPanel(IMsgDisplay msgDisplay, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
+	public EditPanel(IMsgDisplay globalMsgDisplay, FieldPanel<? extends Widget> fieldPanel, boolean showCancelBtn,
 			boolean showDeleteBtn) {
 
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 
-		if(msgDisplay == null) throw new IllegalArgumentException("A global message panel must be specified.");
-
-		this.errorHandler =
-			new ErrorHandlerDelegate(new BillboardValidationFeedback(msgDisplay), new FieldErrorHandler(
-					new MsgPopupRegistry()));
-		editAction = new FieldBindingAction(errorHandler);
+		editAction = new FieldBindingAction(globalMsgDisplay);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -194,9 +183,11 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
+		final ErrorHandlerDelegate ehandler = editAction.getErrorHandler();
+		// clear out any existing server side errors
+		ehandler.clear(ErrorClassifier.SERVER);
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
-			final int attribs = (fw == null ? Attrib.GLOBAL.flag() : (Attrib.GLOBAL.flag() | Attrib.LOCAL.flag()));
 			String emsg;
 			if(fw != null) {
 				// turn off incremental validation for this field since this is a server
@@ -207,7 +198,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 			else {
 				emsg = msg.getRefToken() + ": " + msg.getMsg();
 			}
-			errorHandler.handleError(fw, new Error(emsg), attribs);
+			ehandler.handleError(fw, new Error(ErrorClassifier.SERVER, emsg));
 		}
 	}
 

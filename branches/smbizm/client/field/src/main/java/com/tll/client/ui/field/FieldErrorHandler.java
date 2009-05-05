@@ -15,6 +15,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.field.IFieldWidget.Styles;
 import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.PopupValidationFeedback;
 import com.tll.client.validate.IError.Type;
@@ -38,7 +39,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	 * hoverability.
 	 */
 	private final Map<IFieldWidget<?>, MouseRegs> invalids = new HashMap<IFieldWidget<?>, MouseRegs>();
-	
+
 
 	/**
 	 * Constructor
@@ -49,10 +50,10 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error, int attribs) {
-		super.handleError(source, error, attribs);
-		
-		if(error.getType() == Type.SINGLE && Attrib.isLocal(attribs)) {
+	public void handleError(IWidgetRef source, IError error) {
+		super.handleError(source, error);
+
+		if(error.getType() == Type.SINGLE) {
 			if(source instanceof IFieldWidget) {
 				// handle styling
 				source.getWidget().removeStyleName(Styles.DIRTY);
@@ -70,12 +71,12 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source) {
-		super.resolveError(source);
+	public void resolveError(ErrorClassifier classifier, IWidgetRef source) {
+		super.resolveError(classifier, source);
 		if(source instanceof IFieldWidget) {
 			// handle styling
 			source.getWidget().removeStyleName(Styles.INVALID);
-			
+
 			// un-track popup hovering
 			final MouseRegs regs = invalids.remove(source);
 			if(regs != null) {
@@ -108,7 +109,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 			mregistry.getOperator(field.getWidget(), false).showMsgs(false);
 		}
 	}
-	
+
 	private IFieldWidget<?> resolveField(MouseEvent<?> event) {
 		final Object src = event.getSource();
 		for(final IFieldWidget<?> fw : invalids.keySet()) {

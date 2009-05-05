@@ -35,9 +35,28 @@ public class Errors implements IError {
 	 */
 	private int numErrors;
 
+	/**
+	 * The error source classifier.
+	 */
+	private final ErrorClassifier classifier;
+
+	/**
+	 * Constructor
+	 * @param classifier the sourcing classifier
+	 */
+	public Errors(ErrorClassifier classifier) {
+		super();
+		this.classifier = classifier;
+	}
+
 	@Override
 	public Type getType() {
 		return Type.COMPOSITE;
+	}
+
+	@Override
+	public ErrorClassifier getClassifier() {
+		return classifier;
 	}
 
 	/**
@@ -48,7 +67,7 @@ public class Errors implements IError {
 	 *        sourced.
 	 */
 	public void add(IError error, IWidgetRef source) {
-		if(error == null) throw new IllegalArgumentException();
+		if(error == null) throw new IllegalArgumentException("Null error");
 		if(source == null) {
 			if(unsourced == null) {
 				unsourced = new ArrayList<IError>();
@@ -70,13 +89,13 @@ public class Errors implements IError {
 	}
 
 	/**
-	 * @return List of {@link Msg}s whose ref token is the sourcing field name or
+	 * @return List of {@link Msg}s whose ref token is the classfiier field name or
 	 *         <code>null</code> if no sourced errors exist.
 	 */
 	public Map<IWidgetRef, List<IError>> getSourcedErrors() {
 		return sourced;
 	}
-	
+
 	public List<IError> getUnsourcedErrors() {
 		return unsourced;
 	}

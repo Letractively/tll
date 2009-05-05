@@ -26,26 +26,49 @@ public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegis
 		setMsgPopupRegistry(mregistry);
 	}
 
+	@Override
+	public final ErrorDisplay getDisplayType() {
+		return ErrorDisplay.LOCAL;
+	}
+
+	@Override
 	public MsgPopupRegistry getMsgPopupRegistry() {
 		return mregistry;
 	}
 
+	@Override
 	public void setMsgPopupRegistry(MsgPopupRegistry mregistry) {
-		if(mregistry == null) throw new IllegalArgumentException();
+		if(mregistry == null) throw new IllegalArgumentException("Null mregistry");
 		this.mregistry = mregistry;
 	}
 
-	public void handleError(IWidgetRef source, IError error, int attribs) {
-		// we only handle single local errors
-		if(error.getType() == Type.SINGLE && Attrib.isLocal(attribs)) {
-			mregistry.addMsgs(((Error) error).getMessages(), source.getWidget(), true);
+	@Override
+	public void handleError(IWidgetRef source, IError error) {
+		// we only handle single type errors
+		if(error.getType() == Type.SINGLE) {
+			if(source == null) throw new IllegalArgumentException("Null source");
+			final ErrorClassifier sourcing = error.getClassifier();
+			mregistry.getOrCreateOperator(source.getWidget()).addMsgs(((Error) error).getMessages(),
+					sourcing == null ? null : sourcing
+							.hashCode());
 		}
 	}
 
-	public void resolveError(IWidgetRef source) {
-		mregistry.getOperator(source.getWidget(), false).clearMsgs();
+	@Override
+	public void resolveError(ErrorClassifier sourcing, IWidgetRef source) {
+		if(sourcing == null) {
+			mregistry.getOperator(source.getWidget(), false).clearMsgs();
+		}
+		else {
+			mregistry.getOperator(source.getWidget(), false).removeMsgs(sourcing.hashCode());
+		}
 	}
-	
+
+	@Override
+	public void clear(ErrorClassifier classifier) {
+		mregistry.getAllOperator().removeMsgs(classifier.hashCode());
+	}
+
 	@Override
 	public void clear() {
 		mregistry.clear();

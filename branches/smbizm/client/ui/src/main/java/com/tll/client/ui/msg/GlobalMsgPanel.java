@@ -28,16 +28,16 @@ public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 		 * The root message style
 		 */
 		public static final String MSG = "msg";
-		
+
 		/**
 		 * Style for the container widget.
 		 */
 		public static final String GLOBAL = "gmsg";
 	}
-	
+
 	private static final MsgLevel[] order = new MsgLevel[] {
 		MsgLevel.FATAL, MsgLevel.ERROR, MsgLevel.WARN, MsgLevel.INFO };
-	
+
 	private static final int index(MsgLevel level) {
 		for(int i = 0; i < order.length; i++) {
 			if(order[i] == level) {
@@ -67,120 +67,105 @@ public class GlobalMsgPanel extends Composite implements IMsgDisplay {
 		}
 		initWidget(container);
 	}
-	
+
+	/**
+	 * @param level the msg level
+	 * @return the queried for msg panel bound the given msg level.
+	 */
 	private MutableMsgLevelPanel getMsgLevelPanel(MsgLevel level) {
 		return (MutableMsgLevelPanel) container.getWidget(index(level));
 	}
 
-	/**
-	 * Add multiple sourced messages.
-	 * @param wref
-	 * @param msgs
-	 */
-	public void add(IWidgetRef wref, Iterable<Msg> msgs) {
+	@Override
+	public void add(IWidgetRef wref, Iterable<Msg> msgs, Integer classifier) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
 			p = getMsgLevelPanel(level);
-			p.add(wref, msgs);
-			if(p.size() > 0) p.setVisible(true);
-		}
-	}
-	
-	/**
-	 * Add a single sourced message.
-	 * @param wref
-	 * @param msg
-	 */
-	public void add(IWidgetRef wref, Msg msg) {
-		MutableMsgLevelPanel p;
-		for(final MsgLevel level : order) {
-			p = getMsgLevelPanel(level);
-			p.add(wref, msg);
+			p.add(wref, msgs, classifier);
 			if(p.size() > 0) p.setVisible(true);
 		}
 	}
 
-	/**
-	 * Add multiple of un-sourced messages.
-	 * @param msgs
-	 */
-	public void add(Iterable<Msg> msgs) {
+	@Override
+	public void add(IWidgetRef wref, Msg msg, Integer classifier) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
 			p = getMsgLevelPanel(level);
-			p.add(msgs);
+			p.add(wref, msg, classifier);
 			if(p.size() > 0) p.setVisible(true);
 		}
 	}
-	
-	/**
-	 * Add a single un-sourced message.
-	 * @param msg
-	 */
-	public void add(Msg msg) {
+
+	@Override
+	public void add(Iterable<Msg> msgs, Integer classifier) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
 			p = getMsgLevelPanel(level);
-			p.add(msg);
+			p.add(msgs, classifier);
 			if(p.size() > 0) p.setVisible(true);
 		}
 	}
-	
-	/**
-	 * Remove all posted messages that source to the given widget.
-	 * @param wref the widget reference
-	 */
-	public void remove(IWidgetRef wref) {
+
+	@Override
+	public void add(Msg msg, Integer classifier) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
 			p = getMsgLevelPanel(level);
-			p.remove(wref);
-			if(p.size() == 0) p.setVisible(false);
+			p.add(msg, classifier);
+			if(p.size() > 0) p.setVisible(true);
 		}
 	}
-	
-	/**
-	 * Remove all posted un-sourced messages.
-	 */
-	public void removeUnsourced() {
+
+	@Override
+	public void remove(IWidgetRef wref, Integer classifier) {
 		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
 			p = getMsgLevelPanel(level);
-			p.removeUnsourced();
+			p.remove(wref, classifier);
 			if(p.size() == 0) p.setVisible(false);
 		}
 	}
-	
-	/**
-	 * Clear all messages of the given level.
-	 * @param level
-	 */
-	public void clear(MsgLevel level) {
+
+	@Override
+	public void removeUnsourced(Integer classifier) {
+		MutableMsgLevelPanel p;
+		for(final MsgLevel level : order) {
+			p = getMsgLevelPanel(level);
+			p.remove(null, classifier);
+			if(p.size() == 0) p.setVisible(false);
+		}
+	}
+
+	@Override
+	public void remove(MsgLevel level) {
 		final MutableMsgLevelPanel p = getMsgLevelPanel(level);
 		p.clear();
 		p.setVisible(false);
 	}
 
-	/**
-	 * Remove <em>all</em> messages.
-	 */
-	public void clear() {
+	@Override
+	public void remove(int classifier) {
+		MutableMsgLevelPanel p;
 		for(final MsgLevel level : order) {
-			clear(level);
+			p = getMsgLevelPanel(level);
+			p.remove(classifier);
+			if(p.size() == 0) p.setVisible(false);
 		}
 	}
 
-	/**
-	 * @param level
-	 * @return the number of posted messages of the given level.
-	 */
+	@Override
+	public void clear() {
+		for(final MsgLevel level : order) {
+			remove(level);
+		}
+	}
+
+	@Override
 	public int size(MsgLevel level) {
 		return getMsgLevelPanel(level).size();
 	}
 
-	/**
-	 * @return the total number of posted messages.
-	 */
+	@Override
 	public int size() {
 		int c = 0;
 		for(final MsgLevel l : order) {

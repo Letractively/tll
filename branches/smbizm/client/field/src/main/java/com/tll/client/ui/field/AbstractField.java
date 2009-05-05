@@ -25,13 +25,15 @@ import com.tll.client.validate.CharacterValidator;
 import com.tll.client.validate.CompositeValidator;
 import com.tll.client.validate.DateValidator;
 import com.tll.client.validate.DecimalValidator;
+import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorDisplay;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IError;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.IntegerValidator;
 import com.tll.client.validate.NotEmptyValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.model.PropertyPathException;
 import com.tll.model.schema.IPropertyMetadataProvider;
@@ -477,22 +479,37 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		return valid;
 	}
 
+	/**
+	 * Resolves client-side errors.
+	 */
 	private void resolveError() {
 		if(errorHandler != null) {
-			errorHandler.resolveError(this);
+			errorHandler.resolveError(ErrorClassifier.CLIENT, this);
 		}
 	}
 
+	/**
+	 * Handles client-side errors.
+	 * @param error
+	 */
 	private void handleError(IError error) {
 		if(errorHandler != null) {
-			errorHandler.handleError(this, error, Attrib.LOCAL.flag());
+			if(error.getClassifier() == null || !error.getClassifier().isClient()) {
+				throw new IllegalStateException("Null or non-client error.");
+			}
+			if(errorHandler instanceof ErrorHandlerDelegate) {
+				((ErrorHandlerDelegate) errorHandler).handleError(this, error, ErrorDisplay.LOCAL.flag());
+			}
+			else {
+				errorHandler.handleError(this, error);
+			}
 		}
 	}
 
 	public final void validate() throws ValidationException {
+		resolveError();
 		try {
 			validate(getValue());
-			resolveError();
 		}
 		catch(final ValidationException e) {
 			handleError(e.getError());
@@ -694,7 +711,7 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	@Override
 	public final int hashCode() {
-		return 31 + name.hashCode();
+		return name.hashCode();
 	}
 
 	@Override

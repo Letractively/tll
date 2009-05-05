@@ -13,6 +13,7 @@ import java.util.Set;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.validate.CompositeValidator;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.Errors;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
@@ -180,6 +181,75 @@ public final class FieldGroup implements IField, Iterable<IField> {
 			}
 			if(ef instanceof FieldGroup) {
 				verifyAddField(f, (FieldGroup) ef);
+			}
+		}
+	}
+
+	/**
+	 * Creates a nested path token.
+	 * @param parents
+	 * @param field
+	 * @param includeFirstParent include the first parent in the path?
+	 * @return the created nested path
+	 */
+	private static String nestedPath(List<IField> parents, IField field, boolean includeFirstParent) {
+		final StringBuilder sb = new StringBuilder();
+		for(int i = (includeFirstParent ? 0 : 1); i < parents.size(); i++) {
+			sb.append(parents.get(i).descriptor());
+			sb.append(" - ");
+		}
+		sb.append(field.descriptor());
+		return sb.toString();
+	}
+
+	/**
+	 * Recursive validation routine that maintains a single {@link Errors}
+	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
+	 * qualified" field better validation feedback.
+	 * @param errors the sole constant instance
+	 * @param group the field group
+	 * @param parents the field group parents
+	 */
+	private static void validate(final Errors errors, FieldGroup group,
+			List<FieldGroup> parents) {
+		for(final IField field : group) {
+			if(field instanceof FieldGroup) {
+				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
+				list.addAll(parents);
+				list.add(group);
+				validate(errors, ((FieldGroup) field), list);
+			}
+			else {
+				try {
+					field.validate();
+				}
+				catch(final ValidationException e) {
+					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
+					list.addAll(parents);
+					list.add(group);
+					errors.add(e.getError(), new IWidgetRef() {
+
+						@Override
+						public Widget getWidget() {
+							return field.getWidget();
+						}
+
+						@SuppressWarnings("synthetic-access")
+						@Override
+						public String descriptor() {
+							return nestedPath(list, field, false);
+						}
+					});
+				}
+			}
+		}
+
+		if(group.validator != null) {
+			try {
+				group.validator.validate(null);
+			}
+			catch(final ValidationException e) {
+				errors.add(e.getError(), group);
 			}
 		}
 	}
@@ -532,76 +602,8 @@ public final class FieldGroup implements IField, Iterable<IField> {
 		if(validator != null) this.validator.remove(type);
 	}
 
-	/**
-	 * Creates a nested path token.
-	 * @param parents
-	 * @param field
-	 * @param includeFirstParent include the first parent in the path?
-	 * @return the created nested path
-	 */
-	static String nestedPath(List<IField> parents, IField field, boolean includeFirstParent) {
-		final StringBuilder sb = new StringBuilder();
-		for(int i = (includeFirstParent ? 0 : 1); i < parents.size(); i++) {
-			sb.append(parents.get(i).descriptor());
-			sb.append(" - ");
-		}
-		sb.append(field.descriptor());
-		return sb.toString();
-	}
-
-	/**
-	 * Recursive validation routine that maintains a single {@link Errors}
-	 * instance and tracks the nesting. Nesting is tracked to assemble a "fully
-	 * qualified" field better validation feedback.
-	 * @param errors the sole constant instance
-	 * @param group the field group
-	 * @param parents the field group parents
-	 */
-	private static void validate(final Errors errors, FieldGroup group,
-			List<FieldGroup> parents) {
-		for(final IField field : group) {
-			if(field instanceof FieldGroup) {
-				final ArrayList<FieldGroup> list = new ArrayList<FieldGroup>(parents.size() + 1);
-				list.addAll(parents);
-				list.add(group);
-				validate(errors, ((FieldGroup) field), list);
-			}
-			else {
-				try {
-					field.validate();
-				}
-				catch(final ValidationException e) {
-					final ArrayList<IField> list = new ArrayList<IField>(parents.size() + 1);
-					list.addAll(parents);
-					list.add(group);
-					errors.add(e.getError(), new IWidgetRef() {
-
-						@Override
-						public Widget getWidget() {
-							return field.getWidget();
-						}
-
-						@Override
-						public String descriptor() {
-							return nestedPath(list, field, false);
-						}
-					});
-				}
-			}
-		}
-
-		if(group.validator != null) {
-			try {
-				group.validator.validate(null);
-			}
-			catch(final ValidationException e) {
-				errors.add(e.getError(), group);
-			}
-		}
-	}
-
 	public void validate() throws ValidationException {
-		final Errors errors = new Errors();
+		final Errors errors = new Errors(ErrorClassifier.CLIENT);
 		validate(errors, this, new ArrayList<FieldGroup>());
 		if(errors.size() > 0) {
 			throw new ValidationException(errors);
@@ -634,7 +636,7 @@ public final class FieldGroup implements IField, Iterable<IField> {
 	@Override
 	public int hashCode() {
 		assert name != null;
-		return 37 + name.hashCode();
+		return name.hashCode();
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public abstract class Msgs {
 	 */
 	public static void post(Msg msg, Widget w) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.addMsg(msg);
+		mp.addMsg(msg, null);
 		mp.showMsgs(true);
 	}
 
@@ -46,7 +46,7 @@ public abstract class Msgs {
 	 */
 	public static void post(Msg msg, Widget w, Position p, int duration, boolean showMsgLevelImage) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.addMsg(msg);
+		mp.addMsg(msg, null);
 		mp.showMsgs(p, duration, showMsgLevelImage);
 	}
 
@@ -58,7 +58,7 @@ public abstract class Msgs {
 	 */
 	public static void post(Iterable<Msg> msgs, Widget w) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.addMsgs(msgs);
+		mp.addMsgs(msgs, null);
 		mp.showMsgs(true);
 	}
 
@@ -74,7 +74,7 @@ public abstract class Msgs {
 	 */
 	public static void post(Iterable<Msg> msgs, Widget w, Position p, int duration, boolean showMsgLevelImage) {
 		final MsgPopup mp = new MsgPopup(w);
-		mp.addMsgs(msgs);
+		mp.addMsgs(msgs, null);
 		mp.showMsgs(p, duration, showMsgLevelImage);
 	}
 }

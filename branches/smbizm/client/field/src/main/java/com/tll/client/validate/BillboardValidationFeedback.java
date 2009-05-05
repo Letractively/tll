@@ -29,7 +29,12 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	public BillboardValidationFeedback(IMsgDisplay msgDisplayWidget) {
 		setMsgDisplay(msgDisplayWidget);
 	}
-	
+
+	@Override
+	public ErrorDisplay getDisplayType() {
+		return ErrorDisplay.GLOBAL;
+	}
+
 	@Override
 	public IMsgDisplay getMsgDisplay() {
 		return msgDisplayWidget;
@@ -49,7 +54,9 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	private void post(IWidgetRef wref, Collection<IError> errors) {
 		assert errors != null;
 		for(final IError e : errors) {
-			post(wref, e);
+			if(e instanceof Error) {
+				post(wref, (Error) e);
+			}
 		}
 	}
 
@@ -58,11 +65,11 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	 * @param wref
 	 * @param error
 	 */
-	private void post(IWidgetRef wref, IError error) {
+	private void post(IWidgetRef wref, Error error) {
 		assert error != null;
-		if(error.getType() != Type.SINGLE)
-			throw new IllegalArgumentException("Nested composite errors are not supported.");
-		msgDisplayWidget.add(wref, ((Error) error).getMessages());
+		msgDisplayWidget
+		.add(wref, error.getMessages(), error.getClassifier() == null ? null : error.getClassifier()
+				.hashCode());
 	}
 
 	/**
@@ -84,40 +91,48 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 		assert error != null;
 		if(error.getType() != Type.SINGLE)
 			throw new IllegalArgumentException("Nested composite errors are not supported.");
-		msgDisplayWidget.add(((Error) error).getMessages());
+		msgDisplayWidget.add(((Error) error).getMessages(), error.getClassifier() == null ? null : error.getClassifier()
+				.hashCode());
 	}
 
 	@Override
-	public void handleError(IWidgetRef source, IError error, int attribs) {
-		// we handle only global errors either sourced or unsourced
-		if(Attrib.isGlobal(attribs)) {
-			if(error.getType() == Type.COMPOSITE) {
-				// unsourced
-				final List<IError> unsourced = ((Errors) error).getUnsourcedErrors();
-				if(unsourced != null) {
-					post(unsourced);
-				}
+	public void handleError(IWidgetRef source, IError error) {
+		if(error.getType() == Type.COMPOSITE) {
+			// unsourced
+			final List<IError> unsourced = ((Errors) error).getUnsourcedErrors();
+			if(unsourced != null) {
+				post(unsourced);
+			}
 
-				// sourced
-				final Map<IWidgetRef, List<IError>> map = ((Errors) error).getSourcedErrors();
-				if(map != null) {
-					for(final IWidgetRef wref : map.keySet()) {
-						post(wref, map.get(wref));
-					}
+			// sourced
+			final Map<IWidgetRef, List<IError>> map = ((Errors) error).getSourcedErrors();
+			if(map != null) {
+				for(final IWidgetRef wref : map.keySet()) {
+					post(wref, map.get(wref));
 				}
 			}
-			else if(error.getType() == Type.SINGLE) {
-				post(source, error);
-			}
-			else {
-				throw new IllegalStateException("Unhandled error type: " + error.getType());
-			}
+		}
+		else if(error.getType() == Type.SINGLE) {
+			post(source, (Error) error);
+		}
+		else {
+			throw new IllegalStateException("Unhandled error type: " + error.getType());
 		}
 	}
 
 	@Override
-	public void resolveError(IWidgetRef source) {
-		msgDisplayWidget.remove(source);
+	public void resolveError(ErrorClassifier classifier, IWidgetRef source) {
+		if(source == null) {
+			msgDisplayWidget.removeUnsourced(classifier == null ? null : classifier.hashCode());
+		}
+		else {
+			msgDisplayWidget.remove(source, classifier == null ? null : classifier.hashCode());
+		}
+	}
+
+	@Override
+	public void clear(ErrorClassifier classifier) {
+		msgDisplayWidget.remove(classifier.hashCode());
 	}
 
 	@Override

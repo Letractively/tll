@@ -10,10 +10,10 @@ import java.util.Map.Entry;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.IWidgetRef;
+import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.IValidator;
 import com.tll.client.validate.ValidationException;
-import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.bind.IBindable;
 import com.tll.common.bind.IPropertyChangeListener;
 import com.tll.common.bind.IndexedPropertyChangeEvent;
@@ -106,10 +106,9 @@ public final class Binding {
 				catch(final ValidationException ve) {
 					if(instance.feedback != null) {
 						if(lastException != null) {
-							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource());
+							instance.feedback.resolveError(ErrorClassifier.CLIENT, (IWidgetRef) propertyChangeEvent.getSource());
 						}
-						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError(), Attrib.LOCAL
-								.flag());
+						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError());
 						lastException = ve;
 						return;
 					}
@@ -119,7 +118,7 @@ public final class Binding {
 			}
 
 			if(instance.feedback != null) {
-				instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource());
+				instance.feedback.resolveError(ErrorClassifier.CLIENT, (IWidgetRef) propertyChangeEvent.getSource());
 			}
 
 			lastException = null;

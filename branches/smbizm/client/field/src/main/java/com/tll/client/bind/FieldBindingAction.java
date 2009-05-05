@@ -6,14 +6,19 @@ package com.tll.client.bind;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
+import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
+import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
+import com.tll.client.validate.ErrorClassifier;
+import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
-import com.tll.client.validate.IErrorHandler.Attrib;
 import com.tll.common.model.Model;
 
 /**
@@ -70,9 +75,9 @@ public final class FieldBindingAction {
 	}
 
 	/**
-	 * The error handler to employ.
+	 * The local error handler
 	 */
-	private final IErrorHandler errorHandler;
+	private final ErrorHandlerDelegate errorHandler;
 
 	/**
 	 * The field bound widget.
@@ -95,10 +100,20 @@ public final class FieldBindingAction {
 
 	/**
 	 * Constructor
-	 * @param errorHandler the error handler to employ
+	 * @param globalMsgDisplay Optional message display for global validation
+	 *        feedback.
 	 */
-	public FieldBindingAction(IErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
+	public FieldBindingAction(IMsgDisplay globalMsgDisplay) {
+		errorHandler =
+				new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
+						new MsgPopupRegistry()));
+	}
+
+	/**
+	 * @return The composite error handler.
+	 */
+	public ErrorHandlerDelegate getErrorHandler() {
+		return errorHandler;
 	}
 
 	/**
@@ -118,7 +133,9 @@ public final class FieldBindingAction {
 			binding.setLeft();
 		}
 		catch(final ValidationException e) {
-			if(errorHandler != null) errorHandler.handleError(null, e.getError(), Attrib.GLOBAL.flag());
+			if(errorHandler != null) {
+				errorHandler.handleError(null, e.getError());
+			}
 			throw e;
 		}
 		catch(final Exception e) {
@@ -132,7 +149,9 @@ public final class FieldBindingAction {
 			if(emsg == null) {
 				emsg = "Unknown error occurred.";
 			}
-			if(errorHandler != null) errorHandler.handleError(null, new Error(emsg), Attrib.GLOBAL.flag());
+			if(errorHandler != null) {
+				errorHandler.handleError(null, new Error(ErrorClassifier.CLIENT, emsg));
+			}
 			throw new ValidationException(emsg);
 		}
 	}
