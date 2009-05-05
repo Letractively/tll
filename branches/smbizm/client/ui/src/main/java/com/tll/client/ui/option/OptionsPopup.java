@@ -12,7 +12,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -24,7 +23,7 @@ import com.tll.client.ui.PopupHideTimer;
  * @author jpk
  */
 public class OptionsPopup extends PopupPanel implements MouseDownHandler, MouseOverHandler, MouseOutHandler,
-IOptionHandler, IHasOptionHandlers {
+ IOptionHandler {
 
 	/**
 	 * The default timer duration to show the popup.
@@ -151,11 +150,6 @@ IOptionHandler, IHasOptionHandlers {
 	public void onMouseOver(MouseOverEvent event) {
 		//Log.debug("OptionsPopup.onMouseOver: " + event.toDebugString());
 		if(timer != null) timer.cancel();
-	}
-
-	@Override
-	public HandlerRegistration addOptionHandler(IOptionHandler handler) {
-		return optionsPanel.addOptionHandler(handler);
 	}
 
 	@Override

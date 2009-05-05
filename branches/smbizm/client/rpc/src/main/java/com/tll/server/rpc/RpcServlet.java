@@ -34,10 +34,10 @@ public abstract class RpcServlet extends RemoteServiceServlet {
 			emsg = t.getClass().getSimpleName();
 		}
 		if(t instanceof RuntimeException) {
-			status.addMsg(emsg, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
+			status.addMsg(emsg, MsgLevel.FATAL, MsgAttr.EXCEPTION.flag);
 		}
 		else {
-			status.addMsg(emsg, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag | MsgAttr.NODISPLAY.flag);
+			status.addMsg(emsg, MsgLevel.ERROR, MsgAttr.EXCEPTION.flag);
 		}
 	}
 

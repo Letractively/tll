@@ -203,7 +203,7 @@ IIndexedFieldBoundWidget {
 		// binding actions
 		// as this is handled by the parent binding action since
 		// its root field group is expected to contain this panel's field group as a child
-		final Index<I> index = new Index<I>(ip, new FieldBindingAction());
+		final Index<I> index = new Index<I>(ip, new FieldBindingAction(null));
 		if(!indexPanels.add(index)) {
 			throw new IllegalStateException("Unable to add index: " + ip);
 		}

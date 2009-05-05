@@ -4,6 +4,8 @@
  */
 package com.tll.client.ui;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -13,6 +15,7 @@ import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgAttr;
 
 /**
  * StatusDisplay - Console like window that displays messages contained w/in a
@@ -28,52 +31,36 @@ public class StatusDisplay extends Composite implements IStatusHandler {
 	protected static class Styles {
 
 		public static final String STATUS_DISPLAY = "statusDisplay";
-	}
-
-	private static StatusDisplay firstStatusDisplay = null;
-
-	/**
-	 * Client side logging provision
-	 * @param msg The msg to log to the {@link StatusDisplay}
-	 */
-	public static void log(Msg msg) {
-		if(firstStatusDisplay != null) {
-			firstStatusDisplay.handleMsg(msg);
-		}
-	}
+	} // Styles
 
 	private final ScrollPanel sp = new ScrollPanel();
 	private final VerticalPanel vp = new VerticalPanel();
+	private final int attribs;
 
 	/**
 	 * Constructor
+	 * @param attribs The desired {@link MsgAttr} flags ORd together.
 	 */
-	public StatusDisplay() {
+	public StatusDisplay(int attribs) {
 		super();
 		sp.setStylePrimaryName(Styles.STATUS_DISPLAY);
 		sp.setTitle("Status History");
 		sp.add(vp);
 		initWidget(sp);
-
-		if(firstStatusDisplay == null) {
-			firstStatusDisplay = this;
-		}
-	}
-
-	private void handleMsg(Msg msg) {
-		vp.insert(new StatusMsgDisplay(msg), 0);
+		this.attribs = attribs;
 	}
 
 	private void handleStatus(Status status) {
-		if(status.getNumTotalMsgs() > 0) {
-			for(Msg msg : status.getAllMsgs()) {
-				handleMsg(msg);
+		final List<Msg> msgs = status.getMsgs(attribs);
+		if(msgs != null) {
+			for(final Msg msg : msgs) {
+				vp.insert(new StatusMsgDisplay(msg), 0);
 			}
 		}
 	}
 
 	public void onStatusEvent(StatusEvent event) {
-		Status status = event.getStatus();
+		final Status status = event.getStatus();
 		if(status != null) {
 			handleStatus(status);
 		}

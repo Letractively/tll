@@ -193,12 +193,13 @@ public class MutableMsgLevelPanel extends Composite {
 		if(msg == null) throw new IllegalArgumentException("Null msg");
 		final Entry entry = new Entry(msg, ref, classifier);
 
-		// cache it (a null widget ref is ok as we want to query un-ref'd messages
+		// cache it (a null widget is ok as we want to query un-ref'd messages
 		// too)
-		List<Entry> elist = entries.get(ref);
+		final Widget w = ref == null ? null : ref.getWidget();
+		List<Entry> elist = entries.get(w);
 		if(elist == null) {
 			elist = new ArrayList<Entry>();
-			entries.put(ref.getWidget(), elist);
+			entries.put(w, elist);
 		}
 		elist.add(entry);
 

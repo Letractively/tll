@@ -19,6 +19,7 @@ import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 
 /**
@@ -177,7 +178,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
 		gmp.clear();
-		editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
+		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
 	}
 
 	@Override
@@ -196,13 +197,13 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 
 			case ADDED:
 				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO));
+				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 
 			case UPDATED:
 				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO));
+				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 

@@ -24,15 +24,15 @@ import com.tll.server.rpc.entity.MEntityContext;
 public class AdminContextService extends RpcServlet implements IAdminContextService {
 
 	private static final long serialVersionUID = 7908647379731614097L;
-	
+
 	public AdminContextPayload getAdminContext() {
 		final RequestContext rc = getRequestContext();
 		final MEntityContext mec = (MEntityContext) rc.getServletContext().getAttribute(MEntityContext.KEY);
 		final AppContext ac = (AppContext) rc.getServletContext().getAttribute(AppContext.KEY);
-		
+
 		final com.tll.server.AdminContext sac =
-				(com.tll.server.AdminContext) rc.getSession().getAttribute(
-						com.tll.server.AdminContext.KEY);
+			(com.tll.server.AdminContext) rc.getSession().getAttribute(
+					com.tll.server.AdminContext.KEY);
 		assert sac != null;
 
 		final Marshaler entityMarshaller = mec.getMarshaler();
@@ -45,7 +45,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 		final Model account = entityMarshaller.marshalEntity(sac.getAccount(), MarshalOptions.NON_RELATIONAL);
 
 		final Status status = new Status();
-		status.addMsg("Admin Context retrieved.", MsgLevel.INFO, MsgAttr.NODISPLAY.flag);
+		status.addMsg("Admin Context retrieved.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 		return new AdminContextPayload(status, new AdminContext(ac.isDebug(), ac.getEnvironment(), user, account));
 	}
 

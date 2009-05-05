@@ -327,9 +327,6 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 				if(rowNum > -1) {
 					setText(rowIndex, c, Integer.toString(rowNum));
 				}
-				else {
-					setText(rowIndex, c, "*");
-				}
 			}
 			else {
 				String cv = cellRenderer.getCellValue(rowData, columns[c]);
@@ -359,14 +356,16 @@ public class ListingTable<R> extends Grid implements ClickHandler, KeyDownHandle
 	}
 
 	public final void onListingEvent(ListingEvent<R> event) {
-		if(event.getListingOp().isQuery() && event.isSuccess()) {
+		if(event.getListingOp().isQuery()) {
 			removeBodyRows();
-			addBodyRows(event.getPageElements(), event.getOffset());
-			final Sorting sorting = event.getSorting();
-			if(sortlinks != null && sorting != null) applySorting(sorting);
-			crntPage = event.getPageNum() + 1;
-			numPages = event.getNumPages();
-			actvRowIndex = crntRowIndex = -1; // reset
+			if(event.getPageElements() != null) {
+				addBodyRows(event.getPageElements(), event.getOffset());
+				final Sorting sorting = event.getSorting();
+				if(sortlinks != null && sorting != null) applySorting(sorting);
+				crntPage = event.getPageNum() + 1;
+				numPages = event.getNumPages();
+				actvRowIndex = crntRowIndex = -1; // reset
+			}
 		}
 	}
 

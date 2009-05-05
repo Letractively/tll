@@ -37,6 +37,7 @@ import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
@@ -142,7 +143,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 			}
 
 			void handleModelChangeError(ModelChangeEvent event) {
-				editPanel.applyFieldErrors(event.getStatus().getFieldMsgs());
+				editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
 			}
 
 			void handleModelChangeSuccess(ModelChangeEvent event) {

@@ -50,11 +50,6 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 		}
 
 		@Override
-		protected void handleFailure(Throwable caught) {
-			super.handleFailure(caught);
-		}
-
-		@Override
 		protected void handleSuccess(ListingPayload<Model> payload) {
 			super.handleSuccess(payload);
 			assert payload.getListingName() != null && listingName != null && payload.getListingName().equals(listingName);
@@ -64,8 +59,11 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 			listingGenerated = payload.getListingStatus() == ListingStatus.CACHED;
 
 			if(!listingGenerated && op.isQuery()) {
-				// we need to re-create the listing on the server - the cache has expired
-				fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+				if(!payload.hasErrors()) {
+					// we need to re-create the listing on the server - the cache has
+					// expired
+					fetch(listingRequest.getOffset(), listingRequest.getSorting(), true);
+				}
 			}
 			else {
 				// update client-side listing state
@@ -75,7 +73,9 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 				// reset
 				listingRequest = null;
 				// fire the listing event
-				sourcingWidget.fireEvent(new ListingEvent<Model>(op, payload, listingDef.getPageSize()));
+				sourcingWidget.fireEvent(new ListingEvent<Model>(payload.getListingName(), op, payload
+						.getListSize(), payload.getPageElements(), payload.getOffset(), payload.getSorting(), listingDef
+						.getPageSize()));
 			}
 		}
 	}

@@ -42,7 +42,7 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 
 	@Override
 	public void setMsgDisplay(IMsgDisplay msgDisplay) {
-		if(msgDisplay == null) throw new IllegalArgumentException();
+		if(msgDisplay == null) throw new IllegalArgumentException("Null msg display");
 		this.msgDisplayWidget = msgDisplay;
 	}
 
@@ -121,7 +121,7 @@ public final class BillboardValidationFeedback implements IErrorHandler, IHasMsg
 	}
 
 	@Override
-	public void resolveError(ErrorClassifier classifier, IWidgetRef source) {
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
 		if(source == null) {
 			msgDisplayWidget.removeUnsourced(classifier == null ? null : classifier.hashCode());
 		}

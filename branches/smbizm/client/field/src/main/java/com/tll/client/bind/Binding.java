@@ -106,7 +106,7 @@ public final class Binding {
 				catch(final ValidationException ve) {
 					if(instance.feedback != null) {
 						if(lastException != null) {
-							instance.feedback.resolveError(ErrorClassifier.CLIENT, (IWidgetRef) propertyChangeEvent.getSource());
+							instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT);
 						}
 						instance.feedback.handleError((IWidgetRef) propertyChangeEvent.getSource(), ve.getError());
 						lastException = ve;
@@ -118,7 +118,7 @@ public final class Binding {
 			}
 
 			if(instance.feedback != null) {
-				instance.feedback.resolveError(ErrorClassifier.CLIENT, (IWidgetRef) propertyChangeEvent.getSource());
+				instance.feedback.resolveError((IWidgetRef) propertyChangeEvent.getSource(), ErrorClassifier.CLIENT);
 			}
 
 			lastException = null;

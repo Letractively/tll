@@ -61,7 +61,6 @@ public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
 				final int rowIndex = getRowIndex(mkey);
 				if(rowIndex != -1) {
 					assert rowIndex > 0; // header row
-					// TODO determine how to handle named query specific model data!!
 					updateRow(rowIndex, event.getModel());
 				}
 				break;

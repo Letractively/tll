@@ -20,13 +20,17 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.bind.FieldBindingAction;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
+import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.msg.IMsgDisplay;
+import com.tll.client.ui.msg.MsgPopupRegistry;
+import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
 import com.tll.client.validate.ErrorHandlerDelegate;
+import com.tll.client.validate.IErrorHandler;
 import com.tll.common.model.Model;
 import com.tll.common.msg.Msg;
 
@@ -100,7 +104,17 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		if(fieldPanel == null) throw new IllegalArgumentException("A field panel must be specified.");
 		this.fieldPanel = fieldPanel;
 
-		editAction = new FieldBindingAction(globalMsgDisplay);
+		IErrorHandler errorHandler;
+		if(globalMsgDisplay == null) {
+			errorHandler = new FieldErrorHandler(new MsgPopupRegistry());
+		}
+		else {
+			errorHandler =
+					new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
+							new MsgPopupRegistry()));
+		}
+
+		editAction = new FieldBindingAction(errorHandler);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -183,16 +197,13 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
-		final ErrorHandlerDelegate ehandler = editAction.getErrorHandler();
+		final IErrorHandler ehandler = editAction.getErrorHandler();
 		// clear out any existing server side errors
 		ehandler.clear(ErrorClassifier.SERVER);
 		for(final Msg msg : msgs) {
 			final IFieldWidget<?> fw = root.getFieldWidget(msg.getRefToken());
 			String emsg;
 			if(fw != null) {
-				// turn off incremental validation for this field since this is a server
-				// sourced error and we want it to stick
-				fw.validateIncrementally(false);
 				emsg = msg.getMsg();
 			}
 			else {

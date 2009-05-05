@@ -57,9 +57,9 @@ public final class ErrorHandlerDelegate implements IErrorHandler {
 		}
 	}
 
-	public void resolveError(ErrorClassifier classifier, IWidgetRef source) {
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
 		for(final IErrorHandler handler : handlers) {
-			handler.resolveError(classifier, source);
+			handler.resolveError(source, classifier);
 		}
 	}
 

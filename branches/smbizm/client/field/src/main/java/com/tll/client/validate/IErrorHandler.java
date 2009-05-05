@@ -22,10 +22,10 @@ public interface IErrorHandler {
 
 	/**
 	 * Resolves (clears) all validation errors for the given source.
-	 * @param classifier
-	 * @param source
+	 * @param source the field ref. May be <code>null</code>
+	 * @param classifier the classifier which may be <code>null</code>
 	 */
-	void resolveError(ErrorClassifier classifier, IWidgetRef source);
+	void resolveError(IWidgetRef source, ErrorClassifier classifier);
 
 	/**
 	 * Removes all errors found to be associated with the given classifier.

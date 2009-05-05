@@ -47,7 +47,8 @@ public final class ModelListingTable extends ListingTable<Model> {
 	 *         given row key is present in the table.
 	 */
 	int getRowIndex(ModelKey rowKey) {
-		return rowKeys.indexOf(rowKey) + 1; // account for header row
+		final int i = rowKeys.indexOf(rowKey);
+		return i == -1 ? -1 : i + 1; // account for header row
 	}
 
 	@Override

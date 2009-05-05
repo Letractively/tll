@@ -102,9 +102,4 @@ IValidator {
 	 * @param fieldLabelContainer The desired ancestor {@link Widget}
 	 */
 	void setFieldLabelContainer(Widget fieldLabelContainer);
-
-	/**
-	 * @return the current validity state.
-	 */
-	boolean isValid();
 }

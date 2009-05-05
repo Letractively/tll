@@ -11,7 +11,6 @@
   <stylesheet src="css/msg.css" />
   <stylesheet src="css/options.css" />
   <stylesheet src="css/toolbar.css" />
-  <stylesheet src="css/status.css" />
 
   <inherits name='com.google.gwt.widgetideas.GlassPanel' />
 </module>

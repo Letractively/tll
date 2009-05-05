@@ -100,6 +100,7 @@ IListingHandler<R> {
 	// summary text ("Displaying elements x of y")
 	private Label lblSmry;
 
+	private boolean hasRows;
 	private int firstIndex = -1;
 	private int lastIndex = -1;
 	private int totalSize = -1;
@@ -324,8 +325,8 @@ IListingHandler<R> {
 	private void draw() {
 		if(pageSize > 0) {
 			// first page btn
-			btnPageFirst.setEnabled(!isFirstPage);
-			if(isFirstPage) {
+			btnPageFirst.setEnabled(!isFirstPage && hasRows);
+			if(isFirstPage || !hasRows) {
 				imageBundle.page_first_disabled().applyTo(imgPageFirst);
 			}
 			else {
@@ -333,8 +334,8 @@ IListingHandler<R> {
 			}
 
 			// last page btn
-			btnPageLast.setEnabled(!isLastPage);
-			if(isLastPage) {
+			btnPageLast.setEnabled(!isLastPage && hasRows);
+			if(isLastPage || !hasRows) {
 				imageBundle.page_last_disabled().applyTo(imgPageLast);
 			}
 			else {
@@ -342,8 +343,8 @@ IListingHandler<R> {
 			}
 
 			// prev page btn
-			btnPagePrev.setEnabled(!isFirstPage);
-			if(isFirstPage) {
+			btnPagePrev.setEnabled(!isFirstPage && hasRows);
+			if(isFirstPage || !hasRows) {
 				imageBundle.page_prev_disabled().applyTo(imgPagePrev);
 			}
 			else {
@@ -351,17 +352,24 @@ IListingHandler<R> {
 			}
 
 			// next page btn
-			btnPageNext.setEnabled(!isLastPage);
-			if(isLastPage) {
+			btnPageNext.setEnabled(!isLastPage && hasRows);
+			if(isLastPage || !hasRows) {
 				imageBundle.page_next_disabled().applyTo(imgPageNext);
 			}
 			else {
 				imageBundle.page_next().applyTo(imgPageNext);
 			}
 
-			tbPage.setText(Integer.toString(crntPage));
-			tbPage.setEnabled(numPages > 1);
-			lblPagePost.setText("of " + numPages);
+			tbPage.setEnabled(hasRows);
+			lblPagePost.setVisible(hasRows);
+			if(hasRows) {
+				tbPage.setText(Integer.toString(crntPage));
+				tbPage.setEnabled(numPages > 1);
+				lblPagePost.setText("of " + numPages);
+			}
+			else {
+				tbPage.setText("");
+			}
 		}
 
 		// summary caption
@@ -376,14 +384,22 @@ IListingHandler<R> {
 	}
 
 	public void onListingEvent(ListingEvent<R> event) {
-		if(event.getListingOp().isQuery() && event.isSuccess()) {
-			this.firstIndex = event.getOffset();
-			this.lastIndex = firstIndex + event.getPageElements().length - 1;
-			this.totalSize = event.getListSize();
-			this.numPages = event.getNumPages();
-			this.crntPage = event.getPageNum() + 1;
-			this.isFirstPage = (crntPage == 1);
-			this.isLastPage = (crntPage == numPages);
+		if(event.getListingOp().isQuery()) {
+			hasRows = event.getPageElements() != null;
+			if(hasRows) {
+				firstIndex = event.getOffset();
+				lastIndex = firstIndex + event.getPageElements().length - 1;
+				totalSize = event.getListSize();
+				numPages = event.getNumPages();
+				crntPage = event.getPageNum() + 1;
+				isFirstPage = (crntPage == 1);
+				isLastPage = (crntPage == numPages);
+			}
+			else {
+				firstIndex = lastIndex = numPages = crntPage = -1;
+				totalSize = 0;
+				isFirstPage = isLastPage = false;
+			}
 			draw();
 		}
 	}

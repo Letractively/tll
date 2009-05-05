@@ -59,17 +59,17 @@ IListingService<S, Model> {
 		ListingHandler<Model> handler = null;
 
 		if(listingRequest == null) {
-			status.addMsg("No listing command specified.", MsgLevel.ERROR);
+			status.addMsg("No listing command specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		final String listingName = listingRequest == null ? null : listingRequest.getListingName();
 		if(listingName == null) {
-			status.addMsg("No listing name specified.", MsgLevel.ERROR);
+			status.addMsg("No listing name specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		final ListingOp listingOp = listingRequest == null ? null : listingRequest.getListingOp();
 		if(listingOp == null) {
-			status.addMsg("No listing op specified.", MsgLevel.ERROR);
+			status.addMsg("No listing op specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 		}
 
 		ListingStatus listingStatus = null;
@@ -159,7 +159,7 @@ IListingService<S, Model> {
 						}
 						catch(final EmptyListException e) {
 							// we proceed to allow client to still show the listing
-							status.addMsg(e.getMessage(), MsgLevel.WARN);
+							status.addMsg(e.getMessage(), MsgLevel.WARN, MsgAttr.STATUS.flag);
 						}
 						catch(final ListHandlerException e) {
 							// shouldn't happen
@@ -185,7 +185,7 @@ IListingService<S, Model> {
 					try {
 						handler.query(offset.intValue(), sorting, (listingOp == ListingOp.REFRESH));
 						status.addMsg(listingOp.getName() + " for '" + listingName + "' successful.", MsgLevel.INFO,
-								MsgAttr.NODISPLAY.flag);
+								MsgAttr.STATUS.flag);
 					}
 					catch(final EmptyListException e) {
 						throw new ListingException(listingName, "No matching rows exist.", e);
@@ -224,7 +224,7 @@ IListingService<S, Model> {
 				}
 				listingStatus = ListingStatus.NOT_CACHED;
 			}
-			else if(handler != null) {
+			else if(handler != null && !status.hasErrors()) {
 				// cache listing handler
 				if(log.isDebugEnabled()) log.debug("[Re-]Caching listing '" + listingName + "'...");
 				ListingCache.storeHandler(request, listingName, handler);
@@ -237,8 +237,9 @@ IListingService<S, Model> {
 
 		final ListingPayload<Model> p = new ListingPayload<Model>(listingName, listingStatus);
 
-		// only generate the table page when it is needed at the client
-		if(handler != null && (listingOp != null && !listingOp.isClear())) {
+		// only provide page data when it is needed at the client and there are no
+		// errors
+		if(handler != null && !status.hasErrors() && (listingOp != null && !listingOp.isClear())) {
 			if(log.isDebugEnabled()) log.debug("Sending page data for '" + listingName + "'...");
 			final List<Model> list = handler.getElements();
 			p.setPageData(handler.size(), list.toArray(new Model[list.size()]), handler.getOffset(), handler.getSorting());

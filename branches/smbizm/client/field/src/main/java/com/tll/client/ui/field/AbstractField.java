@@ -131,8 +131,6 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	private IErrorHandler errorHandler;
 
-	private boolean valid = true;
-
 	/**
 	 * The incremental validation flag.
 	 */
@@ -474,17 +472,12 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 		if(validator != null) validator.remove(type);
 	}
 
-	@Override
-	public final boolean isValid() {
-		return valid;
-	}
-
 	/**
 	 * Resolves client-side errors.
 	 */
 	private void resolveError() {
 		if(errorHandler != null) {
-			errorHandler.resolveError(ErrorClassifier.CLIENT, this);
+			errorHandler.resolveError(this, ErrorClassifier.CLIENT);
 		}
 	}
 
@@ -522,10 +515,8 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 			if(validator != null) {
 				value = validator.validate(value);
 			}
-			valid = true;
 		}
 		catch(final ValidationException e) {
-			valid = false;
 			throw e;
 		}
 

@@ -19,6 +19,7 @@ import com.tll.common.data.EntityRequest;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 import com.tll.common.model.IEntityType;
+import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
@@ -70,11 +71,11 @@ public final class MEntityServiceDelegate {
 	private boolean validateEntityRequest(final EntityRequest request, final Payload payload) {
 		assert payload != null;
 		if(request == null) {
-			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR);
+			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;
 		}
 		if(request.getEntityType() == null) {
-			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR);
+			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;
 		}
 		return true;
@@ -88,7 +89,7 @@ public final class MEntityServiceDelegate {
 	 */
 	private boolean validateAuxDataRequest(final AuxDataRequest request, final Payload payload) {
 		if(request == null) {
-			payload.getStatus().addMsg("No aux data request specified", MsgLevel.ERROR);
+			payload.getStatus().addMsg("No aux data request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;
 		}
 		return true;

@@ -57,6 +57,13 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	}
 
 	/**
+	 * @return The number of contained messages.
+	 */
+	public int getNumMsgs() {
+		return msgPanel.size();
+	}
+
+	/**
 	 * @return the reference element
 	 */
 	public Widget getRefWidget() {
@@ -121,6 +128,8 @@ final class MsgPopup extends PopupPanel implements IMsgOperator {
 	@Override
 	public void showMsgs(boolean show) {
 		if(show) {
+			// don't show when there are no messages to show
+			if(getNumMsgs() < 1) return;
 			// make sure we aren't currently cloaked!
 			if(!DOMExt.isCloaked(refWidget.getElement())) {
 				setAutoHideEnabled(duration <= 0);

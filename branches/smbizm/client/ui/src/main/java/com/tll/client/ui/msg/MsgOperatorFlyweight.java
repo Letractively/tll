@@ -38,10 +38,16 @@ final class MsgOperatorFlyweight implements IMsgOperator, Iterable<IMsgOperator>
 
 	@Override
 	public void addMsg(Msg msg, Integer classifier) {
+		for(final IMsgOperator o : operators) {
+			o.addMsg(msg, classifier);
+		}
 	}
 
 	@Override
 	public void addMsgs(Iterable<Msg> msgs, Integer classifier) {
+		for(final IMsgOperator o : operators) {
+			o.addMsgs(msgs, classifier);
+		}
 	}
 
 	@Override

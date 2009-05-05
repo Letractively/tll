@@ -66,13 +66,19 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 					invalids.put((IFieldWidget<?>) source, regs);
 				}
 				trackHover((IFieldWidget<?>) source, regs, true);
+
+				// turn off incremental validation when the error originates from the
+				// server
+				if(error.getClassifier() != null && error.getClassifier().isServer()) {
+					((IFieldWidget<?>) source).validateIncrementally(false);
+				}
 			}
 		}
 	}
 
 	@Override
-	public void resolveError(ErrorClassifier classifier, IWidgetRef source) {
-		super.resolveError(classifier, source);
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+		super.resolveError(source, classifier);
 		if(source instanceof IFieldWidget) {
 			// handle styling
 			source.getWidget().removeStyleName(Styles.INVALID);
@@ -82,6 +88,11 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 			if(regs != null) {
 				trackHover((IFieldWidget<?>) source, regs, false);
 			}
+
+			// reset incremental validation if server error
+			if(classifier != null && classifier.isServer()) {
+				((IFieldWidget<?>) source).validateIncrementally(true);
+			}
 		}
 	}
 
@@ -89,7 +100,21 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	public void onMouseOver(MouseOverEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
 		if(field != null) {
-			mregistry.getOperator(field.getWidget(), false).showMsgs(!field.isValid());
+			mregistry.getOperator(field.getWidget(), false).showMsgs(true);
+		}
+	}
+
+	@Override
+	public void clear(ErrorClassifier classifier) {
+		super.clear(classifier);
+		if(classifier != null && classifier.isServer()) {
+			// NOTE: to reset incr. validation, we iterate over all invalids
+			// irregardless of classification,
+			// since we don't have easy access to the field widget in this context,
+			// and it doesn't hurt to iterate over all
+			for(final IFieldWidget<?> fw : invalids.keySet()) {
+				fw.validateIncrementally(true);
+			}
 		}
 	}
 
@@ -98,6 +123,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 		super.clear();
 		for(final IFieldWidget<?> fw : invalids.keySet()) {
 			trackHover(fw, invalids.get(fw), false);
+			fw.validateIncrementally(true);
 		}
 		invalids.clear();
 	}
@@ -105,7 +131,7 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	@Override
 	public void onMouseOut(MouseOutEvent event) {
 		final IFieldWidget<?> field = resolveField(event);
-		if(field != null && !field.isValid()) {
+		if(field != null) {
 			mregistry.getOperator(field.getWidget(), false).showMsgs(false);
 		}
 	}

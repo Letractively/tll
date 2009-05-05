@@ -55,12 +55,12 @@ public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegis
 	}
 
 	@Override
-	public void resolveError(ErrorClassifier sourcing, IWidgetRef source) {
-		if(sourcing == null) {
+	public void resolveError(IWidgetRef source, ErrorClassifier classifier) {
+		if(classifier == null) {
 			mregistry.getOperator(source.getWidget(), false).clearMsgs();
 		}
 		else {
-			mregistry.getOperator(source.getWidget(), false).removeMsgs(sourcing.hashCode());
+			mregistry.getOperator(source.getWidget(), false).removeMsgs(classifier.hashCode());
 		}
 	}
 

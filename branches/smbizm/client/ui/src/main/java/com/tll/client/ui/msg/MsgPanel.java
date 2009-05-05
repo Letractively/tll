@@ -94,6 +94,13 @@ public class MsgPanel extends Composite {
 	}
 
 	/**
+	 * @return The number of contained messages.
+	 */
+	public int size() {
+		return bindings.size();
+	}
+
+	/**
 	 * Adds a single {@link Msg} to this panel.
 	 * @param msg
 	 * @param classifier optional classifier

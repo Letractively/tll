@@ -49,6 +49,7 @@ import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.msg.Msg;
+import com.tll.common.msg.Msg.MsgAttr;
 
 /**
  * MainPanel
@@ -275,7 +276,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			add(dpViewHistory);
 
 			// status history...
-			statusDisplay = new StatusDisplay();
+			statusDisplay = new StatusDisplay(MsgAttr.EXCEPTION.flag | MsgAttr.STATUS.flag);
 			simplePanel = new SimplePanel();
 			simplePanel.add(statusDisplay);
 
@@ -371,10 +372,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		public void onStatusEvent(StatusEvent event) {
 			final Status status = event.getStatus();
 			if(status != null) {
-				final List<Msg> gms = status.getGlobalDisplayMsgs();
+				final List<Msg> gms = status.getMsgs(MsgAttr.EXCEPTION.flag);
 				if(gms != null && gms.size() > 0) {
-					// TODO create a dedicated inlined widget to handle global status messages.
-					//MsgManager.get().post(gms, this, true).show(Position.CENTER, -1);
 					Msgs.post(gms, this, Position.CENTER, -1, true);
 				}
 			}

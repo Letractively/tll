@@ -107,7 +107,8 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			// load by business key
 			final ISearch search = request.getSearch();
 			if(search == null) {
-				payload.getStatus().addMsg("A business key wise search must be specified.", MsgLevel.ERROR);
+				payload.getStatus()
+						.addMsg("A business key wise search must be specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 				return null;
 			}
 
@@ -142,15 +143,19 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			for(final String propName : refs.keySet()) {
 				payload.setRelatedOneRef(propName, refs.get(propName));
 			}
+
+			payload.getStatus().addMsg(e.descriptor() + " loaded.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 		}
 		catch(final EntityNotFoundException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final SystemError e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 		catch(final RuntimeException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
@@ -166,6 +171,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			Model model = request.getEntity();
 			E e = context.getMarshaler().unmarshalEntity(entityClass, model);
 			final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
+			final boolean isNew = e.isNew();
 			e = svc.persist(e);
 
 			// handle persist options
@@ -175,7 +181,8 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			model = context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
 			payload.setEntity(model);
 
-			payload.getStatus().addMsg(e.descriptor() + " persisted.", MsgLevel.INFO);
+			payload.getStatus()
+					.addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
 		}
 		catch(final EntityExistsException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
@@ -187,10 +194,12 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			}
 		}
 		catch(final SystemError e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 		catch(final RuntimeException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
@@ -210,16 +219,18 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			svc.purge(e);
 
 			payload.setEntityRef(entityRef);
-			payload.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO);
+			payload.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 		}
 		catch(final EntityNotFoundException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
 		}
 		catch(final SystemError e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}
 		catch(final RuntimeException e) {
+			RpcServlet.exceptionToStatus(e, payload.getStatus());
 			context.getExceptionHandler().handleException(e);
 			throw e;
 		}

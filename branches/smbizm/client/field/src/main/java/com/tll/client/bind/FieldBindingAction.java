@@ -6,17 +6,12 @@ package com.tll.client.bind;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.client.ui.IBindableWidget;
-import com.tll.client.ui.field.FieldErrorHandler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.IFieldBoundWidget;
 import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.field.IIndexedFieldBoundWidget;
-import com.tll.client.ui.msg.IMsgDisplay;
-import com.tll.client.ui.msg.MsgPopupRegistry;
-import com.tll.client.validate.BillboardValidationFeedback;
 import com.tll.client.validate.Error;
 import com.tll.client.validate.ErrorClassifier;
-import com.tll.client.validate.ErrorHandlerDelegate;
 import com.tll.client.validate.IErrorHandler;
 import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
@@ -65,6 +60,8 @@ public final class FieldBindingAction {
 		group.setErrorHandler(errorHandler);
 		// create bindings for all provided field widgets in the root field group
 		for(final IFieldWidget<?> fw : group.getFieldWidgets(null)) {
+			// clear the current value to re-mark the field's initial value
+			fw.clearValue();
 			Log.debug("Binding field group: " + group + " to model [" + model + "]." + fw.getPropertyName());
 			final Binding cb = createBinding(model, fw.getPropertyName(), fw, errorHandler);
 			if(cb != null) {
@@ -77,7 +74,7 @@ public final class FieldBindingAction {
 	/**
 	 * The local error handler
 	 */
-	private final ErrorHandlerDelegate errorHandler;
+	private final IErrorHandler errorHandler;
 
 	/**
 	 * The field bound widget.
@@ -93,26 +90,16 @@ public final class FieldBindingAction {
 
 	/**
 	 * Constructor
+	 * @param errorHandler The error handler to employ.
 	 */
-	public FieldBindingAction() {
-		this(null);
-	}
-
-	/**
-	 * Constructor
-	 * @param globalMsgDisplay Optional message display for global validation
-	 *        feedback.
-	 */
-	public FieldBindingAction(IMsgDisplay globalMsgDisplay) {
-		errorHandler =
-				new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
-						new MsgPopupRegistry()));
+	public FieldBindingAction(IErrorHandler errorHandler) {
+		this.errorHandler = errorHandler;
 	}
 
 	/**
 	 * @return The composite error handler.
 	 */
-	public ErrorHandlerDelegate getErrorHandler() {
+	public IErrorHandler getErrorHandler() {
 		return errorHandler;
 	}
 
