@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.Br;
 
 /**
  * FlowPanelFieldComposer - Lays out fields in a flow style having the following
@@ -35,7 +35,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		 * Style for wrapping divs containing a field and label.
 		 */
 		public static final String FIELD_CONTAINER = "fldc";
-		
+
 		/**
 		 * Style applied to each row of fields.
 		 */
@@ -99,7 +99,7 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 			fp.add(fldLbl);
 		}
 		else {
-			fp.add(new Br()); // this is too much space
+			fp.add(new SimplePanel()); // i.e. an empty div
 		}
 		fp.add(w);
 		getCurrentRow().add(fp);

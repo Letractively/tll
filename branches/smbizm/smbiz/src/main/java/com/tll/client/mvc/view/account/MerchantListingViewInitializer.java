@@ -18,7 +18,7 @@ public final class MerchantListingViewInitializer extends AbstractDynamicViewIni
 	 * Constructor
 	 * @param ispRef The required parent isp ref
 	 */
-	MerchantListingViewInitializer(ModelKey ispRef) {
+	public MerchantListingViewInitializer(ModelKey ispRef) {
 		super(MerchantListingView.klas);
 		this.ispRef = ispRef;
 	}

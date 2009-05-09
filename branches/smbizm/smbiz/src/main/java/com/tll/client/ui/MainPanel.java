@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.App;
+import com.tll.client.OpsManager;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.IUserSessionListener;
@@ -34,12 +35,14 @@ import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
+import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.ShowViewRequest;
+import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
-import com.tll.client.ui.view.RecentViewsPanel;
+import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.util.Fmt;
@@ -167,7 +170,11 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// clear out the views
 			ViewManager.get().clear();
+			return;
 		}
+
+		// update the options
+		rightNav.opsPanel.setOptions(OpsManager.get(ac));
 	}
 
 	private final class Header extends FlowPanel {
@@ -192,11 +199,11 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		Label lblCrntAcntType;
 		Label lblCrntAcntDateCreated;
 
-		DisclosurePanel dpViewHistory;
-		RecentViewsPanel viewHistoryPanel;
+		DisclosurePanel dpOps;
+		OptionsPanel opsPanel;
 
-		DisclosurePanel dpStatusDisplay;
-		StatusDisplay statusDisplay;
+		DisclosurePanel dpCmdDisplay;
+		StatusDisplay cmdDisplay;
 
 		public RightNav() {
 			super();
@@ -205,7 +212,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			Label lbl;
 
-			// current user...
+			// current user
 			vlUsername = new ViewLink();
 			lblUserDateCreated = new Label();
 			lblUserAccount = new Label();
@@ -239,7 +246,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			simplePanel.add(frmLogout);
 			add(simplePanel);
 
-			// current account...
+			// current account
 			lblCrntAcnt = new Label();
 			lblCrntAcntType = new Label();
 			lblCrntAcntDateCreated = new Label();
@@ -259,6 +266,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			g.setWidget(2, 1, lblCrntAcntDateCreated);
 
 			simplePanel = new SimplePanel();
+			DOM.setElementAttribute(simplePanel.getElement(), "id", "currentAccount");
 			simplePanel.add(g);
 
 			dpCrntAccount = new DisclosurePanel("Current Account", true);
@@ -266,25 +274,25 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			dpCrntAccount.add(simplePanel);
 			add(dpCrntAccount);
 
-			// view history...
-			dpViewHistory = new DisclosurePanel("Recent Views", false);
-			dpViewHistory.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			viewHistoryPanel = new RecentViewsPanel(3);
-			simplePanel = new SimplePanel();
-			simplePanel.add(viewHistoryPanel);
-			dpViewHistory.add(simplePanel);
-			add(dpViewHistory);
+			// operations
+			dpOps = new DisclosurePanel("Operations", true);
+			dpOps.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
+			// simplePanel = new SimplePanel();
+			opsPanel = new OptionsPanel();
+			opsPanel.addOptionHandler(OpsManager.get());
+			// simplePanel.add(opsPanel);
+			dpOps.add(opsPanel);
+			add(dpOps);
 
-			// status history...
-			statusDisplay = new StatusDisplay(MsgAttr.EXCEPTION.flag | MsgAttr.STATUS.flag);
+			// command history
+			cmdDisplay = new StatusDisplay(MsgAttr.EXCEPTION.flag | MsgAttr.STATUS.flag);
 			simplePanel = new SimplePanel();
-			simplePanel.add(statusDisplay);
-
-			dpStatusDisplay = new DisclosurePanel("Status History", false);
-			dpStatusDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			DOM.setElementAttribute(dpStatusDisplay.getElement(), "id", "dpStatusDisplay");
-			dpStatusDisplay.add(simplePanel);
-			add(dpStatusDisplay);
+			simplePanel.add(cmdDisplay);
+			dpCmdDisplay = new DisclosurePanel("Command History", false);
+			dpCmdDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
+			DOM.setElementAttribute(dpCmdDisplay.getElement(), "id", "dpCmdDisplay");
+			dpCmdDisplay.add(simplePanel);
+			add(dpCmdDisplay);
 		}
 
 		public void onClick(ClickEvent event) {
@@ -350,7 +358,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	 * Center - A {@link SimplePanel} designed to contain the current pinned view.
 	 * @author jpk
 	 */
-	private final class Center extends FlowPanel implements IStatusHandler {
+	private final class Center extends FlowPanel implements IStatusHandler, IViewChangeHandler {
 
 		public Center() {
 			super();
@@ -360,13 +368,17 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		@Override
 		protected void onLoad() {
 			super.onLoad();
+			add(App.getGlobalMsgPanel());
 			StatusEventDispatcher.get().addStatusHandler(this);
+			ViewManager.get().addViewChangeHandler(this);
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
+			ViewManager.get().removeViewChangeHandler(this);
 			StatusEventDispatcher.get().removeStatusHandler(this);
+			remove(App.getGlobalMsgPanel());
 		}
 
 		public void onStatusEvent(StatusEvent event) {
@@ -379,14 +391,18 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			}
 		}
 
-	}
+		@Override
+		public void onViewChange(ViewChangeEvent event) {
+			App.getGlobalMsgPanel().clear();
+		}
+	} // Center
 
 	private final class Footer extends FlowPanel {
 
 		public Footer() {
 			super();
 			setStylePrimaryName(Styles.FOOTER);
-			add(new HTML("<p>&copy; 2009 The Logic Lab - smbiz v" + App.constants.appVersion() + "</p>"));
+			add(new HTML("<p>&copy; 2009 The Logic Lab - smbiz v" + App.constants().appVersion() + "</p>"));
 		}
 
 	}

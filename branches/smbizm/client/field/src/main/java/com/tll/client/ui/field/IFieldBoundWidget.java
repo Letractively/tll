@@ -5,7 +5,7 @@
  */
 package com.tll.client.ui.field;
 
-import com.tll.client.bind.FieldBindingAction;
+import com.tll.client.bind.FieldBinding;
 import com.tll.common.model.IHasModel;
 
 /**
@@ -22,11 +22,11 @@ public interface IFieldBoundWidget extends IHasFieldGroup, IHasModel {
 	/**
 	 * @return The action for this bindable widget.
 	 */
-	FieldBindingAction getAction();
+	FieldBinding getAction();
 
 	/**
 	 * Sets the action.
 	 * @param action
 	 */
-	void setAction(FieldBindingAction action);
+	void setAction(FieldBinding action);
 }

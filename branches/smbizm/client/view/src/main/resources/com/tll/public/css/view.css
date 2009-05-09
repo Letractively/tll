@@ -48,6 +48,7 @@
 .viewContainer-popped .view {
 	overflow: visible;
 	height: auto;
+	margin: 2px;
 }
 
 .viewContainer-popped .portal {

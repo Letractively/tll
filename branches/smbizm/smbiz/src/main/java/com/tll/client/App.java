@@ -7,6 +7,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.tll.client.ui.ImageBundle;
+import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.common.model.IEntityType;
+import com.tll.common.model.SmbizEntityType;
 
 /**
  * App - General app wide utility methods and constants.
@@ -15,9 +18,24 @@ import com.tll.client.ui.ImageBundle;
 public abstract class App {
 
 	/**
+	 * Use this token to initialize GWT history tracking.
+	 */
+	public static final String INITIAL_HISTORY_TOKEN = "";
+
+	/**
 	 * The app wide image bundle.
 	 */
 	private static final ImageBundle imageBundle = (ImageBundle) GWT.create(ImageBundle.class);
+
+	/**
+	 * App wide constants (based on Constants.properties file).
+	 */
+	private static final Constants constants = (Constants) GWT.create(Constants.class);
+
+	/**
+	 * App wide global msg panel.
+	 */
+	private static final GlobalMsgPanel gmp = new GlobalMsgPanel();
 
 	/**
 	 * @return the app scoped image bundle instance.
@@ -27,68 +45,38 @@ public abstract class App {
 	}
 
 	/**
-	 * Use this token to initialize GWT history tracking.
+	 * @return The app wide constants.
 	 */
-	public static final String INITIAL_HISTORY_TOKEN = "";
+	public static Constants constants() {
+		return constants;
+	}
 
 	/**
-	 * App wide constants (based on Constants.properties file).
+	 * @return The global message panel.
 	 */
-	public static final Constants constants = (Constants) GWT.create(Constants.class);
+	public static GlobalMsgPanel getGlobalMsgPanel() {
+		return gmp;
+	}
 
 	/**
 	 * Performs initialization stuff that should be invoked immediately in
 	 * onModuleLoad()
 	 */
 	public static void init() {
-
 		Log.setUncaughtExceptionHandler();
-
-		// set the uncaught exception handler
-		/*
-		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-
-			public void onUncaughtException(final Throwable tracepoint) {
-				App.resetBusy();
-				performDefaultErrorHandling(tracepoint);
-			}
-		});
-		*/
 
 		// setup history tracking by establishing an initial token name in the
 		// history queue
 		History.newItem(INITIAL_HISTORY_TOKEN);
 	}
 
-	/*
-	private void performDefaultErrorHandling(final Throwable caught) {
-		if(caught != null) {
-			final String stacktrace = getStacktraceAsString(caught);
-			Window.alert(stacktrace);
-			if(!GWT.isScript()) GWT.log("Error", caught);
-		}
-		else {
-			final String message = "An Error occurred, but we have no further information about the cause.";
-			Window.alert(message);
-		}
+	/**
+	 * Translates a generic {@link IEntityType} to the app specific enum
+	 * equivalent.
+	 * @param et the generic entity type
+	 * @return the smbiz specific enum entity type equivalent
+	 */
+	public static SmbizEntityType smbizEntityType(IEntityType et) {
+		return IEntityType.Util.toEnum(SmbizEntityType.class, et);
 	}
-
-	private static String getStacktraceAsString(final Throwable tracepoint) {
-		final StackTraceElement[] trace = tracepoint.getStackTrace();
-		final StringBuilder sbuf = new StringBuilder(2048);
-		sbuf.append(tracepoint.toString());
-		sbuf.append(": at\n");
-		// I cut the stacktrace at depth 7
-		final int length = Math.min(7, trace.length);
-		for(int i = 0; i <= length; i++) {
-			sbuf.append(trace[i].toString());
-			sbuf.append("\n");
-		}
-		if(trace.length > 7) {
-			sbuf.append("...");
-		}
-		final String stacktrace = sbuf.toString();
-		return stacktrace;
-	}
-	*/
 }

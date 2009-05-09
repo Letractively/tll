@@ -18,13 +18,6 @@ public abstract class AbstractModelAwareView<I extends IViewInitializer> extends
 IModelAwareView<I> {
 
 	/**
-	 * Constructor
-	 */
-	public AbstractModelAwareView() {
-		addHandler(this, ModelChangeEvent.TYPE);
-	}
-
-	/**
 	 * Must be implemented by concrete views.
 	 * @param event
 	 * @return true/false
@@ -51,7 +44,7 @@ IModelAwareView<I> {
 	public final void onModelChangeEvent(ModelChangeEvent event) {
 		if(shouldHandleModelChangeEvent(event)) {
 			Log.debug("View ( " + toString() + " ) is handling model change event: " + event.toString() + "..");
-			if(event.getStatus().hasErrors()) {
+			if(event.getStatus() != null && event.getStatus().hasErrors()) {
 				// has errors
 				handleModelChangeError(event);
 			}

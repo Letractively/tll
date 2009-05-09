@@ -4,12 +4,8 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.mvc.view.account.IspListingView;
-import com.tll.client.mvc.view.intf.InterfacesView;
-import com.tll.client.ui.HtmlListPanel;
-import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.AccountSearch;
 import com.tll.criteria.CriteriaType;
@@ -34,7 +30,7 @@ public class AspMain extends MainView {
 		}
 	}
 
-	private final HtmlListPanel links = new HtmlListPanel(false);
+	private final Label lbl;
 
 	/**
 	 * Constructor
@@ -45,10 +41,8 @@ public class AspMain extends MainView {
 		final AccountSearch as = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.ISP);
 		as.setNamedQuery("account.ispList");
 
-		links.append(new ViewLink("Isp Listing", "Isp Listing", new StaticViewInitializer(IspListingView.klas)));
-		links.append(new ViewLink("Interfaces", "Interfaces", new StaticViewInitializer(InterfacesView.klas)));
-		links.append(new Hyperlink("Site Summary", "siteSmry"));
-		addWidget(links);
+		lbl = new Label("This is the ASP main view.");
+		addWidget(lbl);
 	}
 
 	public String getLongViewName() {
@@ -56,7 +50,7 @@ public class AspMain extends MainView {
 	}
 
 	protected Widget getViewWidgetInternal() {
-		return links;
+		return lbl;
 	}
 
 	@Override

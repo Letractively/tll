@@ -53,6 +53,9 @@ label .rqd {
 .fldc {
   margin: 1px;
 }
+.fldc a {
+  display: block;
+}
 
 .frow {
   margin-top: .2em;
@@ -70,4 +73,58 @@ label .rqd {
 
 .fgrid .cell-fld {
   padding: 2px;
+}
+
+/* TabbedIndexedFieldPanel */
+.tifp {
+}
+
+.tifp .empty {
+  padding: 2em;
+}
+
+.tifp .gwt-TabBar .gwt-TabBarItem .delbtn {
+	display: none;
+}
+
+.tifp .gwt-TabBar .gwt-TabBarItem-selected .delbtn {
+	background-color: transparent !important;
+	display: block;
+}
+.tifp .gwt-TabBar .gwt-TabBarItem-selected * {
+	font-weight: bold;
+}
+
+.tifp .toolbar {
+	background-color: transparent;
+	height: inherit !important;
+}
+.tifp .button-up,
+.tifp .button-up-hovering,
+.tifp .button-up-disabled {
+  padding: 0;
+}
+.tifp .button-down,
+.tifp .button-down-hovering,
+.tifp .button-down-disabled {
+  padding: 0;
+}
+
+.tifp .button-up {
+  border-color: transparent;
+}
+.tifp .button-up-hovering {
+	background-color: white;
+}
+.tifp .button-up-disabled {
+  border-color: transparent;
+}
+.tifp .button-down {
+  border-color: transparent;
+}
+.tifp .button-down-hovering {
+  border-color: transparent;
+}
+.tifp .button-down-disabled {
+  border-color: transparent;
 }

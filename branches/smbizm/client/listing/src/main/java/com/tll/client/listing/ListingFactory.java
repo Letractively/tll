@@ -6,6 +6,7 @@ package com.tll.client.listing;
 import com.tll.client.ui.listing.ListingTable;
 import com.tll.client.ui.listing.ListingWidget;
 import com.tll.client.ui.listing.ModelListingWidget;
+import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.model.Model;
 import com.tll.common.search.ISearch;
@@ -51,7 +52,7 @@ public abstract class ListingFactory {
 		final RemoteListingOperator<S> lo =
 			createRemoteOperator(listingName, listHandlerType, searchCriteria, propKeys, config.getPageSize(),
 					initialSorting);
-		return assemble(config, new ModelListingWidget(config), lo);
+		return assemble(config, new RemoteListingWidget(config), lo);
 	}
 
 	/**

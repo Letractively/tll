@@ -5,12 +5,13 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.data.rpc.IRpcCommand;
-import com.tll.client.data.rpc.ModelChangeManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.listing.AbstractRowOptions;
+import com.tll.client.model.IHasModelChangeHandlers;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.listing.ModelListingWidget;
 
 /**
@@ -18,7 +19,7 @@ import com.tll.client.ui.listing.ModelListingWidget;
  * @author jpk
  * @param <I> the view initializer type
  */
-public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
+public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> implements IHasModelChangeHandlers {
 
 	protected static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
 
@@ -58,9 +59,7 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			final IRpcCommand cmd = ModelChangeManager.get().deleteModel(listingWidget.getRowKey(rowIndex), null);
-			cmd.addRpcHandler(new RpcUiHandler(listingWidget));
-			cmd.execute();
+			ModelChangeManager.deleteModel(listingWidget, listingWidget.getRowKey(rowIndex), null).execute();
 		}
 
 	}
@@ -69,6 +68,16 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 	 * The listing widget.
 	 */
 	protected ModelListingWidget listingWidget;
+
+	/**
+	 * Constructor
+	 */
+	public ListingView() {
+		super();
+		// listing views shall notify the other views of model change events that
+		// happen in the listing
+		addModelChangeHandler(ViewManager.get());
+	}
 
 	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
@@ -89,6 +98,11 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 		if(listingWidget != null) {
 			listingWidget.clear();
 		}
+	}
+
+	@Override
+	public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
+		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
 
 	@Override

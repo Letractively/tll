@@ -23,7 +23,7 @@ import com.tll.common.search.ISearch;
  * CrudCommand - Issues CRUD commands to the server.
  * @author jpk
  */
-class CrudCommand extends RpcCommand<EntityPayload> {
+public class CrudCommand extends RpcCommand<EntityPayload> {
 
 	public enum CrudOp {
 		LOAD,

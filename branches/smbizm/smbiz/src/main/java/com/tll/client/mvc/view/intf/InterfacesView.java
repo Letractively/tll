@@ -10,17 +10,24 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.App;
 import com.tll.client.Style;
-import com.tll.client.data.rpc.IRpcCommand;
-import com.tll.client.data.rpc.ModelChangeManager;
+import com.tll.client.data.rpc.IHasRpcHandlers;
+import com.tll.client.data.rpc.IRpcHandler;
+import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.listing.IListingHandler;
 import com.tll.client.listing.IListingOperator;
 import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
+import com.tll.client.model.IHasModelChangeHandlers;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.view.AbstractModelAwareView;
 import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
@@ -73,17 +80,29 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 	 */
 	private static final class InterfacesStack extends StackPanel implements IListingHandler<Model> {
 
+		private static AbstractInterfacePanel resolveInterfacePanel(IEntityType intfType) {
+			final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, intfType);
+			if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
+				return new MultiOptionInterfacePanel();
+			}
+			else if(SmbizEntityType.INTERFACE_SWITCH == set) {
+				return new SwitchInterfacePanel();
+			}
+			else {
+				throw new IllegalArgumentException();
+			}
+		}
+
 		/**
-		 * InterfaceStack - Binding between a stack index and an {@link EditPanel}
-		 * assigned to manage the edit for the asociated interface.
+		 * InterfaceStack - Exteneded {@link EditPanel} to manage edit, rpc and
+		 * model change events for the bound interface.
 		 * @author jpk
 		 */
-		private final class InterfaceStack implements IEditHandler {
+		private final class InterfaceStack extends EditPanel implements IEditHandler, IHasRpcHandlers, IHasModelChangeHandlers, IModelChangeHandler {
 
 			// private final int stackIndex;
 			private final ModelKey intfRef;
 			private Model model; // the interface model
-			private final EditPanel editPanel;
 			private final AuxDataRequest auxDataRequest = new AuxDataRequest();
 
 			/**
@@ -91,14 +110,14 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 			 * @param intfRef
 			 */
 			public InterfaceStack(/*int stackIndex, */ModelKey intfRef) {
-				super();
+				super(App.getGlobalMsgPanel(), resolveInterfacePanel(intfRef.getEntityType()), false, true);
 				// this.stackIndex = stackIndex;
 				this.intfRef = intfRef;
 
-				// TODO add global msg panel ref
-				editPanel = new EditPanel(null, resolveInterfacePanel(intfRef.getEntityType()), false, true);
-				editPanel.addEditHandler(this);
-				editPanel.setVisible(false); // hide initially
+				addEditHandler(this);
+				addRpcHandler(new RpcUiHandler(InterfacesStack.this));
+				addModelChangeHandler(this);
+				setVisible(false); // hide initially
 
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SWITCH);
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_SINGLE);
@@ -107,43 +126,37 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 				auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 			}
 
-			private AbstractInterfacePanel<? extends Widget> resolveInterfacePanel(IEntityType intfType) {
-				final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, intfType);
-				if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
-					return new MultiOptionInterfacePanel();
-				}
-				else if(SmbizEntityType.INTERFACE_SWITCH == set) {
-					return new SwitchInterfacePanel();
-				}
-				else {
-					throw new IllegalArgumentException();
-				}
+			@Override
+			public HandlerRegistration addRpcHandler(IRpcHandler handler) {
+				return addHandler(handler, RpcEvent.TYPE);
+			}
+
+			@Override
+			public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
+				return addHandler(handler, ModelChangeEvent.TYPE);
 			}
 
 			public void loadInterfaceIfNecessary() {
 				if(model == null) {
-					final IRpcCommand cmd = ModelChangeManager.get().loadModel(intfRef, null, auxDataRequest);
-					cmd.addRpcHandler(new RpcUiHandler(InterfacesStack.this));
-					cmd.execute();
+					ModelChangeManager.loadModel(this, intfRef, null, auxDataRequest).execute();
 				}
 			}
 
 			public void onEdit(EditEvent event) {
-				IRpcCommand cmd = null;
+				Command cmd = null;
 				if(event.getOp().isSave()) {
-					cmd = ModelChangeManager.get().persistModel(model, null);
+					cmd = ModelChangeManager.persistModel(this, model, null);
 				}
 				else if(event.getOp() == EditOp.DELETE) {
-					cmd = ModelChangeManager.get().deleteModel(model.getKey(), null);
+					cmd = ModelChangeManager.deleteModel(this, model.getKey(), null);
 				}
 				if(cmd != null) {
-					cmd.addRpcHandler(new RpcUiHandler(InterfacesStack.this));
 					cmd.execute();
 				}
 			}
 
 			void handleModelChangeError(ModelChangeEvent event) {
-				editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
+				applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
 			}
 
 			void handleModelChangeSuccess(ModelChangeEvent event) {
@@ -152,16 +165,28 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 						model = event.getModel();
 						// open er up
 						// showStack(stackIndex);
-						editPanel.setVisible(true);
+						setVisible(true);
 						// NOTE: we fall through
 					case UPDATED:
-						editPanel.setModel(model);
+						setModel(model);
 						break;
 
 					case DELETED:
 						// refresh the interface listing
 						refreshData();
 						break;
+				}
+			}
+
+			@Override
+			public void onModelChangeEvent(ModelChangeEvent event) {
+				if(event.getStatus() != null && event.getStatus().hasErrors()) {
+					// has errors
+					handleModelChangeError(event);
+				}
+				else {
+					// no errors
+					handleModelChangeSuccess(event);
 				}
 			}
 
@@ -188,7 +213,7 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 			listHandler =
 				ListingFactory.createRemoteOperator(listingName, ListHandlerType.COLLECTION, criteria, null, -1,
 						defaultSorting);
-			//listHandler.addListingHandler(this);
+			listHandler.setSourcingWidget(this);
 			addHandler(this, ListingEvent.TYPE);
 		}
 
@@ -239,18 +264,18 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 				final Model data = intfs[i];
 				final ModelKey ref = data.getKey();
 				assert ref != null && ref.isSet();
-				final InterfaceStack ir = new InterfaceStack(ref);
-				list.add(ir);
-				add(ir.editPanel, getStackHtml(data), true);
+				final InterfaceStack pnl = new InterfaceStack(ref);
+				list.add(pnl);
+				add(pnl, getStackHtml(data), true);
 			}
 			initialized = true;
 		}
 
 		void handleModelChangeSuccess(ModelChangeEvent event) {
 			final Widget ew = (Widget) event.getSource();
-			for(final InterfaceStack iv : list) {
-				if(ew == iv.editPanel) {
-					iv.handleModelChangeSuccess(event);
+			for(final InterfaceStack pnl : list) {
+				if(ew == pnl) {
+					pnl.handleModelChangeSuccess(event);
 					return;
 				}
 			}
@@ -258,9 +283,9 @@ public class InterfacesView extends AbstractModelAwareView<StaticViewInitializer
 
 		void handleModelChangeError(ModelChangeEvent event) {
 			final Widget ew = (Widget) event.getSource();
-			for(final InterfaceStack iv : list) {
-				if(ew == iv.editPanel) {
-					iv.handleModelChangeError(event);
+			for(final InterfaceStack pnl : list) {
+				if(ew == pnl) {
+					pnl.handleModelChangeError(event);
 					return;
 				}
 			}

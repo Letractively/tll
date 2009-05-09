@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.FieldBindingAction;
+import com.tll.client.bind.FieldBinding;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldErrorHandler;
@@ -42,7 +42,7 @@ import com.tll.common.msg.Msg;
  * and cancel buttons in constant position.
  * @author jpk
  */
-public final class EditPanel extends Composite implements ClickHandler, IHasEditHandlers {
+public class EditPanel extends Composite implements ClickHandler, IHasEditHandlers {
 
 	/**
 	 * Styles - (admin.css)
@@ -79,7 +79,10 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	private final FieldPanel<? extends Widget> fieldPanel;
 
-	private final FieldBindingAction editAction;
+	/**
+	 * The model/field data transfer mechanism.
+	 */
+	private final FieldBinding binding;
 
 	/**
 	 * The panel containing the edit buttons
@@ -110,11 +113,11 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 		}
 		else {
 			errorHandler =
-					new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
-							new MsgPopupRegistry()));
+				new ErrorHandlerDelegate(new BillboardValidationFeedback(globalMsgDisplay), new FieldErrorHandler(
+						new MsgPopupRegistry()));
 		}
 
-		editAction = new FieldBindingAction(errorHandler);
+		binding = new FieldBinding(errorHandler);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -182,7 +185,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {
-				fieldPanel.setAction(editAction);
+				fieldPanel.setAction(binding);
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
 			}
@@ -197,7 +200,7 @@ public final class EditPanel extends Composite implements ClickHandler, IHasEdit
 	 */
 	public void applyFieldErrors(final List<Msg> msgs) {
 		final FieldGroup root = fieldPanel.getFieldGroup();
-		final IErrorHandler ehandler = editAction.getErrorHandler();
+		final IErrorHandler ehandler = binding.getErrorHandler();
 		// clear out any existing server side errors
 		ehandler.clear(ErrorClassifier.SERVER);
 		for(final Msg msg : msgs) {

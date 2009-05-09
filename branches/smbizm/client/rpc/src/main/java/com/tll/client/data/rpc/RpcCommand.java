@@ -6,8 +6,8 @@ package com.tll.client.data.rpc;
 
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.tll.common.data.Payload;
 import com.tll.common.data.Status;
 import com.tll.common.msg.Msg.MsgLevel;
@@ -19,40 +19,19 @@ import com.tll.common.msg.Msg.MsgLevel;
  */
 public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>, IRpcCommand {
 
-	private RpcEventCollection rpcHandlers;
-
-	@Override
-	public void addRpcHandler(IRpcHandler listener) {
-		if(rpcHandlers == null) {
-			rpcHandlers = new RpcEventCollection();
-		}
-		rpcHandlers.add(listener);
-	}
-
-	@Override
-	public void removeRpcHandler(IRpcHandler listener) {
-		if(rpcHandlers != null) {
-			rpcHandlers.remove(listener);
-		}
-	}
-
-	@Override
-	public void fireEvent(GwtEvent<?> event) {
-		if(rpcHandlers != null && event.getAssociatedType() == RpcEvent.TYPE) {
-			rpcHandlers.fire((RpcEvent) event);
-		}
-	}
+	/**
+	 * The sourcing widget which may be <code>null</code>.
+	 */
+	protected Widget source;
 
 	/**
 	 * The declared ref is necessary in order to chain rpc commands.
 	 */
 	private AsyncCallback<P> callback = this;
 
-	/**
-	 * Constructor
-	 */
-	public RpcCommand() {
-		super();
+	@Override
+	public final void setSource(Widget source) {
+		this.source = source;
 	}
 
 	protected final AsyncCallback<P> getAsyncCallback() {
@@ -68,22 +47,25 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 	 */
 	protected abstract void doExecute();
 
+	@Override
 	public final void execute() {
 		try {
 			doExecute();
 			// fire an RPC send event
-			fireEvent(new RpcEvent(RpcEvent.Type.SENT));
+			if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.SENT));
 		}
 		catch(final Throwable t) {
-			fireEvent(new RpcEvent(RpcEvent.Type.SEND_ERROR));
+			if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.SEND_ERROR));
 			throw new RuntimeException(t.getMessage(), t);
 		}
 	}
 
+	@Override
 	public final void onSuccess(P result) {
 		handleSuccess(result);
 	}
 
+	@Override
 	public final void onFailure(Throwable caught) {
 		handleFailure(caught);
 	}
@@ -94,7 +76,7 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 	 */
 	protected void handleSuccess(P result) {
 		// fire RPC event
-		fireEvent(new RpcEvent(RpcEvent.Type.RECEIVED));
+		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.RECEIVED));
 		// fire status event
 		StatusEventDispatcher.get().fireEvent(new StatusEvent(result.getStatus()));
 	}
@@ -106,7 +88,7 @@ public abstract class RpcCommand<P extends Payload> implements AsyncCallback<P>,
 	protected void handleFailure(Throwable caught) {
 		GWT.log("Error in rpc payload retrieval", caught);
 		// fire RPC event
-		fireEvent(new RpcEvent(RpcEvent.Type.ERROR));
+		if(source != null) source.fireEvent(new RpcEvent(RpcEvent.Type.ERROR));
 
 		// fire status event
 		String msg = caught.getMessage();

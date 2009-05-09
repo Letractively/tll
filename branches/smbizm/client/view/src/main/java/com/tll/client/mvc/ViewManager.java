@@ -16,7 +16,6 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
 import com.tll.client.model.IModelChangeHandler;
-import com.tll.client.model.ModelChangeDispatcher;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.IHasViewChangeHandlers;
 import com.tll.client.mvc.view.IModelAwareView;
@@ -106,7 +105,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void initialize(Panel parentViewPanel, int cacheCapacity) {
 		instance = new ViewManager(parentViewPanel, cacheCapacity);
-		ModelChangeDispatcher.get().addModelChangeHandler(instance);
+		// ModelChangeDispatcher.get().addModelChangeHandler(instance);
 	}
 
 	/**
@@ -114,7 +113,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 */
 	public static void shutdown() {
 		if(instance != null) {
-			ModelChangeDispatcher.get().removeModelChangeHandler(instance);
+			// ModelChangeDispatcher.get().removeModelChangeHandler(instance);
 			instance.clear();
 			instance = null;
 		}
@@ -199,8 +198,21 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		viewChangeHandlers.remove(handler);
 	}
 
+	/**
+	 * @return The assigned panel to which views are shown.
+	 */
 	public Panel getParentViewPanel() {
 		return parentViewPanel;
+	}
+
+	/**
+	 * Provides the view container for a cached view given a view key.
+	 * @param key the view key
+	 * @return The {@link ViewContainer} for the given view key.
+	 */
+	public ViewContainer getViewContainer(ViewKey key) {
+		final CView cv = findView(key);
+		return cv == null ? null : cv.vc;
 	}
 
 	/**
@@ -267,9 +279,10 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 				current.vc.removeFromParent();
 			}
 			if(pinPndg) {
-				// pin the view and set as current
+				// pin the view
 				vc.pin(parentViewPanel);
 			}
+			// set as current
 			current = e;
 		}
 
@@ -458,6 +471,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	 *         most recently visited (head) to oldest (tail) which may be empty
 	 *         indicating there are currently no cached views.
 	 */
+	/*
 	public IView<?>[] getCachedViews() {
 		if(cache.size() == 0) {
 			return new IView[] {};
@@ -468,6 +482,7 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 		}
 		return list.toArray(new IView[list.size()]);
 	}
+	 */
 
 	/**
 	 * Provides an array of the cached views as stand-alone references in "cache"

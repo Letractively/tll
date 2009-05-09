@@ -218,6 +218,10 @@ Focusable, KeyDownHandler, IListingHandler<R> {
 		delegateEvent(table, event);
 	}
 
+	public final void setPortalHeight(String height) {
+		portal.setHeight(height);
+	}
+
 	public final void onListingEvent(ListingEvent<R> event) {
 		table.onListingEvent(event);
 		if(navBar != null) navBar.onListingEvent(event);

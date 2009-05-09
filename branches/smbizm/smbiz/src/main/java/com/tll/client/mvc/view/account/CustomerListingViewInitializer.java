@@ -19,9 +19,9 @@ public final class CustomerListingViewInitializer extends AbstractDynamicViewIni
 	/**
 	 * Constructor
 	 * @param mercRef The parent merchant ref
-	 * @param merchantParentRef
+	 * @param merchantParentRef optional
 	 */
-	CustomerListingViewInitializer(ModelKey mercRef, ModelKey merchantParentRef) {
+	public CustomerListingViewInitializer(ModelKey mercRef, ModelKey merchantParentRef) {
 		super(CustomerListingView.klas);
 		this.mercRef = mercRef;
 		this.merchantParentRef = merchantParentRef;

@@ -24,7 +24,6 @@ import com.tll.client.ui.BusyPanel;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.IWidgetRef;
 import com.tll.client.ui.Position;
-import com.tll.client.ui.WidgetAndLabel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.msg.IMsgOperator;
 import com.tll.client.ui.msg.MsgLevelImageBundle;
@@ -64,7 +63,6 @@ public final class UITests extends AbstractUITest {
 			new OptionsPopupTest2(),
 			new PushButtonStyleTest(),
 			new ToolbarStyleTest(),
-			new WidgetAndLabelTest(),
 		};
 	}
 
@@ -1005,38 +1003,4 @@ public final class UITests extends AbstractUITest {
 			tb = null;
 		}
 	} // ToolbarStyleTest
-
-	/**
-	 * WidgetAndLabelTest
-	 * @author jpk
-	 */
-	static final class WidgetAndLabelTest extends DefaultUITestCase {
-
-		WidgetAndLabel wal;
-
-		/**
-		 * Constructor
-		 */
-		public WidgetAndLabelTest() {
-			super("WidgetAndLabel Test", "Tests the styling for the WidgetAndLabel widget.");
-		}
-
-		@Override
-		protected void init() {
-			final PushButton pb = new PushButton(MsgLevelImageBundle.INSTANCE.warn().createImage());
-			wal = new WidgetAndLabel(pb, "This is a warning");
-		}
-
-		@Override
-		protected void teardown() {
-			wal.removeFromParent();
-			wal = null;
-		}
-
-		@Override
-		protected Widget getContext() {
-			return wal;
-		}
-
-	} // WidgetAndLabelTest
 }

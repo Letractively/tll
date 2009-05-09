@@ -4,16 +4,22 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.client.data.rpc.IRpcCommand;
-import com.tll.client.data.rpc.ModelChangeManager;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Command;
+import com.tll.client.App;
+import com.tll.client.data.rpc.IHasRpcHandlers;
+import com.tll.client.data.rpc.IRpcHandler;
+import com.tll.client.data.rpc.RpcEvent;
+import com.tll.client.model.IHasModelChangeHandlers;
+import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
+import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
-import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
@@ -27,7 +33,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractModelAwareView<EditViewInitializer> implements IEditHandler {
+public abstract class EditView extends AbstractModelAwareView<EditViewInitializer> implements IEditHandler, IHasRpcHandlers, IHasModelChangeHandlers {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -50,7 +56,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	 */
 	private final EditPanel editPanel;
 
-	private final GlobalMsgPanel gmp;
+	private HandlerRegistration rpcReg;
 
 	/**
 	 * Constructor
@@ -59,16 +65,15 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	 */
 	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
-
-		gmp = new GlobalMsgPanel();
-
-		editPanel = new EditPanel(gmp, fieldPanel, true, false);
+		editPanel = new EditPanel(App.getGlobalMsgPanel(), fieldPanel, true, false);
 		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;
 
-		addWidget(gmp);
 		addWidget(editPanel);
+
+		// edit views shall notify other open views of model changes
+		addModelChangeHandler(ViewManager.get());
 	}
 
 	/**
@@ -119,23 +124,32 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 		doRefresh();
 	}
 
+	@Override
+	public final HandlerRegistration addRpcHandler(IRpcHandler handler) {
+		return addHandler(handler, RpcEvent.TYPE);
+	}
+
 	private void doRefresh() {
+		if(rpcReg != null) {
+			rpcReg.removeHandler();
+		}
+		rpcReg = addRpcHandler(new RpcUiHandler(ViewManager.get().getViewContainer(getViewKey())));
+
+		Command cmd = null;
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			final IRpcCommand cmd = ModelChangeManager.get().loadModel(modelKey, entityOptions, getNeededAuxData());
-			cmd.addRpcHandler(new RpcUiHandler(ViewManager.get().getParentViewPanel()));
-			cmd.execute();
+			cmd = ModelChangeManager.loadModel(this, modelKey, entityOptions, getNeededAuxData());
 		}
 		else {
-			final IRpcCommand cmd = ModelChangeManager.get().fetchAuxData(getNeededAuxData());
+			cmd = ModelChangeManager.fetchAuxData(this, getNeededAuxData());
 			if(cmd == null) {
 				editPanel.setModel(model);
+				return;
 			}
-			else {
-				cmd.addRpcHandler(new RpcUiHandler(getViewWidget()));
-				cmd.execute();
-			}
+		}
+		if(cmd != null) {
+			cmd.execute();
 		}
 	}
 
@@ -145,23 +159,23 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	}
 
 	public final void onEdit(EditEvent event) {
-		IRpcCommand cmd = null;
+		Command cmd = null;
 		switch(event.getOp()) {
 			case CANCEL:
 				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), false, false));
 				break;
 			case ADD:
 			case UPDATE:
-				cmd = ModelChangeManager.get().persistModel(model, entityOptions);
+				cmd = ModelChangeManager.persistModel(this, model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					cmd = ModelChangeManager.get().deleteModel(modelKey, entityOptions);
+					cmd = ModelChangeManager.deleteModel(this, modelKey, entityOptions);
 				}
 				break;
 		}
 		if(cmd != null) {
-			cmd.addRpcHandler(new RpcUiHandler(getViewWidget()));
+			addRpcHandler(new RpcUiHandler(getViewWidget()));
 			cmd.execute();
 		}
 	}
@@ -176,14 +190,19 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	}
 
 	@Override
+	public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
+		return addHandler(handler, ModelChangeEvent.TYPE);
+	}
+
+	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
-		gmp.clear();
+		App.getGlobalMsgPanel().clear();
 		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
 	}
 
 	@Override
 	protected void handleModelChangeSuccess(ModelChangeEvent event) {
-		gmp.clear();
+		App.getGlobalMsgPanel().clear();
 		switch(event.getChangeOp()) {
 
 			case LOADED:
@@ -191,19 +210,17 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 				// NOTE we fall through
 			case AUXDATA_READY:
 				doRefresh();
-				// NOTE we bail as we don't need to dissemminate these model changes to
-				// the other views
 				return;
 
 			case ADDED:
 				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
+				App.getGlobalMsgPanel().add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 
 			case UPDATED:
 				model = event.getModel();
-				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
+				App.getGlobalMsgPanel().add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 

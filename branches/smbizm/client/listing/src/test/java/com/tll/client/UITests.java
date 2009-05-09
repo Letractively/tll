@@ -149,7 +149,7 @@ public final class UITests extends AbstractUITest {
 
 		@Override
 		public int getPageSize() {
-			return 5;
+			return 20;
 		}
 
 		@Override
@@ -212,6 +212,7 @@ public final class UITests extends AbstractUITest {
 						null, defaultSorting);
 			config.rowOptions.setListing(lw);
 			config.addRowDelegate.setListing(lw);
+			lw.setPortalHeight("300px");
 			return lw;
 		}
 

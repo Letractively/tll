@@ -5,6 +5,7 @@
  */
 package com.tll.client.data.rpc;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
 /**
@@ -14,14 +15,9 @@ import com.google.gwt.event.shared.HasHandlers;
 public interface IHasRpcHandlers extends HasHandlers {
 
 	/**
-	 * Adds a handler.
-	 * @param listener
+	 * Adds an rpc handler.
+	 * @param handler the handler
+	 * @return the handler registration
 	 */
-	void addRpcHandler(IRpcHandler listener);
-
-	/**
-	 * Removes a handler.
-	 * @param listener
-	 */
-	void removeRpcHandler(IRpcHandler listener);
+	HandlerRegistration addRpcHandler(IRpcHandler handler);
 }

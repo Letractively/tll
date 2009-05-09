@@ -40,7 +40,6 @@ public class Toolbar extends Composite {
 		public static final String BUTTON = "button";
 	}
 
-	// private final FlowPanel pnl = new FlowPanel();
 	private final HorizontalPanel pnl = new HorizontalPanel();
 
 	/**
@@ -52,49 +51,67 @@ public class Toolbar extends Composite {
 		initWidget(pnl);
 	}
 
+	/**
+	 * Adds a child widget.
+	 * @param w
+	 */
 	public void add(Widget w) {
 		pnl.add(w);
 	}
 
-	private void buttonize(ButtonBase b, String title) {
+	/**
+	 * Removes a child widget.
+	 * @param w
+	 */
+	public void remove(Widget w) {
+		pnl.remove(w);
+	}
+
+	public final int getWidgetCount() {
+		return pnl.getWidgetCount();
+	}
+
+	public final Widget getWidget(int index) {
+		return pnl.getWidget(index);
+	}
+
+	public final int getWidgetIndex(Widget child) {
+		return pnl.getWidgetIndex(child);
+	}
+
+	/**
+	 * Adds a button to the toolbar.
+	 * @param b the button
+	 */
+	public void addButton(ButtonBase b) {
+		addButton(b, null);
+	}
+
+	/**
+	 * Adds a button to the toolbar with a title that is applied to the button.
+	 * @param b The button to add
+	 * @param title Optional title text shown on hover. May be <code>null</code>.
+	 */
+	public final void addButton(ButtonBase b, String title) {
+		pnl.add(b);
 		final Element td = b.getElement().getParentElement();
 		td.setClassName(Styles.BUTTON);
+		b.setStylePrimaryName(Styles.BUTTON);
 		if(title != null) {
 			b.setTitle(title);
 		}
 	}
 
 	/**
-	 * Adds a Widget to the toolbar applying button styling.
-	 * @param b The button to add
-	 * @param title Optional title text shown on hover. May be <code>null</code>.
+	 * Shows or hides a child Widget.
+	 * @param w the target widget
+	 * @param show show or hide?
 	 */
-	public final void addButton(ButtonBase b, String title) {
-		b.setStylePrimaryName(Styles.BUTTON);
-		pnl.add(b);
-		buttonize(b, title);
-	}
-
-	/**
-	 * Shows a child Widget by setting the display style attribute of the parent
-	 * Widget.
-	 * @param w The Widget to show
-	 */
-	public final void show(Widget w) {
-		if(pnl.getWidgetIndex(w) < 0) return;
-		final Element td = w.getElement().getParentElement();
-		td.getStyle().setProperty("display", "");
-	}
-
-	/**
-	 * Hides a child Widget by setting the display style attribute of the parent
-	 * Widget.
-	 * @param w The Widget to hide
-	 */
-	public final void hide(Widget w) {
-		if(pnl.getWidgetIndex(w) < 0) return;
-		final Element td = w.getElement().getParentElement();
-		td.getStyle().setProperty("display", "none");
+	public final void show(Widget w, boolean show) {
+		if(pnl.getWidgetIndex(w) >= 0) {
+			final Element td = w.getElement().getParentElement();
+			td.getStyle().setProperty("display", show ? "" : "none");
+		}
 	}
 
 	/**

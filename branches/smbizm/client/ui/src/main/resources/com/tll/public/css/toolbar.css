@@ -18,7 +18,7 @@
 .toolbar td.button {
 }
 
-.toolbar div {
+.toolbar * {
 	white-space: nowrap;
 }
 

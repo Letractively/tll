@@ -16,17 +16,16 @@ import com.tll.common.model.Model;
  * SwitchInterfacePanel - One option exists that is either on or off.
  * @author jpk
  */
-public final class SwitchInterfacePanel extends AbstractInterfacePanel<FlowPanel> {
+public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
 
-		@SuppressWarnings("synthetic-access")
-		public void render(FlowPanel panel, FieldGroup fg) {
+		public void render(FlowPanel pnl, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(canvas);
+			cmpsr.setCanvas(pnl);
 
 			// first row
-			cmpsr.addField(fg.getFieldWidgetByName("intfName"));
+			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
 			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
 			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
 
@@ -39,16 +38,6 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel<FlowPanel
 			cmpsr.newRow();
 			cmpsr.addWidget(createAvailabilityGrid(fg));
 		}
-	}
-
-	private final FlowPanel canvas = new FlowPanel();
-
-	/**
-	 * Constructor
-	 */
-	public SwitchInterfacePanel() {
-		super();
-		initWidget(canvas);
 	}
 
 	@Override

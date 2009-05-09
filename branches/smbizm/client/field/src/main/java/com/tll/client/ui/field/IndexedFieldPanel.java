@@ -15,7 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.IProvider;
-import com.tll.client.bind.FieldBindingAction;
+import com.tll.client.bind.FieldBinding;
 import com.tll.client.convert.IConverter;
 import com.tll.client.ui.BindableWidgetAdapter;
 import com.tll.client.validate.ValidationException;
@@ -51,14 +51,14 @@ IIndexedFieldBoundWidget {
 	static final class Index<I extends FieldPanel<?>> implements IProvider<I> {
 
 		final I fieldPanel;
-		final FieldBindingAction binding;
+		final FieldBinding binding;
 
 		/**
 		 * Constructor
 		 * @param fieldPanel
 		 * @param binding
 		 */
-		public Index(I fieldPanel, FieldBindingAction binding) {
+		public Index(I fieldPanel, FieldBinding binding) {
 			super();
 			this.fieldPanel = fieldPanel;
 			this.binding = binding;
@@ -203,7 +203,7 @@ IIndexedFieldBoundWidget {
 		// binding actions
 		// as this is handled by the parent binding action since
 		// its root field group is expected to contain this panel's field group as a child
-		final Index<I> index = new Index<I>(ip, new FieldBindingAction(null));
+		final Index<I> index = new Index<I>(ip, new FieldBinding(null));
 		if(!indexPanels.add(index)) {
 			throw new IllegalStateException("Unable to add index: " + ip);
 		}

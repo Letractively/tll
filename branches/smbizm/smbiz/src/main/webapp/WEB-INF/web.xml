@@ -200,6 +200,10 @@
   <filter>
     <filter-name>WebClientCacheFilter</filter-name>
     <filter-class>com.tll.server.filter.WebClientCacheFilter</filter-class>
+    <init-param>
+      <param-name>oneDayCacheFileExts</param-name>
+      <param-value>${oneDayCacheFileExts}</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>WebClientCacheFilter</filter-name>

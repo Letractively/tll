@@ -27,7 +27,6 @@ public final class BuildTools {
 		b.saveConfig()
 		b.generateGwtConstantsFile();
 		b.generateWebXml();
-		b.copyClasspathResources();
 		b.copyWebappResources();
 		b.stubDbIfNecessary()
 	}
@@ -102,9 +101,9 @@ public final class BuildTools {
 	private Config config;
 	
 	/**
-	 * The dao mode and security mode flags.
+	 * The debug, dao mode and security mode flags.
 	 */
-	private boolean isMock, isSecurity;
+	private boolean debug, isMock, isSecurity;
 	
 	/**
 	 * Constructor
@@ -140,6 +139,8 @@ public final class BuildTools {
 		if(config.getString('environment') == null) {
 			throw new IllegalStateException("No environment property present.")
 		}
+		
+		this.debug = config.getBoolean('debug')
 	
 		// retain the dao mode
 		String daoMode = project.properties.daoMode
@@ -156,27 +157,6 @@ public final class BuildTools {
 		}
 		println "securityMode: ${securityMode}"
 		this.isSecurity = (securityMode == 'acegi')
-	}
-	
-	/**
-	 * Copies server-side classpath related resources to the target war dir.
-	 */
-	private void copyClasspathResources() {
-		println 'Copying cp resources..'
-		String sdir = basedir + '/target/classes'
-		String tdir = basedir + '/target/war/WEB-INF/classes'
-		ant.mkdir(dir: tdir)
-		ant.copy(todir: tdir) {
-			fileset(dir: sdir) {
-				exclude(name: '**/*.sql')
-				exclude(name: '**/*.ddl')
-				exclude(name: '**/public/**')
-				exclude(name: '**/*.gwt.xml')
-				exclude(name: '**/*.java')
-				exclude(name: '**/client/**')
-			}
-		}
-		println 'cp resources copied.'
 	}
 	
 	/**
@@ -200,8 +180,10 @@ public final class BuildTools {
 	 */
 	private void generateWebXml() {
 		println 'Generating web.xml..'
-		// generate the di map
-		Map diMap = [:];
+		
+		Map props = [:];
+		
+		// add the di props
 		int flags = 0;
 		flags = flags | (isMock? FLAG_MOCK : FLAG_ORM);
 		flags = flags | (isSecurity? FLAG_SECURITY_ACEGI : FLAG_SECURITY_NONE);
@@ -214,7 +196,7 @@ public final class BuildTools {
 				sb.append(elm[0])
 			}
 		}
-		diMap.put('di.modules', sb.toString())
+		props.put('di.modules', sb.toString())
 		sb.setLength(0)
 		DI_HANDLERS_ALL.each { elm ->
 			int flag = elm[1]
@@ -224,10 +206,16 @@ public final class BuildTools {
 				sb.append(elm[0])
 			}
 		}
-		diMap.put('di.handlers', sb.toString())
+		props.put('di.handlers', sb.toString())
+		
+		// web client caching policy
+		String tkn = debug? '' : '.js .css .gif .jpg .png'
+		props.put('oneDayCacheFileExts', tkn)
+		
+		// read web.xml
 		StringBuilder sbuf = new StringBuilder(3000)
 		new File(basedir + '/src/main/webapp/WEB-INF', 'web.xml').eachLine{ line ->
-			sbuf.append(rplProps(line, diMap))
+			sbuf.append(rplProps(line, props))
 		    sbuf.append(NL)
 		}
 		String s = sbuf.toString()

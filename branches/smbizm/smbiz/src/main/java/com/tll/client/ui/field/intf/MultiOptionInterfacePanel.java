@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.tll.client.cache.AuxDataCache;
 import com.tll.client.ui.field.FieldGroup;
-import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.IFieldWidget;
@@ -22,23 +22,13 @@ import com.tll.common.model.SmbizEntityType;
  * one option is allowed.
  * @author jpk
  */
-public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<FlowPanel> {
+public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 
 	/**
 	 * OptionPanel
 	 * @author jpk
 	 */
-	static final class OptionPanel extends FieldPanel<FlowPanel> {
-
-		FlowPanel canvas = new FlowPanel();
-
-		/**
-		 * Constructor
-		 */
-		public OptionPanel() {
-			super();
-			initWidget(canvas);
-		}
+	static final class OptionPanel extends FlowFieldPanel {
 
 		@Override
 		protected FieldGroup generateFieldGroup() {
@@ -53,14 +43,14 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel<Flow
 
 	class OptionRenderer implements IFieldRenderer<FlowPanel> {
 
-		public void render(FlowPanel panel, FieldGroup fg) {
+		public void render(FlowPanel pnl, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(panel);
+			cmpsr.setCanvas(pnl);
 
 			// first row
 			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("code"));
-			cmpsr.addField(fg.getFieldWidgetByName("description"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
+			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
 
 			// pricing
 			cmpsr.newRow();

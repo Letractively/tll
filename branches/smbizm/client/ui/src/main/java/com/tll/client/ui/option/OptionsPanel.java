@@ -11,6 +11,8 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -23,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpk
  */
 public class OptionsPanel extends FocusPanel implements KeyDownHandler, MouseDownHandler, MouseOverHandler,
-IHasOptionHandlers {
+MouseOutHandler, IHasOptionHandlers {
 
 	/**
 	 * Styles - (options.css)
@@ -42,10 +44,11 @@ IHasOptionHandlers {
 	 */
 	static class MRegs {
 
-		final HandlerRegistration out, over;
+		final HandlerRegistration down, out, over;
 
-		public MRegs(HandlerRegistration out, HandlerRegistration over) {
+		public MRegs(HandlerRegistration down, HandlerRegistration out, HandlerRegistration over) {
 			super();
+			this.down = down;
 			this.out = out;
 			this.over = over;
 		}
@@ -75,7 +78,8 @@ IHasOptionHandlers {
 	 * @param option The Option to add
 	 */
 	private void addOption(Option option) {
-		final MRegs mreg = new MRegs(option.addMouseDownHandler(this), option.addMouseOverHandler(this));
+		final MRegs mreg =
+				new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
 		options.put(option, mreg);
 		vp.add(option);
 	}
@@ -168,6 +172,14 @@ IHasOptionHandlers {
 		if(index >= 0) {
 			setCurrentOption(index, false);
 			fireEvent(new OptionEvent(OptionEvent.EventType.CHANGED, ((Option) event.getSource()).getText()));
+		}
+	}
+
+	@Override
+	public void onMouseOut(MouseOutEvent event) {
+		final int index = vp.getWidgetIndex((Option) event.getSource());
+		if(index >= 0) {
+			clearCurrentOption();
 		}
 	}
 

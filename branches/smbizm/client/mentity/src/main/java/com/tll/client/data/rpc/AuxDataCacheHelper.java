@@ -23,7 +23,7 @@ import com.tll.refdata.RefDataType;
  * AuxDataCacheHelper
  * @author jpk
  */
-abstract class AuxDataCacheHelper {
+public abstract class AuxDataCacheHelper {
 	/**
 	 * Eliminates those requests already present in the {@link AuxDataCache}.
 	 * @param adr The aux data request to filter.

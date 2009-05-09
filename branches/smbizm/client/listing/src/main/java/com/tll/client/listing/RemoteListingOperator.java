@@ -8,8 +8,8 @@ package com.tll.client.listing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.IMarshalable;
+import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.RpcCommand;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.common.data.ListingOp;
 import com.tll.common.data.ListingPayload;
 import com.tll.common.data.ListingRequest;
@@ -44,7 +44,10 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 		@Override
 		protected void doExecute() {
 			if(listingRequest == null) {
-				throw new IllegalStateException("No listing command set!");
+				throw new IllegalStateException("Null listing command");
+			}
+			if(sourcingWidget == null) {
+				throw new IllegalStateException("Null sourcing widget");
 			}
 			svc.process((ListingRequest) listingRequest, (AsyncCallback) getAsyncCallback());
 		}
@@ -109,7 +112,9 @@ public final class RemoteListingOperator<S extends ISearch> extends AbstractList
 	private void execute() {
 		assert listingRequest != null;
 		final ListingCommand cmd = new ListingCommand();
-		cmd.addRpcHandler(new RpcUiHandler(sourcingWidget));
+		if(sourcingWidget instanceof IHasRpcHandlers) {
+			cmd.setSource(sourcingWidget);
+		}
 		cmd.execute();
 	}
 

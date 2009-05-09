@@ -114,7 +114,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 	 */
 	public ViewContainer(IView<?> view, ViewOptions options, ViewKey key) {
 		super();
-		if(view == null || key == null) throw new IllegalArgumentException();
+		if(view == null || key == null) throw new IllegalArgumentException("Null view and/or view key");
 		this.view = view;
 		this.key = key;
 		toolbar = new ViewToolbar(view.getLongViewName(), options, this);
@@ -318,7 +318,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 			if(toolbar.btnMinimize != null) {
 				toolbar.btnMinimize.setDown(false);
-				toolbar.show(toolbar.btnMinimize);
+				toolbar.show(toolbar.btnMinimize, true);
 			}
 
 			assert toolbar.btnPop != null;
@@ -367,7 +367,7 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 
 			maximize();
 			if(toolbar.btnMinimize != null) {
-				toolbar.hide(toolbar.btnMinimize);
+				toolbar.show(toolbar.btnMinimize, false);
 			}
 
 			if(toolbar.btnPop != null) {

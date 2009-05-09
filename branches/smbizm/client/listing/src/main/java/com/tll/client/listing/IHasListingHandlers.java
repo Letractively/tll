@@ -4,9 +4,8 @@
  */
 package com.tll.client.listing;
 
-import java.util.EventListener;
-
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 
 /**
  * IHasListingHandlers - Propagates listing related events.
@@ -14,7 +13,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
  * @author jpk
  * @param <R> the row element type
  */
-public interface IHasListingHandlers<R> extends EventListener {
+public interface IHasListingHandlers<R> extends HasHandlers {
 	
 	/**
 	 * Adds a listing handler.

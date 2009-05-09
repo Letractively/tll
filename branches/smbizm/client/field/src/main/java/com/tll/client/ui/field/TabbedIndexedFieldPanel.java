@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.ui.WidgetAndLabel;
+import com.tll.client.ui.toolbar.Toolbar;
 import com.tll.common.model.Model;
 
 /**
@@ -161,8 +161,6 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	private final List<Widget> tabWidgets = new ArrayList<Widget>();
 
-	//private int lastSelectedTabIndex = -1;
-
 	/**
 	 * Constructor
 	 * @param name The collective name
@@ -242,7 +240,10 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 				}
 			});
 
-			return new WidgetAndLabel(btnDeleteTgl, labelText);
+			final Toolbar t = new Toolbar();
+			t.addButton(btnDeleteTgl);
+			t.add(new Label(labelText, false));
+			return t;
 		}
 
 		return new Label(labelText);
@@ -289,7 +290,7 @@ implements SelectionHandler<Integer>, BeforeSelectionHandler<Integer> {
 
 	@Override
 	protected void markDeleted(int index, boolean deleted) throws IndexOutOfBoundsException {
-		((WidgetAndLabel) tabWidgets.get(index)).getTheWidget().setTitle(
+		((Toolbar) tabWidgets.get(index)).getWidget(0).setTitle(
 				(deleted ? "Un-delete " : "Delete ") + getIndexTypeName());
 		super.markDeleted(index, deleted);
 	}

@@ -67,8 +67,11 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 		assert r.mercRef != null && r.mercRef.isSet();
 		mercRef = r.mercRef;
 
-		mercListingLink.setViewInitializer(new MerchantListingViewInitializer(r.getMerchantParentRef()));
-		mercListingLink.setText(mercRef.getName());
+		if(r.getMerchantParentRef() != null) {
+			mercListingLink.setViewInitializer(new MerchantListingViewInitializer(r.getMerchantParentRef()));
+			mercListingLink.setText(r.getMerchantParentRef().getName());
+		}
+		mercListingLink.setVisible(r.getMerchantParentRef() != null);
 
 		final AccountSearch criteria = new AccountSearch(CriteriaType.SCALAR_NAMED_QUERY, SmbizEntityType.CUSTOMER);
 		criteria.setNamedQuery("account.customerList");

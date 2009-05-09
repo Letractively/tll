@@ -16,7 +16,7 @@ import com.tll.common.model.ModelKey;
  * @author jpk
  */
 public class ModelListingWidget extends ListingWidget<Model, ModelListingTable>
-		implements IModelChangeHandler {
+implements IModelChangeHandler {
 
 	/**
 	 * Constructor

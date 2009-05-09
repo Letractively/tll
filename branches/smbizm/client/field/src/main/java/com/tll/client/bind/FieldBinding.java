@@ -17,11 +17,11 @@ import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
 
 /**
- * FieldBindingAction - Action that binds fields to model properties enabling
- * bi-directional communication between the two.
+ * FieldBinding - Binds fields to model properties enabling bi-directional model
+ * and view data transfer.
  * @author jpk
  */
-public final class FieldBindingAction {
+public final class FieldBinding {
 
 	/**
 	 * Creates a model/field binding on a particular property. If the binding
@@ -92,7 +92,7 @@ public final class FieldBindingAction {
 	 * Constructor
 	 * @param errorHandler The error handler to employ.
 	 */
-	public FieldBindingAction(IErrorHandler errorHandler) {
+	public FieldBinding(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 

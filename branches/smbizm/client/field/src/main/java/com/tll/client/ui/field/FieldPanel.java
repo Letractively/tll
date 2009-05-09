@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.FieldBindingAction;
+import com.tll.client.bind.FieldBinding;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
@@ -35,7 +35,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	/**
 	 * The optional action.
 	 */
-	private FieldBindingAction action;
+	private FieldBinding action;
 
 	private boolean drawn;
 
@@ -109,12 +109,12 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
-	public final FieldBindingAction getAction() {
+	public final FieldBinding getAction() {
 		return action;
 	}
 
 	@Override
-	public final void setAction(FieldBindingAction action) {
+	public final void setAction(FieldBinding action) {
 		this.action = action;
 	}
 

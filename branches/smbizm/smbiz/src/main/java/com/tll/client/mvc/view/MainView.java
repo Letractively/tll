@@ -5,6 +5,7 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.client.App;
 import com.tll.common.model.IEntityType;
 import com.tll.common.model.SmbizEntityType;
 
@@ -34,7 +35,7 @@ public abstract class MainView extends AbstractView<StaticViewInitializer> {
 		}
 
 		private static String getMainViewName(IEntityType accountType) {
-			final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, accountType);
+			final SmbizEntityType set = App.smbizEntityType(accountType);
 			return set.getValue() + "_MAIN";
 		}
 

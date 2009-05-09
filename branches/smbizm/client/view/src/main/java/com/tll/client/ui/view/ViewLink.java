@@ -57,8 +57,7 @@ public final class ViewLink extends SimpleHyperLink {
 	 */
 	public ViewLink(String shortViewName, String longViewName, IViewInitializer init) {
 		this();
-		setText(shortViewName);
-		setTitle(longViewName);
+		setViewNames(shortViewName, longViewName);
 		setViewInitializer(init);
 	}
 
@@ -70,7 +69,21 @@ public final class ViewLink extends SimpleHyperLink {
 		this(viewRef.getShortViewName(), viewRef.getLongViewName(), viewRef.getViewInitializer());
 	}
 
+	/**
+	 * Sets the view initializer.
+	 * @param init
+	 */
 	public void setViewInitializer(final IViewInitializer init) {
 		this.init = init;
+	}
+
+	/**
+	 * Sets both the short and long view names.
+	 * @param shortName
+	 * @param longName
+	 */
+	public void setViewNames(String shortName, String longName) {
+		setText(shortName);
+		setTitle(longName);
 	}
 }

@@ -11,14 +11,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.field.FlowFieldPanel;
 
 /**
  * AbstractInterfacePanel - Base class for {@link FieldPanel}s that display app
  * interfaces (not Options).
- * @param <W> The wrapped widget and field rendering widget type
  * @author jpk
  */
-public abstract class AbstractInterfacePanel<W extends Widget> extends FieldPanel<W> {
+public abstract class AbstractInterfacePanel extends FlowFieldPanel {
 
 	protected static Grid createAvailabilityGrid(FieldGroup fg) {
 		final Grid g = new Grid(3, 5);
@@ -42,7 +42,7 @@ public abstract class AbstractInterfacePanel<W extends Widget> extends FieldPane
 	/*
 	protected static final Column[] paramColumns = new Column[] {
 		new Column("Name", "name"), new Column("Code", "code"), new Column("Description", "description") };
-	*/
+	 */
 
 	/**
 	 * Constructor
