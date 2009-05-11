@@ -216,6 +216,10 @@ public final class FieldBinding {
 		return widget != null;
 	}
 
+	public boolean isBound() {
+		return bound;
+	}
+
 	private void ensureSet() throws IllegalStateException {
 		if(widget == null) {
 			throw new IllegalStateException("Not field bound widget set.");

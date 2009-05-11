@@ -23,6 +23,23 @@ import com.tll.common.model.Model;
 public abstract class FieldPanel<W extends Widget> extends Composite implements IFieldBoundWidget {
 
 	/**
+	 * Styles (field.css)
+	 * @author jpk
+	 */
+	public static final class Styles {
+
+		/**
+		 * Style indicating a UI artifact is a field title.
+		 */
+		public static final String FIELD_TITLE = "fldtitle";
+
+		/**
+		 * Style indicating a field panel.
+		 */
+		public static final String FIELD_PANEL = "fpnl";
+	}
+
+	/**
 	 * The field group.
 	 */
 	private FieldGroup group;
@@ -47,6 +64,12 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
+	protected void initWidget(Widget widget) {
+		widget.addStyleName(Styles.FIELD_PANEL);
+		super.initWidget(widget);
+	}
+
+	@Override
 	public final FieldGroup getFieldGroup() {
 		if(group == null) {
 			Log.debug(this + " generating fields..");
@@ -57,10 +80,9 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 
 	@Override
 	public final void setFieldGroup(FieldGroup fields) {
-		if(fields == null) {
-			throw new IllegalArgumentException("A field group must be specified");
-		}
+		if(fields == null) throw new IllegalArgumentException("Null fields");
 		if(this.group != fields) {
+			if(action != null && action.isSet()) throw new IllegalStateException("Already set action");
 			this.group = fields;
 			this.group.setWidget(this);
 		}
@@ -86,11 +108,14 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 			action.unbind();
 		}
 
+		getFieldGroup().clearValue();
 		this.model = model;
 
-		// apply property metadata
 		if(model != null) {
+			// apply property metadata
 			getFieldGroup().applyPropertyMetadata(model);
+			// don't do incremental validation when the model is new
+			getFieldGroup().validateIncrementally(!model.isNew());
 		}
 
 		if(action != null) {

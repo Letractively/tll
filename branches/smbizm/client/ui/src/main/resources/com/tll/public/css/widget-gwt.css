@@ -611,7 +611,7 @@ a, a:visited, a:hover {
   cursor: pointer;
   cursor: hand;
   font-weight: bold;
-  font-size: 1.3em;
+  /*font-size: 1.3em;*/
   padding: 3px;
   border: 1px solid #bbbbbb;
   border-bottom: 0px;

@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
  * </ol>
  * @author jpk
  */
-public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
+public class FlowPanelFieldComposer extends AbstractFieldComposer implements HasAlignment {
 
 	/**
 	 * Styles - (field.css)
@@ -60,19 +60,15 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		super();
 	}
 
+	@Override
 	public void setCanvas(Panel canvas) {
-		// reset state
-		if(vp == null) {
-			vp = new VerticalPanel();
-		}
-		else {
-			vp.clear();
-		}
+		if(this.canvas != null && this.canvas == canvas) return;
+		super.setCanvas(canvas);
+		vp = new VerticalPanel();
 		currentRow = null;
 		last = null;
 		atCurrent = false;
-
-		// bind the canvas
+		this.canvas = canvas;
 		canvas.add(vp);
 	}
 
@@ -85,7 +81,8 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		return currentRow;
 	}
 
-	private void add(FieldLabel fldLbl, Widget w) {
+	@Override
+	public void add(FieldLabel fldLbl, Widget w) {
 		FlowPanel fp;
 		if(!atCurrent) {
 			fp = new FlowPanel();
@@ -106,30 +103,17 @@ public class FlowPanelFieldComposer implements IFieldComposer, HasAlignment {
 		last = w;
 	}
 
-	/**
-	 * Adds a new.
-	 * @param w The non-field Widget to add
-	 */
+	@Override
 	public void addWidget(Widget w) {
 		add(null, w);
 	}
 
-	/**
-	 * Adds a field label and Widget to the canvas. If the label text is
-	 * <code>null</code>, no label is added. If the Widget is an IField
-	 * {@link #addField(IFieldWidget)} should be called instead.
-	 * @param label The label text
-	 * @param w The non-IField and non-FieldPanel Widget to add
-	 */
+	@Override
 	public void addWidget(String label, Widget w) {
 		add(label == null ? null : new FieldLabel(label), w);
 	}
 
-	/**
-	 * Adds a field to the canvas. The field label is extracted from the given
-	 * field and if non-<code>null</code>, is added as well.
-	 * @param field The field to add
-	 */
+	@Override
 	public void addField(IFieldWidget<?> field) {
 		add(field.getFieldLabel(), field.getWidget());
 		field.setFieldContainer(last.getParent());

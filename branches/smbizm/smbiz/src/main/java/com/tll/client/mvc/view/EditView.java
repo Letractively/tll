@@ -7,15 +7,11 @@ package com.tll.client.mvc.view;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.tll.client.App;
-import com.tll.client.data.rpc.IHasRpcHandlers;
-import com.tll.client.data.rpc.IRpcHandler;
-import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
@@ -33,7 +29,7 @@ import com.tll.common.msg.Msg.MsgLevel;
  * to edit a single entity.
  * @author jpk
  */
-public abstract class EditView extends AbstractModelAwareView<EditViewInitializer> implements IEditHandler, IHasRpcHandlers, IHasModelChangeHandlers {
+public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInitializer> implements IEditHandler, IHasModelChangeHandlers {
 
 	/**
 	 * The model reference used to subsequently fetch the actual model subject to
@@ -55,8 +51,6 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 	 * The Panel containing the UI edit Widgets.
 	 */
 	private final EditPanel editPanel;
-
-	private HandlerRegistration rpcReg;
 
 	/**
 	 * Constructor
@@ -120,20 +114,12 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 
 	@Override
 	public final void refresh() {
+		super.refresh();
 		model = null;
 		doRefresh();
 	}
 
-	@Override
-	public final HandlerRegistration addRpcHandler(IRpcHandler handler) {
-		return addHandler(handler, RpcEvent.TYPE);
-	}
-
 	private void doRefresh() {
-		if(rpcReg != null) {
-			rpcReg.removeHandler();
-		}
-		rpcReg = addRpcHandler(new RpcUiHandler(ViewManager.get().getViewContainer(getViewKey())));
 
 		Command cmd = null;
 		if(model == null) {
@@ -175,7 +161,7 @@ public abstract class EditView extends AbstractModelAwareView<EditViewInitialize
 				break;
 		}
 		if(cmd != null) {
-			addRpcHandler(new RpcUiHandler(getViewWidget()));
+			// addRpcHandler(new RpcUiHandler(getViewWidget()));
 			cmd.execute();
 		}
 	}

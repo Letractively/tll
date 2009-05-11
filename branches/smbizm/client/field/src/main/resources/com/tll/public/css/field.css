@@ -10,6 +10,11 @@ label {
 .fld {
 }
 
+.fldtitle {
+	font-weight: bold;
+	white-space: nowrap;
+}
+
 .fld .tbox {
 	padding: 0;
 	margin: 0 1px 0 0;
@@ -49,6 +54,14 @@ label .rqd {
   padding: 0 2px;
 }
 
+/* field panel styles */
+.fpnl {
+}
+
+.fpnl .gwt-DisclosurePanel .header a {
+	font-weight: bold;
+}
+
 /* FlowPanelFieldComposer styles */
 .fldc {
   margin: 1px;
@@ -60,7 +73,7 @@ label .rqd {
 .frow {
   margin-top: .2em;
   margin-bottom: .2em;
-  width: 100%;
+  /*width: 100%;*/
 }
 
 /* GridFieldComposer styles */

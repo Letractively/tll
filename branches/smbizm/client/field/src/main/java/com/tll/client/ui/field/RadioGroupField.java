@@ -24,14 +24,14 @@ import com.tll.util.ObjectUtil;
  * @author jpk
  */
 public final class RadioGroupField<V> extends AbstractDataField<V, V> {
-	
+
 	/**
 	 * Impl
 	 * @author jpk
 	 */
 	@SuppressWarnings("synthetic-access")
 	final class Impl extends FocusPanel implements IEditable<V> {
-		
+
 		@Override
 		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<V> handler) {
 			return addHandler(handler, ValueChangeEvent.getType());
@@ -69,19 +69,19 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 			}
 		}
 	}
-	
-  /**
+
+	/**
 	 * GridStyles
 	 * @author jpk
 	 */
-  public static final class GridStyles {
+	public static final class GridStyles {
 
 		/**
 		 * Style applied to the radio grid renderer.
 		 */
 		public static final String GRID = "fradioGrid";
 	}
-	
+
 	/**
 	 * The default radio button renderer.
 	 */
@@ -94,7 +94,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 	 * option.
 	 */
 	private final List<RadioButton> radioButtons = new ArrayList<RadioButton>();
-	
+
 	/**
 	 * The radio button renderer.
 	 */
@@ -117,6 +117,13 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		setData(data);
 	}
 
+	/**
+	 * @return The list of managed radio buttons.
+	 */
+	public List<RadioButton> getRadioButtons() {
+		return radioButtons;
+	}
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		for(final RadioButton rb : radioButtons) {
@@ -130,7 +137,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		fp.clear();
 		fp.add(renderer.render(radioButtons));
 	}
-	
+
 	private RadioButton create(String name) {
 		final RadioButton rb = new RadioButton("rg_" + getDomId(), name);
 		rb.setFormValue(name);
@@ -166,7 +173,7 @@ public final class RadioGroupField<V> extends AbstractDataField<V, V> {
 		}
 		if(isAttached()) render();
 	}
-	
+
 	@Override
 	public void addDataItem(String name, V value) {
 		super.addDataItem(name, value);

@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.cache.AuxDataCache;
+import com.tll.client.model.ModelAssembler;
 import com.tll.client.ui.field.AddressFieldsRenderer;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
@@ -101,7 +101,7 @@ public class AccountPanel extends FlowFieldPanel {
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.get().getEntityPrototype(SmbizEntityType.ACCOUNT_ADDRESS);
+			return ModelAssembler.assemble(SmbizEntityType.ACCOUNT_ADDRESS);
 		}
 
 		@Override
@@ -192,6 +192,8 @@ public class AccountPanel extends FlowFieldPanel {
 				dpAddresses.add(addressesPanel);
 				cmpsr.addWidget(dpAddresses);
 
+				// fourth row
+				cmpsr.newRow();
 				// payment info block
 				final FlowPanel fp = new FlowPanel();
 				fp.add((Widget) fg.getFieldWidgetByName("acntPersistPymntInfo"));

@@ -173,6 +173,13 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	}
 
 	/**
+	 * @return The model instance.
+	 */
+	public Model getModel() {
+		return fieldPanel.getModel();
+	}
+
+	/**
 	 * Sets the model where if <code>null</code> all existing bindings are
 	 * cleared.
 	 * @param model The model to set

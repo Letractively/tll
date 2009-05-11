@@ -300,6 +300,9 @@ ValueChangeHandler<V>, Focusable, BlurHandler {
 
 	public final void clearValue() {
 		setValue(null);
+		// remove all msgs, edit and validation styling
+		resolveError();
+		removeStyleName(Styles.DIRTY);
 		this.initialValue = null;
 		this.initialValueSet = false;
 		this.oldValue = null;

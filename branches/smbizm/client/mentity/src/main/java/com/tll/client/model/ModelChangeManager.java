@@ -27,7 +27,7 @@ public final class ModelChangeManager {
 	 * ModelChangeAuxDataCommand
 	 * @author jpk
 	 */
-	static final class ModelChangeAuxDataCommand extends AuxDataCommand {
+	private static final class ModelChangeAuxDataCommand extends AuxDataCommand {
 
 		/**
 		 * Constructor
@@ -42,22 +42,23 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(AuxDataPayload result) {
 			super.handleSuccess(result);
-			source.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null, null, result.getStatus()));
+			if(source != null)
+				source.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null, null, result.getStatus()));
 		}
 
 		@Override
 		protected void handleFailure(Throwable caught) {
 			super.handleFailure(caught);
 		}
-	} // ModelChangeAuxDataCommand
+	}
 
 	/**
 	 * ModelChangeCrudCommand
 	 * @author jpk
 	 */
-	static final class ModelChangeCrudCommand extends CrudCommand {
+	private static final class ModelChangeCrudCommand extends CrudCommand {
 
-		final ModelKey modelKey;
+		private final ModelKey modelKey;
 
 		/**
 		 * Constructor
@@ -72,7 +73,8 @@ public final class ModelChangeManager {
 		@Override
 		protected void handleSuccess(EntityPayload result) {
 			super.handleSuccess(result);
-			ModelChangeOp mop = null;
+			if(source == null) return;
+			ModelChangeOp mop;
 			switch(crudOp) {
 				case LOAD:
 					mop = ModelChangeOp.LOADED;
@@ -91,7 +93,7 @@ public final class ModelChangeManager {
 			}
 			source.fireEvent(new ModelChangeEvent(mop, result.getEntity(), modelKey, result.getStatus()));
 		}
-	} // ModelChangeCrudCommand
+	}
 
 	/**
 	 * Constructor
@@ -113,8 +115,6 @@ public final class ModelChangeManager {
 	public static Command fetchAuxData(Widget source, AuxDataRequest adr) {
 		// do we need any aux data from the server?
 		adr = AuxDataCacheHelper.filterRequest(adr);
-		// if(adr == null) source.fireEvent(new
-		// ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null, null, null));
 		return adr == null ? null : new ModelChangeAuxDataCommand(source, adr);
 	}
 
@@ -135,8 +135,6 @@ public final class ModelChangeManager {
 			adr.requestEntityPrototype(entityType);
 			return new ModelChangeAuxDataCommand(source, adr);
 		}
-		// source.fireEvent(new ModelChangeEvent(ModelChangeOp.AUXDATA_READY, null,
-		// null, null));
 		return null;
 	}
 
@@ -150,8 +148,7 @@ public final class ModelChangeManager {
 	 * @param adr
 	 * @return the rpc command ready for execution
 	 */
-	public static Command loadModel(Widget source, ModelKey key, EntityOptions entityOptions,
-			AuxDataRequest adr) {
+	public static Command loadModel(Widget source, ModelKey key, EntityOptions entityOptions, AuxDataRequest adr) {
 		final ModelChangeCrudCommand cmd = new ModelChangeCrudCommand(source, key);
 		cmd.load(key, AuxDataCacheHelper.filterRequest(adr));
 		cmd.setEntityOptions(entityOptions);

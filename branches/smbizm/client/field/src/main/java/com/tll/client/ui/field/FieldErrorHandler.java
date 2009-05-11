@@ -52,26 +52,23 @@ public class FieldErrorHandler extends PopupValidationFeedback implements IHover
 	@Override
 	public void handleError(IWidgetRef source, IError error) {
 		super.handleError(source, error);
+		if((source instanceof IFieldWidget) && error.getType() == Type.SINGLE) {
+			// handle styling
+			source.getWidget().removeStyleName(Styles.DIRTY);
+			source.getWidget().addStyleName(Styles.INVALID);
 
-		if(error.getType() == Type.SINGLE) {
-			if(source instanceof IFieldWidget) {
-				// handle styling
-				source.getWidget().removeStyleName(Styles.DIRTY);
-				source.getWidget().addStyleName(Styles.INVALID);
+			// track popup hovering
+			MouseRegs regs = invalids.get(source);
+			if(regs == null) {
+				regs = new MouseRegs();
+				invalids.put((IFieldWidget<?>) source, regs);
+			}
+			trackHover((IFieldWidget<?>) source, regs, true);
 
-				// track popup hovering
-				MouseRegs regs = invalids.get(source);
-				if(regs == null) {
-					regs = new MouseRegs();
-					invalids.put((IFieldWidget<?>) source, regs);
-				}
-				trackHover((IFieldWidget<?>) source, regs, true);
-
-				// turn off incremental validation when the error originates from the
-				// server
-				if(error.getClassifier() != null && error.getClassifier().isServer()) {
-					((IFieldWidget<?>) source).validateIncrementally(false);
-				}
+			// turn off incremental validation when the error originates from the
+			// server
+			if(error.getClassifier() != null && error.getClassifier().isServer()) {
+				((IFieldWidget<?>) source).validateIncrementally(false);
 			}
 		}
 	}

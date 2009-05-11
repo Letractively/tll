@@ -126,10 +126,65 @@
           </dependency>
         </dependencies>
         <configuration>
+          <classpath>
+            <element>
+              <groupId>commons-lang</groupId>
+              <artifactId>commons-lang</artifactId>
+            </element>
+            <element>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </element>
+            <element>
+              <groupId>commons-configuration</groupId>
+              <artifactId>commons-configuration</artifactId>
+            </element>
+            <element>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-config</artifactId>
+              <version>${project.parent.version}</version>
+            </element>
+            <element>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-jdbc</artifactId>
+            </element>
+            <element>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-dao-api</artifactId>
+              <version>${project.parent.version}</version>
+            </element>
+            <element>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-dao-orm</artifactId>
+              <version>${project.parent.version}</version>
+            </element>
+            <element>
+              <groupId>com.tll</groupId>
+              <artifactId>tll-dao-mock</artifactId>
+              <version>${project.parent.version}</version>
+            </element>
+          </classpath>
+          <scriptpath>
+            <element>${project.basedir}/../build-tools/src/main/scripts</element>
+            <element>${project.basedir}/src/main/scripts</element>
+          </scriptpath>
           <!-- NOTE: m2eclipse will fail the build if there is no valid source arg param! -->
           <source>println 'config'</source>
         </configuration>
         <executions>
+          <execution>
+            <id>config</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source><![CDATA[
+                def b = new com.tll.BuildTools(project, ant)
+                b.saveConfig()
+              ]]></source>
+            </configuration>
+          </execution>
           <execution>
             <id>war-resources</id>
             <phase>process-resources</phase>
@@ -137,50 +192,12 @@
               <goal>execute</goal>
             </goals>
             <configuration>
-              <classpath>
-                <element>
-                  <groupId>commons-lang</groupId>
-                  <artifactId>commons-lang</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-logging</groupId>
-                  <artifactId>commons-logging</artifactId>
-                </element>
-                <element>
-                  <groupId>commons-configuration</groupId>
-                  <artifactId>commons-configuration</artifactId>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-config</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-                <element>
-                  <groupId>org.springframework</groupId>
-                  <artifactId>spring-jdbc</artifactId>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-api</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-orm</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-                <element>
-                  <groupId>com.tll</groupId>
-                  <artifactId>tll-dao-mock</artifactId>
-                  <version>${project.parent.version}</version>
-                </element>
-              </classpath>
-              <scriptpath>
-                <element>${project.basedir}/../build-tools/src/main/scripts</element>
-                <element>${project.basedir}/src/main/scripts</element>
-              </scriptpath>
               <source><![CDATA[
-                com.tll.BuildTools.process(project, ant);
+                def b = new com.tll.BuildTools(project, ant);
+                b.generateGwtConstantsFile();
+                b.generateWebXml();
+                b.copyWebappResources();
+                b.stubDbIfNecessary()
                 //println 'temp disabled'
               ]]></source>
             </configuration>

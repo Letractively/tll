@@ -5,14 +5,15 @@
  */
 package com.tll.client.ui.field.intf;
 
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.tll.client.cache.AuxDataCache;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.tll.client.model.ModelAssembler;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.IFieldWidget;
+import com.tll.client.ui.field.IIndexedFieldBoundWidget;
 import com.tll.client.ui.field.TabbedIndexedFieldPanel;
 import com.tll.common.model.Model;
 import com.tll.common.model.SmbizEntityType;
@@ -30,45 +31,41 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 	 */
 	static final class OptionPanel extends FlowFieldPanel {
 
+		private final ParamsPanel paramsPanel;
+		private final DisclosurePanel dpParams;
+
+		/**
+		 * Constructor
+		 */
+		public OptionPanel() {
+			paramsPanel = new ParamsPanel();
+			dpParams = new DisclosurePanel("Parameters", false);
+			dpParams.add(paramsPanel);
+		}
+
 		@Override
 		protected FieldGroup generateFieldGroup() {
-			return (new OptionFieldProvider()).getFieldGroup();
+			final FieldGroup fg = (new OptionFieldProvider()).getFieldGroup();
+			fg.addField("parameters", paramsPanel.getFieldGroup());
+			return fg;
 		}
 
 		@Override
 		public IFieldRenderer<FlowPanel> getRenderer() {
-			throw new UnsupportedOperationException();
+			return new OptionRenderer(false, dpParams, new FlowPanelFieldComposer());
+		}
+
+		@Override
+		public IIndexedFieldBoundWidget[] getIndexedChildren() {
+			return new IIndexedFieldBoundWidget[] { paramsPanel };
 		}
 	}
 
-	class OptionRenderer implements IFieldRenderer<FlowPanel> {
-
-		public void render(FlowPanel pnl, FieldGroup fg) {
-			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(pnl);
-
-			// first row
-			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
-			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
-
-			// pricing
-			cmpsr.newRow();
-			final Grid g = new Grid(2, 3);
-			g.setWidget(0, 0, fg.getFieldByName("optnSetUpCost").getWidget());
-			g.setWidget(0, 1, fg.getFieldByName("optnMonthlyCost").getWidget());
-			g.setWidget(0, 2, fg.getFieldByName("optnAnnualCost").getWidget());
-			g.setWidget(1, 0, fg.getFieldByName("optnBaseSetupPrice").getWidget());
-			g.setWidget(1, 1, fg.getFieldByName("optnBaseMonthlyPrice").getWidget());
-			g.setWidget(1, 2, fg.getFieldByName("optnBaseAnnualPrice").getWidget());
-			cmpsr.addWidget(g);
-
-			// cmpsr.newRow();
-			// cmpsr.addWidget(paramListing);
-		}
-	}
-
-	final class OptionsPanel extends TabbedIndexedFieldPanel<OptionPanel> {
+	/**
+	 * OptionsPanel
+	 * @author jpk
+	 */
+	static final class OptionsPanel extends TabbedIndexedFieldPanel<OptionPanel> {
 
 		/**
 		 * Constructor
@@ -84,18 +81,12 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 
 		@Override
 		protected String getInstanceName(OptionPanel index) {
-			//try {
-			final IFieldWidget<?> fw = index.getFieldGroup().getFieldWidget(Model.NAME_PROPERTY);
-			return fw.getText();
-			//}
-			//catch(final UnsetPropertyException e) {
-			//throw new IllegalStateException(e);
-			//}
+			return index.getFieldGroup().getFieldWidget(Model.NAME_PROPERTY).getText();
 		}
 
 		@Override
 		protected Model createPrototypeModel() {
-			return AuxDataCache.get().getEntityPrototype(SmbizEntityType.INTERFACE_OPTION);
+			return ModelAssembler.assemble(SmbizEntityType.INTERFACE_OPTION);
 		}
 
 		@Override
@@ -105,28 +96,55 @@ public final class MultiOptionInterfacePanel extends AbstractInterfacePanel {
 
 	} // OptionsPanel
 
-	private final FlowPanel canvas = new FlowPanel();
-
-	// private final OptionsPanel optionsPanel = new OptionsPanel();
+	final OptionsPanel optionsPanel = new OptionsPanel();
+	final DisclosurePanel dpOptions = new DisclosurePanel("Options", true);
 
 	/**
 	 * Constructor
 	 */
 	public MultiOptionInterfacePanel() {
-		super();
-		initWidget(canvas);
+		dpOptions.add(optionsPanel);
 	}
 
 	@Override
 	protected FieldGroup generateFieldGroup() {
 		final FieldGroup fg = (new InterfaceFieldProvider()).getFieldGroup();
-		// fg.addField("options", optionsPanel.getFieldGroup());
+		fg.addField("options", optionsPanel.getFieldGroup());
 		return fg;
 	}
 
 	@Override
 	public IFieldRenderer<FlowPanel> getRenderer() {
-		return null;
+		return new IFieldRenderer<FlowPanel>() {
+
+			@Override
+			public void render(FlowPanel widget, FieldGroup fg) {
+				final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+				cmpsr.setCanvas(widget);
+
+				// first row
+				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
+				cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
+
+				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.stopFlow();
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.resetAlignment();
+
+				// second row
+				cmpsr.newRow();
+				cmpsr.addWidget(createAvailabilityWidget(fg));
+
+				// third row
+				cmpsr.addWidget(dpOptions);
+			}
+		};
 	}
 
+	@Override
+	public IIndexedFieldBoundWidget[] getIndexedChildren() {
+		return new IIndexedFieldBoundWidget[] { optionsPanel };
+	}
 }

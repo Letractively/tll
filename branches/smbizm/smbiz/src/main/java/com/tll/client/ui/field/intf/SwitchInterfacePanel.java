@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.field.intf;
 
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.tll.client.ui.field.FieldGroup;
@@ -18,26 +19,20 @@ import com.tll.common.model.Model;
  */
 public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
-	class SwitchInterfaceFieldsRenderer implements IFieldRenderer<FlowPanel> {
+	private final ParamsPanel paramsPanel;
+	private final DisclosurePanel dpParams;
+	private final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+	private final OptionRenderer optionRenderer;
 
-		public void render(FlowPanel pnl, FieldGroup fg) {
-			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
-			cmpsr.setCanvas(pnl);
-
-			// first row
-			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
-			cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
-
-			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
-			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
-			cmpsr.resetAlignment();
-
-			cmpsr.newRow();
-			cmpsr.addWidget(createAvailabilityGrid(fg));
-		}
+	/**
+	 * Constructor
+	 */
+	public SwitchInterfacePanel() {
+		super();
+		paramsPanel = new ParamsPanel();
+		dpParams = new DisclosurePanel("Parameters", false);
+		dpParams.add(paramsPanel);
+		optionRenderer = new OptionRenderer(true, dpParams, cmpsr);
 	}
 
 	@Override
@@ -52,6 +47,30 @@ public final class SwitchInterfacePanel extends AbstractInterfacePanel {
 
 	@Override
 	public IFieldRenderer<FlowPanel> getRenderer() {
-		return new SwitchInterfaceFieldsRenderer();
+		return new IFieldRenderer<FlowPanel>() {
+
+			@SuppressWarnings("synthetic-access")
+			@Override
+			public void render(FlowPanel widget, FieldGroup fg) {
+				cmpsr.setCanvas(widget);
+
+				// first row
+				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("intfCode"));
+				cmpsr.addField(fg.getFieldWidgetByName("intfDescription"));
+
+				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.stopFlow();
+				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.resetAlignment();
+
+				cmpsr.newRow();
+				cmpsr.addWidget(createAvailabilityWidget(fg));
+
+				optionRenderer.render(widget, fg);
+
+			}
+		};
 	}
 }

@@ -17,20 +17,6 @@ import com.tll.dao.jdbc.DbShellBuilder;
  */
 public final class BuildTools {
 	 
-	/**
-	 * Single public point of contact.
-	 * @param project
-	 * @param ant
-	 */
-	public static void process(def project, def ant) {
-		BuildTools b = new BuildTools(project, ant);
-		b.saveConfig()
-		b.generateGwtConstantsFile();
-		b.generateWebXml();
-		b.copyWebappResources();
-		b.stubDbIfNecessary()
-	}
-	
 	static final int FLAG_ALL = 0;
 	static final int FLAG_ORM = 1;
 	static final int FLAG_MOCK = 1 << 1;
@@ -110,7 +96,7 @@ public final class BuildTools {
 	 * @param project the maven project ref
 	 * @param ant the maven ant ref
 	 */
-	private BuildTools(def project, def ant) {
+	public BuildTools(def project, def ant) {
 		if(project == null || ant == null) {
 			throw new IllegalArgumentException('Null project and/or ant ref(s).')
 		}

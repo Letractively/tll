@@ -208,9 +208,6 @@ IIndexedFieldBoundWidget {
 			throw new IllegalStateException("Unable to add index: " + ip);
 		}
 
-		// don't do incremental validation when adding via the ui
-		ip.getFieldGroup().validateIncrementally(!isUiAdd);
-
 		index.setFieldGroupName(size());
 		getFieldGroup().addField(ip.getFieldGroup());
 

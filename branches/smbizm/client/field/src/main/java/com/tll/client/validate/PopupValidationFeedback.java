@@ -44,9 +44,8 @@ public class PopupValidationFeedback implements IErrorHandler, IHasMsgPopupRegis
 
 	@Override
 	public void handleError(IWidgetRef source, IError error) {
-		// we only handle single type errors
-		if(error.getType() == Type.SINGLE) {
-			if(source == null) throw new IllegalArgumentException("Null source");
+		// we only handle sourced and single type errors
+		if(error.getType() == Type.SINGLE && source != null) {
 			final ErrorClassifier sourcing = error.getClassifier();
 			mregistry.getOrCreateOperator(source.getWidget()).addMsgs(((Error) error).getMessages(),
 					sourcing == null ? null : sourcing
