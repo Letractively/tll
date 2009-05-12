@@ -82,7 +82,7 @@ public final class SmbizEntityGraphBuilder extends AbstractEntityGraphBuilder {
 		a.setPaymentInfo(getRandomEntity(PaymentInfo.class));
 
 		// account addresses upto 5
-		final int numAddresses = randomInt(6);
+		final int numAddresses = randomInt(2); // make 0 or 1 for quicker debugging
 		if(numAddresses > 0) {
 			int ai = 0;
 			final Set<AccountAddress> set = addN(AccountAddress.class, true, numAddresses);

@@ -200,6 +200,13 @@ MouseUpHandler, IHasDragHandlers, ClickHandler, NativePreviewHandler {
 		};
 	}
 
+	/**
+	 * @return The contained view toolbar.
+	 */
+	public ViewToolbar getToolbar() {
+		return toolbar;
+	}
+
 	@Override
 	public HandlerRegistration addDragHandler(IDragHandler handler) {
 		return addHandler(handler, DragEvent.TYPE);

@@ -5,6 +5,7 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.view.ViewToolbar;
 
 /**
  * IView - Runtime view definition defining a view's life-cycle.
@@ -43,15 +44,23 @@ public interface IView<I extends IViewInitializer> {
 	/**
 	 * Initializes the view enabling it to be uniquely identifiable at runtime.
 	 * @param initializer The view key provider responsible for providing the view
-	 *        the ability to provide a {@link ViewKey} which is essential for
-	 *        uniquely identifying views at runtime.
+	 *        the ability to provide a {@link ViewKey}.
 	 */
 	void initialize(I initializer);
 
 	/**
-	 * Refreshes the contents of the view. This method also serves to populate the
-	 * UI. A call to {@link #initialize(IViewInitializer)} is required before this
-	 * method may be called.
+	 * Hook to enable tailoring of the view at runtime with the employed view
+	 * toolbar and the widget that contains the view entirely. This method is
+	 * invoked after {@link #initialize(IViewInitializer)}.
+	 * @param viewConitainerRef the widget containing the view in its entirety
+	 * @param toolbar The view toolbar is additionally provided enabling
+	 *        additional {@link Widget}s to be added to it
+	 */
+	void apply(Widget viewConitainerRef, ViewToolbar toolbar);
+
+	/**
+	 * Sets or refreshes the contents of the view. This method is invoked after
+	 * {@link #apply(Widget, ViewToolbar)}.
 	 */
 	void refresh();
 

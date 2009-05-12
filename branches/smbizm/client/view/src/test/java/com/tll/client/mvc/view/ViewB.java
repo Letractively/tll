@@ -43,10 +43,6 @@ public class ViewB extends AbstractView<ViewBInit> {
 	}
 
 	@Override
-	public void refresh() {
-	}
-
-	@Override
 	public String getLongViewName() {
 		return "View B";
 	}

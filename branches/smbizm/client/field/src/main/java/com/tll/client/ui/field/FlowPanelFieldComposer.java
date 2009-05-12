@@ -163,6 +163,20 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 		resetAlignment();
 	}
 
+	/**
+	 * Adds the given style name to the associated field container widget that
+	 * contains it.
+	 * @param w
+	 * @param style
+	 */
+	public void addFieldContainerStyle(Widget w, String style) {
+		final Widget p = w.getParent();
+		if(p.getStyleName() == null || p.getStyleName().indexOf(Styles.FIELD_CONTAINER) < 0) {
+			throw new IllegalArgumentException("Not a field contained widget");
+		}
+		p.addStyleName(style);
+	}
+
 	public HorizontalAlignmentConstant getHorizontalAlignment() {
 		return getCurrentRow().getHorizontalAlignment();
 	}

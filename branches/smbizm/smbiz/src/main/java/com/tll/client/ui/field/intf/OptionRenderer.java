@@ -7,6 +7,7 @@ package com.tll.client.ui.field.intf;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.Style;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.GridFieldComposer;
@@ -65,9 +66,10 @@ class OptionRenderer implements IFieldRenderer<FlowPanel> {
 		pc.addField(fg.getFieldWidgetByName("optnBaseAnnualPrice"));
 
 		cmpsr.addWidget(fp);
+		cmpsr.addFieldContainerStyle(fp, Style.GAP_LEFT);
 
-		if(!isSwitch) cmpsr.newRow();
 		cmpsr.addWidget(paramsWidget);
+		cmpsr.addFieldContainerStyle(paramsWidget, Style.GAP_LEFT);
 	}
 
 }

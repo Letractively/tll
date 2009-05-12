@@ -9,7 +9,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.data.rpc.IHasRpcHandlers;
 import com.tll.client.data.rpc.IRpcHandler;
 import com.tll.client.data.rpc.RpcEvent;
-import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.RpcUiHandler;
 
 /**
@@ -27,11 +26,9 @@ public abstract class AbstractRpcAndModelAwareView<I extends IViewInitializer> e
 	}
 
 	@Override
-	public void refresh() {
-		if(rpcReg != null) {
-			rpcReg.removeHandler();
-		}
-		rpcReg = addRpcHandler(new RpcUiHandler(ViewManager.get().getViewContainer(getViewKey())));
+	protected void loaded() {
+		if(rpcReg != null) rpcReg.removeHandler();
+		rpcReg = addRpcHandler(new RpcUiHandler(getViewContainerRef()));
 	}
 
 }

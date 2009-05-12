@@ -7,7 +7,7 @@ package com.tll.client.rpc;
 
 import java.util.EventListener;
 
-import com.tll.common.AdminContext;
+import com.tll.client.AdminContext;
 
 /**
  * IAdminContextListener

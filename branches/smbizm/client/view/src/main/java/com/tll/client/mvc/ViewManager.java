@@ -206,16 +206,6 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 	}
 
 	/**
-	 * Provides the view container for a cached view given a view key.
-	 * @param key the view key
-	 * @return The {@link ViewContainer} for the given view key.
-	 */
-	public ViewContainer getViewContainer(ViewKey key) {
-		final CView cv = findView(key);
-		return cv == null ? null : cv.vc;
-	}
-
-	/**
 	 * Sets the current view. The current view is defined as the visible pinned
 	 * view.
 	 * @param init The view initializer employed only when the view is not present
@@ -247,6 +237,8 @@ public final class ViewManager implements ValueChangeHandler<String>, IHasViewCh
 
 			e = new CView(new ViewContainer(view, options, key), init);
 			setCurrentView(e, showPopped);
+
+			view.apply(e.vc, e.vc.getToolbar());
 
 			// load the view
 			view.refresh();

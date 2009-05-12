@@ -4,6 +4,7 @@
 package com.tll.client.mvc.view.account;
 
 import com.tll.client.App;
+import com.tll.client.SmbizAdmin;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
@@ -80,7 +81,9 @@ public final class IspListingView extends ListingView<StaticViewInitializer> {
 				new PropertyBoundColumn("Billing Model", "billingModel", "i"),
 				new PropertyBoundColumn("Billing Cycle", "billingCycle", "i") };
 
-			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
+			private final Option mListing = new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage());
+
+			private final ModelChangingRowHandler rowOps = new ModelChangingRowHandler() {
 
 				@Override
 				protected String getListingElementName() {
@@ -94,19 +97,22 @@ public final class IspListingView extends ListingView<StaticViewInitializer> {
 
 				@Override
 				protected Option[] getCustomRowOps(int rowIndex) {
-					return new Option[] { new Option("Merchant Listing", App.imgs().arrow_sm_down().createImage()) };
+					return new Option[] { mListing, App.OPTION_SET_CURRENT, };
 				}
 
 				@Override
 				protected void handleRowOp(String optionText, int rowIndex) {
-					if(optionText.indexOf("Merchant Listing") == 0) {
+					if(mListing.getText().equals(optionText)) {
 						ViewManager.get().dispatch(
 								new ShowViewRequest(new MerchantListingViewInitializer(listingWidget.getRowKey(rowIndex))));
+					}
+					else if(App.OPTION_SET_CURRENT.getText().equals(optionText)) {
+						SmbizAdmin.getAdminContextCmd().changeCurrentAccount(listingWidget.getRowKey(rowIndex));
 					}
 				}
 			};
 
-			public String getListingElementName() {
+			public final String getListingElementName() {
 				return listingElementName;
 			}
 

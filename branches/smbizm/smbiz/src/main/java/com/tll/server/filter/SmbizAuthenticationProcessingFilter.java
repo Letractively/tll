@@ -29,9 +29,6 @@ public final class SmbizAuthenticationProcessingFilter extends AuthenticationPro
 		assert user != null;
 		final AdminContext ac = new AdminContext();
 		ac.setUser(user);
-		ac.setAccount(user.getAccount()); // default set the current account to the
-		// user's owning account
-
 		request.getSession(false).setAttribute(AdminContext.KEY, ac);
 	}
 

@@ -267,21 +267,33 @@
     <property name="notes" value="some notes" />
 	</bean>
 
-	<bean name="ROLE_ADMINISTRATOR" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+	<bean name="ROLE_ASP" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
 		<property name="authority">
-			<value>ROLE_ADMINISTRATOR</value>
+			<value>ASP</value>
 		</property>
 	</bean>
 	
-	<bean name="ROLE_USER" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+  <bean name="ROLE_ISP" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>ISP</value>
+    </property>
+  </bean>
+  
+  <bean name="ROLE_MERCHANT" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>MERCHANT</value>
+    </property>
+  </bean>
+  
+  <bean name="ROLE_CUSTOMER" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
+    <property name="authority">
+      <value>CUSTOMER</value>
+    </property>
+  </bean>
+  
+	<bean name="ROLE_VISITOR" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
 		<property name="authority">
-			<value>ROLE_USER</value>
-		</property>
-	</bean>
-	
-	<bean name="ROLE_ANONYMOUS" class="com.tll.model.Authority" parent="entityBase" scope="prototype">
-		<property name="authority">
-			<value>ROLE_ANONYMOUS</value>
+			<value>VISITOR</value>
 		</property>
 	</bean>
 	

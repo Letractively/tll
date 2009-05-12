@@ -137,6 +137,7 @@ a:active {
 
 #dpOpsDisplay {
 	margin-bottom: 0;
+	height: 150px;
 }
 
 #dpOpsDisplay .statusDisplay {

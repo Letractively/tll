@@ -5,10 +5,7 @@
  */
 package com.tll.client.mvc.view;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.tll.client.listing.AbstractRowOptions;
-import com.tll.client.model.IHasModelChangeHandlers;
-import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
@@ -19,7 +16,7 @@ import com.tll.client.ui.listing.ModelListingWidget;
  * @author jpk
  * @param <I> the view initializer type
  */
-public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> implements IHasModelChangeHandlers {
+public abstract class ListingView<I extends IViewInitializer> extends AbstractModelAwareView<I> {
 
 	protected static final ViewOptions VIEW_OPTIONS = new ViewOptions(true, false, true, false, false);
 
@@ -33,10 +30,10 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 	}
 
 	/**
-	 * ModelChangingRowOpDelegate - Handles standard edit/delete row op selections
+	 * ModelChangingRowHandler - Handles standard edit/delete row op selections
 	 * @author jpk
 	 */
-	protected abstract class ModelChangingRowOpDelegate extends AbstractRowOptions {
+	protected abstract class ModelChangingRowHandler extends AbstractRowOptions {
 
 		/**
 		 * @return The class of the view to display for editing listing rows.
@@ -70,26 +67,18 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 	protected ModelListingWidget listingWidget;
 
 	/**
-	 * Constructor
-	 */
-	public ListingView() {
-		super();
-		// listing views shall notify the other views of model change events that
-		// happen in the listing
-		addModelChangeHandler(ViewManager.get());
-	}
-
-	/**
 	 * Sets the listing widget on this listing view handling necessary tasks
 	 * associated with it.
 	 * @param listingWidget The listing widget to set for this listing view.
 	 */
 	protected final void setListingWidget(ModelListingWidget listingWidget) {
-		this.listingWidget = listingWidget;
+		listingWidget.addModelChangeHandler(ViewManager.get());
 		addWidget(listingWidget);
+		this.listingWidget = listingWidget;
 	}
 
-	public final void refresh() {
+	@Override
+	protected final void doRefresh() {
 		if(listingWidget != null) listingWidget.refresh();
 	}
 
@@ -98,11 +87,6 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 		if(listingWidget != null) {
 			listingWidget.clear();
 		}
-	}
-
-	@Override
-	public HandlerRegistration addModelChangeHandler(IModelChangeHandler handler) {
-		return addHandler(handler, ModelChangeEvent.TYPE);
 	}
 
 	@Override

@@ -1,31 +1,19 @@
 package com.tll.model;
 
 import com.tll.IMarshalable;
-import com.tll.INameValueProvider;
 
 /**
- * The Admin role
+ * AdminRole - The ordinality reflects the privelage level and this aspect is
+ * exploitable.
  * @author jpk
  */
-public enum AdminRole implements INameValueProvider<String>, IMarshalable {
-	ROLE_ASP("The Asp role - all powerful."),
-	ROLE_ISP("The Isp role"),
-	ROLE_MERCHANT("The Merchant role"),
-	ROLE_CUSTOMER("The Customer role"),
-	ROLE_VISITOR("The Visitor role");
+public enum AdminRole implements IMarshalable {
+	ASP,
+	ISP,
+	MERCHANT,
+	CUSTOMER,
+	VISITOR;
 
-	private final String name;
-
-	private AdminRole(final String name) {
-		this.name = name;
+	private AdminRole() {
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getValue() {
-		return name();
-	}
-
 }

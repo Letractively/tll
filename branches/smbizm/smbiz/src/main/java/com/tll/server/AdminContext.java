@@ -5,7 +5,6 @@
  */
 package com.tll.server;
 
-import com.tll.model.Account;
 import com.tll.model.User;
 
 /**
@@ -24,11 +23,6 @@ public final class AdminContext {
 	 */
 	private User user;
 	
-	/**
-	 * The current selected account.
-	 */
-	private Account account;
-
 	public AdminContext() {
 		super();
 	}
@@ -40,14 +34,4 @@ public final class AdminContext {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-
 }

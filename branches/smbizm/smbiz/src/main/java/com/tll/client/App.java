@@ -7,9 +7,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.tll.client.ui.ImageBundle;
-import com.tll.client.ui.msg.GlobalMsgPanel;
-import com.tll.common.model.IEntityType;
-import com.tll.common.model.SmbizEntityType;
+import com.tll.client.ui.option.Option;
 
 /**
  * App - General app wide utility methods and constants.
@@ -33,9 +31,9 @@ public abstract class App {
 	private static final Constants constants = (Constants) GWT.create(Constants.class);
 
 	/**
-	 * App wide global msg panel.
+	 * The global set current account option.
 	 */
-	private static final GlobalMsgPanel gmp = new GlobalMsgPanel();
+	public static final Option OPTION_SET_CURRENT = new Option("Set as Current");
 
 	/**
 	 * @return the app scoped image bundle instance.
@@ -52,13 +50,6 @@ public abstract class App {
 	}
 
 	/**
-	 * @return The global message panel.
-	 */
-	public static GlobalMsgPanel getGlobalMsgPanel() {
-		return gmp;
-	}
-
-	/**
 	 * Performs initialization stuff that should be invoked immediately in
 	 * onModuleLoad()
 	 */
@@ -68,15 +59,5 @@ public abstract class App {
 		// setup history tracking by establishing an initial token name in the
 		// history queue
 		History.newItem(INITIAL_HISTORY_TOKEN);
-	}
-
-	/**
-	 * Translates a generic {@link IEntityType} to the app specific enum
-	 * equivalent.
-	 * @param et the generic entity type
-	 * @return the smbiz specific enum entity type equivalent
-	 */
-	public static SmbizEntityType smbizEntityType(IEntityType et) {
-		return IEntityType.Util.toEnum(SmbizEntityType.class, et);
 	}
 }

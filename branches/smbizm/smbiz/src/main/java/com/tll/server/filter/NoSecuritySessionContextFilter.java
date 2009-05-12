@@ -70,7 +70,6 @@ public final class NoSecuritySessionContextFilter implements Filter {
 				log.debug("Creating mock admin context from default user email specified in config..");
 				final AdminContext ac = new AdminContext();
 				ac.setUser(user);
-				ac.setAccount(user.getAccount());
 				session.setAttribute(AdminContext.KEY, ac);
 				log.info("Server-side admin context created and stored in the servlet context");
 			}

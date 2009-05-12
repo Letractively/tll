@@ -14,12 +14,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.App;
 import com.tll.client.Style;
 import com.tll.client.data.rpc.AuxDataCacheHelper;
 import com.tll.client.data.rpc.AuxDataCommand;
@@ -33,17 +34,14 @@ import com.tll.client.listing.ListingEvent;
 import com.tll.client.listing.ListingFactory;
 import com.tll.client.model.ModelAssembler;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.StaticViewInitializer;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.Dialog;
 import com.tll.client.ui.GridRenderer;
-import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
-import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldFactory;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FieldPanel;
@@ -52,6 +50,8 @@ import com.tll.client.ui.field.IFieldRenderer;
 import com.tll.client.ui.field.RadioGroupField;
 import com.tll.client.ui.field.intf.MultiOptionInterfacePanel;
 import com.tll.client.ui.field.intf.SwitchInterfacePanel;
+import com.tll.client.ui.msg.GlobalMsgPanel;
+import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityPayload;
@@ -59,7 +59,9 @@ import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
+import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
+import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.InterfaceSearch;
 import com.tll.criteria.CriteriaType;
 import com.tll.dao.Sorting;
@@ -183,6 +185,10 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 				@Override
 				protected void handleSuccess(EntityPayload result) {
 					super.handleSuccess(result);
+					if(result.hasErrors()) {
+						applyFieldErrors(result.getStatus().getMsgs(MsgAttr.FIELD.flag));
+						return;
+					}
 					switch(crudOp) {
 						case LOAD:
 							setModel(result.getEntity());
@@ -190,18 +196,14 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 							break;
 
 						case UPDATE:
-							if(result.hasErrors()) {
-								applyFieldErrors(result.getStatus().getMsgs(MsgAttr.FIELD.flag));
-							}
-							else {
-								setModel(result.getEntity());
-							}
+							setModel(result.getEntity());
+							gmp.add(new Msg(getModel().descriptor() + " updated.", MsgLevel.INFO), null);
 							break;
 
 						case PURGE:
-							setVisible(false);
-							// refresh the interface listing
-							refreshData();
+							gmp.add(new Msg(getModel().descriptor() + " deleted.", MsgLevel.INFO), null);
+							// remove interface
+							InterfaceStack.this.removeInterface(InterfacePanel.this);
 							break;
 					}
 				}
@@ -213,13 +215,15 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 			/**
 			 * Constructor
 			 * @param intfRef
+			 * @param showCancelBtn
+			 * @param showDeleteBtn
 			 */
-			public InterfacePanel(ModelKey intfRef) {
-				super(App.getGlobalMsgPanel(), resolveInterfaceFieldPanel(intfRef.getEntityType()), false, true);
+			public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
+				super(gmp, resolveInterfaceFieldPanel(intfRef.getEntityType()), showCancelBtn, showDeleteBtn);
 				this.intfRef = intfRef;
 
 				addEditHandler(this);
-				rpc.setSource(InterfaceStack.this);
+				rpc.setSource(InterfacesView.this);
 				setVisible(false); // hide initially
 			}
 
@@ -228,7 +232,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 			 * @param intf
 			 */
 			public InterfacePanel(Model intf) {
-				this(intf.getKey());
+				this(intf.getKey(), true, false);
 				setModel(intf);
 				setVisible(true);
 			}
@@ -236,19 +240,28 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 			public void loadInterfaceIfNecessary() {
 				if(getModel() == null) {
 					rpc.load(intfRef, auxDataRequest);
-					rpc.execute();
+					DeferredCommand.addCommand(rpc);
 				}
 			}
 
 			@Override
 			public void onEdit(EditEvent event) {
-				if(event.getOp().isSave()) {
-					rpc.update(getModel());
+				switch(event.getOp()) {
+					case ADD:
+						rpc.add(getModel());
+						break;
+					case UPDATE:
+						rpc.update(getModel());
+						break;
+					case DELETE:
+						rpc.purge(getModel().getKey());
+						break;
+					case CANCEL:
+						// remove the pending add from the stack
+						removeInterface(this);
+						return;
 				}
-				else if(event.getOp() == EditOp.DELETE) {
-					rpc.purge(getModel().getKey());
-				}
-				rpc.execute();
+				DeferredCommand.addCommand(rpc);
 			}
 
 		}// InterfacePanel
@@ -261,8 +274,6 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		private final List<InterfacePanel> list = new ArrayList<InterfacePanel>();
 
 		private boolean initialized;
-
-		private HandlerRegistration hr;
 
 		/**
 		 * Constructor
@@ -286,8 +297,6 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		}
 
 		void refreshData() {
-			if(hr == null)
-				hr = addRpcHandler(new RpcUiHandler(ViewManager.get().getViewContainer(InterfacesView.this.getViewKey())));
 			initialized = false;
 			listHandler.refresh();
 		}
@@ -302,14 +311,21 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 				final InterfacePanel ir = list.get(index);
 				ir.loadInterfaceIfNecessary();
 			}
+			gmp.clear();
 			super.showStack(index);
 		}
 
 		void addInterface(Model intf, boolean useKeyOnly) {
 			assert intf != null;
-			final InterfacePanel pnl = useKeyOnly ? new InterfacePanel(intf.getKey()) : new InterfacePanel(intf);
+			final InterfacePanel pnl = useKeyOnly ? new InterfacePanel(intf.getKey(), false, true) : new InterfacePanel(intf);
 			list.add(pnl);
 			add(pnl, getStackHtml(intf), true);
+		}
+
+		void removeInterface(InterfacePanel pnl) {
+			if(remove(pnl)) {
+				list.remove(pnl);
+			}
 		}
 
 		@Override
@@ -370,9 +386,11 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 		auxDataRequest.requestEntityPrototype(SmbizEntityType.INTERFACE_OPTION_PARAMETER_DEFINITION);
 	}
 
+	private final GlobalMsgPanel gmp = new GlobalMsgPanel();
+
 	private final InterfaceStack intfStack = new InterfaceStack();
 
-	private final Button btnAddIntf = new Button("Add Interface");
+	private final PushButton btnAddIntf = new PushButton("Add Interface");
 
 	private IntfSlectDlg dlg;
 
@@ -382,7 +400,7 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	public InterfacesView() {
 		super();
 		btnAddIntf.addClickHandler(this);
-		addWidget(btnAddIntf);
+		addWidget(gmp);
 		addWidget(intfStack);
 	}
 
@@ -402,12 +420,18 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 	}
 
 	@Override
-	public void doInitialization(StaticViewInitializer initializer) {
+	protected void doInitialization(StaticViewInitializer initializer) {
 		// no-op
 	}
 
 	@Override
-	public void refresh() {
+	protected void decorateToolbar(ViewToolbar toolbar) {
+		// add add interface button
+		toolbar.addViewOpButton(this.btnAddIntf, "Add Interface");
+	}
+
+	@Override
+	protected void doRefresh() {
 		intfStack.refreshData();
 	}
 

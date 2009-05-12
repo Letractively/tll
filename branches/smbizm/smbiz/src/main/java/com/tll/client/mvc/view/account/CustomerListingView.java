@@ -3,6 +3,8 @@
  */
 package com.tll.client.mvc.view.account;
 
+import com.tll.client.App;
+import com.tll.client.SmbizAdmin;
 import com.tll.client.listing.Column;
 import com.tll.client.listing.IAddRowDelegate;
 import com.tll.client.listing.IRowOptionsDelegate;
@@ -13,6 +15,7 @@ import com.tll.client.listing.PropertyBoundColumn;
 import com.tll.client.mvc.view.ListingView;
 import com.tll.client.mvc.view.ViewClass;
 import com.tll.client.ui.listing.AccountListingConfig;
+import com.tll.client.ui.option.Option;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.client.util.GlobalFormat;
 import com.tll.common.model.IntPropertyValue;
@@ -94,7 +97,7 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 				new Column[] {
 				Column.ROW_COUNT_COLUMN, cName, cDCreated, cDModified, cStatus, cBillingModel, cBillingCycle };
 
-			private final ModelChangingRowOpDelegate rowOps = new ModelChangingRowOpDelegate() {
+			private final ModelChangingRowHandler rowOps = new ModelChangingRowHandler() {
 
 				@Override
 				protected ViewClass getEditViewClass() {
@@ -106,6 +109,21 @@ public final class CustomerListingView extends ListingView<CustomerListingViewIn
 					return listingElementName;
 				}
 
+				@Override
+				protected Option[] getCustomRowOps(int rowIndex) {
+					final ModelKey rowRef = listingWidget.getRowKey(rowIndex);
+					if(SmbizAdmin.canSetAsCurrent(rowRef, mercRef)) {
+						return new Option[] { App.OPTION_SET_CURRENT };
+					}
+					return null;
+				}
+
+				@Override
+				protected void handleRowOp(String optionText, int rowIndex) {
+					if(App.OPTION_SET_CURRENT.getText().equals(optionText)) {
+						SmbizAdmin.getAdminContextCmd().changeCurrentAccount(listingWidget.getRowKey(rowIndex));
+					}
+				}
 			};
 
 			public String getListingElementName() {

@@ -6,7 +6,7 @@ package com.tll.client.mvc.view;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
-import com.tll.client.App;
+import com.google.gwt.user.client.DeferredCommand;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
@@ -16,6 +16,7 @@ import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
 import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
+import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityOptions;
 import com.tll.common.model.Model;
@@ -48,6 +49,11 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	private final EntityOptions entityOptions;
 
 	/**
+	 * The dedicated global msg display for this view.
+	 */
+	private final GlobalMsgPanel gmp;
+
+	/**
 	 * The Panel containing the UI edit Widgets.
 	 */
 	private final EditPanel editPanel;
@@ -59,11 +65,13 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	 */
 	public EditView(FieldPanel<?> fieldPanel, final EntityOptions entityOptions) {
 		super();
-		editPanel = new EditPanel(App.getGlobalMsgPanel(), fieldPanel, true, false);
+		gmp = new GlobalMsgPanel();
+		editPanel = new EditPanel(gmp, fieldPanel, true, false);
 		editPanel.addEditHandler(this);
 
 		this.entityOptions = entityOptions;
 
+		addWidget(gmp);
 		addWidget(editPanel);
 
 		// edit views shall notify other open views of model changes
@@ -102,10 +110,10 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	}
 
 	@Override
-	protected final void doInitialization(EditViewInitializer viewRequest) {
-		model = viewRequest.getModel();
+	protected final void doInitialization(EditViewInitializer initializer) {
+		model = initializer.getModel();
 		if(model == null) {
-			setModelRef(viewRequest.getModelKey());
+			setModelRef(initializer.getModelKey());
 		}
 		else {
 			setModelRef(model.getKey());
@@ -113,14 +121,12 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	}
 
 	@Override
-	public final void refresh() {
-		super.refresh();
+	protected void doRefresh() {
 		model = null;
-		doRefresh();
+		reload();
 	}
 
-	private void doRefresh() {
-
+	private void reload() {
 		Command cmd = null;
 		if(model == null) {
 			// we need to fetch the model first
@@ -182,36 +188,45 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 
 	@Override
 	protected void handleModelChangeError(ModelChangeEvent event) {
-		App.getGlobalMsgPanel().clear();
+		gmp.clear();
 		editPanel.applyFieldErrors(event.getStatus().getMsgs(MsgAttr.FIELD.flag));
 	}
 
 	@Override
 	protected void handleModelChangeSuccess(ModelChangeEvent event) {
-		App.getGlobalMsgPanel().clear();
+		gmp.clear();
 		switch(event.getChangeOp()) {
 
 			case LOADED:
 				model = event.getModel();
 				// NOTE we fall through
 			case AUXDATA_READY:
-				doRefresh();
+				reload();
 				return;
 
 			case ADDED:
 				model = event.getModel();
-				App.getGlobalMsgPanel().add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
+				gmp.add(new Msg(model.descriptor() + " added", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 
 			case UPDATED:
 				model = event.getModel();
-				App.getGlobalMsgPanel().add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
+				gmp.add(new Msg(model.descriptor() + " updated", MsgLevel.INFO), null);
 				editPanel.setModel(model);
 				break;
 
 			case DELETED:
-				ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true, true));
+				// we need to defer so as not to interfere with ViewManager's
+				// onModelChangeEvent iteration
+				// otherwise we get a ConcurrentModificationException
+				DeferredCommand.addCommand(new Command() {
+
+					@Override
+					public void execute() {
+						ViewManager.get().dispatch(new UnloadViewRequest(getViewKey(), true, true));
+					}
+				});
 				break;
 		}
 	}

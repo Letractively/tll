@@ -43,10 +43,6 @@ public class ViewD extends AbstractView<StaticViewInitializer> {
 	}
 
 	@Override
-	public void refresh() {
-	}
-
-	@Override
 	public String getLongViewName() {
 		return "View D";
 	}

@@ -18,7 +18,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 	/**
 	 * The bound {@link IRowOptionsDelegate}
 	 */
-	private IRowOptionsDelegate rowOpDelegate;
+	private final IRowOptionsDelegate delegate;
 
 	/**
 	 * The needed table ref.
@@ -32,32 +32,18 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 
 	/**
 	 * Constructor
-	 * @param table The table ref
-	 */
-	public RowContextPopup(ListingTable<?> table) {
-		this(DFLT_DURATION, table);
-	}
-
-	/**
-	 * Constructor
 	 * @param duration the time in mili-seconds to show the popup or
 	 *        <code>-1</code> meaning it is shown indefinitely.
 	 * @param table The table ref
+	 * @param delegate the required row ops delegate
 	 */
-	public RowContextPopup(int duration, ListingTable<?> table) {
+	public RowContextPopup(int duration, ListingTable<?> table, IRowOptionsDelegate delegate) {
 		super(duration);
 		if(table == null) throw new IllegalArgumentException("Null table ref");
 		this.table = table;
 		this.table.addClickHandler(this);
-	}
-
-	/**
-	 * Sets or re-sets the row op delegate.
-	 * @param rowOpDelegate The row op delgate to set. Can't be <code>null</code>.
-	 */
-	public void setDelegate(IRowOptionsDelegate rowOpDelegate) {
-		if(rowOpDelegate == null) throw new IllegalArgumentException("A row op delegate must be specified");
-		this.rowOpDelegate = rowOpDelegate;
+		if(delegate == null) throw new IllegalArgumentException("Null delegate");
+		this.delegate = delegate;
 	}
 
 	public void onClick(ClickEvent event) {
@@ -69,7 +55,7 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 
 		if(row != this.rowIndex) {
 			this.rowIndex = row;
-			setOptions(rowOpDelegate.getOptions(row));
+			setOptions(delegate.getOptions(row));
 		}
 
 		if(!isShowing()) {
@@ -80,10 +66,10 @@ public final class RowContextPopup extends OptionsPopup implements ClickHandler 
 
 	@Override
 	public void onOptionEvent(OptionEvent event) {
-		if(rowOpDelegate == null) throw new IllegalStateException("No row op delegate set");
+		if(delegate == null) throw new IllegalStateException("No row op delegate set");
 		super.onOptionEvent(event);
 		if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
-			rowOpDelegate.handleOptionSelection(event.optionText, rowIndex);
+			delegate.handleOptionSelection(event.optionText, rowIndex);
 		}
 	}
 

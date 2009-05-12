@@ -101,4 +101,14 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		}
 		return false;
 	}
+
+	/**
+	 * Translates a generic {@link IEntityType} to the app specific enum
+	 * equivalent.
+	 * @param et the generic entity type
+	 * @return the smbiz specific enum entity type equivalent
+	 */
+	public static SmbizEntityType convert(IEntityType et) {
+		return IEntityType.Util.toEnum(SmbizEntityType.class, et);
+	}
 }

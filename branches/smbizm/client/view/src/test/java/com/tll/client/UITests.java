@@ -2,9 +2,11 @@ package com.tll.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.tll.client.mvc.ViewManager;
@@ -14,8 +16,10 @@ import com.tll.client.mvc.view.ViewBInit;
 import com.tll.client.mvc.view.ViewC;
 import com.tll.client.mvc.view.ViewD;
 import com.tll.client.mvc.view.ViewE;
+import com.tll.client.mvc.view.ViewOptions;
 import com.tll.client.ui.view.RecentViewsPanel;
 import com.tll.client.ui.view.ViewPathPanel;
+import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.MutableEntityType;
 
@@ -32,8 +36,52 @@ public final class UITests extends AbstractUITest {
 
 	@Override
 	protected UITestCase[] getTestCases() {
-		return new UITestCase[] { new MvcTest() };
+		return new UITestCase[] {
+			new ViewToolbarTest(), new MvcTest() };
 	}
+
+	/**
+	 * ViewToolbarTest - Tests the styling and functionality of the view toolbar.
+	 * @author jpk
+	 */
+	static final class ViewToolbarTest extends DefaultUITestCase {
+
+		ViewToolbar vt;
+
+		/**
+		 * Constructor
+		 */
+		public ViewToolbarTest() {
+			super("ViewToolbar test", "Tests the ViewToolbar styling and functionality");
+		}
+
+		@Override
+		protected Widget getContext() {
+			return vt;
+		}
+
+		@Override
+		protected void init() {
+			final ViewOptions vo = new ViewOptions(true, true, true, true, false);
+			vt = new ViewToolbar("Testing", vo, new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("Click");
+				}
+			});
+
+			// add some view option buttons
+			vt.addViewOpButton(new PushButton("Option 1"), "Option 1");
+			vt.addViewOpButton(new PushButton("Option 2"), "Option 2");
+		}
+
+		@Override
+		protected void teardown() {
+			vt.removeFromParent();
+			vt = null;
+		}
+	} // ViewToolbarTest
 
 	/**
 	 * MvcTest - tests the rendering of fields and their value change

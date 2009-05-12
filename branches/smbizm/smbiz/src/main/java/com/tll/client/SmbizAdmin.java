@@ -5,7 +5,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.tll.client.data.rpc.IUserSessionListener;
 import com.tll.client.mvc.view.AspMain;
 import com.tll.client.mvc.view.CustomerMain;
 import com.tll.client.mvc.view.IspMain;
@@ -20,20 +19,63 @@ import com.tll.client.rpc.AdminContextCommand;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.LoginDialog;
 import com.tll.client.ui.MainPanel;
-import com.tll.common.AdminContext;
+import com.tll.common.model.ModelKey;
+import com.tll.common.model.SmbizEntityType;
+import com.tll.model.AdminRole;
 
 /**
  * Smbiz Admin module.
  */
-public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUserSessionListener {
+public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 
-	private static AdminContext adminContext;
+	/**
+	 * The sole admin context command instance.
+	 */
+	private static final AdminContextCommand acc = new AdminContextCommand();
 
-	public static AdminContext getAdminContext() {
-		return adminContext;
+	/**
+	 * @return The sole admin context command instance for the client app.
+	 */
+	public static AdminContextCommand getAdminContextCmd() {
+		return acc;
 	}
 
-	private AdminContextCommand acc;
+	/**
+	 * Resolves whether or not the given account ref is able to be set as the
+	 * current admin context account based on checking the current user's admin
+	 * role held in the admin context.
+	 * @param accountRef the desired account to be set as current
+	 * @param parentAccountRef the parent account of the given
+	 *        <code>accountRef</code> which is conditionally necessary
+	 * @return true/false
+	 * @throws IllegalArgumentException When the account ref param is
+	 *         <code>null</code> or when it is non-<code>null</code> but the
+	 *         parent account ref param is <code>null</code> and is necessary to
+	 *         make a decision.
+	 */
+	public static boolean canSetAsCurrent(ModelKey accountRef, ModelKey parentAccountRef) throws IllegalArgumentException {
+		if(accountRef == null || !accountRef.isSet()) throw new IllegalArgumentException("Null or unset account ref");
+		final AdminContext ac = getAdminContextCmd().getAdminContext();
+		final AdminRole role = ac.getUserRole();
+		final SmbizEntityType targetAccountType = SmbizEntityType.convert(accountRef.getEntityType());
+		final ModelKey userAcntRef = ac.getUserAccount().getKey();
+		assert userAcntRef != null;
+		switch(targetAccountType) {
+			case ASP:
+			case ISP:
+				return (role == AdminRole.ASP);
+			case MERCHANT:
+				switch(role) {
+					case ASP:
+						return true;
+					case ISP:
+						// verify the merchant is parent to the given merchant
+						return userAcntRef.equals(parentAccountRef);
+				}
+		}
+		// default
+		return false;
+	}
 
 	private LoginDialog loginDialog;
 	private MainPanel mainPanel;
@@ -58,8 +100,8 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 
 				// get the admin context from the server
 				assert acc != null;
-				acc.setChangeType(ChangeType.USER_CHANGE);
-				acc.execute();
+				acc.setSource(mainPanel);
+				acc.init();
 			}
 		});
 	}
@@ -81,9 +123,6 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 	}
 
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {
-		// set the admin context instance
-		adminContext = ac;
-
 		final boolean shouldLogin = (changeType == ChangeType.INVALIDATE);
 		mainPanel.setVisible(!shouldLogin);
 		if(shouldLogin) {
@@ -98,19 +137,15 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 	private void buildLoginDialog() {
 		if(loginDialog == null) {
 			loginDialog = new LoginDialog();
-			loginDialog.addUserSessionListener(this);
+			loginDialog.addUserSessionListener(acc);
 		}
 	}
 
 	private void buildMainPanel() {
 		if(mainPanel == null) {
 			mainPanel = new MainPanel();
-			if(acc == null) {
-				acc = new AdminContextCommand();
-				acc.addAdminContextListener(this);
-				acc.addAdminContextListener(mainPanel);
-			}
-			mainPanel.addUserSessionListener(this);
+			acc.addAdminContextListener(this);
+			acc.addAdminContextListener(mainPanel);
 			mainPanel.addUserSessionListener(acc);
 			RootPanel.get().add(mainPanel);
 		}
@@ -127,8 +162,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		mainPanel.setVisible(true);
 
 		// get the admin context from the server
-		acc.setChangeType(ChangeType.USER_CHANGE);
-		acc.execute();
+		acc.init();
 	}
 
 	public void onLogout() {
@@ -138,5 +172,4 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener, IUse
 		// populated
 		History.newItem(App.INITIAL_HISTORY_TOKEN);
 	}
-
 }

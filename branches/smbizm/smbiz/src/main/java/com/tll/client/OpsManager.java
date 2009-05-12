@@ -22,7 +22,6 @@ import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.ui.option.IOptionHandler;
 import com.tll.client.ui.option.Option;
 import com.tll.client.ui.option.OptionEvent;
-import com.tll.common.AdminContext;
 import com.tll.common.model.SmbizEntityType;
 
 /**
@@ -111,7 +110,7 @@ public final class OpsManager implements IOptionHandler {
 	 * @return Newly created {@link IViewInitializer}.
 	 */
 	private IViewInitializer resolveViewInitializer(AdminContext ac, String optionText) {
-		final SmbizEntityType crntUserAccountType = App.smbizEntityType(ac.getUserAccount().getEntityType());
+		final SmbizEntityType crntUserAccountType = SmbizEntityType.convert(ac.getUserAccount().getEntityType());
 
 		if(OP_ACCOUNT_DETAIL.getText().equals(optionText)) {
 			switch(crntUserAccountType) {
@@ -180,8 +179,8 @@ public final class OpsManager implements IOptionHandler {
 	 * @return The available ops
 	 */
 	public static Option[] get(AdminContext ac) {
-		final SmbizEntityType crntUserAccountType = App.smbizEntityType(ac.getUserAccount().getEntityType());
-		final SmbizEntityType crntAccountType = App.smbizEntityType(ac.getAccount().getEntityType());
+		final SmbizEntityType crntUserAccountType = SmbizEntityType.convert(ac.getUserAccount().getEntityType());
+		final SmbizEntityType crntAccountType = SmbizEntityType.convert(ac.getAccount().getEntityType());
 
 		final ArrayList<Option> options = new ArrayList<Option>();
 
@@ -238,7 +237,7 @@ public final class OpsManager implements IOptionHandler {
 	public void onOptionEvent(OptionEvent event) {
 		final String optionText = event.getOptionText();
 		if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
-			final IViewInitializer vi = resolveViewInitializer(SmbizAdmin.getAdminContext(), optionText);
+			final IViewInitializer vi = resolveViewInitializer(SmbizAdmin.getAdminContextCmd().getAdminContext(), optionText);
 			if(vi == null) {
 				Window.alert("The view: '" + optionText + "' is currently not implemented.");
 				return;

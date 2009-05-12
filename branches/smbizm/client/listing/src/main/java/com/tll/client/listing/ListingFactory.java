@@ -5,7 +5,6 @@ package com.tll.client.listing;
 
 import com.tll.client.ui.listing.ListingTable;
 import com.tll.client.ui.listing.ListingWidget;
-import com.tll.client.ui.listing.ModelListingWidget;
 import com.tll.client.ui.listing.RemoteListingWidget;
 import com.tll.common.data.RemoteListingDefinition;
 import com.tll.common.model.Model;
@@ -29,9 +28,13 @@ public abstract class ListingFactory {
 	 */
 	public static <R> ListingWidget<R, ListingTable<R>> createListingWidget(IListingConfig<R> config,
 			IListHandler<R> dataProvider) {
-		return assemble(config, new ListingWidget<R, ListingTable<R>>(config, new ListingTable<R>(config)),
+		final DataListingOperator<R> lo =
 				new DataListingOperator<R>(config.getPageSize(), dataProvider, (config.isSortable() ? config
-						.getDefaultSorting() : null)));
+						.getDefaultSorting() : null));
+		final ListingWidget<R, ListingTable<R>> lw =
+				new ListingWidget<R, ListingTable<R>>(config, new ListingTable<R>(config));
+		lw.setOperator(lo);
+		return lw;
 	}
 
 	/**
@@ -45,14 +48,14 @@ public abstract class ListingFactory {
 	 * @param propKeys optional array of OGNL property names that filter the
 	 *        results on the server.
 	 * @param initialSorting The initial sorting directive
-	 * @return A new {@link ModelListingWidget}.
+	 * @return A new {@link RemoteListingWidget}.
 	 */
-	public static <S extends ISearch> ModelListingWidget createRemoteListingWidget(IListingConfig<Model> config,
+	public static <S extends ISearch> RemoteListingWidget createRemoteListingWidget(IListingConfig<Model> config,
 			String listingName, ListHandlerType listHandlerType, S searchCriteria, String[] propKeys, Sorting initialSorting) {
-		final RemoteListingOperator<S> lo =
-			createRemoteOperator(listingName, listHandlerType, searchCriteria, propKeys, config.getPageSize(),
-					initialSorting);
-		return assemble(config, new RemoteListingWidget(config), lo);
+		final RemoteListingWidget lw = new RemoteListingWidget(config);
+		lw.setOperator(createRemoteOperator(listingName, listHandlerType, searchCriteria, propKeys, config.getPageSize(),
+				initialSorting));
+		return lw;
 	}
 
 	/**
@@ -75,27 +78,5 @@ public abstract class ListingFactory {
 		final RemoteListingDefinition<S> rld =
 			new RemoteListingDefinition<S>(listHandlerType, searchCriteria, propKeys, pageSize, initialSorting);
 		return new RemoteListingOperator<S>(listingName, rld);
-	}
-
-	/**
-	 * Does the actual listing Widget assembling.
-	 * @param <R> the row element type
-	 * @param <T> the listing table widget type
-	 * @param <LW> the listing widget type
-	 * @param config
-	 * @param listingWidget
-	 * @param operator
-	 * @return the assembled listing widget
-	 */
-	private static <R, T extends ListingTable<R>, LW extends ListingWidget<R, T>> LW assemble(IListingConfig<R> config,
-			LW listingWidget, IListingOperator<R> operator) {
-
-		if(config.getAddRowHandler() != null) listingWidget.setAddRowDelegate(config.getAddRowHandler());
-
-		if(config.getRowOptionsHandler() != null) listingWidget.setRowOptionsDelegate(config.getRowOptionsHandler());
-
-		listingWidget.setOperator(operator);
-
-		return listingWidget;
 	}
 }

@@ -60,6 +60,15 @@ public class Toolbar extends Composite {
 	}
 
 	/**
+	 * Inserts a child widget.
+	 * @param w
+	 * @param beforeIndex
+	 */
+	public void insert(Widget w, int beforeIndex) {
+		pnl.insert(w, beforeIndex);
+	}
+
+	/**
 	 * Removes a child widget.
 	 * @param w
 	 */
@@ -80,6 +89,26 @@ public class Toolbar extends Composite {
 	}
 
 	/**
+	 * Inserts a button before the given index.
+	 * @param b
+	 * @param beforeIndex
+	 */
+	public void insertButton(ButtonBase b, int beforeIndex) {
+		insertButton(b, null, beforeIndex);
+	}
+
+	/**
+	 * Inserts a button before the given index.
+	 * @param b
+	 * @param title
+	 * @param beforeIndex
+	 */
+	public void insertButton(ButtonBase b, String title, int beforeIndex) {
+		pnl.insert(b, beforeIndex);
+		buttonize(b, title);
+	}
+
+	/**
 	 * Adds a button to the toolbar.
 	 * @param b the button
 	 */
@@ -94,6 +123,15 @@ public class Toolbar extends Composite {
 	 */
 	public final void addButton(ButtonBase b, String title) {
 		pnl.add(b);
+		buttonize(b, title);
+	}
+
+	/**
+	 * Styles a just added button.
+	 * @param b
+	 * @param title
+	 */
+	private void buttonize(ButtonBase b, String title) {
 		final Element td = b.getElement().getParentElement();
 		td.setClassName(Styles.BUTTON);
 		b.setStylePrimaryName(Styles.BUTTON);

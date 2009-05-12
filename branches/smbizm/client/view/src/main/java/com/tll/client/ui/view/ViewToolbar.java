@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ToggleButton;
@@ -46,6 +47,7 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 	final Label viewTitle;
 	final ToggleButton btnMinimize, btnPop;
 	final PushButton btnClose, btnRefresh;
+	int numViewOpBtns;
 
 	/**
 	 * Constructor
@@ -59,28 +61,38 @@ public class ViewToolbar extends Toolbar implements HasMouseDownHandlers, HasMou
 		assert viewDisplayName != null && viewOptions != null && clickHandler != null;
 		viewTitle = new Label(viewDisplayName);
 		btnMinimize =
-				viewOptions.isMinimizable() ? new ToggleButton(imageBundle.arrow_sm_down().createImage(), imageBundle
-						.arrow_sm_right().createImage(), clickHandler) : null;
-		btnPop =
+			viewOptions.isMinimizable() ? new ToggleButton(imageBundle.arrow_sm_down().createImage(), imageBundle
+					.arrow_sm_right().createImage(), clickHandler) : null;
+			btnPop =
 				viewOptions.isPopable() ? new ToggleButton(imageBundle.external().createImage(), imageBundle.permalink()
 						.createImage(), clickHandler) : null;
 
-		btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickHandler) : null;
-		btnRefresh = viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickHandler) : null;
+				btnClose = viewOptions.isClosable() ? new PushButton(imageBundle.close().createImage(), clickHandler) : null;
+				btnRefresh = viewOptions.isRefreshable() ? new PushButton(imageBundle.refresh().createImage(), clickHandler) : null;
 
-		addStyleName(Styles.VIEW_TOOLBAR);
-		viewTitle.setStyleName(Styles.VIEW_TITLE);
+				addStyleName(Styles.VIEW_TOOLBAR);
+				viewTitle.setStyleName(Styles.VIEW_TITLE);
 
-		if(btnMinimize != null) addButton(btnMinimize, TITLE_MINIMIZE);
-		add(viewTitle);
+				if(btnMinimize != null) addButton(btnMinimize, TITLE_MINIMIZE);
+				add(viewTitle);
 
-		// NOTE: we do this here as this is intrinsic behavior
-		setWidgetContainerWidth(viewTitle, "100%");
+				// NOTE: we do this here as this is intrinsic behavior
+				setWidgetContainerWidth(viewTitle, "100%");
 
-		if(btnPop != null) addButton(btnPop, TITLE_POP);
-		if(btnRefresh != null) addButton(btnRefresh, TITLE_REFRESH);
-		if(btnClose != null) addButton(btnClose, TITLE_CLOSE);
+				if(btnPop != null) addButton(btnPop, TITLE_POP);
+				if(btnRefresh != null) addButton(btnRefresh, TITLE_REFRESH);
+				if(btnClose != null) addButton(btnClose, TITLE_CLOSE);
 
+	}
+
+	/**
+	 * Adds a view op button.
+	 * @param b
+	 * @param title
+	 */
+	public void addViewOpButton(ButtonBase b, String title) {
+		insertButton(b, title, btnMinimize == null ? 1 : 2 + numViewOpBtns);
+		numViewOpBtns++;
 	}
 
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {

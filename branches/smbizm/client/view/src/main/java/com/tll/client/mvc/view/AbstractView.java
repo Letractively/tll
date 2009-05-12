@@ -8,6 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.ui.view.ViewToolbar;
 
 /**
  * AbstractView - Base view class for all defined views in the app.
@@ -20,6 +21,11 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 	 * The view key uniquely indentifying the view at runtime.
 	 */
 	private ViewKey viewKey;
+
+	/**
+	 * The view container ref set at initialization.
+	 */
+	private Widget viewContainerRef;
 
 	/**
 	 * The wrapped Widget
@@ -69,6 +75,16 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 		return null;
 	}
 
+	/**
+	 * @return The widget ref of the widget that contains this view entirely.
+	 *         <p>
+	 *         NOTE: this method is only valid during and after
+	 *         {@link #apply(Widget, ViewToolbar)} is called.
+	 */
+	public final Widget getViewContainerRef() {
+		return viewContainerRef;
+	}
+
 	public final void initialize(I initializer) {
 		if(initializer == null || initializer.getViewKey() == null)
 			throw new IllegalArgumentException("Null or invalid view initializer.");
@@ -84,9 +100,43 @@ public abstract class AbstractView<I extends IViewInitializer> extends Composite
 
 	/**
 	 * Performs impl specific initialization just after the ViewKey has been set.
-	 * @param viewRequest The non-<code>null</code> view request.
+	 * @param initializer the view initializer
 	 */
-	protected abstract void doInitialization(I viewRequest);
+	protected abstract void doInitialization(I initializer);
+
+	public final void apply(Widget viewCntnrRef, ViewToolbar toolbar) {
+		this.viewContainerRef = viewCntnrRef;
+		loaded();
+		decorateToolbar(toolbar);
+	}
+
+	/**
+	 * Called when the view is fully wired up but not refreshed. At a minimum,
+	 * this method indicates when the {@link #getViewContainerRef()} method may be
+	 * validly called.
+	 */
+	protected void loaded() {
+		// base impl no-op
+	}
+
+	/**
+	 * Sub-classes may override this method to do custom toolbar decorations.
+	 * @param toolbar the view toolbar to decorate
+	 */
+	protected void decorateToolbar(ViewToolbar toolbar) {
+		// base impl no-op
+	}
+
+	public final void refresh() {
+		doRefresh();
+	}
+
+	/**
+	 * This is how the views are refreshed.
+	 */
+	protected void doRefresh() {
+		// base impl no-op
+	}
 
 	/**
 	 * Life-cycle provision for view implementations to perform clean-up before

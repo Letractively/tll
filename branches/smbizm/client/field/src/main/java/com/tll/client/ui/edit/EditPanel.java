@@ -244,7 +244,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			fieldPanel.getFieldGroup().reset();
 		}
 		else if(sender == btnDelete) {
-			EditEvent.fire(this, EditOp.UPDATE);
+			EditEvent.fire(this, EditOp.DELETE);
 		}
 		else if(sender == btnCancel) {
 			EditEvent.fire(this, EditOp.CANCEL);

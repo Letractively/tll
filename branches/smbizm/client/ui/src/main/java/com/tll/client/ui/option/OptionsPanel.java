@@ -79,7 +79,7 @@ MouseOutHandler, IHasOptionHandlers {
 	 */
 	private void addOption(Option option) {
 		final MRegs mreg =
-				new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
+			new MRegs(option.addMouseDownHandler(this), option.addMouseOutHandler(this), option.addMouseOverHandler(this));
 		options.put(option, mreg);
 		vp.add(option);
 	}
@@ -90,6 +90,7 @@ MouseOutHandler, IHasOptionHandlers {
 		for(final Option option : options.keySet()) {
 			vp.remove(option);
 			m = options.get(option);
+			m.down.removeHandler();
 			m.out.removeHandler();
 			m.over.removeHandler();
 		}

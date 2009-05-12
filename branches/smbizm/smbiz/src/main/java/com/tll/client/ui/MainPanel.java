@@ -26,19 +26,20 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
+import com.tll.client.AdminContext;
 import com.tll.client.App;
 import com.tll.client.OpsManager;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.IUserSessionListener;
+import com.tll.client.data.rpc.RpcEvent;
 import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
-import com.tll.client.mvc.view.IViewChangeHandler;
 import com.tll.client.mvc.view.ShowViewRequest;
-import com.tll.client.mvc.view.ViewChangeEvent;
 import com.tll.client.mvc.view.MainView.MainViewClass;
+import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
@@ -47,7 +48,6 @@ import com.tll.client.ui.view.ViewLink;
 import com.tll.client.ui.view.ViewPathPanel;
 import com.tll.client.util.Fmt;
 import com.tll.client.util.GlobalFormat;
-import com.tll.common.AdminContext;
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -133,6 +133,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		footerTd.setPropertyString("id", "footerTd");
 
 		initWidget(dockPanel);
+
+		addHandler(new RpcUiHandler(this), RpcEvent.TYPE);
 	}
 
 	public void addUserSessionListener(IUserSessionListener listener) {
@@ -152,6 +154,9 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			rightNav.setCurrentUser(user);
 			rightNav.setCurrentAccount(account);
 
+			// clear out the views
+			ViewManager.get().clear();
+
 			// set the initial view based on the user's account type
 			ViewManager.get().dispatch(
 					new ShowViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
@@ -159,9 +164,6 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
 			rightNav.setCurrentAccount(ac.getAccount());
-
-			// clear out the views
-			ViewManager.get().clear();
 		}
 		else if(changeType == ChangeType.INVALIDATE) {
 			// clear out state in right nav
@@ -192,10 +194,10 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		Button btnLogoff;
 		ViewLink vlUsername;
 		Label lblUserDateCreated;
-		Label lblUserAccount;
+		ViewLink vlUserAccount;
 
 		DisclosurePanel dpCrntAccount;
-		Label lblCrntAcnt;
+		ViewLink vlCrntAcnt;
 		Label lblCrntAcntType;
 		Label lblCrntAcntDateCreated;
 
@@ -215,7 +217,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			// current user
 			vlUsername = new ViewLink();
 			lblUserDateCreated = new Label();
-			lblUserAccount = new Label();
+			vlUserAccount = new ViewLink();
 
 			btnLogoff = new Button("logout", this);
 
@@ -231,7 +233,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			lbl = new Label("account");
 			lbl.setStyleName("lbl");
 			g.setWidget(2, 0, lbl);
-			g.setWidget(2, 1, lblUserAccount);
+			g.setWidget(2, 1, vlUserAccount);
 			g.setWidget(3, 0, btnLogoff);
 
 			frmLogout = new FormPanel();
@@ -247,7 +249,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			add(simplePanel);
 
 			// current account
-			lblCrntAcnt = new Label();
+			vlCrntAcnt = new ViewLink();
 			lblCrntAcntType = new Label();
 			lblCrntAcntDateCreated = new Label();
 
@@ -255,7 +257,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			lbl = new Label("name");
 			lbl.setStyleName("lbl");
 			g.setWidget(0, 0, lbl);
-			g.setWidget(0, 1, lblCrntAcnt);
+			g.setWidget(0, 1, vlCrntAcnt);
 			lbl = new Label("type");
 			lbl.setStyleName("lbl");
 			g.setWidget(1, 0, lbl);
@@ -319,35 +321,37 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 
 		private void setCurrentUser(Model user) {
-			this.vlUsername.setText(user.asString("emailAddress"));
-			this.vlUsername.setViewInitializer(new EditViewInitializer(UserEditView.klas, user));
-			this.lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
-			String dm;
+			vlUsername.setText(user.asString("emailAddress"));
+			vlUsername.setViewInitializer(new EditViewInitializer(UserEditView.klas, user));
+			lblUserDateCreated.setText(Fmt.format(user.getDateCreated(), GlobalFormat.DATE));
 			try {
 				final Model account = user.relatedOne("account").getModel();
-				dm = Fmt.format(account.getDateModified(), GlobalFormat.DATE);
+				vlUserAccount.setText(account.getName());
+				vlUserAccount.setViewInitializer(new EditViewInitializer(AccountEditView.klas, account));
 			}
 			catch(final PropertyPathException e) {
-				dm = "";
+				vlUserAccount.setText("-");
+				vlUserAccount.setViewInitializer(null);
 			}
-			this.lblUserAccount.setText(dm);
 		}
 
 		private void setCurrentAccount(Model account) {
-			this.lblCrntAcnt.setText(account.getName());
-			this.lblCrntAcntType.setText(account.getEntityType().getPresentationName());
-			this.lblCrntAcntDateCreated.setText(Fmt.format(account.getDateCreated(), GlobalFormat.DATE));
+			vlCrntAcnt.setText(account.getName());
+			vlCrntAcnt.setViewInitializer(new EditViewInitializer(AccountEditView.klas, account));
+			lblCrntAcntType.setText(account.getEntityType().getPresentationName());
+			lblCrntAcntDateCreated.setText(Fmt.format(account.getDateCreated(), GlobalFormat.DATE));
 		}
 
 		private void clearCurrentUser() {
 			this.vlUsername.setText(null);
 			this.vlUsername.setViewInitializer(null);
 			this.lblUserDateCreated.setText(null);
-			this.lblUserAccount.setText(null);
+			this.vlUserAccount.setText(null);
+			this.vlUserAccount.setViewInitializer(null);
 		}
 
 		private void clearCurrentAccount() {
-			this.lblCrntAcnt.setText(null);
+			this.vlCrntAcnt.setText(null);
 			this.lblCrntAcntType.setText(null);
 			this.lblCrntAcntDateCreated.setText(null);
 		}
@@ -358,7 +362,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 	 * Center - A {@link SimplePanel} designed to contain the current pinned view.
 	 * @author jpk
 	 */
-	private final class Center extends FlowPanel implements IStatusHandler, IViewChangeHandler {
+	private final class Center extends FlowPanel implements IStatusHandler {
 
 		public Center() {
 			super();
@@ -368,17 +372,13 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		@Override
 		protected void onLoad() {
 			super.onLoad();
-			add(App.getGlobalMsgPanel());
 			StatusEventDispatcher.get().addStatusHandler(this);
-			ViewManager.get().addViewChangeHandler(this);
 		}
 
 		@Override
 		protected void onUnload() {
 			super.onUnload();
-			ViewManager.get().removeViewChangeHandler(this);
 			StatusEventDispatcher.get().removeStatusHandler(this);
-			remove(App.getGlobalMsgPanel());
 		}
 
 		public void onStatusEvent(StatusEvent event) {
@@ -389,11 +389,6 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 					Msgs.post(gms, this, Position.CENTER, -1, true);
 				}
 			}
-		}
-
-		@Override
-		public void onViewChange(ViewChangeEvent event) {
-			App.getGlobalMsgPanel().clear();
 		}
 	} // Center
 

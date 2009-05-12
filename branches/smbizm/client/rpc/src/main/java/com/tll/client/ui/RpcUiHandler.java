@@ -42,31 +42,33 @@ public class RpcUiHandler implements IRpcHandler {
 			Log.warn("RpcUiHandler.onRpcEvent(): Overlay widget is not attached.");
 			return;
 		}
-		switch(event.getType()) {
-			case SENT:
-				// add overlay
-				if(overlayWidget != null) {
-					// local overlay
-					overlay = BusyPanel.getAbsoluteOverlay(overlayWidget);
-					overlay.add(busyPanel, 0, 0);
-				}
-				else {
-					// global overlay
-					RootPanel.get().add(busyPanel, 0, 0);
-				}
-				break;
-			case RECEIVED:
-			case ERROR:
-				if(overlayWidget != null) {
-					// local overlay
-					RootPanel.get().remove(overlay);
-					overlay = null;
-				}
-				else {
-					// global overlay
-					RootPanel.get().remove(busyPanel);
-				}
-				break;
+		if(RootPanel.get() != null) {
+			switch(event.getType()) {
+				case SENT:
+					// add overlay
+					if(overlayWidget != null) {
+						// local overlay
+						overlay = BusyPanel.getAbsoluteOverlay(overlayWidget);
+						overlay.add(busyPanel, 0, 0);
+					}
+					else {
+						// global overlay
+						if(RootPanel.get() != null) RootPanel.get().add(busyPanel, 0, 0);
+					}
+					break;
+				case RECEIVED:
+				case ERROR:
+					if(overlay != null) {
+						// local overlay
+						RootPanel.get().remove(overlay);
+						overlay = null;
+					}
+					else {
+						// global overlay
+						RootPanel.get().remove(busyPanel);
+					}
+					break;
+			}
 		}
 	}
 

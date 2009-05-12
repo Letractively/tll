@@ -5,9 +5,9 @@
 package com.tll.client.mvc.view;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.tll.client.AdminContext;
 import com.tll.client.SmbizAdmin;
 import com.tll.client.ui.HtmlListPanel;
-import com.tll.common.AdminContext;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.common.search.AccountSearch;
@@ -41,7 +41,7 @@ public class IspMain extends MainView {
 	public IspMain() {
 		super();
 
-		final AdminContext ac = SmbizAdmin.getAdminContext();
+		final AdminContext ac = SmbizAdmin.getAdminContextCmd().getAdminContext();
 		assert ac != null;
 		final ModelKey userAccountRef = ac.getUserAccount().getKey();
 		assert userAccountRef != null && userAccountRef.isSet();
