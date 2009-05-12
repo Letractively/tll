@@ -132,7 +132,7 @@ a:active {
 }
 
 .sb-RightNav .sb-dp .content table {
-	width: 100%;
+	width: 13em;
 }
 
 #dpOpsDisplay {
@@ -221,9 +221,9 @@ a:active {
 
 .addIntf {
 	margin: 5px;
+	width: 100%;
 }
 
 .addIntf td {
-	text-align: center;
-	vertical-align: middle;
+	vertical-align: middle !important;
 }

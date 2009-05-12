@@ -204,7 +204,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		DisclosurePanel dpOps;
 		OptionsPanel opsPanel;
 
-		DisclosurePanel dpCmdDisplay;
+		DisclosurePanel dpOpsDisplay;
 		StatusDisplay cmdDisplay;
 
 		public RightNav() {
@@ -290,11 +290,11 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			cmdDisplay = new StatusDisplay(MsgAttr.EXCEPTION.flag | MsgAttr.STATUS.flag);
 			simplePanel = new SimplePanel();
 			simplePanel.add(cmdDisplay);
-			dpCmdDisplay = new DisclosurePanel("Command History", false);
-			dpCmdDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			DOM.setElementAttribute(dpCmdDisplay.getElement(), "id", "dpCmdDisplay");
-			dpCmdDisplay.add(simplePanel);
-			add(dpCmdDisplay);
+			dpOpsDisplay = new DisclosurePanel("Command History", false);
+			dpOpsDisplay.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
+			DOM.setElementAttribute(dpOpsDisplay.getElement(), "id", "dpOpsDisplay");
+			dpOpsDisplay.add(simplePanel);
+			add(dpOpsDisplay);
 		}
 
 		public void onClick(ClickEvent event) {
