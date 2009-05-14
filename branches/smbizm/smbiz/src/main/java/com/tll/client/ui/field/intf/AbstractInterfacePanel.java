@@ -86,6 +86,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 			addModelCommon(fg, true, false);
 			fg.addField(ftext("optnCode", "code", "Code", "Code", 20));
 			fg.addField(ftextarea("optnDescription", "description", "Description", "Description", 3, 25));
+			fg.addField(fcheckbox("optnDefault", "default", "Default?", "Is default?"));
 
 			fg.addField(ftext("optnSetUpCost", "setUpCost", "Set Up", "Set Up Cost", 8));
 			fg.addField(ftext("optnMonthlyCost", "monthlyCost", "Monthly", "Monthly Cost", 8));

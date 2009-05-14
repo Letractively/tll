@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import com.google.inject.Injector;
 import com.tll.config.Config;
 import com.tll.config.IConfigKey;
+import com.tll.service.entity.account.AddAccountService;
 
 /**
  * AppContextBootstrapper
@@ -53,7 +54,8 @@ public class AppContextBootstrapper implements IBootstrapHandler {
 		final boolean debug = config.getBoolean(ConfigKeys.DEBUG.getKey());
 		final String environment = config.getString(ConfigKeys.ENVIRONMENT.getKey());
 		final String dfltUserEmail = config.getString(ConfigKeys.NOSECURITY_USER_EMAIL.getKey());
-		final AppContext c = new AppContext(debug, environment, dfltUserEmail);
+		final AddAccountService aas = injector.getInstance(AddAccountService.class);
+		final AppContext c = new AppContext(debug, environment, dfltUserEmail, aas);
 		servletContext.setAttribute(AppContext.KEY, c);
 	}
 

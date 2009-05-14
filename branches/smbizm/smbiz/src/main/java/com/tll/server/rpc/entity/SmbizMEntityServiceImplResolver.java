@@ -12,6 +12,7 @@ import com.tll.model.Authority;
 import com.tll.model.EntityUtil;
 import com.tll.model.IEntity;
 import com.tll.model.Interface;
+import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.User;
 
 
@@ -43,6 +44,9 @@ public class SmbizMEntityServiceImplResolver implements IMEntityServiceImplResol
 		}
 		else if(Interface.class.isAssignableFrom(rootEntityClass)) {
 			return InterfaceService.class;
+		}
+		else if(InterfaceOptionAccount.class.isAssignableFrom(rootEntityClass)) {
+			return InterfaceOptionAccountService.class;
 		}
 
 		throw new IllegalArgumentException("Unhandled entity type: " + entityClass);

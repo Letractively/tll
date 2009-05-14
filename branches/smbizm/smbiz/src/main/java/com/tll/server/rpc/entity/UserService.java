@@ -22,11 +22,11 @@ import com.tll.server.marshal.MarshalOptions;
  */
 public class UserService extends MNamedEntityServiceImpl<User> {
 
-	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
+	public static final MarshalOptions MARSHAL_OPTIONS = new MarshalOptions(true, 2);
 
 	@Override
 	public MarshalOptions getMarshalOptions(MEntityContext contexxt) {
-		return marshalOptions;
+		return MARSHAL_OPTIONS;
 	}
 
 	@Override

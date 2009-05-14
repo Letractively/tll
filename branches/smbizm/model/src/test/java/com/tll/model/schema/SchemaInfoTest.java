@@ -6,6 +6,7 @@ package com.tll.model.schema;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -182,6 +183,7 @@ public class SchemaInfoTest {
 		private TestEntityB relatedOne;
 		private Set<TestEntity> relatedMany = new LinkedHashSet<TestEntity>();
 		private transient AllTypesData nested;
+		private Map<String, String> smap;
 
 		public Class<? extends IEntity> entityClass() {
 			return TestEntity.class;
@@ -304,6 +306,14 @@ public class SchemaInfoTest {
 		public void setRelatedMany(Set<TestEntity> related) {
 			this.relatedMany = related;
 		}
+
+		public Map<String, String> getSmap() {
+			return smap;
+		}
+
+		public void setSmap(Map<String, String> smap) {
+			this.smap = smap;
+		}
 	}
 
 	/**
@@ -354,5 +364,8 @@ public class SchemaInfoTest {
 
 		sp = si.getSchemaProperty(TestEntity.class, "relatedOne.entityA.aProp");
 		assert sp.getPropertyType() == PropertyType.STRING;
+
+		sp = si.getSchemaProperty(TestEntity.class, "smap");
+		assert sp.getPropertyType() == PropertyType.STRING_MAP;
 	}
 }

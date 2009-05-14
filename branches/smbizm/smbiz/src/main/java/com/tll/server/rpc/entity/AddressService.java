@@ -25,11 +25,11 @@ import com.tll.server.marshal.MarshalOptions;
  */
 public class AddressService extends MEntityServiceImpl<Address> {
 
-	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
+	public static final MarshalOptions MARSHAL_OPTIONS = new MarshalOptions(false, 0);
 
 	@Override
 	public MarshalOptions getMarshalOptions(MEntityContext context) {
-		return marshalOptions;
+		return MARSHAL_OPTIONS;
 	}
 
 	@Override

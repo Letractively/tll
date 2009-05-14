@@ -12,6 +12,7 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
 import com.tll.common.model.Model;
 
 
@@ -45,9 +46,15 @@ class OptionRenderer implements IFieldRenderer<FlowPanel> {
 		if(!isSwitch) {
 			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
 			cmpsr.addField(fg.getFieldWidgetByName("optnCode"));
+			cmpsr.addField(fg.getFieldWidgetByName("optnDefault"));
 			cmpsr.newRow();
 			cmpsr.addField(fg.getFieldWidgetByName("optnDescription"));
 			cmpsr.newRow();
+		}
+		else {
+			final IFieldWidget<?> fw = fg.getFieldWidgetByName("optnCode");
+			fw.setLabelText("On by default?");
+			cmpsr.addField(fw);
 		}
 
 		// pricing

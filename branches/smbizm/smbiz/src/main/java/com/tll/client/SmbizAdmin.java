@@ -14,6 +14,7 @@ import com.tll.client.mvc.view.account.CustomerListingView;
 import com.tll.client.mvc.view.account.IspListingView;
 import com.tll.client.mvc.view.account.MerchantListingView;
 import com.tll.client.mvc.view.intf.InterfacesView;
+import com.tll.client.mvc.view.intf.IntfOptAccView;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.AdminContextCommand;
 import com.tll.client.rpc.IAdminContextListener;
@@ -120,6 +121,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 		ViewClass.addClass(CustomerListingView.klas);
 		ViewClass.addClass(InterfacesView.klas);
 		ViewClass.addClass(UserEditView.klas);
+		ViewClass.addClass(IntfOptAccView.klas);
 	}
 
 	public void onAdminContextChange(AdminContext ac, ChangeType changeType) {

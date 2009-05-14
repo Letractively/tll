@@ -42,6 +42,7 @@ import com.tll.model.IEntityFactory;
 import com.tll.model.IScalar;
 import com.tll.model.schema.ISchemaInfo;
 import com.tll.model.schema.PropertyMetadata;
+import com.tll.model.schema.PropertyType;
 import com.tll.model.schema.RelationInfo;
 import com.tll.model.schema.SchemaInfoException;
 import com.tll.server.rpc.entity.EntityTypeUtil;
@@ -160,6 +161,7 @@ public final class Marshaler {
 	 * @return new IModelProperty instance or <code>null</code> if the given
 	 *         property type does NOT corres. to a rudimentary property value.
 	 */
+	@SuppressWarnings("unchecked")
 	private IModelProperty createValueProperty(final Class<?> ptype, final String pname, final Object obj,
 			final PropertyMetadata pdata) {
 		IModelProperty prop = null;
@@ -199,6 +201,10 @@ public final class Marshaler {
 
 		else if(float.class == ptype || Float.class == ptype) {
 			prop = new DoublePropertyValue(pname, pdata, ((Float) obj).doubleValue());
+		}
+
+		else if(pdata != null && pdata.getPropertyType() == PropertyType.STRING_MAP) {
+			prop = new StringMapPropertyValue(pname, pdata, (Map<String, String>) obj);
 		}
 
 		return prop;
@@ -398,12 +404,12 @@ public final class Marshaler {
 	 * Un-marshals a {@link Model} representing an entity to an {@link IEntity}.
 	 * @param <E>
 	 * @param entityClass
-	 * @param entityGroup
+	 * @param model the client wise model instance
 	 * @return Un-marshaled server-side {@link IEntity} instance.
 	 */
-	public <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model entityGroup) {
+	public <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model model) {
 		BindingStack visited = new BindingStack();
-		final E e = unmarshalEntity(entityClass, entityGroup, visited);
+		final E e = unmarshalEntity(entityClass, model, visited);
 		visited = null;
 		return e;
 	}
@@ -412,18 +418,18 @@ public final class Marshaler {
 	 * Unmarshals a UI entity to a new {@link IEntity} instance.
 	 * @param <E>
 	 * @param entityClass {@link IEntity} class.
-	 * @param entityGroup The {@link Model} holding the entity properties
+	 * @param model The {@link Model} holding the entity properties
 	 * @param visited BindingStack holding visited entities to handle circular
 	 *        entity relationships
 	 * @return New <E> instance
 	 * @throws SystemError upon any error encountered.
 	 */
 	@SuppressWarnings("unchecked")
-	private <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model entityGroup,
+	private <E extends IEntity> E unmarshalEntity(final Class<E> entityClass, final Model model,
 			final BindingStack visited) {
 
 		// only recurse if not already visited
-		Binding b = visited.find(entityGroup);
+		Binding b = visited.find(model);
 		if(b != null) {
 			return (E) b.source;
 		}
@@ -439,12 +445,12 @@ public final class Marshaler {
 			throw new SystemError("Unable to instantiate entity of class: " + entityClass.getSimpleName());
 		}
 
-		b = new Binding(e, entityGroup);
+		b = new Binding(e, model);
 		visited.push(b);
 
 		final BeanWrapperImpl bw = new BeanWrapperImpl(e);
 
-		for(final Iterator itr = entityGroup.iterator(); itr.hasNext();) {
+		for(final Iterator itr = model.iterator(); itr.hasNext();) {
 			final IModelProperty prop = (IModelProperty) itr.next();
 			String propName = prop.getPropertyName();
 			final Object pval = prop.getValue();
@@ -497,10 +503,10 @@ public final class Marshaler {
 					}
 					if(el != null) {
 						for(final Object obj : el) {
-							final Model model = (Model) obj;
-							final IEntityType entityType = model.getEntityType();
+							final Model m = (Model) obj;
+							final IEntityType entityType = m.getEntityType();
 							final IEntity clcEntity =
-								model.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.getEntityClass(entityType), model,
+								m.isMarkedDeleted() ? null : unmarshalEntity(EntityTypeUtil.getEntityClass(entityType), m,
 										visited);
 							if(clcEntity instanceof IChildEntity) {
 								((IChildEntity) clcEntity).setParent(e);

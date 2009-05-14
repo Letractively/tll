@@ -12,15 +12,15 @@ import com.tll.common.data.EntityOptions;
 import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
-import com.tll.model.Interface;
+import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.key.IBusinessKey;
 import com.tll.server.marshal.MarshalOptions;
 
 /**
- * InterfaceService
+ * InterfaceOptionAccountService
  * @author jpk
  */
-public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
+public class InterfaceOptionAccountService extends MEntityServiceImpl<InterfaceOptionAccount> {
 
 	public static final MarshalOptions MARSHAL_OPTIONS = MarshalOptions.UNCONSTRAINED_MARSHALING;
 
@@ -30,22 +30,23 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
 	}
 
 	@Override
-	protected void handleLoadOptions(MEntityContext context, Interface e, EntityOptions options,
+	protected void handleLoadOptions(MEntityContext context, InterfaceOptionAccount e, EntityOptions options,
 			Map<String, ModelKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(MEntityContext context, Interface e, EntityOptions options)
+	protected void handlePersistOptions(MEntityContext context, InterfaceOptionAccount e, EntityOptions options)
 	throws SystemError {
 	}
 
 	@Override
-	protected IBusinessKey<Interface> handleBusinessKeyTranslation(ISearch search) {
+	protected IBusinessKey<InterfaceOptionAccount> handleBusinessKeyTranslation(ISearch search) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Interface> criteria)
+	protected void handleSearchTranslation(MEntityContext context, ISearch search,
+			ICriteria<InterfaceOptionAccount> criteria)
 	throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}

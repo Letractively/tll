@@ -9,6 +9,7 @@
   <source path="model">
     <include name="AdminRole.java" />
     <include name="SmbizEntityType.java" />
+    <include name="InterfaceStatus.java" />
     <include name="AccountStatus.java" />
     <include name="AddressType.java" />
     <include name="CreditCardType.java" />

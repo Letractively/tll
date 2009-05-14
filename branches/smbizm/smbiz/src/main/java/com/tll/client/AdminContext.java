@@ -10,6 +10,7 @@ import java.util.List;
 import com.allen_sauer.gwt.log.client.Log;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.SmbizEntityType;
 import com.tll.model.AdminRole;
 
 /**
@@ -30,12 +31,12 @@ public final class AdminContext {
 	private String environment;
 
 	/**
-	 * The logged in user or the user for this http session.
+	 * The current (logged in) user.
 	 */
 	private Model user;
 
 	/**
-	 * The current account which is distinct from the logged in user.
+	 * The current account which is distinct from the current in user.
 	 */
 	private Model account;
 
@@ -44,6 +45,15 @@ public final class AdminContext {
 	 * computed.
 	 */
 	private transient AdminRole userRole;
+
+	/**
+	 * Lazily computed type of the current user
+	 */
+	private transient SmbizEntityType userType;
+
+	private transient SmbizEntityType userAccountType;
+
+	private transient SmbizEntityType accountType;
 
 	/**
 	 * Constructor
@@ -94,6 +104,9 @@ public final class AdminContext {
 	 */
 	public void setUser(Model user) {
 		this.user = user;
+		// reset
+		this.userRole = null;
+		this.userAccountType = null;
 	}
 
 	/**
@@ -110,6 +123,7 @@ public final class AdminContext {
 	 */
 	public void setAccount(Model account) {
 		this.account = account;
+		this.accountType = null;
 	}
 
 	/**
@@ -160,5 +174,32 @@ public final class AdminContext {
 			}
 		}
 		return userRole;
+	}
+
+	/**
+	 * @return the userType
+	 */
+	public SmbizEntityType getUserType() {
+		assert user != null;
+		if(userType == null) userType = SmbizEntityType.convert(user.getEntityType());
+		return userType;
+	}
+
+	/**
+	 * @return the userAccountType
+	 */
+	public SmbizEntityType getUserAccountType() {
+		assert user != null;
+		if(userAccountType == null) userAccountType = SmbizEntityType.convert(getUserAccount().getEntityType());
+		return userAccountType;
+	}
+
+	/**
+	 * @return the accountType
+	 */
+	public SmbizEntityType getAccountType() {
+		assert account != null;
+		if(accountType == null) accountType = SmbizEntityType.convert(account.getEntityType());
+		return accountType;
 	}
 }

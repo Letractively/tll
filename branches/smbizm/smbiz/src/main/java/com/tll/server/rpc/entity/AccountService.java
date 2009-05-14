@@ -25,10 +25,10 @@ import com.tll.util.EnumUtil;
 
 public class AccountService extends MNamedEntityServiceImpl<Account> {
 
-	private static final MarshalOptions marshalOptions = new MarshalOptions(true, 2);
+	public static final MarshalOptions MARSHAL_OPTIONS = new MarshalOptions(true, 2);
 
 	public MarshalOptions getMarshalOptions(MEntityContext context) {
-		return marshalOptions;
+		return MARSHAL_OPTIONS;
 	}
 
 	@Override

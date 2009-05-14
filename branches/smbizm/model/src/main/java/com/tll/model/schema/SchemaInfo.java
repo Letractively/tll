@@ -260,6 +260,13 @@ public final class SchemaInfo implements ISchemaInfo {
 			else if(Date.class == rt) {
 				fd = new PropertyMetadata(PropertyType.DATE, managed, required, 30);
 			}
+			else if(Map.class == rt) {
+				// string map?
+				if(String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0]
+						&& String.class == ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[1]) {
+					fd = new PropertyMetadata(PropertyType.STRING_MAP, managed, required, -1);
+				}
+			}
 
 			return fd;
 		}

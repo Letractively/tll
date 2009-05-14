@@ -68,6 +68,7 @@
           <include>**/common/**</include>
           <include>**/model/AdminRole.java</include>
           <include>**/model/AccountStatus.java</include>
+          <include>**/model/InterfaceStatus.java</include>
           <include>**/model/AddressType.java</include>
           <include>**/model/CreditCardType.java</include>
         </includes>

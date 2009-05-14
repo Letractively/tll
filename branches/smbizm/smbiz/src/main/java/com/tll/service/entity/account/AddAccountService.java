@@ -10,33 +10,44 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.inject.Inject;
 import com.tll.model.Account;
 import com.tll.model.Customer;
-import com.tll.model.CustomerAccount;
 import com.tll.model.InterfaceOptionAccount;
 import com.tll.model.Isp;
 import com.tll.model.Merchant;
 import com.tll.model.User;
-import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.intf.IInterfaceOptionAccountService;
 import com.tll.service.entity.pymnt.IPaymentInfoService;
 import com.tll.service.entity.user.IUserService;
 
 /**
- * The add account service implementation.
+ * AddAccountService - Derived entity service dedicated to adding
+ * {@link Account}s.
  * @author jpk
  */
 @Transactional
 public class AddAccountService {
 
-	private final IEntityServiceFactory serviceFactory;
+	private final IAccountService accountService;
+	private final IPaymentInfoService piService;
+	private final IInterfaceOptionAccountService ioaService;
+	private final IUserService userService;
+	// private final ICustomerAccountService caService;
 
 	/**
 	 * Constructor
-	 * @param serviceFactory
+	 * @param accountService
+	 * @param piService
+	 * @param ioaService
+	 * @param userService
 	 */
 	@Inject
-	public AddAccountService(IEntityServiceFactory serviceFactory) {
+	public AddAccountService(IAccountService accountService, IPaymentInfoService piService,
+			IInterfaceOptionAccountService ioaService, IUserService userService/*, ICustomerAccountService caService*/) {
 		super();
-		this.serviceFactory = serviceFactory;
+		this.accountService = accountService;
+		this.piService = piService;
+		this.ioaService = ioaService;
+		this.userService = userService;
+		// this.caService = caService;
 	}
 
 	/**
@@ -50,11 +61,6 @@ public class AddAccountService {
 	 */
 	private Account addAccount(Account account, Collection<InterfaceOptionAccount> accountInterfaceOptions,
 			Collection<User> users) throws EntityExistsException {
-
-		final IAccountService accountService = serviceFactory.instance(IAccountService.class);
-		final IPaymentInfoService piService = serviceFactory.instance(IPaymentInfoService.class);
-		final IInterfaceOptionAccountService ioaService = serviceFactory.instance(IInterfaceOptionAccountService.class);
-		final IUserService userService = serviceFactory.instance(IUserService.class);
 
 		// create payment info
 		if(account.getPaymentInfo() != null && account.getPaymentInfo().isNew() && account.getPersistPymntInfo()) {
@@ -73,24 +79,52 @@ public class AddAccountService {
 		return persistedAccount;
 	}
 
+	/**
+	 * Adds an Isp.
+	 * @param isp
+	 * @param accountInterfaceOptions
+	 * @param users
+	 * @return the persisted isp
+	 * @throws ConstraintViolationException
+	 * @throws EntityExistsException
+	 */
 	@Transactional
-	public void addIsp(Isp isp, Collection<InterfaceOptionAccount> accountInterfaceOptions, Collection<User> users)
+	public Isp addIsp(Isp isp, Collection<InterfaceOptionAccount> accountInterfaceOptions, Collection<User> users)
 	throws ConstraintViolationException, EntityExistsException {
-		addAccount(isp, accountInterfaceOptions, users);
+		return (Isp) addAccount(isp, accountInterfaceOptions, users);
 	}
 
+	/**
+	 * Adds a merchant.
+	 * @param merchant
+	 * @param accountInterfaceOptions
+	 * @param users
+	 * @return the persisted merchant
+	 * @throws ConstraintViolationException
+	 * @throws EntityExistsException
+	 */
 	@Transactional
-	public void addMerchant(Merchant merchant, Collection<InterfaceOptionAccount> accountInterfaceOptions,
+	public Merchant addMerchant(Merchant merchant, Collection<InterfaceOptionAccount> accountInterfaceOptions,
 			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
-		addAccount(merchant, accountInterfaceOptions, users);
+		return (Merchant) addAccount(merchant, accountInterfaceOptions, users);
 	}
 
+	/**
+	 * Adds a customer
+	 * @param customer
+	 * @param accountInterfaceOptions
+	 * @param users
+	 * @return the persisted customer
+	 * @throws ConstraintViolationException
+	 * @throws EntityExistsException
+	 */
 	@Transactional
-	public void addCustomer(Customer customer, Collection<InterfaceOptionAccount> accountInterfaceOptions,
+	public Customer addCustomer(Customer customer, Collection<InterfaceOptionAccount> accountInterfaceOptions,
 			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
-		addAccount(customer, accountInterfaceOptions, users);
+		return (Customer) addAccount(customer, accountInterfaceOptions, users);
 	}
 
+	/*
 	@Transactional
 	public void addCustomer(CustomerAccount customerAccount, Collection<InterfaceOptionAccount> accountInterfaceOptions,
 			Collection<User> users) throws ConstraintViolationException, EntityExistsException {
@@ -102,7 +136,7 @@ public class AddAccountService {
 		}
 
 		// add CustomerAccount now
-		final ICustomerAccountService caService = serviceFactory.instance(ICustomerAccountService.class);
 		caService.persist(customerAccount);
 	}
+	 */
 }

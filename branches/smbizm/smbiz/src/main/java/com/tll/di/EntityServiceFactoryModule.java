@@ -23,6 +23,7 @@ import com.tll.service.entity.EntityServiceFactory;
 import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
 import com.tll.service.entity.account.AccountService;
+import com.tll.service.entity.account.AddAccountService;
 import com.tll.service.entity.account.CustomerAccountService;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.service.entity.account.ICustomerAccountService;
@@ -96,6 +97,9 @@ public class EntityServiceFactoryModule extends AbstractModule {
 		bind(ISiteCodeService.class).to(SiteCodeService.class).in(Scopes.SINGLETON);
 		bind(IUserService.class).to(UserService.class).in(Scopes.SINGLETON);
 		bind(IVisitorService.class).to(VisitorService.class).in(Scopes.SINGLETON);
+
+		// add account service
+		bind(AddAccountService.class).in(Scopes.SINGLETON);
 
 		// UserCache (userCache)
 		bind(UserCache.class).toProvider(new Provider<UserCache>() {

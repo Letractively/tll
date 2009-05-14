@@ -221,6 +221,15 @@
     <url-pattern>/smbizAdmin/rpc/aux</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>AddAccountService</servlet-name>
+    <servlet-class>com.tll.server.rpc.entity.AddAccountService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddAccountService</servlet-name>
+    <url-pattern>/smbizAdmin/rpc/aa</url-pattern>
+  </servlet-mapping>
+  
 	<servlet>
 		<servlet-name>ListingService</servlet-name>
 		<servlet-class>com.tll.server.rpc.listing.ListingService</servlet-class>

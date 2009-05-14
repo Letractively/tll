@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.tll.client.AdminContext;
 import com.tll.client.App;
 import com.tll.client.OpsManager;
+import com.tll.client.SmbizAdmin;
 import com.tll.client.data.rpc.ISourcesUserSessionEvents;
 import com.tll.client.data.rpc.IStatusHandler;
 import com.tll.client.data.rpc.IUserSessionListener;
@@ -37,12 +38,15 @@ import com.tll.client.data.rpc.StatusEvent;
 import com.tll.client.data.rpc.StatusEventDispatcher;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.mvc.view.EditViewInitializer;
+import com.tll.client.mvc.view.IViewInitializer;
 import com.tll.client.mvc.view.ShowViewRequest;
 import com.tll.client.mvc.view.MainView.MainViewClass;
 import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.mvc.view.user.UserEditView;
 import com.tll.client.rpc.IAdminContextListener;
 import com.tll.client.ui.msg.Msgs;
+import com.tll.client.ui.option.IOptionHandler;
+import com.tll.client.ui.option.OptionEvent;
 import com.tll.client.ui.option.OptionsPanel;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.client.ui.view.ViewPathPanel;
@@ -176,7 +180,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 
 		// update the options
-		rightNav.opsPanel.setOptions(OpsManager.get(ac));
+		rightNav.opsPanel.setOptions(OpsManager.getOptions(ac.getUserAccountType(), ac.getAccountType(), ac.getUserRole()));
 	}
 
 	private final class Header extends FlowPanel {
@@ -188,7 +192,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		}
 	}
 
-	private final class RightNav extends VerticalPanel implements ClickHandler, SubmitHandler, SubmitCompleteHandler {
+	private final class RightNav extends VerticalPanel implements ClickHandler, SubmitHandler, SubmitCompleteHandler, IOptionHandler {
 
 		FormPanel frmLogout;
 		Button btnLogoff;
@@ -279,10 +283,8 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			// operations
 			dpOps = new DisclosurePanel("Operations", true);
 			dpOps.setStylePrimaryName(Styles.DISCLOSURE_PANEL);
-			// simplePanel = new SimplePanel();
 			opsPanel = new OptionsPanel();
-			opsPanel.addOptionHandler(OpsManager.get());
-			// simplePanel.add(opsPanel);
+			opsPanel.addOptionHandler(this);
 			dpOps.add(opsPanel);
 			add(dpOps);
 
@@ -318,6 +320,21 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			}
 			// logout error
 			Window.alert("Logout error: " + results);
+		}
+
+		@Override
+		public void onOptionEvent(OptionEvent event) {
+			final String optionText = event.getOptionText();
+			if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
+				final AdminContext ac = SmbizAdmin.getAdminContextCmd().getAdminContext();
+				final IViewInitializer vi =
+						OpsManager.resolveViewInitializer(optionText, ac.getUser(), ac.getAccount(), ac.getUserAccountType());
+				if(vi == null) {
+					Window.alert("The view: '" + optionText + "' is currently not implemented.");
+					return;
+				}
+				ViewManager.get().dispatch(new ShowViewRequest(vi));
+			}
 		}
 
 		private void setCurrentUser(Model user) {
