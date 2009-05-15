@@ -7,7 +7,7 @@ package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.common.data.AddAccountRequest;
-import com.tll.common.data.EntityPayload;
+import com.tll.common.data.ModelPayload;
 
 
 /**
@@ -16,5 +16,5 @@ import com.tll.common.data.EntityPayload;
  */
 public interface IAddAccountServiceAsync {
 
-	void add(AddAccountRequest request, AsyncCallback<EntityPayload> callback);
+	void add(AddAccountRequest request, AsyncCallback<ModelPayload> callback);
 }

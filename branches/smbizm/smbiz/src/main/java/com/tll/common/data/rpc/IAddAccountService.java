@@ -7,7 +7,7 @@ package com.tll.common.data.rpc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.tll.common.data.AddAccountRequest;
-import com.tll.common.data.EntityPayload;
+import com.tll.common.data.ModelPayload;
 
 /**
  * ICrudService
@@ -19,7 +19,7 @@ public interface IAddAccountService extends RemoteService {
 	/**
 	 * Adds an account.
 	 * @param request The {@link AddAccountRequest}
-	 * @return the added account in a new {@link EntityPayload} instance
+	 * @return the added account in a new {@link ModelPayload} instance
 	 */
-	EntityPayload add(AddAccountRequest request);
+	ModelPayload add(AddAccountRequest request);
 }

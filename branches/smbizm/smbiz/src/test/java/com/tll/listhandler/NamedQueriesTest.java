@@ -121,9 +121,9 @@ import com.tll.service.entity.IEntityServiceFactory;
 	/**
 	 * @param <E>
 	 * @param entityClass
-	 * @return The {@link IListHandlerDataProvider} subject to testing.
+	 * @return The {@link IListingDataProvider} subject to testing.
 	 */
-	protected <E extends IEntity> IListHandlerDataProvider<E> getListHandlerDataProvider(Class<E> entityClass) {
+	protected <E extends IEntity> IListingDataProvider getListHandlerDataProvider(Class<E> entityClass) {
 		return injector.getInstance(IEntityServiceFactory.class).instanceByEntityType(entityClass);
 	}
 
@@ -143,7 +143,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 	@SuppressWarnings("unchecked")
 	public void test() throws Exception {
 
-		IListHandlerDataProvider<IEntity> dataProvider;
+		IListingDataProvider dataProvider;
 		ICriteria<IEntity> criteria;
 
 		// iterator through all defined select named queries
@@ -154,7 +154,7 @@ import com.tll.service.entity.IEntityServiceFactory;
 
 			// test for all list handler types
 			for(final ListHandlerType lht : ListHandlerType.values()) {
-				IListHandler<SearchResult<IEntity>> listHandler = null;
+				IListHandler<SearchResult<?>> listHandler = null;
 				logger.debug("Validating '" + nq.toString() + "' query with " + lht.toString() + " list handling...");
 				switch(lht) {
 					case COLLECTION:

@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * IRpcCommand - Definition for an RPC command callback.
  * @author jpk
  */
-interface IRpcCommand extends Command {
+public interface IRpcCommand extends Command {
 
 	/**
 	 * Sets the sourcing widget.

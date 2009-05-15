@@ -12,62 +12,51 @@ import com.tll.model.IScalar;
  * SearchResult - Generic container for a single search result. Wraps either a
  * single entity or a single scalar element.
  * @author jpk
- * @param <E>
+ * @param <T> the search result element type
  */
-public final class SearchResult<E extends IEntity> {
+public final class SearchResult<T> {
 
 	/**
 	 * The raw search result element.
 	 */
-	private final Object element;
+	private final T element;
 
 	/**
 	 * Constructor
 	 * @param element
 	 */
-	public SearchResult(final Object element) {
+	public SearchResult(final T element) {
 		super();
+		if(element instanceof IEntity == false && element instanceof IScalar == false)
+			throw new IllegalArgumentException("Invalid search result element type");
 		this.element = element;
 	}
 
 	/**
 	 * @return the uncast search result element.
 	 */
-	public Object getElement() {
+	public T getElement() {
 		return element;
 	}
 
-	@SuppressWarnings("unchecked")
-	public E getEntity() {
-		return (element instanceof IScalar) ? null : (E) element;
-	}
-
-	public IScalar getScalar() {
-		return (element instanceof IScalar) ? (IScalar) element : null;
-	}
-
 	public String getPropertyPath(final String propertyName) {
-		final E e = getEntity();
-		if(e != null) {
+		if(element instanceof IEntity) {
 			// entity
 			return propertyName == null ? "element" : ("element." + propertyName);
 		}
 		// scalar
-		final IScalar scalar = getScalar();
-		assert scalar != null;
-		return propertyName == null ? "element" : ("element." + scalar.getPropertyPath(propertyName));
+		return propertyName == null ? "element" : ("element." + ((IScalar) element).getPropertyPath(propertyName));
 	}
 
 	/**
 	 * @return The type of this search result. May be <code>null</code>.
 	 */
 	Class<? extends IEntity> getRefType() {
-		final E e = getEntity();
-		if(e != null) {
+		if(element instanceof IEntity) {
 			// entity
-			return e.entityClass();
+			return ((IEntity) element).entityClass();
 		}
 		// scalar
-		return getScalar().getRefType();
+		return ((IScalar) element).getRefType();
 	}
 }

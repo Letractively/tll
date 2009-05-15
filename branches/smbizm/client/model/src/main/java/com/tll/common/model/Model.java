@@ -27,7 +27,7 @@ import com.tll.util.StringUtil;
  * @author jpk
  */
 public final class Model implements IMarshalable, IBindable, IPropertyMetadataProvider,
-IDescriptorProvider, Iterable<IModelProperty> {
+ IEntityTypeProvider, IDescriptorProvider, Iterable<IModelProperty> {
 
 	/**
 	 * Entity id property name
@@ -61,7 +61,7 @@ IDescriptorProvider, Iterable<IModelProperty> {
 	 * The set of model properties. <br>
 	 * NOTE: can't mark as final for GWT RPC compatibility
 	 */
-	private /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
+	private final /*final*/Set<IModelProperty> props = new HashSet<IModelProperty>();
 
 	/**
 	 * The entity type.

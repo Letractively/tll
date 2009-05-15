@@ -14,14 +14,14 @@ import com.tll.model.IEntity;
  * @author jpk
  * @param <E>
  */
-public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult<E>> {
+public abstract class SearchListHandler<E extends IEntity> extends AbstractListHandler<SearchResult<?>> {
 
 	protected final Log LOG = LogFactory.getLog(this.getClass());
 
 	/**
 	 * The list handler data provider.
 	 */
-	protected final IListHandlerDataProvider<E> dataProvider;
+	protected final IListingDataProvider dataProvider;
 
 	/**
 	 * The search criteria.
@@ -37,8 +37,8 @@ public abstract class SearchListHandler<E extends IEntity> extends AbstractListH
 	 * @throws IllegalArgumentException When one or more required args are not
 	 *         specifeid
 	 */
-	public SearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<E> criteria, Sorting sorting)
-			throws IllegalArgumentException {
+	public SearchListHandler(IListingDataProvider dataProvider, ICriteria<E> criteria, Sorting sorting)
+	throws IllegalArgumentException {
 		super();
 		if(dataProvider == null) {
 			throw new IllegalArgumentException("A data provider must be specified.");

@@ -298,7 +298,7 @@ public class EntityDao implements IEntityDao {
 		return list;
 	}
 
-	public <E extends IEntity> List<SearchResult<E>> find(final ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult<?>> find(final ICriteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -324,11 +324,11 @@ public class EntityDao implements IEntityDao {
 		return new Scalar(entity.entityClass(), map);
 	}
 
-	private <E extends IEntity> List<SearchResult<E>> transformEntityList(final List<E> entityList, final boolean isScalar) {
-		final List<SearchResult<E>> slist = new ArrayList<SearchResult<E>>(entityList.size());
+	private <E extends IEntity> List<SearchResult<?>> transformEntityList(final List<E> entityList, final boolean isScalar) {
+		final List<SearchResult<?>> slist = new ArrayList<SearchResult<?>>(entityList.size());
 		for(final E e : entityList) {
 			if(isScalar) {
-				slist.add(new SearchResult<E>(scalarize(e)));
+				slist.add(new SearchResult<IScalar>(scalarize(e)));
 			}
 			else {
 				slist.add(new SearchResult<E>(e));
@@ -355,8 +355,9 @@ public class EntityDao implements IEntityDao {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <E extends IEntity> E findEntity(final ICriteria<E> criteria) throws InvalidCriteriaException {
-		final List<SearchResult<E>> list = find(criteria, null);
+		final List<SearchResult<?>> list = find(criteria, null);
 		if(list == null || list.size() < 1) {
 			throw new EntityNotFoundException("No matching entity found.");
 		}
@@ -364,7 +365,7 @@ public class EntityDao implements IEntityDao {
 			throw new NonUniqueResultException("More than one matching entity found.");
 		}
 		assert list.size() == 1;
-		return list.get(0).getEntity();
+		return (E) list.get(0).getElement();
 	}
 
 	public <E extends IEntity> E load(final IBusinessKey<E> key) {
@@ -518,24 +519,25 @@ public class EntityDao implements IEntityDao {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <E extends IEntity> List<Integer> getIds(final ICriteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
-		final List<SearchResult<E>> list = find(criteria, sorting);
+		final List<SearchResult<?>> list = find(criteria, sorting);
 		if(list == null) {
 			return null;
 		}
 		final List<Integer> idlist = new ArrayList<Integer>();
-		for(final SearchResult<E> e : list) {
-			idlist.add(e.getEntity().getId());
+		for(final SearchResult<?> e : list) {
+			idlist.add(((E) e.getElement()).getId());
 		}
 		return idlist;
 	}
 
-	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(final ICriteria<E> criteria, Sorting sorting,
+	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(final ICriteria<E> criteria, Sorting sorting,
 			final int offset, final int pageSize) throws InvalidCriteriaException {
-		List<SearchResult<E>> elist = find(criteria, sorting);
+		List<SearchResult<?>> elist = find(criteria, sorting);
 		if(elist == null) {
-			elist = new ArrayList<SearchResult<E>>();
+			elist = new ArrayList<SearchResult<?>>();
 		}
 		final int size = elist.size();
 		if(size >= 1) {
@@ -549,11 +551,11 @@ public class EntityDao implements IEntityDao {
 			}
 			elist = elist.subList(fi, li);
 		}
-		final List<SearchResult<E>> subList = elist;
-		return new IPageResult<SearchResult<E>>() {
+		final List<SearchResult<?>> subList = elist;
+		return new IPageResult<SearchResult<?>>() {
 
 			@Override
-			public List<SearchResult<E>> getPageList() {
+			public List<SearchResult<?>> getPageList() {
 				return subList;
 			}
 

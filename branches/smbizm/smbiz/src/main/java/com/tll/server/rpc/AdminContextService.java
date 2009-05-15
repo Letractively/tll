@@ -5,7 +5,7 @@
 package com.tll.server.rpc;
 
 import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityPayload;
+import com.tll.common.data.ModelPayload;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.AdminContextPayload;
 import com.tll.common.data.rpc.IAdminContextService;
@@ -68,7 +68,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 		final Marshaler em = mec.getMarshaler();
 		assert delegate != null && em != null && sac != null;
 
-		final EntityPayload ep = delegate.load(new EntityLoadRequest(accountRef));
+		final ModelPayload ep = delegate.load(new EntityLoadRequest(accountRef));
 		final Status status = ep.getStatus();
 
 		status.addMsg("Admin Context current account retrieved for " + accountRef.descriptor(), MsgLevel.INFO,

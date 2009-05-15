@@ -26,23 +26,21 @@ import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.EmptyListException;
 import com.tll.listhandler.IListHandler;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.listhandler.ListHandlerException;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.server.rpc.entity.EntityTypeUtil;
 import com.tll.server.rpc.entity.MEntityContext;
 import com.tll.server.rpc.entity.MEntityServiceDelegate;
 
 /**
  * ListingService - Handles client listing requests.
- * @param <E> the entity type
  * @param <S> the search type
  * @author jpk
  */
-public final class ListingService<E extends IEntity, S extends ISearch> extends RpcServlet implements
+public final class ListingService<S extends ISearch> extends RpcServlet implements
 IListingService<S, Model> {
 
 	private static final long serialVersionUID = 7575667259462319956L;
@@ -52,7 +50,6 @@ IListingService<S, Model> {
 	 * @param listingRequest The listing command
 	 * @return Payload contains the table page and status.
 	 */
-	@SuppressWarnings("unchecked")
 	public ListingPayload<Model> process(final ListingRequest<S> listingRequest) {
 		final Status status = new Status();
 
@@ -77,12 +74,14 @@ IListingService<S, Model> {
 		if(!status.hasErrors() && listingRequest != null) {
 
 			final HttpServletRequest request = getRequestContext().getRequest();
-			final MEntityContext context =
+			final MEntityContext mentityContext =
 				(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
-			final MEntityServiceDelegate delegate =
+			final MEntityServiceDelegate mentityDelegate =
 				(MEntityServiceDelegate) getServletContext().getAttribute(MEntityServiceDelegate.KEY);
-			if(context == null || delegate == null) {
-				throw new IllegalStateException("Unable to obtain the mentity context and/or the mentity service delegate");
+			final ListingContext listingContext = (ListingContext) getServletContext().getAttribute(ListingContext.KEY);
+			if(mentityContext == null || mentityDelegate == null || listingContext == null) {
+				throw new IllegalStateException(
+				"Unable to obtain the mentity context and/or the mentity service delegate and/or the listing context");
 			}
 
 			Integer offset = listingRequest.getOffset();
@@ -123,13 +122,10 @@ IListingService<S, Model> {
 							throw new ListingException(listingName, "No search criteria specified.");
 						}
 
-						// resolve the entity class and corres. marshaling entity service
-						final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(search.getEntityType());
-
 						// translate client side criteria to server side criteria
-						final ICriteria<E> criteria;
+						final ICriteria<? extends IEntity> criteria;
 						try {
-							criteria = (ICriteria<E>) delegate.translate(search);
+							criteria = mentityDelegate.translate(listingRequest, search, status);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -137,8 +133,8 @@ IListingService<S, Model> {
 						}
 
 						// resolve the listing handler data provider
-						final IListHandlerDataProvider<E> dataProvider =
-							context.getEntityServiceFactory().instanceByEntityType(entityClass);
+						final IListingDataProvider dataProvider =
+							listingContext.getListingDataProviderResolver().resolve(getRequestContext(), listingRequest);
 
 						// resolve the list handler type
 						final ListHandlerType lht = listingDef.getListHandlerType();
@@ -150,7 +146,7 @@ IListingService<S, Model> {
 						if(sorting == null) {
 							throw new ListingException(listingName, "No sorting directive specified.");
 						}
-						IListHandler<SearchResult<E>> listHandler = null;
+						IListHandler<SearchResult<?>> listHandler = null;
 						try {
 							listHandler = ListHandlerFactory.create(criteria, sorting, lht, dataProvider);
 						}
@@ -167,11 +163,10 @@ IListingService<S, Model> {
 						}
 
 						// transform to marshaling list handler
-						final MarshalingListHandler<E> marshalingListHandler =
-							new MarshalingListHandler<E>(listHandler, context.getMarshaler(),
-									delegate.getMarshalOptions(search
-											.getEntityType()),
-											listingDef.getPropKeys());
+						final MarshalingListHandler marshalingListHandler =
+							new MarshalingListHandler(listHandler, mentityContext.getMarshaler(), mentityDelegate
+									.getMarshalOptions(
+											listingRequest, status), listingDef.getPropKeys());
 
 						// instantiate the handler
 						handler = new ListingHandler<Model>(marshalingListHandler, listingName, listingDef.getPageSize());
@@ -198,10 +193,10 @@ IListingService<S, Model> {
 			}
 			catch(final ListingException e) {
 				exceptionToStatus(e, status);
-				context.getExceptionHandler().handleException(e);
+				mentityContext.getExceptionHandler().handleException(e);
 			}
 			catch(final RuntimeException re) {
-				context.getExceptionHandler().handleException(re);
+				mentityContext.getExceptionHandler().handleException(re);
 				throw re;
 			}
 

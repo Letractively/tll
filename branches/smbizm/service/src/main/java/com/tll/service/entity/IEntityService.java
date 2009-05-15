@@ -10,7 +10,7 @@ import javax.validation.ConstraintViolationException;
 import com.tll.criteria.ICriteria;
 import com.tll.criteria.InvalidCriteriaException;
 import com.tll.dao.Sorting;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.IEntity;
 import com.tll.model.key.IBusinessKey;
 import com.tll.model.key.PrimaryKey;
@@ -21,7 +21,7 @@ import com.tll.service.IService;
  * @author jpk
  * @param <E>
  */
-public interface IEntityService<E extends IEntity> extends IListHandlerDataProvider<E>, IService {
+public interface IEntityService<E extends IEntity> extends IListingDataProvider, IService {
 
 	/**
 	 * Returns the class of the entity managed by this service.

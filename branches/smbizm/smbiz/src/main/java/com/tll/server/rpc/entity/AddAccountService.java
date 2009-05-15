@@ -10,7 +10,7 @@ import java.util.Collection;
 
 import com.tll.SystemError;
 import com.tll.common.data.AddAccountRequest;
-import com.tll.common.data.EntityPayload;
+import com.tll.common.data.ModelPayload;
 import com.tll.common.data.Status;
 import com.tll.common.data.rpc.IAddAccountService;
 import com.tll.common.model.Model;
@@ -36,8 +36,8 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EntityPayload add(AddAccountRequest request) {
-		final EntityPayload p = new EntityPayload();
+	public ModelPayload add(AddAccountRequest request) {
+		final ModelPayload p = new ModelPayload();
 		final Status s = p.getStatus();
 
 		final AppContext ac = (AppContext) getServletContext().getAttribute(AppContext.KEY);
@@ -102,7 +102,7 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 
 			// marshal the added account
 			maccount = mlr.marshalEntity(account, AccountService.MARSHAL_OPTIONS);
-			p.setEntity(maccount);
+			p.setModel(maccount);
 
 			return p;
 		}

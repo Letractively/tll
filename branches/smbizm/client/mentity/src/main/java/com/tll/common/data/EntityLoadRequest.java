@@ -10,18 +10,23 @@ import com.tll.common.model.ModelKey;
 import com.tll.common.search.ISearch;
 
 /**
- * EntityLoadRequest
+ * LoadRequest
  * @author jpk
  */
-public class EntityLoadRequest extends EntityRequest {
+public class EntityLoadRequest extends EntityModelRequest {
 
-	private ModelKey entityRef;
+	private ModelKey ref;
 
 	private ISearch search;
 
 	private boolean loadByName;
 
 	private boolean loadByBusinessKey;
+
+	/**
+	 * The entity options. May be <code>null</code>.
+	 */
+	private EntityOptions entityOptions;
 
 	/**
 	 * The aux data request. May be <code>null</code>.
@@ -37,11 +42,11 @@ public class EntityLoadRequest extends EntityRequest {
 
 	/**
 	 * Constructor - Use for loading by primary key.
-	 * @param entityRef
+	 * @param ref
 	 */
-	public EntityLoadRequest(ModelKey entityRef) {
+	public EntityLoadRequest(ModelKey ref) {
 		super();
-		this.entityRef = entityRef;
+		this.ref = ref;
 	}
 
 	/**
@@ -51,7 +56,7 @@ public class EntityLoadRequest extends EntityRequest {
 	 */
 	public EntityLoadRequest(IEntityType entityType, String name) {
 		super();
-		this.entityRef = new ModelKey(entityType, null, name);
+		this.ref = new ModelKey(entityType, null, name);
 		this.loadByName = true;
 	}
 
@@ -66,8 +71,14 @@ public class EntityLoadRequest extends EntityRequest {
 	}
 
 	@Override
+	public String descriptor() {
+		// TODO be instance data specific
+		return "Load Request";
+	}
+
+	@Override
 	public IEntityType getEntityType() {
-		return loadByBusinessKey ? search.getEntityType() : entityRef.getEntityType();
+		return loadByBusinessKey ? search.getEntityType() : ref.getEntityType();
 	}
 
 	public boolean isLoadByName() {
@@ -79,10 +90,10 @@ public class EntityLoadRequest extends EntityRequest {
 	}
 
 	/**
-	 * @return the entityRef
+	 * @return the model ref
 	 */
-	public ModelKey getEntityRef() {
-		return entityRef;
+	public ModelKey getRef() {
+		return ref;
 	}
 
 	/**
@@ -90,6 +101,20 @@ public class EntityLoadRequest extends EntityRequest {
 	 */
 	public ISearch getSearch() {
 		return search;
+	}
+
+	/**
+	 * @return the entityOptions
+	 */
+	public EntityOptions getEntityOptions() {
+		return entityOptions;
+	}
+
+	/**
+	 * @param entityOptions the entityOptions to set
+	 */
+	public void setEntityOptions(EntityOptions entityOptions) {
+		this.entityOptions = entityOptions;
 	}
 
 	/**

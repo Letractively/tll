@@ -14,7 +14,7 @@ import com.tll.common.model.Model;
  * AddAccountRequest
  * @author jpk
  */
-public class AddAccountRequest extends EntityRequest {
+public class AddAccountRequest extends EntityModelRequest {
 
 	private Model account;
 	private Collection<Model> accountInterfaceOptions;
@@ -38,6 +38,11 @@ public class AddAccountRequest extends EntityRequest {
 		this.account = account;
 		this.accountInterfaceOptions = accountInterfaceOptions;
 		this.users = users;
+	}
+
+	@Override
+	public String descriptor() {
+		return account == null ? "Add account request" : "Add " + account + " request";
 	}
 
 	@Override

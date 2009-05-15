@@ -16,9 +16,9 @@ import javax.validation.ConstraintViolationException;
 import com.tll.SystemError;
 import com.tll.common.data.EntityLoadRequest;
 import com.tll.common.data.EntityOptions;
-import com.tll.common.data.EntityPayload;
-import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPurgeRequest;
+import com.tll.common.data.ModelPayload;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.msg.Msg.MsgAttr;
@@ -97,7 +97,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	 * @return The loaded {@link IEntity}
 	 */
 	@SuppressWarnings("unchecked")
-	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request, final EntityPayload payload) {
+	protected E coreLoad(final MEntityContext context, final EntityLoadRequest request, final ModelPayload payload) {
 
 		// core entity loading
 		final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
@@ -108,7 +108,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			final ISearch search = request.getSearch();
 			if(search == null) {
 				payload.getStatus()
-						.addMsg("A business key wise search must be specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
+				.addMsg("A business key wise search must be specified.", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 				return null;
 			}
 
@@ -118,11 +118,11 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 		}
 
 		// load by primary key
-		final Integer id = request.getEntityRef().getId();
+		final Integer id = request.getRef().getId();
 		return svc.load(new PrimaryKey(entityClass, id));
 	}
 
-	public final void load(final MEntityContext context, final EntityLoadRequest request, final EntityPayload payload) {
+	public final void load(final MEntityContext context, final EntityLoadRequest request, final ModelPayload payload) {
 		try {
 			final E e = coreLoad(context, request, payload);
 			if(e == null) {
@@ -131,13 +131,13 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 
 			// optional loading
 			final Map<String, ModelKey> refs = new HashMap<String, ModelKey>();
-			if(request.entityOptions != null) {
-				handleLoadOptions(context, e, request.entityOptions, refs);
+			if(request.getEntityOptions() != null) {
+				handleLoadOptions(context, e, request.getEntityOptions(), refs);
 			}
 
 			// marshal the loaded entity
 			final Model group = context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
-			payload.setEntity(group);
+			payload.setModel(group);
 
 			// set any entity refs
 			for(final String propName : refs.keySet()) {
@@ -162,27 +162,27 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void persist(final MEntityContext context, final EntityPersistRequest request,
-			final EntityPayload payload) {
+	public final void persist(final MEntityContext context, final PersistRequest request,
+			final ModelPayload payload) {
 		Class<E> entityClass = null;
 		try {
 			// core persist
 			entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
-			Model model = request.getEntity();
+			Model model = request.getModel();
 			E e = context.getMarshaler().unmarshalEntity(entityClass, model);
 			final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
 			final boolean isNew = e.isNew();
 			e = svc.persist(e);
 
 			// handle persist options
-			handlePersistOptions(context, e, request.entityOptions);
+			handlePersistOptions(context, e, request.getEntityOptions());
 
 			// marshall
 			model = context.getMarshaler().marshalEntity(e, getMarshalOptions(context));
-			payload.setEntity(model);
+			payload.setModel(model);
 
 			payload.getStatus()
-					.addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
+			.addMsg(e.descriptor() + (isNew ? " added." : " updated."), MsgLevel.INFO, MsgAttr.STATUS.flag);
 		}
 		catch(final EntityExistsException e) {
 			RpcServlet.exceptionToStatus(e, payload.getStatus());
@@ -206,11 +206,11 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void purge(final MEntityContext context, final EntityPurgeRequest request, final EntityPayload payload) {
+	public final void purge(final MEntityContext context, final PurgeRequest request, final ModelPayload payload) {
 		try {
 			final Class<E> entityClass = (Class<E>) EntityTypeUtil.getEntityClass(request.getEntityType());
 			final IEntityService<E> svc = context.getEntityServiceFactory().instanceByEntityType(entityClass);
-			final ModelKey entityRef = request.getEntityRef();
+			final ModelKey entityRef = request.getRef();
 			if(entityRef == null || !entityRef.isSet()) {
 				throw new EntityNotFoundException("A valid entity reference must be specified to purge an entity.");
 			}
@@ -218,7 +218,7 @@ public abstract class MEntityServiceImpl<E extends IEntity> implements IMEntityS
 			final E e = svc.load(pk);
 			svc.purge(e);
 
-			payload.setEntityRef(entityRef);
+			payload.setRef(entityRef);
 			payload.getStatus().addMsg(e.descriptor() + " purged.", MsgLevel.INFO, MsgAttr.STATUS.flag);
 		}
 		catch(final EntityNotFoundException e) {

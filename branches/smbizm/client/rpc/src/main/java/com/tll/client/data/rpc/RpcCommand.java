@@ -14,6 +14,11 @@ import com.tll.common.msg.Msg.MsgLevel;
 
 /**
  * RpcCommand - Intended base class for all client-side RPC based requests.
+ * <p>
+ * Fires {@link RpcEvent}s on the source widget if non-<code>null</code>.
+ * <p>
+ * Fires {@link StatusEvent}s via the {@link StatusEventDispatcher} upon rpc
+ * return.
  * @author jpk
  * @param <P> payload type
  */

@@ -62,7 +62,7 @@ public final class DbTestSupport {
 	 * @param criteria
 	 * @return List of search results
 	 */
-	public static final <E extends IEntity> List<SearchResult<E>> getEntitiesFromDb(IEntityDao dao, ICriteria<E> criteria) {
+	public static final <E extends IEntity> List<SearchResult<?>> getEntitiesFromDb(IEntityDao dao, ICriteria<E> criteria) {
 		try {
 			return dao.find(criteria, null);
 		}

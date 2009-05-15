@@ -54,6 +54,7 @@ public final class BuildTools {
 	// all di handler (bootstrapper) refs
 	static final def DI_HANDLERS_ALL = [
 	                               ['com.tll.server.rpc.entity.MEntityServiceBootstrapper', FLAG_ALL],
+	                               ['com.tll.server.rpc.listing.ListingContextBootstrapper', FLAG_ALL],
 	                               ['com.tll.server.SecurityContextBootstrapper', FLAG_SECURITY_ACEGI],
 	                               ['com.tll.server.AppContextBootstrapper', FLAG_ALL]
 	                              ]

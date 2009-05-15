@@ -219,23 +219,18 @@ public final class Marshaler {
 	 * @throws IllegalArgumentException When neither an IEntity nor an IScalar is
 	 *         resolved from the given SearchResult.
 	 */
-	public Model marshalSearchResult(final SearchResult<? extends IEntity> searchResult, final MarshalOptions options) {
+	public Model marshalSearchResult(final SearchResult<?> searchResult, final MarshalOptions options) {
 		assert searchResult != null;
 		assert options != null;
 		Model model;
-		final IEntity e = searchResult.getEntity();
-		if(e == null) {
-			final IScalar scalar = searchResult.getScalar();
-			if(scalar == null) {
-				throw new IllegalArgumentException(
-				"Neither an entity nor scalar was resolvable from the search result argument");
-			}
-			model = marshalScalar(scalar, options);
+		final Object r = searchResult.getElement();
+		if(r instanceof IEntity) {
+			BindingStack visited = new BindingStack();
+			model = marshalEntity((IEntity) r, options, 0, visited);
+			visited = null;
 		}
 		else {
-			BindingStack visited = new BindingStack();
-			model = marshalEntity(e, options, 0, visited);
-			visited = null;
+			model = marshalScalar((IScalar) r, options);
 		}
 		return model;
 	}

@@ -9,7 +9,6 @@ import com.tll.common.model.PropertyPathException;
 import com.tll.dao.SearchResult;
 import com.tll.listhandler.DecoratedListHandler;
 import com.tll.listhandler.IListHandler;
-import com.tll.model.IEntity;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
 
@@ -17,9 +16,8 @@ import com.tll.server.marshal.Marshaler;
  * MarshalingListHandler - Transforms {@link SearchResult}s to {@link Model}s
  * for use in client side list handling.
  * @author jpk
- * @param <E> the entity type
  */
-public final class MarshalingListHandler<E extends IEntity> extends DecoratedListHandler<SearchResult<E>, Model> {
+public final class MarshalingListHandler extends DecoratedListHandler<SearchResult<?>, Model> {
 
 	private final Marshaler marshaler;
 	private final MarshalOptions marshalOptions;
@@ -32,7 +30,7 @@ public final class MarshalingListHandler<E extends IEntity> extends DecoratedLis
 	 * @param marshalOptions
 	 * @param propKeys
 	 */
-	public MarshalingListHandler(IListHandler<SearchResult<E>> listHandler, Marshaler marshaler,
+	public MarshalingListHandler(IListHandler<SearchResult<?>> listHandler, Marshaler marshaler,
 			MarshalOptions marshalOptions, String[] propKeys) {
 		super(listHandler);
 		this.marshaler = marshaler;
@@ -65,7 +63,7 @@ public final class MarshalingListHandler<E extends IEntity> extends DecoratedLis
 		return xgrp;
 	}
 
-	public final Model getDecoratedElement(SearchResult<E> element) {
+	public final Model getDecoratedElement(SearchResult<?> element) {
 		return transform(marshaler.marshalSearchResult(element, marshalOptions));
 	}
 }

@@ -5,9 +5,9 @@
  */
 package com.tll.client.mvc.view;
 
+import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.listing.AbstractRowOptions;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.listing.ModelListingWidget;
 
@@ -56,7 +56,7 @@ public abstract class ListingView<I extends IViewInitializer> extends AbstractMo
 		 */
 		@Override
 		protected void doDeleteRow(int rowIndex) {
-			ModelChangeManager.deleteModel(listingWidget, listingWidget.getRowKey(rowIndex), null).execute();
+			CrudCommand.deleteModel(listingWidget, listingWidget.getRowKey(rowIndex)).execute();
 		}
 
 	}

@@ -155,22 +155,25 @@ public abstract class EntityService<E extends IEntity> implements IEntityService
 	}
 
 	@Transactional(readOnly = true)
-	public List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<SearchResult<?>> find(ICriteria<? extends IEntity> criteria, Sorting sorting)
+			throws InvalidCriteriaException {
 		return dao.find(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids, Sorting sorting) {
+	public <ET extends IEntity> List<ET> getEntitiesFromIds(Class<ET> entityClass, Collection<Integer> ids,
+			Sorting sorting) {
 		return dao.getEntitiesFromIds(entityClass, ids, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Integer> getIds(ICriteria<E> criteria, Sorting sorting) throws InvalidCriteriaException {
+	public List<Integer> getIds(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 		return dao.getIds(criteria, sorting);
 	}
 
 	@Transactional(readOnly = true)
-	public IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, int offset, int pageSize)
+	public IPageResult<SearchResult<?>> getPage(ICriteria<? extends IEntity> criteria, Sorting sorting, int offset,
+			int pageSize)
 	throws InvalidCriteriaException {
 		return dao.getPage(criteria, sorting, offset, pageSize);
 	}

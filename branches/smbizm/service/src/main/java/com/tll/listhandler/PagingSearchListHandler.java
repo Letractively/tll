@@ -19,7 +19,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	/**
 	 * The current page of results
 	 */
-	private IPageResult<SearchResult<E>> page;
+	private IPageResult<SearchResult<?>> page;
 
 	/**
 	 * Constructor
@@ -28,7 +28,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 	 * @param criteria The criteria used to generate the underlying list
 	 * @param sorting The required sorting directive.
 	 */
-	PagingSearchListHandler(IListHandlerDataProvider<E> dataProvider, ICriteria<E> criteria, Sorting sorting) {
+	PagingSearchListHandler(IListingDataProvider dataProvider, ICriteria<E> criteria, Sorting sorting) {
 		super(dataProvider, criteria, sorting);
 	}
 
@@ -36,8 +36,8 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 		return ListHandlerType.PAGE;
 	}
 
-	public List<SearchResult<E>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
-			EmptyListException, ListHandlerException {
+	public List<SearchResult<?>> getElements(int offset, int pageSize, Sorting sort) throws IndexOutOfBoundsException,
+	EmptyListException, ListHandlerException {
 
 		try {
 			page = dataProvider.getPage(criteria, sort, offset, pageSize);
@@ -45,7 +45,7 @@ public final class PagingSearchListHandler<E extends IEntity> extends SearchList
 				throw new EmptyListException("No matching page results found.");
 			}
 		}
-		catch(InvalidCriteriaException e) {
+		catch(final InvalidCriteriaException e) {
 			throw new ListHandlerException(e.getMessage());
 		}
 		return page.getPageList();

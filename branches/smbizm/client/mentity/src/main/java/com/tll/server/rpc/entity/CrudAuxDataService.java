@@ -8,9 +8,9 @@ package com.tll.server.rpc.entity;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityPayload;
-import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPurgeRequest;
+import com.tll.common.data.ModelPayload;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.rpc.IAuxDataService;
 import com.tll.common.data.rpc.ICrudService;
 import com.tll.server.rpc.RpcServlet;
@@ -32,17 +32,17 @@ public class CrudAuxDataService extends RpcServlet implements ICrudService, IAux
 	}
 
 	@Override
-	public EntityPayload load(EntityLoadRequest request) {
+	public ModelPayload load(EntityLoadRequest request) {
 		return getDelegate().load(request);
 	}
 
 	@Override
-	public EntityPayload persist(EntityPersistRequest request) {
+	public ModelPayload persist(PersistRequest request) {
 		return getDelegate().persist(request);
 	}
 
 	@Override
-	public EntityPayload purge(EntityPurgeRequest request) {
+	public ModelPayload purge(PurgeRequest request) {
 		return getDelegate().purge(request);
 	}
 }

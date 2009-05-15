@@ -7,10 +7,11 @@ package com.tll.client.mvc.view;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.tll.client.data.rpc.AuxDataCommand;
+import com.tll.client.data.rpc.CrudCommand;
 import com.tll.client.model.IHasModelChangeHandlers;
 import com.tll.client.model.IModelChangeHandler;
 import com.tll.client.model.ModelChangeEvent;
-import com.tll.client.model.ModelChangeManager;
 import com.tll.client.mvc.ViewManager;
 import com.tll.client.ui.edit.EditEvent;
 import com.tll.client.ui.edit.EditPanel;
@@ -131,10 +132,10 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		if(model == null) {
 			// we need to fetch the model first
 			// NOTE: needed aux data will be fetched with this rpc call
-			cmd = ModelChangeManager.loadModel(this, modelKey, entityOptions, getNeededAuxData());
+			cmd = CrudCommand.loadModel(this, modelKey, entityOptions, getNeededAuxData());
 		}
 		else {
-			cmd = ModelChangeManager.fetchAuxData(this, getNeededAuxData());
+			cmd = AuxDataCommand.fetchAuxData(this, getNeededAuxData());
 			if(cmd == null) {
 				editPanel.setModel(model);
 				return;
@@ -158,11 +159,11 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 				break;
 			case ADD:
 			case UPDATE:
-				cmd = ModelChangeManager.persistModel(this, model, entityOptions);
+				cmd = CrudCommand.persistModel(this, model, entityOptions);
 				break;
 			case DELETE:
 				if(!model.isNew()) {
-					cmd = ModelChangeManager.deleteModel(this, modelKey, entityOptions);
+					cmd = CrudCommand.deleteModel(this, modelKey);
 				}
 				break;
 		}

@@ -7,9 +7,9 @@ package com.tll.common.data.rpc;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityPayload;
-import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPurgeRequest;
+import com.tll.common.data.ModelPayload;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 
 /**
  * ICrudServiceAsync
@@ -18,9 +18,9 @@ import com.tll.common.data.EntityPurgeRequest;
  */
 public interface ICrudServiceAsync {
 
-	void load(EntityLoadRequest request, AsyncCallback<EntityPayload> callback);
+	void load(EntityLoadRequest request, AsyncCallback<ModelPayload> callback);
 
-	void persist(EntityPersistRequest request, AsyncCallback<EntityPayload> callback);
+	void persist(PersistRequest request, AsyncCallback<ModelPayload> callback);
 
-	void purge(EntityPurgeRequest request, AsyncCallback<EntityPayload> callback);
+	void purge(PurgeRequest request, AsyncCallback<ModelPayload> callback);
 }

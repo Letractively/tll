@@ -1,5 +1,5 @@
 /*
- * The Logic Lab 
+ * The Logic Lab
  */
 package com.tll.service.entity;
 
@@ -13,7 +13,7 @@ import com.tll.criteria.Criteria;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
 import com.tll.listhandler.IListHandler;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.Account;
@@ -51,7 +51,7 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 			getDbSupport().startNewTransaction();
 			final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 			criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
-			final List<SearchResult<AccountHistory>> list = DbTestSupport.getEntitiesFromDb(getEntityDao(), criteria);
+			final List<SearchResult<?>> list = DbTestSupport.getEntitiesFromDb(getEntityDao(), criteria);
 			getDbSupport().endTransaction();
 			assert list != null && list.size() == 1;
 		}
@@ -71,16 +71,16 @@ public abstract class AccountServiceTest extends AccountRelatedServiceTest {
 		Account account = stubValidAccount(false);
 		account = accountService.persist(account);
 
-		IListHandlerDataProvider<AccountHistory> dataProvider = accountService.getAccountHistoryDataProvider();
+		final IListingDataProvider dataProvider = accountService.getAccountHistoryDataProvider();
 
 		final Criteria<AccountHistory> criteria = new Criteria<AccountHistory>(AccountHistory.class);
 		criteria.getPrimaryGroup().addCriterion("account", new PrimaryKey<Account>(Account.class, account.getId()));
 
-		Sorting sorting = new Sorting("transDate");
+		final Sorting sorting = new Sorting("transDate");
 
-		IListHandler<SearchResult<AccountHistory>> lh =
-				ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
-		List<SearchResult<AccountHistory>> chunk = lh.getElements(0, 25, sorting);
+		final IListHandler<SearchResult<?>> lh =
+			ListHandlerFactory.create(criteria, sorting, ListHandlerType.PAGE, dataProvider);
+		final List<SearchResult<?>> chunk = lh.getElements(0, 25, sorting);
 		Assert.assertTrue(chunk != null && chunk.size() == 1);
 	}
 }

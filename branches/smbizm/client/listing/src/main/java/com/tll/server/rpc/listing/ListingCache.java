@@ -5,6 +5,8 @@
 
 package com.tll.server.rpc.listing;
 
+import java.io.Serializable;
+
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Cache;
@@ -18,11 +20,11 @@ import net.sf.ehcache.Element;
  * @author jpk
  */
 public final class ListingCache {
-	
+
 	private static final String LIST_HANDLER_CACHE_NAME = "ListHandlerCache";
 
 	private static final String LISTING_STATE_CACHE_NAME = "ListingStateCache";
-	
+
 	/**
 	 * Generates the hash that is http session and listing name dependent.
 	 * @param request
@@ -30,10 +32,10 @@ public final class ListingCache {
 	 * @return the corresponding hash key for the given listing name in the given
 	 *         http session.
 	 */
-	private static String key(HttpServletRequest request, String listingName) {
-		return Integer.toString(request.getSession(false).getId().hashCode() ^ listingName.hashCode()).intern();
+	private static Integer key(HttpServletRequest request, String listingName) {
+		return new Integer(request.getSession(false).getId().hashCode() + 37 * listingName.hashCode());
 	}
-	
+
 	private static Cache handlerCache() {
 		return CacheManager.getInstance().getCache(LIST_HANDLER_CACHE_NAME);
 	}
@@ -41,8 +43,8 @@ public final class ListingCache {
 	private static Cache stateCache() {
 		return CacheManager.getInstance().getCache(LISTING_STATE_CACHE_NAME);
 	}
-	
-	
+
+
 	/**
 	 * Retrieves the cached handler by table view name.
 	 * @param <T>
@@ -62,12 +64,9 @@ public final class ListingCache {
 	 * @param request
 	 * @param listingName
 	 * @param handler
-	 * @return the cache key under which the handler is stored.
 	 */
-	public static <T> String storeHandler(HttpServletRequest request, String listingName, ListingHandler<T> handler) {
-		final String key = key(request, listingName);
-		handlerCache().put(new Element(key, handler));
-		return key;
+	public static <T> void storeHandler(HttpServletRequest request, String listingName, ListingHandler<T> handler) {
+		handlerCache().put(new Element(key(request, listingName), handler));
 	}
 
 	/**
@@ -79,7 +78,7 @@ public final class ListingCache {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> ListingHandler<T> clearHandler(HttpServletRequest request, String listingName) {
-		final String key = key(request, listingName);
+		final Serializable key = key(request, listingName);
 		final Cache c = handlerCache();
 		final Element e = c.get(key);
 		final ListingHandler<T> handler = e == null ? null : (ListingHandler<T>) e.getObjectValue();
@@ -105,12 +104,9 @@ public final class ListingCache {
 	 * @param request
 	 * @param listingName
 	 * @param state
-	 * @return The cache key
 	 */
-	public static String storeState(HttpServletRequest request, String listingName, ListingState state) {
-		final String key = key(request, listingName);
-		stateCache().put(new Element(key, state));
-		return key;
+	public static void storeState(HttpServletRequest request, String listingName, ListingState state) {
+		stateCache().put(new Element(key(request, listingName), state));
 	}
 
 	/**
@@ -121,7 +117,7 @@ public final class ListingCache {
 	 * @return the cleared table mode state. May be <code>null</code>.
 	 */
 	public static ListingState clearState(HttpServletRequest request, String listingName) {
-		final String key = key(request, listingName);
+		final Serializable key = key(request, listingName);
 		final Cache c = stateCache();
 		final Element e = c.get(key);
 		final ListingState state = e == null ? null : (ListingState) e.getObjectValue();

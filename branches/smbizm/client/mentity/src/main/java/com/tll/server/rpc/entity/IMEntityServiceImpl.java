@@ -1,9 +1,9 @@
 package com.tll.server.rpc.entity;
 
 import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityPayload;
-import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPurgeRequest;
+import com.tll.common.data.ModelPayload;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.IEntity;
@@ -21,27 +21,27 @@ public interface IMEntityServiceImpl<E extends IEntity> {
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
 	 *        {@link EntityLoadRequest}
-	 * @param payload The {@link EntityPayload} that is filled
+	 * @param payload The {@link ModelPayload} that is filled
 	 */
-	void load(MEntityContext context, EntityLoadRequest request, EntityPayload payload);
+	void load(MEntityContext context, EntityLoadRequest request, ModelPayload payload);
 
 	/**
 	 * Persists an entity.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityPersistRequest}
-	 * @param payload The {@link EntityPayload} that is filled
+	 *        {@link PersistRequest}
+	 * @param payload The {@link ModelPayload} that is filled
 	 */
-	void persist(MEntityContext context, EntityPersistRequest request, EntityPayload payload);
+	void persist(MEntityContext context, PersistRequest request, ModelPayload payload);
 
 	/**
 	 * Purges an entity.
 	 * @param context Guaranteed non-<code>null</code>
 	 * @param request The guaranteed non-<code>null</code>
-	 *        {@link EntityPurgeRequest}
-	 * @param payload The {@link EntityPayload} that is filled
+	 *        {@link PurgeRequest}
+	 * @param payload The {@link ModelPayload} that is filled
 	 */
-	void purge(MEntityContext context, EntityPurgeRequest request, EntityPayload payload);
+	void purge(MEntityContext context, PurgeRequest request, ModelPayload payload);
 
 	/**
 	 * Translate client-side search to server-side serach.

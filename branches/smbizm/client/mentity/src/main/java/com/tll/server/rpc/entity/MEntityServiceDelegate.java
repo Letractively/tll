@@ -12,13 +12,13 @@ import com.tll.SystemError;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.data.EntityLoadRequest;
-import com.tll.common.data.EntityPayload;
-import com.tll.common.data.EntityPersistRequest;
-import com.tll.common.data.EntityPurgeRequest;
-import com.tll.common.data.EntityRequest;
+import com.tll.common.data.IModelRelatedRequest;
+import com.tll.common.data.ModelPayload;
+import com.tll.common.data.ModelRequest;
 import com.tll.common.data.Payload;
+import com.tll.common.data.PersistRequest;
+import com.tll.common.data.PurgeRequest;
 import com.tll.common.data.Status;
-import com.tll.common.model.IEntityType;
 import com.tll.common.msg.Msg.MsgAttr;
 import com.tll.common.msg.Msg.MsgLevel;
 import com.tll.common.search.ISearch;
@@ -68,14 +68,10 @@ public final class MEntityServiceDelegate {
 	 * @param payload Can't be <code>null</code>
 	 * @return true/false
 	 */
-	private boolean validateEntityRequest(final EntityRequest request, final Payload payload) {
+	private boolean validateEntityRequest(final ModelRequest request, final Payload payload) {
 		assert payload != null;
 		if(request == null) {
-			payload.getStatus().addMsg("No entity request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
-			return false;
-		}
-		if(request.getEntityType() == null) {
-			payload.getStatus().addMsg("No entity type specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
+			payload.getStatus().addMsg("No model request specified", MsgLevel.ERROR, MsgAttr.STATUS.flag);
 			return false;
 		}
 		return true;
@@ -98,25 +94,24 @@ public final class MEntityServiceDelegate {
 	/**
 	 * Resolves the appropriate {@link IMEntityServiceImpl} implementation
 	 * instance for the given entity type.
-	 * @param entityType the entity type
+	 * @param request the model request
 	 * @param status The status object that is filled with the generated erroro
 	 *        msg(s)
 	 * @return The associated {@link IMEntityServiceImpl} impl instance or
 	 *         <code>null</code> when unable to resolve in which case, the
-	 *         {@link EntityPayload}'s {@link Status} is updated with an error
+	 *         {@link ModelPayload}'s {@link Status} is updated with an error
 	 *         message.
 	 */
 	private IMEntityServiceImpl<? extends IEntity> resolveImpl(
-			final IEntityType entityType, final Status status) {
+			final IModelRelatedRequest request, final Status status) {
 		try {
-			final Class<? extends IEntity> entityClass = EntityTypeUtil.getEntityClass(entityType);
 			IMEntityServiceImpl<? extends IEntity> svc;
 			Class<? extends IMEntityServiceImpl<? extends IEntity>> svcType;
 			try {
-				svcType = resolver.resolveMEntityServiceImpl(entityClass);
+				svcType = resolver.resolve(request);
 			}
 			catch(final IllegalArgumentException e) {
-				throw new SystemError("Can't resolve mEntity service impl class for entity: " + entityClass.getName());
+				throw new SystemError("Can't resolve mEntity service impl class for request: " + request.descriptor());
 			}
 			svc = map.get(svcType);
 			if(svc == null) {
@@ -124,10 +119,10 @@ public final class MEntityServiceDelegate {
 					svc = svcType.newInstance();
 				}
 				catch(final InstantiationException e) {
-					throw new SystemError("Unable to instantiate MEntityService class for entity type: " + entityClass, e);
+					throw new SystemError("Unable to instantiate MEntityService class for request: " + request.descriptor(), e);
 				}
 				catch(final IllegalAccessException e) {
-					throw new SystemError("Unable to access MEntityService class for entity type: " + entityClass, e);
+					throw new SystemError("Unable to access MEntityService class for request: " + request.descriptor(), e);
 				}
 				map.put(svcType, svc);
 			}
@@ -171,10 +166,10 @@ public final class MEntityServiceDelegate {
 	 * @param request
 	 * @return the resultant payload
 	 */
-	public EntityPayload load(final EntityLoadRequest request) {
-		final EntityPayload payload = new EntityPayload();
+	public ModelPayload load(final EntityLoadRequest request) {
+		final ModelPayload payload = new ModelPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveImpl(request.getEntityType(), payload.getStatus()).load(context, request, payload);
+			resolveImpl(request, payload.getStatus()).load(context, request, payload);
 		}
 		// load any requested auxiliary
 		if(request.getAuxDataRequest() != null) {
@@ -188,10 +183,10 @@ public final class MEntityServiceDelegate {
 	 * @param request
 	 * @return the resultant payload
 	 */
-	public EntityPayload persist(final EntityPersistRequest request) {
-		final EntityPayload payload = new EntityPayload();
+	public ModelPayload persist(final PersistRequest request) {
+		final ModelPayload payload = new ModelPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveImpl(request.getEntityType(), payload.getStatus()).persist(context, request, payload);
+			resolveImpl(request, payload.getStatus()).persist(context, request, payload);
 		}
 		return payload;
 	}
@@ -201,34 +196,40 @@ public final class MEntityServiceDelegate {
 	 * @param request
 	 * @return the resultant payload
 	 */
-	public EntityPayload purge(final EntityPurgeRequest request) {
-		final EntityPayload payload = new EntityPayload();
+	public ModelPayload purge(final PurgeRequest request) {
+		final ModelPayload payload = new ModelPayload();
 		if(validateEntityRequest(request, payload)) {
-			resolveImpl(request.getEntityType(), payload.getStatus()).purge(context, request, payload);
+			resolveImpl(request, payload.getStatus()).purge(context, request, payload);
 		}
 		return payload;
 	}
 
 	/**
 	 * Provides the entity type specific marshal options.
-	 * @param entityType
+	 * @param request the model related request used to resolve the mentity impl
+	 *        type
+	 * @param status Filled in upon error
 	 * @return the applicable options
 	 */
-	public MarshalOptions getMarshalOptions(IEntityType entityType) {
-		return resolveImpl(entityType, null).getMarshalOptions(context);
+	public MarshalOptions getMarshalOptions(IModelRelatedRequest request, Status status) {
+		return resolveImpl(request, status).getMarshalOptions(context);
 	}
 
 	/**
 	 * Translates client-side search criteria to server-side search criteria.
+	 * @param request the model related request used to resolve the mentity impl
+	 *        type
 	 * @param search the client side search instance
 	 * @return Newly created server side criteria instance
+	 * @param status Filled in upon error
 	 * @throws IllegalArgumentException
 	 * @throws SystemError
 	 */
-	public ICriteria<? extends IEntity> translate(final ISearch search) throws IllegalArgumentException, SystemError {
+	public ICriteria<? extends IEntity> translate(IModelRelatedRequest request, final ISearch search, Status status)
+	throws IllegalArgumentException, SystemError {
 		if(search == null) {
 			throw new IllegalArgumentException("Null search argument.");
 		}
-		return resolveImpl(search.getEntityType(), null).translate(context, search);
+		return resolveImpl(request, status).translate(context, search);
 	}
 }

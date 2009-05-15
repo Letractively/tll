@@ -12,18 +12,17 @@ import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 
 /**
- * EntityPayload - To transport a single entity instance and any supporting data
- * to the client.
+ * ModelPayload - To transport model and any supporting aux data to the client.
  * @author jpk
  */
-public final class EntityPayload extends AuxDataPayload {
+public final class ModelPayload extends AuxDataPayload {
 
 	/**
-	 * The entity model.
+	 * The model.
 	 */
-	private Model entity;
+	private Model model;
 
-	private ModelKey entityRef;
+	private ModelKey ref;
 
 	/**
 	 * Map of related one entity refs keyed by property name.
@@ -33,7 +32,7 @@ public final class EntityPayload extends AuxDataPayload {
 	/**
 	 * Constructor
 	 */
-	public EntityPayload() {
+	public ModelPayload() {
 		super();
 	}
 
@@ -41,7 +40,7 @@ public final class EntityPayload extends AuxDataPayload {
 	 * Constructor
 	 * @param status
 	 */
-	public EntityPayload(Status status) {
+	public ModelPayload(Status status) {
 		super(status);
 	}
 
@@ -50,25 +49,25 @@ public final class EntityPayload extends AuxDataPayload {
 	 * @param status
 	 * @param entity
 	 */
-	public EntityPayload(Status status, Model entity) {
+	public ModelPayload(Status status, Model entity) {
 		super(status);
-		this.entity = entity;
+		this.model = entity;
 	}
 
 	public Model getEntity() {
-		return entity;
+		return model;
 	}
 
-	public void setEntity(Model entityGroup) {
-		this.entity = entityGroup;
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
-	public ModelKey getEntityRef() {
-		return entityRef;
+	public ModelKey getRef() {
+		return ref;
 	}
 
-	public void setEntityRef(ModelKey entityRef) {
-		this.entityRef = entityRef;
+	public void setRef(ModelKey ref) {
+		this.ref = ref;
 	}
 
 	public void setRelatedOneRef(String propName, ModelKey ref) {

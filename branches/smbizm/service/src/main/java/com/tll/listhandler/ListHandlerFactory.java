@@ -26,9 +26,9 @@ public abstract class ListHandlerFactory {
 	 * @throws ListHandlerException When a sorting related occurrs.
 	 */
 	public static <T> IListHandler<T> create(Collection<T> c, Sorting sorting) throws EmptyListException,
-			ListHandlerException {
+	ListHandlerException {
 		try {
-			CollectionListHandler<T> listHandler = new CollectionListHandler<T>(CollectionUtil.listFromCollection(c));
+			final CollectionListHandler<T> listHandler = new CollectionListHandler<T>(CollectionUtil.listFromCollection(c));
 			if(sorting != null) {
 				listHandler.sort(sorting);
 			}
@@ -55,8 +55,8 @@ public abstract class ListHandlerFactory {
 	 *         {@link ListHandlerType#COLLECTION} and the sorting directive is
 	 *         specified but mal-formed.
 	 */
-	public static <E extends IEntity> IListHandler<SearchResult<E>> create(ICriteria<E> criteria, Sorting sorting,
-			ListHandlerType type, IListHandlerDataProvider<E> dataProvider) throws InvalidCriteriaException,
+	public static <E extends IEntity> IListHandler<SearchResult<?>> create(ICriteria<E> criteria, Sorting sorting,
+			ListHandlerType type, IListingDataProvider dataProvider) throws InvalidCriteriaException,
 			EmptyListException, ListHandlerException {
 
 		SearchListHandler<E> slh = null;

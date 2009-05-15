@@ -116,7 +116,7 @@ public interface IEntityDao extends IDao {
 	 *         given criteria
 	 */
 	<E extends IEntity> E findEntity(ICriteria<E> criteria) throws InvalidCriteriaException, EntityNotFoundException,
-			NonUniqueResultException;
+	NonUniqueResultException;
 
 	/**
 	 * Finds matching entities given criteria.
@@ -142,8 +142,8 @@ public interface IEntityDao extends IDao {
 	 * @throws InvalidCriteriaException When the criteria is <code>null</code> or
 	 *         found to be invalid.
 	 */
-	<E extends IEntity> List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException;
+	<E extends IEntity> List<SearchResult<?>> find(ICriteria<E> criteria, Sorting sorting)
+	throws InvalidCriteriaException;
 
 	/**
 	 * Returns a list of entities that satisfy the given id list. This method will
@@ -168,7 +168,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid.
 	 */
 	<E extends IEntity> List<Integer> getIds(ICriteria<E> criteria, Sorting sorting)
-			throws InvalidCriteriaException;
+	throws InvalidCriteriaException;
 
 	/**
 	 * Retrieves entities from a collection of ids. Used for id based list
@@ -197,7 +197,7 @@ public interface IEntityDao extends IDao {
 	 *         found to be invalid or when the sorting directive is
 	 *         <code>null</code>.
 	 */
-	<E extends IEntity> IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting,
+	<E extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<E> criteria, Sorting sorting,
 			int offset, int pageSize)
 			throws InvalidCriteriaException;
 

@@ -5,6 +5,7 @@
  */
 package com.tll.server.rpc.entity;
 
+import com.tll.common.data.IModelRelatedRequest;
 import com.tll.model.IEntity;
 
 
@@ -15,12 +16,14 @@ import com.tll.model.IEntity;
 public interface IMEntityServiceImplResolver {
 
 	/**
-	 * Resolves an entity type to a supporting {@link IMEntityServiceImpl} type.
-	 * @param entityClass The entity type
+	 * Resolves a model related request to a supporting
+	 * {@link IMEntityServiceImpl} type.
+	 * @param request The model related request
 	 * @return The resolved {@link IMEntityServiceImpl} type.
-	 * @throws IllegalArgumentException When the given entity class can't be
-	 *         resolved to a service impl type
+	 * @throws IllegalArgumentException When the model related requesst class
+	 *         can't be resolved to a service impl type
 	 */
-	Class<? extends IMEntityServiceImpl<? extends IEntity>> resolveMEntityServiceImpl(
-			Class<? extends IEntity> entityClass) throws IllegalArgumentException;
+	Class<? extends IMEntityServiceImpl<? extends IEntity>> resolve(
+			IModelRelatedRequest request)
+			throws IllegalArgumentException;
 }

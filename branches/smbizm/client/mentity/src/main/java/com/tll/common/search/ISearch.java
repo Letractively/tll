@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.tll.IMarshalable;
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.IEntityTypeProvider;
 import com.tll.criteria.CriteriaType;
 import com.tll.criteria.IQueryParam;
 
@@ -15,8 +16,8 @@ import com.tll.criteria.IQueryParam;
  * ISearch - Client side search criteria definition.
  * @author jpk
  */
-public interface ISearch extends IMarshalable {
-	
+public interface ISearch extends IMarshalable, IEntityTypeProvider {
+
 	/**
 	 * @return The type of search desired. This should correspond to a supported
 	 *         server side criteria type.

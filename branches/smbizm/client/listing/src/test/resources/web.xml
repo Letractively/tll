@@ -26,6 +26,7 @@
     <param-name>di.handlers</param-name>
     <param-value> 
       com.tll.server.rpc.entity.MEntityServiceBootstrapper
+      com.tll.server.rpc.listing.ListingContextBootstrapper
     </param-value>
   </context-param>
 

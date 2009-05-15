@@ -271,7 +271,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> List<SearchResult<E>> find(ICriteria<E> criteria, Sorting sorting)
+	public <E extends IEntity> List<SearchResult<?>> find(ICriteria<E> criteria, Sorting sorting)
 	throws InvalidCriteriaException {
 		if(criteria == null) {
 			throw new InvalidCriteriaException("No criteria specified.");
@@ -279,7 +279,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 		if(criteria.getCriteriaType() == null) {
 			throw new InvalidCriteriaException("A criteria type must be specified.");
 		}
-		return (List<SearchResult<E>>) processCriteria(criteria, sorting, !criteria.getCriteriaType().isQuery(), criteria
+		return (List<SearchResult<?>>) processCriteria(criteria, sorting, !criteria.getCriteriaType().isQuery(), criteria
 				.getCriteriaType().isScalar() ? (new ScalarSearchResultTransformer(criteria.getEntityClass()))
 						: ENTITY_RESULT_TRANSFORMER);
 	}
@@ -530,7 +530,7 @@ public class EntityDao extends HibernateJpaSupport implements IEntityDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E extends IEntity> IPageResult<SearchResult<E>> getPage(ICriteria<E> criteria, Sorting sorting, int offset,
+	public <E extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<E> criteria, Sorting sorting, int offset,
 			int pageSize) throws InvalidCriteriaException {
 		assert criteria != null && criteria.getCriteriaType() != null;
 		List<SearchResult<E>> rlist = null;

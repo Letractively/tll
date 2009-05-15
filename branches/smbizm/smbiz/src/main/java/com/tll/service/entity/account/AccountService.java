@@ -16,11 +16,12 @@ import com.tll.dao.IEntityDao;
 import com.tll.dao.IPageResult;
 import com.tll.dao.SearchResult;
 import com.tll.dao.Sorting;
-import com.tll.listhandler.IListHandlerDataProvider;
+import com.tll.listhandler.IListingDataProvider;
 import com.tll.model.Account;
 import com.tll.model.AccountHistory;
 import com.tll.model.AccountStatus;
 import com.tll.model.EntityCache;
+import com.tll.model.IEntity;
 import com.tll.model.IEntityAssembler;
 import com.tll.service.entity.NamedEntityService;
 import com.tll.service.entity.account.AccountHistoryContext.AccountHistoryOp;
@@ -37,7 +38,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	 * @author jpk
 	 */
 	@Transactional(readOnly = true)
-	private static final class AccountHistoryDataProvider implements IListHandlerDataProvider<AccountHistory> {
+	private static final class AccountHistoryDataProvider implements IListingDataProvider {
 
 		private final IEntityDao dao;
 
@@ -54,21 +55,21 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 			return dao.findByIds(AccountHistory.class, ids, sorting);
 		}
 
-		public List<SearchResult<AccountHistory>> find(ICriteria<AccountHistory> criteria, Sorting sorting)
+		public List<SearchResult<?>> find(ICriteria<? extends IEntity> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return dao.find(criteria, sorting);
 		}
 
-		public List<AccountHistory> getEntitiesFromIds(Class<AccountHistory> entityClass, Collection<Integer> ids,
+		public <E extends IEntity> List<E> getEntitiesFromIds(Class<E> entityClass, Collection<Integer> ids,
 				Sorting sorting) {
 			return dao.getEntitiesFromIds(entityClass, ids, sorting);
 		}
 
-		public List<Integer> getIds(ICriteria<AccountHistory> criteria, Sorting sorting) throws InvalidCriteriaException {
+		public List<Integer> getIds(ICriteria<? extends IEntity> criteria, Sorting sorting) throws InvalidCriteriaException {
 			return dao.getIds(criteria, sorting);
 		}
 
-		public IPageResult<SearchResult<AccountHistory>> getPage(ICriteria<AccountHistory> criteria, Sorting sorting,
+		public IPageResult<SearchResult<?>> getPage(ICriteria<? extends IEntity> criteria, Sorting sorting,
 				int offset, int pageSize) throws InvalidCriteriaException {
 			return dao.getPage(criteria, sorting, offset, pageSize);
 		}
@@ -208,7 +209,7 @@ public class AccountService extends NamedEntityService<Account> implements IAcco
 	}
 
 	@Override
-	public IListHandlerDataProvider<AccountHistory> getAccountHistoryDataProvider() {
+	public IListingDataProvider getAccountHistoryDataProvider() {
 		return new AccountHistoryDataProvider(dao);
 	}
 

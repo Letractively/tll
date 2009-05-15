@@ -5,13 +5,17 @@
  */
 package com.tll.client.mvc.view.intf;
 
+import com.tll.client.data.rpc.CrudCommand;
+import com.tll.client.data.rpc.IRpcCommand;
 import com.tll.client.model.ModelChangeEvent;
 import com.tll.client.mvc.view.AbstractRpcAndModelAwareView;
 import com.tll.client.mvc.view.ViewClass;
+import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
 import com.tll.common.model.IEntityType;
+import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 
 /**
@@ -48,22 +52,14 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 
 	private final GlobalMsgPanel gmp = new GlobalMsgPanel();
 
-	private final InterfaceStack intfStack;
+	private InterfaceStack intfStack;
 
 	/**
 	 * Constructor
 	 */
 	public IntfOptAccView() {
 		super();
-		intfStack = new InterfaceStack(gmp, this, auxDataRequest, new InterfaceStack.IFieldPanelResolver() {
-
-			@Override
-			public FieldPanel<?> resolveFieldPanel(IEntityType type) {
-				return null;
-			}
-		});
 		addWidget(gmp);
-		addWidget(intfStack);
 	}
 
 	@Override
@@ -77,13 +73,25 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 	}
 
 	@Override
-	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
-		return false;
-	}
-
-	@Override
 	protected void doInitialization(IntfOptAccViewInitializer initializer) {
-		// no-op
+		intfStack =
+			new InterfaceStack(gmp, new RpcUiHandler(getViewContainerRef()), auxDataRequest,
+					new InterfaceStack.IFieldPanelResolver() {
+
+				@Override
+				public FieldPanel<?> resolveFieldPanel(IEntityType type) {
+					return null;
+				}
+			}, new InterfaceStack.IFieldPanelDataLoader() {
+
+				@Override
+				public IRpcCommand load(ModelKey intfKey, AuxDataRequest adr) {
+					final CrudCommand c = new CrudCommand();
+					c.loadBySearch(null/*TODO*/);
+					return c;
+				}
+			}, new CrudCommand());
+		addWidget(intfStack);
 	}
 
 	@Override
@@ -94,5 +102,10 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 	@Override
 	protected void doDestroy() {
 		intfStack.clearData();
+	}
+
+	@Override
+	protected boolean shouldHandleModelChangeEvent(ModelChangeEvent event) {
+		return false;
 	}
 }

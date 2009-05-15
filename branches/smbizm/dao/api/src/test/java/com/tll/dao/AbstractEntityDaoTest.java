@@ -36,6 +36,7 @@ import com.tll.di.ModelModule;
 import com.tll.model.IEntity;
 import com.tll.model.IEntityFactory;
 import com.tll.model.INamedEntity;
+import com.tll.model.IScalar;
 import com.tll.model.ITimeStampEntity;
 import com.tll.model.MockEntityFactory;
 import com.tll.model.key.BusinessKeyFactory;
@@ -138,13 +139,13 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		}
 
 		@Override
-		public <R extends IEntity> List<SearchResult<R>> find(ICriteria<R> criteria, Sorting sorting)
+		public <R extends IEntity> List<SearchResult<?>> find(ICriteria<R> criteria, Sorting sorting)
 		throws InvalidCriteriaException {
 			return rawDao.find(criteria, sorting);
 		}
 
 		@Override
-		public <R extends IEntity> IPageResult<SearchResult<R>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
+		public <R extends IEntity> IPageResult<SearchResult<?>> getPage(ICriteria<R> criteria, Sorting sorting, int offset,
 				int pageSize) throws InvalidCriteriaException {
 			return rawDao.getPage(criteria, sorting, offset, pageSize);
 		}
@@ -694,7 +695,7 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 		crit.getPrimaryGroup().addCriterion(IEntity.PK_FIELDNAME, idList, Comparator.IN, false);
 
 		startNewTransaction();
-		IPageResult<SearchResult<IEntity>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
+		IPageResult<SearchResult<?>> page = dao.getPage(crit, simpleIdSorting, 0, 2);
 		Assert.assertTrue(page != null && page.getPageList() != null && page.getPageList().size() == 2,
 		"Empty or invalid number of initial page elements");
 		endTransaction();
@@ -762,17 +763,17 @@ public abstract class AbstractEntityDaoTest extends AbstractInjectedTest {
 			final IQueryParam[] params = entityHandler.getParamsForTestQuery(qdef);
 			final List<IQueryParam> list = params == null ? null : Arrays.asList(params);
 			final Criteria<IEntity> c = new Criteria<IEntity>(qdef, list);
-			final List<SearchResult<IEntity>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
+			final List<SearchResult<?>> result = dao.find(c, entityHandler.getSortingForTestQuery(qdef));
 			// Assert.assertTrue(result != null && result.size() > 0, "No named query results");
 			// for now, since we can't guarantee results based on the varied nature of
 			// the query defs, we first check for resutls and pass if there aren't any
 			if(result != null && result.size() > 0) {
-				for(final SearchResult<IEntity> sr : result) {
+				for(final SearchResult<?> sr : result) {
 					if(qdef.isScalar()) {
-						Assert.assertTrue(sr.getScalar() != null, "No scalar in scalar search result");
+						Assert.assertTrue(sr.getElement() instanceof IScalar, "No scalar in scalar search result");
 					}
 					else {
-						Assert.assertTrue(sr.getEntity() != null, "No entity in entity search result");
+						Assert.assertTrue(sr.getElement() instanceof IEntity, "No entity in entity search result");
 					}
 				}
 			}
