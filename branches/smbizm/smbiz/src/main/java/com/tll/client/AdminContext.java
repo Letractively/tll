@@ -181,7 +181,7 @@ public final class AdminContext {
 	 */
 	public SmbizEntityType getUserType() {
 		assert user != null;
-		if(userType == null) userType = SmbizEntityType.convert(user.getEntityType());
+		if(userType == null) userType = (SmbizEntityType) user.getEntityType();
 		return userType;
 	}
 
@@ -190,7 +190,7 @@ public final class AdminContext {
 	 */
 	public SmbizEntityType getUserAccountType() {
 		assert user != null;
-		if(userAccountType == null) userAccountType = SmbizEntityType.convert(getUserAccount().getEntityType());
+		if(userAccountType == null) userAccountType = (SmbizEntityType) getUserAccount().getEntityType();
 		return userAccountType;
 	}
 
@@ -199,7 +199,7 @@ public final class AdminContext {
 	 */
 	public SmbizEntityType getAccountType() {
 		assert account != null;
-		if(accountType == null) accountType = SmbizEntityType.convert(account.getEntityType());
+		if(accountType == null) accountType = (SmbizEntityType) account.getEntityType();
 		return accountType;
 	}
 }

@@ -5,7 +5,6 @@
  */
 package com.tll.client.mvc.view;
 
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.SmbizEntityType;
 
 /**
@@ -29,20 +28,19 @@ public abstract class MainView extends AbstractView<StaticViewInitializer> {
 		 * @param accountType
 		 * @return The ViewClass of the appropriate main view.
 		 */
-		public static ViewClass getMainViewClass(IEntityType accountType) {
+		public static ViewClass getMainViewClass(SmbizEntityType accountType) {
 			return ViewClass.findClassByViewName(getMainViewName(accountType));
 		}
 
-		private static String getMainViewName(IEntityType accountType) {
-			final SmbizEntityType set = SmbizEntityType.convert(accountType);
-			return set.getValue() + "_MAIN";
+		private static String getMainViewName(SmbizEntityType accountType) {
+			return accountType.getValue() + "_MAIN";
 		}
 
 		/**
 		 * Constructor
 		 * @param accountType
 		 */
-		protected MainViewClass(IEntityType accountType) {
+		protected MainViewClass(SmbizEntityType accountType) {
 			this.name = getMainViewName(accountType);
 		}
 

@@ -55,6 +55,7 @@ import com.tll.client.util.GlobalFormat;
 import com.tll.common.data.Status;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
+import com.tll.common.model.SmbizEntityType;
 import com.tll.common.msg.Msg;
 import com.tll.common.msg.Msg.MsgAttr;
 
@@ -163,7 +164,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 
 			// set the initial view based on the user's account type
 			ViewManager.get().dispatch(
-					new ShowViewRequest(MainViewClass.getMainViewClass(account.getEntityType())));
+					new ShowViewRequest(MainViewClass.getMainViewClass((SmbizEntityType) account.getEntityType())));
 		}
 		else if(changeType == ChangeType.ACCOUNT_CHANGE) {
 			// update the current account panel
@@ -355,7 +356,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 		private void setCurrentAccount(Model account) {
 			vlCrntAcnt.setText(account.getName());
 			vlCrntAcnt.setViewInitializer(new EditViewInitializer(AccountEditView.klas, account));
-			lblCrntAcntType.setText(account.getEntityType().getPresentationName());
+			lblCrntAcntType.setText(account.getEntityType().descriptor());
 			lblCrntAcntDateCreated.setText(Fmt.format(account.getDateCreated(), GlobalFormat.DATE));
 		}
 

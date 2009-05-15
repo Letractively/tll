@@ -43,13 +43,13 @@ public class AddAccountService extends RpcServlet implements IAddAccountService 
 		final AppContext ac = (AppContext) getServletContext().getAttribute(AppContext.KEY);
 		assert ac != null;
 		final com.tll.service.entity.account.AddAccountService svc = ac.getAddAccountService();
-		final MEntityContext mc = (MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
+		final PersistContext mc = (PersistContext) getServletContext().getAttribute(PersistContext.KEY);
 		assert svc != null && mc != null;
 		final Marshaler mlr = mc.getMarshaler();
 
 		Class<? extends Account> accountClass;
 		try {
-			accountClass = (Class<? extends Account>) EntityTypeUtil.getEntityClass(request.getEntityType());
+			accountClass = (Class<? extends Account>) mc.getEntityTypeResolver().resolveEntityClass(request.getEntityType());
 		}
 		catch(final ClassCastException e) {
 			s.addMsg("Invalid account type.", MsgLevel.ERROR, MsgAttr.STATUS.flag);

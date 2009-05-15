@@ -14,7 +14,6 @@ import com.tll.client.ui.RpcUiHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
 
@@ -79,7 +78,7 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(IEntityType type) {
+				public FieldPanel<?> resolveFieldPanel(SmbizEntityType type) {
 					return null;
 				}
 			}, new InterfaceStack.IFieldPanelDataLoader() {

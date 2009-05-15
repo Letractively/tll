@@ -17,8 +17,8 @@ import com.tll.server.AppContext;
 import com.tll.server.RequestContext;
 import com.tll.server.marshal.MarshalOptions;
 import com.tll.server.marshal.Marshaler;
-import com.tll.server.rpc.entity.MEntityContext;
-import com.tll.server.rpc.entity.MEntityServiceDelegate;
+import com.tll.server.rpc.entity.PersistContext;
+import com.tll.server.rpc.entity.PersistServiceDelegate;
 
 /**
  * AdminContextService
@@ -31,7 +31,7 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 	@Override
 	public AdminContextPayload getAdminContext() {
 		final RequestContext rc = getRequestContext();
-		final MEntityContext mec = (MEntityContext) rc.getServletContext().getAttribute(MEntityContext.KEY);
+		final PersistContext mec = (PersistContext) rc.getServletContext().getAttribute(PersistContext.KEY);
 		final AppContext ac = (AppContext) rc.getServletContext().getAttribute(AppContext.KEY);
 
 		final Status status = new Status();
@@ -61,8 +61,8 @@ public class AdminContextService extends RpcServlet implements IAdminContextServ
 	@Override
 	public AdminContextPayload changeCurrentAccount(ModelKey accountRef) {
 		final RequestContext rc = getRequestContext();
-		final MEntityServiceDelegate delegate = (MEntityServiceDelegate) rc.getServletContext().getAttribute(MEntityServiceDelegate.KEY);
-		final MEntityContext mec = (MEntityContext) rc.getServletContext().getAttribute(MEntityContext.KEY);
+		final PersistServiceDelegate delegate = (PersistServiceDelegate) rc.getServletContext().getAttribute(PersistServiceDelegate.KEY);
+		final PersistContext mec = (PersistContext) rc.getServletContext().getAttribute(PersistContext.KEY);
 		final com.tll.server.AdminContext sac =
 			(com.tll.server.AdminContext) rc.getSession().getAttribute(com.tll.server.AdminContext.KEY);
 		final Marshaler em = mec.getMarshaler();

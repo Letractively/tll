@@ -25,7 +25,6 @@ import com.tll.client.ui.edit.IEditHandler;
 import com.tll.client.ui.field.FieldPanel;
 import com.tll.client.ui.msg.IMsgDisplay;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
@@ -50,7 +49,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 	 */
 	public static interface IFieldPanelResolver {
 
-		FieldPanel<?> resolveFieldPanel(IEntityType type);
+		FieldPanel<?> resolveFieldPanel(SmbizEntityType type);
 	}
 
 	/**
@@ -69,7 +68,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 	 * @return HTML string
 	 */
 	public static String getStackHtml(Model intf) {
-		String type = intf.getEntityType().getPresentationName();
+		String type = intf.getEntityType().descriptor();
 		final int i = type.indexOf('-');
 		if(i > 0) type = type.substring(0, i);
 		if(intf.isNew()) {
@@ -97,7 +96,8 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 		 * @param showDeleteBtn
 		 */
 		public InterfacePanel(ModelKey intfRef, boolean showCancelBtn, boolean showDeleteBtn) {
-			super(msgDisplay, fldPnlResolver.resolveFieldPanel(intfRef.getEntityType()), showCancelBtn, showDeleteBtn);
+			super(msgDisplay, fldPnlResolver.resolveFieldPanel((SmbizEntityType) intfRef.getEntityType()), showCancelBtn,
+					showDeleteBtn);
 			this.intfRef = intfRef;
 
 			addEditHandler(this);
@@ -120,7 +120,7 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 			if(getModel() == null) {
 				final IRpcCommand cmd = loader.load(intfRef, auxDataRequest);
 				cmd.setSource(this);
-				DeferredCommand.addCommand(crud);
+				DeferredCommand.addCommand(cmd);
 			}
 		}
 

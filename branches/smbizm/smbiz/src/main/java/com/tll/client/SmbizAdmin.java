@@ -58,7 +58,7 @@ public final class SmbizAdmin implements EntryPoint, IAdminContextListener {
 		if(accountRef == null || !accountRef.isSet()) throw new IllegalArgumentException("Null or unset account ref");
 		final AdminContext ac = getAdminContextCmd().getAdminContext();
 		final AdminRole role = ac.getUserRole();
-		final SmbizEntityType targetAccountType = SmbizEntityType.convert(accountRef.getEntityType());
+		final SmbizEntityType targetAccountType = (SmbizEntityType) accountRef.getEntityType();
 		final ModelKey userAcntRef = ac.getUserAccount().getKey();
 		assert userAcntRef != null;
 		switch(targetAccountType) {

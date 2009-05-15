@@ -14,28 +14,38 @@ import com.tll.common.search.ISearch;
 import com.tll.criteria.ICriteria;
 import com.tll.model.Interface;
 import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.NameKey;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.service.entity.IEntityService;
+import com.tll.service.entity.INamedEntityService;
 
 /**
  * InterfaceService
  * @author jpk
  */
-public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
+public class InterfaceService extends PersistServiceImpl<Interface> {
 
 	public static final MarshalOptions MARSHAL_OPTIONS = MarshalOptions.UNCONSTRAINED_MARSHALING;
 
 	@Override
-	public MarshalOptions getMarshalOptions(MEntityContext context) {
+	public MarshalOptions getMarshalOptions(PersistContext context) {
 		return MARSHAL_OPTIONS;
 	}
 
 	@Override
-	protected void handleLoadOptions(MEntityContext context, Interface e, EntityOptions options,
+	protected Interface loadByName(Class<Interface> entityClass, IEntityService<Interface> svc, String name)
+			throws UnsupportedOperationException {
+		final INamedEntityService<Interface> nsvc = (INamedEntityService<Interface>) svc;
+		return nsvc.load(new NameKey<Interface>(entityClass, name));
+	}
+
+	@Override
+	protected void handleLoadOptions(PersistContext context, Interface e, EntityOptions options,
 			Map<String, ModelKey> refs) throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(MEntityContext context, Interface e, EntityOptions options)
+	protected void handlePersistOptions(PersistContext context, Interface e, EntityOptions options)
 	throws SystemError {
 	}
 
@@ -45,7 +55,7 @@ public class InterfaceService extends MNamedEntityServiceImpl<Interface> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, ISearch search, ICriteria<Interface> criteria)
+	protected void handleSearchTranslation(PersistContext context, ISearch search, ICriteria<Interface> criteria)
 	throws IllegalArgumentException {
 		throw new UnsupportedOperationException();
 	}

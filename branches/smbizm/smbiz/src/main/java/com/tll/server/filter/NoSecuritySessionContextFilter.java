@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import com.tll.model.User;
 import com.tll.server.AdminContext;
 import com.tll.server.AppContext;
-import com.tll.server.rpc.entity.MEntityContext;
+import com.tll.server.rpc.entity.PersistContext;
 import com.tll.service.entity.user.IUserService;
 
 /**
@@ -61,11 +61,11 @@ public final class NoSecuritySessionContextFilter implements Filter {
 				if(appContext == null) {
 					throw new ServletException("Unable to obtain the app context");
 				}
-				final MEntityContext mec = (MEntityContext) sc.getAttribute(MEntityContext.KEY);
-				if(mec == null) {
-					throw new ServletException("Unable to obtain the MEntity context");
+				final PersistContext pc = (PersistContext) sc.getAttribute(PersistContext.KEY);
+				if(pc == null) {
+					throw new ServletException("Unable to obtain the persist context");
 				}
-				final IUserService userService = mec.getEntityServiceFactory().instance(IUserService.class);
+				final IUserService userService = pc.getEntityServiceFactory().instance(IUserService.class);
 				final User user = (User) userService.loadUserByUsername(appContext.getDfltUserEmail());
 				log.debug("Creating mock admin context from default user email specified in config..");
 				final AdminContext ac = new AdminContext();

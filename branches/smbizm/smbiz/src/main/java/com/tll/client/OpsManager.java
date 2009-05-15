@@ -179,7 +179,7 @@ public final class OpsManager {
 			return new EditViewInitializer(AccountEditView.klas, crntUserAccount);
 		}
 
-		final SmbizEntityType crntUserAccountType = SmbizEntityType.convert(crntUserAccount.getEntityType());
+		final SmbizEntityType crntUserAccountType = (SmbizEntityType) crntUserAccount.getEntityType();
 
 		if(OP_ISPS.getText().equals(optionText)) {
 			return new StaticViewInitializer(IspListingView.klas);

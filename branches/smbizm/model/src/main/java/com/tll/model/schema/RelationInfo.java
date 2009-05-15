@@ -5,7 +5,6 @@
  */
 package com.tll.model.schema;
 
-import com.tll.model.IEntity;
 
 /**
  * RelationInfo - Defines key information about a defined relation (betw. 2
@@ -14,7 +13,7 @@ import com.tll.model.IEntity;
  */
 public final class RelationInfo extends AbstractSchemaProperty {
 
-	private final Class<? extends IEntity> relatedType;
+	private final Class<?> relatedType;
 
 	/**
 	 * Is this relation pointing to an entity or collection of entities that
@@ -28,14 +27,14 @@ public final class RelationInfo extends AbstractSchemaProperty {
 	 * @param propertyType
 	 * @param reference
 	 */
-	public RelationInfo(final Class<? extends IEntity> relatedType, final PropertyType propertyType,
+	public RelationInfo(final Class<?> relatedType, final PropertyType propertyType,
 			final boolean reference) {
 		super(propertyType);
 		this.relatedType = relatedType;
 		this.reference = reference;
 	}
 
-	public Class<? extends IEntity> getRelatedType() {
+	public Class<?> getRelatedType() {
 		return relatedType;
 	}
 

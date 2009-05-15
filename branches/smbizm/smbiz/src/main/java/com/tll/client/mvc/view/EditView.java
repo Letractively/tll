@@ -86,7 +86,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 	protected abstract AuxDataRequest getNeededAuxData();
 
 	public String getLongViewName() {
-		String s = modelKey.getEntityType().getPresentationName();
+		String s = modelKey.getEntityType().descriptor();
 		if(modelKey.getName() != null) {
 			s += " " + modelKey.getName();
 		}
@@ -98,7 +98,7 @@ public abstract class EditView extends AbstractRpcAndModelAwareView<EditViewInit
 		String s = modelKey.getName();
 		if(s == null) {
 			// fallback to the entity type
-			s = modelKey.getEntityType().getPresentationName();
+			s = modelKey.getEntityType().descriptor();
 		}
 		return "Edit " + s;
 	}

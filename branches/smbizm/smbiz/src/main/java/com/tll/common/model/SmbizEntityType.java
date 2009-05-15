@@ -1,7 +1,6 @@
 package com.tll.common.model;
 
 import com.tll.INameValueProvider;
-import com.tll.util.StringUtil;
 
 /**
  * SmbizEntityType - Enumeration impl of {@link IEntityType} identifying all relevant
@@ -46,10 +45,6 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 	SHIP_MODE("Ship Mode"),
 	SITE_CODE("Site Code");
 
-	//private static final String MODEL_PACKAGE_NAME = SmbizEntityType.class.getPackage().getName();
-	// above won't GWT compile
-	private static final String MODEL_PACKAGE_NAME = "com.tll.model";
-
 	private String name;
 
 	private SmbizEntityType(String name) {
@@ -64,11 +59,7 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 		return name();
 	}
 
-	public String getEntityClassName() {
-		return MODEL_PACKAGE_NAME + '.' + StringUtil.enumStyleToCamelCase(name(), true);
-	}
-
-	public String getPresentationName() {
+	public String descriptor() {
 		return getName();
 	}
 
@@ -100,15 +91,5 @@ public enum SmbizEntityType implements IEntityType, INameValueProvider<String> {
 				return type.isInterfaceType();
 		}
 		return false;
-	}
-
-	/**
-	 * Translates a generic {@link IEntityType} to the app specific enum
-	 * equivalent.
-	 * @param et the generic entity type
-	 * @return the smbiz specific enum entity type equivalent
-	 */
-	public static SmbizEntityType convert(IEntityType et) {
-		return IEntityType.Util.toEnum(SmbizEntityType.class, et);
 	}
 }

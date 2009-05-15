@@ -32,8 +32,8 @@ import com.tll.listhandler.ListHandlerFactory;
 import com.tll.listhandler.ListHandlerType;
 import com.tll.model.IEntity;
 import com.tll.server.rpc.RpcServlet;
-import com.tll.server.rpc.entity.MEntityContext;
-import com.tll.server.rpc.entity.MEntityServiceDelegate;
+import com.tll.server.rpc.entity.PersistContext;
+import com.tll.server.rpc.entity.PersistServiceDelegate;
 
 /**
  * ListingService - Handles client listing requests.
@@ -74,14 +74,14 @@ IListingService<S, Model> {
 		if(!status.hasErrors() && listingRequest != null) {
 
 			final HttpServletRequest request = getRequestContext().getRequest();
-			final MEntityContext mentityContext =
-				(MEntityContext) getServletContext().getAttribute(MEntityContext.KEY);
-			final MEntityServiceDelegate mentityDelegate =
-				(MEntityServiceDelegate) getServletContext().getAttribute(MEntityServiceDelegate.KEY);
+			final PersistContext persistContext =
+				(PersistContext) getServletContext().getAttribute(PersistContext.KEY);
+			final PersistServiceDelegate persistDelegate =
+				(PersistServiceDelegate) getServletContext().getAttribute(PersistServiceDelegate.KEY);
 			final ListingContext listingContext = (ListingContext) getServletContext().getAttribute(ListingContext.KEY);
-			if(mentityContext == null || mentityDelegate == null || listingContext == null) {
+			if(persistContext == null || persistDelegate == null || listingContext == null) {
 				throw new IllegalStateException(
-				"Unable to obtain the mentity context and/or the mentity service delegate and/or the listing context");
+				"Unable to obtain the persist context and/or the persist service delegate and/or the listing context");
 			}
 
 			Integer offset = listingRequest.getOffset();
@@ -125,7 +125,7 @@ IListingService<S, Model> {
 						// translate client side criteria to server side criteria
 						final ICriteria<? extends IEntity> criteria;
 						try {
-							criteria = mentityDelegate.translate(listingRequest, search, status);
+							criteria = persistDelegate.translate(listingRequest, search, status);
 						}
 						catch(final IllegalArgumentException iae) {
 							throw new ListingException(listingName, "Unable to translate listing command search criteria: "
@@ -164,7 +164,7 @@ IListingService<S, Model> {
 
 						// transform to marshaling list handler
 						final MarshalingListHandler marshalingListHandler =
-							new MarshalingListHandler(listHandler, mentityContext.getMarshaler(), mentityDelegate
+							new MarshalingListHandler(listHandler, persistContext.getMarshaler(), persistDelegate
 									.getMarshalOptions(
 											listingRequest, status), listingDef.getPropKeys());
 
@@ -193,10 +193,10 @@ IListingService<S, Model> {
 			}
 			catch(final ListingException e) {
 				exceptionToStatus(e, status);
-				mentityContext.getExceptionHandler().handleException(e);
+				persistContext.getExceptionHandler().handleException(e);
 			}
 			catch(final RuntimeException re) {
-				mentityContext.getExceptionHandler().handleException(re);
+				persistContext.getExceptionHandler().handleException(re);
 				throw re;
 			}
 

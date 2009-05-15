@@ -17,22 +17,32 @@ import com.tll.criteria.ICriteria;
 import com.tll.model.Account;
 import com.tll.model.AccountStatus;
 import com.tll.model.key.IBusinessKey;
+import com.tll.model.key.NameKey;
 import com.tll.model.key.PrimaryKey;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.service.entity.IEntityService;
 import com.tll.service.entity.IEntityServiceFactory;
+import com.tll.service.entity.INamedEntityService;
 import com.tll.service.entity.account.IAccountService;
 import com.tll.util.EnumUtil;
 
-public class AccountService extends MNamedEntityServiceImpl<Account> {
+public class AccountService extends PersistServiceImpl<Account> {
 
 	public static final MarshalOptions MARSHAL_OPTIONS = new MarshalOptions(true, 2);
 
-	public MarshalOptions getMarshalOptions(MEntityContext context) {
+	public MarshalOptions getMarshalOptions(PersistContext context) {
 		return MARSHAL_OPTIONS;
 	}
 
 	@Override
-	protected void handleLoadOptions(MEntityContext context, Account e, EntityOptions entityOptions,
+	protected Account loadByName(Class<Account> entityClass, IEntityService<Account> svc, String name)
+			throws UnsupportedOperationException {
+		final INamedEntityService<Account> nsvc = (INamedEntityService<Account>) svc;
+		return nsvc.load(new NameKey<Account>(entityClass, name));
+	}
+
+	@Override
+	protected void handleLoadOptions(PersistContext context, Account e, EntityOptions entityOptions,
 			Map<String, ModelKey> refs) throws SystemError {
 
 		final IEntityServiceFactory entityServiceFactory = context.getEntityServiceFactory();
@@ -77,7 +87,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account> {
 	}
 
 	@Override
-	protected void handlePersistOptions(MEntityContext context, Account e, EntityOptions options)
+	protected void handlePersistOptions(PersistContext context, Account e, EntityOptions options)
 	throws SystemError {
 		// no-op
 	}
@@ -88,7 +98,7 @@ public class AccountService extends MNamedEntityServiceImpl<Account> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, ISearch search,
+	protected void handleSearchTranslation(PersistContext context, ISearch search,
 			ICriteria<Account> criteria) {
 
 		if(search instanceof AccountSearch) {

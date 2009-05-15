@@ -14,7 +14,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.tll.server.rpc.entity.MEntityContext;
+import com.tll.server.rpc.entity.PersistContext;
 
 /**
  * BootstrapperTest
@@ -62,7 +62,7 @@ public class BootstrapperTest {
 		context.addInitParameter(Bootstrapper.DEPENDENCY_MODULE_CLASS_NAMES, sb.toString());
 
 		sb.setLength(0);
-		sb.append("com.tll.server.rpc.entity.MEntityServiceBootstrapper\r\n");
+		sb.append("com.tll.server.rpc.entity.PersistServiceBootstrapper\r\n");
 		if(employSecurity) sb.append("com.tll.server.SecurityContextBootstrapper\r\n");
 		sb.append("com.tll.server.AppContextBootstrapper\r\n");
 		context.addInitParameter(Bootstrapper.DEPENDENCY_HANDLER_CLASS_NAMES, sb.toString());
@@ -76,7 +76,7 @@ public class BootstrapperTest {
 		final ServletContextEvent event = new ServletContextEvent(context);
 		final Bootstrapper bootstraper = new Bootstrapper();
 		bootstraper.contextInitialized(event);
-		final MEntityContext mec = (MEntityContext) context.getAttribute(MEntityContext.KEY);
+		final PersistContext mec = (PersistContext) context.getAttribute(PersistContext.KEY);
 		final SecurityContext sc = (SecurityContext) context.getAttribute(SecurityContext.KEY);
 		// TODO move this test to webapp?
 		// final AppContext ac = (AppContext) context.getAttribute(AppContext.KEY);

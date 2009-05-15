@@ -99,7 +99,7 @@ IIndexedFieldBoundWidget {
 				final String existing = PropertyPath.index(getIndexedPropertyName(), this.index);
 				fieldPanel.getFieldGroup().replaceParentPropertyPath(existing, tgt);
 			}
-			final String name = fieldPanel.getModel().getEntityType().getPresentationName();
+			final String name = fieldPanel.getModel().getEntityType().descriptor();
 			fieldPanel.getFieldGroup().setName(name + " - " + index);
 			this.index = index;
 		}

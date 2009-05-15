@@ -9,8 +9,6 @@ import java.io.Serializable;
 
 import javax.servlet.ServletContext;
 
-import com.tll.server.rpc.entity.MEntityContext;
-
 /**
  * ListingContext
  * @author jpk
@@ -20,7 +18,7 @@ public class ListingContext implements Serializable {
 	private static final long serialVersionUID = -2283719863396426465L;
 
 	/**
-	 * The key identifying the {@link MEntityContext} in the
+	 * The key identifying the {@link ListingContext} in the
 	 * {@link ServletContext}.
 	 */
 	public static final String KEY = Long.toString(serialVersionUID);

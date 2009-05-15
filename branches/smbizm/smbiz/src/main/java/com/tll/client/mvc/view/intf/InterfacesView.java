@@ -39,7 +39,6 @@ import com.tll.client.ui.msg.GlobalMsgPanel;
 import com.tll.client.ui.view.ViewToolbar;
 import com.tll.common.data.AuxDataPayload;
 import com.tll.common.data.AuxDataRequest;
-import com.tll.common.model.IEntityType;
 import com.tll.common.model.Model;
 import com.tll.common.model.ModelKey;
 import com.tll.common.model.SmbizEntityType;
@@ -195,8 +194,8 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 					new InterfaceStack.IFieldPanelResolver() {
 
 				@Override
-				public FieldPanel<?> resolveFieldPanel(IEntityType type) {
-					switch(SmbizEntityType.convert(type)) {
+				public FieldPanel<?> resolveFieldPanel(SmbizEntityType type) {
+								switch(type) {
 						case INTERFACE_SWITCH:
 							return new SwitchInterfacePanel();
 						case INTERFACE_SINGLE:

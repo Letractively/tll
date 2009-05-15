@@ -12,6 +12,7 @@
     <param-name>di.modules</param-name>
     <param-value>
       com.tll.di.RefDataModule
+      com.tll.di.MailModule
       com.tll.di.ValidationModule
       com.tll.di.ModelModule
       com.tll.di.MockEntityFactoryModule
@@ -19,13 +20,15 @@
       com.tll.di.EntityAssemblerModule
       com.tll.di.EntityServiceFactoryModule
       com.tll.di.LogExceptionHandlerModule
+      com.tll.di.ClientPersistModule
+      com.tll.di.ListingModule
     </param-value>
   </context-param>
   
   <context-param>
     <param-name>di.handlers</param-name>
     <param-value> 
-      com.tll.server.rpc.entity.MEntityServiceBootstrapper
+      com.tll.server.rpc.entity.PersistContextBootstrapper
       com.tll.server.rpc.listing.ListingContextBootstrapper
     </param-value>
   </context-param>

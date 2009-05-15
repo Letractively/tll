@@ -5,14 +5,15 @@
  */
 package com.tll.server.rpc.listing;
 
+import com.google.inject.Inject;
 import com.tll.common.data.ListingRequest;
 import com.tll.common.model.IEntityType;
 import com.tll.common.search.ISearch;
 import com.tll.listhandler.IListingDataProvider;
+import com.tll.model.IEntity;
 import com.tll.server.RequestContext;
-import com.tll.server.rpc.entity.EntityTypeUtil;
-import com.tll.server.rpc.entity.MEntityContext;
-
+import com.tll.server.rpc.entity.IEntityTypeResolver;
+import com.tll.server.rpc.entity.PersistContext;
 
 /**
  * SmbizListingDataProviderResolver
@@ -20,18 +21,30 @@ import com.tll.server.rpc.entity.MEntityContext;
  */
 public class SmbizListingDataProviderResolver implements IListingDataProviderResolver {
 
+	private final IEntityTypeResolver etResolver;
+
+	/**
+	 * Constructor
+	 * @param etResolver
+	 */
+	@Inject
+	public SmbizListingDataProviderResolver(IEntityTypeResolver etResolver) {
+		super();
+		this.etResolver = etResolver;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public IListingDataProvider resolve(RequestContext requestContext, ListingRequest<? extends ISearch> request)
-			throws IllegalArgumentException {
+	throws IllegalArgumentException {
 		try {
-			final MEntityContext mc = (MEntityContext) requestContext.getServletContext().getAttribute(MEntityContext.KEY);
+			final PersistContext mc = (PersistContext) requestContext.getServletContext().getAttribute(PersistContext.KEY);
 			final IEntityType et = request.getListingDef().getSearchCriteria().getEntityType();
-			return mc.getEntityServiceFactory().instanceByEntityType(EntityTypeUtil.getEntityClass(et));
+			return mc.getEntityServiceFactory().instanceByEntityType((Class<IEntity>) etResolver.resolveEntityClass(et));
 		}
 		catch(final Exception e) {
 			// fall through
 		}
 		throw new IllegalArgumentException("Can't resolve listing data provider for request: " + request.descriptor());
 	}
-
 }

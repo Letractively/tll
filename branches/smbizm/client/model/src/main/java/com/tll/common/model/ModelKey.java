@@ -94,7 +94,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 
 	@Override
 	public String descriptor() {
-		return isSet() ? (name != null) ? type.getPresentationName() + " '" + name + '\'' : type.getPresentationName()
+		return isSet() ? (name != null) ? type.descriptor() + " '" + name + '\'' : type.descriptor()
 				: "-unset-";
 	}
 
@@ -102,8 +102,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		final String ecn = type == null ? null : type.getEntityClassName();
-		result = prime * result + ((ecn == null) ? 0 : ecn.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -121,12 +120,7 @@ public class ModelKey implements IKey<Model>, IEntityTypeProvider {
 		if(type == null) {
 			if(other.type != null) return false;
 		}
-		final String ecn = type == null ? null : type.getEntityClassName();
-		final String otherEcn = other.type == null ? null : other.type.getEntityClassName();
-		if(ecn == null) {
-			if(otherEcn != null) return false;
-		}
-		else if(!ecn.equals(otherEcn)) return false;
+		else if(!type.equals(other.type)) return false;
 		return true;
 	}
 

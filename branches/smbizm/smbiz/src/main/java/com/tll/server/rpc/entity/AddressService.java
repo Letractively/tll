@@ -18,28 +18,35 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.IBusinessKey;
 import com.tll.server.marshal.MarshalOptions;
+import com.tll.service.entity.IEntityService;
 
 /**
  * AddressService
  * @author jpk
  */
-public class AddressService extends MEntityServiceImpl<Address> {
+public class AddressService extends PersistServiceImpl<Address> {
 
 	public static final MarshalOptions MARSHAL_OPTIONS = new MarshalOptions(false, 0);
 
 	@Override
-	public MarshalOptions getMarshalOptions(MEntityContext context) {
+	public MarshalOptions getMarshalOptions(PersistContext context) {
 		return MARSHAL_OPTIONS;
 	}
 
 	@Override
-	protected void handleLoadOptions(MEntityContext context, Address e, EntityOptions options,
+	protected Address loadByName(Class<Address> entityClass, IEntityService<Address> svc, String name)
+	throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void handleLoadOptions(PersistContext context, Address e, EntityOptions options,
 			Map<String, ModelKey> refs)
 	throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(MEntityContext context, Address e, EntityOptions options)
+	protected void handlePersistOptions(PersistContext context, Address e, EntityOptions options)
 	throws SystemError {
 	}
 
@@ -62,7 +69,7 @@ public class AddressService extends MEntityServiceImpl<Address> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, ISearch search,
+	protected void handleSearchTranslation(PersistContext context, ISearch search,
 			ICriteria<Address> criteria) throws IllegalArgumentException {
 		throw new UnsupportedOperationException("No search implemented for Address type");
 	}

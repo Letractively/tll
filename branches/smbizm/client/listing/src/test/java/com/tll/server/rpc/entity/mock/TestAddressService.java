@@ -19,30 +19,37 @@ import com.tll.model.key.BusinessKeyFactory;
 import com.tll.model.key.BusinessKeyNotDefinedException;
 import com.tll.model.key.IBusinessKey;
 import com.tll.server.marshal.MarshalOptions;
-import com.tll.server.rpc.entity.MEntityContext;
-import com.tll.server.rpc.entity.MEntityServiceImpl;
+import com.tll.server.rpc.entity.PersistContext;
+import com.tll.server.rpc.entity.PersistServiceImpl;
+import com.tll.service.entity.IEntityService;
 
 /**
  * TestAddressService
  * @author jpk
  */
-public class TestAddressService extends MEntityServiceImpl<Address> {
+public class TestAddressService extends PersistServiceImpl<Address> {
 
 	private static final MarshalOptions marshalOptions = new MarshalOptions(false, 0);
 
 	@Override
-	public MarshalOptions getMarshalOptions(MEntityContext context) {
+	public MarshalOptions getMarshalOptions(PersistContext context) {
 		return marshalOptions;
 	}
 
 	@Override
-	protected void handleLoadOptions(MEntityContext context, Address e, EntityOptions options,
+	protected Address loadByName(Class<Address> entityClass, IEntityService<Address> svc, String name)
+	throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void handleLoadOptions(PersistContext context, Address e, EntityOptions options,
 			Map<String, ModelKey> refs)
 	throws SystemError {
 	}
 
 	@Override
-	protected void handlePersistOptions(MEntityContext context, Address e, EntityOptions options)
+	protected void handlePersistOptions(PersistContext context, Address e, EntityOptions options)
 	throws SystemError {
 	}
 
@@ -62,7 +69,7 @@ public class TestAddressService extends MEntityServiceImpl<Address> {
 	}
 
 	@Override
-	protected void handleSearchTranslation(MEntityContext context, ISearch search,
+	protected void handleSearchTranslation(PersistContext context, ISearch search,
 			ICriteria<Address> criteria) throws IllegalArgumentException {
 		final TestAddressSearch tas = (TestAddressSearch) search;
 		criteria.getPrimaryGroup().addCriterion("address1", tas.getAddress1(), Comparator.EQUALS, false);

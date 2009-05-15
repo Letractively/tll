@@ -116,7 +116,7 @@ public final class AuxDataCache {
 	public Model getEntityPrototype(IEntityType entityType) {
 		if(entityPrototypes != null && entityType != null) {
 			for(final Model p : entityPrototypes) {
-				if(p.getEntityType().getEntityClassName().equals(entityType.getEntityClassName())) {
+				if(p.getEntityType().equals(entityType)) {
 					return p.copy(true); // IMPT: provide a distinct instance
 				}
 			}
@@ -141,7 +141,7 @@ public final class AuxDataCache {
 				if(entityPrototypes != null) {
 					final IEntityType et = (IEntityType) obj;
 					for(final Model p : entityPrototypes) {
-						if(et.getEntityClassName().equals(p.getEntityType().getEntityClassName())) return true;
+						if(et.equals(p.getEntityType())) return true;
 					}
 				}
 				return false;

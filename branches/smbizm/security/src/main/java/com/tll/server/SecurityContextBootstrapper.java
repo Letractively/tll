@@ -15,7 +15,6 @@ import org.springframework.security.AuthenticationManager;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-import com.tll.config.Config;
 import com.tll.di.AcegiModule;
 
 /**
@@ -28,7 +27,7 @@ public class SecurityContextBootstrapper implements IBootstrapHandler {
 	private static final Log log = LogFactory.getLog(SecurityContextBootstrapper.class);
 
 	@Override
-	public void startup(Injector injector, ServletContext servletContext, Config config) {
+	public void startup(Injector injector, ServletContext servletContext) {
 		AuthenticationManager authenticationManager = null;
 		AccessDecisionManager httpRequesetAccessDecisionManager = null;
 

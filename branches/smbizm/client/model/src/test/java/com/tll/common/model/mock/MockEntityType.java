@@ -4,25 +4,20 @@
  */
 package com.tll.common.model.mock;
 
-import com.tll.IMarshalable;
 import com.tll.INameValueProvider;
 import com.tll.common.model.IEntityType;
-import com.tll.util.StringUtil;
 
 /**
  * MockEntityType
  * @author jpk
  */
-public enum MockEntityType implements IEntityType, INameValueProvider<String>, IMarshalable {
+public enum MockEntityType implements IEntityType, INameValueProvider<String> {
 
 	ACCOUNT("Account"),
 	ACCOUNT_ADDRESS("Account Address"),
 	ADDRESS("Address"),
 	PAYMENT_INFO("Payment Info"),
 	CURRENCY("Currency");
-
-	//private static final String MODEL_PACKAGE_NAME = MockEntityType.class.getPackage().getName();
-	private static final String MODEL_PACKAGE_NAME = "com.tll.model.";
 
 	private String name;
 
@@ -38,11 +33,7 @@ public enum MockEntityType implements IEntityType, INameValueProvider<String>, I
 		return name();
 	}
 
-	public String getEntityClassName() {
-		return MODEL_PACKAGE_NAME + StringUtil.enumStyleToCamelCase(name(), true);
-	}
-
-	public String getPresentationName() {
+	public String descriptor() {
 		return getName();
 	}
 }

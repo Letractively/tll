@@ -618,7 +618,7 @@
     </dependency>
     <dependency>
       <groupId>com.tll</groupId>
-      <artifactId>client-mentity</artifactId>
+      <artifactId>client-persist</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

@@ -48,15 +48,18 @@ public final class BuildTools {
 	                              ['com.tll.di.MockDaoModule', FLAG_MOCK],
 	                              ['com.tll.di.TransactionModule', FLAG_ORM],
 	                              ['com.tll.di.EntityServiceFactoryModule', FLAG_ALL],
-	                              ['com.tll.di.AcegiModule', FLAG_SECURITY_ACEGI]
+	                              ['com.tll.di.AcegiModule', FLAG_SECURITY_ACEGI],
+	                              ['com.tll.di.ClientPersistModule', FLAG_ALL],
+	                              ['com.tll.di.ListingModule', FLAG_ALL],
+	                              ['com.tll.di.AppModule', FLAG_ALL],
 	                             ]
 	
 	// all di handler (bootstrapper) refs
 	static final def DI_HANDLERS_ALL = [
-	                               ['com.tll.server.rpc.entity.MEntityServiceBootstrapper', FLAG_ALL],
+	                               ['com.tll.server.rpc.entity.PersistContextBootstrapper', FLAG_ALL],
 	                               ['com.tll.server.rpc.listing.ListingContextBootstrapper', FLAG_ALL],
 	                               ['com.tll.server.SecurityContextBootstrapper', FLAG_SECURITY_ACEGI],
-	                               ['com.tll.server.AppContextBootstrapper', FLAG_ALL]
+	                               ['com.tll.server.AppContextBootstrapper', FLAG_ALL],
 	                              ]
 
 	/**
