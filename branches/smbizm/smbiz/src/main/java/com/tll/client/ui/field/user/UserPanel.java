@@ -8,6 +8,8 @@ package com.tll.client.ui.field.user;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.tll.client.Style;
 import com.tll.client.mvc.view.EditViewInitializer;
 import com.tll.client.mvc.view.account.AccountEditView;
 import com.tll.client.ui.field.AddressFieldsRenderer;
@@ -15,6 +17,7 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.IFieldWidget;
 import com.tll.client.ui.view.ViewLink;
 import com.tll.common.model.Model;
 import com.tll.common.model.PropertyPathException;
@@ -31,10 +34,13 @@ public class UserPanel extends FlowFieldPanel {
 		public void render(FlowPanel pnl, FieldGroup fg) {
 			final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
 			cmpsr.setCanvas(pnl);
+			IFieldWidget<?> fw;
 
 			// first row
-			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
-			cmpsr.addField(fg.getFieldWidgetByName("userEmailAddress"));
+			fw = fg.getFieldWidgetByName("userEmailAddress");
+			fw.getWidget().addStyleName(Style.GAP_RIGHT);
+			cmpsr.addField(fw);
+			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.NAME_PROPERTY));
 			cmpsr.addField(fg.getFieldWidgetByName("userExpires"));
 
 			// parent account ref link
@@ -43,15 +49,17 @@ public class UserPanel extends FlowFieldPanel {
 				final String paName = parentAccount.asString(Model.NAME_PROPERTY);
 				lnkAccount.setViewNames(paName, paName);
 				lnkAccount.setViewInitializer(new EditViewInitializer(AccountEditView.klas, parentAccount));
+				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				cmpsr.addWidget("Account", lnkAccount);
 			}
 			catch(final PropertyPathException e) {
 				Log.warn("No parent account for user", e);
 			}
 
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+			cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_CREATED_PROPERTY));
 			cmpsr.stopFlow();
-			cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName("user" + Model.DATE_MODIFIED_PROPERTY));
 			cmpsr.resetFlow();
 
 			// second row

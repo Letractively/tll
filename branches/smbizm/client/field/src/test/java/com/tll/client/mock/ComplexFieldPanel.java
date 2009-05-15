@@ -46,7 +46,7 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 
 					// account address type/name row
 					cmpsr.addField(fg.getFieldWidgetByName("type"));
-					cmpsr.addField(fg.getFieldWidget(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidgetByName("aa" + Model.NAME_PROPERTY));
 
 					// address row
 					cmpsr.newRow();
@@ -161,15 +161,15 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 				cmpsr.setCanvas(widget);
 
 				// first row
-				cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.NAME_PROPERTY));
 				cmpsr.addField(fg.getFieldWidgetByName("acntStatus"));
 				cmpsr.addField(fg.getFieldWidgetByName("acntDateCancelled"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				cmpsr.addField(fg.getFieldWidgetByName("acntParentName"));
 				cmpsr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_CREATED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_CREATED_PROPERTY));
 				cmpsr.stopFlow();
-				cmpsr.addField(fg.getFieldWidgetByName(Model.DATE_MODIFIED_PROPERTY));
+				cmpsr.addField(fg.getFieldWidgetByName("acnt" + Model.DATE_MODIFIED_PROPERTY));
 
 				// second row (billing)
 				cmpsr.newRow();
@@ -216,24 +216,24 @@ public class ComplexFieldPanel extends FlowFieldPanel {
 		fg.getFieldWidget("parent.name").setReadOnly(true);
 
 		((IFieldWidget<AccountStatus>) fg.getFieldWidget("status"))
-				.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
+		.addValueChangeHandler(new ValueChangeHandler<AccountStatus>() {
 
-					@Override
-					public void onValueChange(ValueChangeEvent<AccountStatus> event) {
-						final boolean closed = event.getValue() == AccountStatus.CLOSED;
-						final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
-						f.setVisible(closed);
-						f.setRequired(closed);
-					}
-				});
+			@Override
+			public void onValueChange(ValueChangeEvent<AccountStatus> event) {
+				final boolean closed = event.getValue() == AccountStatus.CLOSED;
+				final IFieldWidget<?> f = getFieldGroup().getFieldWidget("dateCancelled");
+				f.setVisible(closed);
+				f.setRequired(closed);
+			}
+		});
 
 		((IFieldWidget<Boolean>) fg.getFieldWidget("persistPymntInfo"))
-				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						indexedPanel.getFieldGroup().setEnabled(event.getValue());
-					}
-				});
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				indexedPanel.getFieldGroup().setEnabled(event.getValue());
+			}
+		});
 
 		return fg;
 	}

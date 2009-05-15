@@ -27,7 +27,7 @@ import com.tll.client.validate.ValidationException;
  * @author jpk
  */
 public class DateField extends AbstractField<Date> implements IHasFormat {
-	
+
 	/**
 	 * Impl
 	 * @author jpk
@@ -40,6 +40,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 		public Impl() {
 			super();
 			getTextBox().addStyleName(Styles.TBOX);
+			getTextBox().setVisibleLength(8);
 		}
 
 		@Override
@@ -57,7 +58,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 			return addDomHandler(handler, MouseOutEvent.getType());
 		}
 	}
-	
+
 	/**
 	 * ToDateConverter
 	 * @author jpk
@@ -86,7 +87,7 @@ public class DateField extends AbstractField<Date> implements IHasFormat {
 	 * The target date box.
 	 */
 	private final Impl dbox;
-	
+
 	/**
 	 * Constructor
 	 * @param name

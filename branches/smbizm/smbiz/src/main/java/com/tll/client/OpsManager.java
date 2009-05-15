@@ -19,6 +19,7 @@ import com.tll.client.mvc.view.intf.InterfacesView;
 import com.tll.client.mvc.view.intf.IntfOptAccViewInitializer;
 import com.tll.client.ui.option.Option;
 import com.tll.common.model.Model;
+import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.SmbizEntityType;
 import com.tll.model.AdminRole;
 
@@ -163,20 +164,22 @@ public final class OpsManager {
 	 * @param optionText the option text of the desired view
 	 * @param currentUser the current user
 	 * @param currentAccount the current account
-	 * @param crntUserAccountType
 	 * @return Newly created {@link IViewInitializer}.
 	 */
-	public static IViewInitializer resolveViewInitializer(String optionText, Model currentUser, Model currentAccount,
-			SmbizEntityType crntUserAccountType) {
-		if(OP_ACCOUNT_DETAIL.getText().equals(optionText)) {
-			switch(crntUserAccountType) {
-				case ASP:
-				case ISP:
-				case MERCHANT:
-				case CUSTOMER:
-					return new EditViewInitializer(AccountEditView.klas, currentUser);
-			}
+	public static IViewInitializer resolveViewInitializer(String optionText, Model currentUser, Model currentAccount) {
+		Model crntUserAccount;
+		try {
+			crntUserAccount = currentUser.getNestedModel("account");
 		}
+		catch(final PropertyPathException e) {
+			throw new IllegalArgumentException(e);
+		}
+
+		if(OP_ACCOUNT_DETAIL.getText().equals(optionText)) {
+			return new EditViewInitializer(AccountEditView.klas, crntUserAccount);
+		}
+
+		final SmbizEntityType crntUserAccountType = SmbizEntityType.convert(crntUserAccount.getEntityType());
 
 		if(OP_ISPS.getText().equals(optionText)) {
 			return new StaticViewInitializer(IspListingView.klas);

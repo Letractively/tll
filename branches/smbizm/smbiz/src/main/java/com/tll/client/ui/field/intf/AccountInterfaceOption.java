@@ -5,6 +5,7 @@
  */
 package com.tll.client.ui.field.intf;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,26 +13,31 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.tll.client.Style;
 import com.tll.client.ui.Heading;
 import com.tll.client.ui.field.AbstractFieldGroupProvider;
+import com.tll.client.ui.field.CheckboxField;
 import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowFieldPanel;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
+import com.tll.client.ui.field.TextField;
 import com.tll.client.util.Fmt;
 import com.tll.common.model.DoublePropertyValue;
 import com.tll.common.model.Model;
+import com.tll.common.model.PropPathNodeMismatchException;
 import com.tll.common.model.PropertyPathException;
 import com.tll.common.model.StringMapPropertyValue;
 import com.tll.model.InterfaceStatus;
+import com.tll.util.PropertyPath;
 
 /**
- * AccountInterfaceOptions - Manages the interface option to account bindings
- * for a given interface and account.
+ * AccountInterfaceOption - Manages the interface option to account bindings for
+ * a given interface option and account.
  * @author jpk
  */
-public class AccountInterfaceOptions extends FlowFieldPanel {
+public class AccountInterfaceOption extends FlowFieldPanel {
 
 	/**
 	 * InterfaceSummary - Static text that summarizes an interface option.
@@ -104,13 +110,122 @@ public class AccountInterfaceOptions extends FlowFieldPanel {
 				throw new IllegalArgumentException(e);
 			}
 		}
-	}
+	} // InterfaceOptionSummary
+
+	/**
+	 * OptionParameter - Represents an interface option parameter that handles
+	 * account subscribing and un-subscribing.
+	 * @author jpk
+	 */
+	class OptionParameter extends FlowFieldPanel {
+
+		final int optionIndex;
+		CheckboxField fSubscribed;
+		Label lblPName, lblPDesc;
+		TextField fPValue;
+
+		/**
+		 * Constructor
+		 * @param optionIndex
+		 */
+		public OptionParameter(int optionIndex) {
+			super();
+			this.optionIndex = optionIndex;
+		}
+
+		@Override
+		protected FieldGroup generateFieldGroup() {
+			return (new AbstractFieldGroupProvider() {
+
+				@Override
+				protected void populateFieldGroup(FieldGroup fg) {
+					final String op = PropertyPath.index("options", optionIndex);
+					fSubscribed = fcheckbox("subscribed", op + ".subscribed", "Subscribed", "Subscribed");
+					fPValue = ftext("pvalue", op + ".value", "Value", "Value", 20);
+				}
+
+				@Override
+				protected String getFieldGroupName() {
+					return "Option Parameter";
+				}
+			}).getFieldGroup();
+		}
+
+		@Override
+		protected IFieldRenderer<FlowPanel> getRenderer() {
+			return new IFieldRenderer<FlowPanel>() {
+
+				@Override
+				public void render(FlowPanel widget, FieldGroup fg) {
+					final FlowPanelFieldComposer cmpsr = new FlowPanelFieldComposer();
+					cmpsr.setCanvas(widget);
+
+					cmpsr.addWidget("Name", lblPName);
+					cmpsr.addWidget("Description", lblPDesc);
+					cmpsr.addField(fSubscribed);
+					cmpsr.addField(fPValue);
+				}
+			};
+		}
+
+		@Override
+		public void setModel(Model model) {
+			super.setModel(model);
+			// update the static label text
+
+		}
+
+	} // OptionParameter
+
+	/**
+	 * Parameters - Renders a collection of {@link OptionParameter} panels.
+	 * @author jpk
+	 */
+	class Parameters extends Composite {
+
+		private final TabPanel tp = new TabPanel();
+		final ArrayList<OptionParameter> params = new ArrayList<OptionParameter>();
+
+		/**
+		 * Constructor
+		 */
+		public Parameters() {
+			initWidget(tp);
+		}
+
+		public void apply(Model ioa) {
+			Map<String, String> pmap;
+			try {
+				pmap = ((StringMapPropertyValue) ioa.getPropertyValue("parameters")).getStringMap();
+				final Model option = ioa.getNestedModel("option");
+				final List<Model> iopds = option.relatedMany("parameters").getList();
+				for(final Model iopd : iopds) {
+					final String pname = iopd.asString("name");
+					if(pmap.containsKey(pname)) {
+						// "subscribed"
+
+					}
+					else {
+						// "un-subscribed"
+
+					}
+				}
+			}
+			catch(final PropPathNodeMismatchException e) {
+				throw new IllegalArgumentException(e);
+			}
+			catch(final PropertyPathException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+	} // Parameters
 
 	/**
 	 * FieldProvider
 	 * @author jpk
 	 */
-	static class FieldProvider extends AbstractFieldGroupProvider {
+	class FieldProvider extends AbstractFieldGroupProvider {
 
 		@Override
 		protected String getFieldGroupName() {
@@ -127,6 +242,7 @@ public class AccountInterfaceOptions extends FlowFieldPanel {
 	} // FieldProvider
 
 	final InterfaceOptionSummary ioSmry = new InterfaceOptionSummary();
+	final Parameters params = new Parameters();
 
 	@Override
 	public void setModel(Model ioa) {
@@ -139,17 +255,7 @@ public class AccountInterfaceOptions extends FlowFieldPanel {
 			ioSmry.apply(option);
 
 			// create the ioa param fields
-			final Map<String, String> pmap = ((StringMapPropertyValue) ioa.getPropertyValue("parameters")).getStringMap();
-			final List<Model> iopds = option.relatedMany("parameters").getList();
-			for(final Model iopd : iopds) {
-				final String pname = iopd.asString("name");
-				if(pmap.containsKey(pname)) {
-
-				}
-				else {
-
-				}
-			}
+			params.apply(ioa);
 		}
 		catch(final PropertyPathException e) {
 			throw new IllegalArgumentException(e);

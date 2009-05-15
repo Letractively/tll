@@ -169,12 +169,13 @@ public class InterfacesView extends AbstractRpcAndModelAwareView<StaticViewIniti
 
 			@Override
 			public FieldPanel<?> resolveFieldPanel(IEntityType type) {
-				final SmbizEntityType set = IEntityType.Util.toEnum(SmbizEntityType.class, type);
-				if(SmbizEntityType.INTERFACE_MULTI == set || SmbizEntityType.INTERFACE_SINGLE == set) {
-					return new MultiOptionInterfacePanel();
-				}
-				else if(SmbizEntityType.INTERFACE_SWITCH == set) {
-					return new SwitchInterfacePanel();
+				switch(SmbizEntityType.convert(type)) {
+					case INTERFACE_SWITCH:
+						return new SwitchInterfacePanel();
+					case INTERFACE_SINGLE:
+						return new MultiOptionInterfacePanel(true);
+					case INTERFACE_MULTI:
+						return new MultiOptionInterfacePanel(false);
 				}
 				throw new IllegalArgumentException("Unhandled interface type");
 			}

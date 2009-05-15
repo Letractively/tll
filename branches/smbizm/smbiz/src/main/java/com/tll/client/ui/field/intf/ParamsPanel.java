@@ -37,7 +37,7 @@ final class ParamsPanel extends TabbedIndexedFieldPanel<ParamsPanel.ParamPanel> 
 					final GridFieldComposer cmpsr = new GridFieldComposer();
 					cmpsr.setCanvas(widget);
 
-					cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+					cmpsr.addField(fg.getFieldWidgetByName("param" + Model.NAME_PROPERTY));
 					cmpsr.addField(fg.getFieldWidgetByName("paramCode"));
 					cmpsr.addField(fg.getFieldWidgetByName("paramDescription"));
 				}
@@ -60,7 +60,7 @@ final class ParamsPanel extends TabbedIndexedFieldPanel<ParamsPanel.ParamPanel> 
 
 	@Override
 	protected String getInstanceName(ParamPanel index) {
-		return index.getFieldGroup().getFieldWidget(Model.NAME_PROPERTY).getText();
+		return index.getFieldGroup().getFieldWidgetByName("param" + Model.NAME_PROPERTY).getText();
 	}
 
 	@Override

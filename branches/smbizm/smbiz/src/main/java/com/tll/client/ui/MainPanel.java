@@ -328,7 +328,7 @@ public final class MainPanel extends Composite implements IAdminContextListener,
 			if(event.getOptionEventType() == OptionEvent.EventType.SELECTED) {
 				final AdminContext ac = SmbizAdmin.getAdminContextCmd().getAdminContext();
 				final IViewInitializer vi =
-						OpsManager.resolveViewInitializer(optionText, ac.getUser(), ac.getAccount(), ac.getUserAccountType());
+					OpsManager.resolveViewInitializer(optionText, ac.getUser(), ac.getAccount());
 				if(vi == null) {
 					Window.alert("The view: '" + optionText + "' is currently not implemented.");
 					return;

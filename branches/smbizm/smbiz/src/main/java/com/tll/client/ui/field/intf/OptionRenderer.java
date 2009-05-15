@@ -12,7 +12,6 @@ import com.tll.client.ui.field.FieldGroup;
 import com.tll.client.ui.field.FlowPanelFieldComposer;
 import com.tll.client.ui.field.GridFieldComposer;
 import com.tll.client.ui.field.IFieldRenderer;
-import com.tll.client.ui.field.IFieldWidget;
 import com.tll.common.model.Model;
 
 
@@ -44,17 +43,12 @@ class OptionRenderer implements IFieldRenderer<FlowPanel> {
 		cmpsr.setCanvas(widget);
 
 		if(!isSwitch) {
-			cmpsr.addField(fg.getFieldWidgetByName(Model.NAME_PROPERTY));
+			cmpsr.addField(fg.getFieldWidgetByName("optn" + Model.NAME_PROPERTY));
 			cmpsr.addField(fg.getFieldWidgetByName("optnCode"));
 			cmpsr.addField(fg.getFieldWidgetByName("optnDefault"));
 			cmpsr.newRow();
 			cmpsr.addField(fg.getFieldWidgetByName("optnDescription"));
 			cmpsr.newRow();
-		}
-		else {
-			final IFieldWidget<?> fw = fg.getFieldWidgetByName("optnCode");
-			fw.setLabelText("On by default?");
-			cmpsr.addField(fw);
 		}
 
 		// pricing
@@ -72,11 +66,11 @@ class OptionRenderer implements IFieldRenderer<FlowPanel> {
 		pc.addField(fg.getFieldWidgetByName("optnBaseMonthlyPrice"));
 		pc.addField(fg.getFieldWidgetByName("optnBaseAnnualPrice"));
 
+		fp.addStyleName(Style.GAP_LEFT);
 		cmpsr.addWidget(fp);
-		cmpsr.addFieldContainerStyle(fp, Style.GAP_LEFT);
 
+		paramsWidget.addStyleName(Style.GAP_LEFT);
 		cmpsr.addWidget(paramsWidget);
-		cmpsr.addFieldContainerStyle(paramsWidget, Style.GAP_LEFT);
 	}
 
 }

@@ -83,9 +83,16 @@ public class IntfOptAccView extends AbstractRpcAndModelAwareView<IntfOptAccViewI
 
 	@Override
 	protected void doInitialization(IntfOptAccViewInitializer initializer) {
+		// no-op
+	}
+
+	@Override
+	protected void doRefresh() {
+		intfStack.refreshData();
 	}
 
 	@Override
 	protected void doDestroy() {
+		intfStack.clearData();
 	}
 }

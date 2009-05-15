@@ -17,11 +17,11 @@ import com.tll.client.validate.ValidationException;
 import com.tll.common.model.Model;
 
 /**
- * FieldBinding - Binds fields to model properties enabling bi-directional model
+ * FieldModelBinding - Binds fields to model properties enabling bi-directional model
  * and view data transfer.
  * @author jpk
  */
-public final class FieldBinding {
+public final class FieldModelBinding {
 
 	/**
 	 * Creates a model/field binding on a particular property. If the binding
@@ -92,7 +92,7 @@ public final class FieldBinding {
 	 * Constructor
 	 * @param errorHandler The error handler to employ.
 	 */
-	public FieldBinding(IErrorHandler errorHandler) {
+	public FieldModelBinding(IErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 
@@ -218,6 +218,19 @@ public final class FieldBinding {
 
 	public boolean isBound() {
 		return bound;
+	}
+
+	/**
+	 * Creates a "manual" binding. This is a provision to allow for multiple
+	 * bindings beyond the "stock" bindings that are created automatically. This
+	 * binding must first be set.
+	 * @param propPath the property path that identifies the model property to
+	 *        bind
+	 * @param fw the field widget to be bound
+	 */
+	public void addBinding(String propPath, IFieldWidget<?> fw) {
+		ensureSet();
+		createBinding(widget.getModel(), propPath, fw, errorHandler);
 	}
 
 	private void ensureSet() throws IllegalStateException {

@@ -58,7 +58,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
+			addModelCommon(fg, true, true, "intf");
 			fg.addField(ftext("intfCode", "code", "Code", "Code", 20));
 			fg.addField(ftextarea("intfDescription", "description", "Description", "Description", 3, 25));
 
@@ -76,6 +76,17 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 
 	static class OptionFieldProvider extends AbstractFieldGroupProvider {
 
+		private final boolean isSwitch;
+
+		/**
+		 * Constructor
+		 * @param isSwitch
+		 */
+		public OptionFieldProvider(boolean isSwitch) {
+			super();
+			this.isSwitch = isSwitch;
+		}
+
 		@Override
 		protected String getFieldGroupName() {
 			return "Option";
@@ -83,9 +94,11 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, false);
-			fg.addField(ftext("optnCode", "code", "Code", "Code", 20));
-			fg.addField(ftextarea("optnDescription", "description", "Description", "Description", 3, 25));
+			if(!isSwitch) {
+				addModelCommon(fg, true, false, "optn");
+				fg.addField(ftext("optnCode", "code", "Code", "Code", 20));
+				fg.addField(ftextarea("optnDescription", "description", "Description", "Description", 3, 25));
+			}
 			fg.addField(fcheckbox("optnDefault", "default", "Default?", "Is default?"));
 
 			fg.addField(ftext("optnSetUpCost", "setUpCost", "Set Up", "Set Up Cost", 8));
@@ -108,7 +121,7 @@ abstract class AbstractInterfacePanel extends FlowFieldPanel {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, false);
+			addModelCommon(fg, true, false, "param");
 			fg.addField(ftext("paramCode", "code", "Code", "Code", 20));
 			fg.addField(ftextarea("paramDescription", "description", "Description", "Description", 3, 25));
 		}

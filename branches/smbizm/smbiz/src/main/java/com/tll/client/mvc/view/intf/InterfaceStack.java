@@ -97,6 +97,15 @@ class InterfaceStack extends StackPanel implements IHasRpcHandlers, IListingHand
 						msgDisplay.add(new Msg(getModel().descriptor() + " updated.", MsgLevel.INFO), null);
 						break;
 
+					case ADD:
+						InterfaceStack.this.setStackText(InterfaceStack.this.getWidgetIndex(InterfacePanel.this),
+								getStackHtml(result.getEntity()), true);
+						setModel(result.getEntity());
+						showCancelButton(false);
+						showDeleteButton(true);
+						msgDisplay.add(new Msg(getModel().descriptor() + " added.", MsgLevel.INFO), null);
+						break;
+
 					case PURGE:
 						msgDisplay.add(new Msg(getModel().descriptor() + " deleted.", MsgLevel.INFO), null);
 						// remove interface

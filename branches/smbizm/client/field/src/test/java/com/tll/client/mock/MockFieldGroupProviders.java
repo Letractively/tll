@@ -139,7 +139,7 @@ public class MockFieldGroupProviders {
 
 		@Override
 		protected void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
+			addModelCommon(fg, true, true, "aa");
 			fg.addField(fenumselect("type", "type", "Type", "Account Address Type", AddressType.class));
 			final FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
 			fgAddress.setName("address");
@@ -160,7 +160,7 @@ public class MockFieldGroupProviders {
 
 		@Override
 		public void populateFieldGroup(FieldGroup fg) {
-			addModelCommon(fg, true, true);
+			addModelCommon(fg, true, true, "acnt");
 			fg.addField(ftext("acntParentName", "parent.name", "Parent", "Parent Account", 15));
 			fg.addField(fenumselect("acntStatus", "status", "Status", "Status", AccountStatus.class));
 			fg.addField(fdate("acntDateCancelled", "dateCancelled", "Date Cancelled", "Date Cancelled"));
@@ -170,8 +170,8 @@ public class MockFieldGroupProviders {
 			fg.addField(fdate("acntDateLastCharged", "dateLastCharged", "Last Charged", "Last Charged"));
 			fg.addField(fdate("acntNextChargeDate", "nextChargeDate", "Next Charge", "Next Charge"));
 			fg
-					.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
-							"PersistPayment Info?"));
+			.addField(fcheckbox("acntPersistPymntInfo", "persistPymntInfo", "PersistPayment Info?",
+			"PersistPayment Info?"));
 		}
 	}
 }

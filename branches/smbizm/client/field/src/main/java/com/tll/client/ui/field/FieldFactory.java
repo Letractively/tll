@@ -228,7 +228,7 @@ public abstract class FieldFactory {
 			String helpText,
 			final Class<E> type) {
 		final SelectField<E> f =
-				fselect(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE.convert(type));
+			fselect(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE.convert(type));
 		//f.addValidator(new EnumValidator(type));
 		return f;
 	}
@@ -252,8 +252,8 @@ public abstract class FieldFactory {
 			String helpText,
 			final Class<E> type, GridRenderer renderer) {
 		final RadioGroupField<E> f =
-				fradiogroup(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE
-						.convert(type), renderer);
+			fradiogroup(name, propName, labelText, helpText, EnumToDataMapConverter.INSTANCE
+					.convert(type), renderer);
 		f.addValidator(new EnumValidator(type));
 		return f;
 	}
@@ -277,23 +277,30 @@ public abstract class FieldFactory {
 	/**
 	 * Creates an entity name text field. <br>
 	 * NOTE: the value type is {@link String}.
+	 * @param fnamePrefix The optional field name prefix to maintain field name
+	 *        uniqueness
 	 * @return The created entity name field
 	 */
-	public static final TextField entityNameField() {
-		return ftext(Model.NAME_PROPERTY, Model.NAME_PROPERTY, "Name", "Name", 30);
+	public static final TextField entityNameField(String fnamePrefix) {
+		return ftext((fnamePrefix == null ? "" : fnamePrefix) + Model.NAME_PROPERTY, Model.NAME_PROPERTY, "Name", "Name",
+				30);
 	}
 
 	/**
 	 * Creates entity date created and date modified read only fields returning
 	 * them in an array where the first element is the date created field. <br>
 	 * NOTE: the value type is {@link Date}.
+	 * @param fnamePrefix The optional field name prefix to maintain field name
+	 *        uniqueness
 	 * @return DateField array
 	 */
-	public static final DateField[] entityTimestampFields() {
+	public static final DateField[] entityTimestampFields(String fnamePrefix) {
 		final DateField dateCreated =
-				fdate(Model.DATE_CREATED_PROPERTY, Model.DATE_CREATED_PROPERTY, "Created", "Date Created");
+			fdate((fnamePrefix == null ? "" : fnamePrefix) + Model.DATE_CREATED_PROPERTY, Model.DATE_CREATED_PROPERTY,
+						"Created", "Date Created");
 		final DateField dateModified =
-				fdate(Model.DATE_MODIFIED_PROPERTY, Model.DATE_MODIFIED_PROPERTY, "Modified", "Date Modified");
+			fdate((fnamePrefix == null ? "" : fnamePrefix) + Model.DATE_MODIFIED_PROPERTY, Model.DATE_MODIFIED_PROPERTY,
+						"Modified", "Date Modified");
 		dateCreated.setReadOnly(true);
 		dateModified.setReadOnly(true);
 		return new DateField[] {

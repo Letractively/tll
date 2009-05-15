@@ -19,9 +19,9 @@ final class AccountAddressFieldProvider extends AbstractFieldGroupProvider {
 
 	@Override
 	protected void populateFieldGroup(FieldGroup fg) {
-		addModelCommon(fg, true, true);
-		fg.addField(fenumselect("type", "type", "Type", "Account Address Type", AddressType.class));
-		FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
+		addModelCommon(fg, true, true, "aa");
+		fg.addField(fenumselect("aatype", "type", "Type", "Account Address Type", AddressType.class));
+		final FieldGroup fgAddress = (new AddressFieldsProvider()).getFieldGroup();
 		fgAddress.setName("address");
 		fg.addField("address", fgAddress);
 	}

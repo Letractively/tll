@@ -13,7 +13,7 @@ import com.tll.client.convert.ToStringConverter;
  * @author jpk
  */
 public final class CheckboxField extends AbstractField<Boolean> {
-	
+
 	/**
 	 * Impl
 	 * @author jpk
@@ -60,7 +60,6 @@ public final class CheckboxField extends AbstractField<Boolean> {
 		setConverter(ToBooleanConverter.DEFAULT);
 		this.cblabelText = labelText;
 		cb = new Impl(cblabelText);
-		//cb.addClickHandler(this);
 		cb.addBlurHandler(this);
 		cb.addValueChangeHandler(this);
 	}
@@ -71,7 +70,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	}
 
 	public boolean isChecked() {
-		return cb.getValue() == Boolean.TRUE; 
+		return cb.getValue() == Boolean.TRUE;
 	}
 
 	public void setChecked(boolean checked) {
@@ -97,7 +96,7 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	public void setText(String text) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public String getLabelText() {
 		return cblabelText;
@@ -106,5 +105,6 @@ public final class CheckboxField extends AbstractField<Boolean> {
 	@Override
 	public void setLabelText(String labelText) {
 		this.cblabelText = labelText == null ? "" : labelText;
+		if(cb != null) cb.setText(cblabelText);
 	}
 }

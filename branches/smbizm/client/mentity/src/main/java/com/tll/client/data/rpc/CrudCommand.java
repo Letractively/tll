@@ -85,7 +85,7 @@ public class CrudCommand extends RpcCommand<EntityPayload> {
 	 * @param entity The entity to add.
 	 */
 	public final void add(Model entity) {
-		if(entity == null || entity.isNew()) {
+		if(entity == null || !entity.isNew()) {
 			throw new IllegalArgumentException("A non-null and new entity must be specified.");
 		}
 		entityRequest = new EntityPersistRequest(entity);

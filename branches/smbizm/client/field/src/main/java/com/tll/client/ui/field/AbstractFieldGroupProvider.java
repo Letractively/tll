@@ -37,13 +37,15 @@ public abstract class AbstractFieldGroupProvider extends FieldFactory implements
 	 * @param name Add the common model name field?
 	 * @param timestamping Add the commoon model timestamping (date created, date
 	 *        modified) fields?
+	 * @param fnamePrefix The optional field name prefix to maintain field name
+	 *        uniqueness
 	 */
-	protected final void addModelCommon(FieldGroup fg, boolean name, boolean timestamping) {
+	protected final void addModelCommon(FieldGroup fg, boolean name, boolean timestamping, String fnamePrefix) {
 		if(name) {
-			fg.addField(entityNameField());
+			fg.addField(entityNameField(fnamePrefix));
 		}
 		if(timestamping) {
-			fg.addFields(entityTimestampFields());
+			fg.addFields(entityTimestampFields(fnamePrefix));
 		}
 	}
 }

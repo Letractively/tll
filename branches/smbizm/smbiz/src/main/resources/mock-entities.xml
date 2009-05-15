@@ -446,7 +446,7 @@
 			<value>VeriSign payment processor.</value>
 		</property>
 		<property name="default">
-			<value>true</value>
+			<value>false</value>
 		</property>
 	</bean>
 	

@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.FieldBinding;
+import com.tll.client.bind.FieldModelBinding;
 import com.tll.client.ui.FocusCommand;
 import com.tll.client.ui.edit.EditEvent.EditOp;
 import com.tll.client.ui.field.FieldErrorHandler;
@@ -82,14 +82,16 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 	/**
 	 * The model/field data transfer mechanism.
 	 */
-	private final FieldBinding binding;
+	private final FieldModelBinding binding;
 
 	/**
 	 * The panel containing the edit buttons
 	 */
 	private final FlowPanel pnlButtonRow = new FlowPanel();
 
-	private final Button btnSave, btnDelete, btnReset, btnCancel;
+	private final Button btnSave, btnReset;
+
+	private Button btnDelete, btnCancel;
 
 	/**
 	 * Constructor
@@ -117,7 +119,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 						new MsgPopupRegistry()));
 		}
 
-		binding = new FieldBinding(errorHandler);
+		binding = new FieldModelBinding(errorHandler);
 
 		portal.setStyleName(Styles.PORTAL);
 		// we need to defer this until needed aux data is ready
@@ -131,21 +133,9 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		btnReset = new Button("Reset", this);
 		pnlButtonRow.add(btnReset);
 
-		if(showDeleteBtn) {
-			btnDelete = new Button("Delete", this);
-			pnlButtonRow.add(btnDelete);
-		}
-		else {
-			btnDelete = null;
-		}
+		showDeleteButton(showDeleteBtn);
 
-		if(showCancelBtn) {
-			btnCancel = new Button("Cancel", this);
-			pnlButtonRow.add(btnCancel);
-		}
-		else {
-			btnCancel = null;
-		}
+		showCancelButton(showCancelBtn);
 
 		// hide the button row until initialized
 		pnlButtonRow.setVisible(false);
@@ -155,6 +145,22 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		panel.setStyleName(Styles.ENTITY_EDIT);
 
 		initWidget(panel);
+	}
+
+	public void showDeleteButton(boolean show) {
+		if(btnDelete == null) {
+			btnDelete = new Button("Delete", this);
+			pnlButtonRow.add(btnDelete);
+		}
+		btnDelete.setVisible(show);
+	}
+
+	public void showCancelButton(boolean show) {
+		if(btnCancel == null) {
+			btnCancel = new Button("Cancel", this);
+			pnlButtonRow.add(btnCancel);
+		}
+		btnCancel.setVisible(show);
 	}
 
 	@Override
@@ -192,7 +198,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 			setEditMode(model.isNew());
 			// deferred attachment to guarantee needed aux data is available
 			if(!fieldPanel.isAttached()) {
-				fieldPanel.setAction(binding);
+				fieldPanel.setBinding(binding);
 				Log.debug("EditPanel.setModel() adding fieldPanel to DOM..");
 				portal.add(fieldPanel);
 			}
@@ -228,7 +234,7 @@ public class EditPanel extends Composite implements ClickHandler, IHasEditHandle
 		if(sender == btnSave) {
 			try {
 				Log.debug("EditPanel - Saving..");
-				fieldPanel.getAction().execute();
+				fieldPanel.getBinding().execute();
 				EditEvent.fire(this, isAdd() ? EditOp.ADD : EditOp.UPDATE);
 			}
 			catch(final Exception e) {

@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.tll.client.bind.FieldBinding;
+import com.tll.client.bind.FieldModelBinding;
 import com.tll.common.bind.IBindable;
 import com.tll.common.model.Model;
 
@@ -50,9 +50,9 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	private Model model;
 
 	/**
-	 * The optional action.
+	 * The optional binding.
 	 */
-	private FieldBinding action;
+	private FieldModelBinding binding;
 
 	private boolean drawn;
 
@@ -82,7 +82,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	public final void setFieldGroup(FieldGroup fields) {
 		if(fields == null) throw new IllegalArgumentException("Null fields");
 		if(this.group != fields) {
-			if(action != null && action.isSet()) throw new IllegalStateException("Already set action");
+			if(binding != null && binding.isSet()) throw new IllegalStateException("Already set binding");
 			this.group = fields;
 			this.group.setWidget(this);
 		}
@@ -103,9 +103,9 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 
 		final IBindable old = this.model;
 
-		if(old != null) {
+		if(old != null && binding != null) {
 			Log.debug(this + " unbinding..");
-			action.unbind();
+			binding.unbind();
 		}
 
 		getFieldGroup().clearValue();
@@ -118,15 +118,15 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 			getFieldGroup().validateIncrementally(!model.isNew());
 		}
 
-		if(action != null) {
+		if(binding != null) {
 			if(model != null) {
 				Log.debug(this + " binding..");
-				action.set(this);
-				action.bind();
+				binding.set(this);
+				binding.bind();
 			}
 			else {
 				Log.debug(this + " unbinding..");
-				action.unbind();
+				binding.unbind();
 			}
 		}
 		//Log.debug("AbstractBindableWidget - firing 'model' prop change event..");
@@ -134,13 +134,19 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	}
 
 	@Override
-	public final FieldBinding getAction() {
-		return action;
+	public final FieldModelBinding getBinding() {
+		return binding;
 	}
 
 	@Override
-	public final void setAction(FieldBinding action) {
-		this.action = action;
+	public void setBinding(FieldModelBinding binding) {
+		if(binding == null) throw new IllegalArgumentException("Null binding");
+		if(this.binding != null) throw new IllegalStateException("Binding already set");
+		if(model != null) {
+			binding.set(this);
+			binding.bind();
+		}
+		this.binding = binding;
 	}
 
 	/**
@@ -191,9 +197,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	@Override
 	protected void onAttach() {
 		Log.debug("Attaching " + this + "..");
-		if(action != null) {
-			action.set(this);
-		}
+		// if(binding != null) binding.set(this);
 		super.onAttach();
 		//Log.debug("Firing prop change 'attach' event for " + toString() + "..");
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), false, true);
@@ -203,9 +207,7 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void onLoad() {
 		Log.debug("Loading " + toString() + "..");
 		super.onLoad();
-		if(action != null) {
-			action.bind();
-		}
+		// if(binding != null) binding.bind();
 		if(!drawn) {
 			draw();
 			drawn = true;
@@ -216,10 +218,6 @@ public abstract class FieldPanel<W extends Widget> extends Composite implements 
 	protected void onDetach() {
 		Log.debug("Detatching " + toString() + "..");
 		super.onDetach();
-		if(action != null) {
-			// Log.debug("Unbinding action [" + action + "] from [" + this + "]..");
-			// action.unbind(this);
-		}
 		//Log.debug("Firing prop change 'detach' event for " + toString() + "..");
 		//changeSupport.firePropertyChange(PropertyChangeType.ATTACHED.prop(), true, false);
 	}

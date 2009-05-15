@@ -23,8 +23,8 @@ public class UserFieldsProvider extends AbstractFieldGroupProvider {
 
 	@Override
 	public void populateFieldGroup(FieldGroup fg) {
-		addModelCommon(fg, true, true);
-		final TextField email = femail("userEmailAddress", "emailAddress", "Email Address", "Email Address", 30);
+		addModelCommon(fg, true, true, "user");
+		final TextField email = femail("userEmailAddress", "emailAddress", "Username", "Email Address/Username", 30);
 		email.setReadOnly(true);
 		fg.addField(email);
 		fg.addField(fcheckbox("userLocked", "locked", "Locked", "Locked"));

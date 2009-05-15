@@ -6,10 +6,10 @@
 package com.tll.client.ui.field;
 
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -92,12 +92,14 @@ public class FlowPanelFieldComposer extends AbstractFieldComposer implements Has
 			if(last == null) throw new IllegalStateException("Empty row");
 			fp = (FlowPanel) last.getParent();
 		}
+
 		if(fldLbl != null) {
 			fp.add(fldLbl);
 		}
-		else {
-			fp.add(new SimplePanel()); // i.e. an empty div
+		else if(!atCurrent) {
+			fp.add(new HTML("&nbsp;")); // for spacing
 		}
+
 		fp.add(w);
 		getCurrentRow().add(fp);
 		last = w;
